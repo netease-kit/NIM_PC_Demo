@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{294EBA7B-84BF-4A78-AB38-58A84B2DFC35}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>IM</RootNamespace>
+    <ProjectName>nim_demo</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)..\bin\</OutDir>
+    <IntDir>$(ProjectDir)..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+    <TargetName>nim_demo_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)..\bin\</OutDir>
+    <IntDir>$(ProjectDir)..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+    <TargetName>nim_demo</TargetName>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\ui_component\;..\tool_kits\ui_component\session\;..\third_party\;..\third_party\openssl\include\;..\libs\nim_sdk_desktop\nim_cpp_wrapper\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dbghelp.lib;gdiplus.lib;winmm.lib;vfw32.lib;jsoncpp_d.lib;tinyxml_d.lib;wxsqlite3_d.lib;libeay32.lib;duilib_d.lib;nim_capture_image_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\ui_component\;..\tool_kits\ui_component\session\;..\third_party\;..\third_party\openssl\include\;..\libs\nim_sdk_desktop\nim_cpp_wrapper\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>dbghelp.lib;gdiplus.lib;winmm.lib;vfw32.lib;jsoncpp.lib;tinyxml.lib;wxsqlite3.lib;libeay32.lib;duilib.lib;nim_capture_image.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_all_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_audio_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_client_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_data_sync_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_friend_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_global_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_global_define.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_http_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_msglog_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_rts_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_sdk_function.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_session_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_sysmsg_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_talk_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_team_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_tool_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_user_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_vchat_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_tools_cpp_wrapper\nim_tools_http_cpp_wrapper.h" />
+    <ClInclude Include="app_dump.h" />
+    <ClInclude Include="gui\about\about_form.h" />
+    <ClInclude Include="gui\add_friend\add_friend_wnd.h" />
+    <ClInclude Include="gui\black_list\black_list_wnd.h" />
+    <ClInclude Include="gui\login\login_form.h" />
+    <ClInclude Include="gui\main\control\friend_item.h" />
+    <ClInclude Include="gui\main\friend_list.h" />
+    <ClInclude Include="gui\main\friend_list_item_manager.h" />
+    <ClInclude Include="gui\main\group_list.h" />
+    <ClInclude Include="gui\main\main_form.h" />
+    <ClInclude Include="gui\msglogmanage\msglog_manage_form.h" />
+    <ClInclude Include="gui\tray_icon\tray_icon.h" />
+    <ClInclude Include="main.h" />
+    <ClInclude Include="module\sdk_test\nim_client_cpp_wrapper_test.h" />
+    <ClInclude Include="module\sdk_test\nim_talk_cpp_wrapper_test.h" />
+    <ClInclude Include="module\thread\db_thread.h" />
+    <ClInclude Include="module\thread\misc_thread.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="util\windows_manager.h" />
+    <ClInclude Include="util\window_ex.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_audio_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_client_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_data_sync_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_friend_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_global_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_http_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_msglog_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_rts_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_sdk_function.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_session_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_sysmsg_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_talk_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_team_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_tool_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_user_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_vchat_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_tools_cpp_wrapper\nim_tools_http_cpp_wrapper.cpp" />
+    <ClCompile Include="gui\about\about_form.cpp" />
+    <ClCompile Include="gui\add_friend\add_friend_wnd.cpp" />
+    <ClCompile Include="gui\black_list\black_list_wnd.cpp" />
+    <ClCompile Include="gui\login\login_form.cpp" />
+    <ClCompile Include="gui\login\login_form_ui.cpp" />
+    <ClCompile Include="gui\main\control\friend_item.cpp" />
+    <ClCompile Include="gui\main\friend_list.cpp" />
+    <ClCompile Include="gui\main\friend_list_item_manager.cpp" />
+    <ClCompile Include="gui\main\group_list.cpp" />
+    <ClCompile Include="gui\main\main_form.cpp" />
+    <ClCompile Include="gui\main\main_form_ui.cpp" />
+    <ClCompile Include="gui\msglogmanage\msglog_manage_form.cpp" />
+    <ClCompile Include="gui\tray_icon\tray_icon.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="module\thread\db_thread.cpp" />
+    <ClCompile Include="module\thread\misc_thread.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="util\windows_manager.cpp" />
+    <ClCompile Include="util\window_ex.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\tool_kits\base\base.vcxproj">
+      <Project>{8d9a6595-717a-41c8-b468-0011a72be3d1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\tool_kits\db\db.vcxproj">
+      <Project>{745e6452-9fe1-435b-833a-767617eee1da}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\tool_kits\shared\shared.vcxproj">
+      <Project>{9951345f-620b-4bed-bb51-4f928cafd454}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\tool_kits\ui_component\session\session.vcxproj">
+      <Project>{60840bd6-d601-4173-8944-e90809606fcf}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="nim.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="nim.rc" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

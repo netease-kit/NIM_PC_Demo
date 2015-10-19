@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ListContainerElement height="40">
+        <HBox>
+            <Control />
+            <Control width="auto" height="auto" valign="center" bkimage="loading.gif"/>
+            <Label margin="5,0,0,2" valign="center" font="2" text="加载中..."/>
+            <Control />
+        </HBox>
+    </ListContainerElement>
+</Window>

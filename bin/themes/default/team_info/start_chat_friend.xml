@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+    <HBox name="team_member_item" width="170" height="64" margin="0,5,0,5">
+        <Box width="56" height="auto">
+            <Box width="auto" height="auto" margin="8,8,0,8">
+                <Button name="head_image" width="46" height="46" margin="1,1,1,1" borderround="46,46,46,46" cursortype="hand"/>
+                <Button class="icon_headimage_mask_48x48" mouse="false"/>
+            </Box>
+            <Button class="btn_delete" name="btn_delete" width="26" height="26" margin="34,4,0,0" visible="false" fadealpha="true"/>
+            <Control name="admin" width="auto" height="auto" margin="34,34,0,0" visible="false"/>
+        </Box>
+        <VBox padding="8,0,0,0" height="auto" width="stretch" valign="center" mouse="false" mousechild="false">
+            <Label name="show_name" font="2" normaltextcolor="darkcolor" width="stretch" maxwidth="90" margin="0,0,8,0" mouse="false"/>
+        </VBox>
+    </HBox>
+</Window>

@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <ListContainerElement height="auto">
+        <Box width="auto" height="auto" halign="center" bkimage="file='cell_notice.png' corner='15,8,15,8'">
+            <Label name="notice" margin="20,5,20,5" font="1" normaltextcolor="darkcolor"/>
+        </Box>
+    </ListContainerElement>
+</Window>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+    <TreeNode class="listitem" height="56" cursortype="hand">
+        <HBox mouse="false" mousechild="false">
+			<Box valign="center" width="auto" height="auto" margin="8,0,0,0" mouse="false">
+				<CheckBox name="black_list" width="36" height="36" valign="center" margin="2,2,0,0"
+					normalimage="black_list.png"/>
+			</Box>
+            <Button text="黑名单" normaltextcolor="darkcolor" font="2" valign="center" margin="10,0,0,0"/>
+        </HBox>
+        <Control class="splitline_hor_level2" valign="bottom"/>
+    </TreeNode>
+</Window>

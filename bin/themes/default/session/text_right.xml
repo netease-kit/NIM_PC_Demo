@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <Box name="msg_text" width="auto" height="auto" bkimage="file='bubble_right.png' corner='15,15,25,15'">
+        <RichEdit name="text" margin="15,7,20,9" font="2" normaltextcolor="white" menu="true" 
+                  readonly="true" multiline="true" vscrollbar="false" autovscroll="false"/>
+    </Box>
+</Window>

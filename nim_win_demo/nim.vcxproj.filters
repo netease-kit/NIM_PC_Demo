@@ -1,0 +1,307 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="gui">
+      <UniqueIdentifier>{33f959ea-79a0-448b-84c5-9d84e5eff501}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module">
+      <UniqueIdentifier>{d4519b2b-950e-477e-a409-55248f84fb0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\login">
+      <UniqueIdentifier>{b85c2e25-72a3-46d2-82f5-68b570f93161}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\main">
+      <UniqueIdentifier>{c72b4055-5ac1-46ba-b4f8-b7bee8596c67}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\main\control">
+      <UniqueIdentifier>{292f2d29-72f2-4bb7-97fe-500e9fe9baf7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\sdk">
+      <UniqueIdentifier>{45681122-2b69-4fbc-821e-48b5cef99c32}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\thread">
+      <UniqueIdentifier>{8a938a2f-668c-4e6c-9e73-758d8654a98a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\tray_icon">
+      <UniqueIdentifier>{65aadb80-99ba-4cee-97b6-1fcd64cce3c0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\about">
+      <UniqueIdentifier>{96847902-9791-4fd4-bc1e-eb2ea2b911e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\sdk\nim_tools_cpp_wrapper">
+      <UniqueIdentifier>{e4423eab-e846-47f6-9892-417ee3f6ea0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\sdk\nim_cpp_wrapper">
+      <UniqueIdentifier>{97bcb1ee-7151-4c1e-a1ba-0e4bca7e3668}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\sdk_test">
+      <UniqueIdentifier>{fd659d9a-f603-4cb2-928f-818a4933411e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\msglogmanage">
+      <UniqueIdentifier>{dcffa305-ee46-4eda-9cca-45a7c8b62061}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\add_friend">
+      <UniqueIdentifier>{8a715274-460f-4c33-918b-96c785a081b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\black_list">
+      <UniqueIdentifier>{0c4193f4-0871-482d-98ea-989830ac5920}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{878dcc9f-1efd-4e95-be68-87bb68891861}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="gui\login\login_form.h">
+      <Filter>gui\login</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\main_form.h">
+      <Filter>gui\main</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="app_dump.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\control\friend_item.h">
+      <Filter>gui\main\control</Filter>
+    </ClInclude>
+    <ClInclude Include="main.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
+    <ClInclude Include="module\thread\misc_thread.h">
+      <Filter>module\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="module\thread\db_thread.h">
+      <Filter>module\thread</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\tray_icon\tray_icon.h">
+      <Filter>gui\tray_icon</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\about\about_form.h">
+      <Filter>gui\about</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\friend_list_item_manager.h">
+      <Filter>gui\main</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\group_list.h">
+      <Filter>gui\main</Filter>
+    </ClInclude>
+    <ClInclude Include="module\sdk_test\nim_client_cpp_wrapper_test.h">
+      <Filter>module\sdk_test</Filter>
+    </ClInclude>
+    <ClInclude Include="module\sdk_test\nim_talk_cpp_wrapper_test.h">
+      <Filter>module\sdk_test</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\msglogmanage\msglog_manage_form.h">
+      <Filter>gui\msglogmanage</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\friend_list.h">
+      <Filter>gui\main</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\add_friend\add_friend_wnd.h">
+      <Filter>gui\add_friend</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\black_list\black_list_wnd.h">
+      <Filter>gui\black_list</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_all_cpp_wrapper.h">
+      <Filter>module\sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_tools_cpp_wrapper\nim_tools_http_cpp_wrapper.h">
+      <Filter>module\sdk\nim_tools_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_audio_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_client_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_data_sync_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_friend_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_global_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_global_define.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_http_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_msglog_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_rts_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_sdk_function.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_session_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_sysmsg_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_talk_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_team_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_tool_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_user_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_vchat_cpp_wrapper.h">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClInclude>
+    <ClInclude Include="util\window_ex.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\windows_manager.h">
+      <Filter>util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="main.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\login\login_form.cpp">
+      <Filter>gui\login</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\login\login_form_ui.cpp">
+      <Filter>gui\login</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\main_form.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\main_form_ui.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\control\friend_item.cpp">
+      <Filter>gui\main\control</Filter>
+    </ClCompile>
+    <ClCompile Include="module\thread\misc_thread.cpp">
+      <Filter>module\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="module\thread\db_thread.cpp">
+      <Filter>module\thread</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\tray_icon\tray_icon.cpp">
+      <Filter>gui\tray_icon</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\about\about_form.cpp">
+      <Filter>gui\about</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\friend_list_item_manager.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\group_list.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\msglogmanage\msglog_manage_form.cpp">
+      <Filter>gui\msglogmanage</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\friend_list.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\add_friend\add_friend_wnd.cpp">
+      <Filter>gui\add_friend</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\black_list\black_list_wnd.cpp">
+      <Filter>gui\black_list</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_tools_cpp_wrapper\nim_tools_http_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_tools_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_audio_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_client_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_data_sync_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_friend_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_global_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_http_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_msglog_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_rts_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_sdk_function.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_session_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_sysmsg_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_talk_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_team_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_tool_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_user_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_wrapper\nim_cpp_wrapper\nim_vchat_cpp_wrapper.cpp">
+      <Filter>module\sdk\nim_cpp_wrapper</Filter>
+    </ClCompile>
+    <ClCompile Include="util\window_ex.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="util\windows_manager.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="nim.ico">
+      <Filter>资源文件</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="nim.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="ui">
+      <UniqueIdentifier>{edab88b3-71b8-49bd-a8de-257b4b43ad0c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="modal_window">
+      <UniqueIdentifier>{3933bcda-ea39-4898-95d5-cddc10aedd0e}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="cmd_line.cpp" />
+    <ClCompile Include="image_ole_i.c" />
+    <ClCompile Include="ipc_manager.cpp" />
+    <ClCompile Include="tool.cpp" />
+    <ClCompile Include="utf8_file_util.cpp" />
+    <ClCompile Include="xml_util.cpp" />
+    <ClCompile Include="closure.cpp" />
+    <ClCompile Include="log.cpp" />
+    <ClCompile Include="pin_yin_helper.cpp" />
+    <ClCompile Include="zoom_image.cpp" />
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="ui\msgbox.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="ui\ui_menu.cpp">
+      <Filter>ui</Filter>
+    </ClCompile>
+    <ClCompile Include="list_item_util.cpp" />
+    <ClCompile Include="util.cpp" />
+    <ClCompile Include="modal_wnd\async_modal_runner.cpp">
+      <Filter>modal_window</Filter>
+    </ClCompile>
+    <ClCompile Include="modal_wnd\file_dialog_ex.cpp">
+      <Filter>modal_window</Filter>
+    </ClCompile>
+    <ClCompile Include="modal_wnd\async_do_modal.cpp">
+      <Filter>modal_window</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="cmd_line.h" />
+    <ClInclude Include="image_ole_i.h" />
+    <ClInclude Include="ipc_manager.h" />
+    <ClInclude Include="threads.h" />
+    <ClInclude Include="tool.h" />
+    <ClInclude Include="utf8_file_util.h" />
+    <ClInclude Include="xml_util.h" />
+    <ClInclude Include="closure.h" />
+    <ClInclude Include="log.h" />
+    <ClInclude Include="pin_yin_helper.h" />
+    <ClInclude Include="zoom_image.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="auto_unregister.h" />
+    <ClInclude Include="ui\msgbox.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="ui\ui_menu.h">
+      <Filter>ui</Filter>
+    </ClInclude>
+    <ClInclude Include="list_item_util.h" />
+    <ClInclude Include="util.h" />
+    <ClInclude Include="modal_wnd\async_do_modal.h">
+      <Filter>modal_window</Filter>
+    </ClInclude>
+    <ClInclude Include="modal_wnd\async_modal_runner.h">
+      <Filter>modal_window</Filter>
+    </ClInclude>
+    <ClInclude Include="modal_wnd\file_dialog_ex.h">
+      <Filter>modal_window</Filter>
+    </ClInclude>
+    <ClInclude Include="modal_wnd\modal_wnd_base.h">
+      <Filter>modal_window</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

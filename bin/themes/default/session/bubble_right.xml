@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ListContainerElement height="auto">
+        <VBox height="auto">
+            <Label name="msg_time" margin="0,0,0,10" halign="center" normaltextcolor="lightcolor" text="消息时间"/>
+
+            <HBox height="auto">
+                <VBox height="auto">
+                    <Label name="sender_name" margin="0,0,0,5" halign="right" font="2" normaltextcolor="lightcolor"/>
+                    <HBox height="auto" margin="0,3,0,0">
+                        <Control />
+                        <Box name="status" width="auto" padding="0,0,5,0">
+                            <Control name="status_sending" width="auto" height="auto" valign="bottom" bkimage="sending.gif" visible="true"/>
+                            <Button name="status_resend" valign="bottom" cursortype="hand" font="24" normaltextcolor="link_green" text="重新发送" visible="false"/>
+                            <Label name="status_send_failed" valign="bottom" font="24" normaltextcolor="red" text="发送失败" visible="false"/>
+                            
+                            <Control name="status_loading" width="auto" height="auto" valign="center" bkimage="loading.gif" visible="false"/>
+                            <Button name="status_reload" valign="center" cursortype="hand" font="24" normaltextcolor="link_green" text="重新下载" visible="false"/>
+                            <Label name="status_load_failed" valign="center" font="24" normaltextcolor="red" text="下载失败" visible="false"/>
+                        </Box>
+                        <Box name="BubbleBox" width="auto" height="auto"/>
+                    </HBox>
+                </VBox>
+                
+                <Box name="header_panel" width="auto" height="auto" >
+                    <Button name="msg_header_button" width="38" height="38" borderround="38,38,38,38" margin="1,1,0,0" cursortype="hand" forenormalimage="header.png"/>
+                    <Button class="icon_headimage_mask_40x40" name="head_image_mask" mouse="false"/>
+                </Box>
+            </HBox>
+        </VBox>
+    </ListContainerElement>
+</Window>

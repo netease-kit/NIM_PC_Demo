@@ -1,0 +1,39 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Window mininfo="700,500" size="6000,6000" caption="0,0,0,4000" sizebox="12,12,12,12" shadowattached="false" textid="STRID_IMAGEVIEWFORM_TITLE">
+    <Box name="back_image" bkimage="file='win_bg.png' corner='30,40,50,40'">
+        <Control name="gif_image" halign="center" valign="center"/>
+        <ImageView name="image_view"/>
+        <Box name="scale_info_bg" width="60" bkcolor="transbkblack1" height="30" halign="center" valign="center">
+            <Label name="scale_info" normaltextcolor="white" font="11" halign="center" valign="center"/>
+        </Box>
+
+        <HBox height="auto" valign="center">
+			<Button name="preimage_btn" visible="false" margin="20,0,0,0" normalimage="left1.png" hotimage="left1.png" pushedimage="left0.png" disabledimage="left0.png" fadealpha="true"/>
+            <Control />
+			<Button name="nextimage_btn" visible="false" margin="0,0,20,0" normalimage="right1.png" hotimage="right1.png" pushedimage="right0.png" disabledimage="right0.png" fadealpha="true"/>
+        </HBox>
+
+        <HBox height="42" >
+            <Control mouse="false"/>
+            <Button name="close_btn" normalimage="file='close.png' source='0,0,24,24'" hotimage="file='close.png' source='25,0,49,24'" pushedimage="file='close.png' source='50,0,74,24'" disabledimage="file='close.png' source='75,0,99,24'"/>
+            <Button name="close_btn_max" normalimage="file='close_max.png' source='0,0,42,42'" hotimage="file='close_max.png' source='43,0,85,42'" pushedimage="file='close_max.png' source='86,0,128,42'" disabledimage="file='close_max.png' source='129,0,172,42'"/>
+        </HBox>
+
+        <VBox name="tool_bar" height="auto" valign="bottom" margin="0,0,0,16" fadealpha="true" visible="false" fadealpha="true">
+            <Box name="num_tip_bg" bkimage="file='num_tip.png'  corner='20,0,20,0'" height="20" width="auto" minwidth="50" padding="10,0,10,2" visible="false" halign="center">
+                <Label name="num_info" normaltextcolor="white" font="11" halign="center" valign="center" />
+            </Box>
+
+            <HBox name="tool_bar_btns" bkimage="file='toolbar_bk.png'  corner='20,20,20,20'" margin="0,10,0,0" height="41" width="280" halign="center" padding="19,9,19,0" childmargin="22">
+                <Button name="normal_btn" normalimage="file='normal.png' source='0,0,22,22'" hotimage="file='normal.png' source='23,0,45,22'" pushedimage="file='normal.png' source='46,0,68,22'" disabledimage="file='normal.png' source='69,0,92,22'"/>
+                <Button name="max_btn" normalimage="file='max.png' source='0,0,22,22'" hotimage="file='max.png' source='23,0,45,22'" pushedimage="file='max.png' source='46,0,68,22'" disabledimage="file='max.png' source='69,0,92,22'"/>
+                <Button name="restore_btn" normalimage="file='restore.png' source='0,0,22,22'" hotimage="file='restore.png' source='23,0,45,22'" pushedimage="file='restore.png' source='46,0,68,22'" disabledimage="file='restore.png' source='69,0,92,22'"/>
+                <Button name="magnify_btn" normalimage="file='magnify.png' source='0,0,22,22'" hotimage="file='magnify.png' source='23,0,45,22'" pushedimage="file='magnify.png' source='46,0,68,22'" disabledimage="file='magnify.png' source='69,0,92,22'"/>
+                <Button name="reduce_btn" normalimage="file='reduce.png' source='0,0,22,22'" hotimage="file='reduce.png' source='23,0,45,22'" pushedimage="file='reduce.png' source='46,0,68,22'" disabledimage="file='reduce.png' source='69,0,92,22'"/>
+                <Button name="rotate_btn" normalimage="file='rotate.png' source='0,0,22,22'" hotimage="file='rotate.png' source='23,0,45,22'" pushedimage="file='rotate.png' source='46,0,68,22'" disabledimage="file='rotate.png' source='69,0,92,22'"/>
+                <Button name="save_btn" normalimage="file='save.png' source='0,0,22,22'" hotimage="file='save.png' source='23,0,45,22'" pushedimage="file='save.png' source='46,0,68,22'" disabledimage="file='save.png' source='69,0,92,22'"/>
+            </HBox>
+
+        </VBox>
+    </Box>
+</Window>

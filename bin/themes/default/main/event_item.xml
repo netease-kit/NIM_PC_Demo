@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ListContainerElement class="listitem" height="60">
+        <HBox padding="9,0,10,0" mouse="false">
+            <Box width="auto" height="auto" valign="center" >
+				<ButtonBox name="btn_head" width="38" height="38" margin="1,1" borderround="38,38" mouse="false" bkimage="../public/header/head_team.png"/>
+				<Button class="icon_headimage_mask_40x40" name="head_image_mask" mouse="false"/>
+            </Box>
+
+            <VBox margin="10,0,10,0" mouse="false">
+                <Control mouse="false"/>
+                <HBox height="auto" mousechild="false">
+                    <Label name="evt_team"/>
+                    <Control />
+                    <Label name="evt_time" normaltextcolor="lightcolor"/>
+                </HBox>
+                <Label name="evt_tip" margin="0,4,0,0" width="stretch"/>
+                <Control mouse="false"/>
+            </VBox>
+
+            <HBox width="auto" mouse="false">
+                <Button name="btn_ok" valign="center" cursortype="hand" text="同意"/>
+                <Button name="btn_no" margin="10,0,0,0" valign="center" cursortype="hand" text="拒绝"/>
+                <Label name="result" margin="10,0,0,0" valign="center" visible="false" mouse="false"/>
+            </HBox>
+        </HBox>
+        <Control class="splitline_hor_level1" name="split_line" valign="bottom"/>
+    </ListContainerElement>
+</Window>

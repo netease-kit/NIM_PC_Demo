@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Window size="280,410" mininfo="280,410" caption="0,0,0,34">
+    <Class name="Microphone1" value="forenormalimage=&quot;file='microphone10.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='microphone13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Microphone2" value="forenormalimage=&quot;file='microphone20.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='microphone23.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Speaker1" value="forenormalimage=&quot;file='speaker10.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='speaker13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Speaker2" value="forenormalimage=&quot;file='speaker20.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='speaker13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Camera1" value="selectedforenormalimage=&quot;file='camera10.png' dest='3,3,25,25'&quot; selectedforedisabledimage=&quot;file='camera13.png' dest='3,3,25,25'&quot; selectedhotimage=&quot;btn_icon_hover.png&quot; selectedpushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Camera2" value="forenormalimage=&quot;file='camera20.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='camera23.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Camera3" value="forenormalimage=&quot;file='camera30.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='camera33.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="CompleteVideo" value="normalimage=&quot;confirm_video_ok0.png&quot; hotimage=&quot;confirm_video_ok1.png&quot; pushedimage=&quot;confirm_video_ok2.png&quot;"/>
+    <Class name="CompleteAudio" value="normalimage=&quot;confirm_audio_ok0.png&quot; hotimage=&quot;confirm_audio_ok1.png&quot; pushedimage=&quot;confirm_audio_ok2.png&quot;"/>
+    <Class name="RefuseVideo" value="normalimage=&quot;confirm_video_no0.png&quot; hotimage=&quot;confirm_video_no1.png&quot; pushedimage=&quot;confirm_video_no2.png&quot;"/>
+    <Class name="RefuseAudio" value="normalimage=&quot;confirm_audio_no0.png&quot; hotimage=&quot;confirm_audio_no1.png&quot; pushedimage=&quot;confirm_audio_no2.png&quot;"/>
+
+    <VBox>
+        <HBox height="33" padding="20,0,5,0" bkcolor="bk_video_title">
+            <Label name="caption" width="stretch" valign="center" font="3" normaltextcolor="white"/>
+            <Button name="minbtn" margin="10,6,0,0" normalimage="min0.png" hotimage="min1.png" pushedimage="min1.png" disabledimage="min3.png"/>
+            <Box name="sys_menu_box" width="22" height="22" margin="0,6,0,0">
+                <Button name="maxbtn" normalimage="max0.png" hotimage="max1.png" pushedimage="max1.png" disabledimage="max3.png"/>
+                <Button name="restorebtn" visible="false" normalimage="restore0.png" hotimage="restore0.png" pushedimage="restore0.png" disabledimage="restore3.png"/>
+            </Box>
+            <Button name="close_btn" margin="0,6,0,0" normalimage="close0.png" hotimage="close1.png" pushedimage="close1.png" disabledimage="close3.png"/>
+        </HBox>
+
+        <Box bkcolor="bk_video_content">
+            <VBox name="status_page">
+                <Box width="auto" height="auto" margin="0,70,0,0" halign="center" mousechild="false">
+                    <Button name="headicon" width="108" height="108" borderround="108,108,108,108"/>
+                    <Control width="108" height="108" bkimage="mask_108x108.png"/>
+                </Box>
+                <Label name="friend_name" margin="0,10,0,0" halign="center" font="22" normaltextcolor="white"/>
+                <Label name="chat_status" margin="0,5,0,0" halign="center" font="2" normaltextcolor="message_tip"/>
+            </VBox>
+
+            <Box name="video_page">
+                <BitmapControl name="photo_screen" bkcolor="bk_video_content">
+                    <Control name="camera_page_tip" width="68" height="42" halign="center" valign="center" bkimage="camera_page.png" visible="false"/>
+                </BitmapControl>
+                
+                <VBox width="auto" height="auto" margin="0,10,10,0" halign="right">
+                    <Box name="box_video_preview" height="auto" width="auto" >
+                        <BitmapControl name="photo_preview" maxwidth="120" maxheight="120" minwidth="90" minheight="90" bkcolor="bk_video_content">
+                            <Control name="camera_page_tip2" width="40" height="23" halign="center" valign="center" bkimage="camera_page2.png" visible="false"/>
+                        </BitmapControl>
+                        <Control name="video_border" bordersize="1" bordercolor="border_alpha_white"/>
+                        <Button name="swap_photo" halign="center" valign="center" bkimage="exchange.png" visible="false"/>
+                    </Box>
+                </VBox>
+                
+                <Label name="camera_opening" halign="center" valign="center" visible="false" textid="STRID_VIDEO_CAMERA_OPENING" normaltextcolor="white"/>
+                <Label name="camera_closed" halign="center" valign="center" visible="false" textid="STRID_VIDEO_TIP_CLOSE_VIDEO" normaltextcolor="white"/>
+            </Box>
+            
+            <HBox name="volumn_page" height="40" valign="bottom" bkimage="file='hbox_bottom.png' corner='15,15,15,15'">                
+                    <Button name="microphone" width="28" height="28" margin="5,0,0,0" valign="center" tooltiptext="麦克风" enabled="false"/>
+                    <Button name="speaker" width="28" height="28" margin="5,0,0,0" valign="center" tooltiptext="音量" enabled="false"/>
+                    <CheckBox name="camera" width="28" height="28" margin="5,0,0,0" valign="center" enabled="false"/>
+
+                    <Button name="into_video" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_VIDEO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
+                    <Button name="into_audio" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_AUDIO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
+
+                    <Control />
+                    <Label name="time_tick" normaltextcolor="white" font="1" valign="center" visible="false"/>
+                    <Button name="stop_chat" margin="8,0,10,0" valign="center" font="2" normaltextcolor="white" textid="STRID_VIDEO_EXIT_CHAT" normalimage="hangup0.png" hotimage="hangup1.png" pushedimage="hangup2.png"/>
+            </HBox>
+
+            <HBox name="confirm_page" height="auto" margin="0,0,0,15" valign="bottom">
+                <Control />
+                <Button name="complete" font="3" normaltextcolor="white" normalimage="confirm_ok0.png" hotimage="confirm_ok1.png" pushedimage="confirm_ok2.png"/>
+                <Control width="10"/>
+                <Button name="refuse" font="3" normaltextcolor="white" textid="STRID_VIDEO_INVITE_REFUSE" normalimage="confirm_no0.png" hotimage="confirm_no1.png" pushedimage="confirm_no2.png"/>
+                <Control />
+            </HBox>
+
+            <VBox name="vbox_of_input_volumn" width="30" height="120" margin="4,0,0,5" valign="bottom" nofocus="true" bkimage="slider_bkgnd.png" visible="false">
+                <Slider name="input_volumn" width="14" height="74" margin="0,10,0,10" halign="center" hor="false" thumbsize="14,14" min="0" max="255" bkimage="file='slider_ver_bk.png' dest='6,0,8,74'" progressbarpadding="6,0,6,0" progresscolor="bk_progress_progress" thumbnormalimage="slider_thumb.png"/>
+                <Control name="place_ctrl_1" width="22" height="22" halign="center" bkimage="microphone10.png" mouse="false"/>
+            </VBox>
+            
+            <VBox name="vbox_of_output_volumn" width="30" height="120" margin="37,0,0,5" valign="bottom" nofocus="true" bkimage="slider_bkgnd.png" visible="false">
+                <Slider name="output_volumn" width="14" height="74" margin="0,10,0,10" halign="center" hor="false" thumbsize="14,14" min="0" max="255" bkimage="file='slider_ver_bk.png' dest='6,0,8,74'" progressbarpadding="6,0,6,0" progresscolor="bk_progress_progress" thumbnormalimage="slider_thumb.png"/>
+                <Control name="place_ctrl_2" width="22" height="22" halign="center" bkimage="speaker10.png" mouse="false"/>
+            </VBox>
+
+            <Label name="netstat" width="200" height="32" margin="130,0,0,36" valign="bottom" bkimage="file='netstat.png' corner='30,10,10,10'" textpadding="10,4,0,0" font="2" normaltextcolor="obvious_tip" textid="STRID_VIDEO_TIP_NETSTAT_BAD"/>
+            <HBox name="hbox_camera_fail" width="158" height="32" margin="70,0,0,36" valign="bottom" bkimage="file='netstat.png' corner='30,10,10,10'">
+                <Label margin="10,4,0,0" font="2" normaltextcolor="obvious_tip" textid="STRID_VIDEO_TIP_START_VIDEO_FAIL"/>
+                <Button name="go_setting" margin="3,4,0,0" normaltextcolor="link_green" cursortype="hand" font="26" text="设置"/>
+            </HBox>
+            <Box name="vbox_video_audio_tip" width="auto" height="38" margin="0,0,0,60" halign="center" valign="bottom" visible="false" bkimage="status_tip.png">
+                <Label name="label_of_tip" margin="5,0,5,0" valign="center" font="2" normaltextcolor="white"/>
+            </Box>
+
+            <Box name="end_call_page" visible="false">
+                <Control bkcolor="bk_video_content" alpha="200"/>
+                <VBox width="auto" height="auto" halign="center" valign="center" bkcolor="bk_video_tip" padding="20,10,20,10">
+                    <Label name="end_call_tip" halign="center" font="3" normaltextcolor="white"/>
+                    <Label name="end_call_why" margin="0,5,0,0" halign="center" normaltextcolor="obvious_tip" visible="false"/>                     
+                </VBox>
+            </Box>
+        </Box>
+    </VBox>
+</Window>

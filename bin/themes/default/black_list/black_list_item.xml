@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<ListContainerElement class="listitem" width="stretch" height="60" normalcolor="bk_wnd_lightcolor">
+		<HBox padding="9,5,10,5" mouse="false">
+			<Box width="auto" height="auto" valign="center" >
+				<Control name="head_image" width="38" height="38" margin="1,1,0,0" borderround="38,38"/>
+				<Control class="icon_headimage_mask_40x40" name="head_image_mask" mouse="false"/>
+			</Box>
+			<Label name="contact" margin="10,0,0,0" valign="center" font="2"/>
+			<Control width="stretch"/>
+			<Button class="btn_global_green_80x30" name="confirm" width="54" height="30" valign="center" text="解除"/>
+		</HBox>
+		<Control class="splitline_hor_level1" name="split_line" valign="bottom"/>
+	</ListContainerElement>
+</Window>

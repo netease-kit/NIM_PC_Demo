@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <VListBox class="menu">
+        <MenuElement class="MenuElement" name="del_session_item" width="158">
+            <Label class="menu_text" text="从最近联系人删除"/>
+        </MenuElement>
+        <MenuElement class="MenuElement" name="del_session_msg" width="158">
+            <Label class="menu_text" text="删除聊天记录"/>
+        </MenuElement>
+    </VListBox>
+</Window>

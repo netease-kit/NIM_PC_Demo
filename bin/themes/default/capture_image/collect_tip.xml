@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window shadowattached="false" size="150,50" >
+    <Box bkimage="file='collect_ret_bk.png' corner='5,5,5,5'" width="150" height="50">
+        <Label class="font_title" name="info" font="3" width="auto" halign="center" valign="center" normaltextcolor="white" text="收藏成功" />
+    </Box>
+</Window>

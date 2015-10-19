@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="240,270" caption="0,0,0,120">
+    <VBox width="240" height="auto" bkcolor="bk_wnd_lightcolor">
+        <Label name="friend_name" margin="0,30,0,0" halign="center" font="22" normaltextcolor="darkcolor"/>
+
+        <Label name="time_tick" margin="0,10,0,0" halign="center" normaltextcolor="lightcolor" font="11" visible="false"/>
+
+        <Label name="code" margin="0,10,0,0" halign="center" normaltextcolor="lightcolor" font="2"/>
+
+        <HBox height="40" margin="0,30,0,10">
+            <Control />
+            <Button name="complete" normaltextcolor="white" font="3" normalimage="mission_ok0.png" hotimage="mission_ok1.png" pushedimage="mission_ok2.png"/>
+            <Control width="10"/>
+            <Button name="reject" normaltextcolor="white" font="3" normalimage="mission_no0.png" hotimage="mission_no1.png" pushedimage="mission_no2.png"/>
+            <Control />
+        </HBox>
+    </VBox>
+</Window>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ListContainerElement class="listitem" normalcolor="bk_wnd_lightcolor" height="60">
+        <HBox padding="9,5,10,5" mouse="false">
+            <Box width="auto" height="auto" valign="center" mouse="false">
+				<ButtonBox name="head_image" width="38" height="38" borderround="38,38" margin="1,1,0,0" cursortype="hand"/>
+				<Button class="icon_headimage_mask_40x40" name="head_image_mask" mouse="false"/>
+            </Box>
+            <Label name="contact" margin="10,0,0,0" valign="center" font="2" mouse="false" width="stretch"/>
+        </HBox>
+        <Control class="splitline_hor_level1" name="split_line" valign="bottom"/>
+    </ListContainerElement>
+</Window>

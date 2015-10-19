@@ -1,0 +1,70 @@
+<!DOCTYPE HTML>   
+<html>   
+<head>   
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">   
+<title>地图显示</title> 
+<link rel="stylesheet" type="text/css" href="/Public/css/demo.Default.css" />    
+<script language="javascript" src="http://webapi.amap.com/maps?v=1.2&key=2eaf2c506a1cc6c93fef4933a233a7c9"></script>   
+<script language="javascript">  
+var title="%s";
+var content="%s";
+var point="%s";
+ 
+function mapInit(){
+	var p0 = point.split(",")[0];
+	var p1 = point.split(",")[1];
+	var p2 = point.split(",")[2];
+	if(!p2)p2=13;
+	//初始化地图对象，加载地图  
+    mapObj = new AMap.Map("iCenter");
+	//设置地图中心及地图显示的缩放级别
+	mapObj.setZoomAndCenter(p2,new AMap.LngLat(p1,p0)); 
+	//添加地图类型切换插件   
+    mapObj.plugin(["AMap.MapType"],function(){   
+        //地图类型切换   
+        type= new AMap.MapType({defaultType:0});//初始状态使用2D地图   
+        mapObj.addControl(type);   
+    });    
+	//在地图中添加ToolBar插件   
+    mapObj.plugin(["AMap.ToolBar"],function(){         
+        toolBar = new AMap.ToolBar();   
+        mapObj.addControl(toolBar);        
+    });    
+	//加载比例尺插件   
+    mapObj.plugin(["AMap.Scale"],function(){           
+        scale = new AMap.Scale();   
+        mapObj.addControl(scale);   
+    }); 
+	//在地图中添加鹰眼插件   
+    mapObj.plugin(["AMap.OverView"],function(){   
+        //加载鹰眼   
+        overView = new AMap.OverView({   
+            visible:true //初始化隐藏鹰眼   
+        });   
+		overView.open();	
+        mapObj.addControl(overView);	
+    }); 
+	//实例化点标记     
+    marker=new AMap.Marker({                     
+    icon:"http://webapi.amap.com/images/0.png",   
+    position:new AMap.LngLat(p1,p0)   
+    }); 
+	//在地图上添加点	
+    marker.setMap(mapObj); 
+	
+	//构建信息窗体中显示的内容
+    var info = [];    
+    info.push(title);     
+    info.push(content); 
+    inforWindow = new AMap.InfoWindow({
+        content:info.join("<br/>"), 
+        offset:new AMap.Pixel(10, -30)//-113, -140   		
+    });  
+    inforWindow.open(mapObj,new AMap.LngLat(p1,p0));       
+} 
+</script>   
+</head>   
+<body onLoad="mapInit()">   
+    <div style="width:697px;height:550px;border:#ccc solid 1px;" id="iCenter"></div>       
+</body>   
+</html>  

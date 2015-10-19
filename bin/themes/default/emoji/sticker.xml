@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+    <Box width="176" height="176" hotimage="file='icon_hover.png' corner='10,10,10,10'" pushedimage="file='icon_pushed.png' corner='10,10,10,10'">
+        <Control name="sticker" width="160" height="160" halign="center" valign="center" mouse="false"/>
+    </Box>
+</Window>

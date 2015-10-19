@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ButtonBox name="msg_location" width="132" height="106" cursortype="hand" menu="true" bkimage="bubble_location_left.png" 
+               align="center" textpadding="20,67,14,0" singleline="false" linelimit="true" font="1" normaltextcolor="white">
+    </ButtonBox>
+</Window>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <Box name="msg_finger" width="auto" height="auto" menu="true" mousechild="false" bkimage="file='bubble_right.png' corner='15,15,25,15'">
+        <Control name="finger" width="88" height="88" margin="10,5,20,5"/>
+    </Box>
+</Window>

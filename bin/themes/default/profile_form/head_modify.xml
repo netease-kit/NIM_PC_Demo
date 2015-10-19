@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="640,440" caption="0,0,0,33" textid="STRID_HEAD_MODIFY_TITLE">
+    <VBox bkcolor="bk_wnd_lightcolor">
+        <HBox class="caption" name="caption_panel">
+            <Label class="font_title" name="caption" width="stretch" valign="center" normaltextcolor="darkcolor" textid="STRID_HEAD_MODIFY_TITLE"/>
+            <Button class="btn_wnd_min" name="minbtn" margin="4,6,0,0"/>
+            <Button class="btn_wnd_close" name="close_btn" margin="4,6,0,0"/>
+        </HBox>
+
+        <HBox margin="20,20,10,0">
+            <Box name="head_panel" bkcolor="headimage_bk_color" width="400" height="300">
+                <HeadViewControl name="head_view_ctrl" width="400" height="300"/>
+                <HeadSelectControl name="head_select_ctrl"/>
+                <ButtonBox name="local_upload_btn" width="auto" height="auto" halign="center" valign="center" padding="8,10,8,10" mousechild="false"
+						   normalimage="file='select_pic_normal.png' corner='4,4,4,4'" hotimage="file='select_pic_horver.png' corner='4,4,4,4'" pushedimage="file='select_pic_pushed.png' corner='4,4,4,4'">
+					<Event type="buttondown" receiver=".\plus_icon" applyattribute="state=&quot;pushed&quot;"/>
+					<Event type="buttonup" receiver=".\plus_icon" applyattribute="state=&quot;normal&quot;"/>
+					<Button name="plus_icon" valign="center" normalimage="icon_plus_normal.png" pushedimage="icon_plus_pushed.png"/>
+					<Label normaltextcolor="profile_nickname" valign="center" textid="STRID_HEAD_MODIFY_BUTTON_LOCAL_UPLOAD" font="2" margin="19,0,0,0"/>
+				</ButtonBox>
+            </Box>
+
+            <VBox margin="10,0,0,0">
+                <Box width="168" height="168" halign="center">
+                    <HeadPreviewControl name="big_head_preview_ctrl" width="stretch" height="stretch"/>
+                    <Button class="icon_headimage_mask_168x168" mouse="false"/>
+                </Box>
+                <Label text="160×160像素" margin="0,10,0,30" halign="center" mouse="false"/>
+                
+                <Box width="52" height="52" halign="center">
+                    <HeadPreviewControl name="small_head_preview_ctrl" width="52" height="52" halign="center"/>
+                    <Button class="btn_headimage_mask_52x52_small" mouse="false"/>
+                </Box>
+                <Label text="40×40像素" margin="0,10,0,0" halign="center" mouse="false"/>
+            </VBox>
+        </HBox>
+
+        <Control height="30"/>
+		
+        <HBox height="30" margin="0,0,20,20">
+            <Control />
+            <Button class="btn_global_white_80x30" name="cancel_btn" textid="STRID_HEAD_MODIFY_BUTTON_CANCEL"/>
+            <Control width="10"/>
+            <Button class="btn_global_white_80x30" name="select_image_btn" textid="STRID_HEAD_MODIFY_BUTTON_SELECT_IMAGE"/>
+            <Control width="10"/>
+            <Button class="btn_global_green_80x30" name="save_image_btn" textid="STRID_HEAD_MODIFY_BUTTON_SAVE_IMAGE"/>
+        </HBox>
+    </VBox>
+</Window>

@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window caption="0,0,0,34">
+    <VBox bkcolor="bk_wnd_lightcolor" width="460" height="auto">
+        <HBox class="caption">
+            <Label class="font_title" name="title" width="stretch" valign="center" 
+                   normaltextcolor="darkcolor" text="群成员管理"/>				   
+            <Button class="btn_wnd_min" name="minbtn" margin="4,6,0,0"/>
+            <Button class="btn_wnd_close" name="closebtn" margin="4,6,0,0"/>
+        </HBox>
+
+        <HBox name="team_member_item" width="170" height="64" margin="0,5,0,5">
+            <Box width="56" height="auto">
+                <Box width="auto" height="auto" margin="8,8,0,8">
+                    <Button name="head_image" width="46" height="46" margin="1,1,1,1" borderround="46,46,46,46" cursortype="hand"/>
+                    <Button class="icon_headimage_mask_48x48" mouse="false" mouse="false"/>
+                </Box>
+            </Box>
+            <VBox padding="8,0,0,0" height="auto" width="stretch" valign="center" mouse="false" mousechild="false">
+                <Label name="show_name" font="2" normaltextcolor="darkcolor" width="stretch" maxwidth="90" margin="0,0,8,0" mouse="false"/>
+            </VBox>
+        </HBox>
+
+        <HBox height="55">
+            <Label text="群名片" font="3" margin="10,15,20,0"/>
+            <RichEdit name="team_card" margin="0,15,0,0" font="2" prompttext="输入群名片"/>
+        </HBox>
+        
+        <HBox name="privilege_panel" height="55">
+            <Label text="身份" font="3" margin="10,15,20,0"/>
+            <Option class="circle_option_2" group="identity" name="owner" text="转移群主" margin="0,15,0,0"/>
+            <Option class="circle_option_2" group="identity" name="manager" text="管理员" margin="0,15,0,0"/>
+            <Option class="circle_option_2" group="identity" name="member" text="成员" margin="10,15,0,0"/>
+        </HBox>
+        
+        <Control class="splitline_hor_level1"/>
+
+        <HBox bkcolor="bk_wnd_darkcolor" height="50">
+            <Control />
+            <Button class="btn_global_white_80x30" name="cancel" valign="center" text="取消"/>
+            <Control width="10"/>
+            <Button class="btn_global_green_80x30" name="confirm" valign="center" text="确定"/>
+            <Control width="10"/>
+        </HBox>
+    </VBox>
+    
+</Window>

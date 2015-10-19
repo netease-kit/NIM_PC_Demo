@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window caption="0,0,0,34">
+    <VBox width="400" height="auto" bkcolor="bk_wnd_lightcolor">
+        <HBox class="caption">
+            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor"/>
+            <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>
+        </HBox>
+		<VBox name="board_page" height="auto" >
+			<BoardBox name="board" width="400" height="400" />
+			<Control class="splitline_hor_level1"/>
+			<HBox height="auto" margin="10,10,10,10" >
+				<Button  class="btn_global_green_80x30" margin="0,0,10,0" name="btn_showtype" normaltextcolor="white" text="显示全部"/>
+				<Button  class="btn_global_green_80x30" margin="0,0,10,0" name="btn_mine" normaltextcolor="white" text="本人数据"/>
+				<Button  class="btn_global_green_80x30" margin="0,0,10,0" name="btn_other" normaltextcolor="white" text="对方数据"/>
+			</HBox>
+			<Control class="splitline_hor_level1"/>
+			<HBox height="auto" margin="10,10,0,0" >
+				<Button  class="btn_global_green_80x30" margin="0,0,10,0" name="btn_mine_play" normaltextcolor="white" text="自动播放"/>
+				<Button  class="btn_global_green_80x30" margin="0,0,10,0" name="btn_mine_stop" normaltextcolor="white" text="停止播放"/>
+				<Label name="mine_size" margin="0,0,10,0" valign="center" font="2" height="20" />
+			</HBox>
+			<Box height="auto" margin="10,5,10,0" >
+				<Slider name="mine_prg" width="300" height="14" margin="0,0,0,0" valign="center" thumbsize="14,14" min="0" max="0" progressbarpadding="0,6,0,6" bkimage="file='slider_hor_bk.png' dest='0,6,300,8'" progresscolor="bk_progress_progress" thumbnormalimage="slider_thumb.png"/>
+                <Label name="mine_pos" margin="0,0,10,0" valign="center" halign="right" font="2" height="20" />
+			</Box>
+			<HBox height="auto" margin="10,10,0,0" >
+				<Button  class="btn_global_green_80x30" margin="0,0,10,0" name="btn_other_play" normaltextcolor="white" text="自动播放"/>
+				<Button  class="btn_global_green_80x30" margin="0,0,10,0" name="btn_other_stop" normaltextcolor="white" text="停止播放"/>
+				<Label name="other_size" margin="0,0,10,0" valign="center" font="2" height="20" />
+			</HBox>
+			<Box height="auto" margin="10,5,10,10" >
+				<Slider name="other_prg" width="300" height="14" margin="0,0,0,0" valign="center" thumbsize="14,14" min="0" max="0" progressbarpadding="0,6,0,6" bkimage="file='slider_hor_bk.png' dest='0,6,300,8'" progresscolor="bk_progress_progress" thumbnormalimage="slider_thumb.png"/>
+                <Label name="other_pos" margin="0,0,10,0" valign="center" halign="right" font="2" height="20" />
+			</Box>
+		</VBox>
+    </VBox>
+</Window>

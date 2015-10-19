@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ListContainerElement class="listitem" normalcolor="bk_wnd_lightcolor" height="60">
+        <HBox padding="10,5,10,5" mouse="false" >
+			<VBox>
+				<Label name="name" margin="10,0,0,0" valign="center" font="2"/>
+				<Label name="time" margin="10,10,0,0" valign="center" font="1"/>
+			</VBox>
+            <Button name="kick" width="38" height="38" valign="center" text="踢下线" cursortype="hand" normaltextcolor="btn_green" />
+        </HBox>
+        <Control class="splitline_hor_level1" name="split_line" valign="bottom"/>
+    </ListContainerElement>
+</Window>

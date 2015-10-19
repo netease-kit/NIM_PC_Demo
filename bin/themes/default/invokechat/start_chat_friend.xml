@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+    <ListContainerElement name="list_all_user" width="200" height="56" mousechild="false">
+        <Event type="select" receiver=".\headmask" applyattribute="selected=&quot;true&quot;"/>
+        <Event type="unselect" receiver=".\headmask" applyattribute="selected=&quot;false&quot;"/>
+        <Event type="mouseenter" receiver=".\headmask" applyattribute="state=&quot;hot&quot;"/>
+        <Event type="mouseleave" receiver=".\headmask" applyattribute="state=&quot;normal&quot;"/>
+        
+        <HBox>
+            <CheckBox class="checkbox_green" name="checkbox" valign="center" margin="10,0,0,0"/>
+
+            <Box width="auto" height="auto" valign="center" margin="10,0,0,0">
+                <Button name="head_image" width="38" height="38" margin="1,1,1,1" borderround="38,38,38,38"/>
+                <CheckBox name="headmask"/>
+            </Box>
+            
+            <Label name ="show_name" font="2" normaltextcolor="darkcolor" width="stretch" margin="10,0,0,0" valign="center"/>
+        </HBox>
+    </ListContainerElement>
+</Window>

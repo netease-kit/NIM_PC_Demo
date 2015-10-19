@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="300,600" mininfo="300,600" maxinfo="500,800" caption="0,0,0,100" sizebox="4,4,4,4">		
+    <VBox bkcolor="bk_wnd_lightcolor">
+        <VBox height="94" bkcolor="bk_main_wnd_title">
+            <HBox height="auto" margin="10,6,5,0">
+                <Control mouse="false"/>
+                <Button class="btn_wnd_white_menu" name="main_menu_button" margin="10,6,0,0"/>
+                <Button class="btn_wnd_white_min" name="minbtn" margin="10,6,0,0"/>
+                <Button class="btn_wnd_white_close" name="btn_wnd_close" margin="10,6,0,0"/>
+            </HBox>
+            <HBox height="64" margin="10,-10,20,10" mouse="false">
+				<Box width="auto" height="auto" valign="center" >
+					<Button name="btn_header" width="66" height="66" margin="1,1,1,1" borderround="66,66" cursortype="hand"/>
+					<Control bkimage="head_mask.png" mouse="false"/>
+				</Box>
+                <Label name="label_name" width="auto" maxwidth="180" margin="10,0,0,0" valign="center" normaltextcolor="white" font="7"/>
+            </HBox>
+        </VBox>
+
+        <HBox height="36" bkcolor="bk_main_wnd_search">
+            <Control name="search_icon" width="auto" height="auto" valign="center" margin="10,0,0,0" alpha="192" bkimage="file='../public/icon/icon_search.png'"/>
+            <RichEdit class="simple prompt" name="search_edit" height="auto" margin="8,0,10,0" valign="center" font="2" normaltextcolor="white" prompttextid="STRID_MIANWINDOW_SEARCH_EDIT_PROMPT"/>
+            <Button name="clear_input" visible="false" valign="center" margin="0,0,10,0"
+                    normalimage="..\public\button\btn_del_search_normal.png" 
+                    hotimage="..\public\button\btn_del_search_hover.png" 
+                    pushedimage="..\public\button\btn_del_search_normal.png"/>
+        </HBox>
+
+        <Control class="splitline_hor_level1" name="split_line"/>
+        <HBox height="36">
+            <OptionBox group="session_friend_tab" name="btn_session_list" tooltiptextid="STRID_MIANWINDOW_SESSION" cursortype="hand">
+                <Event type="select" receiver=".\select_tab" applyattribute="selectedid=&quot;1&quot;"/>
+                <Event type="unselect" receiver=".\select_tab" applyattribute="selectedid=&quot;0&quot;"/>
+                <Event type="select" receiver=".\session_option_icon" applyattribute="state=&quot;pushed&quot;"/>
+                <Event type="unselect" receiver=".\session_option_icon" applyattribute="state=&quot;normal&quot;"/>
+                <Event type="select" receiver="session_or_friend_list_tabbox" applyattribute="selectedid=&quot;0&quot;"/>
+                
+                <TabBox name="select_tab" mouse="false" mousechild="false">
+                    <HBox>
+                        <Control normalimage="file='bk_tab_unselected.png' source='0,0,15,36' corner='5,5,5,5'"/>
+                        <Control width="20" normalimage="file='bk_tab_unselected.png' source='60,0,80,36' corner='5,5,5,5'"/>
+                        <Control normalimage="file='bk_tab_unselected.png' source='125,0,140,36' corner='5,5,5,5'"/>
+                    </HBox>
+                    <HBox>
+                        <Control normalimage="file='bk_tab_selected.png' source='0,0,15,36' corner='5,5,5,5'"/>
+                        <Control width="20" normalimage="file='bk_tab_selected.png' source='60,0,80,36' corner='5,5,5,5'"/>
+                        <Control normalimage="file='bk_tab_selected.png' source='125,0,140,36' corner='5,5,5,5'"/>
+                    </HBox>
+                </TabBox>
+
+                <Control name="session_option_icon" mouse="false" width="auto" height="auto" halign="center" valign="center"
+                         normalimage="icon_tab_chat_unselected.png" pushedimage="icon_tab_chat_selected.png"/>
+            </OptionBox>
+
+            <OptionBox group="session_friend_tab" name="btn_friend_list" tooltiptextid="STRID_MIANWINDOW_ADDRESSBOOK" cursortype="hand">
+                <Event type="select" receiver=".\select_tab" applyattribute="selectedid=&quot;1&quot;"/>
+                <Event type="unselect" receiver=".\select_tab" applyattribute="selectedid=&quot;0&quot;"/>
+                <Event type="unselect" receiver=".\friend_option_icon" applyattribute="state=&quot;normal&quot;"/>
+                <Event type="select" receiver=".\friend_option_icon" applyattribute="state=&quot;pushed&quot;"/>
+                <Event type="select" receiver="session_or_friend_list_tabbox" applyattribute="selectedid=&quot;1&quot;"/>
+                
+                <TabBox name="select_tab" mouse="false" mousechild="false">
+                    <HBox>
+                        <Control normalimage="file='bk_tab_unselected.png' source='0,0,15,36' corner='5,5,5,5'"/>
+                        <Control width="20" normalimage="file='bk_tab_unselected.png' source='60,0,80,36' corner='5,5,5,5'"/>
+                        <Control normalimage="file='bk_tab_unselected.png' source='125,0,140,36' corner='5,5,5,5'"/>
+                    </HBox>
+                    <HBox>
+                        <Control normalimage="file='bk_tab_selected.png' source='0,0,15,36' corner='5,5,5,5'"/>
+                        <Control width="20" normalimage="file='bk_tab_selected.png' source='60,0,80,36' corner='5,5,5,5'"/>
+                        <Control normalimage="file='bk_tab_selected.png' source='125,0,140,36' corner='5,5,5,5'"/>
+                    </HBox>
+                </TabBox>
+
+                <Control name="friend_option_icon" mouse="false" width="auto" height="auto" halign="center" valign="center"
+                         normalimage="icon_tab_user_unselected.png" pushedimage="file='icon_tab_user_selected.png'"/>
+                <Button name ="unread_number" bkimage="file='../public/icon/icon_number.png' corner='8,0,8,0'" font="1" normaltextcolor="white"
+                        margin="60,0,0,0" halign="center" valign="center" visible="false"/>
+            </OptionBox>
+
+            <OptionBox group="session_friend_tab" name="btn_group_list" tooltiptextid="STRID_MIANWINDOW_ADDRESSBOOK" cursortype="hand">
+                <Event type="select" receiver=".\select_tab" applyattribute="selectedid=&quot;1&quot;"/>
+                <Event type="unselect" receiver=".\select_tab" applyattribute="selectedid=&quot;0&quot;"/>
+                <Event type="unselect" receiver=".\friend_option_icon" applyattribute="state=&quot;normal&quot;"/>
+                <Event type="select" receiver=".\friend_option_icon" applyattribute="state=&quot;pushed&quot;"/>
+                <Event type="select" receiver="session_or_friend_list_tabbox" applyattribute="selectedid=&quot;2&quot;"/>
+
+                <TabBox name="select_tab" mouse="false" mousechild="false">
+                    <HBox>
+                        <Control normalimage="file='bk_tab_unselected.png' source='0,0,15,36' corner='5,5,5,5'"/>
+                        <Control width="20" normalimage="file='bk_tab_unselected.png' source='60,0,80,36' corner='5,5,5,5'"/>
+                        <Control normalimage="file='bk_tab_unselected.png' source='125,0,140,36' corner='5,5,5,5'"/>
+                    </HBox>
+                    <HBox>
+                        <Control normalimage="file='bk_tab_selected.png' source='0,0,15,36' corner='5,5,5,5'"/>
+                        <Control width="20" normalimage="file='bk_tab_selected.png' source='60,0,80,36' corner='5,5,5,5'"/>
+                        <Control normalimage="file='bk_tab_selected.png' source='125,0,140,36' corner='5,5,5,5'"/>
+                    </HBox>
+                </TabBox>
+
+                <Control name="friend_option_icon" mouse="false" width="auto" height="auto" halign="center" valign="center"
+                         normalimage="icon_tab_group_unselected.png" pushedimage="icon_tab_group_selected.png"/>
+            </OptionBox>
+        </HBox>
+
+        <Box>
+            <Box height="75">
+                <Label text="还没有会话，在通讯录中找个人聊聊吧" halign="center" valign="center"/>
+            </Box>
+           
+            <TabBox name="session_or_friend_list_tabbox" fadeswitch="true">
+				<VListBox class="list" name="session_list" vscrollunit="100" bkcolor=""/>
+                <TreeView class="list" name="friend_list" vscrollunit="100"/>
+                <TreeView class="list" name="group_list" vscrollunit="100"/>
+            </TabBox>
+            <VListBox class="list" name="search_result_list" visible="false" vscrollunit="120"/>
+            <Label name="no_search_result_tip" visible="false" halign="center" margin="0,20,0,0" text="没有搜索结果，换个关键词试试？" font="2"/>
+        </Box>
+    </VBox>
+</Window>

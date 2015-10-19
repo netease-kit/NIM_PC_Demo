@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+	<Box name="sticker_container" width="160" height="160" maxwidth="160" maxheight="160" menu="true" bkimage="def_sticker.png"/>
+</Window>

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ButtonBox name="msg_image" width="auto" height="auto" minwidth="94" minheight="67" cursortype="hand" menu="true" mousechild="false" bkimage="file='bubble_right.png' corner='15,15,25,15'">
+        <Control name="image" width="auto" height="auto" margin="5,5,11,5" halign="center" valign="center" bkimage="image_def.png" forenormalimage="file='image_img_foreimage_right.png' corner='20,20,20,20'"/>
+    </ButtonBox>
+</Window>

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="400,560" caption="0,0,0,34">
+    <VBox width="400" height="560" bkcolor="bk_wnd_lightcolor">
+        <HBox class="caption">
+            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor"/>
+            <Button class="btn_wnd_close" name="btn_close" margin="10,6,0,0"/>
+        </HBox>
+        <Box>
+            <VBox name="status_page">
+                <Box width="auto" height="auto" margin="0,70,0,0" halign="center" mousechild="false">
+                    <Button name="headicon" width="108" height="108" borderround="108,108,108,108"/>
+                    <Control width="108" height="108" bkimage="mask_108x108.png"/>
+                </Box>
+                <Label name="friend_name" margin="0,10,0,0" halign="center" font="22" />
+                <Label name="chat_status" margin="0,5,0,0" halign="center" font="2" />
+				<HBox width="auto" height="auto" margin="0,70,0,0" halign="center" name="ack_box" >
+					<Button  class="btn_global_green_80x30" name="btn_accept" normaltextcolor="white" text="接受"/>
+					<Button  class="btn_global_white_80x30" margin="20,0,0,0" name="btn_reject" normaltextcolor="darkcolor" text="拒绝"/>
+					<Button  class="btn_global_green_80x30" name="btn_cancel" normaltextcolor="white" text="取消"/>
+				</HBox>
+            </VBox>
+            <VBox name="board_page" visible="false" >
+                <Label name="chat_status2" margin="0,5,0,0" halign="center" font="2" height="30" />
+                <Control class="splitline_hor_level1"/>
+				<BoardBox name="board" width="400" height="400" />
+                <Control class="splitline_hor_level1"/>
+				<HBox height="auto" margin="20,10,10,0" >
+					<Button  class="btn_global_green_80x30" margin="0,0,10,0" name="btn_showtype" normaltextcolor="white" text="显示全部"/>
+					<Button  class="btn_global_green_80x30" margin="0,0,10,0" name="btn_clear" normaltextcolor="white" text="全部清空"/>
+					<Button  class="btn_global_green_80x30" name="btn_undo" normaltextcolor="white" text="上一步"/>
+				</HBox>
+				<HBox height="auto" margin="20,10,10,0" >
+					<CheckBox name="speak" width="22" height="22" valign="center" selectednormalimage="speak0.png" normalimage="speak1.png" visible="false" />
+					<Control />
+					<Label name="ctrl_notify" valign="center" width="auto" font="2" visible="false" />
+					<Control />
+				</HBox>
+            </VBox>
+        </Box>
+    </VBox>
+</Window>

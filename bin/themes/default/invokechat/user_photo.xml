@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+	<HBox width="175" height="auto" padding="10,6,10,6" margin="0,0,10,10" bkimage="file='selected_user_bk.png' corner='2,2,2,2'">
+		<Label name="show_name" width="stretch" valign="center" font="1" normaltextcolor="dark2color" mouse="false"/>
+		<Button class="btn_wnd_close" name="delete" valign="center" margin="8"/>
+	</HBox>
+</Window>

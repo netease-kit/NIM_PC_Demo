@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window caption="0,0,0,160">
+	<Class name="switch" value="normalimage=&quot;off_normal.png&quot; pushedimage=&quot;off_pushed.png&quot; disabledimage=&quot;off_pushed.png&quot; selectednormalimage=&quot;on_normal.png&quot; selectedpushedimage=&quot;on_pushed.png&quot; selecteddisabledimage=&quot;on_pushed.png&quot; cursortype=&quot;hand&quot;"/>
+	<Class name="space" value="width=&quot;20&quot; valign=&quot;center&quot;"/>
+	<Class name="combo_attrib" value="width=&quot;99&quot; height=&quot;30&quot; valign=&quot;center&quot; bkimage=&quot;file='../public/combo/normal.png' corner='5,5,30,5'&quot; vscrollbar=&quot;true&quot;"/>
+	<Class name="item_box_attrib" value="width=&quot;stretch&quot; height=&quot;39&quot;"/>
+	<Class name="label_attrib" value="valign=&quot;center&quot; margin=&quot;0,0,0,2&quot; font=&quot;2&quot; normaltextcolor=&quot;profile_nickname&quot;"/>
+	<Class name="edit_attrib" value="height=&quot;30&quot; valign=&quot;center&quot; padding=&quot;10,0,10,0&quot; font=&quot;2&quot; normaltextcolor=&quot;profile_account&quot; align=&quot;vcenter&quot; bordercolor=&quot;profile_account&quot; bordersize=&quot;1&quot;"/>
+	<VBox width="414" height="auto" bkcolor="bk_wnd_lightcolor">
+		<Box width="stretch" height="auto" bkcolor="bk_wnd_darkcolor">
+			<HBox width="auto" height="auto" halign="right" margin="0,6,6,0">
+				<Button class="btn_wnd_min" name="minbtn"/>
+				<Button class="btn_wnd_close" name="closebtn" margin="2"/>
+			</HBox>
+			<HBox width="auto" height="auto" margin="23,36,0,36">
+				<Box width="auto" height="auto" valign="center" >
+					<Button name="head_image" width="86" height="86" margin="1,1,1,1" borderround="86,86" mouse="false" cursortype="hand" tooltiptext="更换头像"/>
+					<Control bkimage="../public/headmask/icon_headimage_mask_88x88.png" mouse="false"/>
+				</Box>
+				<VBox width="auto" height="auto" margin="19,0,0,0" valign="center" childmargin="10" mousechild="false">
+					<HBox width="auto" height="auto">
+						<Label name="nickname" font="20" normaltextcolor="profile_nickname"/>
+						<CheckBox name="sex_icon" valign="center" margin="5,0,0,0" normalimage="icon_man.png" selectednormalimage="icon_woman.png"/>
+					</HBox>
+					<Label name="userid" font="2" normaltextcolor="profile_account"/>
+				</VBox>
+			</HBox>
+		</Box>
+		<Control class="splitline_hor_level1" width="stretch"/>
+		<VBox width="stretch" height="auto" padding="30,30,30,30">
+			<HBox width="stretch" height="auto" margin="0,0,0,13">
+				<Label width="auto" height="auto" valign="center" text="基本信息" font="1"/>
+				<Control width="stretch"/>
+				<Button name="modify_info" width="44" height="22" valign="center" visible="false" 
+						normalimage="file='btn_edit_normal.png' corner='11,11,11,11'" hotimage="file='btn_edit_pressed.png' corner='11,11,11,11'" pushedimage="file='btn_edit_normal.png' corner='11,11,11,11'"
+						text="编辑" textpadding="10,4,10,4" normaltextcolor="profile_account" font="1"/>
+				<Button class="btn_global_white_80x30" name="cancel_modify" width="44" height="22" valign="center" text="取消" font="1" visible="false"/>
+				<Button class="btn_global_green_80x30" name="save_modify" width="44" height="22" valign="center" text="保存" font="1" margin="6" visible="false"/>
+			</HBox>
+			<HBox class="item_box_attrib" name="nickname_box" visible="false">
+				<Label class="label_attrib" text="昵称"/>
+				<Control class="space"/>
+				<RichEdit class="prompt edit_attrib" name="nickname_edit" wantreturnmsg="true" wanttab="false"/>
+				<Label name="nickname_error_tip" margin="10,0,0,0" valign="center" font="1" normaltextcolor="obvious_tip" visible="false"/>
+			</HBox>
+			<HBox class="item_box_attrib" name="sex_box" visible="false">
+				<Label class="label_attrib" text="性别"/>
+				<Control class="space"/>
+				<Combo class="combo_attrib" name="sex_option">
+					<ListContainerElement class="listitem" textpadding="10,1,1,1" height="30" text="男" font="2" normaltextcolor="profile_account"/>
+					<ListContainerElement class="listitem" textpadding="10,1,1,1" height="30" text="女" font="2" normaltextcolor="profile_account"/>
+				</Combo>
+				
+			</HBox>
+			<HBox class="item_box_attrib">
+				<Label class="label_attrib" text="生日"/>
+				<Control class="space"/>
+				<Label class="label_attrib" name="birthday" normaltextcolor="profile_account"/>
+				<HBox name="birthday_combobox" width="stretch" height="auto" valign="center" childmargin="4" visible="false">
+					<Combo class="combo_attrib" name="year"/>
+					<Combo class="combo_attrib" name="month"/>
+					<Combo class="combo_attrib" name="day"/>
+				</HBox>
+			</HBox>
+			<HBox class="item_box_attrib">
+				<Label class="label_attrib" text="手机"/>
+				<Control class="space"/>
+				<Label class="label_attrib" name="phone" width="305" normaltextcolor="profile_account"/>
+				<RichEdit class="simple prompt edit_attrib" name="phone_edit" visible="false"/>
+				<!--<Label name="phone_error_tip" margin="10,0,0,0" valign="center" font="1" normaltextcolor="obvious_tip" visible="false"/>-->
+			</HBox>
+			<HBox class="item_box_attrib">
+				<Label class="label_attrib" text="邮箱"/>
+				<Control class="space"/>
+				<Label class="label_attrib" name="email" width="305" normaltextcolor="profile_account"/>
+				<RichEdit class="simple prompt edit_attrib" name="email_edit" visible="false"/>
+				<!--<Label name="email_error_tip" margin="10,0,0,0" valign="center" font="1" normaltextcolor="obvious_tip" visible="false"/>-->
+			</HBox>
+			<HBox width="stretch" height="auto">
+				<Label valign="top" margin="0,10,0,0" font="2" text="签名"/>
+				<Control class="space"/>
+				<Label name="signature" valign="top" width="305" maxheight="38" margin="0,10,0,0" font="2" singleline="false" linelimit="true" normaltextcolor="profile_account"/>
+				<RichEdit class="prompt" name="signature_edit" width="305" height="60" margin="0,4,0,0" valign="top"
+					padding="10,8,10,8" align="top" font="2" normaltextcolor="profile_account" multiline="true"
+					vscrollbar="true" autovscroll="true" wantreturnmsg="true" wanttab="false"
+					bordersize="1" bordercolor="profile_account" visible="false"/>
+			</HBox>
+		</VBox>
+		<VBox name="only_other" width="stretch" height="auto">
+			<Control class="splitline_hor_level1" width="stretch"/>
+			<VBox width="stretch" height="auto" padding="30,30,30,30" childmargin="25">
+				<HBox width="stretch" height="auto">
+					<Label text="消息提醒" font="2"/>
+					<Control width="stretch"/>
+					<CheckBox class="switch" name="notify_switch" selected="true"/>
+				</HBox>
+				<HBox width="stretch" height="auto">
+					<Label text="黑名单" font="2"/>
+					<Control width="stretch"/>
+					<CheckBox class="switch" name="black_switch" selected="false"/>
+				</HBox>
+			</VBox>
+			<Control class="splitline_hor_level1" width="stretch"/>
+			<HBox width="stretch" height="62">
+				<Control width="stretch"/>
+				<TabBox name="add_or_del" width="auto" height="auto" valign="bottom" margin="0,0,10,10">
+					<Button class="btn_global_white_80x30" name="delete_friend" width="80" height="30" font="2" text="删除好友"/>
+					<Button class="btn_global_white_80x30" name="add_friend" width="80" height="30" font="2" text="加为好友"/>
+				</TabBox>
+				<Button class="btn_global_green_80x30" name="start_chat" width="80" height="30" valign="bottom" margin="0,0,20,10" font="2" text="聊天"/>
+			</HBox>
+		</VBox>
+	</VBox>
+</Window>

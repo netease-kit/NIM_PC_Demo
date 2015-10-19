@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <ListContainerElement height="50">
+        <HBox padding="10,0,10,0" childmargin="5">
+            <Box width="40" height="40" valign="center" mousechild="false">
+                <Button name="member_icon" width="38" height="38" borderround="38,38,38,38" margin="1,1,0,0"/>
+                <Button class="icon_headimage_mask_40x40"/>
+                <Control name="icon_admin" width="16" height="16" halign="right" valign="bottom" visible="false"/>
+            </Box>
+            <Label name="member_name" valign="center" font="2"/>
+        </HBox>
+        <Control class="splitline_hor_level1" float="true" valign="bottom"/>
+    </ListContainerElement>
+</Window>

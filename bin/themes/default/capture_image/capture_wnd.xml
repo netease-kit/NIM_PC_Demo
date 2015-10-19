@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window shadowattached="false">
+    <Class name="capture_btn" value="hotimage=&quot;file='option_bk.png'&quot; pushedimage=&quot;file='option_bk.png'&quot; width=&quot;24&quot; height=&quot;24&quot; margin=&quot;0,4,0,4&quot;"/>
+    <Class name="option_btn" value="group=&quot;edit&quot; selectednormalimage=&quot;file='pressed_bk.png'&quot;"/>
+    <Class name="splitline_hor_toolbar" value="bkcolor=&quot;splitline_hor_level4&quot; width=&quot;1&quot;"/>
+    <Class name="track_dot" value="bkimage=&quot;point.png&quot; width=&quot;9&quot; height=&quot;10&quot;"/>
+    <Box menu="true" >
+        <VBox >
+            <VBox name="bg_panel" >
+                <Control name="top_panel" bkcolor="transbkblack1" />
+                <HBox>
+                    <Control name="left_panel" bkcolor="transbkblack1" />
+					<Box clip="true" >
+						<CaptureEdit name="capture_edit" />
+					</Box>
+                    <Control name="right_panel" bkcolor="transbkblack1" />
+                </HBox>
+                <Control name="bottom_panel" bkcolor="transbkblack1" />
+            </VBox>
+        </VBox>
+        <Box>
+            <Control name="track_left_line" bkcolor="bk_lightblue" />
+            <Control name="track_top_line" bkcolor="bk_lightblue" />
+            <Control name="track_right_line" bkcolor="bk_lightblue" />
+            <Control name="track_bottom_line" bkcolor="bk_lightblue" />
+
+            <Control class="track_dot" name="track_topleft" />
+            <Control class="track_dot" name="track_topright" />
+            <Control class="track_dot" name="track_bottomleft" />
+            <Control class="track_dot" name="track_bottomright" />
+
+            <Control class="track_dot" name="track_left" />
+            <Control class="track_dot" name="track_top" />
+            <Control class="track_dot" name="track_right" />
+            <Control class="track_dot" name="track_bottom" />
+
+            <VBox name="toolbar2" bkimage="file='text_bg.png' corner='2,2,2,2'" height="28" visible="false" >
+                <Control />
+                <Label name="send_info2" normaltextcolor="lightcolor" font="11" halign="center"/>
+                <Control />
+            </VBox>
+
+            <HBox name="toolbar" >
+                <Control />
+                <!--Label name="send_info" bkimage="file='text_bg.png' corner='2,2,2,2'" height="28" normaltextcolor="darkcolor" font="11" /-->
+                <!--Control width="8" /-->
+                <VBox name="toolbar_button" width="304" height="auto" minheight="38" bkimage="file='button_bg.png' corner='10,10,10,10'" padding="3,3,3,3" >
+                    <HBox height="32" padding="4,0,4,0" childmargin="4" >
+                        <Option class="capture_btn option_btn" name="rectangle_option" forenormalimage="file='rectangle.png' dest='4,4,20,20'" selectedforenormalimage="file='rectangle.png' dest='4,4,20,20'" selected="false" tooltiptext="方框"/>
+                        <Option class="capture_btn option_btn" name="ellipse_option" forenormalimage="file='ellipse.png' dest='4,4,20,20'" selectedforenormalimage="file='ellipse.png' dest='4,4,20,20'" selected="false" tooltiptext="椭圆"/>
+                        <Option class="capture_btn option_btn" name="line_option" visible="false" forenormalimage="file='brush.png' dest='4,4,20,20'" selectedforenormalimage="file='brush.png' dest='4,4,20,20'" selected="false" tooltiptext="直线"/>
+                        <Option class="capture_btn option_btn" name="brush_option" forenormalimage="file='brush.png' dest='4,4,20,20'" selectedforenormalimage="file='brush.png' dest='4,4,20,20'" selected="false" tooltiptext="画刷"/>
+                        <Option class="capture_btn option_btn" name="arrow_option" forenormalimage="file='arrow.png' dest='4,4,20,20'" selectedforenormalimage="file='arrow.png' dest='4,4,20,20'" selected="false" tooltiptext="箭头"/>
+                        <Option class="capture_btn option_btn" name="mosaic_option" forenormalimage="file='mosaic.png' dest='4,4,20,20'" selectedforenormalimage="file='mosaic.png' dest='4,4,20,20'" selected="false" tooltiptext="马赛克"/>
+                        <Option class="capture_btn option_btn" name="gauss_option" visible="false" forenormalimage="file='gauss.png' dest='4,4,20,20'" selectedforenormalimage="file='gauss.png' dest='4,4,20,20'" selected="false" tooltiptext="毛玻璃"/>
+                        <Option class="capture_btn option_btn" name="text_option" visible="false" forenormalimage="file='text.png' dest='4,4,20,20'"selectedforenormalimage="file='text.png' dest='4,4,20,20'" selected="false" tooltiptext="文本"/>
+						
+						<Control class="splitline_hor_toolbar" margin="1,0,1,0"/>
+						
+                        <Button class="capture_btn" name="undo_btn" forenormalimage="file='undo.png' dest='4,4,20,20'" tooltiptext="撤销"/>
+                        <Button class="capture_btn" name="redo_btn" forenormalimage="file='redo.png' dest='4,4,20,20'" tooltiptext="恢复"/>
+                        <Button class="capture_btn" name="save_btn" forenormalimage="file='save.png' dest='4,4,20,20'" tooltiptext="保存"/>
+						
+						<Control class="splitline_hor_toolbar" margin="1,0,1,0"/>
+						
+                        <Button class="capture_btn" name="cancel_btn" font="1" forenormalimage="file='back.png' dest='4,4,20,20'" normaltextcolor="white" tooltiptext="取消"/>
+                        <Button class="capture_btn" name="send_btn" font="1" forenormalimage="file='send.png' dest='4,4,20,20'" tooltiptext="发送"/>
+                    </HBox>
+                </VBox>
+            </HBox>
+            <VBox name="size_tip" bkimage="file='rect.png' corner='1,1,1,1'" >
+                <Control />
+                <Label name="tip_head" font="1" margin="0,3,0,3" normaltextcolor="darkcolor" halign="center"/>
+                <Label name="tip_size" font="11" margin="0,3,0,3" normaltextcolor="darkcolor" halign="center"/>
+                <Control />
+            </VBox>
+        </Box>
+    </Box>
+</Window>

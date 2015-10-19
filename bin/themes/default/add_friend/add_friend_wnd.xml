@@ -1,0 +1,188 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="420, 200" caption="0,0,0,34" textid="STRID_ADD_FRIEND_TITLE">
+    <Class name="TipEdit" value="width=&quot;348&quot; height=&quot;60&quot; font=&quot;20&quot; multiline=&quot;true&quot; vscrollbar=&quot;false&quot; autovscroll=&quot;false&quot; enabled=&quot;false&quot; rich=&quot;false&quot;"/>
+    <Box width="420" height="200">
+        <TabBox name="tablayout" width="stretch" height="200">
+            <!--搜索-->
+            <VBox name="search_page" height="200" bkcolor="bk_wnd_lightcolor">
+                <HBox class="caption">
+                    <Label class="font_title" textid="STRID_ADD_FRIEND_TITLE" width="stretch" valign="center" normaltextcolor="darkcolor"/>
+                </HBox>
+
+                <Control />
+                <HBox height="40" margin="20,0,20,0" bkimage="file='../public/edit/edit0.png' corner='5,5,5,5'">
+                    <RichEdit class="simple prompt" name="search_key" width="stretch" height="auto" margin="10,0,10,0" valign="center" font="2" prompttext="请输入账号"/>
+                </HBox>
+                <Control />
+
+                <HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
+                    <Button class="btn_global_white_80x30" name="cancel" text="取 消"/>
+                    <Control width="10"/>
+                    <Button class="btn_global_green_80x30" name="confirm" text="搜 索"/>
+                </HBox>
+            </VBox>
+            <!--资料-->
+            <VBox name="userinfo_page" height="200" bkcolor="bk_wnd_lightcolor">
+                <HBox class="caption">
+                    <Label class="font_title" text="个人资料" width="stretch" valign="center" normaltextcolor="darkcolor"/>
+                </HBox>
+
+                <HBox margin="20,20,0,0" height="auto">
+                    <Box width="auto" height="auto">
+                        <Button name="headimage" width="46" height="46" borderround="46,46,46,46" margin="1,1,0,0" mouse="false"/>
+                        <Control class="icon_headimage_mask_48x48" mouse="false"/>
+                    </Box>
+                    <VBox margin="20,0,20,0" height="auto">
+                        <HBox height="22">
+                            <Label text="昵" font="2" normaltextcolor="lightcolor"/>
+                            <Label width="14" font="2" normaltextcolor="lightcolor"/>
+                            <Label text="称" font="2" normaltextcolor="lightcolor"/>
+                            <Label name="nick_name" font="2" width="stretch" margin="20,0,0,0"/>
+                        </HBox>
+                        <HBox height="22">
+                            <Label text="账" font="2" normaltextcolor="lightcolor"/>
+                            <Label width="14" font="2" normaltextcolor="lightcolor"/>
+                            <Label text="号" font="2" normaltextcolor="lightcolor"/>
+                            <Label name="id" font="12" width="stretch" margin="20,2,0,0"/>
+                        </HBox>
+                    </VBox>
+                </HBox>
+
+                <HBox width="auto" height="auto" halign="right" margin="0,40,20,20">
+                    <Button class="btn_global_white_80x30" name="pre_step" textid="STRID_ADD_FRIEND_RETURN_SEARCH"/>
+                    <TabBox name="addfriend_or_chat" margin="10,0,0,0" width="auto" height="auto">
+                        <Button class="btn_global_green_80x30" name="add_friend" text="加为好友"/>
+                        <Button class="btn_global_green_80x30" name="chat" text="聊 天"/>
+						<Button class="btn_global_green_80x30" name="remove" text="移出黑名单"/>
+                    </TabBox>
+                </HBox>
+            </VBox>
+            <!--404-->
+            <VBox name="notfound_page" height="200" bkcolor="bk_wnd_lightcolor">
+                <HBox class="caption">
+                    <Label class="font_title" textid="STRID_ADD_FRIEND_TITLE" width="stretch" valign="center" normaltextcolor="darkcolor"/>
+                </HBox>
+				
+				<Control />
+				
+                <HBox height="auto" margin="20,0,20,0">
+                    <Control width="22" height="auto" margin="0,7,10,0" bkimage="../msgbox/warning.png"/>
+                    <RichEdit class="TipEdit" name="information" height="auto" text="该账号不存在，请检查你输入的账号是否正确" margin="0,3,0,0"/>
+                </HBox>
+
+                <Control />
+				
+                <HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
+                    <Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH"/>
+                    <Control width="10"/>
+					<Button  class="btn_global_green_80x30" name="ok" text="完 成"/>
+                </HBox>
+            </VBox>
+            <!--请求-->
+            <VBox name="send_friend_apply_page" height="200" bkcolor="bk_wnd_lightcolor">
+                <HBox class="caption">
+                    <Label class="font_title" textid="STRID_SEND_FRIEND_APPLY_TITLE" width="stretch" valign="center" normaltextcolor="darkcolor"/>
+                </HBox>
+
+                <VBox margin="20,20,0,0">
+					<Control />
+                    <Label text="对方开启了好友验证，需要通过验证才能加为好友" font="2"/>
+                    <HBox margin="0,10,20,20" height="40" bkimage="file='../public/edit/edit0.png' corner='5,5,5,5'">
+                        <RichEdit class="simple" name="apply_words" width="stretch" height="auto" margin="10,0,10,0" valign="center" font="2"/>
+                    </HBox>
+
+                    <Control />
+                    <HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
+                        <Button  class="btn_global_white_80x30" name="pre_step" text="继续搜索"/>
+                        <Control width="10"/>
+                        <Button  class="btn_global_green_80x30" name="send" text="发 送"/>
+                    </HBox>
+                </VBox>
+            </VBox>
+            <!--回应-->
+            <VBox name="send_complete_page" height="200" bkcolor="bk_wnd_lightcolor">
+                <HBox class="caption">
+                    <Label class="font_title" textid="STRID_SEND_FRIEND_APPLY_TITLE" width="stretch" valign="center" normaltextcolor="darkcolor"/>
+                </HBox>
+				
+				<Control />
+                <HBox height="auto" margin="20,0,20,0">
+                    <Control width="22" height="auto" margin="0,7,10,0" bkimage="../msgbox/ok.png"/>
+                    <RichEdit class="TipEdit" name="information" margin="0,3,0,0" text="发送好友申请成功"/>
+                </HBox>
+
+                <Control />
+                <HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
+                    <Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH"/>
+                    <Control width="10"/>
+                    <Button  class="btn_global_green_80x30" name="ok" text="完 成"/>
+                </HBox>
+            </VBox>
+            <!--警告-->
+            <VBox name="send_too_frequent_page" height="200" bkcolor="bk_wnd_lightcolor">
+                <HBox class="caption">
+                    <Label class="font_title" textid="STRID_SEND_FRIEND_APPLY_TITLE" width="stretch" valign="center" normaltextcolor="darkcolor"/>
+                </HBox>
+				
+				<HBox height="auto" margin="20,20,20,10">
+                    <Control width="22" height="22" margin="0,3,10,0" bkimage="../msgbox/ok.png"/>
+                    <RichEdit class="TipEdit" height="auto" name="information" text="发送好友申请成功"/>
+                </HBox>
+				
+                <Label name="warning" font="2" normaltextcolor="lightcolor" singleline="false" margin="52,0,20,0" width="360" height="auto"
+					text="你已向该用户连续发送3次申请，请耐心等待对方通过验证。为了避免造成干扰，请等待10分钟后再发送申请。"/>
+
+                <Control />
+                <HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
+                    <Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH"/>
+                    <Control width="10"/>
+                    <Button  class="btn_global_green_80x30" name="ok" text="完 成"/>
+                </HBox>
+            </VBox>
+            <!--完成-->
+            <VBox name="add_success_page" height="200" bkcolor="bk_wnd_lightcolor">
+                <HBox class="caption">
+                    <Label class="font_title" textid="STRID_ADD_FRIEND_TITLE" width="stretch" valign="center" normaltextcolor="darkcolor"/>
+                </HBox>
+				
+                <HBox height="auto" margin="20,35,20,0">
+                    <Control width="22" height="22" margin="0,7,10,0" bkimage="../msgbox/ok.png"/>
+                    <RichEdit class="TipEdit" name="information" text="添加好友成功"/>
+                </HBox>
+
+                <Control />
+                <HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
+                    <Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH"/>
+                    <Control width="10"/>
+                    <Button  class="btn_global_green_80x30" name="ok" text="完 成"/>
+                </HBox>
+
+            </VBox>
+			<!-- 网络异常 -->
+			<VBox name="net_abnormal" height="200" bkcolor="bk_wnd_lightcolor">
+				<HBox class="caption">
+					<Label class="font_title" textid="STRID_ADD_FRIEND_TITLE" width="stretch" valign="center" normaltextcolor="darkcolor"/>
+				</HBox>
+
+				<HBox height="auto" margin="20,35,20,0">
+					<Control width="22" height="22" margin="0,7,10,0" bkimage="../msgbox/warning.png"/>
+					<RichEdit class="TipEdit" name="information" text="当前网络连接失败，请检查后重试"/>
+				</HBox>
+
+				<Control />
+				<HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
+					<Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH"/>
+					<Control width="10"/>
+					<Button  class="btn_global_green_80x30" name="ok" text="完 成"/>
+				</HBox>
+			</VBox>
+
+        </TabBox>
+
+        <HBox width="auto" height="auto" halign="right" margin="0,0,5,0">
+            <Button class="btn_wnd_min" name="minbtn"  margin="4,6,0,0"/>
+            <Button class="btn_wnd_close" name="closebtn" margin="4,6,0,0"/>
+        </HBox>
+
+    </Box>
+</Window>

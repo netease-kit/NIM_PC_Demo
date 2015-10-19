@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+    <ButtonBox name="emoj" width="30" height="30" hotimage="icon_hover.png" pushedimage="icon_pushed.png">
+        <Control name="ctrl_emoj" mouse="false" width="24" height="24" halign="center" valign="center"/>
+    </ButtonBox>
+</Window>

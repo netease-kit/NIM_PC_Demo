@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="340,180" caption="0,0,0,34">
+    <VBox width="340" height="180" bkcolor="bk_wnd_lightcolor">
+        <HBox class="caption">
+            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" text="关于云信"/>
+            <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>
+        </HBox>
+
+        <Box>
+            <Control width="auto" height="auto" halign="center" valign="center" bkimage="logo.png"/>
+
+            <Label name="version" font="2" margin="10,0,0,10" valign="bottom"/>
+        </Box>
+    </VBox>
+</Window>

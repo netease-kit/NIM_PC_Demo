@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <HBox name="msg_unknown" width="auto" height="auto" padding="20,10,20,10" bkimage="file='bubble_left.png' corner='25,15,15,15'">
+        <Control width="auto" height="auto" bkimage="msg_unkown.png"/>
+        <Label name="unknown_tip" margin="5,0,0,0" valign="center" font="2" normaltextcolor="darkcolor" text="未知消息"/>
+    </HBox>
+</Window>

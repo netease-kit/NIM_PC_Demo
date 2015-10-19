@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <ListContainerElement height="auto">
+        <VBox height="auto">
+            <Button name="CELL_BTN_LOAD_MORE_MSG" halign="center" cursortype="hand" normaltextcolor="darkcolor" text="点击加载历史消息"/>
+        </VBox>
+    </ListContainerElement>
+</Window>

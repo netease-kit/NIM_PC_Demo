@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ListContainerElement height="auto">
+        <VBox height="auto" margin="10,10,0,0" >
+            <Label name="msg_time" margin="0,0,0,10" halign="center" normaltextcolor="lightcolor" text="消息时间"/>
+
+            <HBox height="auto">
+                <Box name="header_panel" width="auto" height="auto" mouse="false" >
+                    <Button name="msg_header_button" width="38" height="38" borderround="38,38,38,38" margin="1,1,0,0" cursortype="hand" bkimage="header.png"/>
+                    <Button class="icon_headimage_mask_40x40" name="head_image_mask" mouse="false"/>
+                </Box>
+                
+                <VBox height="auto">
+                    <Label name="sender_name" margin="0,0,0,5" font="2" normaltextcolor="lightcolor"/>
+					<Box name="msg_text" width="auto" height="auto" bkimage="file='bubble_left.png' corner='25,15,15,15'">
+						<RichEdit name="text" margin="20,7,15,9" font="2" normaltextcolor="darkcolor" menu="true" 
+								  readonly="true" rich="true" multiline="true" vscrollbar="false" autovscroll="false"/>
+					</Box>
+                </VBox>
+            </HBox>
+        </VBox>
+    </ListContainerElement>
+</Window>

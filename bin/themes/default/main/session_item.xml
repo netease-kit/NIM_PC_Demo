@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ListContainerElement class="listitem" normalcolor="bk_wnd_lightcolor" height="60">
+        <HBox padding="9,0,10,0" mouse="false">
+            <Box width="auto" height="auto" valign="center" mouse="false">
+				<ButtonBox name="head_image" width="38" height="38" borderround="38,38" margin="1,1,0,0" cursortype="hand"/>
+				<Button class="icon_headimage_mask_40x40" name="head_image_mask" mouse="false"/>
+            </Box>
+            
+            <HBox margin="10,0,0,0" mouse="false" mousechild="false">
+                <VBox>
+                    <Control />
+                    <Label name="label_name" width="stretch" font="2"/>
+                    <Label name="label_msg" width="stretch" margin="0,4,0,0" font="1" normaltextcolor="lightcolor"/>
+                    <Control />
+                </VBox>
+                <VBox width="auto" minwidth="50">
+                    <Control />
+                    <Label name="label_time" halign="center" normaltextcolor="lightcolor"/>
+                    <Box name="box_unread" width="26" height="auto" margin="0,4,0,0" padding="0,2,0,4" halign="center" bkimage="file='icon_number.png' corner='8,7,8,7'">
+                        <Label name="label_unread" halign="center" normaltextcolor="white"/>
+                    </Box>
+                    <Control />
+                </VBox>
+            </HBox>
+        </HBox>
+        <Control class="splitline_hor_level1" name="split_line" valign="bottom"/>
+    </ListContainerElement>
+</Window>

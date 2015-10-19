@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="550,350">
+    <VBox bkcolor="bk_wnd_lightcolor">
+        <Box padding="5,0,0,0">           
+            <TabBox name="list_tabbox" fadeswitch="true" >
+				<TileListBox name="tile_emoj" padding="0,0,14,5" itemsize="40,40" vscrollbar="true" vscrollunit="60" />
+				<TileListBox name="sticker_ajmd" padding="0,0,14,5" itemsize="176,176" vscrollbar="true" vscrollunit="60" />
+				<TileListBox name="sticker_lt" padding="0,0,14,5" itemsize="176,176" vscrollbar="true" vscrollunit="60" />
+				<TileListBox name="sticker_xxy" padding="0,0,14,5" itemsize="176,176" vscrollbar="true" vscrollunit="60" />
+            </TabBox>
+        </Box>
+        <Control class="splitline_hor_level1"/>
+        <HBox name="sticker_vector_container" height="60" bkcolor="bk_wnd_darkcolor">
+            <OptionBox group="list_tab" selected="true" margin="10,10,10,10" width="40" height="40" normalimage="emoj_s_normal.png" hotimage="emoj_s_pressed.png" pushedimage="emoj_s_pressed.png" selectednormalimage="emoj_s_pressed.png">
+                <Event type="select" receiver="list_tabbox" applyattribute="selectedid=&quot;0&quot;"/>
+            </OptionBox>
+
+            <OptionBox group="list_tab" name="sticker_op_ajmd" dataid="48" margin="10,10,10,10" width="40" height="40" normalimage="ajmd_s_normal.png" hotimage="ajmd_s_pressed.png" pushedimage="ajmd_s_pressed.png" selectednormalimage="ajmd_s_pressed.png">
+                <Event type="select" receiver="list_tabbox" applyattribute="selectedid=&quot;1&quot;"/>
+            </OptionBox>
+				
+            <OptionBox group="list_tab" name="sticker_op_lt" dataid="20" margin="10,10,10,10" width="40" height="40" normalimage="lt_s_normal.png" hotimage="lt_s_pressed.png" pushedimage="lt_s_pressed.png" selectednormalimage="lt_s_pressed.png">
+                <Event type="select" receiver="list_tabbox" applyattribute="selectedid=&quot;2&quot;"/>
+            </OptionBox>
+			
+            <OptionBox group="list_tab" name="sticker_op_xxy" dataid="40" margin="10,10,10,10" width="40" height="40" normalimage="xxy_s_normal.png" hotimage="xxy_s_pressed.png" pushedimage="xxy_s_pressed.png" selectednormalimage="xxy_s_pressed.png">
+                <Event type="select" receiver="list_tabbox" applyattribute="selectedid=&quot;3&quot;"/>
+            </OptionBox>
+        </HBox>
+    </VBox>
+</Window>

@@ -1,0 +1,225 @@
+#include "resource.h"
+#include "login_form.h"
+//#include "callback/login/login_callback.h"
+#include "util/user.h"
+//#include "module/login/login_manager.h"
+#include "shared/tool.h"
+
+using namespace ui;
+
+const LPCTSTR LoginForm::kClassName	= L"LoginForm";
+
+LoginForm::LoginForm()
+{
+}
+
+LoginForm::~LoginForm()
+{
+
+}
+
+std::wstring LoginForm::GetSkinFolder()
+{
+	return L"login";
+}
+
+std::wstring LoginForm::GetSkinFile()
+{
+	return L"login.xml";
+}
+
+ui::UILIB_RESOURCETYPE LoginForm::GetResourceType() const
+{
+	return ui::UILIB_FILE;
+}
+
+std::wstring LoginForm::GetZIPFileName() const
+{
+	return L"login.zip";
+}
+
+std::wstring LoginForm::GetWindowClassName() const 
+{
+	return kClassName;
+}
+
+std::wstring LoginForm::GetWindowId() const
+{
+	return kClassName;
+}
+
+UINT LoginForm::GetClassStyle() const 
+{
+	return (UI_CLASSSTYLE_FRAME | CS_DBLCLKS);
+}
+
+LRESULT LoginForm::OnClose( UINT u, WPARAM w, LPARAM l, BOOL& bHandled )
+{
+	nim_ui::LoginManager::GetInstance()->DoLogout(false);
+	return 1;
+
+	return __super::OnClose(u, w, l, bHandled);
+}
+
+LRESULT LoginForm::HandleMessage( UINT uMsg, WPARAM wParam, LPARAM lParam )
+{
+	return __super::HandleMessage(uMsg, wParam, lParam);
+}
+
+void LoginForm::InitWindow()
+{
+	SetIcon(IDI_ICON);
+	SetTaskbarTitle(L"登录");
+	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&LoginForm::Notify, this, std::placeholders::_1));
+	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&LoginForm::OnClicked, this, std::placeholders::_1));
+
+	usericon_ = FindControl(L"usericon");
+	passwordicon_ = FindControl(L"passwordicon");
+
+	user_name_edit_ = (RichEdit*) FindControl( L"username" );
+	nick_name_edit_ = (RichEdit*)FindControl(L"nickname");
+	password_edit_ = (RichEdit*) FindControl( L"password" );
+	user_name_edit_->SetSelAllOnFocus(true);
+	password_edit_->SetSelAllOnFocus(true);
+
+	login_ing_tip_ = FindControl( L"login_ing_tip" );
+	login_error_tip_ = (Label*) FindControl( L"login_error_tip" );
+
+	btn_login_ = (Button*) FindControl( L"btn_login" );
+	btn_register_ = (Button*)FindControl(L"btn_register");
+	btn_cancel_ = (Button*) FindControl( L"btn_cancel" );
+
+	//RichEdit的SetText操作放在最后，会触发TextChange事件
+	std::wstring account = QCommand::Get(kCmdAccount);
+	user_name_edit_->SetText(account);
+
+	std::wstring why = QCommand::Get(kCmdExitWhy);
+	if( !why.empty() )
+	{
+		int reason = _wtoi( why.c_str() );
+		if (reason == nim::kNIMLogoutKickout)
+			ShowLoginTip(L"你已被踢出");
+		else if (reason == nim::kNIMLogoutRelogin)
+			ShowLoginTip(L"网络连接已断开");
+
+		QCommand::Erase(kCmdExitWhy);
+	}
+
+	user_name_edit_->SetLimitText(20);
+	nick_name_edit_->SetLimitText(10);
+	password_edit_->SetLimitText(20);
+	((ui::Button*)FindControl(L"register_account"))->AttachClick([this](ui::EventArgs* msg) {
+		SetTaskbarTitle(L"注册");
+		FindControl(L"enter_panel")->SetBkImage(L"user_password_nickname.png");
+		msg->pSender->GetWindow()->FindControl(L"nick_name_panel")->SetVisible();
+		msg->pSender->GetWindow()->FindControl(L"enter_login")->SetVisible();
+		btn_register_->SetVisible();
+		btn_login_->SetVisible(false);
+		user_name_edit_->SetText(L"");
+		user_name_edit_->SetPromptText(L"帐号限20位字母或数字");
+		usericon_->SetEnabled(true);
+		password_edit_->SetText(L"");
+		password_edit_->SetPromptText(L"密码限6~20位字母或数字");
+		passwordicon_->SetEnabled(true);
+		nick_name_edit_->SetText(L"");
+		nick_name_edit_->SetPromptText(L"昵称限10位汉字、字母或数字");
+		msg->pSender->GetWindow()->FindControl(L"register_account")->SetVisible(false);
+		return true; });
+
+	((ui::Button*)FindControl(L"enter_login"))->AttachClick([this](ui::EventArgs* msg) {
+		SetTaskbarTitle(L"登录");
+		FindControl(L"enter_panel")->SetBkImage(L"user_password.png");
+		msg->pSender->GetWindow()->FindControl(L"nick_name_panel")->SetVisible(false);
+		msg->pSender->GetWindow()->FindControl(L"enter_login")->SetVisible(false);
+		btn_register_->SetVisible(false);
+		btn_login_->SetVisible();
+		user_name_edit_->SetText(L"");
+		user_name_edit_->SetPromptText(L"帐号");
+		password_edit_->SetText(L"");
+		password_edit_->SetPromptText(L"密码");
+		msg->pSender->GetWindow()->FindControl(L"register_account")->SetVisible(true);
+		return true; });
+
+}
+
+bool LoginForm::Notify( ui::EventArgs* msg )
+{
+	std::wstring name = msg->pSender->GetName();
+	if(msg->Type == kEventTextChange)
+	{
+		if(name == L"username")
+		{
+			Reset();
+			password_edit_->SetText(L"");
+		}
+		else if(name == L"password")
+		{
+			login_error_tip_->SetVisible(false);
+			passwordicon_->SetEnabled(true);
+		}
+		else if (name == L"nickname")
+		{
+			login_error_tip_->SetVisible(false);
+			FindControl(L"nick_name_icon")->SetEnabled(true);
+		}
+	}
+	else if(msg->Type == kEventTab)
+	{
+		if(user_name_edit_->IsFocused())
+		{
+			if (nick_name_edit_->IsVisible())
+			{
+				nick_name_edit_->SetSelAll();
+				nick_name_edit_->SetFocus();
+			}
+			else
+			{
+				password_edit_->SetSelAll();
+				password_edit_->SetFocus();
+			}
+		}
+		else if(password_edit_->IsFocused())
+		{
+			user_name_edit_->SetSelAll();
+			user_name_edit_->SetFocus();
+		}
+		else if (nick_name_edit_->IsFocused())
+		{
+			password_edit_->SetSelAll();
+			password_edit_->SetFocus();
+		}
+	}
+	else if (msg->Type == kEventReturn)
+	{
+		if (name == L"username" || name == L"nickname" || name == L"password")
+		{
+			if (!nick_name_edit_->IsVisible())
+			{
+				btn_login_->SetFocus();
+				DoBeforeLogin();
+			}
+			else
+				DoRegisterAccount();
+		}
+	}
+	return true;
+}
+
+bool LoginForm::OnClicked( ui::EventArgs* msg )
+{
+	std::wstring name = msg->pSender->GetName();
+	if(name == L"btn_login")
+	{
+		DoBeforeLogin();
+	}
+	else if (name == L"btn_register")
+	{
+		DoRegisterAccount();
+	}
+	else if(name == L"btn_cancel")
+	{
+		btn_cancel_->SetEnabled(false);
+		nim_ui::LoginManager::GetInstance()->CancelLogin();
+	}
+	return true;
+}

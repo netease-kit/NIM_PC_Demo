@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!-- "口吕" -->
+<!-- "  一" -->
+<Window>
+	<Box name="bubble_file" width="250" height="auto" minheight="85" bkimage="file='bubble_right.png' corner='15,15,25,15'" menu="true" >
+		<VBox width="stretch" height="auto" margin="3,3,9,3" mouse="false">
+			<HBox width="stretch" height="70" mouse="false">
+				<Button name="file_image" width="44" height="54" margin="12,12,0,10" mouse="false" />
+				<VBox name="fileinfo_vertlayout" width="stretch" height="stretch" margin="10,10,10,8" mouse="false">
+					<Label name="file_info_name" width="stretch" height="auto" singleline="true" font="3" normaltextcolor="darkcolor" mouse="false"/>
+					<Label name="file_info_size" width="stretch" height="auto" singleline="true" font="2" normaltextcolor="lightcolor" mouse="false"/>
+					<VBox name="progress_vertlayout" width="stretch" height="12" margin="0,10,0,0" visible="false" mouse="false">
+						<Progress name="http_progress" width="stretch" height="2" bkcolor="bk_progress_bk" progresscolor="bk_progress_progress" mouse="false"/>
+						<Control height="10" mouse="false"/>
+					</VBox>
+				</VBox>
+			</HBox>
+			
+			<HBox height="34" width="stretch" margin="12" mouse="false">
+				<Label name="http_status" width="55" valign="center" font="1" normaltextcolor="darkcolor" mouse="false"/>
+				<Control width="stretch" mouse="false"/>
+				<Button name="file_saveas" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>
+				<Button name="file_open" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>
+				<Button name="file_opendocu" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>
+				<Button name="file_cancel" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>
+				<Button name="file_reup" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>
+				<Button name="file_redl" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>					
+			</HBox>
+		</VBox>
+	</Box>	
+</Window>

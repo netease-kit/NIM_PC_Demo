@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="sqlite">
+      <UniqueIdentifier>{7b996a1a-58cb-4c15-845a-88204892d537}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="build">
+      <UniqueIdentifier>{bdffae1b-6460-4a3b-88b8-822a8d2eb8db}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="db_sqlite3.cpp">
+      <Filter>sqlite</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="db_sqlite3.h">
+      <Filter>sqlite</Filter>
+    </ClInclude>
+    <ClInclude Include="..\build\xp_style_manifest_win.h">
+      <Filter>build</Filter>
+    </ClInclude>
+    <ClInclude Include="..\build\build_config.h">
+      <Filter>build</Filter>
+    </ClInclude>
+    <ClInclude Include="..\build\winsdk_config.h">
+      <Filter>build</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="350,300" caption="0,0,0,34">
+    <VBox bkcolor="bk_wnd_lightcolor">
+        <HBox class="caption">
+            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" text="多端登陆管理"/>
+            <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>
+        </HBox>
+		<!--VListBox class="list" name="dev_list" vscrollbar="true" hscrollbar="false" vscrollunit="120" padding="0,0,0,10"/-->
+		<VBox height="auto" >
+            <Control bkimage="duoduan01.png" margin="0,30,0,10" halign="center" width="auto" height="auto"/>
+            <HBox bkimage="file='../public/edit/edit0.png' corner='10,10,10,10'" height="40" margin="50,0,50,0" padding="20,0,20,0" >
+				<Label class="font_title" width="stretch" valign="center" normaltextcolor="darkcolor" text="云信手机版"/>
+				<Button name="kick" valign="center" cursortype="hand" font="1" normaltextcolor="btn_green" text="下线" />
+            </HBox>
+		</VBox>
+    </VBox>
+</Window>
