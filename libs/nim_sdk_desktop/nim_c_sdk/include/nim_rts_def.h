@@ -85,7 +85,7 @@ static const char *kNIMRtsClientType	= "client_type";	/**< int 客户端类型NI
   * @param[out] code 调用结果
   * @param[out] session_id 会话id
   * @param[out] channel_type 通道类型 如要tcp+音视频，则channel_type=kNIMRtsChannelTypeTcp|kNIMRtsChannelTypeVchat
-  * @param[out] uid 对方账号
+  * @param[out] uid 对方帐号
   * @param[out] json_extension 无效的扩展字段
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
@@ -96,7 +96,7 @@ typedef void (*nim_rts_start_cb_func)(int code, const char *session_id, int chan
   * NIM RTS 收到对方创建通道通知
   * @param[out] session_id 会话id
   * @param[out] channel_type 通道类型 如要tcp+音视频，则channel_type=kNIMRtsChannelTypeTcp|kNIMRtsChannelTypeVchat
-  * @param[out] uid 对方账号
+  * @param[out] uid 对方帐号
   * @param[out] json_extension 扩展字段，若有透传数据见kNIMRtsCreateCustomInfo，如{"custom_info": "" }
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
@@ -120,7 +120,7 @@ typedef void (*nim_rts_ack_res_cb_func)(int code, const char *session_id, int ch
   * @param[out] session_id 会话id
   * @param[out] channel_type 通道类型
   * @param[out] accept 是否接受
-  * @param[out] uid 对方账号
+  * @param[out] uid 对方帐号
   * @param[out] json_extension 无效的扩展字段
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
@@ -155,7 +155,7 @@ typedef void (*nim_rts_connect_notify_cb_func)(const char *session_id, int chann
   * @param[out] session_id 会话id
   * @param[out] channel_type 通道类型
   * @param[out] type 成员变化类型见NIMRtsMemberStatus
-  * @param[out] uid 对方账号
+  * @param[out] uid 对方帐号
   * @param[out] json_extension 无效的扩展字段
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
@@ -178,7 +178,7 @@ typedef void (*nim_rts_control_res_cb_func)(int code, const char *session_id, co
   * NIM RTS 控制消息通知回调
   * @param[out] session_id 会话id
   * @param[out] info 透传数据
-  * @param[out] uid 对方账号
+  * @param[out] uid 对方帐号
   * @param[out] json_extension 无效的扩展字段
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
@@ -199,7 +199,7 @@ typedef void (*nim_rts_hangup_res_cb_func)(int code, const char *session_id, con
 /** @typedef void (*nim_rts_hangup_notify_cb_func)(const char *session_id, const char *uid, const char *json_extension, const void *user_data)
   * NIM RTS 挂断会话通知回调
   * @param[out] session_id 会话id
-  * @param[out] uid 对方账号
+  * @param[out] uid 对方帐号
   * @param[out] json_extension 无效的扩展字段
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
@@ -210,7 +210,7 @@ typedef void (*nim_rts_hangup_notify_cb_func)(const char *session_id, const char
   * NIM RTS 数据监听回调
   * @param[out] data 接受的数据
   * @param[out] size data的数据长度
-  * @param[out] uid 对方账号
+  * @param[out] uid 对方帐号
   * @param[out] json_extension 无效的扩展字段
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值

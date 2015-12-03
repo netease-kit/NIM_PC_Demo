@@ -256,7 +256,9 @@ int  GetAsciiCharNumber(const std::wstring &str);
 //删除字符串中超过limit字节个数之后的字符
 void LimitAsciiNumber(std::wstring &src, int limit);
 //获取粘贴板字符串
-void GetClipboardText(std::wstring &out);  
+void GetClipboardText(std::wstring &out);
+//设置粘贴板字符串
+void SetClipBoardText(const std::wstring &str);
 
 } // namespace ui
 

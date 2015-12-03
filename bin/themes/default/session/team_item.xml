@@ -7,7 +7,7 @@
                 <Button class="icon_headimage_mask_40x40"/>
                 <Control name="icon_admin" width="16" height="16" halign="right" valign="bottom" visible="false"/>
             </Box>
-            <Label name="member_name" valign="center" font="2"/>
+            <Label name="member_name" width="stretch" valign="center" font="2"/>
         </HBox>
         <Control class="splitline_hor_level1" float="true" valign="bottom"/>
     </ListContainerElement>

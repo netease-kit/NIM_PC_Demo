@@ -1,0 +1,161 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="12.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{29C9AA69-348D-48B4-A8C0-79F44E3B81EB}</ProjectGuid>
+    <RootNamespace>nim_sdk_cpp_lib</RootNamespace>
+    <ProjectName>nim_cpp_sdk</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(ProjectDir)..\..\..\..\libs\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <TargetName>nim_cpp_sdk_d</TargetName>
+    <IntDir>$(ProjectDir)..\..\..\..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(ProjectDir)..\..\..\..\libs\</OutDir>
+    <TargetName>nim_cpp_sdk</TargetName>
+    <IntDir>$(ProjectDir)..\..\..\..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..\third_party\jsoncpp\include\json\;$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\..\nim_c_sdk\include\;..\..\..\..\tool_kits\;..\..\..\..\..\tool_kits\;..\;..\..\;..\..\..\;..\..\..\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>jsoncpp_d.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>..\..\..\</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..\third_party\jsoncpp\include\json\;$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\..\nim_c_sdk\include\;..\..\..\..\tool_kits\;..\..\..\..\..\tool_kits\;..\;..\..\;..\..\..\;..\..\..\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>jsoncpp.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>..\..\..\</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="api\nim_cpp_client.cpp" />
+    <ClCompile Include="api\nim_cpp_data_sync.cpp" />
+    <ClCompile Include="api\nim_cpp_friend.cpp" />
+    <ClCompile Include="api\nim_cpp_global.cpp" />
+    <ClCompile Include="api\nim_cpp_msglog.cpp" />
+    <ClCompile Include="api\nim_cpp_nos.cpp" />
+    <ClCompile Include="api\nim_cpp_rts.cpp" />
+    <ClCompile Include="api\nim_cpp_session.cpp" />
+    <ClCompile Include="api\nim_cpp_sysmsg.cpp" />
+    <ClCompile Include="api\nim_cpp_talk.cpp" />
+    <ClCompile Include="api\nim_cpp_team.cpp" />
+    <ClCompile Include="api\nim_cpp_tool.cpp" />
+    <ClCompile Include="api\nim_cpp_user.cpp" />
+    <ClCompile Include="api\nim_cpp_vchat.cpp" />
+    <ClCompile Include="helper\nim_client_helper.cpp" />
+    <ClCompile Include="helper\nim_common_helper.cpp" />
+    <ClCompile Include="helper\nim_file_helper.cpp" />
+    <ClCompile Include="helper\nim_friend_helper.cpp" />
+    <ClCompile Include="helper\nim_msglog_helper.cpp" />
+    <ClCompile Include="helper\nim_msg_helper.cpp" />
+    <ClCompile Include="helper\nim_sdk_helper.cpp" />
+    <ClCompile Include="helper\nim_session_helper.cpp" />
+    <ClCompile Include="helper\nim_sysmsg_helper.cpp" />
+    <ClCompile Include="helper\nim_talk_helper.cpp" />
+    <ClCompile Include="helper\nim_team_helper.cpp" />
+    <ClCompile Include="helper\nim_tool_helper.cpp" />
+    <ClCompile Include="helper\nim_user_helper.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="api\nim_cpp_client.h" />
+    <ClInclude Include="api\nim_cpp_data_sync.h" />
+    <ClInclude Include="api\nim_cpp_friend.h" />
+    <ClInclude Include="api\nim_cpp_global.h" />
+    <ClInclude Include="api\nim_cpp_msglog.h" />
+    <ClInclude Include="api\nim_cpp_nos.h" />
+    <ClInclude Include="api\nim_cpp_rts.h" />
+    <ClInclude Include="api\nim_cpp_session.h" />
+    <ClInclude Include="api\nim_cpp_sysmsg.h" />
+    <ClInclude Include="api\nim_cpp_talk.h" />
+    <ClInclude Include="api\nim_cpp_team.h" />
+    <ClInclude Include="api\nim_cpp_tool.h" />
+    <ClInclude Include="api\nim_cpp_user.h" />
+    <ClInclude Include="api\nim_cpp_vchat.h" />
+    <ClInclude Include="helper\nim_client_helper.h" />
+    <ClInclude Include="helper\nim_common_helper.h" />
+    <ClInclude Include="helper\nim_file_helper.h" />
+    <ClInclude Include="helper\nim_friend_helper.h" />
+    <ClInclude Include="helper\nim_msglog_helper.h" />
+    <ClInclude Include="helper\nim_msg_helper.h" />
+    <ClInclude Include="helper\nim_sdk_helper.h" />
+    <ClInclude Include="helper\nim_session_helper.h" />
+    <ClInclude Include="helper\nim_sysmsg_helper.h" />
+    <ClInclude Include="helper\nim_talk_helper.h" />
+    <ClInclude Include="helper\nim_team_helper.h" />
+    <ClInclude Include="helper\nim_tool_helper.h" />
+    <ClInclude Include="helper\nim_user_helper.h" />
+    <ClInclude Include="nim_cpp_api.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\..\tool_kits\base\base.vcxproj">
+      <Project>{8d9a6595-717a-41c8-b468-0011a72be3d1}</Project>
+    </ProjectReference>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

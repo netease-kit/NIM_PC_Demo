@@ -21,7 +21,7 @@ extern"C"
   * @param[in] type NIMDeviceType 见nim_device_def.h
   * @param[in] json_extension 无效的扩展字段
   * @param[in] cb 结果回调见nim_device_def.h
-  * @param[in] user_data 无效的扩展字段
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */ 
 NIM_SDK_DLL_API void nim_vchat_enum_device_devpath(NIMDeviceType type, const char *json_extension, nim_vchat_enum_device_devpath_sync_cb_func cb, const void *user_data);
@@ -33,7 +33,7 @@ NIM_SDK_DLL_API void nim_vchat_enum_device_devpath(NIMDeviceType type, const cha
   * @param[in] fps 摄像头为采样频率（一般传电源频率取50）,其他NIMDeviceType无效（麦克风采样频率由底层控制，播放器采样频率也由底层控制）
   * @param[in] json_extension 无效的扩展字段
   * @param[in] cb 结果回调见nim_device_def.h
-  * @param[in] user_data 无效的扩展字段
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */ 
 NIM_SDK_DLL_API void nim_vchat_start_device(NIMDeviceType type, const char *device_path, unsigned fps, const char *json_extension, nim_vchat_start_device_cb_func cb, const void *user_data);
@@ -46,13 +46,14 @@ NIM_SDK_DLL_API void nim_vchat_start_device(NIMDeviceType type, const char *devi
   */
 NIM_SDK_DLL_API void nim_vchat_end_device(NIMDeviceType type, const char *json_extension);
 
-/** @fn void nim_vchat_add_device_status_cb(NIMDeviceType type, nim_vchat_device_status_cb_func cb)
+/** @fn void nim_vchat_add_device_status_cb(NIMDeviceType type, nim_vchat_device_status_cb_func cb, const void *user_data)
   * NIM VCHAT DEVICE 添加设备监听（摄像头和麦克风） 注意监听设备后底层会定时检查设备情况，在不需要监听后请移除
   * @param[in] type NIMDeviceType（kNIMDeviceTypeAudioIn和kNIMDeviceTypeVideo有效） 见nim_device_def.h
   * @param[in] cb 结果回调见nim_device_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_vchat_add_device_status_cb(NIMDeviceType type, nim_vchat_device_status_cb_func cb);
+NIM_SDK_DLL_API void nim_vchat_add_device_status_cb(NIMDeviceType type, nim_vchat_device_status_cb_func cb, const void *user_data);
 
 /** @fn void nim_vchat_remove_device_status_cb(NIMDeviceType type)
   * NIM VCHAT DEVICE 移除设备监听（摄像头和麦克风）
@@ -61,21 +62,23 @@ NIM_SDK_DLL_API void nim_vchat_add_device_status_cb(NIMDeviceType type, nim_vcha
   */
 NIM_SDK_DLL_API void nim_vchat_remove_device_status_cb(NIMDeviceType type);
 
-/** @fn void nim_vchat_set_audio_data_cb(bool capture, nim_vchat_audio_data_cb_func cb)
+/** @fn void nim_vchat_set_audio_data_cb(bool capture, nim_vchat_audio_data_cb_func cb, const void *user_data)
   * NIM VCHAT DEVICE 监听音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut和kNIMDeviceTypeAudioOutChat由底层播放）
   * @param[in] cb 结果回调见nim_device_def.h
   * @param[in] capture true 标识监听麦克风采集数据，false 标识监听通话中对方音频数据
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_vchat_set_audio_data_cb(bool capture, nim_vchat_audio_data_cb_func cb);
+NIM_SDK_DLL_API void nim_vchat_set_audio_data_cb(bool capture, nim_vchat_audio_data_cb_func cb, const void *user_data);
 
-/** @fn void nim_vchat_set_video_data_cb(bool capture, nim_vchat_video_data_cb_func cb)
+/** @fn void nim_vchat_set_video_data_cb(bool capture, nim_vchat_video_data_cb_func cb, const void *user_data)
   * NIM VCHAT DEVICE 监听视频数据
   * @param[in] cb 结果回调见nim_device_def.h
   * @param[in] capture true 标识监听采集数据，false 标识监听通话中对方视频数据
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_vchat_set_video_data_cb(bool capture, nim_vchat_video_data_cb_func cb);
+NIM_SDK_DLL_API void nim_vchat_set_video_data_cb(bool capture, nim_vchat_video_data_cb_func cb, const void *user_data);
 
 /** @fn void nim_vchat_set_audio_volumn(unsigned char volumn, bool capture)
   * NIM VCHAT DEVICE 设置音量 默认255,且音量均由软件换算得出,设置麦克风音量自动调节后麦克风音量参数无效

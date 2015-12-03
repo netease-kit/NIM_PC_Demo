@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 2013
+VisualStudioVersion = 12.0.31101.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "base", "..\tool_kits\base\base.vcxproj", "{8D9A6595-717A-41C8-B468-0011A72BE3D1}"
 EndProject
@@ -13,9 +13,11 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nim_demo", "nim.vcxproj", "
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ui_component", "ui_component", "{F5B50326-5715-4F56-9D74-462B34090A17}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "session", "..\tool_kits\ui_component\session\session.vcxproj", "{60840BD6-D601-4173-8944-E90809606FCF}"
-EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "image_view", "..\tool_kits\ui_component\image_view\image_view.vcxproj", "{92850844-A8E2-43FB-AE1D-14F72AA0A59C}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ui_kit", "..\tool_kits\ui_component\ui_kit\ui_kit.vcxproj", "{60840BD6-D601-4173-8944-E90809606FCF}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nim_cpp_sdk", "..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\nim_sdk_cpp_lib.vcxproj", "{29C9AA69-348D-48B4-A8C0-79F44E3B81EB}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -39,20 +41,24 @@ Global
 		{294EBA7B-84BF-4A78-AB38-58A84B2DFC35}.Debug|Win32.Build.0 = Debug|Win32
 		{294EBA7B-84BF-4A78-AB38-58A84B2DFC35}.Release|Win32.ActiveCfg = Release|Win32
 		{294EBA7B-84BF-4A78-AB38-58A84B2DFC35}.Release|Win32.Build.0 = Release|Win32
-		{60840BD6-D601-4173-8944-E90809606FCF}.Debug|Win32.ActiveCfg = Debug|Win32
-		{60840BD6-D601-4173-8944-E90809606FCF}.Debug|Win32.Build.0 = Debug|Win32
-		{60840BD6-D601-4173-8944-E90809606FCF}.Release|Win32.ActiveCfg = Release|Win32
-		{60840BD6-D601-4173-8944-E90809606FCF}.Release|Win32.Build.0 = Release|Win32
 		{92850844-A8E2-43FB-AE1D-14F72AA0A59C}.Debug|Win32.ActiveCfg = Debug|Win32
 		{92850844-A8E2-43FB-AE1D-14F72AA0A59C}.Debug|Win32.Build.0 = Debug|Win32
 		{92850844-A8E2-43FB-AE1D-14F72AA0A59C}.Release|Win32.ActiveCfg = Release|Win32
 		{92850844-A8E2-43FB-AE1D-14F72AA0A59C}.Release|Win32.Build.0 = Release|Win32
+		{60840BD6-D601-4173-8944-E90809606FCF}.Debug|Win32.ActiveCfg = Debug|Win32
+		{60840BD6-D601-4173-8944-E90809606FCF}.Debug|Win32.Build.0 = Debug|Win32
+		{60840BD6-D601-4173-8944-E90809606FCF}.Release|Win32.ActiveCfg = Release|Win32
+		{60840BD6-D601-4173-8944-E90809606FCF}.Release|Win32.Build.0 = Release|Win32
+		{29C9AA69-348D-48B4-A8C0-79F44E3B81EB}.Debug|Win32.ActiveCfg = Debug|Win32
+		{29C9AA69-348D-48B4-A8C0-79F44E3B81EB}.Debug|Win32.Build.0 = Debug|Win32
+		{29C9AA69-348D-48B4-A8C0-79F44E3B81EB}.Release|Win32.ActiveCfg = Release|Win32
+		{29C9AA69-348D-48B4-A8C0-79F44E3B81EB}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
-		{60840BD6-D601-4173-8944-E90809606FCF} = {F5B50326-5715-4F56-9D74-462B34090A17}
 		{92850844-A8E2-43FB-AE1D-14F72AA0A59C} = {F5B50326-5715-4F56-9D74-462B34090A17}
+		{60840BD6-D601-4173-8944-E90809606FCF} = {F5B50326-5715-4F56-9D74-462B34090A17}
 	EndGlobalSection
 EndGlobal

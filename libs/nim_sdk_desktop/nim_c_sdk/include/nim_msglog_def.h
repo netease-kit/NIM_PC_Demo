@@ -13,6 +13,17 @@
 extern"C"
 {
 #endif
+/** @typedef void (*nim_msglog_query_single_cb_func)(int res_code, const char *msg_id, const char *result, const char *json_extension, const void *user_data)
+  * 查询单条消息历史回调函数定义
+  * @param[out] res_code		操作结果，成功200
+  * @param[out] id				查询时传入的客户端消息ID
+  * @param[out] result			查询结果 Json String (Keys SEE MORE in `nim_talk_def.h` 『消息结构 Json Keys』)
+  * @param[out] json_extension	json扩展数据（备用）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */ 
+typedef void (*nim_msglog_query_single_cb_func)(int res_code, const char *msg_id, const char *result, const char *json_extension, const void *user_data);
+
 /** @typedef void (*nim_msglog_query_cb_func)(int res_code, const char *id, NIMSessionType type, const char *result, const char *json_extension, const void *user_data)
   * 本地或在线查询消息的回调函数定义
   * @param[out] res_code		操作结果，成功200
@@ -31,7 +42,7 @@ extern"C"
 typedef void (*nim_msglog_query_cb_func)(int res_code, const char *id, NIMSessionType type, const char *result, const char *json_extension, const void *user_data);
 
 /** @typedef void (*nim_msglog_res_cb_func)(int res_code, const char *msg_id, const char *json_extension, const void *user_data)
-  * 消息历史操作结果的回调函数定义
+  * 消息历史操作结果的回调函数定义(按消息历史id操作)
   * @param[out] res_code		操作结果，成功200
   * @param[out] msg_id			消息历史id
   * @param[out] json_extension	json扩展数据（备用）
@@ -41,7 +52,7 @@ typedef void (*nim_msglog_query_cb_func)(int res_code, const char *id, NIMSessio
 typedef void (*nim_msglog_res_cb_func)(int res_code, const char *msg_id, const char *json_extension, const void *user_data);
 
 /** @typedef void (*nim_msglog_res_ex_cb_func)(int res_code, const char *uid, NIMSessionType to_type, const char *json_extension, const void *user_data)
-  * 消息历史操作结果的回调函数定义
+  * 消息历史操作结果的回调函数定义（按消息对象id操作）
   * @param[out] res_code	操作结果，成功200
   * @param[out] uid			对象id(account_id , team_id etc.)
   * @param[out] to_type		对象类型(好友， 群组 etc.)
@@ -51,8 +62,17 @@ typedef void (*nim_msglog_res_cb_func)(int res_code, const char *msg_id, const c
   */
 typedef void (*nim_msglog_res_ex_cb_func)(int res_code, const char *uid, NIMSessionType type, const char *json_extension, const void *user_data);
 
+/** @typedef void (*nim_msglog_modify_res_cb_func)(int res_code, const char *json_extension, const void *user_data)
+  * 消息历史操作结果的回调函数定义(只关心rescode)
+  * @param[out] res_code		操作结果，成功200
+  * @param[out] json_extension	json扩展数据（备用）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_msglog_modify_res_cb_func)(int res_code, const char *json_extension, const void *user_data);
+
 /** @typedef void (*nim_msglog_import_prg_cb_func)(__int64 imported_count, __int64 total_count, const char *json_extension, const void *user_data)
-  * nim callback function for message log import progress
+  * 消息历史数据库导入过程的回调函数定义
   * @param[out] imported_count 		已导入的消息历史记录数目
   * @param[out] total_count			消息历史记录总数目
   * @param[out] json_extension		json扩展数据（备用）
@@ -82,6 +102,7 @@ enum NIMMessageType
 	kNIMMessageTypeLocation  = 4,			/**< 位置类型消息*/
 	kNIMMessageTypeNotification	= 5,		/**< 系统类型通知（包括入群出群通知等） NIMNotificationId*/
 	kNIMMessageTypeFile		 = 6,			/**< 文件类型消息*/
+	kNIMMessageTypeTips		 = 10,			/**< 提醒类型消息,Tip内容根据格式要求填入消息结构中的kNIMMsgKeyServerExt字段*/
 	kNIMMessageTypeCustom    = 100,			/**< 自定义消息*/
 
 	kNIMMessageTypeUnknown	 = 1000,		/**< 未知类型消息，作为默认值*/
@@ -178,95 +199,22 @@ enum NIMMsgLogQueryRange
   * @{
   */
 static const char *kNIMNotificationKeyId		= "id";				/**< int, 见NIMNotificationId */
-static const char *kNIMNotificationKeyData		= "data";			/**< json object (Keys as follows) */
-static const char *kNIMNotificationKeyDataIds	= "ids";			/**< string array (20150505 RECOMMEND TO USE instead of using "ids" as follows) */
-static const char *kNIMNotificationKeyDataId	= "id";				/**< string, (20150505 RECOMMEND TO USE instead of using "id" as follows) */
-static const char *kNIMNotificationKeyTeamInfo	= "team_info";		/**< string,  team info json string (20150505 RECOMMEND TO USE instead of using "team_info" as follows) */
-static const char *kNIMNotificationKeyTeamMember = "team_member";	/**< string,  team member info json string (20150505 RECOMMEND TO USE instead of using "team_member" as follows) */
+static const char *kNIMNotificationKeyData		= "data";			/**< json object 包含以下四种可能的数据*/
+static const char *kNIMNotificationKeyDataIds	= "ids";			/**< string array */
+static const char *kNIMNotificationKeyDataId	= "id";				/**< string */
+static const char *kNIMNotificationKeyTeamInfo	= "team_info";		/**< string, team_info 群组信息 Json Keys*/
+static const char *kNIMNotificationKeyTeamMember = "team_member";	/**< string, team_member_property 群组成员信息 Json Keys*/
 /** @}*/ //群组通知 Json Keys
-
-/** @name kNIMNotificationIdLocalGetTeamInfo Data Keys
-  * @{
-  */
-static const char *kNIMNotificationGetTeamInfoKey	= "team_info";	/**< string */
-/** @}*/ //kNIMNotificationIdLocalGetTeamInfo Data Keys
-
-/** @name kNIMNotificationIdLocalCreateTeam Data Keys
-  * @{
-  */
-static const char *kNIMNotificationCreateTeamKeyUids = "ids";	/**< string array */
-/** @}*/ //kNIMNotificationIdLocalCreateTeam Data Keys
-
-/** @name kNIMNotificationIdTeamInvite Data Keys
-  * @{
-  */
-static const char *kNIMNotificationInviteKeyUids	= "ids";	/**< string array */
-/** @}*/ //kNIMNotificationIdTeamInvite Data Keys
-
-/** @name kNIMNotificationIdTeamLeave Data Keys
-  * @{
-  */
-static const char *kNIMNotificationLeaveKeyUid		= "id";		/**< string */
-/** @}*/ //kNIMNotificationIdTeamLeave Data Keys
-
-/** @name kNIMNotificationIdTeamKick Data Keys
-  * @{
-  */
-static const char *kNIMNotificationKickKeyUids		= "ids";	/**< string array */
-/** @}*/ //kNIMNotificationIdTeamKick Data Keys
-
-/** @name kNIMNotificationIdTeamUpdate Data Keys
-  * @{
-  */
-static const char *kNIMNotificationUpdataKey		= "team_info";		/**< string */
-/** @}*/ //kNIMNotificationIdTeamUpdate Data Keys
-
-/** @name kNIMNotificationIdTeamApplyPass/Reject Data Keys
-  * @{
-  */
-static const char *kNIMNotificationTeamApplyResUid		= "id";		/**< string */
-/** @}*/ //kNIMNotificationIdTeamApplyPass/Reject Data Keys
-
-/** @name kNIMNotificationIdTeamOwnerTransfer Data Keys
-  * @{
-  */
-static const char *kNIMNotificationOwnerTransferUid		= "id";		/**< string */
-static const char *kNIMNotificationOwnerTransferLeave	= "leave";	/**< bool */
-/** @}*/ //kNIMNotificationIdTeamOwnerTransfer Data Keys
-
-/** @name kNIMNotificationIdTeamAddManager Data Keys
-  * @{
-  */
-static const char *kNIMNotificationAddManagerUids		= "ids";	/**< string array */
-/** @}*/ //kNIMNotificationIdTeamAddManager Data Keys
-
-/** @name kNIMNotificationIdTeamRemoveManager Data Keys
-  * @{
-  */
-static const char *kNIMNotificationRemoveManagerUids	= "ids";	/**< string array */
-/** @}*/ //kNIMNotificationIdTeamRemoveManager Data Keys
-
-/** @name kNIMNotificationIdTeamInviteAccept/Reject Data Keys
-  * @{
-  */
-static const char *kNIMNotificationInviteResUid		= "id";		/**< string */
-/** @}*/ //kNIMNotificationIdTeamInviteAccept/Reject Data Keys
-
-/** @name kNIMNotificationIdTeamMemberChanged Data Keys
-  * @{
-  */
-static const char *kNIMNotificationIdTeamMemberChangedKey = "team_member";		/**< string */
-/** @}*/ //kNIMNotificationIdTeamMemberChanged Data Keys
 
 /** @name kNIMNotificationIdNetcallBill/kNIMNotificationIdNetcallMiss/kNIMNotificationIdLocalNetcallReject/kNIMNotificationIdLocalNetcallNoResponse Data Keys
   * @{
   */
 static const char *kNIMNotificationIdNetCallTypeKey		= "calltype";		/**< int 通话类型对应NIMVideoChatMode */
 static const char *kNIMNotificationIdNetCallTimeKey		= "time";			/**< int64 时间 单位毫秒 */
-static const char *kNIMNotificationIdNetCallIdsKey		= "ids";			/**< StrArray 账号 */
+static const char *kNIMNotificationIdNetCallIdsKey		= "ids";			/**< StrArray 帐号 */
 static const char *kNIMNotificationIdNetCallChannelKey	= "channel";		/**< int64 通道id */
 static const char *kNIMNotificationIdNetCallDurationKey = "duration";		/**< int64 通话时长 单位秒 */
-static const char *kNIMNotificationIdNetCallFromKey		= "from";			/**< string 发起者账号 */
+static const char *kNIMNotificationIdNetCallFromKey		= "from";			/**< string 发起者帐号 */
 /** @}*/ //kNIMNotificationIdNetcallBill/kNIMNotificationIdNetcallMiss/kNIMNotificationIdLocalNetcallReject/kNIMNotificationIdLocalNetcallNoResponse Data Keys
 
 #ifdef __cplusplus

@@ -29,7 +29,7 @@
                     <Button name="headicon" width="108" height="108" borderround="108,108,108,108"/>
                     <Control width="108" height="108" bkimage="mask_108x108.png"/>
                 </Box>
-                <Label name="friend_name" margin="0,10,0,0" halign="center" font="22" normaltextcolor="white"/>
+                <Label name="friend_name" margin="0,10,0,0" halign="center" align="vcenter" font="22" normaltextcolor="white" width="stretch"/>
                 <Label name="chat_status" margin="0,5,0,0" halign="center" font="2" normaltextcolor="message_tip"/>
             </VBox>
 

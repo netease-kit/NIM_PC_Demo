@@ -12,15 +12,14 @@ extern"C"
 {
 #endif
 
-static const char *kNIMFriendKey			= "list";	/**< 好友列表json array, */
+static const char *kNIMFriendKey			= "list";	/**< 好友简况 json array, */
 
-/** @name 好友列表 Json Keys
-* 例子 {"list" : [{"accid" : "litianyi02","beflag" : 1,"bits" : 0,"create_timetag" : 1439871983864,"faccid" : "litianyi01","flag" : 1,"source" : 0,"update_timetag" : 1439872006079}, ...]}
+/** @name 好友简况 Json Keys
+* 例子 {"list" : [{"accid" : "litianyi01","beflag" : 1,"bits" : 0,"create_timetag" : 1439871983864,"flag" : 1,"source" : 0,"update_timetag" : 1439872006079}, ...]}
   * @{
   */
 //协议定义
-static const char *kNIMFriendKeyAccid		= "accid";  /**< string, 用户账号*/
-static const char *kNIMFriendKeyFaccid		= "faccid"; /**< string, 好友账户*/
+static const char *kNIMFriendKeyAccid		= "accid";  /**< string, 好友帐号*/
 static const char *kNIMFriendKeyFlag		= "flag";	/**< NIMFriendFlag, 好友关系，修改时需要同步更新反向好友关系beflag */
 static const char *kNIMFriendKeyBeFlag		= "beflag"; /**< NIMFriendFlag, 反向好友关系 */
 static const char *kNIMFriendKeySource		= "source"; /**< NIMFriendSource, 好友来源 */
@@ -29,7 +28,7 @@ static const char *kNIMFriendKeyBits		= "bits";	/**< long, 扩展字段,位运�
 static const char *kNIMFriendKeyEx			= "ex";		/**< string, 扩展字段,字符型 */
 static const char *kNIMFriendKeyCreateTime	= "create_timetag"; /**< long, 创建时间戳(ms)*/
 static const char *kNIMFriendKeyUpdateTime	= "update_timetag"; /**< long, 更新时间戳(ms)*/
-/** @}*/ //好友列表 Json Keys
+/** @}*/ //好友简况 Json Keys
 
 /** @enum NIMFriendFlag 好友类型  */
 enum NIMFriendFlag
@@ -81,10 +80,20 @@ typedef void (*nim_friend_opt_cb_func)(int res_code, const char *json_extension,
   */
 typedef void (*nim_friend_get_list_cb_func)(int res_code, const char *friend_list_json, const char *json_extension, const void *user_data);
 
+/** @typedef void (*nim_friend_get_profile_cb_func)(const char *accid, const char *friend_profile_json, const char *json_extension, const void *user_data)
+  * 获取好友信息的回调函数定义
+  * @param[out] accid		好友ID
+  * @param[out] friend_profile_json		好友简况
+  * @param[out] json_extension	json扩展数据（备用）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_friend_get_profile_cb_func)(const char *accid, const char *friend_profile_json, const char *json_extension, const void *user_data);
+
 /** @typedef void (*nim_friend_change_cb_func)(NIMFriendChangeType type, const char *result_json ,const char *json_extension, const void *user_data)
   * 好友数据变化（添加、删除、更新）的监听回调函数定义
   * @param[out] type		NIMFriendChangeType，数据变化类型
-  * @param[out] result_json		同步内容，kNIMFriendChangeTypeAdd: {"accid" : "abc", "type" : "NIMVerifyType", "msg" : "msg"} , kNIMFriendChangeTypeDel: {"accid" : "abc"}, kNIMFriendChangeTypeUpdate: {"info" : 好友资料 Json value }, kNIMFriendChangeTypeSyncList: {"list":[a , b , ...]}
+  * @param[out] result_json		同步内容，kNIMFriendChangeTypeAdd: {"accid" : "abc", "type" : "NIMVerifyType", "msg" : "msg"} , kNIMFriendChangeTypeDel: {"accid" : "abc"}, kNIMFriendChangeTypeUpdate: {"info" : 好友简况 Json value }, kNIMFriendChangeTypeSyncList: {"list":[a , b , ...]}
   * @param[out] json_extension	json扩展数据（备用）
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值

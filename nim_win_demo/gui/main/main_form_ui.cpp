@@ -1,20 +1,11 @@
 #include "resource.h"
 #include "main_form.h"
-#include "gui/main/friend_list.h"
-#include "gui/main/group_list.h"
 #include "gui/about/about_form.h"
 #include "gui/msglogmanage/msglog_manage_form.h"
-#include "gui/main/team_event_form.h"
+#include "gui/invoke_chat_form/invoke_chat_form.h"
 #include "util/user.h"
-#include "gui/add_friend/add_friend_wnd.h"
+#include "callback/team/team_callback.h"
 
-//依赖dll窗体
-#include "gui/profile_form/profile_form.h"
-#include "gui/link/link_form.h"
-#include "gui/team_info/team_info.h"
-#include "gui/rts/rts_replay.h"
-#include "gui/team_info/team_search.h"
-#include "module/video/video_manager.h"
 
 using namespace ui;
 
@@ -80,8 +71,9 @@ void MainForm::OnFinalMessage(HWND hWnd)
 {
 	TrayIcon::GetInstance()->Destroy();
 	nim_ui::SessionListManager::GetInstance()->AttachListBox(nullptr);
-	friend_list_ = nullptr;
-	group_list_ = nullptr;
+	nim_ui::ContactsListManager::GetInstance()->AttachFriendListBox(nullptr);
+	nim_ui::ContactsListManager::GetInstance()->AttachGroupListBox(nullptr);
+
 	__super::OnFinalMessage(hWnd);
 }
 
@@ -100,7 +92,7 @@ LRESULT MainForm::HandleMessage( UINT uMsg, WPARAM wParam, LPARAM lParam )
 void MainForm::InitWindow()
 {
 	SetIcon(IDI_ICON);
-	SetTaskbarTitle(L"网易云信");
+	SetTaskbarTitle(L"云信 Demo");
 	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&MainForm::Notify, this, std::placeholders::_1));
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&MainForm::OnClicked, this, std::placeholders::_1));
 
@@ -115,9 +107,10 @@ void MainForm::InitWindow()
 	ui::ListBox* session_list = (ListBox*)FindControl(L"session_list");
 	nim_ui::SessionListManager::GetInstance()->AttachListBox(session_list);
 	ui::TreeView* friend_list = (TreeView*) FindControl(L"friend_list");
-	friend_list_.reset(new FriendList(friend_list));
+	nim_ui::ContactsListManager::GetInstance()->AttachFriendListBox(friend_list);
 	ui::TreeView* group_list = (TreeView*) FindControl(L"group_list");
-	group_list_.reset(new GroupList(group_list));
+	nim_ui::ContactsListManager::GetInstance()->AttachGroupListBox(group_list);
+
 	Button* main_menu_button = (Button*) FindControl(L"main_menu_button");
 	main_menu_button->AttachClick(nbase::Bind(&MainForm::MainMenuButtonClick, this, std::placeholders::_1));
 
@@ -131,24 +124,19 @@ void MainForm::InitWindow()
 	search_result_list_ = static_cast<ui::ListBox*>(FindControl(_T("search_result_list")));
 
 	TrayIcon::GetInstance()->Init(this);
-	TrayIcon::GetInstance()->SetTrayIcon(::LoadIconW(nbase::win32::GetCurrentModuleHandle(), MAKEINTRESOURCE(IDI_ICON)), L"网易云信");
+	TrayIcon::GetInstance()->SetTrayIcon(::LoadIconW(nbase::win32::GetCurrentModuleHandle(), MAKEINTRESOURCE(IDI_ICON)), L"云信 Demo");
 
+	nim_ui::ContactsListManager::GetInstance()->InvokeGetAllUserInfo();
 	nim_ui::SessionListManager::GetInstance()->InvokeLoadSessionList();
 	nim_ui::SessionListManager::GetInstance()->QueryUnreadCount();
-
-	nim_ui::UserManager::GetInstance()->InvokeGetAllUserInfo(nbase::Bind(&MainForm::OnGetAllFriendInfo, this, std::placeholders::_1, std::placeholders::_2));
+	
 }
 
-void MainForm::OnGetAllFriendInfo(bool ret, const std::list<UserInfo> &uinfos)
-{
-	friend_list_->OnGetFriendList(uinfos);
-}
-
-void MainForm::OnUserInfoChange(const std::list<UserInfo> &uinfos)
+void MainForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 {
 	for (auto iter = uinfos.cbegin(); iter != uinfos.cend(); iter++)
 	{
-		if (nim_ui::LoginManager::GetInstance()->IsEqual(iter->account))
+		if (nim_ui::LoginManager::GetInstance()->IsEqual(iter->GetAccId()))
 		{
 			InitHeader();
 			break;
@@ -164,11 +152,11 @@ void MainForm::OnUserPhotoReady(const std::string& account, const std::wstring& 
 
 void MainForm::InitHeader()
 {
-	OnGetUserInfoCallback cb = ToWeakCallback([this](bool ret, const std::list<UserInfo> &uinfos) {
+	OnGetUserInfoCallback cb = ToWeakCallback([this](const std::list<nim::UserNameCard> &uinfos) {
 		assert(nbase::MessageLoop::current()->ToUIMessageLoop());
-		if (!ret || uinfos.empty()) return;
-		label_name_->SetText(nbase::UTF8ToUTF16(uinfos.cbegin()->name));
-		btn_header_->SetBkImage(nim_ui::UserManager::GetInstance()->GetUserPhoto(uinfos.cbegin()->account));
+		if (uinfos.empty()) return;
+		label_name_->SetText(nim_ui::UserManager::GetInstance()->GetUserName(uinfos.cbegin()->GetAccId(), false));
+		btn_header_->SetBkImage(nim_ui::UserManager::GetInstance()->GetUserPhoto(uinfos.cbegin()->GetAccId()));
 	});
 	nim_ui::UserManager::GetInstance()->GetUserInfoWithEffort(std::list<std::string>(1, nim_ui::LoginManager::GetInstance()->GetAccount()), cb);
 }
@@ -190,29 +178,47 @@ bool MainForm::OnClicked( ui::EventArgs* msg )
 	std::wstring name = msg->pSender->GetName();
 	if(name == L"btn_search_team")
 	{
-		WindowsManager::SingletonShow<nim_comp::TeamSearchForm>(nim_comp::TeamSearchForm::kClassName);
+		nim_ui::WindowsManager::GetInstance()->SingletonShow<nim_comp::TeamSearchForm>(nim_comp::TeamSearchForm::kClassName);
 	}
 	else if(name == L"btn_create_group")
 	{
-		std::wstring caption = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_INVITEUSERFORM_INVITE_JOINCHAT");
-		nim_comp::TeamInfoForm * team_info_form = (nim_comp::TeamInfoForm*)WindowsManager::GetInstance()->GetWindow\
-			(nim_comp::TeamInfoForm::kClassName, nim_comp::TeamInfoForm::kGroupInfoWindowId);
-		if(team_info_form == NULL)
+		nim_comp::InvokeChatForm *invite_user_form = (nim_comp::InvokeChatForm *)nim_comp::WindowsManager::GetInstance()->GetWindow\
+			(nim_comp::InvokeChatForm::kClassName, L"CreateGroupWnd");
+		std::wstring caption = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_INVITEUSERFORM_CREATE_GROUP");
+		if (!invite_user_form)
 		{
-			team_info_form = new nim_comp::TeamInfoForm(true, nim::kNIMTeamTypeNormal, "", nim::TeamInfo());
-			team_info_form->Create(NULL, caption.c_str(), WS_OVERLAPPEDWINDOW& ~WS_MAXIMIZEBOX, 0L);
-			team_info_form->CenterWindow();
-			team_info_form->ShowWindow(true);
+			nim_comp::InvokeChatForm::SelectedCompletedCallback cb = ToWeakCallback([this](const std::list<std::string> &id_list)
+			{
+				if (id_list.empty())
+				{
+					ShowMsgBox(m_hWnd, L"创建失败，请邀请好友", nullptr, L"提示", L"确定", L"");
+					return;
+				}
+
+				UTF16String user_names;
+				auto it = id_list.cbegin();
+				for (int i = 0; it != id_list.cend() && i < 2; it++, i++)
+					user_names += nim_ui::UserManager::GetInstance()->GetUserName(*it, false) + L";";
+				user_names += nim_ui::UserManager::GetInstance()->GetUserName(it == id_list.end() ? nim_ui::LoginManager::GetInstance()->GetAccount() : *it, false);
+
+				nim::TeamInfo tinfo;
+				tinfo.SetType(nim::kNIMTeamTypeNormal);
+				tinfo.SetName(nbase::UTF16ToUTF8(user_names));
+				nim::Team::CreateTeamAsync(tinfo, id_list, "", nbase::Bind(&nim_comp::TeamCallback::OnTeamEventCallback, std::placeholders::_1));
+			});
+			invite_user_form = new nim_comp::InvokeChatForm("CreateGroupWnd", std::list<UTF8String>(), cb);
+			invite_user_form->Create(NULL, L"", UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L);
+			invite_user_form->CenterWindow();
 		}
 		else
 		{
-			team_info_form->ActiveWindow();
+			invite_user_form->ActiveWindow();
 		}
 	}
 	else if (name == L"btn_create_team")
 	{
 		std::wstring caption = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_INVITEUSERFORM_INVITE_JOINCHAT");
-		nim_comp::TeamInfoForm* team_info_form = (nim_comp::TeamInfoForm*)WindowsManager::GetInstance()->GetWindow\
+		nim_comp::TeamInfoForm* team_info_form = (nim_comp::TeamInfoForm*)nim_ui::WindowsManager::GetInstance()->GetWindow\
 			(nim_comp::TeamInfoForm::kClassName, nim_comp::TeamInfoForm::kTeamInfoWindowId);
 		if (team_info_form == NULL)
 		{
@@ -227,7 +233,7 @@ bool MainForm::OnClicked( ui::EventArgs* msg )
 		}
 	}
 	else if (name == L"btn_header")
-		nim_comp::ProfileForm::ShowProfileForm(nim_comp::LoginManager::GetInstance()->GetAccount());
+		nim_ui::WindowsManager::GetInstance()->ShowProfileForm(nim_ui::LoginManager::GetInstance()->GetAccount());
 
 	return true;
 }
@@ -372,10 +378,10 @@ bool MainForm::FileTransMenuItemClick(ui::EventArgs* param)
 
 bool MainForm::AddressMenuItemClick(ui::EventArgs* param)
 {
-	if( !nim_ui::LoginManager::GetInstance()->IsLinkActive() )
-		nim_comp::ShowLinkForm();
+	if (!nim_ui::LoginManager::GetInstance()->IsLinkActive())
+		nim_ui::WindowsManager::GetInstance()->ShowLinkForm();
 	else
-		nim_ui::UserManager::GetInstance()->InvokeGetAllUserInfo(nbase::Bind(&MainForm::OnGetAllFriendInfo, this, std::placeholders::_1, std::placeholders::_2));
+		nim_ui::ContactsListManager::GetInstance()->InvokeGetAllUserInfo();
 	return true;
 }
 bool MainForm::ExportMsglogMenuItemClick(ui::EventArgs* param)
@@ -392,9 +398,6 @@ bool MainForm::ImportMsglogMenuItemClick(ui::EventArgs* param)
 bool MainForm::ClearChatRecordMenuItemClick(bool del_session, ui::EventArgs* param)
 {
 	nim::MsgLog::DeleteAllAsync(del_session, nim::MsgLog::DeleteAllCallback());
-
-	//nim::Session::DeleteAllRecentSession(nim::Session::DeleteAllRecentSessionCallabck());
-	//session_list_->RemoveAll();
 	return true;
 }
 bool MainForm::ClearChatRecordBySessionTypeMenuItemClick(bool del_session, nim::NIMSessionType type, ui::EventArgs* param)
@@ -404,12 +407,12 @@ bool MainForm::ClearChatRecordBySessionTypeMenuItemClick(bool del_session, nim::
 }
 bool MainForm::VChatSettingMenuItemClick(ui::EventArgs* param)
 {
-	nim_comp::VideoManager::GetInstance()->ShowVideoSetting();
+	nim_ui::WindowsManager::GetInstance()->ShowVideoSettingForm();
 	return true;
 }
 bool MainForm::RtsReplayMenuItemClick(ui::EventArgs* param)
 {
-	WindowsManager::SingletonShow<nim_comp::RtsReplay>(nim_comp::RtsReplay::kClassName);
+	nim_ui::WindowsManager::SingletonShow<nim_comp::RtsReplay>(nim_comp::RtsReplay::kClassName);
 	return true;
 }
 
@@ -423,7 +426,7 @@ bool MainForm::SessionListMenuItemClick(ui::EventArgs* param)
 
 bool MainForm::AboutMenuItemClick(ui::EventArgs* param)
 {
-	WindowsManager::SingletonShow<AboutForm>(AboutForm::kClassName);
+	nim_ui::WindowsManager::SingletonShow<AboutForm>(AboutForm::kClassName);
 	return false;
 }
 

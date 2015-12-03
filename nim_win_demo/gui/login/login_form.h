@@ -1,8 +1,6 @@
 #pragma once
-//依赖session静态库未导出部分
-#include "module/login/login_db.h"
 
-class LoginForm : public WindowEx
+class LoginForm : public nim_comp::WindowEx
 {
 public:
 	LoginForm();
@@ -23,8 +21,9 @@ public:
 	virtual bool Notify(ui::EventArgs* msg);
 	virtual bool OnClicked( ui::EventArgs* msg );
 
+	void RegLoginManagerCallback(); //注册回调函数，让ui_kit控制登录窗体的一些行为
 	void OnLoginResult(int error);
-	void Reset(); //取消登陆
+	void Reset(); //取消登录
 private:
 	void DoBeforeLogin();
 	void DoRegisterAccount();
@@ -40,8 +39,8 @@ private:
 	ui::RichEdit*	password_edit_;
 	ui::Control*	login_ing_tip_;
 	ui::Label*		login_error_tip_;
+	ui::Label*		register_ok_toast_;
 	ui::Button*		btn_login_;
 	ui::Button*		btn_register_;
 	ui::Button*		btn_cancel_;
-	std::vector<LoginData> users_login_data_;
 };

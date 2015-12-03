@@ -63,15 +63,22 @@ static const char *kNIMMsgKeyAttach			= "msg_attach";			/**< string,消息多媒
 static const char *kNIMMsgKeyClientMsgid	= "client_msg_id";		/**< string,客户端消息id */
 static const char *kNIMMsgKeyServerMsgid	= "server_msg_id";		/**< long,服务器端消息id */
 static const char *kNIMMsgKeyResendFlag		= "resend_flag";		/**< int,消息重发标记位,第一次发送0,重发1 */
-static const char *kNIMMsgKeyHistorySave	= "cloud_history";		/**< int,该消息是否存储云端历史,可选,仅对kNIMMessageTypeCustom有效，0:不支持,1:支持, 默认1 */
-static const char *kNIMMsgKeyMsgRoaming		= "roam_msg";			/**< int,该消息是否支持漫游,可选,仅对kNIMMessageTypeCustom有效,0:不支持,1:支持, 默认1 */
-static const char *kNIMMsgKeyMsgSync		= "sync_msg";			/**< int,该消息是否支持发送者多端同步,可选,仅对kNIMMessageTypeCustom有效,0:不支持,1:支持, 默认1 */
+static const char *kNIMMsgKeyHistorySave	= "cloud_history";		/**< int,(可选)该消息是否存储云端历史,可选,仅对kNIMMessageTypeCustom有效，0:不支持,1:支持, 默认1 */
+static const char *kNIMMsgKeyMsgRoaming		= "roam_msg";			/**< int,(可选)该消息是否支持漫游,可选,仅对kNIMMessageTypeCustom有效,0:不支持,1:支持, 默认1 */
+static const char *kNIMMsgKeyMsgSync		= "sync_msg";			/**< int,(可选)该消息是否支持发送者多端同步,可选,仅对kNIMMessageTypeCustom有效,0:不支持,1:支持, 默认1 */
+static const char *kNIMMsgKeyNeedBadge		= "need_badge";			/**< int,(可选)是否要做消息计数，0:不需要，1:需要，默认1 */
+static const char *kNIMMsgKeyServerExt		= "server_ext";			/**< string,服务器扩展,内容限Json String,长度限制1024 */
+static const char *kNIMMsgKeyPushPayload	= "push_payload";		/**< string,第三方自定义的推送属性，限制json string，长度2048 */
+static const char *kNIMMsgKeyPushContent	= "push_content";		/**< string,自定义推送文案，长度限制200字节 */
+static const char *kNIMMsgKeyPushEnable		= "push_enable";		/**< int,(可选)是否需要推送, 0:不需要,1:需要,默认1,aos在收到0是不要模拟本地推送 */
+static const char *kNIMMsgKeyNeedPushNick	= "push_nick";			/**< int,需要推送昵称，0：不需要，1：需要，默认1 */
 //本地定义
 static const char *kNIMMsgKeyLocalFilePath			= "local_res_path";		/**< string,多媒体消息资源本地绝对路径,SDK本地维护,发送多媒体消息时必填 */
 static const char *kNIMMsgKeyLocalTalkId			= "talk_id";			/**< string,会话id,发送方选填,接收方收到的是消息发送方id */
 static const char *kNIMMsgKeyLocalResId				= "res_id";				/**< string,多媒体资源id,发送方选填,接收方收到的是客户端消息id */
 static const char *kNIMMsgKeyLocalLogStatus			= "log_status";			/**< int,消息状态(NIMMsgLogStatus)  */
 static const char *kNIMMsgKeyLocalLogSubStatus		= "log_sub_status";		/**< int,消息二级状态(NIMMsgLogSubStatus) */
+static const char *kNIMMsgKeyLocalExt				= "local_ext";			/**< string,本地扩展内容 */
 /** @}*/ //消息结构 Json Keys
 
 /** @name 发送消息回执Json Keys
@@ -89,6 +96,7 @@ static const char *kNIMMsgAttachKeyMd5		= "md5";			/**< string,资源MD5,发送�
 static const char *kNIMMsgAttachKeySize		= "size";			/**< long,资源大小(KB),发送方选填 */
 static const char *kNIMMsgAttachKeyUrl		= "url";			/**< long,资源URL, 发送方不需要填写 */
 static const char *kNIMMsgAttachKeyExt		= "ext";			/**< string,资源扩展名,不包括符号'.',发送方若选填需要保证资源本地路径包含扩展名 */
+static const char *kNIMMsgAttachKeyDisplayName	= "name";		/**< string,用于显示的文件名,发送方选填,默认文件名 */
 /** @}*/ //多媒体资源参数通用键名定义，可替代不同类型多媒体所使用的相同的参数的键名.
 
 /** @name 图片类型多媒体资源参数键名定义
@@ -100,6 +108,7 @@ static const char *kNIMImgMsgKeyWidth	= "w";				/**< int,图片宽度,发送方�
 static const char *kNIMImgMsgKeyHeight	= "h";				/**< int,图片高度,发送方必填 */
 static const char *kNIMImgMsgKeyUrl		= "url";			/**< string,资源URL, 发送方不需要填写 */
 static const char *kNIMImgMsgKeyExt		= "ext";			/**< string,资源扩展名,不包括符号'.',发送方若选填需要保证资源本地路径包含扩展名 */
+static const char *kNIMImgMsgKeyDisplayName	= "name";		/**< string,用于显示的文件名,发送方选填,默认文件名 */
 /** @}*/ //图片类型多媒体资源参数键名定义
 
 /** @name 语音类型多媒体资源参数键名定义
@@ -110,6 +119,7 @@ static const char *kNIMAudioMsgKeySize		= "size";			/**< long,资源大小(KB),�
 static const char *kNIMAudioMsgKeyDuration	= "dur";			/**< int,语音资源时间长度(毫秒),发送方必填 */
 static const char *kNIMAudioMsgKeyUrl		= "url";			/**< string,资源URL, 发送方不需要填写 */
 static const char *kNIMAudioMsgKeyExt		= "ext";			/**< string,资源扩展名,不包括符号'.',发送方若选填需要保证资源本地路径包含扩展名 */
+static const char *kNIMAudioMsgKeyDisplayName	= "name";		/**< string,用于显示的文件名,发送方选填,默认文件名 */
 /** @}*/ //语音类型多媒体资源参数键名定义
 
 /** @name 短视频类型多媒体资源参数键名定义
@@ -117,7 +127,7 @@ static const char *kNIMAudioMsgKeyExt		= "ext";			/**< string,资源扩展名,�
   */
 static const char *kNIMVideoMsgKeyMd5			= "md5";			/**< string,资源MD5,发送方选填 */
 static const char *kNIMVideoMsgKeySize			= "size";			/**< long,资源大小(KB),发送方选填 */
-static const char *kNIMVideoMsgKeyDisplayName	= "name";			/**< string,资源显示名,发送方选填,默认文件名 */
+static const char *kNIMVideoMsgKeyDisplayName	= "name";			/**< string,用于显示的文件名,发送方选填,默认文件名 */
 static const char *kNIMVideoMsgKeyDuration		= "dur";			/**< int,短视频资源时间长度(毫秒),发送方必填 */
 static const char *kNIMVideoMsgKeyWidth			= "w";				/**< int,短视频画面宽度,发送方必填 */
 static const char *kNIMVideoMsgKeyHeight		= "h";				/**< int,短视频画面高度,发送方必填 */
@@ -130,7 +140,7 @@ static const char *kNIMVideoMsgKeyExt			= "ext";			/**< string,资源扩展名,�
 */
 static const char *kNIMFileMsgKeyMd5			= "md5";			/**< string,资源MD5,发送方选填 */
 static const char *kNIMFileMsgKeySize			= "size";			/**< long,资源大小(KB),发送方选填 */
-static const char *kNIMFileMsgKeyDisplayName	= "name";			/**< string,资源显示名,发送方选填,默认文件名 */
+static const char *kNIMFileMsgKeyDisplayName	= "name";			/**< string,用于显示的文件名,发送方选填,默认文件名 */
 static const char *kNIMFileMsgKeyUrl			= "url";			/**< string,资源URL, 发送方不需要填写 */
 static const char *kNIMFileMsgKeyExt			= "ext";			/**< string,资源扩展名,不包括符号'.',发送方若选填需要保证资源本地路径包含扩展名 */
 /** @}*/ //文件类型多媒体资源参数键名定义

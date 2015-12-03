@@ -6,18 +6,12 @@
 //
 std::string QString::GetGUID()
 {
-	const char* uuid = nim::Tool::GetUuid();
-	std::string str(uuid);
-	QString::NIMFreeBuf((char*)uuid);
-	return str;
+	return nim::Tool::GetUuid();
 }
 
 std::string QString::GetMd5(const std::string& input)
 {
-	const char* md5 = nim::Tool::GetMd5(input);
-	std::string out(md5);
-	QString::NIMFreeBuf((char*)md5);
-	return out;
+	return nim::Tool::GetMd5(input);
 }
 
 void QString::NIMFreeBuf(void *data)
@@ -33,20 +27,12 @@ std::wstring QPath::GetAppPath()
 
 std::wstring QPath::GetUserAppDataDir(const std::string& app_account)
 {
-	std::wstring dir;
-	const wchar_t* user_appdata_dir = nim::Tool::GetUserAppdataDir(app_account);
-	dir = std::wstring(user_appdata_dir);
-	QString::NIMFreeBuf((wchar_t*)user_appdata_dir);
-	return dir;
+	return nim::Tool::GetUserAppdataDir(app_account);
 }
 
 std::wstring QPath::GetLocalAppDataDir()
 {
-	std::wstring dir;
-	const wchar_t* local_appdata_dir = nim::Tool::GetLocalAppdataDir();
-	dir = std::wstring(local_appdata_dir);
-	QString::NIMFreeBuf((wchar_t*)local_appdata_dir);
-	return dir;
+	return nim::Tool::GetLocalAppdataDir();
 }
 
 std::wstring QPath::GetNimAppDataDir()

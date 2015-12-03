@@ -25,6 +25,8 @@ enum NIMResCode
 	kNIMResTimeoutError			= 408,		/**< 请求过程超时 */
 	kNIMResParameterError		= 414,		/**< 参数错误 */
 	kNIMResConnectionError		= 415,		/**< 网络连接出现错误 */
+	kNIMResFrequently			= 416,		/**< 操作太过频繁 */
+	kNIMResExist				= 417,		/**< 对象已经存在 */
 	kNIMResAccountBlock			= 422,		/**< 帐号被禁用 */
 	kNIMResUnknownError			= 500,		/**< 未知错误，或者不方便告诉你 */
 	kNIMResServerDataError		= 501,		/**< 服务器数据错误 */

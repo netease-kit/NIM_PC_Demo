@@ -7,7 +7,7 @@
         </MenuElement>
 		<MenuElement class="MenuElement" name="file_helper" width="180">
             <Button margin="2,0,0,0" normalimage="icon_file_trans_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="传文件到手机" margin="27,0,0,0" mouse="false"/>
+            <Label class="menu_text" text="我的手机" margin="27,0,0,0" mouse="false"/>
         </MenuElement>
         
         <MenuElement class="MenuElement" name="address" width="180">
@@ -35,7 +35,7 @@
             <Label class="menu_text" text="清空记录(保留会话)" margin="27,0,0,0"/>
         </MenuElement>
 		
-        <MenuElement class="MenuElement" name="clear_chat_record_p2p" width="180" visible="false">
+        <MenuElement class="MenuElement" name="clear_chat_record_p2p" width="180" visible="true">
             <Button normalimage="icon_recycle_normal.png" valign="center" mouse="false" />
             <Label class="menu_text" text="清空p2p聊天记录" margin="27,0,0,0"/>
         </MenuElement>

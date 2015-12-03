@@ -11,18 +11,18 @@
                 <Control mouse="false"/>
                 <HBox height="auto" mousechild="false">
                     <Label name="evt_team"/>
-                    <Control />
+                    <Control width="stretch"/>
                     <Label name="evt_time" normaltextcolor="lightcolor"/>
                 </HBox>
-                <Label name="evt_tip" margin="0,4,0,0" width="stretch"/>
+                <HBox height="auto" mouse="false">
+                    <Label name="evt_tip" margin="0,4,0,0" width="auto"/>
+                    <Control width="stretch"/>
+                    <Button name="btn_ok" valign="center" cursortype="hand" text="同意"/>
+                    <Button name="btn_no" margin="10,0,0,0" valign="center" cursortype="hand" text="拒绝"/>
+                    <Label name="result" margin="10,0,0,0" valign="center" visible="false" mouse="false"/>
+                </HBox>
                 <Control mouse="false"/>
             </VBox>
-
-            <HBox width="auto" mouse="false">
-                <Button name="btn_ok" valign="center" cursortype="hand" text="同意"/>
-                <Button name="btn_no" margin="10,0,0,0" valign="center" cursortype="hand" text="拒绝"/>
-                <Label name="result" margin="10,0,0,0" valign="center" visible="false" mouse="false"/>
-            </HBox>
         </HBox>
         <Control class="splitline_hor_level1" name="split_line" valign="bottom"/>
     </ListContainerElement>

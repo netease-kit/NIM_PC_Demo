@@ -1,8 +1,6 @@
 #pragma once
-#include "shared/base.h"
 
-
-class AboutForm : public WindowEx
+class AboutForm : public nim_comp::WindowEx
 {
 public:
 	AboutForm();

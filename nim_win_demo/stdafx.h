@@ -52,16 +52,18 @@
 #include "shared/util.h"
 
 //sdk
-#include "nim_all_cpp_wrapper.h"
+#include "nim_cpp_api.h"
+
+//tool
+#include "nim_tools_http_cpp_wrapper.h"
+#include "nim_tools_audio_cpp_wrapper.h"
 
 //sdk_test
-#include "module/sdk_test/nim_client_cpp_wrapper_test.h"
-#include "module/sdk_test/nim_talk_cpp_wrapper_test.h"
+// #include "module/sdk_test/nim_client_cpp_wrapper_test.h"
+// #include "module/sdk_test/nim_talk_cpp_wrapper_test.h"
 
 //helper
 #include "shared/closure.h"
-#include "util/window_ex.h"
-#include "util/windows_manager.h"
 
 //nim_ui
-#include "ui_component/session/export/nim_ui_all.h"
+#include "ui_component/ui_kit/export/nim_ui_all.h"

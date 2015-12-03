@@ -1,6 +1,6 @@
 #pragma once
 
-class MsglogManageForm : public WindowEx
+class MsglogManageForm : public nim_comp::WindowEx
 {
 public:
 	MsglogManageForm();
@@ -30,10 +30,10 @@ private:
 	void SelPathCallback(BOOL ret, std::wstring file_path);
 
 	void Export(const std::string& path);
-	void ExportResult(nim::NIMResCode res_code, const std::string& msg_id);
+	void ExportResult(nim::NIMResCode res_code);
 	void Import(const std::string& path);
 	void ImportProgress(int64_t imported_count, int64_t total_count);
-	void ImportResult(nim::NIMResCode res_code, const std::string& msg_id);
+	void ImportResult(nim::NIMResCode res_code);
 
 	void DelayClose();
 	void DoDelayClose();

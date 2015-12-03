@@ -1,9 +1,8 @@
 #include "resource.h"
 #include "login_form.h"
-//#include "callback/login/login_callback.h"
 #include "util/user.h"
-//#include "module/login/login_manager.h"
 #include "shared/tool.h"
+#include "gui/main/main_form.h"
 
 using namespace ui;
 
@@ -84,6 +83,7 @@ void LoginForm::InitWindow()
 
 	login_ing_tip_ = FindControl( L"login_ing_tip" );
 	login_error_tip_ = (Label*) FindControl( L"login_error_tip" );
+	register_ok_toast_ = (Label*)FindControl(L"register_ok_toast");
 
 	btn_login_ = (Button*) FindControl( L"btn_login" );
 	btn_register_ = (Button*)FindControl(L"btn_register");
@@ -101,6 +101,10 @@ void LoginForm::InitWindow()
 			ShowLoginTip(L"你已被踢出");
 		else if (reason == nim::kNIMLogoutRelogin)
 			ShowLoginTip(L"网络连接已断开");
+		else if (reason == nim::kNIMResExist)
+			ShowLoginTip(L"你在其他设备上登录过，请重新登录");
+		else
+			ShowLoginTip(nbase::StringPrintf(L"登录失败，错误码：%d", reason));
 
 		QCommand::Erase(kCmdExitWhy);
 	}
@@ -140,6 +144,7 @@ void LoginForm::InitWindow()
 		msg->pSender->GetWindow()->FindControl(L"register_account")->SetVisible(true);
 		return true; });
 
+	this->RegLoginManagerCallback();
 }
 
 bool LoginForm::Notify( ui::EventArgs* msg )
@@ -154,8 +159,28 @@ bool LoginForm::Notify( ui::EventArgs* msg )
 		}
 		else if(name == L"password")
 		{
-			login_error_tip_->SetVisible(false);
-			passwordicon_->SetEnabled(true);
+			//去除中文字符
+			bool has_chinise = false;
+			std::wstring text = password_edit_->GetText(), text_fixed;
+			for (size_t i = 0; i < text.length(); i++)
+			{
+				if (IsAsciiChar(text[i]))
+					text_fixed.push_back(text[i]);
+				else
+					has_chinise = true;
+			}
+			password_edit_->SetText(text_fixed);
+
+			if (has_chinise)
+			{
+				ShowLoginTip(L"密码不能含有中文字符");
+				passwordicon_->SetEnabled(false);
+			}
+			else 
+			{
+				login_error_tip_->SetVisible(false);
+				passwordicon_->SetEnabled(true);
+			}
 		}
 		else if (name == L"nickname")
 		{

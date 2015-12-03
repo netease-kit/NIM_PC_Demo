@@ -11,11 +11,11 @@
         <Control class="splitline_hor_level1"/>
         <VBox name="team_owner_section" height="auto">
             <HBox height="55" name="team_id_panel">
-                <Label text="群ID" font="3" margin="10,15,0,0"/>
+                <Label name="team_id_label" text="群ID" font="3" margin="10,15,0,0"/>
                 <RichEdit class="simple prompt" name="team_id" width="200" height="auto" margin="8,0,10,0" valign="center" font="2" enabled="false"/>
             </HBox>
             <HBox height="55" name="team_name_panel">
-                <Label text="群名称" font="3" margin="10,15,0,0"/>
+                <Label name="team_name_label" text="群名称" font="3" margin="10,15,0,0"/>
                 <RichEdit class="simple prompt" name="team_name" width="200" height="auto" margin="8,0,10,0" valign="center" font="2" prompttext="输入群名称"/>
             </HBox>
             

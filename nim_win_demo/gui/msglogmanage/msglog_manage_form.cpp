@@ -21,7 +21,7 @@ MsglogManageForm::~MsglogManageForm()
 
 MsglogManageForm* MsglogManageForm::ShowForm(bool export_or_import)
 {
-	MsglogManageForm* f = WindowsManager::GetInstance()->SingletonShow<MsglogManageForm>(MsglogManageForm::kClassName);
+	MsglogManageForm* f = nim_ui::WindowsManager::SingletonShow<MsglogManageForm>(MsglogManageForm::kClassName);
 	f->SetType(export_or_import);
 	return f;
 }
@@ -110,15 +110,34 @@ bool MsglogManageForm::OnClicked(ui::EventArgs* param)
 	std::wstring name = param->pSender->GetName();
 	if (name == L"btn_run")
 	{
+		std::wstring path;
+		ITextServices* service = path_edit_->GetTextServices();
+		nim_ui::UserConfig::GetInstance()->Re_GetText(service, path);
+		service->Release();
+
+		if (export_or_import_)
+		{
+			if (path.empty())
+			{
+				ShowMsgBox(m_hWnd, L"请选择导出路径", MsgboxCallback(), L"提示", L"确定", L"");
+				return true;
+			}
+		}
+		else
+		{
+			if (path.empty())
+			{
+				ShowMsgBox(m_hWnd, L"请选择导入文件", MsgboxCallback(), L"提示", L"确定", L"");
+				return true;
+			}
+		}
+
 		path_box_->SetEnabled(false);
 		btn_run_->SetEnabled(false);
 		progress_->SetValue(0);
 		progress_->SetVisible(!export_or_import_);
 		prg_box_->SetVisible();
-		std::wstring path;
-		ITextServices* service = path_edit_->GetTextServices();
-		nim_ui::UserConfig::GetInstance()->Re_GetText(service, path);
-		service->Release();
+
 		if (export_or_import_)
 		{
 			Export(nbase::UTF16ToUTF8(path));
@@ -207,9 +226,9 @@ void MsglogManageForm::Export(const std::string& path)
 {
 	SetDbStatus(true);
 	result_text_->SetText(L"正在导出");
-	nim::MsgLog::ExportDbAsync(path, nbase::Bind(&MsglogManageForm::ExportResult, this, std::placeholders::_1, std::placeholders::_2));
+	nim::MsgLog::ExportDbAsync(path, nbase::Bind(&MsglogManageForm::ExportResult, this, std::placeholders::_1));
 }
-void MsglogManageForm::ExportResult(nim::NIMResCode res_code, const std::string& msg_id)
+void MsglogManageForm::ExportResult(nim::NIMResCode res_code)
 {
 	SetDbStatus(false);
 	if (res_code == nim::kNIMResSuccess)
@@ -229,7 +248,7 @@ void MsglogManageForm::Import(const std::string& path)
 	SetDbStatus(true);
 	result_text_->SetText(L"正在导入");
 	progress_text_->SetText(L"0%");
-	nim::MsgLog::ImportDbAsync(path, nbase::Bind(&MsglogManageForm::ImportResult, this, std::placeholders::_1, std::placeholders::_2), 
+	nim::MsgLog::ImportDbAsync(path, nbase::Bind(&MsglogManageForm::ImportResult, this, std::placeholders::_1), 
 		nbase::Bind(&MsglogManageForm::ImportProgress, this, std::placeholders::_1, std::placeholders::_2));
 }
 void MsglogManageForm::ImportProgress(int64_t imported_count, int64_t total_count)
@@ -239,7 +258,7 @@ void MsglogManageForm::ImportProgress(int64_t imported_count, int64_t total_coun
 	std::wstring pos_text = nbase::StringPrintf(L"%d%%", prg_pos);
 	progress_text_->SetText(pos_text);
 }
-void MsglogManageForm::ImportResult(nim::NIMResCode res_code, const std::string& msg_id)
+void MsglogManageForm::ImportResult(nim::NIMResCode res_code)
 {
 	SetDbStatus(false);
 	if (res_code == nim::kNIMResSuccess)

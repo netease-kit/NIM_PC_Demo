@@ -70,7 +70,8 @@ NIM_SDK_DLL_API	void nim_client_logout(NIMLogoutType logout_type, const char *js
 NIM_SDK_DLL_API void nim_client_kick_other_client(const char *json_extension);
 
 /** @fn void nim_client_reg_auto_relogin_cb(const char *json_extension, nim_json_transport_cb_func cb, const void *user_data)
-  * 注册NIM客户端自动重连回调
+  * 注册NIM客户端自动重连回调。重连失败时，如果不是网络错误引起的（网络相关的错误号为kNIMResTimeoutError和kNIMResConnectionError），而是服务器返回了非kNIMResSuccess的错误号，
+  * 则说明重连的机制已经失效，需要APP层调用nim_client_logout执行注销操作并退回到登录界面后进行重新登录。
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb 自动重连的回调函数， nim_json_transport_cb_func回调函数定义见nim_global_def.h。
   *				  如果返回错误号kNIMResExist，说明无法继续重连，App层必须调用nim_client_logout退出到登录界面，以便用户重新进行登录。

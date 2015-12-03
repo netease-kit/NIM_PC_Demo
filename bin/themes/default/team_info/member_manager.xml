@@ -11,8 +11,8 @@
         <HBox name="team_member_item" width="170" height="64" margin="0,5,0,5">
             <Box width="56" height="auto">
                 <Box width="auto" height="auto" margin="8,8,0,8">
-                    <Button name="head_image" width="46" height="46" margin="1,1,1,1" borderround="46,46,46,46" cursortype="hand"/>
-                    <Button class="icon_headimage_mask_48x48" mouse="false" mouse="false"/>
+                    <Button name="head_image" width="46" height="46" margin="1,1,1,1" borderround="46,46,46,46" mouse="false"/>
+                    <Button class="icon_headimage_mask_48x48" mouse="false"/>
                 </Box>
             </Box>
             <VBox padding="8,0,0,0" height="auto" width="stretch" valign="center" mouse="false" mousechild="false">
@@ -22,7 +22,7 @@
 
         <HBox height="55">
             <Label text="群名片" font="3" margin="10,15,20,0"/>
-            <RichEdit name="team_card" margin="0,15,0,0" font="2" prompttext="输入群名片"/>
+            <RichEdit class="simple prompt" name="team_card" margin="0,15,0,0" font="2" prompttext="输入群名片"/>
         </HBox>
         
         <HBox name="privilege_panel" height="55">

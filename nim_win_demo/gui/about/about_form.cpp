@@ -60,7 +60,6 @@ void AboutForm::InitWindow()
 		int ver = 0;
 		std::wstring vf;
 		nim_ui::UserConfig::GetInstance()->GetAppLocalVersion(ver, vf);
-		//LocalHelper::GetAppLocalVersion(ver, vf);
 		version->SetText(nbase::StringPrintf(L"°æ±¾: %s.%d", vf.c_str(), ver));
 	}
 }

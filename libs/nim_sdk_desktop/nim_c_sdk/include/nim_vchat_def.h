@@ -81,8 +81,8 @@ enum NIMVChatConnectErrorCode{
 /** @name json extension params for nim_vchat_cb_func
   * @{
   */
-static const char *kNIMVChatUids			= "uids";			/**< StrArray 账号 */
-static const char *kNIMVChatUid				= "uid";			/**< string 账号 */
+static const char *kNIMVChatUids			= "uids";			/**< StrArray 帐号 */
+static const char *kNIMVChatUid				= "uid";			/**< string 帐号 */
 static const char *kNIMVChatStatus			= "status";			/**< int 状态 */
 static const char *kNIMVChatRecordAddr		= "record_addr";	/**< string 录制地址（服务器开启录制时有效） */
 static const char *kNIMVChatRecordFile		= "record_file";	/**< string 录制文件名（服务器开启录制时有效） */
@@ -95,7 +95,7 @@ static const char *kNIMVChatCustomAudio		= "custom_audio";	/**< int 是否用自
 static const char *kNIMVChatRecord			= "record";			/**< int 是否需要录制数据 >0表示是 */
 static const char *kNIMVChatAecTime			= "aec_time";		/**< int 回音消除延迟参数 >=0有效 */
 static const char *kNIMVChatMaxVideoRate	= "max_video_rate";	/**< int 视频发送编码码率 >=100000 <=600000有效 */
-/** @}*/ //json extension params for vchat device key
+/** @}*/ //json extension params
 
 /** @typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, __int64 channel_id, int code, const char *json_extension, const void *user_data)
   * NIM VChat 	音视频通话中状态返回回调接口   \n
@@ -116,7 +116,7 @@ static const char *kNIMVChatMaxVideoRate	= "max_video_rate";	/**< int 视频发�
   * @param[out] channel_id 通话的通道id
   * @param[out] code 结果类型或错误类型
   * @param[out] json_extension Json string 扩展
-  * @param[out] user_data 暂时无效
+  * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   *
   */

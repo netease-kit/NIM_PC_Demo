@@ -11,7 +11,7 @@
 
                 <Control />
                 <HBox height="40" margin="20,0,20,0" bkimage="file='../public/edit/edit0.png' corner='5,5,5,5'">
-                    <RichEdit class="simple prompt" name="search_key" width="stretch" height="auto" margin="10,0,10,0" valign="center" font="2" prompttext="请输入账号"/>
+                    <RichEdit class="simple prompt" name="search_key" width="stretch" height="auto" margin="10,0,10,0" valign="center" font="2" prompttext="请输入帐号"/>
                 </HBox>
                 <Control />
 
@@ -40,7 +40,7 @@
                             <Label name="nick_name" font="2" width="stretch" margin="20,0,0,0"/>
                         </HBox>
                         <HBox height="22">
-                            <Label text="账" font="2" normaltextcolor="lightcolor"/>
+                            <Label text="帐" font="2" normaltextcolor="lightcolor"/>
                             <Label width="14" font="2" normaltextcolor="lightcolor"/>
                             <Label text="号" font="2" normaltextcolor="lightcolor"/>
                             <Label name="id" font="12" width="stretch" margin="20,2,0,0"/>
@@ -67,7 +67,7 @@
 				
                 <HBox height="auto" margin="20,0,20,0">
                     <Control width="22" height="auto" margin="0,7,10,0" bkimage="../msgbox/warning.png"/>
-                    <RichEdit class="TipEdit" name="information" height="auto" text="该账号不存在，请检查你输入的账号是否正确" margin="0,3,0,0"/>
+                    <RichEdit class="TipEdit" name="information" height="auto" text="该帐号不存在，请检查你输入的帐号是否正确" margin="0,3,0,0"/>
                 </HBox>
 
                 <Control />

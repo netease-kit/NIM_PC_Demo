@@ -1,13 +1,9 @@
 #pragma once
 
-#include "gui/main/control/friend_item.h"
 #include "gui/tray_icon/tray_icon.h"
 #include "shared/ui/ui_menu.h"
 #include "base/framework/task.h"
 
-class SessionList;
-class FriendList;
-class GroupList;
 
 /** @class MainForm
   * @brief demo程序主界面窗口类
@@ -16,7 +12,7 @@ class GroupList;
   * @date 2015/1/1
   */
 class MainForm : 
-	public WindowEx,
+	public nim_comp::WindowEx,
 	public TrayIconDelegate
 {
 public:
@@ -79,8 +75,7 @@ public:
 	bool OnClicked(ui::EventArgs* msg);
 
 private:
-	void OnGetAllFriendInfo(bool ret, const std::list<UserInfo> &uinfos);
-	void OnUserInfoChange(const std::list<UserInfo> &uinfos);
+	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 	void OnUserPhotoReady(const std::string& account, const std::wstring& photo_path);
 	void InitHeader();
 
@@ -113,9 +108,6 @@ private:
 	ui::RichEdit*	search_edit_;
 	ui::Button*		btn_clear_input_;
 	ui::ListBox*	search_result_list_;
-	//std::unique_ptr<SessionList> session_list_;
-	std::unique_ptr<FriendList> friend_list_;
-	std::unique_ptr<GroupList> group_list_;
 	bool			is_trayicon_left_double_clicked_;
 
 	AutoUnregister unregister_cb;

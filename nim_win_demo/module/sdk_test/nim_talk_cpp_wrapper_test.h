@@ -15,7 +15,7 @@ namespace nim_test
 			json[nim::kNIMMsgKeyType] = nim::kNIMMessageTypeText; //消息类型
 			json[nim::kNIMMsgKeyBody] = text; //消息内容
 
-			json[nim::kNIMMsgKeyToAccount] = receiver; //消息接收者账号
+			json[nim::kNIMMsgKeyToAccount] = receiver; //消息接收者帐号
 			json[nim::kNIMMsgKeyTime] = 1000 * nbase::Time::Now().ToTimeT();; // 消息发送时间（毫秒）
 			json[nim::kNIMMsgKeyClientMsgid] = QString::GetGUID(); //消息id，一般使用guid
 
@@ -57,7 +57,7 @@ namespace nim_test
 			}
 			json[nim::kNIMMsgKeyAttach] = image_key.toStyledString();
 
-			json[nim::kNIMMsgKeyToAccount] = receiver;					    //消息接收者账号
+			json[nim::kNIMMsgKeyToAccount] = receiver;					    //消息接收者帐号
 			json[nim::kNIMMsgKeyTime] = 1000 * nbase::Time::Now().ToTimeT();;   //消息发送时间（毫秒）
 
 			json[nim::kNIMMsgKeyClientMsgid] = QString::GetGUID();				//消息id，一般使用guid

@@ -1,0 +1,667 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="gui">
+      <UniqueIdentifier>{bb55de89-e295-4ee5-9d0c-340978f1db17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="callback">
+      <UniqueIdentifier>{bea34d8b-63c0-4b97-8e3e-7d623753dbca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module">
+      <UniqueIdentifier>{c2117b3c-75c7-41a4-959c-42b207b353e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\emoji">
+      <UniqueIdentifier>{3f48cc47-b889-4c49-a734-5e0d8ff61e57}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="callback\session">
+      <UniqueIdentifier>{c93403a1-0616-47b1-849d-7c98ee9408b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="callback\team">
+      <UniqueIdentifier>{024770d5-02da-463f-9f00-50e54666df59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\invoke_chat_form">
+      <UniqueIdentifier>{2dd91baf-10a1-49a1-affb-4bf188d7523d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\team_info">
+      <UniqueIdentifier>{6bce3f89-0ccf-4c18-b790-dd24b37a44b9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\session">
+      <UniqueIdentifier>{5528bcd3-9f74-46a5-8450-b75c4f033239}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\session\control">
+      <UniqueIdentifier>{1a02998a-ecd8-4838-82d2-16c22e80507b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\service">
+      <UniqueIdentifier>{60952e41-87cb-43f1-a734-e507d7ec9f00}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\session">
+      <UniqueIdentifier>{9d9ad258-073d-4f24-8443-49c2d9ed5546}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\emoji">
+      <UniqueIdentifier>{b57c49f9-316e-4a1f-9a80-81c100046c2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="callback\rts">
+      <UniqueIdentifier>{99782a1d-f517-4678-ba24-ecb905975788}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\broad">
+      <UniqueIdentifier>{00d61300-76e1-4647-b0bd-34862764f7a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\rts">
+      <UniqueIdentifier>{ec9cd0a6-8fca-4b33-bfc9-514fbd131199}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\msglog">
+      <UniqueIdentifier>{54433311-9ad6-413d-aa23-1681460bcc54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\rts">
+      <UniqueIdentifier>{c03c1ee5-ff25-4336-aecb-ab84b523f58a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="callback\vchat">
+      <UniqueIdentifier>{247a6335-8ea0-45ed-b45f-114c0bae6ca9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\video">
+      <UniqueIdentifier>{1bd04e69-7933-4b17-9dbf-47dc37d26c69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\video">
+      <UniqueIdentifier>{4c0fdccb-79a9-45e2-9e28-6e7a5e84ba26}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\main">
+      <UniqueIdentifier>{ed1f84ae-459e-46cd-9dad-e6a7afd2bc6b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\main\control">
+      <UniqueIdentifier>{2dddcf7c-f89e-4e70-bd98-9fc0d399c20e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\profile_form">
+      <UniqueIdentifier>{6ca1ea43-635d-4080-8c88-afcef61a432e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{201cc00c-5cdf-4f6b-a398-b89f8f697cba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\login">
+      <UniqueIdentifier>{d2d2b0f1-1f43-4937-a49e-6a245c651327}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="callback\audio">
+      <UniqueIdentifier>{4f3b7f08-0a69-4010-b4cd-16c4a5b971e8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\link">
+      <UniqueIdentifier>{ffc1bf74-5bf3-40da-b74e-851e6e714e27}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\local">
+      <UniqueIdentifier>{5ccdd853-818c-4e01-9151-6646d306c95e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="callback\http">
+      <UniqueIdentifier>{e2192914-284f-4936-bcca-b1d2b5ae9aff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="callback\login">
+      <UniqueIdentifier>{e7695536-e5cf-4ae8-b928-69eca9b9f7ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="export">
+      <UniqueIdentifier>{35fd65b8-dd4f-4569-84e8-9b2b4d9ef8c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\add_friend">
+      <UniqueIdentifier>{2bd0951c-6dfb-4ff7-9324-00293cc017e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\black_list">
+      <UniqueIdentifier>{a6425fab-1c04-4774-8221-42f9282bce1a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="module\emoji\emoji_info.h">
+      <Filter>module\emoji</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubble_audio.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubble_file.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubble_finger.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubble_image.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubble_item.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubble_location.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubble_notice.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubble_snapchat.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubble_sticker.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubble_text.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubble_unknown.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubble_writing.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\session_util.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\team_item.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="callback\session\session_callback.h">
+      <Filter>callback\session</Filter>
+    </ClInclude>
+    <ClInclude Include="callback\team\team_callback.h">
+      <Filter>callback\team</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\custom_msg_form.h">
+      <Filter>gui\session</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\msg_record.h">
+      <Filter>gui\session</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\session_form.h">
+      <Filter>gui\session</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\invoke_chat_form\invoke_chat_form.h">
+      <Filter>gui\invoke_chat_form</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\team_info\member_manager.h">
+      <Filter>gui\team_info</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\team_info\team_info.h">
+      <Filter>gui\team_info</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\team_info\team_notify.h">
+      <Filter>gui\team_info</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\team_info\team_search.h">
+      <Filter>gui\team_info</Filter>
+    </ClInclude>
+    <ClInclude Include="module\service\team_service.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+    <ClInclude Include="module\session\ring.h">
+      <Filter>module\session</Filter>
+    </ClInclude>
+    <ClInclude Include="module\session\session_manager.h">
+      <Filter>module\session</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\emoji\emoji_form.h">
+      <Filter>gui\emoji</Filter>
+    </ClInclude>
+    <ClInclude Include="callback\rts\rts_callback.h">
+      <Filter>callback\rts</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\broad\broad_form.h">
+      <Filter>gui\broad</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\rts\ui_board_control.h">
+      <Filter>gui\rts</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\rts\rts_form.h">
+      <Filter>gui\rts</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\rts\rts_replay.h">
+      <Filter>gui\rts</Filter>
+    </ClInclude>
+    <ClInclude Include="module\msglog\msg_extend_db.h">
+      <Filter>module\msglog</Filter>
+    </ClInclude>
+    <ClInclude Include="module\msglog\msglog.h">
+      <Filter>module\msglog</Filter>
+    </ClInclude>
+    <ClInclude Include="module\rts\rts_manager.h">
+      <Filter>module\rts</Filter>
+    </ClInclude>
+    <ClInclude Include="callback\vchat\vchat_callback.h">
+      <Filter>callback\vchat</Filter>
+    </ClInclude>
+    <ClInclude Include="module\video\video_manager.h">
+      <Filter>module\video</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\video\ui_bitmap_control.h">
+      <Filter>gui\video</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\video\video_form.h">
+      <Filter>gui\video</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\video\video_setting.h">
+      <Filter>gui\video</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\session_list.h">
+      <Filter>gui\main</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\control\session_item.h">
+      <Filter>gui\main\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\multispot_form.h">
+      <Filter>gui\main</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\team_event_form.h">
+      <Filter>gui\main</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\profile_form\profile_form.h">
+      <Filter>gui\profile_form</Filter>
+    </ClInclude>
+    <ClInclude Include="util\user.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="module\service\mute_black_service.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+    <ClInclude Include="module\service\user_service.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+    <ClInclude Include="module\login\login_manager.h">
+      <Filter>module\login</Filter>
+    </ClInclude>
+    <ClInclude Include="module\service\notify_center.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+    <ClInclude Include="module\login\login_db.h">
+      <Filter>module\login</Filter>
+    </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="callback\audio\audio_callback.h">
+      <Filter>callback\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\control\event_item.h">
+      <Filter>gui\main\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\link\link_form.h">
+      <Filter>gui\link</Filter>
+    </ClInclude>
+    <ClInclude Include="module\local\local_helper.h">
+      <Filter>module\local</Filter>
+    </ClInclude>
+    <ClInclude Include="callback\login\login_callback.h">
+      <Filter>callback\login</Filter>
+    </ClInclude>
+    <ClInclude Include="callback\http\http_callback.h">
+      <Filter>callback\http</Filter>
+    </ClInclude>
+    <ClInclude Include="nim_ui_dll.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\control\custom_msg.h">
+      <Filter>gui\main\control</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_all.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_login_manager.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_window_manager.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_session_manager.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_user_manager.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_init_manager.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_muteblack_manager.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_team_manager.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_user_config.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="module\emoji\richedit_olecallback.h">
+      <Filter>module\emoji</Filter>
+    </ClInclude>
+    <ClInclude Include="module\emoji\richedit_util.h">
+      <Filter>module\emoji</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\profile_form\ui_head_select_ctrl.h">
+      <Filter>gui\profile_form</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\profile_form\ui_head_view_ctrl.h">
+      <Filter>gui\profile_form</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\profile_form\head_modify_form.h">
+      <Filter>gui\profile_form</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\group_list.h">
+      <Filter>gui\main</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\friend_list.h">
+      <Filter>gui\main</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\friend_list_item_manager.h">
+      <Filter>gui\main</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\control\friend_item.h">
+      <Filter>gui\main\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\black_list\black_list_wnd.h">
+      <Filter>gui\black_list</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\add_friend\add_friend_wnd.h">
+      <Filter>gui\add_friend</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_session_list_manager.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_contacts_list_manager.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="util\windows_manager.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\window_ex.h">
+      <Filter>util</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="module\emoji\emoji_info.cpp">
+      <Filter>module\emoji</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubble_audio.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubble_file.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubble_finger.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubble_image.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubble_item.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubble_location.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubble_notice.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubble_snapchat.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubble_sticker.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubble_text.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubble_unknown.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubble_writing.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\session_util.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\team_item.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="callback\session\session_callback.cpp">
+      <Filter>callback\session</Filter>
+    </ClCompile>
+    <ClCompile Include="callback\team\team_callback.cpp">
+      <Filter>callback\team</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\custom_msg_form.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\msg_record.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\msg_record_ui.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\session_form.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\session_form_audio.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\session_form_team.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\session_form_ui.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\invoke_chat_form\invoke_chat_form.cpp">
+      <Filter>gui\invoke_chat_form</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\team_info\member_manager.cpp">
+      <Filter>gui\team_info</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\team_info\team_info.cpp">
+      <Filter>gui\team_info</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\team_info\team_notify.cpp">
+      <Filter>gui\team_info</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\team_info\team_search.cpp">
+      <Filter>gui\team_info</Filter>
+    </ClCompile>
+    <ClCompile Include="module\service\team_service.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+    <ClCompile Include="module\session\ring.cpp">
+      <Filter>module\session</Filter>
+    </ClCompile>
+    <ClCompile Include="module\session\session_manager.cpp">
+      <Filter>module\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\emoji\emoji_form.cpp">
+      <Filter>gui\emoji</Filter>
+    </ClCompile>
+    <ClCompile Include="callback\rts\rts_callback.cpp">
+      <Filter>callback\rts</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\broad\broad_form.cpp">
+      <Filter>gui\broad</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\rts\rts_form.cpp">
+      <Filter>gui\rts</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\rts\rts_replay.cpp">
+      <Filter>gui\rts</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\rts\ui_board_control.cpp">
+      <Filter>gui\rts</Filter>
+    </ClCompile>
+    <ClCompile Include="module\msglog\msg_extend_db.cpp">
+      <Filter>module\msglog</Filter>
+    </ClCompile>
+    <ClCompile Include="module\msglog\msglog.cpp">
+      <Filter>module\msglog</Filter>
+    </ClCompile>
+    <ClCompile Include="module\rts\rts_manager.cpp">
+      <Filter>module\rts</Filter>
+    </ClCompile>
+    <ClCompile Include="callback\vchat\vchat_callback.cpp">
+      <Filter>callback\vchat</Filter>
+    </ClCompile>
+    <ClCompile Include="module\video\video_manager.cpp">
+      <Filter>module\video</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\ui_bitmap_control.cpp">
+      <Filter>gui\video</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\video_form.cpp">
+      <Filter>gui\video</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\video_form_ui.cpp">
+      <Filter>gui\video</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\video_setting.cpp">
+      <Filter>gui\video</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\session_list.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\control\session_item.cpp">
+      <Filter>gui\main\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\multispot_form.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\team_event_form.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\profile_form\profile_form.cpp">
+      <Filter>gui\profile_form</Filter>
+    </ClCompile>
+    <ClCompile Include="util\user.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="module\service\user_service.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+    <ClCompile Include="module\service\mute_black_service.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+    <ClCompile Include="module\login\login_manager.cpp">
+      <Filter>module\login</Filter>
+    </ClCompile>
+    <ClCompile Include="module\service\notify_center.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+    <ClCompile Include="module\login\login_db.cpp">
+      <Filter>module\login</Filter>
+    </ClCompile>
+    <ClCompile Include="callback\audio\audio_callback.cpp">
+      <Filter>callback\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\control\event_item.cpp">
+      <Filter>gui\main\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\link\link_form.cpp">
+      <Filter>gui\link</Filter>
+    </ClCompile>
+    <ClCompile Include="module\local\local_helper.cpp">
+      <Filter>module\local</Filter>
+    </ClCompile>
+    <ClCompile Include="callback\login\login_callback.cpp">
+      <Filter>callback\login</Filter>
+    </ClCompile>
+    <ClCompile Include="callback\http\http_callback.cpp">
+      <Filter>callback\http</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\control\custom_msg.cpp">
+      <Filter>gui\main\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\event_form_custom.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_login_manager.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_window_manager.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_session_manager.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_user_manager.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_init_manager.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_muteblack_manager.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_team_manager.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_user_config.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="module\emoji\richedit_olecallback.cpp">
+      <Filter>module\emoji</Filter>
+    </ClCompile>
+    <ClCompile Include="module\emoji\richedit_util.cpp">
+      <Filter>module\emoji</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\profile_form\ui_head_select_ctrl.cpp">
+      <Filter>gui\profile_form</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\profile_form\ui_head_view_ctrl.cpp">
+      <Filter>gui\profile_form</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\profile_form\head_modify_form.cpp">
+      <Filter>gui\profile_form</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\friend_list.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\friend_list_item_manager.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\group_list.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\control\friend_item.cpp">
+      <Filter>gui\main\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\black_list\black_list_wnd.cpp">
+      <Filter>gui\black_list</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\add_friend\add_friend_wnd.cpp">
+      <Filter>gui\add_friend</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_session_list_manager.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_contacts_list_manager.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="util\windows_manager.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="util\window_ex.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="ui_kit.rc">
+      <Filter>资源文件</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="nim.ico">
+      <Filter>资源文件</Filter>
+    </Image>
+  </ItemGroup>
+</Project>

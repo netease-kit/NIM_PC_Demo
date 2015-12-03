@@ -14,7 +14,7 @@ void LoginForm::DoBeforeLogin()
 	if( username.empty() )
 	{
 		usericon_->SetEnabled(false);
-		ShowLoginTip(L"账号为空");
+		ShowLoginTip(L"帐号为空");
 		return;
 	}
 
@@ -49,31 +49,47 @@ void LoginForm::DoRegisterAccount()
 	{
 		ShowLoginTip(L"昵称为10位汉字、字母或者数字组合");
 	}
-	else {
+	else 
+	{
+		btn_register_->SetEnabled(false);
+		btn_login_->SetVisible(false);
+
 		password = QString::GetMd5(password);
 		nim_ui::UserManager::GetInstance()->InvokeRegisterAccount(username, password, nickname, ToWeakCallback([this](int res, const std::string& err_msg) {
-			if (res == 200) {
-				SetTaskbarTitle(L"登录");
-				FindControl(L"enter_panel")->SetBkImage(L"user_password.png");
-				FindControl(L"nick_name_panel")->SetVisible(false);
-				FindControl(L"enter_login")->SetVisible(false);
-				FindControl(L"register_account")->SetVisible(true);
-				btn_register_->SetVisible(false);
-				btn_login_->SetVisible();
-			}
-			else if (res == 601) {
-				ShowLoginTip(L"账号为6~16位字母或者数字组合");
-			}
-			else if (res == 602) {
-				ShowLoginTip(L"此账号已存在");
-			}
-			else if (res == 603) {
-				ShowLoginTip(L"昵称为10位汉字、字母或者数字组合");
-			}
-			else {
-				ShowLoginTip(nbase::UTF8ToUTF16(err_msg));
-			}
+			if (res == 200) 
+			{
+				register_ok_toast_->SetVisible(true);
+				nbase::ThreadManager::PostDelayedTask(ToWeakCallback([this]() {
+					register_ok_toast_->SetVisible(false);
+				}), nbase::TimeDelta::FromSeconds(2));
 
+				nbase::ThreadManager::PostDelayedTask(ToWeakCallback([this]() {
+					SetTaskbarTitle(L"登录");
+					FindControl(L"enter_panel")->SetBkImage(L"user_password.png");
+					FindControl(L"nick_name_panel")->SetVisible(false);
+					FindControl(L"enter_login")->SetVisible(false);
+					FindControl(L"register_account")->SetVisible(true);
+					btn_register_->SetEnabled(true);
+					btn_register_->SetVisible(false);
+					btn_login_->SetVisible(true);
+				}), nbase::TimeDelta::FromMilliseconds(2500));
+			}
+			else
+			{
+				if (res == 601) {
+					ShowLoginTip(L"帐号为6~16位字母或者数字组合");
+				}
+				else if (res == 602) {
+					ShowLoginTip(L"此帐号已存在");
+				}
+				else if (res == 603) {
+					ShowLoginTip(L"昵称为10位汉字、字母或者数字组合");
+				}
+				else {
+					ShowLoginTip(nbase::UTF8ToUTF16(err_msg));
+				}
+				btn_register_->SetEnabled(true);
+			}
 		}));
 	}
 
@@ -93,6 +109,35 @@ void LoginForm::StartLogin( std::string username, std::string password )
 	nim_ui::LoginManager::GetInstance()->DoLogin(username, password);
 }
 
+void LoginForm::RegLoginManagerCallback()
+{
+	nim_ui::OnLoginResult cb_result = [this](int error){
+		this->OnLoginResult(error);
+	};
+
+	nim_ui::OnCancelLogin cb_cancel = [this]{
+		this->Reset();
+	};
+
+	nim_ui::OnHideWindow cb_hide = [this]{
+		this->ShowWindow(false, false);
+	};
+
+	nim_ui::OnDestroyWindow cb_destroy = [this]{
+		::DestroyWindow(this->GetHWND());
+	};
+
+	nim_ui::OnShowMainWindow cb_show_main = [this]{
+		nim_ui::WindowsManager::SingletonShow<MainForm>(MainForm::kClassName);
+	};
+
+	nim_ui::LoginManager::GetInstance()->RegLoginManagerCallback(ToWeakCallback(cb_result),
+		ToWeakCallback(cb_cancel),
+		ToWeakCallback(cb_hide),
+		ToWeakCallback(cb_destroy),
+		ToWeakCallback(cb_show_main));
+}
+
 void LoginForm::OnLoginResult( int error )
 {
 	Reset();
@@ -107,9 +152,13 @@ void LoginForm::OnLoginResult( int error )
 	{
 		ShowLoginTip(L"网络出现问题，请确认网络连接");
 	}
+	else if (error == nim::kNIMResExist)
+	{
+		ShowLoginTip(L"你在其他设备上登录过，请重新登录");
+	}
 	else
 	{
-		std::wstring tip = nbase::StringPrintf(L"登陆失败，错误码：%d", error);
+		std::wstring tip = nbase::StringPrintf(L"登录失败，错误码：%d", error);
 		ShowLoginTip(tip);
 	}
 }

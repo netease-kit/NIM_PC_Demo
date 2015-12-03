@@ -20,7 +20,7 @@ extern"C"
 /** @fn void nim_rts_start(int channel_type, const char *uid, const char *json_extension, nim_rts_start_cb_func cb, const void *user_data)
   * NIM 创建rts会话，传入的JSON参数定义见nim_rts_def.h    
   * @param[in] channel_type 通道类型 如要tcp+音视频，则channel_type=kNIMRtsChannelTypeTcp|kNIMRtsChannelTypeVchat，同时整个SDK只允许一个音视频通道存在（包括vchat）
-  * @param[in] uid 对方账号
+  * @param[in] uid 对方帐号
   * @param[in] json_extension Json string 扩展
   * @param[in] cb 结果回调见nim_rts_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！

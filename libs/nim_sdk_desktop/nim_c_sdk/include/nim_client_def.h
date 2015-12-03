@@ -109,12 +109,12 @@ static const char *kNIMRelogin			= "relogin";			/**< bool, 是否重连 */
 static const char *kNIMLoginStep		= "login_step";			/**< int, 登录步骤NIMLoginStep */
 static const char *kNIMOtherClientsPres	= "other_clients_pres";	/**< json object array， 其他端的在线状态列表，Keys SEE MORE in "kNIMPres***" Json Keys（登录成功才会返回这部分内容） */
 
-static const char *kNIMPresAppAccount	= "app_account";		/**< string, 第三方账号 */
+static const char *kNIMPresAppAccount	= "app_account";		/**< string, 第三方帐号 */
 static const char *kNIMPresClientType	= "client_type";		/**< int, 客户端类型, 见NIMClientType */
 static const char *kNIMPresOS			= "client_os";			/**< string, 登录系统类型,比如ios 6.0.1 */
 static const char *kNIMPresMac			= "mac";				/**< string, 登录设备的mac地址 */
 static const char *kNIMPresDeviceID		= "device_id";			/**< string, 设备id，uuid */
-static const char *kNIMPresLoginTime	= "login_time";			/**< long, 本次登陆时间, 精度到ms */
+static const char *kNIMPresLoginTime	= "login_time";			/**< long, 本次登录时间, 精度到ms */
 /** @}*/ //json params for nim_json_transport_cb_func that has been registered in nim_client_login and nim_client_reg_auto_relogin_cb API
 
 /** @name json params for nim_json_transport_cb_func that has been registered in nim_client_reg_multispot_login_notify_cb API

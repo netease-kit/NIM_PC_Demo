@@ -62,7 +62,7 @@ NIM_SDK_DLL_API	const char * nim_tool_get_file_md5(const char *file_path);
   */
 NIM_SDK_DLL_API	const char * nim_tool_get_uuid();
 
-/** @fn const char * nim_tool_get_audio_text_async(const char *json_audio_info, const char *json_extension, nim_tool_get_audio_text_cb_func cb, const void *user_data)
+/** @fn void nim_tool_get_audio_text_async(const char *json_audio_info, const char *json_extension, nim_tool_get_audio_text_cb_func cb, const void *user_data)
   * 语音转文字
   * @param[in] json_audio_info 语音信息
   * @param[in] json_extension json扩展参数（备用，目前不需要）

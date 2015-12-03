@@ -64,44 +64,44 @@ NIM_SDK_DLL_API	void nim_user_set_mute(const char *accid, bool set_mute, const c
   */
 NIM_SDK_DLL_API	void nim_user_get_mute_blacklist(const char *json_extension, nim_user_sync_muteandblacklist_cb_func cb, const void *user_data);
 
-/** @fn void nim_user_reg_user_info_changed_cb(const char *json_extension, nim_user_info_change_cb_func cb, const void *user_data)
-  * 统一注册用户信息变更通知回调函数
+/** @fn void nim_user_reg_user_name_card_changed_cb(const char *json_extension, nim_user_name_card_change_cb_func cb, const void *user_data)
+  * 统一注册用户名片变更通知回调函数
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb 操作结果回调
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API	void nim_user_reg_user_info_changed_cb(const char *json_extension, nim_user_info_change_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API	void nim_user_reg_user_name_card_changed_cb(const char *json_extension, nim_user_name_card_change_cb_func cb, const void *user_data);
 
-/** @fn void nim_user_get_user_info(const char *accids, const char *json_extension, nim_user_get_user_info_cb_func cb, const void *user_data)
-  * 获取本地的指定账号的用户信息
+/** @fn void nim_user_get_user_name_card(const char *accids, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data)
+  * 获取本地的指定帐号的用户名片
   * @param[in] accids 例 ["litianyi01", "litianyi02", ...]
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb 操作结果回调
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API	void nim_user_get_user_info(const char *accids, const char *json_extension, nim_user_get_user_info_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API	void nim_user_get_user_name_card(const char *accids, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data);
 
-/** @fn void nim_user_get_user_info_online(const char *accids, const char *json_extension, nim_user_get_user_info_cb_func cb, const void *user_data)
-  * 在线查询指定账号的用户信息
+/** @fn void nim_user_get_user_name_card_online(const char *accids, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data)
+  * 在线查询指定帐号的用户名片
   * @param[in] accids 例 ["litianyi01", "litianyi02", ...]
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb 操作结果回调
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API	void nim_user_get_user_info_online(const char *accids, const char *json_extension, nim_user_get_user_info_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API	void nim_user_get_user_name_card_online(const char *accids, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data);
 
-/** @fn void nim_user_update_user_info(const char *info_json, const char *json_extension, nim_user_update_info_cb_func cb, const void *user_data)
-  * 更新用户信息
+/** @fn void nim_user_update_user_name_card(const char *info_json, const char *json_extension, nim_user_update_name_card_cb_func cb, const void *user_data)
+  * 更新用户名片
   * @param[in] info_json 用户信息json
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb 操作结果回调
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API	void nim_user_update_user_info(const char *info_json, const char *json_extension, nim_user_update_info_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API	void nim_user_update_user_name_card(const char *info_json, const char *json_extension, nim_user_update_name_card_cb_func cb, const void *user_data);
 
 
 #ifdef __cplusplus

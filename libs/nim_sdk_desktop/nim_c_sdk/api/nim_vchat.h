@@ -31,12 +31,13 @@ NIM_SDK_DLL_API	void nim_vchat_cleanup(const char *json_extension);
 
 //通话相关
 
-/** @fn void nim_vchat_set_cb_func(nim_vchat_cb_func cb)
+/** @fn void nim_vchat_set_cb_func(nim_vchat_cb_func cb, const void *user_data)
   * NIM VCHAT 设置通话回调或者服务器通知
   * @param[in] cb 结果回调见nim_vchat_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_vchat_set_cb_func(nim_vchat_cb_func cb);
+NIM_SDK_DLL_API void nim_vchat_set_cb_func(nim_vchat_cb_func cb, const void *user_data);
 
 /** @fn bool nim_vchat_start(NIMVideoChatMode mode, const char *json_extension, const void *user_data)
   * NIM VCHAT 启动通话，异步回调nim_vchat_cb_func 见nim_vchat_def.h
