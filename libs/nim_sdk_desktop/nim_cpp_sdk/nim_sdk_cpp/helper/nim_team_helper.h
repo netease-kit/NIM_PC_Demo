@@ -1,3 +1,10 @@
+/** @file nim_team_helper.h
+  * @brief Team 辅助方法和数据结构定义
+  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @author Oleg
+  * @date 2015/10/14
+  */
+
 #ifndef _NIM_SDK_CPP_TEAM_HELPER_H_
 #define _NIM_SDK_CPP_TEAM_HELPER_H_
 
@@ -6,38 +13,41 @@
 #include <functional>
 #include "json.h"
 #include "nim_sdk_helper.h"
+#include "nim_user_helper.h"
 
+/**
+* @namespace nim
+* @brief namespace nim
+*/
 namespace nim
 {
-/** @brief Team 辅助方法和数据结构定义
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
-  * @author Oleg
-  * @date 2015/10/14
-  */
 
 #include "nim_team_def.h"
 #include "nim_msglog_def.h"
 #include "nim_res_code_def.h"
 
+/** @struct 群组信息数据标记Key,用以标记对应数据的有效性 */
 enum TeamInfoKey
 {
-	kTeamInfoKeyNone = 0,
-	kTeamInfoKeyName = 1,
-	kTeamInfoKeyType = 1 << 1,
-	kTeamInfoKeyOwnerID = 1 << 2,
-	kTeamInfoKeyLevel = 1 << 3,
-	kTeamInfoKeyProperty = 1 << 4,
-	kTeamInfoKeyIntro = 1 << 5,
-	kTeamInfoKeyAnnouncement = 1 << 6,
-	kTeamInfoKeyJoinMode = 1 << 7,
-	kTeamInfoKeyConfigBits = 1 << 8,
-	kTeamInfoKeyCustom = 1 << 9,
-	kTeamInfoKeyAll = (1 << 10) - 1
+	kTeamInfoKeyNone = 0,					/**< 无数据 */	
+	kTeamInfoKeyName = 1,					/**< 群组名字 */
+	kTeamInfoKeyType = 1 << 1,				/**< 群组类型 */
+	kTeamInfoKeyOwnerID = 1 << 2,			/**< 群组拥有者ID */
+	kTeamInfoKeyLevel = 1 << 3,				/**< 群组等级 */
+	kTeamInfoKeyProperty = 1 << 4,			/**< 群组属性 */
+	kTeamInfoKeyIntro = 1 << 5,				/**< 群组简介 */
+	kTeamInfoKeyAnnouncement = 1 << 6,		/**< 群组公告 */
+	kTeamInfoKeyJoinMode = 1 << 7,			/**< 群组验证类型 */
+	kTeamInfoKeyConfigBits = 1 << 8,		/**< 群组配置项 */
+	kTeamInfoKeyCustom = 1 << 9,			/**< 群组扩展项 */
+	kTeamInfoKeyAll = (1 << 10) - 1			/**< 有数据 */
 };
 
+/** @struct 群组信息 */
 struct TeamInfo
 {
 public:
+	/** 构造函数，推荐使用 */
 	TeamInfo(const std::string& team_id) : member_list_timetag_(0)
 		, create_timetag_(0)
 		, update_timetag_(0)
@@ -53,6 +63,7 @@ public:
 		id_ = team_id;
 	}
 
+	/** 构造函数 */
 	TeamInfo() : member_list_timetag_(0)
 			, create_timetag_(0)
 			, update_timetag_(0)
@@ -66,201 +77,246 @@ public:
 			, value_available_flag_(0) {}
 
 public:
+	/** 设置群组ID */
 	void SetTeamID(const std::string& id)
 	{
 		id_ = id;
 	}
 
+	/** 获取群组ID */
 	std::string GetTeamID() const
 	{
 		return id_;
 	}
 
+	/** 设置群组名字 */
 	void SetName(const std::string& name)
 	{
 		name_ = name;
 		value_available_flag_ |= kTeamInfoKeyName;
 	}
 
+	/** 获取群组名字 */
 	std::string GetName() const
 	{
 		return name_;
 	}
 
+	/** 设置群组类型 */
 	void SetType(nim::NIMTeamType type)
 	{
 		type_ = type;
 		value_available_flag_ |= kTeamInfoKeyType;
 	}
 
+	/** 获取群组类型 */
 	nim::NIMTeamType GetType() const
 	{
 		return type_;
 	}
 
+	/** 设置群组拥有者ID */
 	void SetOwnerID(const std::string& id)
 	{
 		owner_id_ = id;
 		value_available_flag_ |= kTeamInfoKeyOwnerID;
 	}
 
+	/** 获取群组拥有者ID */
 	std::string GetOwnerID() const
 	{
 		return owner_id_;
 	}
 
+	/** 设置群组等级 */
 	void SetLevel(int level)
 	{
 		level_ = level;
 		value_available_flag_ |= kTeamInfoKeyLevel;
 	}
 
+	/** 获取群组等级 */
 	int GetLevel() const
 	{
 		return level_;
 	}
 
+	/** 设置群组属性 */
 	void SetProperty(const std::string& prop)
 	{
 		property_ = prop;
 		value_available_flag_ |= kTeamInfoKeyProperty;
 	}
 
+	/** 获取群组属性 */
 	std::string GetProperty() const
 	{
 		return property_;
 	}
 
+	/** 设置群组有效性 */
 	void SetValid(bool valid)
 	{
 		valid_ = valid;
 	}
 
+	/** 获取群组有效性 */
 	bool IsValid() const
 	{
 		return valid_;
 	}
 
+	/** 设置群组成员数量 */
 	void SetMemberCount(int count)
 	{
 		member_count_ = count;
 	}
 
+	/** 获取群组成员数量 */
 	int GetMemberCount() const
 	{
 		return member_count_;
 	}
 
+	/** 设置群组成员档案时间戳(毫秒) */
 	void SetMemberListTimetag(__int64 timetag)
 	{
 		member_list_timetag_ = timetag;
 	}
 
+	/** 获取群组成员档案时间戳(毫秒) */
 	__int64 GetMemberListTimetag() const
 	{
 		return member_list_timetag_;
 	}
 
+	/** 设置群组创建时间戳(毫秒) */
 	void SetCreateTimetag(__int64 timetag)
 	{
 		create_timetag_ = timetag;
 	}
 
+	/** 获取群组创建时间戳(毫秒) */
 	__int64 GetCreateTimetag() const
 	{
 		return create_timetag_;
 	}
 
+	/** 设置群组更新时间戳(毫秒) */
 	void SetUpdateTimetag(__int64 timetag)
 	{
 		update_timetag_ = timetag;
 	}
 
+	/** 获取群组更新时间戳(毫秒) */
 	__int64 GetUpdateTimetag() const
 	{
 		return update_timetag_;
 	}
 
+	/** 设置群组成员有效性 */
 	void SetMemberValid(bool valid)
 	{
 		member_valid_ = valid;
 	}
 
+	/** 获取群组成员有效性 */
 	bool IsMemberValid() const
 	{
 		return member_valid_;
 	}
 
+	/** 设置群组简介 */
 	void SetIntro(const std::string& intro)
 	{
 		intro_ = intro;
 		value_available_flag_ |= kTeamInfoKeyIntro;
 	}
 
+	/** 获取群组简介 */
 	std::string GetIntro() const
 	{
 		return intro_;
 	}
 
+	/** 设置群组公告 */
 	void SetAnnouncement(const std::string& announcement)
 	{
 		announcement_ = announcement;
 		value_available_flag_ |= kTeamInfoKeyAnnouncement;
 	}
 
+	/** 获取群组公告 */
 	std::string GetAnnouncement() const
 	{
 		return announcement_;
 	}
 
+	/** 设置群组验证模式 */
 	void SetJoinMode(nim::NIMTeamJoinMode mode)
 	{
 		join_mode_ = mode;
 		value_available_flag_ |= kTeamInfoKeyJoinMode;
 	}
 
+	/** 获取群组验证模式 */
 	nim::NIMTeamJoinMode GetJoinMode() const
 	{
 		return join_mode_;
 	}
 
+	/** 设置群组配置项 */
 	void SetConfigBits(__int64 bit)
 	{
 		config_bits_ = bit;
 		value_available_flag_ |= kTeamInfoKeyConfigBits;
 	}
 
+	/** 获取群组配置项 */
 	__int64 GetConfigBits() const
 	{
 		return config_bits_;
 	}
 
+	/** 设置群组客户端扩展内容 */
 	void SetCustom(const std::string& custom)
 	{
 		custom_ = custom;
 		value_available_flag_ |= kTeamInfoKeyCustom;
 	}
 
+	/** 获取群组客户端扩展内容 */
 	std::string GetCustom() const
 	{
 		return custom_;
 	}
 
+	/** 设置群组服务器端扩展内容 */
 	void SetServerCustom(const std::string& custom)
 	{
 		server_custom_ = custom;
 	}
 
+	/** 获取群组服务器端扩展内容 */
 	std::string GetServerCustom() const
 	{
 		return server_custom_;
 	}
 
+	/** @fn bool ExistValue(TeamInfoKey value_key) const
+	  * @brief 群组信息数据标记Key对应的数据是否有效（存在，非初始值状态）
+	  * @param[in] value_key 群组信息数据标记Key
+	  * @return bool 有效性 
+	  */
 	bool ExistValue(TeamInfoKey value_key) const
 	{
 		return (value_available_flag_ & value_key) != 0;
 	}
 
+	/** @fn std::string ToJsonString() const
+	  * @brief 组装Json Value字符串
+	  * @return string Json Value字符串 
+      */
 	std::string ToJsonString() const
 	{
 		Json::Value json;
@@ -325,117 +381,146 @@ private:
 	unsigned int	value_available_flag_;
 };
 
+/** @struct 群成员信息数据标记Key,用以标记对应数据的有效性 */
 enum TeamMemberValueKey
 {
-	kTeamMemberPropertyKeyNone = 0,
-	kTeamMemberPropertyKeyUserType = 1,
-	kTeamMemberPropertyKeyNickName = 1 << 1,
-	kTeamMemberPropertyKeyBits = 1 << 2,
-	kTeamMemberPropertyKeyValid = 1 << 3,
-	kTeamMemberPropertyKeyAll = (1 << 4) - 1
+	kTeamMemberPropertyKeyNone = 0,				/**< 无数据 */
+	kTeamMemberPropertyKeyUserType = 1,			/**< 群成员类型 */
+	kTeamMemberPropertyKeyNickName = 1 << 1,	/**< 群成员昵称 */
+	kTeamMemberPropertyKeyBits = 1 << 2,		/**< 群成员配置项 */
+	kTeamMemberPropertyKeyValid = 1 << 3,		/**< 群成员有效性 */
+	kTeamMemberPropertyKeyAll = (1 << 4) - 1	/**< 有数据 */
 };
 
+/** @struct 群组成员信息 */
 struct TeamMemberProperty
 {
 public:
+	/** 构造函数，推荐使用 */
 	TeamMemberProperty(const std::string& team_id, const std::string& accid) : type_(kNIMTeamUserTypeNomal), valid_(false), bits_(0), create_timetag_(0), update_timetag_(0), value_available_flag_(0)
 	{
 		team_id_ = team_id;
 		account_id_ = accid;
 	}
 
+	/** 构造函数 */
 	TeamMemberProperty() : type_(kNIMTeamUserTypeNomal), valid_(false), bits_(0), create_timetag_(0), update_timetag_(0), value_available_flag_(0) {}
 
 public:
+	/** 设置群组ID */
 	void SetTeamID(const std::string& id)
 	{
 		team_id_ = id;
 	}
 
+	/** 获取群组ID */
 	std::string GetTeamID() const
 	{
 		return team_id_;
 	}
 
+	/** 设置群成员ID */
 	void SetAccountID(const std::string& id)
 	{
 		account_id_ = id;
 	}
 
+	/** 获取群成员ID */
 	std::string GetAccountID() const
 	{
 		return account_id_;
 	}
 
+	/** 设置群成员类型 */
 	void SetUserType(nim::NIMTeamUserType type)
 	{
 		type_ = type;
 		value_available_flag_ |= kTeamMemberPropertyKeyUserType;
 	}
 
+	/** 获取群成员类型 */
 	nim::NIMTeamUserType GetUserType() const
 	{
 		return type_;
 	}
 
+	/** 设置群成员昵称 */
 	void SetNick(const std::string& nick)
 	{
 		nick_ = nick;
 		value_available_flag_ |= kTeamMemberPropertyKeyNickName;
 	}
 
+	/** 获取群成员昵称 */
 	std::string GetNick() const
 	{
 		return nick_;
 	}
 
+	/** 设置群成员配置项 */
 	void SetBits(__int64 bit)
 	{
 		bits_ = bit;
 		value_available_flag_ |= kTeamMemberPropertyKeyBits;
 	}
 
+	/** 获取群成员配置项 */
 	__int64 GetBits() const
 	{
 		return bits_;
 	}
 
+	/** 设置群成员有效性 */
 	void SetValid_(bool valid)
 	{
 		valid_ = valid;
 		value_available_flag_ |= kTeamMemberPropertyKeyValid;
 	}
 
+	/** 获取群成员有效性 */
 	bool IsValid() const
 	{
 		return valid_;
 	}
 
+	/** 设置群成员创建时间戳(毫秒) */
 	void SetCreateTimetag(__int64 timetag)
 	{
 		create_timetag_ = timetag;
 	}
 
+	/** 获取群成员创建时间戳(毫秒) */
 	__int64 GetCreateTimetag() const
 	{
 		return create_timetag_;
 	}
 
+	/** 设置群成员更新时间戳(毫秒) */
 	void SetUpdateTimetag(__int64 timetag)
 	{
 		update_timetag_ = timetag;
 	}
 
+	/** 获取群成员更新时间戳(毫秒) */
 	__int64 GetUpdateTimetag() const
 	{
 		return update_timetag_;
 	}
 
+	/** @fn bool ExistValue(TeamMemberValueKey value_key) const
+	  * @brief 群成员信息信息数据标记Key对应的数据是否有效（存在，非初始值状态）
+	  * @param[in] value_key 群成员信息数据标记Key
+	  * @return bool 有效性 
+	  */
 	bool ExistValue(TeamMemberValueKey value_key) const
 	{
 		return (value_available_flag_ & value_key) != 0;
 	}
 
+	/** @fn std::string ToJsonString() const
+	  * @brief 组装Json Value字符串
+	  * @return string Json Value字符串 
+      */
 	std::string ToJsonString() const
 	{
 		Json::Value json;
@@ -472,23 +557,75 @@ private:
 	unsigned int	value_available_flag_;
 };
 
+/** @struct 群组事件通知 */
 struct TeamEvent
 {
-	NIMResCode res_code_;
-	NIMNotificationId notification_id_;
-	std::string team_id_;
-	std::list<std::string> ids_;
-	TeamInfo	team_info_;
+	NIMResCode res_code_;					/**< 错误码 */
+	NIMNotificationId notification_id_;		/**< 通知类型ID */
+	std::string team_id_;					/**< 群组ID */
+	std::list<std::string> ids_;			/**< 通知可能涉及到的群成员ID */
+	std::list<UserNameCard> namecards_;		/**< 通知可能涉及到的群成员的用户名片 */
+	TeamInfo	team_info_;					/**< 通知可能涉及到的群信息 */
 };
 
+/** @fn void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificationId notification_id, const std::string& team_event_json, TeamEvent& team_event)
+  * @brief 解析群组事件通知
+  * @param[in] rescode 错误码
+  * @param[in] team_id 群组ID
+  * @param[in] notification_id 通知类型ID
+  * @param[in] team_event_json 通知内容（Json Value数据）
+  * @param[out] team_event 群组事件通知
+  * @return void 
+  */
 void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificationId notification_id, const std::string& team_event_json, TeamEvent& team_event);
 
+/** @fn ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info)
+  * @brief 解析群组信息
+  * @param[in] team_info_json 群组信息（Json Value数据）
+  * @param[out] team_info 群组信息
+  * @return void 
+  */
 void ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info);
+
+/** @fn ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info)
+  * @brief 解析群组信息
+  * @param[in] team_info_json 群组信息（Json Value数据字符串）
+  * @param[out] team_info 群组信息
+  * @return bool 解析成功或失败 
+  */
 bool ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info);
+
+/** @fn const std::string& team_infos_json, bool include_invalid_team, std::list<TeamInfo>& team_infos
+  * @brief 解析群组信息
+  * @param[in] team_info_json 群组信息（Json Value数据字符串）
+  * @param[in] include_invalid_team 是否包含无效群组（已退群）
+  * @param[out] team_infos 群组信息
+  * @return bool 解析成功或失败 
+  */
 bool ParseTeamInfosJson(const std::string& team_infos_json, bool include_invalid_team, std::list<TeamInfo>& team_infos);
 
+/** @fn void ParseTeamMemberPropertyJson(const Json::Value& team_member_prop_json, TeamMemberProperty& team_member_property)
+  * @brief 解析群成员信息
+  * @param[in] team_member_prop_json 群成员信息（Json Value数据）
+  * @param[out] team_member_property 群成员信息
+  * @return void 
+  */
 void ParseTeamMemberPropertyJson(const Json::Value& team_member_prop_json, TeamMemberProperty& team_member_property);
+
+/** @fn bool ParseTeamMemberPropertyJson(const std::string& team_member_prop_json, TeamMemberProperty& team_member_property)
+  * @brief 解析群成员信息
+  * @param[in] team_member_prop_json 群成员信息（Json Value数据字符串）
+  * @param[out] team_member_property 群成员信息
+  * @return bool 解析成功或失败 
+  */
 bool ParseTeamMemberPropertyJson(const std::string& team_member_prop_json, TeamMemberProperty& team_member_property);
+
+/** @fn bool ParseTeamMemberPropertysJson(const std::string& team_member_props_json, std::list<TeamMemberProperty>& team_member_propertys)
+  * @brief 解析群成员信息
+  * @param[in] team_member_props_json 群成员信息（Json Value数据字符串）
+  * @param[out] team_member_propertys 群成员信息
+  * @return bool 解析成功或失败 
+  */
 bool ParseTeamMemberPropertysJson(const std::string& team_member_props_json, std::list<TeamMemberProperty>& team_member_propertys);
 }//namespace nim
 

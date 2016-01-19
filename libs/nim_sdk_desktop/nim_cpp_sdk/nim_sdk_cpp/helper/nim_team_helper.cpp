@@ -1,3 +1,10 @@
+/** @file nim_team_helper.cpp
+  * @brief Team 辅助方法和数据结构定义
+  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @author Oleg
+  * @date 2015/10/14
+  */
+
 #include "nim_team_helper.h"
 
 namespace nim
@@ -8,19 +15,24 @@ void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificati
 	team_event.res_code_ = (NIMResCode)rescode;
 	team_event.team_id_ = team_id;
 	team_event.notification_id_ = notification_id;
-	switch (notification_id)
+	Json::Reader reader;
+	Json::Value values;
+	if (reader.parse(team_event_json, values) && values.isObject())
 	{
-	case kNIMNotificationIdTeamInvite:
-	case kNIMNotificationIdTeamKick:
-	case kNIMNotificationIdTeamAddManager:
-	case kNIMNotificationIdTeamRemoveManager:
-	case kNIMNotificationIdLocalCreateTeam:
+		//操作者和被操作者用户名片
+		Json::Value name_cards = values[kNIMNotificationKeyData][kNIMNotificationKeyUserNameCards];
+		if (!name_cards.empty() && name_cards.isArray())
+			ParseNameCards(name_cards, team_event.namecards_);
+
+		switch (notification_id)
 		{
-			//ids
-			Json::Reader reader;
-			Json::Value values;
-			if (reader.parse(team_event_json, values) && values.isObject())
+		case kNIMNotificationIdTeamInvite:
+		case kNIMNotificationIdTeamKick:
+		case kNIMNotificationIdTeamAddManager:
+		case kNIMNotificationIdTeamRemoveManager:
+		case kNIMNotificationIdLocalCreateTeam:
 			{
+				//ids
 				Json::Value ids = values[kNIMNotificationKeyData][kNIMNotificationKeyDataIds];
 				int len = ids.size();
 				for (int i = 0; i < len; i++)
@@ -28,78 +40,58 @@ void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificati
 					team_event.ids_.push_back(ids[i].asString());
 				}
 			}
-		}
-		break;
-	case kNIMNotificationIdTeamLeave:
-	case kNIMNotificationIdTeamApplyPass:
-	case kNIMNotificationIdTeamInviteAccept:
-	case kNIMNotificationIdLocalRejectApply:
-	case kNIMNotificationIdLocalRejectInvite:
-		{
-			//id
-			Json::Reader reader;
-			Json::Value values;
-			if (reader.parse(team_event_json, values) && values.isObject())
+			break;
+		case kNIMNotificationIdTeamLeave:
+		case kNIMNotificationIdTeamApplyPass:
+		case kNIMNotificationIdTeamInviteAccept:
+		case kNIMNotificationIdLocalRejectApply:
+		case kNIMNotificationIdLocalRejectInvite:
 			{
+				//id
 				team_event.ids_.push_back(values[kNIMNotificationKeyData][kNIMNotificationKeyDataId].asString());
 			}
-		}
-		break;
-	case kNIMNotificationIdTeamUpdate:
-	case kNIMNotificationIdTeamSyncCreate:
-	case kNIMNotificationIdLocalGetTeamInfo:
-		{
-			//info
-			Json::Reader reader;
-			Json::Value values;
-			if (reader.parse(team_event_json, values) && values.isObject())
+			break;
+		case kNIMNotificationIdTeamUpdate:
+		case kNIMNotificationIdTeamSyncCreate:
+		case kNIMNotificationIdLocalGetTeamInfo:
 			{
+				//info
 				ParseTeamInfoJson(values[kNIMNotificationKeyData][kNIMNotificationKeyTeamInfo], team_event.team_info_);
 			}
-		}
-		break;
-	case kNIMNotificationIdTeamDismiss:
-	case kNIMNotificationIdLocalApplyTeam:
-	case kNIMNotificationIdLocalUpdateOtherNick:
-	case kNIMNotificationIdLocalGetTeamList:
-		{
-			//无
-			//无内容需要解析
-		}
-		break;
-	case kNIMNotificationIdTeamOwnerTransfer:
-		{
-			//id bool
-			//不解析是否离开群组，上层收到通知按需调用接口判断是否要离开
-			Json::Reader reader;
-			Json::Value values;
-			if (reader.parse(team_event_json, values) && values.isObject())
+			break;
+		case kNIMNotificationIdTeamDismiss:
+		case kNIMNotificationIdLocalApplyTeam:
+		case kNIMNotificationIdLocalUpdateOtherNick:
+		case kNIMNotificationIdLocalGetTeamList:
 			{
+				//无
+				//无内容需要解析
+			}
+			break;
+		case kNIMNotificationIdTeamOwnerTransfer:
+			{
+				//id bool
+				//不解析是否离开群组，上层收到通知按需调用接口判断是否要离开
 				team_event.ids_.push_back(values[kNIMNotificationKeyData][kNIMNotificationKeyDataId].asString());
 			}
-		}
-		break;
-	case kNIMNotificationIdTeamMemberChanged:
-		{
-			//team member property
-			//解析id，上层收到通知后调用接口拉取team member property
-			Json::Reader reader;
-			Json::Value values;
-			if (reader.parse(team_event_json, values) && values.isObject())
+			break;
+		case kNIMNotificationIdTeamMemberChanged:
 			{
+				//team member property
+				//解析id，上层收到通知后调用接口拉取team member property
 				team_event.ids_.push_back(values[kNIMNotificationKeyData][kNIMNotificationKeyTeamMember][kNIMTeamUserKeyAccID].asString());
 			}
+			break;
+		case kNIMNotificationIdTeamSyncUpdateTlist:
+		case kNIMNotificationIdLocalUpdateTlist:
+			{
+				//member
+				//不解析，上层收到通知按需调用接口拉取team_member_property
+			}
+			break;
+		default:
+			break;
 		}
-		break;
-	case kNIMNotificationIdTeamSyncUpdateTlist:
-	case kNIMNotificationIdLocalUpdateTlist:
-		{
-			//member
-			//不解析，上层收到通知按需调用接口拉取team_member_property
-		}
-		break;
-	default:
-		break;
 	}
 }
 

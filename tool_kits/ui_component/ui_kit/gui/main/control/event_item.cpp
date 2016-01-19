@@ -37,8 +37,6 @@ void TeamEventItem::InitCtrl()
 	btn_ok_->SetVisible(false);
 	btn_no_->SetVisible(false);
 	result_->SetVisible(false);
-
-	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(nbase::Bind(&TeamEventItem::OnTeamNameChange, this, std::placeholders::_1)));
 }
 
 bool TeamEventItem::InitInfo(const nim::SysMessage &json)
@@ -79,7 +77,7 @@ bool TeamEventItem::InitInfo(const nim::SysMessage &json)
 	else if (msg_type_ == nim::kNIMSysMsgTypeFriendAdd)
 	{
 		btn_head_->SetBkImage(UserService::GetInstance()->GetUserPhoto(acc_id_));
-		evt_team_->SetText(UserService::GetInstance()->GetUserName(acc_id_));
+		evt_team_->SetText(uname);
 
 		Json::Reader reader;
 		Json::Value attach;
@@ -198,6 +196,40 @@ void TeamEventItem::OnTeamEventCb(nim::NIMSysMsgStatus status)
 	else if (status == nim::kNIMSysMsgStatusInvalid)
 		result_->SetText(L"已失效");
 	result_->SetVisible(true);
+}
+
+void TeamEventItem::OnUserInfoChange(const nim::UserNameCard & info)
+{
+	if (info.GetAccId() == acc_id_)
+	{
+		std::wstring uname = UserService::GetInstance()->GetUserName(info.GetAccId());
+		switch (msg_type_)
+		{
+		case nim::kNIMSysMsgTypeTeamApply:
+		case nim::kNIMSysMsgTypeTeamInvite:
+		case nim::kNIMSysMsgTypeTeamReject:
+		case nim::kNIMSysMsgTypeTeamInviteReject:
+		{
+			std::wstring tip = evt_tip_->GetText();
+			evt_tip_->SetText(uname + tip.substr(tip.find_last_of(L' ')));
+			break;
+		}
+		case nim::kNIMSysMsgTypeFriendAdd:
+		{
+			btn_head_->SetBkImage(UserService::GetInstance()->GetUserPhoto(info.GetAccId()));
+			evt_team_->SetText(uname);
+			break;
+		}
+		default:
+			break;
+		}
+	}
+}
+
+void TeamEventItem::OnUserPhotoReady(const std::string & accid, const std::wstring & photo_path)
+{
+	if (accid == acc_id_ && msg_type_ == nim::kNIMSysMsgTypeFriendAdd)
+		btn_head_->SetBkImage(photo_path);
 }
 
 void TeamEventItem::TeamEventCb(__int64 msg_id, const nim::TeamEvent& team_event)

@@ -29,12 +29,6 @@ void VChatCallback::StartDeviceCb(nim::NIMDeviceType type, bool ret, const char 
 }
 void OnVideoCaptureData(uint64_t time, const std::string& data, unsigned int width, unsigned int height)
 {
-	static uint32_t num = 0;
-	num++;
-	if (num % 3 != 0)
-	{
-		return;
-	}
 	VideoManager::GetInstance()->OnVideoDataCb(true, data, width, height);
 }
 void VChatCallback::VideoCaptureData(unsigned __int64 time, const char* data, unsigned int size, unsigned int width, unsigned int height, const char *json, const void *user_data)

@@ -13,6 +13,9 @@ class CustomMsgBubble : public ui::ListContainerElement
 {
 public:
 	void InitControl(const nim::IMMessage &msg);
+	void OnUserInfoChange(const nim::UserNameCard &info);
+	void OnUserPhotoReady(const std::string& accid, const std::wstring& photo_path);
+	void OnTeamNameChange(const nim::TeamInfo& team_info);
 protected:
 	void InitInfo(const nim::IMMessage &msg);
 	void SetMsgText(const std::wstring &str);
@@ -24,7 +27,9 @@ private:
 	ui::Button*		head_;
 
 private:
-	AutoUnregister unregister_cb;
+	std::string		sender_id_;
+	std::string		receiver_id_;
+	nim::NIMSessionType session_type_;
 };
 
 }

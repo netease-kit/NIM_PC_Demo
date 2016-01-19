@@ -19,15 +19,11 @@ ProfileForm * ProfileForm::ShowProfileForm(UTF8String uid)
 			::DestroyWindow(form->m_hWnd); //关闭重新创建
 		form = new ProfileForm();
 		form->Create(NULL, L"", WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0L);
-		form->m_uinfo.SetAccId(uid);
 		
 		// 获取用户信息
-		OnGetUserInfoCallback cb = form->ToWeakCallback([form](const std::list<nim::UserNameCard> &uinfos) {
-			if (uinfos.empty()) return;
-			if (uinfos.cbegin()->GetAccId() == form->m_uinfo.GetAccId())
-				form->InitUserInfo(*uinfos.cbegin());
-		});
-		UserService::GetInstance()->GetUserInfoWithEffort(std::list<std::string>(1, uid), cb);
+		nim::UserNameCard info;
+		UserService::GetInstance()->GetUserInfo(uid, info);
+		form->InitUserInfo(info);
 	}
 	if (!::IsWindowVisible(form->m_hWnd))
 	{
@@ -43,15 +39,14 @@ ProfileForm::ProfileForm()
 	auto user_info_change_cb = nbase::Bind(&ProfileForm::OnUserInfoChange, this, std::placeholders::_1);
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(user_info_change_cb));
 
+	auto user_photo_ready_cb = nbase::Bind(&ProfileForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2);
+	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(user_photo_ready_cb));
+
 	auto misc_uinfo_change_cb = nbase::Bind(&ProfileForm::OnMiscUInfoChange, this, std::placeholders::_1);
 	unregister_cb.Add(UserService::GetInstance()->RegMiscUInfoChange(misc_uinfo_change_cb));
 
 	auto friend_list_change_cb = nbase::Bind(&ProfileForm::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2);
 	unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(friend_list_change_cb));
-
-	OnUserPhotoReadyCallback cb = ToWeakCallback([this](const std::string& accid, const std::wstring& photo_path) {
-		if (m_uinfo.GetAccId() == accid) head_image_btn->SetBkImage(photo_path); });
-	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(cb));
 }
 
 ProfileForm::~ProfileForm()
@@ -556,9 +551,9 @@ bool ProfileForm::OnBirthdayComboSelect(ui::EventArgs * args)
 	return true;
 }
 
-void ProfileForm::OnFriendListChange(FriendChangeType change_type, const nim::UserNameCard & info)
+void ProfileForm::OnFriendListChange(FriendChangeType change_type, const std::string& accid)
 {
-	if (info.GetAccId() == m_uinfo.GetAccId())
+	if (accid == m_uinfo.GetAccId())
 	{
 		if (change_type == kChangeTypeAdd)
 			user_type = nim::kNIMFriendFlagNormal;
@@ -587,6 +582,12 @@ void ProfileForm::OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos)
 			break;
 		}
 	}
+}
+
+void nim_comp::ProfileForm::OnUserPhotoReady(const std::string & account, const std::wstring & photo_path)
+{
+	if (m_uinfo.GetAccId() == account)
+		head_image_btn->SetBkImage(photo_path);
 }
 
 void nim_comp::ProfileForm::OnMiscUInfoChange(const std::list<nim::UserNameCard>& uinfos)

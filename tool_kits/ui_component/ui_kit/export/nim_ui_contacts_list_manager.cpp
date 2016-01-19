@@ -44,6 +44,10 @@ bool ContactsListManager::AttachGroupListBox(ui::TreeView *list_box)
 
 void ContactsListManager::InvokeGetAllUserInfo()
 {
+	ui::TreeNode* friend_list_root = friend_list_->GetFriendList()->GetRootNode();
+	for (std::size_t i = 2; i < friend_list_root->GetChildNodeCount(); i++)
+		friend_list_root->GetChildNode(i)->RemoveAllChildNode();
+
 	nim_comp::UserService::GetInstance()->InvokeGetAllUserInfo(nbase::Bind(&ContactsListManager::OnGetAllFriendInfo, this, std::placeholders::_1));
 }
 
@@ -69,8 +73,8 @@ void ContactsListManager::FillSearchResultList(ui::ListBox* search_result_list, 
 			{
 				nim_comp::FriendItem* search_res_friend_item = new nim_comp::FriendItem;
 				ui::GlobalManager::FillBoxWithCache(search_res_friend_item, L"main/friend_item.xml");
-				search_res_friend_item->Init(friend_item->GetIsTeam(), friend_item->GetUserInfo());
-				if (std::find(searched_ids.begin(), searched_ids.end(), friend_item->GetUserInfo().GetAccId()) == searched_ids.end())
+				search_res_friend_item->Init(friend_item->GetIsTeam(), friend_item->GetId());
+				if (std::find(searched_ids.begin(), searched_ids.end(), friend_item->GetId()) == searched_ids.end())
 				{
 					search_result_list->Add(search_res_friend_item);
 				}
@@ -87,8 +91,8 @@ void ContactsListManager::FillSearchResultList(ui::ListBox* search_result_list, 
 			{
 				nim_comp::FriendItem* search_res_friend_item = new nim_comp::FriendItem;
 				ui::GlobalManager::FillBoxWithCache(search_res_friend_item, L"main/friend_item.xml");
-				search_res_friend_item->Init(friend_item->GetIsTeam(), friend_item->GetUserInfo());
-				if (std::find(searched_ids.begin(), searched_ids.end(), friend_item->GetUserInfo().GetAccId()) == searched_ids.end())
+				search_res_friend_item->Init(friend_item->GetIsTeam(), friend_item->GetId());
+				if (std::find(searched_ids.begin(), searched_ids.end(), friend_item->GetId()) == searched_ids.end())
 				{
 					search_result_list->Add(search_res_friend_item);
 				}

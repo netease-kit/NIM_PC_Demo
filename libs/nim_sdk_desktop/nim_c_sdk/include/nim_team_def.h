@@ -94,24 +94,24 @@ typedef void (*nim_team_query_team_info_cb_func)(const char *tid, const char *re
 /** @name 群组信息 Json Keys
   * @{
   */
-static const char *kNIMTeamInfoKeyID			= "1";		/**< string,群id */	
-static const char *kNIMTeamInfoKeyName			= "3";		/**< string,群名称 */
-static const char *kNIMTeamInfoKeyType			= "4";		/**< int,群类型(NIMTeamType) */
-static const char *kNIMTeamInfoKeyCreator		= "5";		/**< string */
-static const char *kNIMTeamInfoKeyLevel			= "6";		/**< int,群等级 */
-static const char *kNIMTeamInfoKeyProperty		= "7";		/**< string,群性质,长度限制：6000字符 */
-static const char *kNIMTeamInfoKeyValidFlag		= "8";		/**< int,群有效性标记位,有效1,无效0 */
-static const char *kNIMTeamInfoKeyMemberCount	= "9";		/**< int,群成员数量 */
-static const char *kNIMTeamInfoKeyListTime		= "10";		/**< long,群列表时间戳(毫秒) */
-static const char *kNIMTeamInfoKeyCreateTime	= "11";		/**< long,群创建时间戳(毫秒) */
-static const char *kNIMTeamInfoKeyUpdateTime	= "12";		/**< long,群信息上次更新时间戳(毫秒) */
-static const char *kNIMTeamInfoKeyMemberValid	= "13";		/**< int,群有效性标记位,客户端用,有效1,无效0 */
-static const char *kNIMTeamInfoKeyIntro			= "14";		/**< string,群介绍,长度限制：255字符 */
-static const char *kNIMTeamInfoKeyAnnouncement	= "15";		/**< string,群公告,长度限制：5000字符 */
-static const char *kNIMTeamInfoKeyJoinMode		= "16";		/**< int,入群模式(NIMTeamJoinMode),默认为kNIMTeamJoinModeNoAuth(0),不需要验证 */
-static const char *kNIMTeamInfoKeyBits			= "17";		/**< long，群开关(NIMTeamBitsConfigMask) */
-static const char *kNIMTeamInfoKeyCustom		= "18";		/**< string, 第三方扩展字段（仅负责存储和透传） */
-static const char *kNIMTeamInfoKeyServerCustom	= "19";		/**< string, 第三方服务器扩展字段（该配置项只能通过服务器接口设置，对客户端只读） */
+static const char *kNIMTeamInfoKeyID			= "tid";			/**< string,群id */	
+static const char *kNIMTeamInfoKeyName			= "name";			/**< string,群名称 */
+static const char *kNIMTeamInfoKeyType			= "type";			/**< int,群类型(NIMTeamType) */
+static const char *kNIMTeamInfoKeyCreator		= "creator";		/**< string */
+static const char *kNIMTeamInfoKeyLevel			= "level";			/**< int,群等级 */
+static const char *kNIMTeamInfoKeyProperty		= "prop";			/**< string,群性质,长度限制：6000字符 */
+static const char *kNIMTeamInfoKeyValidFlag		= "valid";			/**< int,群有效性标记位,有效1,无效0 */
+static const char *kNIMTeamInfoKeyMemberCount	= "member_count";	/**< int,群成员数量 */
+static const char *kNIMTeamInfoKeyListTime		= "list_timetag";	/**< long,群列表时间戳(毫秒) */
+static const char *kNIMTeamInfoKeyCreateTime	= "create_timetag";	/**< long,群创建时间戳(毫秒) */
+static const char *kNIMTeamInfoKeyUpdateTime	= "update_timetag";	/**< long,群信息上次更新时间戳(毫秒) */
+static const char *kNIMTeamInfoKeyMemberValid	= "member_valid";	/**< int,群有效性标记位,客户端用,有效1,无效0 */
+static const char *kNIMTeamInfoKeyIntro			= "intro";			/**< string,群介绍,长度限制：255字符 */
+static const char *kNIMTeamInfoKeyAnnouncement	= "announcement";	/**< string,群公告,长度限制：5000字符 */
+static const char *kNIMTeamInfoKeyJoinMode		= "join_mode";		/**< int,入群模式(NIMTeamJoinMode),默认为kNIMTeamJoinModeNoAuth(0),不需要验证 */
+static const char *kNIMTeamInfoKeyBits			= "bits";			/**< long，群开关(NIMTeamBitsConfigMask) */
+static const char *kNIMTeamInfoKeyCustom		= "custom";			/**< string, 第三方扩展字段（仅负责存储和透传） */
+static const char *kNIMTeamInfoKeyServerCustom	= "server_custom";	/**< string, 第三方服务器扩展字段（该配置项只能通过服务器接口设置，对客户端只读） */
 /** @}*/ //群组信息Json Keys
 
 /** @enum NIMTeamBitsConfigMask 群组信息Bits属性kNIMTeamInfoKeyBits的配置定义 */
@@ -130,14 +130,14 @@ enum NIMTeamType
 /** @name 群组成员信息 Json Keys
   * @{
   */
-static const char *kNIMTeamUserKeyID			= "1";		/**< string,群id */
-static const char *kNIMTeamUserKeyAccID			= "3";		/**< string,群成员id */
-static const char *kNIMTeamUserKeyType			= "4";		/**< int,群成员类型(NIMTeamUserType),默认kNIMTeamUserTypeNomal(0) */
-static const char *kNIMTeamUserKeyNick			= "5";		/**< string,群成员昵称 */
-static const char *kNIMTeamUserKeyBits			= "7";		/**< long,群成员属性开关 */
-static const char *kNIMTeamUserKeyValidFlag		= "9";		/**< int,群成员有效性标记位,有效1,无效0 */
-static const char *kNIMTeamUserKeyCreateTime	= "10";		/**< long,入群时间戳(毫秒) */
-static const char *kNIMTeamUserKeyUpdateTime	= "11";		/**< long,群成员信息上次更新时间戳(毫秒) */
+static const char *kNIMTeamUserKeyID			= "tid";			/**< string,群id */
+static const char *kNIMTeamUserKeyAccID			= "accid";			/**< string,群成员id */
+static const char *kNIMTeamUserKeyType			= "type";			/**< int,群成员类型(NIMTeamUserType),默认kNIMTeamUserTypeNomal(0) */
+static const char *kNIMTeamUserKeyNick			= "nick";			/**< string,群成员昵称 */
+static const char *kNIMTeamUserKeyBits			= "bits";			/**< long,群成员属性开关 */
+static const char *kNIMTeamUserKeyValidFlag		= "valid";			/**< int,群成员有效性标记位,有效1,无效0 */
+static const char *kNIMTeamUserKeyCreateTime	= "create_timetag";	/**< long,入群时间戳(毫秒) */
+static const char *kNIMTeamUserKeyUpdateTime	= "update_timetag";	/**< long,群成员信息上次更新时间戳(毫秒) */
 /** @}*/ //群组成员信息Json Keys
 
 /** @enum NIMTeamUserType 群成员类型 */

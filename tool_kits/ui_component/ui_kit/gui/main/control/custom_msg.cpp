@@ -26,33 +26,22 @@ void CustomMsgBubble::InitControl(const nim::IMMessage &msg)
 
 void CustomMsgBubble::InitInfo(const nim::IMMessage &msg)
 {
-	OnGetUserInfoCallback cb1 = ToWeakCallback([this, msg](const std::list<nim::UserNameCard> uinfos) {
-		assert(nbase::MessageLoop::current()->ToUIMessageLoop());
-		if (uinfos.empty()) return;
+	sender_id_ = msg.sender_accid_;
+	session_type_ = msg.session_type_;
+	receiver_id_ = msg.receiver_accid_;
 
-		std::string accid = uinfos.cbegin()->GetAccId();
-		std::wstring sender = UserService::GetInstance()->GetUserName(accid);
-		if (sender.empty())
-			sender = nbase::UTF8ToUTF16(accid);
-		if (msg.session_type_ == nim::kNIMSessionTypeP2P)
-		{
-			head_->SetBkImage(UserService::GetInstance()->GetUserPhoto(accid));
-			name_->SetText(sender);
-		}
-		else
-		{
-			head_->SetBkImage(TeamService::GetInstance()->GetTeamPhoto(true));
-			std::wstring team_sender = TeamService::GetInstance()->GetTeamName(msg.receiver_accid_) + L"->" + sender;
-			name_->SetText(team_sender);
-		}
-	});
-	UserService::GetInstance()->GetUserInfoWithEffort(std::list<std::string>(1, msg.sender_accid_), cb1);
-
-	OnUserPhotoReadyCallback cb2 = ToWeakCallback([this, msg](const std::string& accid, const std::wstring& photo_path) {
-		if (msg.session_type_ == nim::kNIMSessionTypeP2P && msg.sender_accid_ == accid)
-			head_->SetBkImage(photo_path);
-	});
-	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(cb2));
+	std::wstring sender = UserService::GetInstance()->GetUserName(sender_id_);
+	if (session_type_ == nim::kNIMSessionTypeP2P)
+	{
+		head_->SetBkImage(UserService::GetInstance()->GetUserPhoto(sender_id_));
+		name_->SetText(sender);
+	}
+	else
+	{
+		head_->SetBkImage(TeamService::GetInstance()->GetTeamPhoto(true));
+		std::wstring team_sender = TeamService::GetInstance()->GetTeamName(receiver_id_) + L"->" + sender;
+		name_->SetText(team_sender);
+	}
 
 	std::wstring tm = GetMessageTime(msg.timetag_, false);
 	time_->SetText(tm);
@@ -108,6 +97,43 @@ void CustomMsgBubble::SetMsgText(const std::wstring &str)
 	ui::CSize sz = text_->GetNaturalSize(width, 0);
 	text_->SetFixedWidth(sz.cx);
 	text_->SetFixedHeight(sz.cy);
+}
+
+void CustomMsgBubble::OnUserInfoChange(const nim::UserNameCard & info)
+{
+	if (info.GetAccId() == sender_id_)
+	{
+		std::wstring sender = UserService::GetInstance()->GetUserName(info.GetAccId());
+		if (session_type_ == nim::kNIMSessionTypeP2P)
+		{
+			name_->SetText(sender);
+			head_->SetBkImage(UserService::GetInstance()->GetUserPhoto(info.GetAccId()));
+		}
+		else
+		{
+			std::wstring team_sender = name_->GetText();
+			size_t pos = team_sender.find(L"->");
+			if (pos != std::wstring::npos)
+				name_->SetText(team_sender.substr(0, pos + 2) + sender);
+		}
+	}
+}
+
+void CustomMsgBubble::OnUserPhotoReady(const std::string & accid, const std::wstring & photo_path)
+{
+	if (accid == sender_id_ && session_type_ == nim::kNIMSessionTypeP2P)
+		head_->SetBkImage(photo_path);
+}
+
+void CustomMsgBubble::OnTeamNameChange(const nim::TeamInfo & team_info)
+{
+	if (team_info.GetTeamID() == receiver_id_ && session_type_ == nim::kNIMSessionTypeTeam)
+	{
+		std::wstring team_sender = name_->GetText();
+		size_t pos = team_sender.find(L"->");
+		if (pos != std::wstring::npos)
+			name_->SetText(nbase::UTF8ToUTF16(team_info.GetName()) + team_sender.substr(pos));
+	}
 }
 
 }

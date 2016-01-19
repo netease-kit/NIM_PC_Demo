@@ -89,89 +89,58 @@ bool StringToJson( const std::string &str, Json::Value &json )
 
 void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account, const std::string& to_account, std::wstring &show_text, const std::string& session_id)
 {
+	show_text.clear();
+
 	Json::Value json;
 	if (StringToJson(msg_attach, json))
 	{
 		nim::NIMNotificationId id = (nim::NIMNotificationId)json[nim::kNIMNotificationKeyId].asInt();
-		std::wstring who = LoginManager::GetInstance()->IsEqual(from_account) ? L"你" : UserService::GetInstance()->GetUserName(from_account);
+
 		std::wstring team_type = TeamService::GetInstance()->GetTeamType(session_id) == 0 ? L"讨论组" : L"群";
+		SessionForm* session_wnd = dynamic_cast<SessionForm*>(WindowsManager::GetInstance()->GetWindow(SessionForm::kClassName, nbase::UTF8ToUTF16(session_id)));
 
-		std::vector<std::string> ids;
-		Json::Value array;
-
-		if (id == nim::kNIMNotificationIdTeamInvite)
+		std::wstring from_name;
+		if (LoginManager::GetInstance()->IsEqual(from_account))
+			from_name = L"你";
+		else
 		{
-			array = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationKeyDataIds];
+			if (session_wnd)
+				from_name = nbase::UTF8ToUTF16(session_wnd->GetTeamMemberInfo(from_account).GetNick());
+			if (from_name.empty())
+				from_name = UserService::GetInstance()->GetUserName(from_account);
 		}
-		else if (id == nim::kNIMNotificationIdTeamApplyPass)
+		
+		std::string obj_account = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationKeyDataId].asString();
+		std::wstring obj_name;
+		if (obj_account.empty())
+			obj_name = L"";
+		else if (LoginManager::GetInstance()->IsEqual(obj_account))
+			obj_name = L"你";
+		else
 		{
-			std::string uid = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationKeyDataId].asString();
-			std::wstring name;
-			if (LoginManager::GetInstance()->IsEqual(uid))
-			{
-				name = L"你";
-			}
-			else
-			{
-				std::string team_nick;
-				SessionForm* session_wnd = dynamic_cast<SessionForm*>(WindowsManager::GetInstance()->GetWindow(SessionForm::kClassName, nbase::UTF8ToUTF16(to_account)));
-				if(session_wnd)
-					team_nick = session_wnd->GetTeamMemberInfo(uid).GetNick();
-				name = team_nick.empty() ? UserService::GetInstance()->GetUserName(uid) : name = nbase::UTF8ToUTF16(team_nick);
-			}
-			show_text = nbase::StringPrintf(L"%s 通过了 %s 的入群申请", who.c_str(), name.c_str());
+			if (session_wnd)
+				obj_name = nbase::UTF8ToUTF16(session_wnd->GetTeamMemberInfo(obj_account).GetNick());
+			if(obj_name.empty())
+				obj_name = UserService::GetInstance()->GetUserName(obj_account);
+		}
 
-			if(from_account == uid) //此群允许任何人加入，有用户通过搜索高级群加入该群，这种情况下from_account等于uid，用户直接入群。
-				show_text = nbase::StringPrintf(L"欢迎 %s 进入群聊", name.c_str());
+		if (id == nim::kNIMNotificationIdTeamApplyPass)
+		{
+			if(from_account == obj_account) //此群允许任何人加入，有用户通过搜索高级群加入该群，这种情况下from_account等于uid，用户直接入群。
+				show_text = nbase::StringPrintf(L"欢迎 %s 进入群聊", obj_name.c_str());
+			else
+				show_text = nbase::StringPrintf(L"%s 通过了 %s 的入群申请", from_name.c_str(), obj_name.c_str());
 		}
 		else if (id == nim::kNIMNotificationIdTeamInviteAccept)
 		{
-			std::string uid = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationKeyDataId].asString();
-			std::wstring name;
-			if (LoginManager::GetInstance()->IsEqual(uid))
-			{
-				name = L"你";
-			}
-			else
-			{
-				std::string team_nick;
-				SessionForm* session_wnd = dynamic_cast<SessionForm*>(WindowsManager::GetInstance()->GetWindow(SessionForm::kClassName, nbase::UTF8ToUTF16(to_account)));
-				if(session_wnd)
-					team_nick = session_wnd->GetTeamMemberInfo(uid).GetNick();
-				name = team_nick.empty() ? UserService::GetInstance()->GetUserName(uid) : name = nbase::UTF8ToUTF16(team_nick);				
-			}
-			show_text = nbase::StringPrintf(L"%s 接受了 %s 的入群邀请", who.c_str(), name.c_str());
-		}
-		else if (id == nim::kNIMNotificationIdTeamKick)
-		{
-			array = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationKeyDataIds];
+			show_text = nbase::StringPrintf(L"%s 接受了 %s 的入群邀请", from_name.c_str(), obj_name.c_str());
 		}
 		else if (id == nim::kNIMNotificationIdTeamLeave)
 		{
-			std::wstring name;
-			if (LoginManager::GetInstance()->IsEqual(from_account))
-			{
-				name = L"你";
-			}
-			else
-			{
-				std::string team_nick;
-				SessionForm* session_wnd = dynamic_cast<SessionForm*>(WindowsManager::GetInstance()->GetWindow(SessionForm::kClassName, nbase::UTF8ToUTF16(to_account)));
-				if(session_wnd)
-					team_nick = session_wnd->GetTeamMemberInfo(from_account).GetNick();
-				name = team_nick.empty() ? UserService::GetInstance()->GetUserName(from_account) : name = nbase::UTF8ToUTF16(team_nick);
-			}
-
-			show_text = nbase::StringPrintf(L"%s 离开了%s", name.c_str(), team_type.c_str());
+			show_text = nbase::StringPrintf(L"%s 离开了%s", from_name.c_str(), team_type.c_str());
 		}
 		else if (id == nim::kNIMNotificationIdTeamUpdate)
 		{
-			std::string team_nick;
-			SessionForm* session_wnd = dynamic_cast<SessionForm*>(WindowsManager::GetInstance()->GetWindow(SessionForm::kClassName, nbase::UTF8ToUTF16(to_account)));
-			if (session_wnd)
-				team_nick = session_wnd->GetTeamMemberInfo(from_account).GetNick();
-			std::wstring name = team_nick.empty() ? UserService::GetInstance()->GetUserName(from_account) : nbase::UTF8ToUTF16(team_nick);
-
 			Json::Value tinfo_json = json[nim::kNIMNotificationKeyData]["tinfo"];
 			if(tinfo_json.isMember(nim::kNIMTeamInfoKeyName))
 			{
@@ -180,7 +149,7 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 			}	
 			else if (tinfo_json.isMember(nim::kNIMTeamInfoKeyAnnouncement))
 			{
-				show_text = nbase::StringPrintf(L"%s 更新了群公告", name.c_str());
+				show_text = nbase::StringPrintf(L"%s 更新了群公告", from_name.c_str());
 			}
 			else if (tinfo_json.isMember(nim::kNIMTeamInfoKeyJoinMode))
 			{
@@ -198,40 +167,20 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 			}
 			else if (tinfo_json.isMember(nim::kNIMTeamInfoKeyIntro))
 			{
-				show_text = nbase::StringPrintf(L"%s 更新了群介绍", name.c_str());
+				show_text = nbase::StringPrintf(L"%s 更新了群介绍", from_name.c_str());
 			}
 			else
 			{
-				show_text = nbase::StringPrintf(L"%s 更新了%s信息", name.c_str(), team_type.c_str());
+				show_text = nbase::StringPrintf(L"%s 更新了%s信息", from_name.c_str(), team_type.c_str());
 			}
 		}
 		else if (id == nim::kNIMNotificationIdTeamDismiss)
 		{
-			show_text = L"已被解散";
+			show_text = L"群已被解散";
 		}
 		else if (id == nim::kNIMNotificationIdTeamOwnerTransfer)
 		{
-			std::string to = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationKeyDataId].asString();
-			std::wstring name;
-			if (LoginManager::GetInstance()->IsEqual(to)) {
-				name = L"你";
-			}
-			else {
-				std::string team_nick;
-				SessionForm* session_wnd = dynamic_cast<SessionForm*>(WindowsManager::GetInstance()->GetWindow(SessionForm::kClassName, nbase::UTF8ToUTF16(to_account)));
-				if(session_wnd)
-					team_nick = session_wnd->GetTeamMemberInfo(to).GetNick();
-				name = team_nick.empty() ? UserService::GetInstance()->GetUserName(to) : nbase::UTF8ToUTF16(team_nick);
-			}
-			show_text = nbase::StringPrintf(L"%s 将群转让给 %s", who.c_str(), name.c_str());
-		}
-		else if (id == nim::kNIMNotificationIdTeamAddManager)
-		{
-			array = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationKeyDataIds];
-		}
-		else if (id == nim::kNIMNotificationIdTeamRemoveManager)
-		{
-			array = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationKeyDataIds];
+			show_text = nbase::StringPrintf(L"%s 将群转让给 %s", from_name.c_str(), obj_name.c_str());
 		}
 		else if (id == nim::kNIMNotificationIdNetcallBill || \
 			id == nim::kNIMNotificationIdNetcallMiss || \
@@ -295,54 +244,56 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 			}
 
 		}
-
-		if( !array.empty() && array.isArray() )
+		else 
 		{
-			int len = array.size();
-			for(int i = 0; i < len; i++)
+			Json::Value array = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationKeyDataIds];
+			if (!array.empty() && array.isArray())
 			{
-				ids.push_back( array[i].asString() );
-			}
-			if( !ids.empty() )
-			{
-				std::wstring obj;
-				int n = ids.size();
-				int i = 0;
-				for(; i < n && i < 3; i++)
+				int len = array.size();
+				std::vector<std::string> ids;
+				for (int i = 0; i < len; i++)
 				{
-					if( !obj.empty() )
-						obj.append(L"，");
-
-					std::wstring show_name;
-					if (LoginManager::GetInstance()->IsEqual(ids[i]))
-						show_name = L"你";
-					else
+					ids.push_back(array[i].asString());
+				}
+				if (!ids.empty())
+				{
+					std::wstring obj;
+					int n = ids.size();
+					int i = 0;
+					for (; i < n && i < 3; i++)
 					{
-						std::string team_nick;
-						SessionForm* session_wnd = dynamic_cast<SessionForm*>(WindowsManager::GetInstance()->GetWindow(SessionForm::kClassName, nbase::UTF8ToUTF16(to_account)));
-						if (session_wnd)
-							team_nick = session_wnd->GetTeamMemberInfo(ids[i]).GetNick();
-						show_name = team_nick.empty() ? UserService::GetInstance()->GetUserName(ids[i]) : nbase::UTF8ToUTF16(team_nick);
-					}
-					obj.append(show_name);
-				}
-				if(i < n-1)
-				{
-					obj.append( nbase::StringPrintf(L"等%d人", n) );
-				}
+						if (!obj.empty())
+							obj.append(L"，");
 
-				std::wstring ttype = TeamService::GetInstance()->GetTeamType(session_id) == 0 ? L"讨论组" : L"群聊";
-				if (id == nim::kNIMNotificationIdTeamInvite)
-					show_text = nbase::StringPrintf(L"%s 邀请 %s 加入了%s", who.c_str(), obj.c_str(), ttype.c_str());
-				else if (id == nim::kNIMNotificationIdTeamKick)
-					show_text = nbase::StringPrintf(L"%s 已被移出%s", obj.c_str(), ttype.c_str());
-				else if (id == nim::kNIMNotificationIdTeamAddManager)
-					show_text = nbase::StringPrintf(L"%s 被任命为管理员", obj.c_str());
-				else if (id == nim::kNIMNotificationIdTeamRemoveManager)
-					show_text = nbase::StringPrintf(L"%s 被取消管理员资格", obj.c_str());
+						std::wstring show_name;
+						if (LoginManager::GetInstance()->IsEqual(ids[i]))
+							show_name = L"你";
+						else
+						{
+							std::string team_nick;
+							if (session_wnd)
+								team_nick = session_wnd->GetTeamMemberInfo(ids[i]).GetNick();
+							show_name = team_nick.empty() ? UserService::GetInstance()->GetUserName(ids[i]) : nbase::UTF8ToUTF16(team_nick);
+						}
+						obj.append(show_name);
+					}
+					if (i < n - 1)
+					{
+						obj.append(nbase::StringPrintf(L"等%d人", n));
+					}
+
+					std::wstring ttype = TeamService::GetInstance()->GetTeamType(session_id) == 0 ? L"讨论组" : L"群聊";
+					if (id == nim::kNIMNotificationIdTeamInvite)
+						show_text = nbase::StringPrintf(L"%s 邀请 %s 加入了%s", from_name.c_str(), obj.c_str(), ttype.c_str());
+					else if (id == nim::kNIMNotificationIdTeamKick)
+						show_text = nbase::StringPrintf(L"%s 已被移出%s", obj.c_str(), ttype.c_str());
+					else if (id == nim::kNIMNotificationIdTeamAddManager)
+						show_text = nbase::StringPrintf(L"%s 被任命为管理员", obj.c_str());
+					else if (id == nim::kNIMNotificationIdTeamRemoveManager)
+						show_text = nbase::StringPrintf(L"%s 被取消管理员资格", obj.c_str());
+				}
 			}
 		}
-
 	}
 	if( show_text.empty() )
 		show_text = L"[通知消息]";

@@ -32,6 +32,8 @@ SessionList::SessionList(ui::ListBox* session_list)
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(cb1));
 	OnUserPhotoReadyCallback cb2 = nbase::Bind(&SessionList::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2);
 	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(cb2));
+	auto cb3 = nbase::Bind(&SessionList::OnTeamNameChange, this, std::placeholders::_1);
+	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(cb3));
 }
 
 SessionList::~SessionList()
@@ -60,7 +62,7 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data)
 	int index = AdjustMsg(item_data);
 	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(nbase::UTF8ToUTF16(item_data.id_)));
 	if(item && (session_list_->GetItemIndex(item) == index - 1 || session_list_->GetItemIndex(item) == index))
-		item->UpdateMsg(item_data); //应该插入自己紧靠前面或后面的位置，就不用删除，直接更新。
+		item->InitMsg(item_data); //应该插入自己紧靠前面或后面的位置，就不用删除，直接更新。
 	else
 	{
 		if(item)
@@ -73,7 +75,8 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data)
 		else
 			session_list_->Add(item);
 
-		item->Init(item_data);
+		item->InitCtrl();
+		item->InitMsg(item_data);
 		item->AttachAllEvents(nbase::Bind(&SessionList::OnItemNotify, this, std::placeholders::_1));
 	}
 	
@@ -151,7 +154,14 @@ void SessionList::UpdateSessionInfo(const nim::UserNameCard& user_info)
 {
 	SessionItem* session_item = (SessionItem*)session_list_->FindSubControl(nbase::UTF8ToUTF16(user_info.GetAccId()));
 	if (session_item != NULL)
-		session_item->UpdateInfoEx();
+		session_item->InitUserProfile();
+
+	for (int i = 0; i < session_list_->GetCount(); i++)
+	{
+		SessionItem* session_item = (SessionItem*)session_list_->GetItemAt(i);
+		if (session_item && session_item->GetIsTeam())
+			session_item->UpdateMsgContent(user_info.GetAccId()); //群通知消息内容中可能含有用户名
+	}
 }
 
 void SessionList::DeleteSessionItem(SessionItem* item)
@@ -299,8 +309,15 @@ void SessionList::OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos)
 void SessionList::OnUserPhotoReady(const std::string& accid, const std::wstring &photo_path)
 {
 	SessionItem* item = (SessionItem*)session_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
-	if (item != NULL)
+	if (item)
 		item->FindSubControl(L"head_image")->SetBkImage(photo_path);
+}
+
+void SessionList::OnTeamNameChange(const nim::TeamInfo& team_info)
+{
+	SessionItem* item = (SessionItem*)session_list_->FindSubControl(nbase::UTF8ToUTF16(team_info.GetTeamID()));
+	if (item)
+		((Label*)item->FindSubControl(L"label_name"))->SetUTF8Text(team_info.GetName());
 }
 
 bool SessionList::OnEventsClick(ui::EventArgs* param)

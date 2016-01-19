@@ -90,10 +90,7 @@ void GroupList::AddListItemInGroup(const nim::TeamInfo& all_info, ui::TreeNode* 
 
 	FriendItem* item = new FriendItem;
 	ui::GlobalManager::FillBoxWithCache( item, L"main/friend_item.xml" );
-	nim::UserNameCard user_info;
-	user_info.SetAccId(all_info.GetTeamID());
-	user_info.SetName(all_info.GetName());
-	item->Init(true, user_info);
+	item->Init(true, all_info.GetTeamID());
 	FriendItem* container_element = item;
 	std::size_t index = 0;
 	for (index = 0; index < tree_node->GetChildNodeCount(); index++)
@@ -116,7 +113,7 @@ void GroupList::AddListItemInGroup(const nim::TeamInfo& all_info, ui::TreeNode* 
 	{
 		tree_node->AddChildNodeAt(container_element, index);
 	}
-	SessionManager::GetInstance()->QueryMyTList(user_info.GetAccId());
+	SessionManager::GetInstance()->QueryMyTList(all_info.GetTeamID());
 }
 
 void GroupList::OnAddTeam(const std::string& tid, const std::string& tname, nim::NIMTeamType type)

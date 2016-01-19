@@ -285,6 +285,10 @@ void TeamService::QueryAllTeamInfoCb(int team_count, const std::list<nim::TeamIn
 
 void TeamService::GetTeamInfo(const std::string& tid)
 {
+	if (on_query_tids_.find(tid) != on_query_tids_.cend())
+		return;
+	on_query_tids_.insert(tid);
+
 	nim::Team::QueryTeamInfoOnlineAsync(tid, nbase::Bind(&TeamService::GetTeamInfoCb, this, std::placeholders::_1));
 }
 
@@ -300,6 +304,8 @@ void TeamService::UIGetLocalTeamInfoCb(const std::string& tid, const nim::TeamIn
 	}
 
 	tid_type_pair_[tid] = result.GetType();
+
+	on_query_tids_.erase(tid); //已经查到，从post_tids_中删除
 }
 
 void TeamService::GetLocalTeamInfoCb(const std::string& tid, const nim::TeamInfo& result)

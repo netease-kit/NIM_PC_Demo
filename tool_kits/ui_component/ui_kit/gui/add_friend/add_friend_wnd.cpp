@@ -96,6 +96,8 @@ void AddFriendWindow::InitWindow()
 
 	//userinfo_page
 	VBox* userinfo_page = static_cast<VBox*>(FindControl(_T("userinfo_page")));
+	headimage_ = (Button*)userinfo_page->FindSubControl(L"headimage");
+	nick_name_ = (Label*)userinfo_page->FindSubControl(L"nick_name");
 	Button* userinfo_page_pre_step = (Button*)userinfo_page->FindSubControl(L"pre_step");
 	userinfo_page_pre_step->AttachClick(nbase::Bind(&AddFriendWindow::PreOrNextClick, this, std::placeholders::_1, g_ADDFRIEND_SEARCH_PAGE, SendApplyEdit)); 
 	addfriend_or_chat_ = (TabBox*)userinfo_page->FindSubControl(L"addfriend_or_chat");
@@ -151,15 +153,10 @@ void AddFriendWindow::InitWindow()
 	Button* net_abnormal_page_ok = (Button*)net_abnormal_page->FindSubControl(L"ok");
 	net_abnormal_page_ok->AttachClick(nbase::Bind(&AddFriendWindow::PreOrNextClick, this, std::placeholders::_1, L"", NONE));
 
-	OnUserPhotoReadyCallback cb = ToWeakCallback([this](const std::string& accid, const std::wstring& photo_path) {
-		if (tablayout_->GetCurSel() == 1 && id_ == accid)
-		{
-			VBox* userinfo_page = static_cast<VBox*>(FindControl(_T("userinfo_page")));
-			Button* headimage = (Button*)userinfo_page->FindSubControl(L"headimage");
-			headimage->SetBkImage(photo_path);
-		}
-	});
-	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(cb));
+	auto user_info_change_cb = nbase::Bind(&AddFriendWindow::OnUserInfoChange, this, std::placeholders::_1);
+	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(user_info_change_cb));
+	auto user_photo_ready_cb = nbase::Bind(&AddFriendWindow::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2);
+	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(user_photo_ready_cb));
 }
 
 bool AddFriendWindow::Search(ui::EventArgs* param)
@@ -169,7 +166,7 @@ bool AddFriendWindow::Search(ui::EventArgs* param)
 	if (key.empty())
 		return false;
 
-	OnGetUserInfoCallback cb = ToWeakCallback([this](const std::list<nim::UserNameCard> uinfos) {
+	nim::User::GetUserNameCardCallback cb = ToWeakCallback([this](const std::list<nim::UserNameCard> uinfos) {
 		assert(nbase::MessageLoop::current()->ToUIMessageLoop());
 			if (!uinfos.empty())
 				InitUserProfile(*uinfos.cbegin());
@@ -178,7 +175,7 @@ bool AddFriendWindow::Search(ui::EventArgs* param)
 
 		SetFocus(nullptr);
 	});
-	UserService::GetInstance()->GetUserInfoWithEffort(std::list<std::string>(1, key), cb);
+	nim::User::GetUserNameCardOnline(std::list<std::string>(1, key), cb); //直接从服务器搜索
 
 	return true;
 }
@@ -249,6 +246,30 @@ bool AddFriendWindow::OnSearchKeyEditSetFocus(void* param)
 	return true;
 }
 
+void nim_comp::AddFriendWindow::OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos)
+{
+	for (const auto &info : uinfos)
+	{
+		if (info.GetAccId() == id_)
+		{
+			if (info.ExistValue(nim::kUserNameCardKeyName))
+				nick_name_->SetText(UserService::GetInstance()->GetUserName(info.GetAccId(), false));
+			if (info.ExistValue(nim::kUserNameCardKeyIconUrl))
+				headimage_->SetBkImage(UserService::GetInstance()->GetUserPhoto(info.GetAccId()));
+
+			return;
+		}
+	}
+}
+
+void nim_comp::AddFriendWindow::OnUserPhotoReady(const std::string & account, const std::wstring & photo_path)
+{
+	if (id_ == account)
+	{
+		headimage_->SetBkImage(photo_path);
+	}
+}
+
 bool AddFriendWindow::PreOrNextClick(ui::EventArgs* param, const std::wstring& page_name, INIT_TYPE init_edit)
 {
 	if (page_name.empty())
@@ -296,16 +317,10 @@ void AddFriendWindow::InitUserProfile(const nim::UserNameCard& uinfo)
 		userinfo_page_add_friend_->SetEnabled(true);
 
 	tablayout_->SelectItem(g_ADDFRIEND_USERINFO_PAGE);
-
-	VBox* userinfo_page = static_cast<VBox*>(FindControl(_T("userinfo_page")));
-	Button* headimage = (Button*)userinfo_page->FindSubControl(L"headimage");
-	headimage->SetBkImage(UserService::GetInstance()->GetUserPhoto(uinfo.GetAccId()));
-
-	Label* nick_name = (Label*)userinfo_page->FindSubControl(L"nick_name");
-	nick_name->SetText(UserService::GetInstance()->GetUserName(id_));
-
-	Label* id = (Label*)userinfo_page->FindSubControl(L"id");
-	id->SetUTF8Text(id_);
+	
+	headimage_->SetBkImage(UserService::GetInstance()->GetUserPhoto(uinfo.GetAccId()));
+	nick_name_->SetText(UserService::GetInstance()->GetUserName(id_, false));
+	((Label*)FindControl(L"id"))->SetUTF8Text(id_);
 
 	nim::NIMFriendFlag user_type = UserService::GetInstance()->GetUserType(id_);
 	if (MuteBlackService::GetInstance()->IsInBlackList(id_))

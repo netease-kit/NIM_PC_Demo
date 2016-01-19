@@ -163,7 +163,7 @@ typedef void (*nim_rts_connect_notify_cb_func)(const char *session_id, int chann
 typedef void (*nim_rts_member_change_cb_func)(const char *session_id, int channel_type, int type, const char *uid, const char *json_extension, const void *user_data);
 
 //控制接口
-/** @typedef void (*nim_rts_control_res_cb_func)(int code, const char *session_id, char type, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_rts_control_res_cb_func)(int code, const char *session_id, const char *info, const char *json_extension, const void *user_data)
   * NIM RTS 控制接口调用结果
   * @param[out] code 调用结果
   * @param[out] session_id 会话id
@@ -174,7 +174,7 @@ typedef void (*nim_rts_member_change_cb_func)(const char *session_id, int channe
   */ 
 typedef void (*nim_rts_control_res_cb_func)(int code, const char *session_id, const char *info, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_rts_control_notify_cb_func)(const char *session_id, char type, const char *uid, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_rts_control_notify_cb_func)(const char *session_id, const char *info, const char *uid, const char *json_extension, const void *user_data)
   * NIM RTS 控制消息通知回调
   * @param[out] session_id 会话id
   * @param[out] info 透传数据

@@ -2,6 +2,7 @@
 #define _NIM_SDK_CPP_VCHAT_H_
 
 #include <string>
+#include <functional>
 
 namespace nim
 {
@@ -19,6 +20,7 @@ class VChat
 {
 
 public:
+	typedef std::function<void(bool ret, int code, const std::string& file, __int64 time)>  Mp4OptCallback;
 	/** 
 	* NIM VCHAT初始化，需要在SDK的nim_client_init成功之后
 	* @param[in] json_extension 无效的扩展字段
@@ -136,7 +138,7 @@ public:
 	* @param[in] user_data 无效的扩展字段
 	* @return bool true 调用成功，false 调用失败可能有正在进行的通话
 	*/
-	static bool Start(NIMVideoChatMode mode, const std::string& json_info);
+	static bool Start(NIMVideoChatMode mode, const std::string& apns_text, const std::string& custom_info, const std::string& json_info);
 
 	/** 
 	* NIM VCHAT 设置通话模式，在更改通话模式后，通知底层
@@ -150,21 +152,33 @@ public:
 	* NIM VCHAT 回应音视频通话邀请，异步回调nim_vchat_cb_func 见nim_vchat_def.h
 	* @param[in] channel_id 音视频通话通道id
 	* @param[in] accept true 接受，false 拒绝
-	* @param[in] json_extension 扩展的json string,接起时有效 kNIMVChatCustomVideo自主视频数据和kNIMVChatCustomAudio自主音频 如{"custom_video":1, "custom_audio":1}
-	* @param[in] user_data 无效的扩展字段
+	* @param[in] json_extension Json string 扩展，kNIMVChatCustomVideo自主视频数据和kNIMVChatCustomAudio自主音频 如{"custom_video":1, "custom_audio":1}
 	* @return bool true 调用成功，false 调用失败（可能channel_id无匹配，如要接起另一路通话前先结束当前通话）
 	*/
-	static bool CalleeAck(unsigned __int64 channel_id, bool accept);
+	static bool CalleeAck(unsigned __int64 channel_id, bool accept, const std::string& json_extension);
 
 	/** 
 	* NIM VCHAT 音视频通话控制，异步回调nim_vchat_cb_func 见nim_vchat_def.h
 	* @param[in] channel_id 音视频通话通道id
 	* @param[in] type NIMVChatControlType 见nim_vchat_def.h
-	* @param[in] json_extension 无效的扩展字段
-	* @param[in] user_data 无效的扩展字段
 	* @return bool true 调用成功，false 调用失败
 	*/
 	static bool Control(unsigned __int64 channel_id, NIMVChatControlType type);
+
+	/** 
+	* NRTC 开始录制MP4文件，一次只允许一个录制文件，在通话开始的时候才有实际数据
+	* @param[in] path 文件录制路径
+	* @param[in] cb 结果回调
+	* @return void 无返回值
+	*/
+	static void StartRecord(const std::string& path, Mp4OptCallback cb);
+
+	/** 
+	* NRTC 停止录制MP4文件
+	* @param[in] cb 结果回调
+	* @return void 无返回值
+	*/
+	static void StopRecord(Mp4OptCallback cb);
 
 	/** 
 	* NIM VCHAT 结束通话(需要主动在通话结束后调用，用于底层挂断和清理数据)

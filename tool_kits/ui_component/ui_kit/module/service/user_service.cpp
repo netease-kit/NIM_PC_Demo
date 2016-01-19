@@ -65,12 +65,7 @@ void UserService::OnFriendListChange(const nim::FriendChangeEvent& change_event)
 			nim::Friend::GetFriendProfileCallback cb = ToWeakCallback([this](const std::string& accid, const nim::FriendProfile& user_profile) 
 			{
 				friend_list_[user_profile.GetAccId()] = user_profile;
-				std::list<std::string> add_list(1, user_profile.GetAccId());
-				OnGetUserInfoCallback cb = ToWeakCallback([this](std::list<nim::UserNameCard> uinfos) {
-					if (uinfos.empty()) return;
-					InvokeFriendListChangeCallback(kChangeTypeAdd, *uinfos.cbegin());
-				});
-				GetUserInfoWithEffort(add_list, cb);
+				InvokeFriendListChangeCallback(kChangeTypeAdd, user_profile.GetAccId());
 			});
 			nim::Friend::GetFriendProfile(add_event.accid_, cb);
 		}
@@ -120,35 +115,16 @@ void UserService::OnFriendListChange(const nim::FriendChangeEvent& change_event)
 		break;
 	}
 
-	if (!add_list.empty())
-	{
-		OnGetUserInfoCallback cb = ToWeakCallback([this](std::list<nim::UserNameCard> uinfos) {
-			for (auto iter = uinfos.cbegin(); iter != uinfos.cend(); iter++)
-				InvokeFriendListChangeCallback(kChangeTypeAdd, *iter);
-		});
-		GetUserInfoWithEffort(add_list, cb);
-	}
+	for each (const auto& id in add_list)
+		InvokeFriendListChangeCallback(kChangeTypeAdd, id);
 
-	if (!delete_list.empty())
-	{
-		OnGetUserInfoCallback cb = ToWeakCallback([this](std::list<nim::UserNameCard> uinfos) {
-			for (auto iter = uinfos.cbegin(); iter != uinfos.cend(); iter++)
-				InvokeFriendListChangeCallback(kChangeTypeDelete, *iter);
-		});
-		GetUserInfoWithEffort(delete_list, cb);
-	}
+	for each (const auto& id in delete_list)
+		InvokeFriendListChangeCallback(kChangeTypeDelete, id);
 
 	if (!update_list.empty())
 	{
 		std::list<nim::UserNameCard> uinfos;
-		for (auto iter = update_list.cbegin(); iter != update_list.cend(); iter++)
-		{
-			nim::UserNameCard info;
-			info.SetAccId(*iter);
-			info.SetName(nbase::UTF16ToUTF8(GetUserName(*iter, false))); //UserNameCard还是填入用户的昵称
-			uinfos.push_back(info);
-		}
-
+		GetUserInfos(update_list, uinfos);
 		for (auto& it : uinfo_change_cb_list_) //通知上层修改用户的备注名
 			(*(it.second))(uinfos);
 	}
@@ -166,8 +142,8 @@ void UserService::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfo_lis
 		auto iter = all_user_.find(info.GetAccId());
 		if (iter != all_user_.end()) //all_user_中存在，就更新
 			iter->second.Update(info);
-		else //all_user_中不存在，就获取该用户信息并插入all_user_
-			InvokeGetUserInfo(std::list<std::string>(1, info.GetAccId()), nullptr);
+		else if(on_query_list_.find(info.GetAccId()) == on_query_list_.cend())//all_user_中不存在，就获取该用户信息并插入all_user_
+			InvokeGetUserInfo(std::list<std::string>(1, info.GetAccId()));
 
 		if (!info.GetIconUrl().empty())
 			DownloadUserPhoto(info);
@@ -233,18 +209,18 @@ UnregisterCallback UserService::RegUserPhotoReady(const OnUserPhotoReadyCallback
 	return cb;
 }
 
-void UserService::UIFriendListChangeCallback(FriendChangeType change_type, const nim::UserNameCard& uinfo)
+void UserService::UIFriendListChangeCallback(FriendChangeType change_type, const std::string& accid)
 {
 	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
 	for (auto& it : friend_list_change_cb_list_)
 	{
-		(*(it.second))(change_type, uinfo);
+		(*(it.second))(change_type, accid);
 	}
 }
 
-void UserService::InvokeFriendListChangeCallback(FriendChangeType change_type, const nim::UserNameCard& user_infos)
+void UserService::InvokeFriendListChangeCallback(FriendChangeType change_type, const std::string& accid)
 {
-	auto task = nbase::Bind(&UserService::UIFriendListChangeCallback, this, change_type, user_infos);
+	auto task = nbase::Bind(&UserService::UIFriendListChangeCallback, this, change_type, accid);
 	nbase::ThreadManager::PostTask(kThreadUI, task);
 }
 
@@ -333,82 +309,64 @@ void UserService::InvokeGetAllUserInfo(const OnGetUserInfoCallback& cb)
 		{
 			if (it.GetRelationship() == nim::kNIMFriendFlagNormal)
 				friend_list_[it.GetAccId()] = it; //插入friend_list_（类的成员变量）好友列表
+			
 			account_list.push_back(it.GetAccId());
 		}
-		if(!account_list.empty())
-			InvokeGetUserInfo(account_list, cb); // 从db和服务器查询用户信息
+		
+		std::list<nim::UserNameCard> uinfos;
+		GetUserInfos(account_list, uinfos); // 从db和服务器查询用户信息
+		if(cb)
+			cb(uinfos);
 	}));
 }
 
-void UserService::InvokeGetUserInfo(const std::list<std::string>& account_list, const OnGetUserInfoCallback & cb)
+void UserService::InvokeGetUserInfo(const std::list<std::string>& account_list)
 {
 	// 先在本地db中找
-	nim::User::GetUserNameCardCallback cb1 = ToWeakCallback([this, account_list, cb](const std::list<nim::UserNameCard> &json_result)
+	nim::User::GetUserNameCardCallback cb1 = ToWeakCallback([this, account_list](const std::list<nim::UserNameCard> &json_result)
 	{
-		std::list<nim::UserNameCard> already_get;
 		std::set<std::string> not_get_set(account_list.cbegin(), account_list.cend());
 		for (auto& card : json_result)
 		{
-			already_get.push_back(card);
-			not_get_set.erase(card.GetAccId());
 			all_user_[card.GetAccId()] = card; // 插入all_user
-			//能在数据库中查到用户信息，则用户头像应该以前下载过，因此此处不下载。
+			on_query_list_.erase(card.GetAccId()); //已经查到，就从on_query_list_删除
+			not_get_set.erase(card.GetAccId());
 		}
-		if (cb && !already_get.empty())
-		{
-			assert(nbase::MessageLoop::current()->ToUIMessageLoop());
-			cb(already_get); // 执行参数传入的回调
-		}
+
+		OnUserInfoChange(json_result); //触发监听
+
 		if (not_get_set.empty()) // 全部从本地db找到，直接返回
 			return;
 
 		// 有些信息本地db没有，再从服务器获取
-		std::list<std::string> not_get_list(not_get_set.cbegin(), not_get_set.cend());
-		nim::User::GetUserNameCardCallback cb2 = ToWeakCallback([this, not_get_list, cb](const std::list<nim::UserNameCard> &json_result)
+		nim::User::GetUserNameCardCallback cb2 = ToWeakCallback([this, not_get_set](const std::list<nim::UserNameCard> &json_result)
 		{
-			std::list<nim::UserNameCard> last_get;
-
+			auto tmp_set = not_get_set;
 			for (auto& card : json_result)
 			{
-				last_get.push_back(card);
 				all_user_[card.GetAccId()] = card; // 插入all_user
+
 				if (card.ExistValue(nim::kUserNameCardKeyIconUrl))
 					DownloadUserPhoto(card); // 下载头像
+
+				on_query_list_.erase(card.GetAccId()); //已经查到，就从on_query_list_删除
+				tmp_set.erase(card.GetAccId());
 			}
 
-			if (cb)
+			//OnUserInfoChange(json_result); //sdk会自动触发此回调
+
+			for (const auto& id : tmp_set) //从服务器也查不到的用户
 			{
-				assert(nbase::MessageLoop::current()->ToUIMessageLoop());
-				cb(last_get); // 执行参数传入的回调
+				QLOG_APP(L"Can't get user's name card from server. Account id: {0}.") << id;
+				on_query_list_.erase(id); //从on_query_list_删除，以免积压
 			}
 		});
-		nim::User::GetUserNameCardOnline(not_get_list, cb2);
+		nim::User::GetUserNameCardOnline(std::list<std::string>(not_get_set.cbegin(), not_get_set.cend()), cb2);
 	});
 	nim::User::GetUserNameCard(account_list, cb1);
-}
 
-void UserService::GetUserInfoWithEffort(const std::list<std::string>& account_list, const OnGetUserInfoCallback& cb)
-{
-	std::list<nim::UserNameCard> already_get;
-	std::list<std::string> not_get_list;
-	for (auto accid : account_list)
-	{
-		auto iter = all_user_.find(accid); // 先从all_user_里面找
-		if (iter != all_user_.cend())
-			already_get.push_back(iter->second);
-		else
-			not_get_list.push_back(accid);
-	}
-	if (cb && !already_get.empty())
-	{
-		assert(nbase::MessageLoop::current()->ToUIMessageLoop());
-		cb(already_get); // 执行参数传入的回调
-	}
-	if (not_get_list.empty()) // 全部从all_user_里面找到，直接返回
-		return;
-
-	// 有些信息不在all_user_里面，再到本地db和服务器中找
-	InvokeGetUserInfo(not_get_list, cb);
+	for (const auto& id : account_list)
+		on_query_list_.insert(id);
 }
 
 void UserService::InvokeUpdateUserInfo(const nim::UserNameCard &new_info, const OnUpdateUserInfoCallback& cb)
@@ -453,9 +411,35 @@ bool UserService::GetUserInfo(const std::string &id, nim::UserNameCard &info)
 	{
 		info.SetName(id);
 		info.SetAccId(id);
-		InvokeGetUserInfo(std::list<std::string>(1, id), nullptr);
+		if(on_query_list_.find(id) == on_query_list_.cend())
+			InvokeGetUserInfo(std::list<std::string>(1, id));
 		return false;
 	}
+}
+
+void UserService::GetUserInfos(const std::list<std::string>& ids, std::list<nim::UserNameCard>& uinfos)
+{
+	uinfos.clear();
+	std::list<std::string> not_get_list;
+
+	for (const auto &id : ids)
+	{
+		auto iter = all_user_.find(id);
+		if (iter != all_user_.cend())
+			uinfos.push_back(iter->second);
+		else
+		{
+			nim::UserNameCard info(id);
+			info.SetName(id);
+			uinfos.push_back(info);
+
+			if(on_query_list_.find(id) == on_query_list_.end()) //不在all_user_里面，也不在查询途中
+				not_get_list.push_back(id);
+		}
+	}
+
+	if (!not_get_list.empty())
+		InvokeGetUserInfo(not_get_list);
 }
 
 nim::NIMFriendFlag UserService::GetUserType(const std::string &id)
@@ -466,12 +450,11 @@ nim::NIMFriendFlag UserService::GetUserType(const std::string &id)
 
 std::wstring UserService::GetUserName(const std::string &id, bool alias_prior/* = true */)
 {
-	nim::UserNameCard info;
-	GetUserInfo(id, info);
-
 	if(alias_prior && GetUserType(id) == nim::kNIMFriendFlagNormal && !friend_list_.at(id).GetAlias().empty()) //优先使用备注名
 		return nbase::UTF8ToUTF16(friend_list_.at(id).GetAlias());
 
+	nim::UserNameCard info;
+	GetUserInfo(id, info);
 	return nbase::UTF8ToUTF16(info.GetName());
 }
 

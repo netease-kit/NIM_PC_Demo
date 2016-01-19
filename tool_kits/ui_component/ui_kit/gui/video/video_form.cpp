@@ -123,7 +123,7 @@ void VideoForm::OnRecVideo( const std::string &data, ui::CSize size, uint64_t ti
 
 void VideoForm::StartChat()
 {
-	bool ret = VideoManager::GetInstance()->StartChat((current_video_mode_ ? nim::kNIMVideoChatModeVideo : nim::kNIMVideoChatModeAudio), session_id_);
+	bool ret = VideoManager::GetInstance()->StartChat((current_video_mode_ ? nim::kNIMVideoChatModeVideo : nim::kNIMVideoChatModeAudio), "", "", session_id_);
 	if (ret)
 	{
 		StartDialWaitingTimer();
@@ -254,10 +254,17 @@ void VideoForm::OnControlModeChange(int64_t channel_id, nim::NIMVChatControlType
 			};
 			::FlashWindowEx(&flash_info);
 		}
-		//VideoManager::GetInstance()->VChatControl(channel_id_, nim::kNIMTagControlAgreeAudioToVideo);
+		if (is_mode_changing_ || current_video_mode_)
+		{
+			StdClosure closure = nbase::Bind(&VideoForm::OnMissionCallback, this, MB_YES);
+			nbase::ThreadManager::PostTask(kThreadUI, closure);
+		}
+		else
+		{
+			MsgboxCallback cb = nbase::Bind(&VideoForm::OnMissionCallback, this, std::placeholders::_1);
+			ShowMsgBox(m_hWnd, L"对方邀请你开启视频聊天", cb);
+		}
 
-		MsgboxCallback cb = nbase::Bind(&VideoForm::OnMissionCallback, this, std::placeholders::_1);
-		ShowMsgBox(m_hWnd, L"对方邀请你开启视频聊天", cb);
 	}
 	break;
 	case nim::kNIMTagControlAgreeAudioToVideo:
@@ -302,6 +309,16 @@ void VideoForm::OnControlModeChange(int64_t channel_id, nim::NIMVChatControlType
 	case nim::kNIMTagControlReceiveStartNotifyFeedback:
 	{
 
+	}
+	break;
+	case nim::kNIMTagControlMp4StartRecord:
+	{
+		ShowRecordTip(L"对方开始录制");
+	}
+	break;
+	case nim::kNIMTagControlMp4StopRecord:
+	{
+		ShowRecordTip(L"对方结束录制");
 	}
 	break;
 	}
@@ -377,7 +394,7 @@ void VideoForm::OnComeIn( uint64_t id )
 	//uint64_t v = StringToUint64t(session_id_);
 	//if( v != id )
 	//	return;
-
+	start_record_btn_->SetVisible(true);
 	if( current_video_mode_ )
 	{
 		IntoVideo();
@@ -475,6 +492,9 @@ void VideoForm::OnLogin( bool success )
 		//{
 		//	EnterEndCallPage( END_CALL_BAD_MICROPHONE );
 		//}
+		paint_video_timer_.Cancel();
+		auto task = nbase::Bind(&VideoForm::PaintVideo, this);
+		nbase::ThreadManager::PostRepeatedTask(kThreadUI, task, nbase::TimeDelta::FromMilliseconds(80));
 	}
 	else
 	{
@@ -564,6 +584,115 @@ void VideoForm::OnMissionCallback(MsgBoxRet ret)
 			into_audio_btn_->SetEnabled(true);
 			VideoManager::GetInstance()->VChatControl(channel_id_, nim::kNIMTagControlCamaraNotAvailable);
 		}
+	}
+}
+void VideoForm::OnRecordMp4SelFileCb(BOOL ret, std::wstring path)
+{
+	if (ret)
+	{
+		if (current_video_mode_)
+		{
+			ShowRecordTip(L"仅录制你的声音和图像");
+		} 
+		else
+		{
+			ShowRecordTip(L"仅录制你说话的内容");
+		}
+		nim::VChat::StartRecord(nbase::UTF16ToUTF8(path), std::bind(&VideoForm::StartRecordCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+	}
+}
+//开始录制回调
+void VideoForm::StartRecordCb(bool ret, int code, const std::string& file, __int64 time)
+{
+	if (ret)
+	{
+		start_record_btn_->SetVisible(false);
+		stop_record_btn_->SetVisible(true);
+		mp4_recording_ = true;
+		if (!record_tip_box_->IsVisible())
+		{
+			ShowRecordTip();
+		}
+		VideoManager::GetInstance()->VChatControl(channel_id_, nim::kNIMTagControlMp4StartRecord);
+		StdClosure task = nbase::Bind(&VideoForm::CheckRecordDiskSpace, this, nbase::UTF8ToUTF16(file));
+		auto weak_task = record_check_disk_space_timer_.ToWeakCallback(task);
+		nbase::ThreadManager::PostRepeatedTask(kThreadUI, weak_task, nbase::TimeDelta::FromSeconds(5));
+	}
+	else
+	{
+
+	}
+}
+//结束录制回调，不需要处理，在结束的通知里处理即可
+void VideoForm::StopRecordCb(bool ret, int code, const std::string& file, __int64 time)
+{
+
+}
+//录制开始通知，正式开始录制数据
+void VideoForm::OnStartRecord(const std::string& file, __int64 time)
+{
+
+}
+//录制结束通知
+void VideoForm::OnStopRecord(int code, const std::string& file, __int64 time)
+{
+	record_check_disk_space_timer_.Cancel();
+	record_tip_label0_->SetVisible(false);
+	VideoManager::GetInstance()->VChatControl(channel_id_, nim::kNIMTagControlMp4StopRecord);
+	start_record_btn_->SetVisible(true);
+	stop_record_btn_->SetVisible(false);
+	mp4_recording_ = false;
+	std::wstring tip;
+	std::wstring tip1 = L"录制已结束，录制文件已保存至"; 
+	std::wstring path = nbase::UTF8ToUTF16(file);
+	if (code == nim::kNIMVChatMp4RecordVideoSizeError)
+	{
+		tip = L"由于摄像头更换";
+	}
+	else if (code == nim::kNIMVChatMp4RecordOutDiskSpace)
+	{
+		tip = L"你的硬盘存储不足";
+	}
+	ShowRecordTip(tip, tip1, path);
+}
+void VideoForm::CheckRecordDiskSpace(const std::wstring& file)
+{
+	std::wstring path = file;
+	double ret = 0;
+	nbase::StringReplaceAll(L"\\", L"/", path);
+	if (path.size() >= 3 && path.substr(1, 2) == L":/")
+	{
+		std::wstring root_path = path.substr(0, 3);
+		DWORD dwSectorsPerCluster = 0;//每簇中扇区数  
+		DWORD dwBytesPerSector = 0;//每扇区中字节数  
+		DWORD dwFreeClusters = 0;//剩余簇数  
+		DWORD dwTotalClusters = 0;//总簇数  
+		if (GetDiskFreeSpace(root_path.c_str(), &dwSectorsPerCluster, &dwBytesPerSector,
+			&dwFreeClusters, &dwTotalClusters))
+		{
+			double dd = dwSectorsPerCluster*dwBytesPerSector / (1024.*1024.);
+			ret = dwFreeClusters*dd;//该磁盘剩余容量总大小  
+		}
+	}
+	if (ret < 100)
+	{
+		record_tip_label0_->SetText(L"你的硬盘存储已不足100M");
+		record_tip_label0_->SetVisible(true);
+	}
+	else
+	{
+		record_tip_label0_->SetVisible(false);
+	}
+}
+void VideoForm::PaintVideo()
+{
+	if (video_ctrl_screen_->IsNeedPaint())
+	{
+		video_ctrl_screen_->Invalidate();
+	} 
+	else if (video_ctrl_preview_->IsNeedPaint())
+	{
+		video_ctrl_preview_->Invalidate();
 	}
 }
 

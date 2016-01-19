@@ -100,40 +100,39 @@ void SessionForm::OnGetTeamMemberCb(const std::string& tid, int count, const std
 	member_list_->RemoveAll();
 	label_member_->SetText(nbase::StringPrintf(L"群成员（共%d人）", team_member_info_list_.size()));
 
-	OnGetUserInfoCallback cb = ToWeakCallback([this](const std::list<nim::UserNameCard>& uinfos) {
-		for (const auto &uinfo : uinfos)
+	std::list<nim::UserNameCard> uinfos;
+	UserService::GetInstance()->GetUserInfos(acc_list, uinfos); //查询群成员的用户信息
+
+	for (const auto &tm_info : team_member_info_list_)
+	{
+		std::string uid = tm_info.second.GetAccountID();
+		if (member_list_->FindSubControl(nbase::UTF8ToUTF16(uid)) == NULL)
 		{
-			nim::TeamMemberProperty tm_info = team_member_info_list_.at(uinfo.GetAccId());
-
-			std::wstring wid = nbase::UTF8ToUTF16(tm_info.GetAccountID());
-			Control* ctrl = member_list_->FindSubControl(wid);
-			if (ctrl == NULL)
-			{
-				TeamItem* item = new TeamItem;
-				GlobalManager::FillBoxWithCache(item, L"session/team_item.xml");
-				if (tm_info.GetUserType() == nim::kNIMTeamUserTypeCreator)
-					member_list_->AddAt(item, 0);
-				else
-					member_list_->Add(item);
-
-				item->InitControl();
-				item->InitInfo(tm_info);
-			}
+			TeamItem* item = new TeamItem;
+			GlobalManager::FillBoxWithCache(item, L"session/team_item.xml");
+			if (tm_info.second.GetUserType() == nim::kNIMTeamUserTypeCreator)
+				member_list_->AddAt(item, 0);
 			else
-			{
-				QLOG_WAR(L"OnGetTeamMemberCb found the duplicate id, id={0}") << wid.c_str();
-			}
+				member_list_->Add(item);
 
-			if (tm_info.GetUserType() == nim::kNIMTeamUserTypeCreator || tm_info.GetUserType() == nim::kNIMTeamUserTypeManager)
+			item->InitControl();
+			item->InitInfo(tm_info.second);
+		}
+		else
+		{
+			QLOG_WAR(L"OnGetTeamMemberCb found the duplicate id, id={0}") << nbase::UTF8ToUTF16(uid).c_str();
+		}
+
+		RefreshMsglistShowname(uid); //刷新消息列表中显示的名字
+
+		if (tm_info.second.GetUserType() == nim::kNIMTeamUserTypeCreator || tm_info.second.GetUserType() == nim::kNIMTeamUserTypeManager)
+		{
+			if (LoginManager::GetInstance()->IsEqual(tm_info.second.GetAccountID()))
 			{
-				if (LoginManager::GetInstance()->IsEqual(tm_info.GetAccountID()))
-				{
-					btn_new_broad_->SetVisible(true);
-				}
+				btn_new_broad_->SetVisible(true);
 			}
 		}
-	});
-	UserService::GetInstance()->GetUserInfoWithEffort(acc_list, cb);
+	}
 }
 
 void SessionForm::OnTeamMemberAdd(const std::string& tid, const nim::TeamMemberProperty& team_member_info)
@@ -147,19 +146,18 @@ void SessionForm::OnTeamMemberAdd(const std::string& tid, const nim::TeamMemberP
 		std::wstring wid = nbase::UTF8ToUTF16(team_member_info.GetAccountID());
 
 		Control* ctrl = member_list_->FindSubControl(wid);
-		if(ctrl == NULL)
-		{
-			TeamItem* item = new TeamItem;
-			GlobalManager::FillBoxWithCache(item, L"session/team_item.xml");
-			member_list_->Add(item);
-
-			item->InitControl();
-			item->SetTeamMember(team_member_info);
-		}
-		else
+		if (ctrl)
 		{
 			QLOG_WAR(L"OnTeamMemberAdd found the duplicate id, id={0}") << wid.c_str();
+			member_list_->Remove(ctrl);
 		}
+
+		TeamItem* item = new TeamItem;
+		GlobalManager::FillBoxWithCache(item, L"session/team_item.xml");
+		member_list_->Add(item);
+
+		item->InitControl();
+		item->InitInfo(team_member_info);
 
 		std::wstring str = nbase::StringPrintf(L"群成员（共%d人）", member_list_->GetCount());
 		label_member_->SetText(str);
@@ -185,6 +183,10 @@ void SessionForm::OnTeamMemberRemove(const std::string& tid, const std::string& 
 
 		std::wstring str = nbase::StringPrintf(L"群成员（共%d人）", member_list_->GetCount());
 		label_member_->SetText(str);
+
+		team_member_info_list_.erase(uid);
+
+		RefreshMsglistShowname(uid);
 	}
 }
 
@@ -204,7 +206,7 @@ void SessionForm::OnTeamMemberChange(const std::string& tid_uid, const std::stri
 		TeamItem* ctrl = (TeamItem*)(member_list_->FindSubControl(wid));
 		if(ctrl)
 		{
-			ctrl->UpdateInfo(team_card);
+			ctrl->SetMemberName(team_card);
 		}
 	}
 }
@@ -281,6 +283,32 @@ bool SessionForm::IsTeamMemberType(const nim::NIMTeamUserType user_type)
 		return true;
 
 	return false;
+}
+
+void SessionForm::RefreshMsglistShowname(const std::string& uid)
+{
+	if (session_type_ != nim::kNIMSessionTypeTeam)
+		return;
+
+	nim::TeamMemberProperty tm_info = GetTeamMemberInfo(uid);
+	std::string show_name = tm_info.GetNick();
+	if (show_name.empty())
+		show_name = nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(uid));
+
+	int msg_count = msg_list_->GetCount();
+	for (int i = 0; i < msg_count; i++)
+	{
+		MsgBubbleItem* bubble_item = dynamic_cast<MsgBubbleItem*>(msg_list_->GetItemAt(i));
+		if (bubble_item && bubble_item->sender_name_->IsVisible() && bubble_item->msg_.sender_accid_ == uid)
+			bubble_item->SetShowName(true, show_name);
+
+		if (!bubble_item)
+		{
+			MsgBubbleNotice* notice_item = dynamic_cast<MsgBubbleNotice*>(msg_list_->GetItemAt(i));
+			if (notice_item)
+				notice_item->RefreshNotice();
+		}
+	}
 }
 
 }

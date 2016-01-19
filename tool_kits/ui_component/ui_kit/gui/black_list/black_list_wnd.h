@@ -26,6 +26,8 @@ private:
 	void OnSetBlackCallback(const std::string& id, bool black);
 	void RestoreUserInfo(const nim::UserNameCard &info);
 	void AddBlackListMember(const nim::UserNameCard &info);
+	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
+	void OnUserPhotoReady(const std::string& account, const std::wstring& photo_path);
 
 public:
 	static const LPCTSTR kClassName;

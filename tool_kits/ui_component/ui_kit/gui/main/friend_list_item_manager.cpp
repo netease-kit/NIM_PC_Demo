@@ -57,36 +57,31 @@ FriendListItemManager::~FriendListItemManager()
 
 void FriendListItemManager::OnGetFriendList(const std::list<nim::UserNameCard> &user)
 {
-	for (std::size_t i = 2; i < friend_list_->GetRootNode()->GetChildNodeCount(); i++)
-	{
-		friend_list_->GetRootNode()->GetChildNode(i)->RemoveAllChildNode();
-	}
-	
 	UTF8String current_user_id = LoginManager::GetInstance()->GetAccount();
-	for(auto it = user.begin(); it != user.end(); it++) {
+	for (auto it = user.begin(); it != user.end(); it++) {
 		if (it->GetAccId() != current_user_id
 			&& UserService::GetInstance()->GetUserType(it->GetAccId()) == nim::kNIMFriendFlagNormal
 			&& !MuteBlackService::GetInstance()->IsInBlackList(it->GetAccId()))
 		{
-			AddListItem(*it);
+			AddListItem(it->GetAccId());
 		}
 	}
 }
 
-void FriendListItemManager::OnFriendListChange(FriendChangeType change_type, const nim::UserNameCard& user)
+void FriendListItemManager::OnFriendListChange(FriendChangeType change_type, const std::string& accid)
 {
 	if (change_type == kChangeTypeAdd)
 	{
-		if (user.GetAccId() != LoginManager::GetInstance()->GetAccount()
-			&& UserService::GetInstance()->GetUserType(user.GetAccId()) == nim::kNIMFriendFlagNormal
-			&& !MuteBlackService::GetInstance()->IsInBlackList(user.GetAccId()))
+		if (accid != LoginManager::GetInstance()->GetAccount()
+			&& UserService::GetInstance()->GetUserType(accid) == nim::kNIMFriendFlagNormal
+			&& !MuteBlackService::GetInstance()->IsInBlackList(accid))
 		{
-			AddListItem(user);
+			AddListItem(accid);
 		}
 	}
 	else if (change_type == kChangeTypeDelete)
 	{
-		DeleteListItem(user);
+		DeleteListItem(accid);
 	}
 }
 
@@ -94,38 +89,35 @@ void FriendListItemManager::OnUserInfoChange(const std::list<nim::UserNameCard> 
 {
 	for (auto info : uinfos)
 	{
-		if (UserService::GetInstance()->GetUserType(info.GetAccId()) == nim::kNIMFriendFlagNormal)
+		std::string accid = info.GetAccId();
+		if (UserService::GetInstance()->GetUserType(accid) == nim::kNIMFriendFlagNormal)
 		{
-			FriendItem* item = dynamic_cast<FriendItem*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(info.GetAccId())));
+			FriendItem* item = dynamic_cast<FriendItem*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
 			if (item != NULL)
 			{
 				if (info.ExistValue(nim::kUserNameCardKeyName))
 				{
-					nim::UserNameCard all_info;
-					UserService::GetInstance()->GetUserInfo(info.GetAccId(), all_info);
-					DeleteListItem(all_info);
-					AddListItem(all_info);
+					//nim::UserNameCard all_info;
+					//UserService::GetInstance()->GetUserInfo(info.GetAccId(), all_info);
+					DeleteListItem(accid);
+					AddListItem(accid);
 				}
 				else
-					item->Init(false, info);
+					item->Init(false, accid);
 			}
+			else if(accid != LoginManager::GetInstance()->GetAccount()
+				&& !MuteBlackService::GetInstance()->IsInBlackList(accid))
+				AddListItem(accid);
 		}
 	}
 }
 
 void FriendListItemManager::OnBlackListChange(const std::string& id, bool is_black)
 {
-	nim::UserNameCard user;
-	UserService* user_service = UserService::GetInstance();
-	user_service->GetUserInfo(id, user);
 	if (is_black)
-	{
-		DeleteListItem(user);
-	}
-	else if (user_service->GetUserType(id) == nim::kNIMFriendFlagNormal)
-	{
-		AddListItem(user);
-	}
+		DeleteListItem(id);
+	else if (UserService::GetInstance()->GetUserType(id) == nim::kNIMFriendFlagNormal)
+		AddListItem(id);
 }
 
 void FriendListItemManager::OnUserPhotoReady(const std::string& accid, const std::wstring &photo_path)
@@ -144,12 +136,12 @@ ui::TreeNode* FriendListItemManager::GetGroup(GroupType groupType, wchar_t lette
 	return tree_node_ver_[ListItemUtil::GetGroup(groupType, letter)];
 }
 
-void FriendListItemManager::AddListItem(const nim::UserNameCard& all_info)
+void FriendListItemManager::AddListItem(const std::string& accid)
 {
-	if (friend_list_->FindSubControl(nbase::UTF8ToUTF16(all_info.GetAccId())) != NULL)
+	if (friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)) != NULL)
 		return;
 
-	std::wstring ws_show_name = UserService::GetInstance()->GetUserName(all_info.GetAccId());
+	std::wstring ws_show_name = UserService::GetInstance()->GetUserName(accid);
 	std::string spell = PinYinHelper::GetInstance()->ConvertToFullSpell(ws_show_name);
 	std::wstring ws_spell = nbase::UTF8ToUTF16(spell);
 	ui::TreeNode* tree_node;
@@ -162,10 +154,10 @@ void FriendListItemManager::AddListItem(const nim::UserNameCard& all_info)
 		tree_node = tree_node_ver_[2];
 	}
 
-	AddListItemInGroup(all_info, tree_node);
+	AddListItemInGroup(accid, tree_node);
 }
 
-void FriendListItemManager::AddListItemInGroup(const nim::UserNameCard& all_info, ui::TreeNode* tree_node)
+void FriendListItemManager::AddListItemInGroup(const std::string& accid, ui::TreeNode* tree_node)
 {
 	if (tree_node->GetChildNodeCount() == 0)
 	{
@@ -174,10 +166,10 @@ void FriendListItemManager::AddListItemInGroup(const nim::UserNameCard& all_info
 
 	FriendItem* item = new FriendItem;
 	ui::GlobalManager::FillBoxWithCache( item, L"main/friend_item.xml" );
-	item->SetUTF8Name(all_info.GetAccId());
-	item->Init(false, all_info);
+	item->SetUTF8Name(accid);
+	item->Init(false, accid);
 	ui::ButtonBox* head_image = (ui::ButtonBox*)(item->FindSubControl(L"head_image"));
-	head_image->AttachClick(nbase::Bind(&FriendListItemManager::OnHeadImageClick, this, all_info.GetAccId(), std::placeholders::_1));
+	head_image->AttachClick(nbase::Bind(&FriendListItemManager::OnHeadImageClick, this, accid, std::placeholders::_1));
 	FriendItem* container_element = item;
 	std::size_t index = 0;
 	for (index = 0; index < tree_node->GetChildNodeCount(); index++)
@@ -202,9 +194,9 @@ void FriendListItemManager::AddListItemInGroup(const nim::UserNameCard& all_info
 	}
 }
 
-void FriendListItemManager::DeleteListItem(const nim::UserNameCard& all_info)
+void FriendListItemManager::DeleteListItem(const std::string& accid)
 {
-	FriendItem* item = (FriendItem*)friend_list_->FindSubControl(nbase::UTF8ToUTF16(all_info.GetAccId()));
+	FriendItem* item = (FriendItem*)friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
 	if (!item) return;
 	std::wstring ws_show_name = ((ui::Label*)item->FindSubControl(L"contact"))->GetText();
 	std::string spell = PinYinHelper::GetInstance()->ConvertToFullSpell(ws_show_name);
@@ -219,16 +211,16 @@ void FriendListItemManager::DeleteListItem(const nim::UserNameCard& all_info)
 		tree_node = tree_node_ver_[2];
 	}
 
-	DeleteListItemInGroup(all_info, tree_node);
+	DeleteListItemInGroup(accid, tree_node);
 }
 
-void FriendListItemManager::DeleteListItemInGroup(const nim::UserNameCard& all_info, ui::TreeNode* tree_node)
+void FriendListItemManager::DeleteListItemInGroup(const std::string& accid, ui::TreeNode* tree_node)
 {
 	for (size_t index = 0; index < tree_node->GetChildNodeCount(); index++)
 	{
 		
 		FriendItem* temp = (FriendItem*)tree_node->GetChildNode(index);
-		if (all_info.GetAccId() == temp->GetId())
+		if (accid == temp->GetId())
 		{
 			tree_node->RemoveChildNodeAt(index);
 			break;

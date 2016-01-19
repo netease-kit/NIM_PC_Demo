@@ -184,7 +184,11 @@ public:
 
 	nim::TeamMemberProperty GetTeamMemberInfo(const std::string& uid)
 	{
-		return team_member_info_list_[uid];
+		auto iter = team_member_info_list_.find(uid);
+		if (iter != team_member_info_list_.cend())
+			return iter->second;
+		else
+			return nim::TeamMemberProperty();
 	}
 
 private:
@@ -397,6 +401,7 @@ private:
 	void ShowCustomMsgForm();
 private:
 	void UpdateSessionIcon(const std::wstring &icon);
+	void RefreshMsglistShowname(const std::string& uid); //刷新消息列表中的名字
 private:
 	/** 
 	* 有群成员增加的回调函数

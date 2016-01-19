@@ -196,6 +196,5 @@ protected:
 	
 	bool			action_menu_;
 	bool			my_msg_;
-	AutoUnregister	unregister_cb;
 };
 }

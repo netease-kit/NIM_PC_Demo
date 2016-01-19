@@ -13,8 +13,7 @@ namespace nim_comp
 {
 SessionItem::SessionItem()
 {
-	msg_time_ = 0;
-	unread_count_ = 0;
+
 }
 
 SessionItem::~SessionItem()
@@ -22,7 +21,7 @@ SessionItem::~SessionItem()
 
 }
 
-void SessionItem::Init(const nim::SessionData &msg)
+void SessionItem::InitCtrl()
 {
 	this->AttachDoubleClick(nbase::Bind(&SessionItem::OnDbClicked, this, std::placeholders::_1));
 	this->AttachMenu(nbase::Bind(&SessionItem::OnSessionItemMenu, this, std::placeholders::_1));
@@ -33,52 +32,34 @@ void SessionItem::Init(const nim::SessionData &msg)
 	box_unread_ = (Box*) this->FindSubControl(L"box_unread");
 	label_unread_ = (Label*) this->FindSubControl(L"label_unread");
 	head_image_ = (ButtonBox*)this->FindSubControl(L"head_image");
-
-	id_ = msg.id_;
-	type_ = msg.type_;
-	SetUTF8Name(id_);
-	SetUTF8DataID(id_);
-	
-	UpdateInfo();
-	UpdateMsg(msg);
-
-	if (type_ == nim::kNIMSessionTypeP2P)
-	{
-		head_image_->AttachClick(ToWeakCallback([this](ui::EventArgs* args)
-		{
-			ProfileForm::ShowProfileForm(id_);
-			return true;
-		}));
-	}
-		
-	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(nbase::Bind(&SessionItem::OnTeamNameChange, this, std::placeholders::_1)));
+	head_image_->AttachClick(nbase::Bind(&SessionItem::OnHeadImageClicked, this, std::placeholders::_1));
 }
 
 long long SessionItem::GetMsgTime()
 {
-	return msg_time_;
+	return msg_.msg_timetag_;
 }
 
-void SessionItem::UpdateInfoEx()
+void SessionItem::InitUserProfile()
 {
-	if (type_ == nim::kNIMSessionTypeP2P)
+	if (msg_.type_ == nim::kNIMSessionTypeP2P)
 	{
 		UserService *user_service = UserService::GetInstance();
-		if (LoginManager::GetInstance()->IsEqual(id_))
+		if (LoginManager::GetInstance()->IsEqual(msg_.id_))
 		{
 			label_name_->SetText(L"我的手机");
 		} 
 		else
 		{
-			label_name_->SetText(user_service->GetUserName(id_));
+			label_name_->SetText(user_service->GetUserName(msg_.id_));
 		}
-		head_image_->SetBkImage(user_service->GetUserPhoto(id_));
+		head_image_->SetBkImage(user_service->GetUserPhoto(msg_.id_));
 	}
 	else
 	{
-		std::wstring tname = TeamService::GetInstance()->GetTeamName(id_);
+		std::wstring tname = TeamService::GetInstance()->GetTeamName(msg_.id_);
 		label_name_->SetText(tname);
-		FindSubControl(L"head_image")->SetBkImage(TeamService::GetInstance()->GetTeamPhoto(false));
+		head_image_->SetBkImage(TeamService::GetInstance()->GetTeamPhoto(false));
 	}
 }
 
@@ -128,23 +109,23 @@ static void GetMsgContent(const nim::SessionData &msg, std::wstring &show_text)
 	}
 }
 
-void SessionItem::UpdateMsgEx(const nim::SessionData &msg)
+void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 {
-	if (last_msg_id_ != msg.msg_id_)
+	if (!id.empty() && relate_ids.find(id) == relate_ids.cend())
 		return;
 
 	std::wstring show_text;
-	if (msg.msg_status_ != nim::kNIMMsgLogStatusDeleted)
+	if (msg_.msg_status_ != nim::kNIMMsgLogStatusDeleted)
 	{
-		GetMsgContent(msg, show_text);
+		GetMsgContent(msg_, show_text);
 
-		if (type_ == nim::kNIMSessionTypeTeam) 
+		if (msg_.type_ == nim::kNIMSessionTypeTeam) 
 		{
-			if (msg.msg_type_ == nim::kNIMMessageTypeNotification && !IsNetCallMsg((nim::NIMMessageType)msg.msg_type_, msg.msg_attach_))
+			if (msg_.msg_type_ == nim::kNIMMessageTypeNotification && !IsNetCallMsg((nim::NIMMessageType)msg_.msg_type_, msg_.msg_attach_))
 				; // do nothing
 			else
 			{
-				std::wstring nick_name = UserService::GetInstance()->GetUserName(msg.msg_sender_accid_);
+				std::wstring nick_name = UserService::GetInstance()->GetUserName(msg_.msg_sender_accid_);
 				if (!nick_name.empty())
 				{
 					show_text = nick_name + L": " + show_text;
@@ -152,7 +133,7 @@ void SessionItem::UpdateMsgEx(const nim::SessionData &msg)
 			}
 		}
 
-		if (msg.msg_status_ == nim::kNIMMsgLogStatusSendFailed)
+		if (msg_.msg_status_ == nim::kNIMMsgLogStatusSendFailed)
 		{
 			show_text = L"[失败]" + show_text;
 		}
@@ -160,90 +141,75 @@ void SessionItem::UpdateMsgEx(const nim::SessionData &msg)
 	label_msg_->SetText(show_text);
 }
 
-void SessionItem::UpdateInfo()
+void SessionItem::InitMsg(const nim::SessionData &msg)
 {
-	if (type_ == nim::kNIMSessionTypeP2P) // 如果是P2P聊天，先获取该用户的信息，再UpdateInfo(因为发消息的可能是陌生人)
-	{
-		OnGetUserInfoCallback cb1 = ToWeakCallback([this](const std::list<nim::UserNameCard> &uinfos) {
-			if (uinfos.empty()) return;
-			UpdateInfoEx();
-		});
-		UserService::GetInstance()->GetUserInfoWithEffort(std::list<std::string>(1, id_), cb1);
-	}
-	else
-		UpdateInfoEx();
-}
+	msg_ = msg;
+	SetUTF8Name(msg_.id_);
+	SetUTF8DataID(msg_.id_);
 
-void SessionItem::UpdateMsg(const nim::SessionData & msg)
-{
-	//更新消息id
-	last_msg_id_ = msg.msg_id_;
-
-	//更新未读条数
-	unread_count_ = msg.unread_count_;
-	UpdateUnread();
+	InitUserProfile(); //设置用户名和头像
+	UpdateMsgContent(); //更新消息内容
+	UpdateUnread(); //刷新未读条数	
 
 	//更新时间
-	msg_time_ = msg.msg_timetag_;
-	if (msg_time_ > 0 && msg.msg_status_ != nim::kNIMMsgLogStatusDeleted)
+	if (msg_.msg_timetag_ > 0 && msg_.msg_status_ != nim::kNIMMsgLogStatusDeleted)
 	{
-		std::wstring str = GetMessageTime(msg_time_, true);
+		std::wstring str = GetMessageTime(msg_.msg_timetag_, true);
 		label_time_->SetText(str);
 	}
 	else
-	{
 		label_time_->SetVisible(false);
-	}
 
-	//更新消息内容
-	UpdateMsgEx(msg);
-	if (type_ == nim::kNIMSessionTypeTeam) // 需要先获得群里最近一条消息中所有人的昵称，再UpdateMsg
+	if (msg_.type_ == nim::kNIMSessionTypeTeam) // 需要先获得群里最近一条消息中所有人的昵称，再UpdateMsg
 	{
-		std::list<std::string> uids;
-		uids.push_back(msg.msg_sender_accid_);
+		head_image_->SetMouseEnabled(false); //群头像不响应点击
+
+		relate_ids.clear();
+		relate_ids.insert(msg_.msg_sender_accid_);
 		Json::Reader reader;
 		Json::Value attach;
-		if (reader.parse(msg.msg_attach_, attach))
+		if (reader.parse(msg_.msg_attach_, attach))
 		{
 			if (attach.isObject() && attach.isMember(nim::kNIMNotificationKeyData))
 			{
 				Json::Value data = attach[nim::kNIMNotificationKeyData];
 				if (data.isObject() && data.isMember(nim::kNIMNotificationKeyDataId))
-					uids.push_back(data[nim::kNIMNotificationKeyDataId].asString());
+					relate_ids.insert(data[nim::kNIMNotificationKeyDataId].asString());
 				if (data.isObject() && data.isMember(nim::kNIMNotificationKeyDataIds) && data[nim::kNIMNotificationKeyDataIds].isArray())
 				{
 					Json::Value ids_json = data[nim::kNIMNotificationKeyDataIds];
 					if (ids_json.isArray())
 					{
 						for (uint32_t i = 0; i < ids_json.size(); i++)
-							uids.push_back(ids_json[i].asString());
+							relate_ids.insert(ids_json[i].asString());
 					}
 				}
 			}
 		}
-		OnGetUserInfoCallback cb2 = ToWeakCallback([this, msg](const std::list<nim::UserNameCard> &uinfos) {
-			if (uinfos.empty()) return;
-			UpdateMsgEx(msg);
-		});
-		UserService::GetInstance()->GetUserInfoWithEffort(uids, cb2);
-	}		
+
+		if (!relate_ids.empty())
+		{
+			std::list<std::string> uids(relate_ids.cbegin(), relate_ids.cend());
+			std::list<nim::UserNameCard> uinfos;
+			UserService::GetInstance()->GetUserInfos(uids, uinfos);
+		}
+	}
 }
 
 void SessionItem::ClearMsg()
 {
 	label_msg_->SetText(L"");
 	label_time_->SetVisible(false);
-	unread_count_;
 	ResetUnread();
 }
 
 bool SessionItem::OnDbClicked(ui::EventArgs* arg)
 {
-	if(unread_count_ > 0)
+	if(msg_.unread_count_ > 0)
 	{
 		ResetUnread();
 	}
-	SessionManager::GetInstance()->OpenSessionForm(id_, type_);
+	SessionManager::GetInstance()->OpenSessionForm(msg_.id_, msg_.type_);
 	return true;
 }
 
@@ -252,6 +218,12 @@ bool SessionItem::OnSessionItemMenu( ui::EventArgs* arg )
 	POINT point;
 	::GetCursorPos(&point);
 	PopupSessionItemMenu(point);
+	return true;
+}
+
+bool SessionItem::OnHeadImageClicked(ui::EventArgs * arg)
+{
+	ProfileForm::ShowProfileForm(msg_.id_);
 	return true;
 }
 
@@ -275,51 +247,51 @@ bool SessionItem::DelSessionItemMenuItemClick( ui::EventArgs* param )
 	std::wstring name = param->pSender->GetName();
 	if(name == L"del_session_item")
 	{
-		nim::Session::DeleteRecentSession(type_, id_, nbase::Bind(&SessionItem::DeleteRecentSessionCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		nim::Session::DeleteRecentSession(msg_.type_, msg_.id_, nbase::Bind(&SessionItem::DeleteRecentSessionCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 		m_pWindow->SendNotify(this, ui::kEventNotify, SET_DELETE, 0);
 	}
 	else if(name == L"del_session_msg")
 	{
-		nim::MsgLog::BatchStatusDeleteAsync(id_, type_, nbase::Bind(&SessionItem::BatchStatusDeleteCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		nim::MsgLog::BatchStatusDeleteAsync(msg_.id_, msg_.type_, nbase::Bind(&SessionItem::BatchStatusDeleteCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	}
 	return true;
 }
 
 int SessionItem::GetUnread()
 {
-	return unread_count_;
+	return msg_.unread_count_;
 }
 
 void SessionItem::SetUnread(int unread)
 {
-	unread_count_ = unread;
+	msg_.unread_count_ = unread;
 	UpdateUnread();
 }
 
 void SessionItem::AddUnread()
 {
-	unread_count_++;
+	msg_.unread_count_++;
 	UpdateUnread();
 }
 
 void SessionItem::ResetUnread()
 {
-	if(unread_count_ > 0)
+	if(msg_.unread_count_ > 0)
 	{
-		unread_count_ = 0;
+		msg_.unread_count_ = 0;
 		UpdateUnread();
 
-		InvokeResetUnread(id_, type_);
+		InvokeResetUnread(msg_.id_, msg_.type_);
 	}
 }
 
 void SessionItem::UpdateUnread()
 {
-	if (unread_count_ > 0)
+	if (msg_.unread_count_ > 0)
 	{
-		if (unread_count_ < 100) {
-			label_unread_->SetText(nbase::StringPrintf(L"%d", unread_count_));
+		if (msg_.unread_count_ < 100) {
+			label_unread_->SetText(nbase::StringPrintf(L"%d", msg_.unread_count_));
 		}
 		else {
 			label_unread_->SetText(L"99+");
@@ -340,14 +312,6 @@ void SessionItem::DeleteRecentSessionCb(nim::NIMResCode code, const nim::Session
 void SessionItem::BatchStatusDeleteCb(nim::NIMResCode res_code, const std::string& uid, nim::NIMSessionType to_type)
 {
 	QLOG_APP(L"batch delete msg, id={0} type={1} code={2}") << uid << to_type << res_code;
-}
-
-void SessionItem::OnTeamNameChange(const nim::TeamInfo& team_info)
-{
-	if (team_info.GetTeamID() == id_)
-	{
-		label_name_->SetUTF8Text(team_info.GetName());
-	}
 }
 
 void InvokeResetUnread(const std::string &id, nim::NIMSessionType type)

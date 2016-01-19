@@ -14,6 +14,9 @@ void MsgBubbleNotice::InitControl()
 
 void MsgBubbleNotice::InitInfo(const nim::IMMessage &msg, const UTF8String& session_id)
 {
+	msg_ = msg;
+	session_id_ = session_id;
+
 	this->SetUTF8Name(msg.client_msg_id_);
 
 	std::wstring wstr;
@@ -27,6 +30,18 @@ void MsgBubbleNotice::InitInfo(const nim::IMMessage &msg, const UTF8String& sess
 	}
 	notice_->SetText(wstr);
 
+	OnResized();
+}
+
+void MsgBubbleNotice::RefreshNotice()
+{
+	std::wstring wstr;
+	if (msg_.type_ == nim::kNIMMessageTypeCustom)
+		wstr = GetCustomMsg(msg_.attach_);
+	else
+		GetNotifyMsg(msg_.attach_, msg_.sender_accid_, msg_.receiver_accid_, wstr, session_id_);
+	
+	notice_->SetText(wstr);
 	OnResized();
 }
 

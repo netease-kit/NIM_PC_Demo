@@ -974,35 +974,27 @@ void SessionForm::UpdateSessionIcon(const std::wstring &icon)
 
 void SessionForm::CheckHeader()
 {
+	std::wstring name, photo;
 	bool is_team = (session_type_ == nim::kNIMSessionTypeTeam);
+
 	if (is_team)
 	{
 		label_tid_->SetUTF8Text(session_id_);
-		std::wstring name = TeamService::GetInstance()->GetTeamName(session_id_);
-		label_title_->SetText(name);
-		SetTaskbarTitle(name);
-		std::wstring photo = TeamService::GetInstance()->GetTeamPhoto(true);
-		btn_header_->SetBkImage(photo);
-		UpdateSessionIcon(photo);
+		name = TeamService::GetInstance()->GetTeamName(session_id_);
+		photo = TeamService::GetInstance()->GetTeamPhoto(true);
+
 	}
 	else
 	{
-		OnGetUserInfoCallback cb = ToWeakCallback([this](const std::list<nim::UserNameCard> &uinfos) {
-			if (uinfos.empty()) return;
-			std::string accid = uinfos.cbegin()->GetAccId();
-			if (accid == session_id_)
-			{
-				std::wstring name = IsFileTransPhone() ? L"我的手机" : UserService::GetInstance()->GetUserName(accid);
-				label_title_->SetText(name);
-				label_tid_->SetVisible(false);
-				SetTaskbarTitle(name);
-				std::wstring photo = UserService::GetInstance()->GetUserPhoto(accid);
-				btn_header_->SetBkImage(photo);
-				UpdateSessionIcon(photo);
-			}
-		});
-		UserService::GetInstance()->GetUserInfoWithEffort(std::list<std::string>(1, session_id_), cb);
+		label_tid_->SetVisible(false);
+		name = IsFileTransPhone() ? L"我的手机" : UserService::GetInstance()->GetUserName(session_id_);
+		photo = UserService::GetInstance()->GetUserPhoto(session_id_);
 	}
+
+	label_title_->SetText(name);
+	SetTaskbarTitle(name);
+	btn_header_->SetBkImage(photo);
+	UpdateSessionIcon(photo);
 }
 
 bool SessionForm::OnBtnInvite(ui::EventArgs* param)
@@ -1087,22 +1079,28 @@ void SessionForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 {
 	auto refresh_msglist = [this](const nim::UserNameCard& info) //更新消息列表中消息气泡的头像和名称
 	{
-		if (!info.ExistValue(nim::kUserNameCardKeyIconUrl) && !info.ExistValue(nim::kUserNameCardKeyName))
-			return;
-
-		int msg_count = msg_list_->GetCount();
-		for (int i = 0; i < msg_count; i++)
+		bool refresh_icon = info.ExistValue(nim::kUserNameCardKeyIconUrl);
+		bool refresh_show_name = info.ExistValue(nim::kUserNameCardKeyName) && session_type_ == nim::kNIMSessionTypeTeam;
+		if (refresh_show_name)
 		{
-			MsgBubbleItem* bubble_item = dynamic_cast<MsgBubbleItem*>(msg_list_->GetItemAt(i));
-			if (bubble_item != NULL && bubble_item->msg_.sender_accid_ == info.GetAccId())
+			auto iter = team_member_info_list_.find(info.GetAccId());
+			if (iter != team_member_info_list_.cend() && !iter->second.GetNick().empty()) //设置了群名片，不更新
+				refresh_show_name = false;
+		}
+		
+		if (refresh_icon)
+		{
+			int msg_count = msg_list_->GetCount();
+			for (int i = 0; i < msg_count; i++)
 			{
-				UserService* user_service = UserService::GetInstance();
-				if (info.ExistValue(nim::kUserNameCardKeyIconUrl))
-					bubble_item->msg_header_button_->SetBkImage(user_service->GetUserPhoto(info.GetAccId()));
-				if (bubble_item->sender_name_->IsVisible() && info.ExistValue(nim::kUserNameCardKeyName))
-					bubble_item->sender_name_->SetText(user_service->GetUserName(info.GetAccId()));
+				MsgBubbleItem* bubble_item = dynamic_cast<MsgBubbleItem*>(msg_list_->GetItemAt(i));
+				if (bubble_item != NULL && bubble_item->msg_.sender_accid_ == info.GetAccId())
+					bubble_item->SetShowHeader();
 			}
 		}
+
+		if (refresh_show_name)
+			RefreshMsglistShowname(info.GetAccId());
 	};
 
 	for (auto info : uinfos)
@@ -1111,8 +1109,6 @@ void SessionForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 		{
 			if (info.GetAccId() == session_id_)
 				CheckHeader();
-
-			refresh_msglist(info);
 		}
 		else if (session_type_ == nim::kNIMSessionTypeTeam)
 		{
@@ -1125,13 +1121,11 @@ void SessionForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 					TeamItem* item = (TeamItem*)member_list_->FindSubControl(nbase::UTF8ToUTF16(info.GetAccId()));
 					if (item != NULL)
 						item->InitInfo(iter->second);
-					
-					refresh_msglist(info);
 				}
 			}
-			else
-				refresh_msglist(info);
 		}
+
+		refresh_msglist(info);
 	}
 }
 

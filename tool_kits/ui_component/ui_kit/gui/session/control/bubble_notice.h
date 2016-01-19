@@ -14,6 +14,7 @@ class MsgBubbleNotice : public ui::ListContainerElement
 public:
 	void InitControl();
 	void InitInfo(const nim::IMMessage &msg, const UTF8String& session_id);
+	void RefreshNotice();
 private:
 
 	/**
@@ -29,6 +30,9 @@ private:
 	*/
 	void OnResized();
 private:
-	ui::Label*  notice_;
+	ui::Label*	notice_;
+
+	nim::IMMessage	msg_;
+	std::string		session_id_;
 };
 }

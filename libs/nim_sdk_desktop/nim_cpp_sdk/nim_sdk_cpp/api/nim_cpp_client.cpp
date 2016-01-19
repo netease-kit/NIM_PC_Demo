@@ -93,7 +93,7 @@ static void CallbackMutliSpotLogin(const char* json_res, const void* callback)
 		Json::Value values;
 		if (reader.parse(PCharToString(json_res), values) && values.isObject())
 		{
-			res.notiry_type_ = (NIMMultiSpotNotiyType)values[kNIMMultiSpotNotiyType].asUInt();
+			res.notiry_type_ = (NIMMultiSpotNotifyType)values[kNIMMultiSpotNotifyType].asUInt();
 			ParseOtherClientsPres(values[kNIMOtherClientsPres], res.other_clients_);
 		}
 		Client::MultiSpotLoginCallback *cb = (Client::MultiSpotLoginCallback *)callback;

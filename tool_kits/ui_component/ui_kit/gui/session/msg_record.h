@@ -127,5 +127,7 @@ private:
 	
 	typedef std::map<std::string,MsgBubbleItem*> IdBubblePair;
 	IdBubblePair	id_bubble_pair_;
+
+	std::map<std::string, nim::TeamMemberProperty> team_member_info_list_; //（会话类型是群聊时有效）保存用户和群相关的信息
 };
 }

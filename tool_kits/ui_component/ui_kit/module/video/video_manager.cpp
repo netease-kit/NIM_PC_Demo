@@ -239,6 +239,30 @@ void VideoManager::OnVChatEvent(nim::NIMVideoChatSessionType type, uint64_t chan
 			}
 		}
 	}break;
+	case nim::kNIMVideoChatSessionTypeMp4Notify:{
+		Json::Value valus;
+		Json::Reader reader;
+		if (reader.parse(json, valus))
+		{
+			VideoForm *window = (VideoForm*)(WindowsManager::GetInstance()->GetWindow(VideoForm::kClassName, VideoForm::kClassName));
+			if (window)
+			{
+				if (valus[nim::kNIMVChatMp4Start].isObject())
+				{
+					std::string path = valus[nim::kNIMVChatMp4Start][nim::kNIMVChatMp4File].asString();
+					int64_t time = valus[nim::kNIMVChatMp4Start][nim::kNIMVChatTime].asInt64();
+					window->OnStartRecord(path, time);
+				}
+				else if (valus[nim::kNIMVChatMp4Close].isObject())
+				{
+					std::string path = valus[nim::kNIMVChatMp4Close][nim::kNIMVChatMp4File].asString();
+					int code = valus[nim::kNIMVChatMp4Close][nim::kNIMVChatStatus].asInt();
+					int64_t time = valus[nim::kNIMVChatMp4Close][nim::kNIMVChatTime].asInt64();
+					window->OnStopRecord(code, path, time);
+				}
+			}
+		}
+	}break;
 	}
 }
 
@@ -418,14 +442,32 @@ void VideoManager::EndDevice(nim::NIMDeviceType type, DeviceSessionType session_
 	}
 }
 //通话
-bool VideoManager::StartChat(nim::NIMVideoChatMode mode, const std::string& uid)
+bool VideoManager::StartChat(nim::NIMVideoChatMode mode, const std::string& apns_text, const std::string& custom_info, const std::string& uid)
 {
 	QLOG_APP(L"StartChat mode={0}, uid={1}") << mode << uid;
 	Json::FastWriter fs;
 	Json::Value value;
 	value[nim::kNIMVChatUids].append(uid);
+	if (1)
+	{
+		wchar_t buffer[MAX_PATH];
+		GetModuleFileName(NULL, (LPWSTR)buffer, sizeof(buffer));
+		std::wstring exe_path = buffer;
+		int pos = exe_path.rfind(L'\\');
+		if (pos != -1)
+		{
+			exe_path.erase(pos);
+		}
+		exe_path.append(L"\\video_quality.txt");
+		std::string info;
+		nbase::ReadFileToString(exe_path, info);
+		if (!info.empty())
+		{
+			value[nim::kNIMVChatVideoQuality] = atoi(info.c_str());
+		}
+	}
 	std::string json_value = fs.write(value);
-	return nim::VChat::Start(mode, json_value);
+	return nim::VChat::Start(mode, apns_text, custom_info, json_value);
 }
 //设置视频类型
 bool VideoManager::SetVoipMode(nim::NIMVideoChatMode mode)
@@ -437,7 +479,29 @@ bool VideoManager::SetVoipMode(nim::NIMVideoChatMode mode)
 bool VideoManager::VChatCalleeAck(uint64_t channel_id, bool accept)
 {
 	QLOG_APP(L"VChatCalleeAck channel_id={0}, accept={1}") << channel_id << accept;
-	return nim::VChat::CalleeAck(channel_id, accept);
+	std::string json_value;
+	if (accept)
+	{
+		wchar_t buffer[MAX_PATH];
+		GetModuleFileName(NULL, (LPWSTR)buffer, sizeof(buffer));
+		std::wstring exe_path = buffer;
+		int pos = exe_path.rfind(L'\\');
+		if (pos != -1)
+		{
+			exe_path.erase(pos);
+		}
+		exe_path.append(L"\\video_quality.txt");
+		std::string info;
+		nbase::ReadFileToString(exe_path, info);
+		if (!info.empty())
+		{
+			Json::FastWriter fs;
+			Json::Value value;
+			value[nim::kNIMVChatVideoQuality] = atoi(info.c_str());
+			json_value = fs.write(value);
+		}
+	}
+	return nim::VChat::CalleeAck(channel_id, accept, json_value);
 }
 //通话控制
 bool VideoManager::VChatControl(uint64_t channel_id, nim::NIMVChatControlType type)

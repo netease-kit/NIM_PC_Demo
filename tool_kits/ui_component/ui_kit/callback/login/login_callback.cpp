@@ -363,7 +363,7 @@ void LoginCallback::OnMultispotLoginCallback(const nim::MultiSpotLoginRes& res)
 {
 	QLOG_APP(L"OnMultispotLoginCallback: {0} - {1}") << res.notiry_type_ << res.other_clients_.size();
 
-	bool online = res.notiry_type_ == nim::kNIMMultiSpotNotiyTypeImIn;
+	bool online = res.notiry_type_ == nim::kNIMMultiSpotNotifyTypeImIn;
 	if (!res.other_clients_.empty())
 		Post2UI(nbase::Bind(LoginCallback::OnMultispotChange, online, res.other_clients_));
 

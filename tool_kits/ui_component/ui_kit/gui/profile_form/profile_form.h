@@ -53,8 +53,9 @@ private:
 	void InitBirthdayCombo(); //初始化生日下拉框
 	void CheckInMuteBlack(); //检查该用户是否在自己的静音列表和黑名单中
 
-	void OnFriendListChange(FriendChangeType change_type, const nim::UserNameCard& info);
+	void OnFriendListChange(FriendChangeType change_type, const std::string& accid);
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
+	void OnUserPhotoReady(const std::string& account, const std::wstring& photo_path);
 	void OnMiscUInfoChange(const std::list<nim::UserNameCard> &uinfos);
 
 public:

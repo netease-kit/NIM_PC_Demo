@@ -62,11 +62,15 @@ public:
 	//清理数据
 	void Clear();
 	void SetAutoSize(bool auto_size ){auto_size_ = auto_size;}
+	bool IsNeedPaint(){ return need_paint_; }
+	void SetAutoPaint(bool auto_paint) { auto_paint_ = auto_paint; }
 private:
 	bool Reversal_Pic( uint32_t* src, uint32_t* dest, int width, int height );
 protected:
 	BitmapDrawInfo cur_paint_bitmap_info_;
 	bool auto_size_;
+	bool need_paint_;
+	bool auto_paint_;
 };
 
 }

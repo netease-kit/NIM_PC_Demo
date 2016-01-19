@@ -48,7 +48,7 @@ public:
 	void EndDevice(nim::NIMDeviceType type, DeviceSessionType session_type, bool forced = false);
 
 	//通话
-	bool StartChat(nim::NIMVideoChatMode mode, const std::string& uid);
+	bool StartChat(nim::NIMVideoChatMode mode, const std::string& apns_text, const std::string& custom_info, const std::string& uid);
 	//设置视频类型
 	bool SetVoipMode(nim::NIMVideoChatMode mode);
 	//回应邀请

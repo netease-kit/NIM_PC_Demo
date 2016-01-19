@@ -39,19 +39,6 @@ void MsgBubbleItem::InitControl(bool bubble_right)
 	play_status_ = this->FindSubControl(L"play_status");
 
 	HideAllStatus(0);
-
-	//OnUserInfoChangeCallback cb = ToWeakCallback([this](const std::list<UserInfo> &infos) {
-	//	for (auto iter = infos.cbegin(); iter != infos.cend(); iter++)
-	//	{
-	//		if (iter->account == msg_.from_account)
-	//		{
-	//			msg_header_button_->SetBkImage(UserService::GetInstance()->GetUserPhoto(*iter));
-	//			sender_name_->SetUTF8Text(iter->name);
-	//			break;
-	//		}
-	//	}
-	//});
-	//unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(cb));
 }
 
 void MsgBubbleItem::InitInfo(const nim::IMMessage &msg)
@@ -97,21 +84,15 @@ void MsgBubbleItem::SetShowTime(bool show)
 
 void MsgBubbleItem::SetShowHeader()
 {
-	OnGetUserInfoCallback cb = ToWeakCallback([this](const std::list<nim::UserNameCard> uinfos) {
-		assert(nbase::MessageLoop::current()->ToUIMessageLoop());
-		if (uinfos.empty()) return;
-		msg_header_button_->SetBkImage(UserService::GetInstance()->GetUserPhoto(uinfos.cbegin()->GetAccId()));
-	});
-	UserService::GetInstance()->GetUserInfoWithEffort(std::list<std::string>(1, msg_.sender_accid_), cb);
+	msg_header_button_->SetBkImage(UserService::GetInstance()->GetUserPhoto(msg_.sender_accid_));
 }
 
 void MsgBubbleItem::SetShowName(bool show, const std::string& from_nick)
 {
 	sender_name_->SetVisible(show);
-	if(show)
-	{
+
+	if (show)
 		sender_name_->SetUTF8Text(from_nick);
-	}
 }
 
 void MsgBubbleItem::SetMsgStatus(nim::NIMMsgLogStatus status)

@@ -129,7 +129,6 @@ void MainForm::InitWindow()
 	nim_ui::ContactsListManager::GetInstance()->InvokeGetAllUserInfo();
 	nim_ui::SessionListManager::GetInstance()->InvokeLoadSessionList();
 	nim_ui::SessionListManager::GetInstance()->QueryUnreadCount();
-	
 }
 
 void MainForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
@@ -152,13 +151,9 @@ void MainForm::OnUserPhotoReady(const std::string& account, const std::wstring& 
 
 void MainForm::InitHeader()
 {
-	OnGetUserInfoCallback cb = ToWeakCallback([this](const std::list<nim::UserNameCard> &uinfos) {
-		assert(nbase::MessageLoop::current()->ToUIMessageLoop());
-		if (uinfos.empty()) return;
-		label_name_->SetText(nim_ui::UserManager::GetInstance()->GetUserName(uinfos.cbegin()->GetAccId(), false));
-		btn_header_->SetBkImage(nim_ui::UserManager::GetInstance()->GetUserPhoto(uinfos.cbegin()->GetAccId()));
-	});
-	nim_ui::UserManager::GetInstance()->GetUserInfoWithEffort(std::list<std::string>(1, nim_ui::LoginManager::GetInstance()->GetAccount()), cb);
+	std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
+	label_name_->SetText(nim_ui::UserManager::GetInstance()->GetUserName(my_id, false));
+	btn_header_->SetBkImage(nim_ui::UserManager::GetInstance()->GetUserPhoto(my_id));
 }
 
 bool MainForm::Notify( ui::EventArgs* msg )

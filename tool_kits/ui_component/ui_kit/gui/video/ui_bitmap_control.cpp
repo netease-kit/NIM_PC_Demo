@@ -8,6 +8,8 @@ namespace ui
 CBitmapControl::CBitmapControl(void)
 {
 	auto_size_ = false;
+	need_paint_ = false;
+	auto_paint_ = true;
 }
 
 CBitmapControl::~CBitmapControl(void)
@@ -21,6 +23,7 @@ void CBitmapControl::Paint(HDC hDC, const UiRect& rcPaint)
 	{
 		if( !::IntersectRect( &m_rcPaint, &rcPaint, &m_rcItem ) ) 
 			return;
+		need_paint_ = false;
 		Control::Paint(hDC, rcPaint);
 		//paint hbitmap
 		if (cur_paint_bitmap_info_.bitmap_)
@@ -141,14 +144,22 @@ void CBitmapControl::Refresh(HWND hWnd, BYTE* data, uint32_t size, uint32_t widt
 			SetFixedWidth(paint_w);
 		}
 	}
-	Invalidate();
+	if (auto_paint_)
+	{
+		Invalidate();
+	}
+	need_paint_ = true;
 }
 //清理失效数据
 void CBitmapControl::Clear()
 {
 	cur_paint_bitmap_info_.ClearData();
 	cur_paint_bitmap_info_.ClearHBitmap();
-	Invalidate();
+	if (auto_paint_)
+	{
+		Invalidate();
+	}
+	need_paint_ = true;
 }
 bool CBitmapControl::Reversal_Pic( uint32_t* src, uint32_t* dest, int width, int height )
 {

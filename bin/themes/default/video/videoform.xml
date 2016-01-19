@@ -11,6 +11,8 @@
     <Class name="CompleteAudio" value="normalimage=&quot;confirm_audio_ok0.png&quot; hotimage=&quot;confirm_audio_ok1.png&quot; pushedimage=&quot;confirm_audio_ok2.png&quot;"/>
     <Class name="RefuseVideo" value="normalimage=&quot;confirm_video_no0.png&quot; hotimage=&quot;confirm_video_no1.png&quot; pushedimage=&quot;confirm_video_no2.png&quot;"/>
     <Class name="RefuseAudio" value="normalimage=&quot;confirm_audio_no0.png&quot; hotimage=&quot;confirm_audio_no1.png&quot; pushedimage=&quot;confirm_audio_no2.png&quot;"/>
+    <Class name="Record1" value="forenormalimage=&quot;file='record10.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='record13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Record2" value="forenormalimage=&quot;file='record20.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='record23.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
 
     <VBox>
         <HBox height="33" padding="20,0,5,0" bkcolor="bk_video_title">
@@ -56,6 +58,8 @@
                     <Button name="microphone" width="28" height="28" margin="5,0,0,0" valign="center" tooltiptext="麦克风" enabled="false"/>
                     <Button name="speaker" width="28" height="28" margin="5,0,0,0" valign="center" tooltiptext="音量" enabled="false"/>
                     <CheckBox name="camera" width="28" height="28" margin="5,0,0,0" valign="center" enabled="false"/>
+                    <Button class="Record1" name="record_start" width="28" height="28" margin="5,0,0,0" tooltiptext="开始录制" valign="center" visible="false" />
+                    <Button class="Record2" name="record_stop" width="28" height="28" margin="5,0,0,0" tooltiptext="结束录制" valign="center" visible="false"/>
 
                     <Button name="into_video" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_VIDEO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
                     <Button name="into_audio" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_AUDIO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
@@ -99,6 +103,15 @@
                     <Label name="end_call_why" margin="0,5,0,0" halign="center" normaltextcolor="obvious_tip" visible="false"/>                     
                 </VBox>
             </Box>
+			<VBox name="record_tip_box" width="auto" height="auto" halign="center" valign="bottom" margin="0,0,0,60" mouse="false" visible="false" childmargin="4" >
+				<Label name="record_tip0" halign="center" font="3" normaltextcolor="link_red" visible="false"/> 
+				<VBox width="auto" height="auto" halign="center" valign="center" bkcolor="bk_video_content" alpha="200" padding="20,10,20,10" mouse="false" childmargin="4" >
+					<Label name="record_tip1" halign="center" font="3" normaltextcolor="white" visible="false"/> 
+					<Label name="record_tip2" halign="center" font="3" normaltextcolor="white" visible="false"/>
+					<Label name="record_tip3" halign="center" font="3" normaltextcolor="white" visible="false" maxwidth="260"/>     
+					<Label name="recording_tip" halign="center" font="3" normaltextcolor="link_red" visible="false"/>                 
+				</VBox>                
+			</VBox>
         </Box>
     </VBox>
 </Window>

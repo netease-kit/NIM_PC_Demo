@@ -43,7 +43,7 @@ enum NIMResCode
 	kNIMResTeamApplySuccess		= 808,		/**< 申请成功 */
 	kNIMResTeamAlreadyIn		= 809,		/**< 已经在群里 */
 	kNIMResTeamInviteSuccess	= 810,		/**< 邀请成功 */
-	//数据整解编错误代码
+	//数据解编错误代码
 	kNIMResInvalidProtocol		= 997,		/**< 协议已失效 */
 	kNIMResEUnpacket			= 998,		/**< 解包错误 */
 	kNIMResEPacket				= 999,		/**< 打包错误 */

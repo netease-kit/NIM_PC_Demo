@@ -53,6 +53,11 @@ private:
 
 	void GetMoreCustomMsg();
 	void AddCustomMsg(const nim::SysMessage& msg, bool first);
+
+	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
+	void OnUserPhotoReady(const std::string& account, const std::wstring& photo_path);
+	void OnTeamNameChange(const nim::TeamInfo& team_info);
+
 public:
 	static const LPCTSTR kClassName;
 private:
@@ -68,7 +73,10 @@ private:
 
 	__int64 last_custom_msg_time_;//早的一条消息时间
 	bool has_more_custom_;
+
+	AutoUnregister unregister_cb;
 };
+
 
 /**
 * 全局函数，更新未读系统消息条数
@@ -83,4 +91,5 @@ void UpdateSysmsgUnread(int count);
 * @return void	无返回值
 */
 void UpdateCustomSysmsgUnread(bool add);
+
 }

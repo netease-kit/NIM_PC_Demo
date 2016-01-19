@@ -45,6 +45,7 @@ public:
 
 	void OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos);
 	void OnUserPhotoReady(const std::string& accid, const std::wstring &photo_path);
+	void OnTeamNameChange(const nim::TeamInfo& team_info);
 
 private:
 	bool OnItemNotify(ui::EventArgs* msg);

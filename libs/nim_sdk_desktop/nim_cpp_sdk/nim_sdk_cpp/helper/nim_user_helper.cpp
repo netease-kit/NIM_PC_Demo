@@ -1,3 +1,10 @@
+/** @file nim_user_helper.cpp
+  * @brief SDK用户信息辅助方法
+  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @author Oleg
+  * @date 2015/10/20
+  */
+
 #include "nim_user_helper.h"
 
 namespace nim
@@ -9,17 +16,25 @@ bool ParseNameCards(const std::string& namecards_json, std::list<UserNameCard>& 
 	Json::Reader reader;
 	if (reader.parse(namecards_json, values) && values.isArray())
 	{
-		int len = values.size();
-		for (int i = 0; i < len; i++)
-		{
-			UserNameCard info;
-			ParseNameCard(values[i], info);
-			namecards.push_back(info);
-		}
-
-		return true;
+		return ParseNameCards(values, namecards);
 	}
 	return false;
+}
+
+bool ParseNameCards(const Json::Value& namecards_json, std::list<UserNameCard>& namecards)
+{
+	if (!namecards_json.isArray())
+		return false;
+
+	int len = namecards_json.size();
+	for (int i = 0; i < len; i++)
+	{
+		UserNameCard info;
+		ParseNameCard(namecards_json[i], info);
+		namecards.push_back(info);
+	}
+
+	return true;
 }
 
 bool ParseNameCard(const std::string& namecard_json, UserNameCard& namecard)

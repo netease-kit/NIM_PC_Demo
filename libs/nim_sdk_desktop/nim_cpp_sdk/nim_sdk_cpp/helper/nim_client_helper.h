@@ -71,7 +71,7 @@ struct KickoutRes
 
 struct MultiSpotLoginRes
 {
-	NIMMultiSpotNotiyType	notiry_type_;
+	NIMMultiSpotNotifyType	notiry_type_;
 	std::list<OtherClientPres> other_clients_;
 };
 

@@ -50,11 +50,11 @@ enum NIMLoginStep
 	kNIMLoginStepLogin			= 3,	/**< 登录验证*/        
 };
 
-/** @enum NIMMultiSpotNotiyType 多点登录通知类型 */
-enum NIMMultiSpotNotiyType
+/** @enum NIMMultiSpotNotifyType 多点登录通知类型 */
+enum NIMMultiSpotNotifyType
 {
-	kNIMMultiSpotNotiyTypeImIn	=   2,		/**< 通知其他在线端自己登录了*/
-	kNIMMultiSpotNotiyTypeImOut	=   3,		/**< 通知其他在线端自己退出*/
+	kNIMMultiSpotNotifyTypeImIn	=   2,		/**< 通知其他在线端自己登录了*/
+	kNIMMultiSpotNotifyTypeImOut	=   3,		/**< 通知其他在线端自己退出*/
 };
 
 /** @enum NIMSDKLogLevel NIM SDK log级别，级别越高，log越详细 */
@@ -124,7 +124,7 @@ static const char *kNIMPresLoginTime	= "login_time";			/**< long, 本次登录�
   * }
   * @{
   */
-static const char *kNIMMultiSpotNotiyType		= "multi_spot_notiy_type";	/**< int，多点登录通知类型NIMMultiSpotNotiyType，其他端的状态列表json格式同kNIMOtherClientsPres */
+static const char *kNIMMultiSpotNotifyType		= "multi_spot_notiy_type";	/**< int，多点登录通知类型NIMMultiSpotNotifyType，其他端的状态列表json格式同kNIMOtherClientsPres */
 /** @}*/ //json params for nim_json_transport_cb_func that has been registered in nim_client_reg_multispot_login_notify_cb API
 
 /** @name json params for nim_json_transport_cb_func that has been registered in nim_client_logout API

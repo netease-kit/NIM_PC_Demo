@@ -32,7 +32,6 @@ FriendList::FriendList(ui::TreeView* friend_list):
 	black_list_item->AttachClick([](ui::EventArgs* param)
 	{
 		WindowsManager::GetInstance()->SingletonShow<BlackListWindow>(BlackListWindow::kClassName);
-
 		return true;
 	});
 }

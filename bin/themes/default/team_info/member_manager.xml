@@ -8,15 +8,15 @@
             <Button class="btn_wnd_close" name="closebtn" margin="4,6,0,0"/>
         </HBox>
 
-        <HBox name="team_member_item" width="170" height="64" margin="0,5,0,5">
+        <HBox name="team_member_item" width="auto" height="64" margin="0,5,0,5">
             <Box width="56" height="auto">
                 <Box width="auto" height="auto" margin="8,8,0,8">
                     <Button name="head_image" width="46" height="46" margin="1,1,1,1" borderround="46,46,46,46" mouse="false"/>
                     <Button class="icon_headimage_mask_48x48" mouse="false"/>
                 </Box>
             </Box>
-            <VBox padding="8,0,0,0" height="auto" width="stretch" valign="center" mouse="false" mousechild="false">
-                <Label name="show_name" font="2" normaltextcolor="darkcolor" width="stretch" maxwidth="90" margin="0,0,8,0" mouse="false"/>
+            <VBox padding="8,0,0,0" height="auto" width="auto" valign="center" mouse="false" mousechild="false">
+                <Label name="show_name" font="2" normaltextcolor="darkcolor" width="auto" margin="0,0,8,0" mouse="false"/>
             </VBox>
         </HBox>
 

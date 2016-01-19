@@ -25,6 +25,9 @@ public:
 	__int64 GetMsgId();
 	__int64 GetTime();
 	void OnTeamEventCb(nim::NIMSysMsgStatus status);
+	void OnUserInfoChange(const nim::UserNameCard &info);
+	void OnUserPhotoReady(const std::string& accid, const std::wstring& photo_path);
+	void OnTeamNameChange(const nim::TeamInfo& team_info);
 
 	static void TeamEventCb(__int64 msg_id, const nim::TeamEvent& team_event);
 	static void SetStatusCb(nim::NIMResCode code, __int64 msg_id, int unread);
@@ -35,8 +38,7 @@ private:
 private:
 	bool OnClicked(ui::EventArgs* arg);
 	bool OnEventItemMenu(ui::EventArgs* arg);
-private:
-	void OnTeamNameChange(const nim::TeamInfo& team_info);
+	
 private:
 	ui::Button*		btn_head_;
 	ui::Label*		evt_team_;

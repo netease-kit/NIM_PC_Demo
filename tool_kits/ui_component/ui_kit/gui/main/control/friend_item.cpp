@@ -15,14 +15,14 @@ FriendItem::~FriendItem()
 
 }
 
-void FriendItem::Init(bool is_team, const nim::UserNameCard &user_info)
+void FriendItem::Init(bool is_team, const std::string &accid)
 {
 	this->AttachDoubleClick(nbase::Bind(&FriendItem::OnDbClicked, this, std::placeholders::_1));
 
 	contact_ = (Label*) this->FindSubControl(L"contact");
 
 	is_team_ = is_team;
-	id_ = user_info.GetAccId();
+	id_ = accid;
 
 	SetUTF8Name(id_);
 	SetUTF8DataID(id_);
@@ -37,7 +37,7 @@ void FriendItem::Init(bool is_team, const nim::UserNameCard &user_info)
 	if(is_team)
 		head_ctrl->SetBkImage(TeamService::GetInstance()->GetTeamPhoto(false));
 	else
-		head_ctrl->SetBkImage(UserService::GetInstance()->GetUserPhoto(user_info.GetAccId()));
+		head_ctrl->SetBkImage(UserService::GetInstance()->GetUserPhoto(accid));
 
 	nick_name_ = nbase::MakeLowerString(nick_name_);
 	nick_name_full_spell_ = nbase::MakeLowerString(PinYinHelper::GetInstance()->ConvertToFullSpell(nick_name_));
@@ -45,17 +45,6 @@ void FriendItem::Init(bool is_team, const nim::UserNameCard &user_info)
 
 	if(is_team_)
 		unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(nbase::Bind(&FriendItem::OnTeamNameChange, this, std::placeholders::_1)));
-}
-
-nim::UserNameCard FriendItem::GetUserInfo()
-{
-	nim::UserNameCard uinfo;
-	uinfo.SetAccId(id_);
-	if(!is_team_)
-	{
-		UserService::GetInstance()->GetUserInfo(id_, uinfo);
-	}
-	return uinfo;
 }
 
 bool FriendItem::OnDbClicked(ui::EventArgs* arg)

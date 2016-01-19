@@ -24,13 +24,17 @@ typedef bool(*nim_vchat_get_audio_input_auto_volumn)();
 typedef void(*nim_vchat_set_cb_func)(nim_vchat_cb_func cb, const void *user_data);
 //启动通话
 //json_info 见nim_vchat_def.h
-typedef bool(*nim_vchat_start)(NIMVideoChatMode mode, const char* json_extension, const void *user_data);
+typedef bool(*nim_vchat_start)(NIMVideoChatMode mode, const char* apns_text, const char* custom_info, const char* json_extension, const void *user_data);
 //设置通话模式
 typedef bool(*nim_vchat_set_talking_mode)(NIMVideoChatMode mode, const char* json_extension);
 //回应邀请
 typedef bool(*nim_vchat_callee_ack)(__int64 channel_id, bool accept, const char* json_extension, const void *user_data);
 //通话控制
 typedef bool(*nim_vchat_control)(__int64 channel_id, NIMVChatControlType type, const char* json_extension, const void *user_data);
+//开始录制MP4文件，一次只允许一个录制文件，在通话开始的时候才有实际数据
+typedef void(*nim_vchat_start_record)(const char *path, const char *json_extension, nim_vchat_mp4_record_opt_cb_func cb, const void *user_data);
+//停止录制MP4文件
+typedef void(*nim_vchat_stop_record)(const char *json_extension, nim_vchat_mp4_record_opt_cb_func cb, const void *user_data);
 //结束通话
 typedef void(*nim_vchat_end)(const char* json_extension);
 
@@ -127,9 +131,9 @@ void VChat::SetCbFunc(nim_vchat_cb_func cb)
 }
 //启动通话
 //json_info 见nim_vchat_def.h
-bool VChat::Start(NIMVideoChatMode mode, const std::string& json_info)
+bool VChat::Start(NIMVideoChatMode mode, const std::string& apns_text, const std::string& custom_info, const std::string& json_info)
 {
-	return NIM_SDK_GET_FUNC(nim_vchat_start)(mode, json_info.c_str(), nullptr);
+	return NIM_SDK_GET_FUNC(nim_vchat_start)(mode, apns_text.c_str(), custom_info.c_str(), json_info.c_str(), nullptr);
 }
 //设置通话模式
 bool VChat::SetTalkingMode(NIMVideoChatMode mode, const std::string& json_extension)
@@ -137,14 +141,37 @@ bool VChat::SetTalkingMode(NIMVideoChatMode mode, const std::string& json_extens
 	return NIM_SDK_GET_FUNC(nim_vchat_set_talking_mode)(mode, json_extension.c_str());
 }
 //回应邀请
-bool VChat::CalleeAck(unsigned __int64 channel_id, bool accept)
+bool VChat::CalleeAck(unsigned __int64 channel_id, bool accept, const std::string& json_extension)
 {
-	return NIM_SDK_GET_FUNC(nim_vchat_callee_ack)(channel_id, accept, "", nullptr);
+	return NIM_SDK_GET_FUNC(nim_vchat_callee_ack)(channel_id, accept, json_extension.c_str(), nullptr);
 }
 //通话控制
 bool VChat::Control(unsigned __int64 channel_id, NIMVChatControlType type)
 {
 	return NIM_SDK_GET_FUNC(nim_vchat_control)(channel_id, type, "", nullptr);
+}
+static void mp4_record_opt_cb(bool ret, int code, const char *file, __int64 time, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		VChat::Mp4OptCallback* cb_pointer = (VChat::Mp4OptCallback*)user_data;
+		if (*cb_pointer)
+		{
+			PostTaskToUIThread(std::bind((*cb_pointer), ret, code, PCharToString(file), time));
+		}
+		delete user_data;
+	}
+}
+void VChat::StartRecord(const std::string& path, Mp4OptCallback cb)
+{
+	Mp4OptCallback* cb_pointer = new Mp4OptCallback(cb);
+	NIM_SDK_GET_FUNC(nim_vchat_start_record)(path.c_str(), "", mp4_record_opt_cb, cb_pointer);
+}
+//停止录制MP4文件
+void VChat::StopRecord(Mp4OptCallback cb)
+{
+	Mp4OptCallback* cb_pointer = new Mp4OptCallback(cb);
+	NIM_SDK_GET_FUNC(nim_vchat_stop_record)("", mp4_record_opt_cb, cb_pointer);
 }
 //结束通话
 void VChat::End()

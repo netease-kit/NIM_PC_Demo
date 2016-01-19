@@ -1,6 +1,8 @@
 ﻿#include "video_form.h"
 #include "util/windows_manager.h"
 #include "module/video/video_manager.h"
+#include "shared/modal_wnd/file_dialog_ex.h"
+#include <sys/timeb.h>
 
 using namespace ui;
 
@@ -35,6 +37,7 @@ VideoForm::VideoForm(std::string session_id) : session_id_(session_id)
 	need_change_form_size_ = true;
 
 	is_max_window_ = false;
+	mp4_recording_ = false;
 }
 
 VideoForm::~VideoForm()
@@ -127,8 +130,10 @@ void VideoForm::InitWindow()
 	status_label_   = (Label*) FindControl(L"chat_status");
 
 	video_ctrl_screen_  = (CBitmapControl*) FindControl(L"photo_screen");
+	video_ctrl_screen_->SetAutoPaint(false);
 	video_ctrl_preview_ = (CBitmapControl*) FindControl(L"photo_preview");
 	video_ctrl_preview_->SetAutoSize(true);
+	video_ctrl_preview_->SetAutoPaint(false);
 
 	time_tick_label_ = (Label*) FindControl( L"time_tick" );
 	camera_open_label_ = (Label*) FindControl( L"camera_opening" );
@@ -152,6 +157,8 @@ void VideoForm::InitWindow()
 	speaker_btn_	 = (Button*) FindControl(L"speaker");
 	microphone_btn_  = (Button*) FindControl(L"microphone");
 	camera_checkbox_ = (CheckBox*) FindControl(L"camera");
+	start_record_btn_ = (Button*)FindControl(L"record_start");
+	stop_record_btn_ = (Button*)FindControl(L"record_stop");
 
 	input_volumn_slider_ = (Slider*) FindControl( L"input_volumn" );
 	vbox_of_input_ = (VBox*) FindControl( L"vbox_of_input_volumn" );
@@ -170,6 +177,13 @@ void VideoForm::InitWindow()
 	netstat_label_ = (Label*) FindControl( L"netstat" );
 	hbox_camera_fail_ = (HBox*) FindControl( L"hbox_camera_fail" );
 	vbox_video_audio_tip_ = (Box*) FindControl( L"vbox_video_audio_tip" );
+
+	record_tip_box_ = (Box*)FindControl(L"record_tip_box");
+	record_tip_label0_ = (Label*)FindControl(L"record_tip0");
+	record_tip_label1_ = (Label*)FindControl(L"record_tip1");
+	record_tip_label2_ = (Label*)FindControl(L"record_tip2");
+	record_tip_label3_ = (Label*)FindControl(L"record_tip3");
+	recording_tip_label_ = (Label*)FindControl(L"recording_tip");
 
 	AllowWindowMaxsize( false );
 
@@ -321,6 +335,14 @@ void VideoForm::OnCloseRingEnd( const int32_t mode )
 
 void VideoForm::EnterEndCallPage( EndCallEnum why )
 {
+	if (end_call_ != END_CALL_NONE)
+	{
+		return;
+	}
+	if (mp4_recording_)
+	{
+		nim::VChat::StopRecord(std::bind(&VideoForm::StopRecordCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+	}
 	Control* min = FindControl( L"minbtn" );
 	ASSERT( min );
 	min->SetEnabled( false );
@@ -549,6 +571,27 @@ bool VideoForm::OnClicked( ui::EventArgs* arg )
 		{
 			BeforeClose();
 		}
+	}
+	else if (name == L"record_start")
+	{
+		// 要保存的文件名
+		CFileDialogEx* file_dlg = new CFileDialogEx();
+		std::map<LPCTSTR, LPCTSTR> filters;
+		filters[L"文件格式(*.mp4)"] = L"*.mp4";
+		file_dlg->SetFilter(filters);
+		timeb time_now;
+		ftime(&time_now); // 秒数
+		std::wstring file_name = nbase::StringPrintf(L"%d.mp4", time_now.time);
+		file_dlg->SetFileName(file_name.c_str());
+		file_dlg->SetDefExt(L".mp4");
+		file_dlg->SetParentWnd(GetHWND());
+		// 弹出非模态对话框
+		CFileDialogEx::FileDialogCallback2 callback2 = nbase::Bind(&VideoForm::OnRecordMp4SelFileCb, this, std::placeholders::_1, std::placeholders::_2);
+		file_dlg->AyncShowSaveFileDlg(callback2);
+	}
+	else if (name == L"record_stop")
+	{
+		nim::VChat::StopRecord(std::bind(&VideoForm::StopRecordCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 	}
 	return false;
 }
@@ -1100,5 +1143,41 @@ void VideoForm::StartTalking( /*const nbiz::VideoChatStartCallbackParam& msg*/ )
 	CheckTitle();
 	ShowStatusPage(SP_DIAL);
 	SwitchStatus(STATUS_CONNECTING);
+}
+void VideoForm::ShowRecordTip(std::wstring tip, std::wstring tip2, std::wstring path)
+{
+	bool show = false;
+	if (tip.empty() && tip2.empty() && path.empty())
+	{
+		record_tip_label1_->SetVisible(false);
+		record_tip_label2_->SetVisible(false);
+		record_tip_label3_->SetVisible(false);
+		if (mp4_recording_)
+		{
+			recording_tip_label_->SetText(L"录制中");
+			recording_tip_label_->SetVisible(true);
+			show = true;
+		}
+	}
+	else
+	{
+		recording_tip_label_->SetVisible(false);
+		record_tip_label1_->SetVisible(!tip.empty());
+		record_tip_label1_->SetText(tip);
+		record_tip_label2_->SetVisible(!tip2.empty());
+		record_tip_label2_->SetText(tip2);
+		record_tip_label3_->SetVisible(!path.empty());
+		record_tip_label3_->SetText(path);
+		show = true;
+		record_tip_timer_.Cancel();
+		StdClosure task = nbase::Bind(&VideoForm::HideRecordTipTime, this);
+		task = record_tip_timer_.ToWeakCallback(task);
+		nbase::ThreadManager::PostDelayedTask(kThreadUI, task, nbase::TimeDelta::FromSeconds(3));
+	}
+	record_tip_box_->SetVisible(show);
+}
+void VideoForm::HideRecordTipTime()
+{
+	ShowRecordTip(L"");
 }
 }

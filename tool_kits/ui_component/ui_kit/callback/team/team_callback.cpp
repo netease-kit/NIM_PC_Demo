@@ -61,11 +61,23 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 	}
 	else if (info.notification_id_ == nim::kNIMNotificationIdTeamInviteAccept)	//接受入群邀请（包括自己和他人）
 	{
-		if (info.res_code_ == nim::kNIMResSuccess && info.ids_.front() == team_info.GetOwnerID())
-		{	//ids中的用户是群主，说明是自己接受邀请入群，就添加到群列表并打开群聊窗口
-			TeamService::GetInstance()->InvokeAddTeam(tid, "", team_info.GetType());
-			SessionManager::GetInstance()->OpenSessionForm(tid, nim::kNIMSessionTypeTeam, true);
-		}	
+		if (info.res_code_ == nim::kNIMResSuccess)
+		{
+			if (info.ids_.front() == team_info.GetOwnerID())
+			{	//ids中的用户是群主，说明是自己接受邀请入群，就添加到群列表并打开群聊窗口
+				TeamService::GetInstance()->InvokeAddTeam(tid, "", team_info.GetType());
+				SessionManager::GetInstance()->OpenSessionForm(tid, nim::kNIMSessionTypeTeam, true);
+			}
+			else
+			{
+				std::string uid = *info.ids_.begin();
+				assert(LoginManager::GetInstance()->GetAccount() != uid);
+				//群成员收到别人入群消息
+				nim::Team::QueryTeamMemberAsync(tid, uid, [tid](const nim::TeamMemberProperty& team_member_info) {
+					TeamService::GetInstance()->InvokeAddTeamMember(tid, team_member_info);
+				});
+			}
+		}
 	}
 	else if (info.notification_id_ == nim::kNIMNotificationIdLocalGetTeamList)
 	{
@@ -86,16 +98,7 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 	{
 		if (info.res_code_ == nim::kNIMResSuccess)
 		{
-			if (info.notification_id_ == nim::kNIMNotificationIdTeamInviteAccept)
-			{
-				std::string uid = *info.ids_.begin();
-				assert(LoginManager::GetInstance()->GetAccount() != uid);
-				//群成员收到别人入群消息
-				nim::Team::QueryTeamMemberAsync(tid, uid, [tid](const nim::TeamMemberProperty& team_member_info) {
-					TeamService::GetInstance()->InvokeAddTeamMember(tid, team_member_info);
-				});
-			}
-			else if (info.notification_id_ == nim::kNIMNotificationIdTeamInvite)
+			if (info.notification_id_ == nim::kNIMNotificationIdTeamInvite)
 			{
 				TeamService::GetInstance()->InvokeAddTeam(tid, "", team_info.GetType());
 				for (auto& id : info.ids_)
@@ -148,11 +151,6 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 				nim::Team::QueryTeamMemberAsync(tid, uid, [](const nim::TeamMemberProperty& team_member_info) {
 					TeamService::GetInstance()->InvokeChangeTeamMember(team_member_info.GetTeamID(), team_member_info.GetAccountID(), team_member_info.GetNick());
 				});
-			}
-
-			if (!info.ids_.empty())
-			{
-				int len = info.ids_.size();
 			}
 		}
 	}

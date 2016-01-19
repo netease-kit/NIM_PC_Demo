@@ -22,7 +22,7 @@ class SessionItem : public ui::ListContainerElement
 public:
 	SessionItem();
 	virtual ~SessionItem();
-	virtual void Init(const nim::SessionData &msg);
+	virtual void InitCtrl();
 
 	bool Match(const UTF8String& search_key)
 	{
@@ -38,23 +38,22 @@ public:
 	}
 	bool GetIsTeam()
 	{
-		return type_ == nim::kNIMSessionTypeTeam;
+		return msg_.type_ == nim::kNIMSessionTypeTeam;
 	}
 
 	/**
-	* 更新该会话列表项的显示（除最近一条消息外）
+	* 初始化头像和用户名/群名
 	* @return void	无返回值
 	*/
-	void UpdateInfo();
-	void UpdateInfoEx();
+	void InitUserProfile();
 
 	/**
-	* 更新该会话列表项的最近一条消息
+	* 初始化该会话列表项的显示
 	* @param[in] msg 消息内容和信息
 	* @return void	无返回值
 	*/
-	void UpdateMsg(const nim::SessionData &msg);
-	void UpdateMsgEx(const nim::SessionData &msg);
+	void InitMsg(const nim::SessionData &msg);
+	void UpdateMsgContent(const std::string& id = "");
 
 	void ClearMsg();
 	long long GetMsgTime();
@@ -74,8 +73,7 @@ private:
 private:
 	bool OnDbClicked(ui::EventArgs* arg);
 	bool OnSessionItemMenu(ui::EventArgs* arg);
-private:
-	void OnTeamNameChange(const nim::TeamInfo& team_info);
+	bool OnHeadImageClicked(ui::EventArgs* arg);
 private:
 	ui::ButtonBox*	head_image_;
 	ui::Label*		label_name_;
@@ -84,12 +82,8 @@ private:
 	ui::Box*		box_unread_;
 	ui::Label*		label_unread_;
 
-	std::string		id_;
-	std::string		last_msg_id_;
-	nim::NIMSessionType	type_;
-	long long		msg_time_;
-	long			unread_count_;
-	AutoUnregister unregister_cb;
+	nim::SessionData msg_;
+	std::set<std::string> relate_ids;
 };
 
 //清除未读数

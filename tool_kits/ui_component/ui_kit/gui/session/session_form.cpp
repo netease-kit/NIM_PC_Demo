@@ -180,11 +180,14 @@ MsgBubbleItem* SessionForm::ShowMsg(const nim::IMMessage &msg, bool first, bool 
 		item->SetShowName(false, "");
 	else
 	{
-		std::wstring sender = UserService::GetInstance()->GetUserName(msg.sender_accid_);
-		if (!sender.empty())
-			item->SetShowName(true, nbase::UTF16ToUTF8(sender));
+		auto iter = team_member_info_list_.find(msg.sender_accid_);
+		if (iter != team_member_info_list_.cend() && !iter->second.GetNick().empty())
+			item->SetShowName(true, iter->second.GetNick()); //显示群名片
 		else
-			item->SetShowName(true, msg.readonly_sender_nickname_);
+		{
+			std::string show_name = nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(msg.sender_accid_));
+			item->SetShowName(true, show_name); //显示备注名或昵称
+		}
 	}
 
 	id_bubble_pair_[bubble_id] = item;

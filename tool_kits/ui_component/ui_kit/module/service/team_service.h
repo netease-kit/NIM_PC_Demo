@@ -76,5 +76,6 @@ private:
 
 	std::map<std::string,std::string> tid_tname_pair_;
 	std::map<std::string, int> tid_type_pair_;
+	std::set<std::string> on_query_tids_; //正在查询其群信息，但还没返回的群id
 };
 }

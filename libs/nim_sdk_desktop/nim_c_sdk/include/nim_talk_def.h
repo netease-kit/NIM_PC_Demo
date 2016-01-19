@@ -153,18 +153,6 @@ static const char *kNIMLocationMsgKeyLongitude	= "lng";			/**< double,经度 */
 static const char *kNIMLocationMsgKeyTitle		= "title";			/**< string,位置信息 */
 /** @}*/ //位置类型多媒体资源参数键名定义
 
-/** @name Notification Msg Attach Keys
-  * kNIMNotificationMsgKeyId对应的attach内容：
-  * TEAM_INVITE    {"tinfo":tinfo,"invite":["a1", "a2"]} 
-  * TEAM_KICK      {"kick":["a1", "a2"]} 
-  * TEAM_LEAVE     {"accid":"a1"}
-  * TEAM_UPDATE    tinfo json
-  * TEAM_DISMISS   {"tid":tid}
-  * @{
-  */
-static const char *kNIMNotificationMsgKeyId		= "id";			/**< int */
-static const char *kNIMNotificationMsgKeyData	= "data";		/**< json object */
-/** @}*/ //Notification Msg Attach Keys
 #ifdef __cplusplus
 };
 #endif //__cplusplus

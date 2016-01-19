@@ -1,5 +1,6 @@
 ﻿#include "resource.h"
 #include "team_event_form.h"
+#include "control/custom_msg.h"
 #include "export/nim_ui_all.h"
 
 using namespace ui;
@@ -76,6 +77,10 @@ void TeamEventForm::InitWindow()
 	btn_recycle_ = (Button*) FindControl(L"btn_recycle");
 	event_list_ = (ListBox*)FindControl(L"event_list");
 	custom_list_ = (ListBox*)FindControl(L"custom_list");
+
+	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(nbase::Bind(&TeamEventForm::OnUserInfoChange, this, std::placeholders::_1)));
+	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(nbase::Bind(&TeamEventForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2)));
+	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(nbase::Bind(&TeamEventForm::OnTeamNameChange, this, std::placeholders::_1)));
 
 	GetMoreCustomMsg();
 }
@@ -266,12 +271,68 @@ void TeamEventForm::SysMsgReadAllCb(nim::NIMResCode code, int unread)
 	UpdateSysmsgUnread(unread);
 }
 
+void TeamEventForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
+{
+	for (const auto& info : uinfos)
+	{
+		for (int i = 0; i < event_list_->GetCount(); i++)
+		{
+			TeamEventItem* event_item = dynamic_cast<TeamEventItem*>(event_list_->GetItemAt(i));
+			if(event_item)
+				event_item->OnUserInfoChange(info);
+		}
+
+		for (int i = 0; i < custom_list_->GetCount(); i++)
+		{
+			CustomMsgBubble* custom_item = dynamic_cast<CustomMsgBubble*>(custom_list_->GetItemAt(i));
+			if (custom_item)
+				custom_item->OnUserInfoChange(info);
+		}
+	}
+}
+
+void TeamEventForm::OnUserPhotoReady(const std::string& account, const std::wstring& photo_path)
+{
+	for (int i = 0; i < event_list_->GetCount(); i++)
+	{
+		TeamEventItem* event_item = dynamic_cast<TeamEventItem*>(event_list_->GetItemAt(i));
+		if (event_item)
+			event_item->OnUserPhotoReady(account, photo_path);
+	}
+
+	for (int i = 0; i < custom_list_->GetCount(); i++)
+	{
+		CustomMsgBubble* custom_item = dynamic_cast<CustomMsgBubble*>(custom_list_->GetItemAt(i));
+		if (custom_item)
+			custom_item->OnUserPhotoReady(account, photo_path);
+	}
+}
+
+void TeamEventForm::OnTeamNameChange(const nim::TeamInfo& team_info)
+{
+	for (int i = 0; i < event_list_->GetCount(); i++)
+	{
+		TeamEventItem* event_item = dynamic_cast<TeamEventItem*>(event_list_->GetItemAt(i));
+		if (event_item)
+			event_item->OnTeamNameChange(team_info);
+	}
+
+	for (int i = 0; i < custom_list_->GetCount(); i++)
+	{
+		CustomMsgBubble* custom_item = dynamic_cast<CustomMsgBubble*>(custom_list_->GetItemAt(i));
+		if (custom_item)
+			custom_item->OnTeamNameChange(team_info);
+	}
+}
+
 void UpdateSysmsgUnread( int count )
 {
 	nim_ui::SessionListManager::GetInstance()->UISysmsgUnread(count);
 }
+
 void UpdateCustomSysmsgUnread(bool add)
 {
 	nim_ui::SessionListManager::GetInstance()->UICustomSysmsgUnread(add);
 }
+
 }

@@ -33,9 +33,9 @@ bool UserManager::GetUserInfo(const std::string &account, nim::UserNameCard &inf
 	return nim_comp::UserService::GetInstance()->GetUserInfo(account, info);
 }
 
-void UserManager::GetUserInfoWithEffort(const std::list<std::string>& account_list, const OnGetUserInfoCallback& cb)
+void UserManager::GetUserInfos(const std::list<std::string>& ids, std::list<nim::UserNameCard>& uinfos)
 {
-	nim_comp::UserService::GetInstance()->GetUserInfoWithEffort(account_list, cb);
+	nim_comp::UserService::GetInstance()->GetUserInfos(ids, uinfos);
 }
 
 const std::map<std::string, nim::UserNameCard>& UserManager::GetAllUserInfos()

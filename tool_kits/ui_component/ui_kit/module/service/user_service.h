@@ -19,7 +19,7 @@ enum UserGender
 };
 
 typedef std::function<void(int res, const std::string& err_msg)> OnRegisterAccountCallback;
-typedef std::function<void(FriendChangeType change_type, const nim::UserNameCard&)> OnFriendListChangeCallback;
+typedef std::function<void(FriendChangeType change_type, const std::string& accid)> OnFriendListChangeCallback;
 typedef std::function<void(const std::list<nim::UserNameCard>&)> OnUserInfoChangeCallback;
 typedef std::function<void(const std::list<nim::UserNameCard>&)> OnGetUserInfoCallback;
 typedef std::function<void(nim::NIMResCode res)> OnUpdateUserInfoCallback;
@@ -43,8 +43,8 @@ public:
 	void InvokeUpdateUserInfo(const nim::UserNameCard &new_info, const OnUpdateUserInfoCallback& cb); // 修改自己的个人信息
 	void InvokeChangeUserPhoto(const std::string &url, const OnUpdateUserInfoCallback& cb); // 修改自己的头像
 	const std::map<std::string, nim::UserNameCard>& GetAllUserInfos(); // 获取UserService::all_user_保存的所有用户信息
-	void GetUserInfoWithEffort(const std::list<std::string>& account_list, const OnGetUserInfoCallback& cb); // 尽最大努力获取用户信息，只能异步获取
 	bool GetUserInfo(const std::string &id, nim::UserNameCard &info); // 查询UserService::all_user_中某个用户信息（可能查不到）
+	void GetUserInfos(const std::list<std::string> &ids, std::list<nim::UserNameCard>&uinfos);
 	nim::NIMFriendFlag GetUserType(const std::string &id); // 好友or陌生人？
 	std::wstring GetUserName(const std::string &id, bool alias_prior = true); // 查询用户昵称或备注名
 	std::wstring GetFriendAlias(const std::string &id); //查询好友备注名
@@ -59,9 +59,9 @@ public:
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &json_result);
 
 private:
-	void InvokeGetUserInfo(const std::list<std::string>& account_list, const OnGetUserInfoCallback& cb);// 向数据库和服务器获取指定id的用户信息
-	void InvokeFriendListChangeCallback(FriendChangeType change_type, const nim::UserNameCard& uinfo);
-	void UIFriendListChangeCallback(FriendChangeType change_type, const nim::UserNameCard& uinfo);
+	void InvokeGetUserInfo(const std::list<std::string>& account_list);// 向数据库和服务器获取指定id的用户信息
+	void InvokeFriendListChangeCallback(FriendChangeType change_type, const std::string& accid);
+	void UIFriendListChangeCallback(FriendChangeType change_type, const std::string& accid);
 	void DownloadUserPhoto(const nim::UserNameCard &info); //获取用户信息后，或者用户信息修改后，下载用户头像
 	bool CheckPhotoOK(std::wstring photo_path); // 检查某个头像图片是否完好
 
@@ -73,6 +73,8 @@ private:
 	std::map<int, std::unique_ptr<OnUserInfoChangeCallback>> uinfo_change_cb_list_; //用户名、头像变化回调列表
 	std::map<int, std::unique_ptr<OnUserInfoChangeCallback>> misc_uinfo_change_cb_list_; //用户其他信息变化回调列表
 	std::map<int, std::unique_ptr<OnUserPhotoReadyCallback>> photo_ready_cb_list_; //用户头像下载完成回调列表
+
+	std::set<std::string> on_query_list_; //已经要求查询，但还未返回结果的
 };
 
 }

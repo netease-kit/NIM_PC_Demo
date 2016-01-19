@@ -61,11 +61,13 @@ private:
 	bool RemoveFromBlack(ui::EventArgs* args);
 	//void SendFriendApplyCallback(const nbiz::VerifyFriendParam& msg_param);
 	bool SendFriendApplyClick(ui::EventArgs* param);
-	
 	bool OnSearchKeyEditSetFocus(void* param);
+	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
+	void OnUserPhotoReady(const std::string& account, const std::wstring& photo_path);
 
 private:
-	UTF8String id_;  
+	ui::Button* headimage_;
+	ui::Label* nick_name_;
 	ui::RichEdit* search_key_;
 	ui::RichEdit* apply_words_;
 	ui::TabBox*	tablayout_;
@@ -73,6 +75,7 @@ private:
 	ui::Button* userinfo_page_add_friend_;
 
 private:
+	UTF8String id_;
 	bool da_key_;
 	AutoUnregister unregister_cb;
 };
