@@ -2,7 +2,7 @@
 
 ## <span id="前言">前言</span>
 
-这篇教程主要介绍NIM DEMO的nim工程的内容，demo的作用主要是展现sdk的功能，方便开发者快速熟悉使用sdk，但demo的代码不一定是最佳的。demo使用Visible Studio 2013开发。
+这篇教程主要介绍NIM DEMO的nim工程的内容，demo的作用主要是展现sdk的功能，方便开发者快速熟悉使用sdk，但demo的代码不一定是最佳的。demo使用Visual Studio 2013开发。
 
 demo的主要功能由demo工程本身以及`UI组件`工程共同完成，demo工程和`UI组件`工程具有相同的目录结构。`UI组件`位于`tool_kits\ui_component\ui_kit`目录，`UI组件的`相关文档详见：[云信UI组件](https://github.com/netease-im/NIM_PC_UIKit)
 
