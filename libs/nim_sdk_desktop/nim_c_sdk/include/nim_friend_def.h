@@ -1,6 +1,6 @@
 ﻿/** @file nim_friend_def.h
   * @brief NIM SDK friend相关的定义
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/08/13
   */
@@ -25,7 +25,7 @@ static const char *kNIMFriendKeyBeFlag		= "beflag"; /**< NIMFriendFlag, 反向�
 static const char *kNIMFriendKeySource		= "source"; /**< NIMFriendSource, 好友来源 */
 static const char *kNIMFriendKeyAlias		= "alias";	/**< string, 备注名 */
 static const char *kNIMFriendKeyBits		= "bits";	/**< long, 扩展字段,位运算型 */
-static const char *kNIMFriendKeyEx			= "ex";		/**< string, 扩展字段,字符型 */
+static const char *kNIMFriendKeyEx			= "ex";		/**< string, 扩展字段,必须为可以解析为json的非格式化的字符串 */
 static const char *kNIMFriendKeyCreateTime	= "create_timetag"; /**< long, 创建时间戳(ms)*/
 static const char *kNIMFriendKeyUpdateTime	= "update_timetag"; /**< long, 更新时间戳(ms)*/
 /** @}*/ //好友简况 Json Keys

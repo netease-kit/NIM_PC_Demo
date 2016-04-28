@@ -1,3 +1,10 @@
+﻿/** @file nim_cpp_user.cpp
+  * @brief NIM SDK提供的用户相关接口
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author towik, Oleg
+  * @date 2015/8/17
+  */
+
 #include "nim_cpp_user.h"
 #include "nim_sdk_helper.h"
 #include "nim_common_helper.h"
@@ -14,7 +21,7 @@ typedef	void (*nim_user_get_mute_blacklist)(const char *json_extension, nim_user
 typedef void (*nim_user_reg_user_name_card_changed_cb)(const char *json_extension, nim_user_name_card_change_cb_func cb, const void *user_data);
 typedef void (*nim_user_get_user_name_card)(const char *accids, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data);
 typedef void (*nim_user_get_user_name_card_online)(const char *accids, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data);
-typedef void (*nim_user_update_user_name_card)(const char *info_json, const char *json_extension, nim_user_update_name_card_cb_func cb, const void *user_data);
+typedef void (*nim_user_update_my_user_name_card)(const char *info_json, const char *json_extension, nim_user_update_my_name_card_cb_func cb, const void *user_data);
 
 static void CallbackSetRelation(int res_code, const char *accid, bool opt, const char *json_extension, const void *callback)
 {
@@ -80,11 +87,11 @@ static void CallbackGetUserNameCard(const char *result_json, const char *json_ex
 	}
 }
 
-static void CallbackUpdateUserNameCard(int res_code, const char *json_extension, const void *callback)
+static void CallbackUpdateMyUserNameCard(int res_code, const char *json_extension, const void *callback)
 {
 	if (callback)
 	{
-		User::UpdateUserNameCardCallback* cb_pointer = (User::UpdateUserNameCardCallback*)callback;
+		User::UpdateMyUserNameCardCallback* cb_pointer = (User::UpdateMyUserNameCardCallback*)callback;
 		if (*cb_pointer)
 		{
 			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code));
@@ -125,15 +132,16 @@ static void CallbackUserNameCardChange(const char *result_json, const char *json
 	}
 }
 
-static User::SpecialRelationshipChangedCallback* g_changed_cb_pointer = nullptr;
+static User::SpecialRelationshipChangedCallback* g_cb_relation_changed_ = nullptr;
 void User::RegSpecialRelationshipChangedCb(const SpecialRelationshipChangedCallback& cb, const std::string& json_extension)
 {
-	delete g_changed_cb_pointer;
-	if (cb)
+	if (g_cb_relation_changed_)
 	{
-		g_changed_cb_pointer = new SpecialRelationshipChangedCallback(cb);
+		delete g_cb_relation_changed_;
+		g_cb_relation_changed_ = nullptr;
 	}
-	return NIM_SDK_GET_FUNC(nim_user_reg_special_relationship_changed_cb)(json_extension.c_str(), &CallbackSpecialRelationChange, g_changed_cb_pointer);
+	g_cb_relation_changed_ = new SpecialRelationshipChangedCallback(cb);
+	return NIM_SDK_GET_FUNC(nim_user_reg_special_relationship_changed_cb)(json_extension.c_str(), &CallbackSpecialRelationChange, g_cb_relation_changed_);
 }
 
 bool User::SetBlack(const std::string& accid, bool set_black, const SetBlackCallback& cb, const std::string& json_extension)
@@ -186,15 +194,16 @@ void User::GetBlacklist(const GetBlackListCallback& cb, const std::string& json_
 	return NIM_SDK_GET_FUNC(nim_user_get_mute_blacklist)(json_extension.c_str(), &CallbackGetBlackList, cb_pointer);
 }
 
-static User::UserNameCardChangedCallback* g_uinfo_changed_cb_pointer = nullptr;
+static User::UserNameCardChangedCallback* g_cb_uinfo_changed_ = nullptr;
 void User::RegUserNameCardChangedCb(const UserNameCardChangedCallback & cb, const std::string & json_extension)
 {
-	delete g_uinfo_changed_cb_pointer;
-	if (cb)
+	if (g_cb_uinfo_changed_)
 	{
-		g_uinfo_changed_cb_pointer = new UserNameCardChangedCallback(cb);
+		delete g_cb_uinfo_changed_;
+		g_cb_uinfo_changed_ = nullptr;
 	}
-	return NIM_SDK_GET_FUNC(nim_user_reg_user_name_card_changed_cb)(json_extension.c_str(), &CallbackUserNameCardChange, g_uinfo_changed_cb_pointer);
+	g_cb_uinfo_changed_ = new UserNameCardChangedCallback(cb);
+	return NIM_SDK_GET_FUNC(nim_user_reg_user_name_card_changed_cb)(json_extension.c_str(), &CallbackUserNameCardChange, g_cb_uinfo_changed_);
 }
 
 bool User::GetUserNameCard(const std::list<std::string>& accids, const GetUserNameCardCallback& cb, const std::string& json_extension /*= ""*/)
@@ -212,7 +221,7 @@ bool User::GetUserNameCard(const std::list<std::string>& accids, const GetUserNa
 	for (auto iter = accids.cbegin(); iter != accids.cend(); ++iter)
 		values.append(*iter);
 	
-	NIM_SDK_GET_FUNC(nim_user_get_user_name_card)(values.toStyledString().c_str(), json_extension.c_str(), &CallbackGetUserNameCard, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_user_get_user_name_card)(GetJsonStringWithNoStyled(values).c_str(), json_extension.c_str(), &CallbackGetUserNameCard, cb_pointer);
 
 	return true;
 }
@@ -232,22 +241,22 @@ bool User::GetUserNameCardOnline(const std::list<std::string>& accids, const Get
 	for (auto iter = accids.cbegin(); iter != accids.cend(); ++iter)
 		values.append(*iter);
 
-	NIM_SDK_GET_FUNC(nim_user_get_user_name_card_online)(values.toStyledString().c_str(), json_extension.c_str(), &CallbackGetUserNameCard, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_user_get_user_name_card_online)(GetJsonStringWithNoStyled(values).c_str(), json_extension.c_str(), &CallbackGetUserNameCard, cb_pointer);
 
 	return true;
 }
 
-bool User::UpdateUserNameCard(const UserNameCard& namecard, const UpdateUserNameCardCallback& cb, const std::string& json_extension /*= ""*/)
+bool User::UpdateMyUserNameCard(const UserNameCard& namecard, const UpdateMyUserNameCardCallback& cb, const std::string& json_extension /*= ""*/)
 {
 	if (namecard.GetAccId().empty())
 		return false;
 
-	UpdateUserNameCardCallback* cb_pointer = nullptr;
+	UpdateMyUserNameCardCallback* cb_pointer = nullptr;
 	if (cb)
 	{
-		cb_pointer = new UpdateUserNameCardCallback(cb);
+		cb_pointer = new UpdateMyUserNameCardCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_user_update_user_name_card)(namecard.ToJsonString().c_str(), json_extension.c_str(), &CallbackUpdateUserNameCard, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_user_update_my_user_name_card)(namecard.ToJsonString().c_str(), json_extension.c_str(), &CallbackUpdateMyUserNameCard, cb_pointer);
 
 	return true;
 }
@@ -294,4 +303,18 @@ bool User::ParseSyncSpecialRelationshipChange(const SpecialRelationshipChangeEve
 	return ParseSpecialListInfo(change_event.content_, black_list, mute_list);
 }
 
+void User::UnregUserCb()
+{
+	if (g_cb_relation_changed_)
+	{
+		delete g_cb_relation_changed_;
+		g_cb_relation_changed_ = nullptr;
+	}
+
+	if (g_cb_uinfo_changed_)
+	{
+		delete g_cb_uinfo_changed_;
+		g_cb_uinfo_changed_ = nullptr;
+	}
+}
 }

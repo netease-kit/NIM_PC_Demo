@@ -98,6 +98,7 @@
     <ClCompile Include="api\nim_cpp_global.cpp" />
     <ClCompile Include="api\nim_cpp_msglog.cpp" />
     <ClCompile Include="api\nim_cpp_nos.cpp" />
+    <ClCompile Include="api\nim_cpp_plugin_in.cpp" />
     <ClCompile Include="api\nim_cpp_rts.cpp" />
     <ClCompile Include="api\nim_cpp_session.cpp" />
     <ClCompile Include="api\nim_cpp_sysmsg.cpp" />
@@ -127,6 +128,7 @@
     <ClInclude Include="api\nim_cpp_global.h" />
     <ClInclude Include="api\nim_cpp_msglog.h" />
     <ClInclude Include="api\nim_cpp_nos.h" />
+    <ClInclude Include="api\nim_cpp_plugin_in.h" />
     <ClInclude Include="api\nim_cpp_rts.h" />
     <ClInclude Include="api\nim_cpp_session.h" />
     <ClInclude Include="api\nim_cpp_sysmsg.h" />

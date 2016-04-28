@@ -346,6 +346,7 @@ void VideoSettingForm::ShowPage( bool video )
 	}
 	else
 	{
+		paint_video_timer_.Cancel();
 		VideoManager::GetInstance()->EndDevice(nim::kNIMDeviceTypeVideo, kDeviceSessionTypeSetting);
 
 		option_audio_->Selected(true, false);
@@ -384,6 +385,9 @@ void VideoSettingForm::OnVideoDeviceStartCallback(bool result)
 	camera_is_open_ = result;
 	if( result )
 	{
+		paint_video_timer_.Cancel();
+		auto task = nbase::Bind(&VideoSettingForm::PaintVideo, this);
+		nbase::ThreadManager::PostRepeatedTask(kThreadUI, task, nbase::TimeDelta::FromMilliseconds(70));
 		camera_fail_ctrl_->SetVisible( false );
 		error_notice_label_->SetVisible( false );
 	}
@@ -544,13 +548,12 @@ void VideoSettingForm::PrepareVideoInput( bool start )
 	error_notice_label_->SetVisible(true);
 	camera_fail_ctrl_->SetVisible( true );
 }
-
-void VideoSettingForm::OnInputVideoData(const std::string &data, ui::CSize size, uint64_t timestamp)
+void VideoSettingForm::PaintVideo()
 {
 	int cur = tabbox_->GetCurSel();
-	if(cur == 1 && camera_is_open_)
+	if (cur == 1 && camera_is_open_)
 	{
-		video_show_ctrl_->Refresh(m_hWnd, (BYTE*)data.c_str(), data.size(), size.cx, size.cy, false);
+		video_show_ctrl_->Refresh(this);
 	}
 }
 

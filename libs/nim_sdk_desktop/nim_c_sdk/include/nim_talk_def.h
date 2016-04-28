@@ -1,6 +1,6 @@
 ﻿/** @file nim_talk_def.h
   * @brief NIM SDK talk相关的定义
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/02/02
   */
@@ -11,17 +11,17 @@
 extern"C"
 {
 #endif
-/** @typedef void (*nim_talk_arc_cb_func)(const char *result, const void *user_data)
+/** @typedef void (*nim_talk_ack_cb_func)(const char *result, const void *user_data)
   * 发送消息回执的回调函数定义
   * @param[out] result		json string (Keys SEE MORE 『发送消息回执Json Keys』 as follows)
   * @param[out] user_data	APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_talk_arc_cb_func)(const char *result, const void *user_data);
+typedef void (*nim_talk_ack_cb_func)(const char *result, const void *user_data);
 
 /** @typedef void (*nim_talk_receive_cb_func)(const char *content, const char *json_extension, const void *user_data)
   * 接收消息的回调函数定义
-  * @param[out] content			json string (Keys SEE MORE 『接收消息Json Keys』 as follows)
+  * @param[out] content			json string (Keys SEE MORE 『接收消息Json Keys』),批量接口回调时，内容为json string array
   * @param[out] json_extension	json扩展数据（备用）
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
@@ -59,7 +59,7 @@ static const char *kNIMMsgKeyFromNick		= "from_nick";			/**< string,消息发送
 static const char *kNIMMsgKeyTime			= "time";				/**< long,消息时间戳(毫秒) */
 static const char *kNIMMsgKeyType			= "msg_type";			/**< int,消息类型(NIMMessageType) */
 static const char *kNIMMsgKeyBody			= "msg_body";			/**< string,消息正文,长度限制：5000字符 */
-static const char *kNIMMsgKeyAttach			= "msg_attach";			/**< string,消息多媒体资源参数,不同类型多媒体参数不同,发送非多媒体消息时不需要填写 */
+static const char *kNIMMsgKeyAttach			= "msg_attach";			/**< string,消息多媒体资源参数,不同类型多媒体参数不同,发送非多媒体消息时不需要填写,如需使用json string,必须为可以解析为json的非格式化的字符串 */
 static const char *kNIMMsgKeyClientMsgid	= "client_msg_id";		/**< string,客户端消息id */
 static const char *kNIMMsgKeyServerMsgid	= "server_msg_id";		/**< long,服务器端消息id */
 static const char *kNIMMsgKeyResendFlag		= "resend_flag";		/**< int,消息重发标记位,第一次发送0,重发1 */
@@ -67,8 +67,8 @@ static const char *kNIMMsgKeyHistorySave	= "cloud_history";		/**< int,(可选)�
 static const char *kNIMMsgKeyMsgRoaming		= "roam_msg";			/**< int,(可选)该消息是否支持漫游,可选,仅对kNIMMessageTypeCustom有效,0:不支持,1:支持, 默认1 */
 static const char *kNIMMsgKeyMsgSync		= "sync_msg";			/**< int,(可选)该消息是否支持发送者多端同步,可选,仅对kNIMMessageTypeCustom有效,0:不支持,1:支持, 默认1 */
 static const char *kNIMMsgKeyNeedBadge		= "need_badge";			/**< int,(可选)是否要做消息计数，0:不需要，1:需要，默认1 */
-static const char *kNIMMsgKeyServerExt		= "server_ext";			/**< string,服务器扩展,内容限Json String,长度限制1024 */
-static const char *kNIMMsgKeyPushPayload	= "push_payload";		/**< string,第三方自定义的推送属性，限制json string，长度2048 */
+static const char *kNIMMsgKeyServerExt		= "server_ext";			/**< string,自定义扩展字段,必须为可以解析为json的非格式化的字符串,长度限制1024 */
+static const char *kNIMMsgKeyPushPayload	= "push_payload";		/**< string,第三方自定义的推送属性，必须为可以解析为json的非格式化的字符串，长度2048 */
 static const char *kNIMMsgKeyPushContent	= "push_content";		/**< string,自定义推送文案，长度限制200字节 */
 static const char *kNIMMsgKeyPushEnable		= "push_enable";		/**< int,(可选)是否需要推送, 0:不需要,1:需要,默认1,aos在收到0是不要模拟本地推送 */
 static const char *kNIMMsgKeyNeedPushNick	= "push_nick";			/**< int,需要推送昵称，0：不需要，1：需要，默认1 */
@@ -78,15 +78,17 @@ static const char *kNIMMsgKeyLocalTalkId			= "talk_id";			/**< string,会话id,�
 static const char *kNIMMsgKeyLocalResId				= "res_id";				/**< string,多媒体资源id,发送方选填,接收方收到的是客户端消息id */
 static const char *kNIMMsgKeyLocalLogStatus			= "log_status";			/**< int,消息状态(NIMMsgLogStatus)  */
 static const char *kNIMMsgKeyLocalLogSubStatus		= "log_sub_status";		/**< int,消息二级状态(NIMMsgLogSubStatus) */
-static const char *kNIMMsgKeyLocalExt				= "local_ext";			/**< string,本地扩展内容 */
+static const char *kNIMMsgKeyLocalExt				= "local_ext";			/**< string,只维护在本地的扩展字段,必须为可以解析为json的非格式化的字符串 */
 /** @}*/ //消息结构 Json Keys
 
 /** @name 发送消息回执Json Keys
   * @{
   */
-static const char *kNIMSendArcKeyMsgId		= "msg_id";			/**< string,客户端消息id */
-static const char *kNIMSendArcKeyTalkId		= "talk_id";		/**< string,会话id */
-static const char *kNIMSendArcKeyRescode	= "rescode";		/**< int,消息错误码(NIMResCode) */
+static const char *kNIMSendAckKeyMsgId		= "msg_id";			/**< string,客户端消息id */
+static const char *kNIMSendAckKeyTalkId		= "talk_id";		/**< string,会话id */
+static const char *kNIMSendAckKeyRescode	= "rescode";		/**< int,消息错误码(NIMResCode) */
+static const char *kNIMSendAckKeyTimetag	= "msg_timetag";	/**< long,消息时间戳(毫秒),收到ack包时更新上层缓存的消息时间戳 */
+
 /** @}*/ //发送消息回执Json Keys
 
 /** @name 多媒体资源参数通用键名定义，可替代不同类型多媒体所使用的相同的参数的键名.

@@ -1,6 +1,6 @@
 ﻿/** @file nim_device_def.h
   * @brief NIM VChat提供的设备相关接口定义
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/4/24
   */
@@ -32,6 +32,13 @@ enum NIMDeviceStatus
 	kNIMDeviceStatusEnd			= 0x10,	/**< 设备停止工作 */
 };
 
+/** @enum NIMVideoSubType 视频格式类型 */
+enum NIMVideoSubType
+{
+	kNIMVideoSubTypeARGB	= 0,	/**< 32位位图格式 存储 (B,G,R,A)... */
+	kNIMVideoSubTypeRGB		= 1,	/**< 24位位图格式 存储 (B,G,R)... */
+	kNIMVideoSubTypeI420	= 2,	/**< YUV格式，存储 yyyyyyyy...uu...vv... */
+};
 
 /** @name json extension params for vchat device key
   * @{
@@ -42,6 +49,7 @@ static const char *kNIMDeviceSampleRate		= "sample_rate"; 	/**< 采样频率int3
 static const char *kNIMDeviceSampleBit		= "sample_bit"; 	/**< 采样位深int32 */
 static const char *kNIMDeviceDataUid		= "uid"; 			/**< 用户id int64 */
 static const char *kNIMDeviceDataAccount	= "account";		/**< 用户账号 string */
+static const char *kNIMVideoSubType			= "subtype"; 		/**< int32 视频数据类型，NIMVideoSubType */
 /** @}*/ //json extension params for vchat device key
 
 /** @typedef void (*nim_vchat_enum_device_devpath_sync_cb_func)(bool ret, NIMDeviceType type, const char *json_extension, const void *user_data)
@@ -89,11 +97,11 @@ typedef void (*nim_vchat_audio_data_cb_func)(unsigned __int64 time, const char *
 /** @typedef void (*nim_vchat_video_data_cb_func)(unsigned __int64 time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension, const void *user_data)
   * NIM Device 视频数据监听接口
   * @param[out] time 时间毫秒级
-  * @param[out] data 视频数据ARGB格式
+  * @param[out] data 视频数据，默认为ARGB格式
   * @param[out] size data的数据长度
   * @param[out] width  画面宽度
   * @param[out] height  画面高度
-  * @param[out] json_extension Json string 收到对方视频数据返回kNRTCDeviceDataUid和kNIMDeviceDataAccount,本地采集的回调为空
+  * @param[out] json_extension Json string kNIMVideoSubType（缺省为kNIMVideoSubTypeARGB），收到对方视频数据返回kNRTCDeviceDataUid和kNIMDeviceDataAccount
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */ 

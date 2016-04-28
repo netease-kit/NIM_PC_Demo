@@ -1,0 +1,17 @@
+# Build matrix / environment variable are explained on:
+# http://about.travis-ci.org/docs/user/build-configuration/
+# This file can be validated on:
+# http://lint.travis-ci.org/
+before_install: sudo apt-get install cmake
+language: cpp
+compiler:
+  - gcc
+  - clang
+script: cmake -DJSONCPP_WITH_CMAKE_PACKAGE=$CMAKE_PKG -DJSONCPP_LIB_BUILD_SHARED=$SHARED_LIB -DCMAKE_BUILD_TYPE=$BUILD_TYPE -DCMAKE_VERBOSE_MAKEFILE=$VERBOSE_MAKE . && make && make jsoncpp_check
+env:
+  matrix:
+    - SHARED_LIB=ON  STATIC_LIB=ON CMAKE_PKG=ON  BUILD_TYPE=release VERBOSE_MAKE=false
+    - SHARED_LIB=OFF STATIC_LIB=ON CMAKE_PKG=OFF BUILD_TYPE=debug   VERBOSE_MAKE=true VERBOSE
+notifications:
+  email:
+    - aaronjjacobs@gmail.com

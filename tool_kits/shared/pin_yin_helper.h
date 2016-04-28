@@ -4,9 +4,7 @@
 /*
  *
  *	Author       tom|yuzj
- *	Email        yuzhijun@yixin.im
  *	Date         2013-10-10
- *	Copyright    Hangzhou, Yixin Inc.
  *	Brief        拼音
  *
  */

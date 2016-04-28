@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef YIXIN_WIN_GUI_HEAD_MODIFY_H_
-#define YIXIN_WIN_GUI_HEAD_MODIFY_H_
+#ifndef NIM_WIN_GUI_HEAD_MODIFY_H_
+#define NIM_WIN_GUI_HEAD_MODIFY_H_
 
 #include "ui_head_view_ctrl.h"
 #include "ui_head_select_ctrl.h"
@@ -127,4 +127,4 @@ private:
 using namespace nbase;
 DISABLE_RUNNABLE_METHOD_REFCOUNT(nim_comp::HeadModifyForm);
 
-#endif  // YIXIN_WIN_GUI_HEAD_MODIFY_H_
+#endif  // NIM_WIN_GUI_HEAD_MODIFY_H_

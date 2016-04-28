@@ -25,7 +25,9 @@ void SessionForm::AddNewMsg(const nim::IMMessage &msg, bool create)
 		show_time = CheckIfShowTime(last_msg_time_, msg.timetag_);
 	}
 	ShowMsg(msg, false, show_time);
-	last_msg_time_ = msg.timetag_;
+
+	if(!IsNoticeMsg(msg))
+		last_msg_time_ = msg.timetag_;
 
 	if (first_show_msg_)
 	{
@@ -45,6 +47,8 @@ void SessionForm::AddNewMsg(const nim::IMMessage &msg, bool create)
 	{
 		msg_list_->EndDown(true, false);
 	}
+
+	SendReceiptIfNeeded(true);
 }
 
 void SessionForm::AddWritingMsg(const nim::IMMessage &msg)
@@ -95,7 +99,7 @@ MsgBubbleItem* SessionForm::ShowMsg(const nim::IMMessage &msg, bool first, bool 
 		item = new MsgBubbleLocation;
 	else if (msg.type_ == nim::kNIMMessageTypeFile)
 		item = new MsgBubbleFile;
-	else if (msg.type_ == nim::kNIMMessageTypeNotification)
+	else if (msg.type_ == nim::kNIMMessageTypeNotification || msg.type_ == nim::kNIMMessageTypeTips)
 	{
 		id_bubble_pair_[bubble_id] = NULL;
 
@@ -191,6 +195,10 @@ MsgBubbleItem* SessionForm::ShowMsg(const nim::IMMessage &msg, bool first, bool 
 	}
 
 	id_bubble_pair_[bubble_id] = item;
+	if (first)//第一次打开，顺序倒序
+		cached_msgs_bubbles_.insert(cached_msgs_bubbles_.begin(), 1, item);
+	else
+		cached_msgs_bubbles_.push_back(item);
 
 	return item;
 }
@@ -243,8 +251,14 @@ void SessionForm::SendText( const std::string &text )
 
 	AddSendingMsg(msg);
 
-	std::string json_msg = nim::Talk::CreateTextMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, msg.content_, nim::MessageSetting(), msg.timetag_);
-	nim::Talk::SendMsg(json_msg);
+	nim::MessageSetting setting;
+	//Json::Reader reader;
+	//std::string test_string = "{\"remote\":{\"mapmap\":{\"int\":1,\"boolean\":false,\"list\":[1,2,3],\"string\":\"string, lalala\"}}}";
+	//if (reader.parse(test_string, setting.server_ext_))
+	//{
+		std::string json_msg = nim::Talk::CreateTextMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, msg.content_, setting, msg.timetag_);
+		nim::Talk::SendMsg(json_msg);
+	//}
 }
 
 void SessionForm::SendImage( const std::wstring &src )
@@ -303,13 +317,14 @@ void SessionForm::SendSnapChat(const std::wstring &src)
 			new_msg.type_ = nim::kNIMMessageTypeCustom;
 			Json::Value json;
 			Json::Value json_data;
+			Json::FastWriter writer;
 			json_data["size"] = file_size;
 			json_data["md5"] = md5;
 			json_data["url"] = url;
 			json["type"] = CustomMsgType_SnapChat;
 			json["data"] = json_data;
 			new_msg.content_ = nbase::UTF16ToUTF8(L"阅后即焚");
-			new_msg.attach_ = json.toStyledString();
+			new_msg.attach_ = writer.write(json);
 			AddSendingMsg(new_msg);
 	
 			nim::Talk::SendMsg(new_msg.ToJsonString(true));
@@ -380,15 +395,29 @@ void SessionForm::SendSticker(const std::string &catalog, const std::string &nam
 	msg.type_ = nim::kNIMMessageTypeCustom;
 
 	Json::Value json;
+	Json::FastWriter writer;
 	json["type"] = CustomMsgType_Sticker;
 	json["data"]["catalog"] = catalog;
 	json["data"]["chartlet"] = name;
 
 	msg.content_ = nbase::UTF16ToUTF8(L"贴图");
-	msg.attach_ = json.toStyledString();
+	msg.attach_ = writer.write(json);
 
 	AddSendingMsg(msg);
 
+	nim::Talk::SendMsg(msg.ToJsonString(true));
+}
+
+void SessionForm::SendTip(const std::wstring &tip)
+{
+	nim::IMMessage msg;
+	PackageMsg(msg);
+	msg.type_ = nim::kNIMMessageTypeTips;
+	msg.content_ = nbase::UTF16ToUTF8(tip);
+	msg.msg_setting_.need_push_ = nim::BS_FALSE;
+	msg.status_ = nim::kNIMMsgLogStatusSent;
+
+	AddSendingMsg(msg);
 	nim::Talk::SendMsg(msg.ToJsonString(true));
 }
 
@@ -407,7 +436,9 @@ void SessionForm::AddSendingMsg(const nim::IMMessage &msg)
 	{
 		show_time = CheckIfShowTime(last_msg_time_, msg.timetag_);
 	}
-	last_msg_time_ = msg.timetag_;
+	
+	if (!IsNoticeMsg(msg))
+		last_msg_time_ = msg.timetag_;
 
 	MsgBubbleItem* item = ShowMsg(msg, false, show_time);
 	msg_list_->EndDown(true, false);
@@ -450,7 +481,6 @@ void SessionForm::InvokeShowMsgs(bool first_show_msg)
 
 void SessionForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 {
-
 	int pos = msg_list_->GetScrollRange().cy - msg_list_->GetScrollPos().cy;
 
 	bool show_time = false;
@@ -464,7 +494,16 @@ void SessionForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 		}
 		else
 		{
-			show_time = CheckIfShowTime(msg[i+1].timetag_, msg[i].timetag_);
+			long long older_time = 0;
+			for (size_t j = i + 1; j < len; j++)
+			{
+				if (!IsNoticeMsg(msg[j]))
+				{
+					older_time = msg[j].timetag_;
+					break;
+				}
+			}
+			show_time = CheckIfShowTime(older_time, msg[i].timetag_);
 		}
 		ShowMsg(msg[i], true, show_time);
 	}
@@ -486,8 +525,31 @@ void SessionForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 
 		msg_list_->EndDown(true, false);
 
-		if(len > 0 && last_msg_time_ == 0)
-			last_msg_time_ = msg[0].timetag_;
+		if (len > 0 && last_msg_time_ == 0)
+		{
+			for (const auto &i : msg)
+			{
+				if (!IsNoticeMsg(i))
+				{
+					last_msg_time_ = i.timetag_;
+					break;
+				}
+			}
+		}
+
+		if (session_type_ == nim::kNIMSessionTypeP2P)
+		{
+			//检查回执
+			CheckLastReceiptMsg();
+			nim::IMMessage msg;
+			if (GetLastNeedSendReceiptMsg(msg))
+			{
+				nim::MsgLog::SendReceiptAsync(msg.ToJsonString(false), [](const nim::MessageStatusChangedResult& res) {
+					auto iter = res.results_.begin();
+					QLOG_APP(L"mark receipt id:{0} time:{1} rescode:{2}") << iter->talk_id_ << iter->msg_timetag_ << res.rescode_;
+				});
+			}
+		}
 	}
 	else
 	{
@@ -504,7 +566,7 @@ void SessionForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 	}
 }
 
-void SessionForm::OnSendMsgCallback( const std::string &cid, int code )
+void SessionForm::OnSendMsgCallback(const std::string &cid, int code, __int64 msg_timetag)
 {
 	IdBubblePair::iterator it = id_bubble_pair_.find(cid);
 	if(it != id_bubble_pair_.end())
@@ -513,7 +575,10 @@ void SessionForm::OnSendMsgCallback( const std::string &cid, int code )
 		if(item)
 		{
 			if (code == nim::kNIMResSuccess)
+			{
 				item->SetMsgStatus(nim::kNIMMsgLogStatusSent);
+				item->UpdateMsgTime(msg_timetag);
+			}
 			else if (code == nim::kNIMLocalResMsgFileNotExist)
 				item->SetMsgStatus(nim::kNIMMsgLogStatusSendFailed);
 			else if (code == nim::kNIMLocalResMsgNosUploadCancel)
@@ -525,6 +590,144 @@ void SessionForm::OnSendMsgCallback( const std::string &cid, int code )
 			}
 		}
 	}
+}
+
+void SessionForm::CheckLastReceiptMsg()
+{
+	if (!last_receipt_msg_id_.empty())
+		return;
+
+	std::string my_id = LoginManager::GetInstance()->GetAccount();
+	auto iter = cached_msgs_bubbles_.rbegin();
+	for (; iter != cached_msgs_bubbles_.rend(); ++iter)
+	{
+		MsgBubbleItem* item = (MsgBubbleItem*)(*iter);
+		if (item)
+		{
+			nim::IMMessage msg = item->GetMsg();
+			if (msg.sender_accid_ == my_id && item->IsMyMsg() && msg.status_ == nim::kNIMMsgLogStatusReceipt)
+			{
+				item->SetMsgStatus(nim::kNIMMsgLogStatusReceipt);
+				last_receipt_msg_id_ = msg.client_msg_id_;
+				break;
+			}
+		}
+	}
+}
+
+bool SessionForm::GetLastNeedSendReceiptMsg(nim::IMMessage &msg)
+{
+	std::string my_id = LoginManager::GetInstance()->GetAccount();
+	auto iter = cached_msgs_bubbles_.rbegin();
+	for (; iter != cached_msgs_bubbles_.rend(); ++iter)
+	{
+		MsgBubbleItem* item = (MsgBubbleItem*)(*iter);
+		if (item)
+		{
+			nim::IMMessage message = item->GetMsg();
+			if (message.sender_accid_ != my_id || !item->IsMyMsg())
+			{
+				if (!nim::MsgLog::QueryMessageBeReaded(message))
+				{
+					msg = message;
+					return true;
+				}
+				return false;
+			}
+		}
+	}
+	return false;
+}
+
+void SessionForm::RemoveMsgItem(const std::string& client_msg_id)
+{
+	MsgBubbleItem* msg_item = NULL;
+	MsgBubbleNotice* msg_cell = NULL;
+	for (int i = 0; i < msg_list_->GetCount(); i++)
+	{
+		if (msg_list_->GetItemAt(i)->GetUTF8Name() == client_msg_id)
+		{
+			msg_item = dynamic_cast<MsgBubbleItem*>(msg_list_->GetItemAt(i));
+			msg_cell = dynamic_cast<MsgBubbleNotice*>(msg_list_->GetItemAt(i));
+			break;
+		}
+	}
+	if (!msg_item)
+	{
+		if (msg_cell) //要删除的是一个通知消息，删除后直接return
+			msg_list_->Remove(msg_cell);
+		return;
+	}
+	
+	auto iter2 = std::find(cached_msgs_bubbles_.begin(), cached_msgs_bubbles_.end(), msg_item);
+	if (iter2 != cached_msgs_bubbles_.end())
+	{
+		if (last_receipt_msg_id_ == client_msg_id) //本条要被删除的消息是显示已读的消息，则把上一条自己发的消息显示为已读。
+		{
+			auto iter3 = std::reverse_iterator<decltype(iter2)>(iter2); //iter3现在指向iter2的上一个元素
+			std::string my_id = LoginManager::GetInstance()->GetAccount();
+			while (iter3 != cached_msgs_bubbles_.rend())
+			{
+				MsgBubbleItem* item = dynamic_cast<MsgBubbleItem*>(*iter3);
+				if (item)
+				{
+					nim::IMMessage msg = item->GetMsg();
+					if (msg.sender_accid_ == my_id)
+					{
+						item->SetMsgStatus(nim::kNIMMsgLogStatusReceipt);
+						last_receipt_msg_id_ = msg.client_msg_id_;
+						break;
+					}
+				}
+				iter3++;
+			}
+			if (iter3 == cached_msgs_bubbles_.rend())
+				last_receipt_msg_id_ = "";
+		}
+		cached_msgs_bubbles_.erase(iter2); //从cached_msgs_bubbles_中删除
+	}
+
+	auto iter1 = id_bubble_pair_.find(client_msg_id);
+	if (iter1 != id_bubble_pair_.end())
+		id_bubble_pair_.erase(client_msg_id); //从id_bubble_pair_删除
+
+	msg_list_->Remove(msg_item); //最后从msg_list_中删除并销毁该MsgBubbleItem
+}
+
+void SessionForm::OnMsgStatusChangedCallback(const std::string &from_accid, const __int64 timetag, nim::NIMMsgLogStatus status)
+{
+	if (!last_receipt_msg_id_.empty())
+	{
+		auto it = id_bubble_pair_.find(last_receipt_msg_id_);
+		if (it != id_bubble_pair_.end())
+		{
+			MsgBubbleItem* item = it->second;
+			if (item)
+				item->SetMsgStatus(nim::kNIMMsgLogStatusSent);
+		}
+	}
+
+	std::string my_id = LoginManager::GetInstance()->GetAccount();
+	auto iter = cached_msgs_bubbles_.rbegin();
+	for (; iter != cached_msgs_bubbles_.rend(); ++iter)
+	{
+		MsgBubbleItem* item = (MsgBubbleItem*)(*iter);
+		if (item)
+		{
+			nim::IMMessage msg = item->GetMsg();
+			if (msg.sender_accid_ == my_id && item->IsMyMsg() &&/* msg.timetag_ <= timetag*/nim::MsgLog::QueryMessageBeReaded(msg))
+			{
+				item->SetMsgStatus(nim::kNIMMsgLogStatusReceipt);
+				last_receipt_msg_id_ = msg.client_msg_id_;
+				break;
+			}
+		}
+	}
+}
+
+void SessionForm::OnSnapchatRead(const std::string& client_msg_id)
+{
+	RemoveMsgItem(client_msg_id);
 }
 
 void SessionForm::OnDownloadCallback( const std::string &cid, bool success )
@@ -554,4 +757,24 @@ void SessionForm::ShowCustomMsgForm()
 	CustomMsgForm* f = WindowsManager::SingletonShow<CustomMsgForm>(CustomMsgForm::kClassName);
 	f->SetSession(session_id_, session_type_, label_title_->GetText());
 }
+
+bool IsNoticeMsg(const nim::IMMessage& msg)
+{
+	if (msg.type_ == nim::kNIMMessageTypeNotification || msg.type_ == nim::kNIMMessageTypeTips)
+		return true;
+
+	if (msg.type_ == nim::kNIMMessageTypeCustom)
+	{
+		Json::Value json;
+		if (StringToJson(msg.attach_, json))
+		{
+			int sub_type = json["type"].asInt();
+			if (sub_type == CustomMsgType_Rts)
+				return true;
+		}
+	}
+
+	return false;
+}
+
 }

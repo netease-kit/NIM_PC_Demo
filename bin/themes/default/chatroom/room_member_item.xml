@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <HBox width="stretch" height="35" mousechild="false" menu="true">
+    	<Control name="member_type" margin="8,9,6,0" width="26" height="16" bkimage=""/>
+    	<Box width="29" height="29" valign="center">
+            <Control name="header_image" width="27" height="27" borderround="27,27" margin="1,1,1,1" mouse="false"/>
+            <Control width="29" height="29" bkimage="mask_25x25.png"/>
+        </Box>
+        <Label name="name" text="" font="2" height="stretch" align="vcenter" normaltextcolor="darkcolor" textpadding="7,0,0,0"/>
+    </HBox>
+</Window>

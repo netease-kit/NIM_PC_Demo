@@ -46,9 +46,10 @@ public:
 	* @param[in] file_path 播放文件绝对路径
 	* @param[in] call_id 用以定位资源的一级ID，可选
 	* @param[in] res_id 用以定位资源的二级ID，可选
+	* @param[in] audio_format 播放音频格式，AAC : 0， AMR : 1
 	* @return bool true 调用成功，false 调用失败
 	*/
-	static bool PlayAudio(const char* call_id, const char* res_id, const char* file_path);
+	static bool PlayAudio(const char* call_id, const char* res_id, const char* file_path, int audio_format);
 
 	/** 
 	* NIM SDK 停止播放,通过回调获取停止播放状态

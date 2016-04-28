@@ -1,10 +1,21 @@
-﻿#ifndef _NIM_SDK_CPP_SYSMSG_H_
+﻿/** @file nim_cpp_sysmsg.h
+  * @brief 系统消息接口；主要包括查询系统消息、删除系统消息等功能
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author towik, Oleg
+  * @date 2015/2/1
+  */
+
+#ifndef _NIM_SDK_CPP_SYSMSG_H_
 #define _NIM_SDK_CPP_SYSMSG_H_
 
 #include <functional>
 #include "nim_sysmsg_helper.h"
 #include "nim_msg_helper.h"
 
+/**
+* @namespace nim
+* @brief namespace nim
+*/
 namespace nim
 {
 
@@ -14,26 +25,22 @@ namespace nim
 
 /** @class SystemMsg
   * @brief 系统消息接口；主要包括查询系统消息、删除系统消息等功能
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
-  * @author towik, Oleg
-  * @date 2015/2/1
   */
-
 class SystemMsg
 {
 
 public:
-	typedef std::function<void(const SysMessage&)>		ReceiveSysmsgCallback;
-	typedef std::function<void(const SendMessageArc&)>	SendCustomSysmsgCallback;
-	typedef std::function<void(int count, int unread_count, const std::list<SysMessage>& result)>		QueryMsgCallback;
-	typedef std::function<void(nim::NIMResCode res_code, int unread_count)>	NotifySysmsgResCallback;
-	typedef NotifySysmsgResCallback	QuerySysmsgUnreadCallback;
-	typedef NotifySysmsgResCallback	ReadAllCallback;
-	typedef NotifySysmsgResCallback	DeleteAllCallback;
+	typedef std::function<void(const SysMessage&)>		ReceiveSysmsgCallback;		/**< 收到自定义通知回执回调模板 */
+	typedef std::function<void(const SendMessageArc&)>	SendCustomSysmsgCallback;	/**< 发送自定义通知回调模板 */
+	typedef std::function<void(int count, int unread_count, const std::list<SysMessage>& result)>		QueryMsgCallback;	/**< 查询系统消息自定义通知回调模板 */
+	typedef std::function<void(nim::NIMResCode res_code, int unread_count)>	NotifySysmsgResCallback;	/**< 修改系统消息自定义通知回调模板 */
+	typedef NotifySysmsgResCallback	QuerySysmsgUnreadCallback;	/**< 查询系统消息自定义通知未读数回调模板 */
+	typedef NotifySysmsgResCallback	ReadAllCallback;			/**< 设置系统消息自定义通知已读状态回调模板 */
+	typedef NotifySysmsgResCallback	DeleteAllCallback;			/**< 删除全部系统消息自定义通知回调模板 */
 	typedef NotifySysmsgResCallback	BatchSetCallback;			/**< 批量调整系统消息自定义通知回调模板 */
-	typedef std::function<void(nim::NIMResCode res_code, __int64 msg_id, int unread_count)>	NotifySingleSysmsgCallback;
-	typedef NotifySingleSysmsgCallback SetStatusCallback;
-	typedef NotifySingleSysmsgCallback DeleteCallback;
+	typedef std::function<void(nim::NIMResCode res_code, __int64 msg_id, int unread_count)>	NotifySingleSysmsgCallback;	/**< 修改（单条）系统消息自定义通知回调模板 */
+	typedef NotifySingleSysmsgCallback SetStatusCallback;		/**< 设置系统消息自定义通知状态回调模板 */
+	typedef NotifySingleSysmsgCallback DeleteCallback;			/**< 删除系统消息自定义通知回调模板 */
 
 	/** @fn static void RegSysmsgCb(const ReceiveSysmsgCallback& cb, const std::string& json_extension = "")
 	* 注册接收系统通知回调接口
@@ -54,7 +61,6 @@ public:
 	/** @fn static void SendCustomNotificationMsg(const std::string& json_msg)
 	* 发送自定义通知消息
 	* @param[in] json_msg		消息体Json, 可以通过CreateCustomNotificationMsg方法自动创建
-	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
 	*/
 	static void SendCustomNotificationMsg(const std::string& json_msg);
@@ -147,6 +153,13 @@ public:
 	* @return void 无返回值
 	*/
 	static void DeleteStatusByTypeAsync(NIMSysMsgType type, const BatchSetCallback& cb, const std::string& json_extension = "");
+
+	/** @fn void UnregSysmsgCb()
+	* 反注册SysMsg提供的所有回调
+	* @return void 无返回值
+	*/
+	static void UnregSysmsgCb();
+
 };
 
 } 

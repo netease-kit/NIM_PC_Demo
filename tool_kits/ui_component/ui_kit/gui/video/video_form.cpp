@@ -47,85 +47,86 @@ void VideoForm::FreeAudio()
 	VideoManager::GetInstance()->EndDevice(nim::kNIMDeviceTypeAudioOutChat, kDeviceSessionTypeChat);
 }
 
-void VideoForm::OnVideoData( const std::string &data, ui::CSize size, uint64_t timestamp)
-{
-	// 本机摄像头捕捉画面
-	if(current_video_mode_ && camera_is_open_)
-	{
-		if( screen_is_other_ )
-		{
-			camera_page_tip2_->SetVisible( false );
-			video_ctrl_preview_->Refresh( m_hWnd, (BYTE*)data.c_str(), data.size(), size.cx, size.cy, true );
-		}
-		else
-		{
-			camera_page_tip_->SetVisible( false );
-			video_ctrl_screen_->Refresh( m_hWnd, (BYTE*)data.c_str(), data.size(), size.cx, size.cy, true );
-		}
-	}
-}
-
-void VideoForm::OnRecVideo( const std::string &data, ui::CSize size, uint64_t timestamp)
-{
-	// 接收的画面
-	if (current_video_mode_ && data.size() > 0 && camera_is_open_other_)
-	{
-		camera_open_label_->SetVisible( false );
-		camera_closed_label_->SetVisible( false );
-
-		if( need_change_form_size_ )
-		{
-			need_change_form_size_ = false;
-
-			int min_width = 500, min_height = 400;
-			if( size.cx > min_width )
-			{
-				min_width = size.cx;
-				if( size.cy > min_height - 34 ) //标题栏的高度
-					min_height = size.cy + 34;
-
-				if( IsZoomed( m_hWnd ) )
-				{
-					SendMessage( WM_SYSCOMMAND, SC_RESTORE, 0 );
-				}
-
-				ui::UiRect dest( 0, 0, min_width, min_height );
-				this->SetPos( dest, SWP_NOMOVE );
-			}
-			else if (size.cy > min_height - 34 )
-			{
-				min_height = size.cy + 34;
-				if (size.cx > min_width)
-				{
-					min_width = size.cx;
-				}
-				if (IsZoomed(m_hWnd))
-				{
-					SendMessage(WM_SYSCOMMAND, SC_RESTORE, 0);
-				}
-				ui::UiRect dest(0, 0, min_width, min_height);
-				this->SetPos(dest, SWP_NOMOVE);
-			}
-		}
-
-		if( screen_is_other_ )
-		{
-			camera_page_tip_->SetVisible(false);
-			video_ctrl_screen_->Refresh(m_hWnd, (BYTE*)data.c_str(), data.size(), size.cx, size.cy, false);
-		}
-		else
-		{
-			camera_page_tip2_->SetVisible(false);
-			video_ctrl_preview_->Refresh(m_hWnd, (BYTE*)data.c_str(), data.size(), size.cx, size.cy, false);
-		}
-	}
-}
+//void VideoForm::OnVideoData( const std::string &data, ui::CSize size, uint64_t timestamp)
+//{
+//	// 本机摄像头捕捉画面
+//	if(current_video_mode_ && camera_is_open_)
+//	{
+//		if( screen_is_other_ )
+//		{
+//			camera_page_tip2_->SetVisible( false );
+//			video_ctrl_preview_->Refresh( m_hWnd, (BYTE*)data.c_str(), data.size(), size.cx, size.cy, true );
+//		}
+//		else
+//		{
+//			camera_page_tip_->SetVisible( false );
+//			video_ctrl_screen_->Refresh( m_hWnd, (BYTE*)data.c_str(), data.size(), size.cx, size.cy, true );
+//		}
+//	}
+//}
+//
+//void VideoForm::OnRecVideo( const std::string &data, ui::CSize size, uint64_t timestamp)
+//{
+//	// 接收的画面
+//	if (current_video_mode_ && data.size() > 0 && camera_is_open_other_)
+//	{
+//		camera_open_label_->SetVisible( false );
+//		camera_closed_label_->SetVisible( false );
+//
+//		if( need_change_form_size_ )
+//		{
+//			need_change_form_size_ = false;
+//
+//			int min_width = 500, min_height = 400;
+//			if( size.cx > min_width )
+//			{
+//				min_width = size.cx;
+//				if( size.cy > min_height - 34 ) //标题栏的高度
+//					min_height = size.cy + 34;
+//
+//				if( IsZoomed( m_hWnd ) )
+//				{
+//					SendMessage( WM_SYSCOMMAND, SC_RESTORE, 0 );
+//				}
+//
+//				ui::UiRect dest( 0, 0, min_width, min_height );
+//				this->SetPos( dest, SWP_NOMOVE );
+//			}
+//			else if (size.cy > min_height - 34 )
+//			{
+//				min_height = size.cy + 34;
+//				if (size.cx > min_width)
+//				{
+//					min_width = size.cx;
+//				}
+//				if (IsZoomed(m_hWnd))
+//				{
+//					SendMessage(WM_SYSCOMMAND, SC_RESTORE, 0);
+//				}
+//				ui::UiRect dest(0, 0, min_width, min_height);
+//				this->SetPos(dest, SWP_NOMOVE);
+//			}
+//		}
+//
+//		if( screen_is_other_ )
+//		{
+//			camera_page_tip_->SetVisible(false);
+//			video_ctrl_screen_->Refresh(m_hWnd, (BYTE*)data.c_str(), data.size(), size.cx, size.cy, false);
+//		}
+//		else
+//		{
+//			camera_page_tip2_->SetVisible(false);
+//			video_ctrl_preview_->Refresh(m_hWnd, (BYTE*)data.c_str(), data.size(), size.cx, size.cy, false);
+//		}
+//	}
+//}
 
 void VideoForm::StartChat()
 {
 	bool ret = VideoManager::GetInstance()->StartChat((current_video_mode_ ? nim::kNIMVideoChatModeVideo : nim::kNIMVideoChatModeAudio), "", "", session_id_);
 	if (ret)
 	{
+		is_start_ = true;
 		StartDialWaitingTimer();
 	}
 	else
@@ -152,10 +153,7 @@ void VideoForm::ChatStartCallback(bool success, int64_t channel_id)
 	else
 	{
 		QLOG_ERR(L"发起{0}聊天失败") << (current_video_mode_ ? L"视频" : L"语音");
-		//if(param.code_ == 2)
-		//	EnterEndCallPage( END_CALL_VERSION );
-		//else
-			EnterEndCallPage( END_CALL_HANGUP );
+		EnterEndCallPage(END_CALL_STARTFAIL);
 	}
 }
 
@@ -494,7 +492,7 @@ void VideoForm::OnLogin( bool success )
 		//}
 		paint_video_timer_.Cancel();
 		auto task = nbase::Bind(&VideoForm::PaintVideo, this);
-		nbase::ThreadManager::PostRepeatedTask(kThreadUI, task, nbase::TimeDelta::FromMilliseconds(80));
+		nbase::ThreadManager::PostRepeatedTask(kThreadUI, task, nbase::TimeDelta::FromMilliseconds(70));
 	}
 	else
 	{
@@ -686,59 +684,39 @@ void VideoForm::CheckRecordDiskSpace(const std::wstring& file)
 }
 void VideoForm::PaintVideo()
 {
-	if (video_ctrl_screen_->IsNeedPaint())
+	if (current_video_mode_)
 	{
-		video_ctrl_screen_->Invalidate();
-	} 
-	else if (video_ctrl_preview_->IsNeedPaint())
-	{
-		video_ctrl_preview_->Invalidate();
+		bool show_screen = false;
+		bool show_preview = false;
+		if (screen_is_other_)
+		{
+			show_screen = camera_is_open_other_;
+			show_preview = camera_is_open_;
+		}
+		else
+		{
+			show_screen = camera_is_open_;
+			show_preview = camera_is_open_other_;
+		}
+		if (show_screen && video_ctrl_screen_->Refresh(this, !screen_is_other_, !screen_is_other_))
+		{
+			camera_page_tip_->SetVisible(false);
+			if (screen_is_other_)
+			{
+				camera_open_label_->SetVisible(false);
+				camera_closed_label_->SetVisible(false);
+			}
+		}
+		if (show_preview && video_ctrl_preview_->Refresh(this, screen_is_other_, screen_is_other_))
+		{
+			camera_page_tip2_->SetVisible(false);
+			if (!screen_is_other_)
+			{
+				camera_open_label_->SetVisible(false);
+				camera_closed_label_->SetVisible(false);
+			}
+		}
 	}
 }
 
-
-//显示保存消息
-void ShowVideochatMsg( bool is_video_type, VideoForm::VideoChatMsgStateType type, long sec, UTF8String uid, bool is_self, uint32_t time, bool is_offline, bool open_sess )
-{
-	//Json::Value root;
-	//root[kSessionVideoChatState] = type;
-	//root[kSessionVideoChatTime] = sec;
-	//Json::FastWriter fast_writer;
-	//UTF8String json = fast_writer.write(root);
-
-	//UTF8String my_id = GetIYixinCore()->GetUid();
-	//UTF8String sender = (is_self ? my_id : uid);
-	//UTF8String receiver = (is_self ? uid : my_id);
-
-	//nbiz::SessionMsgType content_type = (is_video_type ? kSessionMsgTypeVideoChatMessage : kSessionMsgTypeAudioChatMessage);
-
-	//uint32_t msg_time = 0;
-	//if( time == 0 )
-	//	msg_time = msg_helper::GetNowTimestamp();
-	//else
-	//	msg_time = time;
-
-	//nbiz::Property msg;
-	//msg.put_string(kSessionTagClientMsgID, GetUUID());
-	//msg.put_string(kSessionTagSender,  sender);
-	//msg.put_string(kSessionTagReceiver, receiver);
-	//msg.put_string(kSessionTagBody, json);
-	//msg.put_int32(kSessionTagContentType, content_type);
-	//msg.put_uint32(kSessionTagTime, msg_time);
-
-	//msg_helper::SaveMsgLog( msg, uid, kSessionTypeDouble, kMsgLogStatusUnread, "", true );
-
-	//std::string msg_body = msg_helper::GetMsgTextShowByData(content_type, json);
-	//SessionManager::GetInstance()->UpdateOneLocalMsg(kSessionTypeDouble, uid, msg_body, msg_time/*, is_video_type ? SessionIconVideo : SessionIconAudio*/);
-
-	//if( open_sess )
-	//{
-	//	SessionManager::GetInstance()->CreateSession(uid, kSessionTypeDouble);
-	//}
-
-	//if( is_offline )
-	//	SessionManager::GetInstance()->CreateSession( msg, false, true, false, false );
-	//else
-	//	SessionManager::GetInstance()->CreateSession( msg, true, false, false, false );
-}
 }

@@ -19,7 +19,6 @@ struct HttpRequest
 		progress_cb_user_data(nullptr),
 		header_map()
 	{
-
 	}
 	bool is_set_as_post;
 	std::string url;
@@ -34,6 +33,7 @@ struct HttpRequest
 	nim_http_request_progress_cb progress_cb;
 	const void* progress_cb_user_data;
 	std::map<std::string, std::string> header_map;
+	net::Proxy proxy;
 };
 
 void nim_http_init()
@@ -105,6 +105,10 @@ int nim_http_post_request(HttpRequestHandle request_handle)
 		shared_request->AddHeaderField(it->first, it->second);
 	}
 	shared_request->SetTimeout(http_request->timeout_ms);
+	if (http_request->proxy.type != net::ProxyNone)
+	{
+		shared_request->SetProxy(http_request->proxy);
+	}
 	int http_request_id = net::HttpTransThread::GetInstance()->PostRequest(shared_request);
 	delete http_request;
 
@@ -185,4 +189,30 @@ NET_EXPORT void nim_http_set_timeout(HttpRequestHandle request_handle, int timeo
 
 	HttpRequest* http_request = (HttpRequest*)request_handle;
 	http_request->timeout_ms = timeout_ms;
+}
+NET_EXPORT void nim_http_set_proxy(HttpRequestHandle request_handle, int type, const char* host, short port, const char* user, const char* pass)
+{
+	HttpRequest* http_request = (HttpRequest*)request_handle;
+	switch (type)
+	{
+	case kNIMProxyHttp11:
+		http_request->proxy.type = net::ProxyHttp11;
+		break;
+	case kNIMProxySocks4:
+		http_request->proxy.type = net::ProxySock4;
+		break;
+	case kNIMProxySocks4a:
+		http_request->proxy.type = net::ProxySock4a;
+		break;
+	case kNIMProxySocks5:
+		http_request->proxy.type = net::ProxySock5;
+		break;
+	default:
+		http_request->proxy.type = net::ProxyNone;
+		break;
+	}
+	http_request->proxy.host = host;
+	http_request->proxy.port = port;
+	http_request->proxy.user = user;
+	http_request->proxy.pass = pass;
 }

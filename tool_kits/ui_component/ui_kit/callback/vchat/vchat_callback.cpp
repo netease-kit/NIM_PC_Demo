@@ -27,25 +27,15 @@ void VChatCallback::StartDeviceCb(nim::NIMDeviceType type, bool ret, const char 
 	auto closure = nbase::Bind(&OnStartDeviceCb, type, ret);
 	Post2UI(closure);
 }
-void OnVideoCaptureData(uint64_t time, const std::string& data, unsigned int width, unsigned int height)
-{
-	VideoManager::GetInstance()->OnVideoDataCb(true, data, width, height);
-}
 void VChatCallback::VideoCaptureData(unsigned __int64 time, const char* data, unsigned int size, unsigned int width, unsigned int height, const char *json, const void *user_data)
 {
-	std::string data_temp(data, size);
-	auto closure = nbase::Bind(&OnVideoCaptureData, time, data_temp, width, height);
-	Post2UI(closure);
-}
-void OnVideoRecData(uint64_t time, const std::string& data, unsigned int width, unsigned int height)
-{
-	VideoManager::GetInstance()->OnVideoDataCb(false, data, width, height);
+	std::string json_temp(json);
+	VideoFrameMng::AddVideoFrame(true, time, data, size, width, height, json_temp);
 }
 void VChatCallback::VideoRecData(unsigned __int64 time, const char* data, unsigned int size, unsigned int width, unsigned int height, const char *json, const void *user_data)
 {
-	std::string data_temp(data, size);
-	auto closure = nbase::Bind(&OnVideoRecData, time, data_temp, width, height);
-	Post2UI(closure);
+	std::string json_temp(json);
+	VideoFrameMng::AddVideoFrame(false, time, data, size, width, height, json_temp);
 }
 
 void OnVChatCb(nim::NIMVideoChatSessionType type, uint64_t channel_id, int code, const std::string& json)

@@ -1,3 +1,10 @@
+/** @file nim_cpp_team.cpp
+  * @brief 群组功能；主要包括查询群信息、查询群成员信息、加人、踢人等功能
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author towik, Oleg
+  * @date 2015/2/1
+  */
+
 #include "nim_cpp_team.h"
 #include "nim_sdk_helper.h"
 #include "nim_common_helper.h"
@@ -142,15 +149,16 @@ static void CallbackQueryTeamInfo(const char *tid, const char *result, const cha
 	}
 }
 
-static Team::TeamEventCallback* g_cb_pointer = nullptr;
+static Team::TeamEventCallback* g_cb_team_event_ = nullptr;
 void Team::RegTeamEventCb(const TeamEventCallback& cb, const std::string& json_extension)
 {
-	delete g_cb_pointer;
-	if (cb)
+	if (g_cb_team_event_)
 	{
-		g_cb_pointer = new TeamEventCallback(cb);
+		delete g_cb_team_event_;
+		g_cb_team_event_ = nullptr;
 	}
-	return NIM_SDK_GET_FUNC(nim_team_reg_team_event_cb)(json_extension.c_str(), &CallbackTeamEvent, g_cb_pointer);
+	g_cb_team_event_ = new TeamEventCallback(cb);
+	return NIM_SDK_GET_FUNC(nim_team_reg_team_event_cb)(json_extension.c_str(), &CallbackTeamEvent, g_cb_team_event_);
 }
 
 bool Team::CreateTeamAsync(const TeamInfo& team_info
@@ -606,4 +614,14 @@ bool Team::ParseTeamInfo(const std::string& json_team_info, TeamInfo& team_info)
 {
 	return ParseTeamInfoJson(json_team_info, team_info);
 }
+
+void Team::UnregTeamCb()
+{
+	if (g_cb_team_event_)
+	{
+		delete g_cb_team_event_;
+		g_cb_team_event_ = nullptr;
+	}
+}
+
 }

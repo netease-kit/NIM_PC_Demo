@@ -1,28 +1,36 @@
-﻿#ifndef _NIM_SDK_CPP_CLIENT_H_
+﻿/** @file nim_cpp_client.h
+  * @brief 全局管理功能；主要包括SDK初始化/清理、客户端登录/退出等功能
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author towik, Oleg
+  * @date 2015/09/21
+  */
+
+#ifndef _NIM_SDK_CPP_CLIENT_H_
 #define _NIM_SDK_CPP_CLIENT_H_
 
 #include "nim_client_helper.h"
 
+/**
+* @namespace nim
+* @brief namespace nim
+*/
 namespace nim
 {
 
 /** @class Client
   * @brief 全局管理功能；主要包括SDK初始化/清理、客户端登录/退出等功能
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
-  * @author towik, Oleg
-  * @date 2015/09/21
   */
 
 class Client
 {
 
 public:
-	typedef std::function<void(const LoginRes&)> LoginCallback;
-	typedef std::function<void(NIMResCode)> LogoutCallback;
-	typedef std::function<void(const KickoutRes&)> KickoutCallback;
-	typedef std::function<void(void)> DisconnectCallback;
-	typedef std::function<void(const MultiSpotLoginRes&)> MultiSpotLoginCallback;
-	typedef std::function<void(const KickOtherRes&)> KickOtherCallback;
+	typedef std::function<void(const LoginRes&)> LoginCallback; /**< 登录回调模板 */
+	typedef std::function<void(NIMResCode)> LogoutCallback;		/**< 登出回调模板 */
+	typedef std::function<void(const KickoutRes&)> KickoutCallback;	/**< 被踢通知回调模板 */
+	typedef std::function<void(void)> DisconnectCallback;		/**< 断网通知回调模板 */
+	typedef std::function<void(const MultiSpotLoginRes&)> MultiSpotLoginCallback;	/**< 多端登录通知回调模板 */
+	typedef std::function<void(const KickOtherRes&)> KickOtherCallback;	/**< 将多端下线回调模板 */
 
 public:
 	/** @fn bool Init(const std::string& app_data_dir, const std::string& app_install_dir, const SDKConfig &config)
@@ -123,6 +131,12 @@ public:
 	* @return void 无返回值
 	*/
 	static void RegKickOtherClientCb(const KickOtherCallback& cb, const std::string& json_extension = "");
+
+	/** @fn void UnregClientCb()
+	* 反注册Client提供的所有回调
+	* @return void 无返回值
+	*/
+	static void UnregClientCb();
 };
 
 } 

@@ -1,3 +1,10 @@
+/** @file nim_cpp_friend.cpp
+  * @brief NIM 好友相关接口
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author caowei, Oleg
+  * @date 2015/8/17
+  */
+
 #include "nim_cpp_friend.h"
 #include "nim_sdk_helper.h"
 #include "nim_common_helper.h"
@@ -77,15 +84,16 @@ static void CallbackGetFriendProfile(const char *accid, const char *result_json,
 	}
 }
 
-static Friend::FriendChangeCallback* friend_change_cb = nullptr;
+static Friend::FriendChangeCallback* g_cb_friend_changed_ = nullptr;
 void Friend::RegChangeCb(const FriendChangeCallback &cb, const std::string& json_extension /* = "" */)
 {
-	delete friend_change_cb;
-	if (cb)
+	if (g_cb_friend_changed_)
 	{
-		friend_change_cb = new FriendChangeCallback(cb);
+		delete g_cb_friend_changed_;
+		g_cb_friend_changed_ = nullptr;
 	}
-	return NIM_SDK_GET_FUNC(nim_friend_reg_changed_cb)(json_extension.c_str(), &CallbackFriendChange, friend_change_cb);
+	g_cb_friend_changed_ = new FriendChangeCallback(cb);
+	return NIM_SDK_GET_FUNC(nim_friend_reg_changed_cb)(json_extension.c_str(), &CallbackFriendChange, g_cb_friend_changed_);
 }
 
 bool Friend::Request(const std::string &accid, NIMVerifyType verify_type, const std::string &msg, const FriendOptCallback &cb, const std::string& json_extension /*= ""*/)
@@ -211,5 +219,13 @@ bool Friend::ParseFriendProfileSyncEvent(const FriendChangeEvent& change_event, 
 	return ParseFriendsProfile(change_event.content_, out_event.profiles_);
 }
 
+void Friend::UnregFriendCb()
+{
+	if (g_cb_friend_changed_)
+	{
+		delete g_cb_friend_changed_;
+		g_cb_friend_changed_ = nullptr;
+	}
+}
 
 }

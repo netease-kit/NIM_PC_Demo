@@ -1,6 +1,6 @@
 ﻿/** @file nim_vchat_def.h
   * @brief NIM VChat提供的音视频接口定义，
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/5/5
   */
@@ -111,9 +111,15 @@ enum NIMVChatMp4RecordCode{
 static const char *kNIMVChatUids			= "uids";			/**< StrArray 帐号, ack无效 */
 static const char *kNIMVChatCustomVideo		= "custom_video";	/**< int 是否用自主的视频数据 >0表示是 */
 static const char *kNIMVChatCustomAudio		= "custom_audio";	/**< int 是否用自主的音频数据 >0表示是 */
-static const char *kNIMVChatRecord			= "record";			/**< int 是否需要录制数据 >0表示是，需要服务器支持 */
+static const char *kNIMVChatRecord			= "record";			/**< int 是否需要录制音频数据 >0表示是 （需要服务器配置支持，本地录制直接调用接口函数） */
+static const char *kNIMVChatVideoRecord		= "video_record";	/**< int 是否需要录制视频数据 >0表示是 （需要服务器配置支持，本地录制直接调用接口函数）*/
 static const char *kNIMVChatMaxVideoRate	= "max_video_rate";	/**< int 视频发送编码码率 >=100000 <=1000000有效 */
 static const char *kNIMVChatVideoQuality	= "video_quality";	/**< int 视频聊天分辨率选择 NIMVChatVideoQuality */
+static const char *kNIMVChatPushEnable		= "push_enable";	/**< int 是否需要推送 >0表示是 默认是 */
+static const char *kNIMVChatNeedBadge		= "need_badge";		/**< int 是否需要角标计数 >0表示是 默认是 */
+static const char *kNIMVChatNeedFromNick	= "need_nick";		/**< int 是否需要推送昵称 >0表示是 默认是 */
+static const char *kNIMVChatApnsPayload		= "payload";		/**< string JSON格式,推送payload */
+static const char *kNIMVChatSound			= "sound";			/**< string 推送声音 */
 /** @}*/ //json extension params
 
 /** @name json extension params for nim_vchat_cb_func

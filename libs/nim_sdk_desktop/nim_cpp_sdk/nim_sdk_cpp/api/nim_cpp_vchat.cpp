@@ -1,4 +1,11 @@
-﻿#include "nim_cpp_vchat.h"
+﻿/** @file nim_cpp_vchat.cpp
+  * @brief NIM VChat提供的音视频（包括设备）相关接口
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author gq
+  * @date 2015/4/30
+  */
+
+#include "nim_cpp_vchat.h"
 #include "nim_sdk_helper.h"
 #include "nim_common_helper.h"
 
@@ -13,8 +20,8 @@ typedef void(*nim_vchat_start_device)(nim::NIMDeviceType type, const char* devic
 typedef void(*nim_vchat_end_device)(nim::NIMDeviceType type, const char *json_extension);
 typedef void(*nim_vchat_add_device_status_cb)(nim::NIMDeviceType type, nim_vchat_device_status_cb_func cb, const void *user_data);
 typedef void(*nim_vchat_remove_device_status_cb)(nim::NIMDeviceType type);
-typedef void(*nim_vchat_set_audio_data_cb)(bool capture, nim_vchat_audio_data_cb_func cb, const void *user_data);
-typedef void(*nim_vchat_set_video_data_cb)(bool capture, nim_vchat_video_data_cb_func cb, const void *user_data);
+typedef void(*nim_vchat_set_audio_data_cb)(bool capture, const char* json_extension, nim_vchat_audio_data_cb_func cb, const void *user_data);
+typedef void(*nim_vchat_set_video_data_cb)(bool capture, const char* json_extension, nim_vchat_video_data_cb_func cb, const void *user_data);
 typedef void(*nim_vchat_set_audio_volumn)(unsigned char volumn, bool capture);
 typedef unsigned char(*nim_vchat_get_audio_volumn)(bool capture);
 typedef void(*nim_vchat_set_audio_input_auto_volumn)(bool auto_volumn);
@@ -37,6 +44,8 @@ typedef void(*nim_vchat_start_record)(const char *path, const char *json_extensi
 typedef void(*nim_vchat_stop_record)(const char *json_extension, nim_vchat_mp4_record_opt_cb_func cb, const void *user_data);
 //结束通话
 typedef void(*nim_vchat_end)(const char* json_extension);
+//自定义视频数据
+typedef bool(*nim_vchat_custom_video_data)(unsigned __int64 time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension);
 
 
 //dll-------------------------------
@@ -89,13 +98,17 @@ void VChat::RemoveDeviceStatusCb(nim::NIMDeviceType type)
 //capture = false	监听音频接收数据（接收到的语音数据，由底层播放，可以不监听）
 void VChat::SetAudioDataCb(bool capture, nim_vchat_audio_data_cb_func cb)
 {
-	NIM_SDK_GET_FUNC(nim_vchat_set_audio_data_cb)(capture, cb, nullptr);
+	NIM_SDK_GET_FUNC(nim_vchat_set_audio_data_cb)(capture, "", cb, nullptr);
 }
 //capture = true	监听视频采集数据（摄像头）
 //capture = false	监听视频接收数据（接收到的图像数据，由上层播放）
 void VChat::SetVideoDataCb(bool capture, nim_vchat_video_data_cb_func cb)
 {
-	NIM_SDK_GET_FUNC(nim_vchat_set_video_data_cb)(capture, cb, nullptr);
+	Json::FastWriter fs;
+	Json::Value value;
+	value[nim::kNIMVideoSubType] = kNIMVideoSubTypeI420;
+	std::string json_value = fs.write(value);
+	NIM_SDK_GET_FUNC(nim_vchat_set_video_data_cb)(capture, json_value.c_str(), cb, nullptr);
 }
 
 //设置相关接口
@@ -177,6 +190,10 @@ void VChat::StopRecord(Mp4OptCallback cb)
 void VChat::End()
 {
 	NIM_SDK_GET_FUNC(nim_vchat_end)("");
+}
+bool VChat::CustomVideoData(unsigned __int64 time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension)
+{
+	return NIM_SDK_GET_FUNC(nim_vchat_custom_video_data)(time, data, size, width, height, json_extension);
 }
 
 }  // namespace nim

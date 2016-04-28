@@ -1,10 +1,21 @@
-﻿#ifndef _NIM_SDK_CPP_SESSION_H_
+﻿/** @file nim_cpp_session.h
+  * @brief 会话列表管理功能；主要包括查询会话列表、删除会话列表等功能
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author towik, Oleg
+  * @date 2015/2/1
+  */
+
+#ifndef _NIM_SDK_CPP_SESSION_H_
 #define _NIM_SDK_CPP_SESSION_H_
 
 #include <string>
 #include <functional>
 #include "nim_session_helper.h"
 
+/**
+* @namespace nim
+* @brief namespace nim
+*/
 namespace nim
 {
 
@@ -14,20 +25,17 @@ namespace nim
 
 /** @class Session
   * @brief 会话列表管理功能；主要包括查询会话列表、删除会话列表等功能
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
-  * @author towik, Oleg
-  * @date 2015/2/1
   */
 
 class Session
 {
 
 public:
-	typedef std::function<void(nim::NIMResCode, const SessionData&, int)> ChangeCallback;
-	typedef std::function<void(int, const SessionDataList&)> QuerySessionListCallabck;
-	typedef ChangeCallback DeleteRecentSessionCallabck;
-	typedef ChangeCallback DeleteAllRecentSessionCallabck;
-	typedef ChangeCallback SetUnreadCountZeroCallback;
+	typedef std::function<void(nim::NIMResCode, const SessionData&, int)> ChangeCallback;	/**< 会话变更通知回调模板 */
+	typedef std::function<void(int, const SessionDataList&)> QuerySessionListCallabck;		/**< 查询会话列表回调模板 */
+	typedef ChangeCallback DeleteRecentSessionCallabck;										/**< 删除会话回调模板 */
+	typedef ChangeCallback DeleteAllRecentSessionCallabck;									/**< 删除全部会话回调模板 */
+	typedef ChangeCallback SetUnreadCountZeroCallback;										/**< 会话未读消息数清零回调模板 */
 
 	/** @fn static void RegChangeCb(const ChangeCallback& cb, const std::string& json_extension = "")
 	* 注册最近会话列表项变更通知
@@ -72,6 +80,13 @@ public:
 	* @return bool 检查参数如果不符合要求则返回失败
 	*/
 	static bool SetUnreadCountZeroAsync(nim::NIMSessionType to_type, const std::string& id, const SetUnreadCountZeroCallback& cb, const std::string& json_extension = "");
+
+	/** @fn void UnregSessionCb()
+	* 反注册Session提供的所有回调
+	* @return void 无返回值
+	*/
+	static void UnregSessionCb();
+
 };
 
 } 

@@ -1,6 +1,6 @@
 ﻿/** @file nim_team_def.h
   * @brief NIM SDK team相关的定义
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/03/04
   */

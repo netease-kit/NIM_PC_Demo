@@ -109,6 +109,8 @@ void UserService::OnFriendListChange(const nim::FriendChangeEvent& change_event)
 		update_list.push_back(accid);
 		friend_list_.at(accid).Update(update_event.profile_);
 
+		//QLOG_APP(L"OnFriendListChange id : {0}, ext: {1}") << update_event.profile_.GetAccId() << update_event.profile_.GetEx().toStyledString();
+
 		break;
 	}
 	default:
@@ -152,6 +154,8 @@ void UserService::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfo_lis
 			name_photo_list.push_back(info);
 		if (info.ExistValue((nim::UserNameCardValueKey)(nim::kUserNameCardKeyAll - nim::kUserNameCardKeyName - nim::kUserNameCardKeyIconUrl))) //用户其他信息变化了
 			misc_uinfo_list.push_back(info);
+
+		//QLOG_APP(L"OnUserInfoChange id : {0}, ext: {1}") << info.GetAccId() << info.GetExpand().toStyledString();
 	}
 
 	// 执行回调列表中所有回调
@@ -371,18 +375,25 @@ void UserService::InvokeGetUserInfo(const std::list<std::string>& account_list)
 
 void UserService::InvokeUpdateUserInfo(const nim::UserNameCard &new_info, const OnUpdateUserInfoCallback& cb)
 {
-	auto update_uinfo_cb = ToWeakCallback([this, new_info, cb](nim::NIMResCode res) {
+	nim::UserNameCard info = new_info;
+
+	auto update_uinfo_cb = ToWeakCallback([this, info, cb](nim::NIMResCode res) {
 		if (res == nim::kNIMResSuccess)
 		{
 			assert(nbase::MessageLoop::current()->ToUIMessageLoop());
 			std::list<nim::UserNameCard> lst;
-			lst.push_back(new_info);
+			lst.push_back(info);
 			OnUserInfoChange(lst);
 		}
 		if (cb != nullptr)
 			cb(res);
 	});
-	nim::User::UpdateUserNameCard(new_info, update_uinfo_cb);
+	//Json::Value values;
+	//Json::Reader reader;
+	//std::string test_string = "{\"remote\":{\"mapmap\":{\"int\":1,\"boolean\":false,\"list\":[1,2,3],\"string\":\"string, lalala\"}}}";
+	//if (reader.parse(test_string, values))
+	//	info.SetExpand(values);
+	nim::User::UpdateMyUserNameCard(info, update_uinfo_cb);
 }
 
 void UserService::InvokeChangeUserPhoto(const std::string &url, const OnUpdateUserInfoCallback& cb)

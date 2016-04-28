@@ -1,4 +1,11 @@
-﻿#ifndef _NIM_SDK_CPP_FRIEND_H_
+﻿/** @file nim_cpp_friend.h
+  * @brief NIM 好友相关接口
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author caowei, Oleg
+  * @date 2015/8/17
+  */
+
+#ifndef _NIM_SDK_CPP_FRIEND_H_
 #define _NIM_SDK_CPP_FRIEND_H_
 
 #include <string>
@@ -6,23 +13,23 @@
 #include <functional>
 #include "nim_friend_helper.h"
 
+/**
+* @namespace nim
+* @brief namespace nim
+*/
 namespace nim
 {
-/** @class Friend
-  * @brief NIM 好友相关接口
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
-  * @author caowei, Oleg
-  * @date 2015/8/17
-  */
-
 #include "nim_res_code_def.h"
 
+/** @class Friend
+  * @brief NIM 好友相关接口
+  */
 class Friend
 {
 public:
-	typedef std::function<void(const FriendChangeEvent& )> FriendChangeCallback;
-	typedef std::function<void(NIMResCode res_code)> FriendOptCallback;
-	typedef std::function<void(NIMResCode res_code, const std::list<nim::FriendProfile>& user_profile_list)> GetFriendsListCallback;
+	typedef std::function<void(const FriendChangeEvent& )> FriendChangeCallback;	/**< 好友信息变更通知回调模板 */
+	typedef std::function<void(NIMResCode res_code)> FriendOptCallback;				/**< 变更好友信息回调模板 */
+	typedef std::function<void(NIMResCode res_code, const std::list<nim::FriendProfile>& user_profile_list)> GetFriendsListCallback;	/**< 获取好友回调模板 */
 	typedef std::function<void(const std::string& accid, const nim::FriendProfile& user_profile)> GetFriendProfileCallback;	/**< 获取好友信息回调模板 */
 
 public:
@@ -80,7 +87,7 @@ public:
 	*/
 	static void GetFriendProfile(const std::string &accid, const GetFriendProfileCallback& cb, const std::string& json_extension = "");
 
-	/** @fn static bool ParseFriendAddEvent(const FriendChangeEvent& change_event, FriendAddEvent& add_event)
+	/** @fn static bool ParseFriendAddEvent(const FriendChangeEvent& change_event, FriendAddEvent& out_event)
 	* 解析收到的好友添加请求通知
 	* @param[in] change_event	好友添加请求通知
 	* @param[out] out_event		解析后结果
@@ -96,7 +103,7 @@ public:
 	*/
 	static bool ParseFriendDelEvent(const FriendChangeEvent& change_event, FriendDelEvent& out_event);
 
-	/** @fn static bool ParseFriendUserInfoUpdateEvent(const FriendChangeEvent& change_event, FriendProfileUpdateEvent& out_event)
+	/** @fn static bool ParseFriendProfileUpdateEvent(const FriendChangeEvent& change_event, FriendProfileUpdateEvent& out_event)
 	* 解析收到的好友简况更新通知
 	* @param[in] change_event	好友用户信息更新通知
 	* @param[out] out_event		解析后结果
@@ -111,6 +118,12 @@ public:
 	* @return bool 解析是否成功
 	*/
 	static bool ParseFriendProfileSyncEvent(const FriendChangeEvent& change_event, FriendProfileSyncEvent& out_event);
+
+	/** @fn void UnregFriendCb()
+	* 反注册Friend提供的所有回调
+	* @return void 无返回值
+	*/
+	static void UnregFriendCb();
 };
 
 }

@@ -441,6 +441,11 @@ bool ProfileForm::OnAliasEditLoseFocus(ui::EventArgs * args)
 		return false;
 
 	nim::FriendProfile profile;
+	//Json::Value values;
+	//Json::Reader reader;
+	//std::string test_string = "{\"remote\":{\"mapmap\":{\"int\":1,\"boolean\":false,\"list\":[1,2,3],\"string\":\"string, lalala\"}}}";
+	//if (reader.parse(test_string, values))
+	//	profile.SetEx(values);
 	profile.SetAccId(m_uinfo.GetAccId());
 	profile.SetAlias(alias_edit->GetUTF8Text());
 	nim::Friend::Update(profile, nullptr);

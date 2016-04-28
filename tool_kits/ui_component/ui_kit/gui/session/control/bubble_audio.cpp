@@ -89,13 +89,26 @@ bool MsgBubbleAudio::OnClicked( ui::EventArgs* arg )
 			if( !shared::FilePathIsExist(path_, false) )
 			{
 				QLOG_ERR(L"Audio not exist: {0}") <<path_;
-				return true;
+				return false;
 			}
 
 			AudioCallback::SetPlaySid(sid_);
 			AudioCallback::SetPlayCid(msg_.client_msg_id_);
 
-			nim_audio::Audio::PlayAudio(path_.c_str(), sid_.c_str(), msg_.client_msg_id_.c_str());
+			int audio_format = 0;
+			{
+				FILE* audio_file;
+				if (_wfopen_s(&audio_file, nbase::UTF8ToUTF16(path_).c_str(), L"rb"))
+					return false;
+
+				char header[6];
+				int n = fread(header, 1, 6, audio_file);
+				if (n == 6 && !memcmp(header, "#!AMR\n", 6)) //AMR文件
+					audio_format = 1;
+				fclose(audio_file);
+			}
+
+			nim_audio::Audio::PlayAudio(path_.c_str(), sid_.c_str(), msg_.client_msg_id_.c_str(), audio_format);
 			nim::MsgLog::SetSubStatusAsync(msg_.client_msg_id_, nim::kNIMMsgLogSubStatusPlayed, nim::MsgLog::SetSubStatusCallback());
 			msg_.sub_status_ = nim::kNIMMsgLogSubStatusPlayed;
 			SetPlayed(true);

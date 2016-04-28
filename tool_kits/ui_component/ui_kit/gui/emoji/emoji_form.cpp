@@ -8,7 +8,7 @@ const LPCTSTR EmojiForm::kClassName = L"EmojiForm";
 
 EmojiForm::EmojiForm()
 {
-
+	only_emoj_ = false;
 }
 
 EmojiForm::~EmojiForm()
@@ -74,6 +74,11 @@ void EmojiForm::InitWindow()
 	m_pRoot->AttachBubbledEvent(ui::kEventSelect, nbase::Bind(&EmojiForm::OnSelChanged, this, std::placeholders::_1));
 	emoj_ = (TileBox*) FindControl(L"tile_emoj");
 
+	if (only_emoj_)
+	{
+		FindControl(L"sticker_vector_container")->SetVisible(false);
+	}
+
 	std::vector<emoji::Emoticon> vec;
 	emoji::GetEmoticon(vec);
 	if( vec.empty() )
@@ -138,11 +143,12 @@ bool EmojiForm::OnSelChanged(ui::EventArgs* param)
 	return true;
 }
 
-void EmojiForm::ShowEmoj(POINT pt, OnSelectEmotion sel, OnSelectEmotion2 sel2, OnEmotionClose cls)
+void EmojiForm::ShowEmoj(POINT pt, OnSelectEmotion sel, OnSelectEmotion2 sel2, OnEmotionClose cls, bool only_emoj)
 {
 	sel_cb_ = sel;
 	sel2_cb_ = sel2;
 	cls_cb_ = cls;
+	only_emoj_ = only_emoj;
 
 	HWND hwnd = WindowEx::Create(NULL, L"", WS_POPUP, WS_EX_TOOLWINDOW);
 	if(hwnd == NULL)

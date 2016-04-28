@@ -17,7 +17,7 @@ typedef bool(*nim_audio_init_module)(const char* user_data_parent_path);
 typedef bool(*nim_audio_uninit_module)();
 
 //play and stop
-typedef bool(*nim_audio_play_audio)(const char* call_id, const char* res_id, const char* file_path);
+typedef bool(*nim_audio_play_audio)(const char* call_id, const char* res_id, const char* file_path, int audio_format);
 typedef bool(*nim_audio_stop_play_audio)();
 
 //reg
@@ -29,11 +29,11 @@ typedef bool(*nim_audio_reg_stop_play_cb)(nim_rescode_id_cb cb);
 bool Audio::Init(const std::string& res_audio_path)
 {
 	std::wstring dir = QPath::GetAppPath();
-#ifdef _DEBUG
-	dir.append(kSdkAudioDll_d);
-#else
+//#ifdef _DEBUG
+//	dir.append(kSdkAudioDll_d);
+//#else
 	dir.append(kSdkAudioDll);
-#endif
+//#endif
 	instance_audio_ = ::LoadLibraryW(dir.c_str());
 	if (instance_audio_ == NULL)
 	{
@@ -69,10 +69,10 @@ void Audio::Cleanup()
 	}
 }
 
-bool Audio::PlayAudio(const char* call_id, const char* res_id, const char* file_path)
+bool Audio::PlayAudio(const char* call_id, const char* res_id, const char* file_path, int audio_format)
 {
 	nim_audio_play_audio f_uninit = Function<nim_audio_play_audio>("nim_audio_play_audio");
-	return f_uninit(call_id, res_id, file_path);
+	return f_uninit(call_id, res_id, file_path, audio_format);
 }
 
 bool Audio::StopPlayAudio()

@@ -1,4 +1,11 @@
-﻿#ifndef _NIM_SDK_CPP_VCHAT_H_
+﻿/** @file nim_cpp_vchat.h
+  * @brief NIM VChat提供的音视频（包括设备）相关接口
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author gq
+  * @date 2015/4/30
+  */
+
+#ifndef _NIM_SDK_CPP_VCHAT_H_
 #define _NIM_SDK_CPP_VCHAT_H_
 
 #include <string>
@@ -10,12 +17,6 @@ namespace nim
 #include "nim_vchat_def.h"
 #include "nim_device_def.h"
 
-/** @class VChat
-  * @brief NIM VChat提供的音视频（包括设备）相关接口
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
-  * @author gq
-  * @date 2015/4/30
-  */
 class VChat
 {
 
@@ -186,6 +187,18 @@ public:
 	* @return void 无返回值
 	*/
 	static void End();
+
+	/** 
+	* NIM VCHAT 自定义视频数据接口
+	* @param[in] time 时间毫秒级
+	* @param[in] data 视频数据， 默认为yuv420格式
+	* @param[in] size data的数据长度
+	* @param[in] width  画面宽度，必须是偶数
+	* @param[in] height  画面高度，必须是偶数
+	* @param[in] json_extension  扩展Json string，kNIMVideoSubType视频数据格式（缺省为kNIMVideoSubTypeI420）
+	* @return bool true 调用成功，false 调用失败
+	*/
+	static bool CustomVideoData(unsigned __int64 time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension);
 };
 }
 

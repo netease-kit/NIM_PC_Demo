@@ -111,9 +111,28 @@ public:
 	* 新消息发送给对方后，获取消息发送状态的回调函数（是否发送成功等）
 	* @param[in] cid	消息id 
 	* @param[in] code	错误码(200代表无错误)
+	* @param[in] msg_timetag	时间戳
 	* @return void 无返回值
 	*/
-	void OnSendMsgCallback(const std::string &cid, int code);
+	void OnSendMsgCallback(const std::string &cid, int code, __int64 msg_timetag);
+
+	/**
+	* 新消息发送给对方后，获取消息发送状态的回调函数（对方是否已读）
+	* @param[in] from_accid	发送方id
+	* @param[in] timetag	临界消息time
+	* @param[in] status	消息状态
+	* @return void 无返回值
+	*/
+	void OnMsgStatusChangedCallback(const std::string &from_accid, const __int64 timetag, nim::NIMMsgLogStatus status);
+
+	/**
+	* 阅后即焚消息被（发送者或接收者）读了之后，从消息列表删除
+	* @param[in] from_accid	发送方id
+	* @param[in] timetag	临界消息time
+	* @param[in] status	消息状态
+	* @return void 无返回值
+	*/
+	void OnSnapchatRead(const std::string& client_msg_id);
 
 	/** 
 	* 对方发送文件过来，获取是否成功下载文件的回调函数
@@ -217,9 +236,13 @@ private:
 	bool CheckFileSize(const std::wstring &src);
 	void SendJsb(const std::string &attach);
 	void SendSticker(const std::string &catalog, const std::string &name);
+	void SendTip(const std::wstring &tip);
 	void AddSendingMsg(const nim::IMMessage &msg);
 	void ReSendMsg(nim::IMMessage &msg);
 	void PackageMsg(nim::IMMessage &msg);
+	void CheckLastReceiptMsg();
+	bool GetLastNeedSendReceiptMsg(nim::IMMessage &msg);
+	void RemoveMsgItem(const std::string& client_msg_id); //移除消息气泡
 private:
 	void FlashTaskbar();
 
@@ -464,6 +487,8 @@ private:
 	* @return void 无返回值
 	*/
 	bool IsTeamMemberType(const nim::NIMTeamUserType user_type);
+
+	void SendReceiptIfNeeded(bool auto_detect = false);
 public:
 	//////////////////////////////////////////////////////////////////////////
 	// 实现系统的文件拖拽接口
@@ -515,9 +540,14 @@ private:
 	
 	typedef std::map<std::string,MsgBubbleItem*> IdBubblePair;
 	IdBubblePair	id_bubble_pair_;
+	std::list<MsgBubbleItem*> cached_msgs_bubbles_; //记录消息前后顺序 lty
+
 	nim::TeamInfo	team_info_;
 	bool			is_valid_;
 	AutoUnregister	unregister_cb;
+
+	std::string		last_receipt_msg_id_; //最近一条发送
+	bool			receipt_need_send_ = false; //当下会话是否有已读回执需要发送
 
 private:
 	IDropTarget		*droptarget_;
@@ -526,4 +556,6 @@ private:
 
 //return true表示处理了link事件
 bool CheckRichEditLink(WPARAM wParam, LPARAM lParam);
+bool IsNoticeMsg(const nim::IMMessage& msg);
+
 }

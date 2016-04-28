@@ -1,6 +1,6 @@
 ﻿/** @file nim_sysmsg_def.h
   * @brief system msg define
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/2/1
   */
@@ -11,13 +11,13 @@
 extern"C"
 {
 #endif
-/** @typedef void (*nim_custom_sysmsg_arc_cb_func)(const char *result, const void *user_data)
+/** @typedef void (*nim_custom_sysmsg_ack_cb_func)(const char *result, const void *user_data)
   * 透传系统消息回执的回调函数定义
   * @param[out] result json string (Keys SEE MORE 『发送透传的系统消息回执Json Keys』 as follows)
   * @param[out] user_data	APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_custom_sysmsg_arc_cb_func)(const char *result, const void *user_data);
+typedef void (*nim_custom_sysmsg_ack_cb_func)(const char *result, const void *user_data);
 
 /** @typedef void (*nim_sysmsg_receive_cb_func)(const char *content, const char *json_extension, const void *user_data)
   * 接收系统消息的回调函数定义
@@ -80,9 +80,9 @@ static const char *kNIMSysMsglogQueryKeyContent = "content";			/**< json object 
   * }
   * @{
   */
-static const char *kNIMSendSysMsgArcKeyMsgId		= "msg_id";				/**< string, 本地定义的消息id,返回的是发送方发送时填写的id */
-static const char *kNIMSendSysMsgArcKeyTalkId		= "talk_id";			/**< string, 会话id,消息接收者id */
-static const char *kNIMSendSysMsgArcKeyRescode		= "rescode";			/**< int, 返回的错误码，见NIMResCode */
+static const char *kNIMSendSysMsgAckKeyMsgId		= "msg_id";				/**< string, 本地定义的消息id,返回的是发送方发送时填写的id */
+static const char *kNIMSendSysMsgAckKeyTalkId		= "talk_id";			/**< string, 会话id,消息接收者id */
+static const char *kNIMSendSysMsgAckKeyRescode		= "rescode";			/**< int, 返回的错误码，见NIMResCode */
 /** @}*/ //发送透传的系统消息回执Json Keys
 
 /** @name 接收系统消息Json Keys，本地定义
@@ -114,7 +114,7 @@ static const char *kNIMSysMsgKeyCustomSaveFlag	= "custom_save_flag";	/**< int,		
 static const char *kNIMSysMsgKeyCustomApnsText	= "custom_apns_text";	/**< string,	自定义通知消息推送文本，不填则不推送*/
 static const char *kNIMSysMsgKeyLocalStatus		= "log_status";			/**< int,		本地定义的系统消息状态,见NIMSysMsgStatus,发送方不需要填写*/
 static const char *kNIMSysMsgKeyLocalClientMsgId= "client_msg_id";		/**< string,	本地定义的消息id,发送方必填,建议使用uuid */
-static const char *kNIMSysMsgKeyPushPayload		= "push_payload";		/**< json string, 第三方自定义的推送属性，限制json string，长度2048 */
+static const char *kNIMSysMsgKeyPushPayload		= "push_payload";		/**< json string, 第三方自定义的推送属性，必须为可以解析为json的非格式化的字符串，长度2048 */
 static const char *kNIMSysMsgKeyPushEnable		= "push_enable";		/**< int,		是否需要推送, 0:不需要,1:需要,默认1 */
 static const char *kNIMSysMsgKeyNeedBadge		= "need_badge";			/**< int,		是否要做消息计数，0:不需要，1:需要，默认1 */
 static const char *kNIMSysMsgKeyPushNeedNick	= "push_nick";			/**< int,		需要推送昵称，0：不需要，1：需要，默认0 */

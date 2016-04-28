@@ -15,6 +15,7 @@ typedef void (*typeof_nim_http_add_request_header)(HttpRequestHandle request_han
 typedef void (*typeof_nim_http_set_request_progress_cb)(HttpRequestHandle request_handle, nim_http_request_progress_cb progress_callback, const void* user_data);
 typedef void (*typeof_nim_http_set_request_method_as_post)(HttpRequestHandle request_handle);
 typedef void (*typeof_nim_http_set_timeout)(HttpRequestHandle request_handle, int timeout_ms);
+typedef void (*typeof_nim_http_set_proxy)(HttpRequestHandle request_handle, int type, const char* host, short port, const char* user, const char* pass);
 typedef int (*typeof_nim_http_post_request)(HttpRequestHandle);
 typedef void (*typeof_nim_http_remove_request)(int http_request_id);
 
@@ -27,6 +28,7 @@ typeof_nim_http_add_request_header	g_nim_http_add_request_header;
 typeof_nim_http_set_request_progress_cb	g_nim_http_set_request_progress_cb;
 typeof_nim_http_set_request_method_as_post	g_nim_http_set_request_method_as_post;
 typeof_nim_http_set_timeout	g_nim_http_set_timeout;
+typeof_nim_http_set_proxy g_nim_http_set_proxy;
 typeof_nim_http_post_request	g_nim_http_post_request;
 typeof_nim_http_remove_request	g_nim_http_remove_request;
 
@@ -57,11 +59,11 @@ struct ResponseCallbackUserData
 void Init()
 {
 	HMODULE hmod;
-#ifdef _DEBUG
-	hmod = ::LoadLibrary(L"nim_tools_http_d.dll");
-#else
+//#ifdef _DEBUG
+//	hmod = ::LoadLibrary(L"nim_tools_http_d.dll");
+//#else
 	hmod = ::LoadLibrary(L"nim_tools_http.dll");
-#endif
+//#endif
 
 	g_nim_http_init = (typeof_nim_http_init)GetProcAddress(hmod,"nim_http_init");
 	g_nim_http_uninit = (typeof_nim_http_uninit)GetProcAddress(hmod,"nim_http_uninit");
@@ -71,7 +73,8 @@ void Init()
 	g_nim_http_add_request_header = (typeof_nim_http_add_request_header)GetProcAddress(hmod,"nim_http_add_request_header");
 	g_nim_http_set_request_progress_cb = (typeof_nim_http_set_request_progress_cb)GetProcAddress(hmod,"nim_http_set_request_progress_cb");
 	g_nim_http_set_request_method_as_post = (typeof_nim_http_set_request_method_as_post)GetProcAddress(hmod,"nim_http_set_request_method_as_post");
-	g_nim_http_set_timeout = (typeof_nim_http_set_timeout)GetProcAddress(hmod,"nim_http_set_timeout");
+	g_nim_http_set_timeout = (typeof_nim_http_set_timeout)GetProcAddress(hmod, "nim_http_set_timeout");
+	g_nim_http_set_proxy = (typeof_nim_http_set_proxy)GetProcAddress(hmod, "nim_http_set_proxy");
 	g_nim_http_post_request = (typeof_nim_http_post_request)GetProcAddress(hmod,"nim_http_post_request");
 	g_nim_http_remove_request = (typeof_nim_http_remove_request)GetProcAddress(hmod,"nim_http_remove_request");
 
@@ -82,6 +85,20 @@ void Init()
 void Uninit()
 {
 	g_nim_http_uninit();
+}
+//设置cpp封装层的全局代理
+NIMProxyType proxy_type_ = kNIMProxyNone;
+std::string proxy_host_;
+short proxy_port_ = 0;
+std::string proxy_user_;
+std::string proxy_pass_;
+void SetGlobalProxy(NIMProxyType type, const std::string& host, short port, const std::string& user, const std::string& pass)
+{
+	proxy_type_ = type;
+	proxy_host_ = host;
+	proxy_port_ = port;
+	proxy_user_ = user;
+	proxy_pass_ = pass;
 }
 
 int PostRequest(const HttpRequest& http_request)
@@ -112,6 +129,10 @@ HttpRequest::HttpRequest(const std::string& url, const std::string& download_fil
 	}
 	http_reuqest_handle_ = g_nim_http_create_download_file_request(url.c_str(), download_file_path.c_str(),
 		&CompletedCallbackWrapper, complete_cb_userdata);
+	if (proxy_type_ != kNIMProxyNone)
+	{
+		SetProxy(proxy_type_, proxy_host_, proxy_port_, proxy_user_, proxy_pass_);
+	}
 	if (progress_cb)
 	{
 		g_nim_http_set_request_progress_cb(http_reuqest_handle_, &ProgressCallbackWrapper, progress_cb_pointer);
@@ -136,6 +157,10 @@ HttpRequest::HttpRequest(const std::string& url, const std::string& download_fil
 	}
 	http_reuqest_handle_ = g_nim_http_create_download_file_range_request(url.c_str(), download_file_path.c_str(), range_start,
 		&CompletedCallbackWrapper, complete_cb_userdata);
+	if (proxy_type_ != kNIMProxyNone)
+	{
+		SetProxy(proxy_type_, proxy_host_, proxy_port_, proxy_user_, proxy_pass_);
+	}
 	if (progress_cb)
 	{
 		g_nim_http_set_request_progress_cb(http_reuqest_handle_, &ProgressCallbackWrapper, progress_cb_pointer);
@@ -160,6 +185,10 @@ HttpRequest::HttpRequest(const std::string& url, const char* post_body, size_t p
 	}
 	http_reuqest_handle_ = g_nim_http_create_request(url.c_str(), post_body, post_body_size,
 		&ResponseCallbackWrapper, response_cb_userdata);
+	if (proxy_type_ != kNIMProxyNone)
+	{
+		SetProxy(proxy_type_, proxy_host_, proxy_port_, proxy_user_, proxy_pass_);
+	}
 	if (progress_cb)
 	{
 		g_nim_http_set_request_progress_cb(http_reuqest_handle_, &ProgressCallbackWrapper, progress_cb_pointer);
@@ -187,6 +216,10 @@ void HttpRequest::SetMethodAsPost()
 void HttpRequest::SetTimeout(int timeout_ms)
 {
 	g_nim_http_set_timeout(http_reuqest_handle_, timeout_ms);
+}
+void HttpRequest::SetProxy(NIMProxyType type, const std::string& host, short port, const std::string& user, const std::string& pass)
+{
+	g_nim_http_set_proxy(http_reuqest_handle_, type, host.c_str(), port, user.c_str(), pass.c_str());
 }
 
 void HttpRequest::CompletedCallbackWrapper(const void* user_data, bool is_ok, int response_code)

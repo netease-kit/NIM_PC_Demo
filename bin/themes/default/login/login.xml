@@ -10,6 +10,8 @@
                 <VBox height="auto">
                     <HBox height="20" margin="0,6,5,40">
                         <Control />
+                        <Button name="proxy_setting" width="20" height="20" tooltiptext="代理设置"
+								forenormalimage="file='btn_set.png' source='1,1,21,21'" hotimage="../public/button/btn_wnd_bk_hovered.png" pushedimage="../public/button/btn_wnd_bk_pushed.png"/>
                         <Button class="btn_wnd_min" name="minbtn" margin="4,0,4,0"/>
                         <Button class="btn_wnd_close" name="closebtn"/>
                     </HBox>

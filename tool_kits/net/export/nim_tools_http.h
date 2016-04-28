@@ -12,6 +12,15 @@
 
 extern "C"
 {
+/** @enum NIMProxyType 代理类型 */
+enum NIMProxyType
+{
+	kNIMProxyNone		= 0,	/**< 不使用代理*/
+	kNIMProxyHttp11		= 1,	/**< HTTP 1.1 Proxy*/
+	kNIMProxySocks4		= 4,	/**< Socks4 Proxy*/
+	kNIMProxySocks4a	= 5,	/**< Socks4a Proxy*/
+	kNIMProxySocks5		= 6,	/**< Socks5 Proxy*/
+};
 
 /** @typedef void* HttpRequestHandle
   * http任务句柄
@@ -141,6 +150,18 @@ NET_EXPORT void nim_http_set_request_method_as_post(HttpRequestHandle request_ha
   * @return void				无返回值
   */
 NET_EXPORT void nim_http_set_timeout(HttpRequestHandle request_handle, int timeout_ms);
+
+/** @fn void nim_http_set_proxy(HttpRequestHandle request_handle, int type, const char* host, short port, const char* user, const char* pass)
+  * NIM HTTP 设置代理
+  * @param[in] request_handle	http任务句柄
+  * @param[in] type				代理类型NIMProxyType
+  * @param[in] host				代理地址
+  * @param[in] port				代理端口
+  * @param[in] user				代理账号
+  * @param[in] pass				代理密码
+  * @return void				无返回值
+  */
+NET_EXPORT void nim_http_set_proxy(HttpRequestHandle request_handle, int type, const char* host, short port, const char* user, const char* pass);
 
 }
 

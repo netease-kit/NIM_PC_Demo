@@ -45,6 +45,7 @@ bool Re_InsertCustomItem(ITextServices *text_service, InsertCustomItemErrorCallb
 					, int face_id, bool scale, int scale_width = 0, int scale_height = 0, LONG cp=REO_CP_SELECTION);
 
 bool Re_InsertFace(ITextServices *text_service, const std::wstring& file, const std::wstring& face_tag);
+bool Re_InsertJsb(ITextServices *text_service, const std::wstring& file, const std::wstring& face_tag);
 bool Re_InsertImage(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file, bool loading = false, LONG cp=REO_CP_SELECTION);
 bool Re_InsertFile(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file);
 

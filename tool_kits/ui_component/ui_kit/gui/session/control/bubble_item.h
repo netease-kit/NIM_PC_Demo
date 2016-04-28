@@ -66,6 +66,8 @@ public:
 	*/
 	nim::IMMessage GetMsg();
 
+	void UpdateMsgTime(__int64 timetag) { msg_.timetag_ = timetag; }
+
 	/**
 	* 设置此消息项是否显示接收消息的时间
 	* @param[in] show 是否显示时间
@@ -127,6 +129,8 @@ public:
 	* @return void 无返回值
 	*/
 	virtual void OnDownloadCallback(bool success){}
+
+	bool IsMyMsg() { return my_msg_; }
 protected:
 	/** 
 	* 弹出右键菜单
@@ -187,6 +191,7 @@ private:
 	ui::Button*		status_reload_;
 	ui::Control*	status_send_failed_;
 	ui::Control*	status_load_failed_;
+	ui::Label*		status_receipt_;
 	ui::Control*	play_status_;
 protected:
 	nim::IMMessage			msg_;

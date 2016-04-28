@@ -40,6 +40,9 @@
     <Filter Include="module\tools_sdk">
       <UniqueIdentifier>{bdaa436e-9ea8-49a0-adb3-2f6168bd0309}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gui\proxy">
+      <UniqueIdentifier>{39fa7758-b404-43e9-9bf1-05d629b60d37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui\login\login_form.h">
@@ -81,6 +84,9 @@
     <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\nim_tools_audio_cpp_wrapper.h">
       <Filter>module\tools_sdk</Filter>
     </ClInclude>
+    <ClInclude Include="gui\proxy\proxy_form.h">
+      <Filter>gui\proxy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -121,6 +127,9 @@
     </ClCompile>
     <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\nim_tools_audio_cpp_wrapper.cpp">
       <Filter>module\tools_sdk</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\proxy\proxy_form.cpp">
+      <Filter>gui\proxy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

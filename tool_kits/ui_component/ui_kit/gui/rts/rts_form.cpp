@@ -555,11 +555,12 @@ void RtsForm::SendCreateMsg()
 	msg.type_ = nim::kNIMMessageTypeCustom;
 
 	Json::Value json;
+	Json::FastWriter writer;
 	json["type"] = CustomMsgType_Rts;
 	json["data"]["flag"] = 0;
 
 	msg.content_ = nbase::UTF16ToUTF8(L"白板");
-	msg.attach_ = json.toStyledString();
+	msg.attach_ = writer.write(json);
 
 	nim::Talk::SendMsg(msg.ToJsonString(true));
 	SessionForm* session = SessionManager::GetInstance()->Find(uid_);
@@ -581,11 +582,12 @@ void RtsForm::ShowEndMsg()
 	msg.type_ = nim::kNIMMessageTypeCustom;
 
 	Json::Value json;
+	Json::FastWriter writer;
 	json["type"] = CustomMsgType_Rts;
 	json["data"]["flag"] = 1;
 
 	msg.content_ = nbase::UTF16ToUTF8(L"白板");
-	msg.attach_ = json.toStyledString();
+	msg.attach_ = writer.write(json);
 
 	nim::MsgLog::WriteMsglogOnlyAsync(uid_, msg.session_type_, msg.client_msg_id_, msg, nim::MsgLog::WriteMsglogCallback());
 	SessionForm* session = SessionManager::GetInstance()->Find(uid_);

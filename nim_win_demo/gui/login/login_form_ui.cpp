@@ -3,6 +3,7 @@
 #include "util/user.h"
 #include "shared/tool.h"
 #include "gui/main/main_form.h"
+#include "gui/proxy/proxy_form.h"
 
 using namespace ui;
 
@@ -109,9 +110,9 @@ void LoginForm::InitWindow()
 		QCommand::Erase(kCmdExitWhy);
 	}
 
-	user_name_edit_->SetLimitText(20);
-	nick_name_edit_->SetLimitText(10);
-	password_edit_->SetLimitText(20);
+	user_name_edit_->SetLimitText(32);
+	nick_name_edit_->SetLimitText(64);
+	password_edit_->SetLimitText(128);
 	((ui::Button*)FindControl(L"register_account"))->AttachClick([this](ui::EventArgs* msg) {
 		SetTaskbarTitle(L"注册");
 		FindControl(L"enter_panel")->SetBkImage(L"user_password_nickname.png");
@@ -120,13 +121,13 @@ void LoginForm::InitWindow()
 		btn_register_->SetVisible();
 		btn_login_->SetVisible(false);
 		user_name_edit_->SetText(L"");
-		user_name_edit_->SetPromptText(L"帐号限20位字母或数字");
+		user_name_edit_->SetPromptText(L"帐号限32位字母或数字");
 		usericon_->SetEnabled(true);
 		password_edit_->SetText(L"");
-		password_edit_->SetPromptText(L"密码限6~20位字母或数字");
+		password_edit_->SetPromptText(L"密码限6~128位字母或数字");
 		passwordicon_->SetEnabled(true);
 		nick_name_edit_->SetText(L"");
-		nick_name_edit_->SetPromptText(L"昵称限10位汉字、字母或数字");
+		nick_name_edit_->SetPromptText(L"昵称为汉字、字母或数字的组合");
 		msg->pSender->GetWindow()->FindControl(L"register_account")->SetVisible(false);
 		return true; });
 
@@ -245,6 +246,10 @@ bool LoginForm::OnClicked( ui::EventArgs* msg )
 	{
 		btn_cancel_->SetEnabled(false);
 		nim_ui::LoginManager::GetInstance()->CancelLogin();
+	}
+	else if (name == L"proxy_setting")
+	{
+		nim_comp::WindowsManager::SingletonShow<ProxyForm>(ProxyForm::kClassName);
 	}
 	return true;
 }

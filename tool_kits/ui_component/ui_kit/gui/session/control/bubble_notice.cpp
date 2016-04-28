@@ -18,19 +18,7 @@ void MsgBubbleNotice::InitInfo(const nim::IMMessage &msg, const UTF8String& sess
 	session_id_ = session_id;
 
 	this->SetUTF8Name(msg.client_msg_id_);
-
-	std::wstring wstr;
-	if (msg.type_ == nim::kNIMMessageTypeCustom)
-	{
-		wstr = GetCustomMsg(msg.attach_);
-	}
-	else
-	{
-		GetNotifyMsg(msg.attach_, msg.sender_accid_, msg.receiver_accid_, wstr, session_id);
-	}
-	notice_->SetText(wstr);
-
-	OnResized();
+	RefreshNotice();
 }
 
 void MsgBubbleNotice::RefreshNotice()
@@ -38,8 +26,14 @@ void MsgBubbleNotice::RefreshNotice()
 	std::wstring wstr;
 	if (msg_.type_ == nim::kNIMMessageTypeCustom)
 		wstr = GetCustomMsg(msg_.attach_);
-	else
+	else if (msg_.type_ == nim::kNIMMessageTypeNotification)
 		GetNotifyMsg(msg_.attach_, msg_.sender_accid_, msg_.receiver_accid_, wstr, session_id_);
+	else if (msg_.type_ == nim::kNIMMessageTypeTips)
+	{
+		wstr = nbase::UTF8ToUTF16(msg_.content_);
+		if (wstr.empty())
+			wstr = L"空提醒消息";
+	}
 	
 	notice_->SetText(wstr);
 	OnResized();

@@ -6,6 +6,7 @@
 #include "base/util/at_exit.h"
 #include "shared/xml_util.h"
 #include "base/util/string_number_conversions.h"
+#include "callback/chatroom_callback.h"
 
 void MainThread::Init()
 {
@@ -39,6 +40,8 @@ void MainThread::Cleanup()
 	PostMessageLoop();
 	SetThreadWasQuitProperly(true);
 	nbase::ThreadManager::UnregisterThread();
+
+	nim_chatroom::ChatRoom::Cleanup();
 }
 
 void MainThread::PreMessageLoop()
@@ -127,8 +130,11 @@ static void InitNim()
 
 	bool ret = nim::Client::Init("Netease", "", config); // 载入云信sdk，初始化安装目录和用户目录
 	assert(ret);
+	ret = nim_chatroom::ChatRoom::Init();
+	assert(ret);
 
 	nim_ui::InitManager::GetInstance()->InitUiKit();
+	nim_chatroom::ChatroomCallback::InitChatroomCallback();
 }
 
 int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)
@@ -167,6 +173,7 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, in
 
 	// 程序结束之前，清理云信sdk和UI组件
 	nim_ui::InitManager::GetInstance()->CleanupUiKit();
+
 	QLOG_APP(L"app exit");
 
 	// 是否重新运行程序

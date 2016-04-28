@@ -1,4 +1,11 @@
-﻿#ifndef _NIM_SDK_CPP_TEAM_H_
+﻿/** @file nim_cpp_team.h
+  * @brief 群组功能；主要包括查询群信息、查询群成员信息、加人、踢人等功能
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author towik, Oleg
+  * @date 2015/2/1
+  */
+
+#ifndef _NIM_SDK_CPP_TEAM_H_
 #define _NIM_SDK_CPP_TEAM_H_
 
 #include <string>
@@ -6,6 +13,10 @@
 #include <functional>
 #include "nim_team_helper.h"
 
+/**
+* @namespace nim
+* @brief namespace nim
+*/
 namespace nim
 {
 
@@ -14,20 +25,17 @@ namespace nim
 
 /** @class Team
   * @brief 群组功能；主要包括查询群信息、查询群成员信息、加人、踢人等功能
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
-  * @author towik, Oleg
-  * @date 2015/2/1
   */
 class Team
 {
 
 public:
-	typedef std::function<void(const TeamEvent& team_event)> TeamEventCallback;
-	typedef std::function<void(int team_count, const std::list<std::string>& team_id_list)> QueryAllMyTeamsCallback;
-	typedef std::function<void(int team_count, const std::list<nim::TeamInfo>& team_info_list)>	QueryAllMyTeamsInfoCallback;
-	typedef std::function<void(const std::string& tid, int member_count, const std::list<TeamMemberProperty>& props)>	QueryTeamMembersCallback;
-	typedef std::function<void(const TeamMemberProperty& team_member_property)>	QueryTeamMemberCallback;
-	typedef std::function<void(const std::string& tid, const TeamInfo& result)>	QueryTeamInfoCallback;
+	typedef std::function<void(const TeamEvent& team_event)> TeamEventCallback;		/**< 群组事件通知回调模板 */
+	typedef std::function<void(int team_count, const std::list<std::string>& team_id_list)> QueryAllMyTeamsCallback;		/**< 查询本人所有群ID回调模板 */
+	typedef std::function<void(int team_count, const std::list<nim::TeamInfo>& team_info_list)>	QueryAllMyTeamsInfoCallback;	/**< 查询本人所有群信息回调模板 */
+	typedef std::function<void(const std::string& tid, int member_count, const std::list<TeamMemberProperty>& props)>	QueryTeamMembersCallback;	/**< 查询指定群组全部成员信息回调模板 */
+	typedef std::function<void(const TeamMemberProperty& team_member_property)>	QueryTeamMemberCallback;	/**< 查询指定群成员信息回调模板 */
+	typedef std::function<void(const std::string& tid, const TeamInfo& result)>	QueryTeamInfoCallback;		/**< 查询指定群信息回调模板 */
 
 	/** @fn static void RegTeamEventCb(const TeamEventCallback& cb, const std::string& json_extension = "")
 	* 统一注册接收群通知回调函数（创建群,收到邀请等群通知通过此接口广播，注意：服务器推送过来的群通知和APP发起请求的回调统一处理！）
@@ -37,7 +45,7 @@ public:
 	*/
 	static void RegTeamEventCb(const TeamEventCallback& cb, const std::string& json_extension = "");
 
-	/** @fn static bool CreateTeamAsync(const TeamInfo& team_info, const std::list<std::string>& jsonlist_uids, const std::string& invitation_postscript, const TeamEventCallback& cb, const std::string& json_extension = "");
+	/** @fn static bool CreateTeamAsync(const TeamInfo& team_info, const std::list<std::string>& ids, const std::string& invitation_postscript, const TeamEventCallback& cb, const std::string& json_extension = "");
 	* 创建群组，回调函数中返回的结果代码：
 	* 200:普通群创建成功；
 	* 810:如果创建的是高级群，返回810表示邀请成功并带上tinfo；
@@ -258,7 +266,7 @@ public:
 	*/
 	static bool UpdateMyPropertyAsync(const TeamMemberProperty& prop, const TeamEventCallback& cb, const std::string& json_extension = "");
 
-	/** @fn static bool UpdateOtherNickAsync(const TeamMemberProperty& property, const TeamEventCallback& cb, const std::string& json_extension = "")
+	/** @fn static bool UpdateOtherNickAsync(const TeamMemberProperty& prop, const TeamEventCallback& cb, const std::string& json_extension = "")
 	* 修改别人的群昵称，回调函数中返回的结果代码：
 	* 200:成功；
 	* 802:没有权限；
@@ -331,7 +339,7 @@ public:
 	*/
 	static bool QueryTeamMembersAsync(const std::string& tid, const QueryTeamMembersCallback& cb, const std::string& json_extension = "");
 
-	/** @fn static bool QueryTeamMemberAsync(const std::string& tid, const std::string& uid, const QueryTeamMemberCallback& cb, const std::string& json_extension = "")
+	/** @fn static bool QueryTeamMemberAsync(const std::string& tid, const std::string& id, const QueryTeamMemberCallback& cb, const std::string& json_extension = "")
 	* 查询(单个)群成员信息
 	* @param[in] tid		群组id
 	* @param[in] id		    群成员id
@@ -369,6 +377,13 @@ public:
 	* @return bool 解析成功失败
 	*/
 	static bool ParseTeamInfo(const std::string& json_team_info, TeamInfo& team_info);
+
+	/** @fn void UnregTeamCb()
+	* 反注册Team提供的所有回调
+	* @return void 无返回值
+	*/
+	static void UnregTeamCb();
+
 };
 
 } 

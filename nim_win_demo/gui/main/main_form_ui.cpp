@@ -5,6 +5,7 @@
 #include "gui/invoke_chat_form/invoke_chat_form.h"
 #include "util/user.h"
 #include "callback/team/team_callback.h"
+#include "gui/chatroom_frontpage.h"
 
 
 using namespace ui;
@@ -229,6 +230,8 @@ bool MainForm::OnClicked( ui::EventArgs* msg )
 	}
 	else if (name == L"btn_header")
 		nim_ui::WindowsManager::GetInstance()->ShowProfileForm(nim_ui::LoginManager::GetInstance()->GetAccount());
+	else if (name == L"chatroom")
+		nim_ui::WindowsManager::GetInstance()->SingletonShow<nim_chatroom::ChatroomFrontpage>(nim_chatroom::ChatroomFrontpage::kClassName);
 
 	return true;
 }

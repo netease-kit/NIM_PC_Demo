@@ -154,8 +154,9 @@ bool BroadForm::OnClicked( ui::EventArgs* arg )
 		Json::Value broads;
 		broads.append(broad);
 
+		Json::FastWriter writer;
 		nim::TeamInfo param;
-		param.SetAnnouncement(broads.toStyledString());
+		param.SetAnnouncement(writer.write(broads));
 		param.SetTeamID(tid_);
 
 		nim::Team::UpdateTeamInfoAsync(tid_, param, nbase::Bind(&BroadForm::OnUpdateBroadCb, this, std::placeholders::_1));

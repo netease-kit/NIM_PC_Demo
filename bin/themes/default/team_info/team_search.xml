@@ -20,7 +20,7 @@
                         <Button class="icon_headimage_mask_48x48" name="head_image_mask" bkimage="../public/headmask/icon_headimage_mask_48x48_selected.png"/>
                     </Box>
                     <VBox margin="5,0,0,0" childmargin="5">
-                        <Label name="team_name" margin="0,5,0,0" font="2"/>
+                        <Label name="team_name" width="stretch" margin="0,5,10,0" font="2"/>
                         <Label name="team_id" normaltextcolor="lightcolor"/>
                     </VBox>
                 </HBox>
@@ -35,7 +35,7 @@
             </VBox>
             
             <VBox name="page_apply_ok" visible="false">
-                <RichEdit name="re_apply" width="stretch" height="70" rich="true" multiline="true" vscrollbar="false" readonly="true" font="3"/>
+                <RichEdit name="re_apply" width="stretch" height="80" rich="true" multiline="true" vscrollbar="false" readonly="true" font="3"/>
                 <Control />
                 <Button class="btn_global_green_80x30" name="btn_apply_ok" halign="right" normaltextcolor="white" text="完成"/>
             </VBox>

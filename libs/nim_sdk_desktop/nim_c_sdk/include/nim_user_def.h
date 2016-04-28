@@ -1,6 +1,6 @@
 ﻿/** @file nim_user_def.h
   * @brief NIM SDK提供的User相关定义
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1
   */
@@ -53,7 +53,7 @@ static const char *kNIMNameCardKeyGender	= "gender";	/**< int 性别*/
 static const char *kNIMNameCardKeyEmail	= "email";	/**< string 邮箱*/
 static const char *kNIMNameCardKeyBirth	= "birth";	/**< string 生日*/
 static const char *kNIMNameCardKeyMobile	= "mobile";	/**< string 电话*/
-static const char *kNIMNameCardKeyEx		= "ex";		/**< string 扩展字段*/
+static const char *kNIMNameCardKeyEx		= "ex";		/**< string 扩展字段, 必须为可以解析为json的非格式化的字符串*/
 static const char *kNIMNameCardKeyCreateTime	= "create_timetag";	/**< long 创建时间戳 毫秒*/
 static const char *kNIMNameCardKeyUpdateTime	= "update_timetag";	/**< long 更新时间戳 毫秒*/
 /** @}*/ //用户名片 Json Keys
@@ -107,14 +107,14 @@ typedef void (*nim_user_name_card_change_cb_func)(const char *result_json ,const
   */
 typedef void (*nim_user_get_user_name_card_cb_func)(const char *result_json ,const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_user_update_name_card_cb_func)(int res_code, const char *accid, const char *json_extension, const void *user_data)
-  * 更新用户名片回调函数
+/** @typedef void (*nim_user_update_my_name_card_cb_func)(int res_code, const char *accid, const char *json_extension, const void *user_data)
+  * 更新自己的用户名片回调函数
   * @param[out] res_code		结果代码，一切正常200
   * @param[out] json_extension	json扩展数据（备用）
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_user_update_name_card_cb_func)(int res_code, const char *json_extension, const void *user_data);
+typedef void (*nim_user_update_my_name_card_cb_func)(int res_code, const char *json_extension, const void *user_data);
 
 #ifdef __cplusplus
 };

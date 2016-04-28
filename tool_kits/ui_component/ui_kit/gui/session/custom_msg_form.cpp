@@ -108,13 +108,14 @@ bool CustomMsgForm::OnClicked(ui::EventArgs* param)
 		}
 		richedit_attach_->SetText(L"");
 		Json::Value json;
+		Json::FastWriter writer;
 		json["id"] = "2";
 		json["content"] = attach_text;
 		nim::SysMessage msg;
 		msg.receiver_accid_ = session_id_;
 		msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
 		msg.support_offline_ = msg_mode_->IsSelected() ? nim::BS_FALSE : nim::BS_TRUE;
-		msg.attach_ = json.toStyledString();
+		msg.attach_ = writer.write(json);
 		if (richedit_msg_)
 		{
 			msg.content_ = GetRichText(richedit_msg_);

@@ -26,7 +26,7 @@ public:
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 	virtual void InitWindow() override;
 public:
-	void ShowEmoj(POINT pt, OnSelectEmotion sel, OnSelectEmotion2 sel2, OnEmotionClose cls);
+	void ShowEmoj(POINT pt, OnSelectEmotion sel, OnSelectEmotion2 sel2, OnEmotionClose cls, bool only_emoj = false);
 private:
 	void AddSticker(std::wstring name, int num);
 	bool OnSelChanged(ui::EventArgs* param);
@@ -40,5 +40,6 @@ private:
 	OnSelectEmotion sel_cb_;
 	OnSelectEmotion2 sel2_cb_;
 	OnEmotionClose	cls_cb_;
+	bool			only_emoj_;
 };
 }

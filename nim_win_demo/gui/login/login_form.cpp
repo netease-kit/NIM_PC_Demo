@@ -41,13 +41,13 @@ void LoginForm::DoRegisterAccount()
 	StringHelper::Trim(password);
 	std::string nickname = nick_name_edit_->GetUTF8Text();
 	StringHelper::Trim(nickname);
-	if (password.length() < 6 || password.length() > 16)
+	if (password.length() < 6 || password.length() > 128)
 	{
-		ShowLoginTip(L"密码为6~16位字母或者数字组合");
+		ShowLoginTip(L"密码为6~128位字母或者数字组合");
 	}
 	else if (nickname.empty())
 	{
-		ShowLoginTip(L"昵称为10位汉字、字母或者数字组合");
+		ShowLoginTip(L"昵称为汉字、字母或数字的组合");
 	}
 	else 
 	{
@@ -77,13 +77,13 @@ void LoginForm::DoRegisterAccount()
 			else
 			{
 				if (res == 601) {
-					ShowLoginTip(L"帐号为6~16位字母或者数字组合");
+					ShowLoginTip(L"帐号为6~32位字母或者数字组合");
 				}
 				else if (res == 602) {
 					ShowLoginTip(L"此帐号已存在");
 				}
 				else if (res == 603) {
-					ShowLoginTip(L"昵称为10位汉字、字母或者数字组合");
+					ShowLoginTip(L"昵称为汉字、字母或数字的组合");
 				}
 				else {
 					ShowLoginTip(nbase::UTF8ToUTF16(err_msg));

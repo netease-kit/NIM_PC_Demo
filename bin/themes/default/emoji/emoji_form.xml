@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Window size="550,350">
-    <VBox bkcolor="bk_wnd_lightcolor">
-        <Box padding="5,0,0,0">           
+    <VBox bkcolor="bk_wnd_lightcolor" width="550" height="auto">
+        <Box padding="5,0,0,0" height="289">           
             <TabBox name="list_tabbox" fadeswitch="true" >
 				<TileListBox name="tile_emoj" padding="0,0,14,5" itemsize="40,40" vscrollbar="true" vscrollunit="60" />
 				<TileListBox name="sticker_ajmd" padding="0,0,14,5" itemsize="176,176" vscrollbar="true" vscrollunit="60" />

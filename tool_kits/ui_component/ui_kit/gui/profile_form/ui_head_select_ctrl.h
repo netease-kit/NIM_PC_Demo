@@ -8,8 +8,8 @@
  *
  */
 
-#ifndef _YIXIN_GUI_CAPTURE_FORM_UI_HEAD_SELECT_CTRL_H_
-#define _YIXIN_GUI_CAPTURE_FORM_UI_HEAD_SELECT_CTRL_H_
+#ifndef _NIM_GUI_CAPTURE_FORM_UI_HEAD_SELECT_CTRL_H_
+#define _NIM_GUI_CAPTURE_FORM_UI_HEAD_SELECT_CTRL_H_
 #pragma once
 
 namespace nim_comp
@@ -61,4 +61,4 @@ private:
 	ui::UiRect    box_rect_ALL_;
 };
 }
-#endif  // _YIXIN_GUI_CAPTURE_FORM_UI_HEAD_SELECT_CTRL_H_
+#endif  // _NIM_GUI_CAPTURE_FORM_UI_HEAD_SELECT_CTRL_H_

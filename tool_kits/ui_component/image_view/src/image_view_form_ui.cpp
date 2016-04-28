@@ -12,7 +12,7 @@ ImageViewForm::ImageViewForm(void) :ui_image_view_(NULL), back_image_(NULL), pic
 {
 	point_off_.x = 0;
 	point_off_.y = 0;
-	show_nextorpre_btn_ = false;	//TODO:(zhuhongshuyu@yixin.im)现在不让上一个/下一个按钮默认显示,云信增加相关功能后，开启此项
+	show_nextorpre_btn_ = false;	//TODO:(zhuhongshuyu)现在不让上一个/下一个按钮默认显示,云信增加相关功能后，开启此项
 }
 
 

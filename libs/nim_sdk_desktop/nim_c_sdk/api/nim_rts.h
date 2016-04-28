@@ -1,6 +1,6 @@
 ﻿/** @file nim_rts.h
   * @brief NIM RTS提供的实时会话（数据通道）相关接口，如果需要用到音视频功能请使用nim_device.h中相关接口，并调用nim_vchat_init初始化
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/6/30
   */
