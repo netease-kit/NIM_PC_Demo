@@ -1,5 +1,5 @@
-﻿#ifndef YIXIN_WIN_GUI_VIDEO_FORM_H_
-#define YIXIN_WIN_GUI_VIDEO_FORM_H_
+﻿#ifndef NIM_WIN_GUI_VIDEO_FORM_H_
+#define NIM_WIN_GUI_VIDEO_FORM_H_
 
 #include "shared/base.h"
 #include "util/window_ex.h"
@@ -34,10 +34,19 @@ public:
 	//结束通话原因
 	enum EndCallEnum
 	{
-		END_CALL_NONE, END_CALL_CLOSE, END_CALL_HANGUP, END_CALL_BE_HANGUP, 
-		END_CALL_SYNC_ACCEPT, END_CALL_SYNC_REFUSE,
-		END_CALL_BAD_MICROPHONE, END_CALL_VERSION, END_CALL_CONNECTION,
-		END_CALL_RESPONSE, END_CALL_BUSYING, END_CALL_REJECT
+		END_CALL_NONE, 
+		END_CALL_CLOSE, 
+		END_CALL_HANGUP, 
+		END_CALL_BE_HANGUP, 
+		END_CALL_SYNC_ACCEPT, 
+		END_CALL_SYNC_REFUSE,
+		END_CALL_BAD_MICROPHONE, 
+		END_CALL_VERSION, 
+		END_CALL_CONNECTION,
+		END_CALL_RESPONSE, 
+		END_CALL_BUSYING, 
+		END_CALL_REJECT,
+		END_CALL_STARTFAIL,
 	};
 	enum VideoChatMsgStateType
 	{
@@ -98,6 +107,8 @@ public:
 	void  InitVolumnSetting();
 
 	void ClearBitmapControl( bool mine );
+	//是否开启了通话
+	bool IsStart(){ return is_start_; }
 public:
 	//virtual void AddListenEvents();
 	//virtual void OnLocalSettingChange(const UTF8String &item_id);
@@ -118,13 +129,9 @@ private:	//logic
 	bool InitAudio();
 	void FreeAudio();
 
-	void OnVideoData(const std::string &data, ::ui::CSize size, uint64_t timestamp);
-	void OnRecVideo(const std::string &data, ::ui::CSize size, uint64_t timestamp);
-	//void OnRecAudio( const std::string &data, uint64_t timestamp);
+	//void OnVideoData(const std::string &data, ::ui::CSize size, uint64_t timestamp);
+	//void OnRecVideo(const std::string &data, ::ui::CSize size, uint64_t timestamp);
 
-	//void AudioPlay();
-
-	//void Hangup();
 	void StartDialWaitingTimer();
 
 	void StartChat();
@@ -134,7 +141,6 @@ private:	//logic
 	void SendControlCommand(bool audio, bool open);
 	void OnControlModeChange(int64_t channel_id, nim::NIMVChatControlType type);
 public:
-	//void OnTimeout(const nbiz::VideoChatHangupOnTimeoutCallbackParam& msg);	//等待对方接听超时
 	void OnRejected(int64_t channel_id);  //被对方拒绝
 	void OnVideochatSyncNotify( bool accept, int64_t channel_id ); //其他端接收或拒绝后通知pc端
 
@@ -272,9 +278,7 @@ private:
 	bool	mic_in_open_;
 	bool	speaker_out_open_;
 	bool	mp4_recording_;
+	bool	is_start_;
 };
-//
-////显示保存消息：is_self是否主动发起，time为0表示自己获取时间，open_sess是否打开会话窗口
-void ShowVideochatMsg( bool is_video_type, VideoForm::VideoChatMsgStateType type, long sec, UTF8String uid, bool is_self, uint32_t time, bool is_offline, bool open_sess );
 }
-#endif  // YIXIN_WIN_GUI_VIDEO_FORM_H_
+#endif  // NIM_WIN_GUI_VIDEO_FORM_H_

@@ -1,6 +1,6 @@
 ﻿/** @file nim_sysmsg.h
   * @brief NIM SDK提供的系统消息历史接口 
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/2/1
   */
@@ -32,14 +32,14 @@ NIM_SDK_DLL_API void nim_sysmsg_reg_sysmsg_cb(const char *json_extension, nim_sy
   */
 NIM_SDK_DLL_API void nim_sysmsg_send_custom_notification(const char *json_msg, const char *json_extension);
 
-/** @fn void nim_sysmsg_reg_custom_notification_arc_cb(const char *json_extension, nim_custom_sysmsg_arc_cb_func cb, const void *user_data)
+/** @fn void nim_sysmsg_reg_custom_notification_ack_cb(const char *json_extension, nim_custom_sysmsg_ack_cb_func cb, const void *user_data)
   * 发送自定义通知结果回调函数 （必须全局注册，统一接受回调后分发消息到具体的会话。注意：客户端发包之后，服务器不一定会返回！）
   * @param[in] json_extension json扩展参数（备用，目前不需要）
-  * @param[in] cb		发送透传消息的回调函数, nim_custom_sysmsg_arc_cb_func回调函数定义见nim_sysmsg_def.h
+  * @param[in] cb		发送透传消息的回调函数, nim_custom_sysmsg_ack_cb_func回调函数定义见nim_sysmsg_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_sysmsg_reg_custom_notification_arc_cb(const char *json_extension, nim_custom_sysmsg_arc_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_sysmsg_reg_custom_notification_ack_cb(const char *json_extension, nim_custom_sysmsg_ack_cb_func cb, const void *user_data);
 
 /** @fn void nim_sysmsg_query_msg_async(int limit_count, __int64 last_time, const char *json_extension, nim_sysmsg_query_cb_func cb, const void *user_data)
   * 查询本地系统消息（按时间逆序起查，逆序排列）

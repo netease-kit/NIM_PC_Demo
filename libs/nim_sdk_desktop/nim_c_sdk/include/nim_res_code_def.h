@@ -1,6 +1,6 @@
 ﻿/** @file nim_res_code_def.h
   * @brief NIM SDK提供给外部使用的错误号定义（包含客户端自定义和服务器返回的所有错误号）
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1
   */
@@ -66,6 +66,12 @@ enum NIMResCode
 	kNIMLocalResRtsVChatExist		= 11417,		/**< rts会话 音视频已存在 */
 	kNIMLocalResRtsStatusError		= 11501,		/**< rts会话 通道状态不正确 */
 	kNIMLocalResRtsChannelNotExist	= 11510,		/**< rts会话 通道不存在 */
+
+	//客户端自定义的api调用问题
+	kNIMLocalResAPIErrorInitUndone	= 20000,		/**< 还未初始化或初始化未正常完成 */
+	kNIMLocalResAPIErrorLoginUndone	= 20001,		/**< 还未登陆或登录未完成 */
+	kNIMLocalResAPIErrorLogined		= 20002,		/**< 已经登录 */
+	kNIMLocalResAPIErrorVersionError= 20003,		/**< SDK版本不对，可能会引发其他问题 */
 };
 
 #ifdef __cplusplus

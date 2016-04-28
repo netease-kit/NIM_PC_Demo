@@ -97,6 +97,10 @@ static void GetMsgContent(const nim::SessionData &msg, std::wstring &show_text)
 	{
 		show_text = GetCustomMsg(msg.msg_attach_);
 	}
+	else if (msg.msg_type_ == nim::kNIMMessageTypeTips)
+	{
+		show_text = L"[提醒消息]";
+	}
 	else if (msg.msg_type_ == nim::kNIMMessageTypeUnknown)
 	{
 		show_text = L"[未定义消息]";
@@ -175,14 +179,11 @@ void SessionItem::InitMsg(const nim::SessionData &msg)
 				Json::Value data = attach[nim::kNIMNotificationKeyData];
 				if (data.isObject() && data.isMember(nim::kNIMNotificationKeyDataId))
 					relate_ids.insert(data[nim::kNIMNotificationKeyDataId].asString());
-				if (data.isObject() && data.isMember(nim::kNIMNotificationKeyDataIds) && data[nim::kNIMNotificationKeyDataIds].isArray())
+				if (data.isObject() && data.isMember(nim::kNIMNotificationKeyUserNameCards) && data[nim::kNIMNotificationKeyUserNameCards].isArray())
 				{
-					Json::Value ids_json = data[nim::kNIMNotificationKeyDataIds];
-					if (ids_json.isArray())
-					{
-						for (uint32_t i = 0; i < ids_json.size(); i++)
-							relate_ids.insert(ids_json[i].asString());
-					}
+					Json::Value name_cards_json = data[nim::kNIMNotificationKeyUserNameCards];
+					for (uint32_t i = 0; i < name_cards_json.size(); i++)
+						relate_ids.insert(name_cards_json[i][nim::kNIMNameCardKeyAccid].asString());
 				}
 			}
 		}

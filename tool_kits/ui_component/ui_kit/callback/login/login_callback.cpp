@@ -139,7 +139,7 @@ void LoginCallback::DoLogin( std::string user, std::string pass )
 	LoginManager::GetInstance()->SetLoginStatus(LoginStatus_LOGIN);
 
 	LoginManager::GetInstance()->SetAccount(user);
-	std::string pass_md5 = QString::GetMd5(pass);
+	std::string pass_md5 = QString::GetMd5(pass); //密码MD5加密（用户自己的应用请去掉加密）
 	LoginManager::GetInstance()->SetPassword(pass_md5);
 
 	_InitUserFolder();
@@ -154,7 +154,9 @@ void LoginCallback::DoLogin( std::string user, std::string pass )
 		QLOG_APP(L"-----login begin-----");
 	}
 
-	//app key是应用的标识，不同应用之间的数据（用户、消息、群组等）是完全隔离的。开发自己的应用时，请替换为自己的app key。
+	//注意：
+	//1. app key是应用的标识，不同应用之间的数据（用户、消息、群组等）是完全隔离的。开发自己的应用时，请替换为自己的app key。
+	//2. 用户登录自己的应用是不需要对密码md5加密的，替换app key之后，请记得去掉加密。
 	std::string app_key = "45c6af3c98409b18a84451215d0bdd6e";
 	std::string new_app_key = GetConfigValue(g_AppKey);
 	if (!new_app_key.empty())
@@ -361,9 +363,9 @@ void LoginCallback::OnReLoginCallback(const nim::LoginRes& login_res)
 //多端
 void LoginCallback::OnMultispotLoginCallback(const nim::MultiSpotLoginRes& res)
 {
-	QLOG_APP(L"OnMultispotLoginCallback: {0} - {1}") << res.notiry_type_ << res.other_clients_.size();
+	QLOG_APP(L"OnMultispotLoginCallback: {0} - {1}") << res.notify_type_ << res.other_clients_.size();
 
-	bool online = res.notiry_type_ == nim::kNIMMultiSpotNotifyTypeImIn;
+	bool online = res.notify_type_ == nim::kNIMMultiSpotNotifyTypeImIn;
 	if (!res.other_clients_.empty())
 		Post2UI(nbase::Bind(LoginCallback::OnMultispotChange, online, res.other_clients_));
 

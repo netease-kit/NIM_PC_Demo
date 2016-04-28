@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Window size="280,410" mininfo="280,410" caption="0,0,0,34">
+<Window size="280,410" mininfo="280,410" caption="0,0,0,34" shadowattached="false">
     <Class name="Microphone1" value="forenormalimage=&quot;file='microphone10.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='microphone13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
     <Class name="Microphone2" value="forenormalimage=&quot;file='microphone20.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='microphone23.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
     <Class name="Speaker1" value="forenormalimage=&quot;file='speaker10.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='speaker13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>

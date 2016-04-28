@@ -56,11 +56,18 @@
                         <Button name="btn_clip" width="30" height="30" valign="center" margin="4" tooltiptext="截图"
                                 forenormalimage="file='btn_clip.png' dest='5,5,25,25'" foredisabledimage="file='btn_clip.png' dest='5,5,25,25' fade='80'"
                                 hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
-						<Button name="btn_audio" width="30" height="30" valign="center" margin="4" forenormalimage="file='audio_chat.png' dest='5,5,25,25'" foredisabledimage="file='audio_chat.png' dest='5,5,25,25' fade='80'" hotimage="icon_hover.png" pushedimage="icon_pushed.png" tooltiptext="免费通话" visible="false"/>
-						<Button name="btn_video" width="30" height="30" valign="center" margin="5" forenormalimage="file='video_chat.png' dest='4,5,25,25'" foredisabledimage="file='video_chat.png' dest='4,5,25,25' fade='80'"
-                            hotimage="icon_hover.png" pushedimage="icon_pushed.png" tooltiptext="免费视频" visible="false"/>
-						<Button name="btn_rts" width="30" height="30" valign="center" margin="5" forenormalimage="file='rts.png' dest='4,5,25,25'" foredisabledimage="file='rts.png' dest='4,5,25,25' fade='80'"
-                            hotimage="icon_hover.png" pushedimage="icon_pushed.png" tooltiptext="白板" visible="false"/>
+						<Button name="btn_audio" width="30" height="30" valign="center" margin="4" tooltiptext="免费通话"
+                                forenormalimage="file='audio_chat.png' dest='5,5,25,25'" foredisabledimage="file='audio_chat.png' dest='5,5,25,25' fade='80'" 
+                                hotimage="icon_hover.png" pushedimage="icon_pushed.png" visible="false"/>
+						<Button name="btn_video" width="30" height="30" valign="center" margin="5" tooltiptext="免费视频" 
+                                forenormalimage="file='video_chat.png' dest='4,5,25,25'" foredisabledimage="file='video_chat.png' dest='4,5,25,25' fade='80'"
+                                hotimage="icon_hover.png" pushedimage="icon_pushed.png" visible="false"/>
+						<Button name="btn_rts" width="30" height="30" valign="center" margin="5" tooltiptext="白板" 
+                                forenormalimage="file='rts.png' dest='4,5,25,25'" foredisabledimage="file='rts.png' dest='4,5,25,25' fade='80'"
+                                hotimage="icon_hover.png" pushedimage="icon_pushed.png" visible="false"/>
+                        <Button name="btn_tip" width="30" height="30" valign="center" margin="4" tooltiptext="提醒消息"
+                                forenormalimage="file='btn_tip.png' dest='5,5,25,25'" foredisabledimage="file='btn_tip.png' dest='5,5,25,25' fade='80'"
+                                hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
                         <Control />
                         <!--Button name="add_msglog" dataid="10" valign="center" cursortype="hand" margin="5,0,10,0" normaltextcolor="link_blue" text="+记录"/-->
                         <Button name="btn_custom_msg" valign="center" cursortype="hand" normaltextcolor="link_blue" text="自定义通知"/>

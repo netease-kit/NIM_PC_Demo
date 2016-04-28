@@ -171,6 +171,10 @@ bool Re_InsertFace(ITextServices *text_service, const std::wstring& file, const 
 {
 	return  Re_InsertCustomItem( text_service, InsertCustomItemErrorCallback(), file, face_tag, RE_OLE_TYPE_FACE, 0, true, EMOJI_SIZE, 0 );
 }
+bool Re_InsertJsb(ITextServices *text_service, const std::wstring& file, const std::wstring& face_tag)
+{
+	return  Re_InsertCustomItem(text_service, InsertCustomItemErrorCallback(), file, face_tag, RE_OLE_TYPE_FACE, 0, false, MAX_CUSTOM_ITEM_W, MAX_CUSTOM_ITEM_H);
+}
 bool Re_InsertImage(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file, bool loading, LONG cp)
 {
 	return  Re_InsertCustomItem(text_service, callback, loading?L"":file, file, loading?RE_OLE_TYPE_IMAGELOADING:RE_OLE_TYPE_IMAGE, 0, false, MAX_CUSTOM_ITEM_W, MAX_CUSTOM_ITEM_H, cp);

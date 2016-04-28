@@ -1,3 +1,10 @@
+/** @file nim_cpp_tool.cpp
+  * @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author towik, Oleg
+  * @date 2015/09/21
+  */
+
 #include "nim_cpp_tool.h"
 #include "nim_sdk_helper.h"
 #include "nim_common_helper.h"
@@ -92,7 +99,7 @@ bool Tool::GetAudioTextAsync(const AudioInfo& audio_info, const GetAudioTextCall
 	json_value[nim::kNIMTransAudioKeySample] = audio_info.samplerate_;
 	json_value[nim::kNIMTransAudioKeyAudioUrl] = audio_info.url_;
 	json_value[nim::kNIMTransAudioKeyDuration] = audio_info.duration_;
-	NIM_SDK_GET_FUNC(nim_tool_get_audio_text_async)(json_value.toStyledString().c_str(), json_extension.c_str(), &CallbackGetAudioText, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_tool_get_audio_text_async)(GetJsonStringWithNoStyled(json_value).c_str(), json_extension.c_str(), &CallbackGetAudioText, cb_pointer);
 
 	return true;
 }

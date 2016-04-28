@@ -38,6 +38,7 @@ VideoForm::VideoForm(std::string session_id) : session_id_(session_id)
 
 	is_max_window_ = false;
 	mp4_recording_ = false;
+	is_start_ = false;
 }
 
 VideoForm::~VideoForm()
@@ -130,10 +131,8 @@ void VideoForm::InitWindow()
 	status_label_   = (Label*) FindControl(L"chat_status");
 
 	video_ctrl_screen_  = (CBitmapControl*) FindControl(L"photo_screen");
-	video_ctrl_screen_->SetAutoPaint(false);
-	video_ctrl_preview_ = (CBitmapControl*) FindControl(L"photo_preview");
+	video_ctrl_preview_ = (CBitmapControl*)FindControl(L"photo_preview");
 	video_ctrl_preview_->SetAutoSize(true);
-	video_ctrl_preview_->SetAutoPaint(false);
 
 	time_tick_label_ = (Label*) FindControl( L"time_tick" );
 	camera_open_label_ = (Label*) FindControl( L"camera_opening" );
@@ -209,8 +208,10 @@ void VideoForm::OnFinalMessage(HWND hWnd)
 
 	FreeVideo();
 	FreeAudio();
-
-	VideoManager::GetInstance()->EndChat();
+	if (is_start_)
+	{
+		VideoManager::GetInstance()->EndChat();
+	}
 
 	__super::OnFinalMessage(hWnd);
 }
@@ -382,6 +383,7 @@ void VideoForm::EnterEndCallPage( EndCallEnum why )
 	case VideoForm::END_CALL_BAD_MICROPHONE:
 	case VideoForm::END_CALL_VERSION:
 	case VideoForm::END_CALL_CONNECTION:
+	case VideoForm::END_CALL_STARTFAIL:
 	{
 		ASSERT( why != END_CALL_NONE );
 		if( why == END_CALL_BE_HANGUP )
@@ -391,12 +393,14 @@ void VideoForm::EnterEndCallPage( EndCallEnum why )
 			//	::DestroyWindow( miss->GetHWND() );
 			end_call_tip->SetTextId( L"STRID_VIDEO_END_CALL_BE_HANGUP" );
 		}
-		else if( why == END_CALL_SYNC_ACCEPT )
-			end_call_tip->SetTextId( L"STRID_VIDEO_END_CALL_SYNC_ACCEPT" );
-		else if( why == END_CALL_SYNC_REFUSE )
-			end_call_tip->SetTextId( L"STRID_VIDEO_END_CALL_SYNC_REFUSE" );
+		else if (why == END_CALL_SYNC_ACCEPT)
+			end_call_tip->SetTextId(L"STRID_VIDEO_END_CALL_SYNC_ACCEPT");
+		else if (why == END_CALL_SYNC_REFUSE)
+			end_call_tip->SetTextId(L"STRID_VIDEO_END_CALL_SYNC_REFUSE");
+		else if (why == END_CALL_STARTFAIL)
+			end_call_tip->SetTextId(L"STRID_VIDEO_END_CALL_STARTFAIL");
 		else
-			end_call_tip->SetTextId( L"STRID_VIDEO_END_CALL_HANGUP" );
+			end_call_tip->SetTextId(L"STRID_VIDEO_END_CALL_HANGUP");
 
 		if( why == END_CALL_BAD_MICROPHONE )
 		{
@@ -559,11 +563,18 @@ bool VideoForm::OnClicked( ui::EventArgs* arg )
 		ShowStatusPage(SP_DIAL);
 		SwitchStatus(STATUS_CONNECTING);
 
-		VideoManager::GetInstance()->VChatCalleeAck(channel_id_, true);
-
-		StdClosure closure = nbase::Bind(&VideoForm::OnConnectTimeOut, this);
-		closure = connect_timeout_timer_.ToWeakCallback(closure);
-		nbase::ThreadManager::PostDelayedTask(closure, nbase::TimeDelta::FromSeconds(kConnectTimeOut));
+		bool ret = VideoManager::GetInstance()->VChatCalleeAck(channel_id_, true);
+		if (ret)
+		{
+			is_start_ = true;
+			StdClosure closure = nbase::Bind(&VideoForm::OnConnectTimeOut, this);
+			closure = connect_timeout_timer_.ToWeakCallback(closure);
+			nbase::ThreadManager::PostDelayedTask(closure, nbase::TimeDelta::FromSeconds(kConnectTimeOut));
+		}
+		else
+		{
+			EnterEndCallPage(END_CALL_STARTFAIL);
+		}
 	}
 	else if (name == L"close_btn")
 	{
@@ -795,15 +806,10 @@ void VideoForm::StartReceiving(uint64_t channel_id, bool video)
 void VideoForm::PrepareQuit()
 {
 	if(status_ == STATUS_WAITING || status_ == STATUS_BUSYING)
-	{		
-		//if(status_ == STATUS_WAITING )
-		//	Hangup();
-
-		ShowVideochatMsg(current_video_mode_, kVideoChatMsgStateHangup1, 0, session_id_, is_self_, 0, false, true);
+	{
 	}
 	else if(status_ == STATUS_REJECT)
 	{
-		ShowVideochatMsg( current_video_mode_, kVideoChatMsgStateHangup2, 0, session_id_, is_self_, 0, false, true );
 	}
 	else if( status_ == STATUS_NO_RESPONSE || status_ == STATUS_INVITING || status_ == STATUS_CONNECTING )
 	{
@@ -811,19 +817,9 @@ void VideoForm::PrepareQuit()
 		{
 			if( status_ == STATUS_INVITING )
 			{
-				//IVideoChatService* service = GetVideoChatService();
-				//ASSERT( service );
-				//if( service != NULL )
-				//{
-				//	uint8_t chat_type = (current_video_mode_ ? nbiz::kTagChatTypeVideo : nbiz::kTagChatTypeAudio);
-				//	service->Invoke_VideoChatReject( session_id_, chat_type, channel_id_, nbiz::IAsynCallback() );
-				//}
 				VideoManager::GetInstance()->VChatCalleeAck(channel_id_, false);
 			}
-			//Hangup();
 		}
-
-		ShowVideochatMsg( current_video_mode_, kVideoChatMsgStateHangup3, 0, session_id_, is_self_, 0, false, true );
 	}
 	else if(status_ == STATUS_TALKING)
 	{
@@ -835,8 +831,6 @@ void VideoForm::PrepareQuit()
 		uint32_t sec = tm - time_stamp_;
 		if(sec < 0)
 			sec = 0;
-
-		ShowVideochatMsg( current_video_mode_, kVideoChatMsgStateSuccess, sec, session_id_, is_self_, 0, false, true );
 	}
 }
 

@@ -34,6 +34,9 @@ void Init();
 */
 void Uninit();
 
+//设置cpp封装层的全局代理
+void SetGlobalProxy(NIMProxyType type, const std::string& host, short port, const std::string& user, const std::string& pass);
+
 /** @fn int nim_http_post_request(HttpRequestHandle)
 * NIM HTTP 发起任务
 * @param[in] request_handle	http任务句柄
@@ -109,6 +112,18 @@ public:
 	* @return void				无返回值
 	*/
 	void SetTimeout(int timeout_ms);
+
+	/** 
+	* NIM HTTP 设置代理
+	* @param[in] request_handle	http任务句柄
+	* @param[in] type				代理类型NIMProxyType
+	* @param[in] host				代理地址
+	* @param[in] port				代理端口
+	* @param[in] user				代理账号
+	* @param[in] pass				代理密码
+	* @return void				无返回值
+	*/
+	void SetProxy(NIMProxyType type, const std::string& host, short port, const std::string& user, const std::string& pass);
 
 private:
 	static void CompletedCallbackWrapper(const void* user_data, bool is_ok, int response_code);

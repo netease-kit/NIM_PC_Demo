@@ -66,16 +66,16 @@ UINT MsgBox::GetClassStyle() const
 
 LRESULT MsgBox::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	if(uMsg == WM_DESTROY)
-	{
-		HWND hWndParent = GetWindowOwner(m_hWnd);
-		if(hWndParent)
-		{
-			::EnableWindow(hWndParent, TRUE);
-			::SetForegroundWindow(hWndParent);
-			::SetFocus(hWndParent);
-		}
-	}
+	//if(uMsg == WM_DESTROY)
+	//{
+	//	HWND hWndParent = GetWindowOwner(m_hWnd);
+	//	if(hWndParent)
+	//	{
+	//		::EnableWindow(hWndParent, TRUE);
+	//		::SetForegroundWindow(hWndParent);
+	//		::SetFocus(hWndParent);
+	//	}
+	//}
 	return __super::HandleMessage(uMsg, wParam, lParam);
 }
 
@@ -83,6 +83,18 @@ void MsgBox::OnEsc( BOOL &bHandled )
 {
 	bHandled = TRUE;
 	EndMsgBox(MB_NO);
+}
+void MsgBox::Close(UINT nRet)
+{
+	// 提示框关闭之前先Enable父窗口，防止父窗口隐到后面去。
+	HWND hWndParent = GetWindowOwner(m_hWnd);
+	if (hWndParent)
+	{
+		::EnableWindow(hWndParent, TRUE);
+		::SetFocus(hWndParent);
+	}
+
+	__super::Close(nRet);
 }
 
 void MsgBox::InitWindow()

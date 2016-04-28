@@ -19,11 +19,25 @@ public:
 	static void OnReceiveMsgCallback(const nim::IMMessage& message);
 
 	/**
+	* 收到批量普通消息的回调，需要在程序开始运行时就注册好。
+	* @param[in] str 消息内容及其他相关信息， Json数据转化成的字符串
+	* @return void	无返回值
+	*/
+	static void OnReceiveMsgsCallback(const std::list<nim::IMMessage>& messages);
+
+	/**
 	* 发送消息的结果回调，需要在程序开始运行时就注册好。
 	* @param[in] str 返回的结果的内容， Json数据转化成的字符串
 	* @return void	无返回值
 	*/
 	static void OnSendMsgCallback(const nim::SendMessageArc& arc);
+
+	/**
+	* 发送消息的已读结果回调，需要在程序开始运行时就注册好。
+	* @param[in] str 返回的结果的内容， Json数据转化成的字符串
+	* @return void	无返回值
+	*/
+	static void OnMsgStatusChangedCallback(const nim::MessageStatusChangedResult& res);
 
 	/**
 	* 发送自定义消息的结果回调，需要在程序开始运行时就注册好。

@@ -1,3 +1,10 @@
+/** @file nim_cpp_nos.cpp
+  * @brief NIM SDK提供的NOS云存储服务接口
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author towik, Oleg
+  * @date 2015/2/1
+  */
+
 #include "nim_cpp_nos.h"
 #include "nim_sdk_helper.h"
 #include "nim_common_helper.h"
@@ -15,15 +22,15 @@ typedef void(*nim_nos_download)(const char *nos_url, nim_nos_download_cb_func ca
 struct UploadCallbackUserData
 {
 	UploadCallbackUserData() :	callback_result(),	callback_progress_pointer(nullptr) {}
-	NOS::UploadMediaCallback callback_result;
-	NOS::ProgressCallback* callback_progress_pointer;
+	NOS::UploadMediaCallback callback_result; 	/**< 上传结果回调 */
+	NOS::ProgressCallback* callback_progress_pointer; /**< 过程回调 */
 };
 
 struct DownloadCallbackUserData
 {
 	DownloadCallbackUserData() : callback_result(),	callback_progress_pointer(nullptr) {}
-	NOS::DownloadMediaCallback callback_result;
-	NOS::ProgressCallback* callback_progress_pointer;
+	NOS::DownloadMediaCallback callback_result;	/**< 下载结果回调 */
+	NOS::ProgressCallback* callback_progress_pointer; /**< 过程回调 */
 };
 
 static void CallbackUpload(int res_code, const char *url, const char *json_extension, const void *user_data)

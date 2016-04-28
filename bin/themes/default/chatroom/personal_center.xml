@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window size="1020,624" mininfo="1020,624" caption="0,0,0,42" textid="STRID_CHATROOM_PERSONAL_CENTER">
+    <VBox bkcolor="bk_wnd_lightcolor">
+        <HBox class="caption" height="42" padding="7,0,5,0">
+            <Box width="29" height="29" mouse="false" valign="center">
+                <Control name="header_image" width="27" height="27" borderround="27,27" margin="1,1,1,1" mouse="false"/>
+                <Control width="29" height="29" bkimage="mask_25x25.png" mouse="false"/>
+            </Box>
+            <Label name="name" font="1" normaltextcolor="dark2color" valign="center" margin="6"/>
+
+            <Control width="stretch"/>
+
+            <Control width="auto" height="auto" bkimage="btn_create_room.png" valign="center"/>
+            <TabBox width="auto" height="auto" valign="center" margin="3,0,16,0">
+                <Button name="create_room" text="我要当主播" font="1" normaltextcolor="lightcolor" />
+                <Button name="my_rooms" text="我的直播间" font="1" normaltextcolor="lightcolor" />
+            </TabBox>
+            <HBox width="auto" height="auto" valign="top" margin="0,6">
+                <Button class="btn_wnd_min" name="minbtn" margin="4,6,0,0"/>
+                <Button class="btn_wnd_close" name="closebtn" margin="1,6,0,0"/>
+            </HBox>
+        </HBox>
+
+        <HBox width="stretch" height="stretch">
+            <VBox width="230" height="stretch">
+                <Label width="auto" height="45" margin="22" font="20" text="个人中心" textpadding="0,16"/>
+                <OptionBox name="manage_room" group="personal_center_option" width="stretch" height="35" selectednormalcolor="bk_listitem_selected" mousechild="false">
+                    <Event type="select" receiver=".\manage_icon" applyattribute="bkimage=&quot;manage_selected.png&quot;"/>
+                    <Event type="unselect" receiver=".\manage_icon" applyattribute="bkimage=&quot;manage_unselected.png&quot;"/>
+                    <Event type="select" receiver=".\manage_label" applyattribute="normaltextcolor=&quot;tab_text_selected&quot;"/>
+                    <Event type="unselect" receiver=".\manage_label" applyattribute="normaltextcolor=&quot;lightcolor&quot;"/>
+                    <Event type="select" receiver=".\right_border" applyattribute="visible=&quot;true&quot;"/>
+                    <Event type="unselect" receiver=".\right_border" applyattribute="visible=&quot;false&quot;"/>
+                    <HBox name="manage_box" width="auto" height="auto" margin="20,1" valign="center">
+                        <Control name="manage_icon" width="auto" height="auto" margin="0,3"/>
+                        <Label name="manage_label" width="auto" height="auto" valign="center" margin="6" font="2" text="房间管理"/>
+                    </HBox>
+                    <Control name="right_border" width="3" height="stretch" halign="right" bkcolor="tab_text_selected"/>
+                </OptionBox> 
+                <OptionBox name="apply_room" group="personal_center_option" width="stretch" height="35" selectednormalcolor="bk_listitem_selected" mousechild="false">
+                    <Event type="select" receiver=".\apply_icon" applyattribute="bkimage=&quot;apply_selected.png&quot;"/>
+                    <Event type="unselect" receiver=".\apply_icon" applyattribute="bkimage=&quot;apply_unselected.png&quot;"/>
+                    <Event type="select" receiver=".\apply_label" applyattribute="normaltextcolor=&quot;tab_text_selected&quot;"/>
+                    <Event type="unselect" receiver=".\apply_label" applyattribute="normaltextcolor=&quot;lightcolor&quot;"/>
+                    <Event type="select" receiver=".\right_border" applyattribute="visible=&quot;true&quot;"/>
+                    <Event type="unselect" receiver=".\right_border" applyattribute="visible=&quot;false&quot;"/>
+                    <HBox width="auto" height="auto" margin="20,1" valign="center">
+                        <Control name="apply_icon" width="auto" height="auto" margin="0,3"/>
+                        <Label name="apply_label" width="auto" height="auto" valign="center" margin="6" font="2" text="申请直播间"/>
+                    </HBox>
+                    <Control name="right_border" width="3" height="stretch" halign="right" bkcolor="tab_text_selected"/>
+                </OptionBox>
+            </VBox>
+            <Control class="splitline_ver_level1" height="stretch"/>
+            <TabBox name="page_tab" width="stretch" height="stretch">
+                <Control width="auto" height="auto" halign="center" valign="top" bkimage="room_manage_list.png"/>
+                <VBox width="auto" height="auto" halign="center" valign="top" margin="0,118">
+                    <Label width="auto" height="auto" halign="center" text="后台审核成功即可成为主播" font="3" normaltextcolor="darkcolor"/>
+                    <Label width="auto" height="auto" halign="center" margin="0,13" text="该功能只用于Demo展示，具体请咨询我们的技术、销售人员。" font="2" normaltextcolor="lightcolor"/>
+                    <Button class="btn_global_green_80x30" width="auto" height="auto" halign="center" margin="0,19" text="申 请" enabled="false"/>
+                </VBox>
+            </TabBox>
+        </HBox>
+    </VBox>
+</Window>

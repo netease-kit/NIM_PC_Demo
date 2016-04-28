@@ -37,6 +37,7 @@ void MsgBubbleItem::InitControl(bool bubble_right)
 	status_reload_ = (Button*) this->FindSubControl(L"status_reload");
 	status_load_failed_ = this->FindSubControl(L"status_load_failed");
 	play_status_ = this->FindSubControl(L"play_status");
+	status_receipt_ = (Label*)this->FindSubControl(L"status_receipt");
 
 	HideAllStatus(0);
 }
@@ -49,7 +50,9 @@ void MsgBubbleItem::InitInfo(const nim::IMMessage &msg)
 
 	SetShowHeader();
 
-	SetMsgStatus(msg.status_);
+	//只显示最后一个回执
+	if (msg.status_ != nim::kNIMMsgLogStatusReceipt)
+		SetMsgStatus(msg.status_);
 }
 
 void MsgBubbleItem::SetSessionId( const std::string &sid )
@@ -109,6 +112,9 @@ void MsgBubbleItem::SetMsgStatus(nim::NIMMsgLogStatus status)
 		break;
 	case nim::kNIMMsgLogStatusDeleted:
 		status_send_failed_->SetVisible(true);
+		break;
+	case nim::kNIMMsgLogStatusReceipt:
+		status_receipt_->SetVisible(true);
 		break;
 	default:
 		break;
@@ -178,6 +184,7 @@ void MsgBubbleItem::HideAllStatus(int type)
 		status_sending_->SetVisible(false);
 		status_resend_->SetVisible(false);
 		status_send_failed_->SetVisible(false);
+		status_receipt_->SetVisible(false);
 	}
 }
 

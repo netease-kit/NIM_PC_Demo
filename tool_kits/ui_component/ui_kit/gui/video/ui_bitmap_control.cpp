@@ -1,5 +1,6 @@
 ﻿#include "ui_bitmap_control.h"
 #include <sys/timeb.h>
+#include "module/video/video_manager.h"
 
 #define TIMER_FOR_CHECK_BITMAP	163
 namespace ui
@@ -7,9 +8,10 @@ namespace ui
 
 CBitmapControl::CBitmapControl(void)
 {
+	timestamp_ = 0;
+	width_ = 0;
+	height_ = 0;
 	auto_size_ = false;
-	need_paint_ = false;
-	auto_paint_ = true;
 }
 
 CBitmapControl::~CBitmapControl(void)
@@ -23,47 +25,52 @@ void CBitmapControl::Paint(HDC hDC, const UiRect& rcPaint)
 	{
 		if( !::IntersectRect( &m_rcPaint, &rcPaint, &m_rcItem ) ) 
 			return;
-		need_paint_ = false;
 		Control::Paint(hDC, rcPaint);
-		//paint hbitmap
-		if (cur_paint_bitmap_info_.bitmap_)
+		//paint bitmap
+		if (width_ * height_ > 0)
 		{
 			int item_w = m_rcItem.right-m_rcItem.left;
 			int item_h = m_rcItem.bottom-m_rcItem.top;
 			int item_x = m_rcItem.left;
 			int item_y = m_rcItem.top;
-			int source_w = cur_paint_bitmap_info_.width_;
-			int source_h = cur_paint_bitmap_info_.height_;
-			if (source_w > 0 && source_h > 0)
+			int source_w = width_;
+			int source_h = height_;
+			if (source_w > 0 && source_h > 0 && parent_wnd_)
 			{
-				int paint_w = source_w;
-				int paint_h = source_h;
-				//等比
-				if (item_h * source_w > item_w * source_h)
-				{
-					paint_w = item_w;
-					paint_h = paint_w * source_h / source_w;
-				} 
-				else
-				{
-					paint_h = item_h;
-					paint_w = paint_h * source_w / source_h;
-				}
 				//居中
-				item_x += (item_w - paint_w) / 2;
-				item_y += (item_h - paint_h) / 2;
+				item_x += (item_w - source_w) / 2;
+				item_y += (item_h - source_h) / 2;
+				UiRect rcClient;
+				::GetClientRect(parent_wnd_->GetHWND(), &rcClient);
+				int width = rcClient.right - rcClient.left;
+				int height = rcClient.bottom - rcClient.top;
 
+				//计算实际绘制区域坐标
+				int draw_x = max(rcPaint.left, item_x);
+				draw_x = max(m_rcItem.left, draw_x);
+				int draw_y = max(rcPaint.top, item_y);
+				draw_y = max(m_rcItem.top, draw_y);
+				int draw_h = min(rcPaint.bottom - draw_y, min(item_y + source_h, m_rcItem.bottom) - draw_y);
+				draw_h = max(draw_h, 0);
+				int src_x = draw_x - item_x;
+				int src_y = draw_y - item_y;
+				int src_w = min(rcPaint.right - draw_x, min(item_x + source_w, m_rcItem.right) - draw_x);
+				src_w = max(src_w, 0);
 
-				RenderEngine::GdiDrawImage(hDC, false, m_rcPaint, cur_paint_bitmap_info_.bitmap_, false,
-					UiRect(item_x, item_y, item_x + paint_w, item_y + paint_h), UiRect(0, 0, source_w, source_h), UiRect(0, 0, 0, 0));
-				//HDC hCloneDC = ::CreateCompatibleDC(hDC);
-				//HBITMAP hOldBitmap = (HBITMAP) ::SelectObject(hCloneDC, cur_paint_bitmap_info_.bitmap_);
-				//int stretchBltMode = ::SetStretchBltMode(hDC, HALFTONE);
-				//::StretchBlt(hDC, item_x, item_y, paint_w, paint_h, hCloneDC, \
-				//	0, 0, source_w, source_h, SRCCOPY);
-				//::SetStretchBltMode(hDC, stretchBltMode);
-				//::SelectObject(hCloneDC, hOldBitmap);
-				//::DeleteDC(hCloneDC);
+				int dest_byte_width = width * 4;
+				int src_byte_width = source_w * 4;
+				int paint_byte_width = src_w * 4;
+				char* dest_data = (char*)parent_wnd_->GetBits();
+				int bottom = height - draw_y - 1;
+				dest_data += bottom * dest_byte_width + draw_x * 4;
+				char* src_data = (char*)data_.c_str();
+				src_data += src_y * src_byte_width + src_x * 4;
+				for (int i = 0; i < draw_h; ++i)
+				{
+					memcpy(dest_data, src_data, paint_byte_width);
+					dest_data -= dest_byte_width;
+					src_data += src_byte_width;
+				}
 			}
 		}
 		//绘制子控件
@@ -81,105 +88,44 @@ void CBitmapControl::Paint(HDC hDC, const UiRect& rcPaint)
 		throw "CBitmapControl::DoPaint";
 	}
 }
-
-void CBitmapControl::Refresh(HWND hWnd, BYTE* data, uint32_t size, uint32_t width, uint32_t height, bool reversal)
+bool CBitmapControl::Refresh(Window* wnd, bool captrue, bool mirror)
 {
-	uint32_t data_size = width * height * 4;
-	if (size < data_size)
-	{
-		return;
-	}
-	if (cur_paint_bitmap_info_.pBitmapData_ == NULL || cur_paint_bitmap_info_.bitmap_ == NULL\
-		|| cur_paint_bitmap_info_.width_ != width\
-		|| cur_paint_bitmap_info_.height_ != height)
-	{
-		cur_paint_bitmap_info_.ClearData();
-		cur_paint_bitmap_info_.ClearHBitmap();
-		cur_paint_bitmap_info_.width_ = width;
-		cur_paint_bitmap_info_.height_ = height;
-		HDC	hdc = ::GetDC(hWnd);
-		HDC hMemDC = CreateCompatibleDC(hdc);
-		BITMAPINFO bmi;
-		::ZeroMemory(&bmi, sizeof(BITMAPINFO));
-		bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-		bmi.bmiHeader.biWidth = width;
-		bmi.bmiHeader.biHeight = height;
-		bmi.bmiHeader.biPlanes = 1;
-		bmi.bmiHeader.biBitCount = 32;
-		bmi.bmiHeader.biCompression = BI_RGB;
-		bmi.bmiHeader.biSizeImage = size;
-		cur_paint_bitmap_info_.bitmap_ = ::CreateDIBSection(hdc, &bmi, DIB_RGB_COLORS, 
-			(void**)&cur_paint_bitmap_info_.pBitmapData_, NULL, 0);
-		DeleteDC(hMemDC);
-		::ReleaseDC( hWnd, hdc );
-	}
-	if (reversal)
-	{
-		Reversal_Pic((uint32_t*)data, (uint32_t*)cur_paint_bitmap_info_.pBitmapData_, width, height);
-	}
-	else
-	{
-		memcpy(cur_paint_bitmap_info_.pBitmapData_, data, data_size);
-	}
+	int item_w = m_rcItem.right - m_rcItem.left;
+	int item_h = m_rcItem.bottom - m_rcItem.top;
 	if (auto_size_)
 	{
-		int item_w = GetMaxWidth();
-		int item_h = GetMaxHeight();
-		if (item_w > 0 && item_h > 0 && width > 0 && height > 0)
+		item_w = GetMaxWidth();
+		item_h = GetMaxHeight();
+	}
+	bool ret = false;
+	if (item_w > 0 && item_h > 0)
+	{
+		parent_wnd_ = wnd;
+		data_.resize(item_w * item_h * 4);
+
+		ret = nim_comp::VideoFrameMng::GetVideoFrame(captrue, timestamp_, (char*)data_.c_str(), item_w, item_h, mirror);
+		if (ret)
 		{
-			int paint_w = width;
-			int paint_h = height;
-			//等比
-			if (item_h * width > item_w * height)
+			width_ = item_w;
+			height_ = item_h;
+			if (auto_size_)
 			{
-				paint_w = item_w;
-				paint_h = paint_w * height / width;
-			} 
-			else
-			{
-				paint_h = item_h;
-				paint_w = paint_h * width / height;
+				SetFixedWidth(width_);
+				SetFixedHeight(height_);
 			}
-			SetFixedHeight(paint_h);
-			SetFixedWidth(paint_w);
+			Invalidate();
 		}
 	}
-	if (auto_paint_)
-	{
-		Invalidate();
-	}
-	need_paint_ = true;
+	return ret;
 }
 //清理失效数据
 void CBitmapControl::Clear()
 {
-	cur_paint_bitmap_info_.ClearData();
-	cur_paint_bitmap_info_.ClearHBitmap();
-	if (auto_paint_)
-	{
-		Invalidate();
-	}
-	need_paint_ = true;
+	timestamp_ = 0;
+	width_ = 0;
+	height_ = 0;
 }
-bool CBitmapControl::Reversal_Pic( uint32_t* src, uint32_t* dest, int width, int height )
-{
-	if (width > 0 && height > 0 && src != NULL && dest != NULL)
-	{
-		int point_src = 0;
-		for (int y = 0; y < height; y++)
-		{
-			int point_dest = point_src + width - 1;
-			for (int x = 0; x < width; x++)
-			{
-				dest[point_dest] = src[point_src];
-				point_src++;
-				point_dest--;
-			}
-		}
-		return true;
-	}
-	return false;
-}
+
 }
 
 

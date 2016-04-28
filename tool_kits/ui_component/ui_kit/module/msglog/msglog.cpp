@@ -133,7 +133,20 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 		}
 		else if (id == nim::kNIMNotificationIdTeamInviteAccept)
 		{
-			show_text = nbase::StringPrintf(L"%s 接受了 %s 的入群邀请", from_name.c_str(), obj_name.c_str());
+			std::string invitor_id = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationKeyUserNameCards][1]["accid"].asString();
+			std::wstring invitor_name;
+			if(invitor_id.empty())
+				invitor_name = L"管理员";
+			else if (LoginManager::GetInstance()->IsEqual(invitor_id))
+				invitor_name = L"你";
+			else
+			{
+				if (session_wnd)
+					invitor_name = nbase::UTF8ToUTF16(session_wnd->GetTeamMemberInfo(invitor_id).GetNick());
+				if (invitor_name.empty())
+					invitor_name = UserService::GetInstance()->GetUserName(invitor_id);
+			}
+			show_text = nbase::StringPrintf(L"%s 接受了 %s 的入群邀请", from_name.c_str(), invitor_name.c_str());
 		}
 		else if (id == nim::kNIMNotificationIdTeamLeave)
 		{
@@ -141,7 +154,7 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 		}
 		else if (id == nim::kNIMNotificationIdTeamUpdate)
 		{
-			Json::Value tinfo_json = json[nim::kNIMNotificationKeyData]["tinfo"];
+			Json::Value tinfo_json = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationKeyTeamInfo];
 			if(tinfo_json.isMember(nim::kNIMTeamInfoKeyName))
 			{
 				std::wstring team_name = nbase::UTF8ToUTF16(tinfo_json[nim::kNIMTeamInfoKeyName].asString());

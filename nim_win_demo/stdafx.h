@@ -67,3 +67,6 @@
 
 //nim_ui
 #include "ui_component/ui_kit/export/nim_ui_all.h"
+
+// chatroom
+#include "nim_chatroom_cpp.h"

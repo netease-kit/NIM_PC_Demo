@@ -219,7 +219,16 @@ void MsgRecordForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 		}
 		else
 		{
-			show_time = CheckIfShowTime(msg[i+1].timetag_, msg[i].timetag_);
+			long long older_time = 0;
+			for (int j = i + 1; j < len; j++)
+			{
+				if (!IsNoticeMsg(msg[j]))
+				{
+					older_time = msg[j].timetag_;
+					break;
+				}
+			}
+			show_time = CheckIfShowTime(older_time, msg[i].timetag_);
 		}
 		ShowMsg(msg[i], true, show_time);
 	}
@@ -230,8 +239,17 @@ void MsgRecordForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 
 		msg_list_->EndDown(true, false);
 
-		if(len > 0 && last_msg_time_ == 0)
-			last_msg_time_ = msg[0].timetag_;
+		if (len > 0 && last_msg_time_ == 0)
+		{
+			for (const auto &i : msg)
+			{
+				if (!IsNoticeMsg(i))
+				{
+					last_msg_time_ = i.timetag_;
+					break;
+				}
+			}
+		}
 	}
 	else
 	{

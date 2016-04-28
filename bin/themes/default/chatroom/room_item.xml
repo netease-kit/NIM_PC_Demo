@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <Box width="stretch" height="auto" margin="5,7,5,7" mouse="false">
+        <VBox width="stretch" height="auto">
+            <Button name="room_shot" width="stretch" height="95" bkimage="cover.png" cursortype="hand"/>
+            <Control class="splitline_hor_level1" width="stretch"/>
+            <Label name="room_name" width="stretch" text="LOL直播" font="1" normaltextcolor="dark2color" margin="0,5,0,0" mouse="false"/>
+            <Label name="online_num" text="在线人数：5000" font="1" normaltextcolor="dark2color" margin="0,3,0,4" mouse="false"/>
+        </VBox>
+        <Label margin="3,3" text="正在直播" font="1" normaltextcolor="white" textpadding="4,1,4,1" bkcolor="bk_main_wnd_search" mouse="false"/>
+    </Box>
+</Window>

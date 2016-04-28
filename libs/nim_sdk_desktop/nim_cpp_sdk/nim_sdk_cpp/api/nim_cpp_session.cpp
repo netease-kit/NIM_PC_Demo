@@ -1,3 +1,10 @@
+/** @file nim_cpp_session.cpp
+  * @brief 会话列表管理功能；主要包括查询会话列表、删除会话列表等功能
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author towik, Oleg
+  * @date 2015/2/1
+  */
+
 #include "nim_cpp_session.h"
 #include "nim_sdk_helper.h"
 #include "nim_common_helper.h"
@@ -59,15 +66,16 @@ static void CallbackSessionChange(int rescode, const char *result, int total_unr
 	}
 }
 
-static Session::ChangeCallback* g_chang_cb_pointer = nullptr;
+static Session::ChangeCallback* g_cb_session_changed_ = nullptr;
 void Session::RegChangeCb(const ChangeCallback& cb, const std::string& json_extension)
 {
-	delete g_chang_cb_pointer;
-	if (cb)
+	if (g_cb_session_changed_)
 	{
-		g_chang_cb_pointer = new ChangeCallback(cb);
+		delete g_cb_session_changed_;
+		g_cb_session_changed_ = nullptr;
 	}
-	return NIM_SDK_GET_FUNC(nim_session_reg_change_cb)(json_extension.c_str(), &CallbackSessionChange, g_chang_cb_pointer);
+	g_cb_session_changed_ = new ChangeCallback(cb);
+	return NIM_SDK_GET_FUNC(nim_session_reg_change_cb)(json_extension.c_str(), &CallbackSessionChange, g_cb_session_changed_);
 }
 
 void Session::QueryAllRecentSessionAsync(const QuerySessionListCallabck& cb, const std::string& json_extension)
@@ -118,6 +126,15 @@ bool Session::SetUnreadCountZeroAsync(nim::NIMSessionType to_type, const std::st
 	NIM_SDK_GET_FUNC(nim_session_set_unread_count_zero_async)(to_type, id.c_str(), json_extension.c_str(), &CallbackNotifySession, cb_pointer);
 
 	return true;
+}
+
+void Session::UnregSessionCb()
+{
+	if (g_cb_session_changed_)
+	{
+		delete g_cb_session_changed_;
+		g_cb_session_changed_ = nullptr;
+	}
 }
 
 }

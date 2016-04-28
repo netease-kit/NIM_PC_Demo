@@ -160,6 +160,13 @@
     <TextColor name="tip_yellow" value="#ffffffe6"/>
 	<TextColor name="btn_green" value="#ff00ba8f"/>
 
+    <!-- 直播间 -->
+    <TextColor name="close_cast" value="#ffd5dbde"/>
+    <TextColor name="tab_text_selected" value="#ff3686f5"/>
+    <TextColor name="tab_bk_unselected" value="#ffebeaed"/>
+    <TextColor name="exit_tip_bk" value="#ffdce9f3"/>
+    <TextColor name="exit_room_name_color" value="#ff909ead"/>
+
     <!--字体大小-->
     <Class name="font_title" value="font=&quot;2&quot;" />
 

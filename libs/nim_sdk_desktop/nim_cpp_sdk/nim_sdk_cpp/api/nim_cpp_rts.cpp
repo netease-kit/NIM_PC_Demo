@@ -1,4 +1,11 @@
-﻿#include "nim_cpp_rts.h"
+﻿/** @file nim_cpp_rts.cpp
+  * @brief NIM Rts提供的相关接口
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author gq
+  * @date 2015/7/3
+  */
+
+#include "nim_cpp_rts.h"
 #include "nim_sdk_helper.h"
 #include "nim_common_helper.h"
 

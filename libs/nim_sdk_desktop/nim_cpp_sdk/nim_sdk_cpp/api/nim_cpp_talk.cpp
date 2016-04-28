@@ -1,3 +1,10 @@
+/** @file nim_cpp_talk.cpp
+  * @brief 鑱婂ぉ鍔熻兘锛涗富瑕佸寘鎷彂閫佹秷鎭�佹帴鏀舵秷鎭瓑鍔熻兘
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author towik, Oleg
+  * @date 2015/2/1
+  */
+
 #include "nim_cpp_talk.h"
 #include "nim_sdk_helper.h"
 #include "nim_common_helper.h"
@@ -5,10 +12,11 @@
 namespace nim
 {
 
-typedef void(*nim_talk_reg_arc_cb)(const char *json_extension, nim_talk_arc_cb_func cb, const void *user_data);
+typedef void(*nim_talk_reg_ack_cb)(const char *json_extension, nim_talk_ack_cb_func cb, const void *user_data);
 typedef void(*nim_talk_send_msg)(const char* json_msg, const char *json_extension, nim_nos_upload_prg_cb_func prg_cb, const void *prg_user_data);
 typedef void(*nim_talk_stop_send_msg)(const char *json_msg, const char *json_extension);
 typedef void(*nim_talk_reg_receive_cb)(const char *json_extension, nim_talk_receive_cb_func cb, const void* user_data);
+typedef void(*nim_talk_reg_receive_msgs_cb)(const char *json_extension, nim_talk_receive_cb_func cb, const void* user_data);
 
 static void CallbackSendMsgArc(const char *result, const void *callback)
 {
@@ -18,7 +26,7 @@ static void CallbackSendMsgArc(const char *result, const void *callback)
 		if (*cb_pointer)
 		{
 			SendMessageArc arc;
-			ParseSendMessageArc(PCharToString(result), arc);
+			ParseSendMessageAck(PCharToString(result), arc);
 			PostTaskToUIThread(std::bind((*cb_pointer), arc));
 			//(*cb_pointer)(arc);
 		}
@@ -40,6 +48,32 @@ static void CallbackReceiveMsg(const char *content, const char *json_extension, 
 	}
 }
 
+static void CallbackReceiveMessages(const char *content, const char *json_extension, const void *callback)
+{
+	if (callback)
+	{
+		Talk::ReceiveMsgsCallback* cb_pointer = (Talk::ReceiveMsgsCallback*)callback;
+		if (*cb_pointer)
+		{
+			std::list<IMMessage> msgs;
+			Json::Reader reader;
+			Json::Value value;
+			if (reader.parse(PCharToString(content), value) && value.isArray())
+			{
+				int size = value.size();
+				for (int i = 0; i < size; i++)
+				{
+					IMMessage msg;
+					ParseReceiveMessage(value[i], msg);
+					msgs.push_back(msg);
+				}
+			}
+			PostTaskToUIThread(std::bind((*cb_pointer), msgs));
+			//(*cb_pointer)(msgs);
+		}
+	}
+}
+
 static void CallbackFileUploadProcess(__int64 uploaded_size, __int64 file_size, const char *json_extension, const void *callback)
 {
 	if (callback)
@@ -53,15 +87,16 @@ static void CallbackFileUploadProcess(__int64 uploaded_size, __int64 file_size, 
 	}
 }
 
-static Talk::SendMsgArcCallback* g_send_msg_cb_pointer = nullptr;
+static Talk::SendMsgArcCallback* g_cb_send_msg_arc_ = nullptr;
 void Talk::RegSendMsgCb(const SendMsgArcCallback& cb, const std::string& json_extension)
 {
-	delete g_send_msg_cb_pointer;
-	if (cb)
+	if (g_cb_send_msg_arc_)
 	{
-		g_send_msg_cb_pointer = new SendMsgArcCallback(cb);
+		delete g_cb_send_msg_arc_;
+		g_cb_send_msg_arc_ = nullptr;
 	}
-	return NIM_SDK_GET_FUNC(nim_talk_reg_arc_cb)(json_extension.c_str(), &CallbackSendMsgArc, g_send_msg_cb_pointer);
+	g_cb_send_msg_arc_ = new SendMsgArcCallback(cb);
+	return NIM_SDK_GET_FUNC(nim_talk_reg_ack_cb)(json_extension.c_str(), &CallbackSendMsgArc, g_cb_send_msg_arc_);
 }
 
 void Talk::SendMsg(const std::string& json_msg, const std::string& json_extension/* = ""*/, FileUpPrgCallback* pcb/* = nullptr*/)
@@ -84,7 +119,7 @@ bool Talk::StopSendMsg(const std::string& client_msg_id, const NIMMessageType& t
 	Json::Value values;
 	values[kNIMMsgKeyClientMsgid] = client_msg_id;
 	values[kNIMMsgKeyType] = type;
-	NIM_SDK_GET_FUNC(nim_talk_stop_send_msg)(values.toStyledString().c_str(), json_extension.c_str());
+	NIM_SDK_GET_FUNC(nim_talk_stop_send_msg)(GetJsonStringWithNoStyled(values).c_str(), json_extension.c_str());
 
 	return true;
 }
@@ -98,6 +133,17 @@ void Talk::RegReceiveCb(const ReveiveMsgCallback& cb, const std::string& json_ex
 		g_cb_pointer = new ReveiveMsgCallback(cb);
 	}
 	return NIM_SDK_GET_FUNC(nim_talk_reg_receive_cb)(json_extension.c_str(), &CallbackReceiveMsg, g_cb_pointer);
+}
+
+static Talk::ReceiveMsgsCallback* g_cb_msgs_pointer = nullptr;
+void Talk::RegReceiveMessagesCb(const ReceiveMsgsCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	delete g_cb_msgs_pointer;
+	if (cb)
+	{
+		g_cb_msgs_pointer = new ReceiveMsgsCallback(cb);
+	}
+	return NIM_SDK_GET_FUNC(nim_talk_reg_receive_msgs_cb)(json_extension.c_str(), &CallbackReceiveMessages, g_cb_msgs_pointer);
 }
 
 std::string Talk::CreateTextMessage(const std::string& receiver_id
@@ -117,11 +163,11 @@ std::string Talk::CreateTextMessage(const std::string& receiver_id
 
 	msg_setting.ToJsonValue(values);
 
-	//选填
+	//閫夊～
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
 
-	return values.toStyledString();
+	return GetJsonStringWithNoStyled(values);
 }
 
 std::string Talk::CreateImageMessage(const std::string& receiver_id
@@ -144,11 +190,11 @@ std::string Talk::CreateImageMessage(const std::string& receiver_id
 
 	msg_setting.ToJsonValue(values);
 
-	//选填
+	//閫夊～
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
 
-	return values.toStyledString();
+	return GetJsonStringWithNoStyled(values);
 }
 
 std::string Talk::CreateFileMessage(const std::string& receiver_id
@@ -171,11 +217,11 @@ std::string Talk::CreateFileMessage(const std::string& receiver_id
 
 	msg_setting.ToJsonValue(values);
 
-	//选填
+	//閫夊～
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
 
-	return values.toStyledString();
+	return GetJsonStringWithNoStyled(values);
 }
 
 std::string Talk::CreateAudioMessage(const std::string& receiver_id
@@ -198,11 +244,11 @@ std::string Talk::CreateAudioMessage(const std::string& receiver_id
 
 	msg_setting.ToJsonValue(values);
 
-	//选填
+	//閫夊～
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
 
-	return values.toStyledString();
+	return GetJsonStringWithNoStyled(values);
 }
 
 std::string Talk::CreateVideoMessage(const std::string& receiver_id
@@ -225,11 +271,11 @@ std::string Talk::CreateVideoMessage(const std::string& receiver_id
 
 	msg_setting.ToJsonValue(values);
 
-	//选填
+	//閫夊～
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
 
-	return values.toStyledString();
+	return GetJsonStringWithNoStyled(values);
 }
 
 std::string Talk::CreateLocationMessage(const std::string& receiver_id
@@ -249,11 +295,11 @@ std::string Talk::CreateLocationMessage(const std::string& receiver_id
 
 	msg_setting.ToJsonValue(values);
 
-	//选填
+	//閫夊～
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
 
-	return values.toStyledString();
+	return GetJsonStringWithNoStyled(values);
 }
 
 std::string Talk::CreateTipMessage(const std::string& receiver_id
@@ -267,18 +313,19 @@ std::string Talk::CreateTipMessage(const std::string& receiver_id
 	values[kNIMMsgKeyToAccount] = receiver_id;
 	values[kNIMMsgKeyToType] = session_type;
 	values[kNIMMsgKeyClientMsgid] = client_msg_id;
-	values[kNIMMsgKeyServerExt] = tips.toStyledString();
+	values[kNIMMsgKeyServerExt] = GetJsonStringWithNoStyled(tips);
 	values[kNIMMsgKeyType] = kNIMMessageTypeTips;
 	values[kNIMMsgKeyLocalTalkId] = receiver_id;
 
 	msg_setting.ToJsonValue(values);
 
-	//选填
+	//閫夊～
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
 
-	return values.toStyledString();
+	return GetJsonStringWithNoStyled(values);
 }
+
 
 bool Talk::ParseIMMessage(const std::string& json_msg, IMMessage& msg)
 {
@@ -384,6 +431,14 @@ bool Talk::ParseLocationMessageAttach(const IMMessage& msg, IMLocation& location
 	return false;
 }
 
+void Talk::UnregTalkCb()
+{
+	if (g_cb_send_msg_arc_)
+	{
+		delete g_cb_send_msg_arc_;
+		g_cb_send_msg_arc_ = nullptr;
+	}
+}
 
 
 }

@@ -1,6 +1,6 @@
 ﻿/** @file nim_client_def.h
   * @brief NIM SDK提供的Client相关定义（如登录、注销、被踢、掉线等功能）
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1
   */

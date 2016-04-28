@@ -1,25 +1,32 @@
-﻿#ifndef _NIM_SDK_CPP_TOOL_H_
+﻿/** @file nim_cpp_tool.h
+  * @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author towik, Oleg
+  * @date 2015/09/21
+  */
+
+#ifndef _NIM_SDK_CPP_TOOL_H_
 #define _NIM_SDK_CPP_TOOL_H_
 
 #include <string>
 #include "nim_tool_helper.h"
 
+/**
+* @namespace nim
+* @brief namespace nim
+*/
 namespace nim
 {
-/** @class Tool
-  * @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
-  * @author towik, Oleg
-  * @date 2015/09/21
-  */
-
 #include "nim_tools_def.h"
 
+/** @class Tool
+  * @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等
+  */
 class Tool
 {
 
 public:
-	typedef std::function<void(int rescode, const std::string& text)> GetAudioTextCallback;
+	typedef std::function<void(int rescode, const std::string& text)> GetAudioTextCallback;	/**< 语音转文字回调模板 */
 
 public:
 	/** @fn std::wstring GetUserAppdataDir(const std::string& app_account)

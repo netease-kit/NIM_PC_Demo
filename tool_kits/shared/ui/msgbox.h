@@ -24,6 +24,7 @@ public:
 	virtual std::wstring GetZIPFileName() const;
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 	virtual void OnEsc(BOOL &bHandled);
+	virtual void Close(UINT nRet = IDOK) override;
 
 	virtual std::wstring GetWindowClassName() const override;
 	virtual std::wstring GetWindowId() const /*override*/;

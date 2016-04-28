@@ -1,6 +1,6 @@
 ﻿/** @file nim_friend.h
   * @brief NIM SDK提供的friend接口
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/08/13
   */

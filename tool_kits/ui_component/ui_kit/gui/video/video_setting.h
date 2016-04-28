@@ -1,5 +1,5 @@
-﻿#ifndef YIXIN_WIN_GUI_VIDEO_SETTING_H_
-#define YIXIN_WIN_GUI_VIDEO_SETTING_H_
+﻿#ifndef NIM_WIN_GUI_VIDEO_SETTING_H_
+#define NIM_WIN_GUI_VIDEO_SETTING_H_
 
 #include "util/window_ex.h"
 #include "ui_bitmap_control.h"
@@ -30,7 +30,6 @@ public:
 	
 	void ShowPage(bool video);
 
-	void OnInputVideoData(const std::string &data, ui::CSize size, uint64_t timestamp);
 	void OnVideoDeviceStartCallback(bool result);
 private:
 	void InitDeviceList(bool video, bool input);
@@ -48,9 +47,12 @@ public:
 	void OnAudioInDeviceChange(uint32_t status);
 	void OnVideoInDeviceChange(uint32_t status);
 	void AudioVolumnChange();
+	void PaintVideo();
 public:
 	static const LPCTSTR kClassName;
 private:
+	nbase::WeakCallbackFlag paint_video_timer_;
+
 	ui::TabBox*		tabbox_;
 	ui::OptionBox*	option_audio_;
 	ui::OptionBox*	option_video_;

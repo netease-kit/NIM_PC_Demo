@@ -1,6 +1,6 @@
 ﻿/** @file nim_user.h
   * @brief NIM SDK提供的用户相关接口
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1
   */
@@ -93,15 +93,15 @@ NIM_SDK_DLL_API	void nim_user_get_user_name_card(const char *accids, const char 
   */
 NIM_SDK_DLL_API	void nim_user_get_user_name_card_online(const char *accids, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data);
 
-/** @fn void nim_user_update_user_name_card(const char *info_json, const char *json_extension, nim_user_update_name_card_cb_func cb, const void *user_data)
-  * 更新用户名片
+/** @fn void nim_user_update_my_user_name_card(const char *info_json, const char *json_extension, nim_user_update_my_name_card_cb_func cb, const void *user_data)
+  * 更新自己的用户名片
   * @param[in] info_json 用户信息json
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb 操作结果回调
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API	void nim_user_update_user_name_card(const char *info_json, const char *json_extension, nim_user_update_name_card_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API	void nim_user_update_my_user_name_card(const char *info_json, const char *json_extension, nim_user_update_my_name_card_cb_func cb, const void *user_data);
 
 
 #ifdef __cplusplus

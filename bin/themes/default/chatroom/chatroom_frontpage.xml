@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window size="750,704" mininfo="750,704" caption="0,0,0,68" textid="STRID_CHATROOM_FRONTPAGE_TITLE">
+    <Box width="stretch" height="stretch">
+        <VBox bkcolor="bk_wnd_lightcolor">
+            <HBox class="caption" height="68">
+                <Box width="48" height="48" mouse="false" valign="center">
+                    <Control name="header_image" width="46" height="46" borderround="46,46,46,46" margin="1,1,1,1" mouse="false"/>
+                    <Control name="head_image_mask" bkimage="../public/headmask/icon_headimage_mask_48x48_selected.png" mouse="false"/>
+                </Box>
+                <Label name="name" font="1" normaltextcolor="dark2color" valign="center" margin="6"/>
+            
+                <Control width="stretch"/>
+            
+                <VBox width="auto" height="stretch">
+                    <HBox width="auto" height="auto" valign="top">
+                        <Button class="btn_wnd_min" name="minbtn" margin="4,6,0,0"/>
+                        <Box width="21" margin="4,6,0,0">
+                            <Button class="btn_wnd_max" name="maxbtn"/>
+                            <Button class="btn_wnd_restore" name="restorebtn" visible="false"/>
+                        </Box>
+                        <Button class="btn_wnd_close" name="closebtn" margin="4,6,0,0"/>
+                    </HBox>
+                    <Control height="stretch"/>
+                    <Button class="btn_word_border" name="be_host" width="26" height="26" halign="right" margin="0,0,0,6" tooltiptext="我要当主播"
+                            forenormalimage="file='btn_create_room.png' dest='5,5,20,20'"/>
+                    <Button class="btn_word_border" name="my_room" width="26" height="26" halign="right" margin="0,0,0,6" tooltiptext="我的直播间"
+                            forenormalimage="file='btn_create_room.png' dest='5,5,20,20'" visible="false"/>
+                </VBox>
+            </HBox>
+        
+            <Box width="stretch" height="stretch">
+                <TileListBox class="list" name="room_list" columns="4" padding="15,10,15,10" vscrollunit="100"/>
+            </Box>
+        </VBox>
+    
+        <Box name="kicked_tip_box" width="stretch" height="stretch" bkimage="front_page_mask.png" visible="false" fadealpha="true">
+            <VBox width="auto" height="auto" halign="center" valign="center" padding="60,40,60,40" bkcolor="exit_tip_bk">
+                <Label name="kick_tip" halign="center" font="2" normaltextcolor="darkcolor"/>
+                <Label name="room_name" halign="center" font="2" normaltextcolor="exit_room_name_color" textpadding="0,12,0,0"/>
+            </VBox>
+        </Box>
+        
+        <VBox name="loading_tip" width="auto" height="auto" halign="center" valign="top" margin="0,150,0,0" visible="false">
+            <Control width="auto" height="auto" halign="center" bkimage="../public/animation/ani_loading.gif"/>
+            <Label width="auto" height="auto" text="房间加载中..." normaltextcolor="lightcolor" font="3" margin="0,8"/>
+        </VBox>
+
+        <HBox name="load_error_tip" width="auto" height="auto" halign="center" valign="top" margin="0,150,0,0" visible="false">
+            <Label width="auto" height="auto" valign="center" text="加载房间列表失败" normaltextcolor="lightcolor" font="3"/>
+            <Button class="btn_global_green_80x30" name="retry" valign="center" margin="8" text="重试"/>
+        </HBox>
+    </Box>
+</Window>

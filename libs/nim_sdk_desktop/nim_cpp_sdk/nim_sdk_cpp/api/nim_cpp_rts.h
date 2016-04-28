@@ -1,9 +1,20 @@
-﻿#ifndef _NIM_SDK_CPP_RTS_H_
+﻿/** @file nim_cpp_rts.h
+  * @brief NIM Rts提供的相关接口
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @author gq
+  * @date 2015/7/3
+  */
+
+#ifndef _NIM_SDK_CPP_RTS_H_
 #define _NIM_SDK_CPP_RTS_H_
 
 #include <string>
 #include <functional>
 
+/**
+* @namespace nim
+* @brief namespace nim
+*/
 namespace nim
 {
 
@@ -12,9 +23,6 @@ namespace nim
 
 /** @class Rts
   * @brief NIM Rts提供的相关接口
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
-  * @author gq
-  * @date 2015/7/3
   */
 class Rts
 {

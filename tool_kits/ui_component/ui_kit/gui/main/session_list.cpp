@@ -152,13 +152,13 @@ void SessionList::UICustomSysmsgUnread(bool add)
 
 void SessionList::UpdateSessionInfo(const nim::UserNameCard& user_info)
 {
-	SessionItem* session_item = (SessionItem*)session_list_->FindSubControl(nbase::UTF8ToUTF16(user_info.GetAccId()));
+	SessionItem* session_item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(nbase::UTF8ToUTF16(user_info.GetAccId())));
 	if (session_item != NULL)
 		session_item->InitUserProfile();
 
 	for (int i = 0; i < session_list_->GetCount(); i++)
 	{
-		SessionItem* session_item = (SessionItem*)session_list_->GetItemAt(i);
+		SessionItem* session_item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
 		if (session_item && session_item->GetIsTeam())
 			session_item->UpdateMsgContent(user_info.GetAccId()); //群通知消息内容中可能含有用户名
 	}

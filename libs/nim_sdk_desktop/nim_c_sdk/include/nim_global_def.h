@@ -1,6 +1,6 @@
 ﻿/** @file nim_global_def.h
   * @brief NIM SDK提供的一些全局定义
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1
   */
@@ -25,6 +25,16 @@ static const char *kNIMResCode		= "err_code";		/**< int, NIMResCode */
   * @return void 无返回值
   */ 
 typedef void (*nim_json_transport_cb_func)(const char *json_params, const void *user_data);
+
+/** @enum NIMProxyType 代理类型 */
+enum NIMProxyType
+{
+	kNIMProxyNone		= 0,	/**< 不使用代理*/
+	kNIMProxyHttp11		= 1,	/**< HTTP 1.1 Proxy（暂不支持）*/
+	kNIMProxySocks4		= 4,	/**< Socks4 Proxy*/
+	kNIMProxySocks4a	= 5,	/**< Socks4a Proxy*/
+	kNIMProxySocks5		= 6,	/**< Socks5 Proxy*/
+};
 
 #ifdef __cplusplus
 };

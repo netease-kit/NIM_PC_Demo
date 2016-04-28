@@ -1,6 +1,6 @@
 ﻿/** @file nim_msglog.h
   * @brief NIM SDK提供的消息历史接口 
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/2/1
   */
@@ -208,6 +208,44 @@ NIM_SDK_DLL_API void nim_msglog_export_db_async(const char *dst_path, const char
   * @return void 无返回值
   */
 NIM_SDK_DLL_API void nim_msglog_import_db_async(const char *src_path, const char *json_extension, nim_msglog_modify_res_cb_func res_cb, const void *res_user_data, nim_msglog_import_prg_cb_func prg_cb, const void *prg_user_data);
+
+/** @fn void nim_msglog_send_receipt_async(const char *json_msg, const char *json_extension, nim_msglog_status_changed_cb_func cb, const void *user_data)
+  * 发送消息已读回执
+  * @param[in] json_msg			已读消息json string。
+  * @param[in] json_extension	json扩展参数（备用，目前不需要）
+  * @param[in] cb				操作结果的回调函数， nim_msglog_status_changed_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data		APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_msglog_send_receipt_async(const char *json_msg, const char *json_extension, nim_msglog_status_changed_cb_func cb, const void *user_data);
+
+/** @fn bool nim_msglog_query_be_readed(const char *json_msg, const char *json_extension)
+  * 查询自己发送的消息是否被对方已读
+  * @param[in] json_msg			消息json string。
+  * @param[in] json_extension	json扩展参数（备用，目前不需要）
+  * @return bool 是否被已读
+  */
+NIM_SDK_DLL_API bool nim_msglog_query_be_readed(const char *json_msg, const char *json_extension);
+
+/** @fn void nim_msglog_reg_status_changed_cb(const char *json_extension, nim_msglog_status_changed_cb_func cb, const void *user_data)
+  * 注册全局的消息状态变更通知（目前只支持已读状态的通知）
+  * @param[in] json_extension	json扩展参数（备用，目前不需要）
+  * @param[in] cb				回调函数， nim_msglog_status_changed_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data		APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_msglog_reg_status_changed_cb(const char *json_extension, nim_msglog_status_changed_cb_func cb, const void *user_data);
+
+/** @fn void nim_msglog_update_localext_async(const char *msg_id, const char *local_ext, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data)
+  * 更新本地扩展字段内容
+  * @param[in] msg_id		消息id
+  * @param[in] local_ext	消息本地扩展字段内容
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb			操作结果的回调函数， nim_msglog_res_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_msglog_update_localext_async(const char *msg_id, const char *local_ext, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 
 #ifdef __cplusplus
 };

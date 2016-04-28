@@ -143,6 +143,7 @@ LRESULT SessionForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (wParam != WA_INACTIVE)
 		{
 			SessionManager::GetInstance()->ResetUnread(session_id_);
+			SendReceiptIfNeeded();
 		}
 	}
 	if (uMsg == WM_NOTIFY)  // 超链接消息
@@ -157,6 +158,33 @@ LRESULT SessionForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	//		OnDropFile(hDrop);
 	//}
 	return __super::HandleMessage(uMsg, wParam, lParam);
+}
+
+void SessionForm::SendReceiptIfNeeded(bool auto_detect/* = false*/)
+{
+	//发送已读回执目前只支持P2P会话
+	if (session_type_ != nim::kNIMSessionTypeP2P)
+		return;
+
+	if (auto_detect)
+	{
+		auto top_hwnd = GetForegroundWindow();
+		if (top_hwnd != this->GetHWND() || msg_list_ == nullptr || !msg_list_->IsAtEnd())
+		{
+			receipt_need_send_ = true;
+			return;
+		}
+	}
+
+	nim::IMMessage msg;
+	if (GetLastNeedSendReceiptMsg(msg))
+	{
+		receipt_need_send_ = false;
+		nim::MsgLog::SendReceiptAsync(msg.ToJsonString(false), [](const nim::MessageStatusChangedResult& res) {
+			auto iter = res.results_.begin();
+			QLOG_APP(L"mark receipt id:{0} time:{1} rescode:{2}") << iter->talk_id_ << iter->msg_timetag_ << res.rescode_;
+		});
+	}
 }
 
 void SessionForm::OnEsc(BOOL &bHandled)
@@ -272,7 +300,18 @@ void SessionForm::InitWindow()
 bool SessionForm::Notify(ui::EventArgs* param)
 {
 	std::wstring name = param->pSender->GetName();
-	if (param->Type == ui::kEventNotify)
+	if (param->Type == kEventScrollChange)
+	{
+		if (name == L"msg_list")
+		{
+			if (receipt_need_send_)
+			{
+				bool list_last = msg_list_->IsAtEnd();
+				if (list_last)
+					SendReceiptIfNeeded();
+			}
+		}
+	} else if (param->Type == ui::kEventNotify)
 	{
 		MsgBubbleItem* item = dynamic_cast<MsgBubbleItem*>(param->pSender);
 		assert(item);
@@ -280,9 +319,7 @@ bool SessionForm::Notify(ui::EventArgs* param)
 
 		if (param->wParam == BET_RESEND)
 		{
-			msg_list_->Remove(item);
-			id_bubble_pair_.erase(md.client_msg_id_);
-
+			RemoveMsgItem(md.client_msg_id_);
 			ReSendMsg(md);
 		}
 		else if (param->wParam == BET_RELOAD)
@@ -292,13 +329,7 @@ bool SessionForm::Notify(ui::EventArgs* param)
 		}
 		else if (param->wParam == BET_DELETE)
 		{
-			bool is_last_msg = false;
-			if (msg_list_->GetItemAt(msg_list_->GetCount() - 1) == item)
-			{
-				is_last_msg = true;
-			}
-			msg_list_->Remove(item);
-			id_bubble_pair_.erase(md.client_msg_id_);
+			RemoveMsgItem(md.client_msg_id_);
 			nim::MsgLog::DeleteAsync(session_id_, session_type_, md.client_msg_id_, nim::MsgLog::DeleteCallback());
 		}
 		else if (param->wParam == BET_TRANSFORM)
@@ -343,12 +374,15 @@ bool SessionForm::Notify(ui::EventArgs* param)
 						writing_time_ = now;
 
 						Json::Value json;
+						Json::FastWriter writer;
 						json["id"] = "1";
 
 						nim::SysMessage msg;
+						msg.receiver_accid_ = session_id_;
+						msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
 						msg.client_msg_id_ = QString::GetGUID();
 						msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
-						msg.attach_ = json.toStyledString();
+						msg.attach_ = writer.write(json);
 						msg.type_ = nim::kNIMSysMsgTypeCustomP2PMsg;
 
 						nim::SystemMsg::SendCustomNotificationMsg(msg.ToJsonString());
@@ -402,6 +436,10 @@ bool SessionForm::OnClicked(ui::EventArgs* param)
 	else if (name == L"btn_rts")
 	{
 		OnBtnRts();
+	}
+	else if (name == L"btn_tip")
+	{
+		SendTip(L"这是一条提醒消息");
 	}
 	else if (name == CELL_BTN_LOAD_MORE_MSG)
 	{
@@ -685,10 +723,11 @@ void SessionForm::OnBtnJsb()
 	int jsb = (rand() % 3 + rand() % 4 + rand() % 5) % 3 + 1;
 
 	Json::Value json;
+	Json::FastWriter writer;
 	json["type"] = CustomMsgType_Jsb;
 	json["data"]["value"] = jsb;
 
-	SendJsb(json.toStyledString());
+	SendJsb(writer.write(json));
 }
 
 void SessionForm::OnBtnEmoji()

@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2013, NetEase Inc. All rights reserved.
 //
-// Author: gaoqi <gaoqi@yixin.im>
+// Author: gaoqi
 // Date: 2015/7/7
 
 //支持白板绘制

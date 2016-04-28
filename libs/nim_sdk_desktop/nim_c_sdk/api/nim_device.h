@@ -1,6 +1,6 @@
 ﻿/** @file nim_device.h
   * @brief NIM VChat提供的音视频设备相关接口，使用前请先调用nim_vchat.h中nim_vchat_init
-  * @copyright (c) 2015, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/4/30
   */
@@ -62,23 +62,25 @@ NIM_SDK_DLL_API void nim_vchat_add_device_status_cb(NIMDeviceType type, nim_vcha
   */
 NIM_SDK_DLL_API void nim_vchat_remove_device_status_cb(NIMDeviceType type);
 
-/** @fn void nim_vchat_set_audio_data_cb(bool capture, nim_vchat_audio_data_cb_func cb, const void *user_data)
+/** @fn void nim_vchat_set_audio_data_cb(bool capture, const char *json_extension, nim_vchat_audio_data_cb_func cb, const void *user_data)
   * NIM VCHAT DEVICE 监听音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut和kNIMDeviceTypeAudioOutChat由底层播放）
-  * @param[in] cb 结果回调见nim_device_def.h
   * @param[in] capture true 标识监听麦克风采集数据，false 标识监听通话中对方音频数据
-  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
-  * @return void 无返回值
-  */
-NIM_SDK_DLL_API void nim_vchat_set_audio_data_cb(bool capture, nim_vchat_audio_data_cb_func cb, const void *user_data);
-
-/** @fn void nim_vchat_set_video_data_cb(bool capture, nim_vchat_video_data_cb_func cb, const void *user_data)
-  * NIM VCHAT DEVICE 监听视频数据
+  * @param[in] json_extension 无效的扩展字段
   * @param[in] cb 结果回调见nim_device_def.h
-  * @param[in] capture true 标识监听采集数据，false 标识监听通话中对方视频数据
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_vchat_set_video_data_cb(bool capture, nim_vchat_video_data_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_vchat_set_audio_data_cb(bool capture, const char *json_extension, nim_vchat_audio_data_cb_func cb, const void *user_data);
+
+/** @fn void nim_vchat_set_video_data_cb(bool capture, const char *json_extension, nim_vchat_video_data_cb_func cb, const void *user_data)
+  * NIM VCHAT DEVICE 监听视频数据
+  * @param[in] capture true 标识监听采集数据，false 标识监听通话中对方视频数据
+  * @param[in] json_extension Json string 返回kNIMVideoSubType（缺省为kNIMVideoSubTypeARGB）
+  * @param[in] cb 结果回调见nim_device_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_vchat_set_video_data_cb(bool capture, const char *json_extension, nim_vchat_video_data_cb_func cb, const void *user_data);
 
 /** @fn void nim_vchat_set_audio_volumn(unsigned char volumn, bool capture)
   * NIM VCHAT DEVICE 设置音量 默认255,且音量均由软件换算得出,设置麦克风音量自动调节后麦克风音量参数无效
@@ -121,11 +123,11 @@ NIM_SDK_DLL_API bool nim_vchat_custom_audio_data(unsigned __int64 time, const ch
 /** @typedef void nim_vchat_custom_video_data(unsigned __int64 time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension)
   * NIM VCHAT 自定义视频数据接口
   * @param[in] time 时间毫秒级
-  * @param[in] data 视频数据yuv420格式
+  * @param[in] data 视频数据， 默认为yuv420格式
   * @param[in] size data的数据长度
-  * @param[in] width  画面宽度
-  * @param[in] height  画面高度
-  * @param[in] json_extension 无效的扩展字段
+  * @param[in] width  画面宽度，必须是偶数
+  * @param[in] height  画面高度，必须是偶数
+  * @param[in] json_extension  扩展Json string，kNIMVideoSubType视频数据格式（缺省为kNIMVideoSubTypeI420）
   * @return bool true 调用成功，false 调用失败
   */ 
 NIM_SDK_DLL_API bool nim_vchat_custom_video_data(unsigned __int64 time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension);

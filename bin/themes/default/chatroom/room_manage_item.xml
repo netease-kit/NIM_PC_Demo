@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <HBox width="auto" height="auto">
+        <HBox width="150" height="auto" childmargin="4">
+            <Control />
+            <Label name="room_name" width="auto" text="LOL游戏直播"/>
+            <Label name="anchor" width="auto" text="主播"/>
+            <Label name="manager" width="auto" text="房管" visible="false"/>
+            <Control />
+        </HBox>
+        <HBox width="150" height="auto" childmargin="4">
+            <Control />
+            <Button name="mute_list" width="auto" text="禁言名单"/>
+            <Button name="black_list" width="auto" text="黑名单"/>
+            <Button name="manager_list" width="auto" text="管理员"/>
+            <Control />
+        </HBox>
+        <HBox width="100" height="auto" childmargin="4">
+            <Control />
+            <Button name="chatroom_setting" width="auto" text="房间设置"/>
+            <Button name="dismiss" width="auto" text="解散"/>
+            <Button name="resign" width="auto" text="辞职" visible="false"/>
+            <Control />
+        </HBox>
+    </HBox>
+</Window>
