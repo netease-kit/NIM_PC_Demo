@@ -27,7 +27,7 @@ namespace nim_chatroom
 class ChatRoom
 {
 public:
-	typedef std::function<void(__int64 room_id, const NIMChatRoomEnterStep step, int error_code, const ChatRoomInfo& info, const ChatRoomMemberInfo& my_info)>	EnterCallback;	/**< 登录回调 */
+	typedef std::function<void(__int64 room_id, const NIMChatRoomEnterStep step, int error_code, const ChatRoomInfo& info, const ChatRoomMemberInfo& my_info)>	EnterCallback;	/**< 登录回调, 如果错误码为kResRoomLocalNeedRequestAgain，聊天室重连机制结束，则需要向IM服务器重新请求进入该聊天室权限 */
 	typedef std::function<void(__int64 room_id, int error_code, NIMChatRoomExitReason exit_reason)>	ExitCallback;	/**< 登出、被踢回调 */
 	typedef std::function<void(__int64 room_id, int error_code, const ChatRoomMessage& result)>	SendMsgAckCallback;	/**< 发送消息回执 */
 	typedef std::function<void(__int64 room_id, const ChatRoomMessage& result)>	ReceiveMsgCallback;	/**< 接收消息回调 */

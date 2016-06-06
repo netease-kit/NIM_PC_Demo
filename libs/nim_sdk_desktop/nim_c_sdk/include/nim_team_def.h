@@ -91,6 +91,34 @@ typedef void (*nim_team_query_team_member_cb_func)(const char *tid,
   */
 typedef void (*nim_team_query_team_info_cb_func)(const char *tid, const char *result, const char *json_extension, const void *user_data);
 
+/** @enum NIMTeamBeInviteMode 被邀请人同意方式 */
+enum NIMTeamBeInviteMode
+{
+	kNIMTeamBeInviteModeNeedAgree	= 0,	/**< 需要同意 */
+	kNIMTeamBeInviteModeNotNeedAgree= 1,	/**< 不需要同意 */
+};
+
+/** @enum NIMTeamInviteMode 谁可以邀请他人入群 */
+enum NIMTeamInviteMode
+{
+	kNIMTeamInviteModeManager	= 0,	/**< 管理员 */
+	kNIMTeamInviteModeEveryone  = 1,	/**< 所有人 */
+};
+
+/** @enum NIMTeamUpdateInfoMode 谁可以修改群资料 */
+enum NIMTeamUpdateInfoMode
+{
+	kNIMTeamUpdateInfoModeManager	= 0,	/**< 管理员 */
+	kNIMTeamUpdateInfoModeEveryone  = 1,	/**< 所有人 */
+};
+
+/** @enum NIMTeamUpdateCustomMode 谁可以更新群自定义属性 */
+enum NIMTeamUpdateCustomMode
+{
+	kNIMTeamUpdateCustomModeManager	= 0,	/**< 管理员 */
+	kNIMTeamUpdateCustomModeEveryone  = 1,	/**< 所有人 */
+};
+
 /** @name 群组信息 Json Keys
   * @{
   */
@@ -112,6 +140,12 @@ static const char *kNIMTeamInfoKeyJoinMode		= "join_mode";		/**< int,入群模�
 static const char *kNIMTeamInfoKeyBits			= "bits";			/**< long，群开关(NIMTeamBitsConfigMask) */
 static const char *kNIMTeamInfoKeyCustom		= "custom";			/**< string, 第三方扩展字段（仅负责存储和透传） */
 static const char *kNIMTeamInfoKeyServerCustom	= "server_custom";	/**< string, 第三方服务器扩展字段（该配置项只能通过服务器接口设置，对客户端只读） */
+static const char *kNIMTeamInfoKeyIcon			= "icon";			/**< string, 群头像,长度限制：1024字符 */
+static const char *kNIMTeamInfoKeyBeInviteMode	= "be_invite_mode"; /**< int, 被邀请人同意方式，属性本身只有群主管理员可以修改,默认kNIMTeamBeInviteModeNeedAgree(0)/kNIMTeamBeInviteModeNotNeedAgree(1) */
+static const char *kNIMTeamInfoKeyInviteMode	= "invite_mode";	/**< int, 谁可以邀请他人入群，属性本身只有群主管理员可以修改,默认kNIMTeamInviteModeManager(0)/kNIMTeamInviteModeEveryone(1) */
+static const char *kNIMTeamInfoKeyUpdateInfoMode= "update_info_mode";/**< int, 谁可以修改群资料，属性本身只有群主管理员可以修改,默认kNIMTeamUpdateInfoModeManager(0)/kNIMTeamUpdateInfoModeEveryone(1) */
+static const char *kNIMTeamInfoKeyUpdateCustomMode	= "update_custom_mode";/**< int, 谁可以更新群自定义属性，属性本身只有群主管理员可以修改,默认kNIMTeamUpdateCustomModeManager(0)/kNIMTeamUpdateCustomModeEveryone(1) */
+
 /** @}*/ //群组信息Json Keys
 
 /** @enum NIMTeamBitsConfigMask 群组信息Bits属性kNIMTeamInfoKeyBits的配置定义 */
@@ -138,6 +172,8 @@ static const char *kNIMTeamUserKeyBits			= "bits";			/**< long,群成员属性�
 static const char *kNIMTeamUserKeyValidFlag		= "valid";			/**< int,群成员有效性标记位,有效1,无效0 */
 static const char *kNIMTeamUserKeyCreateTime	= "create_timetag";	/**< long,入群时间戳(毫秒) */
 static const char *kNIMTeamUserKeyUpdateTime	= "update_timetag";	/**< long,群成员信息上次更新时间戳(毫秒) */
+static const char *kNIMTeamUserKeyCustom		= "custom";			/**< string,群成员自定义扩展字段,必须为可以解析为json的非格式化的字符串 */
+static const char *kNIMTeamUserKeyMute			= "mute";			/**< int,是否被禁言,0-非禁言(默认),1-禁言 */
 /** @}*/ //群组成员信息Json Keys
 
 /** @enum NIMTeamUserType 群成员类型 */

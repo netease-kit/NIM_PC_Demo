@@ -65,7 +65,7 @@ NIM_SDK_DLL_API void nim_vchat_remove_device_status_cb(NIMDeviceType type);
 /** @fn void nim_vchat_set_audio_data_cb(bool capture, const char *json_extension, nim_vchat_audio_data_cb_func cb, const void *user_data)
   * NIM VCHAT DEVICE 监听音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut和kNIMDeviceTypeAudioOutChat由底层播放）
   * @param[in] capture true 标识监听麦克风采集数据，false 标识监听通话中对方音频数据
-  * @param[in] json_extension 无效的扩展字段
+  * @param[in] json_extension 扩展Json string：kNIMDeviceSampleRate（要求返回的音频数据为指定的采样频，缺省为0使用默认采样频）
   * @param[in] cb 结果回调见nim_device_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值

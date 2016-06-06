@@ -20,13 +20,13 @@ public:
 		return group_list_;
 	}
 private:
-	void QueryAllMyTeamsInfoAsync(nim::NIMDataSyncType sync_type, nim::NIMDataSyncStatus status);
 	void OnQueryAllMyTeams(int team_count, const std::list<nim::TeamInfo>& team_info_list);
 	void AddListItem(const nim::TeamInfo& user_info);
 	void AddListItemInGroup(const nim::TeamInfo& all_info, ui::TreeNode* tree_node);
 	void OnAddTeam(const std::string& tid, const std::string& tname, nim::NIMTeamType type);
 	void OnTeamNameChanged(const nim::TeamInfo& team_info);
 	void OnRemoveTeam(const std::string& tid);
+	void OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path);
 
 	ui::TreeView* group_list_;
 	vector<ui::TreeNode*> tree_node_ver_;

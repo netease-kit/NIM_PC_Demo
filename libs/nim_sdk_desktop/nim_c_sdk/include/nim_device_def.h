@@ -101,7 +101,7 @@ typedef void (*nim_vchat_audio_data_cb_func)(unsigned __int64 time, const char *
   * @param[out] size data的数据长度
   * @param[out] width  画面宽度
   * @param[out] height  画面高度
-  * @param[out] json_extension Json string kNIMVideoSubType（缺省为kNIMVideoSubTypeARGB），收到对方视频数据返回kNRTCDeviceDataUid和kNIMDeviceDataAccount
+  * @param[out] json_extension Json string kNIMVideoSubType（缺省为kNIMVideoSubTypeARGB），收到对方视频数据返回kNIMDeviceDataUid和kNIMDeviceDataAccount
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */ 

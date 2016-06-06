@@ -101,6 +101,7 @@
   <ItemGroup>
     <ClInclude Include="callback\audio\audio_callback.h" />
     <ClInclude Include="callback\http\http_callback.h" />
+    <ClInclude Include="callback\login\data_sync_callback.h" />
     <ClInclude Include="callback\login\login_callback.h" />
     <ClInclude Include="callback\rts\rts_callback.h" />
     <ClInclude Include="callback\session\session_callback.h" />
@@ -108,9 +109,11 @@
     <ClInclude Include="callback\vchat\vchat_callback.h" />
     <ClInclude Include="export\nim_ui_all.h" />
     <ClInclude Include="export\nim_ui_contacts_list_manager.h" />
+    <ClInclude Include="export\nim_ui_http_manager.h" />
     <ClInclude Include="export\nim_ui_init_manager.h" />
     <ClInclude Include="export\nim_ui_login_manager.h" />
     <ClInclude Include="export\nim_ui_muteblack_manager.h" />
+    <ClInclude Include="export\nim_ui_photo_manager.h" />
     <ClInclude Include="export\nim_ui_session_list_manager.h" />
     <ClInclude Include="export\nim_ui_session_manager.h" />
     <ClInclude Include="export\nim_ui_team_manager.h" />
@@ -161,9 +164,14 @@
     <ClInclude Include="gui\team_info\team_info.h" />
     <ClInclude Include="gui\team_info\team_notify.h" />
     <ClInclude Include="gui\team_info\team_search.h" />
-    <ClInclude Include="gui\video\ui_bitmap_control.h" />
+    <ClInclude Include="gui\video\helper\screen_capture.h" />
+    <ClInclude Include="gui\video\helper\ui_barrage_control.h" />
+    <ClInclude Include="gui\video\helper\ui_bitmap_control.h" />
+    <ClInclude Include="gui\video\helper\yuv_image.h" />
+    <ClInclude Include="gui\video\screen_capture_tool.h" />
     <ClInclude Include="gui\video\video_form.h" />
     <ClInclude Include="gui\video\video_setting.h" />
+    <ClInclude Include="gui\video\window_select.h" />
     <ClInclude Include="module\emoji\emoji_info.h" />
     <ClInclude Include="module\emoji\richedit_olecallback.h" />
     <ClInclude Include="module\emoji\richedit_util.h" />
@@ -173,12 +181,16 @@
     <ClInclude Include="module\msglog\msglog.h" />
     <ClInclude Include="module\msglog\msg_extend_db.h" />
     <ClInclude Include="module\rts\rts_manager.h" />
+    <ClInclude Include="module\service\http_service.h" />
     <ClInclude Include="module\service\mute_black_service.h" />
     <ClInclude Include="module\service\notify_center.h" />
+    <ClInclude Include="module\service\photo_service.h" />
     <ClInclude Include="module\service\team_service.h" />
     <ClInclude Include="module\service\user_service.h" />
     <ClInclude Include="module\session\ring.h" />
     <ClInclude Include="module\session\session_manager.h" />
+    <ClInclude Include="module\video\audio_frame_mng.h" />
+    <ClInclude Include="module\video\video_frame_mng.h" />
     <ClInclude Include="module\video\video_manager.h" />
     <ClInclude Include="nim_ui_dll.h" />
     <ClInclude Include="resource.h" />
@@ -191,15 +203,18 @@
   <ItemGroup>
     <ClCompile Include="callback\audio\audio_callback.cpp" />
     <ClCompile Include="callback\http\http_callback.cpp" />
+    <ClCompile Include="callback\login\data_sync_callback.cpp" />
     <ClCompile Include="callback\login\login_callback.cpp" />
     <ClCompile Include="callback\rts\rts_callback.cpp" />
     <ClCompile Include="callback\session\session_callback.cpp" />
     <ClCompile Include="callback\team\team_callback.cpp" />
     <ClCompile Include="callback\vchat\vchat_callback.cpp" />
     <ClCompile Include="export\nim_ui_contacts_list_manager.cpp" />
+    <ClCompile Include="export\nim_ui_http_manager.cpp" />
     <ClCompile Include="export\nim_ui_init_manager.cpp" />
     <ClCompile Include="export\nim_ui_login_manager.cpp" />
     <ClCompile Include="export\nim_ui_muteblack_manager.cpp" />
+    <ClCompile Include="export\nim_ui_photo_manager.cpp" />
     <ClCompile Include="export\nim_ui_session_list_manager.cpp" />
     <ClCompile Include="export\nim_ui_session_manager.cpp" />
     <ClCompile Include="export\nim_ui_team_manager.cpp" />
@@ -255,10 +270,15 @@
     <ClCompile Include="gui\team_info\team_info.cpp" />
     <ClCompile Include="gui\team_info\team_notify.cpp" />
     <ClCompile Include="gui\team_info\team_search.cpp" />
-    <ClCompile Include="gui\video\ui_bitmap_control.cpp" />
+    <ClCompile Include="gui\video\helper\screen_capture.cpp" />
+    <ClCompile Include="gui\video\helper\ui_barrage_control.cpp" />
+    <ClCompile Include="gui\video\helper\ui_bitmap_control.cpp" />
+    <ClCompile Include="gui\video\helper\yuv_image.cpp" />
+    <ClCompile Include="gui\video\screen_capture_tool.cpp" />
     <ClCompile Include="gui\video\video_form.cpp" />
     <ClCompile Include="gui\video\video_form_ui.cpp" />
     <ClCompile Include="gui\video\video_setting.cpp" />
+    <ClCompile Include="gui\video\window_select.cpp" />
     <ClCompile Include="module\emoji\emoji_info.cpp" />
     <ClCompile Include="module\emoji\richedit_olecallback.cpp" />
     <ClCompile Include="module\emoji\richedit_util.cpp" />
@@ -268,12 +288,16 @@
     <ClCompile Include="module\msglog\msglog.cpp" />
     <ClCompile Include="module\msglog\msg_extend_db.cpp" />
     <ClCompile Include="module\rts\rts_manager.cpp" />
+    <ClCompile Include="module\service\http_service.cpp" />
     <ClCompile Include="module\service\mute_black_service.cpp" />
     <ClCompile Include="module\service\notify_center.cpp" />
+    <ClCompile Include="module\service\photo_service.cpp" />
     <ClCompile Include="module\service\team_service.cpp" />
     <ClCompile Include="module\service\user_service.cpp" />
     <ClCompile Include="module\session\ring.cpp" />
     <ClCompile Include="module\session\session_manager.cpp" />
+    <ClCompile Include="module\video\audio_frame_mng.cpp" />
+    <ClCompile Include="module\video\video_frame_mng.cpp" />
     <ClCompile Include="module\video\video_manager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

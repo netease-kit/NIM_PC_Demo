@@ -15,8 +15,8 @@ FriendListItemManager::FriendListItemManager(ui::TreeView* friend_list) :
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(user_info_change_cb));
 	auto set_black_cb = nbase::Bind(&FriendListItemManager::OnBlackListChange, this, std::placeholders::_1, std::placeholders::_2);
 	unregister_cb.Add(MuteBlackService::GetInstance()->RegSyncSetBlackCallback(set_black_cb));
-	auto user_photo_ready_cb = nbase::Bind(&FriendListItemManager::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2);
-	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(user_photo_ready_cb));
+	auto user_photo_ready_cb = nbase::Bind(&FriendListItemManager::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(user_photo_ready_cb));
 
 
 	ui::TreeNode* tree_node = ListItemUtil::CreateFirstLetterListItem(L"*");
@@ -120,9 +120,9 @@ void FriendListItemManager::OnBlackListChange(const std::string& id, bool is_bla
 		AddListItem(id);
 }
 
-void FriendListItemManager::OnUserPhotoReady(const std::string& accid, const std::wstring &photo_path)
+void FriendListItemManager::OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path)
 {
-	if (UserService::GetInstance()->GetUserType(accid) == nim::kNIMFriendFlagNormal)
+	if (type == kUser && UserService::GetInstance()->GetUserType(accid) == nim::kNIMFriendFlagNormal)
 	{
 		FriendItem* item = (FriendItem*)friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
 		if (item == NULL)

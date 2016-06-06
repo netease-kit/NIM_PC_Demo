@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <VListBox class="menu">
+        <MenuElement class="MenuElement" name="mute" width="158">
+            <Label class="menu_text" name="mute_text" text="禁言"/>
+        </MenuElement>
+    </VListBox>
+</Window>

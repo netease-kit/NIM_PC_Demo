@@ -27,7 +27,7 @@ private:
 	void InitRoomManageList();
 
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
-	void OnUserPhotoReady(const std::string& account, const std::wstring& photo_path);
+	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
 
 	void OnApplyButtonClicked(ui::EventArgs* msg);
 

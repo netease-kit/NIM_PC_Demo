@@ -37,6 +37,7 @@ typedef void(*nim_team_query_team_members_async)(const char *tid, bool include_u
 typedef void(*nim_team_query_team_member_async)(const char *tid, const char *user_id, const char *json_extension, nim_team_query_team_member_cb_func cb, const void *user_data);
 typedef void(*nim_team_query_team_info_async)(const char *tid, const char *json_extension, nim_team_query_team_info_cb_func cb, const void* user_data);
 
+typedef void(*nim_team_mute_member_async)(const char *tid, const char *member_id, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 
 static void CallbackTeamEvent(int res_code, int notification_id, const char *tid, const char *result, const char *json_extension, const void *user_data)
 {
@@ -160,7 +161,7 @@ bool Team::CreateTeamAsync(const TeamInfo& team_info
 	, const TeamEventCallback& cb
 	, const std::string& json_extension/* = ""*/)
 {
-	if (ids.empty())
+	if (team_info.GetType() == kNIMTeamTypeNormal && ids.empty())
 		return false;
 
 	TeamEventCallback* cb_pointer = nullptr;
@@ -615,6 +616,26 @@ void Team::UnregTeamCb()
 		delete g_cb_team_event_;
 		g_cb_team_event_ = nullptr;
 	}
+}
+
+bool Team::MuteMemberAsync(const std::string& tid, const std::string& member_id, bool set_mute, const TeamEventCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty() || member_id.empty())
+		return false;
+
+	TeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new TeamEventCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_team_mute_member_async)(tid.c_str()
+		, member_id.c_str()
+		, set_mute
+		, json_extension.c_str()
+		, &CallbackTeamChange
+		, cb_pointer);
+
+	return true;
 }
 
 }

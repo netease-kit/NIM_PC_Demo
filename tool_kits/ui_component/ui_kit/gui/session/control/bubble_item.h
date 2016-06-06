@@ -6,7 +6,8 @@ enum BubbleEventType
 	BET_RESEND,		//重新发送 
 	BET_RELOAD,		//重新下载
 	BET_DELETE,		//删除
-	BET_TRANSFORM	//转文字
+	BET_TRANSFORM,	//转文字
+	BET_SHOWPROFILE,//显示资料
 };
 
 namespace nim_comp
@@ -178,6 +179,7 @@ private:
 	* @return void 无返回值
 	*/
 	void HideAllStatus(int type); 
+
 protected:
 	ui::Box*		bubble_box_;
 	ui::Button*		status_resend_;

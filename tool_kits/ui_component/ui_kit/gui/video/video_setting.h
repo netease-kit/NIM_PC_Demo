@@ -2,7 +2,7 @@
 #define NIM_WIN_GUI_VIDEO_SETTING_H_
 
 #include "util/window_ex.h"
-#include "ui_bitmap_control.h"
+#include "helper/ui_bitmap_control.h"
 
 namespace nim_comp
 {

@@ -175,6 +175,7 @@
   
     <!--滚动条-->
     <Class name="vscrollbar" value="width=&quot;14&quot; fadealpha=&quot;true&quot; thumbnormalimage=&quot;file='../public/vsrcollbar/thumb_normal.png'  corner='0,8,0,8'&quot; thumbhotimage=&quot;file='../public/vsrcollbar/thumb_hovered.png' corner='0,8,0,8'&quot; bkhotimage=&quot;file='../public/vsrcollbar/bk_hovered.png' corner='0,4,0,4'&quot; showbutton1=&quot;false&quot; showbutton2=&quot;false&quot;"/>
+    <Class name="hscrollbar" value="height=&quot;14&quot; fadealpha=&quot;true&quot; thumbnormalimage=&quot;file='../public/hscrollbar/thumb_normal.png' corner='8,0,8,0'&quot; thumbhotimage=&quot;file='../public/hscrollbar/thumb_hovered.png' corner='8,0,8,0'&quot; bkhotimage=&quot;file='../public/hscrollbar/bk_hovered.png' corner='4,0,4,0'&quot; showbutton1=&quot;false&quot; showbutton2=&quot;false&quot;"/>
 
     <!--option-->
     <Class name="option" value="selectednormalimage=&quot;../public/option/selected.png&quot; selectedhotimage=&quot;../public/option/selectedhover.png&quot; selectedpushedimage=&quot;../public/option/selectedhover.png&quot;"/>

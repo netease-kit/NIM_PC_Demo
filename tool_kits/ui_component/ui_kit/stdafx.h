@@ -67,6 +67,8 @@
 #include "module/service/user_service.h"
 #include "module/service/team_service.h"
 #include "module/service/mute_black_service.h"
+#include "module/service/http_service.h"
+#include "module/service/photo_service.h"
 
 //helper
 #include "shared/closure.h"

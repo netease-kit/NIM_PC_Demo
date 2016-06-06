@@ -13,7 +13,10 @@ using namespace ui;
 void ChatroomForm::RequestEnter(const __int64 room_id)
 {
 	if (room_id == 0)
+	{
+		RequestRoomError();
 		return;
+	}
 
 	room_id_ = room_id;
 	//获取聊天室登录信息
@@ -43,11 +46,34 @@ void ChatroomForm::OnReceiveMsgCallback(const ChatRoomMessage& result)
 
 void ChatroomForm::OnEnterCallback(int error_code, const ChatRoomInfo& info, const ChatRoomMemberInfo& my_info)
 {
-	if (error_code != nim::kNIMResSuccess)
+	if (error_code == nim::kNIMResTimeoutError)
 	{
-		Close();
+		ui::Box* kicked_tip_box = (ui::Box*)this->FindControl(L"kicked_tip_box");
+		if (kicked_tip_box->IsVisible())
+			return;
+		kicked_tip_box->SetVisible(true);
+		std::wstring kick_tip_str;
+		ui::MutiLanSupport *multilan = ui::MutiLanSupport::GetInstance();
+		kick_tip_str = L"登录中";
+		ui::Label* kick_tip_label = (ui::Label*)kicked_tip_box->FindSubControl(L"kick_tip");
+		kick_tip_label->SetText(kick_tip_str);
+
+// 		ui::Label* room_name_label = (ui::Label*)kicked_tip_box->FindSubControl(L"room_name");
+// 		room_name_label->SetDataID(nbase::Int64ToString16(info.id_));
+// 		if (!info.name_.empty())
+// 			room_name_label->SetUTF8Text(info.name_);
+// 		else
+// 			room_name_label->SetText(nbase::StringPrintf(L"直播间(id %lld)", info.id_));
+
+		//Close();
 		return;
 	}
+	else if (error_code == nim::kNIMResSuccess)
+	{
+		ui::Box* kicked_tip_box = (ui::Box*)this->FindControl(L"kicked_tip_box");
+		kicked_tip_box->SetVisible(false);
+	}
+
 	if (info.id_ == 0)
 	{
 		return;
@@ -55,6 +81,18 @@ void ChatroomForm::OnEnterCallback(int error_code, const ChatRoomInfo& info, con
 
 	room_id_ = info.id_;
 	has_enter_ = true;
+
+	StdClosure task = [=](){
+		if (!my_info.avatar_.empty() && my_info.avatar_.find_first_of("http") == 0)
+			header_icon_->SetBkImage(nim_ui::HttpManager::GetInstance()->GetCustomImage(kChatroomMemberIcon, my_info.account_id_, my_info.avatar_));
+		else
+			header_icon_->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(my_info.account_id_));
+
+		std::wstring name = my_info.nick_.empty() ? nim_ui::UserManager::GetInstance()->GetUserName(my_info.account_id_, false) : nbase::UTF8ToUTF16(my_info.nick_);
+		name_->SetText(name);
+
+	};
+	Post2UI(task);
 
 	OnGetChatRoomInfoCallback(room_id_, error_code, info);
 	GetMembers();
@@ -73,15 +111,14 @@ void ChatroomForm::OnGetChatRoomInfoCallback(__int64 room_id, int error_code, co
 		ASSERT(!info.creator_id_.empty());
 		creater_id_ = info.creator_id_;
 
-		nim_ui::UserManager* user_service = nim_ui::UserManager::GetInstance();
-		host_icon_->SetBkImage(user_service->GetUserPhoto(info.creator_id_));
+		host_icon_->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(info.creator_id_));
+		host_name_->SetText(std::wstring(L"主播：") + nim_ui::UserManager::GetInstance()->GetUserName(info.creator_id_, false));
 
 		std::wstring room_name = nbase::UTF8ToUTF16(info.name_);
 		if (room_name.length() > 15)
 			room_name = room_name.substr(0, 15) + L"...";
 		room_name_->SetText(room_name);
 
-		host_name_->SetText(std::wstring(L"主播：") + user_service->GetUserName(info.creator_id_, false));
 		if (info.online_count_ >= 10000)
 			online_num_->SetText(nbase::StringPrintf(L"在线人数：%.1f万人", (float)info.online_count_ / (float)10000));
 		else
@@ -148,6 +185,10 @@ void ChatroomForm::OnGetMembersCallback(__int64 room_id, int error_code, const s
 
 				if (it.type_ == 1)//创建者
 				{
+					if (!it.avatar_.empty() && it.avatar_.find_first_of("http") == 0)
+						host_icon_->SetBkImage(nim_ui::HttpManager::GetInstance()->GetCustomImage(kChatroomMemberIcon, it.account_id_, it.avatar_));
+					else
+						host_icon_->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(it.account_id_));
 					host_name_->SetText(std::wstring(L"主播：") + nbase::UTF8ToUTF16(it.nick_));
 					member_type->SetBkImage(L"icon_anchor.png");
 					online_members_list_->AddAt(room_member_item, 0);
@@ -172,7 +213,10 @@ void ChatroomForm::OnGetMembersCallback(__int64 room_id, int error_code, const s
 				}
 
 				name->SetUTF8Text(it.nick_);
-				header_image->SetBkImage(nim_ui::UserManager::GetInstance()->GetUserPhoto(it.account_id_));
+				if (!it.avatar_.empty() && it.avatar_.find_first_of("http") == 0)
+					header_image->SetBkImage(nim_ui::HttpManager::GetInstance()->GetCustomImage(kChatroomMemberIcon, it.account_id_, it.avatar_));
+				else
+					header_image->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(it.account_id_));
 
 				room_member_item->SetUTF8Name(it.account_id_);
 			}
@@ -258,9 +302,17 @@ void ChatroomForm::KickMemberCallback(__int64 room_id, int error_code)
 
 void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::string& result)
 {
+	StdClosure closure_err = ToWeakCallback([this, error_code]()
+	{
+		RequestRoomError();
+	});
 	if (error_code != nim::kNIMResSuccess)
 	{
-		if (error_code == nim::kNIMResForbidden || error_code == nim::kNIMResNotExist)
+		if (error_code == nim::kNIMResForbidden 
+			|| error_code == nim::kNIMResNotExist
+			|| error_code == nim::kNIMLocalResAPIErrorInitUndone
+			|| error_code == nim::kNIMLocalResAPIErrorLoginUndone
+			|| error_code == nim::kNIMResTimeoutError)
 		{
 			StdClosure closure = ToWeakCallback([this, error_code]()
 			{
@@ -272,11 +324,15 @@ void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::str
 					kicked_tip_box->SetVisible(false);
 				}), nbase::TimeDelta::FromSeconds(2));
 
-				std::wstring kick_tip_str;
+				std::wstring kick_tip_str = L"进入直播间失败";
 				if (error_code == nim::kNIMResForbidden)
 					kick_tip_str = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_CHATROOM_TIP_BLACKLISTED");
 				else if (error_code == nim::kNIMResNotExist)
 					kick_tip_str = L"直播间不存在";
+				else if (error_code == nim::kNIMLocalResAPIErrorInitUndone 
+					|| error_code == nim::kNIMLocalResAPIErrorLoginUndone
+					|| error_code == nim::kNIMResTimeoutError)
+					kick_tip_str = L"网络异常，请稍后尝试";
 				ui::Label* kick_tip_label = (ui::Label*)kicked_tip_box->FindSubControl(L"kick_tip");
 				kick_tip_label->SetText(kick_tip_str);
 
@@ -292,11 +348,15 @@ void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::str
 				}
 				else if (error_code == nim::kNIMResNotExist)
 					room_name_label->SetText(L"");
+				RequestRoomError();
 			});
 			Post2UI(closure);
 		}
 		else
+		{
+			Post2UI(closure_err);
 			QLOG_APP(L"OnChatRoomRequestEnterCallback error: error id={0}") << error_code;
+		}
 		return;
 	}
 	
@@ -314,7 +374,6 @@ void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::str
 			bool bRet = ChatRoom::Enter(room_id_, room_enter_token_, info);
 			if (bRet)
 			{
-				this->Create(NULL, ChatroomForm::kClassName, WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
 				this->CenterWindow();
 				this->ShowWindow();
 			}
@@ -325,9 +384,15 @@ void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::str
 				ChatroomFrontpage* front_page = (ChatroomFrontpage*)nim_ui::WindowsManager::GetInstance()->GetWindow(ChatroomFrontpage::kClassName, ChatroomFrontpage::kClassName);
 				if (!front_page) return;
 				ShowMsgBox(front_page->GetHWND(), L"进入直播间失败，请重试", nullptr, L"提示", L"确定", L"");
+
+				RequestRoomError();
 			}
 		};
 		Post2UI(cb);
+	}
+	else
+	{
+		Post2UI(closure_err);
 	}
 
 }
@@ -500,8 +565,7 @@ void ChatroomForm::AddText(const std::wstring &text, const std::wstring &sender_
 	//
 	long lSelBegin = 0, lSelEnd = 0;
 	CHARFORMAT2 cf;
-	ZeroMemory(&cf, sizeof(CHARFORMAT2));
-	cf.cbSize = sizeof(cf);
+	msg_list_->GetDefaultCharFormat(cf); //获取消息字体
 	cf.dwMask = CFM_LINK | CFM_FACE | CFM_COLOR;
 	cf.dwEffects = CFE_LINK;
 
@@ -530,6 +594,12 @@ void ChatroomForm::AddText(const std::wstring &text, const std::wstring &sender_
 	// 添加正文，并设置他的颜色	
 	msg_list_->SetSel(lSelEnd, lSelEnd);
 	nim_comp::emoji::InsertToEdit(msg_list_, text);
+	//设置文本字体
+	msg_list_->GetDefaultCharFormat(cf); //获取消息字体
+	long lSelBegin2 = 0, lSelEnd2 = 0;
+	msg_list_->GetSel(lSelBegin2, lSelEnd2);
+	msg_list_->SetSel(lSelEnd, lSelEnd2);
+	msg_list_->SetSelectionCharFormat(cf);
 
 	// 设置正文文本的缩进
 	msg_list_->SetSel(lSelEnd, lSelEnd);
@@ -562,8 +632,7 @@ void ChatroomForm::AddNotify(const std::wstring &notify, bool is_history)
 	//
 	long lSelBegin = 0, lSelEnd = 0;
 	CHARFORMAT2 cf;
-	ZeroMemory(&cf, sizeof(CHARFORMAT2));
-	cf.cbSize = sizeof(cf);
+	msg_list_->GetDefaultCharFormat(cf); //获取消息字体
 	cf.dwMask |= CFM_COLOR;
 	cf.crTextColor = RGB(255, 0, 0);
 

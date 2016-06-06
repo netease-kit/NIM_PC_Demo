@@ -1,5 +1,5 @@
 ﻿/** @file nim_data_sync.h
-  * @brief NIM SDK提供的数据同步相关接口
+  * @brief NIM SDK提供的数据同步相关接口(登录时)
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1
@@ -15,7 +15,7 @@ extern"C"
 {
 #endif
 /** @fn void nim_data_sync_reg_complete_cb(nim_data_sync_cb_func cb, const void *user_data)
-  * 注册数据同步完成的回调函数   
+  * 注册数据同步完成的回调函数(登录时)
   * @param[in] cb 数据同步完成的回调函数， nim_data_sync_cb_func回调函数定义见nim_data_sync_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值

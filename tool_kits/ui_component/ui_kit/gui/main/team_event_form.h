@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "gui/main/control/event_item.h"
+#include "module/service/photo_service.h"
 
 namespace nim_comp
 {
@@ -55,7 +56,7 @@ private:
 	void AddCustomMsg(const nim::SysMessage& msg, bool first);
 
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
-	void OnUserPhotoReady(const std::string& account, const std::wstring& photo_path);
+	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
 	void OnTeamNameChange(const nim::TeamInfo& team_info);
 
 public:

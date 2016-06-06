@@ -35,6 +35,13 @@ public:
 	void SetAdmin(bool admin);
 
 	/**
+	* 设置禁言
+	* @param[in] mute 设置/取消 禁言
+	* @return void 无返回值
+	*/
+	void SetMute(bool mute);
+
+	/**
 	* 设置本成员为管理员
 	* @param[in] admin 设置/取消 为管理员
 	* @return void 无返回值
@@ -60,12 +67,22 @@ public:
 	* @return void 无返回值
 	*/
 	void SetMemberName(const std::string& team_card);
+
+private:
+	bool OnItemMenu(ui::EventArgs* arg);
+	void PopupItemMenu(POINT point);
+	bool TeamItemMenuItemClick(ui::EventArgs* param);
+
 private:
 	ui::Button*		member_icon_;
 	ui::Label*		member_name_;
 	ui::Control*	icon_admin_;
+	ui::Control*	icon_mute_;
 	std::string		team_card_;
+	std::string		team_id_;
+	std::string		uid_;
 	nim::NIMTeamUserType team_user_type_;
+	bool			is_mute_ = false;
 	AutoUnregister	unregister_cb;
 };
 }

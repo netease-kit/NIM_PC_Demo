@@ -5,6 +5,7 @@
 #include "module/service/user_service.h"
 #include "module/service/team_service.h"
 #include "shared/ui/msgbox.h"
+#include "module/service/photo_service.h"
 
 namespace nim_comp
 {
@@ -30,6 +31,10 @@ public:
 	void OnGetTeamMembers(const std::string& team_id, int count, const std::list<nim::TeamMemberProperty>& team_member_list);
 	void UpdateTeamMember();
 
+	bool OnHeadImageClicked(ui::EventArgs* args); //头像被点击
+private:
+	void OnModifyHeaderComplete(const std::string& id, const std::string &url);
+
 private:
 	void AddInviteButton();
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
@@ -53,10 +58,13 @@ private:
 	void OnTeamAdminSet(const std::string& tid, const std::string& uid, bool admin);
 	void OnTeamOwnerChange(const std::string& tid, const std::string& uid);
 	void OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos);
-	void OnUserPhotoReady(const std::string& accid, const std::wstring &photo_path);
+	void OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path);
 	void OnTeamRemove(const std::string& tid);
 
 	bool IsTeamMemberType(const nim::NIMTeamUserType user_type);
+
+	virtual LRESULT OnClose(UINT u, WPARAM w, LPARAM l, BOOL& bHandled);
+
 private:
 	ui::ListBox* tile_box_;
 	ui::RichEdit* re_team_name_;
@@ -64,6 +72,7 @@ private:
 	ui::Button* invitebtn_;
 	ui::Button* btn_dismiss_;
 	ui::Button* btn_quit_;
+	ui::Button* btn_header_ = nullptr;
 
 private:
 	bool create_or_display_;
@@ -71,8 +80,12 @@ private:
 	nim::NIMTeamType type_;
 	nim::TeamInfo team_info_;
 	std::map<std::string, nim::TeamMemberProperty> team_member_list_;
-	nim::NIMTeamUserType my_type_;
+	nim::TeamMemberProperty my_property_;
 	AutoUnregister unregister_cb;
+
+private:
+	std::wstring temp_file_path_;
+	std::string new_header_url_;
 };
 }
 #endif // TEAM_INFO_FORM_H_

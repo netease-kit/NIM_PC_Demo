@@ -1,5 +1,5 @@
-/** @file nim_cpp_plugin_in.cpp
-  * @brief NIM SDK Ìá¹©µÄplugin½ÓÈë½Ó¿Ú
+ï»¿/** @file nim_cpp_plugin_in.cpp
+  * @brief NIM SDK æä¾›çš„pluginæ¥å…¥æ¥å£
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/12/29

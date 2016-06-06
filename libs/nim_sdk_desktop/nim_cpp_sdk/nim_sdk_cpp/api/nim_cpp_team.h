@@ -384,6 +384,20 @@ public:
 	*/
 	static void UnregTeamCb();
 
+	/** @fn static bool MuteMemberAsync(const std::string& tid, const std::string& member_id, bool set_mute, const TeamEventCallback& cb, const std::string& json_extension = "")
+	* 禁言/解除禁言，回调函数中返回的结果代码：
+	* 404:对象不存在；
+	* 414:参数错误；
+	* 802:没有权限；
+	* 803:群不存在；
+	* @param[in] tid		群组id
+	* @param[in] member_id	操作对象id
+	* @param[in] set_mute	禁言/解除禁言
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		踢人的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	*/
+	static bool MuteMemberAsync(const std::string& tid, const std::string& member_id, bool set_mute, const TeamEventCallback& cb, const std::string& json_extension = "");
 };
 
 } 

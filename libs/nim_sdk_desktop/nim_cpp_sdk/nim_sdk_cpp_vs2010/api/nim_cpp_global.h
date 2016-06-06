@@ -40,7 +40,7 @@ public:
 	*/
 	static void FreeBuf(void *data);
 	
-	/** @fn void SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& passward)
+	/** @fn void SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password)
     * 设置SDK统一的网络代理。不需要代理时，type设置为kNIMProxyNone，其余参数都传空字符串（端口设为0）。有些代理不需要用户名和密码，相应参数也传空字符串。   
     * @param[in] type 代理类型，见NIMProxyType定义
     * @param[in] host 代理地址

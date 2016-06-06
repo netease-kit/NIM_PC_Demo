@@ -28,6 +28,7 @@
     <ClCompile Include="helper\nim_chatroom_sdk_helper.cpp">
       <Filter>helper</Filter>
     </ClCompile>
+    <ClCompile Include="nim_chatroom_cpp_api.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api\nim_chatroom_cpp.h">

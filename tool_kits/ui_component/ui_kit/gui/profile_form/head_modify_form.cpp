@@ -2,6 +2,7 @@
 #include "shared/utf8_file_util.h"
 #include "shared/modal_wnd/file_dialog_ex.h"
 #include "module/service/user_service.h"
+#include "module/service/photo_service.h"
 #include "module/login/login_manager.h"
 
 using namespace ui;
@@ -15,7 +16,7 @@ static RECT g_last_select_padding_;
 
 const LPCTSTR HeadModifyForm::kClassName = L"HeadModifyForm";
 
-HeadModifyForm::HeadModifyForm(UTF8String uid) : uid_(uid)
+HeadModifyForm::HeadModifyForm(UTF8String uid, const std::wstring& specific_cached_file/* = L""*/) : uid_(uid), specific_cached_file_(specific_cached_file)
 {
 	point_off_.x = 0;
 	point_off_.y = 0;
@@ -49,6 +50,11 @@ HeadModifyForm::HeadModifyForm(UTF8String uid) : uid_(uid)
 HeadModifyForm::~HeadModifyForm()
 {
 	
+}
+
+std::wstring HeadModifyForm::GetWindowId() const
+{
+	return kClassName;
 }
 
 ui::Control* HeadModifyForm::CreateControl(const std::wstring& pstrClass)
@@ -856,12 +862,20 @@ void HeadModifyForm::OnButtonSaveImage()
 	//	return shared::CreateDirRecursively(attach_path);
 
 	static const std::wstring mime_type = L"image/png";
-	std::wstring temp_file_path = UserService::GetInstance()->GetUserPhotoDir();
-	std::wstring temp_file_name;
-	nbase::Time::TimeStruct now = nbase::Time::Now().ToTimeStruct(true);
-	nbase::StringPrintf(temp_file_name, L"temp_head_icon_%d%d%d%d%d%d",
-		now.year(), now.month(), now.day_of_month(), now.hour(), now.minute(), now.second());
-	temp_file_path.append(temp_file_name);
+	std::wstring temp_file_path;
+	if (!specific_cached_file_.empty())
+	{
+		temp_file_path = specific_cached_file_;
+	}
+	else
+	{
+		temp_file_path = PhotoService::GetInstance()->GetPhotoDir(kUser);
+		std::wstring temp_file_name;
+		nbase::Time::TimeStruct now = nbase::Time::Now().ToTimeStruct(true);
+		nbase::StringPrintf(temp_file_name, L"temp_head_icon_%d%d%d%d%d%d",
+			now.year(), now.month(), now.day_of_month(), now.hour(), now.minute(), now.second());
+		temp_file_path.append(temp_file_name);
+	}
 
 	// 覆盖本地的旧头像
 	if(head_view_ctrl_->SaveSelectBitmap(head_select_ctrl_->GetPos(), temp_file_path, mime_type))
@@ -904,9 +918,19 @@ void HeadModifyForm::OnUploadHeadIconCallback(nim::NIMResCode res_code, const st
 {
 	if(res_code == nim::kNIMResSuccess)
 	{
-		// 头像上传成功，开始更新用户信息
-		auto update_cb = nbase::Bind(&HeadModifyForm::UpdateUInfoCallback, this, std::placeholders::_1);
-		UserService::GetInstance()->InvokeChangeUserPhoto(url, update_cb);
+		QLOG_APP(L"Head icon upload success and call callback!");
+
+		if (complete_callback_)
+			complete_callback_(uid_, url);
+
+		if (specific_cached_file_.empty())
+		{
+			//删除缓存头像
+			StdClosure closure = nbase::Bind(&HeadModifyForm::DeleteFileCallback, new_temp_head_image_path_);
+			nbase::ThreadManager::PostTask(kThreadGlobalMisc, closure);
+		}
+
+		OnNotifyHeadModifyCallback();
 	}
 	else
 	{
@@ -914,25 +938,6 @@ void HeadModifyForm::OnUploadHeadIconCallback(nim::NIMResCode res_code, const st
 		QLOG_ERR(L"Upload head icon failed");
 		StdClosure closure = nbase::Bind(&HeadModifyForm::OnNotifyHeadModifyFailed, this);
 		nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback(closure));
-	}
-}
-
-void HeadModifyForm::UpdateUInfoCallback(int res)
-{
-	if(res != nim::kNIMResSuccess)
-	{
-		// 更新头像信息失败
-		QLOG_ERR(L"Multi terminal sync head icon failed. Error code: {0}.") << res;
-		OnNotifyHeadModifyFailed();
-	}
-	else
-	{
-		OnNotifyHeadModifyCallback();
-		QLOG_APP(L"Head icon modify success!");
-
-		//删除缓存头像
-		StdClosure closure = nbase::Bind(&HeadModifyForm::DeleteFileCallback, new_temp_head_image_path_);
-		nbase::ThreadManager::PostTask(kThreadGlobalMisc, closure);
 	}
 }
 
@@ -1026,9 +1031,8 @@ void HeadModifyForm::OnButtonCloseTipCallback( MsgBoxRet ret )
 void HeadModifyForm::LoadCurrentHeadImageForPreview()
 {
 	nim::UserNameCard info;
-	UserService* user_service = UserService::GetInstance();
-	user_service->GetUserInfo(uid_, info);
-	UTF8String img_path = nbase::UTF16ToUTF8(user_service->GetUserPhoto(info.GetAccId()));
+	UserService::GetInstance()->GetUserInfo(uid_, info);
+	UTF8String img_path = nbase::UTF16ToUTF8(PhotoService::GetInstance()->GetUserPhoto(info.GetAccId()));
 	if(!img_path.empty())
 	{
 		if(shared::FilePathIsExist(img_path, false))
@@ -1075,5 +1079,10 @@ void HeadModifyForm::OnNotifyImageInvalid()
 	ShowMsgBox(m_hWnd, content, MsgboxCallback(), title, yes, L"");
 
 	select_image_btn_->SetEnabled(true);
+}
+
+void HeadModifyForm::RegCompleteCallback(const OnModifyCompleteCallback &callback)
+{
+	complete_callback_ = callback;
 }
 }

@@ -214,6 +214,7 @@ void Rts::StartChannel(int channel_type, const std::string& uid, const std::stri
 	values_temp[nim::kNIMRtsCreateCustomInfo] = custom_info;
 	values_temp[nim::kNIMRtsApnsText] = apns;
 	values_temp[nim::kNIMRtsDataRecord] = 1;
+	//values_temp[nim::kNIMRtsSound] = "video_chat_tip_HangUp.aac";
 	Json::FastWriter fs;
 	json = fs.write(values_temp);
 	return NIM_SDK_GET_FUNC(nim_rts_start)(channel_type, uid.c_str(), json.c_str(), &StartChannelCallbackWrapper, cb_pointer);

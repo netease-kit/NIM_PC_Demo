@@ -38,6 +38,7 @@ struct SessionData
 	std::string		msg_attach_;			/**< 当前会话最新一条消息附件 */
 	NIMMsgLogStatus	msg_status_;			/**< 当前会话最新一条消息状态 */
 	NIMMsgLogSubStatus	msg_sub_status_;	/**< 当前会话最新一条消息子状态 */
+	bool			last_updated_msg_;		/**< (批量)消息变更或增加时是否是最后一条变更的信息 */
 
 	/** 构造函数 */
 	SessionData() : unread_count_(0)
@@ -46,7 +47,8 @@ struct SessionData
 				, command_(kNIMSessionCommandAdd)
 				, msg_type_(kNIMMessageTypeUnknown)
 				, msg_status_(kNIMMsgLogStatusNone)
-				, msg_sub_status_(kNIMMsgLogSubStatusNone){}
+				, msg_sub_status_(kNIMMsgLogSubStatusNone)
+				, last_updated_msg_(true){}
 };
 
 /** @brief 会话列表数据 */

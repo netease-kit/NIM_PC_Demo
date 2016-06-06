@@ -63,16 +63,6 @@ std::wstring UserManager::GetFriendAlias(const std::string & id)
 	return nim_comp::UserService::GetInstance()->GetFriendAlias(id);
 }
 
-std::wstring UserManager::GetUserPhoto(const std::string &icon)
-{
-	return nim_comp::UserService::GetInstance()->GetUserPhoto(icon);
-}
-
-std::wstring UserManager::GetUserPhotoDir()
-{
-	return nim_comp::UserService::GetInstance()->GetUserPhotoDir();
-}
-
 UnregisterCallback UserManager::RegFriendListChange(const OnFriendListChangeCallback & callback)
 {
 	return nim_comp::UserService::GetInstance()->RegFriendListChange(callback);
@@ -86,11 +76,6 @@ UnregisterCallback UserManager::RegUserInfoChange(const OnUserInfoChangeCallback
 UnregisterCallback UserManager::RegMiscUInfoChange(const OnUserInfoChangeCallback & callback)
 {
 	return nim_comp::UserService::GetInstance()->RegMiscUInfoChange(callback);
-}
-
-UnregisterCallback UserManager::RegUserPhotoReady(const OnUserPhotoReadyCallback & callback)
-{
-	return nim_comp::UserService::GetInstance()->RegUserPhotoReady(callback);
 }
 
 }

@@ -12,3 +12,5 @@
 #include "nim_ui_user_config.h"
 #include "nim_ui_muteblack_manager.h"
 #include "nim_ui_team_manager.h"
+#include "nim_ui_http_manager.h"
+#include "nim_ui_photo_manager.h"

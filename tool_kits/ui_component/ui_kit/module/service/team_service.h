@@ -17,6 +17,8 @@ typedef std::function<void(const std::string&, const std::string&)> OnTeamOwnerC
 
 typedef std::function<void(const nim::TeamInfo& team_info)> OnGetTeamInfo;
 
+typedef OnTeamAdminSet OnMuteMember;
+
 namespace nim_comp
 {
 class TeamService : public nbase::SupportWeakCallback
@@ -35,9 +37,10 @@ public:
 	UnregisterCallback RegChangeTeamMember(OnTeamMemberChange change);
 	UnregisterCallback RegSetTeamAdmin(OnTeamAdminSet admin);
 	UnregisterCallback RegChangeTeamOwner(OnTeamOwnerChange set_team_owner);
+	UnregisterCallback RegMuteMember(OnMuteMember mute);
 
 	std::wstring GetTeamName(const std::string& tid);
-	std::wstring GetTeamPhoto(bool full_path);
+	bool GetTeamIcon(const std::string& tid, std::string& icon);
 	int GetTeamType(const std::string& tid); //0: 普通群； 1: 高级群； -1: 获取不到
 
 	//从SDK获取
@@ -45,13 +48,14 @@ public:
 	void InvokeChangeTeamMember(const std::string& tid, const std::string& uid, const std::string& team_card);
 
 	void InvokeRemoveTeamMember(const std::string& tid, const std::string& uid);
-	void InvokeAddTeam(const std::string& tid, const std::string& tname, nim::NIMTeamType type);
+	void InvokeAddTeam(const std::string& tid, const nim::TeamInfo& tinfo);
 
 	void InvokeRemoveTeam(const std::string& tid);
 	void InvokeAddTeamMember(const std::string& tid, const nim::TeamMemberProperty& team_member);
 	void InvokeChangeTeamName(const nim::TeamInfo& team_info);
 	void InvokeChangeTeamAdmin(const std::string& tid, const std::string& uid, bool admin);
 	void InvokeSetTeamOwner(const std::string& tid, const std::string& uid);
+	void InvokeMuteMember(const std::string& tid, const std::string& uid, bool set_mute);
 
 	//从SDK获取
 	void QueryTeamInfo(const std::string& tid, OnGetTeamInfo cb);
@@ -64,6 +68,10 @@ public:
 	void UIGetLocalTeamInfoCb(const std::string& tid, const nim::TeamInfo& result);
 	void GetLocalTeamInfoCb(const std::string& tid, const nim::TeamInfo& result);
 
+public:
+	void InvokeTeamDataSyncCallback(nim::NIMDataSyncType sync_type, nim::NIMDataSyncStatus status, const std::string &data_sync_info);
+	std::list<nim::TeamInfo> GetCachedTinfos();
+
 private:
 	std::map<int, std::unique_ptr<OnTeamAdd>>			add_team_cb_;
 	std::map<int, std::unique_ptr<OnTeamRemove>>		remove_team_cb_;
@@ -71,11 +79,11 @@ private:
 	std::map<int, std::unique_ptr<OnTeamMemberRemove>>	remove_team_member_cb_;
 	std::map<int, std::unique_ptr<OnTeamMemberChange>>	change_team_member_cb_;
 	std::map<int, std::unique_ptr<OnTeamNameChange>>	change_team_name_cb_;
-	std::map<int, std::unique_ptr<OnTeamAdminSet>>	change_team_admin_cb_;
-	std::map<int, std::unique_ptr<OnTeamOwnerChange>>		set_team_owner_cb_;
+	std::map<int, std::unique_ptr<OnTeamAdminSet>>		change_team_admin_cb_;
+	std::map<int, std::unique_ptr<OnTeamOwnerChange>>	set_team_owner_cb_;
+	std::map<int, std::unique_ptr<OnMuteMember>>		mute_member_cb_;
 
-	std::map<std::string,std::string> tid_tname_pair_;
-	std::map<std::string, int> tid_type_pair_;
+	std::map<std::string, nim::TeamInfo> cached_tinfo_;
 	std::set<std::string> on_query_tids_; //正在查询其群信息，但还没返回的群id
 };
 }

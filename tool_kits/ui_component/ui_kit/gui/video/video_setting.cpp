@@ -40,7 +40,7 @@ ui::Control* VideoSettingForm::CreateControl(const std::wstring& pstrClass)
 {
 	if (pstrClass == _T("BitmapControl"))
 	{
-		return new ui::CBitmapControl();
+		return new ui::CBitmapControl(&nim_comp::VideoManager::GetInstance()->video_frame_mng_);
 	}
 	return NULL;
 }
@@ -386,8 +386,8 @@ void VideoSettingForm::OnVideoDeviceStartCallback(bool result)
 	if( result )
 	{
 		paint_video_timer_.Cancel();
-		auto task = nbase::Bind(&VideoSettingForm::PaintVideo, this);
-		nbase::ThreadManager::PostRepeatedTask(kThreadUI, task, nbase::TimeDelta::FromMilliseconds(70));
+		StdClosure task = nbase::Bind(&VideoSettingForm::PaintVideo, this);
+		nbase::ThreadManager::PostRepeatedTask(kThreadUI, paint_video_timer_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(70));
 		camera_fail_ctrl_->SetVisible( false );
 		error_notice_label_->SetVisible( false );
 	}

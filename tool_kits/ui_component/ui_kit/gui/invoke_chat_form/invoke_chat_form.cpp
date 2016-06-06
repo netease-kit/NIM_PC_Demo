@@ -28,8 +28,8 @@ InvokeChatForm::InvokeChatForm(const UTF8String& uid_or_tid, const std::list<UTF
 	auto user_info_change_cb = nbase::Bind(&InvokeChatForm::OnUserInfoChange, this, std::placeholders::_1);
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(user_info_change_cb));
 
-	auto user_photo_ready_cb = nbase::Bind(&InvokeChatForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2);
-	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(user_photo_ready_cb));
+	auto user_photo_ready_cb = nbase::Bind(&InvokeChatForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(user_photo_ready_cb));
 }
 
 InvokeChatForm::~InvokeChatForm()
@@ -548,29 +548,32 @@ void InvokeChatForm::OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos
 			
 			if(info.ExistValue(nim::kUserNameCardKeyIconUrl))
 			{
-				friend_item->FindSubControl(L"head_image")->SetBkImage(user_service->GetUserPhoto(accid));
+				friend_item->FindSubControl(L"head_image")->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(accid));
 
 				if(search_item)
-					search_item->FindSubControl(L"head_image")->SetBkImage(user_service->GetUserPhoto(accid));
+					search_item->FindSubControl(L"head_image")->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(accid));
 			}
 		}
 	}
 }
 
-void InvokeChatForm::OnUserPhotoReady(const std::string & accid, const std::wstring & photo_path)
+void InvokeChatForm::OnUserPhotoReady(PhotoType type, const std::string & accid, const std::wstring & photo_path)
 {
-	UserService* user_service = UserService::GetInstance();
-	if (user_service->GetUserType(accid) == nim::kNIMFriendFlagNormal && !MuteBlackService::GetInstance()->IsInBlackList(accid))
+	if (type == kUser)
 	{
-		CInvokeChatListItemUI* friend_item = dynamic_cast<CInvokeChatListItemUI*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
-		if (friend_item)
-			friend_item->FindSubControl(L"head_image")->SetBkImage(photo_path);
-
-		if (search_result_list_->IsVisible())
+		UserService* user_service = UserService::GetInstance();
+		if (user_service->GetUserType(accid) == nim::kNIMFriendFlagNormal && !MuteBlackService::GetInstance()->IsInBlackList(accid))
 		{
-			CInvokeChatListItemUI* search_item = dynamic_cast<CInvokeChatListItemUI*>(search_result_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
-			if(search_item)
-				search_item->FindSubControl(L"head_image")->SetBkImage(photo_path);
+			CInvokeChatListItemUI* friend_item = dynamic_cast<CInvokeChatListItemUI*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
+			if (friend_item)
+				friend_item->FindSubControl(L"head_image")->SetBkImage(photo_path);
+
+			if (search_result_list_->IsVisible())
+			{
+				CInvokeChatListItemUI* search_item = dynamic_cast<CInvokeChatListItemUI*>(search_result_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
+				if (search_item)
+					search_item->FindSubControl(L"head_image")->SetBkImage(photo_path);
+			}
 		}
 	}
 }

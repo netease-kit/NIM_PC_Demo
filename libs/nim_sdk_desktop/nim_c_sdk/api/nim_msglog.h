@@ -24,12 +24,12 @@ extern"C"
   */
 NIM_SDK_DLL_API void nim_msglog_query_msg_by_id_async(const char *client_msg_id, const char *json_extension, nim_msglog_query_single_cb_func cb, const void *user_data);
 
-/** @fn void nim_msglog_query_msg_async(const char *account_id, NIMSessionType to_type, int limit_count, __int64 last_time, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
-  * 查询本地消息（按时间逆序起查，逆序排列）
+/** @fn void nim_msglog_query_msg_async(const char *account_id, NIMSessionType to_type, int limit_count, __int64 anchor_msg_time, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
+  * 查询本地消息（默认为从定位点的消息历史时间开始向前查找）
   * @param[in] account_id	会话id，对方的account id或者群组tid
   * @param[in] to_type	    会话类型
   * @param[in] limit_count	一次查询数量，建议20
-  * @param[in] last_time	上次查询最后一条消息的时间戳（按时间逆序起查，即最小的时间戳）
+  * @param[in] anchor_msg_time	作为此次查询的定位点的消息历史的消息时间戳（上次查询最后一条消息的时间戳，按指定的时间的顺序起查，默认为逆序，2.4.0之前命名为last_name）
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb			查询本地消息的回调函数， nim_msglog_query_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！

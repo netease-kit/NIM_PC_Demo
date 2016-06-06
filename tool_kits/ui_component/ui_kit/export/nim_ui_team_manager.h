@@ -28,13 +28,14 @@ public:
 	UnregisterCallback RegChangeTeamMember(OnTeamMemberChange change);
 	UnregisterCallback RegSetTeamAdmin(OnTeamAdminSet admin);
 	UnregisterCallback RegChangeTeamOwner(OnTeamOwnerChange set_team_owner);
+	UnregisterCallback RegMuteMember(OnMuteMember mute);
 
 	std::wstring GetTeamName(const std::string& tid);
-	std::wstring GetTeamPhoto(bool full_path);
 
 	//从SDK获取
 	void QueryAllTeamInfo();
 	void InvokeChangeTeamMember(const std::string& tid, const std::string& uid, const std::string& team_card);
+	void InvokeTeamDataSyncCallback(nim::NIMDataSyncType sync_type, nim::NIMDataSyncStatus status, const std::string &data_sync_info);
 };
 
 }

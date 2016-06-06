@@ -139,8 +139,9 @@ void ChatroomForm::InitWindow()
 	ui::Option *option_online_members = (ui::Option*)FindControl(L"option_online_members");
 	option_online_members->AttachSelect(nbase::Bind(&ChatroomForm::OnSelOnlineMembers, this, std::placeholders::_1));
 
-	unregister_cb.Add(nim_ui::UserManager::GetInstance()->RegUserInfoChange(nbase::Bind(&ChatroomForm::OnUserInfoChange, this, std::placeholders::_1)));
-	unregister_cb.Add(nim_ui::UserManager::GetInstance()->RegUserPhotoReady(nbase::Bind(&ChatroomForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2)));
+	//unregister_cb.Add(nim_ui::UserManager::GetInstance()->RegUserInfoChange(nbase::Bind(&ChatroomForm::OnUserInfoChange, this, std::placeholders::_1)));
+	//unregister_cb.Add(nim_ui::PhotoManager::GetInstance()->RegPhotoReady(nbase::Bind(&ChatroomForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+	unregister_cb.Add(nim_ui::HttpManager::GetInstance()->RegDownloadComplete(nbase::Bind(&ChatroomForm::OnHttoDownloadReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 }
 
 LRESULT ChatroomForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -597,16 +598,16 @@ void ChatroomForm::SetMemberFixed(const std::string &id, bool is_fixed)
 void ChatroomForm::RemoveMember(const std::string &uid)
 {
 // 现在单击了在线成员列表后会重新刷新成员，无须单独维护成员列表
-// 	auto exit_member = members_list_.find(uid);
-// 	if (exit_member != members_list_.end())
-// 	{
-// 		if (!exit_member->second.is_blacklist_ && !exit_member->second.is_muted_ && exit_member->second.type_ == 0)
-// 		{
-// 			Control* member_item = online_members_list_->FindSubControl(nbase::UTF8ToUTF16(uid));
-// 			online_members_list_->Remove(member_item);
-// 			members_list_.erase(exit_member);
-// 		}
-// 	}
+	auto exit_member = members_list_.find(uid);
+	if (exit_member != members_list_.end())
+	{
+		if (!exit_member->second.is_blacklist_ && !exit_member->second.is_muted_ && exit_member->second.type_ == 0)
+		{
+			Control* member_item = online_members_list_->FindSubControl(nbase::UTF8ToUTF16(uid));
+			online_members_list_->Remove(member_item);
+			members_list_.erase(exit_member);
+		}
+	}
 }
 
 void ChatroomForm::UpdateOnlineCount()
@@ -625,46 +626,70 @@ void ChatroomForm::OnWndSizeMax(bool max)
 
 void ChatroomForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 {
-	for (auto iter = uinfos.cbegin(); iter != uinfos.cend(); iter++)
-	{
-		if (nim_ui::LoginManager::GetInstance()->IsEqual(iter->GetAccId()))
-		{
-			InitHeader();
-		}
-		
-		if (creater_id_ == iter->GetAccId())
-			host_icon_->SetBkImage(nim_ui::UserManager::GetInstance()->GetUserPhoto(iter->GetAccId()));
+	//for (auto iter = uinfos.cbegin(); iter != uinfos.cend(); iter++)
+	//{
+		//if (nim_ui::LoginManager::GetInstance()->IsEqual(iter->GetAccId()))
+		//	InitHeader();
+		//if (creater_id_ == iter->GetAccId())
+		//	host_icon_->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(iter->GetAccId()));
+		//return;
+		//聊天室不建议对成员列表做监听后的实现，会有性能问题
+		//ui::ButtonBox* room_member_item = (ui::ButtonBox*)online_members_list_->FindSubControl(nbase::UTF8ToUTF16(iter->GetAccId()));
+		//if (room_member_item != NULL)
+		//{
+		//	ui::Control* header_image = (ui::Control*)room_member_item->FindSubControl(L"header_image");
+		//	header_image->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(iter->GetAccId()));
+		//}
+	//}
+}
 
-		ui::ButtonBox* room_member_item = (ui::ButtonBox*)online_members_list_->FindSubControl(nbase::UTF8ToUTF16(iter->GetAccId()));
+void ChatroomForm::OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path)
+{
+	//if (type == kUser)
+	//{
+	//	if (nim_ui::LoginManager::GetInstance()->GetAccount() == account)
+	//		header_icon_->SetBkImage(photo_path);
+	//	if (creater_id_ == account)
+	//		host_icon_->SetBkImage(photo_path);
+	//}
+	//return;
+	//聊天室不建议对成员列表做监听后的实现，可能会有性能问题
+	//ui::ButtonBox* room_member_item = (ui::ButtonBox*)online_members_list_->FindSubControl(nbase::UTF8ToUTF16(account));
+	//if (room_member_item != NULL)
+	//{
+	//	ui::Control* header_image = (ui::Control*)room_member_item->FindSubControl(L"header_image");
+	//	header_image->SetBkImage(photo_path);
+	//}
+}
+
+void ChatroomForm::OnHttoDownloadReady(HttpResourceType type, const std::string& account, const std::wstring& photo_path)
+{
+	if (type == kChatroomMemberIcon)
+	{
+		ui::ButtonBox* room_member_item = (ui::ButtonBox*)online_members_list_->FindSubControl(nbase::UTF8ToUTF16(account));
 		if (room_member_item != NULL)
 		{
 			ui::Control* header_image = (ui::Control*)room_member_item->FindSubControl(L"header_image");
-			header_image->SetBkImage(nim_ui::UserManager::GetInstance()->GetUserPhoto(iter->GetAccId()));
+			header_image->SetBkImage(photo_path);
 		}
-	}
-}
 
-void ChatroomForm::OnUserPhotoReady(const std::string& account, const std::wstring& photo_path)
-{
-	if (nim_ui::LoginManager::GetInstance()->GetAccount() == account)
-		header_icon_->SetBkImage(photo_path);
+		if (nim_ui::LoginManager::GetInstance()->IsEqual(account))
+			header_icon_->SetBkImage(photo_path);
 
-	if (creater_id_ == account)
-		host_icon_->SetBkImage(photo_path);
-
-	ui::ButtonBox* room_member_item = (ui::ButtonBox*)online_members_list_->FindSubControl(nbase::UTF8ToUTF16(account));
-	if (room_member_item != NULL)
-	{
-		ui::Control* header_image = (ui::Control*)room_member_item->FindSubControl(L"header_image");
-		header_image->SetBkImage(photo_path);
+		if (account == creater_id_)
+			host_icon_->SetBkImage(photo_path);
 	}
 }
 
 void ChatroomForm::InitHeader()
 {
 	std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
-	nim_ui::UserManager* user_service = nim_ui::UserManager::GetInstance();
-	header_icon_->SetBkImage(user_service->GetUserPhoto(my_id));
-	name_->SetText(user_service->GetUserName(my_id, false));
+	header_icon_->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(my_id));
+	name_->SetText(nim_ui::UserManager::GetInstance()->GetUserName(my_id, false));
+}
+
+void ChatroomForm::RequestRoomError()
+{
+	this->Close();
 }
 }

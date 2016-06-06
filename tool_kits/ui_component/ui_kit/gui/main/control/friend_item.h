@@ -50,6 +50,8 @@ public:
 	bool OnDbClicked(ui::EventArgs* arg);
 private:
 	void OnTeamNameChange(const nim::TeamInfo& user_info);
+	void OnUserPhotoReady(PhotoType type, const std::string& tid, const std::wstring &photo_path);
+
 private:
 	ui::Label*		contact_;
 

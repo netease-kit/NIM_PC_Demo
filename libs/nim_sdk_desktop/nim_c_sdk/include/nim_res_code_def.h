@@ -27,6 +27,7 @@ enum NIMResCode
 	kNIMResConnectionError		= 415,		/**< 网络连接出现错误 */
 	kNIMResFrequently			= 416,		/**< 操作太过频繁 */
 	kNIMResExist				= 417,		/**< 对象已经存在 */
+	kNIMResOverrun				= 419,		/**< 超限 */
 	kNIMResAccountBlock			= 422,		/**< 帐号被禁用 */
 	kNIMResUnknownError			= 500,		/**< 未知错误，或者不方便告诉你 */
 	kNIMResServerDataError		= 501,		/**< 服务器数据错误 */
@@ -49,6 +50,7 @@ enum NIMResCode
 	kNIMResEPacket				= 999,		/**< 打包错误 */
 	//客户端自定义的错误号
 	kNIMLocalRes					= 10000,		/**< 值大于该错误号的都是客户端自定义的错误号。不能随意更改其值！ */
+	kNIMResRoomLocalNeedRequestAgain	= 10001,	/**< 客户端本地错误号，需要重新向IM服务器获取进入聊天室权限 */
 
 	//客户端自定义的消息错误号
 	kNIMLocalResMsgNosUploadCancel	= 10200,		/**< 发送文件消息，NOS上传暂停 */
@@ -66,6 +68,10 @@ enum NIMResCode
 	kNIMLocalResRtsVChatExist		= 11417,		/**< rts会话 音视频已存在 */
 	kNIMLocalResRtsStatusError		= 11501,		/**< rts会话 通道状态不正确 */
 	kNIMLocalResRtsChannelNotExist	= 11510,		/**< rts会话 通道不存在 */
+
+	kNIMResRoomLinkError			= 13001,		/**< 主链接错误 */
+	kNIMResRoomError				= 13002,		/**< 聊天室状态异常 */
+	kNIMResRoomBlackBeOut			= 13003,		/**< 黑名单用户禁止进入 */
 
 	//客户端自定义的api调用问题
 	kNIMLocalResAPIErrorInitUndone	= 20000,		/**< 还未初始化或初始化未正常完成 */

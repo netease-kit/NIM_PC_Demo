@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "shared/auto_unregister.h"
 #include "shared/ui/msgbox.h"
+#include "module/service/photo_service.h"
 
 namespace nim_comp
 {
@@ -8,9 +9,15 @@ class ProfileForm : public WindowEx
 {
 public:
 	static ProfileForm *ShowProfileForm(UTF8String uid);
+	static ProfileForm *ShowProfileForm(UTF8String tid, UTF8String uid, nim::NIMTeamUserType my_type);
 
 private:
 	ProfileForm();
+	ProfileForm(UTF8String tid, UTF8String uid, nim::NIMTeamUserType my_type)
+	{
+		tid_ = tid;
+		my_team_user_type_ = my_type;
+	}
 	~ProfileForm();
 
 public:
@@ -29,6 +36,8 @@ private:
 	bool OnNotifySwitchUnSelected(ui::EventArgs* args); //消息提醒关闭（屏蔽该用户的消息）
 	bool OnBlackSwitchSelected(ui::EventArgs* args); //黑名单选项打开（将该用户加入黑名单）
 	bool OnBlackSwitchUnSelected(ui::EventArgs* args); //黑名单选项关闭（将该用户从黑名单移除）
+	bool OnMuteSwitchSelected(ui::EventArgs* args); //设置禁言选项打开（将该用户加入禁言状态）
+	bool OnMuteSwitchUnSelected(ui::EventArgs* args); //设置禁言选项关闭（将该用户从禁言状态中解除除）
 	void OnNotifyChangeCallback(std::string id, bool mute);
 	void OnBlackChangeCallback(std::string id, bool black);
 	bool OnStartChatBtnClicked(ui::EventArgs* args); //聊天按钮被点击
@@ -37,7 +46,6 @@ private:
 	bool OnAddFriendBtnClicked(ui::EventArgs* args); //添加好友按钮被点击
 	bool OnBirthdayComboSelect(ui::EventArgs* args);
 
-	bool OnHeadImageClicked(ui::EventArgs* args); //自己名片的头像被点击
 	bool OnModifyOrCancelBtnClicked(ui::EventArgs* args, bool to_modify); //编辑信息或取消编辑按钮被点击
 	bool OnSaveInfoBtnClicked(ui::EventArgs* args); //保存编辑信息按钮被点击
 	bool OnAliasEditGetFocus(ui::EventArgs* args); //备注名编辑框获得焦点
@@ -55,11 +63,21 @@ private:
 
 	void OnFriendListChange(FriendChangeType change_type, const std::string& accid);
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
-	void OnUserPhotoReady(const std::string& account, const std::wstring& photo_path);
+	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
 	void OnMiscUInfoChange(const std::list<nim::UserNameCard> &uinfos);
+
+	bool OnHeadImageClicked(ui::EventArgs* args); //自己名片的头像被点击
+private:
+	void OnModifyHeaderComplete(const std::string& id, const std::string &url);
+	void UpdateUInfoHeaderCallback(int res);
 
 public:
 	static const LPCTSTR kClassName;
+
+public:
+	std::string	tid_;
+	nim::NIMTeamUserType my_team_user_type_;
+	bool have_mute_right_ = false;
 
 private:
 	nim::UserNameCard	m_uinfo;
@@ -73,6 +91,7 @@ private:
 	ui::Label*		nickname_label = NULL;
 	ui::CheckBox*	notify_switch = NULL;
 	ui::CheckBox*	black_switch = NULL;
+	ui::CheckBox*	mute_switch = NULL;
 	ui::Button*		start_chat = NULL;
 	ui::TabBox*		add_or_del = NULL;
 	ui::Button*		delete_friend = NULL;

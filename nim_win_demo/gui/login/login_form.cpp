@@ -83,7 +83,7 @@ void LoginForm::DoRegisterAccount()
 					ShowLoginTip(L"此帐号已存在");
 				}
 				else if (res == 603) {
-					ShowLoginTip(L"昵称为汉字、字母或数字的组合");
+					ShowLoginTip(L"输入昵称超长");
 				}
 				else {
 					ShowLoginTip(nbase::UTF8ToUTF16(err_msg));

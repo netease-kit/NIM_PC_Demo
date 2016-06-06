@@ -97,6 +97,7 @@
     <ClCompile Include="api\nim_cpp_plugin_in.cpp">
       <Filter>api</Filter>
     </ClCompile>
+    <ClCompile Include="nim_cpp_api.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\nim_client_helper.h">

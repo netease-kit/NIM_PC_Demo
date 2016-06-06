@@ -19,8 +19,8 @@ MainForm::MainForm()
 	OnUserInfoChangeCallback cb1 = nbase::Bind(&MainForm::OnUserInfoChange, this, std::placeholders::_1);
 	unregister_cb.Add(nim_ui::UserManager::GetInstance()->RegUserInfoChange(cb1));
 
-	OnUserPhotoReadyCallback cb2 = nbase::Bind(&MainForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2);
-	unregister_cb.Add(nim_ui::UserManager::GetInstance()->RegUserPhotoReady(cb2));
+	OnPhotoReadyCallback cb2 = nbase::Bind(&MainForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	unregister_cb.Add(nim_ui::PhotoManager::GetInstance()->RegPhotoReady(cb2));
 }
 
 MainForm::~MainForm()
@@ -144,9 +144,9 @@ void MainForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 	}
 }
 
-void MainForm::OnUserPhotoReady(const std::string& account, const std::wstring& photo_path)
+void MainForm::OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path)
 {
-	if (nim_ui::LoginManager::GetInstance()->GetAccount() == account)
+	if (type == kUser && nim_ui::LoginManager::GetInstance()->GetAccount() == account)
 		btn_header_->SetBkImage(photo_path);
 }
 
@@ -154,7 +154,7 @@ void MainForm::InitHeader()
 {
 	std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
 	label_name_->SetText(nim_ui::UserManager::GetInstance()->GetUserName(my_id, false));
-	btn_header_->SetBkImage(nim_ui::UserManager::GetInstance()->GetUserPhoto(my_id));
+	btn_header_->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(my_id));
 }
 
 bool MainForm::Notify( ui::EventArgs* msg )

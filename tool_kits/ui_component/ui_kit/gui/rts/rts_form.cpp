@@ -371,7 +371,7 @@ void RtsForm::ShowStartUI(bool creater)
 	if (creater)
 	{
 		nim::Rts::StartChannelCallback cb = nbase::Bind(&RtsForm::OnStartRtsCb, this, session_id_, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
-		nim::Rts::StartChannel(type_, uid_, "rts", "rts test", cb);
+		nim::Rts::StartChannel(type_, uid_, nbase::UTF16ToUTF8(L"白板通话邀请test"), "rts custom info", cb);
 	}
 	auto closure = nbase::Bind(&RtsForm::NoActiveTimer, this);
 	nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(40));
@@ -409,7 +409,7 @@ void RtsForm::ShowHeader()
 	Label* title = (Label*)FindControl(L"title");
 	title->SetText(title_text);
 
-	std::wstring photo = UserService::GetInstance()->GetUserPhoto(uid_);
+	std::wstring photo = PhotoService::GetInstance()->GetUserPhoto(uid_);
 	Button* headicon = (Button*)FindControl(L"headicon");
 	headicon->SetBkImage(photo);
 }

@@ -167,7 +167,13 @@ void TeamNotifyForm::OnInviteYou(const nim::SysMessage &json)
 	msg_id_ = json.id_;
 	type_ = TNP_INVITE_YOU;
 	uid_ = json.sender_accid_;
-	SetInviteText();
+	nim::TeamInfo team_info;
+	nim::Team::ParseTeamInfo(json.attach_, team_info);
+	if (team_info.GetInviteMode() == nim::kNIMTeamInviteModeManager)
+		re_invite_->SetText(nbase::StringPrintf(L"群 %s 管理员邀请你加入群", nbase::UTF8ToUTF16(team_info.GetName()).c_str()));
+	else
+		re_invite_->SetText(nbase::StringPrintf(L"群 %s 邀请你加入群", nbase::UTF8ToUTF16(team_info.GetName()).c_str()));
+	//SetInviteText();
 	GotoPage(1);
 }
 
@@ -206,8 +212,8 @@ void TeamNotifyForm::RefreshText()
 {
 	if(type_ == TNP_ASK_JOIN)
 		SetAskJoinText();
-	else if(type_ == TNP_INVITE_YOU)
-		SetInviteText();
+	//else if(type_ == TNP_INVITE_YOU)
+		//SetInviteText();
 	else if(type_ == TNP_REJECT_INVITE)
 		SetRejectInviteText();
 	else if(type_ == TNP_REJECT_JOIN)

@@ -7,6 +7,7 @@
 #include "callback/team/team_callback.h"
 #include "callback/vchat/vchat_callback.h"
 #include "callback/rts/rts_callback.h"
+#include "callback/login/data_sync_callback.h"
 #include "module/service/user_service.h"
 #include "shared/modal_wnd/async_do_modal.h"
 
@@ -29,6 +30,8 @@ void InitManager::InitUiKit()
 	assert(ret);
 
 	nim_http::Init(); // 初始化云信http
+
+	nim::DataSync::RegCompleteCb(nbase::Bind(&nim_comp::DataSyncCallback::SyncCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 	/* 以下注册的回调函数，都是在收到服务器推送的消息或事件时执行的。因此需要在程序开始时就注册好。 */
 	//注册重连、被踢、掉线、多点登录、把移动端踢下线的回调

@@ -40,7 +40,12 @@ enum TeamInfoKey
 	kTeamInfoKeyJoinMode = 1 << 7,			/**< 群组验证类型 */
 	kTeamInfoKeyConfigBits = 1 << 8,		/**< 群组配置项 */
 	kTeamInfoKeyCustom = 1 << 9,			/**< 群组扩展项 */
-	kTeamInfoKeyAll = (1 << 10) - 1			/**< 有数据 */
+	kTeamInfoKeyIcon = 1 << 10,				/**< 群头像 */
+	kTeamInfoKeyBeInviteMode = 1 << 11,		/**< 被邀请人同意方式 */
+	kTeamInfoKeyInviteMode = 1 << 12,		/**< 谁可以邀请他人入群 */
+	kTeamInfoKeyUpdateInfoMode = 1 << 13,	/**< 谁可以修改群资料 */
+	kTeamInfoKeyUpdateCustomMode = 1 << 14,	/**< 谁可以更新群自定义属性 */
+	kTeamInfoKeyAll = (1 << 15) - 1			/**< 有数据 */
 };
 
 /** @brief 群组信息 */
@@ -59,6 +64,10 @@ public:
 		, member_valid_(false)
 		, join_mode_(kNIMTeamJoinModeNoAuth) 
 		, value_available_flag_(0)
+		, be_invite_mode_(kNIMTeamBeInviteModeNeedAgree)
+		, invite_mode_(kNIMTeamInviteModeManager)
+		, update_info_mode_(kNIMTeamUpdateInfoModeManager)
+		, update_custom_mode_(kNIMTeamUpdateCustomModeManager)
 	{
 		id_ = team_id;
 	}
@@ -74,7 +83,64 @@ public:
 			, type_(kNIMTeamTypeNormal)
 			, member_valid_(false)
 			, join_mode_(kNIMTeamJoinModeNoAuth) 
-			, value_available_flag_(0) {}
+			, value_available_flag_(0) 
+			, be_invite_mode_(kNIMTeamBeInviteModeNeedAgree)
+			, invite_mode_(kNIMTeamInviteModeManager)
+			, update_info_mode_(kNIMTeamUpdateInfoModeManager)
+			, update_custom_mode_(kNIMTeamUpdateCustomModeManager){}
+
+public:
+	void operator = (const TeamInfo& new_info)
+	{
+		Update(new_info);
+	}
+
+	void Update(const TeamInfo& info)
+	{
+		if (info.ExistValue(kTeamInfoKeyName))
+			SetName(info.GetName());
+		if (info.ExistValue(kTeamInfoKeyType))
+			SetType(info.GetType());
+		if (info.ExistValue(kTeamInfoKeyOwnerID))
+			SetOwnerID(info.GetOwnerID());
+		if (info.ExistValue(kTeamInfoKeyLevel))
+			SetLevel(info.GetLevel());
+		if (info.ExistValue(kTeamInfoKeyProperty))
+			SetProperty(info.GetProperty());
+		if (info.ExistValue(kTeamInfoKeyIntro))
+			SetIntro(info.GetIntro());
+		if (info.ExistValue(kTeamInfoKeyAnnouncement))
+			SetAnnouncement(info.GetAnnouncement());
+		if (info.ExistValue(kTeamInfoKeyJoinMode))
+			SetJoinMode(info.GetJoinMode());
+		if (info.ExistValue(kTeamInfoKeyConfigBits))
+			SetConfigBits(info.GetConfigBits());
+		if (info.ExistValue(kTeamInfoKeyCustom))
+			SetCustom(info.GetCustom());
+		if (info.ExistValue(kTeamInfoKeyIcon))
+			SetIcon(info.GetIcon());
+		if (info.ExistValue(kTeamInfoKeyBeInviteMode))
+			SetBeInviteMode(info.GetBeInviteMode());
+		if (info.ExistValue(kTeamInfoKeyInviteMode))
+			SetInviteMode(info.GetInviteMode());
+		if (info.ExistValue(kTeamInfoKeyUpdateInfoMode))
+			SetUpdateInfoMode(info.GetUpdateInfoMode());
+		if (info.ExistValue(kTeamInfoKeyUpdateCustomMode))
+			SetUpdateCustomMode(info.GetUpdateCustomMode());
+
+		SetTeamID(info.GetTeamID());
+		SetValid(info.IsValid());
+		if (info.GetMemberCount() > -1)
+			SetMemberCount(info.GetMemberCount());
+		if (info.GetMemberListTimetag() > -1)
+			SetMemberListTimetag(info.GetMemberListTimetag());
+		if (info.GetCreateTimetag() > -1)
+			SetCreateTimetag(info.GetCreateTimetag());
+		if (info.GetUpdateTimetag() > -1)
+			SetUpdateTimetag(info.GetUpdateTimetag());
+		if (!info.GetServerCustom().empty())
+			SetServerCustom(info.GetServerCustom());
+	}
 
 public:
 	/** 设置群组ID */
@@ -303,6 +369,71 @@ public:
 		return server_custom_;
 	}
 
+	/** 设置群头像 */
+	void SetIcon(const std::string& icon)
+	{
+		icon_ = icon;
+		value_available_flag_ |= kTeamInfoKeyIcon;
+	}
+
+	/** 获取群头像 */
+	std::string GetIcon() const 
+	{
+		return icon_;
+	}
+
+	/** 设置被邀请人同意方式 */
+	void SetBeInviteMode(NIMTeamBeInviteMode mode)
+	{
+		be_invite_mode_ = mode;
+		value_available_flag_ |= kTeamInfoKeyBeInviteMode;
+	}
+
+	/** 获得被邀请人同意方式 */
+	NIMTeamBeInviteMode GetBeInviteMode() const
+	{
+		return be_invite_mode_;
+	}
+
+	/** 设置谁可以邀请他人入群 */
+	void SetInviteMode(NIMTeamInviteMode mode)
+	{
+		invite_mode_ = mode;
+		value_available_flag_ |= kTeamInfoKeyInviteMode;
+	}
+
+	/** 获取谁可以邀请他人入群 */
+	NIMTeamInviteMode GetInviteMode() const
+	{
+		return invite_mode_;
+	}
+
+	/** 设置谁可以修改群资料 */
+	void SetUpdateInfoMode(NIMTeamUpdateInfoMode mode)
+	{
+		update_info_mode_ = mode;
+		value_available_flag_ |= kTeamInfoKeyUpdateInfoMode;
+	}
+
+	/** 获取谁可以修改群资料 */
+	NIMTeamUpdateInfoMode GetUpdateInfoMode() const
+	{
+		return update_info_mode_;
+	}
+
+	/** 设置谁可以修改群资料属性 */
+	void SetUpdateCustomMode(NIMTeamUpdateCustomMode mode)
+	{
+		update_custom_mode_ = mode;
+		value_available_flag_ |= kTeamInfoKeyUpdateCustomMode;
+	}
+
+	/** 获取谁可以修改群资料属性 */
+	NIMTeamUpdateCustomMode GetUpdateCustomMode() const
+	{
+		return update_custom_mode_;
+	}
+
 	/** @fn bool ExistValue(TeamInfoKey value_key) const
 	  * @brief 群组信息数据标记Key对应的数据是否有效（存在，非初始值状态）
 	  * @param[in] value_key 群组信息数据标记Key
@@ -352,6 +483,16 @@ public:
 		if (ExistValue(nim::kTeamInfoKeyCustom))
 			json[nim::kNIMTeamInfoKeyCustom] = custom_;
 		json[nim::kNIMTeamInfoKeyServerCustom] = server_custom_;
+		if (ExistValue(nim::kTeamInfoKeyIcon))
+			json[nim::kNIMTeamInfoKeyIcon] = icon_;
+		if (ExistValue(nim::kTeamInfoKeyBeInviteMode))
+			json[nim::kNIMTeamInfoKeyBeInviteMode] = (unsigned int)be_invite_mode_;
+		if (ExistValue(nim::kTeamInfoKeyInviteMode))
+			json[nim::kNIMTeamInfoKeyInviteMode] = (unsigned int)invite_mode_;
+		if (ExistValue(nim::kTeamInfoKeyUpdateInfoMode))
+			json[nim::kNIMTeamInfoKeyUpdateInfoMode] = (unsigned int)update_info_mode_;
+		if (ExistValue(nim::kTeamInfoKeyUpdateCustomMode))
+			json[nim::kNIMTeamInfoKeyUpdateCustomMode] = (unsigned int)update_custom_mode_;
 
 		return GetJsonStringWithNoStyled(json);
 	}
@@ -378,6 +519,13 @@ private:
 	__int64			config_bits_;
 	std::string		custom_;
 
+private:
+	std::string		icon_;
+	nim::NIMTeamBeInviteMode be_invite_mode_;
+	nim::NIMTeamInviteMode invite_mode_;
+	nim::NIMTeamUpdateInfoMode update_info_mode_;
+	nim::NIMTeamUpdateCustomMode update_custom_mode_;
+
 	unsigned int	value_available_flag_;
 };
 
@@ -389,7 +537,9 @@ enum TeamMemberValueKey
 	kTeamMemberPropertyKeyNickName = 1 << 1,	/**< 群成员昵称 */
 	kTeamMemberPropertyKeyBits = 1 << 2,		/**< 群成员配置项 */
 	kTeamMemberPropertyKeyValid = 1 << 3,		/**< 群成员有效性 */
-	kTeamMemberPropertyKeyAll = (1 << 4) - 1	/**< 有数据 */
+	kTeamMemberPropertyKeyCustom = 1 << 4,		/**< 群成员自定义扩展字段 */
+	kTeamMemberPropertyKeyMute = 1 << 5,		/**< 群成员是否禁言 */
+	kTeamMemberPropertyKeyAll = (1 << 6) - 1	/**< 有数据 */
 };
 
 /** @brief 群组成员信息 */
@@ -397,14 +547,26 @@ struct TeamMemberProperty
 {
 public:
 	/** 构造函数，推荐使用 */
-	TeamMemberProperty(const std::string& team_id, const std::string& accid) : type_(kNIMTeamUserTypeNomal), valid_(false), bits_(0), create_timetag_(0), update_timetag_(0), value_available_flag_(0)
+	TeamMemberProperty(const std::string& team_id, const std::string& accid) : type_(kNIMTeamUserTypeNomal)
+		, valid_(false)
+		, bits_(0)
+		, create_timetag_(0)
+		, update_timetag_(0)
+		, value_available_flag_(0)
+		, mute_(false)
 	{
 		team_id_ = team_id;
 		account_id_ = accid;
 	}
 
 	/** 构造函数 */
-	TeamMemberProperty() : type_(kNIMTeamUserTypeNomal), valid_(false), bits_(0), create_timetag_(0), update_timetag_(0), value_available_flag_(0) {}
+	TeamMemberProperty() : type_(kNIMTeamUserTypeNomal)
+		, valid_(false)
+		, bits_(0)
+		, create_timetag_(0)
+		, update_timetag_(0)
+		, value_available_flag_(0) 
+		, mute_(false){}
 
 public:
 	/** 设置群组ID */
@@ -471,7 +633,7 @@ public:
 	}
 
 	/** 设置群成员有效性 */
-	void SetValid_(bool valid)
+	void SetValid(bool valid)
 	{
 		valid_ = valid;
 		value_available_flag_ |= kTeamMemberPropertyKeyValid;
@@ -517,6 +679,32 @@ public:
 		return (value_available_flag_ & value_key) != 0;
 	}
 
+	/** 设置禁言 */
+	void SetMute(bool mute)
+	{
+		mute_ = mute;
+		value_available_flag_ |= kTeamMemberPropertyKeyMute;
+	}
+
+	/** 是否禁言 */
+	bool IsMute() const
+	{
+		return mute_;
+	}
+
+	/** 设置扩展字段 */
+	void SetCustom(const std::string& custom)
+	{
+		custom_ = custom;
+		value_available_flag_ |= kTeamMemberPropertyKeyCustom;
+	}
+
+	/** 获取扩展字段 */
+	std::string GetCustom() const
+	{
+		return custom_;
+	}
+
 	/** @fn std::string ToJsonString() const
 	  * @brief 组装Json Value字符串
 	  * @return string Json Value字符串 
@@ -538,6 +726,10 @@ public:
 			json[nim::kNIMTeamUserKeyCreateTime] = create_timetag_;
 		if (update_timetag_ > 0)
 			json[nim::kNIMTeamUserKeyUpdateTime] = update_timetag_;
+		if (ExistValue(nim::kTeamMemberPropertyKeyCustom))
+			json[nim::kNIMTeamUserKeyCustom] = custom_;
+		if (ExistValue(nim::kTeamMemberPropertyKeyMute))
+			json[nim::kNIMTeamUserKeyMute] = mute_ ? 1 : 0;
 
 		return GetJsonStringWithNoStyled(json);
 	}
@@ -554,6 +746,10 @@ private:
 	std::string		nick_;
 	__int64			bits_;
 
+private:
+	bool			mute_;
+	std::string		custom_;
+
 	unsigned int	value_available_flag_;
 };
 
@@ -566,6 +762,8 @@ struct TeamEvent
 	std::list<std::string> ids_;			/**< 通知可能涉及到的群成员ID */
 	std::list<UserNameCard> namecards_;		/**< 通知可能涉及到的群成员的用户名片 */
 	TeamInfo	team_info_;					/**< 通知可能涉及到的群信息 */
+	TeamMemberProperty member_property_;	/**< 群成员属性 */
+	bool	opt_;							/**< 操作*/
 };
 
 /** @fn void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificationId notification_id, const std::string& team_event_json, TeamEvent& team_event)

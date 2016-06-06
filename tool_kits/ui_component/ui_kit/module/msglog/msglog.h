@@ -14,6 +14,7 @@ enum CustomMsgType
 	CustomMsgType_SnapChat,	//阅后即焚
 	CustomMsgType_Sticker,	//贴图
 	CustomMsgType_Rts,		//白板的发起结束消息
+	CustomMsgType_Meeting = 10,		//多人会议控制协议
 };
 
 // struct MsgData

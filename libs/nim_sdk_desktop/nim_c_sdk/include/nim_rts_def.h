@@ -73,8 +73,9 @@ static const char *kNIMRtsSound				= "sound";			/**< string 推送声音 */
   * {"record_addr": "", "record_file":"" }
   * @{
   */
-static const char *kNIMRtsRecordAddr	= "record_addr";	/**< string 录制地址（服务器开启录制时有效） */
-static const char *kNIMRtsRecordFile	= "record_file";	/**< string 录制文件名（服务器开启录制时有效） */
+static const char *kNIMRtsRecordAddr		= "record_addr";		/**< string 录制地址（服务器开启录制时有效） */
+static const char *kNIMRtsRecordFile		= "record_file";		/**< string 录制的文件名（服务器开启录制时有效,音视频类型时为音频文件名） */
+static const char *kNIMRtsVideoRecordFile	= "video_record_file";	/**< string 录制的视频文件名（服务器开启录制时有效） */
 /** @}*/ //json extension params for nim_rts_connect_notify_cb_func
 
 /** @name json extension params for nim_rts_sync_ack_notify_cb_func

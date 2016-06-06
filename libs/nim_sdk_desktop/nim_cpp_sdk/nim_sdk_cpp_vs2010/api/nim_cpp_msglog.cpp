@@ -166,7 +166,7 @@ bool MsgLog::QueryMsgByIDAysnc(const std::string &client_msg_id, const QuerySing
 bool MsgLog::QueryMsgAsync(const std::string& account_id
 	, nim::NIMSessionType to_type
 	, int limit_count
-	, __int64 last_time
+	, __int64 anchor_msg_time
 	, const QueryMsgCallback& cb
 	, const std::string& json_extension/* = ""*/)
 {
@@ -181,7 +181,7 @@ bool MsgLog::QueryMsgAsync(const std::string& account_id
 	NIM_SDK_GET_FUNC(nim_msglog_query_msg_async)(account_id.c_str()
 		, to_type
 		, limit_count
-		, last_time
+		, anchor_msg_time
 		, json_extension.c_str()
 		, &CallbackQueryMsg
 		, cb_pointer);

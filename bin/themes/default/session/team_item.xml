@@ -5,6 +5,7 @@
             <Box width="40" height="40" valign="center" mousechild="false">
                 <Button name="member_icon" width="38" height="38" borderround="38,38,38,38" margin="1,1,0,0"/>
                 <Button class="icon_headimage_mask_40x40"/>
+				<Control name="icon_mute" width="16" height="16" halign="left" valign="bottom" visible="false"/>
                 <Control name="icon_admin" width="16" height="16" halign="right" valign="bottom" visible="false"/>
             </Box>
             <Label name="member_name" width="stretch" valign="center" font="2"/>

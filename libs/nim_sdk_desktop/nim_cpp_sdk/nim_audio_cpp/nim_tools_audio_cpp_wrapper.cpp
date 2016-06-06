@@ -1,7 +1,4 @@
 #include "nim_tools_audio_cpp_wrapper.h"
-#include "module/login/login_manager.h"
-
-
 
 namespace nim_audio
 {
@@ -11,45 +8,42 @@ static const std::wstring kSdkAudioDll = L"nim_audio.dll";
 
 HINSTANCE Audio::instance_audio_ = NULL;
 
-
 //init
 typedef bool(*nim_audio_init_module)(const char* user_data_parent_path);
 typedef bool(*nim_audio_uninit_module)();
 
 //play and stop
-typedef bool(*nim_audio_play_audio)(const char* call_id, const char* res_id, const char* file_path, int audio_format);
+typedef bool(*nim_audio_play_audio)(const char* file_path, const char* call_id, const char* res_id, int audio_format);
 typedef bool(*nim_audio_stop_play_audio)();
 
-//reg
+//capture
+typedef bool(*nim_audio_start_capture)(const char* call_id, const char* res_id, int audio_format, int volume, int loudness);
+typedef bool(*nim_audio_stop_capture)();
+typedef bool(*nim_audio_cancel_audio)(const char* file_path);
+
+//reg callback
 typedef bool(*nim_audio_reg_start_play_cb)(nim_rescode_id_cb cb);
-
 typedef bool(*nim_audio_reg_stop_play_cb)(nim_rescode_id_cb cb);
+typedef bool(*nim_audio_reg_start_capture_cb)(nim_rescode_cb cb);
+typedef bool(*nim_audio_reg_stop_capture_cb)(nim_stop_capture_cb cb);
+typedef bool(*nim_audio_reg_cancel_audio_cb)(nim_rescode_cb cb);
 
 
-bool Audio::Init(const std::string& res_audio_path)
+bool Audio::Init(const std::string& user_data_parent_path)
 {
-	std::wstring dir = QPath::GetAppPath();
 //#ifdef _DEBUG
-//	dir.append(kSdkAudioDll_d);
+//	instance_audio_ = ::LoadLibraryW(kSdkAudioDll_d.c_str());
 //#else
-	dir.append(kSdkAudioDll);
+	instance_audio_ = ::LoadLibraryW(kSdkAudioDll.c_str());
 //#endif
-	instance_audio_ = ::LoadLibraryW(dir.c_str());
-	if (instance_audio_ == NULL)
-	{
-		QLOG_ERR(L"sdk audio dll load fail {0} {1}") << dir << GetLastError();
-		return false;
-	}
-
 	assert(instance_audio_);
+	if (instance_audio_ == NULL)
+		return false;
+
 	if (instance_audio_)
 	{
 		nim_audio_init_module f_init = Function<nim_audio_init_module>("nim_audio_init_module");
-		bool ret = f_init(res_audio_path.c_str());
-		if (!ret)
-		{
-			QLOG_ERR(L"init audio fail: {0}") << res_audio_path;
-		}
+		bool ret = f_init(user_data_parent_path.c_str());
 		return ret;
 	}
 	return false;
@@ -61,18 +55,15 @@ void Audio::Cleanup()
 	{
 		nim_audio_uninit_module f_uninit = Function<nim_audio_uninit_module>("nim_audio_uninit_module");
 		f_uninit();
-		QLOG_APP(L"uninit audio module");
-
 		::FreeLibrary(instance_audio_);
 		instance_audio_ = NULL;
-		QLOG_APP(L"free audio library");
 	}
 }
 
-bool Audio::PlayAudio(const char* call_id, const char* res_id, const char* file_path, int audio_format)
+bool Audio::PlayAudio(const char* file_path, const char* call_id, const char* res_id, nim_audio_type audio_format)
 {
 	nim_audio_play_audio f_uninit = Function<nim_audio_play_audio>("nim_audio_play_audio");
-	return f_uninit(call_id, res_id, file_path, audio_format);
+	return f_uninit(file_path, call_id, res_id, audio_format);
 }
 
 bool Audio::StopPlayAudio()
@@ -92,5 +83,42 @@ bool Audio::RegStopPlayCb(nim_rescode_id_cb cb)
 	nim_audio_reg_stop_play_cb f_uninit = Function<nim_audio_reg_stop_play_cb>("nim_audio_reg_stop_play_cb");
 	return f_uninit(cb);
 }
+
+bool Audio::RegStartCaptureCb(nim_rescode_cb cb)
+{
+	nim_audio_reg_start_capture_cb f_uninit = Function<nim_audio_reg_start_capture_cb>("nim_audio_reg_start_capture_cb");
+	return f_uninit(cb);
+}
+
+bool Audio::RegStopCaptureCb(nim_stop_capture_cb cb)
+{
+	nim_audio_reg_stop_capture_cb f_uninit = Function<nim_audio_reg_stop_capture_cb>("nim_audio_reg_stop_capture_cb");
+	return f_uninit(cb);
+}
+
+bool Audio::RegCancelAudioCb(nim_rescode_cb cb)
+{
+	nim_audio_reg_cancel_audio_cb f_uninit = Function<nim_audio_reg_cancel_audio_cb>("nim_audio_reg_cancel_audio_cb");
+	return f_uninit(cb);
+}
+
+bool Audio::StartCapture(const char* call_id, const char* res_id, nim_audio_type audio_format/* = AAC*/, int volume/* = 180*/, int loudness/* = 0*/)
+{
+	nim_audio_start_capture f_uninit = Function<nim_audio_start_capture>("nim_audio_start_capture");
+	return f_uninit(call_id, res_id, audio_format, volume, loudness);
+}
+
+bool Audio::StopCapture()
+{
+	nim_audio_stop_capture f_uninit = Function<nim_audio_stop_capture>("nim_audio_stop_capture");
+	return f_uninit();
+}
+
+bool Audio::CancelAudio(const char* file_path)
+{
+	nim_audio_cancel_audio f_uninit = Function<nim_audio_cancel_audio>("nim_audio_cancel_audio");
+	return f_uninit(file_path);
+}
+
 
 }

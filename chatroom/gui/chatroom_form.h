@@ -44,9 +44,11 @@ public:
 	void OnChatRoomRequestEnterCallback(int error_code, const std::string& result);
 	void OnRegLinkConditionCallback(__int64 room_id, const NIMChatRoomLinkCondition condition);
 
+	void RequestRoomError();
 private:
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
-	void OnUserPhotoReady(const std::string& account, const std::wstring& photo_path);
+	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
+	void OnHttoDownloadReady(HttpResourceType type, const std::string& account, const std::wstring& photo_path);
 	void InitHeader();
 
 private:

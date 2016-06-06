@@ -29,7 +29,7 @@ public:
 
 private:
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
-	void OnUserPhotoReady(const std::string& account, const std::wstring& photo_path);
+	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
 	void InitHeader();
 
 private:

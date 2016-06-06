@@ -35,7 +35,9 @@ struct MessageSetting
 	BoolStatus self_sync_;				/**< 该消息是否支持发送者多端同步 */
 	BoolStatus need_push_; 				/**< 是否需要推送 */
 	BoolStatus push_need_badge_;		/**< 是否要做消息计数 */
-	BoolStatus push_need_nick_;			/**< 需要推送昵称 */
+	BoolStatus push_need_prefix_;		/**< 需要推送昵称 */
+	BoolStatus routable_;				/**< 是否要抄送 */
+	BoolStatus need_offline_;			/**< 是否支持离线消息 */
 	Json::Value push_payload_;
 	std::string push_content_;
 	Json::Value server_ext_;
@@ -47,8 +49,10 @@ struct MessageSetting
 		, self_sync_(BS_NOT_INIT)
 		, need_push_(BS_NOT_INIT)
 		, push_need_badge_(BS_NOT_INIT)
-		, push_need_nick_(BS_NOT_INIT)
-		, resend_flag_(BS_NOT_INIT){}
+		, push_need_prefix_(BS_NOT_INIT)
+		, resend_flag_(BS_NOT_INIT)
+		, routable_(BS_NOT_INIT)
+		, need_offline_(BS_NOT_INIT){}
 
 	/** @fn void ToJsonValue(Json::Value& message) const
 	  * @brief 组装Json Value字符串
@@ -64,13 +68,17 @@ struct MessageSetting
 		if (self_sync_ != BS_NOT_INIT)
 			message[kNIMMsgKeyMsgSync] = self_sync_;
 		if (push_need_badge_ != BS_NOT_INIT)
-			message[kNIMMsgKeyNeedBadge] = push_need_badge_;
+			message[kNIMMsgKeyPushNeedBadge] = push_need_badge_;
 		if (need_push_ != BS_NOT_INIT)
 			message[kNIMMsgKeyPushEnable] = need_push_;
-		if (push_need_nick_ != BS_NOT_INIT)
-			message[kNIMMsgKeyNeedPushNick] = push_need_nick_;
+		if (push_need_prefix_ != BS_NOT_INIT)
+			message[kNIMMsgKeyPushNeedPrefix] = push_need_prefix_;
 		if (resend_flag_ != BS_NOT_INIT)
 			message[kNIMMsgKeyResendFlag] = resend_flag_;
+		if (routable_ != BS_NOT_INIT)
+			message[kNIMMsgKeyMsgRoutable] = routable_;
+		if (need_offline_ != BS_NOT_INIT)
+			message[kNIMMsgKeySetMsgOffline] = need_offline_;
 		if (!push_payload_.empty())
 			message[kNIMMsgKeyPushPayload] = GetJsonStringWithNoStyled(push_payload_);
 		if (!push_content_.empty())
@@ -94,15 +102,18 @@ struct MessageSetting
 			roaming_ = (BoolStatus)message[kNIMMsgKeyMsgRoaming].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeyMsgSync))
 			self_sync_ = (BoolStatus)message[kNIMMsgKeyMsgSync].asInt() == 1 ? BS_TRUE : BS_FALSE;
-		if (message.isMember(kNIMMsgKeyNeedBadge))
-			push_need_badge_ = (BoolStatus)message[kNIMMsgKeyNeedBadge].asInt() == 1 ? BS_TRUE : BS_FALSE;
+		if (message.isMember(kNIMMsgKeyPushNeedBadge))
+			push_need_badge_ = (BoolStatus)message[kNIMMsgKeyPushNeedBadge].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeyPushEnable))
 			need_push_ = (BoolStatus)message[kNIMMsgKeyPushEnable].asInt() == 1 ? BS_TRUE : BS_FALSE;
-		if (message.isMember(kNIMMsgKeyNeedPushNick))
-			push_need_nick_ = (BoolStatus)message[kNIMMsgKeyNeedPushNick].asInt() == 1 ? BS_TRUE : BS_FALSE;
+		if (message.isMember(kNIMMsgKeyPushNeedPrefix))
+			push_need_prefix_ = (BoolStatus)message[kNIMMsgKeyPushNeedPrefix].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeyResendFlag))
 			resend_flag_ = (BoolStatus)message[kNIMMsgKeyResendFlag].asInt() == 1 ? BS_TRUE : BS_FALSE;
-
+		if (message.isMember(kNIMMsgKeyMsgRoutable))
+			routable_ = (BoolStatus)message[kNIMMsgKeyMsgRoutable].asInt() == 1 ? BS_TRUE : BS_FALSE;
+		if (message.isMember(kNIMMsgKeySetMsgOffline))
+			need_offline_ = (BoolStatus)message[kNIMMsgKeySetMsgOffline].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		Json::Reader reader;
 		if (!reader.parse(message[kNIMMsgKeyServerExt].asString(), server_ext_) || !server_ext_.isObject())
 			//assert(0);
@@ -129,7 +140,6 @@ public:
 	NIMMessageType	type_;						/**< 消息类型 */
 	std::string		attach_;					/**< 消息附件 */
 	std::string		client_msg_id_;				/**< 消息ID（客户端） */
-	bool			resend_flag_;				/**< 重发标记 */
 	MessageSetting	msg_setting_;				/**< 消息属性设置 */
 
 public:
@@ -146,8 +156,7 @@ public:
 	__int64		   readonly_server_id_;				/**< 消息ID（服务器，只读） */
 
 	/** 构造函数 */
-	IMMessage() : resend_flag_(false)
-				, readonly_sender_client_type_(0) 
+	IMMessage() : readonly_sender_client_type_(0) 
 				, readonly_server_id_(0)
 				, feature_(kNIMMessageFeatureDefault)
 				, session_type_(kNIMSessionTypeP2P)
@@ -156,8 +165,7 @@ public:
 				, sub_status_(nim::kNIMMsgLogSubStatusNone) {}
 
 	/** 构造函数 */
-	IMMessage(const std::string &json_msg) : resend_flag_(false)
-		, readonly_sender_client_type_(0) 
+	IMMessage(const std::string &json_msg) :readonly_sender_client_type_(0) 
 		, readonly_server_id_(0)
 		, feature_(kNIMMessageFeatureDefault)
 		, session_type_(kNIMSessionTypeP2P)
@@ -182,7 +190,6 @@ public:
 			attach_ = values[kNIMMsgKeyAttach].asString();
 			client_msg_id_ = values[kNIMMsgKeyClientMsgid].asString();
 			readonly_server_id_ = values[kNIMMsgKeyServerMsgid].asUInt64();
-			resend_flag_ = values[kNIMMsgKeyResendFlag].asUInt() > 0;
 
 			local_res_path_ = values[kNIMMsgKeyLocalFilePath].asString();
 			local_talk_id_ = values[kNIMMsgKeyLocalTalkId].asString();
@@ -209,7 +216,6 @@ public:
 		values[kNIMMsgKeyBody] = content_;
 		values[kNIMMsgKeyAttach] = attach_;
 		values[kNIMMsgKeyClientMsgid] = client_msg_id_;
-		values[kNIMMsgKeyResendFlag] = resend_flag_ ? 1 : 0;
 		values[kNIMMsgKeyLocalFilePath] = local_res_path_;
 		values[kNIMMsgKeyLocalTalkId] = receiver_accid_;
 		values[kNIMMsgKeyLocalResId] = local_res_id_;
@@ -340,7 +346,7 @@ struct IMAudio : IMFile
 	std::string ToJsonString() const
 	{
 		Json::Value attach;
-		attach[kNIMAudioMsgKeyDisplayName] = display_name_;
+		attach[kNIMAudioMsgKeyDuration] = duration_;
 
 		return __super::ToJsonString(attach);
 	}

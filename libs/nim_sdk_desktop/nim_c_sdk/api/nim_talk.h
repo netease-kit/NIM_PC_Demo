@@ -53,13 +53,23 @@ NIM_SDK_DLL_API void nim_talk_reg_ack_cb(const char *json_extension, nim_talk_ac
 NIM_SDK_DLL_API void nim_talk_reg_receive_cb(const char *json_extension, nim_talk_receive_cb_func cb, const void *user_data);
 
 /** @fn void nim_talk_reg_receive_msgs_cb(const char *json_extension, nim_talk_receive_cb_func cb, const void *user_data)
-  * 注册接收批量消息回调 （如果在注册了接收消息回调的同时也注册了该批量接口，当有批量消息时，会改走这个接口通知应用层，例如登录后接收到的离线消息等）
+  * 注册接收批量消息(一个会话为单位)回调 （如果在注册了接收消息回调的同时也注册了该批量接口，当有批量消息时，会改走这个接口通知应用层，例如登录后接收到的离线消息等）
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb		接收消息的回调函数, nim_talk_receive_cb_func回调函数定义见nim_talk_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
 NIM_SDK_DLL_API void nim_talk_reg_receive_msgs_cb(const char *json_extension, nim_talk_receive_cb_func cb, const void *user_data);
+
+/** @fn void nim_talk_reg_notification_filter_cb(const char *json_extension, nim_talk_team_notification_filter_func cb, const void *user_data)
+  * 注册接收群通知是否需要过滤的回调
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		nim_talk_team_notification_filter_func回调函数定义见nim_talk_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_talk_reg_notification_filter_cb(const char *json_extension, nim_talk_team_notification_filter_func cb, const void *user_data);
+
 
 #ifdef __cplusplus
 };

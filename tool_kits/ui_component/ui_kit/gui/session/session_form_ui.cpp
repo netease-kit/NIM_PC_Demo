@@ -284,7 +284,7 @@ void SessionForm::InitWindow()
 
 	unregister_cb.Add(NotifyCenter::GetInstance()->RegNotify(NT_LINK, nbase::Bind(&SessionForm::OnRelink, this, std::placeholders::_1)));
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(nbase::Bind(&SessionForm::OnUserInfoChange, this, std::placeholders::_1)));
-	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(nbase::Bind(&SessionForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2)));
+	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(nbase::Bind(&SessionForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 	if (session_type_ == nim::kNIMSessionTypeTeam)
 	{
 		unregister_cb.Add(TeamService::GetInstance()->RegAddTeamMember(nbase::Bind(&SessionForm::OnTeamMemberAdd, this, std::placeholders::_1, std::placeholders::_2)));
@@ -294,6 +294,7 @@ void SessionForm::InitWindow()
 		unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamOwner(nbase::Bind(&SessionForm::OnTeamOwnerChange, this, std::placeholders::_1, std::placeholders::_2)));
 		unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(nbase::Bind(&SessionForm::OnTeamNameChange, this, std::placeholders::_1)));
 		unregister_cb.Add(TeamService::GetInstance()->RegRemoveTeam(nbase::Bind(&SessionForm::OnTeamRemove, this, std::placeholders::_1)));
+		unregister_cb.Add(TeamService::GetInstance()->RegMuteMember(nbase::Bind(&SessionForm::OnTeamMuteMember, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 	}
 }
 
@@ -352,6 +353,18 @@ bool SessionForm::Notify(ui::EventArgs* param)
 					QLOG_ERR(L"audio convert to text failed errorcode={0}") << rescode;
 				}
 			}));
+		}
+		else if (param->wParam == BET_SHOWPROFILE)
+		{
+			if (session_type_ == nim::kNIMSessionTypeTeam)
+			{
+				nim::NIMTeamUserType type = team_member_info_list_[LoginManager::GetInstance()->GetAccount()].GetUserType();
+				ProfileForm::ShowProfileForm(session_id_, md.sender_accid_, type);
+			}
+			else
+			{
+				ProfileForm::ShowProfileForm(md.sender_accid_);
+			}
 		}
 	}
 	else if (param->Type == ui::kEventTextChange)
@@ -1020,14 +1033,14 @@ void SessionForm::CheckHeader()
 	{
 		label_tid_->SetUTF8Text(session_id_);
 		name = TeamService::GetInstance()->GetTeamName(session_id_);
-		photo = TeamService::GetInstance()->GetTeamPhoto(true);
+		photo = PhotoService::GetInstance()->GetTeamPhoto(session_id_, true);
 
 	}
 	else
 	{
 		label_tid_->SetVisible(false);
 		name = IsFileTransPhone() ? L"我的手机" : UserService::GetInstance()->GetUserName(session_id_);
-		photo = UserService::GetInstance()->GetUserPhoto(session_id_);
+		photo = PhotoService::GetInstance()->GetUserPhoto(session_id_);
 	}
 
 	label_title_->SetText(name);
@@ -1168,7 +1181,7 @@ void SessionForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 	}
 }
 
-void SessionForm::OnUserPhotoReady(const std::string& accid, const std::wstring &photo_path)
+void SessionForm::OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path)
 {
 	auto refresh_msglist_photo = [=]() //更新消息列表头像
 	{
@@ -1181,27 +1194,29 @@ void SessionForm::OnUserPhotoReady(const std::string& accid, const std::wstring 
 		}
 	};
 
-	// P2P聊天时，更新左上角头像和消息列表头像
-	if (session_type_ == nim::kNIMSessionTypeP2P)
+	if (accid == session_id_)
 	{
-		if (accid == session_id_)
-			btn_header_->SetBkImage(photo_path);
-
-		refresh_msglist_photo();
+		UpdateSessionIcon(photo_path);
+		btn_header_->SetBkImage(photo_path);
 	}
 
-	// 群聊时，更新群成员列表和消息列表中用户头像
-	if (session_type_ == nim::kNIMSessionTypeTeam)
+	if (type == kUser)
 	{
-		if (team_info_.GetType() == nim::kNIMTeamTypeAdvanced && team_member_info_list_.find(accid) != team_member_info_list_.cend())
+		// 群聊时，更新群成员列表和消息列表中用户头像
+		if (session_type_ == nim::kNIMSessionTypeTeam)
 		{
-			TeamItem* item = (TeamItem*)member_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
-			if (item != NULL)
-				item->FindSubControl(L"member_icon")->SetBkImage(photo_path);
+			if (team_info_.GetType() == nim::kNIMTeamTypeAdvanced && team_member_info_list_.find(accid) != team_member_info_list_.cend())
+			{
+				TeamItem* item = (TeamItem*)member_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
+				if (item != NULL)
+					item->FindSubControl(L"member_icon")->SetBkImage(photo_path);
 
-			refresh_msglist_photo();
+				refresh_msglist_photo();
+			}
+			else if (team_info_.GetType() == nim::kNIMTeamTypeNormal)
+				refresh_msglist_photo();
 		}
-		else if (team_info_.GetType() == nim::kNIMTeamTypeNormal)
+		else
 			refresh_msglist_photo();
 	}
 }

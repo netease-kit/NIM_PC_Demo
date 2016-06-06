@@ -123,9 +123,10 @@ void VideoForm::FreeAudio()
 
 void VideoForm::StartChat()
 {
-	bool ret = VideoManager::GetInstance()->StartChat((current_video_mode_ ? nim::kNIMVideoChatModeVideo : nim::kNIMVideoChatModeAudio), "", "", session_id_);
+	bool ret = VideoManager::GetInstance()->StartChat((current_video_mode_ ? nim::kNIMVideoChatModeVideo : nim::kNIMVideoChatModeAudio), "", "", session_id_, session_id_);
 	if (ret)
 	{
+		//VideoManager::GetInstance()->SetAudioMuted(false);
 		is_start_ = true;
 		StartDialWaitingTimer();
 	}
@@ -491,8 +492,8 @@ void VideoForm::OnLogin( bool success )
 		//	EnterEndCallPage( END_CALL_BAD_MICROPHONE );
 		//}
 		paint_video_timer_.Cancel();
-		auto task = nbase::Bind(&VideoForm::PaintVideo, this);
-		nbase::ThreadManager::PostRepeatedTask(kThreadUI, task, nbase::TimeDelta::FromMilliseconds(70));
+		StdClosure task = nbase::Bind(&VideoForm::PaintVideo, this);
+		nbase::ThreadManager::PostRepeatedTask(kThreadUI, paint_video_timer_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(70));
 	}
 	else
 	{

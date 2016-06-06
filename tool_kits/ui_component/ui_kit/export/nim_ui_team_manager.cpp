@@ -60,11 +60,6 @@ std::wstring TeamManager::GetTeamName(const std::string& tid)
 	return nim_comp::TeamService::GetInstance()->GetTeamName(tid);
 }
 
-std::wstring TeamManager::GetTeamPhoto(bool full_path)
-{
-	return nim_comp::TeamService::GetInstance()->GetTeamPhoto(full_path);
-}
-
 void TeamManager::QueryAllTeamInfo()
 {
 	nim_comp::TeamService::GetInstance()->QueryAllTeamInfo();
@@ -73,6 +68,16 @@ void TeamManager::QueryAllTeamInfo()
 void TeamManager::InvokeChangeTeamMember(const std::string& tid, const std::string& uid, const std::string& team_card)
 {
 	nim_comp::TeamService::GetInstance()->InvokeChangeTeamMember(tid, uid, team_card);
+}
+
+UnregisterCallback TeamManager::RegMuteMember(OnMuteMember mute)
+{
+	return nim_comp::TeamService::GetInstance()->RegMuteMember(mute);
+}
+
+void TeamManager::InvokeTeamDataSyncCallback(nim::NIMDataSyncType sync_type, nim::NIMDataSyncStatus status, const std::string &data_sync_info)
+{
+	nim_comp::TeamService::GetInstance()->InvokeTeamDataSyncCallback(sync_type, status, data_sync_info);
 }
 
 }

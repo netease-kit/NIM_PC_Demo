@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_api.h
-  * @brief NIM cpp sdk 头文件
+  * @brief NIM集合头文件
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/10/20
@@ -35,17 +35,7 @@ namespace nim
 * 反注册NIM提供的所有回调
 * @return void 无返回值
 */
-void UnregNIMCallback()
-{
-	Client::UnregClientCb();
-	DataSync::UnregDataSyncCb();
-	Friend::UnregFriendCb();
-	Session::UnregSessionCb();
-	SystemMsg::UnregSysmsgCb();
-	Talk::UnregTalkCb();
-	Team::UnregTeamCb();
-	User::UnregUserCb();
-}
+void UnregNIMCallback();
 
 }
 

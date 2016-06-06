@@ -34,7 +34,7 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 		item = new MsgBubbleFile;
 	else if (msg.type_ == nim::kNIMMessageTypeLocation)
 		item = new MsgBubbleLocation;
-	else if (msg.type_ == nim::kNIMMessageTypeNotification)
+	else if (msg.type_ == nim::kNIMMessageTypeNotification || msg.type_ == nim::kNIMMessageTypeTips)
 	{
 		id_bubble_pair_[bubble_id] = NULL;
 
@@ -269,8 +269,7 @@ void MsgRecordForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 
 void MsgRecordForm::QueryMsgOnlineCb(nim::NIMResCode code, const std::string& id, nim::NIMSessionType type, const nim::QueryMsglogResult& result)
 {
-	QLOG_APP(L"query online msg end: code={0} id={1} type={2}") <<code <<id <<type;
-
+	QLOG_APP(L"query online msg end: code={0} id={1} type={2} count={3}") <<code <<id <<type <<result.msglogs_.size();
 
 	if (id != session_id_)
 		return;

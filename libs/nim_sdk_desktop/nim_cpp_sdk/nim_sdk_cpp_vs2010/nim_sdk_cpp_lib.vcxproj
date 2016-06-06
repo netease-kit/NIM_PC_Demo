@@ -115,6 +115,7 @@
     <ClCompile Include="helper\nim_team_helper.cpp" />
     <ClCompile Include="helper\nim_tool_helper.cpp" />
     <ClCompile Include="helper\nim_user_helper.cpp" />
+    <ClCompile Include="nim_cpp_api.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api\nim_cpp_client.h" />

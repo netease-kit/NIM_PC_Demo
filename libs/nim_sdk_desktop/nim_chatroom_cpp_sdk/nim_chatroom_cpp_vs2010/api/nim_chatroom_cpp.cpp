@@ -1,5 +1,5 @@
-/** @file nim_chatroom_cpp.cpp
-  * @brief ���칦�ܣ���Ҫ����������Ϣ��������Ϣ�ȹ���
+﻿/** @file nim_chatroom_cpp.cpp
+  * @brief 聊天功能；主要包括发送消息、接收消息等功能
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/12/29
@@ -39,6 +39,7 @@ static void CallbackEnter(__int64 room_id, int step, int error_code, const char 
 			ChatRoomInfo info;
 			ChatRoomMemberInfo my_info;
 			ParseChatRoomEnterCallbackResultInfo(PCharToString(result), info, my_info);
+			//如果错误码error_code为kResRoomLocalNeedRequestAgain，聊天室重连机制结束，则需要向IM服务器重新请求进入该聊天室权限
 			(*cb_pointer)(room_id, (NIMChatRoomEnterStep)step, error_code, info, my_info);
 		}
 	}

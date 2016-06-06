@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window shadowattached="false">
+    <Box >
+		<VBox name="track_box" margin="200,200,200,200" bkimage="file='screen_border.png' corner='30,30,30,30'" >
+			<HBox height="auto" margin="15,15,15,0" >
+				<Control name="track_NW" width="17" height="17" bkimage="screen_point.png" />
+				<Control />
+				<Control name="track_T" width="17" height="17" bkimage="screen_point.png" />
+				<Control />
+				<Control name="track_NE" width="17" height="17" bkimage="screen_point.png" />
+			</HBox>
+			<Control />
+			<HBox height="auto" margin="15,0,15,0" >
+				<Control name="track_L" width="17" height="17" bkimage="screen_point.png" />
+				<Control />
+				<Control name="track_R" width="17" height="17" bkimage="screen_point.png" />
+			</HBox>
+			<Control />
+			<HBox height="auto" margin="15,0,15,15" >
+				<Control name="track_SW" width="17" height="17" bkimage="screen_point.png" />
+				<Control />
+				<Control name="track_B" width="17" height="17" bkimage="screen_point.png" />
+				<Control />
+				<Control name="track_SE" width="17" height="17" bkimage="screen_point.png" />
+			</HBox>
+		</VBox>
+    </Box>
+</Window>

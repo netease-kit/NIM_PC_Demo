@@ -1,5 +1,5 @@
-/** @file nim_http.h
-  * @brief NIM HTTPÌá¹©µÄhttp´«ÊäÏà¹Ø½Ó¿Ú
+ï»¿/** @file nim_tools_http.h
+  * @brief NIM HTTPæä¾›çš„httpä¼ è¾“ç›¸å…³æ¥å£
   * @copyright (c) 2015, NetEase Inc. All rights reserved
   * @author towik
   * @date 2015/4/30
@@ -12,10 +12,10 @@
 
 extern "C"
 {
-/** @enum NIMProxyType ´úÀíÀàĞÍ */
+/** @enum NIMProxyType ä»£ç†ç±»å‹ */
 enum NIMProxyType
 {
-	kNIMProxyNone		= 0,	/**< ²»Ê¹ÓÃ´úÀí*/
+	kNIMProxyNone		= 0,	/**< ä¸ä½¿ç”¨ä»£ç†*/
 	kNIMProxyHttp11		= 1,	/**< HTTP 1.1 Proxy*/
 	kNIMProxySocks4		= 4,	/**< Socks4 Proxy*/
 	kNIMProxySocks4a	= 5,	/**< Socks4a Proxy*/
@@ -23,143 +23,143 @@ enum NIMProxyType
 };
 
 /** @typedef void* HttpRequestHandle
-  * httpÈÎÎñ¾ä±ú
+  * httpä»»åŠ¡å¥æŸ„
   */
 typedef void* HttpRequestHandle;
 
 /** @typedef void (*nim_http_request_completed_cb)(const void* user_data, bool, int)
   * nim callback function that has been registered in nim_http_create_*** API
-  * @param[out] user_data		»Ø´«µÄ×Ô¶¨ÒåÊı¾İ
-  * @param[out] result			´«Êä½á¹û£¬true´ú±í´«Êä³É¹¦£¬false´ú±í´«ÊäÊ§°Ü
-  * @param[out] response_code	httpÏìÓ¦Âë
-  * @return void				ÎŞ·µ»ØÖµ
+  * @param[out] user_data		å›ä¼ çš„è‡ªå®šä¹‰æ•°æ®
+  * @param[out] result			ä¼ è¾“ç»“æœï¼Œtrueä»£è¡¨ä¼ è¾“æˆåŠŸï¼Œfalseä»£è¡¨ä¼ è¾“å¤±è´¥
+  * @param[out] response_code	httpå“åº”ç 
+  * @return void				æ— è¿”å›å€¼
   */
 typedef void (*nim_http_request_completed_cb)(const void* user_data, bool result, int response_code);
 
 /** @typedef void (*nim_http_request_response_cb)(const void* user_data, bool, int)
   * nim callback function that has been registered in nim_http_create_*** API
-  * @param[out] user_data			»Ø´«µÄ×Ô¶¨ÒåÊı¾İ
-  * @param[out] result				´«Êä½á¹û£¬true´ú±í´«Êä³É¹¦£¬false´ú±í´«ÊäÊ§°Ü
-  * @param[out] response_code		httpÏìÓ¦Âë
-  * @param[out] response_content	httpÏìÓ¦ÊµÌåÄÚÈİ
-  * @return void					ÎŞ·µ»ØÖµ
+  * @param[out] user_data			å›ä¼ çš„è‡ªå®šä¹‰æ•°æ®
+  * @param[out] result				ä¼ è¾“ç»“æœï¼Œtrueä»£è¡¨ä¼ è¾“æˆåŠŸï¼Œfalseä»£è¡¨ä¼ è¾“å¤±è´¥
+  * @param[out] response_code		httpå“åº”ç 
+  * @param[out] response_content	httpå“åº”å®ä½“å†…å®¹
+  * @return void					æ— è¿”å›å€¼
   */
 typedef void (*nim_http_request_response_cb)(const void* user_data, bool result, int response_code, const char* response_content);
 
-/** @typedef void (*nim_http_request_progress_cb)(const void* user_data, double uploaded_size, double total_upload_size, double downloaded_size, double total_download_size)
+/** @typedef void (*nim_http_request_progress_cb)(const void* user_data, double total_upload_size, double uploaded_size, double total_download_size, double downloaded_size)
   * nim callback function that has been registered in nim_http_set_request_progress_cb API
-  * @param[out] user_data				»Ø´«µÄ×Ô¶¨ÒåÊı¾İ
-  * @param[out] uploaded_size			ÒÑ¾­ÉÏ´«µÄ×Ö½ÚÊı
-  * @param[out] total_upload_size		×ÜµÄ´ıÉÏ´«µÄ×Ö½ÚÊı
-  * @param[out] downloaded_size			ÒÑ¾­ÏÂÔØµÄ×Ö½ÚÊı
-  * @param[out] total_download_size		×ÜµÄ´ıÏÂÔØµÄ×Ö½ÚÊı
-  * @return void						ÎŞ·µ»ØÖµ
+  * @param[out] user_data				å›ä¼ çš„è‡ªå®šä¹‰æ•°æ®
+  * @param[out] total_upload_size		æ€»çš„å¾…ä¸Šä¼ çš„å­—èŠ‚æ•°
+  * @param[out] uploaded_size			å·²ç»ä¸Šä¼ çš„å­—èŠ‚æ•°
+ * @param[out] total_download_size		æ€»çš„å¾…ä¸‹è½½çš„å­—èŠ‚æ•°
+  * @param[out] downloaded_size			å·²ç»ä¸‹è½½çš„å­—èŠ‚æ•°
+  * @return void						æ— è¿”å›å€¼
   */
-typedef void (*nim_http_request_progress_cb)(const void* user_data, double uploaded_size, double total_upload_size, double downloaded_size, double total_download_size);
+typedef void(*nim_http_request_progress_cb)(const void* user_data, double total_upload_size, double uploaded_size, double total_download_size, double downloaded_size);
 
 /** @fn void nim_http_init()
-  * NIM HTTP ³õÊ¼»¯
-  * @return void ÎŞ·µ»ØÖµ
+  * NIM HTTP åˆå§‹åŒ–
+  * @return void æ— è¿”å›å€¼
   */
 NET_EXPORT void nim_http_init();
 
 /** @fn void nim_http_uninit()
-  * NIM HTTP ·´³õÊ¼»¯
-  * @return void ÎŞ·µ»ØÖµ
+  * NIM HTTP ååˆå§‹åŒ–
+  * @return void æ— è¿”å›å€¼
   */
 NET_EXPORT void nim_http_uninit();
 
 /** @fn int nim_http_post_request(HttpRequestHandle)
-* NIM HTTP ·¢ÆğÈÎÎñ
-* @param[in] request_handle	httpÈÎÎñ¾ä±ú
-* @return int					ÈÎÎñid
+* NIM HTTP å‘èµ·ä»»åŠ¡
+* @param[in] request_handle	httpä»»åŠ¡å¥æŸ„
+* @return int					ä»»åŠ¡id
 */
-NET_EXPORT int nim_http_post_request(HttpRequestHandle);
+NET_EXPORT int nim_http_post_request(HttpRequestHandle request_handle);
 
 /** @fn void nim_http_remove_request(int http_request_id)
-* NIM HTTP È¡ÏûÈÎÎñ
-* @param[in] http_request_id	ÈÎÎñid
-* @return void				ÎŞ·µ»ØÖµ
+* NIM HTTP å–æ¶ˆä»»åŠ¡
+* @param[in] http_request_id	ä»»åŠ¡id
+* @return void				æ— è¿”å›å€¼
 */
 NET_EXPORT void nim_http_remove_request(int http_request_id);
 
 /** @fn HttpRequestHandle nim_http_create_download_file_request(const char* url, const char *download_file_path, nim_http_request_completed_cb complete_cb, const void* user_data)
-  * NIM HTTP ´´½¨ÏÂÔØÎÄ¼şÈÎÎñ
-  * @param[in] url					×ÊÔ´µØÖ·
-  * @param[in] download_file_path	ÏÂÔØÎÄ¼ş±£´æµÄ±¾µØÂ·¾¶
-  * @param[in] complete_cb			½áÊø»Øµ÷
-  * @param[in] user_data			×Ô¶¨ÒåÊı¾İ
-  * @return HttpRequestHandle		httpÈÎÎñ¾ä±ú
+  * NIM HTTP åˆ›å»ºä¸‹è½½æ–‡ä»¶ä»»åŠ¡
+  * @param[in] url					èµ„æºåœ°å€
+  * @param[in] download_file_path	ä¸‹è½½æ–‡ä»¶ä¿å­˜çš„æœ¬åœ°è·¯å¾„
+  * @param[in] complete_cb			ç»“æŸå›è°ƒ
+  * @param[in] user_data			è‡ªå®šä¹‰æ•°æ®
+  * @return HttpRequestHandle		httpä»»åŠ¡å¥æŸ„
   */
 NET_EXPORT HttpRequestHandle nim_http_create_download_file_request(const char* url, const char *download_file_path,
 															nim_http_request_completed_cb complete_cb, const void* user_data);
 
 /** @fn HttpRequestHandle nim_http_create_download_file_range_request(const char* url, const char *download_file_path, __int64 range_start, nim_http_request_completed_cb complete_cb, const void* user_data)
-  * NIM HTTP ´´½¨ÏÂÔØÎÄ¼şÈÎÎñ£¬Ö§³Ö¶ÏµãĞø´«
-  * @param[in] url					×ÊÔ´µØÖ·
-  * @param[in] download_file_path	ÏÂÔØÎÄ¼ş±£´æµÄ±¾µØÂ·¾¶
-  * @param[in] range_start			ÏÂÔØÎÄ¼şµÄÆğÊ¼µã
-  * @param[in] complete_cb			½áÊø»Øµ÷
-  * @param[in] user_data			×Ô¶¨ÒåÊı¾İ
-  * @return HttpRequestHandle		httpÈÎÎñ¾ä±ú
+  * NIM HTTP åˆ›å»ºä¸‹è½½æ–‡ä»¶ä»»åŠ¡ï¼Œæ”¯æŒæ–­ç‚¹ç»­ä¼ 
+  * @param[in] url					èµ„æºåœ°å€
+  * @param[in] download_file_path	ä¸‹è½½æ–‡ä»¶ä¿å­˜çš„æœ¬åœ°è·¯å¾„
+  * @param[in] range_start			ä¸‹è½½æ–‡ä»¶çš„èµ·å§‹ç‚¹
+  * @param[in] complete_cb			ç»“æŸå›è°ƒ
+  * @param[in] user_data			è‡ªå®šä¹‰æ•°æ®
+  * @return HttpRequestHandle		httpä»»åŠ¡å¥æŸ„
   */
 NET_EXPORT HttpRequestHandle nim_http_create_download_file_range_request(const char* url, const char *download_file_path,
 															__int64 range_start, nim_http_request_completed_cb complete_cb, const void* user_data);
 
 /** @fn HttpRequestHandle nim_http_create_request(const char* url, const char* post_body, size_t post_body_size, nim_http_request_response_cb response_cb, const void* user_data)
-  * NIM HTTP ´´½¨ÈÎÎñ
-  * @param[in] url				×ÊÔ´µØÖ·
-  * @param[in] post_body		ÉÏ´«ÄÚÈİ
-  * @param[in] post_body_size	ÉÏ´«ÄÚÈİ´óĞ¡
-  * @param[in] response_cb		½áÊø»Øµ÷£¬ÏìÓ¦ÊµÌåÄÚÈİ
-  * @param[in] user_data		×Ô¶¨ÒåÊı¾İ
-  * @return HttpRequestHandle	httpÈÎÎñ¾ä±ú
+  * NIM HTTP åˆ›å»ºä»»åŠ¡
+  * @param[in] url				èµ„æºåœ°å€
+  * @param[in] post_body		ä¸Šä¼ å†…å®¹
+  * @param[in] post_body_size	ä¸Šä¼ å†…å®¹å¤§å°
+  * @param[in] response_cb		ç»“æŸå›è°ƒï¼Œå“åº”å®ä½“å†…å®¹
+  * @param[in] user_data		è‡ªå®šä¹‰æ•°æ®
+  * @return HttpRequestHandle	httpä»»åŠ¡å¥æŸ„
   */
 NET_EXPORT HttpRequestHandle nim_http_create_request(const char* url, const char* post_body, size_t post_body_size, 
 															nim_http_request_response_cb response_cb, const void* user_data);
 
 /** @fn void nim_http_add_request_header(HttpRequestHandle request_handle, const char* key, const char* value)
-  * NIM HTTP ´´½¨ÈÎÎñ
-  * @param[in] request_handle	httpÈÎÎñ¾ä±ú
-  * @param[in] key				Í·µÄkey
-  * @param[in] value			Í·µÄvalue
-  * @return void				ÎŞ·µ»ØÖµ
+  * NIM HTTP åˆ›å»ºä»»åŠ¡
+  * @param[in] request_handle	httpä»»åŠ¡å¥æŸ„
+  * @param[in] key				å¤´çš„key
+  * @param[in] value			å¤´çš„value
+  * @return void				æ— è¿”å›å€¼
   */
 NET_EXPORT void nim_http_add_request_header(HttpRequestHandle request_handle, const char* key, const char* value);
 
 /** @fn void nim_http_set_request_progress_cb(HttpRequestHandle request_handle, nim_http_request_progress_cb progress_callback, const void* user_data)
-  * NIM HTTP ÉèÖÃ½ø¶È»Øµ÷
-  * @param[in] request_handle		httpÈÎÎñ¾ä±ú
-  * @param[in] progress_callback	½ø¶È»Øµ÷º¯Êı
-  * @param[in] user_data			×Ô¶¨ÒåÊı¾İ
-  * @return void					ÎŞ·µ»ØÖµ
+  * NIM HTTP è®¾ç½®è¿›åº¦å›è°ƒ
+  * @param[in] request_handle		httpä»»åŠ¡å¥æŸ„
+  * @param[in] progress_callback	è¿›åº¦å›è°ƒå‡½æ•°
+  * @param[in] user_data			è‡ªå®šä¹‰æ•°æ®
+  * @return void					æ— è¿”å›å€¼
   */
 NET_EXPORT void nim_http_set_request_progress_cb(HttpRequestHandle request_handle, nim_http_request_progress_cb progress_callback, const void* user_data);
 
 /** @fn void nim_http_set_request_method_as_post(HttpRequestHandle request_handle)
-  * NIM HTTP Ç¿ÖÆÉèÖÃhttpÇëÇó·½·¨Îªpost
-  * @param[in] request_handle	httpÈÎÎñ¾ä±ú
-  * @return void				ÎŞ·µ»ØÖµ
+  * NIM HTTP å¼ºåˆ¶è®¾ç½®httpè¯·æ±‚æ–¹æ³•ä¸ºpost
+  * @param[in] request_handle	httpä»»åŠ¡å¥æŸ„
+  * @return void				æ— è¿”å›å€¼
   */
 NET_EXPORT void nim_http_set_request_method_as_post(HttpRequestHandle request_handle);
 
 /** @fn void nim_http_set_timeout(HttpRequestHandle request_handle, int timeout_ms)
-  * NIM HTTP ÉèÖÃ³¬Ê±
-  * @param[in] request_handle	httpÈÎÎñ¾ä±ú
-  * @param[in] timeout_ms		³¬Ê±Ê±¼ä£¬µ¥Î»ÊÇºÁÃë
-  * @return void				ÎŞ·µ»ØÖµ
+  * NIM HTTP è®¾ç½®è¶…æ—¶
+  * @param[in] request_handle	httpä»»åŠ¡å¥æŸ„
+  * @param[in] timeout_ms		è¶…æ—¶æ—¶é—´ï¼Œå•ä½æ˜¯æ¯«ç§’
+  * @return void				æ— è¿”å›å€¼
   */
 NET_EXPORT void nim_http_set_timeout(HttpRequestHandle request_handle, int timeout_ms);
 
 /** @fn void nim_http_set_proxy(HttpRequestHandle request_handle, int type, const char* host, short port, const char* user, const char* pass)
-  * NIM HTTP ÉèÖÃ´úÀí
-  * @param[in] request_handle	httpÈÎÎñ¾ä±ú
-  * @param[in] type				´úÀíÀàĞÍNIMProxyType
-  * @param[in] host				´úÀíµØÖ·
-  * @param[in] port				´úÀí¶Ë¿Ú
-  * @param[in] user				´úÀíÕËºÅ
-  * @param[in] pass				´úÀíÃÜÂë
-  * @return void				ÎŞ·µ»ØÖµ
+  * NIM HTTP è®¾ç½®ä»£ç†
+  * @param[in] request_handle	httpä»»åŠ¡å¥æŸ„
+  * @param[in] type				ä»£ç†ç±»å‹NIMProxyType
+  * @param[in] host				ä»£ç†åœ°å€
+  * @param[in] port				ä»£ç†ç«¯å£
+  * @param[in] user				ä»£ç†è´¦å·
+  * @param[in] pass				ä»£ç†å¯†ç 
+  * @return void				æ— è¿”å›å€¼
   */
 NET_EXPORT void nim_http_set_proxy(HttpRequestHandle request_handle, int type, const char* host, short port, const char* user, const char* pass);
 

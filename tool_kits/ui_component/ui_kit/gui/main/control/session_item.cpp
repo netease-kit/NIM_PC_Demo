@@ -44,22 +44,21 @@ void SessionItem::InitUserProfile()
 {
 	if (msg_.type_ == nim::kNIMSessionTypeP2P)
 	{
-		UserService *user_service = UserService::GetInstance();
 		if (LoginManager::GetInstance()->IsEqual(msg_.id_))
 		{
 			label_name_->SetText(L"我的手机");
 		} 
 		else
 		{
-			label_name_->SetText(user_service->GetUserName(msg_.id_));
+			label_name_->SetText(UserService::GetInstance()->GetUserName(msg_.id_));
 		}
-		head_image_->SetBkImage(user_service->GetUserPhoto(msg_.id_));
+		head_image_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(msg_.id_));
 	}
 	else
 	{
 		std::wstring tname = TeamService::GetInstance()->GetTeamName(msg_.id_);
 		label_name_->SetText(tname);
-		head_image_->SetBkImage(TeamService::GetInstance()->GetTeamPhoto(false));
+		head_image_->SetBkImage(PhotoService::GetInstance()->GetTeamPhoto(msg_.id_, false));
 	}
 }
 

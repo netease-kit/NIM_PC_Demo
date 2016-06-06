@@ -33,12 +33,12 @@ void CustomMsgBubble::InitInfo(const nim::IMMessage &msg)
 	std::wstring sender = UserService::GetInstance()->GetUserName(sender_id_);
 	if (session_type_ == nim::kNIMSessionTypeP2P)
 	{
-		head_->SetBkImage(UserService::GetInstance()->GetUserPhoto(sender_id_));
+		head_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(sender_id_));
 		name_->SetText(sender);
 	}
 	else
 	{
-		head_->SetBkImage(TeamService::GetInstance()->GetTeamPhoto(true));
+		head_->SetBkImage(PhotoService::GetInstance()->GetTeamPhoto(receiver_id_, true));
 		std::wstring team_sender = TeamService::GetInstance()->GetTeamName(receiver_id_) + L"->" + sender;
 		name_->SetText(team_sender);
 	}
@@ -107,7 +107,7 @@ void CustomMsgBubble::OnUserInfoChange(const nim::UserNameCard & info)
 		if (session_type_ == nim::kNIMSessionTypeP2P)
 		{
 			name_->SetText(sender);
-			head_->SetBkImage(UserService::GetInstance()->GetUserPhoto(info.GetAccId()));
+			head_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(info.GetAccId()));
 		}
 		else
 		{

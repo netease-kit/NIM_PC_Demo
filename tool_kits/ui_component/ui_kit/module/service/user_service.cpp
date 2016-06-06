@@ -148,7 +148,7 @@ void UserService::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfo_lis
 			InvokeGetUserInfo(std::list<std::string>(1, info.GetAccId()));
 
 		if (!info.GetIconUrl().empty())
-			DownloadUserPhoto(info);
+			PhotoService::GetInstance()->DownloadUserPhoto(info);
 
 		if (info.ExistValue(nim::kUserNameCardKeyName) || info.ExistValue(nim::kUserNameCardKeyIconUrl)) //用户名或头像变化了
 			name_photo_list.push_back(info);
@@ -201,18 +201,6 @@ UnregisterCallback nim_comp::UserService::RegMiscUInfoChange(const OnUserInfoCha
 	return cb;
 }
 
-UnregisterCallback UserService::RegUserPhotoReady(const OnUserPhotoReadyCallback & callback)
-{
-	OnUserPhotoReadyCallback* new_callback = new OnUserPhotoReadyCallback(callback);
-	int cb_id = (int)new_callback;
-	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
-	photo_ready_cb_list_[cb_id].reset(new_callback);
-	auto cb = ToWeakCallback([this, cb_id]() {
-		photo_ready_cb_list_.erase(cb_id);
-	});
-	return cb;
-}
-
 void UserService::UIFriendListChangeCallback(FriendChangeType change_type, const std::string& accid)
 {
 	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
@@ -226,32 +214,6 @@ void UserService::InvokeFriendListChangeCallback(FriendChangeType change_type, c
 {
 	auto task = nbase::Bind(&UserService::UIFriendListChangeCallback, this, change_type, accid);
 	nbase::ThreadManager::PostTask(kThreadUI, task);
-}
-
-void UserService::DownloadUserPhoto(const nim::UserNameCard &info)
-{
-	if (info.GetIconUrl().find_first_of("http") != 0) //info.head_image不是正确的url
-		return;
-
-	std::wstring photo_path = GetUserPhotoDir() + nbase::UTF8ToUTF16(QString::GetMd5(info.GetIconUrl()));
-	if (info.GetIconUrl().empty() || CheckPhotoOK(photo_path)) // 如果头像已经存在且完好，就不下载
-		return;
-
-	nim::NOS::DownloadMediaCallback cb = ToWeakCallback([this, info, photo_path](nim::NIMResCode res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
-		if (res_code == nim::kNIMResSuccess)
-		{
-			std::wstring ws_file_path = nbase::UTF8ToUTF16(file_path);
-			if (nbase::FilePathIsExist(ws_file_path, false))
-			{
-				nbase::CopyFileW(ws_file_path, photo_path);
-				nbase::DeleteFile(ws_file_path);
-
-				for (auto &it : photo_ready_cb_list_) // 执行监听头像下载的回调
-					(*it.second)(info.GetAccId(), photo_path);
-			}
-		}
-	});
-	nim::NOS::DownloadResource(info.GetIconUrl(), cb);
 }
 
 void UserService::InvokeRegisterAccount(const std::string &username, const std::string &password, const std::string &nickname, const OnRegisterAccountCallback& cb)
@@ -351,7 +313,7 @@ void UserService::InvokeGetUserInfo(const std::list<std::string>& account_list)
 				all_user_[card.GetAccId()] = card; // 插入all_user
 
 				if (card.ExistValue(nim::kUserNameCardKeyIconUrl))
-					DownloadUserPhoto(card); // 下载头像
+					PhotoService::GetInstance()->DownloadUserPhoto(card); // 下载头像
 
 				on_query_list_.erase(card.GetAccId()); //已经查到，就从on_query_list_删除
 				tmp_set.erase(card.GetAccId());
@@ -365,7 +327,28 @@ void UserService::InvokeGetUserInfo(const std::list<std::string>& account_list)
 				on_query_list_.erase(id); //从on_query_list_删除，以免积压
 			}
 		});
-		nim::User::GetUserNameCardOnline(std::list<std::string>(not_get_set.cbegin(), not_get_set.cend()), cb2);
+
+		//SDK限制一次服务器查询数量不超过150
+		if (not_get_set.size() > 150)
+		{
+			std::list<std::string> ids;
+			for (auto iter = not_get_set.begin(); iter != not_get_set.end(); ++iter )
+			{
+				ids.push_back(*iter);
+				if (ids.size() == 150)
+				{
+					nim::User::GetUserNameCardOnline(ids, cb2);
+					ids.clear();
+				}
+			}
+			if (!ids.empty())
+			{
+				nim::User::GetUserNameCardOnline(ids, cb2);
+				ids.clear();
+			}
+		}
+		else
+			nim::User::GetUserNameCardOnline(std::list<std::string>(not_get_set.cbegin(), not_get_set.cend()), cb2);
 	});
 	nim::User::GetUserNameCard(account_list, cb1);
 
@@ -475,45 +458,6 @@ std::wstring UserService::GetFriendAlias(const std::string & id)
 	if (iter == friend_list_.cend())
 		return L"";
 	return nbase::UTF8ToUTF16(iter->second.GetAlias());
-}
-
-std::wstring UserService::GetUserPhoto(const std::string &accid)
-{
-	std::wstring default_photo = QPath::GetAppPath() + L"res\\faces\\default\\default.png";
-	if (!nbase::FilePathIsExist(default_photo, false))
-		default_photo = L"";
-
-	nim::UserNameCard info;
-	GetUserInfo(accid, info);
-	if (!info.ExistValue(nim::kUserNameCardKeyIconUrl) || info.GetIconUrl().empty())
-		return default_photo;
-
-	// 检查图片是否存在
-	std::wstring photo_path = GetUserPhotoDir() + nbase::UTF8ToUTF16(QString::GetMd5(info.GetIconUrl()));
-	if (!nbase::FilePathIsExist(photo_path, false))
-		return default_photo;
-
-	if (!CheckPhotoOK(photo_path))
-		return default_photo;
-
-	return GetUserPhotoDir() + nbase::UTF8ToUTF16(QString::GetMd5(info.GetIconUrl()));
-}
-
-bool UserService::CheckPhotoOK(std::wstring photo_path)
-{
-	if (!nbase::FilePathIsExist(photo_path, false))
-		return false;
-
-	// 检查图片是否损坏
-	return (Gdiplus::Image(photo_path.c_str()).GetLastStatus() == Gdiplus::Status::Ok);
-}
-
-std::wstring UserService::GetUserPhotoDir()
-{
-	std::wstring photo_dir = QPath::GetUserAppDataDir(LoginManager::GetInstance()->GetAccount()).append(L"photo\\");
-	if (!nbase::FilePathIsExist(photo_dir, true))
-		nbase::win32::CreateDirectoryRecursively(photo_dir.c_str());
-	return photo_dir;
 }
 
 }

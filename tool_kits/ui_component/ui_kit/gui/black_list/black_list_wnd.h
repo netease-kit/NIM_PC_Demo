@@ -1,6 +1,7 @@
 #pragma once
 
 #include "util/window_ex.h"
+#include "module/service/photo_service.h"
 
 namespace nim_comp
 {
@@ -27,7 +28,7 @@ private:
 	void RestoreUserInfo(const nim::UserNameCard &info);
 	void AddBlackListMember(const nim::UserNameCard &info);
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
-	void OnUserPhotoReady(const std::string& account, const std::wstring& photo_path);
+	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
 
 public:
 	static const LPCTSTR kClassName;

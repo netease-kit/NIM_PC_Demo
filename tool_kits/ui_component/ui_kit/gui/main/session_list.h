@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "control/session_item.h"
 #include "gui/main/multispot_form.h"
+#include "module/service/photo_service.h"
 
 namespace nim_comp
 {
@@ -44,7 +45,7 @@ public:
 	void OnChangeCallback(nim::NIMResCode rescode, const nim::SessionData& data, int total_unread_counts);
 
 	void OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos);
-	void OnUserPhotoReady(const std::string& accid, const std::wstring &photo_path);
+	void OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path);
 	void OnTeamNameChange(const nim::TeamInfo& team_info);
 
 private:

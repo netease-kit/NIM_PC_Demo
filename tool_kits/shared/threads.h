@@ -8,6 +8,8 @@ enum ThreadId
 	kThreadDatabase,	//写DB线程
 	kThreadGlobalMisc,	//全局Misc线程（比如：打开url）
 	kThreadDuilibHelper,//Duilib专用，UI辅助线程
+	kThreadLiveStreaming,//直播线程
+	kThreadScreenCapture,//取屏线程
 };
 
 #endif // SHARED_THREADS_H_

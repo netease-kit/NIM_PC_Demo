@@ -95,7 +95,7 @@ bool MsgBubbleAudio::OnClicked( ui::EventArgs* arg )
 			AudioCallback::SetPlaySid(sid_);
 			AudioCallback::SetPlayCid(msg_.client_msg_id_);
 
-			int audio_format = 0;
+			nim_audio::nim_audio_type audio_format = nim_audio::AAC;
 			{
 				FILE* audio_file;
 				if (_wfopen_s(&audio_file, nbase::UTF8ToUTF16(path_).c_str(), L"rb"))
@@ -104,7 +104,7 @@ bool MsgBubbleAudio::OnClicked( ui::EventArgs* arg )
 				char header[6];
 				int n = fread(header, 1, 6, audio_file);
 				if (n == 6 && !memcmp(header, "#!AMR\n", 6)) //AMR文件
-					audio_format = 1;
+					audio_format = nim_audio::AMR;
 				fclose(audio_file);
 			}
 

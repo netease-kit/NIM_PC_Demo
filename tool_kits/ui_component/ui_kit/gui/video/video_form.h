@@ -7,7 +7,7 @@
 //#include "video_mission.h"
 #include "shared/ui/msgbox.h"
 #include "module/session/ring.h"
-#include "ui_bitmap_control.h"
+#include "helper/ui_bitmap_control.h"
 
 namespace nim_comp
 {

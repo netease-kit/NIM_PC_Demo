@@ -28,6 +28,16 @@ typedef void (*nim_talk_ack_cb_func)(const char *result, const void *user_data);
   */
 typedef void (*nim_talk_receive_cb_func)(const char *content, const char *json_extension, const void *user_data);
 
+/** @typedef bool (*nim_talk_team_notification_filter_func)(const char *content, const char *json_extension, const void *user_data)
+  * 接收群通知是否需要过滤的函数定义（堵塞线程，谨慎使用，避免耗时行为）
+  * @param[out] content			json string (Keys SEE MORE 『接收消息Json Keys』),批量接口回调时，内容为json string array
+  * @param[out] json_extension	json扩展数据（备用）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef bool (*nim_talk_team_notification_filter_func)(const char *content, const char *json_extension, const void *user_data);
+
+
 /** @name 接收消息Json Keys
   * 本地定义的error code如下：
   * kNIMResSuccess(200) : no error
@@ -66,12 +76,14 @@ static const char *kNIMMsgKeyResendFlag		= "resend_flag";		/**< int,消息重发
 static const char *kNIMMsgKeyHistorySave	= "cloud_history";		/**< int,(可选)该消息是否存储云端历史,可选,仅对kNIMMessageTypeCustom有效，0:不支持,1:支持, 默认1 */
 static const char *kNIMMsgKeyMsgRoaming		= "roam_msg";			/**< int,(可选)该消息是否支持漫游,可选,仅对kNIMMessageTypeCustom有效,0:不支持,1:支持, 默认1 */
 static const char *kNIMMsgKeyMsgSync		= "sync_msg";			/**< int,(可选)该消息是否支持发送者多端同步,可选,仅对kNIMMessageTypeCustom有效,0:不支持,1:支持, 默认1 */
-static const char *kNIMMsgKeyNeedBadge		= "need_badge";			/**< int,(可选)是否要做消息计数，0:不需要，1:需要，默认1 */
-static const char *kNIMMsgKeyServerExt		= "server_ext";			/**< string,自定义扩展字段,必须为可以解析为json的非格式化的字符串,长度限制1024 */
-static const char *kNIMMsgKeyPushPayload	= "push_payload";		/**< string,第三方自定义的推送属性，必须为可以解析为json的非格式化的字符串，长度2048 */
-static const char *kNIMMsgKeyPushContent	= "push_content";		/**< string,自定义推送文案，长度限制200字节 */
+static const char *kNIMMsgKeyPushNeedBadge	= "push_need_badge";	/**< int,(可选)推送是否要做消息计数(角标)，0:不需要，1:需要，默认1 */
+static const char *kNIMMsgKeyServerExt		= "server_ext";			/**< string,(可选)自定义扩展字段,必须为可以解析为json的非格式化的字符串,长度限制1024 */
+static const char *kNIMMsgKeyPushPayload	= "push_payload";		/**< string,(可选)第三方自定义的推送属性，必须为可以解析为json的非格式化的字符串，长度2048 */
+static const char *kNIMMsgKeyPushContent	= "push_content";		/**< string,(可选)自定义推送文案，长度限制200字节 */
 static const char *kNIMMsgKeyPushEnable		= "push_enable";		/**< int,(可选)是否需要推送, 0:不需要,1:需要,默认1,aos在收到0是不要模拟本地推送 */
-static const char *kNIMMsgKeyNeedPushNick	= "push_nick";			/**< int,需要推送昵称，0：不需要，1：需要，默认1 */
+static const char *kNIMMsgKeyPushNeedPrefix	= "push_prefix";		/**< int,(可选)推送是否需要前缀，0：不需要，1：需要，默认1 */
+static const char *kNIMMsgKeyMsgRoutable	= "routable_msg";		/**< int,(可选)该消息是否抄送,0:不支持,1:支持,默认按照app的路由开关 */
+static const char *kNIMMsgKeySetMsgOffline	= "offline_msg";		/**< int,(可选)消息是否要存离线,0:不需要, 1:需要，默认1*/
 //本地定义
 static const char *kNIMMsgKeyLocalFilePath			= "local_res_path";		/**< string,多媒体消息资源本地绝对路径,SDK本地维护,发送多媒体消息时必填 */
 static const char *kNIMMsgKeyLocalTalkId			= "talk_id";			/**< string,会话id,发送方选填,接收方收到的是消息发送方id */

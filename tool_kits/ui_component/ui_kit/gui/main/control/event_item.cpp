@@ -48,7 +48,7 @@ bool TeamEventItem::InitInfo(const nim::SysMessage &json)
 	msg_id_ = json.id_;
 	msg_status_ = json.status_;
 
-	btn_head_->SetBkImage(TeamService::GetInstance()->GetTeamPhoto(false));
+	btn_head_->SetBkImage(PhotoService::GetInstance()->GetTeamPhoto(tid_, false));
 	evt_team_->SetText(TeamService::GetInstance()->GetTeamName(tid_));
 	evt_time_->SetText(GetMessageTime(msg_time_, false));
 
@@ -76,7 +76,7 @@ bool TeamEventItem::InitInfo(const nim::SysMessage &json)
 	}
 	else if (msg_type_ == nim::kNIMSysMsgTypeFriendAdd)
 	{
-		btn_head_->SetBkImage(UserService::GetInstance()->GetUserPhoto(acc_id_));
+		btn_head_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(acc_id_));
 		evt_team_->SetText(uname);
 
 		Json::Reader reader;
@@ -216,7 +216,7 @@ void TeamEventItem::OnUserInfoChange(const nim::UserNameCard & info)
 		}
 		case nim::kNIMSysMsgTypeFriendAdd:
 		{
-			btn_head_->SetBkImage(UserService::GetInstance()->GetUserPhoto(info.GetAccId()));
+			btn_head_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(info.GetAccId()));
 			evt_team_->SetText(uname);
 			break;
 		}

@@ -79,7 +79,7 @@ void TeamEventForm::InitWindow()
 	custom_list_ = (ListBox*)FindControl(L"custom_list");
 
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(nbase::Bind(&TeamEventForm::OnUserInfoChange, this, std::placeholders::_1)));
-	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(nbase::Bind(&TeamEventForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2)));
+	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(nbase::Bind(&TeamEventForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(nbase::Bind(&TeamEventForm::OnTeamNameChange, this, std::placeholders::_1)));
 
 	GetMoreCustomMsg();
@@ -291,20 +291,23 @@ void TeamEventForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 	}
 }
 
-void TeamEventForm::OnUserPhotoReady(const std::string& account, const std::wstring& photo_path)
+void TeamEventForm::OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path)
 {
-	for (int i = 0; i < event_list_->GetCount(); i++)
+	if (type == kUser || type == kTeam)
 	{
-		TeamEventItem* event_item = dynamic_cast<TeamEventItem*>(event_list_->GetItemAt(i));
-		if (event_item)
-			event_item->OnUserPhotoReady(account, photo_path);
-	}
+		for (int i = 0; i < event_list_->GetCount(); i++)
+		{
+			TeamEventItem* event_item = dynamic_cast<TeamEventItem*>(event_list_->GetItemAt(i));
+			if (event_item)
+				event_item->OnUserPhotoReady(account, photo_path);
+		}
 
-	for (int i = 0; i < custom_list_->GetCount(); i++)
-	{
-		CustomMsgBubble* custom_item = dynamic_cast<CustomMsgBubble*>(custom_list_->GetItemAt(i));
-		if (custom_item)
-			custom_item->OnUserPhotoReady(account, photo_path);
+		for (int i = 0; i < custom_list_->GetCount(); i++)
+		{
+			CustomMsgBubble* custom_item = dynamic_cast<CustomMsgBubble*>(custom_list_->GetItemAt(i));
+			if (custom_item)
+				custom_item->OnUserPhotoReady(account, photo_path);
+		}
 	}
 }
 

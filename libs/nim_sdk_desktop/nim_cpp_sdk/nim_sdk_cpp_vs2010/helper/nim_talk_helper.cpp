@@ -58,7 +58,6 @@ void ParseMessage(const Json::Value& msg_json, IMMessage& message)
 	message.attach_ = msg_json[kNIMMsgKeyAttach].asString();
 	message.client_msg_id_ = msg_json[kNIMMsgKeyClientMsgid].asString();
 	message.readonly_server_id_ = msg_json[kNIMMsgKeyServerMsgid].asUInt64();
-	message.resend_flag_ = msg_json[kNIMMsgKeyResendFlag].asInt() > 0;
 
 	message.local_res_path_ = msg_json[kNIMMsgKeyLocalFilePath].asString();
 	message.local_talk_id_ = msg_json[kNIMMsgKeyLocalTalkId].asString();

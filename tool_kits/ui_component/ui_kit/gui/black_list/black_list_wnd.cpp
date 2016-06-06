@@ -7,7 +7,7 @@ const LPCTSTR BlackListWindow::kClassName = L"AddFriendWindow";
 BlackListWindow::BlackListWindow()
 {
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(nbase::Bind(&BlackListWindow::OnUserInfoChange, this, std::placeholders::_1)));
-	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(nbase::Bind(&BlackListWindow::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2)));
+	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(nbase::Bind(&BlackListWindow::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 	unregister_cb.Add(MuteBlackService::GetInstance()->RegSyncSetBlackCallback(nbase::Bind(&BlackListWindow::OnSetBlackCallback, this, std::placeholders::_1, std::placeholders::_2)));
 }
 
@@ -72,7 +72,7 @@ void BlackListWindow::RestoreUserInfo(const nim::UserNameCard &info)
 		return;
 	ui::Control* head_image = black_item->FindSubControl(L"head_image");
 	ui::Label* contact = static_cast<ui::Label*>(black_item->FindSubControl(L"contact"));
-	head_image->SetBkImage(UserService::GetInstance()->GetUserPhoto(info.GetAccId()));
+	head_image->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(info.GetAccId()));
 	contact->SetText(UserService::GetInstance()->GetUserName(info.GetAccId()));
 }
 
@@ -96,11 +96,14 @@ void BlackListWindow::OnUserInfoChange(const std::list<nim::UserNameCard>& uinfo
 		RestoreUserInfo(info);
 }
 
-void BlackListWindow::OnUserPhotoReady(const std::string & account, const std::wstring & photo_path)
+void BlackListWindow::OnUserPhotoReady(PhotoType type, const std::string & account, const std::wstring & photo_path)
 {
-	ui::ListContainerElement* black_item = (ui::ListContainerElement*)m_black_list->FindSubControl(nbase::UTF8ToUTF16(account));
-	if (black_item)
-		black_item->FindSubControl(L"head_image")->SetBkImage(photo_path);
+	if (type == kUser)
+	{
+		ui::ListContainerElement* black_item = (ui::ListContainerElement*)m_black_list->FindSubControl(nbase::UTF8ToUTF16(account));
+		if (black_item)
+			black_item->FindSubControl(L"head_image")->SetBkImage(photo_path);
+	}
 }
 
 bool BlackListWindow::OnRemoveBtnClicked(ui::EventArgs *args)

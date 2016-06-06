@@ -2,6 +2,7 @@
 #define NIM_WIN_GUI_LIST_UTIL_NIM_LIST_BASE_H_
 
 #include "shared/list_item_util.h"
+#include "module/service/photo_service.h"
 
 namespace nim_comp
 {
@@ -27,7 +28,7 @@ private:
 	void OnFriendListChange(FriendChangeType change_type, const std::string& accid);
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 	void OnBlackListChange(const std::string& id, bool is_black);
-	void OnUserPhotoReady(const std::string& accid, const std::wstring &photo_path);
+	void OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path);
 	ui::TreeNode* GetGroup(GroupType groupType, wchar_t letter = L'');
 	void AddListItemInGroup(const std::string& accid, ui::TreeNode* tree_node);
 	void DeleteListItemInGroup(const std::string& accid, ui::TreeNode* tree_node);

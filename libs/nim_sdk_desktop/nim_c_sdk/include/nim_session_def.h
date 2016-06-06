@@ -50,6 +50,7 @@ static const char *kNIMSessionMsgBody		= "msg_body";			/**< string, 本地消息
 static const char *kNIMSessionMsgAttach		= "msg_attach";			/**< string, 本地消息历史中该会话最后一条消息的attach */
 static const char *kNIMSessionMsgStatus		= "msg_status";			/**< int, 本地消息历史中该会话最后一条消息的状态，见NIMMsgLogStatus */
 static const char *kNIMSessionMsgSubStatus	= "msg_sub_status";		/**< int, 本地消息历史中该会话最后一条消息的子状态，见NIMMsgLogSubStatus */
+static const char *kNIMSessionLastUpdatedMsg= "last_updated_msg";	/**< bool, (批量)消息变更或增加时是否是最后一条变更的信息 */
 /** @}*/ //会话列表的Json Keys
 
 /** @enum NIMSessionType 会话类型 */

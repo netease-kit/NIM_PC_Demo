@@ -62,7 +62,7 @@ void CustomSysMessageToIMMessage(const nim::SysMessage &sys_msg, nim::IMMessage 
 	msg.content_ = sys_msg.content_;
 	msg.attach_ = sys_msg.attach_;
 	msg.readonly_server_id_ = sys_msg.id_;
-	msg.msg_setting_.server_history_saved_ = sys_msg.support_offline_ ? nim::BS_TRUE : nim::BS_FALSE;
+	msg.msg_setting_.server_history_saved_ = sys_msg.support_offline_;
 	msg.rescode_ = sys_msg.rescode_;
 	msg.feature_ = sys_msg.feature_;
 	msg.session_type_ = sys_msg.type_ == nim::kNIMSysMsgTypeCustomP2PMsg ? nim::kNIMSessionTypeP2P : nim::kNIMSessionTypeTeam;
@@ -124,7 +124,15 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 				obj_name = UserService::GetInstance()->GetUserName(obj_account);
 		}
 
-		if (id == nim::kNIMNotificationIdTeamApplyPass)
+		if (id == nim::kNIMNotificationIdTeamMuteMember)
+		{
+			bool set_mute = json[nim::kNIMNotificationKeyData]["mute"].asInt() == 1;
+			if (set_mute)
+				show_text = nbase::StringPrintf(L"%s 被 %s 禁言", obj_name.c_str(), LoginManager::GetInstance()->IsEqual(from_account) ? L"你" : L"管理员");
+			else
+				show_text = nbase::StringPrintf(L"%s 被 %s 解除禁言", obj_name.c_str(), LoginManager::GetInstance()->IsEqual(from_account) ? L"你" : L"管理员");
+		}
+		else if (id == nim::kNIMNotificationIdTeamApplyPass)
 		{
 			if(from_account == obj_account) //此群允许任何人加入，有用户通过搜索高级群加入该群，这种情况下from_account等于uid，用户直接入群。
 				show_text = nbase::StringPrintf(L"欢迎 %s 进入群聊", obj_name.c_str());

@@ -69,7 +69,7 @@ ui::Control* VideoForm::CreateControl(const std::wstring& pstrClass)
 {
 	if (pstrClass == _T("BitmapControl"))
 	{
-		return new ui::CBitmapControl();
+		return new ui::CBitmapControl(&nim_comp::VideoManager::GetInstance()->video_frame_mng_);
 	}
 	return NULL;
 }
@@ -131,8 +131,10 @@ void VideoForm::InitWindow()
 	status_label_   = (Label*) FindControl(L"chat_status");
 
 	video_ctrl_screen_  = (CBitmapControl*) FindControl(L"photo_screen");
+	video_ctrl_screen_->SetAccount(session_id_);
 	video_ctrl_preview_ = (CBitmapControl*)FindControl(L"photo_preview");
 	video_ctrl_preview_->SetAutoSize(true);
+	video_ctrl_preview_->SetAccount(session_id_);
 
 	time_tick_label_ = (Label*) FindControl( L"time_tick" );
 	camera_open_label_ = (Label*) FindControl( L"camera_opening" );
@@ -208,9 +210,9 @@ void VideoForm::OnFinalMessage(HWND hWnd)
 
 	FreeVideo();
 	FreeAudio();
-	if (is_start_)
+	//if (is_start_)
 	{
-		VideoManager::GetInstance()->EndChat();
+		VideoManager::GetInstance()->EndChat(session_id_);
 	}
 
 	__super::OnFinalMessage(hWnd);
@@ -563,7 +565,7 @@ bool VideoForm::OnClicked( ui::EventArgs* arg )
 		ShowStatusPage(SP_DIAL);
 		SwitchStatus(STATUS_CONNECTING);
 
-		bool ret = VideoManager::GetInstance()->VChatCalleeAck(channel_id_, true);
+		bool ret = VideoManager::GetInstance()->VChatCalleeAck(channel_id_, true, session_id_);
 		if (ret)
 		{
 			is_start_ = true;
@@ -817,7 +819,7 @@ void VideoForm::PrepareQuit()
 		{
 			if( status_ == STATUS_INVITING )
 			{
-				VideoManager::GetInstance()->VChatCalleeAck(channel_id_, false);
+				VideoManager::GetInstance()->VChatCalleeAck(channel_id_, false, session_id_);
 			}
 		}
 	}
@@ -976,7 +978,7 @@ void VideoForm::CheckHeadIcon()
 {
 	nim::UserNameCard info;
 	UserService::GetInstance()->GetUserInfo(session_id_, info);
-	std::wstring photo = UserService::GetInstance()->GetUserPhoto(info.GetAccId());
+	std::wstring photo = PhotoService::GetInstance()->GetUserPhoto(info.GetAccId());
 	headicon_btn_->SetBkImage(photo);
 }
 

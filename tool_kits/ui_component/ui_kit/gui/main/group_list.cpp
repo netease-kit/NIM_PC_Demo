@@ -10,17 +10,17 @@ namespace nim_comp
 GroupList::GroupList(ui::TreeView* group_list) :
 	group_list_(group_list)
 {
-	auto query_cb = nbase::Bind(&GroupList::QueryAllMyTeamsInfoAsync, this, std::placeholders::_1, std::placeholders::_2);
-	nim::DataSync::RegCompleteCb(query_cb);
-	nim::Team::QueryAllMyTeamsInfoAsync(nbase::Bind(&GroupList::OnQueryAllMyTeams, this, std::placeholders::_1, std::placeholders::_2));
-
 	auto add_team_cb = nbase::Bind(&GroupList::OnAddTeam, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	unregister_cb.Add(TeamService::GetInstance()->RegAddTeam(add_team_cb));
 	auto remove_team_cb = nbase::Bind(&GroupList::OnRemoveTeam, this, std::placeholders::_1);
 	unregister_cb.Add(TeamService::GetInstance()->RegRemoveTeam(remove_team_cb));
 	auto change_team_name_cb = nbase::Bind(&GroupList::OnTeamNameChanged, this, std::placeholders::_1);
 	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(change_team_name_cb));
-	
+	OnPhotoReadyCallback cb2 = nbase::Bind(&GroupList::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(cb2));
+
+	nim::Team::QueryAllMyTeamsInfoAsync(nbase::Bind(&GroupList::OnQueryAllMyTeams, this, std::placeholders::_1, std::placeholders::_2));
+
 	//添加创建和搜索群的listitem，位于列表最开头位置
 	ui::TreeNode* create_group_item = (ui::TreeNode*)ui::GlobalManager::CreateBox(L"main/main_create_normal_group_list_item.xml");
 	group_list_->GetRootNode()->AddChildNodeAt(create_group_item, 0);
@@ -44,13 +44,19 @@ GroupList::GroupList(ui::TreeView* group_list) :
 	tree_node_ver_.push_back(tree_node);
 	tree_node->SetVisible(false);
 	tree_node->SetEnabled(false);
+
 }
 
-void GroupList::QueryAllMyTeamsInfoAsync(nim::NIMDataSyncType sync_type, nim::NIMDataSyncStatus status)
+void GroupList::OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path)
 {
-	if (sync_type == nim::kNIMDataSyncTypeTeamInfo)
+	if (type == kTeam)
 	{
-		nim::Team::QueryAllMyTeamsInfoAsync(nbase::Bind(&GroupList::OnQueryAllMyTeams, this, std::placeholders::_1, std::placeholders::_2));
+		FriendItem* friend_item = (FriendItem*)group_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
+		if (friend_item)
+		{
+			if (friend_item->GetId() == accid)
+				friend_item->FindSubControl(L"head_image")->SetBkImage(photo_path);
+		}
 	}
 }
 

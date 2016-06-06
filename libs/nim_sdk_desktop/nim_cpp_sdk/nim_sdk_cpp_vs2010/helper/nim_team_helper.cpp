@@ -31,16 +31,16 @@ void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificati
 		case kNIMNotificationIdTeamAddManager:
 		case kNIMNotificationIdTeamRemoveManager:
 		case kNIMNotificationIdLocalCreateTeam:
+		{
+			//ids
+			Json::Value ids = values[kNIMNotificationKeyData][kNIMNotificationKeyDataIds];
+			int len = ids.size();
+			for (int i = 0; i < len; i++)
 			{
-				//ids
-				Json::Value ids = values[kNIMNotificationKeyData][kNIMNotificationKeyDataIds];
-				int len = ids.size();
-				for (int i = 0; i < len; i++)
-				{
-					team_event.ids_.push_back(ids[i].asString());
-				}
+				team_event.ids_.push_back(ids[i].asString());
 			}
-			break;
+		}
+		break;
 		case kNIMNotificationIdTeamLeave:
 		case kNIMNotificationIdTeamApplyPass:
 		case kNIMNotificationIdTeamInviteAccept:
@@ -61,7 +61,6 @@ void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificati
 			break;
 		case kNIMNotificationIdTeamDismiss:
 		case kNIMNotificationIdLocalApplyTeam:
-		case kNIMNotificationIdLocalUpdateOtherNick:
 		case kNIMNotificationIdLocalGetTeamList:
 			{
 				//无
@@ -70,23 +69,37 @@ void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificati
 			break;
 		case kNIMNotificationIdTeamOwnerTransfer:
 			{
-				//id bool
-				//不解析是否离开群组，上层收到通知按需调用接口判断是否要离开
+				team_event.opt_ = values[kNIMNotificationKeyData]["leave"].asBool();
 				team_event.ids_.push_back(values[kNIMNotificationKeyData][kNIMNotificationKeyDataId].asString());
 			}
 			break;
 		case kNIMNotificationIdTeamMemberChanged:
 			{
 				//team member property
-				//解析id，上层收到通知后调用接口拉取team member property
+				ParseTeamMemberPropertyJson(values[kNIMNotificationKeyData][kNIMNotificationKeyTeamMember], team_event.member_property_);
 				team_event.ids_.push_back(values[kNIMNotificationKeyData][kNIMNotificationKeyTeamMember][kNIMTeamUserKeyAccID].asString());
 			}
 			break;
-		case kNIMNotificationIdTeamSyncUpdateTlist:
-		case kNIMNotificationIdLocalUpdateTlist:
+		case kNIMNotificationIdLocalUpdateOtherNick:
 			{
-				//member
-				//不解析，上层收到通知按需调用接口拉取team_member_property
+				//与kNIMNotificationIdLocalUpdateMemberProperty事件重复，上层需要做去重
+				ParseTeamMemberPropertyJson(values[kNIMNotificationKeyData][kNIMNotificationKeyTeamMember], team_event.member_property_);
+			}
+			break;
+		case kNIMNotificationIdTeamSyncUpdateMemberProperty:
+		case kNIMNotificationIdLocalUpdateMemberProperty:
+			{
+				ParseTeamMemberPropertyJson(values[kNIMNotificationKeyData][kNIMNotificationKeyTeamMember], team_event.member_property_);
+			}
+			break;
+		case kNIMNotificationIdTeamMuteMember:
+			{
+				ParseTeamInfoJson(values[kNIMNotificationKeyData][kNIMNotificationKeyTeamInfo], team_event.team_info_);
+			}
+		case kNIMNotificationIdLocalMuteMember:
+			{
+				team_event.opt_ = values[kNIMNotificationKeyData]["mute"].asInt() == 1;
+				team_event.ids_.push_back(values[kNIMNotificationKeyData][kNIMNotificationKeyDataId].asString());
 			}
 			break;
 		default:
@@ -114,6 +127,11 @@ void ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info)
 	team_info.SetValid(team_info_json[nim::kNIMTeamInfoKeyValidFlag].asUInt() == 0 ? false : true);
 	team_info.SetConfigBits(team_info_json[nim::kNIMTeamInfoKeyBits].asUInt64());
 	team_info.SetMemberValid(team_info_json[nim::kNIMTeamInfoKeyMemberValid].asUInt() == 0 ? false : true);
+	team_info.SetIcon(team_info_json[nim::kNIMTeamInfoKeyIcon].asString());
+	team_info.SetBeInviteMode(team_info_json[nim::kNIMTeamInfoKeyBeInviteMode].asInt() == 0 ? kNIMTeamBeInviteModeNeedAgree : kNIMTeamBeInviteModeNotNeedAgree);
+	team_info.SetInviteMode(team_info_json[nim::kNIMTeamInfoKeyInviteMode].asInt() == 0 ? kNIMTeamInviteModeManager : kNIMTeamInviteModeEveryone);
+	team_info.SetUpdateInfoMode(team_info_json[nim::kNIMTeamInfoKeyUpdateInfoMode].asInt() == 0 ? kNIMTeamUpdateInfoModeManager : kNIMTeamUpdateInfoModeEveryone);
+	team_info.SetUpdateCustomMode(team_info_json[nim::kNIMTeamInfoKeyUpdateCustomMode].asInt() == 0 ? kNIMTeamUpdateCustomModeManager : kNIMTeamUpdateCustomModeEveryone);
 }
 
 bool ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info)
@@ -160,7 +178,9 @@ void ParseTeamMemberPropertyJson(const Json::Value& team_member_prop_json, TeamM
 		team_member_property.SetCreateTimetag(team_member_prop_json[nim::kNIMTeamUserKeyCreateTime].asUInt64());
 		team_member_property.SetUpdateTimetag(team_member_prop_json[nim::kNIMTeamUserKeyUpdateTime].asUInt64());
 		team_member_property.SetTeamID(team_member_prop_json[nim::kNIMTeamUserKeyID].asString());
-		team_member_property.SetValid_(team_member_prop_json[nim::kNIMTeamUserKeyValidFlag].asUInt() == 0 ? false : true);
+		team_member_property.SetValid(team_member_prop_json[nim::kNIMTeamUserKeyValidFlag].asUInt() == 0 ? false : true);
+		team_member_property.SetCustom(team_member_prop_json[nim::kNIMTeamUserKeyCustom].asString());
+		team_member_property.SetMute(team_member_prop_json[nim::kNIMTeamUserKeyMute].asInt() == 1);
 	}
 }
 

@@ -16,7 +16,7 @@ extern"C"
   * 进入的回调函数定义
   * @param[out] room_id		聊天室ID
   * @param[out] enter_step	进入聊天室的过程(NIMChatRoomEnterStep)
-  * @param[out] error_code	错误码
+  * @param[out] error_code	错误码(如果错误码为kResRoomLocalNeedRequestAgain，聊天室重连机制结束，则需要向IM服务器重新请求进入该聊天室权限)
   * @param[out] result		聊天室信息
   * @param[out] json_extension	json扩展数据（备用）
   * @param[out] user_data	APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！

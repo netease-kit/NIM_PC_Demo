@@ -17,10 +17,12 @@
 
 namespace nim_comp
 {
+typedef std::function<void(const std::string& id, const std::string &url)> OnModifyCompleteCallback;
+
 class HeadModifyForm : public WindowEx
 {
 public:
-	HeadModifyForm(UTF8String uid);
+	HeadModifyForm(UTF8String uid, const std::wstring& specific_cached_file = L"");
 	virtual ~HeadModifyForm();
 	
 	// 接口实现
@@ -31,7 +33,7 @@ public:
 	
 	// 覆盖虚函数
 	virtual std::wstring GetWindowClassName() const override { return kClassName; };
-	virtual std::wstring GetWindowId() const override { return kClassName; };
+	virtual std::wstring GetWindowId() const override;
 	virtual UINT GetClassStyle() const override { return UI_CLASSSTYLE_FRAME | CS_DBLCLKS; };
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 	virtual void InitWindow() override; // 当窗口创建完成后初始化
@@ -46,6 +48,8 @@ public:
 	// 对外函数
 	void CloseHeadModifyForm();
 //	void UpdateUInfoCallback(const nbiz::UpdateUInfoParam& update_info);
+
+	void RegCompleteCallback(const OnModifyCompleteCallback &callback);
 
 private:
 	static void DeleteFileCallback(const std::wstring& tmp_head_image_path);
@@ -78,7 +82,7 @@ private:
 	void OnNotifyHeadModifyCallback();
 	void OnNotifyHeadModifyFailed();
 	void OnNotifyImageInvalid();
-	void UpdateUInfoCallback(int res);
+
 public:
 	static const LPCTSTR kClassName; // 类名
 	
@@ -122,6 +126,9 @@ private:
 	std::wstring new_temp_head_image_path_;			// 新头像临时保存路径
 	bool load_global_last_image_;					// 加载本次软件运行上次修改的图像
 	std::unique_ptr<Gdiplus::Bitmap> current_head_bitmap_;	// 当前用户头像(200*200)
+
+	OnModifyCompleteCallback complete_callback_;
+	std::wstring	specific_cached_file_;
 };
 }
 using namespace nbase;

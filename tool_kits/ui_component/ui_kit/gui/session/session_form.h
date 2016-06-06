@@ -14,6 +14,7 @@
 #include "gui/emoji/emoji_form.h"
 #include "gui/team_info/team_info.h"
 #include "callback/audio/audio_callback.h"
+#include "module/service/photo_service.h"
 
 namespace nim_comp
 {
@@ -381,7 +382,7 @@ private:
 	* @param[in] photo_path 头像本地路径
 	* @return void 无返回值
 	*/
-	void OnUserPhotoReady(const std::string& accid, const std::wstring &photo_path);
+	void OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path);
 private:
 
 	/** 
@@ -460,6 +461,15 @@ private:
 	void OnTeamAdminSet(const std::string& tid, const std::string& uid, bool admin);
 
 	/**
+	* 有群成员被禁言/被取消禁言的回调函数
+	* @param[in] tid 群ID
+	* @param[in] uid 群成员的帐号
+	* @param[in] set_mute 禁言/取消禁言
+	* @return void 无返回值
+	*/
+	void OnTeamMuteMember(const std::string& tid, const std::string& uid, bool set_mute);
+
+	/**
 	* 有群成员成为群主的回调函数
 	* @param[in] tid 群ID
 	* @param[in] uid 群成员的帐号
@@ -489,6 +499,7 @@ private:
 	bool IsTeamMemberType(const nim::NIMTeamUserType user_type);
 
 	void SendReceiptIfNeeded(bool auto_detect = false);
+	void SetTeamMuteUI(bool mute);
 public:
 	//////////////////////////////////////////////////////////////////////////
 	// 实现系统的文件拖拽接口

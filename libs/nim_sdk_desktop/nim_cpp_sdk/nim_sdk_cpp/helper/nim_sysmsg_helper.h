@@ -42,7 +42,7 @@ struct SysMessage
 	Json::Value push_payload_;		/**< 第三方自定义的推送属性，长度2048 */
 	BoolStatus	push_enable_;		/**< 是否需要推送*/
 	BoolStatus	push_need_badge_;	/**< 推送是否需要做消息计数*/
-	BoolStatus	push_need_nick_;	/**< 推送是否需要昵称*/
+	BoolStatus	push_need_prefix_;	/**< 推送是否需要昵称*/
 
 	NIMResCode	rescode_;			/**< 通知错误码 */
 	NIMMessageFeature	feature_;	/**< 通知属性 */
@@ -59,7 +59,7 @@ struct SysMessage
 		, feature_(kNIMMessageFeatureDefault) 
 		, push_enable_(BS_NOT_INIT)
 		, push_need_badge_(BS_NOT_INIT)
-		, push_need_nick_(BS_NOT_INIT) {}
+		, push_need_prefix_(BS_NOT_INIT) {}
 
 	/** @fn std::string ToJsonString() const
 	  * @brief 组装Json Value字符串
@@ -82,10 +82,10 @@ struct SysMessage
 		values[kNIMSysMsgKeyLocalStatus] = status_;
 		if (push_enable_ != BS_NOT_INIT)
 			values[kNIMSysMsgKeyPushEnable] = push_enable_ == BS_TRUE ? 1 : 0;
-		if (push_need_nick_ != BS_NOT_INIT)
-			values[kNIMSysMsgKeyPushNeedNick] = push_need_nick_ == BS_TRUE ? 1 : 0;
+		if (push_need_prefix_ != BS_NOT_INIT)
+			values[kNIMSysMsgKeyPushNeedPrefix] = push_need_prefix_ == BS_TRUE ? 1 : 0;
 		if (push_need_badge_ != BS_NOT_INIT)
-			values[kNIMSysMsgKeyNeedBadge] = push_need_badge_ == BS_TRUE ? 1 : 0;
+			values[kNIMSysMsgKeyPushNeedBadge] = push_need_badge_ == BS_TRUE ? 1 : 0;
 		if (!push_payload_.empty())
 			values[kNIMSysMsgKeyPushPayload] = GetJsonStringWithNoStyled(push_payload_);
 		return GetJsonStringWithNoStyled(values);

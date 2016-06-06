@@ -58,7 +58,7 @@ void ChatroomFrontpage::InitWindow()
 	InitHeader();
 
 	unregister_cb.Add(nim_ui::UserManager::GetInstance()->RegUserInfoChange(nbase::Bind(&ChatroomFrontpage::OnUserInfoChange, this, std::placeholders::_1)));
-	unregister_cb.Add(nim_ui::UserManager::GetInstance()->RegUserPhotoReady(nbase::Bind(&ChatroomFrontpage::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2)));
+	unregister_cb.Add(nim_ui::PhotoManager::GetInstance()->RegPhotoReady(nbase::Bind(&ChatroomFrontpage::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 
 	room_list_ = (ui::TileBox*)FindControl(L"room_list");
 	
@@ -170,23 +170,18 @@ void ChatroomFrontpage::InvokeGetRoomList()
 			});
 			Post2UI(closure);
 		}
+		else
+		{
+			QLOG_ERR(L"invoke get room list json parse error {0}.") << reply;
+			Post2UI(error_cb);
+		}
 	});
 
 	std::string api_addr = "https://app.netease.im/api/chatroom/homeList";
-	std::wstring server_conf_path = QPath::GetAppPath();
-	server_conf_path.append(L"server_conf.txt");
-	nim::SDKConfig config;
-	TiXmlDocument document;
-	if (shared::LoadXmlFromFile(document, server_conf_path))
-	{
-		TiXmlElement* root = document.RootElement();
-		if (root)
-		{
-			if (auto pchar = root->Attribute("kNIMChatRoomAddress")) {
-				api_addr = pchar;
-			}
-		}
-	}
+	std::string new_api_addr = GetConfigValue("kNIMChatRoomAddress");
+	if (!new_api_addr.empty())
+		api_addr = new_api_addr;
+
 	std::string app_key = "45c6af3c98409b18a84451215d0bdd6e";
 	std::string new_app_key = GetConfigValue(g_AppKey);
 	if (!new_app_key.empty())
@@ -254,6 +249,7 @@ void ChatroomFrontpage::CreateRoomItem(const ChatRoomInfo& room_info)
 			chat_form = new ChatroomForm(id);
 			if (chat_form != NULL)
 			{
+				chat_form->Create(NULL, ChatroomForm::kClassName, WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
 				chat_form->RequestEnter(id);
 			}
 
@@ -283,18 +279,17 @@ void ChatroomFrontpage::OnUserInfoChange(const std::list<nim::UserNameCard> &uin
 	}
 }
 
-void ChatroomFrontpage::OnUserPhotoReady(const std::string& account, const std::wstring& photo_path)
+void ChatroomFrontpage::OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path)
 {
-	if (nim_ui::LoginManager::GetInstance()->GetAccount() == account)
+	if (type == kUser && nim_ui::LoginManager::GetInstance()->GetAccount() == account)
 		FindControl(L"header_image")->SetBkImage(photo_path);
 }
 
 void ChatroomFrontpage::InitHeader()
 {
 	std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
-	nim_ui::UserManager* user_service = nim_ui::UserManager::GetInstance();
-	FindControl(L"header_image")->SetBkImage(user_service->GetUserPhoto(my_id));
-	((ui::Label*)FindControl(L"name"))->SetText(user_service->GetUserName(my_id, false));
+	FindControl(L"header_image")->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(my_id));
+	((ui::Label*)FindControl(L"name"))->SetText(nim_ui::UserManager::GetInstance()->GetUserName(my_id, false));
 }
 
 }

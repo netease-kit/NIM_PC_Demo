@@ -155,8 +155,8 @@ void AddFriendWindow::InitWindow()
 
 	auto user_info_change_cb = nbase::Bind(&AddFriendWindow::OnUserInfoChange, this, std::placeholders::_1);
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(user_info_change_cb));
-	auto user_photo_ready_cb = nbase::Bind(&AddFriendWindow::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2);
-	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(user_photo_ready_cb));
+	auto user_photo_ready_cb = nbase::Bind(&AddFriendWindow::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(user_photo_ready_cb));
 }
 
 bool AddFriendWindow::Search(ui::EventArgs* param)
@@ -255,16 +255,16 @@ void nim_comp::AddFriendWindow::OnUserInfoChange(const std::list<nim::UserNameCa
 			if (info.ExistValue(nim::kUserNameCardKeyName))
 				nick_name_->SetText(UserService::GetInstance()->GetUserName(info.GetAccId(), false));
 			if (info.ExistValue(nim::kUserNameCardKeyIconUrl))
-				headimage_->SetBkImage(UserService::GetInstance()->GetUserPhoto(info.GetAccId()));
+				headimage_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(info.GetAccId()));
 
 			return;
 		}
 	}
 }
 
-void nim_comp::AddFriendWindow::OnUserPhotoReady(const std::string & account, const std::wstring & photo_path)
+void nim_comp::AddFriendWindow::OnUserPhotoReady(PhotoType type, const std::string & account, const std::wstring & photo_path)
 {
-	if (id_ == account)
+	if (type == kUser && id_ == account)
 	{
 		headimage_->SetBkImage(photo_path);
 	}
@@ -318,7 +318,7 @@ void AddFriendWindow::InitUserProfile(const nim::UserNameCard& uinfo)
 
 	tablayout_->SelectItem(g_ADDFRIEND_USERINFO_PAGE);
 	
-	headimage_->SetBkImage(UserService::GetInstance()->GetUserPhoto(uinfo.GetAccId()));
+	headimage_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(uinfo.GetAccId()));
 	nick_name_->SetText(UserService::GetInstance()->GetUserName(id_, false));
 	((Label*)FindControl(L"id"))->SetUTF8Text(id_);
 

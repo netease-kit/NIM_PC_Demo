@@ -1,6 +1,6 @@
 #include "personal_center.h"
 
-const LPTSTR PersonalCenterForm::kClassName = L"ChatroomForm";
+const LPTSTR PersonalCenterForm::kClassName = L"PersonalCenterForm";
 
 PersonalCenterForm::PersonalCenterForm()
 {
@@ -52,7 +52,7 @@ void PersonalCenterForm::InitWindow()
 
 	m_pRoot->AttachBubbledEvent(ui::kEventSelect, nbase::Bind(&PersonalCenterForm::OnSelected, this, std::placeholders::_1));
 	unregister_cb.Add(nim_ui::UserManager::GetInstance()->RegUserInfoChange(nbase::Bind(&PersonalCenterForm::OnUserInfoChange, this, std::placeholders::_1)));
-	unregister_cb.Add(nim_ui::UserManager::GetInstance()->RegUserPhotoReady(nbase::Bind(&PersonalCenterForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2)));
+	unregister_cb.Add(nim_ui::PhotoManager::GetInstance()->RegPhotoReady(nbase::Bind(&PersonalCenterForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 
 	((ui::OptionBox*)FindControl(L"apply_room"))->Selected(true, true);
 }
@@ -96,9 +96,9 @@ void PersonalCenterForm::OnUserInfoChange(const std::list<nim::UserNameCard> &ui
 	}
 }
 
-void PersonalCenterForm::OnUserPhotoReady(const std::string& account, const std::wstring& photo_path)
+void PersonalCenterForm::OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path)
 {
-	if (nim_ui::LoginManager::GetInstance()->GetAccount() == account)
+	if (type == kUser && nim_ui::LoginManager::GetInstance()->GetAccount() == account)
 		FindControl(L"header_image")->SetBkImage(photo_path);
 }
 
@@ -110,9 +110,8 @@ void PersonalCenterForm::OnApplyButtonClicked(ui::EventArgs * msg)
 void PersonalCenterForm::InitHeader()
 {
 	std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
-	nim_ui::UserManager* user_service = nim_ui::UserManager::GetInstance();
-	FindControl(L"header_image")->SetBkImage(user_service->GetUserPhoto(my_id));
-	((ui::Label*)FindControl(L"name"))->SetText(user_service->GetUserName(my_id, false));
+	FindControl(L"header_image")->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(my_id));
+	((ui::Label*)FindControl(L"name"))->SetText(nim_ui::UserManager::GetInstance()->GetUserName(my_id, false));
 }
 
 void PersonalCenterForm::InitRoomManageList()

@@ -137,7 +137,7 @@ void TeamSearchForm::GotoPage( TeamSearchPage page )
 
 void TeamSearchForm::ShowTeamInfo(const nim::TeamEvent& team_event)
 {
-	team_icon_->SetBkImage( TeamService::GetInstance()->GetTeamPhoto(false) );
+	team_icon_->SetBkImage( PhotoService::GetInstance()->GetTeamPhoto(team_event.team_id_, false) );
 
 	team_id_->SetUTF8Text(team_event.team_id_);
 

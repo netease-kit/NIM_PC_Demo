@@ -11,21 +11,29 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 {
 	QLOG_APP(L"TeamEvent: notify_id={0} tid={1} code={2}") << info.notification_id_ << tid << info.res_code_;
 
-	if (info.notification_id_ == nim::kNIMNotificationIdLocalCreateTeam || info.notification_id_ == nim::kNIMNotificationIdLocalApplyTeam)
+	if (info.notification_id_ == nim::kNIMNotificationIdTeamSyncCreate)
+	{
+		if (info.res_code_ == nim::kNIMResSuccess || info.res_code_ == nim::kNIMResTeamInviteSuccess)
+		{
+			TeamService::GetInstance()->InvokeAddTeam(tid, team_info);
+		}
+	}
+	else if (info.notification_id_ == nim::kNIMNotificationIdLocalCreateTeam 
+		|| info.notification_id_ == nim::kNIMNotificationIdLocalApplyTeam)
 	{
 		if (info.res_code_ == nim::kNIMResSuccess || info.res_code_ == nim::kNIMResTeamInviteSuccess) {
-			TeamService::GetInstance()->InvokeAddTeam(tid, "", team_info.GetType());
+			TeamService::GetInstance()->InvokeAddTeam(tid, team_info);
 			SessionManager::GetInstance()->OpenSessionForm(tid, nim::kNIMSessionTypeTeam);
 		}
 	}
-	else if (info.notification_id_ == nim::kNIMNotificationIdLocalUpdateTlist || info.notification_id_ == nim::kNIMNotificationIdTeamApplyPass || info.notification_id_ == nim::kNIMNotificationIdTeamSyncUpdateTlist)
+	else if (info.notification_id_ == nim::kNIMNotificationIdLocalUpdateMemberProperty || info.notification_id_ == nim::kNIMNotificationIdTeamApplyPass || info.notification_id_ == nim::kNIMNotificationIdTeamSyncUpdateMemberProperty)
 	{
 		if (info.res_code_ == nim::kNIMResSuccess)
 		{
 			if (info.notification_id_ == nim::kNIMNotificationIdTeamApplyPass) {
-				TeamService::GetInstance()->InvokeAddTeam(tid, "", team_info.GetType());
+				TeamService::GetInstance()->InvokeAddTeam(tid, team_info);
 			}
-			if (info.notification_id_ == nim::kNIMNotificationIdLocalUpdateTlist || info.notification_id_ == nim::kNIMNotificationIdTeamSyncUpdateTlist)
+			if (info.notification_id_ == nim::kNIMNotificationIdLocalUpdateMemberProperty || info.notification_id_ == nim::kNIMNotificationIdTeamSyncUpdateMemberProperty)
 			{
 				SessionManager::GetInstance()->QueryMyTList(tid);
 				std::wstring session_id = nbase::UTF8ToUTF16(tid);
@@ -63,15 +71,15 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 	{
 		if (info.res_code_ == nim::kNIMResSuccess)
 		{
+			TeamService::GetInstance()->InvokeAddTeam(tid, team_info);
 			if (info.ids_.front() == team_info.GetOwnerID())
 			{	//ids中的用户是群主，说明是自己接受邀请入群，就添加到群列表并打开群聊窗口
-				TeamService::GetInstance()->InvokeAddTeam(tid, "", team_info.GetType());
 				SessionManager::GetInstance()->OpenSessionForm(tid, nim::kNIMSessionTypeTeam, true);
 			}
 			else
 			{
 				std::string uid = *info.ids_.begin();
-				assert(LoginManager::GetInstance()->GetAccount() != uid);
+				//assert(LoginManager::GetInstance()->GetAccount() != uid);
 				//群成员收到别人入群消息
 				nim::Team::QueryTeamMemberAsync(tid, uid, [tid](const nim::TeamMemberProperty& team_member_info) {
 					TeamService::GetInstance()->InvokeAddTeamMember(tid, team_member_info);
@@ -94,13 +102,23 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 			SessionManager::GetInstance()->QueryMyTList(tid);
 		}
 	}
+	else if (info.notification_id_ == nim::kNIMNotificationIdLocalMuteMember || info.notification_id_ == nim::kNIMNotificationIdTeamMuteMember)
+	{
+		if (info.res_code_ == nim::kNIMResSuccess)
+		{
+			for (auto& id : info.ids_)
+			{
+				TeamService::GetInstance()->InvokeMuteMember(tid, id, info.opt_);
+			}
+		}
+	}
 	else
 	{
 		if (info.res_code_ == nim::kNIMResSuccess)
 		{
 			if (info.notification_id_ == nim::kNIMNotificationIdTeamInvite)
 			{
-				TeamService::GetInstance()->InvokeAddTeam(tid, "", team_info.GetType());
+				TeamService::GetInstance()->InvokeAddTeam(tid, team_info);
 				for (auto& id : info.ids_)
 				{
 					nim::Team::QueryTeamMemberAsync(tid, id, [tid](const nim::TeamMemberProperty& team_member_info) {
@@ -163,7 +181,6 @@ void TeamCallback::OnTeamEventCallback(const nim::TeamEvent& result)
 }
 
 //sysmsg
-
 TeamNotifyForm* GetTeamNotifyForm(const std::string &tid)
 {
 	std::wstring wid = nbase::UTF8ToUTF16(tid);
@@ -193,7 +210,7 @@ void UIReceiveSysmsgCallback(nim::SysMessage& msg)
 	{
 		nim::IMMessage immsg;
 		CustomSysMessageToIMMessage(msg, immsg);
-		if (!msg.support_offline_)//只在线
+		if (msg.support_offline_ != nim::BS_TRUE)//只在线
 		{
 			if (msg.type_ == nim::kNIMSysMsgTypeCustomP2PMsg)
 			{

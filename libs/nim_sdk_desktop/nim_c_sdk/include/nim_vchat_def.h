@@ -109,6 +109,7 @@ enum NIMVChatMp4RecordCode{
   * @{
   */
 static const char *kNIMVChatUids			= "uids";			/**< StrArray 帐号, ack无效 */
+static const char *kNIMVChatSessionId		= "session_id";		/**< string 发起会话的标识id，将在创建通话及结束通话时有效，帮助针对无channelid的情况下进行映射 */
 static const char *kNIMVChatCustomVideo		= "custom_video";	/**< int 是否用自主的视频数据 >0表示是 */
 static const char *kNIMVChatCustomAudio		= "custom_audio";	/**< int 是否用自主的音频数据 >0表示是 */
 static const char *kNIMVChatRecord			= "record";			/**< int 是否需要录制音频数据 >0表示是 （需要服务器配置支持，本地录制直接调用接口函数） */
@@ -125,32 +126,33 @@ static const char *kNIMVChatSound			= "sound";			/**< string 推送声音 */
 /** @name json extension params for nim_vchat_cb_func
   * @{
   */
-static const char *kNIMVChatUid				= "uid";			/**< string 帐号 */
-static const char *kNIMVChatStatus			= "status";			/**< int 状态 */
-static const char *kNIMVChatRecordAddr		= "record_addr";	/**< string 录制地址（服务器开启录制时有效） */
-static const char *kNIMVChatRecordFile		= "record_file";	/**< string 录制文件名（服务器开启录制时有效） */
-static const char *kNIMVChatType			= "type";			/**< int 状态 */
-static const char *kNIMVChatTime			= "time";			/**< int64 时间 单位毫秒 */
-static const char *kNIMVChatAccept			= "accept";			/**< int 是否接受 >0表示接受 */
-static const char *kNIMVChatClient			= "client";			/**< int 客户端类型 NIMClientType见nim_client_def.h */
-static const char *kNIMVChatMp4Start		= "mp4_start";		/**< key Mp4写入数据开始 kNIMVChatMp4File kNIMVChatTime(本地时间点) */
-static const char *kNIMVChatMp4Close		= "mp4_close";		/**< key 结束Mp4录制，返回时长及原因 kNIMVChatStatus(NIMVChatMp4RecordCode) kNIMVChatTime(时长) kNIMVChatMp4File */
-static const char *kNIMVChatMp4File			= "mp4_file";		/**< string mp4录制地址 */
-static const char *kNIMVChatCustomInfo		= "custom_info";	/**< string 自定义数据 */
+static const char *kNIMVChatUid				= "uid";				/**< string 帐号 */
+static const char *kNIMVChatStatus			= "status";				/**< int 状态 */
+static const char *kNIMVChatRecordAddr		= "record_addr";		/**< string 录制地址（服务器开启录制时有效） */
+static const char *kNIMVChatRecordFile		= "record_file";		/**< string 服务器音频录制文件名（服务器开启录制时有效） */
+static const char *kNIMVChatVideoRecordFile = "video_record_file";	/**< string 服务器视频录制文件名（服务器开启录制时有效） */
+static const char *kNIMVChatType			= "type";				/**< int 状态 */
+static const char *kNIMVChatTime			= "time";				/**< int64 时间 单位毫秒 */
+static const char *kNIMVChatAccept			= "accept";				/**< int 是否接受 >0表示接受 */
+static const char *kNIMVChatClient			= "client";				/**< int 客户端类型 NIMClientType见nim_client_def.h */
+static const char *kNIMVChatMp4Start		= "mp4_start";			/**< key Mp4写入数据开始 kNIMVChatMp4File kNIMVChatTime(本地时间点) */
+static const char *kNIMVChatMp4Close		= "mp4_close";			/**< key 结束Mp4录制，返回时长及原因 kNIMVChatStatus(NIMVChatMp4RecordCode) kNIMVChatTime(时长) kNIMVChatMp4File */
+static const char *kNIMVChatMp4File			= "mp4_file";			/**< string mp4录制地址 */
+static const char *kNIMVChatCustomInfo		= "custom_info";		/**< string 自定义数据 */
 /** @}*/ //json extension params
 
 /** @typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, __int64 channel_id, int code, const char *json_extension, const void *user_data)
   * NIM VChat 	音视频通话中状态返回回调接口   \n
   * 			根据NIMVideoChatSessionType的具体参数说明如下： \n
-  * 			kNIMVideoChatSessionTypeStartRes,			//创建通话结果 code=200成功，json无效 \n
+  * 			kNIMVideoChatSessionTypeStartRes,			//创建通话结果 code=200成功，json 返回kNIMVChatSessionId \n
   * 			kNIMVideoChatSessionTypeInviteNotify,		//通话邀请 code无效,json 返回kNIMVChatUid发起者，kNIMVChatType对应NIMVideoChatMode, kNIMVChatTime, kNIMVChatCustomInfo \n
   * 			kNIMVideoChatSessionTypeCalleeAckRes,		//确认通话，接受拒绝结果 json 无效 code: 200:成功 9103 : 已经在其他端接听 / 拒绝过这通电话 \n
   * 			kNIMVideoChatSessionTypeCalleeAckNotify,	//确认通话，接受拒绝通知 code=无效，json 返回kNIMVChatUid发起者，kNIMVChatType对应NIMVideoChatMode, kNIMVChatAccept \n
   * 			kNIMVideoChatSessionTypeControlRes,			//NIMVChatControlType 结果  code=200成功，json 返回kNIMVChatType对应NIMVChatControlType \n
   * 			kNIMVideoChatSessionTypeControlNotify,		//NIMVChatControlType 通知	code=无效，json 返回kNIMVChatUid发起者，kNIMVChatType对应NIMVChatControlType \n
-  * 			kNIMVideoChatSessionTypeConnect,			//通话中链接状态通知 code对应NIMVChatConnectErrorCode， 非200均失败并底层结束,如果成功json中带kNIMVChatRecordAddr和kNIMVChatRecordFile \n
+  * 			kNIMVideoChatSessionTypeConnect,			//通话中链接状态通知 code对应NIMVChatConnectErrorCode， 非200均失败并底层结束,如果成功json中带kNIMVChatVideoRecordFile和kNIMVChatRecordFile \n
   * 			kNIMVideoChatSessionTypePeopleStatus,		//通话中成员状态 code对应NIMVideoChatSessionStatus, json返回kNIMVChatUid \n
-  * 			kNIMVideoChatSessionTypeNetStatus,			//通话中网络状态 code对应NIMVideoChatSessionNetStat \n
+  * 			kNIMVideoChatSessionTypeNetStatus,			//通话中网络状态 code对应NIMVideoChatSessionNetStat, json返回kNIMVChatUid \n
   * 			kNIMVideoChatSessionTypeHangupRes,			//通话主动结果 code=200成功，json无效 \n
   * 			kNIMVideoChatSessionTypeHangupNotify,		//通话被挂断通知 code无效，json无效 \n
   * 			kNIMVideoChatSessionTypeSyncAckNotify,		//其他端接听挂断后的同步通知 json 返回 kNIMVChatTime，kNIMVChatType对应NIMVideoChatMode，kNIMVChatAccept，kNIMVChatClient  \n
@@ -177,7 +179,27 @@ typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, __int64 channel_
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-typedef void(*nim_vchat_mp4_record_opt_cb_func)(bool ret, int code, const char *file, __int64 time, const char *json_extension, const void *user_data);
+typedef void (*nim_vchat_mp4_record_opt_cb_func)(bool ret, int code, const char *file, __int64 time, const char *json_extension, const void *user_data);
+
+/** @typedef void (*nim_vchat_opt_cb_func)(bool ret, int code, const char *json_extension, const void *user_data)
+  * NIM 操作回调，通用的操作回调接口
+  * @param[out] ret 结果代码，true表示成功
+  * @param[out] code 暂时无效
+  * @param[out] json_extension Json string 扩展字段
+  * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_vchat_opt_cb_func)(bool ret, int code, const char *json_extension, const void *user_data);
+
+/** @typedef void (*nim_vchat_opt2_cb_func)(int code, __int64 channel_id, const char *json_extension, const void *user_data)
+  * NIM 操作回调，通用的操作回调接口
+  * @param[out] code 结果代码，code==200表示成功
+  * @param[out] channel_id 通道id
+  * @param[out] json_extension Json string 扩展字段
+  * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_vchat_opt2_cb_func)(int code, __int64 channel_id, const char *json_extension, const void *user_data);
 
 #ifdef __cplusplus
 };

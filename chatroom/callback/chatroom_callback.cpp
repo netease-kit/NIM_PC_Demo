@@ -42,10 +42,70 @@ void ChatroomCallback::OnEnterCallback(__int64 room_id, const NIMChatRoomEnterSt
 		return;
 
 	StdClosure cb = [=](){
-		ChatroomForm* chat_form = static_cast<ChatroomForm*>(nim_ui::WindowsManager::GetInstance()->GetWindow(ChatroomForm::kClassName, nbase::Int64ToString16(room_id)));
-		if (chat_form != NULL)
+		if (error_code != nim::kNIMResSuccess && error_code != nim::kNIMResTimeoutError)
 		{
-			chat_form->OnEnterCallback(error_code, info, my_info);
+			ChatroomForm* chat_form = static_cast<ChatroomForm*>(nim_ui::WindowsManager::GetInstance()->GetWindow(ChatroomForm::kClassName, nbase::Int64ToString16(room_id)));
+			if (chat_form)
+			{
+				if (error_code == nim::kNIMResRoomLocalNeedRequestAgain)
+				{//重新登录
+					chat_form->RequestEnter(room_id);
+					return;
+				}
+				else
+					chat_form->Close();
+			}
+
+			ChatroomFrontpage* front_page = nim_ui::WindowsManager::GetInstance()->SingletonShow<ChatroomFrontpage>(ChatroomFrontpage::kClassName);
+			if (!front_page) return;
+
+			std::wstring kick_tip_str;
+			ui::MutiLanSupport *multilan = ui::MutiLanSupport::GetInstance();
+			switch (error_code)
+			{
+			case nim::kNIMResNotExist:
+				kick_tip_str = L"聊天室不存在";
+				break;
+			case nim::kNIMResForbidden:
+				kick_tip_str = L"权限问题";
+				break;
+			case nim::kNIMResRoomLinkError:
+			case nim::kNIMResRoomError:
+				kick_tip_str = L"聊天室异常";
+				break;
+			case nim::kNIMResRoomBlackBeOut:
+				kick_tip_str = L"黑名单用户禁止进入聊天室";
+				break;
+			case nim::kNIMResFrequently:
+				kick_tip_str = L"操作太频繁,稍后重试";
+				break;
+			default:
+				QLOG_APP(L"enter faled: {0} , {1}") << room_id << error_code;
+				return;
+			}
+
+			ui::Box* kicked_tip_box = (ui::Box*)front_page->FindControl(L"kicked_tip_box");
+			kicked_tip_box->SetVisible(true);
+			nbase::ThreadManager::PostDelayedTask(front_page->ToWeakCallback([kicked_tip_box]() {
+				kicked_tip_box->SetVisible(false);
+			}), nbase::TimeDelta::FromSeconds(2));
+
+			ui::Label* kick_tip_label = (ui::Label*)kicked_tip_box->FindSubControl(L"kick_tip");
+			kick_tip_label->SetText(kick_tip_str);
+
+			ui::Label* room_name_label = (ui::Label*)kicked_tip_box->FindSubControl(L"room_name");
+			room_name_label->SetDataID(nbase::Int64ToString16(room_id));
+			ChatRoomInfo info = front_page->GetRoomInfo(room_id);
+			if (!info.name_.empty())
+				room_name_label->SetUTF8Text(info.name_);
+			else
+				room_name_label->SetText(nbase::StringPrintf(L"直播间(id %lld)", room_id));
+		}
+		else
+		{
+			ChatroomForm* chat_form = static_cast<ChatroomForm*>(nim_ui::WindowsManager::GetInstance()->GetWindow(ChatroomForm::kClassName, nbase::Int64ToString16(room_id)));
+			if (chat_form != NULL)
+				chat_form->OnEnterCallback(error_code, info, my_info);
 		}
 	};
 	Post2UI(cb);
@@ -81,7 +141,7 @@ void ChatroomCallback::OnExitCallback(__int64 room_id, int error_code, NIMChatRo
 			kick_tip_str = multilan->GetStringViaID(L"STRID_CHATROOM_TIP_MULTIPOT_LOGIN");
 			break;
 		default:
-			QLOG_APP(L"Exit reason: %d.") << room_id << exit_reason;
+			QLOG_APP(L"Exit reason: {0}, {1}") << room_id << exit_reason;
 			return;
 		}
 

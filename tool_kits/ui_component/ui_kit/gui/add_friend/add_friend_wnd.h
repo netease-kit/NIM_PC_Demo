@@ -7,6 +7,7 @@
 #define ADD_FRIEND_H_
 
 #include "util/window_ex.h"
+#include "module/service/photo_service.h"
 
 namespace nim_comp
 {
@@ -63,7 +64,7 @@ private:
 	bool SendFriendApplyClick(ui::EventArgs* param);
 	bool OnSearchKeyEditSetFocus(void* param);
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
-	void OnUserPhotoReady(const std::string& account, const std::wstring& photo_path);
+	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
 
 private:
 	ui::Button* headimage_;

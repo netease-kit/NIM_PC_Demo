@@ -103,6 +103,11 @@
 					<Control width="stretch"/>
 					<CheckBox class="switch" name="black_switch" selected="false"/>
 				</HBox>
+				<HBox name="mute_switch_box" width="stretch" height="auto">
+					<Label text="设置禁言" font="2"/>
+					<Control width="stretch"/>
+					<CheckBox class="switch" name="mute_switch" selected="false"/>
+				</HBox>
 			</VBox>
 			<Control class="splitline_hor_level1" width="stretch"/>
 			<HBox width="stretch" height="62">

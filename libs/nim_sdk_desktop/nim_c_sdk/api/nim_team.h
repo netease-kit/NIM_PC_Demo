@@ -268,7 +268,7 @@ NIM_SDK_DLL_API void nim_team_transfer_team_async(const char *tid,
   * 803:群不存在； 
   * 804:不在群里； 
   * 805:群类型不对；
-  * @param[in] info		json string tlist,包含tid和需要修改的字段（暂时只有nick和bits） (Keys SEE MORE `nim_team_def.h` 『群组属性 Json Keys』
+  * @param[in] info		json string 群组成员信息,包含tid和需要修改的字段（目前支持修改kNIMTeamUserKeyNick、kNIMTeamUserKeyBits、kNIMTeamUserKeyCustom三个字段） (Keys SEE MORE `nim_team_def.h` 『群组属性 Json Keys』
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb		更新自己的群属性的回调函数, nim_team_opt_cb_func回调函数定义见nim_team_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
@@ -413,6 +413,24 @@ NIM_SDK_DLL_API void nim_team_query_team_info_online_async(const char *tid,
 	const char *json_extension, 
 	nim_team_opt_cb_func cb, 
 	const void *user_data);
+
+/** @fn void nim_team_mute_member_async(const char *tid, const char *member_id, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data)
+  * 对群成员禁言/解除禁言
+  * @param[in] tid		群组id
+  * @param[in] member_id群成员id
+  * @param[in] set_mute	禁言(true)、解除禁言(false)
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		拒绝邀请的回调函数, nim_team_opt_cb_func回调函数定义见nim_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_team_mute_member_async(const char *tid, 
+	const char *member_id, 
+	bool set_mute, 
+	const char *json_extension, 
+	nim_team_opt_cb_func cb, 
+	const void *user_data);
+
 
 #ifdef __cplusplus
 };

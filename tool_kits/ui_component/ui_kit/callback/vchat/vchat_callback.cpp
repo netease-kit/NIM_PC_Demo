@@ -30,12 +30,12 @@ void VChatCallback::StartDeviceCb(nim::NIMDeviceType type, bool ret, const char 
 void VChatCallback::VideoCaptureData(unsigned __int64 time, const char* data, unsigned int size, unsigned int width, unsigned int height, const char *json, const void *user_data)
 {
 	std::string json_temp(json);
-	VideoFrameMng::AddVideoFrame(true, time, data, size, width, height, json_temp);
+	VideoManager::GetInstance()->video_frame_mng_.AddVideoFrame(true, time, data, size, width, height, json_temp, nim_comp::VideoFrameMng::Ft_I420);
 }
 void VChatCallback::VideoRecData(unsigned __int64 time, const char* data, unsigned int size, unsigned int width, unsigned int height, const char *json, const void *user_data)
 {
 	std::string json_temp(json);
-	VideoFrameMng::AddVideoFrame(false, time, data, size, width, height, json_temp);
+	VideoManager::GetInstance()->video_frame_mng_.AddVideoFrame(false, time, data, size, width, height, json_temp, nim_comp::VideoFrameMng::Ft_I420);
 }
 
 void OnVChatCb(nim::NIMVideoChatSessionType type, uint64_t channel_id, int code, const std::string& json)

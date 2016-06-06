@@ -115,6 +115,9 @@
     <Filter Include="gui\black_list">
       <UniqueIdentifier>{a6425fab-1c04-4774-8221-42f9282bce1a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gui\video\helper">
+      <UniqueIdentifier>{413e9754-b788-402a-95e6-5ba717e03186}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -239,9 +242,6 @@
     </ClInclude>
     <ClInclude Include="module\video\video_manager.h">
       <Filter>module\video</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\video\ui_bitmap_control.h">
-      <Filter>gui\video</Filter>
     </ClInclude>
     <ClInclude Include="gui\video\video_form.h">
       <Filter>gui\video</Filter>
@@ -381,6 +381,45 @@
     <ClInclude Include="util\window_ex.h">
       <Filter>util</Filter>
     </ClInclude>
+    <ClInclude Include="module\video\video_frame_mng.h">
+      <Filter>module\video</Filter>
+    </ClInclude>
+    <ClInclude Include="module\service\http_service.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_http_manager.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="module\video\audio_frame_mng.h">
+      <Filter>module\video</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\video\helper\screen_capture.h">
+      <Filter>gui\video\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\video\helper\ui_barrage_control.h">
+      <Filter>gui\video\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\video\helper\ui_bitmap_control.h">
+      <Filter>gui\video\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\video\helper\yuv_image.h">
+      <Filter>gui\video\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\video\screen_capture_tool.h">
+      <Filter>gui\video</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\video\window_select.h">
+      <Filter>gui\video</Filter>
+    </ClInclude>
+    <ClInclude Include="module\service\photo_service.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_photo_manager.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+    <ClInclude Include="callback\login\data_sync_callback.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -514,9 +553,6 @@
     </ClCompile>
     <ClCompile Include="module\video\video_manager.cpp">
       <Filter>module\video</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\video\ui_bitmap_control.cpp">
-      <Filter>gui\video</Filter>
     </ClCompile>
     <ClCompile Include="gui\video\video_form.cpp">
       <Filter>gui\video</Filter>
@@ -652,6 +688,45 @@
     </ClCompile>
     <ClCompile Include="util\window_ex.cpp">
       <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="module\video\video_frame_mng.cpp">
+      <Filter>module\video</Filter>
+    </ClCompile>
+    <ClCompile Include="module\service\http_service.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_http_manager.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="module\video\audio_frame_mng.cpp">
+      <Filter>module\video</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\helper\screen_capture.cpp">
+      <Filter>gui\video\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\helper\ui_barrage_control.cpp">
+      <Filter>gui\video\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\helper\ui_bitmap_control.cpp">
+      <Filter>gui\video\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\helper\yuv_image.cpp">
+      <Filter>gui\video\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\screen_capture_tool.cpp">
+      <Filter>gui\video</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\window_select.cpp">
+      <Filter>gui\video</Filter>
+    </ClCompile>
+    <ClCompile Include="module\service\photo_service.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_photo_manager.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+    <ClCompile Include="callback\login\data_sync_callback.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

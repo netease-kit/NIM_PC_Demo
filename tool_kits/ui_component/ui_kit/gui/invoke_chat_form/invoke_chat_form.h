@@ -3,6 +3,7 @@
 
 #include "util/window_ex.h"
 #include "module/service/user_service.h"
+#include "module/service/photo_service.h"
 #include "shared/pin_yin_helper.h"
 #include "shared/list_item_util.h"
 
@@ -26,7 +27,7 @@ public:
 		ui::Button* head_image_button = (ui::Button*)FindSubControl(L"head_image");
 		ui::Control* head_image_mask = (ui::Control*)FindSubControl(L"headmask");
 		head_image_mask->SetClass(L"checkbox_headimage_mask_40x40");
-		head_image_button->SetBkImage(UserService::GetInstance()->GetUserPhoto(accid));
+		head_image_button->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(accid));
 
 		ui::Label* show_name_label = (ui::Label*)FindSubControl(L"show_name");
 		nick_name = UserService::GetInstance()->GetUserName(accid);
@@ -106,7 +107,7 @@ private:
 	//用户名片改变回调
 	void OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos);
 	//用户头像下载完回调
-	void OnUserPhotoReady(const std::string & accid, const std::wstring & photo_path);
+	void OnUserPhotoReady(PhotoType type, const std::string & accid, const std::wstring & photo_path);
 	
 private:
 	UTF8String uid_or_tid_;

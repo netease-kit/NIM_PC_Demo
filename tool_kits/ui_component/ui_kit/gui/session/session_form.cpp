@@ -446,7 +446,7 @@ void SessionForm::AddSendingMsg(const nim::IMMessage &msg)
 
 void SessionForm::ReSendMsg(nim::IMMessage &msg)
 {
-	msg.resend_flag_ = true;
+	msg.msg_setting_.resend_flag_ = nim::BS_TRUE;
 	msg.status_ = nim::kNIMMsgLogStatusSending;
 	msg.timetag_= 1000 * nbase::Time::Now().ToTimeT();
 
@@ -461,8 +461,8 @@ void SessionForm::PackageMsg(nim::IMMessage &msg)
 	msg.receiver_accid_		= session_id_;
 	msg.sender_accid_	= LoginManager::GetInstance()->GetAccount();
 	msg.client_msg_id_   = QString::GetGUID();
-	msg.resend_flag_		= false;
-	
+	msg.msg_setting_.resend_flag_ = nim::BS_FALSE;
+
 	//base获取的时间单位是s，服务器的时间单位是ms
 	msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
 

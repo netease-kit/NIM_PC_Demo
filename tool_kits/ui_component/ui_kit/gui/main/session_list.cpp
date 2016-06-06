@@ -30,8 +30,8 @@ SessionList::SessionList(ui::ListBox* session_list)
 	
 	OnUserInfoChangeCallback cb1 = nbase::Bind(&SessionList::OnUserInfoChange, this, std::placeholders::_1);
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(cb1));
-	OnUserPhotoReadyCallback cb2 = nbase::Bind(&SessionList::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2);
-	unregister_cb.Add(UserService::GetInstance()->RegUserPhotoReady(cb2));
+	OnPhotoReadyCallback cb2 = nbase::Bind(&SessionList::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(cb2));
 	auto cb3 = nbase::Bind(&SessionList::OnTeamNameChange, this, std::placeholders::_1);
 	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(cb3));
 }
@@ -49,7 +49,7 @@ int SessionList::AdjustMsg(const nim::SessionData &msg)
 		SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
 		if (item)
 		{
-			if (msg.msg_timetag_ > item->GetMsgTime())
+			if (msg.msg_timetag_ == 0 || msg.msg_timetag_ > item->GetMsgTime())
 				return i;
 		}
 
@@ -254,11 +254,13 @@ void SessionList::OnChangeCallback(nim::NIMResCode rescode, const nim::SessionDa
 		case nim::kNIMSessionCommandUpdate:
 		case nim::kNIMSessionCommandMsgDeleted:
 		{
-			AddSessionItem(data);
-			
-			if (SessionManager::GetInstance()->IsSessionWndActive(data.id_))
+			if (data.last_updated_msg_)
 			{
-				ResetSessionUnread(data.id_);
+				AddSessionItem(data);
+				if (SessionManager::GetInstance()->IsSessionWndActive(data.id_))
+				{
+					ResetSessionUnread(data.id_);
+				}
 			}
 		}
 		break;
@@ -306,11 +308,14 @@ void SessionList::OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos)
 		UpdateSessionInfo(*iter);
 }
 
-void SessionList::OnUserPhotoReady(const std::string& accid, const std::wstring &photo_path)
+void SessionList::OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path)
 {
-	SessionItem* item = (SessionItem*)session_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
-	if (item)
-		item->FindSubControl(L"head_image")->SetBkImage(photo_path);
+	if (type == kUser || type == kTeam)
+	{
+		SessionItem* item = (SessionItem*)session_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
+		if (item)
+			item->FindSubControl(L"head_image")->SetBkImage(photo_path);
+	}
 }
 
 void SessionList::OnTeamNameChange(const nim::TeamInfo& team_info)

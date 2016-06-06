@@ -93,6 +93,7 @@
     <ClCompile Include="helper\nim_chatroom_common_helper.cpp" />
     <ClCompile Include="helper\nim_chatroom_file_helper.cpp" />
     <ClCompile Include="helper\nim_chatroom_sdk_helper.cpp" />
+    <ClCompile Include="nim_chatroom_cpp_api.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api\nim_chatroom_cpp.h" />

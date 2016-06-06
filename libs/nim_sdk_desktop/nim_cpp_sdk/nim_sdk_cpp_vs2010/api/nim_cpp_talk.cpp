@@ -17,6 +17,7 @@ typedef void(*nim_talk_send_msg)(const char* json_msg, const char *json_extensio
 typedef void(*nim_talk_stop_send_msg)(const char *json_msg, const char *json_extension);
 typedef void(*nim_talk_reg_receive_cb)(const char *json_extension, nim_talk_receive_cb_func cb, const void* user_data);
 typedef void(*nim_talk_reg_receive_msgs_cb)(const char *json_extension, nim_talk_receive_cb_func cb, const void* user_data);
+typedef void(*nim_talk_reg_notification_filter_cb)(const char *json_extension, nim_talk_team_notification_filter_func cb, const void *user_data);
 
 static void CallbackSendMsgAck(const char *result, const void *callback)
 {
@@ -81,6 +82,21 @@ static void CallbackFileUploadProcess(__int64 uploaded_size, __int64 file_size, 
 			(*cb_pointer)(uploaded_size, file_size);
 		}
 	}
+}
+
+static bool FilterTeamNotification(const char *content, const char *json_extension, const void *callback)
+{
+	if (callback)
+	{
+		Talk::TeamNotificationFilter* cb_point = (Talk::TeamNotificationFilter *)callback;
+		if (*cb_point)
+		{
+			IMMessage msg;
+			ParseReceiveMessage(PCharToString(content), msg);
+			return (*cb_point)(msg);
+		}
+	}
+	return false;
 }
 
 static Talk::SendMsgAckCallback* g_cb_send_msg_ack_ = nullptr;
@@ -427,6 +443,18 @@ bool Talk::ParseLocationMessageAttach(const IMMessage& msg, IMLocation& location
 	return false;
 }
 
+static Talk::TeamNotificationFilter* g_team_notification_filter_ = nullptr;
+void Talk::RegTeamNotificationFilter(const TeamNotificationFilter& filter, const std::string& json_extension/* = ""*/)
+{
+	if (g_team_notification_filter_)
+	{
+		delete g_team_notification_filter_;
+		g_team_notification_filter_ = nullptr;
+	}
+	g_team_notification_filter_ = new Talk::TeamNotificationFilter(filter);
+	return NIM_SDK_GET_FUNC(nim_talk_reg_notification_filter_cb)(json_extension.c_str(), &FilterTeamNotification, g_team_notification_filter_);
+}
+
 void Talk::UnregTalkCb()
 {
 	if (g_cb_send_msg_ack_)
@@ -434,7 +462,21 @@ void Talk::UnregTalkCb()
 		delete g_cb_send_msg_ack_;
 		g_cb_send_msg_ack_ = nullptr;
 	}
+	if (g_team_notification_filter_)
+	{
+		delete g_team_notification_filter_;
+		g_team_notification_filter_ = nullptr;
+	}
+	if (g_cb_pointer)
+	{
+		delete g_cb_pointer;
+		g_cb_pointer = nullptr;
+	}
+	if (g_cb_msgs_pointer)
+	{
+		delete g_cb_msgs_pointer;
+		g_cb_msgs_pointer = nullptr;
+	}
 }
-
 
 }

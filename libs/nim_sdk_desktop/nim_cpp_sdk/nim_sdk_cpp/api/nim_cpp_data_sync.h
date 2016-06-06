@@ -26,8 +26,8 @@ class DataSync
 {
 
 public:
-	typedef std::function<void(nim::NIMDataSyncType sync_type, nim::NIMDataSyncStatus status)> DataSyncCallback;	/**< 数据同步通知回调模板 */
-	
+	typedef std::function<void(nim::NIMDataSyncType sync_type, nim::NIMDataSyncStatus status, const std::string &data_sync_info)> DataSyncCallback;	/**< 数据同步通知回调模板 */
+
 public:
 	/** @fn static void RegCompleteCb(const DataSyncCallback& cb)
 	* 注册数据同步完成的回调函数

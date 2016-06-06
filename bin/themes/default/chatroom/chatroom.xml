@@ -25,6 +25,7 @@
             </HBox>
         </HBox>
         
+		<Box width="stretch" height="stretch">
         <HBox width="stretch" height="stretch" margin="12,12,12,12">
             <VBox width="stretch" height="stretch" bkcolor="bk_wnd_lightcolor">
                 <HBox width="stretch" height="94">
@@ -103,5 +104,12 @@
                 </HBox>
             </VBox>
         </HBox>
-    </VBox>
+		<Box name="kicked_tip_box" width="stretch" height="stretch" bkimage="front_page_mask.png" visible="false" fadealpha="true">
+			<VBox width="auto" height="auto" halign="center" valign="center" padding="60,40,60,40" bkcolor="exit_tip_bk">
+				<Label name="kick_tip" halign="center" font="2" normaltextcolor="darkcolor"/>
+				<Label name="room_name" halign="center" font="2" normaltextcolor="exit_room_name_color" textpadding="0,12,0,0"/>
+			</VBox>
+		</Box>	
+		</Box>
+	</VBox>
 </Window>

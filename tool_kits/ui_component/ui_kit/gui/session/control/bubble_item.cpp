@@ -87,7 +87,7 @@ void MsgBubbleItem::SetShowTime(bool show)
 
 void MsgBubbleItem::SetShowHeader()
 {
-	msg_header_button_->SetBkImage(UserService::GetInstance()->GetUserPhoto(msg_.sender_accid_));
+	msg_header_button_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(msg_.sender_accid_));
 }
 
 void MsgBubbleItem::SetShowName(bool show, const std::string& from_nick)
@@ -166,7 +166,7 @@ bool MsgBubbleItem::OnClicked(ui::EventArgs* arg)
 	}
 	else if (name == L"msg_header_button")
 	{
-		ProfileForm::ShowProfileForm(msg_.sender_accid_);
+		m_pWindow->SendNotify(this, ui::kEventNotify, BET_SHOWPROFILE, 0);
 	}
 	return true;
 }

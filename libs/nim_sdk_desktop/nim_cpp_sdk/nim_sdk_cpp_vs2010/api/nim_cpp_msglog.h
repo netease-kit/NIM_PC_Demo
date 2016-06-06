@@ -58,12 +58,12 @@ public:
 	 */
 	static bool QueryMsgByIDAysnc(const std::string &client_msg_id, const QuerySingleMsgCallback &cb, const std::string &json_extension = "");
 
-	/** @fn static bool QueryMsgAsync(const std::string& account_id, nim::NIMSessionType to_type, int limit_count, __int64 last_time, const QueryMsgCallback& cb, const std::string& json_extension = "")
+	/** @fn static bool QueryMsgAsync(const std::string& account_id, nim::NIMSessionType to_type, int limit_count, __int64 anchor_msg_time, const QueryMsgCallback& cb, const std::string& json_extension = "")
 	* 查询本地消息
 	* @param[in] account_id	查询id，account_id/uid或者tid
 	* @param[in] to_type	    会话类型，双人0，群组1 (见nim_msglog_def.h)
 	* @param[in] limit_count	一次查询数量，建议20
-	* @param[in] last_time	上次查询最后一条消息的时间戳
+	* @param[in] anchor_msg_time 作为此次查询的定位点的消息历史的消息时间戳（上次查询最后一条消息的时间戳，按指定的时间的顺序起查，默认为逆序，2.4.0之前命名为last_name）
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			查询本地消息的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
@@ -71,7 +71,7 @@ public:
 	static bool QueryMsgAsync(const std::string& account_id
 		, nim::NIMSessionType to_type
 		, int limit_count
-		, __int64 last_time
+		, __int64 anchor_msg_time
 		, const QueryMsgCallback& cb
 		, const std::string& json_extension = "");
 

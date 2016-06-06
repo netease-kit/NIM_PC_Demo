@@ -27,7 +27,7 @@ namespace nim_chatroom
 class ChatRoom
 {
 public:
-	typedef std::function<void(__int64 room_id, const NIMChatRoomEnterStep step, int error_code, const ChatRoomInfo& info, const ChatRoomMemberInfo& my_info)>	EnterCallback;	/**< 登录回调 */
+	typedef std::function<void(__int64 room_id, const NIMChatRoomEnterStep step, int error_code, const ChatRoomInfo& info, const ChatRoomMemberInfo& my_info)>	EnterCallback;	/**< 登录回调, 如果错误码为kResRoomLocalNeedRequestAgain，聊天室重连机制结束，则需要向IM服务器重新请求进入该聊天室权限 */
 	typedef std::function<void(__int64 room_id, int error_code, NIMChatRoomExitReason exit_reason)>	ExitCallback;	/**< 登出、被踢回调 */
 	typedef std::function<void(__int64 room_id, int error_code, const ChatRoomMessage& result)>	SendMsgAckCallback;	/**< 发送消息回执 */
 	typedef std::function<void(__int64 room_id, const ChatRoomMessage& result)>	ReceiveMsgCallback;	/**< 接收消息回调 */
@@ -222,7 +222,7 @@ static void KickMemberAsync(const __int64 room_id,
 	const KickMemberCallback &callback, 
 	const std::string &json_extension = "");
 
-/** @fn void SetProxy(NIMChatRoomProxyType type, const std::string& host, int port, const std::string& user, const std::string& passward)
+/** @fn void SetProxy(NIMChatRoomProxyType type, const std::string& host, int port, const std::string& user, const std::string& password)
 * 设置SDK统一的网络代理。不需要代理时，type设置为kNIMProxyNone，其余参数都传空字符串（端口设为0）。有些代理不需要用户名和密码，相应参数也传空字符串。
 * @param[in] type 代理类型，见NIMChatRoomProxyType定义
 * @param[in] host 代理地址

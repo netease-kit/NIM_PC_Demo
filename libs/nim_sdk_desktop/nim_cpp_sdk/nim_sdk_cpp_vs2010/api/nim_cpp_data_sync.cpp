@@ -7,6 +7,7 @@
 
 #include "nim_cpp_data_sync.h"
 #include "nim_sdk_helper.h"
+#include "nim_common_helper.h"
 
 namespace nim
 {
@@ -21,7 +22,7 @@ static void CallbackSyncComplete(nim::NIMDataSyncType sync_type, nim::NIMDataSyn
 		DataSync::DataSyncCallback* cb_pointer = (DataSync::DataSyncCallback*)user_data;
 		if (*cb_pointer)
 		{
-			(*cb_pointer)(sync_type, status);
+			(*cb_pointer)(sync_type, status, PCharToString(json_attachment));
 		}
 	}
 }
