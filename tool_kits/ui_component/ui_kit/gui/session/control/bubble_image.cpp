@@ -160,7 +160,18 @@ void MsgBubbleImage::DoZoom()
 
 bool MsgBubbleImage::OnMenu( ui::EventArgs* arg )
 {
-	PopupMenu(false);
+	bool show_retweet = true;
+	if (msg_.type_ == nim::kNIMMessageTypeCustom)
+	{
+		Json::Value json;
+		if (StringToJson(msg_.attach_, json))
+		{
+			int sub_type = json["type"].asInt();
+			if (sub_type == CustomMsgType_SnapChat)
+				show_retweet = false;
+		}
+	}
+	PopupMenu(false, show_retweet);
 	return false;
 }
 

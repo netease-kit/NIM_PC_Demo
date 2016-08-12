@@ -8,6 +8,7 @@
 #include "nim_cpp_talk.h"
 #include "nim_sdk_helper.h"
 #include "nim_common_helper.h"
+#include "nim_cpp_global.h"
 
 namespace nim
 {
@@ -18,6 +19,7 @@ typedef void(*nim_talk_stop_send_msg)(const char *json_msg, const char *json_ext
 typedef void(*nim_talk_reg_receive_cb)(const char *json_extension, nim_talk_receive_cb_func cb, const void* user_data);
 typedef void(*nim_talk_reg_receive_msgs_cb)(const char *json_extension, nim_talk_receive_cb_func cb, const void* user_data);
 typedef void(*nim_talk_reg_notification_filter_cb)(const char *json_extension, nim_talk_team_notification_filter_func cb, const void *user_data);
+typedef char*(*nim_talk_create_retweet_msg)(const char* src_msg_json, const char* client_msg_id, const NIMSessionType retweet_to_session_type, const char* retweet_to_session_id, const char* msg_setting, __int64 timetag);
 
 static void CallbackSendMsgAck(const char *result, const void *callback)
 {
@@ -317,7 +319,7 @@ std::string Talk::CreateLocationMessage(const std::string& receiver_id
 std::string Talk::CreateTipMessage(const std::string& receiver_id
 	, const NIMSessionType session_type
 	, const std::string& client_msg_id
-	, const Json::Value& tips
+	, const std::string& tip_content
 	, const MessageSetting& msg_setting
 	, __int64 timetag/* = 0*/)
 {
@@ -325,7 +327,7 @@ std::string Talk::CreateTipMessage(const std::string& receiver_id
 	values[kNIMMsgKeyToAccount] = receiver_id;
 	values[kNIMMsgKeyToType] = session_type;
 	values[kNIMMsgKeyClientMsgid] = client_msg_id;
-	values[kNIMMsgKeyServerExt] = GetJsonStringWithNoStyled(tips);
+	values[kNIMMsgKeyBody] = tip_content;
 	values[kNIMMsgKeyType] = kNIMMessageTypeTips;
 	values[kNIMMsgKeyLocalTalkId] = receiver_id;
 
@@ -338,6 +340,36 @@ std::string Talk::CreateTipMessage(const std::string& receiver_id
 	return GetJsonStringWithNoStyled(values);
 }
 
+std::string Talk::CreateRetweetMessage(const std::string& src_msg_json
+	, const std::string& client_msg_id
+	, const NIMSessionType retweet_to_session_type
+	, const std::string& retweet_to_session_id
+	, const MessageSetting& msg_setting
+	, __int64 timetag/* = 0*/)
+{
+	Json::Value setting;
+	msg_setting.ToJsonValue(setting);
+	Json::FastWriter fw;
+	const char *msg = NIM_SDK_GET_FUNC(nim_talk_create_retweet_msg)(src_msg_json.c_str(), client_msg_id.c_str(), retweet_to_session_type, retweet_to_session_id.c_str(), fw.write(setting).c_str(), timetag);
+	std::string out_msg = (std::string)msg;	
+	Global::FreeBuf((void *)msg);
+	return out_msg;
+// 	IMMessage msg;
+// 	bool ret = ParseIMMessage(src_msg_json, msg);
+// 	msg.feature_ = kNIMMessageFeatureDefault;
+// 	msg.session_type_ = retweet_to_session_type;
+// 	msg.receiver_accid_ = retweet_to_session_id;
+// 	msg.sender_accid_.clear();
+// 	msg.timetag_ = timetag;
+// 	msg.client_msg_id_ = client_msg_id;
+// 	msg.msg_setting_ = msg_setting;
+// 	msg.local_res_id_ = client_msg_id;
+// 	msg.local_talk_id_ = retweet_to_session_id;
+// 	msg.status_ = kNIMMsgLogStatusSending;
+// 	msg.sub_status_ = kNIMMsgLogSubStatusNone;
+// 
+// 	return msg.ToJsonString(true);
+}
 
 bool Talk::ParseIMMessage(const std::string& json_msg, IMMessage& msg)
 {

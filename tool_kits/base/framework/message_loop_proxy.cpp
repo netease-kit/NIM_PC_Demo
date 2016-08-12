@@ -1,6 +1,6 @@
 // Copyright (c) 2013, NetEase Inc. All rights reserved.
 //
-// Author: Wang Rongtao <rtwang@corp.netease.com>
+// Author: wrt(guangguang)
 // Date: 2013/08/26
 //
 // This file trys to implement a cross flatform message loop proxy,

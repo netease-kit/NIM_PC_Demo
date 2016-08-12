@@ -43,6 +43,7 @@ public:
 	void KickMemberCallback(__int64 room_id, int error_code);
 	void OnChatRoomRequestEnterCallback(int error_code, const std::string& result);
 	void OnRegLinkConditionCallback(__int64 room_id, const NIMChatRoomLinkCondition condition);
+	void TempMuteCallback(__int64 room_id, int error_code, const ChatRoomMemberInfo& info);
 
 	void RequestRoomError();
 private:
@@ -83,12 +84,15 @@ private:
 	bool RemoveBlacklistMenuItemClick(ui::EventArgs* args);
 	bool AddAdminMenuItemClick(ui::EventArgs* args);
 	bool RemoveAdminMenuItemClick(ui::EventArgs* args);
+	bool TempMuteMenuItemClick(ui::EventArgs* args);
+	bool RemoveTempMuteMenuItemClick(ui::EventArgs* args);
 
 private:
 	void SetMemberAdmin(const std::string &id, bool is_admin);	//设置成员列表界面中某个成员的类型
 	void SetMemberBlacklist(const std::string &id, bool is_black);
 	void SetMemberMute(const std::string &id, bool is_mute);
 	void SetMemberFixed(const std::string &id, bool is_fixed);
+	void SetMemberTempMute(const std::string &id, bool temp_mute, __int64 duration);
 	void RemoveMember(const std::string &uid);
 	void UpdateOnlineCount();	// 刷新在线人数
 	void GetMembers();
@@ -152,6 +156,7 @@ private:
 	nim_comp::IRichEditOleCallbackEx *richeditolecallback_;
 	AutoUnregister	unregister_cb;
 
+	std::map<std::string, nbase::WeakCallbackFlag> temp_unmute_id_task_map_;
 };
 
 }

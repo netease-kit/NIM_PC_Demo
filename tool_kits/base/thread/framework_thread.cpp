@@ -1,9 +1,9 @@
 // Copyright (c) 2011, NetEase Inc. All rights reserved.
 //
-// Author: Ruan Liang <ruanliang@corp.netease.com>
+// Author: rl
 // Date: 2011/6/29
 //
-// Enhanced by: Wang Rongtao <rtwang@corp.netease.com>
+// Enhanced by: wrt(guangguang)
 //
 // Thread with framework(message loop)
 

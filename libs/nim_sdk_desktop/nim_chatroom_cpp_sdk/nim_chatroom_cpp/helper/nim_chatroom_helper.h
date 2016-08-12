@@ -110,6 +110,24 @@ struct ChatRoomInfo
 		ext_ = values[kNIMChatRoomInfoKeyExt].asString();
 		online_count_ = values[kNIMChatRoomInfoKeyOnlineCount].asUInt();
 	}
+
+	/** @fn std::string ToJsonString() const
+	  * @brief 组装Json Value字符串
+	  * @return void
+      */
+	std::string	ToJsonString() const
+	{
+		Json::Value values;
+		values[kNIMChatRoomInfoKeyID] = id_;
+		values[kNIMChatRoomInfoKeyName] = name_;
+		values[kNIMChatRoomInfoKeyAnnouncement] = announcement_;
+		values[kNIMChatRoomInfoKeyBroadcastUrl] = broadcast_url_;
+		values[kNIMChatRoomInfoKeyCreatorID] = creator_id_;
+		values[kNIMChatRoomInfoKeyValidFlag] = valid_flag_;
+		values[kNIMChatRoomInfoKeyExt] = ext_;
+		values[kNIMChatRoomInfoKeyOnlineCount] = online_count_;
+		return GetJsonStringWithNoStyled(values);
+	}
 };
 
 /** @brief 聊天室通知*/
@@ -121,9 +139,10 @@ struct ChatRoomNotification
 	std::string						operator_nick_;/**< 操作者的账号nick */
 	std::list<std::string>			target_nick_;/**< 被操作者的账号nick列表 */
 	std::list<std::string>			target_ids_; /**< 被操作者的accid列表 */
+	__int64							temp_mute_duration_; /**<long 当通知为临时禁言相关时有该值，禁言时代表本次禁言的时长(秒)，解禁时代表本次禁言剩余时长(秒) */
 
 	/** 构造函数 */
-	ChatRoomNotification(){ }
+	ChatRoomNotification() : temp_mute_duration_(0) { }
 
 	/** @fn void ParseFromJsonValue(const Json::Value &values)
 	  * @brief 从JsonValue中解析得到聊天室通知
@@ -138,6 +157,8 @@ struct ChatRoomNotification
 		operator_nick_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyOptNick].asString();
 		JsonStrArrayToList(values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTargetNick], target_nick_);
 		JsonStrArrayToList(values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTarget], target_ids_);
+		if (id_ == kNIMChatRoomNotificationIdMemberTempMute || id_ == kNIMChatRoomNotificationIdMemberTempUnMute)
+			temp_mute_duration_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTempMuteDuration].asUInt64();
 	}
 };
 
@@ -304,7 +325,8 @@ struct ChatRoomMemberInfo
 	bool			is_muted_;			/**<是禁言用户*/
 	bool			is_valid_;			/**<记录有效标记位*/
 	__int64			update_timetag_;	/**<固定成员的记录更新时间,用于固定成员列表的排列查询*/
-
+	bool			temp_muted_;		/**<临时禁言*/
+	__int64			temp_muted_duration_;/**<临时禁言的解除时长,单位秒*/
 	/** 构造函数 */
 	ChatRoomMemberInfo() : room_id_(0),
 		type_(0),
@@ -315,7 +337,9 @@ struct ChatRoomMemberInfo
 		is_blacklist_(false),
 		is_muted_(false),
 		is_valid_(false),
-		update_timetag_(0){}
+		update_timetag_(0),
+		temp_muted_(false),
+		temp_muted_duration_(0){}
 
 	/** 构造函数 */
 	void ParseFromJsonValue(const Json::Value &value)
@@ -348,9 +372,49 @@ struct ChatRoomMemberInfo
 			is_valid_ = value[kNIMChatRoomMemberInfoKeyValid].asInt() == 1;
 		if (value.isMember(kNIMChatRoomMemberInfoKeyUpdateTimetag))
 			update_timetag_ = value[kNIMChatRoomMemberInfoKeyUpdateTimetag].asUInt64();
+		if (value.isMember(kNIMChatRoomMemberInfoKeyTempMute))
+			temp_muted_ = value[kNIMChatRoomMemberInfoKeyTempMute].asInt() == 1;
+		if (value.isMember(kNIMChatRoomMemberInfoKeyTempMuteRestDuration))
+			temp_muted_duration_ = value[kNIMChatRoomMemberInfoKeyTempMuteRestDuration].asInt64();
 	}
+
+	/** @fn std::string ToJsonString() const
+	  * @brief 组装Json Value字符串
+	  * @return void
+      */
+	std::string	ToJsonString() const
+	{
+		Json::Value values;
+		values[kNIMChatRoomMemberInfoKeyRoomID] = room_id_;
+		values[kNIMChatRoomMemberInfoKeyAccID] = account_id_;
+		values[kNIMChatRoomMemberInfoKeyType] = type_;
+		values[kNIMChatRoomMemberInfoKeyLevel] = level_;
+		values[kNIMChatRoomMemberInfoKeyNick] = nick_;
+		values[kNIMChatRoomMemberInfoKeyAvatar] = avatar_;
+		values[kNIMChatRoomMemberInfoKeyExt] = ext_;
+		values[kNIMChatRoomMemberInfoKeyOnlineState] = state_;
+		values[kNIMChatRoomMemberInfoKeyGuestFlag] = guest_flag_;
+		values[kNIMChatRoomMemberInfoKeyEnterTimetag] = enter_timetag_;
+		values[kNIMChatRoomMemberInfoKeyBlacklist] = is_blacklist_ ? 1 : 0;
+		values[kNIMChatRoomMemberInfoKeyMuted] = is_muted_ ? 1 : 0;
+		values[kNIMChatRoomMemberInfoKeyValid] = is_valid_ ? 1 : 0;
+		values[kNIMChatRoomMemberInfoKeyUpdateTimetag] = update_timetag_;
+		values[kNIMChatRoomMemberInfoKeyTempMute] = temp_muted_ ? 1 : 0;
+		values[kNIMChatRoomMemberInfoKeyTempMuteRestDuration] = temp_muted_duration_;
+		return GetJsonStringWithNoStyled(values);
+	}
+
 };
 
+/** @brief 聊天室麦序队列元素*/
+struct ChatRoomQueueElement
+{
+	std::string key_;		/**<元素的UniqKey,长度限制128字节 */
+	std::string value_;		/**<元素的内容，长度限制4096字节 */
+};
+
+/** @brief 聊天室麦序队列*/
+typedef std::list<ChatRoomQueueElement> ChatRoomQueue;
 
 /** @fn bool ParseChatRoomEnterCallbackResultInfo(const std::string& result, ChatRoomInfo& room_info, ChatRoomMemberInfo& my_info)
   * @brief 解析聊天室登录结果

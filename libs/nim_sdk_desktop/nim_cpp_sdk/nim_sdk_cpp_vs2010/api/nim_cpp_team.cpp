@@ -8,6 +8,7 @@
 #include "nim_cpp_team.h"
 #include "nim_sdk_helper.h"
 #include "nim_common_helper.h"
+#include "nim_cpp_global.h"
 
 namespace nim
 {
@@ -36,6 +37,8 @@ typedef void(*nim_team_query_all_my_teams_info_async)(const char *json_extension
 typedef void(*nim_team_query_team_members_async)(const char *tid, bool include_user_info, const char *json_extension, nim_team_query_team_members_cb_func cb, const void* user_data);
 typedef void(*nim_team_query_team_member_async)(const char *tid, const char *user_id, const char *json_extension, nim_team_query_team_member_cb_func cb, const void *user_data);
 typedef void(*nim_team_query_team_info_async)(const char *tid, const char *json_extension, nim_team_query_team_info_cb_func cb, const void* user_data);
+typedef char*(*nim_team_query_team_member_block)(const char *tid, const char *user_id);
+typedef char*(*nim_team_query_team_info_block)(const char *tid);
 
 typedef void(*nim_team_mute_member_async)(const char *tid, const char *member_id, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 
@@ -76,7 +79,7 @@ static void CallbackQueryMyTeams(int team_count, const char *result, const char 
 		if (*cb_pointer)
 		{
 			std::list<std::string> team_id_list;
-			JsonStrArrayToList(PCharToString(result), team_id_list);
+			JsonStrArrayToList(GetJsonValueFromJsonString(PCharToString(result)), team_id_list);
 			(*cb_pointer)(team_count, team_id_list);
 		}
 		delete cb_pointer;
@@ -121,7 +124,7 @@ static void CallbackQueryAllMyTeamsInfo(int team_count, const char *result, cons
 		if (*cb_pointer)
 		{
 			std::list<nim::TeamInfo> team_info_list;
-			ParseTeamInfosJson(PCharToString(result), false, team_info_list);
+			ParseTeamInfosJson(PCharToString(result), team_info_list);
 			(*cb_pointer)(team_count, team_info_list);
 		}
 		delete cb_pointer;
@@ -568,6 +571,15 @@ bool Team::QueryTeamMemberAsync(const std::string& tid
 	return true;
 }
 
+TeamMemberProperty Team::QueryTeamMemberBlock(const std::string& tid, const std::string& id)
+{
+	const char *team_member_info = NIM_SDK_GET_FUNC(nim_team_query_team_member_block)(tid.c_str(), id.c_str());
+	nim::TeamMemberProperty prop;
+	ParseTeamMemberPropertyJson(PCharToString(team_member_info), prop);
+	Global::FreeBuf((void *)team_member_info);
+	return prop;
+}
+
 bool Team::QueryTeamInfoAsync(const std::string& tid, const QueryTeamInfoCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	if (tid.empty())
@@ -584,6 +596,15 @@ bool Team::QueryTeamInfoAsync(const std::string& tid, const QueryTeamInfoCallbac
 		, cb_pointer);
 
 	return true;
+}
+
+TeamInfo Team::QueryTeamInfoBlock(const std::string& tid)
+{
+	const char *team_info = NIM_SDK_GET_FUNC(nim_team_query_team_info_block)(tid.c_str());
+	nim::TeamInfo tinfo;
+	ParseTeamInfoJson(PCharToString(team_info), tinfo);
+	Global::FreeBuf((void *)team_info);
+	return tinfo;
 }
 
 bool Team::QueryTeamInfoOnlineAsync(const std::string& tid, const TeamEventCallback& cb, const std::string& json_extension/* = ""*/)

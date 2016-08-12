@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2013, NetEase Inc. All rights reserved.
 //
-// Wang Rongtao <rtwang@corp.netease.com>
+// wrt(guangguang)
 // 2013/9/3
 //
 // Network utilities

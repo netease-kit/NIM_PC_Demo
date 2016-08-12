@@ -56,10 +56,12 @@ public:
 	* @param[in] type NIMDeviceType 见nim_device_def.h
 	* @param[in] device_path 无效的扩展字段
 	* @param[in] fps 摄像头为采样频率,其他NIMDeviceType无效（麦克风采样频率由底层控制，播放器采样频率也由底层控制）
+	* @param[in] width 摄像头采集宽度期望值，取0则底层选默认值
+	* @param[in] height 摄像头采集高度期望值，取0则底层选默认值
 	* @param[in] cb 结果回调见nim_device_def.h
 	* @return void 无返回值
 	*/
-	static void StartDevice(nim::NIMDeviceType type, const std::string& device_path, unsigned fps, nim_vchat_start_device_cb_func cb);
+	static void StartDevice(nim::NIMDeviceType type, const std::string& device_path, unsigned fps, int width, int height, nim_vchat_start_device_cb_func cb);
 
 	/** @fn static void EndDevice(nim::NIMDeviceType type)
 	* NIM VCHAT DEVICE 结束设备
@@ -198,6 +200,13 @@ public:
 	*/
 	static void SetVideoQuality(int video_quality);
 
+	/** @fn void SetVideoBitrate(int video_bitrate)
+	* NIM 通话中修改视频码率，有效区间[100kb,2000kb]，如果设置video_bitrate为0则取默认码率
+	* @param[in] video_bitrate 视频码率值
+	* @return void 无返回值
+	*/
+	static void SetVideoBitrate(int video_bitrate);
+
 	/** @fn static void SetCustomData(bool custom_audio, bool custom_video)
 	* NIM 通话中修改自定义音视频数据模式
 	* @param[in] custom_audio true表示使用自定义的音频数据，false表示不使用
@@ -244,6 +253,19 @@ public:
 	*/
 	static bool GetAudioMuteEnabled();
 
+	/** @fn void SetRotateRemoteVideo(bool rotate)
+	* NIM VCHAT 设置不自动旋转对方画面，默认打开，全局有效（重新发起时也生效）
+	* @param[in] rotate true 自动旋转，false 不旋转
+	* @return void 无返回值
+	*/
+	static void SetRotateRemoteVideo(bool rotate);
+
+	/** @fn bool IsRotateRemoteVideo()
+	* NIM VCHAT 获取自动旋转对方画面设置状态
+	* @return bool true 自动旋转，false 不旋转
+	*/
+	static bool IsRotateRemoteVideo();
+
 	/** @fn static void SetMemberBlacklist(const std::string& uid, bool add, bool audio, const std::string& json_extension, OptCallback cb)
 	* NIM VCHAT 设置单个成员的黑名单状态，当前通话有效(只能设置进入过房间的成员)
 	* @param[in] uid 成员account
@@ -274,6 +296,14 @@ public:
 	* @return bool true 调用成功，false 调用失败可能有正在进行的通话
 	*/
 	static bool JoinRoom(NIMVideoChatMode mode, const std::string& room_name, const std::string& json_extension, Opt2Callback cb);
+
+	/** @fn void UpdateRtmpUrl(const std::string& rtmp_url, OptCallback cb)
+	* NIM 通话中修改直播推流地址（主播有效）
+	* @param[in] rtmp_url 新的rtmp推流地址
+	* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
+	* @return void 无返回值
+	*/
+	static void UpdateRtmpUrl(const std::string& rtmp_url, OptCallback cb);
 };
 }
 

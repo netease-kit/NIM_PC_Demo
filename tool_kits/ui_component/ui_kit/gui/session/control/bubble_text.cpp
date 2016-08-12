@@ -42,6 +42,33 @@ void MsgBubbleText::InitInfo(const nim::IMMessage &msg)
 		str = GetCustomMsg(msg.attach_);
 		msg_.content_ = nbase::UTF16ToUTF8(str);
 	}
+	else
+	{
+		if (msg_.msg_setting_.is_force_push_ == nim::BS_TRUE)
+		{
+			if (msg_.msg_setting_.force_push_ids_list_.empty())
+			{
+				//强推所有人
+				if (!msg_.msg_setting_.force_push_content_.empty())
+					str += L"_@强推文案:" + nbase::UTF8ToUTF16(msg_.msg_setting_.force_push_content_);
+				str += L"_@强推了所有人";
+			}
+			else
+			{
+				if (!msg_.msg_setting_.force_push_content_.empty())
+				{
+					str += L"_@强推文案:";
+					str += nbase::UTF8ToUTF16(msg_.msg_setting_.force_push_content_);
+				}
+				str += L"_@强推了以下成员:";
+				for each (std::string id in msg_.msg_setting_.force_push_ids_list_)
+				{
+					str += nbase::UTF8ToUTF16(id);
+					str += L",";
+				}
+			}
+		}
+	}
 	SetMsgText(str);
 }
 
@@ -74,7 +101,7 @@ ui::CSize MsgBubbleText::EstimateSize(ui::CSize szAvailable)
 
 bool MsgBubbleText::OnMenu( ui::EventArgs* arg )
 {
-	PopupMenu(true);
+	PopupMenu(true, msg_.type_ != nim::kNIMMessageTypeNotification);
 	return false;
 }
 

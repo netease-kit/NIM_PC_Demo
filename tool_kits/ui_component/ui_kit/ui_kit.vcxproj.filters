@@ -420,6 +420,9 @@
     <ClInclude Include="callback\login\data_sync_callback.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="gui\session\control\bubble_video.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -726,6 +729,9 @@
       <Filter>module\service</Filter>
     </ClCompile>
     <ClCompile Include="callback\login\data_sync_callback.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubble_video.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

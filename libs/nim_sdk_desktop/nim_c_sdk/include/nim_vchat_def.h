@@ -54,13 +54,24 @@ enum NIMVideoChatMode{
 	kNIMVideoChatModeVideo	=	2	/**< 视频通话模式 */
 };
 
-/** @enum NIMVChatVideoQuality 视频通话分辨率 */
+/** @enum NIMVChatVideoQuality 视频通话分辨率，最终长宽比不保证 */
 enum NIMVChatVideoQuality{
-	kNIMVChatVideoQualityNormal		= 0,		/**< 视频默认分辨率 */
-	kNIMVChatVideoQualityLow		= 1,		/**< 视频低分辨率 */
-	kNIMVChatVideoQualityMedium		= 2,		/**< 视频中分辨率 */
-	kNIMVChatVideoQualityHigh		= 3,		/**< 视频高分辨率 */
-	kNIMVChatVideoQualitySuper		= 4,		/**< 视频超高分辨率 */
+	kNIMVChatVideoQualityNormal		= 0,		/**< 视频默认分辨率 480x320*/
+	kNIMVChatVideoQualityLow		= 1,		/**< 视频低分辨率 176x144*/
+	kNIMVChatVideoQualityMedium		= 2,		/**< 视频中分辨率 352x288*/
+	kNIMVChatVideoQualityHigh		= 3,		/**< 视频高分辨率 480x320*/
+	kNIMVChatVideoQualitySuper		= 4,		/**< 视频超高分辨率 640x480*/
+	kNIMVChatVideoQuality720p		= 5,		/**< 用于桌面分享级别的分辨率1280x720，需要使用高清摄像头并指定对应的分辨率，或者自定义通道传输 */
+};
+
+/** @enum NIMVChatVideoFrameRate 视频通话帧率，实际帧率因画面采集频率和机器性能限制可能达不到期望值 */
+enum NIMVChatVideoFrameRate{
+	kNIMVChatVideoFrameRateNormal	= 0,		/**< 视频通话帧率默认值,最大取每秒15帧 */
+	kNIMVChatVideoFrameRate5		= 1,		/**< 视频通话帧率 最大取每秒5帧 */
+	kNIMVChatVideoFrameRate10		= 2,		/**< 视频通话帧率 最大取每秒10帧 */
+	kNIMVChatVideoFrameRate15		= 3,		/**< 视频通话帧率 最大取每秒15帧 */
+	kNIMVChatVideoFrameRate20		= 4,		/**< 视频通话帧率 最大取每秒20帧 */
+	kNIMVChatVideoFrameRate25		= 5,		/**< 视频通话帧率 最大取每秒25帧 */
 };
 
 /** @enum NIMVideoChatSessionStatus 音视频通话成员变化类型 */
@@ -79,19 +90,24 @@ enum NIMVideoChatSessionNetStat{
 
 /** @enum NIMVChatConnectErrorCode 音视频服务器连接状态类型 */
 enum NIMVChatConnectErrorCode{
-	kNIMVChatConnectDisconn			= 0,		/**< 断开连接 */
-	kNIMVChatConnectStartFail		= 1,		/**< 启动失败 */
-    kNIMVChatConnectTimeout			= 101,		/**< 超时 */
-    kNIMVChatConnectSuccess			= 200,		/**< 成功 */
-    kNIMVChatConnectInvalidParam	= 400,		/**< 错误参数 */
-	kNIMVChatConnectDesKey			= 401,		/**< 密码加密错误 */
-    kNIMVChatConnectInvalidRequst	= 417,		/**< 错误请求 */
-    kNIMVChatConnectServerUnknown	= 500,		/**< 服务器内部错误 */
-	kNIMVChatConnectLogout			= 1001,		/**< 退出 */
-	kNIMVChatChannelStartFail		= 11000,	/**< 发起失败 */
-	kNIMVChatChannelDisconnected	= 11001,	/**< 断开连接 */
-	kNIMVChatVersionSelfLow			= 11002,	/**< 本人SDK版本太低不兼容 */
-	kNIMVChatVersionRemoteLow		= 11003,	/**< 对方SDK版本太低不兼容 */
+	kNIMVChatConnectDisconn				= 0,		/**< 断开连接 */
+	kNIMVChatConnectStartFail			= 1,		/**< 启动失败 */
+    kNIMVChatConnectTimeout				= 101,		/**< 超时 */
+	kNIMVChatConnectMeetingModeError	= 102,		/**< 会议模式错误 */
+	kNIMVChatConnectRtmpModeError		= 103,		/**< 非rtmp用户加入rtmp频道 */
+	kNIMVChatConnectRtmpNodesError		= 104,		/**< 超过频道最多rtmp人数限制 */
+	kNIMVChatConnectRtmpHostError		= 105,		/**< 已经存在一个主播 */
+	kNIMVChatConnectRtmpCreateError		= 106,		/**< 需要旁路直播, 但频道创建者非主播 */
+    kNIMVChatConnectSuccess				= 200,		/**< 成功 */
+    kNIMVChatConnectInvalidParam		= 400,		/**< 错误参数 */
+	kNIMVChatConnectDesKey				= 401,		/**< 密码加密错误 */
+    kNIMVChatConnectInvalidRequst		= 417,		/**< 错误请求 */
+    kNIMVChatConnectServerUnknown		= 500,		/**< 服务器内部错误 */
+	kNIMVChatConnectLogout				= 1001,		/**< 退出 */
+	kNIMVChatChannelStartFail			= 11000,	/**< 发起失败 */
+	kNIMVChatChannelDisconnected		= 11001,	/**< 断开连接 */
+	kNIMVChatVersionSelfLow				= 11002,	/**< 本人SDK版本太低不兼容 */
+	kNIMVChatVersionRemoteLow			= 11003,	/**< 对方SDK版本太低不兼容 */
 };
 
 /** @enum NIMVChatMp4RecordCode mp4录制状态 */
@@ -114,8 +130,11 @@ static const char *kNIMVChatCustomVideo		= "custom_video";	/**< int 是否用自
 static const char *kNIMVChatCustomAudio		= "custom_audio";	/**< int 是否用自主的音频数据 >0表示是 */
 static const char *kNIMVChatRecord			= "record";			/**< int 是否需要录制音频数据 >0表示是 （需要服务器配置支持，本地录制直接调用接口函数） */
 static const char *kNIMVChatVideoRecord		= "video_record";	/**< int 是否需要录制视频数据 >0表示是 （需要服务器配置支持，本地录制直接调用接口函数）*/
-static const char *kNIMVChatMaxVideoRate	= "max_video_rate";	/**< int 视频发送编码码率 >=100000 <=1000000有效 */
+static const char *kNIMVChatMaxVideoRate	= "max_video_rate";	/**< int 视频发送编码码率 >=100000 <=5000000有效 */
 static const char *kNIMVChatVideoQuality	= "video_quality";	/**< int 视频聊天分辨率选择 NIMVChatVideoQuality */
+static const char *kNIMVChatVideoFrameRate	= "frame_rate";		/**< int 视频画面帧率 NIMVChatVideoFrameRate */
+static const char *kNIMVChatRtmpUrl			= "rtmp_url";		/**< string 直播推流地址(加入多人时有效)，非空代表主播旁路直播，此时kNIMVChatBypassRtmp无效 */
+static const char *kNIMVChatBypassRtmp		= "bypass_rtmp";	/**< int 是否是旁路直播观众(加入多人时有效)， >0表示是 */
 static const char *kNIMVChatPushEnable		= "push_enable";	/**< int 是否需要推送 >0表示是 默认是 */
 static const char *kNIMVChatNeedBadge		= "need_badge";		/**< int 是否需要角标计数 >0表示是 默认是 */
 static const char *kNIMVChatNeedFromNick	= "need_nick";		/**< int 是否需要推送昵称 >0表示是 默认是 */

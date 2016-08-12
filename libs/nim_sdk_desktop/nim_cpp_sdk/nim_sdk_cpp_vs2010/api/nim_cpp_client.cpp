@@ -23,6 +23,9 @@ typedef void(*nim_client_reg_kickout_cb)(const char *json_extension, nim_json_tr
 typedef void(*nim_client_reg_disconnect_cb)(const char *json_extension, nim_json_transport_cb_func cb, const void* user_data);
 typedef void(*nim_client_reg_multispot_login_notify_cb)(const char *json_extension, nim_json_transport_cb_func cb, const void *user_data);
 typedef void(*nim_client_reg_kickout_other_client_cb)(const char *json_extension, nim_json_transport_cb_func cb, const void *user_data);
+typedef void(*nim_client_reg_sync_multiport_push_config_cb)(const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
+typedef void(*nim_client_set_multiport_push_config)(const char *switch_content, const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
+typedef void(*nim_client_get_multiport_push_config)(const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
 
 static void CallbackLogin(const char* json_res, const void *callback)
 {
@@ -282,6 +285,88 @@ void Client::RegKickOtherClientCb(const KickOtherCallback& cb, const std::string
 	g_cb_kickother_ = new KickOtherCallback(cb);
 
 	return NIM_SDK_GET_FUNC(nim_client_reg_kickout_other_client_cb)(json_extension.c_str(), &CallbackKickother, g_cb_kickother_);
+}
+
+static void CallbackSyncMultiportPushConfig(int rescode, const char *content, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		Client::MultiportPushConfigCallback* cb_pointer = (Client::MultiportPushConfigCallback*)user_data;
+		if (*cb_pointer)
+		{
+			Json::Value values;
+			Json::Reader reader;
+			if (rescode == nim::kNIMResSuccess && reader.parse(PCharToString(content), values) && values.isObject())
+			{
+				bool open = values[kNIMMultiportPushConfigContentKeyOpen].asInt() == 1;
+				(*cb_pointer)(rescode, open);
+				return;
+			}
+			(*cb_pointer)(rescode, false);
+		}
+	}
+}
+
+static Client::MultiportPushConfigCallback* g_cb_sync_multiport_push_switch_ = nullptr;
+void Client::RegSyncMultiportPushConfigCb(const MultiportPushConfigCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	if (g_cb_sync_multiport_push_switch_)
+	{
+		delete g_cb_sync_multiport_push_switch_;
+		g_cb_sync_multiport_push_switch_ = nullptr;
+	}
+	g_cb_sync_multiport_push_switch_ = new MultiportPushConfigCallback(cb);
+	return NIM_SDK_GET_FUNC(nim_client_reg_sync_multiport_push_config_cb)(json_extension.c_str(), &CallbackSyncMultiportPushConfig, g_cb_sync_multiport_push_switch_);
+}
+
+static void CallbackMultiportPushConfig(int rescode, const char *content, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		Client::MultiportPushConfigCallback* cb_pointer = (Client::MultiportPushConfigCallback*)user_data;
+		if (*cb_pointer)
+		{
+			Json::Value values;
+			Json::Reader reader;
+			if (rescode == nim::kNIMResSuccess && reader.parse(PCharToString(content), values) && values.isObject())
+			{
+				bool open = values[kNIMMultiportPushConfigContentKeyOpen].asInt() == 1;
+				(*cb_pointer)(rescode, open);
+				delete cb_pointer;
+				return;
+			}
+			(*cb_pointer)(rescode, false);
+		}
+		delete cb_pointer;
+	}
+}
+
+void Client::SetMultiportPushConfigAsync(bool switch_on, const MultiportPushConfigCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	MultiportPushConfigCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new MultiportPushConfigCallback(cb);
+	}
+	Json::Value values;
+	Json::FastWriter fw;
+	values[kNIMMultiportPushConfigContentKeyOpen] = switch_on ? 1 : 2;
+	NIM_SDK_GET_FUNC(nim_client_set_multiport_push_config)(GetJsonStringWithNoStyled(values).c_str()
+		, json_extension.c_str()
+		, &CallbackMultiportPushConfig
+		, cb_pointer);
+}
+
+void Client::GetMultiportPushConfigAsync(const MultiportPushConfigCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	MultiportPushConfigCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new MultiportPushConfigCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_client_get_multiport_push_config)(json_extension.c_str()
+		, &CallbackMultiportPushConfig
+		, cb_pointer);
 }
 
 void Client::UnregClientCb()

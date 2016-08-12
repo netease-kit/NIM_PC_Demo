@@ -65,7 +65,7 @@ NIM_SDK_DLL_API void nim_msglog_query_msg_online_async(const char *id,
 													   const void *user_data);
 
 /** @fn void nim_msglog_query_msg_by_options_async(NIMMsgLogQueryRange query_range, const char *ids, int limit_count, __int64 from_time, __int64 end_time, const char *end_client_msg_id, bool reverse, NIMMessageType msg_type, const char *search_content, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
-  * 根据指定条件查询本地消息
+  * 根据指定条件查询本地消息,使用此接口可以完成全局搜索等功能,具体请参阅开发手册 http://dev.netease.im/docs?doc=pc&#历史记录
   * @param[in] query_range		消息历史的检索范围（目前暂不支持某些范围的组合检索，详见NIMMsgLogQueryRange说明）
   * @param[in] ids				会话id（对方的account id或者群组tid）的集合，格式为string array json（目前暂不支持多个的组合检索，详见NIMMsgLogQueryRange说明）
   * @param[in] limit_count		本次查询的消息条数上限(默认100条)

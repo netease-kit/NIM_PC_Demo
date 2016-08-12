@@ -145,7 +145,6 @@ static const char *kNIMTeamInfoKeyBeInviteMode	= "be_invite_mode"; /**< int, 被
 static const char *kNIMTeamInfoKeyInviteMode	= "invite_mode";	/**< int, 谁可以邀请他人入群，属性本身只有群主管理员可以修改,默认kNIMTeamInviteModeManager(0)/kNIMTeamInviteModeEveryone(1) */
 static const char *kNIMTeamInfoKeyUpdateInfoMode= "update_info_mode";/**< int, 谁可以修改群资料，属性本身只有群主管理员可以修改,默认kNIMTeamUpdateInfoModeManager(0)/kNIMTeamUpdateInfoModeEveryone(1) */
 static const char *kNIMTeamInfoKeyUpdateCustomMode	= "update_custom_mode";/**< int, 谁可以更新群自定义属性，属性本身只有群主管理员可以修改,默认kNIMTeamUpdateCustomModeManager(0)/kNIMTeamUpdateCustomModeEveryone(1) */
-
 /** @}*/ //群组信息Json Keys
 
 /** @enum NIMTeamBitsConfigMask 群组信息Bits属性kNIMTeamInfoKeyBits的配置定义 */
@@ -193,6 +192,13 @@ enum NIMTeamJoinMode
 	kNIMTeamJoinModeNeedAuth	= 1,		/**< 需要验证 */
 	kNIMTeamJoinModeRejectAll	= 2,		/**< 拒绝所有人入群 */
 };
+
+/** @name 搜索本地群组信息扩展参数
+  * @{
+  */
+static const char *kNIMTeamSearchKeyInclude			= "include_invalid";			/**< bool,是否包括无效群，不在群里（离开或被踢）或者群已经解散 */	
+/** @}*/ //搜索本地群组信息扩展参数
+
 
 #ifdef __cplusplus
 };

@@ -74,11 +74,6 @@ LRESULT TeamInfoForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void TeamInfoForm::InitWindow()
 {
-	if (type_ == nim::kNIMTeamTypeNormal)
-	{
-		FindControl(L"team_info_fields")->SetVisible(false);
-		FindControl(L"team_info_icon")->SetVisible(false);
-	}
 	unregister_cb.Add(TeamService::GetInstance()->RegAddTeamMember(nbase::Bind(&TeamInfoForm::OnTeamMemberAdd, this, std::placeholders::_1, std::placeholders::_2)));
 	unregister_cb.Add(TeamService::GetInstance()->RegRemoveTeamMember(nbase::Bind(&TeamInfoForm::OnTeamMemberRemove, this, std::placeholders::_1, std::placeholders::_2)));
 	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamMember(nbase::Bind(&TeamInfoForm::OnTeamMemberChange, this, std::placeholders::_1, std::placeholders::_2)));
@@ -134,7 +129,6 @@ void TeamInfoForm::InitWindow()
 		if (type_ == nim::kNIMTeamTypeAdvanced)
 		{
 			btn_header_->SetBkImage(PhotoService::GetInstance()->GetTeamPhoto(tid_));
-			btn_header_->AttachClick(nbase::Bind(&TeamInfoForm::OnHeadImageClicked, this, std::placeholders::_1));
 			re_team_intro_->SetUTF8Text(team_info_.GetIntro());
 			if (team_info_.GetJoinMode() == nim::kNIMTeamJoinModeNoAuth)
 				((Option*)FindControl(L"join_mode_any"))->Selected(true);
@@ -178,6 +172,14 @@ void TeamInfoForm::InitWindow()
 			((Option*)FindControl(L"up_custom_mode_manager"))->Selected(true);
 		}
 	}
+
+	if (type_ == nim::kNIMTeamTypeNormal)
+	{
+		FindControl(L"team_info_fields")->SetVisible(false);
+		FindControl(L"team_info_icon")->SetVisible(false);
+	}
+	else
+		btn_header_->AttachClick(nbase::Bind(&TeamInfoForm::OnHeadImageClicked, this, std::placeholders::_1));
 }
 
 bool TeamInfoForm::OnHeadImageClicked(ui::EventArgs* args)
@@ -522,6 +524,9 @@ bool TeamInfoForm::OnBtnConfirmClick(ui::EventArgs* param)
 		{
 			id_list.push_back(tile_box_->GetItemAt(i)->GetUTF8DataID());
 		}
+
+		if (!tinfo.GetIcon().empty())
+			PhotoService::GetInstance()->DownloadTeamIcon(tinfo);
 
 		nim::Team::CreateTeamAsync(tinfo, id_list, "", nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 	}

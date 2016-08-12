@@ -130,6 +130,7 @@ public:
 
 		SetTeamID(info.GetTeamID());
 		SetValid(info.IsValid());
+		SetMemberValid(info.IsMemberValid());
 		if (info.GetMemberCount() > -1)
 			SetMemberCount(info.GetMemberCount());
 		if (info.GetMemberListTimetag() > -1)
@@ -764,6 +765,7 @@ struct TeamEvent
 	TeamInfo	team_info_;					/**< 通知可能涉及到的群信息 */
 	TeamMemberProperty member_property_;	/**< 群成员属性 */
 	bool	opt_;							/**< 操作*/
+	std::string attach_;					/**< 扩展字段,目前仅kick和invite事件可选*/
 };
 
 /** @fn void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificationId notification_id, const std::string& team_event_json, TeamEvent& team_event)
@@ -796,11 +798,10 @@ bool ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info);
 /** @fn const std::string& team_infos_json, bool include_invalid_team, std::list<TeamInfo>& team_infos
   * @brief 解析群组信息
   * @param[in] team_info_json 群组信息（Json Value数据字符串）
-  * @param[in] include_invalid_team 是否包含无效群组（已退群）
   * @param[out] team_infos 群组信息
   * @return bool 解析成功或失败 
   */
-bool ParseTeamInfosJson(const std::string& team_infos_json, bool include_invalid_team, std::list<TeamInfo>& team_infos);
+bool ParseTeamInfosJson(const std::string& team_infos_json, std::list<TeamInfo>& team_infos);
 
 /** @fn void ParseTeamMemberPropertyJson(const Json::Value& team_member_prop_json, TeamMemberProperty& team_member_property)
   * @brief 解析群成员信息

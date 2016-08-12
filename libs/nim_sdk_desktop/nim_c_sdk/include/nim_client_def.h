@@ -13,6 +13,23 @@
 #ifdef __cplusplus
 extern"C"
 {
+
+/** @typedef void (*nim_client_multiport_push_config_cb_func)(const char *content, const char *json_params, const void *user_data)  
+  * 多端推送设置/同步回调
+  * @param[out] rescode			
+  * @param[out] content			
+  * @param[out] json_extension	json扩展数据（备用）
+  * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */ 
+typedef void (*nim_client_multiport_push_config_cb_func)(int rescode, const char *content, const char *json_params, const void *user_data);
+
+/** @name 多端推送设置/同步 内容Json key
+  * @{
+  */ 
+static const char *kNIMMultiportPushConfigContentKeyOpen	= "switch_open";		/**< int, 1开启，即桌面端在线时移动端不需推送；2关闭，即桌面端在线时移动端需推送 */
+/** @}*/ //多端推送设置/同步 内容Json key
+
 #endif
 /** @enum NIMLogoutType Logout类型 */
 enum NIMLogoutType
@@ -39,6 +56,7 @@ enum NIMClientType
 	kNIMClientTypePCWindows		= 4,  /**< PC Windows*/
 	kNIMClientTypeWindowsPhone	= 8,  /**< Windows Phone*/
 	kNIMClientTypeWeb			= 16, /**< Web*/
+	kNIMClientTypeRestAPI		= 32, /**< RestAPI*/
 };
 
 /** @enum NIMLoginStep 登录步骤 */

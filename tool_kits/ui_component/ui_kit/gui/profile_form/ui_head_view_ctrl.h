@@ -1,7 +1,6 @@
 ﻿/*
  *
- *	Author       huangjun
- *	Email        hzhuangjun2013@corp.netease.com
+ *	Author       hj
  *	Date         2013-12-05
  *	Copyright    Hangzhou, Netease Inc.
  *	Brief        头像浏览/预览控件

@@ -8,6 +8,7 @@ enum BubbleEventType
 	BET_DELETE,		//删除
 	BET_TRANSFORM,	//转文字
 	BET_SHOWPROFILE,//显示资料
+	BET_RETWEET,	//转发
 };
 
 namespace nim_comp
@@ -138,7 +139,7 @@ protected:
 	* @param[in] copy 弹出的菜单是否包含复制选项	
 	* @return void 无返回值
 	*/
-	void PopupMenu(bool copy);
+	void PopupMenu(bool copy, bool retweet = true);
 
 	/**
 	* 右键菜单项被单机后的回调函数

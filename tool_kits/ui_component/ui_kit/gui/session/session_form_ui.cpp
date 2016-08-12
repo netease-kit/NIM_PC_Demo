@@ -331,7 +331,20 @@ bool SessionForm::Notify(ui::EventArgs* param)
 		else if (param->wParam == BET_DELETE)
 		{
 			RemoveMsgItem(md.client_msg_id_);
+			//if (session_type_ == nim::kNIMSessionTypeTeam)
+			//	nim::Session::DeleteRecentSession(nim::kNIMSessionTypeTeam, session_id_, nim::Session::DeleteRecentSessionCallabck());
 			nim::MsgLog::DeleteAsync(session_id_, session_type_, md.client_msg_id_, nim::MsgLog::DeleteCallback());
+		}
+		else if (param->wParam == BET_RETWEET)
+		{
+			std::string new_receiver_accid = session_id_;
+			std::string msg = nim::Talk::CreateRetweetMessage(md.ToJsonString(false), QString::GetGUID(), session_type_, new_receiver_accid, md.msg_setting_, 1000 * nbase::Time::Now().ToTimeT());
+			nim::IMMessage sending_msg;
+			nim::Talk::ParseIMMessage(msg, sending_msg);
+			sending_msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
+			if (new_receiver_accid == session_id_)
+				AddSendingMsg(sending_msg);
+			nim::Talk::SendMsg(msg);
 		}
 		else if (param->wParam == BET_TRANSFORM)
 		{
@@ -898,6 +911,19 @@ void SessionForm::EnterTeamHandle()
 void SessionForm::LeaveTeamHandle()
 {
 	AddTip(STT_LEAVE);
+	is_valid_ = false;
+
+	btn_header_->SetEnabled(false);
+	btn_invite_->SetEnabled(false);
+	input_edit_->SetReadOnly(true);
+	FindControl(L"bottom_panel")->SetEnabled(false);
+	btn_new_broad_->SetEnabled(false);
+	btn_refresh_member_->SetEnabled(false);
+}
+
+void SessionForm::DismissTeamHandle()
+{
+	AddTip(STT_DISMISS);
 	is_valid_ = false;
 
 	btn_header_->SetEnabled(false);

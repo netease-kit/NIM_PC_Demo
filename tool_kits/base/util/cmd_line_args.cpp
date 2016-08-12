@@ -1,6 +1,6 @@
 /*
  *
- *	Author		Wang Rongtao <rtwang@corp.netease.com>
+ *	Author		wrt(guangguang)
  *	Date		2010-09-01
  *	Copyright	Hangzhou, Netease Inc.
  *	Brief		a Windows command line parser

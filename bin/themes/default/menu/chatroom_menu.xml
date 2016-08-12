@@ -22,5 +22,11 @@
         <MenuElement class="MenuElement" name="removeadmin" width="170" height="24" visible="false">
             <Label class="menu_text" text="解除管理员" />
         </MenuElement>
+        <MenuElement class="MenuElement" name="tempmute" width="170" height="24" visible="false">
+            <Label class="menu_text" text="临时禁言60秒(测试)" />
+        </MenuElement>
+        <MenuElement class="MenuElement" name="tempunmute" width="170" height="24" visible="false">
+            <Label class="menu_text" text="解除临时禁言" />
+        </MenuElement>
     </VListBox>
 </Window>

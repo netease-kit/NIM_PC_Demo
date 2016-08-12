@@ -19,6 +19,7 @@ enum NIMDeviceType
 	kNIMDeviceTypeAudioOut		= 1,	/**< 听筒设备用于播放本地采集音频数据 */
 	kNIMDeviceTypeAudioOutChat	= 2,	/**< 听筒设备用于通话音频数据（nim_vchat_start_device和nim_vchat_end_device中使用） */
 	kNIMDeviceTypeVideo			= 3,	/**< 摄像头 */
+	kNIMDeviceTypeSoundcardCapturer	= 4,	/**< 声卡声音采集，并在通话结束时会主动关闭，得到的数据只混音到发送的通话声音中，customaudio模式时无效 */
 };
 
 /** @enum NIMDeviceStatus 设备状态类型 */
@@ -49,7 +50,10 @@ static const char *kNIMDeviceSampleRate		= "sample_rate"; 	/**< 采样频率int3
 static const char *kNIMDeviceSampleBit		= "sample_bit"; 	/**< 采样位深int32 */
 static const char *kNIMDeviceDataUid		= "uid"; 			/**< 用户id int64 */
 static const char *kNIMDeviceDataAccount	= "account";		/**< 用户账号 string */
+static const char *kNIMDeviceWidth			= "width"; 			/**< int32 画面宽 */
+static const char *kNIMDeviceHeight			= "height"; 		/**< int32 画面高 */
 static const char *kNIMVideoSubType			= "subtype"; 		/**< int32 视频数据类型，NIMVideoSubType */
+static const char *kNIMDeviceId				= "id"; 			/**< string 标识ID */
 /** @}*/ //json extension params for vchat device key
 
 /** @typedef void (*nim_vchat_enum_device_devpath_sync_cb_func)(bool ret, NIMDeviceType type, const char *json_extension, const void *user_data)
@@ -101,7 +105,7 @@ typedef void (*nim_vchat_audio_data_cb_func)(unsigned __int64 time, const char *
   * @param[out] size data的数据长度
   * @param[out] width  画面宽度
   * @param[out] height  画面高度
-  * @param[out] json_extension Json string kNIMVideoSubType（缺省为kNIMVideoSubTypeARGB），收到对方视频数据返回kNIMDeviceDataUid和kNIMDeviceDataAccount
+  * @param[out] json_extension Json string kNIMVideoSubType（缺省为kNIMVideoSubTypeARGB），收到对方视频数据返回kNIMDeviceDataUid和kNIMDeviceDataAccount，如果是辅助摄像头数据则返回kNIMDeviceId
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */ 

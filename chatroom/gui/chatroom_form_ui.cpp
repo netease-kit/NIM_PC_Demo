@@ -23,7 +23,11 @@ ChatroomForm::ChatroomForm(__int64 room_id)
 
 ChatroomForm::~ChatroomForm()
 {
-
+	for each (auto var in temp_unmute_id_task_map_)
+	{
+		var.second.Cancel();
+	}
+	temp_unmute_id_task_map_.clear();
 }
 
 std::wstring ChatroomForm::GetSkinFolder()
@@ -210,16 +214,20 @@ bool ChatroomForm::OnEditEnter(ui::EventArgs* param)
 
 void ChatroomForm::OnBtnEmoji()
 {
-	RECT rc = btn_face_->GetPos(true);
-	POINT pt = { rc.left - 150, rc.top - 290 };
-	::ClientToScreen(m_hWnd, &pt);
+	auto my_info = members_list_.find(nim_ui::LoginManager::GetInstance()->GetAccount());
+	if (my_info != members_list_.end() && !my_info->second.is_muted_ && !my_info->second.temp_muted_)
+	{
+		RECT rc = btn_face_->GetPos(true);
+		POINT pt = { rc.left - 150, rc.top - 290 };
+		::ClientToScreen(m_hWnd, &pt);
 
-	OnSelectEmotion sel = nbase::Bind(&ChatroomForm::OnEmotionSelected, this, std::placeholders::_1);
-	OnSelectEmotion2 sel2 = nbase::Bind(&ChatroomForm::OnEmotionSelectedSticker, this, std::placeholders::_1, std::placeholders::_2);
-	OnEmotionClose  cls = nbase::Bind(&ChatroomForm::OnEmotionClosed, this);
+		OnSelectEmotion sel = nbase::Bind(&ChatroomForm::OnEmotionSelected, this, std::placeholders::_1);
+		OnSelectEmotion2 sel2 = nbase::Bind(&ChatroomForm::OnEmotionSelectedSticker, this, std::placeholders::_1, std::placeholders::_2);
+		OnEmotionClose  cls = nbase::Bind(&ChatroomForm::OnEmotionClosed, this);
 
-	nim_comp::EmojiForm* emoji_form = new nim_comp::EmojiForm;
-	emoji_form->ShowEmoj(pt, sel, sel2, cls, true);
+		nim_comp::EmojiForm* emoji_form = new nim_comp::EmojiForm;
+		emoji_form->ShowEmoj(pt, sel, sel2, cls, true);
+	}
 }
 
 bool ChatroomForm::OnSelChanged(ui::EventArgs* param)
@@ -394,6 +402,19 @@ void ChatroomForm::ShowMemberMenu(std::wstring &name)
 				addadmin->AttachSelect(nbase::Bind(&ChatroomForm::AddAdminMenuItemClick, this, std::placeholders::_1));
 				addadmin->SetVisible(true);
 			}
+
+			if (member_info.temp_muted_)
+			{
+				CMenuElementUI* removetempmute = (CMenuElementUI*)pMenu->FindControl(L"tempunmute");
+				removetempmute->AttachSelect(nbase::Bind(&ChatroomForm::RemoveTempMuteMenuItemClick, this, std::placeholders::_1));
+				removetempmute->SetVisible(true);
+			}
+			else
+			{
+				CMenuElementUI* tempmute = (CMenuElementUI*)pMenu->FindControl(L"tempmute");
+				tempmute->AttachSelect(nbase::Bind(&ChatroomForm::TempMuteMenuItemClick, this, std::placeholders::_1));
+				tempmute->SetVisible(true);
+			}
 		}
 
 		pMenu->Show();
@@ -504,6 +525,24 @@ bool ChatroomForm::RemoveAdminMenuItemClick(ui::EventArgs* args)
 	return true;
 }
 
+bool ChatroomForm::TempMuteMenuItemClick(ui::EventArgs* args)
+{
+	if (clicked_user_account_.empty())
+		return true;
+
+	ChatRoom::TempMuteMemberAsync(room_id_, clicked_user_account_, 60, true, "", nbase::Bind(&ChatroomForm::TempMuteCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	return true;
+}
+
+bool ChatroomForm::RemoveTempMuteMenuItemClick(ui::EventArgs* args)
+{
+	if (clicked_user_account_.empty())
+		return true;
+
+	ChatRoom::TempMuteMemberAsync(room_id_, clicked_user_account_, 0, true, "", nbase::Bind(&ChatroomForm::TempMuteCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	return true;
+}
+
 void ChatroomForm::SetMemberAdmin(const std::string &id, bool is_admin)
 {
 	if (id == creater_id_)
@@ -592,6 +631,31 @@ void ChatroomForm::SetMemberFixed(const std::string &id, bool is_fixed)
 	{
 		info->second.guest_flag_ = is_fixed ? kNIMChatRoomGuestFlagNoGuest : kNIMChatRoomGuestFlagGuest;
 		members_list_[id] = info->second;
+	}
+}
+
+void ChatroomForm::SetMemberTempMute(const std::string &id, bool temp_mute, __int64 duration)
+{
+	auto info = members_list_.find(id);
+	if (info != members_list_.end())
+	{
+		info->second.temp_muted_ = temp_mute;
+		info->second.temp_muted_duration_ = temp_mute ? duration : 0;
+		members_list_[id] = info->second;
+		auto iter = temp_unmute_id_task_map_.find(id);
+		if (iter != temp_unmute_id_task_map_.end())
+		{
+			(*iter).second.Cancel();
+			temp_unmute_id_task_map_.erase(iter);
+		}
+		if (temp_mute)
+		{
+			StdClosure task = nbase::Bind(&ChatroomForm::SetMemberTempMute, this, id, false, 0);
+			nbase::WeakCallbackFlag weak_flag;
+			task = weak_flag.ToWeakCallback(task);
+			temp_unmute_id_task_map_[id] = weak_flag;
+			nbase::ThreadManager::PostDelayedTask(task, nbase::TimeDelta::FromSeconds(duration));
+		}
 	}
 }
 

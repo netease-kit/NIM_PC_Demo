@@ -37,7 +37,6 @@ typedef void (*nim_talk_receive_cb_func)(const char *content, const char *json_e
   */
 typedef bool (*nim_talk_team_notification_filter_func)(const char *content, const char *json_extension, const void *user_data);
 
-
 /** @name 接收消息Json Keys
   * 本地定义的error code如下：
   * kNIMResSuccess(200) : no error
@@ -81,9 +80,12 @@ static const char *kNIMMsgKeyServerExt		= "server_ext";			/**< string,(可选)�
 static const char *kNIMMsgKeyPushPayload	= "push_payload";		/**< string,(可选)第三方自定义的推送属性，必须为可以解析为json的非格式化的字符串，长度2048 */
 static const char *kNIMMsgKeyPushContent	= "push_content";		/**< string,(可选)自定义推送文案，长度限制200字节 */
 static const char *kNIMMsgKeyPushEnable		= "push_enable";		/**< int,(可选)是否需要推送, 0:不需要,1:需要,默认1,aos在收到0是不要模拟本地推送 */
-static const char *kNIMMsgKeyPushNeedPrefix	= "push_prefix";		/**< int,(可选)推送是否需要前缀，0：不需要，1：需要，默认1 */
+static const char *kNIMMsgKeyPushNeedPrefix	= "push_prefix";		/**< int,(可选)推送是否需要前缀，0:不需要，1:需要，默认1 */
 static const char *kNIMMsgKeyMsgRoutable	= "routable_msg";		/**< int,(可选)该消息是否抄送,0:不支持,1:支持,默认按照app的路由开关 */
 static const char *kNIMMsgKeySetMsgOffline	= "offline_msg";		/**< int,(可选)消息是否要存离线,0:不需要, 1:需要，默认1*/
+static const char *kNIMMsgKeyForcePushList	= "force_push_list";			/**< string,(可选)群组消息强推列表,推送指定账号id string array json, 如果推送全员不填*/
+static const char *kNIMMsgKeyForcePushContent= "force_push_content";		/**< string,(可选)群组消息强推文本 */
+static const char *kNIMMsgKeyIsForcePush	= "is_force_push";		/**< int,(可选)群组消息是否强推,0:不强推, 1:强推，属性只针对群组消息强推列表 */
 //本地定义
 static const char *kNIMMsgKeyLocalFilePath			= "local_res_path";		/**< string,多媒体消息资源本地绝对路径,SDK本地维护,发送多媒体消息时必填 */
 static const char *kNIMMsgKeyLocalTalkId			= "talk_id";			/**< string,会话id,发送方选填,接收方收到的是消息发送方id */
@@ -91,6 +93,7 @@ static const char *kNIMMsgKeyLocalResId				= "res_id";				/**< string,多媒体�
 static const char *kNIMMsgKeyLocalLogStatus			= "log_status";			/**< int,消息状态(NIMMsgLogStatus)  */
 static const char *kNIMMsgKeyLocalLogSubStatus		= "log_sub_status";		/**< int,消息二级状态(NIMMsgLogSubStatus) */
 static const char *kNIMMsgKeyLocalExt				= "local_ext";			/**< string,只维护在本地的扩展字段,必须为可以解析为json的非格式化的字符串 */
+//static const char *kNIMMsgKeyLocalNeedUploadRes		= "need_upload_res";	/**< bool, 只支持在发送包含本地资源的自定义消息(kNIMMessageTypeCustom), kNIMMsgKeyLocalFilePath的值为有效的本地资源绝对路径, 成功上传资源服务器获取到的url信息将存放在kNIMMsgKeyAttach字段, 内容为{"url" : "资源url", ...}, kNIMMsgKeyAttach字段内容请保证为json字符串, 并且不要占用key : url*/
 /** @}*/ //消息结构 Json Keys
 
 /** @name 发送消息回执Json Keys

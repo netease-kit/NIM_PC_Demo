@@ -189,7 +189,7 @@ void MsgBubbleItem::HideAllStatus(int type)
 }
 
 class MsgBubbleAudio;
-void MsgBubbleItem::PopupMenu( bool copy )
+void MsgBubbleItem::PopupMenu(bool copy, bool retweet/* = true*/)
 {
 	if(!action_menu_)
 		return;
@@ -212,6 +212,10 @@ void MsgBubbleItem::PopupMenu( bool copy )
 	transform->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
 	transform->SetVisible(typeid(*this) == typeid(MsgBubbleAudio));
 
+	CMenuElementUI* ret = (CMenuElementUI*)pMenu->FindControl(L"retweet");
+	ret->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
+	ret->SetVisible(retweet);
+
 	pMenu->Show();
 }
 
@@ -224,6 +228,8 @@ bool MsgBubbleItem::OnMenu( ui::EventArgs* arg )
 		OnMenuDelete();
 	else if (name == L"transform")
 		OnMenuTransform();
+	else if (name == L"retweet")
+		m_pWindow->SendNotify(this, ui::kEventNotify, BET_RETWEET, 0);
 	return false;
 }
 

@@ -1,5 +1,5 @@
 ﻿/*
- *	Author		Wang Rongtao <rtwang@corp.netease.com>
+ *	Author		wrt(guangguang)
  *	Date		2011-06-14
  *	Copyright	Hangzhou, Netease Inc.
  *	Brief		Utilities for Windows applications

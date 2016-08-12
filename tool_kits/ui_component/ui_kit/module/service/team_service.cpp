@@ -242,6 +242,9 @@ std::wstring TeamService::GetTeamName( const std::string& tid )
 		tname = nbase::UTF8ToUTF16(it->second.GetName());
 	}
 
+	if (tname.empty())
+		tname = nbase::UTF8ToUTF16(tid);
+
 	return tname;
 }
 
@@ -353,7 +356,7 @@ void TeamService::InvokeTeamDataSyncCallback(nim::NIMDataSyncType sync_type, nim
 	if (sync_type == nim::kNIMDataSyncTypeTeamInfo)
 	{
 		std::list<nim::TeamInfo> tinfos;
-		ParseTeamInfosJson(data_sync_info, true, tinfos);
+		ParseTeamInfosJson(data_sync_info, tinfos);
 		for (auto& tinfo : tinfos)
 		{
 			UIGetLocalTeamInfoCb(tinfo.GetTeamID(), tinfo);

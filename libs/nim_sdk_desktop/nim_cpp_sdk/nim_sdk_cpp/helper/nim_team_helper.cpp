@@ -26,8 +26,12 @@ void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificati
 
 		switch (notification_id)
 		{
-		case kNIMNotificationIdTeamInvite:
 		case kNIMNotificationIdTeamKick:
+		case kNIMNotificationIdTeamInvite:
+			{
+				if (values[kNIMNotificationKeyData].isMember("attach"))
+					team_event.attach_ = values[kNIMNotificationKeyData]["attach"].asString();
+			}
 		case kNIMNotificationIdTeamAddManager:
 		case kNIMNotificationIdTeamRemoveManager:
 		case kNIMNotificationIdLocalCreateTeam:
@@ -147,7 +151,7 @@ bool ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info)
 	return false;
 }
 
-bool ParseTeamInfosJson(const std::string& team_infos_json, bool include_invalid_team, std::list<TeamInfo>& team_infos)
+bool ParseTeamInfosJson(const std::string& team_infos_json, std::list<TeamInfo>& team_infos)
 {
 	Json::Value json;
 	Json::Reader reader;
@@ -158,8 +162,7 @@ bool ParseTeamInfosJson(const std::string& team_infos_json, bool include_invalid
 		{
 			TeamInfo info;
 			ParseTeamInfoJson(json[i], info);
-			if (info.IsValid() || (!info.IsValid() && include_invalid_team))
-				team_infos.push_back(info);
+			team_infos.push_back(info);
 		}
 		return true;
 	}

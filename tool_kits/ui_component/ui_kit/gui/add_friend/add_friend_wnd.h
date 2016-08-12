@@ -1,6 +1,6 @@
 // Copyright (c) 2013, NetEase Inc. All rights reserved.
 //
-// Author: panqinke <panqinke@corp.netease.com>
+// Author: pqk
 // Date: 2013/8/14
 
 #ifndef ADD_FRIEND_H_

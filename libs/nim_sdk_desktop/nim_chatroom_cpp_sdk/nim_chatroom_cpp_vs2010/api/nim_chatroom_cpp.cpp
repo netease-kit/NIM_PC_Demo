@@ -28,6 +28,7 @@ typedef void(*nim_chatroom_get_info_async)(const __int64 room_id, const char *js
 typedef void(*nim_chatroom_get_members_by_ids_online_async)(const __int64 room_id, const char *ids_json_array_string, const char *json_extension, nim_chatroom_get_members_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_kick_member_async)(const __int64 room_id, const char *id, const char *notify_ext, const char *json_extension, nim_chatroom_kick_member_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_set_proxy)(NIMChatRoomProxyType type, const char *host, int port, const char *user, const char *password);
+typedef void(*nim_chatroom_temp_mute_member_async)(const __int64 room_id, const char *accid, const __int64 duration, bool need_notify, const char *notify_ext, const char *json_extension, nim_chatroom_temp_mute_member_cb_func cb, const void *user_data);
 
 static void CallbackEnter(__int64 room_id, int step, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
@@ -426,6 +427,49 @@ void ChatRoom::SetProxy(NIMChatRoomProxyType type,
 	const std::string& password)
 {
 	return NIM_SDK_GET_FUNC(nim_chatroom_set_proxy)(type, host.c_str(), port, user.c_str(), password.c_str());
+}
+
+static void CallbackTempMuteMember(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		ChatRoom::TempMuteMemberCallback *cb = (ChatRoom::TempMuteMemberCallback*)user_data;
+		if (*cb)
+		{
+			Json::Value value;
+			Json::Reader reader;
+			if (reader.parse(PCharToString(result), value) && value.isObject())
+			{
+				ChatRoomMemberInfo info;
+				info.ParseFromJsonValue(value);
+				(*cb)(room_id, error_code, info);
+				return;
+			}
+			(*cb)(room_id, error_code, ChatRoomMemberInfo());
+		}
+	}
+}
+
+void ChatRoom::TempMuteMemberAsync(const __int64 room_id
+	, const std::string& accid
+	, const __int64 duration
+	, bool need_notify
+	, const std::string& notify_ext
+	, const TempMuteMemberCallback& callback
+	, const std::string &json_extension/* = ""*/)
+{
+	TempMuteMemberCallback* cb_pointer = nullptr;
+	if (callback)
+		cb_pointer = new TempMuteMemberCallback(callback);
+
+	return NIM_SDK_GET_FUNC(nim_chatroom_temp_mute_member_async)(room_id
+		, accid.c_str()
+		, duration
+		, need_notify
+		, notify_ext.c_str()
+		, json_extension.c_str()
+		, &CallbackTempMuteMember
+		, cb_pointer);
 }
 
 }

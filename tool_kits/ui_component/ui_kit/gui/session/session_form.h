@@ -10,6 +10,7 @@
 #include "gui/session/control/bubble_writing.h"
 #include "gui/session/control/bubble_file.h"
 #include "gui/session/control/bubble_sticker.h"
+#include "gui/session/control/bubble_video.h"
 #include "gui/session/control/team_item.h"
 #include "gui/emoji/emoji_form.h"
 #include "gui/team_info/team_info.h"
@@ -169,7 +170,7 @@ public:
 	* 执行获取群信息的操作	
 	* @return void 无返回值
 	*/
-	void InvokeGetTeamInfo();
+	void InvokeGetTeamInfo(bool sync_block = false);
 
 	/** 
 	* 获取了群信息后自动调用的回调函数，根据群信息设置会话窗体的显示状态
@@ -347,6 +348,7 @@ private:
 
 	void EnterTeamHandle();
 	void LeaveTeamHandle();
+	void DismissTeamHandle();
 
 	/** 
 	* 响应邀请按钮消息，邀请他人加入群聊

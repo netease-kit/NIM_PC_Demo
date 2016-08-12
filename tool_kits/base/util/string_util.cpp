@@ -1,6 +1,6 @@
 ﻿/*
  *
- *	Author		Wang Rongtao <rtwang@corp.netease.com>
+ *	Author		wrt(guangguang)
  *	Date		2011-06-08
  *	Copyright	Hangzhou, Netease Inc.
  *	Brief		Utilities for string operation

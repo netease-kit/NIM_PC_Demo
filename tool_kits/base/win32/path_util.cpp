@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2012, NetEase Inc. All rights reserved.
 //
-// Wang Rongtao <rtwang@corp.netease.com>
+// wrt(guangguang)
 // 2012/5/31
 //
 // utilities for path operation

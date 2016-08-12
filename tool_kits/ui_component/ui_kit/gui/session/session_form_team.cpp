@@ -29,9 +29,16 @@ void SessionForm::CheckTeamType(nim::NIMTeamType type)
 	frame_right->SetVisible(show);
 }
 
-void SessionForm::InvokeGetTeamInfo()
+void SessionForm::InvokeGetTeamInfo(bool sync_block/* = false*/)
 {
-	nim::Team::QueryTeamInfoAsync(session_id_, nbase::Bind(&SessionForm::OnGetTeamInfoCb, this, std::placeholders::_1, std::placeholders::_2));
+	if (sync_block)
+	{
+		//TODO(oleg) 测试用，不建议使用同步堵塞接口
+		nim::TeamInfo info = nim::Team::QueryTeamInfoBlock(session_id_);
+		OnGetTeamInfoCb(session_id_, info);
+	}
+	else
+		nim::Team::QueryTeamInfoAsync(session_id_, nbase::Bind(&SessionForm::OnGetTeamInfoCb, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 void SessionForm::OnGetTeamInfoCb(const std::string& tid, const nim::TeamInfo& result)
@@ -45,11 +52,14 @@ void SessionForm::OnGetTeamInfoCb(const std::string& tid, const nim::TeamInfo& r
 		label_title_->SetText(wname);
 	}
 
-	bool valid = team_info_.IsValid();
-	if (!valid)
+	if (!team_info_.IsMemberValid())
 	{
 		LeaveTeamHandle();
-		return;
+		//return;
+	}
+	else if (!team_info_.IsValid())
+	{
+		DismissTeamHandle();
 	}
 	else
 	{

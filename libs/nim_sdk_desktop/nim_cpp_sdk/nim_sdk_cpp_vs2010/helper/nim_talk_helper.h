@@ -38,10 +38,13 @@ struct MessageSetting
 	BoolStatus push_need_prefix_;		/**< 需要推送昵称 */
 	BoolStatus routable_;				/**< 是否要抄送 */
 	BoolStatus need_offline_;			/**< 是否支持离线消息 */
-	Json::Value push_payload_;
-	std::string push_content_;
-	Json::Value server_ext_;
-	std::string local_ext_;
+	Json::Value push_payload_;			/**< 第三方自定义的推送属性，长度2048 */
+	std::string push_content_;			/**< 自定义推送文案，长度限制200字节 */
+	Json::Value server_ext_;			/**< 第三方扩展字段, 长度限制1024 */
+	std::string local_ext_;				/**< 本地扩展字段, 格式不限，长度限制1024 */
+	BoolStatus is_force_push_;			/**< 群组消息强推开关，强推全员设置true并强推列表为空 */
+	std::list<std::string> force_push_ids_list_;	/**< 群组消息强推列表 */
+	std::string force_push_content_;	/**< 群组消息强推文本 */
 
 	/** 构造函数 */
 	MessageSetting() : server_history_saved_(BS_NOT_INIT)
@@ -52,7 +55,8 @@ struct MessageSetting
 		, push_need_prefix_(BS_NOT_INIT)
 		, resend_flag_(BS_NOT_INIT)
 		, routable_(BS_NOT_INIT)
-		, need_offline_(BS_NOT_INIT){}
+		, need_offline_(BS_NOT_INIT)
+		, is_force_push_(BS_NOT_INIT){}
 
 	/** @fn void ToJsonValue(Json::Value& message) const
 	  * @brief 组装Json Value字符串
@@ -87,6 +91,16 @@ struct MessageSetting
 			message[kNIMMsgKeyServerExt] = GetJsonStringWithNoStyled(server_ext_);
 		if (!local_ext_.empty())
 			message[kNIMMsgKeyLocalExt] = local_ext_;
+		if (is_force_push_ != BS_NOT_INIT)
+			message[kNIMMsgKeyIsForcePush] = is_force_push_ == BS_TRUE ? 1 : 0;
+		if (!force_push_content_.empty())
+			message[kNIMMsgKeyForcePushContent] = force_push_content_;
+		if (!force_push_ids_list_.empty())
+		{
+			std::string ids_json;
+			StrListToJsonString(force_push_ids_list_, ids_json);
+			message[kNIMMsgKeyForcePushList] = ids_json;
+		}
 	}
 
 	/** @fn void ParseMessageSetting(const Json::Value& message)
@@ -121,6 +135,19 @@ struct MessageSetting
 			//assert(0);
 		local_ext_ = message[kNIMMsgKeyLocalExt].asString();
 		push_content_ = message[kNIMMsgKeyPushContent].asString();
+		if (message.isMember(kNIMMsgKeyIsForcePush))
+			is_force_push_ = message[kNIMMsgKeyIsForcePush].asInt() == 1 ? BS_TRUE : BS_FALSE;
+		force_push_content_ = message[kNIMMsgKeyForcePushContent].asString();
+		if (message[kNIMMsgKeyForcePushList].isString())
+		{
+			Json::Value values;
+			if (reader.parse(message[kNIMMsgKeyForcePushList].asString(), values) && values.isArray())
+				JsonStrArrayToList(values, force_push_ids_list_);
+			else
+			{
+				//assert(0);
+			}
+		}
 	}
 };
 
@@ -300,7 +327,6 @@ struct IMImage : IMFile
 		Json::Value attach;
 		attach[kNIMImgMsgKeyWidth] = width_;
 		attach[kNIMImgMsgKeyHeight] = height_;
-		attach[kNIMImgMsgKeyDisplayName] = display_name_;
 
 		return __super::ToJsonString(attach);
 	}

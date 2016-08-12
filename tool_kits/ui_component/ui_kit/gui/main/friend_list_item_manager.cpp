@@ -198,7 +198,14 @@ void FriendListItemManager::DeleteListItem(const std::string& accid)
 {
 	FriendItem* item = (FriendItem*)friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
 	if (!item) return;
-	std::wstring ws_show_name = ((ui::Label*)item->FindSubControl(L"contact"))->GetText();
+	//先做保护 c
+	auto contact = ((ui::Label*)item->FindSubControl(L"contact"));
+	if (!contact)
+	{
+		assert(0);
+		return;
+	}
+	std::wstring ws_show_name = contact->GetText();
 	std::string spell = PinYinHelper::GetInstance()->ConvertToFullSpell(ws_show_name);
 	std::wstring ws_spell = nbase::UTF8ToUTF16(spell);
 	ui::TreeNode* tree_node;

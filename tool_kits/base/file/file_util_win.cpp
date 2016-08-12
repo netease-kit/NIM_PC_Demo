@@ -1,9 +1,9 @@
 // Copyright (c) 2011, NetEase Inc. All rights reserved.
 //
-// Author: Ruan Liang <ruanliang@corp.netease.com>
+// Author: rl
 // Date: 2011/6/12
 //
-// Modified by Wang Rongtao <rtwang@corp.netease.com>
+// Modified by wrt(guangguang)
 // Date: 2013/9/5
 //
 // Utilities for file and filepath operation

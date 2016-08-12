@@ -26,7 +26,7 @@ enum NIMResCode
 	kNIMResParameterError		= 414,		/**< 参数错误 */
 	kNIMResConnectionError		= 415,		/**< 网络连接出现错误 */
 	kNIMResFrequently			= 416,		/**< 操作太过频繁 */
-	kNIMResExist				= 417,		/**< 对象已经存在 */
+	kNIMResExist				= 417,		/**< 对象已经存在/重复操作 */
 	kNIMResOverrun				= 419,		/**< 超限 */
 	kNIMResAccountBlock			= 422,		/**< 帐号被禁用 */
 	kNIMResUnknownError			= 500,		/**< 未知错误，或者不方便告诉你 */
@@ -44,10 +44,16 @@ enum NIMResCode
 	kNIMResTeamApplySuccess		= 808,		/**< 申请成功 */
 	kNIMResTeamAlreadyIn		= 809,		/**< 已经在群里 */
 	kNIMResTeamInviteSuccess	= 810,		/**< 邀请成功 */
+	kNIMResForcePushCountLimit	= 811,		/**< 强推列表账号数量超限 */
+
 	//数据整解编错误代码
 	kNIMResInvalidProtocol		= 997,		/**< 协议已失效 */
 	kNIMResEUnpacket			= 998,		/**< 解包错误 */
 	kNIMResEPacket				= 999,		/**< 打包错误 */
+
+	//
+	kNIMResInBlack				= 7101,		/**< 被接收方加入黑名单 SDK版本大于2.5.0支持*/
+
 	//客户端自定义的错误号
 	kNIMLocalRes						= 10000,	/**< 值大于该错误号的都是客户端自定义的错误号。不能随意更改其值！ */
 	kNIMResRoomLocalNeedRequestAgain	= 10001,	/**< 客户端本地错误号，需要重新向IM服务器获取进入聊天室权限 */

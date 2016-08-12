@@ -94,16 +94,17 @@ public:
 	*/
 	static bool RegCancelAudioCb(nim_rescode_cb cb);
 
-	/** @fn bool StartCapture(const char* call_id, const char* res_id, nim_audio_type audio_format = AAC, int volume = 180, int loudness = 0)
+	/** @fn bool StartCapture(const char* call_id, const char* res_id, nim_audio_type audio_format = AAC, int volume = 180, int loudness = 0, const wchar_t* capture_device = nullptr)
 	* NIM SDK 录制语音
 	* @param[in] call_id 用以定位资源的一级ID，可选
 	* @param[in] res_id 用以定位资源的二级ID，可选
 	* @param[in] audio_format 音频格式，AAC : 0， AMR : 1
 	* @param[in] volume 音量(0 - 255, 默认180)
 	* @param[in] loudness 默认0
+	* @param[in] capture_device 采集设备
 	* @return bool true 调用成功，false 调用失败
 	*/
-	static bool StartCapture(const char* call_id, const char* res_id, nim_audio_type audio_format = AAC, int volume = 180, int loudness = 0);
+	static bool StartCapture(const char* call_id, const char* res_id, nim_audio_type audio_format = AAC, int volume = 180, int loudness = 0, const wchar_t* capture_device = nullptr);
 
 	/** @fn bool StopCapture()
 	* NIM SDK 停止录制语音
@@ -116,6 +117,19 @@ public:
 	* @return bool true 调用成功，false 调用失败
 	*/
 	static bool CancelAudio(const char* file_path);
+
+	/** @fn bool RegEnumCaptureDeviceCb(nim_enum_capture_device_cb cb)
+	* 注册枚举本地录音采集设备回调
+	* @param[in] cb 回调函数 见nim_audio_def.h
+	* @return bool true 调用成功，false 调用失败
+	*/
+	static bool RegEnumCaptureDeviceCb(nim_enum_capture_device_cb cb);
+
+	/** @fn bool EnumCaptureDevice()
+	* NIM SDK 枚举本地录音采集设备
+	* @return bool true 调用成功，false 调用失败
+	*/
+	static bool EnumCaptureDevice();
 
 private:
 	template <typename F>

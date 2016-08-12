@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2011, NetEase Inc. All rights reserved.
 //
-// Author: Wang Rongtao <rtwang@corp.netease.com>
+// Author: wrt(guangguang)
 // Date: 2011/6/8
 //
 // The base class of a cross flatform message pump implemention

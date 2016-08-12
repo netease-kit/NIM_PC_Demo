@@ -20,6 +20,9 @@ typedef void(*nim_vchat_start_device)(nim::NIMDeviceType type, const char* devic
 typedef void(*nim_vchat_end_device)(nim::NIMDeviceType type, const char *json_extension);
 typedef void(*nim_vchat_add_device_status_cb)(nim::NIMDeviceType type, nim_vchat_device_status_cb_func cb, const void *user_data);
 typedef void(*nim_vchat_remove_device_status_cb)(nim::NIMDeviceType type);
+typedef void(*nim_vchat_start_extend_camera)(const char *id, const char *device_path, unsigned fps, const char *json_extension, nim_vchat_start_device_cb_func cb, const void *user_data);
+typedef void(*nim_vchat_stop_extend_camera)(const char *id, const char *json_extension);
+
 typedef void(*nim_vchat_set_audio_data_cb)(bool capture, const char* json_extension, nim_vchat_audio_data_cb_func cb, const void *user_data);
 typedef void(*nim_vchat_set_video_data_cb)(bool capture, const char* json_extension, nim_vchat_video_data_cb_func cb, const void *user_data);
 typedef void(*nim_vchat_set_audio_volumn)(unsigned char volumn, bool capture);
@@ -48,7 +51,8 @@ typedef void(*nim_vchat_end)(const char* json_extension);
 typedef bool(*nim_vchat_custom_video_data)(unsigned __int64 time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension);
 
 //NIM 通话中修改分辨率，只在多人中支持
-typedef void(*nim_vchat_set_video_quality)(int video_quality, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+typedef void(*nim_vchat_set_video_quality)(int video_quality, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data); 
+typedef void(*nim_vchat_set_video_bitrate)(int video_bitrate, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
 //NIM 通话中修改自定义音视频数据模式
 typedef void(*nim_vchat_set_custom_data)(bool custom_audio, bool custom_video, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
@@ -78,6 +82,19 @@ typedef void(*nim_vchat_set_audio_mute)(bool muted);
 * @return bool true 静音，false 不静音
 */
 typedef bool(*nim_vchat_audio_mute_enabled)();
+
+/** @fn void nim_vchat_set_rotate_remote_video(bool rotate)
+* NIM VCHAT 设置不自动旋转对方画面，默认打开，全局有效（重新发起时也生效）
+* @param[in] rotate true 自动旋转，false 不旋转
+* @return void 无返回值
+*/
+typedef void(*nim_vchat_set_rotate_remote_video)(bool rotate);
+
+/** @fn bool nim_vchat_rotate_remote_video_enabled()
+* NIM VCHAT 获取自动旋转对方画面设置状态
+* @return bool true 自动旋转，false 不旋转
+*/
+typedef bool(*nim_vchat_rotate_remote_video_enabled)();
 
 /** @fn void nim_vchat_set_member_in_blacklist(const char *uid, bool add, bool audio, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
 * NIM VCHAT 设置单个成员的黑名单状态，当前通话有效(只能设置进入过房间的成员)
@@ -113,6 +130,16 @@ typedef void(*nim_vchat_create_room)(const char *room_name, const char *custom_i
 */
 typedef bool(*nim_vchat_join_room)(NIMVideoChatMode mode, const char *room_name, const char *json_extension, nim_vchat_opt2_cb_func cb, const void *user_data);
 
+/** @fn void nim_vchat_update_rtmp_url(const char *rtmp_url, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
+* NIM 通话中修改直播推流地址（主播有效）
+* @param[in] rtmp_url 新的rtmp推流地址
+* @param[in] json_extension 无效扩展字段
+* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
+* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+*/
+typedef void(*nim_vchat_update_rtmp_url)(const char *rtmp_url, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+
 //dll-------------------------------
 //NIM vchat初始化
 bool VChat::Init(const std::string& json_info)
@@ -138,14 +165,37 @@ void VChat::EnumDeviceDevpath(nim::NIMDeviceType type, nim_vchat_enum_device_dev
 //fps 摄像头为采样频率（一般传电源频率取50）
 //麦克风采样频率由底层控制，播放器采样频率也由底层控制
 //type 见NIMDeviceType定义
-void VChat::StartDevice(nim::NIMDeviceType type, const std::string& device_path, unsigned fps, nim_vchat_start_device_cb_func cb)
+void VChat::StartDevice(nim::NIMDeviceType type, const std::string& device_path, unsigned fps, int width, int height, nim_vchat_start_device_cb_func cb)
 {
-	NIM_SDK_GET_FUNC(nim_vchat_start_device)(type, device_path.c_str(), fps, "", cb, nullptr);
+	std::string json_value;
+	if (width * height > 0)
+	{
+		Json::FastWriter fs;
+		Json::Value value;
+		value[nim::kNIMDeviceWidth] = width;
+		value[nim::kNIMDeviceHeight] = height;
+		json_value = fs.write(value);
+	}
+	//if (type == kNIMDeviceTypeVideo)
+	//{
+	//	NIM_SDK_GET_FUNC(nim_vchat_start_extend_camera)("video_extend", device_path.c_str(), fps, json_value.c_str(), cb, nullptr);
+	//} 
+	//else
+	{
+		NIM_SDK_GET_FUNC(nim_vchat_start_device)(type, device_path.c_str(), fps, json_value.c_str(), cb, nullptr);
+	}
 }
 //结束设备
 void VChat::EndDevice(nim::NIMDeviceType type)
 {
-	NIM_SDK_GET_FUNC(nim_vchat_end_device)(type, "");
+	//if (type == kNIMDeviceTypeVideo)
+	//{
+	//	NIM_SDK_GET_FUNC(nim_vchat_stop_extend_camera)("video_extend", "");
+	//}
+	//else
+	{
+		NIM_SDK_GET_FUNC(nim_vchat_end_device)(type, "");
+	}
 }
 
 //添加设备监听（摄像头和麦克风） 注意监听设备后底层会定时检查设备情况，在不需要监听后请移除
@@ -261,6 +311,10 @@ void VChat::SetVideoQuality(int video_quality)
 {
 	NIM_SDK_GET_FUNC(nim_vchat_set_video_quality)(video_quality, "", nullptr, nullptr);
 }
+void VChat::SetVideoBitrate(int video_bitrate)
+{
+	NIM_SDK_GET_FUNC(nim_vchat_set_video_bitrate)(video_bitrate, "", nullptr, nullptr);
+}
 void VChat::SetCustomData(bool custom_audio, bool custom_video)
 {
 	NIM_SDK_GET_FUNC(nim_vchat_set_custom_data)(custom_audio, custom_video, "", nullptr, nullptr);
@@ -286,6 +340,14 @@ void VChat::SetAudioMuted(bool muted)
 bool VChat::GetAudioMuteEnabled()
 {
 	return NIM_SDK_GET_FUNC(nim_vchat_audio_mute_enabled)();
+}
+void VChat::SetRotateRemoteVideo(bool rotate)
+{
+	NIM_SDK_GET_FUNC(nim_vchat_set_rotate_remote_video)(rotate);
+}
+bool VChat::IsRotateRemoteVideo()
+{
+	return NIM_SDK_GET_FUNC(nim_vchat_rotate_remote_video_enabled)();
 }
 static void OnOptCallback(bool ret, int code, const char *json_extension, const void *user_data)
 {
@@ -328,6 +390,11 @@ bool VChat::JoinRoom(NIMVideoChatMode mode, const std::string& room_name, const 
 {
 	Opt2Callback* cb_pointer = new Opt2Callback(cb);
 	return NIM_SDK_GET_FUNC(nim_vchat_join_room)(mode, room_name.c_str(), json_extension.c_str(), OnOpt2Callback, cb_pointer);
+}
+void VChat::UpdateRtmpUrl(const std::string& rtmp_url, OptCallback cb)
+{
+	OptCallback* cb_pointer = new OptCallback(cb);
+	return NIM_SDK_GET_FUNC(nim_vchat_update_rtmp_url)(rtmp_url.c_str(), "", OnOptCallback, cb_pointer);
 }
 
 }  // namespace nim

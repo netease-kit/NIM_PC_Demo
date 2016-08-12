@@ -207,6 +207,11 @@ void VideoManager::OnVChatEvent(nim::NIMVideoChatSessionType type, uint64_t chan
 		if (window && window->IsStart())
 		{
 			window->OnLogin(code == 200);
+			int bitrate = atoi(GetConfigValue("video_bitrate").c_str());
+			if (bitrate > 0)
+			{
+				nim::VChat::SetVideoBitrate(bitrate);
+			}
 		}
 		else if (chatroom_connect_cb_)
 		{
@@ -459,7 +464,14 @@ void VideoManager::StartDevice(nim::NIMDeviceType type, std::string device_path,
 		GetDefaultDevicePath(num_no, device_path, type);
 	}
 	SetDefaultDevicePath(device_path, type);
-	nim::VChat::StartDevice(type, device_path, 50, &VChatCallback::StartDeviceCb);
+	int width = 1280;
+	int height = 720;
+	if (1)
+	{
+		width = atoi(GetConfigValue("video_width").c_str());
+		height = atoi(GetConfigValue("video_height").c_str());
+	}
+	nim::VChat::StartDevice(type, device_path, 50, width, height, &VChatCallback::StartDeviceCb);
 	if (device_session_type_[type] == kDeviceSessionTypeNone)
 	{
 		nim::VChat::AddDeviceStatusCb(type, &VChatCallback::DeviceStatusCb);

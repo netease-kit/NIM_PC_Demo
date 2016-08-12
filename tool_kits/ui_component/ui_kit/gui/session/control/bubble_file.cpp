@@ -68,6 +68,8 @@ void MsgBubbleFile::InitControl(bool bubble_right)
 	file_cancel_->AttachClick(nbase::Bind(&MsgBubbleFile::OnEvent, this, std::placeholders::_1));
 	file_redl_->AttachClick(nbase::Bind(&MsgBubbleFile::OnEvent, this, std::placeholders::_1));
 	file_reup_->AttachClick(nbase::Bind(&MsgBubbleFile::OnEvent, this, std::placeholders::_1));
+
+	msg_file_->AttachMenu(nbase::Bind(&MsgBubbleFile::OnMenu, this, std::placeholders::_1));
 }
 
 void MsgBubbleFile::InitInfo(const nim::IMMessage &msg)
@@ -495,6 +497,12 @@ void MsgBubbleFile::DownloadResourceProgressCallback(double current_upload, doub
 		int prog_value = (int)(current_download * 100 / total_downnload);
 		SetProgressValue(prog_value);
 	}
+}
+
+bool MsgBubbleFile::OnMenu(ui::EventArgs* arg)
+{
+	PopupMenu(false);
+	return false;
 }
 
 }

@@ -336,7 +336,7 @@ NIM_SDK_DLL_API void nim_team_reject_invitation_async(const char *tid,
 	const void *user_data);
 
 /** @fn void nim_team_query_all_my_teams_async(const char *json_extension, nim_team_query_all_my_teams_cb_func cb, const void *user_data)
-  * 查询所有群
+  * 查询本地所有群（有效群-群有效和我在群里-）
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb		查询所有群的回调函数, nim_team_query_all_my_teams_cb_func回调函数定义见nim_team_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
@@ -347,8 +347,8 @@ NIM_SDK_DLL_API void nim_team_query_all_my_teams_async(const char *json_extensio
 	const void *user_data);
 
 /** @fn void nim_team_query_all_my_teams_info_async(const char *json_extension, nim_team_query_all_my_teams_info_cb_func cb, const void *user_data)
-  * 查询所有群信息
-  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * 查询本地所有群信息（默认有效群-群有效和我在群里-）
+  * @param[in] json_extension 扩展参数，可以条件获取相关群，例如 "{"include_invalid" : true}"，参数可查询nim_team_def.h 搜索本地群组信息扩展参数
   * @param[in] cb		查询所有群信息的回调函数, nim_team_query_all_my_teams_info_cb_func回调函数定义见nim_team_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
@@ -387,6 +387,14 @@ NIM_SDK_DLL_API void nim_team_query_team_member_async(const char *tid,
 	nim_team_query_team_member_cb_func cb, 
 	const void *user_data);
 
+/** @fn char *nim_team_query_team_member_block(const char *tid, const char *user_id)
+  * 查询(单个)群成员信息(同步版本，堵塞NIM内部线程，谨慎使用)
+  * @param[in] tid		群组id
+  * @param[in] user_id  群成员id
+  * @return char * 返回群成员信息Json char,需要上层调用nim_global.h提供的内存释放接口释放。
+  */
+NIM_SDK_DLL_API char *nim_team_query_team_member_block(const char *tid, const char *user_id);
+
 /** @fn void nim_team_query_team_info_async(const char *tid, const char *json_extension, nim_team_query_team_info_cb_func cb, const void *user_data)
   * 本地查询群信息
   * @param[in] tid		群组id
@@ -399,6 +407,13 @@ NIM_SDK_DLL_API void nim_team_query_team_info_async(const char *tid,
 	const char *json_extension, 
 	nim_team_query_team_info_cb_func cb, 
 	const void *user_data);
+
+/** @fn char *nim_team_query_team_info_block(const char *tid)
+  * 本地查询群信息(同步版本，堵塞NIM内部线程，谨慎使用)
+  * @param[in] tid		群组id
+  * @return char * 返回群信息Json char, 需要上层调用nim_global.h提供的内存释放接口释放。
+  */
+NIM_SDK_DLL_API char *nim_team_query_team_info_block(const char *tid);
 
 /** @fn void nim_team_query_team_info_online_async(const char *tid, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data)
   * 在线查询群信息（从服务器获取）
@@ -417,7 +432,7 @@ NIM_SDK_DLL_API void nim_team_query_team_info_online_async(const char *tid,
 /** @fn void nim_team_mute_member_async(const char *tid, const char *member_id, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data)
   * 对群成员禁言/解除禁言
   * @param[in] tid		群组id
-  * @param[in] member_id群成员id
+  * @param[in] member_id 群成员id
   * @param[in] set_mute	禁言(true)、解除禁言(false)
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb		拒绝邀请的回调函数, nim_team_opt_cb_func回调函数定义见nim_team_def.h

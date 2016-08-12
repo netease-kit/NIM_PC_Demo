@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2011, NetEase Inc. All rights reserved.
 //
-// Author: Ruan Liang <ruanliang@corp.netease.com>
+// Author: rl
 // Date: 2011/11/6
 //
 // Network utility function

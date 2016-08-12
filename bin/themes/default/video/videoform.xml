@@ -63,6 +63,8 @@
 
                     <Button name="into_video" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_VIDEO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
                     <Button name="into_audio" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_AUDIO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
+					
+                    <Button name="rotate" margin="10,0,0,0" valign="center" visible="false" tooltiptext="旋转开关" text="旋转开关" normaltextcolor="white" font="1" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
 
                     <Control />
                     <Label name="time_tick" normaltextcolor="white" font="1" valign="center" visible="false"/>

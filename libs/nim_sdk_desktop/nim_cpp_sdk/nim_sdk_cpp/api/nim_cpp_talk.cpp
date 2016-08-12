@@ -8,6 +8,8 @@
 #include "nim_cpp_talk.h"
 #include "nim_sdk_helper.h"
 #include "nim_common_helper.h"
+#include "shared/log.h"
+#include "nim_cpp_global.h"
 
 namespace nim
 {
@@ -18,12 +20,13 @@ typedef void(*nim_talk_stop_send_msg)(const char *json_msg, const char *json_ext
 typedef void(*nim_talk_reg_receive_cb)(const char *json_extension, nim_talk_receive_cb_func cb, const void* user_data);
 typedef void(*nim_talk_reg_receive_msgs_cb)(const char *json_extension, nim_talk_receive_cb_func cb, const void* user_data);
 typedef void(*nim_talk_reg_notification_filter_cb)(const char *json_extension, nim_talk_team_notification_filter_func cb, const void *user_data);
+typedef char*(*nim_talk_create_retweet_msg)(const char* src_msg_json, const char* client_msg_id, const NIMSessionType retweet_to_session_type, const char* retweet_to_session_id, const char* msg_setting, __int64 timetag);
 
-static void CallbackSendMsgArc(const char *result, const void *callback)
+static void CallbackSendMsgAck(const char *result, const void *callback)
 {
 	if (callback)
 	{
-		Talk::SendMsgArcCallback* cb_pointer = (Talk::SendMsgArcCallback*)callback;
+		Talk::SendMsgAckCallback* cb_pointer = (Talk::SendMsgAckCallback*)callback;
 		if (*cb_pointer)
 		{
 			SendMessageArc arc;
@@ -38,7 +41,7 @@ static void CallbackReceiveMsg(const char *content, const char *json_extension, 
 {
 	if (callback)
 	{
-		Talk::ReveiveMsgCallback* cb_pointer = (Talk::ReveiveMsgCallback*)callback;
+		Talk::ReceiveMsgCallback* cb_pointer = (Talk::ReceiveMsgCallback*)callback;
 		if (*cb_pointer)
 		{
 			IMMessage msg;
@@ -103,16 +106,16 @@ static bool FilterTeamNotification(const char *content, const char *json_extensi
 	return false;
 }
 
-static Talk::SendMsgArcCallback* g_cb_send_msg_arc_ = nullptr;
-void Talk::RegSendMsgCb(const SendMsgArcCallback& cb, const std::string& json_extension)
+static Talk::SendMsgAckCallback* g_cb_send_msg_ack_ = nullptr;
+void Talk::RegSendMsgCb(const SendMsgAckCallback& cb, const std::string& json_extension)
 {
-	if (g_cb_send_msg_arc_)
+	if (g_cb_send_msg_ack_)
 	{
-		delete g_cb_send_msg_arc_;
-		g_cb_send_msg_arc_ = nullptr;
+		delete g_cb_send_msg_ack_;
+		g_cb_send_msg_ack_ = nullptr;
 	}
-	g_cb_send_msg_arc_ = new SendMsgArcCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_talk_reg_ack_cb)(json_extension.c_str(), &CallbackSendMsgArc, g_cb_send_msg_arc_);
+	g_cb_send_msg_ack_ = new SendMsgAckCallback(cb);
+	return NIM_SDK_GET_FUNC(nim_talk_reg_ack_cb)(json_extension.c_str(), &CallbackSendMsgAck, g_cb_send_msg_ack_);
 }
 
 void Talk::SendMsg(const std::string& json_msg, const std::string& json_extension/* = ""*/, FileUpPrgCallback* pcb/* = nullptr*/)
@@ -140,13 +143,13 @@ bool Talk::StopSendMsg(const std::string& client_msg_id, const NIMMessageType& t
 	return true;
 }
 
-static Talk::ReveiveMsgCallback* g_cb_pointer = nullptr;
-void Talk::RegReceiveCb(const ReveiveMsgCallback& cb, const std::string& json_extension)
+static Talk::ReceiveMsgCallback* g_cb_pointer = nullptr;
+void Talk::RegReceiveCb(const ReceiveMsgCallback& cb, const std::string& json_extension)
 {
 	delete g_cb_pointer;
 	if (cb)
 	{
-		g_cb_pointer = new ReveiveMsgCallback(cb);
+		g_cb_pointer = new ReceiveMsgCallback(cb);
 	}
 	return NIM_SDK_GET_FUNC(nim_talk_reg_receive_cb)(json_extension.c_str(), &CallbackReceiveMsg, g_cb_pointer);
 }
@@ -321,7 +324,7 @@ std::string Talk::CreateLocationMessage(const std::string& receiver_id
 std::string Talk::CreateTipMessage(const std::string& receiver_id
 	, const NIMSessionType session_type
 	, const std::string& client_msg_id
-	, const Json::Value& tips
+	, const std::string& tip_content
 	, const MessageSetting& msg_setting
 	, __int64 timetag/* = 0*/)
 {
@@ -329,7 +332,7 @@ std::string Talk::CreateTipMessage(const std::string& receiver_id
 	values[kNIMMsgKeyToAccount] = receiver_id;
 	values[kNIMMsgKeyToType] = session_type;
 	values[kNIMMsgKeyClientMsgid] = client_msg_id;
-	values[kNIMMsgKeyServerExt] = GetJsonStringWithNoStyled(tips);
+	values[kNIMMsgKeyBody] = tip_content;
 	values[kNIMMsgKeyType] = kNIMMessageTypeTips;
 	values[kNIMMsgKeyLocalTalkId] = receiver_id;
 
@@ -342,6 +345,36 @@ std::string Talk::CreateTipMessage(const std::string& receiver_id
 	return GetJsonStringWithNoStyled(values);
 }
 
+std::string Talk::CreateRetweetMessage(const std::string& src_msg_json
+	, const std::string& client_msg_id
+	, const NIMSessionType retweet_to_session_type
+	, const std::string& retweet_to_session_id
+	, const MessageSetting& msg_setting
+	, __int64 timetag/* = 0*/)
+{
+	Json::Value setting;
+	msg_setting.ToJsonValue(setting);
+	Json::FastWriter fw;
+	const char *msg = NIM_SDK_GET_FUNC(nim_talk_create_retweet_msg)(src_msg_json.c_str(), client_msg_id.c_str(), retweet_to_session_type, retweet_to_session_id.c_str(), fw.write(setting).c_str(), timetag);
+	std::string out_msg = (std::string)msg;	
+	Global::FreeBuf((void *)msg);
+	return out_msg;
+// 	IMMessage msg;
+// 	bool ret = ParseIMMessage(src_msg_json, msg);
+// 	msg.feature_ = kNIMMessageFeatureDefault;
+// 	msg.session_type_ = retweet_to_session_type;
+// 	msg.receiver_accid_ = retweet_to_session_id;
+// 	msg.sender_accid_.clear();
+// 	msg.timetag_ = timetag;
+// 	msg.client_msg_id_ = client_msg_id;
+// 	msg.msg_setting_ = msg_setting;
+// 	msg.local_res_id_ = client_msg_id;
+// 	msg.local_talk_id_ = retweet_to_session_id;
+// 	msg.status_ = kNIMMsgLogStatusSending;
+// 	msg.sub_status_ = kNIMMsgLogSubStatusNone;
+// 
+// 	return msg.ToJsonString(true);
+}
 
 bool Talk::ParseIMMessage(const std::string& json_msg, IMMessage& msg)
 {
@@ -461,10 +494,10 @@ void Talk::RegTeamNotificationFilter(const TeamNotificationFilter& filter, const
 
 void Talk::UnregTalkCb()
 {
-	if (g_cb_send_msg_arc_)
+	if (g_cb_send_msg_ack_)
 	{
-		delete g_cb_send_msg_arc_;
-		g_cb_send_msg_arc_ = nullptr;
+		delete g_cb_send_msg_ack_;
+		g_cb_send_msg_ack_ = nullptr;
 	}
 	if (g_team_notification_filter_)
 	{

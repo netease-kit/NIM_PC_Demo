@@ -31,7 +31,7 @@ NIM_SDK_DLL_API void nim_vchat_enum_device_devpath(NIMDeviceType type, const cha
   * @param[in] type NIMDeviceType 见nim_device_def.h
   * @param[in] device_path 设备路径对应kNIMDevicePath
   * @param[in] fps 摄像头为采样频率（一般传电源频率取50）,其他NIMDeviceType无效（麦克风采样频率由底层控制，播放器采样频率也由底层控制）
-  * @param[in] json_extension 无效的扩展字段
+  * @param[in] json_extension 打开摄像头是允许设置 kNIMDeviceWidth 和 kNIMDeviceHeight，最后取最接近设置值的画面模式
   * @param[in] cb 结果回调见nim_device_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
@@ -62,6 +62,26 @@ NIM_SDK_DLL_API void nim_vchat_add_device_status_cb(NIMDeviceType type, nim_vcha
   */
 NIM_SDK_DLL_API void nim_vchat_remove_device_status_cb(NIMDeviceType type);
 
+/** @fn void nim_vchat_start_extend_camera(const char *id, const char *device_path, unsigned fps, const char *json_extension, nim_vchat_start_device_cb_func cb, const void *user_data)
+  * NIM VCHAT DEVICE 启动辅助的摄像头，摄像头数据通过nim_vchat_set_video_data_cb设置采集回调返回，不直接通过视频通话发送给对方，并且不参与设备监听检测
+  * @param[in] id 摄像头标识，用于开关及数据回调时的对应，不能为空。（同一id下设备将不重复启动，如果设备device_path不同会先关闭前一个设备开启新设备）
+  * @param[in] device_path 设备路径对应kNIMDevicePath
+  * @param[in] fps 摄像头为采样频率
+  * @param[in] json_extension 打开摄像头是允许设置 kNIMDeviceWidth 和 kNIMDeviceHeight，并取最接近设置值的画面模式
+  * @param[in] cb 结果回调见nim_device_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_vchat_start_extend_camera(const char *id, const char *device_path, unsigned fps, const char *json_extension, nim_vchat_start_device_cb_func cb, const void *user_data);
+
+/** @fn void nim_vchat_stop_extend_camera(const char *id, const char *json_extension)
+  * NIM VCHAT DEVICE 结束辅助摄像头
+  * @param[in] id 摄像头标识id，如果为空，则关闭所有辅助摄像头
+  * @param[in] json_extension 无效的扩展字段
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_vchat_stop_extend_camera(const char *id, const char *json_extension);
+
 /** @fn void nim_vchat_set_audio_data_cb(bool capture, const char *json_extension, nim_vchat_audio_data_cb_func cb, const void *user_data)
   * NIM VCHAT DEVICE 监听音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut和kNIMDeviceTypeAudioOutChat由底层播放）
   * @param[in] capture true 标识监听麦克风采集数据，false 标识监听通话中对方音频数据
@@ -74,7 +94,7 @@ NIM_SDK_DLL_API void nim_vchat_set_audio_data_cb(bool capture, const char *json_
 
 /** @fn void nim_vchat_set_video_data_cb(bool capture, const char *json_extension, nim_vchat_video_data_cb_func cb, const void *user_data)
   * NIM VCHAT DEVICE 监听视频数据
-  * @param[in] capture true 标识监听采集数据，false 标识监听通话中对方视频数据
+  * @param[in] capture true 标识监听采集数据（包括辅助摄像头数据），false 标识监听通话中对方视频数据
   * @param[in] json_extension Json string 返回kNIMVideoSubType（缺省为kNIMVideoSubTypeARGB）
   * @param[in] cb 结果回调见nim_device_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！

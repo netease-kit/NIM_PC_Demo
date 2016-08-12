@@ -142,7 +142,8 @@ std::wstring GetMessageTime( const long long t, bool abbreviate )
 	}
 	else if (IsSameWeekDay(msg_time_tm,now_time_tm,msg_time_t,now_time_t))//week
 	{
-		show_data = GetWeekOfDate(msg_time_tm.day_of_week());
+		int now_time_day_of_week = msg_time_tm.day_of_week() == 0 ? 7 : msg_time_tm.day_of_week();
+		show_data = GetWeekOfDate(now_time_day_of_week);
 	}
 	else //mm-dd or yyyy-mm-dd
 	{

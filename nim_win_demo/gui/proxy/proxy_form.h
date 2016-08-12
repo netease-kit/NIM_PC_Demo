@@ -2,7 +2,7 @@
 //  proxy_form.h
 //
 //
-//  Created by wangpeng<hzwangpeng@corp.netease.com> on 2014.02.14.
+//  Created by wp on 2014.02.14.
 //  Copyright (c) 2013 Netease. All rights reserved.
 //
 //  代理设置窗口

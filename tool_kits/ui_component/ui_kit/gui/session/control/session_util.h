@@ -30,7 +30,8 @@ enum SessionTipType
 	STT_LEAVE,
 	STT_NOT_FRIEND,
 	STT_LOAD_MORE_MSG,
-	STT_WRITING
+	STT_WRITING,
+	STT_DISMISS,
 };
 
 //会话类型

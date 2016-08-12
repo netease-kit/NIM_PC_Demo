@@ -1,5 +1,6 @@
 ﻿#pragma once
 #include "shared/base.h"
+#include "module/service/photo_service.h"
 
 namespace nim_comp
 {
@@ -32,6 +33,8 @@ public:
 	void OnApplyJoinCb(const nim::TeamEvent& team_event);
 
 	void GotoPage(TeamSearchPage page);
+
+	void OnUserPhotoReady(PhotoType type, const std::string& tid, const std::wstring &photo_path);
 private:
 	bool Notify(ui::EventArgs* arg);
 	bool OnClicked(ui::EventArgs* arg);
@@ -56,5 +59,7 @@ private:
 
 	std::string		tid_;
 	std::wstring	tname_;
+	AutoUnregister	unregister_cb;
+
 };
 }

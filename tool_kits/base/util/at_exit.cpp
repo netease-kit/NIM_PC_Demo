@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Ported by Wang Rongtao <rtwang@corp.netease.com>
+// Ported by wrt(guangguang)
 // Date: 2013/09/17
 
 #include "base/util/at_exit.h"

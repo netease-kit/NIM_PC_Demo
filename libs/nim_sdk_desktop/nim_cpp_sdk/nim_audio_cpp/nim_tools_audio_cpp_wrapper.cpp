@@ -17,9 +17,10 @@ typedef bool(*nim_audio_play_audio)(const char* file_path, const char* call_id, 
 typedef bool(*nim_audio_stop_play_audio)();
 
 //capture
-typedef bool(*nim_audio_start_capture)(const char* call_id, const char* res_id, int audio_format, int volume, int loudness);
+typedef bool(*nim_audio_start_capture)(const char* call_id, const char* res_id, int audio_format, int volume, int loudness, const wchar_t* capture_device);
 typedef bool(*nim_audio_stop_capture)();
 typedef bool(*nim_audio_cancel_audio)(const char* file_path);
+typedef bool(*nim_audio_enum_capture_device)();
 
 //reg callback
 typedef bool(*nim_audio_reg_start_play_cb)(nim_rescode_id_cb cb);
@@ -27,7 +28,7 @@ typedef bool(*nim_audio_reg_stop_play_cb)(nim_rescode_id_cb cb);
 typedef bool(*nim_audio_reg_start_capture_cb)(nim_rescode_cb cb);
 typedef bool(*nim_audio_reg_stop_capture_cb)(nim_stop_capture_cb cb);
 typedef bool(*nim_audio_reg_cancel_audio_cb)(nim_rescode_cb cb);
-
+typedef bool(*nim_audio_reg_enum_capture_device_cb)(nim_enum_capture_device_cb cb);
 
 bool Audio::Init(const std::string& user_data_parent_path)
 {
@@ -102,10 +103,10 @@ bool Audio::RegCancelAudioCb(nim_rescode_cb cb)
 	return f_uninit(cb);
 }
 
-bool Audio::StartCapture(const char* call_id, const char* res_id, nim_audio_type audio_format/* = AAC*/, int volume/* = 180*/, int loudness/* = 0*/)
+bool Audio::StartCapture(const char* call_id, const char* res_id, nim_audio_type audio_format/* = AAC*/, int volume/* = 180*/, int loudness/* = 0*/, const wchar_t* capture_device/* = nullptr*/)
 {
 	nim_audio_start_capture f_uninit = Function<nim_audio_start_capture>("nim_audio_start_capture");
-	return f_uninit(call_id, res_id, audio_format, volume, loudness);
+	return f_uninit(call_id, res_id, audio_format, volume, loudness, capture_device);
 }
 
 bool Audio::StopCapture()
@@ -120,5 +121,16 @@ bool Audio::CancelAudio(const char* file_path)
 	return f_uninit(file_path);
 }
 
+bool Audio::RegEnumCaptureDeviceCb(nim_enum_capture_device_cb cb)
+{
+	nim_audio_reg_enum_capture_device_cb fun = Function<nim_audio_reg_enum_capture_device_cb>("nim_audio_reg_enum_capture_device_cb");
+	return fun(cb);
+}
+
+bool Audio::EnumCaptureDevice()
+{
+	nim_audio_enum_capture_device fun = Function<nim_audio_enum_capture_device>("nim_audio_enum_capture_device");
+	return fun();
+}
 
 }

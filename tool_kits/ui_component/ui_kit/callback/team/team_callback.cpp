@@ -81,6 +81,9 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 				std::string uid = *info.ids_.begin();
 				//assert(LoginManager::GetInstance()->GetAccount() != uid);
 				//群成员收到别人入群消息
+				//TODO(litianyi) 同步堵塞接口测试
+				//nim::TeamMemberProperty prop = nim::Team::QueryTeamMemberBlock(tid, uid);
+				//TeamService::GetInstance()->InvokeAddTeamMember(tid, prop);
 				nim::Team::QueryTeamMemberAsync(tid, uid, [tid](const nim::TeamMemberProperty& team_member_info) {
 					TeamService::GetInstance()->InvokeAddTeamMember(tid, team_member_info);
 				});
@@ -118,6 +121,8 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 		{
 			if (info.notification_id_ == nim::kNIMNotificationIdTeamInvite)
 			{
+				QLOG_APP(L"UITeamEventCallback invite : {0}") << info.attach_;
+
 				TeamService::GetInstance()->InvokeAddTeam(tid, team_info);
 				for (auto& id : info.ids_)
 				{
@@ -128,6 +133,8 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 			}
 			else if (info.notification_id_ == nim::kNIMNotificationIdTeamKick)
 			{
+				QLOG_APP(L"UITeamEventCallback Kick : {0}") << info.attach_;
+
 				for (auto& id : info.ids_)
 				{
 					TeamService::GetInstance()->InvokeRemoveTeamMember(tid, id);
@@ -166,6 +173,10 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 			else if (info.notification_id_ == nim::kNIMNotificationIdTeamMemberChanged)
 			{
 				std::string uid = *info.ids_.begin();
+				//TODO(litianyi) 同步堵塞接口测试
+				//nim::TeamMemberProperty prop = nim::Team::QueryTeamMemberBlock(tid, uid);
+				//TeamService::GetInstance()->InvokeChangeTeamMember(tid, prop.GetAccountID(), prop.GetNick());
+
 				nim::Team::QueryTeamMemberAsync(tid, uid, [](const nim::TeamMemberProperty& team_member_info) {
 					TeamService::GetInstance()->InvokeChangeTeamMember(team_member_info.GetTeamID(), team_member_info.GetAccountID(), team_member_info.GetNick());
 				});
@@ -215,19 +226,22 @@ void UIReceiveSysmsgCallback(nim::SysMessage& msg)
 			if (msg.type_ == nim::kNIMSysMsgTypeCustomP2PMsg)
 			{
 				Json::Value json;
-				if (StringToJson(msg.attach_, json))
+				if (StringToJson(msg.attach_, json) && json.isObject())
 				{
-					std::string id = json["id"].asString();
-					if (id == "1")
+					if (json.isMember("id"))
 					{
-						std::string id = msg.sender_accid_;
-
-						SessionForm* session = SessionManager::GetInstance()->Find(id);
-						if (session)
+						std::string id = json["id"].asString();
+						if (id == "1")
 						{
-							session->AddWritingMsg(immsg);
+							std::string id = msg.sender_accid_;
+
+							SessionForm* session = SessionManager::GetInstance()->Find(id);
+							if (session)
+							{
+								session->AddWritingMsg(immsg);
+							}
+							return;
 						}
-						return;
 					}
 				}
 			}

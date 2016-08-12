@@ -28,6 +28,13 @@ typedef void(*nim_chatroom_get_info_async)(const __int64 room_id, const char *js
 typedef void(*nim_chatroom_get_members_by_ids_online_async)(const __int64 room_id, const char *ids_json_array_string, const char *json_extension, nim_chatroom_get_members_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_kick_member_async)(const __int64 room_id, const char *id, const char *notify_ext, const char *json_extension, nim_chatroom_kick_member_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_set_proxy)(NIMChatRoomProxyType type, const char *host, int port, const char *user, const char *password);
+typedef void(*nim_chatroom_temp_mute_member_async)(const __int64 room_id, const char *accid, const __int64 duration, bool need_notify, const char *notify_ext, const char *json_extension, nim_chatroom_temp_mute_member_cb_func cb, const void *user_data);
+typedef void(*nim_chatroom_update_room_info_async)(const __int64 room_id, const char *room_info_json_str, bool need_notify, const char *notify_ext, const char *json_extension, nim_chatroom_update_room_info_cb_func cb, const void *user_data);
+typedef void(*nim_chatroom_update_my_role_async)(const __int64 room_id, const char *role_info_json_str, bool need_notify, const char *notify_ext, const char *json_extension, nim_chatroom_update_my_role_cb_func cb, const void *user_data);
+typedef void(*nim_chatroom_queue_offer_async)(const __int64 room_id, const char *element_key, const char *element_value, const char *json_extension, nim_chatroom_queue_offer_cb_func cb, const void *user_data);
+typedef void(*nim_chatroom_queue_poll_async)(const __int64 room_id, const char *element_key, const char *json_extension, nim_chatroom_queue_poll_cb_func cb, const void *user_data);
+typedef void(*nim_chatroom_queue_list_async)(const __int64 room_id, const char *json_extension, nim_chatroom_queue_list_cb_func cb, const void *user_data);
+typedef void(*nim_chatroom_queue_drop_async)(const __int64 room_id, const char *json_extension, nim_chatroom_queue_drop_cb_func cb, const void *user_data);
 
 static void CallbackEnter(__int64 room_id, int step, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
@@ -426,6 +433,240 @@ void ChatRoom::SetProxy(NIMChatRoomProxyType type,
 	const std::string& password)
 {
 	return NIM_SDK_GET_FUNC(nim_chatroom_set_proxy)(type, host.c_str(), port, user.c_str(), password.c_str());
+}
+
+static void CallbackTempMuteMember(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		ChatRoom::TempMuteMemberCallback *cb = (ChatRoom::TempMuteMemberCallback*)user_data;
+		if (*cb)
+		{
+			Json::Value value;
+			Json::Reader reader;
+			if (reader.parse(PCharToString(result), value) && value.isObject())
+			{
+				ChatRoomMemberInfo info;
+				info.ParseFromJsonValue(value);
+				(*cb)(room_id, error_code, info);
+				return;
+			}
+			(*cb)(room_id, error_code, ChatRoomMemberInfo());
+		}
+	}
+}
+
+void ChatRoom::TempMuteMemberAsync(const __int64 room_id
+	, const std::string& accid
+	, const __int64 duration
+	, bool need_notify
+	, const std::string& notify_ext
+	, const TempMuteMemberCallback& callback
+	, const std::string &json_extension/* = ""*/)
+{
+	TempMuteMemberCallback* cb_pointer = nullptr;
+	if (callback)
+		cb_pointer = new TempMuteMemberCallback(callback);
+
+	return NIM_SDK_GET_FUNC(nim_chatroom_temp_mute_member_async)(room_id
+		, accid.c_str()
+		, duration
+		, need_notify
+		, notify_ext.c_str()
+		, json_extension.c_str()
+		, &CallbackTempMuteMember
+		, cb_pointer);
+}
+
+static void CallbackUpdateRoomInfo(__int64 room_id, int error_code, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		ChatRoom::UpdateRoomInfoCallback *cb = (ChatRoom::UpdateRoomInfoCallback*)user_data;
+		if (*cb)
+			(*cb)(room_id, error_code);
+	}
+}
+
+static void CallbackUpdateMyRoomRole(__int64 room_id, int error_code, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		ChatRoom::UpdateMyRoomRoleCallback *cb = (ChatRoom::UpdateMyRoomRoleCallback*)user_data;
+		if (*cb)
+			(*cb)(room_id, error_code);
+	}
+}
+
+static void CallbackQueueOffer(__int64 room_id, int error_code, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		ChatRoom::QueueOfferCallback *cb = (ChatRoom::QueueOfferCallback*)user_data;
+		if (*cb)
+			(*cb)(room_id, error_code);
+	}
+}
+
+static void CallbackQueueDrop(__int64 room_id, int error_code, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		ChatRoom::QueueDropCallback *cb = (ChatRoom::QueueDropCallback*)user_data;
+		if (*cb)
+			(*cb)(room_id, error_code);
+	}
+}
+
+void ChatRoom::UpdateRoomInfoAsync(const __int64 room_id
+	, const ChatRoomInfo& info
+	, bool need_notify
+	, const std::string& notify_ext
+	, const UpdateRoomInfoCallback& callback
+	, const std::string &json_extension/* = ""*/)
+{
+	UpdateRoomInfoCallback* cb_pointer = nullptr;
+	if (callback)
+		cb_pointer = new UpdateRoomInfoCallback(callback);
+
+	return NIM_SDK_GET_FUNC(nim_chatroom_update_room_info_async)(room_id, 
+		info.ToJsonString().c_str(), 
+		need_notify,
+		notify_ext.c_str(), 
+		json_extension.c_str(),
+		&CallbackUpdateRoomInfo,
+		cb_pointer);
+}
+
+void ChatRoom::UpdateMyRoomRoleAsync(const __int64 room_id
+	, const ChatRoomMemberInfo& info
+	, bool need_notify
+	, const std::string& notify_ext
+	, const UpdateMyRoomRoleCallback& callback
+	, const std::string &json_extension/* = ""*/)
+{
+	UpdateMyRoomRoleCallback* cb_pointer = nullptr;
+	if (callback)
+		cb_pointer = new UpdateMyRoomRoleCallback(callback);
+
+	return NIM_SDK_GET_FUNC(nim_chatroom_update_my_role_async)(room_id, 
+		info.ToJsonString().c_str(), 
+		need_notify,
+		notify_ext.c_str(), 
+		json_extension.c_str(),
+		&CallbackUpdateMyRoomRole,
+		cb_pointer);
+}
+
+void ChatRoom::QueueOfferAsync(const __int64 room_id
+	, const ChatRoomQueueElement& element
+	, const QueueOfferCallback& callback
+	, const std::string &json_extension/* = ""*/)
+{
+	QueueOfferCallback* cb_pointer = nullptr;
+	if (callback)
+		cb_pointer = new QueueOfferCallback(callback);
+
+	return NIM_SDK_GET_FUNC(nim_chatroom_queue_offer_async)(room_id, 
+		element.key_.c_str(), 
+		element.value_.c_str(), 
+		json_extension.c_str(),
+		&CallbackQueueOffer,
+		cb_pointer);
+}
+
+static void CallbackQueuePoll(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		ChatRoom::QueuePollCallback *cb = (ChatRoom::QueuePollCallback*)user_data;
+		if (*cb)
+		{
+			Json::Value value;
+			Json::Reader reader;
+			if (reader.parse(PCharToString(result), value) && value.isObject())
+			{
+				ChatRoomQueueElement element;
+				element.key_ = value[kNIMChatRoomQueueElementKey].asString();
+				element.value_ = value[kNIMChatRoomQueueElementValue].asString();
+				(*cb)(room_id, error_code, element);
+				return;
+			}
+			(*cb)(room_id, error_code, ChatRoomQueueElement());
+		}
+	}
+}
+
+static void CallbackQueueList(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		ChatRoom::QueueListCallback *cb = (ChatRoom::QueueListCallback*)user_data;
+		if (*cb)
+		{
+			Json::Value value;
+			Json::Reader reader;
+			if (reader.parse(PCharToString(result), value) && value.isArray())
+			{
+				ChatRoomQueue queue;
+				auto size = value.size();
+				for (size_t i = 0; i < size; i++)
+				{
+					ChatRoomQueueElement element;
+					element.key_ = value[i][kNIMChatRoomQueueElementKey].asString();
+					element.value_ = value[i][kNIMChatRoomQueueElementValue].asString();
+					queue.push_back(element);
+				}
+				(*cb)(room_id, error_code, queue);
+				return;
+			}
+			(*cb)(room_id, error_code, ChatRoomQueue());
+		}
+	}
+}
+
+void ChatRoom::QueuePollAsync(const __int64 room_id
+	, const std::string& element_key
+	, const QueuePollCallback& callback
+	, const std::string &json_extension/* = ""*/)
+{
+	QueuePollCallback* cb_pointer = nullptr;
+	if (callback)
+		cb_pointer = new QueuePollCallback(callback);
+
+	return NIM_SDK_GET_FUNC(nim_chatroom_queue_poll_async)(room_id, 
+		element_key.c_str(), 
+		json_extension.c_str(),
+		&CallbackQueuePoll,
+		cb_pointer);
+}
+
+void ChatRoom::QueueListAsync(const __int64 room_id
+	, const QueueListCallback& callback
+	, const std::string &json_extension/* = ""*/)
+{
+	QueueListCallback* cb_pointer = nullptr;
+	if (callback)
+		cb_pointer = new QueueListCallback(callback);
+
+	return NIM_SDK_GET_FUNC(nim_chatroom_queue_list_async)(room_id, 
+		json_extension.c_str(),
+		&CallbackQueueList,
+		cb_pointer);
+}
+
+void ChatRoom::QueueDropAsync(const __int64 room_id
+	, const QueueDropCallback& callback
+	, const std::string &json_extension/* = ""*/)
+{
+	QueueDropCallback* cb_pointer = nullptr;
+	if (callback)
+		cb_pointer = new QueueDropCallback(callback);
+
+	return NIM_SDK_GET_FUNC(nim_chatroom_queue_drop_async)(room_id, 
+		json_extension.c_str(),
+		&CallbackQueueDrop,
+		cb_pointer);
 }
 
 }

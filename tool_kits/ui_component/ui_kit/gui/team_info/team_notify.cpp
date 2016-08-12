@@ -168,7 +168,18 @@ void TeamNotifyForm::OnInviteYou(const nim::SysMessage &json)
 	type_ = TNP_INVITE_YOU;
 	uid_ = json.sender_accid_;
 	nim::TeamInfo team_info;
-	nim::Team::ParseTeamInfo(json.attach_, team_info);
+	Json::Value values;
+	Json::Reader reader;
+	if (reader.parse(json.attach_, values) && values.isObject())
+	{
+		if (values.isMember("attach"))
+		{
+			nim::Team::ParseTeamInfo(values[nim::kNIMNotificationKeyTeamInfo].toStyledString(), team_info);
+			QLOG_APP(L"OnReceiveTeamInviteMsgWithAttach: {0}") << values["attach"].asString();
+		}
+		else
+			nim::Team::ParseTeamInfo(json.attach_, team_info);
+	}
 	if (team_info.GetInviteMode() == nim::kNIMTeamInviteModeManager)
 		re_invite_->SetText(nbase::StringPrintf(L"群 %s 管理员邀请你加入群", nbase::UTF8ToUTF16(team_info.GetName()).c_str()));
 	else

@@ -606,6 +606,10 @@ bool VideoForm::OnClicked( ui::EventArgs* arg )
 	{
 		nim::VChat::StopRecord(std::bind(&VideoForm::StopRecordCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 	}
+	else if (name == L"rotate")
+	{
+		nim::VChat::SetRotateRemoteVideo(!nim::VChat::IsRotateRemoteVideo());
+	}
 	return false;
 }
 

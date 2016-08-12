@@ -31,8 +31,8 @@ class Talk
 {
 
 public:
-	typedef std::function<void(const SendMessageArc&)>	SendMsgArcCallback;	/**< 发送消息回执通知回调模板 */
-	typedef std::function<void(const IMMessage&)>	ReveiveMsgCallback;	/**< 接收消息通知回调模板 */
+	typedef std::function<void(const SendMessageArc&)>	SendMsgAckCallback;	/**< 发送消息回执通知回调模板 */
+	typedef std::function<void(const IMMessage&)>	ReceiveMsgCallback;	/**< 接收消息通知回调模板 */
 	typedef std::function<void(const std::list<IMMessage>&)>	ReceiveMsgsCallback;	/**< 批量接收消息通知回调模板 */
 	typedef std::function<void(__int64, __int64)>	FileUpPrgCallback;	/**< 发送多媒体消息文件上传过程回调模板 */
 	typedef std::function<bool(const IMMessage&)> TeamNotificationFilter; /**< 群通知过滤器 */
@@ -43,7 +43,7 @@ public:
 	* @param[in] cb		发送消息的回调函数
 	* @return void 无返回值
 	*/
-	static void RegSendMsgCb(const SendMsgArcCallback& cb, const std::string& json_extension = "");
+	static void RegSendMsgCb(const SendMsgAckCallback& cb, const std::string& json_extension = "");
 
 	/** 
 	* 发送消息
@@ -63,16 +63,16 @@ public:
 	*/
 	static bool StopSendMsg(const std::string& client_msg_id, const NIMMessageType& type, const std::string& json_extension = "");
 
-	/** @fn static void RegReceiveCb(const ReveiveMsgCallback& cb, const std::string& json_extension = "")
+	/** @fn static void RegReceiveCb(const ReceiveMsgCallback& cb, const std::string& json_extension = "")
 	* 注册接收消息回调 （建议全局注册,统一接受回调后分发消息到具体的会话）
 	* @param[in] json_extension json扩展参数（备用,目前不需要）
 	* @param[in] cb		接收消息的回调函数
 	* @return void 无返回值
 	*/
-	static void RegReceiveCb(const ReveiveMsgCallback& cb, const std::string& json_extension = "");
+	static void RegReceiveCb(const ReceiveMsgCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static void RegReceiveCb(const ReceiveMsgCallback& cb, const std::string& json_extension = "")
-	* 注册批量接收消息(一个会话为单位)回调 （建议全局注册,统一接受回调后分发消息到具体的会话）
+	* 注册批量接收消息回调 （建议全局注册,统一接受回调后分发消息到具体的会话）
 	* @param[in] json_extension json扩展参数（备用,目前不需要）
 	* @param[in] cb		接收消息的回调函数
 	* @return void 无返回值
@@ -189,12 +189,12 @@ public:
 		, const MessageSetting& msg_setting
 		, __int64 timetag = 0);
 
-	/** @fn static std::string CreateTipMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const Json::Value& tips, const MessageSetting& msg_setting, __int64 timetag  = 0)
+	/** @fn static std::string CreateTipMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const std::string& tip_content, const MessageSetting& msg_setting, __int64 timetag  = 0)
 	/* 生成Tip消息内容,生成的字符串在调用SendMsg时直接传入
 	*  @param[in] receiver_id 聊天对象的 ID,如果是单聊,为用户帐号,如果是群聊,为群组 ID
 	*  @param[in] session_type NIMSessionType,聊天类型,单聊或群组
 	*  @param[in] client_msg_id 客户端消息id,建议uuid
-	*  @param[in] tips Tip内容
+	*  @param[in] tip_content Tip文本内容
 	*  @param[in] msg_setting 消息属性设置
 	*  @param[in] timetag 消息时间
 	*  @return std::string 位置消息Json字符串
@@ -202,7 +202,25 @@ public:
 	static std::string CreateTipMessage(const std::string& receiver_id
 		, const NIMSessionType session_type
 		, const std::string& client_msg_id
-		, const Json::Value& tips
+		, const std::string& tip_content
+		, const MessageSetting& msg_setting
+		, __int64 timetag = 0);
+
+
+	/** @fn static std::string CreateRetweetMessage(const std::string& src_msg_json	, const std::string& client_msg_id	, const NIMSessionType retweet_to_session_type	, const std::string& retweet_to_session_id	, const MessageSetting& msg_setting	, __int64 timetag = 0)
+	/* 由其他消息生成转发消息
+	*  @param[in] src_msg_json 原消息json
+	*  @param[in] client_msg_id 新的客户端消息id,建议uuid
+	*  @param[in] retweet_to_session_type 转发目标会话类型 NIMSessionType
+	*  @param[in] retweet_to_session_id 转发目标ID
+	*  @param[in] msg_setting 消息属性设置
+	*  @param[in] timetag 消息时间
+	*  @return std::string 位置消息Json字符串
+	*/
+	static std::string CreateRetweetMessage(const std::string& src_msg_json
+		, const std::string& client_msg_id
+		, const NIMSessionType retweet_to_session_type
+		, const std::string& retweet_to_session_id
 		, const MessageSetting& msg_setting
 		, __int64 timetag = 0);
 

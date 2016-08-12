@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2011, NetEase Inc. All rights reserved.
 // All rights reserved.
 //
-// Author: Wang Rongtao <rtwang@corp.netease.com>
+// Author: wrt(guangguang)
 // Date: 2011/7/4
 //
 // A wrapper class of Windows shared memory

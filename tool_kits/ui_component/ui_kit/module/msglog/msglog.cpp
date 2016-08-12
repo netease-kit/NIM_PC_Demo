@@ -96,6 +96,19 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 	{
 		nim::NIMNotificationId id = (nim::NIMNotificationId)json[nim::kNIMNotificationKeyId].asInt();
 
+		//test
+		if (json[nim::kNIMNotificationKeyData].isMember("attach"))
+		{
+			if (id == nim::kNIMNotificationIdTeamKick)
+			{
+				QLOG_APP(L"GetNotifyMsg Kick : {0}") << json[nim::kNIMNotificationKeyData]["attach"].asString();
+			}
+			else if (id == nim::kNIMNotificationIdTeamInvite)
+			{
+				QLOG_APP(L"GetNotifyMsg invite : {0}") << json[nim::kNIMNotificationKeyData]["attach"].asString();
+			}
+		}
+
 		std::wstring team_type = TeamService::GetInstance()->GetTeamType(session_id) == 0 ? L"讨论组" : L"群";
 		SessionForm* session_wnd = dynamic_cast<SessionForm*>(WindowsManager::GetInstance()->GetWindow(SessionForm::kClassName, nbase::UTF8ToUTF16(session_id)));
 

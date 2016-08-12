@@ -154,6 +154,7 @@
     <ClInclude Include="gui\session\control\bubble_sticker.h" />
     <ClInclude Include="gui\session\control\bubble_text.h" />
     <ClInclude Include="gui\session\control\bubble_unknown.h" />
+    <ClInclude Include="gui\session\control\bubble_video.h" />
     <ClInclude Include="gui\session\control\bubble_writing.h" />
     <ClInclude Include="gui\session\control\session_util.h" />
     <ClInclude Include="gui\session\control\team_item.h" />
@@ -256,6 +257,7 @@
     <ClCompile Include="gui\session\control\bubble_sticker.cpp" />
     <ClCompile Include="gui\session\control\bubble_text.cpp" />
     <ClCompile Include="gui\session\control\bubble_unknown.cpp" />
+    <ClCompile Include="gui\session\control\bubble_video.cpp" />
     <ClCompile Include="gui\session\control\bubble_writing.cpp" />
     <ClCompile Include="gui\session\control\session_util.cpp" />
     <ClCompile Include="gui\session\control\team_item.cpp" />
@@ -314,8 +316,17 @@
     <ProjectReference Include="..\..\db\db.vcxproj">
       <Project>{745e6452-9fe1-435b-833a-767617eee1da}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\duilib\duilib.vcxproj">
+      <Project>{e106acd7-4e53-4aee-942b-d0dd426db34e}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\net\net.vcxproj">
+      <Project>{93d48c33-d49c-494f-9742-cfef8c54cf08}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\shared\shared.vcxproj">
       <Project>{9951345f-620b-4bed-bb51-4f928cafd454}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\capture_image\capture_image.vcxproj">
+      <Project>{a8b95530-a231-4089-8f84-b1dbad8f3008}</Project>
     </ProjectReference>
     <ProjectReference Include="..\image_view\image_view.vcxproj">
       <Project>{92850844-a8e2-43fb-ae1d-14f72aa0a59c}</Project>

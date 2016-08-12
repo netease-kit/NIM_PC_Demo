@@ -352,6 +352,14 @@ public:
 		, const QueryTeamMemberCallback& cb
 		, const std::string& json_extension = "");
 
+	/** @fn static bool QueryTeamMemberBlock(const std::string& tid, const std::string& id)
+	* 查询(单个)群成员信息(同步版本，堵塞NIM内部线程，谨慎使用)
+	* @param[in] tid		群组id
+	* @param[in] id		    群成员id
+	* @return 群成员信息
+	*/
+	static TeamMemberProperty QueryTeamMemberBlock(const std::string& tid, const std::string& id);
+
 	/** @fn static bool QueryTeamInfoAsync(const std::string& tid, const QueryTeamInfoCallback& cb, const std::string& json_extension = "")
 	* 查询群信息
 	* @param[in] tid		群组id
@@ -360,6 +368,13 @@ public:
 	* @return bool 检查参数如果不符合要求则返回失败
 	*/
 	static bool QueryTeamInfoAsync(const std::string& tid, const QueryTeamInfoCallback& cb, const std::string& json_extension = "");
+
+	/** @fn static TeamInfo QueryTeamInfoBlock(const std::string& tid)
+	* 查询群信息(同步版本，堵塞NIM内部线程，谨慎使用)
+	* @param[in] tid		群组id
+	* @return 群信息
+	*/
+	static TeamInfo QueryTeamInfoBlock(const std::string& tid);
 
 	/** @fn static bool QueryTeamInfoOnlineAsync(const std::string& tid, const TeamEventCallback& cb, const std::string& json_extension = "")
 	* 获取群信息

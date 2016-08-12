@@ -136,7 +136,7 @@ enum NIMSysMsgType
 {
 	kNIMSysMsgTypeTeamApply			= 0,		/**< 申请入群  */
 	kNIMSysMsgTypeTeamReject		= 1,		/**< 拒绝入群申请 */
-	kNIMSysMsgTypeTeamInvite		= 2,		/**< 邀请进群 kNIMSysMsgKeyAttach : {"team_info":team_info} //群组信息(Keys SEE MORE `nim_team_def.h` 『群组信息 Json Keys』) */
+	kNIMSysMsgTypeTeamInvite		= 2,		/**< 邀请进群 kNIMSysMsgKeyAttach : {"team_info":team_info, "attach" : ""} attach为可选字段，作为应用自定义扩展字段,解析前需要判断有没有这个字段, 群组信息(Keys SEE MORE `nim_team_def.h` 『群组信息 Json Keys』) */
 	kNIMSysMsgTypeTeamInviteReject	= 3,		/**< 拒绝邀请 */
 	kNIMSysMsgTypeFriendAdd			= 5,		/**< 加好友, kNIMSysMsgKeyAttach: {"vt":verifyType} */
 	kNIMSysMsgTypeFriendDel			= 6,		/**< 删除好友 */

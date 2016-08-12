@@ -1,6 +1,6 @@
 // Copyright (c) 2011, NetEase Inc. All rights reserved.
 //
-// Author: Wang Rongtao <rtwang@corp.netease.com>
+// Author: wrt(guangguang)
 // Date: 2011/6/8
 //
 // a implemention of a Windows specific message pump for user interface,

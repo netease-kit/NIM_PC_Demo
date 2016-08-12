@@ -223,6 +223,10 @@ void ProfileForm::InitUserInfo(const nim::UserNameCard &info)
 
 		if (have_mute_right_)
 		{
+			//TODO(litianyi) 同步堵塞接口测试
+			//nim::TeamMemberProperty prop = nim::Team::QueryTeamMemberBlock(tid_, m_uinfo.GetAccId());
+			//mute_switch->Selected(prop.IsMute());
+
 			nim::Team::QueryTeamMemberAsync(tid_, m_uinfo.GetAccId(), ToWeakCallback([this](const nim::TeamMemberProperty& team_member_info) {
 				mute_switch->Selected(team_member_info.IsMute());
 			}));

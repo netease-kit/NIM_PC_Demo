@@ -31,6 +31,7 @@ public:
 	typedef std::function<void(void)> DisconnectCallback;		/**< 断网通知回调模板 */
 	typedef std::function<void(const MultiSpotLoginRes&)> MultiSpotLoginCallback;	/**< 多端登录通知回调模板 */
 	typedef std::function<void(const KickOtherRes&)> KickOtherCallback;	/**< 将多端下线回调模板 */
+	typedef std::function<void(int, bool)> MultiportPushConfigCallback;	/**< 多端推送控制开关回调模板 */
 
 public:
 	/** @fn bool Init(const std::string& app_data_dir, const std::string& app_install_dir, const SDKConfig &config)
@@ -131,6 +132,31 @@ public:
 	* @return void 无返回值
 	*/
 	static void RegKickOtherClientCb(const KickOtherCallback& cb, const std::string& json_extension = "");
+
+	/** @fn void RegSyncMultiportPushConfigCb(const MultiportPushConfigCallback& cb, const std::string& json_extension = "")
+	* 注册多端推送开关同步回调
+	* @param[in] cb 回调函数
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @return void 无返回值
+	*/
+	static void RegSyncMultiportPushConfigCb(const MultiportPushConfigCallback& cb, const std::string& json_extension = "");
+
+	/** @fn void SetMultiportPushConfigAsync(bool switch_on, const MultiportPushConfigCallback& cb, const std::string& json_extension = "")
+	* 设置多端推送
+	* @param[in] switch_on 开关
+	* @param[in] cb 回调函数
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @return void
+	*/
+	static void SetMultiportPushConfigAsync(bool switch_on, const MultiportPushConfigCallback& cb, const std::string& json_extension = "");
+
+	/** @fn void GetMultiportPushConfigAsync(const MultiportPushConfigCallback& cb, const std::string& json_extension = "")
+	* 获得多端推送设置
+	* @param[in] cb 回调函数
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @return void
+	*/
+	static void GetMultiportPushConfigAsync(const MultiportPushConfigCallback& cb, const std::string& json_extension = "");
 
 	/** @fn void UnregClientCb()
 	* 反注册Client提供的所有回调

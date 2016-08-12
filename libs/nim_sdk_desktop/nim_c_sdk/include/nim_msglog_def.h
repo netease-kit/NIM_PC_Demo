@@ -154,8 +154,8 @@ enum NIMMsgLogStatus
 /** @enum NIMNotificationId Notification Id */
 enum NIMNotificationId
 {
-	kNIMNotificationIdTeamInvite			= 0,			/**< 普通群拉人，{"ids":["a1", "a2"],"user_namecards":["namecard1", "namecard2"]}*/
-	kNIMNotificationIdTeamKick				= 1,			/**< 普通群踢人，{"ids":["a1", "a2"],"user_namecards":["namecard1", "namecard2"]}*/
+	kNIMNotificationIdTeamInvite			= 0,			/**< 普通群拉人，{"ids":["a1", "a2"],"user_namecards":["namecard1", "namecard2"], "attach" : ""} attach为可选字段，作为应用自定义扩展字段,解析前需要判断有没有这个字段 */
+	kNIMNotificationIdTeamKick				= 1,			/**< 普通群踢人，{"ids":["a1", "a2"],"user_namecards":["namecard1", "namecard2"], "attach" : ""} attach为可选字段，作为应用自定义扩展字段,解析前需要判断有没有这个字段 */
 	kNIMNotificationIdTeamLeave				= 2,			/**< 退出群，{"id" : "a1","user_namecards":["namecard1", "namecard2"]}*/
 	kNIMNotificationIdTeamUpdate			= 3,			/**< team_info更新，{"team_info":team_info,"user_namecards":["namecard1", "namecard2"]} //群组信息(Keys SEE MORE `nim_team_def.h` 『群组信息 Json Keys』)*/
 	kNIMNotificationIdTeamDismiss			= 4,			/**< 群解散，{"user_namecards":["namecard1", "namecard2"]}*/

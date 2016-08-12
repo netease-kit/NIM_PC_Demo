@@ -38,6 +38,7 @@ public:
 	typedef std::function<void(__int64 room_id, int error_code, const ChatRoomInfo& info)> GetChatRoomInfoCallback; /**< 获取当前聊天室信息回调*/
 	typedef std::function<void(__int64 room_id, int error_code)> KickMemberCallback; /**< 踢掉指定成员回调*/
 	typedef std::function<void(__int64 room_id, const NIMChatRoomLinkCondition condition)> LinkConditionCallback; /**< 服务连接情况回调*/
+	typedef SetMemberAttributeCallback TempMuteMemberCallback; /**< 临时禁言/解禁回调*/
 
 public:
 /** @fn void RegEnterCb(const EnterCallback& cb, const std::string& json_extension = "")
@@ -99,7 +100,7 @@ static bool Init(const std::string& json_extension = "");
   * 聊天室登录
   * @param[in] room_id			  聊天室ID
   * @param[in] request_login_data 聊天室登录信息(NIM SDK请求聊天室返回的数据)
-  * @param[in] info				  聊天室可选信息(暂时不支持)
+  * @param[in] info				  聊天室可选信息
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
   * @return bool 登录信息是否正确,返回失败则不会促发登录回调
   */
@@ -236,6 +237,25 @@ static void SetProxy(NIMChatRoomProxyType type,
 	int				   port, 
 	const std::string& user, 
 	const std::string& password);
+
+/** @fn static void TempMuteMemberAsync(const __int64 room_id, const std::string& accid, const __int64 duration, bool need_notify, std::string& notify_ext, const TempMuteMemberCallback& callback, const std::string &json_extension = "");
+  * 异步临时禁言/解禁成员
+  * @param[in] room_id				聊天室ID
+  * @param[in] accid				成员ID
+  * @param[in] duration				临时禁言时长（秒），解禁填0
+  * @param[in] need_notify			是否聊天室内广播通知
+  * @param[in] notify_ext			通知中的自定义字段，长度限制2048
+  * @param[in] callback				回调函数
+  * @param[in] json_extension		json扩展参数（备用，目前不需要）
+  * @return void 无返回值
+  */
+static void TempMuteMemberAsync(const __int64 room_id
+	, const std::string& accid
+	, const __int64 duration
+	, bool need_notify
+	, const std::string& notify_ext
+	, const TempMuteMemberCallback& callback
+	, const std::string &json_extension = "");
 
 };
 

@@ -1,6 +1,6 @@
 ﻿// Copyright (c) 2011, NetEase Inc. All rights reserved.
 //
-// Author: Wang Rongtao <rtwang@corp.netease.com>
+// Author: wrt(guangguang)
 // Date: 2011/06/09
 //
 // This file trys to implement a cross flatform message loop,

@@ -1,12 +1,12 @@
 // Copyright (c) 2011, NetEase Inc. All rights reserved.
 //
-// Author: Ruan Liang <ruanliang@corp.netease.com>
+// Author: rl
 // Date: 2011/6/6
 //
 // cpu description
 /*
  *
- *	Author		Ruan Liang <ruanliang@corp.netease.com>
+ *	Author		rl
  *	Date		2011-06-06
  *	Copyright	Hangzhou, Netease Inc.
  *	Brief		cpu description

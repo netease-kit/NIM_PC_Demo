@@ -31,6 +31,8 @@ public:
 	{
 		return nbase::Bind(&MsgBubbleFile::FileUpPrgCallback, this, std::placeholders::_1, std::placeholders::_2);
 	}
+
+	bool OnMenu(ui::EventArgs* arg);
 protected:
 
 	/** 

@@ -235,9 +235,6 @@ bool MsgLog::QueryMsgByOptionsAsync(NIMMsgLogQueryRange query_range
 	, const QueryMsgCallback& cb
 	, const std::string& json_extension/* = ""*/)
 {
-	if (ids.empty() || limit_count <= 0 || search_content.empty())
-		return false;
-
 	QueryMsgCallback* cb_pointer = nullptr;
 	if (cb)
 	{

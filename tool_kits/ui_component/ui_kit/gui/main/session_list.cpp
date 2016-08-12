@@ -248,57 +248,64 @@ void SessionList::ShowMultispotUI()
 
 void SessionList::OnChangeCallback(nim::NIMResCode rescode, const nim::SessionData& data, int total_unread_counts)
 {
-		switch (data.command_)
+	if (rescode != nim::kNIMResSuccess)
+	{
+		QLOG_APP(L"SessionList::OnChangeCallback Error! {0}, uid:{1}, unread_count: {2}") << rescode << data.id_<< total_unread_counts;
+		assert(0);
+		return;
+	}
+	QLOG_APP(L"SessionList::OnChangeCallback. command: {0}, uid: {1}, type: {2}, total unread_count: {3}") << data.command_ << data.id_ << data.type_ << total_unread_counts;
+	switch (data.command_)
+	{
+	case nim::kNIMSessionCommandAdd:
+	case nim::kNIMSessionCommandUpdate:
+	case nim::kNIMSessionCommandMsgDeleted:
+	{
+		if (data.last_updated_msg_)
 		{
-		case nim::kNIMSessionCommandAdd:
-		case nim::kNIMSessionCommandUpdate:
-		case nim::kNIMSessionCommandMsgDeleted:
-		{
-			if (data.last_updated_msg_)
+			AddSessionItem(data);
+			if (SessionManager::GetInstance()->IsSessionWndActive(data.id_))
 			{
-				AddSessionItem(data);
-				if (SessionManager::GetInstance()->IsSessionWndActive(data.id_))
+				ResetSessionUnread(data.id_);
+			}
+		}
+	}
+	break;
+	case nim::kNIMSessionCommandRemoveAll:
+		RemoveAllSessionItem();
+		break;
+	case nim::kNIMSessionCommandRemoveAllP2P:
+	case nim::kNIMSessionCommandRemoveAllTeam:
+	{
+		for (int i = session_list_->GetCount() - 1; i >= 0; i--)
+		{
+			SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
+			if (item && (item->GetIsTeam() == (data.command_ == nim::kNIMSessionCommandRemoveAllTeam)))
+			{
+				session_list_->RemoveAt(i);
+			}
+		}
+	}
+	break;
+	case nim::kNIMSessionCommandRemove:
+		break;
+	case nim::kNIMSessionCommandAllMsgDeleted:
+	case nim::kNIMSessionCommandAllP2PMsgDeleted:
+	case nim::kNIMSessionCommandAllTeamMsgDeleted:
+	{
+		for (int i = session_list_->GetCount() - 1; i >= 0; i--)
+		{
+			SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
+			if (item)
+			{
+				if (data.command_ == nim::kNIMSessionCommandAllMsgDeleted || (item->GetIsTeam() == (data.command_ == nim::kNIMSessionCommandAllTeamMsgDeleted)))
 				{
-					ResetSessionUnread(data.id_);
+					item->ClearMsg();
 				}
 			}
 		}
-		break;
-		case nim::kNIMSessionCommandRemoveAll:
-			RemoveAllSessionItem();
-			break;
-		case nim::kNIMSessionCommandRemoveAllP2P:
-		case nim::kNIMSessionCommandRemoveAllTeam:
-		{
-			for (int i = session_list_->GetCount() - 1; i >= 0; i--)
-			{
-				SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
-				if (item && (item->GetIsTeam() == (data.command_ == nim::kNIMSessionCommandRemoveAllTeam)))
-				{
-					session_list_->RemoveAt(i);
-				}
-			}
-		}
-		break;
-		case nim::kNIMSessionCommandRemove:
-			break;
-		case nim::kNIMSessionCommandAllMsgDeleted:
-		case nim::kNIMSessionCommandAllP2PMsgDeleted:
-		case nim::kNIMSessionCommandAllTeamMsgDeleted:
-		{
-			for (int i = session_list_->GetCount() - 1; i >= 0; i--)
-			{
-				SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
-				if (item)
-				{
-					if (data.command_ == nim::kNIMSessionCommandAllMsgDeleted || (item->GetIsTeam() == (data.command_ == nim::kNIMSessionCommandAllTeamMsgDeleted)))
-					{
-						item->ClearMsg();
-					}
-				}
-			}
-		}
-		break;
+	}
+	break;
 	}
 }
 

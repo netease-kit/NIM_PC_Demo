@@ -31,7 +31,7 @@ void PluginIn::ChatRoomRequestEnterAsync(const __int64 room_id, const ChatRoomRe
 	if (callback)
 		cb_pointer = new ChatRoomRequestEnterCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_plugin_chatroom_request_enter_async)(room_id, json_extension.c_str(), &CallbackRequestChatRoomEnter, cb_pointer);;
+	return NIM_SDK_GET_FUNC(nim_plugin_chatroom_request_enter_async)(room_id, json_extension.c_str(), &CallbackRequestChatRoomEnter, cb_pointer);
 }
 
 }

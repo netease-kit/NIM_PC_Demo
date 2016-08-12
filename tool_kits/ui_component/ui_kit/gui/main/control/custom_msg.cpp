@@ -71,20 +71,27 @@ void CustomMsgBubble::InitInfo(const nim::IMMessage &msg)
 		}
 		msg_body += L"【附言】" + nbase::UTF8ToUTF16(msg.content_);
 	}
+	bool fetch_data = false;
 	Json::Value json;
-	if (StringToJson(msg.attach_, json))
+	if (StringToJson(msg.attach_, json) && json.isObject())
 	{
-		std::string id = json["id"].asString();
-		std::string content = json["content"].asString();
-		if (id == "2" && !content.empty())
+		if (json.isMember("id") && json.isMember("content"))
 		{
-			if (!msg_body.empty())
+			std::string id = json["id"].asString();
+			std::string content = json["content"].asString();
+			if (id == "2" && !content.empty())
 			{
-				msg_body += L"\r\n【内容】";
+				if (!msg_body.empty())
+				{
+					msg_body += L"\r\n【内容】";
+				}
+				msg_body = nbase::UTF8ToUTF16(content);
+				fetch_data = true;
 			}
-			msg_body = nbase::UTF8ToUTF16(content);
 		}
 	}
+	if (!fetch_data)
+		msg_body = nbase::UTF8ToUTF16(msg.attach_);
 
 	SetMsgText(msg_body);
 }

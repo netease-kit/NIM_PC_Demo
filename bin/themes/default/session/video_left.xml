@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ButtonBox name="msg_video" width="auto" height="auto" minwidth="94" minheight="67" cursortype="hand" menu="true" mousechild="false" bkimage="file='bubble_left.png' corner='25,15,15,15'">
+        <Control mouse="false" name="image" width="auto" height="auto" margin="11,5,5,5" halign="center" valign="center" bkimage="image_video_default.png" forenormalimage="file='image_img_foreimage_left.png' corner='20,20,20,20'"/>
+		<Control mouse="false" width="auto" height="auto" margin="11,5,5,5" halign="center" valign="center" bkimage="play_hovered.png"/>
+	</ButtonBox>
+</Window>

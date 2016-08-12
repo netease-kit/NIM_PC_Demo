@@ -189,12 +189,12 @@ public:
 		, const MessageSetting& msg_setting
 		, __int64 timetag = 0);
 
-	/** @fn static std::string CreateTipMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const Json::Value& tips, const MessageSetting& msg_setting, __int64 timetag  = 0)
+	/** @fn static std::string CreateTipMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const std::string& tip_content, const MessageSetting& msg_setting, __int64 timetag  = 0)
 	/* 生成Tip消息内容,生成的字符串在调用SendMsg时直接传入
 	*  @param[in] receiver_id 聊天对象的 ID,如果是单聊,为用户帐号,如果是群聊,为群组 ID
 	*  @param[in] session_type NIMSessionType,聊天类型,单聊或群组
 	*  @param[in] client_msg_id 客户端消息id,建议uuid
-	*  @param[in] tips Tip内容
+	*  @param[in] tip_content Tip文本内容
 	*  @param[in] msg_setting 消息属性设置
 	*  @param[in] timetag 消息时间
 	*  @return std::string 位置消息Json字符串
@@ -202,7 +202,24 @@ public:
 	static std::string CreateTipMessage(const std::string& receiver_id
 		, const NIMSessionType session_type
 		, const std::string& client_msg_id
-		, const Json::Value& tips
+		, const std::string& tip_content
+		, const MessageSetting& msg_setting
+		, __int64 timetag = 0);
+
+	/** @fn static std::string CreateRetweetMessage(const std::string& src_msg_json	, const std::string& client_msg_id	, const NIMSessionType retweet_to_session_type	, const std::string& retweet_to_session_id	, const MessageSetting& msg_setting	, __int64 timetag = 0)
+	/* 由其他消息生成转发消息
+	*  @param[in] src_msg_json 原消息json
+	*  @param[in] client_msg_id 新的客户端消息id,建议uuid
+	*  @param[in] retweet_to_session_type 转发目标会话类型 NIMSessionType
+	*  @param[in] retweet_to_session_id 转发目标ID
+	*  @param[in] msg_setting 消息属性设置
+	*  @param[in] timetag 消息时间
+	*  @return std::string 位置消息Json字符串
+	*/
+	static std::string CreateRetweetMessage(const std::string& src_msg_json
+		, const std::string& client_msg_id
+		, const NIMSessionType retweet_to_session_type
+		, const std::string& retweet_to_session_id
 		, const MessageSetting& msg_setting
 		, __int64 timetag = 0);
 

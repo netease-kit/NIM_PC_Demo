@@ -287,6 +287,17 @@ void ChatroomForm::SetMemberAttributeCallback(__int64 room_id, int error_code, c
 
 }
 
+void ChatroomForm::TempMuteCallback(__int64 room_id, int error_code, const ChatRoomMemberInfo& info)
+{
+	if (error_code != nim::kNIMResSuccess || room_id_ != room_id)
+		return;
+
+	StdClosure cb = [=](){
+		SetMemberTempMute(info.account_id_, info.temp_muted_, info.temp_muted_ ? info.temp_muted_duration_ : 0);
+	};
+	Post2UI(cb);
+}
+
 void ChatroomForm::KickMemberCallback(__int64 room_id, int error_code)
 {
 	if (error_code != nim::kNIMResSuccess || room_id_ != room_id)
@@ -515,6 +526,16 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 			str = nbase::StringPrintf(L"%s被管理员移出直播间", nick.c_str());
 			RemoveMember(*it_id);
 		}
+		else if (notification.id_ == kNIMChatRoomNotificationIdMemberTempMute)
+		{
+			str = nbase::StringPrintf(L"%s被管理员临时禁言%lld秒", nick.c_str(), notification.temp_mute_duration_);
+			SetMemberTempMute(*it_id, true, notification.temp_mute_duration_);
+		}
+		else if (notification.id_ == kNIMChatRoomNotificationIdMemberTempUnMute)
+		{
+			str = nbase::StringPrintf(L"%s被管理员解除临时禁言，此时离自动解除还有%lld秒", nick.c_str(), notification.temp_mute_duration_);
+			SetMemberTempMute(*it_id, false, notification.temp_mute_duration_);
+		}
 
 		AddNotify(str, is_history);
 	}
@@ -530,7 +551,7 @@ void ChatroomForm::OnBtnSend()
 	}
 
 	auto my_info = members_list_.find(nim_ui::LoginManager::GetInstance()->GetAccount());
-	if (my_info != members_list_.end() && !my_info->second.is_muted_)
+	if (my_info != members_list_.end() && !my_info->second.is_muted_ && !my_info->second.temp_muted_)
 	{
 		wstring sText;
 		nim_comp::Re_GetText(input_edit_->GetTextServices(), sText);
@@ -687,7 +708,9 @@ void ChatroomForm::SendImage(const std::wstring &src)
 	nim::NOS::UploadResource(utf8, [this, img, weak_flag](nim::NIMResCode res_code, const std::string& url) {
 		if (!weak_flag.expired() && res_code == nim::kNIMResSuccess)
 		{
-			std::string send_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeImage, QString::GetGUID(), img.ToJsonString());
+			nim::IMImage new_img(img);
+			new_img.url_ = url;
+			std::string send_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeImage, QString::GetGUID(), new_img.ToJsonString());
 			ChatRoom::SendMsg(room_id_, send_msg);
 		}
 	});
@@ -715,7 +738,7 @@ void ChatroomForm::OnBtnJsb()
 	}
 
 	auto my_info = members_list_.find(nim_ui::LoginManager::GetInstance()->GetAccount());
-	if (my_info != members_list_.end() && !my_info->second.is_muted_)
+	if (my_info != members_list_.end() && !my_info->second.is_muted_ && !my_info->second.temp_muted_)
 	{
 		int jsb = (rand() % 3 + rand() % 4 + rand() % 5) % 3 + 1;
 

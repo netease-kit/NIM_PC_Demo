@@ -99,6 +99,8 @@ MsgBubbleItem* SessionForm::ShowMsg(const nim::IMMessage &msg, bool first, bool 
 		item = new MsgBubbleLocation;
 	else if (msg.type_ == nim::kNIMMessageTypeFile)
 		item = new MsgBubbleFile;
+	else if (msg.type_ == nim::kNIMMessageTypeVideo)
+		item = new MsgBubbleVideo;
 	else if (msg.type_ == nim::kNIMMessageTypeNotification || msg.type_ == nim::kNIMMessageTypeTips)
 	{
 		id_bubble_pair_[bubble_id] = NULL;
