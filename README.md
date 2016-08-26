@@ -24,9 +24,9 @@ demo的主要功能由demo工程本身以及`UI组件`工程共同完成，demo�
 
 - nim_audio.dll：语音消息功能库文件。
 
-- nim_videochat.dll：音视频通话功能库文件。
+- nrtc.dll：音视频通话功能库文件。
 
-- nim_tools_http.dll：http功能库文件。
+- nim\_tools\_http.dll：http功能库文件。
 
 - msvcr100.dll：SDK依赖的VS2010动态链接库。
 
