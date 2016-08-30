@@ -40,15 +40,7 @@ void MsgBubbleAudio::InitInfo(const nim::IMMessage &msg)
 
 	SetCanPlay(false);
 	InitTime();
-
-	path_ = msg.local_res_path_;
-	if( path_.empty() )
-	{
-		nim::IMAudio audio_data;
-		nim::Talk::ParseAudioMessageAttach(msg, audio_data);
-		std::string dir = nbase::UTF16ToUTF8(GetUserAudioPath());
-		path_ = dir + audio_data.md5_;
-	}
+	InitResPath();
 
 	if( shared::FilePathIsExist(path_, false) )
 	{
@@ -64,9 +56,9 @@ void MsgBubbleAudio::InitInfo(const nim::IMMessage &msg)
 		{
 			if (msg_.rescode_ == nim::kNIMResSuccess)
 				SetLoadStatus(RS_LOADING);
-			else if (msg_.rescode_ == nim::kNIMLocalResMsgUrlInvalid)
+			else if (msg_.rescode_ == nim::kNIMLocalResParameterError)
 				SetLoadStatus(RS_LOAD_NO);
-			else if (msg_.rescode_ == nim::kNIMLocalResMsgFileExist)
+			else if (msg_.rescode_ == nim::kNIMLocalResExist)
 				SetCanPlay(true);
 			else
 				QLOG_WAR(L"unknown receive msg code {0}") <<msg_.rescode_;
@@ -75,7 +67,19 @@ void MsgBubbleAudio::InitInfo(const nim::IMMessage &msg)
 	SetPlayed(msg_.sub_status_ == nim::kNIMMsgLogSubStatusPlayed);
 }
 
-bool MsgBubbleAudio::OnClicked( ui::EventArgs* arg )
+void MsgBubbleAudio::InitResPath()
+{
+	path_ = msg_.local_res_path_;
+	if (path_.empty() || !shared::FilePathIsExist(path_, false))
+	{
+		nim::IMAudio audio_data;
+		nim::Talk::ParseAudioMessageAttach(msg_, audio_data);
+		std::string dir = nbase::UTF16ToUTF8(GetUserAudioPath());
+		path_ = dir + audio_data.md5_;
+	}
+}
+
+bool MsgBubbleAudio::OnClicked(ui::EventArgs* arg)
 {
 	std::wstring name = arg->pSender->GetName();
 	if( name == L"msg_audio" )
@@ -88,8 +92,12 @@ bool MsgBubbleAudio::OnClicked( ui::EventArgs* arg )
 		{
 			if( !shared::FilePathIsExist(path_, false) )
 			{
-				QLOG_ERR(L"Audio not exist: {0}") <<path_;
-				return false;
+				InitResPath();
+				if (!shared::FilePathIsExist(path_, false))
+				{
+					QLOG_ERR(L"Audio not exist: {0}") << path_;
+					return false;
+				}
 			}
 
 			AudioCallback::SetPlaySid(sid_);
@@ -213,7 +221,7 @@ void MsgBubbleAudio::OnStopCallback( int code )
 
 bool MsgBubbleAudio::OnMenu( ui::EventArgs* arg )
 {
-	PopupMenu(false);
+	PopupMenu(false, true);
 	return false;
 }
 

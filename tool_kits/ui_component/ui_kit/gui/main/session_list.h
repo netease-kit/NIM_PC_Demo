@@ -5,6 +5,9 @@
 
 namespace nim_comp
 {
+
+typedef std::function<void(int unread_count)> OnUnreadCountChangeCallback;
+
 /** @class SessionList
   * @brief 用于操作和维护最近会话列表
   * @copyright (c) 2015, NetEase Inc. All rights reserved
@@ -21,6 +24,9 @@ public:
 	SessionItem* AddSessionItem(const nim::SessionData &msg);
 	void RemoveAllSessionItem();
 
+	// 注册未读会话消息总数改变的回调
+	void InvokeUnreadCountChange();
+	UnregisterCallback RegUnreadCountChange(const OnUnreadCountChangeCallback& callback);
 	void AddUnreadCount(const std::string &id);
 	void ResetSessionUnread(const std::string &id);
 
@@ -64,5 +70,6 @@ private:
 
 	AutoUnregister unregister_cb;
 	std::map<nim::NIMClientType, nim::OtherClientPres> map_multispot_infos_;
+	std::map<int, std::unique_ptr<OnUnreadCountChangeCallback>> unread_count_change_cb_list_;
 };
 }

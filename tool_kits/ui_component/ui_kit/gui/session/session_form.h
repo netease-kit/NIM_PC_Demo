@@ -144,6 +144,15 @@ public:
 	*/
 	void OnDownloadCallback(const std::string &cid, bool success);
 
+	/**
+	* 被转发的消息的资源文件被清理了，则重新下载，否则加载本地资源文件的消息会显示有错误
+	* @param[in] code 返回码
+	* @param[in] file_path 文件下载保存的路径
+	* @param[in] sid 会话id（好友id或群id）
+	* @param[in] cid 消息id
+	* @return void	无返回值
+	*/
+	void OnRetweetResDownloadCallback(nim::NIMResCode code, const std::string& file_path, const std::string& sid, const std::string& cid);
 	//////////////////////////////////////////////////////////////////////////
 	//音频相关的操作
 
@@ -212,6 +221,8 @@ public:
 			return nim::TeamMemberProperty();
 	}
 
+	void RecallMsg(nim::NIMResCode code, const nim::RecallMsgNotify &notify);
+
 private:
 	/** 
 	* 执行截图操作		
@@ -244,7 +255,10 @@ private:
 	void PackageMsg(nim::IMMessage &msg);
 	void CheckLastReceiptMsg();
 	bool GetLastNeedSendReceiptMsg(nim::IMMessage &msg);
-	void RemoveMsgItem(const std::string& client_msg_id); //移除消息气泡
+	int RemoveMsgItem(const std::string& client_msg_id); //移除消息气泡
+
+	void CallbackWriteMsglog(const std::wstring &notify_text, nim::NIMResCode res_code, const std::string& msg_id);
+
 private:
 	void FlashTaskbar();
 

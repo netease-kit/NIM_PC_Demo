@@ -24,6 +24,7 @@ VideoForm::VideoForm(std::string session_id) : session_id_(session_id)
 	channel_id_		 = 0;
 	screen_is_other_ = true;
 	current_video_mode_ = false;
+	custom_video_mode_ = false;
 	is_self_ = true;
 
 	end_call_ = END_CALL_NONE;
@@ -160,6 +161,8 @@ void VideoForm::InitWindow()
 	camera_checkbox_ = (CheckBox*) FindControl(L"camera");
 	start_record_btn_ = (Button*)FindControl(L"record_start");
 	stop_record_btn_ = (Button*)FindControl(L"record_stop");
+	face_open_btn_ = (Button*)FindControl(L"face_open");
+	face_close_btn_ = (Button*)FindControl(L"face_close");
 
 	input_volumn_slider_ = (Slider*) FindControl( L"input_volumn" );
 	vbox_of_input_ = (VBox*) FindControl( L"vbox_of_input_volumn" );
@@ -609,6 +612,14 @@ bool VideoForm::OnClicked( ui::EventArgs* arg )
 	else if (name == L"rotate")
 	{
 		nim::VChat::SetRotateRemoteVideo(!nim::VChat::IsRotateRemoteVideo());
+	}
+	else if (name == L"face_open")
+	{
+		SetCustomVideoMode(true);
+	}
+	else if (name == L"face_close")
+	{
+		SetCustomVideoMode(false);
 	}
 	return false;
 }
@@ -1061,10 +1072,15 @@ void VideoForm::InitSetting()
 				camera_checkbox_->SetEnabled(true);
 		}
 		camera_checkbox_->SetVisible(true);
+		//暂时不开发放功能
+		//face_open_btn_->SetVisible(!custom_video_mode_);
+		//face_close_btn_->SetVisible(custom_video_mode_);
 	}
 	else
 	{
 		camera_checkbox_->SetVisible(false);
+		face_open_btn_->SetVisible(false);
+		face_close_btn_->SetVisible(false);
 	}
 }
 

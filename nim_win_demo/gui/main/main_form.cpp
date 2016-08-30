@@ -2,7 +2,7 @@
 
 using namespace ui;
 
-bool MainForm::SearchEditChange(ui::EventArgs* param) 
+bool MainForm::SearchEditChange(ui::EventArgs* param)
 {
 	UTF8String search_key = search_edit_->GetUTF8Text();
 	bool has_serch_key = !search_key.empty();

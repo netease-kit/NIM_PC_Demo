@@ -118,6 +118,9 @@
     <Filter Include="gui\video\helper">
       <UniqueIdentifier>{413e9754-b788-402a-95e6-5ba717e03186}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gui\toast">
+      <UniqueIdentifier>{987e0053-5f75-44af-9cc5-3cd8fd41b1f2}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -417,11 +420,14 @@
     <ClInclude Include="export\nim_ui_photo_manager.h">
       <Filter>module\service</Filter>
     </ClInclude>
-    <ClInclude Include="callback\login\data_sync_callback.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="gui\session\control\bubble_video.h">
-      <Filter>头文件</Filter>
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="callback\login\data_sync_callback.h">
+      <Filter>callback\login</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\toast\toast.h">
+      <Filter>gui\toast</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -728,11 +734,14 @@
     <ClCompile Include="export\nim_ui_photo_manager.cpp">
       <Filter>module\service</Filter>
     </ClCompile>
-    <ClCompile Include="callback\login\data_sync_callback.cpp">
-      <Filter>源文件</Filter>
-    </ClCompile>
     <ClCompile Include="gui\session\control\bubble_video.cpp">
-      <Filter>源文件</Filter>
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="callback\login\data_sync_callback.cpp">
+      <Filter>callback\login</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\toast\toast.cpp">
+      <Filter>gui\toast</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

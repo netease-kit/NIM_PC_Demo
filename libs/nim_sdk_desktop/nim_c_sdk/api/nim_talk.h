@@ -83,7 +83,25 @@ NIM_SDK_DLL_API void nim_talk_reg_notification_filter_cb(const char *json_extens
 */
 NIM_SDK_DLL_API char *nim_talk_create_retweet_msg(const char* src_msg_json, const char* client_msg_id, const NIMSessionType retweet_to_session_type, const char* retweet_to_session_id, const char* msg_setting, __int64 timetag);
 
+/** @fn void nim_talk_recall_msg(const char *json_msg, const char *notify, const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data)
+  * 撤回消息
+  * @param[in] json_msg		消息体Json string (Keys SEE MORE `nim_talk_def.h` 『消息结构 Json Keys』)
+  * @param[in] notify		自定义通知
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		nim_talk_recall_msg_func回调函数定义见nim_talk_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_talk_recall_msg(const char *json_msg, const char *notify, const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data);
 
+/** @fn void nim_talk_reg_recall_msg_cb(const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data)
+  * 注册接收消息撤回通知的回调
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		nim_talk_recall_msg_func回调函数定义见nim_talk_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_talk_reg_recall_msg_cb(const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data);
 
 #ifdef __cplusplus
 };

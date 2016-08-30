@@ -13,6 +13,10 @@
             <Label class="menu_text" text="转文字"/>
         </MenuElement>
 		
+        <MenuElement class="MenuElement" name="recall" width="170">
+            <Label class="menu_text" text="撤回"/>
+        </MenuElement>
+		
         <MenuElement class="MenuElement" name="retweet" width="170">
             <Label class="menu_text" text="转发到当前会话(测试)"/>
         </MenuElement>

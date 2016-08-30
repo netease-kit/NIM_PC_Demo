@@ -7,7 +7,6 @@
 #include "callback/team/team_callback.h"
 #include "gui/chatroom_frontpage.h"
 
-
 using namespace ui;
 
 const LPCTSTR MainForm::kClassName	= L"MainForm";
@@ -104,9 +103,13 @@ void MainForm::InitWindow()
 	label_name_ = (Label*) FindControl(L"label_name");
 	InitHeader();
 
+	box_unread_ = (Box*) this->FindControl(L"box_unread");
+	label_unread_ = (Label*) this->FindControl(L"label_unread");
 	((OptionBox*) FindControl(L"btn_session_list"))->Selected(true, true);
 	ui::ListBox* session_list = (ListBox*)FindControl(L"session_list");
 	nim_ui::SessionListManager::GetInstance()->AttachListBox(session_list);
+	unregister_cb.Add(nim_ui::SessionListManager::GetInstance()->RegUnreadCountChange(nbase::Bind(&MainForm::OnUnreadCountChange, this, std::placeholders::_1)));
+
 	ui::TreeView* friend_list = (TreeView*) FindControl(L"friend_list");
 	nim_ui::ContactsListManager::GetInstance()->AttachFriendListBox(friend_list);
 	ui::TreeView* group_list = (TreeView*) FindControl(L"group_list");
@@ -148,6 +151,19 @@ void MainForm::OnUserPhotoReady(PhotoType type, const std::string& account, cons
 {
 	if (type == kUser && nim_ui::LoginManager::GetInstance()->GetAccount() == account)
 		btn_header_->SetBkImage(photo_path);
+}
+
+void MainForm::OnUnreadCountChange(int unread_count)
+{
+	if (unread_count > 0)
+	{
+		label_unread_->SetText(nbase::StringPrintf(L"%d", unread_count));
+		box_unread_->SetVisible(true);
+	}
+	else
+	{
+		box_unread_->SetVisible(false);
+	}
 }
 
 void MainForm::InitHeader()

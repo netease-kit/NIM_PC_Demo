@@ -12,7 +12,7 @@ namespace nim_chatroom
 {
 typedef void(*nim_chatroom_reg_enter_cb)(const char *json_extension, nim_chatroom_enter_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_reg_exit_cb)(const char *json_extension, nim_chatroom_exit_cb_func cb, const void *user_data);
-typedef void(*nim_chatroom_reg_send_msg_arc_cb)(const char *json_extension, nim_chatroom_sendmsg_arc_cb_func cb, const void *user_data);
+typedef void(*nim_chatroom_reg_send_msg_ack_cb)(const char *json_extension, nim_chatroom_sendmsg_arc_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_reg_receive_msg_cb)(const char *json_extension, nim_chatroom_receive_msg_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_reg_receive_notification_cb)(const char *json_extension, nim_chatroom_receive_notification_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_reg_link_condition_cb)(const char *json_extension, nim_chatroom_link_condition_cb_func cb, const void *user_data);
@@ -163,7 +163,7 @@ void ChatRoom::RegSendMsgAckCb(const SendMsgAckCallback& cb, const std::string& 
 		g_cb_send_msg_ack_ = nullptr;
 	}
 	g_cb_send_msg_ack_ = new SendMsgAckCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_send_msg_arc_cb)(json_extension.c_str(), &CallbackSendMsgAck, g_cb_send_msg_ack_);
+	return NIM_SDK_GET_FUNC(nim_chatroom_reg_send_msg_ack_cb)(json_extension.c_str(), &CallbackSendMsgAck, g_cb_send_msg_ack_);
 }
 
 static ChatRoom::ReceiveMsgCallback* g_cb_receive_msg_ = nullptr;

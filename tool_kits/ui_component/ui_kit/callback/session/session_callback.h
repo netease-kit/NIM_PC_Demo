@@ -63,6 +63,8 @@ public:
 	* @return void	无返回值
 	*/
 	static void OnQuerySessionListCallback(int unread_count, const nim::SessionDataList& session_list);
+
+	static void OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::list<nim::RecallMsgNotify>& message);
 };
 
 }

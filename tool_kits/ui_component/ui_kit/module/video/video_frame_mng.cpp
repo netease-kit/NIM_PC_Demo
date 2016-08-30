@@ -111,7 +111,12 @@ bool VideoFrameMng::GetVideoFrame(std::string account, int64_t& time, char* out_
 		int src_w = pic_info->width_;
 		int src_h = pic_info->height_;
 		//µÈ±È
-		if (src_h * width > src_w * height)
+		if (width <= 0 || height <= 0)
+		{
+			width = src_w;
+			height = src_h;
+		}
+		else if (src_h * width > src_w * height)
 		{
 			width = src_w * height / src_h;
 		}

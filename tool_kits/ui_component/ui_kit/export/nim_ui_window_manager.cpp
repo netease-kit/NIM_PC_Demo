@@ -1,5 +1,6 @@
 ﻿#include "nim_ui_window_manager.h"
 #include "module/login/login_manager.h"
+#include "gui/toast/toast.h"
 
 namespace nim_ui
 {
@@ -47,6 +48,11 @@ void WindowsManager::ShowLinkForm()
 void WindowsManager::ShowVideoSettingForm()
 {
 	nim_comp::VideoManager::GetInstance()->ShowVideoSetting();
+}
+
+void ShowToast(const std::wstring &content, int duration, HWND parent)
+{
+	nim_comp::Toast::ShowToast(content, duration, parent);
 }
 
 }

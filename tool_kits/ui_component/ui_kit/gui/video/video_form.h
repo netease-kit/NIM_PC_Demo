@@ -183,6 +183,11 @@ public:
 	void CheckRecordDiskSpace(const std::wstring& file);
 
 	void PaintVideo();
+
+	//设置自定义数据模式
+	void SetCustomVideoMode(bool open);
+	//将自定义数据处理后给底层发送
+	void SendCustomVideo();
 public:
 	static const LPCTSTR kClassName; // 类名
 private:
@@ -212,6 +217,8 @@ private:
 	::ui::CheckBox*	camera_checkbox_;
 	::ui::Button*		start_record_btn_;
 	::ui::Button*		stop_record_btn_;
+	::ui::Button*		face_open_btn_;
+	::ui::Button*		face_close_btn_;
 
 	::ui::Slider*		input_volumn_slider_;
 	::ui::VBox*		vbox_of_input_;
@@ -243,6 +250,8 @@ private:
 	std::string		session_id_;
 	StatusEnum		status_;
 	bool			current_video_mode_; //当前聊天模式，true为视频，false为语音
+	bool			custom_video_mode_;//使用自定义数据模式，做数据处理用
+	VideoFrameMng	video_frame_mng_;//使用自定义数据模式，做数据处理后，数据保存用于预览
 	int64_t			channel_id_;
 
 	EndCallEnum		end_call_;
@@ -262,6 +271,7 @@ private:
 	nbase::WeakCallbackFlag record_tip_timer_;
 	nbase::WeakCallbackFlag record_check_disk_space_timer_;
 	nbase::WeakCallbackFlag paint_video_timer_;
+	nbase::WeakCallbackFlag send_custom_video_;
 
 	bool is_self_; //是否是主动发起，true表示“是”
 

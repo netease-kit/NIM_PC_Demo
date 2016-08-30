@@ -32,6 +32,7 @@ enum NIMResCode
 	kNIMResUnknownError			= 500,		/**< 未知错误，或者不方便告诉你 */
 	kNIMResServerDataError		= 501,		/**< 服务器数据错误 */
 	kNIMResTooBuzy				= 503,		/**< 服务器太忙 */
+	kNIMResExceedLimit			= 508,		/**< 超过配置有效期 */
 	kNIMResInvalid				= 509,		/**< 协议无效, 不允许访问的协议 */
 	//群错误码
 	kNIMResTeamECountLimit		= 801,		/**< 已达到人数限制 */
@@ -61,11 +62,12 @@ enum NIMResCode
 	//客户端自定义的消息错误号
 	kNIMLocalResMsgNosUploadCancel	= 10200,		/**< 发送文件消息，NOS上传暂停 */
 	kNIMLocalResMsgNosDownloadCancel = 10206,		/**< 收到文件消息，NOS下载暂停 */
-	kNIMLocalResMsgFileNotExist		= 10404,		/**< 本地资源不存在 */
-	kNIMLocalResMsgUrlInvalid		= 10414,		/**< 收到消息，资源下载地址无效，无法下载 */
-	kNIMLocalResMsgFileExist		= 10417,		/**< 收到消息，本地资源已存在，不需要重复下载 */
-	kNIMLocalResParaError			= 10450,		/**< 调用api，传入的参数有误 */
+	kNIMLocalResMsgNosDownloadCheckError = 10207,	/**< 收到文件消息，NOS下载完成后本地文件检查错误，一般为下载的文件大小与文件信息不符 */
+	kNIMLocalResMsgFileNotExist = 10404,		/**< 本地资源不存在 */
+	kNIMLocalResParameterError		= 10414,		/**< 本地错误码，参数错误，(收到消息，资源下载地址无效，无法下载) */
+	kNIMLocalResExist				= 10417,		/**< 本地错误码，对象已经存在/重复操作，(收到消息，本地资源已存在，不需要重复下载) */
 	kNIMLocalResMsgSendNosError		= 10502,		/**< 发送消息，上传NOS失败 */
+	kNIMLocalResExceedLimit			= 10508,		/**< 本地错误码,超过配置有效期或者所需参数不存在 */
 	kNIMLocalResCheckMsgDBFailed	= 10600,		/**< 导入消息历史时验证身份和加密密钥不通过 */
 	kNIMLocalResImportMsgDBFailed	= 10601,		/**< 导入消息历史时写记录失败 */
 	//客户端自定义的RTS错误号

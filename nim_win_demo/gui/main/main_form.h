@@ -77,6 +77,7 @@ public:
 private:
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
+	void OnUnreadCountChange(int unread_count);
 	void InitHeader();
 
 	bool SearchEditChange(ui::EventArgs* param);
@@ -105,12 +106,16 @@ public:
 private:
 	ui::Button*		btn_header_;
 	ui::Label*		label_name_;
+
+	ui::Box*		box_unread_;
+	ui::Label*		label_unread_;
+
 	ui::RichEdit*	search_edit_;
 	ui::Button*		btn_clear_input_;
 	ui::ListBox*	search_result_list_;
 	bool			is_trayicon_left_double_clicked_;
 
-	AutoUnregister unregister_cb;
+	AutoUnregister	unregister_cb;
 };
 
 using namespace nbase;

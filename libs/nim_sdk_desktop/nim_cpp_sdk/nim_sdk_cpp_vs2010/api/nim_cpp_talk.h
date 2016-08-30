@@ -23,7 +23,6 @@ namespace nim
 #include "nim_nos_def.h"
 #include "nim_sysmsg_def.h"
 
-
 /** @class Talk
   * @brief 聊天功能；主要包括发送消息、接收消息等功能
   */
@@ -36,6 +35,7 @@ public:
 	typedef std::function<void(const std::list<IMMessage>&)>	ReceiveMsgsCallback;	/**< 批量接收消息通知回调模板 */
 	typedef std::function<void(__int64, __int64)>	FileUpPrgCallback;	/**< 发送多媒体消息文件上传过程回调模板 */
 	typedef std::function<bool(const IMMessage&)> TeamNotificationFilter; /**< 群通知过滤器 */
+	typedef std::function<void(const NIMResCode, const std::list<RecallMsgNotify>&)>	RecallMsgsCallback;	/**< 消息撤回通知回调模板 */
 
 	/** @fn static void RegSendMsgCb(const SendMsgCallback& cb, const std::string& json_extension = "")
 	* 注册发送消息回调函数 （必须全局注册,统一接受回调后分发消息到具体的会话。注意：客户端发包之后,服务器不一定会返回！！！）
@@ -284,6 +284,25 @@ public:
 	* @return void 无返回值
 	*/
 	static void RegTeamNotificationFilter(const TeamNotificationFilter& filter, const std::string& json_extension = "");
+
+	/** @fn static void RegRecallMsgsCallback(const RecallMsgsCallback& cb, const std::string& json_extension = "");
+	* 注册消息回调通知接口
+	* @param[in] json_extension json扩展参数（备用,目前不需要）
+	* @param[in] cb	回调
+	* @return void 无返回值
+	*/
+	static void RegRecallMsgsCallback(const RecallMsgsCallback& cb, const std::string& json_extension = "");
+
+	/** @fn static void RecallMsg(const IMMessage &msg, const std::string &notify, const RecallMsgsCallback& cb, const std::string& json_extension = "");
+	* 撤回消息
+	* @param[in] msg 消息
+	* @param[in] notify 自定义通知消息
+	* @param[in] json_extension json扩展参数（备用,目前不需要）
+	* @param[in] cb	回调
+	* @return void 无返回值
+	*/
+	static void RecallMsg(const IMMessage &msg, const std::string &notify, const RecallMsgsCallback& cb, const std::string& json_extension = "");
+
 };
 
 } 

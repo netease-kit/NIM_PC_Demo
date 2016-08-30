@@ -100,7 +100,7 @@ void MsgBubbleItem::SetShowName(bool show, const std::string& from_nick)
 
 void MsgBubbleItem::SetMsgStatus(nim::NIMMsgLogStatus status)
 {
-	HideAllStatus(1);
+	HideAllStatus(0);
 	switch(status)
 	{
 	case nim::kNIMMsgLogStatusSending:
@@ -123,7 +123,7 @@ void MsgBubbleItem::SetMsgStatus(nim::NIMMsgLogStatus status)
 
 void MsgBubbleItem::SetLoadStatus(MsgResLoadStatus status)
 {
-	HideAllStatus(2);
+	HideAllStatus(0);
 	switch(status)
 	{
 	case RS_LOADING:
@@ -189,7 +189,7 @@ void MsgBubbleItem::HideAllStatus(int type)
 }
 
 class MsgBubbleAudio;
-void MsgBubbleItem::PopupMenu(bool copy, bool retweet/* = true*/)
+void MsgBubbleItem::PopupMenu(bool copy, bool recall, bool retweet/* = true*/)
 {
 	if(!action_menu_)
 		return;
@@ -212,6 +212,10 @@ void MsgBubbleItem::PopupMenu(bool copy, bool retweet/* = true*/)
 	transform->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
 	transform->SetVisible(typeid(*this) == typeid(MsgBubbleAudio));
 
+	CMenuElementUI* rec = (CMenuElementUI*)pMenu->FindControl(L"recall");
+	rec->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
+	rec->SetVisible(my_msg_ && recall && msg_.receiver_accid_ != LoginManager::GetInstance()->GetAccount());
+
 	CMenuElementUI* ret = (CMenuElementUI*)pMenu->FindControl(L"retweet");
 	ret->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
 	ret->SetVisible(retweet);
@@ -230,6 +234,8 @@ bool MsgBubbleItem::OnMenu( ui::EventArgs* arg )
 		OnMenuTransform();
 	else if (name == L"retweet")
 		m_pWindow->SendNotify(this, ui::kEventNotify, BET_RETWEET, 0);
+	else if (name == L"recall")
+		m_pWindow->SendNotify(this, ui::kEventNotify, BET_RECALL, 0);
 	return false;
 }
 

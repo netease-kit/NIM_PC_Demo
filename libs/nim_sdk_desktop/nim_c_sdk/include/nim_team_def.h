@@ -193,11 +193,11 @@ enum NIMTeamJoinMode
 	kNIMTeamJoinModeRejectAll	= 2,		/**< 拒绝所有人入群 */
 };
 
-/** @name 搜索本地群组信息扩展参数
+/** @name 搜索本地群组相关信息扩展参数
   * @{
   */
-static const char *kNIMTeamSearchKeyInclude			= "include_invalid";			/**< bool,是否包括无效群，不在群里（离开或被踢）或者群已经解散 */	
-/** @}*/ //搜索本地群组信息扩展参数
+static const char *kNIMTeamSearchKeyIncludeInvalid			= "include_invalid";			/**< bool,是否包括无效群(成员)，不在群里（离开或被踢）或者群已经解散 */	
+/** @}*/ //搜索本地群组相关信息扩展参数
 
 
 #ifdef __cplusplus

@@ -59,7 +59,6 @@
 
 
 #include <windows.h>
-#include <windowsx.h>
 #include <commctrl.h>
 #include <stddef.h>
 #include <richedit.h>
@@ -76,6 +75,7 @@
 #include <queue>
 #include <functional>
 
+#include "Utils/Macros.h"
 #include "Utils/Utils.h"
 #include "Utils/Delegate.h"
 #include "Utils/StringUtil.h"

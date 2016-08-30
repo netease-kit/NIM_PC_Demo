@@ -689,15 +689,25 @@ void VideoForm::PaintVideo()
 	{
 		bool show_screen = false;
 		bool show_preview = false;
+		video_ctrl_screen_->SetVideoFrameMng(&nim_comp::VideoManager::GetInstance()->video_frame_mng_);
+		video_ctrl_preview_->SetVideoFrameMng(&nim_comp::VideoManager::GetInstance()->video_frame_mng_);
 		if (screen_is_other_)
 		{
 			show_screen = camera_is_open_other_;
 			show_preview = camera_is_open_;
+			if (custom_video_mode_)
+			{
+				video_ctrl_preview_->SetVideoFrameMng(&video_frame_mng_);
+			}
 		}
 		else
 		{
 			show_screen = camera_is_open_;
 			show_preview = camera_is_open_other_;
+			if (custom_video_mode_)
+			{
+				video_ctrl_screen_->SetVideoFrameMng(&video_frame_mng_);
+			}
 		}
 		if (show_screen && video_ctrl_screen_->Refresh(this, !screen_is_other_, !screen_is_other_))
 		{
@@ -716,6 +726,67 @@ void VideoForm::PaintVideo()
 				camera_open_label_->SetVisible(false);
 				camera_closed_label_->SetVisible(false);
 			}
+		}
+	}
+}
+void VideoForm::SetCustomVideoMode(bool open)
+{
+	send_custom_video_.Cancel();
+	custom_video_mode_ = open;
+	if (custom_video_mode_)
+	{
+		StdClosure task = nbase::Bind(&VideoForm::SendCustomVideo, this);
+		nbase::ThreadManager::PostRepeatedTask(kThreadScreenCapture, send_custom_video_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(60));
+	}
+	nim::VChat::SetCustomData(false, custom_video_mode_);
+	face_open_btn_->SetVisible(!custom_video_mode_ && current_video_mode_);
+	face_close_btn_->SetVisible(custom_video_mode_ && current_video_mode_);
+}
+void VideoForm::SendCustomVideo()
+{
+	if (current_video_mode_ && custom_video_mode_)
+	{
+		static int64_t timestamp = 0;
+		std::string data;
+		data.resize(1280 * 720 * 2);
+		int32_t w, h;
+		w = 0;
+		h = 0;
+		bool ret = nim_comp::VideoManager::GetInstance()->video_frame_mng_.GetVideoFrame("", timestamp, (char*)data.c_str(), w, h, false, false);
+		if (ret)
+		{
+			int32_t data_size = w * h * 3 / 2;
+			//处理数据
+			uint8_t *buffer = (uint8_t*)data.c_str();
+			for (int i = 0; i < h; ++i)
+			{
+				for (int j = 0; j < w; ++j)
+				{
+					uint8_t y_temp = *buffer;
+					if (y_temp >= 178)
+					{
+						uint32_t temp = 255 - y_temp;
+						y_temp = 255 - temp / 2;
+					}
+					else if (y_temp >= 100)
+					{
+						uint32_t temp = 256 - y_temp;
+						y_temp = 256 - temp * temp / 156;
+					}
+					else
+					{
+						y_temp = y_temp * y_temp / 100;
+					}
+					*buffer = y_temp;
+					++buffer;
+				}
+			}
+
+			//保存用于预览
+			std::string json;
+			video_frame_mng_.AddVideoFrame(true, 0, data.c_str(), data_size, w, h, json, nim_comp::VideoFrameMng::Ft_I420);
+			//发送
+			nim::VChat::CustomVideoData(0, data.c_str(), data_size, w, h, nullptr);
 		}
 	}
 }

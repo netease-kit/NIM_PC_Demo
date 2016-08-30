@@ -589,7 +589,7 @@ void RtsForm::ShowEndMsg()
 	msg.content_ = nbase::UTF16ToUTF8(L"白板");
 	msg.attach_ = writer.write(json);
 
-	nim::MsgLog::WriteMsglogOnlyAsync(uid_, msg.session_type_, msg.client_msg_id_, msg, nim::MsgLog::WriteMsglogCallback());
+	nim::MsgLog::WriteMsglogToLocalAsync(uid_, msg, false, nim::MsgLog::WriteMsglogCallback());
 	SessionForm* session = SessionManager::GetInstance()->Find(uid_);
 	if (session)
 	{

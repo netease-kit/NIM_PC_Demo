@@ -48,7 +48,7 @@ bool MsgBubbleLocation::OnClicked( ui::EventArgs* arg )
 
 bool MsgBubbleLocation::OnMenu( ui::EventArgs* arg )
 {
-	PopupMenu(false);
+	PopupMenu(false, true);
 	return false;
 }
 }

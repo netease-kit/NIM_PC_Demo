@@ -18,7 +18,7 @@ typedef void(*nim_msglog_batch_status_read_async)(const char* account_id, nim::N
 typedef void(*nim_msglog_set_status_async)(const char* msg_id, nim::NIMMsgLogStatus msglog_status, const char *json_extension, nim_msglog_res_cb_func cb, const void* user_data);
 typedef void(*nim_msglog_set_sub_status_async)(const char* msg_id, nim::NIMMsgLogSubStatus msglog_sub_status, const char *json_extension, nim_msglog_res_cb_func cb, const void* user_data);
 typedef void(*nim_msglog_batch_status_delete_async)(const char* account_id, nim::NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void* user_data);
-typedef void(*nim_msglog_write_db_only_async)(const char *account_id, NIMSessionType to_type, const char *msg_id, const char *json_msg, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
+typedef void(*nim_msglog_insert_msglog_async)(const char *talk_id, const char *json_msg, bool need_update_session, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_delete_by_session_type_async)(bool delete_sessions, NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_delete_async)(const char *account_id, NIMSessionType to_type, const char *msg_id, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_delete_all_async)(bool delete_sessions, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
@@ -347,14 +347,13 @@ bool MsgLog::SetSubStatusAsync(const std::string& msg_id
 	return true;
 }
 
-bool MsgLog::WriteMsglogOnlyAsync(const std::string& account_id
-	, NIMSessionType to_type
-	, const std::string& msg_id
+bool MsgLog::WriteMsglogToLocalAsync(const std::string& talk_id
 	, const IMMessage& msg
+	, bool need_update_session
 	, const WriteMsglogCallback& cb
 	, const std::string& json_extension)
 {
-	if (account_id.empty() || msg_id.empty() || msg.client_msg_id_.empty())
+	if (talk_id.empty() || msg.client_msg_id_.empty())
 		return false;
 
 	WriteMsglogCallback* cb_pointer = nullptr;
@@ -362,10 +361,9 @@ bool MsgLog::WriteMsglogOnlyAsync(const std::string& account_id
 	{
 		cb_pointer = new WriteMsglogCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_msglog_write_db_only_async)(account_id.c_str()
-		, to_type
-		, msg_id.c_str()
+	NIM_SDK_GET_FUNC(nim_msglog_insert_msglog_async)(talk_id.c_str()
 		, msg.ToJsonString(false).c_str()
+		, need_update_session
 		, json_extension.c_str()
 		, &CallbackModifySingleMsglog
 		, cb_pointer);

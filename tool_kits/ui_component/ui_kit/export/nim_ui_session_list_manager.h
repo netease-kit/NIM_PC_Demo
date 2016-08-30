@@ -32,6 +32,8 @@ public:
 public:
 	void LoadSessionList(const std::list<nim::SessionData>& sessions);
 
+	// 注册未读会话消息总数改变的回调
+	UnregisterCallback RegUnreadCountChange(const nim_comp::OnUnreadCountChangeCallback& callback);
 	void AddUnreadCount(const std::string &id);
 	void ResetSessionUnread(const std::string &id);
 

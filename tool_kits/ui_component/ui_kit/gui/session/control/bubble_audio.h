@@ -58,6 +58,12 @@ protected:
 	virtual void OnDownloadCallback(bool success);
 private:
 	/**
+	* 设置语音资源的路径
+	* @return void 无返回值
+	*/
+	void InitResPath();
+
+	/**
 	* 响应此消息项的单击消息，播放语音
 	*@param[in] param 被单击的按钮的相关信息
 	* @return bool 返回值true: 继续传递控件消息， false: 停止传递控件消息

@@ -40,7 +40,7 @@ bool MsgBubbleVideo::OnClicked( ui::EventArgs* arg )
 
 bool MsgBubbleVideo::OnMenu( ui::EventArgs* arg )
 {
-	PopupMenu(false);
+	PopupMenu(false, true);
 	return false;
 }
 

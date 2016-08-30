@@ -1,4 +1,5 @@
 ﻿#include "login_manager.h"
+#include "shared/xml_util.h"
 
 namespace nim_comp
 {
@@ -10,6 +11,7 @@ LoginManager::LoginManager()
 	active_ = true;
 	current_login_data_.reset(new LoginData);
 	ReadLoginDataFromFile();
+	ReadDemoLogLevel();
 }
 
 bool LoginManager::IsSelf( const std::string &account )
@@ -142,4 +144,29 @@ void LoginManager::SaveLoginData()
 
 	}  
 }
+void LoginManager::ReadDemoLogLevel()
+{
+	std::wstring server_conf_path = QPath::GetAppPath();
+	server_conf_path.append(L"server_conf.txt");
+	nim::SDKConfig config;
+	TiXmlDocument document;
+	if (shared::LoadXmlFromFile(document, server_conf_path))
+	{
+		TiXmlElement* root = document.RootElement();
+		if (root)
+		{
+			if (auto pchar = root->Attribute("kNIMSDKLogLevel")){
+				int log_level = 5;
+				nbase::StringToInt((std::string)pchar, &log_level);
+				SetDemoLogLevel(log_level);
+			}
+			if (auto pchar = root->Attribute("LimitFileSize")){
+				int file_size = 15;
+				nbase::StringToInt((std::string)pchar, &file_size);
+				SetFileSizeLimit(file_size);
+			}
+		}
+	}
+}
+
 }

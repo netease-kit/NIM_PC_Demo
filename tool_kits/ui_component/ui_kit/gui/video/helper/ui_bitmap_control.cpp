@@ -91,6 +91,10 @@ void CBitmapControl::Paint(HDC hDC, const UiRect& rcPaint)
 }
 bool CBitmapControl::Refresh(Window* wnd, bool captrue, bool mirror)
 {
+	if (!video_frame_mng_ || (!captrue && account_.empty()))
+	{
+		return false;
+	}
 	int item_w = m_rcItem.right - m_rcItem.left;
 	int item_h = m_rcItem.bottom - m_rcItem.top;
 	if (auto_size_)

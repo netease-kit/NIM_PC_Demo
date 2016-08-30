@@ -180,20 +180,18 @@ public:
 		, const SetSubStatusCallback& cb
 		, const std::string& json_extension = "");
 
-	/** @fn	static bool WriteMsglogOnlyAsync(const std::string& account_id, NIMSessionType to_type, const std::string& msg_id, const std::string& json_msg, const WriteMsglogCallback& cb, const std::string& json_extension = "")
+	/** @fn	static bool WriteMsglogToLocalAsync(const std::string& talk_id, bool need_update_session, const std::string& json_msg, const WriteMsglogCallback& cb, const std::string& json_extension = "")
 	* 只往本地消息历史数据库里写入一条消息（如果已存在这条消息，则更新。通常是APP的本地自定义消息，并不会发给服务器）
 	* @param[in] account_id	会话id，对方的account id或者群组tid
-	* @param[in] to_type	    会话类型
-	* @param[in] msg_id		消息id
 	* @param[in] msg			消息内容
+	* @param[in] need_update_session		是否更新会话列表（一般最新一条消息有这个需求）
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			操作结果的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
 	*/
-	static bool WriteMsglogOnlyAsync(const std::string& account_id
-		, NIMSessionType to_type
-		, const std::string& msg_id
+	static bool WriteMsglogToLocalAsync(const std::string& talk_id
 		, const IMMessage& msg
+		, bool need_update_session
 		, const WriteMsglogCallback& cb
 		, const std::string& json_extension = "");
 

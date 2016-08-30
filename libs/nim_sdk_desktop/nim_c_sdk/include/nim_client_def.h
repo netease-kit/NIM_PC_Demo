@@ -51,6 +51,7 @@ enum NIMKickReason
 /** @enum NIMClientType 客户端类型 */
 enum NIMClientType
 {
+	kNIMClientTypeDefault		= 0,  /**< Default, unset*/
 	kNIMClientTypeAndroid		= 1,  /**< Android*/
 	kNIMClientTypeiOS			= 2,  /**< iOS*/
 	kNIMClientTypePCWindows		= 4,  /**< PC Windows*/

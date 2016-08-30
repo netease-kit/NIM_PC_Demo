@@ -42,7 +42,7 @@ void MsgBubbleSticker::InitInfo(const nim::IMMessage &msg)
 }
 bool MsgBubbleSticker::OnMenu(ui::EventArgs* arg)
 {
-	PopupMenu(false);
+	PopupMenu(false, true);
 	return false;
 }
 }

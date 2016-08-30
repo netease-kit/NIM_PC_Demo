@@ -7,6 +7,8 @@
     <Class name="Camera1" value="selectedforenormalimage=&quot;file='camera10.png' dest='3,3,25,25'&quot; selectedforedisabledimage=&quot;file='camera13.png' dest='3,3,25,25'&quot; selectedhotimage=&quot;btn_icon_hover.png&quot; selectedpushedimage=&quot;btn_icon_pressed.png&quot;"/>
     <Class name="Camera2" value="forenormalimage=&quot;file='camera20.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='camera23.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
     <Class name="Camera3" value="forenormalimage=&quot;file='camera30.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='camera33.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Face1" value="forenormalimage=&quot;file='face10.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='face13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Face2" value="forenormalimage=&quot;file='face20.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='face23.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
     <Class name="CompleteVideo" value="normalimage=&quot;confirm_video_ok0.png&quot; hotimage=&quot;confirm_video_ok1.png&quot; pushedimage=&quot;confirm_video_ok2.png&quot;"/>
     <Class name="CompleteAudio" value="normalimage=&quot;confirm_audio_ok0.png&quot; hotimage=&quot;confirm_audio_ok1.png&quot; pushedimage=&quot;confirm_audio_ok2.png&quot;"/>
     <Class name="RefuseVideo" value="normalimage=&quot;confirm_video_no0.png&quot; hotimage=&quot;confirm_video_no1.png&quot; pushedimage=&quot;confirm_video_no2.png&quot;"/>
@@ -60,6 +62,8 @@
                     <CheckBox name="camera" width="28" height="28" margin="5,0,0,0" valign="center" enabled="false"/>
                     <Button class="Record1" name="record_start" width="28" height="28" margin="5,0,0,0" tooltiptext="开始录制" valign="center" visible="false" />
                     <Button class="Record2" name="record_stop" width="28" height="28" margin="5,0,0,0" tooltiptext="结束录制" valign="center" visible="false"/>
+                    <Button class="Face1" name="face_open" width="28" height="28" margin="5,0,0,0" tooltiptext="打开美颜" valign="center" visible="false"/>
+                    <Button class="Face2" name="face_close" width="28" height="28" margin="5,0,0,0" tooltiptext="关闭美颜" valign="center" visible="false"/>
 
                     <Button name="into_video" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_VIDEO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
                     <Button name="into_audio" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_AUDIO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>

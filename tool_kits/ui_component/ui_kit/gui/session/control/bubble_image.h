@@ -35,6 +35,12 @@ public:
 	*/
 	virtual bool NeedDownloadResource();
 private:
+	/**
+	* 设置图片资源的路径
+	* @return void 无返回值
+	*/
+	void InitResPath();
+
 	/** 
 	* 设置图片消息项的图片是否可以预览
 	* @param[in] can 是否可预览		

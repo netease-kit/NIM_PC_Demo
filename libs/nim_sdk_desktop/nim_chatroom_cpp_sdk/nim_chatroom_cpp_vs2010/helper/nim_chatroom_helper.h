@@ -169,7 +169,7 @@ public:
 	__int64			room_id_;					/**< 消息所属的聊天室id,服务器填写,发送方不需要填写 */
 	std::string		from_id_;					/**< 消息发送者的账号,服务器填写,发送方不需要填写 */
 	__int64			timetag_;					/**< 消息发送的时间戳(毫秒),服务器填写,发送方不需要填写 */
-	int				from_client_type_;			/**< 消息发送方客户端类型,服务器填写,发送方不需要填写 */
+	NIMChatRoomClientType from_client_type_;			/**< 消息发送方客户端类型,服务器填写,发送方不需要填写 */
 	
 public:
 	std::string		from_nick_;					/**< 发送方昵称,服务器填写,发送方不需要填写 */
@@ -188,7 +188,7 @@ public:
 	/** 构造函数 */
 	ChatRoomMessage() : resend_flag_(false)
 		, room_id_(-1)
-		, from_client_type_(-1)
+		, from_client_type_(kNIMChatRoomClientTypeDefault)
 		, timetag_(0) {}
 
 	/** @fn void ParseFromJsonValue(const Json::Value &values)
@@ -201,7 +201,7 @@ public:
 		room_id_ = values[kNIMChatRoomMsgKeyRoomID].asUInt64();
 		from_id_ = values[kNIMChatRoomMsgKeyFromAccount].asString();
 		timetag_ = values[kNIMChatRoomMsgKeyTime].asUInt64();
-		from_client_type_ = values[kNIMChatRoomMsgKeyFromClientType].asUInt();
+		from_client_type_ = (NIMChatRoomClientType)values[kNIMChatRoomMsgKeyFromClientType].asUInt();
 		from_nick_ = values[kNIMChatRoomMsgKeyFromNick].asString();
 		from_avatar_ = values[kNIMChatRoomMsgKeyFromAvatar].asString();
 		from_ext_ = values[kNIMChatRoomMsgKeyFromExt].asString();

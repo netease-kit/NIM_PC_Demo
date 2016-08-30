@@ -10,6 +10,34 @@
 namespace nim
 {
 #include "nim_talk_def.h"
+#include "nim_msglog_def.h"
+
+bool ParseRecallMsgNotify(const std::string& notify_json, std::list<RecallMsgNotify>& notifys)
+{
+	Json::Value values;
+	Json::Reader reader;
+	if (reader.parse(notify_json, values) && values.isArray())
+	{
+		auto size = values.size();
+		for (int i = 0; i < size; i++ )
+		{
+			Json::Value value = values[i];
+			RecallMsgNotify notify;
+			notify.from_id_ = value[kNIMRecallMsgKeyFromAccID].asString();
+			notify.to_id_ = value[kNIMRecallMsgKeyToAccID].asString();
+			notify.msg_id_ = value[kNIMRecallMsgKeyMsgId].asString();
+			//if (value.isMember(kNIMRecallMsgKeyNotify))
+			notify.notify_ = value[kNIMRecallMsgKeyNotify].asString();
+			notify.session_type_ = (NIMSessionType)value[kNIMRecallMsgKeyToType].asInt();
+			notify.notify_timetag_ = value[kNIMRecallMsgKeyTime].asUInt64();
+			notify.notify_feature_ = (NIMMessageFeature)value[kNIMRecallMsgKeyNotifyFeature].asInt();
+			notify.msglog_exist_ = value[kNIMRecallMsgKeyMsgExist].asBool();
+			notifys.push_back(notify);
+		}
+		return true;
+	}
+	return false;
+}
 
 bool ParseSendMessageAck(const std::string& arc_json, SendMessageArc& arc)
 {

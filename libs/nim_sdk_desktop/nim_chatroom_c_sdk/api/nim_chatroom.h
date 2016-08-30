@@ -42,14 +42,14 @@ NIM_SDK_DLL_API void nim_chatroom_reg_exit_cb(const char *json_extension, nim_ch
   */
 NIM_SDK_DLL_API void nim_chatroom_reg_link_condition_cb(const char *json_extension, nim_chatroom_link_condition_cb_func cb, const void *user_data);
 
-/** @fn void nim_chatroom_reg_send_msg_arc_cb(const char *json_extension, nim_chatroom_sendmsg_arc_cb_func cb, const void *user_data)
+/** @fn void nim_chatroom_reg_send_msg_ack_cb(const char *json_extension, nim_chatroom_sendmsg_arc_cb_func cb, const void *user_data)
   * 注册全局发送消息回执回调
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb			  回调函数, 定义见nim_chatroom_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_chatroom_reg_send_msg_arc_cb(const char *json_extension, nim_chatroom_sendmsg_arc_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_chatroom_reg_send_msg_ack_cb(const char *json_extension, nim_chatroom_sendmsg_arc_cb_func cb, const void *user_data);
 
 /** @fn void nim_chatroom_reg_receive_msg_cb(const char *json_extension, nim_chatroom_receive_msg_cb_func cb, const void *user_data)
   * 注册全局接收消息回调

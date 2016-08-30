@@ -101,7 +101,7 @@ ui::CSize MsgBubbleText::EstimateSize(ui::CSize szAvailable)
 
 bool MsgBubbleText::OnMenu( ui::EventArgs* arg )
 {
-	PopupMenu(true, msg_.type_ != nim::kNIMMessageTypeNotification);
+	PopupMenu(true, !IsNetCallMsg(msg_.type_, msg_.attach_), msg_.type_ != nim::kNIMMessageTypeNotification);
 	return false;
 }
 

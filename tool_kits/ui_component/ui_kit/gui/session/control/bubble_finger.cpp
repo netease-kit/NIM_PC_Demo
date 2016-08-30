@@ -48,7 +48,7 @@ void MsgBubbleFinger::InitInfo(const nim::IMMessage &msg)
 
 bool MsgBubbleFinger::OnMenu( ui::EventArgs* arg )
 {
-	PopupMenu(false, false);
+	PopupMenu(false, true, false);
 	return false;
 }
 }

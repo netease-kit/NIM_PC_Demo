@@ -21,6 +21,8 @@ namespace nim
 {
 
 #include "nim_res_code_def.h"
+#include "nim_session_def.h"
+#include "nim_msglog_def.h"
 
 /** @brief 发送消息回执 */
 struct SendMessageArc
@@ -30,6 +32,29 @@ struct SendMessageArc
 	NIMResCode rescode_;	/**< 错误码 */
 	__int64	msg_timetag_;	/**< 消息时间戳 */
 };
+
+/** @brief 消息撤回通知 */
+struct RecallMsgNotify
+{
+	std::string from_id_;	/**< 消息发送方ID */
+	std::string to_id_;		/**< 消息接收方ID */
+	std::string msg_id_;	/**< 客户端消息ID */
+	std::string notify_;	/**< 自定义通知文案 */
+	NIMSessionType session_type_;	/**< 会话类型 */
+	__int64		notify_timetag_;	/**< 消息时间戳 */
+	NIMMessageFeature notify_feature_;	/**< 通知的种类 */
+	bool msglog_exist_;		/**< 客户端消息本地是否存在 */
+
+	RecallMsgNotify() : notify_timetag_(0), msglog_exist_(true) {}
+};
+
+/** @fn bool ParseRecallMsgNotify(const std::string& notify_json, std::list<RecallMsgNotify>& notifys)
+  * @brief 解析消息撤回通知
+  * @param[in] notify_json 消息撤回通知(Json Value数据字符串)
+  * @param[out] notifys 消息撤回通知
+  * @return bool 解析成功 或失败
+  */
+bool ParseRecallMsgNotify(const std::string& notify_json, std::list<RecallMsgNotify>& notifys);
 
 /** @fn bool ParseSendMessageAck(const std::string& arc_json, SendMessageArc& arc)
   * @brief 解析发送消息回执

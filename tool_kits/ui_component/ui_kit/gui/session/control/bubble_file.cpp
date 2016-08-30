@@ -430,23 +430,23 @@ void MsgBubbleFile::StartDownload()
 			std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
 		nim::NOS::ProgressCallback cb2 = nbase::Bind(&MsgBubbleFile::DownloadResourceProgressCallback1, this, \
 			std::placeholders::_1, std::placeholders::_2);
+
+		//自定义保存路径
+// 		std::wstring dir = nim::Tool::GetUserAppdataDir(LoginManager::GetInstance()->GetAccount());
+// 		dir += L"temp\\";
+// 		bool ret = nbase::CreateDirectoryW(dir);
+// 		nim::IMMessage msg = msg_;
+// 		std::wstring fileName;
+// 		ret = nbase::FilePathApartFileName(nbase::UTF8ToUTF16(msg.local_res_path_), fileName);
+// 		if (fileName.empty())
+// 		{
+// 			nim::IMFile file;
+// 			nim::Talk::ParseFileMessageAttach(msg, file);
+// 			fileName = nbase::UTF8ToUTF16(file.md5_);
+// 		}
+// 		msg.local_res_path_ = nbase::UTF16ToUTF8(dir + fileName);
 		nim::NOS::FetchMedia(msg_, cb1, cb2);
 
-		//std::string acc = LoginManager::GetInstance()->GetAccount();
-		//local_path_temp_ = nbase::UTF16ToUTF8(QPath::GetUserAppDataDir(acc)) + "temp\\" + msg_.client_msg_id;
-		//if (range_start_ > 0)
-		//{
-		//	if (!nbase::FilePathIsExist(nbase::UTF8ToUTF16(local_path_temp_), false) || nbase::GetFileSize(nbase::UTF8ToUTF16(local_path_temp_)) < range_start_)
-		//	{
-		//		range_start_ = 0;
-		//	}
-		//}
-		//nim_http::CompletedCallback cb1 = nbase::Bind(&MsgBubbleFile::DownloadResourceCallback, this, \
-		//	std::placeholders::_1, std::placeholders::_2);
-		//nim_http::ProgressCallback cb2 = nbase::Bind(&MsgBubbleFile::DownloadResourceProgressCallback, this, \
-		//	std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
-		//nim_http::HttpRequest request(file_url_, local_path_temp_, range_start_, cb1, cb2);
-		//download_request_id_ = nim_http::PostRequest(request);
 		SetMsgStatus(nim::kNIMMsgLogStatusNone);
 	}
 }
@@ -501,7 +501,7 @@ void MsgBubbleFile::DownloadResourceProgressCallback(double current_upload, doub
 
 bool MsgBubbleFile::OnMenu(ui::EventArgs* arg)
 {
-	PopupMenu(false);
+	PopupMenu(false, true);
 	return false;
 }
 

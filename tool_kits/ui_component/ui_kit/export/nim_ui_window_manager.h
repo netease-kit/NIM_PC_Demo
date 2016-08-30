@@ -52,4 +52,6 @@ public:
 	void ShowVideoSettingForm();
 };
 
+//毫秒
+void ShowToast(const std::wstring &content, int duration = 0, HWND parent = NULL);
 }

@@ -37,11 +37,34 @@ typedef void (*nim_talk_receive_cb_func)(const char *content, const char *json_e
   */
 typedef bool (*nim_talk_team_notification_filter_func)(const char *content, const char *json_extension, const void *user_data);
 
+/** @typedef void (*nim_talk_recall_msg_func)(int rescode, const char *content, const char *json_extension, const void *user_data)
+  * 消息撤回通知
+  * @param[out] rescode			错误码
+  * @param[out] content			json string array string(Keys 『消息撤回通知Json Keys』)
+  * @param[out] json_extension	json扩展数据（备用）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_talk_recall_msg_func)(int rescode, const char *content, const char *json_extension, const void *user_data);
+
+/** @name 消息撤回通知Json Keys
+  * @{
+  */
+static const char *kNIMRecallMsgKeyToType			= "to_type";			/**< int,会话类型(NIMSessionType) */
+static const char *kNIMRecallMsgKeyFromAccID		= "from_id";			/**< string,消息发送方ID */
+static const char *kNIMRecallMsgKeyToAccID			= "to_id";				/**< string,消息接收方ID */
+static const char *kNIMRecallMsgKeyMsgId			= "msg_id";				/**< string,客户端消息ID */
+static const char *kNIMRecallMsgKeyNotify			= "notify";				/**< string,自定义通知文案,按需填 */
+static const char *kNIMRecallMsgKeyTime				= "time";				/**< long,消息时间戳(毫秒) */
+static const char *kNIMRecallMsgKeyNotifyFeature	= "feature";			/**< int,撤回通知种类（NIMMessageFeature） */
+static const char *kNIMRecallMsgKeyMsgExist			= "msg_exist";			/**< bool,撤回的消息本地是否存在,比如对方离线时发一条消息又撤回,对方上线收到离线撤回通知该tag为false */
+/** @}*/ //消息撤回通知Json Keys
+
 /** @name 接收消息Json Keys
   * 本地定义的error code如下：
   * kNIMResSuccess(200) : no error
-  * kNIMLocalResMsgUrlInvalid(414) : url invalid
-  * kNIMLocalResMsgFileExist(417) : local file has exists
+  * kNIMLocalResParameterError(414) : url invalid
+  * kNIMLocalResExist(417) : local file has exists
   * for example: 
   * {"rescode": 200,
   *  "feature": 1,
@@ -62,7 +85,7 @@ static const char *kNIMMsgKeyLocalReceiveMsgContent = "content";			/**< json str
 static const char *kNIMMsgKeyToType			= "to_type";			/**< int,会话类型(NIMSessionType) */
 static const char *kNIMMsgKeyToAccount		= "to_accid";			/**< string,消息接收方id,给自己发送消息时填写自己id */
 static const char *kNIMMsgKeyFromAccount	= "from_id";			/**< string,消息发送方id,服务器填写,发送方不需要填写 */
-static const char *kNIMMsgKeyFromClientType = "from_client_type";	/**< int,消息发送方客户端类型,服务器填写,发送方不需要填写 */
+static const char *kNIMMsgKeyFromClientType = "from_client_type";	/**< int,消息发送方客户端类型（NIMClientType）,服务器填写,发送方不需要填写 */
 static const char *kNIMMsgKeyFromDeviceId	= "from_device_id";		/**< string,消息发送方设备id,服务器填写,发送方不需要填写 */
 static const char *kNIMMsgKeyFromNick		= "from_nick";			/**< string,消息发送方昵称,服务器填写,发送方不需要填写 */
 static const char *kNIMMsgKeyTime			= "time";				/**< long,消息时间戳(毫秒) */
@@ -93,7 +116,6 @@ static const char *kNIMMsgKeyLocalResId				= "res_id";				/**< string,多媒体�
 static const char *kNIMMsgKeyLocalLogStatus			= "log_status";			/**< int,消息状态(NIMMsgLogStatus)  */
 static const char *kNIMMsgKeyLocalLogSubStatus		= "log_sub_status";		/**< int,消息二级状态(NIMMsgLogSubStatus) */
 static const char *kNIMMsgKeyLocalExt				= "local_ext";			/**< string,只维护在本地的扩展字段,必须为可以解析为json的非格式化的字符串 */
-//static const char *kNIMMsgKeyLocalNeedUploadRes		= "need_upload_res";	/**< bool, 只支持在发送包含本地资源的自定义消息(kNIMMessageTypeCustom), kNIMMsgKeyLocalFilePath的值为有效的本地资源绝对路径, 成功上传资源服务器获取到的url信息将存放在kNIMMsgKeyAttach字段, 内容为{"url" : "资源url", ...}, kNIMMsgKeyAttach字段内容请保证为json字符串, 并且不要占用key : url*/
 /** @}*/ //消息结构 Json Keys
 
 /** @name 发送消息回执Json Keys

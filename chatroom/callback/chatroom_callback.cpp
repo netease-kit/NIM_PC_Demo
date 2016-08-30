@@ -7,7 +7,7 @@ namespace nim_chatroom
 
 void ChatroomCallback::OnReceiveMsgCallback(__int64 room_id, const ChatRoomMessage& result)
 {
-	QLOG_PRO(L"Chatroom:OnReceiveMsgCallback: {0}") << result.client_msg_id_;
+	QLOG_PRO(L"Chatroom:OnReceiveMsgCallback: {0} from client: {1}") << result.client_msg_id_ << result.from_client_type_;
 	//QLOG_PRO(L"Chatroom:OnReceiveMsgCallback ext: {0}") << result.ext_;
 	//QLOG_PRO(L"Chatroom:OnReceiveMsgCallback from_ext: {0}") << result.from_ext_;
 

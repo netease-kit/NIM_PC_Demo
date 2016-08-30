@@ -20,6 +20,7 @@ public:
 	CBitmapControl(nim_comp::VideoFrameMng* video_frame_mng);
 	~CBitmapControl(void);
 
+	void SetVideoFrameMng(nim_comp::VideoFrameMng* video_frame_mng){ video_frame_mng_ = video_frame_mng; }
 	void SetAccount(std::string account){ account_ = account; }
 	std::string GetAccount() { return account_; }
 	void Paint(HDC hDC, const UiRect& rcPaint) override;
@@ -31,6 +32,8 @@ public:
 	void SetAutoSize(bool auto_size){ auto_size_ = auto_size; }
 
 	bool IsRefreshTimeout();
+
+	float GetPicWHPercent() { return height_ > 0 ? width_*1.0 / height_ : 0; }
 
 protected:
 	std::string account_;

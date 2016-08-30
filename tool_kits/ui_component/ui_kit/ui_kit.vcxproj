@@ -56,7 +56,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\openssl\include\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\third_party\jsoncpp\include\json\;</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\openssl\include\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -79,7 +79,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\openssl\include\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\libs\nim_sdk_desktop\nim_cpp_wrapper\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\openssl\include\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_wrapper\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
@@ -165,6 +165,7 @@
     <ClInclude Include="gui\team_info\team_info.h" />
     <ClInclude Include="gui\team_info\team_notify.h" />
     <ClInclude Include="gui\team_info\team_search.h" />
+    <ClInclude Include="gui\toast\toast.h" />
     <ClInclude Include="gui\video\helper\screen_capture.h" />
     <ClInclude Include="gui\video\helper\ui_barrage_control.h" />
     <ClInclude Include="gui\video\helper\ui_bitmap_control.h" />
@@ -272,6 +273,7 @@
     <ClCompile Include="gui\team_info\team_info.cpp" />
     <ClCompile Include="gui\team_info\team_notify.cpp" />
     <ClCompile Include="gui\team_info\team_search.cpp" />
+    <ClCompile Include="gui\toast\toast.cpp" />
     <ClCompile Include="gui\video\helper\screen_capture.cpp" />
     <ClCompile Include="gui\video\helper\ui_barrage_control.cpp" />
     <ClCompile Include="gui\video\helper\ui_bitmap_control.cpp" />

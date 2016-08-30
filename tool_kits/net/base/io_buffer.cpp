@@ -2,7 +2,7 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// Ported & Modified by Wang Rongtao <rtwang@corp.netease.com>
+// Ported & Modified by wrt(guangguang)
 // 2013/8/30
 
 #include "net/base/io_buffer.h"

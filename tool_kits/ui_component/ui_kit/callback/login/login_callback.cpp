@@ -23,7 +23,7 @@ void _InitLog()
 #ifdef _DEBUG
 	QLogImpl::GetInstance()->SetLogLevel(LV_PRO);
 #else
-	QLogImpl::GetInstance()->SetLogLevel(LV_APP);
+	QLogImpl::GetInstance()->SetLogLevel(LoginManager::GetInstance()->GetDemoLogLevel());
 #endif
 	std::wstring dir = GetUserDataPath();
 	QLogImpl::GetInstance()->SetLogFile(dir + kLogFile);
@@ -75,7 +75,6 @@ void UILogoutCallback()
 	else
 	{
 		PostQuitMessage(0);
-
 		_DoBeforeAppExit();
 	}
 }

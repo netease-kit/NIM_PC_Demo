@@ -3,6 +3,7 @@
 #include "module/session/session_manager.h"
 #include "callback/session/session_callback.h"
 #include "util/user.h"
+#include "export/nim_ui_window_manager.h"
 
 using namespace ui;
 
@@ -90,7 +91,58 @@ MsgBubbleItem* SessionForm::ShowMsg(const nim::IMMessage &msg, bool first, bool 
 	MsgBubbleItem* item = NULL;
 
 	if (msg.type_ == nim::kNIMMessageTypeText || IsNetCallMsg(msg.type_, msg.attach_))
-		item = new MsgBubbleText;
+	{
+		Json::Value values;
+		Json::Reader reader;
+		if (reader.parse(msg.attach_, values) 
+			&& values.isObject() 
+			&& values.isMember("comment")
+			&& values["comment"].asString() == "is_recall_notification")
+		{
+			std::wstring notify_text = nbase::UTF8ToUTF16(msg.content_);
+			if (values.isMember("notify_from"))
+			{
+				std::string from_id = values["notify_from"].asString();
+				if (from_id == LoginManager::GetInstance()->GetAccount())
+				{
+					notify_text = L"我撤回了一条消息";
+				}
+				else
+				{
+					if (session_type_ == nim::kNIMSessionTypeP2P)
+					{
+						notify_text = L"对方撤回了一条消息";
+					}
+					else
+					{
+						auto info = GetTeamMemberInfo(from_id);
+						UTF8String name = info.GetNick();
+						if (name.empty())
+						{
+							nim::UserNameCard name_card;
+							UserService::GetInstance()->GetUserInfo(from_id, name_card);
+							name = name_card.GetName();
+						}
+						if (name.empty())
+							name = from_id;
+						notify_text = nbase::UTF8ToUTF16(name) + L" 撤回了一条消息";
+					}
+				}
+			}
+
+			MsgBubbleNotice* cell = new MsgBubbleNotice;
+			GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
+			if (first)
+				msg_list_->AddAt(cell, 0);
+			else
+				msg_list_->Add(cell);
+			cell->InitControl();
+			cell->InitCustomInfo(notify_text, session_id_, msg.client_msg_id_);
+			return nullptr;
+		}
+		else
+			item = new MsgBubbleText;
+	}
 	else if (msg.type_ == nim::kNIMMessageTypeImage)
 		item = new MsgBubbleImage;
 	else if (msg.type_ == nim::kNIMMessageTypeAudio)
@@ -270,7 +322,11 @@ void SessionForm::SendImage( const std::wstring &src )
 	msg.type_ = nim::kNIMMessageTypeImage;
 
 	std::wstring filename = nbase::UTF8ToUTF16(msg.client_msg_id_);
-	std::wstring dest = GetUserImagePath() + filename;
+	std::wstring dest = GetUserImagePath();
+	if (!nbase::FilePathIsExist(dest, true))
+		nbase::CreateDirectory(dest);
+	
+	dest += filename;
 	GenerateUploadImage(src, dest);
 	msg.local_res_path_ = nbase::UTF16ToUTF8(dest);
 
@@ -337,7 +393,7 @@ void SessionForm::SendSnapChat(const std::wstring &src)
 bool SessionForm::CheckFileSize(const std::wstring &src)
 {
 	int64_t sz = nbase::GetFileSize(src);
-	if (sz > 15*1024*1024 || sz <= 0)
+	if (sz > LoginManager::GetInstance()->GetFileSizeLimit()*1024*1024 || sz <= 0)
 	{
 		return false;
 	}
@@ -641,8 +697,9 @@ bool SessionForm::GetLastNeedSendReceiptMsg(nim::IMMessage &msg)
 	return false;
 }
 
-void SessionForm::RemoveMsgItem(const std::string& client_msg_id)
+int SessionForm::RemoveMsgItem(const std::string& client_msg_id)
 {
+	int index = -1;
 	MsgBubbleItem* msg_item = NULL;
 	MsgBubbleNotice* msg_cell = NULL;
 	for (int i = 0; i < msg_list_->GetCount(); i++)
@@ -651,6 +708,7 @@ void SessionForm::RemoveMsgItem(const std::string& client_msg_id)
 		{
 			msg_item = dynamic_cast<MsgBubbleItem*>(msg_list_->GetItemAt(i));
 			msg_cell = dynamic_cast<MsgBubbleNotice*>(msg_list_->GetItemAt(i));
+			index = i;
 			break;
 		}
 	}
@@ -658,7 +716,7 @@ void SessionForm::RemoveMsgItem(const std::string& client_msg_id)
 	{
 		if (msg_cell) //要删除的是一个通知消息，删除后直接return
 			msg_list_->Remove(msg_cell);
-		return;
+		return index;
 	}
 	
 	auto iter2 = std::find(cached_msgs_bubbles_.begin(), cached_msgs_bubbles_.end(), msg_item);
@@ -694,6 +752,8 @@ void SessionForm::RemoveMsgItem(const std::string& client_msg_id)
 		id_bubble_pair_.erase(client_msg_id); //从id_bubble_pair_删除
 
 	msg_list_->Remove(msg_item); //最后从msg_list_中删除并销毁该MsgBubbleItem
+
+	return index;
 }
 
 void SessionForm::OnMsgStatusChangedCallback(const std::string &from_accid, const __int64 timetag, nim::NIMMsgLogStatus status)
@@ -745,6 +805,19 @@ void SessionForm::OnDownloadCallback( const std::string &cid, bool success )
 	}
 }
 
+void SessionForm::OnRetweetResDownloadCallback(nim::NIMResCode code, const std::string& file_path, const std::string& sid, const std::string& cid)
+{
+	IdBubblePair::iterator it = id_bubble_pair_.find(cid);
+	if (it != id_bubble_pair_.end())
+	{
+		MsgBubbleItem* item = it->second;
+		if (item)
+		{
+			item->OnDownloadCallback(code == nim::kNIMResSuccess);
+		}
+	}
+}
+
 void SessionForm::OnRelink( const Json::Value &json )
 {
 	bool link = json["link"].asBool();
@@ -777,6 +850,74 @@ bool IsNoticeMsg(const nim::IMMessage& msg)
 	}
 
 	return false;
+}
+
+void SessionForm::CallbackWriteMsglog(const std::wstring &notify_text, nim::NIMResCode res_code, const std::string& msg_id)
+{
+	if (res_code == nim::kNIMResSuccess)
+	{
+		MsgBubbleNotice* cell = new MsgBubbleNotice;
+		GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
+		msg_list_->Add(cell);
+		cell->InitControl();
+		cell->InitCustomInfo(notify_text, session_id_, msg_id);
+	}
+}
+
+void SessionForm::RecallMsg(nim::NIMResCode code, const nim::RecallMsgNotify &notify)
+{
+	if (code != nim::kNIMResSuccess)
+	{
+		std::wstring toast = nbase::StringPrintf(L"recall msg error, code:%d, id:%s", code, nbase::UTF8ToUTF16(notify.msg_id_).c_str());
+		nim_ui::ShowToast(toast, 5000, this->GetHWND());
+		return;
+	}
+	int index = RemoveMsgItem(notify.msg_id_);
+	if (index > -1 && notify.msglog_exist_)			//撤回本地不存在的消息的通知不在消息流中插入通知
+	{
+		std::wstring notify_text;
+		if (notify.from_id_ == LoginManager::GetInstance()->GetAccount())
+		{
+			notify_text = L"我撤回了一条消息";
+		}
+		else
+		{
+			if (notify.session_type_ == nim::kNIMSessionTypeP2P)
+			{
+				notify_text = L"对方撤回了一条消息";
+			}
+			else
+			{
+				auto info = GetTeamMemberInfo(notify.from_id_);
+				UTF8String name = info.GetNick();
+				if (name.empty())
+				{
+					nim::UserNameCard name_card;
+					UserService::GetInstance()->GetUserInfo(notify.from_id_, name_card);
+					name = name_card.GetName();
+				}
+				if (name.empty())
+					name = notify.from_id_;
+				notify_text = nbase::UTF8ToUTF16(name) + L" 撤回了一条消息";
+			}
+		}
+
+		nim::IMMessage msg;
+		msg.timetag_ = notify.notify_timetag_;
+		msg.client_msg_id_ = QString::GetGUID();
+		msg.receiver_accid_ = session_id_;
+		msg.session_type_ = session_type_;
+		msg.sender_accid_ = notify.from_id_;
+		msg.status_ = nim::kNIMMsgLogStatusSent;
+		msg.type_ = nim::kNIMMessageTypeText;
+		Json::Value values;
+		values["comment"] = "is_recall_notification";
+		values["notify_from"] = notify.from_id_;
+		msg.attach_ = values.toStyledString();
+		msg.content_ = nbase::UTF16ToUTF8(notify_text);
+		msg.msg_setting_.push_need_badge_ = nim::BS_FALSE; //设置会话列表不需要计入未读数
+		nim::MsgLog::WriteMsglogToLocalAsync(session_id_, msg, true, nbase::Bind(&SessionForm::CallbackWriteMsglog, this, notify_text, std::placeholders::_1, std::placeholders::_2));
+	}
 }
 
 }

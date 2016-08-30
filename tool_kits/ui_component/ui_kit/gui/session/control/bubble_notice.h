@@ -15,6 +15,10 @@ public:
 	void InitControl();
 	void InitInfo(const nim::IMMessage &msg, const UTF8String& session_id);
 	void RefreshNotice();
+
+public:
+	void InitCustomInfo(const std::wstring &show_notice, const UTF8String& session_id, const UTF8String& client_msg_id);
+
 private:
 
 	/**
@@ -34,5 +38,7 @@ private:
 
 	nim::IMMessage	msg_;
 	std::string		session_id_;
+
+	bool is_custom_info_ = false;
 };
 }

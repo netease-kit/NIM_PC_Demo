@@ -20,6 +20,8 @@ typedef void(*nim_talk_reg_receive_cb)(const char *json_extension, nim_talk_rece
 typedef void(*nim_talk_reg_receive_msgs_cb)(const char *json_extension, nim_talk_receive_cb_func cb, const void* user_data);
 typedef void(*nim_talk_reg_notification_filter_cb)(const char *json_extension, nim_talk_team_notification_filter_func cb, const void *user_data);
 typedef char*(*nim_talk_create_retweet_msg)(const char* src_msg_json, const char* client_msg_id, const NIMSessionType retweet_to_session_type, const char* retweet_to_session_id, const char* msg_setting, __int64 timetag);
+typedef void(*nim_talk_recall_msg)(const char *json_msg, const char *notify, const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data);
+typedef void(*nim_talk_reg_recall_msg_cb)(const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data);
 
 static void CallbackSendMsgAck(const char *result, const void *callback)
 {
@@ -487,6 +489,57 @@ void Talk::RegTeamNotificationFilter(const TeamNotificationFilter& filter, const
 	return NIM_SDK_GET_FUNC(nim_talk_reg_notification_filter_cb)(json_extension.c_str(), &FilterTeamNotification, g_team_notification_filter_);
 }
 
+static void ReceiveRecallMsg(int rescode, const char *content, const char *json_extension, const void *call_back)
+{
+	if (call_back)
+	{
+		Talk::RecallMsgsCallback *cb_pointer = (Talk::RecallMsgsCallback *)call_back;
+		if (*cb_pointer)
+		{
+			std::list<RecallMsgNotify> notifys;
+			ParseRecallMsgNotify(PCharToString(content), notifys);
+			(*cb_pointer)(kNIMResSuccess, notifys);
+		}
+	}
+}
+
+static Talk::RecallMsgsCallback* g_recall_msg_cb_ = nullptr;
+void Talk::RegRecallMsgsCallback(const RecallMsgsCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	if (g_recall_msg_cb_)
+	{
+		delete g_recall_msg_cb_;
+		g_recall_msg_cb_ = nullptr;
+	}
+	g_recall_msg_cb_ = new Talk::RecallMsgsCallback(cb);
+	return NIM_SDK_GET_FUNC(nim_talk_reg_recall_msg_cb)(json_extension.c_str(), &ReceiveRecallMsg, g_recall_msg_cb_);
+}
+
+static void CallbackRecallMsg(int rescode, const char *content, const char *json_extension, const void *call_back)
+{
+	if (call_back)
+	{
+		Talk::RecallMsgsCallback *cb_pointer = (Talk::RecallMsgsCallback *)call_back;
+		if (*cb_pointer)
+		{
+			std::list<RecallMsgNotify> notifys;
+			ParseRecallMsgNotify(PCharToString(content), notifys);
+			(*cb_pointer)((NIMResCode)rescode, notifys);
+		}
+		delete cb_pointer;
+	}
+}
+
+void Talk::RecallMsg(const IMMessage &msg, const std::string &notify, const RecallMsgsCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	RecallMsgsCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new RecallMsgsCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_talk_recall_msg)(msg.ToJsonString(false).c_str(), notify.c_str(), json_extension.c_str(), &CallbackRecallMsg, cb_pointer);
+}
+
 void Talk::UnregTalkCb()
 {
 	if (g_cb_send_msg_ack_)
@@ -508,6 +561,16 @@ void Talk::UnregTalkCb()
 	{
 		delete g_cb_msgs_pointer;
 		g_cb_msgs_pointer = nullptr;
+	}
+	if (g_team_notification_filter_)
+	{
+		delete g_team_notification_filter_;
+		g_team_notification_filter_ = nullptr;
+	}
+	if (g_recall_msg_cb_)
+	{
+		delete g_recall_msg_cb_;
+		g_recall_msg_cb_ = nullptr;
 	}
 }
 

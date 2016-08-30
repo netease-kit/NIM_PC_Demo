@@ -308,7 +308,8 @@ bool SessionForm::Notify(ui::EventArgs* param)
 			if (receipt_need_send_)
 			{
 				bool list_last = msg_list_->IsAtEnd();
-				if (list_last)
+				// 这里要判断当前窗口是否是激活状态，因为在非激活状态下的话也可能会收到Scroll消息导致误发回执消息
+				if (list_last && this->GetHWND() == GetForegroundWindow())
 					SendReceiptIfNeeded();
 			}
 		}
@@ -343,8 +344,20 @@ bool SessionForm::Notify(ui::EventArgs* param)
 			nim::Talk::ParseIMMessage(msg, sending_msg);
 			sending_msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
 			if (new_receiver_accid == session_id_)
+			{
+  				// 如果这个消息对应的资源文件被清理掉，就重新下载
+				if (!IsResourceExist(sending_msg))
+				{
+					nim::NOS::FetchMedia(sending_msg, nbase::Bind(&SessionForm::OnRetweetResDownloadCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4), nim::NOS::ProgressCallback());
+				}
 				AddSendingMsg(sending_msg);
+			}
+				
 			nim::Talk::SendMsg(msg);
+		}
+		else if (param->wParam == BET_RECALL)
+		{
+			nim::Talk::RecallMsg(md, "test notify when recall", nbase::Bind(&nim_comp::TalkCallback::OnReceiveRecallMsgCallback, std::placeholders::_1, std::placeholders::_2));
 		}
 		else if (param->wParam == BET_TRANSFORM)
 		{
@@ -522,7 +535,7 @@ bool SessionForm::OnClicked(ui::EventArgs* param)
 			//UserInfo user_info;
 			//UserService::GetInstance()->GetUserInfo(msg.from_account, user_info);
 			//msg.from_nick = user_info.name;
-			nim::MsgLog::WriteMsglogOnlyAsync(session_id_, msg.session_type_, msg.client_msg_id_, msg, nim::MsgLog::WriteMsglogCallback());
+			nim::MsgLog::WriteMsglogToLocalAsync(session_id_, msg, false, nim::MsgLog::WriteMsglogCallback());
 		}
 	}
 	return true;

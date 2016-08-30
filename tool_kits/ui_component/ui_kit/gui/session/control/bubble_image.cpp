@@ -29,25 +29,7 @@ void MsgBubbleImage::InitInfo(const nim::IMMessage &msg)
 	__super::InitInfo(msg);
 
 	SetCanView(false);
-
-	std::wstring wpath = nbase::UTF8ToUTF16(msg.local_res_path_);
-
-	if( wpath.empty() )
-	{
-		nim::IMImage img;
-		nim::Talk::ParseImageMessageAttach(msg, img);
-		std::wstring filename = nbase::UTF8ToUTF16(img.md5_);
-		thumb_ = GetUserImagePath() + L"thumb_" + filename;
-		path_ = GetUserImagePath() + filename;
-
-	}
-	else
-	{
-		std::wstring filename;
-		nbase::FilePathApartFileName(wpath, filename);
-		thumb_ = GetUserImagePath() + L"thumb_" + filename; 
-		path_  = wpath;
-	}
+	InitResPath();
 
 	if( nbase::FilePathIsExist(path_, false) )
 	{
@@ -63,9 +45,9 @@ void MsgBubbleImage::InitInfo(const nim::IMMessage &msg)
 		{
 			if (msg_.rescode_ == nim::kNIMResSuccess)
 				SetLoadStatus(RS_LOADING);
-			else if (msg_.rescode_ == nim::kNIMLocalResMsgUrlInvalid)
+			else if (msg_.rescode_ == nim::kNIMLocalResParameterError)
 				SetLoadStatus(RS_LOAD_NO);
-			else if (msg_.rescode_ == nim::kNIMLocalResMsgFileExist)
+			else if (msg_.rescode_ == nim::kNIMLocalResExist)
 				DoZoom();
 			else
 			{
@@ -85,7 +67,29 @@ bool MsgBubbleImage::OnClicked( ui::EventArgs* arg )
 	return true;
 }
 
-void MsgBubbleImage::SetCanView( bool can )
+void MsgBubbleImage::InitResPath()
+{
+	std::wstring wpath = nbase::UTF8ToUTF16(msg_.local_res_path_);
+
+	if (wpath.empty() || !nbase::FilePathIsExist(wpath, false))
+	{
+		nim::IMImage img;
+		nim::Talk::ParseImageMessageAttach(msg_, img);
+		std::wstring filename = nbase::UTF8ToUTF16(img.md5_);
+		thumb_ = GetUserImagePath() + L"thumb_" + filename;
+		path_ = GetUserImagePath() + filename;
+
+	}
+	else
+	{
+		std::wstring filename;
+		nbase::FilePathApartFileName(wpath, filename);
+		thumb_ = GetUserImagePath() + L"thumb_" + filename;
+		path_ = wpath;
+	}
+}
+
+void MsgBubbleImage::SetCanView(bool can)
 {
 	msg_image_->SetEnabled(can);
 }
@@ -115,8 +119,12 @@ void MsgBubbleImage::DoZoom()
 {
 	if( !nbase::FilePathIsExist(path_, false) )
 	{
-		QLOG_ERR(L"Image not exist: {0}") <<path_;
-		return;
+		InitResPath();
+		if (!nbase::FilePathIsExist(path_, false))
+		{
+			QLOG_ERR(L"Image not exist: {0}") << path_;
+			return;
+		}
 	}
 
 	const int cx = 270, cy = 180, xf = 78 - 5, yf = 57 - 5;
@@ -171,7 +179,7 @@ bool MsgBubbleImage::OnMenu( ui::EventArgs* arg )
 				show_retweet = false;
 		}
 	}
-	PopupMenu(false, show_retweet);
+	PopupMenu(false, true, show_retweet);
 	return false;
 }
 

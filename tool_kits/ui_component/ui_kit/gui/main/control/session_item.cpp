@@ -122,7 +122,52 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 	{
 		GetMsgContent(msg_, show_text);
 
-		if (msg_.type_ == nim::kNIMSessionTypeTeam) 
+		bool need_prefix = true;
+		if (msg_.msg_type_ == nim::kNIMMessageTypeText)
+		{
+			Json::Value values;
+			Json::Reader reader;
+			if (reader.parse(msg_.msg_attach_, values)
+				&& values.isObject()
+				&& values.isMember("comment")
+				&& values["comment"].asString() == "is_recall_notification")
+			{
+				if (values.isMember("notify_from"))
+				{
+					std::string from_id = values["notify_from"].asString();
+					if (from_id == LoginManager::GetInstance()->GetAccount())
+					{
+						show_text = L"我撤回了一条消息";
+						need_prefix = false;
+					}
+					else
+					{
+						if (msg_.type_ == nim::kNIMSessionTypeP2P)
+						{
+							show_text = L"对方撤回了一条消息";
+							need_prefix = false;
+						}
+						else
+						{
+							auto info = nim::Team::QueryTeamMemberBlock(msg_.id_, from_id);
+							UTF8String name = info.GetNick();
+							if (name.empty())
+							{
+								nim::UserNameCard name_card;
+								UserService::GetInstance()->GetUserInfo(from_id, name_card);
+								name = name_card.GetName();
+							}
+							if (name.empty())
+								name = from_id;
+							show_text = nbase::UTF8ToUTF16(name) + L" 撤回了一条消息";
+							need_prefix = false;
+						}
+					}
+				}
+			}
+		}
+
+		if (need_prefix && msg_.type_ == nim::kNIMSessionTypeTeam)
 		{
 			if (msg_.msg_type_ == nim::kNIMMessageTypeNotification && !IsNetCallMsg((nim::NIMMessageType)msg_.msg_type_, msg_.msg_attach_))
 				; // do nothing
@@ -205,10 +250,6 @@ void SessionItem::ClearMsg()
 
 bool SessionItem::OnDbClicked(ui::EventArgs* arg)
 {
-	if(msg_.unread_count_ > 0)
-	{
-		ResetUnread();
-	}
 	SessionManager::GetInstance()->OpenSessionForm(msg_.id_, msg_.type_);
 	return true;
 }

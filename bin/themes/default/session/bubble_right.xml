@@ -12,11 +12,11 @@
                         <Box name="status" width="auto" padding="0,0,5,0">
                             <Control name="status_sending" width="auto" height="auto" valign="bottom" bkimage="sending.gif" visible="true"/>
                             <Button name="status_resend" valign="bottom" cursortype="hand" font="24" normaltextcolor="link_green" text="重新发送" visible="false"/>
-                            <Label name="status_send_failed" valign="bottom" font="24" normaltextcolor="red" text="发送失败" visible="false"/>
+                            <Label name="status_send_failed" valign="bottom" font="24" normaltextcolor="link_red" text="发送失败" visible="false"/>
                             
                             <Control name="status_loading" width="auto" height="auto" valign="center" bkimage="loading.gif" visible="false"/>
                             <Button name="status_reload" valign="center" cursortype="hand" font="24" normaltextcolor="link_green" text="重新下载" visible="false"/>
-                            <Label name="status_load_failed" valign="center" font="24" normaltextcolor="red" text="下载失败" visible="false"/>
+                            <Label name="status_load_failed" valign="center" font="24" normaltextcolor="link_red" text="下载失败" visible="false"/>
 							
                             <Label name="status_receipt" valign="center" font="1" text="已读" visible="false"/>						
                         </Box>

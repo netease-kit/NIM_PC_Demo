@@ -126,7 +126,7 @@ enum NIMMessageType
 	kNIMMessageTypeUnknown	 = 1000,		/**< 未知类型消息，作为默认值*/
 };
 
-/** @enum NIMMessageFeature Message Feature */
+/** @enum NIMMessageFeature 消息种类 */
 enum NIMMessageFeature
 {
 	kNIMMessageFeatureDefault	= 0,			/**< 默认*/
@@ -136,7 +136,7 @@ enum NIMMessageFeature
 	kNIMMessageFeatureCustomizedMsg	= 4,		/**< 透传消息*/
 };
 
-/** @enum NIMMsgLogStatus Message Log Status */
+/** @enum NIMMsgLogStatus 消息状态 */
 enum NIMMsgLogStatus
 {
 	kNIMMsgLogStatusNone		= 0,			/**< 默认,不能当查询条件,意义太多*/
@@ -151,7 +151,7 @@ enum NIMMsgLogStatus
 	kNIMMsgLogStatusSendCancel	= 9,			/**< 发送取消*/
 };
 
-/** @enum NIMNotificationId Notification Id */
+/** @enum NIMNotificationId 通知类型 */
 enum NIMNotificationId
 {
 	kNIMNotificationIdTeamInvite			= 0,			/**< 普通群拉人，{"ids":["a1", "a2"],"user_namecards":["namecard1", "namecard2"], "attach" : ""} attach为可选字段，作为应用自定义扩展字段,解析前需要判断有没有这个字段 */

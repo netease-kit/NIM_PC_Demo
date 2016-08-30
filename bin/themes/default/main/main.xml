@@ -50,6 +50,10 @@
 
                 <Control name="session_option_icon" mouse="false" width="auto" height="auto" halign="center" valign="center"
                          normalimage="icon_tab_chat_unselected.png" pushedimage="icon_tab_chat_selected.png"/>
+
+                <Box name="box_unread" width="auto" minwidth="18" height="18" margin="60,8,0,0" padding="2,1,2,2" halign="center" bkimage="file='icon_number.png' corner='8,7,8,7'" mouse="false" mousechild="false" visible="false">
+                    <Label name="label_unread" halign="center" normaltextcolor="white"/>
+                </Box>
             </OptionBox>
 
             <OptionBox group="session_friend_tab" name="btn_friend_list" tooltiptextid="STRID_MIANWINDOW_ADDRESSBOOK" cursortype="hand">
@@ -118,7 +122,9 @@
         </Box>
         
         <Control class="splitline_hor_level1" width="stretch"/>
-        <Button name="chatroom" width="stretch" height="36" text="直播间" font="7" normaltextcolor="white" cursortype="hand"
-				normalcolor="bk_main_wnd_search" hotcolor="bk_main_wnd_title" pushedcolor="bk_main_wnd_search"/>
+        <HBox height="36">
+        	<Button name="chatroom" width="stretch" height="stretch" text="直播间" font="7" normaltextcolor="white" cursortype="hand" normalcolor="bk_main_wnd_search" hotcolor="bk_main_wnd_title" pushedcolor="bk_main_wnd_search"/>
+        </HBox>
+        
     </VBox>
 </Window>

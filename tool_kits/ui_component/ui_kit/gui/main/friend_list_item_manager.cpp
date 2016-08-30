@@ -25,7 +25,7 @@ FriendListItemManager::FriendListItemManager(ui::TreeView* friend_list) :
 	tree_node->SetVisible(false);
 	tree_node->SetEnabled(false);
 
-	tree_node = ListItemUtil::CreateFirstLetterListItem(L"Ⱥ��");
+	tree_node = ListItemUtil::CreateFirstLetterListItem(L"群组");
 	friend_list_->GetRootNode()->AddChildNode(tree_node);
 	tree_node_ver_.push_back(tree_node);
 	tree_node->SetVisible(false);
@@ -138,7 +138,7 @@ ui::TreeNode* FriendListItemManager::GetGroup(GroupType groupType, wchar_t lette
 
 void FriendListItemManager::AddListItem(const std::string& accid)
 {
-	if (friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)) != NULL)
+	if (NULL != FindFriendItem(accid))
 		return;
 
 	std::wstring ws_show_name = UserService::GetInstance()->GetUserName(accid);
@@ -196,15 +196,17 @@ void FriendListItemManager::AddListItemInGroup(const std::string& accid, ui::Tre
 
 void FriendListItemManager::DeleteListItem(const std::string& accid)
 {
-	FriendItem* item = (FriendItem*)friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
-	if (!item) return;
-	//�������� c
-	auto contact = ((ui::Label*)item->FindSubControl(L"contact"));
+	FriendItem *item = static_cast<FriendItem*>(FindFriendItem(accid));
+	if (!item) 
+		return;
+
+	ui::Label* contact = ((ui::Label*)item->FindSubControl(L"contact"));
 	if (!contact)
 	{
-		assert(0);
+		ASSERT(contact);
 		return;
 	}
+
 	std::wstring ws_show_name = contact->GetText();
 	std::string spell = PinYinHelper::GetInstance()->ConvertToFullSpell(ws_show_name);
 	std::wstring ws_spell = nbase::UTF8ToUTF16(spell);
@@ -219,6 +221,41 @@ void FriendListItemManager::DeleteListItem(const std::string& accid)
 	}
 
 	DeleteListItemInGroup(accid, tree_node);
+}
+
+ui::TreeNode* FriendListItemManager::FindFriendItem(const std::string& accid)
+{
+	ui::TreeNode* item = NULL;
+
+	// 这里要考虑特殊情况，某些accid是A到Z，而FriendList中的分组控件GroupTitle的name也是A到Z
+	// 所以直接用FindSubControl搜索可能会GroupTitle。对于这种情况就直接遍历所有分组去查找
+	char id = accid.at(0);
+	if (accid.length() == 1 && ((id >= 'a' && id <= 'z') || (id >= 'A' && id <= 'Z')))
+	{
+		std::wstring waccid = nbase::UTF8ToUTF16(accid);
+
+		for (size_t i = 2; i < tree_node_ver_.size(); i++)
+		{
+			ui::TreeNode *group_node = tree_node_ver_.at(i);
+
+			for (size_t j = 0; j < group_node->GetChildNodeCount(); j++)
+			{
+				ui::TreeNode *friend_node = group_node->GetChildNode(j);
+				std::wstring name = friend_node->GetName();
+				if (name == waccid)
+				{
+					item = friend_node;
+					break;
+				}
+			}
+		}
+	}
+	else
+	{
+		item = static_cast<ui::TreeNode*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
+	}
+
+	return item;
 }
 
 void FriendListItemManager::DeleteListItemInGroup(const std::string& accid, ui::TreeNode* tree_node)

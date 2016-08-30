@@ -25,6 +25,7 @@ namespace nim
 #include "nim_session_def.h"
 #include "nim_msglog_def.h"
 #include "nim_res_code_def.h"
+#include "nim_client_def.h"
 
 /** @brief 消息属性设置 */
 struct MessageSetting
@@ -177,13 +178,13 @@ public:
 	NIMMsgLogSubStatus	sub_status_;			/**< 消息子状态（客户端） */
 
 public:
-	int			   readonly_sender_client_type_;	/**< 发送者客户端类型（只读） */
+	NIMClientType  readonly_sender_client_type_;	/**< 发送者客户端类型（只读） */
 	std::string	   readonly_sender_device_id_;		/**< 发送者客户端设备ID（只读） */
 	std::string	   readonly_sender_nickname_;		/**< 发送者昵称（只读） */
 	__int64		   readonly_server_id_;				/**< 消息ID（服务器，只读） */
 
 	/** 构造函数 */
-	IMMessage() : readonly_sender_client_type_(0) 
+	IMMessage() : readonly_sender_client_type_(kNIMClientTypeDefault) 
 				, readonly_server_id_(0)
 				, feature_(kNIMMessageFeatureDefault)
 				, session_type_(kNIMSessionTypeP2P)
@@ -192,7 +193,7 @@ public:
 				, sub_status_(nim::kNIMMsgLogSubStatusNone) {}
 
 	/** 构造函数 */
-	IMMessage(const std::string &json_msg) :readonly_sender_client_type_(0) 
+	IMMessage(const std::string &json_msg) :readonly_sender_client_type_(kNIMClientTypeDefault) 
 		, readonly_server_id_(0)
 		, feature_(kNIMMessageFeatureDefault)
 		, session_type_(kNIMSessionTypeP2P)
@@ -207,7 +208,7 @@ public:
 			session_type_ = (NIMSessionType)values[kNIMMsgKeyToType].asUInt();
 			receiver_accid_ = values[kNIMMsgKeyToAccount].asString();
 			sender_accid_ = values[kNIMMsgKeyFromAccount].asString();
-			readonly_sender_client_type_ = values[kNIMMsgKeyFromClientType].asUInt();
+			readonly_sender_client_type_ = (NIMClientType)values[kNIMMsgKeyFromClientType].asUInt();
 			readonly_sender_device_id_ = values[kNIMMsgKeyFromDeviceId].asString();
 			readonly_sender_nickname_ = values[kNIMMsgKeyFromNick].asString();
 			timetag_ = values[kNIMMsgKeyTime].asUInt64();

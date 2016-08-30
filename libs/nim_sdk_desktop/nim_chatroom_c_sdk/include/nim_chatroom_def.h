@@ -237,7 +237,7 @@ static const char *kNIMChatRoomMsgKeyExt			= "ext";				/**< string, 第三方扩
 static const char *kNIMChatRoomMsgKeyRoomID			= "room_id";			/**< long, 消息所属的聊天室id,服务器填写,发送方不需要填写 */
 static const char *kNIMChatRoomMsgKeyFromAccount	= "from_id";			/**< string, 消息发送者的账号,服务器填写,发送方不需要填写 */
 static const char *kNIMChatRoomMsgKeyTime			= "time";				/**< long, 消息发送的时间戳(毫秒),服务器填写,发送方不需要填写 */
-static const char *kNIMChatRoomMsgKeyFromClientType = "from_client_type";	/**< int,消息发送方客户端类型,服务器填写,发送方不需要填写 */
+static const char *kNIMChatRoomMsgKeyFromClientType = "from_client_type";	/**< int,消息发送方客户端类型(NIMChatRoomClientType),服务器填写,发送方不需要填写 */
 static const char *kNIMChatRoomMsgKeyFromNick		= "from_nick";			/**< string, 消息发送方昵称,服务器填写,发送方不需要填写*/
 static const char *kNIMChatRoomMsgKeyFromAvatar		= "from_avator";		/**< string, 消息发送方头像,服务器填写,发送方不需要填写*/
 static const char *kNIMChatRoomMsgKeyFromExt		= "from_ext";			/**< string, 消息发送方身份扩展字段,服务器填写,发送方不需要填写*/
@@ -262,6 +262,18 @@ enum NIMChatRoomMsgType
 	kNIMChatRoomMsgTypeCustom = 100,	/**< 自定义消息*/
 
 	kNIMChatRoomMsgTypeUnknown = 1000,	/**< 未知类型消息，作为默认值*/
+};
+
+/** @enum NIMChatRoomClientType 聊天室消息来源端 */
+enum NIMChatRoomClientType
+{
+	kNIMChatRoomClientTypeDefault          = 0,		/**< default,unset*/
+	kNIMChatRoomClientTypeAndroid          = 1,		/**< android*/
+	kNIMChatRoomClientTypeiOS			   = 2,		/**< iOS*/
+	kNIMChatRoomClientTypePCWindows        = 4,		/**< PC*/
+	kNIMChatRoomClientTypeWindowsPhone	   = 8,		/**< WindowsPhone*/
+	kNIMChatRoomClientTypeWeb              = 16,	/**< Web*/
+	kNIMChatRoomClientTypeRestAPI		   = 32,	/**< RestAPI*/
 };
 
 /** @name 进入聊天室回调结果Json Keys

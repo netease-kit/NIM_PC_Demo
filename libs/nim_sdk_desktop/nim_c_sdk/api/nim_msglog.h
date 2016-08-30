@@ -126,18 +126,17 @@ NIM_SDK_DLL_API void nim_msglog_set_status_async(const char *msg_id, NIMMsgLogSt
   */
 NIM_SDK_DLL_API void nim_msglog_set_sub_status_async(const char *msg_id, NIMMsgLogSubStatus msglog_sub_status, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 
-/** @fn void nim_msglog_write_db_only_async(const char *account_id, NIMSessionType to_type, const char *msg_id, const char *json_msg, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data)
-  * 只往本地消息历史数据库里写入一条消息（如果已存在这条消息，则更新。通常是APP的本地自定义消息，并不会发给服务器）
-  * @param[in] account_id	会话id，对方的account id或者群组tid
-  * @param[in] to_type	    会话类型
-  * @param[in] msg_id		消息id
+/** @fn void nim_msglog_insert_msglog_async(const char *talk_id, const char *json_msg, bool need_update_session, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data)
+  * 往本地消息历史数据库里写入一条消息（如果已存在这条消息，则更新。通常是APP的本地自定义消息，并不会发给服务器）
+  * @param[in] talk_id		会话id，对方的account id或者群组tid
   * @param[in] json_msg		消息体Json string (Keys SEE MORE `nim_talk_def.h` 『消息结构 Json Keys』)
+  * @param[in] need_update_session		是否更新会话列表（一般最新一条消息会有更新的需求）
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb			操作结果的回调函数， nim_msglog_res_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_msglog_write_db_only_async(const char *account_id, NIMSessionType to_type, const char *msg_id, const char *json_msg, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_msglog_insert_msglog_async(const char *talk_id, const char *json_msg, bool need_update_session, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 
 /** @fn void nim_msglog_batch_status_delete_async(const char *account_id, NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data)
   * 批量删除指定对话的消息。删除成功后，将相应会话项的最后一条消息的状态kNIMSessionMsgStatus设置为已删除状态，并通过nim_session_reg_change_cb注册的回调通知上层相应会话项的kNIMSessionCommandMsgDeleted事件。

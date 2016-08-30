@@ -80,6 +80,7 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data)
 		item->AttachAllEvents(nbase::Bind(&SessionList::OnItemNotify, this, std::placeholders::_1));
 	}
 	
+	InvokeUnreadCountChange();
 	return item;
 }
 
@@ -91,6 +92,40 @@ void SessionList::RemoveAllSessionItem()
 	{
 		session_list_->RemoveAt(i);
 	}
+	InvokeUnreadCountChange();
+}
+
+void SessionList::InvokeUnreadCountChange()
+{
+	if (unread_count_change_cb_list_.empty())
+		return;
+
+	int unread_count = sys_msg_unread_ + custom_msg_unread_;
+
+	int count = session_list_->GetCount();
+	for (int i = 0; i < count; i++)
+	{
+		SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
+		if (item)
+		{
+			unread_count += item->GetUnread();
+		}
+	}
+
+	for (auto& it : unread_count_change_cb_list_)
+		(*(it.second))(unread_count);
+}
+
+UnregisterCallback SessionList::RegUnreadCountChange(const OnUnreadCountChangeCallback& callback)
+{
+	OnUnreadCountChangeCallback* new_callback = new OnUnreadCountChangeCallback(callback);
+	int cb_id = (int)new_callback;
+	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
+	unread_count_change_cb_list_[cb_id].reset(new_callback);
+	auto cb = ToWeakCallback([this, cb_id]() {
+		unread_count_change_cb_list_.erase(cb_id);
+	});
+	return cb;	
 }
 
 void SessionList::AddUnreadCount(const std::string &id)
@@ -98,8 +133,9 @@ void SessionList::AddUnreadCount(const std::string &id)
 	std::wstring wid = nbase::UTF8ToUTF16(id);
 	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(wid));
 	if (item)
-	{
+	{		
 		item->AddUnread();
+		InvokeUnreadCountChange();
 	}
 }
 
@@ -108,8 +144,9 @@ void SessionList::ResetSessionUnread(const std::string &id)
 	std::wstring wid = nbase::UTF8ToUTF16(id);
 	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(wid));
 	if (item)
-	{
+	{	
 		item->ResetUnread();
+		InvokeUnreadCountChange();
 	}
 }
 
@@ -126,6 +163,7 @@ void SessionList::UISysmsgUnread(int count)
 	{
 		box_unread_sysmsg_->SetVisible(false);
 	}
+	InvokeUnreadCountChange();
 }
 
 void SessionList::UICustomSysmsgUnread(bool add)
@@ -148,6 +186,7 @@ void SessionList::UICustomSysmsgUnread(bool add)
 	{
 		box_unread_sysmsg_->SetVisible(false);
 	}
+	InvokeUnreadCountChange();
 }
 
 void SessionList::UpdateSessionInfo(const nim::UserNameCard& user_info)
@@ -168,6 +207,7 @@ void SessionList::DeleteSessionItem(SessionItem* item)
 {
 	assert(item);
 	session_list_->Remove(item);
+	InvokeUnreadCountChange();
 }
 
 //多端登录

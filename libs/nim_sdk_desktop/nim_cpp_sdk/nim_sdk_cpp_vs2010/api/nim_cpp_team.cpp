@@ -434,7 +434,7 @@ bool Team::TransferTeamAsync(const std::string& tid
 
 bool Team::UpdateMyPropertyAsync(const TeamMemberProperty& prop, const TeamEventCallback& cb, const std::string& json_extension/* = ""*/)
 {
-	if (prop.GetTeamID().empty() || prop.GetAccountID().empty())
+	if (prop.GetTeamID().empty())
 		return false;
 
 	TeamEventCallback* cb_pointer = nullptr;

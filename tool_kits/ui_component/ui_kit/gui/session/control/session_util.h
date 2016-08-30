@@ -43,27 +43,32 @@ enum SessionType
 
 namespace nim_comp
 {
-//获取会话类型
+// 获取会话类型
 SessionType GetSessionType(const nim::IMMessage &msg);
-//获取会话id
+
+// 获取会话id
 std::string GetSessionId(const nim::IMMessage &msg);
-//气泡显示位置，左 或 右
+
+// 气泡显示位置，左 或 右
 bool IsBubbleRight(const nim::IMMessage &msg);
 
-//附加可获取表情对应的字符串
+// 附加可获取表情对应的字符串
 std::wstring GetRichText(ui::RichEdit* re);
 
-//计算消息时间：会话窗口abbreviate=false；会话列表abbreviate=true
+// 计算消息时间：会话窗口abbreviate=false；会话列表abbreviate=true
 std::wstring GetMessageTime(const long long t, bool abbreviate);
 
 bool CheckIfShowTime(const long long old_timestamp, const long long new_timestamp);
 
-//计算文件md5
+// 计算文件md5
 std::string GetFileMD5(const std::wstring &file);
 
-//生成上传图片
+// 生成上传图片
 void GenerateUploadImage(const std::wstring &src, const std::wstring &dest);
 
-//打开地理位置
+// 打开地理位置
 void OpenMap(const std::string& title, const std::string& content,  const std::string& point);
+
+// 判断消息中对应的资源文件是否存在（图片、语音）
+bool IsResourceExist(const nim::IMMessage &msg);
 }

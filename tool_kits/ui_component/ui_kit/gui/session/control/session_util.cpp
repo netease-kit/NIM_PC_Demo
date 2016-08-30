@@ -263,4 +263,23 @@ void OpenMap( const std::string& title, const std::string& content, const std::s
 	}
 }
 
+bool IsResourceExist(const nim::IMMessage &msg)
+{
+	std::wstring wpath = nbase::UTF8ToUTF16(msg.local_res_path_);
+
+	if (wpath.empty() || !nbase::FilePathIsExist(wpath, false))
+	{
+		nim::IMImage img;
+		nim::Talk::ParseImageMessageAttach(msg, img);
+		std::wstring filename = nbase::UTF8ToUTF16(img.md5_);
+		wpath = GetUserImagePath() + filename;
+
+		return nbase::FilePathIsExist(wpath, false);
+	}
+	else
+	{
+		return true;
+	}
+}
+
 }

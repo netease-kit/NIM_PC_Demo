@@ -49,6 +49,9 @@ void MainThread::PreMessageLoop()
 	misc_thread_.reset( new MiscThread(kThreadGlobalMisc, "Global Misc Thread") );
 	misc_thread_->Start();
 
+	screen_capture_thread_.reset(new MiscThread(kThreadScreenCapture, "screen capture"));
+	screen_capture_thread_->Start();
+
 	db_thread_.reset( new DBThread(kThreadDatabase, "Database Thread") );
 	db_thread_->Start();
 }
@@ -57,6 +60,9 @@ void MainThread::PostMessageLoop()
 {
 	misc_thread_->Stop();
 	misc_thread_.reset(NULL);
+
+	screen_capture_thread_->Stop();
+	screen_capture_thread_.reset(NULL);
 
 	db_thread_->Stop();
 	db_thread_.reset(NULL);
@@ -120,6 +126,11 @@ static void InitNim()
 			if (auto pchar = root->Attribute("kNIMRsaVersion")) {
 				nbase::StringToInt((std::string)pchar, &config.rsa_version_);
 				use_private_server = true;
+			}
+			if (auto pchar = root->Attribute("kNIMSDKLogLevel")){
+				int log_level = 5;
+				nbase::StringToInt((std::string)pchar, &log_level);
+				config.sdk_log_level_ = (nim::NIMSDKLogLevel)log_level;
 			}
 			config.use_private_server_ = use_private_server;
 		}

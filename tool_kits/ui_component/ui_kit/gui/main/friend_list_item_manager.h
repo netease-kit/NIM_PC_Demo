@@ -25,6 +25,7 @@ public:
 private:
 	void AddListItem(const std::string& accid);
 	void DeleteListItem(const std::string& accid);
+	ui::TreeNode* FindFriendItem(const std::string& accid);
 	void OnFriendListChange(FriendChangeType change_type, const std::string& accid);
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 	void OnBlackListChange(const std::string& id, bool is_black);
