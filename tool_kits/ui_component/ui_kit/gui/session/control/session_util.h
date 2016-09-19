@@ -71,4 +71,7 @@ void OpenMap(const std::string& title, const std::string& content,  const std::s
 
 // 判断消息中对应的资源文件是否存在（图片、语音）
 bool IsResourceExist(const nim::IMMessage &msg);
+
+// 是否包含@me信息的消息
+bool IsAtMeMsg(const nim::IMMessage &msg);
 }

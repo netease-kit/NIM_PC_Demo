@@ -20,7 +20,7 @@ extern"C"
 typedef void (*nim_talk_ack_cb_func)(const char *result, const void *user_data);
 
 /** @typedef void (*nim_talk_receive_cb_func)(const char *content, const char *json_extension, const void *user_data)
-  * 接收消息的回调函数定义
+  * 接收消息的回调函数定义(如果是初始化时设置了自动下载图片和语音附件，开发者需要通过监听nim_nos_reg_download_cb返回的事件来保证附件已经成功缓存到本地)
   * @param[out] content			json string (Keys SEE MORE 『接收消息Json Keys』),批量接口回调时，内容为json string array
   * @param[out] json_extension	json扩展数据（备用）
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！

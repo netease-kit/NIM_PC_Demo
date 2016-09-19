@@ -18,7 +18,7 @@
         </MenuElement>
 		
         <MenuElement class="MenuElement" name="retweet" width="170">
-            <Label class="menu_text" text="转发到当前会话(测试)"/>
+            <Label class="menu_text" text="转发"/>
         </MenuElement>
     </VListBox>
 </Window>

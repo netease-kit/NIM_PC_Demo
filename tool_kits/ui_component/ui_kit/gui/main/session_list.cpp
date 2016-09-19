@@ -61,22 +61,34 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data)
 {
 	int index = AdjustMsg(item_data);
 	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(nbase::UTF8ToUTF16(item_data.id_)));
-	if(item && (session_list_->GetItemIndex(item) == index - 1 || session_list_->GetItemIndex(item) == index))
-		item->InitMsg(item_data); //应该插入自己紧靠前面或后面的位置，就不用删除，直接更新。
+	nim::SessionData item_data_new = item_data;
+	if (item)
+	{
+		if (item->GetMsgTime() > item_data.msg_timetag_)
+		{
+			item_data_new = item->GetSessionData();
+			item_data_new.unread_count_ = item_data.unread_count_;
+		}
+	}
+
+	if (item && (session_list_->GetItemIndex(item) == index - 1 || session_list_->GetItemIndex(item) == index))
+	{
+		item->InitMsg(item_data_new); //应该插入自己紧靠前面或后面的位置，就不用删除，直接更新。
+	}
 	else
 	{
-		if(item)
+		if (item)
 			session_list_->Remove(item);
 		item = new SessionItem;
 		GlobalManager::FillBoxWithCache(item, L"main/session_item.xml");
-		index = AdjustMsg(item_data); //删掉之后重新算一次
+		index = AdjustMsg(item_data_new); //删掉之后重新算一次
 		if (index >= 0)
 			session_list_->AddAt(item, index);
 		else
 			session_list_->Add(item);
 
 		item->InitCtrl();
-		item->InitMsg(item_data);
+		item->InitMsg(item_data_new);
 		item->AttachAllEvents(nbase::Bind(&SessionList::OnItemNotify, this, std::placeholders::_1));
 	}
 	

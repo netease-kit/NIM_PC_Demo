@@ -14,11 +14,6 @@
 extern"C"
 {
 #endif
-/** @name json params for nim_json_transport_cb_func of nim_user_set_stat API，顺风环境专用更新用户自定义在线状态（公网版不开发该接口）
-  * @{
-  */
-static const char *kNIMUserErrorCode		= kNIMResCode;		/**< int, 返回的错误码NIMResCode */
-/** @}*/ //json params for nim_json_transport_cb_func of nim_user_set_stat API，顺风环境专用更新用户自定义在线状态（公网版不开发该接口）
 
 /** @enum NIMUserSpecialRelationshipChangeType 用户特殊关系数据变更类型 */
 enum NIMUserSpecialRelationshipChangeType

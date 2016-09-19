@@ -3,7 +3,6 @@
 #include "shared/pin_yin_helper.h"
 #include "callback/team/team_callback.h"
 #include "shared/tool.h"
-#include "gui/invoke_chat_form/invoke_chat_form.h"
 #include "shared/ui/msgbox.h"
 #include "module/login/login_manager.h"
 #include "module/service/user_service.h"

@@ -14,7 +14,7 @@
 
 /**
 * @namespace nim
-* @brief IM
+* @brief namespace nim
 */
 namespace nim
 {
@@ -38,7 +38,7 @@ public:
 	typedef ChangeCallback SetUnreadCountZeroCallback;										/**< 会话未读消息数清零回调模板 */
 
 	/** @fn static void RegChangeCb(const ChangeCallback& cb, const std::string& json_extension = "")
-	* 注册最近会话列表项变更通知
+	* (全局回调)注册最近会话列表项变更通知
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			最近会话列表项变更的回调函数
 	* @return void 无返回值

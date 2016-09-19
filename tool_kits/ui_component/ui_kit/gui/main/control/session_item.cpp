@@ -28,6 +28,7 @@ void SessionItem::InitCtrl()
 
 	label_name_ = (Label*) this->FindSubControl(L"label_name");
 	label_msg_ = (Label*) this->FindSubControl(L"label_msg");
+	label_atme_ = (Label*) this->FindSubControl(L"at_me_label");
 	label_time_ = (Label*) this->FindSubControl(L"label_time");
 	box_unread_ = (Box*) this->FindSubControl(L"box_unread");
 	label_unread_ = (Label*) this->FindSubControl(L"label_unread");
@@ -199,6 +200,9 @@ void SessionItem::InitMsg(const nim::SessionData &msg)
 	UpdateMsgContent(); //更新消息内容
 	UpdateUnread(); //刷新未读条数	
 
+	if (SessionManager::GetInstance()->IsContainAtMeMsg(msg_.id_))
+		ShowAtmeTip(true);
+
 	//更新时间
 	if (msg_.msg_timetag_ > 0 && msg_.msg_status_ != nim::kNIMMsgLogStatusDeleted)
 	{
@@ -314,6 +318,9 @@ void SessionItem::AddUnread()
 {
 	msg_.unread_count_++;
 	UpdateUnread();
+
+	if (SessionManager::GetInstance()->IsContainAtMeMsg(msg_.id_))
+		ShowAtmeTip(true);
 }
 
 void SessionItem::ResetUnread()
@@ -322,9 +329,15 @@ void SessionItem::ResetUnread()
 	{
 		msg_.unread_count_ = 0;
 		UpdateUnread();
+		ShowAtmeTip(false);
 
 		InvokeResetUnread(msg_.id_, msg_.type_);
 	}
+}
+
+void SessionItem::ShowAtmeTip(bool show)
+{
+	label_atme_->SetVisible(show);
 }
 
 void SessionItem::UpdateUnread()

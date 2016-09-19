@@ -5,6 +5,8 @@ namespace nim_http
 
 typedef void (*typeof_nim_http_init)();
 typedef void (*typeof_nim_http_uninit)();
+typedef void(*typeof_nim_http_init_log)(const char* log_file_path);
+typedef bool(*typeof_nim_http_is_init_log)();
 typedef HttpRequestHandle (*typeof_nim_http_create_download_file_request)(const char* url, const char *download_file_path,
 	nim_http_request_completed_cb complete_cb, const void* user_data);
 typedef HttpRequestHandle (*typeof_nim_http_create_download_file_range_request)(const char* url, const char *download_file_path,
@@ -21,6 +23,8 @@ typedef void (*typeof_nim_http_remove_request)(int http_request_id);
 
 typeof_nim_http_init	g_nim_http_init;
 typeof_nim_http_uninit	g_nim_http_uninit;
+typeof_nim_http_init_log g_nim_http_init_log;
+typeof_nim_http_is_init_log g_nim_http_is_init_log;
 typeof_nim_http_create_download_file_request	g_nim_http_create_download_file_request;
 typeof_nim_http_create_download_file_range_request	g_nim_http_create_download_file_range_request;
 typeof_nim_http_create_request	g_nim_http_create_request;
@@ -67,6 +71,8 @@ void Init()
 
 	g_nim_http_init = (typeof_nim_http_init)GetProcAddress(hmod,"nim_http_init");
 	g_nim_http_uninit = (typeof_nim_http_uninit)GetProcAddress(hmod,"nim_http_uninit");
+	g_nim_http_init_log = (typeof_nim_http_init_log)GetProcAddress(hmod, "nim_http_init_log");
+	g_nim_http_is_init_log = (typeof_nim_http_is_init_log)GetProcAddress(hmod, "nim_http_is_init_log");
 	g_nim_http_create_download_file_request = (typeof_nim_http_create_download_file_request)GetProcAddress(hmod,"nim_http_create_download_file_request");
 	g_nim_http_create_download_file_range_request = (typeof_nim_http_create_download_file_range_request)GetProcAddress(hmod,"nim_http_create_download_file_range_request");
 	g_nim_http_create_request = (typeof_nim_http_create_request)GetProcAddress(hmod,"nim_http_create_request");
@@ -86,6 +92,17 @@ void Uninit()
 {
 	g_nim_http_uninit();
 }
+
+void InitLog(const std::string& log_file_path)
+{
+	g_nim_http_init_log(log_file_path.c_str());
+}
+
+bool IsInitLog()
+{
+	return g_nim_http_is_init_log();
+}
+
 //设置cpp封装层的全局代理
 NIMProxyType proxy_type_ = kNIMProxyNone;
 std::string proxy_host_;

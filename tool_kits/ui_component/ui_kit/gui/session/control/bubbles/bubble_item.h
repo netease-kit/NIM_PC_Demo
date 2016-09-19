@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "session_util.h"
+#include "gui/session/control/session_util.h"
 
 enum BubbleEventType
 {
@@ -68,6 +68,10 @@ public:
 	* @return MsgData 消息信息结构体
 	*/
 	nim::IMMessage GetMsg();
+
+	std::string GetSenderId();
+
+	nim::NIMMessageType GetMsgType();
 
 	void UpdateMsgTime(__int64 timetag) { msg_.timetag_ = timetag; }
 

@@ -12,7 +12,7 @@
 
 /**
 * @namespace nim
-* @brief IM
+* @brief namespace nim
 */
 namespace nim
 {
@@ -93,7 +93,7 @@ public:
 	static bool KickOtherClient(const std::list<std::string>& client_ids);
 
 	/** @fn void RegReloginCb(const LoginCallback& cb, const std::string& json_extension = "")
-	* 注册NIM客户端自动重连回调。重连失败时，如果不是网络错误引起的（网络相关的错误号为kNIMResTimeoutError和kNIMResConnectionError），而是服务器返回了非kNIMResSuccess的错误号，
+	* (全局回调)注册NIM客户端自动重连回调。重连失败时，如果不是网络错误引起的（网络相关的错误号为kNIMResTimeoutError和kNIMResConnectionError），而是服务器返回了非kNIMResSuccess的错误号，
 	* 则说明重连的机制已经失效，需要APP层调用nim_client_logout执行注销操作并退回到登录界面后进行重新登录。
 	* @param[in] cb 自动重连的回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -102,7 +102,7 @@ public:
 	static void RegReloginCb(const LoginCallback& cb, const std::string& json_extension = "");
 
 	/** @fn void RegKickoutCb(const KickoutCallback& cb, const std::string& json_extension = "")
-	* 注册NIM客户端被踢回调
+	* (全局回调)注册NIM客户端被踢回调
 	* @param[in] cb 被踢的回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
@@ -110,7 +110,7 @@ public:
 	static void RegKickoutCb(const KickoutCallback& cb, const std::string& json_extension = "");
 
 	/** @fn void RegDisconnectCb(const DisconnectCallback& cb, const std::string& json_extension = "")
-	* 注册NIM客户端掉线回调
+	* (全局回调)注册NIM客户端掉线回调
 	* @param[in] cb 掉线的回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
@@ -118,7 +118,7 @@ public:
 	static void RegDisconnectCb(const DisconnectCallback& cb, const std::string& json_extension = "");
 
 	/** @fn void RegMultispotLoginCb(const MultiSpotLoginCallback& cb, const std::string& json_extension = "")
-	* 注册NIM客户端多点登录通知回调
+	* (全局回调)注册NIM客户端多点登录通知回调
 	* @param[in] cb 多点登录通知的回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
@@ -126,7 +126,7 @@ public:
 	static void RegMultispotLoginCb(const MultiSpotLoginCallback& cb, const std::string& json_extension = "");
 
 	/** @fn void RegKickOtherClientCb(const KickOtherCallback& cb, const std::string& json_extension = "")
-	* 注册NIM客户端将本帐号的其他端踢下线结果回调
+	* (全局回调)注册NIM客户端将本帐号的其他端踢下线结果回调
 	* @param[in] cb 踢下线结果回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
@@ -134,7 +134,7 @@ public:
 	static void RegKickOtherClientCb(const KickOtherCallback& cb, const std::string& json_extension = "");
 
 	/** @fn void RegSyncMultiportPushConfigCb(const MultiportPushConfigCallback& cb, const std::string& json_extension = "")
-	* 注册多端推送开关同步回调
+	* (全局回调)注册多端推送开关同步回调
 	* @param[in] cb 回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
@@ -142,7 +142,7 @@ public:
 	static void RegSyncMultiportPushConfigCb(const MultiportPushConfigCallback& cb, const std::string& json_extension = "");
 
 	/** @fn void SetMultiportPushConfigAsync(bool switch_on, const MultiportPushConfigCallback& cb, const std::string& json_extension = "")
-	* 设置多端推送
+	* (全局回调)设置多端推送
 	* @param[in] switch_on 开关
 	* @param[in] cb 回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）

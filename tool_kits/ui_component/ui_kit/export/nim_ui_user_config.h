@@ -27,7 +27,6 @@ public:
 	void SetIcon(UINT nRes);
 	UINT GetIcon();
 
-	void Re_GetText(ITextServices * text_service, std::wstring& text);
 	bool GetAppLocalVersion(int &version, std::wstring &version_flag);
 
 private:

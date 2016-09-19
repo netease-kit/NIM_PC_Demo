@@ -34,6 +34,19 @@ void Init();
 */
 void Uninit();
 
+/** @fn void InitLog(const std::string& log_file_path)
+* NIM HTTP 设置日志文件路径
+* @param[in] log_file_path	日志文件保存路径
+* @return void 无返回值
+*/
+void InitLog(const std::string& log_file_path);
+
+/** @fn bool IsInitLog()
+* NIM HTTP 是否设置过日志路径
+* @return bool 是否设置过日志路径
+*/
+bool IsInitLog();
+
 //设置cpp封装层的全局代理
 void SetGlobalProxy(NIMProxyType type, const std::string& host, short port, const std::string& user, const std::string& pass);
 

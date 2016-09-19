@@ -13,7 +13,7 @@
 
 /**
 * @namespace nim
-* @brief IM
+* @brief namespace nim
 */
 namespace nim
 {
@@ -30,7 +30,7 @@ public:
 	
 public:
 	/** @fn static void RegCompleteCb(const DataSyncCallback& cb)
-	* 注册数据同步完成的回调函数
+	* (全局回调)注册数据同步完成的回调函数
 	* @param[in] cb 数据同步完成的回调函数
 	* @return void 无返回值
 	*/

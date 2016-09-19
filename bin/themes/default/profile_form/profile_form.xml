@@ -90,6 +90,16 @@
 					bordersize="1" bordercolor="profile_account" visible="false"/>
 			</HBox>
 		</VBox>
+		<VBox name="only_me" width="stretch" height="auto">
+			<Control class="splitline_hor_level1" width="stretch"/>
+			<VBox width="stretch" height="auto" padding="30,30,30,30" childmargin="25">
+				<HBox width="stretch" height="auto">
+					<Label text="多端推送" font="2"/>
+					<Control width="stretch"/>
+					<CheckBox class="switch" name="multi_push_switch" selected="true"/>
+				</HBox>
+			</VBox>
+		</VBox>
 		<VBox name="only_other" width="stretch" height="auto">
 			<Control class="splitline_hor_level1" width="stretch"/>
 			<VBox width="stretch" height="auto" padding="30,30,30,30" childmargin="25">

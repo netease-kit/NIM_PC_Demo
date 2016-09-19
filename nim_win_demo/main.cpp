@@ -132,6 +132,14 @@ static void InitNim()
 				nbase::StringToInt((std::string)pchar, &log_level);
 				config.sdk_log_level_ = (nim::NIMSDKLogLevel)log_level;
 			}
+			if (auto pchar = root->Attribute("kNIMPreloadImageQuality")){
+				int quality = -1;
+				nbase::StringToInt((std::string)pchar, &quality);
+				config.preload_image_quality_ = quality;
+			}
+			if (auto pchar = root->Attribute("kNIMPreloadImageResize")){
+				config.preload_image_resize_ = (std::string)pchar;
+			}
 			config.use_private_server_ = use_private_server;
 		}
 	}

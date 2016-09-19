@@ -16,8 +16,8 @@ GroupList::GroupList(ui::TreeView* group_list) :
 	unregister_cb.Add(TeamService::GetInstance()->RegRemoveTeam(remove_team_cb));
 	auto change_team_name_cb = nbase::Bind(&GroupList::OnTeamNameChanged, this, std::placeholders::_1);
 	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(change_team_name_cb));
-	OnPhotoReadyCallback cb2 = nbase::Bind(&GroupList::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(cb2));
+	auto photo_ready_cb = nbase::Bind(&GroupList::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(photo_ready_cb));
 
 	nim::Team::QueryAllMyTeamsInfoAsync(nbase::Bind(&GroupList::OnQueryAllMyTeams, this, std::placeholders::_1, std::placeholders::_2));
 

@@ -1,5 +1,4 @@
 ﻿#pragma once
-#include "bubble_item.h"
 #include "module/service/team_service.h"
 
 namespace nim_comp

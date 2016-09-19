@@ -27,6 +27,7 @@ enum NIMVideoChatSessionType{
 	kNIMVideoChatSessionTypeHangupNotify	= 11,		/**< 通话被挂断通知 */
 	kNIMVideoChatSessionTypeSyncAckNotify	= 12,		/**< 通话接听挂断同步通知 */
 	kNIMVideoChatSessionTypeMp4Notify		= 13,		/**< 通知MP4录制状态，包括开始录制和结束录制 */
+	kNIMVideoChatSessionTypeInfoNotify		= 14,		/**< 通知实时音视频数据状态 */
 };
 
 /** @enum NIMVChatControlType 音视频通话控制类型 */
@@ -158,6 +159,11 @@ static const char *kNIMVChatMp4Start		= "mp4_start";			/**< key Mp4写入数据�
 static const char *kNIMVChatMp4Close		= "mp4_close";			/**< key 结束Mp4录制，返回时长及原因 kNIMVChatStatus(NIMVChatMp4RecordCode) kNIMVChatTime(时长) kNIMVChatMp4File */
 static const char *kNIMVChatMp4File			= "mp4_file";			/**< string mp4录制地址 */
 static const char *kNIMVChatCustomInfo		= "custom_info";		/**< string 自定义数据 */
+static const char *kNIMVChatVideo			= "video";				/**< key 视频 */
+static const char *kNIMVChatAudio			= "audio";				/**< key 音频 */
+static const char *kNIMVChatStaticInfo		= "static_info";		/**< key 音视频实时状态 */
+static const char *kNIMVChatFPS				= "fps";				/**< int 每秒帧率或者每秒发包数 */
+static const char *kNIMVChatKBPS			= "KBps";				/**< int 每秒流量，单位为“千字节” */
 /** @}*/ //json extension params
 
 /** @typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, __int64 channel_id, int code, const char *json_extension, const void *user_data)
@@ -178,6 +184,7 @@ static const char *kNIMVChatCustomInfo		= "custom_info";		/**< string 自定义�
   *				kNIMVideoChatSessionTypeMp4Notify			//通知MP4录制状态，包括开始录制和结束录制 code无效，json 返回如下 \n
   *															//	MP4开始 	{"mp4_start":{ "mp4_file": "d:\\test.mp4", "time": 14496477000000 }} \n
   *															//	MP4结束 	{"mp4_close":{ "mp4_file": "d:\\test.mp4", "time": 120000, "status": 0 }} \n
+  *				kNIMVideoChatSessionTypeInfoNotify			//实时状态		{"static_info":{ "video": {"fps":20, "KBps":200, "width":1280,"height":720}, "audio": {"fps":17, "KBps":3}}} \n
   * @param[out] type NIMVideoChatSessionType
   * @param[out] channel_id 通话的通道id
   * @param[out] code 结果类型或错误类型

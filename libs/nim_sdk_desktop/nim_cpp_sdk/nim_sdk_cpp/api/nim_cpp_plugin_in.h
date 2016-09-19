@@ -1,5 +1,5 @@
-/** @file nim_cpp_plugin_in.h
-  * @brief NIM SDK Ìá¹©µÄplugin½ÓÈë½Ó¿Ú
+ï»¿/** @file nim_cpp_plugin_in.h
+  * @brief NIM SDK æä¾›çš„pluginæ¥å…¥æ¥å£
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/12/29
@@ -21,20 +21,20 @@ namespace nim
 #include "nim_plugin_in_def.h"
 
 /** @class PluginIn
-  * @brief NIM SDK Ìá¹©µÄplugin½ÓÈë½Ó¿ÚÀà
+  * @brief NIM SDK æä¾›çš„pluginæ¥å…¥æ¥å£ç±»
   */
 class PluginIn
 {
 public:
-	typedef std::function<void(int error_code, const std::string& result)>	ChatRoomRequestEnterCallback;	/**<  »ñÈ¡ÁÄÌìÊÒµÇÂ¼ĞÅÏ¢»Øµ÷*/
+	typedef std::function<void(int error_code, const std::string& result)>	ChatRoomRequestEnterCallback;	/**<  è·å–èŠå¤©å®¤ç™»å½•ä¿¡æ¯å›è°ƒ*/
 
 public:
 	/** @fn void ChatRoomRequestEnter(const __int64 room_id, const ChatRoomRequestEnterCallback &callback, const std::string& json_extension = "")
-  * Òì²½»ñÈ¡½øÈëµÄÁÄÌìÊÒĞÅÏ¢
-  * @param[in] room_id				ÁÄÌìÊÒID
-  * @param[in] callback				»Øµ÷º¯Êı
-  * @param[in] json_extension		jsonÀ©Õ¹²ÎÊı£¨±¸ÓÃ£¬Ä¿Ç°²»ĞèÒª£©
-  * @return void ÎŞ·µ»ØÖµ
+  * å¼‚æ­¥è·å–èŠå¤©å®¤ç™»å½•ä¿¡æ¯
+  * @param[in] room_id				èŠå¤©å®¤ID
+  * @param[in] callback				å›è°ƒå‡½æ•°
+  * @param[in] json_extension		jsonæ‰©å±•å‚æ•°ï¼ˆå¤‡ç”¨ï¼Œç›®å‰ä¸éœ€è¦ï¼‰
+  * @return void æ— è¿”å›å€¼
   */
 	static void ChatRoomRequestEnterAsync(const __int64 room_id, const ChatRoomRequestEnterCallback &callback, const std::string& json_extension = "");
 };

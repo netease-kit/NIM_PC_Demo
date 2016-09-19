@@ -103,6 +103,8 @@ void SessionManager::AddNewMsg(const nim::IMMessage &msg)
 
 	if (!IsSessionWndActive(id))
 	{
+		if (IsAtMeMsg(msg))
+			id_atme_[id] = true;
 		nim_ui::SessionListManager::GetInstance()->AddUnreadCount(id);
 	}
 	if (sess)
@@ -140,8 +142,18 @@ void SessionManager::RemoveForm( std::string id, const SessionForm* form /*=NULL
 	}
 }
 
-void SessionManager::ResetUnread( const std::string &id )
+bool SessionManager::IsContainAtMeMsg(const std::string &id)
 {
+	auto i = id_atme_.find(id);
+	if (i != id_atme_.end())
+		return i->second;
+	
+	return false;
+}
+
+void SessionManager::ResetUnread(const std::string &id)
+{
+	id_atme_[id] = false;
 	nim_ui::SessionListManager::GetInstance()->ResetSessionUnread(id);
 }
 void SessionManager::AddFileUpProgressCb(std::string msg_id, nim::Talk::FileUpPrgCallback* cb)

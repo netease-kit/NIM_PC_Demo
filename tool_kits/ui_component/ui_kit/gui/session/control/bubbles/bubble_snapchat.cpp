@@ -51,7 +51,7 @@ bool MsgBubbleSnapChat::OnClicked(ui::EventArgs* arg)
 				session_form->OnSnapchatRead(msg_.client_msg_id_);
 		}
 		else {
-			nim::NOS::DownloadResource(url, ToWeakCallback([this](nim::NIMResCode res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
+			nim::NOS::DownloadResource(url, ToWeakCallback([this](int res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
 				if (res_code == nim::kNIMResSuccess)
 				{
 					std::wstring ws_file_path = nbase::UTF8ToUTF16(file_path);

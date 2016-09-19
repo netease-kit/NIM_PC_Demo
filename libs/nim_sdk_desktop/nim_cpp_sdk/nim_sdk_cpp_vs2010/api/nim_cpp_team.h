@@ -15,7 +15,7 @@
 
 /**
 * @namespace nim
-* @brief IM
+* @brief namespace nim
 */
 namespace nim
 {
@@ -38,7 +38,7 @@ public:
 	typedef std::function<void(const std::string& tid, const TeamInfo& result)>	QueryTeamInfoCallback;		/**< 查询指定群信息回调模板 */
 
 	/** @fn static void RegTeamEventCb(const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 统一注册接收群通知回调函数（创建群,收到邀请等群通知通过此接口广播，注意：服务器推送过来的群通知和APP发起请求的回调统一处理！）
+	* (全局回调)统一注册接收群通知回调函数（创建群,收到邀请等群通知通过此接口广播，注意：服务器推送过来的群通知和APP发起请求的回调统一处理！）
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		群通知的回调函数
 	* @return void 无返回值

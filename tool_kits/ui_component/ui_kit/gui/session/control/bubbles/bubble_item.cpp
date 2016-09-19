@@ -75,6 +75,16 @@ nim::IMMessage MsgBubbleItem::GetMsg()
 	return msg_;
 }
 
+std::string MsgBubbleItem::GetSenderId()
+{
+	return msg_.sender_accid_;
+}
+
+nim::NIMMessageType MsgBubbleItem::GetMsgType()
+{
+	return msg_.type_;
+}
+
 void MsgBubbleItem::SetShowTime(bool show)
 {
 	if(show)

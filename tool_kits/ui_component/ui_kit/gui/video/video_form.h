@@ -253,6 +253,7 @@ private:
 	bool			custom_video_mode_;//使用自定义数据模式，做数据处理用
 	VideoFrameMng	video_frame_mng_;//使用自定义数据模式，做数据处理后，数据保存用于预览
 	int64_t			channel_id_;
+	nbase::NLock	capture_lock_;
 
 	EndCallEnum		end_call_;
 

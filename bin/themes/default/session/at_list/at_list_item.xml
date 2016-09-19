@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+    <ListContainerElement class="listitem" dataid="at_list_item" height="40" mousechild="false" padding="0,0,10,0">        
+		<HBox height="stretch">
+			<Box valign="center" width="26" height="26" margin="12,7,10,7">
+				<Control name="user_icon" width="26" height="26" borderround="26,26,26,26" />
+				<Control class="icon_headimage_mask_40x40" width="26" height="26" />
+			</Box>
+			<Label name="user_name" width="stretch" font="2" normaltextcolor="darkcolor" valign="center" endellipsis="true"/>
+		</HBox>
+    </ListContainerElement>
+</Window>

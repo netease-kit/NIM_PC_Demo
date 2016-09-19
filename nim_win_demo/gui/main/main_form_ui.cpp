@@ -2,7 +2,7 @@
 #include "main_form.h"
 #include "gui/about/about_form.h"
 #include "gui/msglogmanage/msglog_manage_form.h"
-#include "gui/invoke_chat_form/invoke_chat_form.h"
+#include "gui/contact_select_form/contact_select_form.h"
 #include "util/user.h"
 #include "callback/team/team_callback.h"
 #include "gui/chatroom_frontpage.h"
@@ -194,37 +194,37 @@ bool MainForm::OnClicked( ui::EventArgs* msg )
 	}
 	else if(name == L"btn_create_group")
 	{
-		nim_comp::InvokeChatForm *invite_user_form = (nim_comp::InvokeChatForm *)nim_comp::WindowsManager::GetInstance()->GetWindow\
-			(nim_comp::InvokeChatForm::kClassName, L"CreateGroupWnd");
-		std::wstring caption = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_INVITEUSERFORM_CREATE_GROUP");
-		if (!invite_user_form)
+		nim_comp::ContactSelectForm *contact_select_form = (nim_comp::ContactSelectForm *)nim_comp::WindowsManager::GetInstance()->GetWindow\
+			(nim_comp::ContactSelectForm::kClassName, nbase::UTF8ToUTF16(nim_comp::ContactSelectForm::kCreateGroup));
+
+		if (!contact_select_form)
 		{
-			nim_comp::InvokeChatForm::SelectedCompletedCallback cb = ToWeakCallback([this](const std::list<std::string> &id_list)
+			auto cb = ToWeakCallback([this](const std::list<std::string> &friend_list, const std::list<std::string> &team_list)
 			{
-				if (id_list.empty())
+				if (friend_list.empty())
 				{
 					ShowMsgBox(m_hWnd, L"创建失败，请邀请好友", nullptr, L"提示", L"确定", L"");
 					return;
 				}
 
 				UTF16String user_names;
-				auto it = id_list.cbegin();
-				for (int i = 0; it != id_list.cend() && i < 2; it++, i++)
+				auto it = friend_list.cbegin();
+				for (int i = 0; it != friend_list.cend() && i < 2; it++, i++)
 					user_names += nim_ui::UserManager::GetInstance()->GetUserName(*it, false) + L";";
-				user_names += nim_ui::UserManager::GetInstance()->GetUserName(it == id_list.end() ? nim_ui::LoginManager::GetInstance()->GetAccount() : *it, false);
+				user_names += nim_ui::UserManager::GetInstance()->GetUserName(it == friend_list.end() ? nim_ui::LoginManager::GetInstance()->GetAccount() : *it, false);
 
 				nim::TeamInfo tinfo;
 				tinfo.SetType(nim::kNIMTeamTypeNormal);
 				tinfo.SetName(nbase::UTF16ToUTF8(user_names));
-				nim::Team::CreateTeamAsync(tinfo, id_list, "", nbase::Bind(&nim_comp::TeamCallback::OnTeamEventCallback, std::placeholders::_1));
+				nim::Team::CreateTeamAsync(tinfo, friend_list, "", nbase::Bind(&nim_comp::TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 			});
-			invite_user_form = new nim_comp::InvokeChatForm("CreateGroupWnd", std::list<UTF8String>(), cb);
-			invite_user_form->Create(NULL, L"", UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L);
-			invite_user_form->CenterWindow();
+			contact_select_form = new nim_comp::ContactSelectForm(nim_comp::ContactSelectForm::kCreateGroup, std::list<UTF8String>(), cb);
+			contact_select_form->Create(NULL, L"", UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L);
+			contact_select_form->CenterWindow();
 		}
 		else
 		{
-			invite_user_form->ActiveWindow();
+			contact_select_form->ActiveWindow();
 		}
 	}
 	else if (name == L"btn_create_team")

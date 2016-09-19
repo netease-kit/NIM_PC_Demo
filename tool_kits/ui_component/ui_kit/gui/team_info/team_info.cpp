@@ -3,7 +3,7 @@
 #include "shared/pin_yin_helper.h"
 #include "callback/team/team_callback.h"
 #include "shared/tool.h"
-#include "gui/invoke_chat_form/invoke_chat_form.h"
+#include "gui/contact_select_form/contact_select_form.h"
 #include "module/login/login_manager.h"
 #include "gui/team_info/member_manager.h"
 #include "gui/profile_form/head_modify_form.h"
@@ -227,10 +227,10 @@ bool TeamInfoForm::OnInviteUesrBtnClick(ui::EventArgs *param)
 		switch (type_)
 		{
 		case nim::kNIMTeamTypeNormal:
-			wnd_id = "CreateGroupWnd";
+			wnd_id = ContactSelectForm::kCreateGroup;
 			break;
 		case nim::kNIMTeamTypeAdvanced:
-			wnd_id = "CreateTeamWnd";
+			wnd_id = ContactSelectForm::kCreateTeam;
 			break;
 		default:
 			break;
@@ -242,32 +242,30 @@ bool TeamInfoForm::OnInviteUesrBtnClick(ui::EventArgs *param)
 	if (wnd_id.empty())
 		return false;
 
-	InvokeChatForm *invite_user_form = (InvokeChatForm *)WindowsManager::GetInstance()->GetWindow\
-		(InvokeChatForm::kClassName, nbase::UTF8ToUTF16(wnd_id));
-	std::wstring caption = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_INVITEUSERFORM_INVITE_JOINCHAT");
-	if(!invite_user_form)
+	ContactSelectForm *contact_select_form = (ContactSelectForm *)WindowsManager::GetInstance()->GetWindow\
+		(ContactSelectForm::kClassName, nbase::UTF8ToUTF16(wnd_id));
+
+	if(!contact_select_form)
 	{
-		std::list<UTF8String> ids_;
+		std::list<UTF8String> exnclude_ids;
 		for (int i = 0; i < tile_box_->GetCount(); i++)
-		{
-			ids_.push_back(tile_box_->GetItemAt(i)->GetUTF8DataID());
-		}
-		invite_user_form = new InvokeChatForm(wnd_id, ids_, nbase::Bind(&TeamInfoForm::SelectedCompleted, this, std::placeholders::_1));
-		invite_user_form->Create(NULL, caption.c_str(), UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L);
-		invite_user_form->CenterWindow();
+			exnclude_ids.push_back(tile_box_->GetItemAt(i)->GetUTF8DataID());
+
+		contact_select_form = new ContactSelectForm(wnd_id, exnclude_ids, nbase::Bind(&TeamInfoForm::SelectedCompleted, this, std::placeholders::_1, std::placeholders::_1));
+		contact_select_form->Create(NULL, L"", UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L);
+		contact_select_form->CenterWindow();
 	}
 
-	invite_user_form->ActiveWindow();
-	::SetForegroundWindow(invite_user_form->GetHWND());
+	contact_select_form->ActiveWindow();
 
 	return true;
 }
 
-void TeamInfoForm::SelectedCompleted(const std::list<UTF8String>& id_list)
+void TeamInfoForm::SelectedCompleted(const std::list<UTF8String>& friend_list, const std::list<UTF8String>& team_list)
 {
 	if (create_or_display_) {
 		nim::TeamMemberProperty team_member;
-		for (auto it = id_list.begin(); it != id_list.end(); it++)
+		for (auto it = friend_list.begin(); it != friend_list.end(); it++)
 		{
 			team_member.SetAccountID(*it);
 			team_member.SetNick(nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(*it)));
@@ -276,7 +274,7 @@ void TeamInfoForm::SelectedCompleted(const std::list<UTF8String>& id_list)
 		}
 	}
 	else {
-		nim::Team::InviteAsync(tid_, id_list, "", nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
+		nim::Team::InviteAsync(tid_, friend_list, "", nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 	}
 }
 

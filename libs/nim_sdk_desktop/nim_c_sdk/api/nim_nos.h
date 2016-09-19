@@ -16,7 +16,7 @@ extern"C"
 #endif
 
 /** @fn void nim_nos_reg_download_cb(nim_nos_download_cb_func cb, const void *user_data)
-  * 注册下载回调，通过注册回调获得http下载结果通知，刷新资源
+  * (全局回调)注册下载回调，通过注册回调获得http下载结果通知，刷新资源
   * @param[in] cb 下载的回调函数， nim_nos_download_cb_func回调函数定义见nim_nos_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值

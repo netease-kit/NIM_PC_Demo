@@ -15,7 +15,7 @@
 
 /**
 * @namespace nim
-* @brief IM
+* @brief namespace nim
 */
 namespace nim
 {
@@ -273,7 +273,7 @@ public:
 	static bool QueryMessageBeReaded(const IMMessage& msg);
 
 	/** @fn void RegMessageStatusChangedCb(const MessageStatusChangedCallback& cb, const std::string &json_extension = "")
-	* 注册全局的消息状态变更通知（目前只支持已读状态的通知）
+	* (全局回调)注册全局的消息状态变更通知（目前只支持已读状态的通知）
 	* @param[in] cb				回调函数
 	* @param[in] json_extension	json扩展参数（备用，目前不需要）
 	* @return void 无返回值

@@ -1,4 +1,5 @@
 ﻿#include "profile_form.h"
+#include "callback/multiport/multiport_push_callback.h"
 #include "module/session/session_manager.h"
 #include "module/service/mute_black_service.h"
 #include "head_modify_form.h"
@@ -112,6 +113,7 @@ void ProfileForm::InitWindow()
 	nickname_label = static_cast<ui::Label*>(FindControl(L"nickname"));
 	sex_icon = static_cast<ui::CheckBox*>(FindControl(L"sex_icon"));
 
+	multi_push_switch = static_cast<ui::CheckBox*>(FindControl(L"multi_push_switch"));
 	notify_switch = static_cast<ui::CheckBox*>(FindControl(L"notify_switch"));
 	black_switch = static_cast<ui::CheckBox*>(FindControl(L"black_switch"));
 	mute_switch = static_cast<ui::CheckBox*>(FindControl(L"mute_switch"));
@@ -174,11 +176,15 @@ void ProfileForm::InitUserInfo(const nim::UserNameCard &info)
 
 	if (user_type == -1) // 自己的名片
 	{
+		// 获取多端推送开关
+		nim::Client::GetMultiportPushConfigAsync(&MultiportPushCallback::OnMultiportPushConfigChange);
+
 		head_image_btn->SetMouseEnabled(true); // 可点击头像进行更换
 		btn_modify_info->SetVisible(true); // 显示“编辑”按钮
 		head_image_btn->SetMouseEnabled(true); // 可点击头像进行更换
 
-		FindControl(L"only_other")->SetVisible(false); // 当名片是自己的时候，下面两块隐藏
+		FindControl(L"only_other")->SetVisible(false);	// 当名片是自己的时候，隐藏下面两块
+		FindControl(L"only_me")->SetVisible(true);		// 当名片是自己的时候，显示多端推送开关
 
 		nickname_edit->SetLimitText(10);
 		phone_edit->SetLimitText(13);
@@ -193,9 +199,15 @@ void ProfileForm::InitUserInfo(const nim::UserNameCard &info)
 		btn_modify_info->AttachClick(nbase::Bind(&ProfileForm::OnModifyOrCancelBtnClicked, this, std::placeholders::_1, true));
 		btn_cancel_modify->AttachClick(nbase::Bind(&ProfileForm::OnModifyOrCancelBtnClicked, this, std::placeholders::_1, false));
 		btn_save_modify->AttachClick(nbase::Bind(&ProfileForm::OnSaveInfoBtnClicked, this, std::placeholders::_1));
+
+		multi_push_switch->AttachSelect(nbase::Bind(&ProfileForm::OnMultiPushSwitchSelected, this, std::placeholders::_1));
+		multi_push_switch->AttachUnSelect(nbase::Bind(&ProfileForm::OnMultiPushSwitchUnSelected, this, std::placeholders::_1));
 	}
 	else
 	{
+		FindControl(L"only_other")->SetVisible(true);	// 当名片是自己的时候，显示下面两块
+		FindControl(L"only_me")->SetVisible(false);		// 当名片是自己的时候，隐藏多端推送开关
+
 		CheckInMuteBlack();
 		add_or_del->SelectItem(user_type == nim::kNIMFriendFlagNormal ? 0 : 1);
 
@@ -277,6 +289,18 @@ bool ProfileForm::Notify(ui::EventArgs * msg)
 			nickname_edit->SetFocus();
 		}
 	}
+	return true;
+}
+
+bool ProfileForm::OnMultiPushSwitchSelected(ui::EventArgs* args)
+{
+	nim::Client::SetMultiportPushConfigAsync(true, &MultiportPushCallback::OnMultiportPushConfigChange);
+	return true;
+}
+
+bool ProfileForm::OnMultiPushSwitchUnSelected(ui::EventArgs* args)
+{
+	nim::Client::SetMultiportPushConfigAsync(false, &MultiportPushCallback::OnMultiportPushConfigChange);
 	return true;
 }
 
@@ -686,6 +710,14 @@ void nim_comp::ProfileForm::OnMiscUInfoChange(const std::list<nim::UserNameCard>
 			break;
 		}
 	}
+}
+
+void ProfileForm::OnMultiportPushConfigChange(bool switch_on)
+{
+	if (-1 != user_type)
+		return;
+
+	multi_push_switch->Selected(switch_on, false);
 }
 
 void ProfileForm::InitLabels()

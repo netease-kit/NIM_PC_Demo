@@ -14,7 +14,7 @@
 
 /**
 * @namespace nim
-* @brief IM
+* @brief namespace nim
 */
 namespace nim
 {
@@ -26,7 +26,9 @@ struct SDKConfig
 {
 	//global_config
 	std::string		database_encrypt_key_;			/**< 数据库秘钥，必填，目前只支持最多32个字符的加密密钥！建议使用32个字符 */
-	bool			preload_attach_;				/**< 必填，是否需要预下载附件缩略图，默认为true */
+	bool			preload_attach_;				/**< 是否需要预下载附件(图片和语音),选填,默认为true,如果有对带宽流量有较高要求的请关闭该选项，改为上层开发者按需下载附件文件 */
+	int				preload_image_quality_;			/**< 预下载图片质量,选填,范围0-100 */
+	std::string		preload_image_resize_;			/**< 预下载图片基于长宽做内缩略,选填,比如宽100高50,则赋值为100x50,中间为字母小写x */
 	NIMSDKLogLevel	sdk_log_level_;					/**< 定义见NIMSDKLogLevel，选填，SDK默认的内置级别为kNIMSDKLogLevelPro */
 
 	//private_server_setting
@@ -42,6 +44,7 @@ struct SDKConfig
 
 	/** 构造函数 */
 	SDKConfig() : preload_attach_(true)
+				, preload_image_quality_(-1)
 				, use_private_server_(false)
 				, rsa_version_(0)
 				, sdk_log_level_(kNIMSDKLogLevelApp) {}

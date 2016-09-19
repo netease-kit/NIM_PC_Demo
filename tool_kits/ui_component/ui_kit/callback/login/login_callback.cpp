@@ -265,59 +265,6 @@ void LoginCallback::UILoginCallback(nim::NIMResCode code, bool relogin)
 		 	LoginManager::GetInstance()->SetLoginStatus(code == nim::kNIMResSuccess ? LoginStatus_SUCCESS : LoginStatus_NONE);
 		 	LoginCallback::DoLogout(false);
 		}
-//依赖demo部分
-// 		LoginForm* login_form = dynamic_cast<LoginForm*>( WindowsManager::GetInstance()->GetWindow(LoginForm::kClassName, LoginForm::kClassName) );
-// 		if(login_form)
-// 		{
-// 			if(LoginManager::GetInstance()->GetLoginStatus() == LoginStatus_CANCEL)
-// 			{
-// 				QLOG_APP(L"-----login cancel end-----");
-// 				if (code == nim::kNIMResSuccess)
-// 					NimLogout(nim::kNIMLogoutChangeAccout);
-// 				else
-// 					UILogoutCallback();
-// 				return;
-// 			}
-// 			else
-// 				LoginManager::GetInstance()->SetLoginStatus(code == nim::kNIMResSuccess ? LoginStatus_SUCCESS : LoginStatus_NONE);
-// 
-// 			if (code == nim::kNIMResSuccess)
-// 			{
-// 				//LoginManager::GetInstance()->GetLoginData()->status_ = kLoginDataStatusValid;
-// 				//LoginManager::GetInstance()->GetLoginData()->remember_ = remember_pwd_ckb_->IsSelected() ? 1 : 0;
-// 				//LoginManager::GetInstance()->GetLoginData()->auto_login_ = auto_login_ckb_->IsSelected() ? 1 : 0;
-// 				//LoginManager::GetInstance()->SaveLoginData();
-// 
-// 				login_form->ShowWindow(false, false);
-// 
-// 				std::string acc = LoginManager::GetInstance()->GetAccount();
-// 				assert(!acc.empty());
-// 				std::wstring app_data_audio_path = QPath::GetUserAppDataDir(acc);
-// 				nbase::CreateDirectory(app_data_audio_path);
-// 				std::string res_audio_path = nbase::UTF16ToUTF8(app_data_audio_path);
-// 				bool ret = nim_audio::Audio::Init(res_audio_path);
-// 				assert(ret);
-// 				//audio
-// 				nim_audio::Audio::RegStartPlayCb(&AudioCallback::OnPlayAudioCallback);
-// 				nim_audio::Audio::RegStopPlayCb(&AudioCallback::OnStopAudioCallback);
-// 
-// 				_DoAfterLogin();
-// 				// 登录成功，显示主界面
-// 				WindowsManager::SingletonShow<MainForm>(MainForm::kClassName);
-// 
-// 				::DestroyWindow( login_form->GetHWND() );
-// 			}
-// 			else
-// 			{
-// 				login_form->OnLoginResult(code);
-// 			}
-// 		}
-// 		else
-// 		{
-// 			QLOG_APP(L"login form has been closed");
-// 			LoginManager::GetInstance()->SetLoginStatus(code == nim::kNIMResSuccess ? LoginStatus_SUCCESS : LoginStatus_NONE);
-// 			LoginCallback::DoLogout(false);
-// 		}
 	}
 }
 

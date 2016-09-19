@@ -57,12 +57,14 @@ public:
 
 	void ClearMsg();
 	long long GetMsgTime();
+	nim::SessionData GetSessionData() { return msg_; }
 	
 	// 未读消息条数相关操作
 	int GetUnread();
 	void SetUnread(int unread);
 	void AddUnread();
 	void ResetUnread();
+	void ShowAtmeTip(bool show);
 
 	static void DeleteRecentSessionCb(nim::NIMResCode code, const nim::SessionData &result, int total_unread_counts);
 	static void BatchStatusDeleteCb(nim::NIMResCode res_code, const std::string& uid, nim::NIMSessionType to_type);
@@ -78,6 +80,7 @@ private:
 	ui::ButtonBox*	head_image_;
 	ui::Label*		label_name_;
 	ui::Label*		label_msg_;
+	ui::Label*		label_atme_;
 	ui::Label*		label_time_;
 	ui::Box*		box_unread_;
 	ui::Label*		label_unread_;

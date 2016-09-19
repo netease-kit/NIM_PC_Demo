@@ -40,7 +40,7 @@ private:
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 	virtual void InitWindow() override;
 	bool OnInviteUesrBtnClick(ui::EventArgs *param);
-	void SelectedCompleted(const std::list<UTF8String>& id_list);
+	void SelectedCompleted(const std::list<UTF8String>& friend_list, const std::list<UTF8String>& team_list);
 	ui::HBox* CreateTeamMemberListItem(const nim::TeamMemberProperty& member_info);
 	void ChangeUIByIdentity();
 	bool OnBtnDeleteClick(ui::Box* container_element, const UTF8String& user_id, ui::EventArgs* args);

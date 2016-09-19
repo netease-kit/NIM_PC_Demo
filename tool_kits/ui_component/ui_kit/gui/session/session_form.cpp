@@ -1,6 +1,7 @@
 ﻿#include "session_form.h"
 #include "custom_msg_form.h"
 #include "module/session/session_manager.h"
+#include "gui/session/control/atme_view.h"
 #include "callback/session/session_callback.h"
 #include "util/user.h"
 #include "export/nim_ui_window_manager.h"
@@ -50,6 +51,22 @@ void SessionForm::AddNewMsg(const nim::IMMessage &msg, bool create)
 	}
 
 	SendReceiptIfNeeded(true);
+
+	// 如果当前msg包含atme消息，就显示提示条
+	if (IsAtMeMsg(msg))
+	{
+		std::string sender_name = GetShowName(msg.sender_accid_);
+		if (!sender_name.empty())
+		{
+			Json::Value root;
+			Json::Value value;
+			value["sender"] = sender_name;
+			value["uuid"] = msg.client_msg_id_;
+			value["msgbody"] = msg.content_;
+			root[0] = value;
+			atme_view_->AddMessage(root.toStyledString());
+		}
+	}
 }
 
 void SessionForm::AddWritingMsg(const nim::IMMessage &msg)
@@ -141,7 +158,9 @@ MsgBubbleItem* SessionForm::ShowMsg(const nim::IMMessage &msg, bool first, bool 
 			return nullptr;
 		}
 		else
+		{
 			item = new MsgBubbleText;
+		}		
 	}
 	else if (msg.type_ == nim::kNIMMessageTypeImage)
 		item = new MsgBubbleImage;
@@ -299,20 +318,33 @@ void SessionForm::SendText( const std::string &text )
 	msg.type_ = nim::kNIMMessageTypeText;
 	msg.content_ = text;
 	//nickname客户端不需要填写
-	//UserInfo user_info;
-	//UserService::GetInstance()->GetUserInfo(msg.from_account, user_info);
-	//msg.from_nick = user_info.name;
 
 	AddSendingMsg(msg);
 
 	nim::MessageSetting setting;
-	//Json::Reader reader;
-	//std::string test_string = "{\"remote\":{\"mapmap\":{\"int\":1,\"boolean\":false,\"list\":[1,2,3],\"string\":\"string, lalala\"}}}";
-	//if (reader.parse(test_string, setting.server_ext_))
-	//{
-		std::string json_msg = nim::Talk::CreateTextMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, msg.content_, setting, msg.timetag_);
-		nim::Talk::SendMsg(json_msg);
-	//}
+	//判断是否包含@某人的消息
+	if (session_type_ == nim::kNIMSessionTypeTeam && !uid_at_someone_.empty())
+	{
+		setting.is_force_push_ = nim::BS_TRUE;
+		setting.force_push_content_ = text;
+
+		//检查文本消息中是否存在“@xxx ”的文本
+		for (auto it = uid_at_someone_.begin(); it != uid_at_someone_.end(); ++it)
+		{
+			std::string nick_name = it->first;
+			std::string at_str = "@";
+			at_str.append(nick_name);
+			at_str.append(" ");
+
+			if (text.find(at_str) != std::string::npos)
+				setting.force_push_ids_list_.push_back(it->second);
+		}
+
+		uid_at_someone_.clear();
+	}
+
+	std::string json_msg = nim::Talk::CreateTextMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, msg.content_, setting, msg.timetag_);
+	nim::Talk::SendMsg(json_msg);
 }
 
 void SessionForm::SendImage( const std::wstring &src )
@@ -818,7 +850,7 @@ void SessionForm::OnRetweetResDownloadCallback(nim::NIMResCode code, const std::
 	}
 }
 
-void SessionForm::OnRelink( const Json::Value &json )
+void SessionForm::OnRelink(const Json::Value &json)
 {
 	bool link = json["link"].asBool();
 	if(link)

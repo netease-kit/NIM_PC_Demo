@@ -38,6 +38,8 @@ public:
 	SessionForm* Find(const std::string &id);
 	void RemoveForm(std::string id, const SessionForm* form = NULL);
 
+	bool IsContainAtMeMsg(const std::string &id);
+
 	void AddFileUpProgressCb(std::string msg_id, nim::Talk::FileUpPrgCallback* cb);
 	void RemoveFileUpProgressCb(std::string msg_id);
 	void QueryMyTList(const std::string& tid);
@@ -48,6 +50,8 @@ private:
 
 private:
 	std::map<std::string, SessionForm*>	id_form_;
+	std::map<std::string, bool>	id_atme_;	// 会话是否包含未读的@me消息
+
 	std::map<std::string, nim::Talk::FileUpPrgCallback*>	id_up_prg_cb_;
 	std::map<std::string, uint64_t> tlist_bits_;
 

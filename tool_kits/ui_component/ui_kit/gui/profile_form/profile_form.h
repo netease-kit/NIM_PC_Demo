@@ -10,7 +10,6 @@ class ProfileForm : public WindowEx
 public:
 	static ProfileForm *ShowProfileForm(UTF8String uid);
 	static ProfileForm *ShowProfileForm(UTF8String tid, UTF8String uid, nim::NIMTeamUserType my_type);
-
 private:
 	ProfileForm();
 	ProfileForm(UTF8String tid, UTF8String uid, nim::NIMTeamUserType my_type)
@@ -30,8 +29,13 @@ public:
 
 	virtual void InitWindow() override;
 
+public:
+	void OnMultiportPushConfigChange(bool switch_on);
+
 private:
 	bool Notify(ui::EventArgs* msg);
+	bool OnMultiPushSwitchSelected(ui::EventArgs* args); //多端推送打开（桌面端在线时移动端不需推送）
+	bool OnMultiPushSwitchUnSelected(ui::EventArgs* args); //多端推送关闭（桌面端在线时移动端需推送）
 	bool OnNotifySwitchSelected(ui::EventArgs* args); //消息提醒打开（接收该用户的消息）
 	bool OnNotifySwitchUnSelected(ui::EventArgs* args); //消息提醒关闭（屏蔽该用户的消息）
 	bool OnBlackSwitchSelected(ui::EventArgs* args); //黑名单选项打开（将该用户加入黑名单）
@@ -89,6 +93,7 @@ private:
 	ui::Label*		show_name_label = NULL;
 	ui::Label*		user_id_label = NULL;
 	ui::Label*		nickname_label = NULL;
+	ui::CheckBox*	multi_push_switch = NULL;
 	ui::CheckBox*	notify_switch = NULL;
 	ui::CheckBox*	black_switch = NULL;
 	ui::CheckBox*	mute_switch = NULL;

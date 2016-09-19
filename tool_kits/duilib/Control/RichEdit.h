@@ -136,6 +136,7 @@ public:
 	BOOL CreateCaret(INT xWidth, INT yHeight);
 	BOOL ShowCaret(BOOL fShow);
 	BOOL SetCaretPos(INT x, INT y);
+	virtual RECT GetCaretRect();
 	void ChangeCaretVisiable();
 
 	ITextHost * GetTextHost();

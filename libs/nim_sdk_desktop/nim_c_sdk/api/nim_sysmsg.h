@@ -16,7 +16,7 @@ extern"C"
 {
 #endif
 /** @fn void nim_sysmsg_reg_sysmsg_cb(const char *json_extension, nim_sysmsg_receive_cb_func cb, const void *user_data)
-  * 注册接收系统通知回调接口
+  * (全局回调)注册接收系统通知回调接口
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb			操作结果的回调函数， nim_sysmsg_receive_cb_func回调函数定义见nim_sysmsg_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
@@ -33,7 +33,7 @@ NIM_SDK_DLL_API void nim_sysmsg_reg_sysmsg_cb(const char *json_extension, nim_sy
 NIM_SDK_DLL_API void nim_sysmsg_send_custom_notification(const char *json_msg, const char *json_extension);
 
 /** @fn void nim_sysmsg_reg_custom_notification_ack_cb(const char *json_extension, nim_custom_sysmsg_ack_cb_func cb, const void *user_data)
-  * 发送自定义通知结果回调函数 （必须全局注册，统一接受回调后分发消息到具体的会话。注意：客户端发包之后，服务器不一定会返回！）
+  * (全局回调)发送自定义通知结果回调函数 （必须全局注册，统一接受回调后分发消息到具体的会话。注意：客户端发包之后，服务器不一定会返回！）
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb		发送透传消息的回调函数, nim_custom_sysmsg_ack_cb_func回调函数定义见nim_sysmsg_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！

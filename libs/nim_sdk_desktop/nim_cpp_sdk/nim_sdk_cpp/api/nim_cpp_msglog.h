@@ -45,7 +45,7 @@ public:
 
 	typedef std::function<void(nim::NIMResCode res_code)> DBFunctionCallback;		/**< 消息历史变更回调模板 */
 	typedef DBFunctionCallback DeleteAllCallback;	/**< 删除全部消息历史回调模板 */
-	
+
 	typedef std::function<void(__int64 imported_count, __int64 total_count)> ImportDbPrgCallback;	/**< 导入消息历史回调模板 */
 
 	typedef std::function<void(const MessageStatusChangedResult&)>	MessageStatusChangedCallback;	/**< 发送消息已读回执通知回调模板 */
@@ -257,7 +257,6 @@ public:
 		, const ImportDbPrgCallback& prg_cb
 		, const std::string& json_extension = "");
 
-
 	/** @fn void SendReceiptAsync(const std::string& json_msg, const MessageStatusChangedCallback& cb)
 	* 发送消息已读回执
 	* @param[in] json_msg			已读消息json string。
@@ -274,7 +273,7 @@ public:
 	static bool QueryMessageBeReaded(const IMMessage& msg);
 
 	/** @fn void RegMessageStatusChangedCb(const MessageStatusChangedCallback& cb, const std::string &json_extension = "")
-	* 注册全局的消息状态变更通知（目前只支持已读状态的通知）
+	* (全局回调)注册全局的消息状态变更通知（目前只支持已读状态的通知）
 	* @param[in] cb				回调函数
 	* @param[in] json_extension	json扩展参数（备用，目前不需要）
 	* @return void 无返回值

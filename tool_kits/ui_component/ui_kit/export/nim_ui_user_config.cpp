@@ -31,13 +31,6 @@ std::wstring UserConfig::GetUserAudioPath()
 	return nim_comp::GetUserAudioPath();
 }
 
-
-
-void UserConfig::Re_GetText(ITextServices * text_service, std::wstring& text)
-{
-	nim_comp::Re_GetText(text_service, text);
-}
-
 bool UserConfig::GetAppLocalVersion(int &version, std::wstring &version_flag)
 {
 	return nim_comp::LocalHelper::GetAppLocalVersion(version, version_flag);

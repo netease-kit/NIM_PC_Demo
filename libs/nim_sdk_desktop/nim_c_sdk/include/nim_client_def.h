@@ -91,8 +91,10 @@ enum NIMSDKLogLevel
   * @{
   */ 
 static const char *kNIMGlobalConfig				= "global_config";			/**< json object, Global Config */
-static const char *kNIMDataBaseEncryptKey		= "db_encrypt_key";			/**< string, （必填，目前只支持最多32个字符的加密密钥！建议使用32个字符） */
-static const char *kNIMPreloadAttach			= "preload_attach";			/**< bool, （必填，是否需要预下载附件缩略图） */
+static const char *kNIMDataBaseEncryptKey		= "db_encrypt_key";			/**< string, 必填，目前只支持最多32个字符的加密密钥！建议使用32个字符 */
+static const char *kNIMPreloadAttach			= "preload_attach";			/**< bool, 是否需要预下载附件(图片和语音),选填,默认为true,如果有对带宽流量有较高要求的请关闭该选项，改为上层开发者按需下载附件文件 */
+static const char *kNIMPreloadImageQuality		= "preload_image_quality";	/**< int, 预下载图片质量,选填,范围0-100 */
+static const char *kNIMPreloadImageResize		= "preload_image_resize";	/**< string, 预下载图片基于长宽做内缩略,选填,比如宽100高50,则赋值为100x50,中间为字母小写x */
 static const char *kNIMSDKLogLevel				= "sdk_log_level";			/**< int，定义见NIMSDKLogLevel（选填，SDK默认的内置级别为kNIMSDKLogLevelPro） */
 
 static const char *kNIMPrivateServerSetting		= "private_server_setting";	/**< json object, Private Server Setting（一旦设置了私有服务器，则全部连私有服务器，必须确保配置正确！） */

@@ -12,7 +12,6 @@
 namespace nim
 {
 
-typedef	void (*nim_user_set_stat)(const unsigned int user_stat, const char *json_extension, nim_json_transport_cb_func cb, const void *user_data);
 typedef	void (*nim_user_reg_special_relationship_changed_cb)(const char *json_extension, nim_user_special_relationship_change_cb_func cb, const void *user_data);
 typedef	void (*nim_user_set_black)(const char *accid, bool set_black, const char *json_extension, nim_user_opt_cb_func cb, const void *user_data);
 typedef	void (*nim_user_set_mute)(const char *accid, bool set_mute, const char *json_extension, nim_user_opt_cb_func cb, const void *user_data);

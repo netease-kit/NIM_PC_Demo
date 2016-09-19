@@ -86,6 +86,7 @@ bool CustomMsgForm::Notify(ui::EventArgs* param)
 {
 	return true;
 }
+
 std::string GetRichText(ui::RichEdit* re)
 {
 	std::wstring wstr;

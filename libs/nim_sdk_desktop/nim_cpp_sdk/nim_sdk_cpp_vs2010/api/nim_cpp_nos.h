@@ -14,7 +14,7 @@
 
 /**
 * @namespace nim
-* @brief IM
+* @brief namespace nim
 */
 namespace nim
 {
@@ -29,12 +29,12 @@ class NOS
 {
 
 public:
-	typedef std::function<void(nim::NIMResCode res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id)> DownloadMediaCallback; /**< 下载回调模板 */
-	typedef std::function<void(nim::NIMResCode res_code, const std::string& url)> UploadMediaCallback; /**< 上传回调模板 */
+	typedef std::function<void(NIMResCode res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id)> DownloadMediaCallback; /**< 下载回调模板 */
+	typedef std::function<void(NIMResCode res_code, const std::string& url)> UploadMediaCallback; /**< 上传回调模板 */
 	typedef std::function<void(__int64 completed_size, __int64 file_size)> ProgressCallback; /**< 过程回调模板 */
 
 	/** @fn static void RegDownloadCb(const DownloadMediaCallback& cb)
-	* 注册下载回调，通过注册回调获得http下载结果通知，刷新资源
+	* (全局回调)注册下载回调，通过注册回调获得http下载结果通知，刷新资源
 	* @param[in] cb 下载的回调函数
 	* @return void 无返回值
 	*/

@@ -31,9 +31,6 @@
     <Filter Include="callback\team">
       <UniqueIdentifier>{024770d5-02da-463f-9f00-50e54666df59}</UniqueIdentifier>
     </Filter>
-    <Filter Include="gui\invoke_chat_form">
-      <UniqueIdentifier>{2dd91baf-10a1-49a1-affb-4bf188d7523d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="gui\team_info">
       <UniqueIdentifier>{6bce3f89-0ccf-4c18-b790-dd24b37a44b9}</UniqueIdentifier>
     </Filter>
@@ -121,6 +118,18 @@
     <Filter Include="gui\toast">
       <UniqueIdentifier>{987e0053-5f75-44af-9cc5-3cd8fd41b1f2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gui\session\at_list">
+      <UniqueIdentifier>{b04470a2-aa11-4fdd-8e4b-22f5d3021b69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\session\control\bubbles">
+      <UniqueIdentifier>{f9e6462f-11c0-41a1-846e-c91ecb7018e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="callback\multiport">
+      <UniqueIdentifier>{ea593020-c551-4154-ada9-4815a6c39962}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\contact_select_form">
+      <UniqueIdentifier>{2dd91baf-10a1-49a1-affb-4bf188d7523d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -131,42 +140,6 @@
     </ClInclude>
     <ClInclude Include="module\emoji\emoji_info.h">
       <Filter>module\emoji</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\control\bubble_audio.h">
-      <Filter>gui\session\control</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\control\bubble_file.h">
-      <Filter>gui\session\control</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\control\bubble_finger.h">
-      <Filter>gui\session\control</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\control\bubble_image.h">
-      <Filter>gui\session\control</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\control\bubble_item.h">
-      <Filter>gui\session\control</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\control\bubble_location.h">
-      <Filter>gui\session\control</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\control\bubble_notice.h">
-      <Filter>gui\session\control</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\control\bubble_snapchat.h">
-      <Filter>gui\session\control</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\control\bubble_sticker.h">
-      <Filter>gui\session\control</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\control\bubble_text.h">
-      <Filter>gui\session\control</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\control\bubble_unknown.h">
-      <Filter>gui\session\control</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\control\bubble_writing.h">
-      <Filter>gui\session\control</Filter>
     </ClInclude>
     <ClInclude Include="gui\session\control\session_util.h">
       <Filter>gui\session\control</Filter>
@@ -188,9 +161,6 @@
     </ClInclude>
     <ClInclude Include="gui\session\session_form.h">
       <Filter>gui\session</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\invoke_chat_form\invoke_chat_form.h">
-      <Filter>gui\invoke_chat_form</Filter>
     </ClInclude>
     <ClInclude Include="gui\team_info\member_manager.h">
       <Filter>gui\team_info</Filter>
@@ -420,14 +390,71 @@
     <ClInclude Include="export\nim_ui_photo_manager.h">
       <Filter>module\service</Filter>
     </ClInclude>
-    <ClInclude Include="gui\session\control\bubble_video.h">
-      <Filter>gui\session\control</Filter>
-    </ClInclude>
     <ClInclude Include="callback\login\data_sync_callback.h">
       <Filter>callback\login</Filter>
     </ClInclude>
     <ClInclude Include="gui\toast\toast.h">
       <Filter>gui\toast</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\video\helper\smooth.h">
+      <Filter>gui\video\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\video\helper\colorbalance.h">
+      <Filter>gui\video\helper</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\atme_view.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\atlist\at_list_form.h">
+      <Filter>gui\session\at_list</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\atlist\at_list_item.h">
+      <Filter>gui\session\at_list</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_audio.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_file.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_finger.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_image.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_item.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_location.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_notice.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_snapchat.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_sticker.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_text.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_unknown.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_video.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_writing.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="callback\multiport\multiport_push_callback.h">
+      <Filter>callback\multiport</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\contact_select_form\contact_select_form.h">
+      <Filter>gui\contact_select_form</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -436,42 +463,6 @@
     </ClCompile>
     <ClCompile Include="module\emoji\emoji_info.cpp">
       <Filter>module\emoji</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\bubble_audio.cpp">
-      <Filter>gui\session\control</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\bubble_file.cpp">
-      <Filter>gui\session\control</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\bubble_finger.cpp">
-      <Filter>gui\session\control</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\bubble_image.cpp">
-      <Filter>gui\session\control</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\bubble_item.cpp">
-      <Filter>gui\session\control</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\bubble_location.cpp">
-      <Filter>gui\session\control</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\bubble_notice.cpp">
-      <Filter>gui\session\control</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\bubble_snapchat.cpp">
-      <Filter>gui\session\control</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\bubble_sticker.cpp">
-      <Filter>gui\session\control</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\bubble_text.cpp">
-      <Filter>gui\session\control</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\bubble_unknown.cpp">
-      <Filter>gui\session\control</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\bubble_writing.cpp">
-      <Filter>gui\session\control</Filter>
     </ClCompile>
     <ClCompile Include="gui\session\control\session_util.cpp">
       <Filter>gui\session\control</Filter>
@@ -505,9 +496,6 @@
     </ClCompile>
     <ClCompile Include="gui\session\session_form_ui.cpp">
       <Filter>gui\session</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\invoke_chat_form\invoke_chat_form.cpp">
-      <Filter>gui\invoke_chat_form</Filter>
     </ClCompile>
     <ClCompile Include="gui\team_info\member_manager.cpp">
       <Filter>gui\team_info</Filter>
@@ -734,14 +722,74 @@
     <ClCompile Include="export\nim_ui_photo_manager.cpp">
       <Filter>module\service</Filter>
     </ClCompile>
-    <ClCompile Include="gui\session\control\bubble_video.cpp">
-      <Filter>gui\session\control</Filter>
-    </ClCompile>
     <ClCompile Include="callback\login\data_sync_callback.cpp">
       <Filter>callback\login</Filter>
     </ClCompile>
     <ClCompile Include="gui\toast\toast.cpp">
       <Filter>gui\toast</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\helper\smooth.cpp">
+      <Filter>gui\video\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\helper\colorbalance.cpp">
+      <Filter>gui\video\helper</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\atme_view.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\atlist\at_list_form.cpp">
+      <Filter>gui\session\at_list</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\atlist\at_list_item.cpp">
+      <Filter>gui\session\at_list</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_audio.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_file.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_finger.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_image.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_item.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_location.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_notice.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_snapchat.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_sticker.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_text.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_unknown.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_video.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_writing.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="callback\multiport\multiport_push_callback.cpp">
+      <Filter>callback\multiport</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\contact_select_form\contact_select_form.cpp">
+      <Filter>gui\contact_select_form</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\contact_select_form\contact_select_form_ui.cpp">
+      <Filter>gui\contact_select_form</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!--@我消息预览-->
+<Window>
+    <AtMeView name="btn_at_me" height="48" valign="bottom" visible="false" bkimage="bk_tip_dwon.png" padding="10,0,10,0" fadeinoutyfrombottom="true" fadehot="false" cursortype="hand">      
+		<HBox name="btn_at_me" height="stretch" mouse="false" mousechild="false">
+			<Label text="[有人@我] " width="auto" valign="center" normaltextcolor="link_red" font="1" visible="false"/> 
+            <Label name="sender_name" width="auto" valign="center" normaltextcolor="lightcolor" font="1" />  
+			<Label name="msg_body" width="stretch" margin="0,0,30,0" valign="center" normaltextcolor="darkcolor" font="1" endellipsis="true"/>           
+		</HBox>
+
+        <Button name="btn_close_at_me" width="10" height="10" halign="right" valign="center" margin="0,0,10,0" normalimage="at_me_view\close_normal.png" hotimage="at_me_view\close_hover.png" pushedimage="at_me_view\close_hover.png" fadehot="false" cursortype="hand"/>
+    </AtMeView>
+</Window>

@@ -44,6 +44,8 @@ VideoForm::VideoForm(std::string session_id) : session_id_(session_id)
 
 VideoForm::~VideoForm()
 {
+	nbase::NAutoLock auto_lock(&capture_lock_);
+	custom_video_mode_ = false;
 }
 
 ::ui::UILIB_RESOURCETYPE VideoForm::GetResourceType() const
@@ -615,10 +617,12 @@ bool VideoForm::OnClicked( ui::EventArgs* arg )
 	}
 	else if (name == L"face_open")
 	{
+		QLOG_APP(L"face_open");
 		SetCustomVideoMode(true);
 	}
 	else if (name == L"face_close")
 	{
+		QLOG_APP(L"face_close");
 		SetCustomVideoMode(false);
 	}
 	return false;
@@ -1072,9 +1076,9 @@ void VideoForm::InitSetting()
 				camera_checkbox_->SetEnabled(true);
 		}
 		camera_checkbox_->SetVisible(true);
-		//暂时不开发放功能
-		//face_open_btn_->SetVisible(!custom_video_mode_);
-		//face_close_btn_->SetVisible(custom_video_mode_);
+		//美颜功能按钮
+		face_open_btn_->SetVisible(!custom_video_mode_);
+		face_close_btn_->SetVisible(custom_video_mode_);
 	}
 	else
 	{

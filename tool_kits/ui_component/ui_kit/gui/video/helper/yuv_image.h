@@ -46,5 +46,7 @@ private:
 	std::wstring text_;
 	int64_t time_start_;
 };
+void YUV420ToARGB(char* src, char* dst, int width, int height);
+void ARGBToYUV420(char* src, char* dst, int width, int height);
 
 }

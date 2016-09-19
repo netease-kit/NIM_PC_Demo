@@ -69,6 +69,19 @@ NET_EXPORT void nim_http_init();
   */
 NET_EXPORT void nim_http_uninit();
 
+/** @fn void nim_http_init_log(const char* log_file_path)
+* NIM HTTP 设置日志文件路径
+* @param[in] log_file_path	日志文件保存路径
+* @return void 无返回值
+*/
+NET_EXPORT void nim_http_init_log(const char* log_file_path);
+
+/** @fn bool nim_http_is_init_log()
+* NIM HTTP 是否设置过日志路径
+* @return bool 是否设置过日志路径
+*/
+NET_EXPORT bool nim_http_is_init_log();
+
 /** @fn int nim_http_post_request(HttpRequestHandle)
 * NIM HTTP 发起任务
 * @param[in] request_handle	http任务句柄

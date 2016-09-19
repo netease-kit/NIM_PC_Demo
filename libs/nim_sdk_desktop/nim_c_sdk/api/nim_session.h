@@ -16,7 +16,7 @@ extern"C"
 {
 #endif
 /** @fn void nim_session_reg_change_cb(const char *json_extension, nim_session_change_cb_func cb, const void *user_data)
-  * 注册最近会话列表项变更通知
+  * (全局回调)注册最近会话列表项变更通知
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb			最近会话列表项变更的回调函数， nim_session_change_cb_func回调函数定义见nim_session_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！

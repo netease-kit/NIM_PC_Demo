@@ -1,16 +1,16 @@
 ﻿#pragma once
-#include "gui/session/control/bubble_text.h"
-#include "gui/session/control/bubble_image.h"
-#include "gui/session/control/bubble_snapchat.h"
-#include "gui/session/control/bubble_audio.h"
-#include "gui/session/control/bubble_location.h"
-#include "gui/session/control/bubble_notice.h"
-#include "gui/session/control/bubble_finger.h"
-#include "gui/session/control/bubble_unknown.h"
-#include "gui/session/control/bubble_writing.h"
-#include "gui/session/control/bubble_file.h"
-#include "gui/session/control/bubble_sticker.h"
-#include "gui/session/control/bubble_video.h"
+#include "gui/session/control/bubbles/bubble_text.h"
+#include "gui/session/control/bubbles/bubble_image.h"
+#include "gui/session/control/bubbles/bubble_snapchat.h"
+#include "gui/session/control/bubbles/bubble_audio.h"
+#include "gui/session/control/bubbles/bubble_location.h"
+#include "gui/session/control/bubbles/bubble_notice.h"
+#include "gui/session/control/bubbles/bubble_finger.h"
+#include "gui/session/control/bubbles/bubble_unknown.h"
+#include "gui/session/control/bubbles/bubble_writing.h"
+#include "gui/session/control/bubbles/bubble_file.h"
+#include "gui/session/control/bubbles/bubble_sticker.h"
+#include "gui/session/control/bubbles/bubble_video.h"
 #include "gui/session/control/team_item.h"
 #include "gui/emoji/emoji_form.h"
 #include "gui/team_info/team_info.h"
@@ -22,6 +22,7 @@ namespace nim_comp
 const int kCellWritingTime = 5;
 const int kCellCancelWriting = 7;
 
+class AtMeView;
 /** @class SessionForm
   * @brief 会话窗体；用来创建个人会话、讨论组会话、高级群会话的窗体
   * @copyright (c) 2015, NetEase Inc. All rights reserved
@@ -239,6 +240,29 @@ private:
 	void OnClipCallback(bool ret, const std::wstring& file_path);
 
 	void OnBtnSend();
+
+private:
+	void ScrollToControl(const ui::Control *control);			//执行滚动到某个控件位置的动画，用于@me消息查看
+	void ScrollToControlCallback(const ui::Control *control);	//聊天框从当前位置滚动到某个控件位置的动画过程
+
+	// 获取某uid显示的名称，优先显示备注名，其次显示群名片，最后显示昵称
+	std::string GetShowName(const std::string& uid);
+
+	bool OnBtnAtMe(ui::EventArgs* param);
+	bool OnCloseAtMeTip(ui::EventArgs* param);
+
+	//处理输入框的@相关的按键消息,返回真代则不继续传递消息
+	bool HandleAtMsg(WPARAM wParam, LPARAM lParam);
+	//处理输入框的@相关的鼠标滚轮消息,返回真代则不继续传递消息
+	bool HandleAtMouseWheel(WPARAM wParam, LPARAM lParam);
+	void HideAtListForm();
+
+	//响应@列表被单击的回调函数
+	void OnSelectAtItemCallback(const std::string& uid);
+
+	//最近发消息的5个人（不包括自己）,最新发言的在列表最前
+	void GetLastFiveSender(std::list<std::string> &uid_last_five);
+
 private:
 	void ShowMsgWriting(const nim::IMMessage &msg);
 	void CancelWriting();
@@ -364,6 +388,22 @@ private:
 	void LeaveTeamHandle();
 	void DismissTeamHandle();
 
+	/**
+	* 转发消息
+	* @param[in] msg 被转发的消息
+	* @return void 无返回值
+	*/
+	void OnRetweetMessage(const nim::IMMessage &msg);
+
+	/**
+	* 收到转发列表后的回调函数
+	* @param[in] msg 被转发的消息
+	* @param[in] friend_list 转发的好友帐号数组
+	* @param[in] team_list 转发的群组数组
+	* @return void 无返回值
+	*/
+	void RetweetMessage(nim::IMMessage msg, const std::list<std::string>& friend_list, const std::list<std::string>& team_list);
+
 	/** 
 	* 响应邀请按钮消息，邀请他人加入群聊
 	* @param[in] param 被单击的按钮的相关信息
@@ -373,10 +413,11 @@ private:
 
 	/** 
 	* 邀请完毕后的回调函数，根据邀请的名单把个人会话升级带讨论组会话
-	* @param[in] id_list 邀请的好友帐号数组
+	* @param[in] friend_list 邀请的好友帐号数组
+	* @param[in] team_list 不使用
 	* @return void 无返回值
 	*/
-	void CreateGroup(const std::list<UTF8String>& id_list);
+	void CreateGroup(const std::list<std::string>& friend_list, const std::list<std::string>& team_list);
 
 	/**
 	* 响应个人信息(群信息)按钮消息，显示个人信息（群信息）
@@ -552,6 +593,15 @@ private:
 	ui::ListBox*	member_list_;
 	std::map<std::string, nim::TeamMemberProperty> team_member_info_list_;
 
+private:
+	nbase::WeakCallbackFlag	scroll_weak_flag_;		//一键顶部查看和@me滚动条动画所用
+	LONG					scroll_step_;			//滚动条步长
+	bool					scroll_top_;			//单击@me消息滚动的方向
+
+	AtMeView				*atme_view_;			//@我 消息预览
+	std::map<std::string, std::string>	uid_at_someone_;	//当前输入框被@的人的昵称和uid
+
+private:
 	std::string		session_id_;
 	nim::NIMSessionType session_type_;
 

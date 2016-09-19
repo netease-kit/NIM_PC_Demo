@@ -11,7 +11,10 @@
                 <VBox>
                     <Control />
                     <Label name="label_name" width="stretch" font="2"/>
-                    <Label name="label_msg" width="stretch" margin="0,4,0,0" font="1" normaltextcolor="lightcolor"/>
+                    <HBox height="auto" margin="0,4,0,0" mouse="false" mousechild="false">
+						<Label name="at_me_label" text="[有人@我] " visible="false" width="auto" valign="center" normaltextcolor="link_red" font="1"/> 
+                    	<Label name="label_msg" width="stretch" font="1" normaltextcolor="lightcolor"/>
+					</HBox>
                     <Control />
                 </VBox>
                 <VBox width="auto" minwidth="50">

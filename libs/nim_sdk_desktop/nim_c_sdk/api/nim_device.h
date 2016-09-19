@@ -95,7 +95,7 @@ NIM_SDK_DLL_API void nim_vchat_set_audio_data_cb(bool capture, const char *json_
 /** @fn void nim_vchat_set_video_data_cb(bool capture, const char *json_extension, nim_vchat_video_data_cb_func cb, const void *user_data)
   * NIM VCHAT DEVICE 监听视频数据
   * @param[in] capture true 标识监听采集数据（包括辅助摄像头数据），false 标识监听通话中对方视频数据
-  * @param[in] json_extension Json string 返回kNIMVideoSubType（缺省为kNIMVideoSubTypeARGB）
+  * @param[in] json_extension 扩展Json string：kNIMVideoSubType（缺省为kNIMVideoSubTypeARGB）
   * @param[in] cb 结果回调见nim_device_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值

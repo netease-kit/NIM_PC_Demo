@@ -134,8 +134,10 @@ bool Client::Init(const std::string& app_data_dir
 	Json::Value config_root;
 	//sdk能力参数（必填）
 	Json::Value config_values;
-	config_values[nim::kNIMDataBaseEncryptKey] = config.database_encrypt_key_;//"41e7247dd58611b6329db670fa3d4f6c"; //string（db key必填，目前只支持最多32个字符的加密密钥！建议使用32个字符）
-	config_values[nim::kNIMPreloadAttach] = config.preload_attach_;        //bool （选填，是否需要预下载附件缩略图， sdk默认预下载）
+	config_values[nim::kNIMDataBaseEncryptKey] = config.database_encrypt_key_;
+	config_values[nim::kNIMPreloadAttach] = config.preload_attach_;	
+	config_values[nim::kNIMPreloadImageQuality] = config.preload_image_quality_;
+	config_values[nim::kNIMPreloadImageResize] = config.preload_image_resize_;
 	config_values[nim::kNIMSDKLogLevel] = config.sdk_log_level_;
 	config_root[nim::kNIMGlobalConfig] = config_values;
 

@@ -15,7 +15,7 @@
 
 /**
 * @namespace nim
-* @brief IM
+* @brief namespace nim
 */
 namespace nim
 {
@@ -34,7 +34,7 @@ public:
 
 public:
 	/** @fn static void RegChangeCb(const FriendChangeCallback &cb, const std::string& json_extension = "")
-	* 统一注册好友变更通知回调函数（多端同步添加、删除、更新，好友列表同步）
+	* (全局回调)统一注册好友变更通知回调函数（多端同步添加、删除、更新，好友列表同步）
 	* @param[in] cb	好友变更通知回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值

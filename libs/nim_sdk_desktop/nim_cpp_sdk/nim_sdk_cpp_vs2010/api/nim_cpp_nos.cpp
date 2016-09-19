@@ -40,7 +40,7 @@ static void CallbackUpload(int res_code, const char *url, const char *json_exten
 		NOS::UploadMediaCallback cb = ((UploadCallbackUserData*)user_data)->callback_result;
 		if (cb)
 		{
-			cb((nim::NIMResCode)res_code, PCharToString(url));
+			cb((NIMResCode)res_code, PCharToString(url));
 		}
 		delete ((UploadCallbackUserData*)user_data)->callback_progress_pointer;
 		delete user_data;
@@ -54,7 +54,7 @@ static void CallbackDownload(int res_code, const char *file_path, const char *ca
 		NOS::DownloadMediaCallback cb = ((DownloadCallbackUserData*)user_data)->callback_result;
 		if (cb)
 		{
-			cb((nim::NIMResCode)res_code, PCharToString(file_path), PCharToString(call_id), PCharToString(res_id));
+			cb((NIMResCode)res_code, PCharToString(file_path), PCharToString(call_id), PCharToString(res_id));
 		}
 		delete ((DownloadCallbackUserData*)user_data)->callback_progress_pointer;
 		delete user_data;
@@ -80,7 +80,7 @@ static void CallbackMediaDownloadResult(int res_code, const char *file_path, con
 		NOS::DownloadMediaCallback* cb = (NOS::DownloadMediaCallback*)user_data;
 		if (*cb)
 		{
-			(*cb)((nim::NIMResCode)res_code, PCharToString(file_path), PCharToString(call_id), PCharToString(res_id));
+			(*cb)((NIMResCode)res_code, PCharToString(file_path), PCharToString(call_id), PCharToString(res_id));
 		}
 	}
 }

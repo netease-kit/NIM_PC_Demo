@@ -1,0 +1,4 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <VListBox name="team_list_box" width="140" height="auto" maxheight="200" vscrollbar="true" hscrollbar="false" bkcolor="white" vscrollunit="80"/>
+</Window>

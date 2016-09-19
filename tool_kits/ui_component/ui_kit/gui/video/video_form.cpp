@@ -4,6 +4,9 @@
 #include "util/windows_manager.h"
 #include "base/time/time.h"
 #include "module/video/video_manager.h"
+#include "./helper/smooth.h"
+#include "./helper/yuv_image.h"
+#include "./helper/colorbalance.h"
 
 namespace nim_comp
 {
@@ -731,10 +734,12 @@ void VideoForm::PaintVideo()
 }
 void VideoForm::SetCustomVideoMode(bool open)
 {
+	QLOG_APP(L"SetCustomVideoMode Start");
 	send_custom_video_.Cancel();
 	custom_video_mode_ = open;
 	if (custom_video_mode_)
 	{
+		QLOG_APP(L"CustomVideoMode Task Start");
 		StdClosure task = nbase::Bind(&VideoForm::SendCustomVideo, this);
 		nbase::ThreadManager::PostRepeatedTask(kThreadScreenCapture, send_custom_video_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(60));
 	}
@@ -744,49 +749,46 @@ void VideoForm::SetCustomVideoMode(bool open)
 }
 void VideoForm::SendCustomVideo()
 {
+	nbase::NAutoLock auto_lock(&capture_lock_);
 	if (current_video_mode_ && custom_video_mode_)
 	{
+		QLOG_APP(L"CustomVideoData Start");
 		static int64_t timestamp = 0;
 		std::string data;
-		data.resize(1280 * 720 * 2);
+		data.resize(1280 * 720 * 4);
 		int32_t w, h;
 		w = 0;
 		h = 0;
 		bool ret = nim_comp::VideoManager::GetInstance()->video_frame_mng_.GetVideoFrame("", timestamp, (char*)data.c_str(), w, h, false, false);
+		QLOG_APP(L"CustomVideoData GetFrame End");
 		if (ret)
 		{
-			int32_t data_size = w * h * 3 / 2;
-			//处理数据
-			uint8_t *buffer = (uint8_t*)data.c_str();
-			for (int i = 0; i < h; ++i)
-			{
-				for (int j = 0; j < w; ++j)
-				{
-					uint8_t y_temp = *buffer;
-					if (y_temp >= 178)
-					{
-						uint32_t temp = 255 - y_temp;
-						y_temp = 255 - temp / 2;
-					}
-					else if (y_temp >= 100)
-					{
-						uint32_t temp = 256 - y_temp;
-						y_temp = 256 - temp * temp / 156;
-					}
-					else
-					{
-						y_temp = y_temp * y_temp / 100;
-					}
-					*buffer = y_temp;
-					++buffer;
-				}
-			}
+			QLOG_APP(L"CustomVideoData Start");
+			int32_t width = w;
+			int32_t height = h;
+			int32_t wxh = width*height;
+			int32_t data_size = wxh * 3 / 2;
+
+			//均方差滤波
+			std::string beauty_src_data;
+			beauty_src_data.resize(wxh * 4);
+			nim_comp::YUV420ToARGB((char*)data.c_str(), (char*)beauty_src_data.c_str(), width, height);
+
+			//采用色彩平衡算法进行美白
+			nim_comp::colorbalance_rgb_u8((unsigned char*)beauty_src_data.c_str(), wxh, (size_t)(wxh * 2 / 100), (size_t)(wxh * 8 / 100), 4);
+
+			nim_comp::ARGBToYUV420((char*)beauty_src_data.c_str(), (char*)data.c_str(), width, height);
+
+			//采用均方差滤波进行磨皮
+			nim_comp::smooth_process((uint8_t*)data.c_str(), width, height, 10, 0, 200);
+			QLOG_APP(L"colorbalance_rgb_u8 End");
 
 			//保存用于预览
 			std::string json;
 			video_frame_mng_.AddVideoFrame(true, 0, data.c_str(), data_size, w, h, json, nim_comp::VideoFrameMng::Ft_I420);
 			//发送
 			nim::VChat::CustomVideoData(0, data.c_str(), data_size, w, h, nullptr);
+			QLOG_APP(L"CustomVideoData End") ;
 		}
 	}
 }

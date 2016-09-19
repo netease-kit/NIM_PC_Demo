@@ -4,6 +4,49 @@
 
 namespace nim_comp
 {
+void YUV420ToARGB(char* src, char* dst, int width, int height)
+{
+	uint8_t* src_y = (uint8_t*)src;
+	uint8_t* src_u = src_y + width * height;
+	uint8_t* src_v = src_u + width * height / 4;
+
+	// 		libyuv::I420ToRGB24(
+	// 			src_y, width,
+	// 			src_u, width / 2,
+	// 			src_v, width / 2,
+	// 			(uint8_t*)dst, width * 3,
+	// 			width, height);
+	libyuv::I420ToARGB(
+		src_y, width,
+		src_u, width / 2,
+		src_v, width / 2,
+		(uint8_t*)dst, width * 4,
+		width, height);
+}
+
+void ARGBToYUV420(char* src, char* dst, int width, int height)
+{
+	int byte_width = width * 4;
+	width -= width % 2;
+	height -= height % 2;
+	int wxh = width * height;
+	uint8_t* des_y = (uint8_t*)dst;
+	uint8_t* des_u = des_y + wxh;
+	uint8_t* des_v = des_u + wxh / 4;
+
+
+
+	// 		libyuv::RGB24ToI420((const uint8*)src, byte_width,
+	// 			des_y, width,
+	// 			des_u, width / 2,
+	// 			des_v, width / 2,
+	// 			width, height);
+	libyuv::ARGBToI420((const uint8_t*)src, byte_width,
+		des_y, width,
+		des_u, width / 2,
+		des_v, width / 2,
+		width, height);
+}
 
 YuvImage::YuvImage()
 {

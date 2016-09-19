@@ -110,11 +110,7 @@ bool MsglogManageForm::OnClicked(ui::EventArgs* param)
 	std::wstring name = param->pSender->GetName();
 	if (name == L"btn_run")
 	{
-		std::wstring path;
-		ITextServices* service = path_edit_->GetTextServices();
-		nim_ui::UserConfig::GetInstance()->Re_GetText(service, path);
-		service->Release();
-
+		std::wstring path = path_edit_->GetText();
 		if (export_or_import_)
 		{
 			if (path.empty())

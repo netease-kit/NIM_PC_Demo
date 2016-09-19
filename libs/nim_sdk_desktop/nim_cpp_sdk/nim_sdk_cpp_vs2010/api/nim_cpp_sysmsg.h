@@ -14,7 +14,7 @@
 
 /**
 * @namespace nim
-* @brief IM
+* @brief namespace nim
 */
 namespace nim
 {
@@ -43,7 +43,7 @@ public:
 	typedef NotifySingleSysmsgCallback DeleteCallback;			/**< 删除系统消息自定义通知回调模板 */
 
 	/** @fn static void RegSysmsgCb(const ReceiveSysmsgCallback& cb, const std::string& json_extension = "")
-	* 注册接收系统通知回调接口
+	* (全局回调)注册接收系统通知回调接口
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			操作结果的回调函数
 	* @return void 无返回值
@@ -51,7 +51,7 @@ public:
 	static void RegSysmsgCb(const ReceiveSysmsgCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static void RegSendCustomSysmsgCb(const SendCustomSysmsgCallback& cb, const std::string& json_extension = "")
-	* 注册发送透传消息回调函数 （必须全局注册，统一接受回调后分发消息到具体的会话。注意：客户端发包之后，服务器不一定会返回！！！）
+	* (全局回调)注册发送透传消息回调函数 （必须全局注册，统一接受回调后分发消息到具体的会话。注意：客户端发包之后，服务器不一定会返回！！！）
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		发送透传消息的回调函数
 	* @return void 无返回值

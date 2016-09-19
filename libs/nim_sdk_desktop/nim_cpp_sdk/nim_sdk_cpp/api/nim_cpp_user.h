@@ -43,10 +43,10 @@ public:
 
 	typedef std::function<void(const std::list<UserNameCard>&)> UserNameCardChangedCallback;					/**< 用户名片变更通知回调模板 */
 	typedef std::function<void(const std::list<UserNameCard>&)> GetUserNameCardCallback;						/**< 获取用户名片回调模板 */
-	typedef std::function<void(NIMResCode res_code)> UpdateMyUserNameCardCallback;								/**< 更新自己的用户名片回调模板 */
+	typedef std::function<void(NIMResCode res_code)> UpdateMyUserNameCardCallback;								/**< 更新自己的名片回调模板 */
 
 	/** @fn static void RegSpecialRelationshipChangedCb(const SpecialRelationshipChangedCallback& cb, const std::string& json_extension = "")
-	* 统一注册用户属性变更通知回调函数（多端同步黑名单、静音名单变更）
+	* (全局回调)统一注册用户属性变更通知回调函数（多端同步黑名单、静音名单变更）
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb
 	* @return void 无返回值
@@ -90,7 +90,7 @@ public:
 	static void GetBlacklist(const GetBlackListCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static void RegUserNameCardChangedCb(const UserNameCardChangedCallback& cb, const std::string& json_extension = "")
-	* 统一注册用户名片变更通知回调函数
+	* (全局回调)统一注册用户名片变更通知回调函数
 	* @param[in] cb 操作结果回调
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值

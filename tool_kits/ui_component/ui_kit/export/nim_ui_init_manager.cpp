@@ -8,6 +8,7 @@
 #include "callback/vchat/vchat_callback.h"
 #include "callback/rts/rts_callback.h"
 #include "callback/login/data_sync_callback.h"
+#include "callback/multiport/multiport_push_callback.h"
 #include "module/service/user_service.h"
 #include "shared/modal_wnd/async_do_modal.h"
 
@@ -40,6 +41,7 @@ void InitManager::InitUiKit()
 	nim::Client::RegDisconnectCb(&nim_comp::LoginCallback::OnDisconnectCallback);
 	nim::Client::RegMultispotLoginCb(&nim_comp::LoginCallback::OnMultispotLoginCallback);
 	nim::Client::RegKickOtherClientCb(&nim_comp::LoginCallback::OnKickoutOtherClientCallback);
+	nim::Client::RegSyncMultiportPushConfigCb(&nim_comp::MultiportPushCallback::OnMultiportPushConfigChange);
 
 	//注册返回发送消息结果的回调，和收到消息的回调。
 	nim::Talk::RegSendMsgCb(nbase::Bind(&nim_comp::TalkCallback::OnSendMsgCallback, std::placeholders::_1));

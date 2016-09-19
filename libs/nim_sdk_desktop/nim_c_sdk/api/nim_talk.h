@@ -36,7 +36,7 @@ NIM_SDK_DLL_API void nim_talk_send_msg(const char *json_msg, const char *json_ex
 NIM_SDK_DLL_API void nim_talk_stop_send_msg(const char *json_msg, const char *json_extension);
 
 /** @fn void nim_talk_reg_ack_cb(const char *json_extension, nim_talk_ack_cb_func cb, const void *user_data)
-  * 注册发送消息结果回调函数 （必须全局注册，统一接受回调后分发消息到具体的会话。注意：客户端发包之后，服务器不一定会返回！）
+  * (全局回调)注册发送消息结果回调函数 （必须全局注册，统一接受回调后分发消息到具体的会话。注意：客户端发包之后，服务器不一定会返回！）
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb		发送消息的回调函数, nim_talk_ack_cb_func回调函数定义见nim_talk_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
@@ -45,7 +45,7 @@ NIM_SDK_DLL_API void nim_talk_stop_send_msg(const char *json_msg, const char *js
 NIM_SDK_DLL_API void nim_talk_reg_ack_cb(const char *json_extension, nim_talk_ack_cb_func cb, const void *user_data);
 
 /** @fn void nim_talk_reg_receive_cb(const char *json_extension, nim_talk_receive_cb_func cb, const void *user_data)
-  * 注册接收消息回调 （建议全局注册，统一接受回调后分发消息到具体的会话）
+  * (全局回调)注册接收消息回调 （建议全局注册，统一接受回调后分发消息到具体的会话）
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb		接收消息的回调函数, nim_talk_receive_cb_func回调函数定义见nim_talk_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
@@ -63,7 +63,7 @@ NIM_SDK_DLL_API void nim_talk_reg_receive_cb(const char *json_extension, nim_tal
 NIM_SDK_DLL_API void nim_talk_reg_receive_msgs_cb(const char *json_extension, nim_talk_receive_cb_func cb, const void *user_data);
 
 /** @fn void nim_talk_reg_notification_filter_cb(const char *json_extension, nim_talk_team_notification_filter_func cb, const void *user_data)
-  * 注册接收群通知是否需要过滤的回调
+  * (全局回调)注册接收群通知是否需要过滤的回调
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb		nim_talk_team_notification_filter_func回调函数定义见nim_talk_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
@@ -95,7 +95,7 @@ NIM_SDK_DLL_API char *nim_talk_create_retweet_msg(const char* src_msg_json, cons
 NIM_SDK_DLL_API void nim_talk_recall_msg(const char *json_msg, const char *notify, const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data);
 
 /** @fn void nim_talk_reg_recall_msg_cb(const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data)
-  * 注册接收消息撤回通知的回调
+  * (全局回调)注册接收消息撤回通知的回调
   * @param[in] json_extension json扩展参数（备用，目前不需要）
   * @param[in] cb		nim_talk_recall_msg_func回调函数定义见nim_talk_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
