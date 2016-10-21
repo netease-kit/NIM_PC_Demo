@@ -55,8 +55,8 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\third_party\jsoncpp\include\json\;$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\..\nim_c_sdk\include\;..\..\..\..\tool_kits\;..\..\..\..\..\tool_kits\;..\;..\..\;..\..\..\;..\..\..\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..\third_party\jsoncpp\include\json\;$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\..\nim_c_sdk\include\;$(ProjectDir)..\..\nim_c_sdk\util\;..\..\..\..\tool_kits\;..\..\..\..\..\tool_kits\;..\;..\..\;..\..\..\;..\..\..\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -75,8 +75,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\..\third_party\jsoncpp\include\json\;$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\..\nim_c_sdk\include\;..\..\..\..\tool_kits\;..\..\..\..\..\tool_kits\;..\;..\..\;..\..\..\;..\..\..\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..\third_party\jsoncpp\include\json\;$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\..\nim_c_sdk\include\;$(ProjectDir)..\..\nim_c_sdk\util\;..\..\..\..\tool_kits\;..\..\..\..\..\tool_kits\;..\;..\..\;..\..\..\;..\..\..\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -115,12 +115,14 @@
     <ClCompile Include="helper\nim_msg_helper.cpp" />
     <ClCompile Include="helper\nim_sdk_helper.cpp" />
     <ClCompile Include="helper\nim_session_helper.cpp" />
+    <ClCompile Include="helper\nim_string_helper.cpp" />
     <ClCompile Include="helper\nim_sysmsg_helper.cpp" />
     <ClCompile Include="helper\nim_talk_helper.cpp" />
     <ClCompile Include="helper\nim_team_helper.cpp" />
     <ClCompile Include="helper\nim_tool_helper.cpp" />
     <ClCompile Include="helper\nim_user_helper.cpp" />
     <ClCompile Include="nim_cpp_api.cpp" />
+    <ClCompile Include="third_party\convert_utf\convert_utf.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api\nim_cpp_client.h" />
@@ -146,12 +148,14 @@
     <ClInclude Include="helper\nim_msg_helper.h" />
     <ClInclude Include="helper\nim_sdk_helper.h" />
     <ClInclude Include="helper\nim_session_helper.h" />
+    <ClInclude Include="helper\nim_string_helper.h" />
     <ClInclude Include="helper\nim_sysmsg_helper.h" />
     <ClInclude Include="helper\nim_talk_helper.h" />
     <ClInclude Include="helper\nim_team_helper.h" />
     <ClInclude Include="helper\nim_tool_helper.h" />
     <ClInclude Include="helper\nim_user_helper.h" />
     <ClInclude Include="nim_cpp_api.h" />
+    <ClInclude Include="third_party\convert_utf\convert_utf.h" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\..\..\tool_kits\base\base.vcxproj">

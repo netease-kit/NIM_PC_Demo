@@ -253,6 +253,8 @@ public:
 		OnEvent[kEventResize] += callback;
 	}
 
+	void DetachEvent(EventType type);
+
 protected:
 	friend WindowBuilder;
 

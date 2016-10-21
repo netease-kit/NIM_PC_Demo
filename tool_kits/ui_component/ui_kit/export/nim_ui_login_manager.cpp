@@ -5,29 +5,19 @@
 namespace nim_ui
 {
 
-LoginManager::LoginManager()
+void LoginManager::RegLoginManagerCallback(const OnLoginError& cb_result, const OnCancelLogin& cb_cancel, const OnHideWindow& cb_hide, const OnDestroyWindow& cb_destroy, const OnShowMainWindow& cb_show_main)
 {
-
-}
-
-LoginManager::~LoginManager()
-{
-
-}
-
-void LoginManager::RegLoginManagerCallback(const OnLoginResult& cb_result, const OnCancelLogin& cb_cancel, const OnHideWindow& cb_hide, const OnDestroyWindow& cb_destroy, const OnShowMainWindow& cb_show_main)
-{
-	cb_login_result_ = cb_result;
+	cb_login_error_ = cb_result;
 	cb_cancel_login_ = cb_cancel;
 	cb_hide_window_ = cb_hide;
 	cb_destroy_window_ = cb_destroy;
 	cb_show_main_window_ = cb_show_main;
 }
 
-void LoginManager::InvokeLoginResult(int error)
+void LoginManager::InvokeLoginError(int error)
 {
-	if (cb_login_result_)
-		cb_login_result_(error);
+	if (cb_login_error_)
+		cb_login_error_(error);
 }
 
 void LoginManager::InvokeCancelLogin()
@@ -56,7 +46,7 @@ void LoginManager::InvokeShowMainForm()
 
 bool LoginManager::IsLoginFormValid()
 {
-	bool is_valid = cb_cancel_login_ && cb_destroy_window_ && cb_hide_window_ && cb_login_result_ && cb_show_main_window_;
+	bool is_valid = cb_cancel_login_ && cb_destroy_window_ && cb_hide_window_ && cb_login_error_ && cb_show_main_window_;
 	return is_valid;
 }
 

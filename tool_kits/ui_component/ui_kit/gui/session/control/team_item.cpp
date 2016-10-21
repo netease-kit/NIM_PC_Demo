@@ -1,7 +1,7 @@
 ﻿#include "team_item.h"
 #include "shared/ui/ui_menu.h"
 #include "callback/team/team_callback.h"
-#include "gui/session/session_form.h"
+#include "module/session/session_manager.h"
 
 using namespace ui;
 
@@ -118,10 +118,10 @@ void TeamItem::PopupItemMenu(POINT point)
 	pMenu->Init(xml, _T("xml"), point);
 
 	nim::NIMTeamUserType my_team_user_type = nim::kNIMTeamUserTypeNomal;
-	SessionForm* session_form = dynamic_cast<SessionForm*>(WindowsManager::GetInstance()->GetWindow(SessionForm::kClassName, nbase::UTF8ToUTF16(team_id_)));
-	if (session_form)
+	SessionBox* session_box = dynamic_cast<SessionBox*>(SessionManager::GetInstance()->FindSessionBox(team_id_));
+	if (session_box)
 	{
-		auto my_pro = session_form->GetTeamMemberInfo(LoginManager::GetInstance()->GetAccount());
+		auto my_pro = session_box->GetTeamMemberInfo(LoginManager::GetInstance()->GetAccount());
 		my_team_user_type = my_pro.GetUserType();
 	}
 	CMenuElementUI* mute_item = (CMenuElementUI*)pMenu->FindControl(L"mute");

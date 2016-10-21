@@ -27,12 +27,12 @@ std::wstring QPath::GetAppPath()
 
 std::wstring QPath::GetUserAppDataDir(const std::string& app_account)
 {
-	return nim::Tool::GetUserAppdataDir(app_account);
+	return nbase::UTF8ToUTF16(nim::Tool::GetUserAppdataDir(app_account));
 }
 
 std::wstring QPath::GetLocalAppDataDir()
 {
-	return nim::Tool::GetLocalAppdataDir();
+	return nbase::UTF8ToUTF16(nim::Tool::GetLocalAppdataDir());
 }
 
 std::wstring QPath::GetNimAppDataDir()

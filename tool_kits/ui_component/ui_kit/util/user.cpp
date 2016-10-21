@@ -1,6 +1,12 @@
 ﻿#include "user.h"
 #include "module/login/login_manager.h"
 
+namespace
+{
+	static const std::wstring kResImage = L"image\\";
+	static const std::wstring kResAudio = L"audio\\";
+}
+
 namespace nim_comp
 {
 std::wstring GetUserDataPath()

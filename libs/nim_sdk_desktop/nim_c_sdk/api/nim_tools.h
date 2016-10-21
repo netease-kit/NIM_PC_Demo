@@ -15,32 +15,33 @@
 extern"C"
 {
 #endif
-/** @fn const wchar_t * nim_tool_get_user_appdata_dir(const char *app_account)  
+
+/** @fn const char * nim_tool_get_user_appdata_dir(const char *app_account)  
   * 获取SDK里app account对应的app data目录（各个帐号拥有独立的目录，其父目录相同），需要调用nim_free_buf(void *data)释放内存 
   * @param[in] app_account APP account。如果传入空字符串，则将获取到各个帐号目录的父目录（谨慎删除！）
-  * @return const wchar_t * 返回的目录路径
+  * @return const char * 返回的目录路径
   */ 
-NIM_SDK_DLL_API	const wchar_t * nim_tool_get_user_appdata_dir(const char *app_account);
+NIM_SDK_DLL_API	const char * nim_tool_get_user_appdata_dir(const char *app_account);
 
-/** @fn const wchar_t * nim_tool_get_user_specific_appdata_dir(const char *app_account, NIMAppDataType appdata_type)  
+/** @fn const char * nim_tool_get_user_specific_appdata_dir(const char *app_account, NIMAppDataType appdata_type)  
   * 获取SDK里app account对应的具体类型的app data目录（如图片消息文件存放目录，语音消息文件存放目录等），需要调用nim_free_buf(void *data)释放内存 
   * @param[in] app_account APP account。如果传入空字符串，则返回结果为空
   * @param[in] appdata_type 具体类型的app data。见NIMAppDataType定义
-  * @return const wchar_t * 返回的目录路径（目录可能未生成，需要app自行判断是否已生成）
+  * @return const char * 返回的目录路径（目录可能未生成，需要app自行判断是否已生成）
   */ 
-NIM_SDK_DLL_API	const wchar_t * nim_tool_get_user_specific_appdata_dir(const char *app_account, NIMAppDataType appdata_type);
+NIM_SDK_DLL_API	const char * nim_tool_get_user_specific_appdata_dir(const char *app_account,enum NIMAppDataType appdata_type);
 
-/** @fn const wchar_t * nim_tool_get_local_appdata_dir()  
+/** @fn const char * nim_tool_get_local_appdata_dir()  
   * 获取本地存储路径，需要调用nim_free_buf(void *data)释放内存
-  * @return const wchar_t * 返回的目录路径
+  * @return const char * 返回的目录路径
   */ 
-NIM_SDK_DLL_API	const wchar_t * nim_tool_get_local_appdata_dir(); 
+NIM_SDK_DLL_API	const char * nim_tool_get_local_appdata_dir(); 
 
-/** @fn const wchar_t * nim_tool_get_cur_module_dir()
+/** @fn const char * nim_tool_get_cur_module_dir()
   * 获取安装目录（SDK DLL所在的当前目录），需要调用nim_free_buf(void *data)释放内存
-  * @return const wchar_t * 返回的目录路径
+  * @return const char * 返回的目录路径
   */ 
-NIM_SDK_DLL_API	const wchar_t * nim_tool_get_cur_module_dir();
+NIM_SDK_DLL_API	const char * nim_tool_get_cur_module_dir();
 
 /** @fn const char * nim_tool_get_md5(const char *input)
   * 计算md5，需要调用nim_free_buf(void *data)释放内存  

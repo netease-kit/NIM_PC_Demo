@@ -41,7 +41,7 @@ NIM_SDK_DLL_API void nim_sysmsg_send_custom_notification(const char *json_msg, c
   */
 NIM_SDK_DLL_API void nim_sysmsg_reg_custom_notification_ack_cb(const char *json_extension, nim_custom_sysmsg_ack_cb_func cb, const void *user_data);
 
-/** @fn void nim_sysmsg_query_msg_async(int limit_count, __int64 last_time, const char *json_extension, nim_sysmsg_query_cb_func cb, const void *user_data)
+/** @fn void nim_sysmsg_query_msg_async(int limit_count, int64_t last_time, const char *json_extension, nim_sysmsg_query_cb_func cb, const void *user_data)
   * 查询本地系统消息（按时间逆序起查，逆序排列）
   * @param[in] limit_count	一次查询数量，建议20
   * @param[in] last_time	上次查询最后一条消息的时间戳（按时间逆序起查，即最小的时间戳）
@@ -50,7 +50,7 @@ NIM_SDK_DLL_API void nim_sysmsg_reg_custom_notification_ack_cb(const char *json_
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_sysmsg_query_msg_async(int limit_count, __int64 last_time, const char *json_extension, nim_sysmsg_query_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_sysmsg_query_msg_async(int limit_count, int64_t last_time, const char *json_extension, nim_sysmsg_query_cb_func cb, const void *user_data);
 
 /** @fn void nim_sysmsg_query_unread_count(const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data)
   * 查询未读消息数
@@ -61,7 +61,7 @@ NIM_SDK_DLL_API void nim_sysmsg_query_msg_async(int limit_count, __int64 last_ti
   */
 NIM_SDK_DLL_API void nim_sysmsg_query_unread_count(const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
 
-/** @fn void nim_sysmsg_set_status_async(__int64 msg_id, NIMSysMsgStatus status, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void *user_data)
+/** @fn void nim_sysmsg_set_status_async(int64_t msg_id, enum NIMSysMsgStatus status, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void *user_data)
   * 设置消息状态
   * @param[in] msg_id		消息id
   * @param[in] status		消息状态
@@ -70,7 +70,7 @@ NIM_SDK_DLL_API void nim_sysmsg_query_unread_count(const char *json_extension, n
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_sysmsg_set_status_async(__int64 msg_id, NIMSysMsgStatus status, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_sysmsg_set_status_async(int64_t msg_id, enum NIMSysMsgStatus status, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void *user_data);
 
 /** @fn void nim_sysmsg_read_all_async(const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data)
   * 设置全部消息为已读
@@ -81,7 +81,7 @@ NIM_SDK_DLL_API void nim_sysmsg_set_status_async(__int64 msg_id, NIMSysMsgStatus
   */
 NIM_SDK_DLL_API void nim_sysmsg_read_all_async(const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
 
-/** @fn void nim_sysmsg_delete_async(__int64 msg_id, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void *user_data)
+/** @fn void nim_sysmsg_delete_async(int64_t msg_id, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void *user_data)
   * 删除消息
   * @param[in] msg_id		消息id
   * @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -89,7 +89,7 @@ NIM_SDK_DLL_API void nim_sysmsg_read_all_async(const char *json_extension, nim_s
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_sysmsg_delete_async(__int64 msg_id, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_sysmsg_delete_async(int64_t msg_id, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void *user_data);
 
 /** @fn void nim_sysmsg_delete_all_async(const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data)
   * 全部删除
@@ -100,7 +100,7 @@ NIM_SDK_DLL_API void nim_sysmsg_delete_async(__int64 msg_id, const char *json_ex
   */
 NIM_SDK_DLL_API void nim_sysmsg_delete_all_async(const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
 
-/** @fn void nim_sysmsg_set_logs_status_by_type_async(NIMSysMsgType type, NIMSysMsgStatus status, const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data)
+/** @fn void nim_sysmsg_set_logs_status_by_type_async(enum NIMSysMsgType type, enum NIMSysMsgStatus status, const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data)
   * 按消息类型批量设置消息状态
   * @param[in] type 消息类型
   * @param[in] status 消息状态,见NIMSysMsgStatus
@@ -109,9 +109,9 @@ NIM_SDK_DLL_API void nim_sysmsg_delete_all_async(const char *json_extension, nim
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_sysmsg_set_logs_status_by_type_async(NIMSysMsgType type, NIMSysMsgStatus status, const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_sysmsg_set_logs_status_by_type_async(enum NIMSysMsgType type, enum NIMSysMsgStatus status, const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
 
-/** @fn void nim_sysmsg_delete_logs_by_type_async(NIMSysMsgType type, const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data)
+/** @fn void nim_sysmsg_delete_logs_by_type_async(enum NIMSysMsgType type, const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data)
   * 按消息类型批量删除消息
   * @param[in] type 消息类型
   * @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -119,7 +119,7 @@ NIM_SDK_DLL_API void nim_sysmsg_set_logs_status_by_type_async(NIMSysMsgType type
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_sysmsg_delete_logs_by_type_async(NIMSysMsgType type, const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_sysmsg_delete_logs_by_type_async(enum NIMSysMsgType type, const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
 
 #ifdef __cplusplus 
 };

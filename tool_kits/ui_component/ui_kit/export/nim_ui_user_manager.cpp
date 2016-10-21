@@ -2,25 +2,9 @@
 
 namespace nim_ui
 {
-
-UserManager::UserManager()
-{
-
-}
-
-UserManager::~UserManager()
-{
-
-}
-
 void UserManager::InvokeRegisterAccount(const std::string &username, const std::string &password, const std::string &nickname, const OnRegisterAccountCallback& cb)
 {
 	nim_comp::UserService::GetInstance()->InvokeRegisterAccount(username, password, nickname, cb);
-}
-
-void UserManager::InvokeGetAllUserInfo(const OnGetUserInfoCallback& cb)
-{
-	nim_comp::UserService::GetInstance()->InvokeGetAllUserInfo(cb);
 }
 
 nim::NIMFriendFlag UserManager::GetUserType(const std::string &id)
@@ -41,16 +25,6 @@ void UserManager::GetUserInfos(const std::list<std::string>& ids, std::list<nim:
 const std::map<std::string, nim::UserNameCard>& UserManager::GetAllUserInfos()
 {
 	return nim_comp::UserService::GetInstance()->GetAllUserInfos();
-}
-
-void UserManager::InvokeUpdateUserInfo(const nim::UserNameCard & new_info, const OnUpdateUserInfoCallback & cb)
-{
-	nim_comp::UserService::GetInstance()->InvokeUpdateUserInfo(new_info, cb);
-}
-
-void UserManager::InvokeChangeUserPhoto(const std::string & url, const OnUpdateUserInfoCallback & cb)
-{
-	nim_comp::UserService::GetInstance()->InvokeChangeUserPhoto(url, cb);
 }
 
 std::wstring UserManager::GetUserName(const std::string &id, bool alias_prior/* = true */)

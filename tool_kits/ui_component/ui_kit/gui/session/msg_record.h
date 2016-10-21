@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "gui/session/session_form.h"
+#include "gui/session/session_box.h"
 
 namespace nim_comp
 {
@@ -15,21 +15,48 @@ public:
 	MsgRecordForm();
 	~MsgRecordForm();
 	
+	//覆盖虚函数
 	virtual std::wstring GetSkinFolder() override;
 	virtual std::wstring GetSkinFile() override;
-	virtual ui::UILIB_RESOURCETYPE GetResourceType() const;
-	virtual std::wstring GetZIPFileName() const;
-	
 	virtual std::wstring GetWindowClassName() const override;
 	virtual std::wstring GetWindowId() const override;
 	virtual UINT GetClassStyle() const override;
 	
-	virtual void OnFinalMessage(HWND hWnd);
+	/**
+	* 窗口初始化函数
+	* @return void	无返回值
+	*/
+	virtual void InitWindow() override;
+
+	/**
+	* 拦截并处理底层窗体消息
+	* @param[in] uMsg 消息类型
+	* @param[in] wParam 附加参数
+	* @param[in] lParam 附加参数
+	* @return LRESULT 处理结果
+	*/
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
-	virtual void InitWindow() override;
-	virtual bool Notify(ui::EventArgs* param);
-	virtual bool OnClicked(ui::EventArgs* param);
+	/**
+	* 处理窗口被销毁的消息
+	* @param[in] hWnd 窗口句柄
+	* @return void	无返回值
+	*/
+	virtual void OnFinalMessage(HWND hWnd) override;
+	
+	/**
+	* 处理所有控件的所有消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool Notify(ui::EventArgs* msg);
+
+	/**
+	* 处理所有控件单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnClicked(ui::EventArgs* msg);
 
 	//////////////////////////////////////////////////////////////////////////
 	//与消息相关的操作
@@ -104,8 +131,19 @@ public:
 	*/
 	void OnStopAudioCallback(const std::string &cid, int code);
 private:
+	/**
+	* 响应窗体最大化消息
+	* @param[in] max 是否最大化显示
+	* @return void	无返回值
+	*/
 	void OnWndSizeMax(bool max);
-	void LoadingTip(bool add);
+
+	/**
+	* 显示正在加载中的提示信息
+	* @param[in] show 是否显示
+	* @return void	无返回值
+	*/
+	void LoadingTip(bool show);
 public:
 	static const LPCTSTR kClassName;
 private:

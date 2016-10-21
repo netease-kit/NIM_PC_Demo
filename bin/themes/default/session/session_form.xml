@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="500,600" mininfo="500,600" caption="100,0,0,68" sizebox="4,4,4,4">
+	<HBox>
+		<VListBox class="list" name="merge_list" width="130" visible="false" padding="0,0,2,0" rightbordersize="1" bordercolor="splitline_level1"/><!-- 左侧合并窗口列表 -->
+		<TabBox name="session_box_tab" bkcolor="bk_gray1">
+		</TabBox>
+	</HBox>
+</Window>

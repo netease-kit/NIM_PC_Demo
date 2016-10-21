@@ -26,16 +26,6 @@ std::wstring EmojiForm::GetSkinFile()
 	return L"emoji_form.xml";
 }
 
-ui::UILIB_RESOURCETYPE EmojiForm::GetResourceType() const
-{
-	return ui::UILIB_FILE;
-}
-
-std::wstring EmojiForm::GetZIPFileName() const
-{
-	return L"emoji_form.zip";
-}
-
 std::wstring EmojiForm::GetWindowClassName() const
 {
 	return kClassName;
@@ -49,24 +39,6 @@ std::wstring EmojiForm::GetWindowId() const
 UINT EmojiForm::GetClassStyle() const
 {
 	return (UI_CLASSSTYLE_FRAME | CS_DBLCLKS);
-}
-
-LRESULT EmojiForm::OnClose(UINT u, WPARAM w, LPARAM l, BOOL& bHandled)
-{
-	if( cls_cb_ )
-	{
-		Post2UI( nbase::Bind(cls_cb_) );
-	}
-	return __super::OnClose(u, w, l, bHandled);
-}
-
-LRESULT EmojiForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	if( uMsg == WM_KILLFOCUS )
-	{
-		this->Close();
-	}
-	return __super::HandleMessage(uMsg, wParam, lParam);
 }
 
 void EmojiForm::InitWindow()
@@ -91,7 +63,7 @@ void EmojiForm::InitWindow()
 		emoj_->Add(box);
 
 		box->SetKeyboardEnabled(false);
-		box->AttachClick(nbase::Bind(&EmojiForm::OnClicked, this, std::placeholders::_1));
+		box->AttachClick(nbase::Bind(&EmojiForm::OnEmojiClicked, this, std::placeholders::_1));
 		std::wstring tag = i->tag;
 		assert(tag.size() > 2);
 		box->SetToolTipText( tag.substr(1, tag.size() - 2) );
@@ -102,6 +74,40 @@ void EmojiForm::InitWindow()
 	//AddSticker(L"ajmd", 48);
 	//AddSticker(L"lt", 20);
 }
+
+LRESULT EmojiForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	if (uMsg == WM_KILLFOCUS)
+	{
+		this->Close();
+	}
+	return __super::HandleMessage(uMsg, wParam, lParam);
+}
+
+LRESULT EmojiForm::OnClose(UINT u, WPARAM w, LPARAM l, BOOL& bHandled)
+{
+	if (close_cb_)
+	{
+		Post2UI(nbase::Bind(close_cb_));
+	}
+	return __super::OnClose(u, w, l, bHandled);
+}
+
+void EmojiForm::ShowEmoj(POINT pt, OnSelectEmotion sel, OnSelectSticker sel_sticker, OnEmotionClose close_cb, bool only_emoj)
+{
+	sel_cb_ = sel;
+	sel_sticker_cb_ = sel_sticker;
+	close_cb_ = close_cb;
+	only_emoj_ = only_emoj;
+
+	HWND hwnd = WindowEx::Create(NULL, L"", WS_POPUP, WS_EX_TOOLWINDOW);
+	if (hwnd == NULL)
+		return;
+
+	UiRect rc(pt.x, pt.y, 0, 0);
+	this->SetPos(rc, SWP_NOSIZE | SWP_SHOWWINDOW, HWND_TOPMOST);
+}
+
 void EmojiForm::AddSticker(std::wstring name, int num)
 {
 	std::wstring sticker_id = nbase::StringPrintf(L"sticker_%s", name.c_str());
@@ -114,7 +120,7 @@ void EmojiForm::AddSticker(std::wstring name, int num)
 		sticker->SetDataID(name);
 
 		box->SetKeyboardEnabled(false);
-		box->AttachClick(nbase::Bind(&EmojiForm::OnClicked2, this, std::placeholders::_1));
+		box->AttachClick(nbase::Bind(&EmojiForm::OnStickerClicked, this, std::placeholders::_1));
 
 		Control* c = box->FindSubControl(L"sticker");
 		std::wstring sticker_name = nbase::StringPrintf(L"%s%.3d", name.c_str(), i);
@@ -125,6 +131,7 @@ void EmojiForm::AddSticker(std::wstring name, int num)
 		c->SetBkImage(path);
 	}
 }
+
 bool EmojiForm::OnSelChanged(ui::EventArgs* param)
 {
 	std::wstring name = param->pSender->GetName();
@@ -143,22 +150,7 @@ bool EmojiForm::OnSelChanged(ui::EventArgs* param)
 	return true;
 }
 
-void EmojiForm::ShowEmoj(POINT pt, OnSelectEmotion sel, OnSelectEmotion2 sel2, OnEmotionClose cls, bool only_emoj)
-{
-	sel_cb_ = sel;
-	sel2_cb_ = sel2;
-	cls_cb_ = cls;
-	only_emoj_ = only_emoj;
-
-	HWND hwnd = WindowEx::Create(NULL, L"", WS_POPUP, WS_EX_TOOLWINDOW);
-	if(hwnd == NULL)
-		return;
-
-	UiRect rc( pt.x, pt.y, 0, 0 );
-	this->SetPos( rc, SWP_NOSIZE | SWP_SHOWWINDOW, HWND_TOPMOST );
-}
-
-bool EmojiForm::OnClicked( ui::EventArgs* arg )
+bool EmojiForm::OnEmojiClicked( ui::EventArgs* arg )
 {
 	std::wstring tip = arg->pSender->GetToolTipText();
 	if( tip.empty() )
@@ -176,7 +168,8 @@ bool EmojiForm::OnClicked( ui::EventArgs* arg )
 	this->Close();
 	return false;
 }
-bool EmojiForm::OnClicked2(ui::EventArgs* arg)
+
+bool EmojiForm::OnStickerClicked(ui::EventArgs* arg)
 {
 	std::wstring id = arg->pSender->GetDataID();
 	if (id.empty())
@@ -191,9 +184,9 @@ bool EmojiForm::OnClicked2(ui::EventArgs* arg)
 		return false;
 	}
 
-	if (sel2_cb_)
+	if (sel_sticker_cb_)
 	{
-		Post2UI(nbase::Bind(sel2_cb_, sticker_name, id));
+		Post2UI(nbase::Bind(sel_sticker_cb_, sticker_name, id));
 	}
 
 	this->Close();

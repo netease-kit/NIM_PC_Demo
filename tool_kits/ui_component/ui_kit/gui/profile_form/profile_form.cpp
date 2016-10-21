@@ -365,7 +365,7 @@ void ProfileForm::OnBlackChangeCallback(std::string id, bool black)
 
 bool ProfileForm::OnStartChatBtnClicked(ui::EventArgs* args)
 {
-	SessionManager::GetInstance()->OpenSessionForm(m_uinfo.GetAccId(), nim::kNIMSessionTypeP2P);
+	SessionManager::GetInstance()->OpenSessionBox(m_uinfo.GetAccId(), nim::kNIMSessionTypeP2P);
 	return true;
 }
 
@@ -401,7 +401,7 @@ void ProfileForm::OnModifyHeaderComplete(const std::string& id, const std::strin
 {
 	// 头像上传成功，开始更新用户信息
 	auto update_cb = nbase::Bind(&ProfileForm::UpdateUInfoHeaderCallback, this, std::placeholders::_1);
-	UserService::GetInstance()->InvokeChangeUserPhoto(url, update_cb);
+	UserService::GetInstance()->InvokeUpdateMyPhoto(url, update_cb);
 }
 
 void ProfileForm::UpdateUInfoHeaderCallback(int res)
@@ -523,7 +523,7 @@ bool ProfileForm::OnSaveInfoBtnClicked(ui::EventArgs * args)
 	}
 	
 	if (new_info.ExistValue(nim::kUserNameCardKeyAll))
-		UserService::GetInstance()->InvokeUpdateUserInfo(new_info, nullptr);
+		UserService::GetInstance()->InvokeUpdateMyInfo(new_info, nullptr);
 	else
 		OnModifyOrCancelBtnClicked(nullptr, false);
 

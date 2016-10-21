@@ -16,11 +16,19 @@ class NIM_UI_DLL_API InitManager
 {
 public:
 	SINGLETON_DEFINE(InitManager);
+	InitManager(){};
+	~InitManager(){};
 public:
-	InitManager();
-	~InitManager();
-public:
+	/**
+	* 初始化UI组件（应该在程序初始化时调用）
+	* @return void	无返回值
+	*/
 	void InitUiKit();
+
+	/**
+	* 清理UI组件
+	* @return void	无返回值
+	*/
 	void CleanupUiKit();
 };
 

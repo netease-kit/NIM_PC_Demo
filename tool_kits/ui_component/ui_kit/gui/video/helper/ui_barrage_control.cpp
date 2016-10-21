@@ -3,16 +3,16 @@
 namespace ui
 {
 
-CBarrageControl::CBarrageControl()
+BarrageControl::BarrageControl()
 {
 	SetBarrageInfo(25, 40, 10, 20);
 }
 
-CBarrageControl::~CBarrageControl(void)
+BarrageControl::~BarrageControl(void)
 {
 	Clear();
 }
-void CBarrageControl::SetBarrageInfo(int32_t line_num_max, int32_t line_height, int32_t line_h_random, int32_t top_pos)
+void BarrageControl::SetBarrageInfo(int32_t line_num_max, int32_t line_height, int32_t line_h_random, int32_t top_pos)
 {
 	Clear();
 	if (line_num_max <= BarrageLineMax)
@@ -24,7 +24,7 @@ void CBarrageControl::SetBarrageInfo(int32_t line_num_max, int32_t line_height, 
 	barrage_top_pos_ = top_pos;
 }
 
-void CBarrageControl::Paint(HDC hDC, const UiRect& rcPaint)
+void BarrageControl::Paint(HDC hDC, const UiRect& rcPaint)
 {
 	try
 	{
@@ -79,14 +79,14 @@ void CBarrageControl::Paint(HDC hDC, const UiRect& rcPaint)
 	}
 }
 //清理失效数据
-void CBarrageControl::Clear()
+void BarrageControl::Clear()
 {
 	for (int i = 0; i < BarrageLineMax; ++i)
 	{
 		barrage_info_group_[i].clear();
 	}
 }
-bool CBarrageControl::AddText(std::wstring text)
+bool BarrageControl::AddText(std::wstring text)
 {
 	if (!IsVisible())
 	{
@@ -150,7 +150,7 @@ bool CBarrageControl::AddText(std::wstring text)
 	}
 	return true;
 }
-bool CBarrageControl::InsertBarrageItem(BarrageInfo info, bool single, bool random, bool cover)
+bool BarrageControl::InsertBarrageItem(BarrageInfo info, bool single, bool random, bool cover)
 {
 	int height = m_rcItem.bottom - m_rcItem.top;
 	int barrage_line_num = (height - barrage_top_pos_) / line_height_;
@@ -215,7 +215,7 @@ bool CBarrageControl::InsertBarrageItem(BarrageInfo info, bool single, bool rand
 	return false;
 }
 
-bool CBarrageControl::IsEmpty()
+bool BarrageControl::IsEmpty()
 {
 	for (int i = 0; i < barrage_line_num_max_; ++i)
 	{

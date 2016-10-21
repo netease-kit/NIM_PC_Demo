@@ -52,8 +52,8 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;NIM_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)helper\;$(SolutionDir)third_party\jsoncpp\include\json\;$(ProjectDir)..\nim_sdk_dll\export_headers\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;NIM_SDK;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\..\third_party\jsoncpp\include\json\;$(ProjectDir)..\nim_sdk_dll\export_headers\;$(ProjectDir)..\nim_sdk_dll\util\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -62,7 +62,7 @@
       <AdditionalDependencies>jsoncpp_d.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)libs\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\libs\</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -71,8 +71,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;NIM_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)helper\;$(SolutionDir)third_party\jsoncpp\include\json\;$(ProjectDir)..\nim_sdk_dll\export_headers\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;NIM_SDK;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\..\third_party\jsoncpp\include\json\;$(ProjectDir)..\nim_sdk_dll\export_headers\;$(ProjectDir)..\nim_sdk_dll\util\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -83,7 +83,7 @@
       <AdditionalDependencies>jsoncpp.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(SolutionDir)libs\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\libs\</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -110,12 +110,14 @@
     <ClCompile Include="helper\nim_msg_helper.cpp" />
     <ClCompile Include="helper\nim_sdk_helper.cpp" />
     <ClCompile Include="helper\nim_session_helper.cpp" />
+    <ClCompile Include="helper\nim_string_helper.cpp" />
     <ClCompile Include="helper\nim_sysmsg_helper.cpp" />
     <ClCompile Include="helper\nim_talk_helper.cpp" />
     <ClCompile Include="helper\nim_team_helper.cpp" />
     <ClCompile Include="helper\nim_tool_helper.cpp" />
     <ClCompile Include="helper\nim_user_helper.cpp" />
     <ClCompile Include="nim_cpp_api.cpp" />
+    <ClCompile Include="third_party\convert_utf\convert_utf.c" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api\nim_cpp_client.h" />
@@ -141,12 +143,14 @@
     <ClInclude Include="helper\nim_msg_helper.h" />
     <ClInclude Include="helper\nim_sdk_helper.h" />
     <ClInclude Include="helper\nim_session_helper.h" />
+    <ClInclude Include="helper\nim_string_helper.h" />
     <ClInclude Include="helper\nim_sysmsg_helper.h" />
     <ClInclude Include="helper\nim_talk_helper.h" />
     <ClInclude Include="helper\nim_team_helper.h" />
     <ClInclude Include="helper\nim_tool_helper.h" />
     <ClInclude Include="helper\nim_user_helper.h" />
     <ClInclude Include="nim_cpp_api.h" />
+    <ClInclude Include="third_party\convert_utf\convert_utf.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

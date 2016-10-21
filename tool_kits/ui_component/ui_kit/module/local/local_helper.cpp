@@ -4,7 +4,6 @@
 
 namespace nim_comp
 {
-bool LocalHelper::devenv_ = false;
 
 bool LocalHelper::GetAppLocalVersion( int &version, std::wstring &version_flag )
 {

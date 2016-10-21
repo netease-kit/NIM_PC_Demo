@@ -37,16 +37,6 @@ std::wstring MainForm::GetSkinFile()
 	return L"main.xml";
 }
 
-ui::UILIB_RESOURCETYPE MainForm::GetResourceType() const
-{
-	return ui::UILIB_FILE;
-}
-
-std::wstring MainForm::GetZIPFileName() const
-{
-	return L"main.zip";
-}
-
 std::wstring MainForm::GetWindowClassName() const 
 {
 	return kClassName;
@@ -84,20 +74,11 @@ LRESULT MainForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 	return 0;
 }
 
-LRESULT MainForm::HandleMessage( UINT uMsg, WPARAM wParam, LPARAM lParam )
-{
-	return __super::HandleMessage(uMsg, wParam, lParam);
-}
-
 void MainForm::InitWindow()
 {
 	SetIcon(IDI_ICON);
 	SetTaskbarTitle(L"云信 Demo");
-	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&MainForm::Notify, this, std::placeholders::_1));
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&MainForm::OnClicked, this, std::placeholders::_1));
-
-	Button* closebtn = (Button*) FindControl(L"btn_wnd_close");
-	closebtn->AttachClick(nbase::Bind(&MainForm::OnCloseBtnClicked, this, std::placeholders::_1));
 
 	btn_header_ = (Button*) FindControl(L"btn_header");
 	label_name_ = (Label*) FindControl(L"label_name");
@@ -132,65 +113,21 @@ void MainForm::InitWindow()
 
 	nim_ui::ContactsListManager::GetInstance()->InvokeGetAllUserInfo();
 	nim_ui::SessionListManager::GetInstance()->InvokeLoadSessionList();
-	nim_ui::SessionListManager::GetInstance()->QueryUnreadCount();
-}
-
-void MainForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
-{
-	for (auto iter = uinfos.cbegin(); iter != uinfos.cend(); iter++)
-	{
-		if (nim_ui::LoginManager::GetInstance()->IsEqual(iter->GetAccId()))
-		{
-			InitHeader();
-			break;
-		}
-	}
-}
-
-void MainForm::OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path)
-{
-	if (type == kUser && nim_ui::LoginManager::GetInstance()->GetAccount() == account)
-		btn_header_->SetBkImage(photo_path);
-}
-
-void MainForm::OnUnreadCountChange(int unread_count)
-{
-	if (unread_count > 0)
-	{
-		label_unread_->SetText(nbase::StringPrintf(L"%d", unread_count));
-		box_unread_->SetVisible(true);
-	}
-	else
-	{
-		box_unread_->SetVisible(false);
-	}
-}
-
-void MainForm::InitHeader()
-{
-	std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
-	label_name_->SetText(nim_ui::UserManager::GetInstance()->GetUserName(my_id, false));
-	btn_header_->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(my_id));
-}
-
-bool MainForm::Notify( ui::EventArgs* msg )
-{
-	return true;
-}
-
-bool MainForm::OnCloseBtnClicked(ui::EventArgs* msg)
-{
-	SendMessage(WM_SYSCOMMAND, SC_MINIMIZE);
-	::ShowWindow(m_hWnd, SW_HIDE);
-	return false;
+	nim_ui::SessionListManager::GetInstance()->QueryUnreadSysMsgCount();
 }
 
 bool MainForm::OnClicked( ui::EventArgs* msg )
 {
 	std::wstring name = msg->pSender->GetName();
+
 	if(name == L"btn_search_team")
 	{
 		nim_ui::WindowsManager::GetInstance()->SingletonShow<nim_comp::TeamSearchForm>(nim_comp::TeamSearchForm::kClassName);
+	}
+	else if (name == L"btn_wnd_close")
+	{
+		SendMessage(WM_SYSCOMMAND, SC_MINIMIZE);
+		::ShowWindow(m_hWnd, SW_HIDE);
 	}
 	else if(name == L"btn_create_group")
 	{
@@ -250,49 +187,6 @@ bool MainForm::OnClicked( ui::EventArgs* msg )
 		nim_ui::WindowsManager::GetInstance()->SingletonShow<nim_chatroom::ChatroomFrontpage>(nim_chatroom::ChatroomFrontpage::kClassName);
 
 	return true;
-}
-
-void MainForm::LeftClick()
-{
-	this->ActiveWindow();
-	if(is_trayicon_left_double_clicked_)
-	{
-		is_trayicon_left_double_clicked_ = false;
-		return;
-	}
-	::SetForegroundWindow(m_hWnd);
-	::BringWindowToTop(m_hWnd);
-}
-
-void MainForm::LeftDoubleClick()
-{
-	is_trayicon_left_double_clicked_ = true;
-}
-
-void MainForm::RightClick()
-{
-	POINT point;
-	::GetCursorPos(&point);
-	PopupMainTrayMenu(point);
-}
-
-void MainForm::PopupMainTrayMenu(POINT point)
-{
-	//创建菜单窗口
-	CMenuWnd* pMenu = new CMenuWnd(NULL);
-	STRINGorID xml(L"tray_menu.xml");
-	pMenu->Init(xml, _T("xml"), point, CMenuWnd::RIGHT_TOP);
-	//注册回调
-	CMenuElementUI* display_session_list = (CMenuElementUI*)pMenu->FindControl(L"display_session_list");
-	display_session_list->AttachSelect(nbase::Bind(&MainForm::SessionListMenuItemClick, this, std::placeholders::_1));
-
-	CMenuElementUI* logoff = (CMenuElementUI*)pMenu->FindControl(L"logoff");
-	logoff->AttachSelect(nbase::Bind(&MainForm::LogoffMenuItemClick, this, std::placeholders::_1));
-
-	CMenuElementUI* quit = (CMenuElementUI*)pMenu->FindControl(L"quit");
-	quit->AttachSelect(nbase::Bind(&MainForm::QuitMenuItemClick, this, std::placeholders::_1));
-	//显示
-	pMenu->Show();
 }
 
 bool MainForm::MainMenuButtonClick(ui::EventArgs* param)
@@ -384,9 +278,10 @@ bool MainForm::LookLogMenuItemClick(ui::EventArgs* param)
 	nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&LookLogClick, GetHWND()));
 	return false;
 }
+
 bool MainForm::FileTransMenuItemClick(ui::EventArgs* param)
 {
-	nim_ui::SessionManager::GetInstance()->OpenSessionForm(nim_ui::LoginManager::GetInstance()->GetAccount(), nim::kNIMSessionTypeP2P);
+	nim_ui::SessionManager::GetInstance()->OpenSessionBox(nim_ui::LoginManager::GetInstance()->GetAccount(), nim::kNIMSessionTypeP2P);
 	return true;
 }
 
@@ -400,12 +295,16 @@ bool MainForm::AddressMenuItemClick(ui::EventArgs* param)
 }
 bool MainForm::ExportMsglogMenuItemClick(ui::EventArgs* param)
 {
-	MsglogManageForm::ShowForm(true);
+	MsglogManageForm *form = nim_ui::WindowsManager::SingletonShow<MsglogManageForm>(MsglogManageForm::kClassName);
+	form->SetType(true);
+
 	return true;
 }
 bool MainForm::ImportMsglogMenuItemClick(ui::EventArgs* param)
 {
-	MsglogManageForm::ShowForm(false);
+	MsglogManageForm *form = nim_ui::WindowsManager::SingletonShow<MsglogManageForm>(MsglogManageForm::kClassName);
+	form->SetType(false);
+
 	return true;
 }
 
@@ -414,16 +313,19 @@ bool MainForm::ClearChatRecordMenuItemClick(bool del_session, ui::EventArgs* par
 	nim::MsgLog::DeleteAllAsync(del_session, nim::MsgLog::DeleteAllCallback());
 	return true;
 }
+
 bool MainForm::ClearChatRecordBySessionTypeMenuItemClick(bool del_session, nim::NIMSessionType type, ui::EventArgs* param)
 {
 	nim::MsgLog::DeleteBySessionTypeAsync(del_session, type, nim::MsgLog::DeleteBySessionTypeCallback());
 	return true;
 }
+
 bool MainForm::VChatSettingMenuItemClick(ui::EventArgs* param)
 {
 	nim_ui::WindowsManager::GetInstance()->ShowVideoSettingForm();
 	return true;
 }
+
 bool MainForm::RtsReplayMenuItemClick(ui::EventArgs* param)
 {
 	nim_ui::WindowsManager::SingletonShow<nim_comp::RtsReplay>(nim_comp::RtsReplay::kClassName);

@@ -55,7 +55,7 @@ void MsgBubbleText::SetMsgText( const std::wstring &str )
 	}
 	else
 	{
-		emoji::InsertToEdit(text_, str);
+		InsertTextToEdit(text_, str);
 	}
 }
 
@@ -75,7 +75,10 @@ ui::CSize MsgBubbleText::EstimateSize(ui::CSize szAvailable)
 
 bool MsgBubbleText::OnMenu( ui::EventArgs* arg )
 {
-	PopupMenu(true, !IsNetCallMsg(msg_.type_, msg_.attach_), msg_.type_ != nim::kNIMMessageTypeNotification);
+	bool can_recall = !IsNetCallMsg(msg_.type_, msg_.attach_);
+	bool can_retweet = msg_.type_ != nim::kNIMMessageTypeNotification;
+
+	PopupMenu(true, can_recall, can_retweet);
 	return false;
 }
 

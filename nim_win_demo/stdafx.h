@@ -58,10 +58,6 @@
 #include "nim_tools_http_cpp_wrapper.h"
 #include "nim_tools_audio_cpp_wrapper.h"
 
-//sdk_test
-// #include "module/sdk_test/nim_client_cpp_wrapper_test.h"
-// #include "module/sdk_test/nim_talk_cpp_wrapper_test.h"
-
 //helper
 #include "shared/closure.h"
 

@@ -2,7 +2,7 @@
 #include "module/emoji/richedit_util.h"
 #include "module/session/session_manager.h"
 #include "callback/team/team_callback.h"
-#include "gui/session/control/session_util.h"
+#include "module/session/session_util.h"
 
 
 using namespace ui;
@@ -30,16 +30,6 @@ std::wstring BroadForm::GetSkinFile()
 	return L"broad.xml";
 }
 
-ui::UILIB_RESOURCETYPE BroadForm::GetResourceType() const
-{
-	return ui::UILIB_FILE;
-}
-
-std::wstring BroadForm::GetZIPFileName() const
-{
-	return L"broad.zip";
-}
-
 std::wstring BroadForm::GetWindowClassName() const
 {
 	return kClassName;
@@ -54,28 +44,6 @@ UINT BroadForm::GetClassStyle() const
 {
 	return (UI_CLASSSTYLE_FRAME | CS_DBLCLKS);
 }
-
-LRESULT BroadForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	if(uMsg == WM_KEYDOWN && wParam == 'V')
-	{
-		if(::GetKeyState(VK_CONTROL) < 0)
-		{
-			if(re_title_->IsFocused())
-			{
-				re_title_->PasteSpecial(CF_TEXT);
-				return 1;
-			}
-			else if(re_content_->IsFocused())
-			{
-				re_content_->PasteSpecial(CF_TEXT);
-				return 1;
-			}
-		}
-	}
-	return __super::HandleMessage(uMsg, wParam, lParam);
-}
-
 void BroadForm::InitWindow()
 {
 	SetTaskbarTitle(L"发布新公告");
@@ -92,6 +60,27 @@ void BroadForm::InitWindow()
 	re_content_->SetLimitText(300);
 
 	btn_commit_ = (Button*) FindControl(L"commit");
+}
+
+LRESULT BroadForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	if (uMsg == WM_KEYDOWN && wParam == 'V')
+	{
+		if (::GetKeyState(VK_CONTROL) < 0)
+		{
+			if (re_title_->IsFocused())
+			{
+				re_title_->PasteSpecial(CF_TEXT);
+				return 1;
+			}
+			else if (re_content_->IsFocused())
+			{
+				re_content_->PasteSpecial(CF_TEXT);
+				return 1;
+			}
+		}
+	}
+	return __super::HandleMessage(uMsg, wParam, lParam);
 }
 
 void BroadForm::SetTid( const std::string &tid )
@@ -170,7 +159,7 @@ void BroadForm::OnUpdateBroadCb(const nim::TeamEvent& team_event)
 	
 	if (team_event.res_code_ == 200)
 	{
-		SessionForm* session = SessionManager::GetInstance()->Find(tid_);
+		SessionBox* session = SessionManager::GetInstance()->FindSessionBox(tid_);
 		if (session)
 			session->InvokeGetTeamInfo();
 

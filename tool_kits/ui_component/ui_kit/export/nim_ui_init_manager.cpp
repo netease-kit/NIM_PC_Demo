@@ -14,24 +14,16 @@
 
 namespace nim_ui
 {
-
-InitManager::InitManager()
-{
-
-}
-
-InitManager::~InitManager()
-{
-
-}
-
 void InitManager::InitUiKit()
 {
-	bool ret = nim::VChat::Init(""); // 初始化云信音视频
+	// 初始化云信音视频
+	bool ret = nim::VChat::Init("");
 	assert(ret);
 
-	nim_http::Init(); // 初始化云信http
+	// 初始化云信http
+	nim_http::Init();
 
+	//注册数据同步结果的回调
 	nim::DataSync::RegCompleteCb(nbase::Bind(&nim_comp::DataSyncCallback::SyncCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 	/* 以下注册的回调函数，都是在收到服务器推送的消息或事件时执行的。因此需要在程序开始时就注册好。 */
@@ -76,7 +68,10 @@ void InitManager::InitUiKit()
 	nim::Rts::SetControlNotifyCb(nbase::Bind(&nim_comp::RtsCallback::ControlNotifyCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	nim::Rts::SetRecDataCb(nbase::Bind(&nim_comp::RtsCallback::RecDataCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 
+	//加载聊天表情
 	nim_comp::emoji::LoadEmoji();
+
+	//语音组件回调函数在登录后注册
 }
 
 void InitManager::CleanupUiKit()

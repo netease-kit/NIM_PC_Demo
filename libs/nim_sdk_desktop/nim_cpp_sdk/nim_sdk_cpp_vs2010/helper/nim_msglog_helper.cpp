@@ -17,6 +17,7 @@ bool ParseMsglogs(const std::string& msgs_json, QueryMsglogResult& res)
 	if (reader.parse(msgs_json, values) && values.isObject())
 	{
 		res.count_ = values[kNIMMsglogQueryKeyCount].asUInt();
+		res.source_ = (NIMMsglogQuerySource)values[kNIMMsglogQueryKeySource].asUInt();
 		Json::Value msgs = values[kNIMMsglogQueryKeyContent];
 		int len = msgs.size();
 		for (int i = 0; i < len; i++)

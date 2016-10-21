@@ -1,0 +1,56 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="814,610" caption="0,0,0,34" textid="STRING_INVOKECHATFORM_CAPTION">
+    <VBox bkcolor="bk_wnd_lightcolor">
+        <HBox class="caption">
+            <Label class="font_title" name="title" width="stretch" valign="center" 
+                   normaltextcolor="darkcolor" textid="STRING_INVOKECHATFORM_CAPTION"/>				   
+            <Button class="btn_wnd_min" name="minbtn" margin="4,6,0,0"/>
+            <Button class="btn_wnd_close" name="closebtn" margin="4,6,0,0"/>
+        </HBox>
+
+        <HBox>
+            <VBox width="614">
+                <HBox name="search_frame" height="32">
+                    <Control name="search_icon" width="auto" height="auto" valign="center" margin="10,0,0,0" bkimage="file='../public/icon/icon_search_gray.png'"/>
+                    <RichEdit class="simple prompt" name="search" margin="10,0,10,0" height="auto" valign="center" font="1"/>
+                    <Button class="btn_del_search" name="clear_input" visible="false" valign="center" margin="0,0,10,0"/>
+                </HBox>
+
+                <Control class="splitline_hor_level1"/>
+
+                <Box>
+
+                    <Box>
+                        <TreeView name="user_list" vscrollbar="true" vscrollunit="75"/>
+                    </Box>
+
+                    <TileListBox class="list" name="search_result" visible="false" columns="3" padding="0,0,14,0" vscrollunit="75"/>
+                    <VBox mouse="false">
+                        <Label name="tool_tip" visible="false" halign="center" margin="0,10,0,0" font="2" normaltextcolor="lightcolor"/>
+                    </VBox>
+                </Box>
+            </VBox>
+
+            <Control class="splitline_ver_level1"/>
+
+            <VBox width="200" bkcolor="bk_listitem_hovered">
+                <Label name="tip_of_number" width="stretch" height="32" textpadding="10,7,0,0" font="1" normaltextcolor="darkcolor"/>
+                <Box margin="6">
+                    <VListBox name="selected_user_list" vscrollbar="true" vscrollunit="100" padding="0,10,0,10"/>
+                </Box>
+            </VBox>
+			
+        </HBox>
+
+        <Control class="splitline_hor_level1"/>
+
+        <HBox bkcolor="bk_wnd_darkcolor" height="50">
+            <Control />
+            <Button class="btn_global_white_80x30" name="cancel" valign="center" text="取消"/>
+            <Control width="10"/>
+            <Button class="btn_global_green_80x30" name="confirm" valign="center" text="确定"/>
+            <Control />
+        </HBox>
+    </VBox>
+    
+</Window>

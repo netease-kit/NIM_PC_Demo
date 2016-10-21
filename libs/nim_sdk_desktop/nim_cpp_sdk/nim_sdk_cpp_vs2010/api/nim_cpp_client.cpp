@@ -1,7 +1,7 @@
 ﻿/** @file nim_cpp_client.cpp
   * @brief 全局管理功能；主要包括SDK初始化/清理、客户端登录/退出等功能
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @author towik, Oleg, Harrison
   * @date 2015/09/21
   */
 
@@ -11,7 +11,7 @@
 
 namespace nim
 {
-
+#ifdef NIM_SDK_DLL_IMPORT
 typedef bool(*nim_client_init)(const char *app_data_dir, const char *app_install_dir, const char *json_extension);
 typedef void(*nim_client_cleanup)(const char *json_extension);
 typedef void(*nim_client_login)(const char *app_token, const char *account, const char *password, const char *json_extension, nim_json_transport_cb_func cb, const void* user_data);
@@ -26,6 +26,9 @@ typedef void(*nim_client_reg_kickout_other_client_cb)(const char *json_extension
 typedef void(*nim_client_reg_sync_multiport_push_config_cb)(const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
 typedef void(*nim_client_set_multiport_push_config)(const char *switch_content, const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
 typedef void(*nim_client_get_multiport_push_config)(const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
+#else
+#include "nim_client.h"
+#endif
 
 static void CallbackLogin(const char* json_res, const void *callback)
 {
@@ -39,6 +42,7 @@ static void CallbackLogin(const char* json_res, const void *callback)
 			res.res_code_ = (NIMResCode)values[kNIMResCode].asInt();
 			res.login_step_ = (NIMLoginStep)values[kNIMLoginStep].asUInt();
 			res.relogin_ = values[kNIMRelogin].asBool();
+			res.retrying_ = values[kNIMRetrying].asBool();
 			ParseOtherClientsPres(values[kNIMOtherClientsPres], res.other_clients_);
 		}
 		Client::LoginCallback *cb = (Client::LoginCallback *)callback;
@@ -51,7 +55,7 @@ static void CallbackLogout(const char *json_res, const void *callback)
 	if (callback != nullptr)
 	{
 		Client::LogoutCallback *cb = (Client::LogoutCallback *)callback;
-		NIMResCode error_code;
+		NIMResCode error_code = kNIMResSuccess;
 		Json::Reader reader;
 		Json::Value values;
 		if (reader.parse(PCharToString(json_res), values) && values.isObject())
@@ -128,8 +132,10 @@ bool Client::Init(const std::string& app_data_dir
 	, const std::string& app_install_dir
 	, const SDKConfig &config)
 {
-	if (!SDKFunction::LoadSdkDll())
+#ifdef NIM_SDK_DLL_IMPORT
+	if (!SDKFunction::LoadSdkDll(app_install_dir.c_str()))
 		return false;
+#endif
 
 	Json::Value config_root;
 	//sdk能力参数（必填）
@@ -164,7 +170,10 @@ bool Client::Init(const std::string& app_data_dir
 void Client::Cleanup(const std::string& json_extension/* = ""*/)
 {
 	NIM_SDK_GET_FUNC(nim_client_cleanup)(json_extension.c_str());
+
+#ifdef NIM_SDK_DLL_IMPORT
 	SDKFunction::UnLoadSdkDll();
+#endif
 }
 
 bool Client::Login(const std::string& app_key

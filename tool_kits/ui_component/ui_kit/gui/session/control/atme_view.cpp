@@ -5,6 +5,8 @@ namespace nim_comp
 {
 void AtMeView::InitControl()
 {
+	GlobalManager::FillBoxWithCache(this, L"session/at_me_view.xml");
+
 	content_ = static_cast<Label*>(FindSubControl(L"msg_body"));
 	sender_name_ = static_cast<Label*>(FindSubControl(L"sender_name"));
 }

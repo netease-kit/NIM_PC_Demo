@@ -35,7 +35,7 @@ enum NIMDataSyncStatus
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */ 
-typedef void (*nim_data_sync_cb_func)(NIMDataSyncType sync_type, NIMDataSyncStatus status, const char *json_attachment, const void *user_data);
+typedef void (*nim_data_sync_cb_func)(enum NIMDataSyncType sync_type,enum NIMDataSyncStatus status, const char *json_attachment, const void *user_data);
 
 #ifdef __cplusplus
 };

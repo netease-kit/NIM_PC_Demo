@@ -19,13 +19,6 @@ MsglogManageForm::~MsglogManageForm()
 
 }
 
-MsglogManageForm* MsglogManageForm::ShowForm(bool export_or_import)
-{
-	MsglogManageForm* f = nim_ui::WindowsManager::SingletonShow<MsglogManageForm>(MsglogManageForm::kClassName);
-	f->SetType(export_or_import);
-	return f;
-}
-
 std::wstring MsglogManageForm::GetSkinFolder()
 {
 	return L"msglogmanage";
@@ -34,16 +27,6 @@ std::wstring MsglogManageForm::GetSkinFolder()
 std::wstring MsglogManageForm::GetSkinFile()
 {
 	return L"manage_form.xml";
-}
-
-ui::UILIB_RESOURCETYPE MsglogManageForm::GetResourceType() const
-{
-	return ui::UILIB_FILE;
-}
-
-std::wstring MsglogManageForm::GetZIPFileName() const
-{
-	return L"manage_form.zip";
 }
 
 std::wstring MsglogManageForm::GetWindowClassName() const
@@ -145,7 +128,7 @@ bool MsglogManageForm::OnClicked(ui::EventArgs* param)
 	}
 	else if (name == L"btn_sel")
 	{
-		SelPath();
+		SelectPath();
 	}
 	else if (name == L"btn_close")
 	{
@@ -183,7 +166,7 @@ bool MsglogManageForm::SetType(bool export_or_import)
 	return true;
 }
 
-void MsglogManageForm::SelPath()
+void MsglogManageForm::SelectPath()
 {
 	open_file_ = true;
 	std::wstring file_type = L"文件格式";
@@ -200,7 +183,7 @@ void MsglogManageForm::SelPath()
 	file_dlg->SetDefExt(file_exten.c_str());
 	file_dlg->SetParentWnd(GetHWND());
 	// 弹出非模态对话框
-	CFileDialogEx::FileDialogCallback2 callback2 = nbase::Bind(&MsglogManageForm::SelPathCallback, this, std::placeholders::_1, std::placeholders::_2);
+	CFileDialogEx::FileDialogCallback2 callback2 = nbase::Bind(&MsglogManageForm::OnSelectPathCallback, this, std::placeholders::_1, std::placeholders::_2);
 	if (export_or_import_)
 	{
 		file_dlg->AyncShowSaveFileDlg(callback2);
@@ -210,7 +193,8 @@ void MsglogManageForm::SelPath()
 		file_dlg->AyncShowOpenFileDlg(callback2);
 	}
 }
-void MsglogManageForm::SelPathCallback(BOOL ret, std::wstring file_path)
+
+void MsglogManageForm::OnSelectPathCallback(BOOL ret, std::wstring file_path)
 {
 	open_file_ = false;
 	if (ret)
@@ -218,13 +202,15 @@ void MsglogManageForm::SelPathCallback(BOOL ret, std::wstring file_path)
 		path_edit_->SetText(file_path);
 	}
 }
+
 void MsglogManageForm::Export(const std::string& path)
 {
 	SetDbStatus(true);
 	result_text_->SetText(L"正在导出");
-	nim::MsgLog::ExportDbAsync(path, nbase::Bind(&MsglogManageForm::ExportResult, this, std::placeholders::_1));
+	nim::MsgLog::ExportDbAsync(path, nbase::Bind(&MsglogManageForm::OnExportCompeleteCallback, this, std::placeholders::_1));
 }
-void MsglogManageForm::ExportResult(nim::NIMResCode res_code)
+
+void MsglogManageForm::OnExportCompeleteCallback(nim::NIMResCode res_code)
 {
 	SetDbStatus(false);
 	if (res_code == nim::kNIMResSuccess)
@@ -239,27 +225,30 @@ void MsglogManageForm::ExportResult(nim::NIMResCode res_code)
 		btn_run_->SetEnabled(true);
 	}
 }
+
 void MsglogManageForm::Import(const std::string& path)
 {
 	SetDbStatus(true);
 	result_text_->SetText(L"正在导入");
 	progress_text_->SetText(L"0%");
-	nim::MsgLog::ImportDbAsync(path, nbase::Bind(&MsglogManageForm::ImportResult, this, std::placeholders::_1), 
-		nbase::Bind(&MsglogManageForm::ImportProgress, this, std::placeholders::_1, std::placeholders::_2));
+	nim::MsgLog::ImportDbAsync(path, nbase::Bind(&MsglogManageForm::OnImportCompeleteCallback, this, std::placeholders::_1), 
+		nbase::Bind(&MsglogManageForm::OnImportProgressCallback, this, std::placeholders::_1, std::placeholders::_2));
 }
-void MsglogManageForm::ImportProgress(int64_t imported_count, int64_t total_count)
+
+void MsglogManageForm::OnImportProgressCallback(int64_t imported_count, int64_t total_count)
 {
 	int prg_pos = imported_count * 100.0 / total_count;
 	progress_->SetValue(prg_pos);
 	std::wstring pos_text = nbase::StringPrintf(L"%d%%", prg_pos);
 	progress_text_->SetText(pos_text);
 }
-void MsglogManageForm::ImportResult(nim::NIMResCode res_code)
+
+void MsglogManageForm::OnImportCompeleteCallback(nim::NIMResCode res_code)
 {
 	SetDbStatus(false);
 	if (res_code == nim::kNIMResSuccess)
 	{
-		ImportProgress(1, 1);
+		OnImportProgressCallback(1, 1);
 		result_text_->SetText(L"导入完成");
 		nim_ui::SessionListManager::GetInstance()->InvokeLoadSessionList();
 
@@ -272,17 +261,15 @@ void MsglogManageForm::ImportResult(nim::NIMResCode res_code)
 		btn_run_->SetEnabled(true);
 	}
 }
+
 void MsglogManageForm::DelayClose()
 {
 	close_timer_.Cancel();
-	StdClosure timer_cb = nbase::Bind(&MsglogManageForm::DoDelayClose, this);
+	StdClosure timer_cb = nbase::Bind(&MsglogManageForm::Close, this, IDOK);
 	timer_cb = close_timer_.ToWeakCallback(timer_cb);
 	nbase::ThreadManager::PostDelayedTask(timer_cb, nbase::TimeDelta::FromSeconds(3));
 }
-void MsglogManageForm::DoDelayClose()
-{
-	Close();
-}
+
 void MsglogManageForm::SetDbStatus(bool running)
 {
 	ui::Control* close = FindControl(L"btn_close");

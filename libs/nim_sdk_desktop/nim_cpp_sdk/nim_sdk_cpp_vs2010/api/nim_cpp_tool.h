@@ -1,7 +1,7 @@
 ﻿/** @file nim_cpp_tool.h
   * @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @author towik, Oleg, Harrison
   * @date 2015/09/21
   */
 
@@ -29,24 +29,24 @@ public:
 	typedef std::function<void(int rescode, const std::string& text)> GetAudioTextCallback;	/**< 语音转文字回调模板 */
 
 public:
-	/** @fn std::wstring GetUserAppdataDir(const std::string& app_account)
+	/** @fn std::string GetUserAppdataDir(const std::string& app_account)
 	* 获取SDK里app account对应的app data目录（各个帐号拥有独立的目录，其父目录相同）
 	* @param[in] app_account APP account。如果传入空字符串，则将获取到各个帐号目录的父目录（谨慎删除！）
-	* @return std::wstring 返回的目录路径
+	* @return std::string 返回的目录路径(UTF8)
 	*/
-	static std::wstring GetUserAppdataDir(const std::string& app_account);
+	static std::string GetUserAppdataDir(const std::string& app_account);
 
-	/** @fn std::wstring GetLocalAppdataDir()
+	/** @fn std::string GetLocalAppdataDir()
 	* 获取本地存储路径
-	* @return std::wstring 返回的目录路径
+	* @return std::string 返回的目录路径(UTF8)
 	*/
-	static std::wstring GetLocalAppdataDir(); 
+	static std::string GetLocalAppdataDir(); 
 
-	/** @fn std::wstring GetCurModuleDir()
+	/** @fn std::string GetCurModuleDir()
 	* 获取安装目录（SDK DLL所在的当前目录）
-	* @return std::wstring 返回的目录路径
+	* @return std::string 返回的目录路径(UTF8)
 	*/
-	static std::wstring GetCurModuleDir();
+	static std::string GetCurModuleDir();
 
 	/** @fn std::string GetMd5(const std::string& input)
 	* 计算md5

@@ -29,16 +29,6 @@ std::wstring Toast::GetSkinFile()
 	return L"Toast.xml";
 }
 
-ui::UILIB_RESOURCETYPE Toast::GetResourceType() const
-{
-	return ui::UILIB_FILE;
-}
-
-std::wstring Toast::GetZIPFileName() const
-{
-	return (L"Toast.zip");
-}
-
 std::wstring Toast::GetWindowClassName() const
 {
 	return kClassName;

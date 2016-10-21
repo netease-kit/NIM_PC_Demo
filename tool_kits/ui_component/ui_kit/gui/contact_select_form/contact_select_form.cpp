@@ -13,12 +13,12 @@ namespace nim_comp
 void ContactSelectForm::AddGroup(ui::TreeNode* tree_node)
 {
 	tree_node->SetEnabled(false);
-	friend_list_->GetRootNode()->AddChildNode(tree_node);
+	contract_list_->GetRootNode()->AddChildNode(tree_node);
 	tree_node->SetVisible(false);
 	TreeNode* tree_node2 = new TreeNode();
 
 	ContactTileListUI* tile_layout = new ContactTileListUI;
-	ui::GlobalManager::FillBox(tile_layout, L"invokechat/InvokeChatTileList.xml");
+	ui::GlobalManager::FillBox(tile_layout, L"contact_select/contact_select_tile_list.xml");
 
 	RECT rect = { 5, 5, 5, 5 };
 	tree_node2->GetLayout()->SetPadding(rect);
@@ -145,7 +145,6 @@ ui::Box* ContactSelectForm::AddListItemInGroup(const std::string& accid, bool is
 	return container_element;
 }
 
-
 bool ContactSelectForm::RemoveListItemInGroup(const std::string& accid, ContactTileListUI* tile_layout)
 {
 	bool ret = false;
@@ -184,33 +183,6 @@ ContactListItemUI* ContactSelectForm::CreateListItem(const std::string& accid, b
 	return container_element;
 }
 
-ContactTileListUI* ContactSelectForm::GetGroup(GroupType groupType, wchar_t letter)
-{
-	return tree_node_ver_[ListItemUtil::GetGroup(groupType, letter)];
-}
-
-void ContactSelectForm::OnCheckBox(UTF8String id, bool is_team, bool check)
-{
-	if(check) 
-	{
-		SelectedContactItemUI* selected_listitem = CreateSelectedListItem(id, is_team);
-		selected_user_list_->Add(selected_listitem);
-		selected_user_list_->EndDown();
-	}
-	else 
-	{
-		for (int i = 0; i < selected_user_list_->GetCount(); i++)
-		{
-			SelectedContactItemUI* listitem = (SelectedContactItemUI*)selected_user_list_->GetItemAt(i);
-			if (listitem->GetUTF8DataID() == id)
-			{
-				selected_user_list_->RemoveAt(i);
-				break;
-			}
-		}
-	}
-}
-
 SelectedContactItemUI* ContactSelectForm::CreateSelectedListItem(const std::string& accid, bool is_team)
 {
 	SelectedContactItemUI* selected_item = new SelectedContactItemUI();
@@ -220,6 +192,11 @@ SelectedContactItemUI* ContactSelectForm::CreateSelectedListItem(const std::stri
 	btn_delete->AttachClick(nbase::Bind(&ContactSelectForm::OnBtnDeleteClick, this, accid, std::placeholders::_1));
 
 	return selected_item;
+}
+
+ContactTileListUI* ContactSelectForm::GetGroup(GroupType groupType, wchar_t letter)
+{
+	return tree_node_ver_[ListItemUtil::GetGroup(groupType, letter)];
 }
 
 void ContactSelectForm::OnFriendListChange(FriendChangeType change_type, const std::string& accid)
@@ -263,7 +240,7 @@ void ContactSelectForm::OnUserInfoChange(const std::list<nim::UserNameCard>& uin
 		if (user_service->GetUserType(accid) == nim::kNIMFriendFlagNormal && !MuteBlackService::GetInstance()->IsInBlackList(accid))
 		{
 			//好友列表项
-			ContactListItemUI* friend_item = dynamic_cast<ContactListItemUI*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
+			ContactListItemUI* friend_item = dynamic_cast<ContactListItemUI*>(contract_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
 			if(!friend_item)
 				continue;
 
@@ -287,7 +264,7 @@ void ContactSelectForm::OnUserInfoChange(const std::list<nim::UserNameCard>& uin
 					dynamic_cast<TreeNode*>(tile_box->GetParent())->GetParentNode()->SetVisible(false);
 
 				AddFriendListItem(accid, enabled); //重新添加
-				friend_item = dynamic_cast<ContactListItemUI*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
+				friend_item = dynamic_cast<ContactListItemUI*>(contract_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
 				((CheckBox*)friend_item->FindSubControl(L"checkbox"))->Selected(checked);
 				
 				if (search_item)
@@ -324,7 +301,7 @@ void ContactSelectForm::OnUserPhotoReady(PhotoType type, const std::string & acc
 		}
 	}
 
-	ContactListItemUI* friend_item = dynamic_cast<ContactListItemUI*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
+	ContactListItemUI* friend_item = dynamic_cast<ContactListItemUI*>(contract_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
 	if (friend_item)
 		friend_item->FindSubControl(L"head_image")->SetBkImage(photo_path);
 
@@ -352,7 +329,7 @@ void ContactSelectForm::OnTeamNameChanged(const nim::TeamInfo& team_info)
 	std::string accid = team_info.GetTeamID();
 
 	//群组列表项
-	ContactListItemUI* team_item = dynamic_cast<ContactListItemUI*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
+	ContactListItemUI* team_item = dynamic_cast<ContactListItemUI*>(contract_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
 	if (!team_item)
 		return;
 
@@ -376,7 +353,7 @@ void ContactSelectForm::OnTeamNameChanged(const nim::TeamInfo& team_info)
 			dynamic_cast<TreeNode*>(tile_box->GetParent())->GetParentNode()->SetVisible(false);
 
 		AddTeamListItem(accid, enabled); //重新添加
-		team_item = dynamic_cast<ContactListItemUI*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
+		team_item = dynamic_cast<ContactListItemUI*>(contract_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
 		((CheckBox*)team_item->FindSubControl(L"checkbox"))->Selected(checked);
 
 		if (search_item)

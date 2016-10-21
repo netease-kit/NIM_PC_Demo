@@ -38,7 +38,7 @@ enum TeamInfoKey
 	kTeamInfoKeyIntro = 1 << 5,				/**< 群组简介 */
 	kTeamInfoKeyAnnouncement = 1 << 6,		/**< 群组公告 */
 	kTeamInfoKeyJoinMode = 1 << 7,			/**< 群组验证类型 */
-	kTeamInfoKeyConfigBits = 1 << 8,		/**< 群组配置项 */
+	//kTeamInfoKeyConfigBits = 1 << 8,		/**< 群属性,开发者无需关注 20161011 by Oleg */
 	kTeamInfoKeyCustom = 1 << 9,			/**< 群组扩展项 */
 	kTeamInfoKeyIcon = 1 << 10,				/**< 群头像 */
 	kTeamInfoKeyBeInviteMode = 1 << 11,		/**< 被邀请人同意方式 */
@@ -57,7 +57,6 @@ public:
 		, create_timetag_(0)
 		, update_timetag_(0)
 		, member_count_(0)
-		, config_bits_(0)
 		, level_(0)
 		, valid_(false)
 		, type_(kNIMTeamTypeNormal)
@@ -77,7 +76,6 @@ public:
 			, create_timetag_(0)
 			, update_timetag_(0)
 			, member_count_(0)
-			, config_bits_(0)
 			, level_(0)
 			, valid_(false)
 			, type_(kNIMTeamTypeNormal)
@@ -113,8 +111,9 @@ public:
 			SetAnnouncement(info.GetAnnouncement());
 		if (info.ExistValue(kTeamInfoKeyJoinMode))
 			SetJoinMode(info.GetJoinMode());
-		if (info.ExistValue(kTeamInfoKeyConfigBits))
-			SetConfigBits(info.GetConfigBits());
+		//群属性,开发者无需关注 20161011 by Oleg
+		//if (info.ExistValue(kTeamInfoKeyConfigBits))
+		//	SetConfigBits(info.GetConfigBits());
 		if (info.ExistValue(kTeamInfoKeyCustom))
 			SetCustom(info.GetCustom());
 		if (info.ExistValue(kTeamInfoKeyIcon))
@@ -246,37 +245,37 @@ public:
 	}
 
 	/** 设置群组成员档案时间戳(毫秒) */
-	void SetMemberListTimetag(__int64 timetag)
+	void SetMemberListTimetag(int64_t timetag)
 	{
 		member_list_timetag_ = timetag;
 	}
 
 	/** 获取群组成员档案时间戳(毫秒) */
-	__int64 GetMemberListTimetag() const
+	int64_t GetMemberListTimetag() const
 	{
 		return member_list_timetag_;
 	}
 
 	/** 设置群组创建时间戳(毫秒) */
-	void SetCreateTimetag(__int64 timetag)
+	void SetCreateTimetag(int64_t timetag)
 	{
 		create_timetag_ = timetag;
 	}
 
 	/** 获取群组创建时间戳(毫秒) */
-	__int64 GetCreateTimetag() const
+	int64_t GetCreateTimetag() const
 	{
 		return create_timetag_;
 	}
 
 	/** 设置群组更新时间戳(毫秒) */
-	void SetUpdateTimetag(__int64 timetag)
+	void SetUpdateTimetag(int64_t timetag)
 	{
 		update_timetag_ = timetag;
 	}
 
 	/** 获取群组更新时间戳(毫秒) */
-	__int64 GetUpdateTimetag() const
+	int64_t GetUpdateTimetag() const
 	{
 		return update_timetag_;
 	}
@@ -332,18 +331,18 @@ public:
 		return join_mode_;
 	}
 
-	/** 设置群组配置项 */
-	void SetConfigBits(__int64 bit)
-	{
-		config_bits_ = bit;
-		value_available_flag_ |= kTeamInfoKeyConfigBits;
-	}
+	/** 群属性,开发者无需关注 20161011 by Oleg */
+	//void SetConfigBits(int64_t bit)
+	//{
+	//	config_bits_ = bit;
+	//	value_available_flag_ |= kTeamInfoKeyConfigBits;
+	//}
 
-	/** 获取群组配置项 */
-	__int64 GetConfigBits() const
-	{
-		return config_bits_;
-	}
+	/** 获取群属性,开发者无需关注 20161011 by Oleg */
+	//int64_t GetConfigBits() const
+	//{
+	//	return config_bits_;
+	//}
 
 	/** 设置群组客户端扩展内容 */
 	void SetCustom(const std::string& custom)
@@ -479,8 +478,9 @@ public:
 			json[nim::kNIMTeamInfoKeyAnnouncement] = announcement_;
 		if (ExistValue(nim::kTeamInfoKeyJoinMode))
 			json[nim::kNIMTeamInfoKeyJoinMode] = (unsigned int)join_mode_;
-		if (ExistValue(nim::kTeamInfoKeyConfigBits))
-			json[nim::kNIMTeamInfoKeyBits] = config_bits_;
+		//群属性,开发者无需关注 20161011 by Oleg
+		//if (ExistValue(nim::kTeamInfoKeyConfigBits))
+		//	json[nim::kNIMTeamInfoKeyBits] = config_bits_;
 		if (ExistValue(nim::kTeamInfoKeyCustom))
 			json[nim::kNIMTeamInfoKeyCustom] = custom_;
 		json[nim::kNIMTeamInfoKeyServerCustom] = server_custom_;
@@ -502,9 +502,9 @@ private:
 	std::string		id_;
 	bool			valid_;
 	int				member_count_;
-	__int64			member_list_timetag_;
-	__int64			create_timetag_;
-	__int64			update_timetag_;
+	int64_t			member_list_timetag_;
+	int64_t			create_timetag_;
+	int64_t			update_timetag_;
 	std::string		server_custom_;
 
 private:
@@ -517,7 +517,8 @@ private:
 	std::string		intro_;
 	std::string		announcement_;
 	nim::NIMTeamJoinMode join_mode_;
-	__int64			config_bits_;
+	//群属性,开发者无需关注 20161011 by Oleg
+	//int64_t			config_bits_;
 	std::string		custom_;
 
 private:
@@ -621,14 +622,14 @@ public:
 	}
 
 	/** 设置群成员配置项 */
-	void SetBits(__int64 bit)
+	void SetBits(int64_t bit)
 	{
 		bits_ = bit;
 		value_available_flag_ |= kTeamMemberPropertyKeyBits;
 	}
 
 	/** 获取群成员配置项 */
-	__int64 GetBits() const
+	int64_t GetBits() const
 	{
 		return bits_;
 	}
@@ -647,25 +648,25 @@ public:
 	}
 
 	/** 设置群成员创建时间戳(毫秒) */
-	void SetCreateTimetag(__int64 timetag)
+	void SetCreateTimetag(int64_t timetag)
 	{
 		create_timetag_ = timetag;
 	}
 
 	/** 获取群成员创建时间戳(毫秒) */
-	__int64 GetCreateTimetag() const
+	int64_t GetCreateTimetag() const
 	{
 		return create_timetag_;
 	}
 
 	/** 设置群成员更新时间戳(毫秒) */
-	void SetUpdateTimetag(__int64 timetag)
+	void SetUpdateTimetag(int64_t timetag)
 	{
 		update_timetag_ = timetag;
 	}
 
 	/** 获取群成员更新时间戳(毫秒) */
-	__int64 GetUpdateTimetag() const
+	int64_t GetUpdateTimetag() const
 	{
 		return update_timetag_;
 	}
@@ -737,15 +738,15 @@ public:
 
 private:
 	bool			valid_;
-	__int64			create_timetag_;
-	__int64			update_timetag_;
+	int64_t			create_timetag_;
+	int64_t			update_timetag_;
 
 private:
 	std::string		team_id_;
 	std::string		account_id_;
 	nim::NIMTeamUserType type_;
 	std::string		nick_;
-	__int64			bits_;
+	int64_t			bits_;
 
 private:
 	bool			mute_;

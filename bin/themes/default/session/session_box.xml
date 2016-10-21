@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window >
+	<VBox bkcolor="bk_wnd_lightcolor">
+	    <Box height="68" bkimage="file='bk_caption.png' corner='5,5,5,5'">
+	        <HBox height="48" margin="10,0,20,0" valign="center" mouse="false">
+	            <Box width="48" height="48" mouse="false">
+					<Button name="btn_header" width="46" height="46" borderround="46,46,46,46" margin="1,1,1,1" cursortype="hand"/>
+	                <Button name="head_image_mask" bkimage="../public/headmask/icon_headimage_mask_48x48_selected.png" mouse="false"/>
+	            </Box>
+	            <VBox margin="5,0,70,0" height="auto" valign="center">
+	                <Label name="label_title" width="stretch" mouse="false" font="2"/>
+	                <Label name="label_tid" margin="0,5,0,0" mouse="false" normaltextcolor="lightcolor"/>
+	            </VBox>
+	        </HBox>
+	        <VBox mouse="false">
+	            <HBox height="auto" padding="0,0,5,0" mouse="false">
+	                <Control mouse="false"/>
+	                <Button class="btn_wnd_min" name="btn_min" margin="10,6,0,0"/>
+	                <Button class="btn_wnd_max" name="btn_max_restore" margin="10,6,0,0"/>
+	                <Button class="btn_wnd_close" name="btn_close" margin="10,6,0,0"/>
+	            </HBox>
+	            <HBox mouse="false">
+	                <Control mouse="false"/>
+	                <Button name="btn_invite" valign="center" margin="0,5,5,10" tooltiptext="邀请好友加入" 
+	                       normalimage="btn_invite_normal.png" hotimage="btn_invite_hovered.png" pushedimage="btn_invite_pushed.png"/>
+	            </HBox>
+	        </VBox>
+	    </Box>
+	    <HBox>
+	        <!--左侧：消息-->
+	        <VBox>
+	            <Box name="msg_content">
+	                <VListBox name="msg_list" padding="10,10,10,20" childmargin="10" vscrollbar="true" hscrollbar="false" vscrollunit="150"/>
+	            </Box>
+	            <VBox name="toolbar_splitline" height="4">
+	                <Control class="splitline_hor_level1"/>
+	            </VBox>
+	            <VBox name="bottom_panel" height="auto" padding="0,1,10,10">
+	                <HBox name="hbox_toolbar" height="30" margin="5,0,5,0">
+	                    <CheckBox name="btn_face" width="30" height="30" valign="center" margin="0" tooltiptext="表情"
+	                              forenormalimage="file='btn_face.png' dest='5,5,25,25'" foredisabledimage="file='btn_face_disable.png' dest='5,5,25,25' fade='80'"
+	                              hotimage="icon_hover.png" pushedimage="icon_pushed.png" selectednormalimage="icon_pushed.png"
+	                              selectedforenormalimage="file='btn_face.png' dest='5,5,25,25'" selectedforedisabledimage="file='btn_face_disable.png' dest='5,5,25,25' fade='80'"/>
+	                    <Button name="btn_image" width="30" height="30" valign="center" margin="4" tooltiptext="图片"
+	                            forenormalimage="file='btn_image.png' dest='4,4,26,26'" foredisabledimage="file='btn_image_disable.png' dest='4,4,26,26' fade='80'"
+	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
+	                    <Button name="btn_snapchat" width="30" height="30" valign="center" margin="4" tooltiptext="阅后即焚"
+	                            forenormalimage="file='btn_snapchat.png' dest='4,4,26,26'" foredisabledimage="file='btn_snapchat_disable.png' dest='4,4,26,26' fade='80'"
+	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
+	                    <Button name="btn_file" width="30" height="30" valign="center" margin="4" tooltiptext="文件"
+	                            forenormalimage="file='btn_file.png' dest='4,4,26,26'" foredisabledimage="file='btn_file_disable.png' dest='4,4,26,26' fade='80'"
+	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
+	                    <Option name="btn_capture_audio" width="30" height="30" valign="center" margin="4" tooltiptext="录制语音"
+                                forenormalimage="file='audio_chat.png' dest='5,5,25,25'" foredisabledimage="file='audio_chat_disable.png' dest='5,5,25,25' fade='80'" 
+                                hotimage="icon_hover.png" pushedimage="icon_pushed.png" selectednormalimage="icon_pushed.png" selectedforenormalimage="file='audio_chat.png' dest='5,5,25,25'" selectedforedisabledimage="file='audio_chat_disable.png' dest='5,5,25,25' fade='80'"/>
+	                    <Button name="btn_jsb" width="30" height="30" valign="center" margin="4" tooltiptext="石头剪刀布"
+	                            forenormalimage="jsb.png" foredisabledimage="file='jsb_disable.png' fade='80'"
+	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
+	                    <Button name="btn_clip" width="30" height="30" valign="center" margin="4" tooltiptext="截图"
+	                            forenormalimage="file='btn_clip.png' dest='5,5,25,25'" foredisabledimage="file='btn_clip_disable.png' dest='5,5,25,25' fade='80'"
+	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
+						<Button name="btn_audio" width="30" height="30" valign="center" margin="4" tooltiptext="免费通话"
+	                            forenormalimage="file='audio_chat.png' dest='5,5,25,25'" foredisabledimage="file='audio_chat_disable.png' dest='5,5,25,25' fade='80'" 
+	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png" visible="false"/>
+						<Button name="btn_video" width="30" height="30" valign="center" margin="5" tooltiptext="免费视频" 
+	                            forenormalimage="file='video_chat.png' dest='4,5,25,25'" foredisabledimage="file='video_chat_disable.png' dest='4,5,25,25' fade='80'"
+	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png" visible="false"/>
+						<Button name="btn_rts" width="30" height="30" valign="center" margin="5" tooltiptext="白板" 
+	                            forenormalimage="file='rts.png' dest='4,5,25,25'" foredisabledimage="file='rts_disable.png' dest='4,5,25,25' fade='80'"
+	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png" visible="false"/>
+	                    <Button name="btn_tip" width="30" height="30" valign="center" margin="4" tooltiptext="提醒消息"
+	                            forenormalimage="file='btn_tip.png' dest='5,5,25,25'" foredisabledimage="file='btn_tip_disable.png' dest='5,5,25,25' fade='80'"
+	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
+	                    <Control />
+	                    <!--Button name="add_msglog" dataid="10" valign="center" cursortype="hand" margin="5,0,10,0" normaltextcolor="link_blue" text="+记录"/-->
+	                    <Button name="btn_custom_msg" valign="center" cursortype="hand" normaltextcolor="link_blue" disabledtextcolor="gray" text="自定义通知"/>
+	                    <Control width="10" />
+	                    <Button name="btn_msg_record" valign="center" cursortype="hand" normaltextcolor="link_blue" text="消息记录"/>
+	                </HBox>
+	                <Control height="6"/>
+	                <Box height="auto">
+	                    <RichEdit class="prompt" name="input_edit" minheight="86" maxheight="300" multiline="true" vscrollbar="true" autovscroll="true" readonly="false" font="2" normaltextcolor="darkcolor" margin="2,2,2,2" padding="8,0,0,0" wantreturnmsg="true" rich="true"/>
+						<Label name="input_edit_mute_tip" valign="center" halign="center" text="你已经被禁言" visible="false" normaltextcolor="gray"/>
+	                </Box>
+	                <HBox name="hbox_send" height="30" margin="10,10,0,0">
+	                    <Label valign="bottom" text="提示：Enter发送，Ctrl+Enter换行"/>
+	                    <Control />
+	                    <Button name="btn_send" normaltextcolor="white" font="7" text="发送" normalimage="send0.png" hotimage="send1.png" pushedimage="send2.png" disabledimage="send_disable.png"/>
+	                </HBox>
+	            </VBox>
+	        </VBox>
+	        <!--中间：分割线-->
+	        <Control class="splitline_ver_level1" name="frame_mid_split" visible="false"/>
+	        <!--右侧：公告-->
+	        <VBox name="frame_right" width="240" visible="false">
+	            <HBox height="30">
+	                <Label width="stretch" margin="10,0,0,0" valign="center" normaltextcolor="lightcolor" text="群公告"/>
+	                <Button name="btn_new_broad" margin="0,0,10,0" valign="center" cursortype="hand" normaltextcolor="link_blue" text="新公告"/>
+	            </HBox>
+	            <Control class="splitline_hor_level1"/>
+	            <RichEdit name="re_broad" width="stretch" height="200" padding="5,5,0,0" readonly="true" multiline="true" rich="true" 
+	                      vscrollbar="true" hscrollbar="false" font="2"/>
+	            <Control class="splitline_hor_level1"/>
+	            <HBox height="30">
+	                <Label name="label_member" width="stretch" margin="10,0,0,0" valign="center" text="群成员（共0人）"/>
+	                <Button name="btn_refresh_member" margin="0,0,10,0" valign="center" cursortype="hand" normaltextcolor="link_blue" text="刷新"/>
+	            </HBox>
+	            <Control class="splitline_hor_level1"/>
+	            <VListBox name="member_list" vscrollbar="true" hscrollbar="false" vscrollunit="50"/>
+	        </VBox>
+	    </HBox>
+	</VBox>
+</Window>

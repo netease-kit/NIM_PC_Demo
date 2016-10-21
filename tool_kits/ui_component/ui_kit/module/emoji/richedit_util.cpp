@@ -66,10 +66,10 @@ IRichEditOle* Re_GetOleInterface(ITextServices *text_service)
 	return pRichEditOle;
 }
 
-bool Re_InsertCustomItem(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file, const std::wstring& face_tag, int face_index
+bool Re_InsertCustomItem(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file, const std::wstring& face_tag, int ole_type
 					, int face_id, bool scale, int scale_width, int scale_height, LONG cp)
 {
-	if (face_index >= RE_OLE_TYPE_CUSTOM && Re_GetCustomImageOleCount(text_service) >= MAX_CUSTOM_ITEM_NUM)
+	if (ole_type >= RE_OLE_TYPE_CUSTOM && Re_GetCustomImageOleCount(text_service) >= MAX_CUSTOM_ITEM_NUM)
 	{
 		if( callback )
 		{
@@ -127,9 +127,9 @@ bool Re_InsertCustomItem(ITextServices *text_service, InsertCustomItemErrorCallb
 		lpOleObject->SetClientSite(lpOleClientSite);
 		std::wstring image_path = file;
 		image_ole->SetFaceTag((BSTR)(face_tag.c_str()));
-		image_ole->SetFaceIndex(face_index);
+		image_ole->SetFaceIndex(ole_type);
 		image_ole->SetFaceId(face_id);
-		if (face_index == RE_OLE_TYPE_FILE)
+		if (ole_type == RE_OLE_TYPE_FILE)
 		{
 			OSVERSIONINFO os = { sizeof(OSVERSIONINFO) };
 			::GetVersionEx(&os);
@@ -141,7 +141,7 @@ bool Re_InsertCustomItem(ITextServices *text_service, InsertCustomItemErrorCallb
 			}
 			image_ole->SetBgColor(RGB(255, 255, 255));
 		}
-		else if (face_index == RE_OLE_TYPE_IMAGELOADING)
+		else if (ole_type == RE_OLE_TYPE_IMAGELOADING)
 		{
 			if (image_path.size() == 0)
 			{
@@ -188,26 +188,20 @@ bool Re_InsertFile(ITextServices *text_service, InsertCustomItemErrorCallback ca
 	return  Re_InsertCustomItem(text_service, callback, L"", file, RE_OLE_TYPE_FILE, 0, false, MAX_CUSTOM_FILE_W, MAX_CUSTOM_ITEM_H);
 }
 
-int Re_GetWindowTextLength(ITextServices * text_service)
+int Re_GetTextLength(ITextServices * text_service)
 {
 	HRESULT lRes = 0;
 	text_service->TxSendMessage(WM_GETTEXTLENGTH, 0, 0, &lRes);
 	return (int)lRes;
 }
 
-int Re_GetWindowText(ITextServices * text_service, wchar_t *buff, int max_count)
-{
-	HRESULT lRes = 0;
-	text_service->TxSendMessage(WM_GETTEXT, max_count, (LPARAM)buff, &lRes);
-	return (int)lRes;
-}
 //文本剩余数， limit-cur+sel
 int Re_GetTextLimitSurplus(ITextServices * text_service)
 {
 	HRESULT lRes = 0;
 	text_service->TxSendMessage(EM_GETLIMITTEXT, 0, 0, &lRes);
 	long text_limit = (int)lRes;
-	int text_cur = Re_GetWindowTextLength(text_service);
+	int text_cur = Re_GetTextLength(text_service);
 	std::wstring edit_text;
 	CHARRANGE chrg = { 0, text_cur };
 	Re_GetTextRange(text_service, &chrg, edit_text);
@@ -265,7 +259,7 @@ void Re_GetText(ITextServices * text_service, std::wstring& text)
 	if (NULL == pRichEditOle)
 		return;
 
-	CHARRANGE chrg = {0, Re_GetWindowTextLength(text_service)};
+	CHARRANGE chrg = {0, Re_GetTextLength(text_service)};
 	Re_GetTextRange(text_service, &chrg, org_text);
 
 	for (LONG i = 0; i < (int)org_text.size(); i++)
@@ -338,7 +332,7 @@ void Re_GetTextEx(ITextServices * text_service, std::vector<RE_OLE_ITEM_CONTENT>
 	if (NULL == pRichEditOle)
 		return;
 
-	CHARRANGE chrg = {0, Re_GetWindowTextLength(text_service)};
+	CHARRANGE chrg = {0, Re_GetTextLength(text_service)};
 	Re_GetTextRange(text_service, &chrg, org_text);
 
 	for (LONG i = 0; i < (int)org_text.size(); i++)
@@ -367,9 +361,11 @@ void Re_GetTextEx(ITextServices * text_service, std::vector<RE_OLE_ITEM_CONTENT>
 				if (SUCCEEDED(hr))
 				{
 					wchar_t* image_info;
+					wchar_t* image_src;
 					wchar_t* guid;
 					LONG scale = 0;
 					pImageOle->GetFaceTag(&image_info);
+					pImageOle->GetImageFile(&image_src);
 					pImageOle->GetFaceIndex(&nImageIndex);
 					pImageOle->GetFaceId(&nImageId);
 					pImageOle->GetGUID(&guid);
@@ -402,6 +398,7 @@ void Re_GetTextEx(ITextServices * text_service, std::vector<RE_OLE_ITEM_CONTENT>
 						RE_OLE_ITEM_CONTENT content2;
 						content2.type_ = nImageIndex;
 						content2.content_ = image_info;
+						content2.image_src_ = image_src;
 						content2.guid_ = guid;
 						content2.scale_ = scale;
 						content_list.push_back(content2);
@@ -648,13 +645,13 @@ void Re_InsertNimTextInfo(ITextServices * text_service, std::string& nim_text, b
 	}
 }
 
-void Re_ReplaceSel(ITextServices * text_service, const std::wstring& new_text, BOOL undo /*= false*/)
+void Re_ReplaceSel(ITextServices * text_service, const std::wstring& new_text, bool undo /*= false*/)
 {
-	text_service->TxSendMessage(EM_REPLACESEL, (WPARAM)undo, (LPARAM)new_text.c_str(), NULL);
+	BOOL bUndo = undo ? TRUE : FALSE;
+	text_service->TxSendMessage(EM_REPLACESEL, (WPARAM)bUndo, (LPARAM)new_text.c_str(), NULL);
 }
 
-void Re_ReplaceSel(ITextServices * text_service, const std::wstring& new_text, const std::wstring& font_name, int font_size
-	, COLORREF clr_text, bool bold, bool italic, bool underline, bool link, int start_indent, bool undo/* = false*/)
+void Re_ReplaceSel(ITextServices * text_service, const std::wstring& new_text, int start_indent, bool undo/* = false*/)
 {
 	long start_char = 0, end_char = 0;
 	Re_GetSel(text_service, start_char, end_char);
@@ -840,7 +837,7 @@ bool Re_AllImageOleChangeFrame(ITextServices * text_service)
 	if (NULL == pRichEditOle)
 		return ret;
 
-	CHARRANGE chrg = {0, Re_GetWindowTextLength(text_service)};
+	CHARRANGE chrg = {0, Re_GetTextLength(text_service)};
 
 	for (LONG i = 0; i < chrg.cpMax; i++)
 	{
@@ -884,7 +881,7 @@ int Re_GetCustomImageOleCount(ITextServices * text_service)
 	if (NULL == pRichEditOle)
 		return ret;
 
-	CHARRANGE chrg = {0, Re_GetWindowTextLength(text_service)};
+	CHARRANGE chrg = {0, Re_GetTextLength(text_service)};
 
 	for (LONG i = 0; i < chrg.cpMax; i++)
 	{
@@ -930,7 +927,7 @@ RE_OLE_ITEM_CONTENT Re_CustomImageOleHitTest(ITextServices * text_service, POINT
 	if (NULL == pRichEditOle)
 		return ret;
 
-	CHARRANGE chrg = {0, Re_GetWindowTextLength(text_service)};
+	CHARRANGE chrg = {0, Re_GetTextLength(text_service)};
 
 	for (LONG i = 0; i < chrg.cpMax && ret.type_ == RE_OLE_TYPE_ERROR; i++)
 	{
@@ -958,12 +955,15 @@ RE_OLE_ITEM_CONTENT Re_CustomImageOleHitTest(ITextServices * text_service, POINT
 					if (nImageIndex >= RE_OLE_TYPE_CUSTOM && PtInRect(&rc, pt))
 					{
 						wchar_t* image_info;
+						wchar_t* image_src;
 						wchar_t* guid;
 						pImageOle->GetFaceTag(&image_info);
+						pImageOle->GetImageFile(&image_src);
 						pImageOle->GetGUID(&guid);
 						pImageOle->GetScale(&ret.scale_);
 						ret.type_ = nImageIndex;
 						ret.content_ = image_info;
+						ret.image_src_ = image_src;
 						ret.guid_ = guid;
 					}
 					pImageOle->Release();
@@ -984,7 +984,7 @@ int Re_ImageLoadingFinish(ITextServices * text_service, const std::wstring& file
 	if (NULL == pRichEditOle)
 		return ret;
 
-	CHARRANGE chrg = {0, Re_GetWindowTextLength(text_service)};
+	CHARRANGE chrg = {0, Re_GetTextLength(text_service)};
 
 	for (LONG i = 0; i < chrg.cpMax; i++)
 	{
@@ -1050,15 +1050,14 @@ int Re_ImageLoadingFinish(ITextServices * text_service, const std::wstring& file
 
 	return ret;
 }
-int Re_RemoveCustomItem(ITextServices * text_service)
+void Re_RemoveCustomItem(ITextServices * text_service)
 {
-	int ret = 0;
 	REOBJECT reobject;
 	IRichEditOle * pRichEditOle = Re_GetOleInterface(text_service);
 	if (NULL == pRichEditOle)
-		return ret;
+		return;
 
-	CHARRANGE chrg = { 0, Re_GetWindowTextLength(text_service) };
+	CHARRANGE chrg = { 0, Re_GetTextLength(text_service) };
 
 	for (LONG i = 0; i < chrg.cpMax; i++)
 	{
@@ -1098,8 +1097,6 @@ int Re_RemoveCustomItem(ITextServices * text_service)
 	}
 	pRichEditOle->Release();
 	Re_SetSel(text_service, -1, -1);
-
-	return ret;
 }
 std::wstring GetIconByFile(std::wstring file)
 {
@@ -1168,7 +1165,7 @@ bool Re_FindFile(ITextServices * text_service, const std::wstring& file, bool ch
 	if (NULL == pRichEditOle)
 		return ret;
 
-	CHARRANGE chrg = {0, Re_GetWindowTextLength(text_service)};
+	CHARRANGE chrg = {0, Re_GetTextLength(text_service)};
 	long start_char = 0, end_char = 0;
 	Re_GetSel(text_service, start_char, end_char);
 

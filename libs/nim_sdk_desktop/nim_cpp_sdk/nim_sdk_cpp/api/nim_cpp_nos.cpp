@@ -1,5 +1,5 @@
-/** @file nim_cpp_nos.cpp
-  * @brief NIM SDKÌá¹©µÄNOSÔÆ´æ´¢·şÎñ½Ó¿Ú
+ï»¿/** @file nim_cpp_nos.cpp
+  * @brief NIM SDKæä¾›çš„NOSäº‘å­˜å‚¨æœåŠ¡æ¥å£
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author towik, Oleg
   * @date 2015/2/1
@@ -22,15 +22,15 @@ typedef void(*nim_nos_download)(const char *nos_url, nim_nos_download_cb_func ca
 struct UploadCallbackUserData
 {
 	UploadCallbackUserData() :	callback_result(),	callback_progress_pointer(nullptr) {}
-	NOS::UploadMediaCallback callback_result; 	/**< ÉÏ´«½á¹û»Øµ÷ */
-	NOS::ProgressCallback* callback_progress_pointer; /**< ¹ı³Ì»Øµ÷ */
+	NOS::UploadMediaCallback callback_result; 	/**< ä¸Šä¼ ç»“æœå›è°ƒ */
+	NOS::ProgressCallback* callback_progress_pointer; /**< è¿‡ç¨‹å›è°ƒ */
 };
 
 struct DownloadCallbackUserData
 {
 	DownloadCallbackUserData() : callback_result(),	callback_progress_pointer(nullptr) {}
-	NOS::DownloadMediaCallback callback_result;	/**< ÏÂÔØ½á¹û»Øµ÷ */
-	NOS::ProgressCallback* callback_progress_pointer; /**< ¹ı³Ì»Øµ÷ */
+	NOS::DownloadMediaCallback callback_result;	/**< ä¸‹è½½ç»“æœå›è°ƒ */
+	NOS::ProgressCallback* callback_progress_pointer; /**< è¿‡ç¨‹å›è°ƒ */
 };
 
 static void CallbackUpload(int res_code, const char *url, const char *json_extension, const void *user_data)

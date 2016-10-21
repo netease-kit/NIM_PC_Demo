@@ -31,27 +31,6 @@ void BlackListWindow::InitWindow()
 	RefreshBlackList();
 }
 
-void BlackListWindow::OnSetBlackCallback(const std::string& id, bool black)
-{
-	switch (black)
-	{
-	case true:
-	{	
-		nim::UserNameCard info;
-		UserService::GetInstance()->GetUserInfo(id, info);
-		AddBlackListMember(info);
-		break;
-	}
-	default:
-	{
-		ui::ListContainerElement* black_item = (ui::ListContainerElement*)m_black_list->FindSubControl(nbase::UTF8ToUTF16(id));
-		if (black_item != NULL)
-			m_black_list->Remove(black_item);
-		break;
-	}
-	}
-}
-
 void BlackListWindow::RefreshBlackList()
 {
 	m_black_list->RemoveAll();
@@ -65,7 +44,13 @@ void BlackListWindow::RefreshBlackList()
 		AddBlackListMember(*iter);
 }
 
-void BlackListWindow::RestoreUserInfo(const nim::UserNameCard &info)
+bool BlackListWindow::OnRemoveBtnClicked(ui::EventArgs *args)
+{
+	MuteBlackService::GetInstance()->InvokeSetBlack(args->pSender->GetUTF8DataID(), false);
+	return true;
+}
+
+void BlackListWindow::ResetUserInfo(const nim::UserNameCard &info)
 {
 	ui::ListContainerElement* black_item = (ui::ListContainerElement*)m_black_list->FindSubControl(nbase::UTF8ToUTF16(info.GetAccId()));
 	if (black_item == NULL)
@@ -84,7 +69,7 @@ void BlackListWindow::AddBlackListMember(const nim::UserNameCard & info)
 	black_item = dynamic_cast<ui::ListContainerElement*>(ui::GlobalManager::CreateBoxWithCache(L"black_list/black_list_item.xml"));
 	black_item->SetUTF8Name(info.GetAccId());
 	m_black_list->Add(black_item);
-	RestoreUserInfo(info);
+	ResetUserInfo(info);
 	ui::Button* remove = static_cast<ui::Button*>(black_item->FindSubControl(L"confirm"));
 	remove->SetUTF8DataID(info.GetAccId()); // 把用户帐号保存到按钮的m_sUserData中
 	remove->AttachClick(nbase::Bind(&BlackListWindow::OnRemoveBtnClicked, this, std::placeholders::_1));
@@ -93,7 +78,7 @@ void BlackListWindow::AddBlackListMember(const nim::UserNameCard & info)
 void BlackListWindow::OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos)
 {
 	for (const auto &info : uinfos)
-		RestoreUserInfo(info);
+		ResetUserInfo(info);
 }
 
 void BlackListWindow::OnUserPhotoReady(PhotoType type, const std::string & account, const std::wstring & photo_path)
@@ -106,9 +91,25 @@ void BlackListWindow::OnUserPhotoReady(PhotoType type, const std::string & accou
 	}
 }
 
-bool BlackListWindow::OnRemoveBtnClicked(ui::EventArgs *args)
+void BlackListWindow::OnSetBlackCallback(const std::string& id, bool black)
 {
-	MuteBlackService::GetInstance()->InvokeSetBlack(args->pSender->GetUTF8DataID(), false);
-	return true;
+	switch (black)
+	{
+	case true:
+	{
+		nim::UserNameCard info;
+		UserService::GetInstance()->GetUserInfo(id, info);
+		AddBlackListMember(info);
+		break;
+	}
+	default:
+	{
+		ui::ListContainerElement* black_item = (ui::ListContainerElement*)m_black_list->FindSubControl(nbase::UTF8ToUTF16(id));
+		if (black_item != NULL)
+			m_black_list->Remove(black_item);
+		break;
+	}
+	}
 }
+
 }

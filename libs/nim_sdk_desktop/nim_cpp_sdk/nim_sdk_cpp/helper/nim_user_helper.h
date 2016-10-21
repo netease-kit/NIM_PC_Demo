@@ -13,6 +13,7 @@
 #include <assert.h>
 #include "json.h"
 #include "nim_common_helper.h"
+#include "nim_base_types.h"
 
 /**
 * @namespace nim
@@ -168,25 +169,25 @@ public:
 	}
 
 	/** 设置用户档案创建时间戳(毫秒) */
-	void SetCreateTimetag(__int64 timetag)
+	void SetCreateTimetag(int64_t timetag)
 	{
 		create_timetag_ = timetag;
 	}
 
 	/** 获得用户档案创建时间戳(毫秒) */
-	__int64 GetCreateTimetag() const
+	int64_t GetCreateTimetag() const
 	{
 		return create_timetag_;
 	}
 
 	/** 设置用户档案更新时间戳(毫秒) */
-	void SetUpdateTimetag(__int64 timetag)
+	void SetUpdateTimetag(int64_t timetag)
 	{
 		update_timetag_ = timetag;
 	}
 
 	/** 获得用户档案更新时间戳(毫秒) */
-	__int64 GetUpdateTimetag() const
+	int64_t GetUpdateTimetag() const
 	{
 		return update_timetag_;
 	}
@@ -272,8 +273,8 @@ private:
 	std::string		birth_;				/**< 用户生日 */
 	std::string		mobile_;			/**< 用户电话 */
 	Json::Value		expand_;			/**< 用户扩展数据 */
-	__int64			create_timetag_;	/**< 用户档案创建时间戳(毫秒) */
-	__int64			update_timetag_;	/**< 用户档案更新时间戳(毫秒) */
+	int64_t			create_timetag_;	/**< 用户档案创建时间戳(毫秒) */
+	int64_t			update_timetag_;	/**< 用户档案更新时间戳(毫秒) */
 
 	unsigned int	value_available_flag_;
 };
@@ -283,8 +284,8 @@ struct BlackListInfo
 {
 	std::string		accid_;				/**< 用户ID */
 	bool			set_black_;			/**< 是否黑名单 */
-	__int64			create_timetag_;	/**< 档案创建时间（毫秒） */
-	__int64			update_timetag_;	/**< 档案更新时间（毫秒） */
+	int64_t			create_timetag_;	/**< 档案创建时间（毫秒） */
+	int64_t			update_timetag_;	/**< 档案更新时间（毫秒） */
 
 	BlackListInfo() : set_black_(true), create_timetag_(0), update_timetag_(0){}
 };
@@ -294,8 +295,8 @@ struct MuteListInfo
 {
 	std::string		accid_;				/**< 用户ID */
 	bool			set_mute_;			/**< 是否被静音 */
-	__int64			create_timetag_;	/**< 档案创建时间（毫秒） */
-	__int64			update_timetag_;	/**< 档案更新时间（毫秒） */
+	int64_t			create_timetag_;	/**< 档案创建时间（毫秒） */
+	int64_t			update_timetag_;	/**< 档案更新时间（毫秒） */
 
 	MuteListInfo() : set_mute_(true), create_timetag_(0), update_timetag_(0) {}
 };

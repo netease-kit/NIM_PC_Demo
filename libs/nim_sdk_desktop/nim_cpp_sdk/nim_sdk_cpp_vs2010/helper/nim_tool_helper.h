@@ -11,7 +11,7 @@
 #include <functional>
 #include <string>
 #include "assert.h"
-#include "wtypes.h"
+#include "nim_base_types.h"
 
 /**
 * @namespace nim
@@ -28,7 +28,7 @@ struct AudioInfo
 	std::string mime_type_;				/**< 语音类型 */
 	std::string samplerate_;			/**< 采样率 */
 	std::string url_;					/**< 上传云端后得到的下载地址 */
-	unsigned __int64 duration_;			/**< 语音时长 */
+	uint64_t duration_;			/**< 语音时长 */
 
 	/** 构造函数 */
 	AudioInfo() : duration_(0) {}

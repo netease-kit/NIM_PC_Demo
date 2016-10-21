@@ -60,18 +60,8 @@ void ParseSysMessageContent(const Json::Value& content_json, SysMessage& msg)
 	msg.content_ = content_json[kNIMSysMsgKeyMsg].asString();
 	msg.attach_ = content_json[kNIMSysMsgKeyAttach].asString();
 	msg.id_ = content_json[kNIMSysMsgKeyMsgId].asUInt64();
-	if (content_json[kNIMSysMsgKeyCustomSaveFlag].isUInt())
-		msg.support_offline_ = content_json[kNIMSysMsgKeyCustomSaveFlag].asInt() == 1 ? BS_TRUE : BS_FALSE;
-	msg.apns_text_ = content_json[kNIMSysMsgKeyCustomApnsText].asString();
 	msg.status_ = (NIMSysMsgStatus)content_json[kNIMSysMsgKeyLocalStatus].asUInt();
-	if (content_json[kNIMSysMsgKeyPushEnable].isUInt())
-		msg.push_enable_ = content_json[kNIMSysMsgKeyPushEnable].asInt() == 1 ? BS_TRUE : BS_FALSE;
-	if (content_json[kNIMSysMsgKeyPushNeedBadge].isUInt())
-		msg.push_need_badge_ = content_json[kNIMSysMsgKeyPushNeedBadge].asInt() == 1 ? BS_TRUE : BS_FALSE;
-	if (content_json[kNIMSysMsgKeyPushNeedPrefix].isUInt())
-		msg.push_need_prefix_ = content_json[kNIMSysMsgKeyPushNeedPrefix].asInt() == 1 ? BS_TRUE : BS_FALSE;
-	Json::Reader reader;
-	reader.parse(content_json[kNIMSysMsgKeyPushPayload].asString(), msg.push_payload_);
+	msg.msg_setting_.ParseMessageSetting(content_json);
 }
 
 }

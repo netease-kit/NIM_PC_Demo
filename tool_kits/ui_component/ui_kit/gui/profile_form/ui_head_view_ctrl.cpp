@@ -90,7 +90,6 @@ void HeadViewControl::SetGraphicsMode( Graphics &gp )
 	gp.SetPixelOffsetMode(PixelOffsetModeHighQuality);
 }
 
-// 生成原图在内存中
 bool HeadViewControl::RenderImage(const std::wstring& path, bool compress)
 {
 	// 获取图像数据
@@ -149,7 +148,6 @@ bool HeadViewControl::RenderImage(const std::wstring& path, bool compress)
 	return false;
 }
 
-// 生成画布图
 void HeadViewControl::RenderCanvas( int canvas_width, int canvas_height )
 {
 	// 兼容实际画布大小的绘制
@@ -160,7 +158,6 @@ void HeadViewControl::RenderCanvas( int canvas_width, int canvas_height )
 	gp.DrawImage(image_.get(), rf_canvas, 0, 0, (Gdiplus::REAL)image_->GetWidth(), (Gdiplus::REAL)image_->GetHeight(), UnitPixel);
 }
 
-// 生成抠图用的临时图
 void HeadViewControl::RenderTempCanvas( int select_width )
 {
 	// 当选区宽度变化超过10px时重新生成
@@ -183,7 +180,6 @@ void HeadViewControl::RenderTempCanvas( int select_width )
 	}
 }
 
-// 抠图
 Bitmap* HeadViewControl::GetSelectBitmap( RECT select_rect, bool use_original_image/*= false */)
 {
 	if(zoom_ratio_ > 1.0f)

@@ -1,955 +1,769 @@
 ﻿#include "session_form.h"
-#include "custom_msg_form.h"
+#include "session_box.h"
 #include "module/session/session_manager.h"
-#include "gui/session/control/atme_view.h"
-#include "callback/session/session_callback.h"
-#include "util/user.h"
-#include "export/nim_ui_window_manager.h"
+#include "gui/session/control/merge_item.h"
 
 using namespace ui;
 
+namespace
+{
+	const int kNormalSessionBoxWidth = 500;
+	const int kNormalSessionBoxHeight = 600;
+	const int kLargeSessionBoxWidth = 740;
+	const int kLargeSessionBoxHeight = 600;
+
+	// 窗口收到WM_CLOSE消息的原因
+	enum CloseReason
+	{
+		kDefaultClose	 = 0,	// 在任务栏右击关闭窗口，按Alt+F4等常规原因
+		kSessionBoxClose = 1	// 关闭了最后一个会话盒子导致窗口关闭
+	};
+}
+
 namespace nim_comp
 {
-const int kMsgLogNumberShow = 20;
+const LPCTSTR SessionForm::kClassName = L"SesssionForm";
 
-void SessionForm::AddNewMsg(const nim::IMMessage &msg, bool create)
+SessionForm::SessionForm()
 {
-	bool at_end = msg_list_->IsAtEnd();
+	drop_helper_ = NULL;
+	icon_handle_ = NULL;
 
-	bool show_time = false;
-	if (first_show_msg_)
+	merge_list_ = NULL;
+	session_box_tab_ = NULL;
+	active_session_box_ = NULL;
+
+	is_drag_state_ = false;
+	old_drag_point_.x = old_drag_point_.y = 0;
+}
+
+SessionForm::~SessionForm()
+{
+
+}
+
+std::wstring SessionForm::GetSkinFolder()
+{
+	return L"session";
+}
+
+std::wstring SessionForm::GetSkinFile()
+{
+	return L"session_form.xml";
+}
+
+std::wstring SessionForm::GetWindowClassName() const
+{
+	return kClassName;
+}
+
+std::wstring SessionForm::GetWindowId() const
+{
+	return kClassName;
+}
+
+UINT SessionForm::GetClassStyle() const
+{
+	return (UI_CLASSSTYLE_FRAME | CS_DBLCLKS);
+}
+
+LRESULT SessionForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	CloseReason closeReason = (CloseReason)wParam;
+
+	// 如果是因为所有会话盒子都关闭了导致窗口关闭，则正常返回
+	if (kSessionBoxClose == closeReason)
 	{
-		show_time = true;
-		farst_msg_time_ = msg.timetag_;
+		return __super::OnClose(uMsg, wParam, lParam, bHandled);
 	}
+	// 如果是其他原因触发了WM_CLOSE
 	else
 	{
-		show_time = CheckIfShowTime(last_msg_time_, msg.timetag_);
-	}
-	ShowMsg(msg, false, show_time);
-
-	if(!IsNoticeMsg(msg))
-		last_msg_time_ = msg.timetag_;
-
-	if (first_show_msg_)
-	{
-		first_show_msg_ = false;
-		AddTip(STT_LOAD_MORE_MSG);
-	}
-
-	RemoveTip(STT_WRITING);
-	writing_time_ = 0;
-
-	bool flash = true;
-	if (msg.feature_ == nim::kNIMMessageFeatureSyncMsg || msg.type_ == nim::kNIMMessageTypeNotification)
-		flash = false;
-	OnNewMsg(create, flash);
-	
-	if(at_end)
-	{
-		msg_list_->EndDown(true, false);
-	}
-
-	SendReceiptIfNeeded(true);
-
-	// 如果当前msg包含atme消息，就显示提示条
-	if (IsAtMeMsg(msg))
-	{
-		std::string sender_name = GetShowName(msg.sender_accid_);
-		if (!sender_name.empty())
+		int session_count = merge_list_->GetCount();
+		if (session_count > 0 && NULL != active_session_box_)
 		{
-			Json::Value root;
-			Json::Value value;
-			value["sender"] = sender_name;
-			value["uuid"] = msg.client_msg_id_;
-			value["msgbody"] = msg.content_;
-			root[0] = value;
-			atme_view_->AddMessage(root.toStyledString());
-		}
-	}
-}
-
-void SessionForm::AddWritingMsg(const nim::IMMessage &msg)
-{
-	bool at_end = msg_list_->IsAtEnd();
-
-	Json::Value json;
-	if (StringToJson(msg.attach_, json))
-	{
-		std::string id = json["id"].asString();
-		if (id == "1")
-		{
-			ShowMsgWriting(msg);
-		}
-	}
-
-	if (at_end)
-	{
-		msg_list_->EndDown(true, false);
-	}
-}
-
-MsgBubbleItem* SessionForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_time)
-{
-	const std::string &bubble_id = msg.client_msg_id_;
-	if(bubble_id.empty())
-	{
-		QLOG_WAR(L"msg id empty");
-		return nullptr;
-	}
-
-	IdBubblePair::iterator it = id_bubble_pair_.find(bubble_id);
-	if(it != id_bubble_pair_.end())
-	{
-		QLOG_WAR(L"repeat msg: {0}") <<bubble_id;
-		return nullptr;
-	}
-
-	MsgBubbleItem* item = NULL;
-
-	if (msg.type_ == nim::kNIMMessageTypeText || IsNetCallMsg(msg.type_, msg.attach_))
-	{
-		Json::Value values;
-		Json::Reader reader;
-		if (reader.parse(msg.attach_, values) 
-			&& values.isObject() 
-			&& values.isMember("comment")
-			&& values["comment"].asString() == "is_recall_notification")
-		{
-			std::wstring notify_text = nbase::UTF8ToUTF16(msg.content_);
-			if (values.isMember("notify_from"))
+			// 如果只有一个会话盒子，就直接关闭
+			if (1 == session_count)
 			{
-				std::string from_id = values["notify_from"].asString();
-				if (from_id == LoginManager::GetInstance()->GetAccount())
-				{
-					notify_text = L"我撤回了一条消息";
-				}
-				else
-				{
-					if (session_type_ == nim::kNIMSessionTypeP2P)
-					{
-						notify_text = L"对方撤回了一条消息";
-					}
-					else
-					{
-						auto info = GetTeamMemberInfo(from_id);
-						UTF8String name = info.GetNick();
-						if (name.empty())
-						{
-							nim::UserNameCard name_card;
-							UserService::GetInstance()->GetUserInfo(from_id, name_card);
-							name = name_card.GetName();
-						}
-						if (name.empty())
-							name = from_id;
-						notify_text = nbase::UTF8ToUTF16(name) + L" 撤回了一条消息";
-					}
-				}
+				CloseSessionBox(active_session_box_->GetSessionId());
 			}
-
-			MsgBubbleNotice* cell = new MsgBubbleNotice;
-			GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
-			if (first)
-				msg_list_->AddAt(cell, 0);
+			// 如果包含多个会话盒子，就询问用户
 			else
-				msg_list_->Add(cell);
-			cell->InitControl();
-			cell->InitCustomInfo(notify_text, session_id_, msg.client_msg_id_);
-			return nullptr;
-		}
-		else
-		{
-			item = new MsgBubbleText;
-		}		
-	}
-	else if (msg.type_ == nim::kNIMMessageTypeImage)
-		item = new MsgBubbleImage;
-	else if (msg.type_ == nim::kNIMMessageTypeAudio)
-		item = new MsgBubbleAudio;
-	else if (msg.type_ == nim::kNIMMessageTypeLocation)
-		item = new MsgBubbleLocation;
-	else if (msg.type_ == nim::kNIMMessageTypeFile)
-		item = new MsgBubbleFile;
-	else if (msg.type_ == nim::kNIMMessageTypeVideo)
-		item = new MsgBubbleVideo;
-	else if (msg.type_ == nim::kNIMMessageTypeNotification || msg.type_ == nim::kNIMMessageTypeTips)
-	{
-		id_bubble_pair_[bubble_id] = NULL;
-
-		MsgBubbleNotice* cell = new MsgBubbleNotice;
-		GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
-		if(first)
-			msg_list_->AddAt(cell, 0);
-		else
-			msg_list_->Add(cell);
-		cell->InitControl();
-		cell->InitInfo(msg, session_id_);
-		return nullptr;
-	}
-	else if (msg.type_ == nim::kNIMMessageTypeCustom)
-	{
-		Json::Value json;
-		if (StringToJson(msg.attach_, json))
-		{
-			int sub_type = json["type"].asInt();
-			if (sub_type == CustomMsgType_Jsb) //finger
 			{
-				item = new MsgBubbleFinger;
-			}
-			else if (sub_type == CustomMsgType_SnapChat)
-			{
-				item = new MsgBubbleSnapChat;
-			}
-			else if (sub_type == CustomMsgType_Sticker)
-			{
-				item = new MsgBubbleSticker;
-			}
-			else if (sub_type == CustomMsgType_Rts)
-			{
-				if (json["data"].isObject())
+				MsgboxCallback cb = ToWeakCallback([this](MsgBoxRet ret)
 				{
-					int flag = json["data"]["flag"].asInt();
-					if (flag == 0)
+					if (ret == MB_YES)
 					{
-						item = new MsgBubbleText;
-					}
-					else if (flag == 1)
-					{
-						id_bubble_pair_[bubble_id] = NULL;
+						while (merge_list_->GetCount() > 0)
+						{
+							Control *merge_item = merge_list_->GetItemAt(0);
+							ASSERT(NULL != merge_item);
+							if (NULL == merge_item)
+								break;
 
-						MsgBubbleNotice* cell = new MsgBubbleNotice;
-						GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
-						if (first)
-							msg_list_->AddAt(cell, 0);
-						else
-							msg_list_->Add(cell);
-						cell->InitControl();
-						cell->InitInfo(msg, session_id_);
-						return nullptr;
-					}
-				}
+							CloseSessionBox(merge_item->GetUTF8Name());
+						}
+					}				
+				});
+				ShowMsgBox(this->GetHWND(), L"当前窗口包含多个会话，确定要关闭窗口吗？", cb);
 			}
+
+			bHandled = TRUE;
+			return 0;
 		}
 	}
-	if (item == nullptr)
+
+	return __super::OnClose(uMsg, wParam, lParam, bHandled);
+}
+
+LRESULT SessionForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{	
+	if (uMsg == WM_KEYDOWN)
 	{
-		QLOG_WAR(L"unknown msg: cid={0} msg_type={1}") << bubble_id << msg.type_;
-		item = new MsgBubbleUnknown;
-	}
-
-	bool bubble_right = IsBubbleRight(msg);
-	if(bubble_right)
-		GlobalManager::FillBoxWithCache( item, L"session/bubble_right.xml" );
-	else
-		GlobalManager::FillBoxWithCache( item, L"session/bubble_left.xml" );
-
-	if(first)
-		msg_list_->AddAt(item, 0);
-	else
-		msg_list_->Add(item);
-
-	item->InitControl(bubble_right);
-	item->InitInfo(msg);
-	item->SetSessionId(session_id_);
-	item->SetSessionType(session_type_);
-	item->SetShowTime(show_time);
-	if (bubble_right || msg.session_type_ == nim::kNIMSessionTypeP2P)
-		item->SetShowName(false, "");
-	else
-	{
-		auto iter = team_member_info_list_.find(msg.sender_accid_);
-		if (iter != team_member_info_list_.cend() && !iter->second.GetNick().empty())
-			item->SetShowName(true, iter->second.GetNick()); //显示群名片
-		else
+		// 处理Ctrl+Tab快捷键
+		if (wParam == VK_TAB && ::GetKeyState(VK_CONTROL) < 0)
 		{
-			std::string show_name = nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(msg.sender_accid_));
-			item->SetShowName(true, show_name); //显示备注名或昵称
+			int next = merge_list_->GetCurSel();
+			next = (next+1) % merge_list_->GetCount();
+			merge_list_->SelectItem(next);
+			return 0;
 		}
-	}
-
-	id_bubble_pair_[bubble_id] = item;
-	if (first)//第一次打开，顺序倒序
-		cached_msgs_bubbles_.insert(cached_msgs_bubbles_.begin(), 1, item);
-	else
-		cached_msgs_bubbles_.push_back(item);
-
-	return item;
-}
-
-void SessionForm::ShowMsgWriting(const nim::IMMessage &msg)
-{
-	cancel_writing_timer_.Cancel();
-	StdClosure cb = nbase::Bind(&SessionForm::CancelWriting, this);
-	auto weak_cb = cancel_writing_timer_.ToWeakCallback(cb);
-	nbase::ThreadManager::PostDelayedTask(weak_cb, nbase::TimeDelta::FromSeconds(kCellCancelWriting));
-
-	if(has_writing_cell_)
-		return;
-
-	MsgBubbleWriting* item = new MsgBubbleWriting;
-	GlobalManager::FillBoxWithCache(item, L"session/bubble_left.xml");
-	msg_list_->Add(item);
-
-	item->InitControl(false);
-	item->InitInfo(msg);
-	item->SetShowTime(false);
-	item->SetShowName(false, "");
-
-	item->SetName(CELL_WRITING);
-
-	has_writing_cell_ = true;
-}
-
-void SessionForm::CancelWriting()
-{
-	bool at_end = msg_list_->IsAtEnd();
-
-	RemoveTip(STT_WRITING);
-
-	if(at_end)
-		msg_list_->EndDown(true, false);
-}
-
-void SessionForm::SendText( const std::string &text )
-{
-	nim::IMMessage msg;
-	//TODO(litianyi)
-	PackageMsg(msg);
-	msg.type_ = nim::kNIMMessageTypeText;
-	msg.content_ = text;
-	//nickname客户端不需要填写
-
-	AddSendingMsg(msg);
-
-	nim::MessageSetting setting;
-	//判断是否包含@某人的消息
-	if (session_type_ == nim::kNIMSessionTypeTeam && !uid_at_someone_.empty())
-	{
-		setting.is_force_push_ = nim::BS_TRUE;
-		setting.force_push_content_ = text;
-
-		//检查文本消息中是否存在“@xxx ”的文本
-		for (auto it = uid_at_someone_.begin(); it != uid_at_someone_.end(); ++it)
+		// 处理ESC快捷键
+		else if (wParam == VK_ESCAPE)
 		{
-			std::string nick_name = it->first;
-			std::string at_str = "@";
-			at_str.append(nick_name);
-			at_str.append(" ");
+			BOOL bHandled = FALSE;
+			if (!SessionManager::GetInstance()->IsDragingSessionBox() && NULL != active_session_box_)
+				active_session_box_->OnEsc(bHandled);
 
-			if (text.find(at_str) != std::string::npos)
-				setting.force_push_ids_list_.push_back(it->second);
+			if (!bHandled)
+				this->CloseSessionBox(active_session_box_->GetSessionId());
+
+			return 0;
 		}
-
-		uid_at_someone_.clear();
+	}
+	// 超链接消息
+	else if (uMsg == WM_NOTIFY)
+	{
+		if (CheckRichEditLink(wParam, lParam))
+			return 0;
 	}
 
-	std::string json_msg = nim::Talk::CreateTextMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, msg.content_, setting, msg.timetag_);
-	nim::Talk::SendMsg(json_msg);
+	if (NULL != active_session_box_)
+	{
+		bool bHandle = false;
+		LRESULT ret = active_session_box_->HandleMessage(uMsg, wParam, lParam, bHandle);
+		if (bHandle)
+			return ret;
+	}
+
+	return __super::HandleMessage(uMsg, wParam, lParam);
 }
 
-void SessionForm::SendImage( const std::wstring &src )
+void SessionForm::OnFinalMessage(HWND hWnd)
 {
-	nim::IMMessage msg;
-	PackageMsg(msg);
-	msg.type_ = nim::kNIMMessageTypeImage;
+	// 使用merge_list_来判断会话盒子总数，session_box_tab_获取的总数不准确
+	int session_box_count = merge_list_->GetCount();
+	for (int i = 0; i < session_box_count; i++)
+	{
+		Control *box_item = session_box_tab_->GetItemAt(i);
+		ASSERT(NULL != box_item);
+		if (NULL == box_item)
+			continue;;
 
-	std::wstring filename = nbase::UTF8ToUTF16(msg.client_msg_id_);
-	std::wstring dest = GetUserImagePath();
-	if (!nbase::FilePathIsExist(dest, true))
-		nbase::CreateDirectory(dest);
+		SessionBox* session_box = dynamic_cast<SessionBox*>(box_item);
+		if (NULL != session_box)
+			session_box->UninitSessionBox();
+	}
+
+	UnInitDragDrop();
+
+	if (icon_handle_)
+	{
+		::DestroyIcon(icon_handle_);
+		icon_handle_ = NULL;
+	}
+
+	__super::OnFinalMessage(hWnd);
+}
+
+void SessionForm::InitWindow()
+{
+	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&SessionForm::OnNotify, this, std::placeholders::_1));
+	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&SessionForm::OnClicked, this, std::placeholders::_1));
+
+	merge_list_ = static_cast<ListBox*>(FindControl(L"merge_list"));
+	session_box_tab_ = static_cast<TabBox*>(FindControl(L"session_box_tab"));
+
+	merge_list_->AttachSelect(nbase::Bind(&SessionForm::OnMergeItemSelected, this, std::placeholders::_1));
 	
-	dest += filename;
-	GenerateUploadImage(src, dest);
-	msg.local_res_path_ = nbase::UTF16ToUTF8(dest);
-
-	nim::IMImage img;
-	img.md5_ = GetFileMD5(dest);
-	img.size_ = (long)nbase::GetFileSize(dest);
-
-	Gdiplus::Image image(dest.c_str());
-	if (image.GetLastStatus() != Gdiplus::Ok)
-	{
-		assert(0);
-	}
-	else
-	{
-		img.width_ = image.GetWidth();
-		img.height_ = image.GetHeight();
-	}
-
-	msg.attach_ = img.ToJsonString();
-
-	AddSendingMsg(msg);
-	std::string json_msg = nim::Talk::CreateImageMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, img, msg.local_res_path_, nim::MessageSetting(), msg.timetag_);
-	nim::Talk::SendMsg(json_msg);
+	InitDragDrop();
 }
 
-void SessionForm::SendSnapChat(const std::wstring &src)
+bool SessionForm::OnNotify(ui::EventArgs* param)
 {
-	auto weak_flag = this->GetWeakFlag();
-	nim::IMMessage msg;
-	PackageMsg(msg);
-	msg.msg_setting_.server_history_saved_ = nim::BS_FALSE;
-	msg.msg_setting_.roaming_ = nim::BS_FALSE;
-	msg.msg_setting_.self_sync_ = nim::BS_FALSE;
-	//TODO(litianyi)
-	std::wstring filename = nbase::UTF8ToUTF16(msg.client_msg_id_);
-	std::wstring dest = GetUserImagePath() + filename;
-	GenerateUploadImage(src, dest);
-	msg.local_res_path_ = nbase::UTF16ToUTF8(dest);
-
-	nim::NOS::UploadResource(msg.local_res_path_, [this, msg, weak_flag](nim::NIMResCode res_code, const std::string& url) {
-		if (!weak_flag.expired() && res_code == nim::kNIMResSuccess)
-		{
-			nim::IMMessage new_msg = msg;
-			std::string md5 = GetFileMD5(nbase::UTF8ToUTF16(new_msg.local_res_path_));
-			int file_size = (int)nbase::GetFileSize(nbase::UTF8ToUTF16(new_msg.local_res_path_));
-			new_msg.type_ = nim::kNIMMessageTypeCustom;
-			Json::Value json;
-			Json::Value json_data;
-			Json::FastWriter writer;
-			json_data["size"] = file_size;
-			json_data["md5"] = md5;
-			json_data["url"] = url;
-			json["type"] = CustomMsgType_SnapChat;
-			json["data"] = json_data;
-			new_msg.content_ = nbase::UTF16ToUTF8(L"阅后即焚");
-			new_msg.attach_ = writer.write(json);
-			AddSendingMsg(new_msg);
-	
-			nim::Talk::SendMsg(new_msg.ToJsonString(true));
-		}
-	});
-}
-
-bool SessionForm::CheckFileSize(const std::wstring &src)
-{
-	int64_t sz = nbase::GetFileSize(src);
-	if (sz > LoginManager::GetInstance()->GetFileSizeLimit()*1024*1024 || sz <= 0)
-	{
-		return false;
-	}
 	return true;
 }
 
-void SessionForm::SendFile(const std::wstring &src)
+bool SessionForm::OnClicked(ui::EventArgs* param)
 {
-	nim::IMMessage msg;
-	PackageMsg(msg);
-	msg.type_ = nim::kNIMMessageTypeFile;
-	msg.local_res_path_ = nbase::UTF16ToUTF8(src);
-
-	nim::IMFile file;
-	file.md5_ = GetFileMD5(src);
-	file.size_ = (long)nbase::GetFileSize(src);
-
-	nbase::PathString file_name;
-	nbase::FilePathApartFileName(src, file_name);
-	std::wstring file_exten;
-	nbase::FilePathExtension(file_name, file_exten);
-	file.display_name_ = nbase::UTF16ToUTF8(file_name);
-	file.file_extension_ = nbase::UTF16ToUTF8(file_exten);
-	msg.attach_ = file.ToJsonString();
-
-	AddSendingMsg(msg);
-
-	nim::Talk::FileUpPrgCallback* cb_pointer = nullptr;
-	MsgBubbleFile* bubble = dynamic_cast<MsgBubbleFile*>(msg_list_->FindSubControl(nbase::UTF8ToUTF16(msg.client_msg_id_)));
-	if (!msg.local_res_path_.empty() && nbase::FilePathIsExist(nbase::UTF8ToUTF16(msg.local_res_path_), false) && bubble)
+	std::wstring name = param->pSender->GetName();
+	if (name == L"btn_max_restore")
 	{
-		cb_pointer = new nim::Talk::FileUpPrgCallback(bubble->GetFileUpPrgCallback());
-		SessionManager::GetInstance()->AddFileUpProgressCb(msg.client_msg_id_, cb_pointer);
+		DWORD style = GetWindowLong(GetHWND(), GWL_STYLE);
+		if (style & WS_MAXIMIZE)
+			::ShowWindow(GetHWND(), SW_RESTORE);
+		else
+			::ShowWindow(GetHWND(), SW_MAXIMIZE);
 	}
-	std::string json_msg = nim::Talk::CreateFileMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, file, msg.local_res_path_, nim::MessageSetting(), msg.timetag_);
-	nim::Talk::SendMsg(json_msg, msg.client_msg_id_, cb_pointer);
-}
-
-void SessionForm::SendJsb( const std::string &attach )
-{
-	nim::IMMessage msg;
-	PackageMsg(msg);
-	msg.type_ = nim::kNIMMessageTypeCustom;
-
-	msg.content_ = nbase::UTF16ToUTF8(L"这是一个猜拳");
-	msg.attach_ = attach;
-	
-	AddSendingMsg(msg);
-
-	nim::Talk::SendMsg(msg.ToJsonString(true));
-}
-
-void SessionForm::SendSticker(const std::string &catalog, const std::string &name)
-{
-	nim::IMMessage msg;
-	PackageMsg(msg);
-	msg.type_ = nim::kNIMMessageTypeCustom;
-
-	Json::Value json;
-	Json::FastWriter writer;
-	json["type"] = CustomMsgType_Sticker;
-	json["data"]["catalog"] = catalog;
-	json["data"]["chartlet"] = name;
-
-	msg.content_ = nbase::UTF16ToUTF8(L"贴图");
-	msg.attach_ = writer.write(json);
-
-	AddSendingMsg(msg);
-
-	nim::Talk::SendMsg(msg.ToJsonString(true));
-}
-
-void SessionForm::SendTip(const std::wstring &tip)
-{
-	nim::IMMessage msg;
-	PackageMsg(msg);
-	msg.type_ = nim::kNIMMessageTypeTips;
-	msg.content_ = nbase::UTF16ToUTF8(tip);
-	msg.msg_setting_.need_push_ = nim::BS_FALSE;
-	msg.status_ = nim::kNIMMsgLogStatusSent;
-
-	AddSendingMsg(msg);
-	nim::Talk::SendMsg(msg.ToJsonString(true));
-}
-
-void SessionForm::AddSendingMsg(const nim::IMMessage &msg)
-{
-	writing_time_ = 0;
-	RemoveTip(STT_WRITING);
-
-	bool show_time = false;
-	if(last_msg_time_ == 0)
+	else if (name == _T("btn_close"))
 	{
-		show_time = true;
-		farst_msg_time_ = msg.timetag_;
+		if (NULL == active_session_box_)
+		{
+			ASSERT(0);
+			return true;
+		}
+		
+		CloseSessionBox(active_session_box_->GetSessionId());
+	}
+	else if (name == _T("btn_min"))
+	{
+		SendMessage(WM_SYSCOMMAND, SC_MINIMIZE, 0);
+	}
+
+	return true;
+}
+
+SessionBox* SessionForm::CreateSessionBox(const std::string &session_id, nim::NIMSessionType session_type)
+{
+	std::wstring id = nbase::UTF8ToUTF16(session_id);
+	if (NULL != FindMergeItem(id))
+	{
+		ASSERT(0);
+		return NULL;
+	}
+	if (NULL != FindSessionBox(id))
+	{
+		ASSERT(0);
+		return NULL;
+	}
+
+	MergeItem *merge_item = new MergeItem;
+	GlobalManager::FillBoxWithCache(merge_item, L"session/merge_item.xml");
+	merge_list_->Add(merge_item);
+	merge_item->AttachAllEvents(nbase::Bind(&SessionForm::OnProcessMergeItemDrag, this, std::placeholders::_1));
+	merge_item->InitControl(session_id, session_type == nim::kNIMSessionTypeTeam);	
+	Button *btn_item_close = (Button*)merge_item->FindSubControl(L"merge_item_close");
+	btn_item_close->AttachClick(nbase::Bind(&SessionForm::OnMergeItemClose, this, std::placeholders::_1, session_id));
+
+	SessionBox* session_box = new SessionBox(session_id, session_type);
+	session_box_tab_->Add(session_box);
+	GlobalManager::FillBoxWithCache(session_box, L"session/session_box.xml");
+	session_box->SetName(id);
+	session_box->InitSessionBox();
+	Button *btn_header_ = (Button*)session_box->FindSubControl(L"btn_header");
+	btn_header_->AttachAllEvents(nbase::Bind(&SessionForm::OnProcessSessionBoxHeaderDrag, this, std::placeholders::_1));
+
+	if (merge_list_->GetCount() <= 1)
+		active_session_box_ = session_box;
+	else
+		merge_list_->SetVisible(true);
+
+	// 切换到新的会话盒子
+	// 如果merge_item处于隐藏状态，则无法顺利触发选择事件，所以这里直接切换到目标会话盒子
+	merge_item->Selected(true, false);
+	ChangeToSessionBox(id);
+	AdjustFormSize();
+
+	return session_box;
+}
+
+void SessionForm::CloseSessionBox(const std::string &session_id)
+{
+	if (session_id.empty())
+		return;
+
+	std::wstring id = nbase::UTF8ToUTF16(session_id);
+
+	// 从左侧会话列表项移除对应item
+	MergeItem *merge_item = FindMergeItem(id);
+	if (NULL != merge_item)
+	{
+		merge_list_->Remove(merge_item);
+	}
+
+	// 在右侧Tab会话盒子列表中找到会话盒子并且移除盒子
+	SessionBox *session_box = FindSessionBox(id);
+	ASSERT(NULL != session_box);
+	if (NULL != session_box)
+	{
+		session_box->UninitSessionBox();
+		// 如果会话盒子的数量大于1就立马移除盒子，否则不移除
+		// 如果最后一个会话盒子在这里立马移除，在窗口关闭时界面会因为没有控件而变成黑色
+		// 窗口关闭时，会自动的移除这个会话盒子
+		if (session_box_tab_->GetCount() > 1)
+			session_box_tab_->Remove(session_box);
+	}
+
+	// 当会话盒子只有一个时，隐藏左侧会话列表
+	if (merge_list_->GetCount() == 1)
+	{
+		merge_list_->SetVisible(false);
+	}
+
+	// 当会话盒子清空时，关闭会话窗口
+	if (merge_list_->GetCount() == 0)
+	{
+		this->Close(kSessionBoxClose);
 	}
 	else
 	{
-		show_time = CheckIfShowTime(last_msg_time_, msg.timetag_);
+		AdjustFormSize();
 	}
-	
-	if (!IsNoticeMsg(msg))
-		last_msg_time_ = msg.timetag_;
-
-	MsgBubbleItem* item = ShowMsg(msg, false, show_time);
-	msg_list_->EndDown(true, false);
 }
 
-void SessionForm::ReSendMsg(nim::IMMessage &msg)
+bool SessionForm::AttachSessionBox(SessionBox *session_box)
 {
-	msg.msg_setting_.resend_flag_ = nim::BS_TRUE;
-	msg.status_ = nim::kNIMMsgLogStatusSending;
-	msg.timetag_= 1000 * nbase::Time::Now().ToTimeT();
+	if (NULL == session_box)
+		return false;
 
-	AddSendingMsg(msg);
-
-	nim::Talk::SendMsg(msg.ToJsonString(true));
-}
-
-void SessionForm::PackageMsg(nim::IMMessage &msg)
-{
-	msg.session_type_			= session_type_;
-	msg.receiver_accid_		= session_id_;
-	msg.sender_accid_	= LoginManager::GetInstance()->GetAccount();
-	msg.client_msg_id_   = QString::GetGUID();
-	msg.msg_setting_.resend_flag_ = nim::BS_FALSE;
-
-	//base获取的时间单位是s，服务器的时间单位是ms
-	msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
-
-	msg.status_ = nim::kNIMMsgLogStatusSending;
-}
-
-void SessionForm::InvokeShowMsgs(bool first_show_msg)
-{
-	first_show_msg_ = first_show_msg;
-
-	QLOG_APP(L"query begin: id={0} type={1} farst_time={2}") <<session_id_ <<session_type_ <<farst_msg_time_;
-
-	nim::MsgLog::QueryMsgAsync(session_id_, session_type_, kMsgLogNumberShow, farst_msg_time_, 
-		nbase::Bind(&TalkCallback::OnQueryMsgCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
-}
-
-void SessionForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)
-{
-	int pos = msg_list_->GetScrollRange().cy - msg_list_->GetScrollPos().cy;
-
-	bool show_time = false;
-	//msg倒序排列
-	size_t len = msg.size();
-	for(size_t i = 0; i < len; i++)
+	std::wstring id = nbase::UTF8ToUTF16(session_box->GetSessionId());
+	if (NULL != FindMergeItem(id))
 	{
-		if(len == 1 || i == len-1)
+		ASSERT(0);
+		return false;
+	}
+	if (NULL != FindSessionBox(id))
+	{
+		ASSERT(0);
+		return false;
+	}
+
+	MergeItem *merge_item = new MergeItem;
+	GlobalManager::FillBoxWithCache(merge_item, L"session/merge_item.xml");
+	merge_list_->Add(merge_item);
+	merge_item->AttachAllEvents(nbase::Bind(&SessionForm::OnProcessMergeItemDrag, this, std::placeholders::_1));
+	merge_item->InitControl(session_box->GetSessionId(), session_box->GetSessionType() == nim::kNIMSessionTypeTeam);
+	Button *btn_item_close = (Button*)merge_item->FindSubControl(L"merge_item_close");
+	btn_item_close->AttachClick(nbase::Bind(&SessionForm::OnMergeItemClose, this, std::placeholders::_1, session_box->GetSessionId()));
+
+	// 当另一个窗体创建的session_box会话盒子控件添加到另一个窗体内的容器控件时
+	// Add函数会重新的修改session_box内所有子控件的m_pWindow为新的窗体指针
+	session_box_tab_->Add(session_box);
+	Button *btn_header_ = (Button*)session_box->FindSubControl(L"btn_header");
+	btn_header_->DetachEvent(kEventAll);
+	btn_header_->AttachAllEvents(nbase::Bind(&SessionForm::OnProcessSessionBoxHeaderDrag, this, std::placeholders::_1));
+
+	if (merge_list_->GetCount() <= 1)
+		active_session_box_ = session_box;
+	else
+		merge_list_->SetVisible(true);
+
+	// 切换到新的会话盒子
+	// 如果merge_item处于隐藏状态，则无法顺利触发选择事件，所以这里直接切换到目标会话盒子
+	merge_item->Selected(true, false);
+	ChangeToSessionBox(id);
+	AdjustFormSize();
+
+	return true;
+}
+
+bool SessionForm::DetachSessionBox(SessionBox *session_box)
+{
+	if (NULL == session_box)
+		return false;
+
+	std::wstring id = nbase::UTF8ToUTF16(session_box->GetSessionId());
+
+	// 从左侧会话列表项移除对应item
+	MergeItem *session_item = FindMergeItem(id);
+	if (NULL == session_item)
+		return false;
+
+	merge_list_->Remove(session_item);
+
+	// 在右侧Tab会话盒子列表中找到会话盒子并且移除盒子
+	// 在这里不能delete session_box
+	bool auto_destroy = session_box_tab_->IsAutoDestroy();
+	session_box_tab_->SetAutoDestroy(false);
+	if (!session_box_tab_->Remove(session_box))
+	{
+		session_box_tab_->SetAutoDestroy(auto_destroy);
+		return false;
+	}
+	session_box_tab_->SetAutoDestroy(auto_destroy);
+
+	// 当会话盒子只有一个时，隐藏左侧会话列表
+	if (merge_list_->GetCount() == 1)
+	{
+		merge_list_->SetVisible(false);
+	}
+
+	// 当会话盒子清空时，关闭会话窗口
+	if (merge_list_->GetCount() == 0)
+	{
+		this->Close(kSessionBoxClose);
+	}
+	else
+	{
+		AdjustFormSize();
+	}
+
+	return true;
+}
+
+SessionBox* SessionForm::GetSelectedSessionBox()
+{
+	return active_session_box_;
+}
+
+void SessionForm::SetActiveSessionBox(const std::string &session_id)
+{
+	if (session_id.empty())
+		return;
+
+	ActiveWindow();
+
+	// 从窗口左侧会话列表找到要激活的会话盒子项
+	std::wstring id = nbase::UTF8ToUTF16(session_id);
+	MergeItem *merge_item = FindMergeItem(id);
+	if (NULL == merge_item)
+		return;
+
+	// 如果merge_item处于隐藏状态，则无法顺利触发选择事件，所以这里直接切换到目标会话盒子
+	merge_item->Selected(true, false);
+	ChangeToSessionBox(id);
+}
+
+bool SessionForm::IsActiveSessionBox(const SessionBox *session_box)
+{
+	ASSERT(NULL != session_box);
+	return (::GetForegroundWindow() == GetHWND() && session_box == active_session_box_);
+}
+
+bool SessionForm::IsActiveSessionBox(const std::wstring &session_id)
+{
+	ASSERT(!session_id.empty());
+	return (::GetForegroundWindow() == GetHWND() && FindSessionBox(session_id) == active_session_box_);
+}
+
+int SessionForm::GetSessionBoxCount() const
+{
+	return session_box_tab_->GetCount();
+}
+
+void SessionForm::OnBeforeDargSessionBoxCallback(const std::wstring &session_id)
+{
+	// 如果当前被拖拽的会话盒子所属的会话窗口只有一个会话盒子，则在拖拽时隐藏会话窗口
+	int box_count = this->GetSessionBoxCount();
+	if (1 == box_count)
+	{
+		this->ShowWindow(false);
+	}
+	// 否则隐藏被拖拽的会话盒子和合并项
+	else
+	{
+		SessionBox *session_box = FindSessionBox(session_id);
+		if (NULL != session_box)
+			session_box->SetVisible(false);
+
+		MergeItem *merge_item = FindMergeItem(session_id);
+		if (NULL != merge_item)
+			merge_item->SetVisible(false);
+
+		// 找到新的被显示的会话盒子
+		int index = merge_item->GetIndex();
+		if (index > 0)
+			index--;
+		else
+			index++;
+		MergeItem *new_merge_item = static_cast<MergeItem*>(merge_list_->GetItemAt(index));
+		if (NULL != new_merge_item)
 		{
-			show_time = true;
+			new_merge_item->Selected(true, false);
+			ChangeToSessionBox(new_merge_item->GetName());
+		}
+
+		draging_session_id_ = session_id;
+	}
+}
+
+void SessionForm::OnAfterDragSessionBoxCallback(bool drop_succeed)
+{
+	is_drag_state_ = false;
+
+	if (drop_succeed)
+	{
+		int box_count = this->GetSessionBoxCount();
+		// 如果当前被拖拽的会话盒子所属的会话窗口只有一个会话盒子，并且拖拽到新的会话窗口里，这个会话窗口就会关闭
+		if (1 == box_count)
+		{
+
 		}
 		else
 		{
-			long long older_time = 0;
-			for (size_t j = i + 1; j < len; j++)
-			{
-				if (!IsNoticeMsg(msg[j]))
-				{
-					older_time = msg[j].timetag_;
-					break;
-				}
-			}
-			show_time = CheckIfShowTime(older_time, msg[i].timetag_);
-		}
-		ShowMsg(msg[i], true, show_time);
-	}
-	//加载更多历史消息
-	AddTip(STT_LOAD_MORE_MSG);
-	if(len < kMsgLogNumberShow)
-	{
-		Box* box = (Box*) msg_list_->FindSubControl(CELL_LOAD_MORE_MSG);
-		assert(box);
-		Button* btn = (Button*) box->FindSubControl(CELL_BTN_LOAD_MORE_MSG);
-		assert(btn);
-		btn->SetText(L"已显示全部历史消息");
-		btn->SetEnabled(false);
-	}
-	//修正最近时间
-	if(first_show_msg_)
-	{
-		first_show_msg_ = false;
 
-		msg_list_->EndDown(true, false);
-
-		if (len > 0 && last_msg_time_ == 0)
-		{
-			for (const auto &i : msg)
-			{
-				if (!IsNoticeMsg(i))
-				{
-					last_msg_time_ = i.timetag_;
-					break;
-				}
-			}
-		}
-
-		if (session_type_ == nim::kNIMSessionTypeP2P)
-		{
-			//检查回执
-			CheckLastReceiptMsg();
-			nim::IMMessage msg;
-			if (GetLastNeedSendReceiptMsg(msg))
-			{
-				nim::MsgLog::SendReceiptAsync(msg.ToJsonString(false), [](const nim::MessageStatusChangedResult& res) {
-					auto iter = res.results_.begin();
-					QLOG_APP(L"mark receipt id:{0} time:{1} rescode:{2}") << iter->talk_id_ << iter->msg_timetag_ << res.rescode_;
-				});
-			}
 		}
 	}
 	else
 	{
-		msg_list_->SetPos( msg_list_->GetPos() );
-
-		ui::CSize sz = msg_list_->GetScrollPos();
-		sz.cy = msg_list_->GetScrollRange().cy - pos - 50;
-		msg_list_->SetScrollPos(sz);
-	}
-	//修正最远时间
-	if(len > 0)
-	{
-		farst_msg_time_ = msg[len-1].timetag_;
-	}
-}
-
-void SessionForm::OnSendMsgCallback(const std::string &cid, int code, __int64 msg_timetag)
-{
-	IdBubblePair::iterator it = id_bubble_pair_.find(cid);
-	if(it != id_bubble_pair_.end())
-	{
-		MsgBubbleItem* item = it->second;
-		if(item)
+		int box_count = this->GetSessionBoxCount();
+		// 如果当前被拖拽的会话盒子所属的会话窗口只有一个会话盒子，并且没有拖拽到新的会话窗口里
+		// 就显示会话窗口
+		if (1 == box_count)
 		{
-			if (code == nim::kNIMResSuccess)
+			this->ShowWindow(true);
+		}
+		// 如果当前被拖拽的会话盒子所属的会话窗口有多个会话盒子，并且没有拖拽到新的会话窗口里
+		// 就显示之前被隐藏的会话盒子和合并项
+		else
+		{
+			SessionBox *session_box = FindSessionBox(draging_session_id_);
+			if (NULL != session_box)
+				session_box->SetVisible(true);
+
+			MergeItem *merge_item = FindMergeItem(draging_session_id_);
+			if (NULL != merge_item)
 			{
-				item->SetMsgStatus(nim::kNIMMsgLogStatusSent);
-				item->UpdateMsgTime(msg_timetag);
+				merge_item->SetVisible(true);
+				merge_item->Selected(true, false);
+				ChangeToSessionBox(draging_session_id_);
 			}
-			else if (code == nim::kNIMLocalResMsgFileNotExist)
-				item->SetMsgStatus(nim::kNIMMsgLogStatusSendFailed);
-			else if (code == nim::kNIMLocalResMsgNosUploadCancel)
-				item->SetMsgStatus(nim::kNIMMsgLogStatusSendCancel);
-			else
-			{
-				QLOG_WAR(L"unknown send msg callback code {0}") << code;
-				item->SetMsgStatus(nim::kNIMMsgLogStatusSendFailed);
-			}
+
+			draging_session_id_.clear();
 		}
 	}
 }
 
-void SessionForm::CheckLastReceiptMsg()
+void SessionForm::InvokeSetSessionUnread(const std::string &id, int unread)
 {
-	if (!last_receipt_msg_id_.empty())
-		return;
-
-	std::string my_id = LoginManager::GetInstance()->GetAccount();
-	auto iter = cached_msgs_bubbles_.rbegin();
-	for (; iter != cached_msgs_bubbles_.rend(); ++iter)
+	MergeItem *merge_item = FindMergeItem(nbase::UTF8ToUTF16(id));
+	if (NULL != merge_item)
 	{
-		MsgBubbleItem* item = (MsgBubbleItem*)(*iter);
-		if (item)
-		{
-			nim::IMMessage msg = item->GetMsg();
-			if (msg.sender_accid_ == my_id && item->IsMyMsg() && msg.status_ == nim::kNIMMsgLogStatusReceipt)
-			{
-				item->SetMsgStatus(nim::kNIMMsgLogStatusReceipt);
-				last_receipt_msg_id_ = msg.client_msg_id_;
-				break;
-			}
-		}
+		merge_item->SetUnread(unread);
 	}
 }
 
-bool SessionForm::GetLastNeedSendReceiptMsg(nim::IMMessage &msg)
+bool SessionForm::OnMergeItemSelected(ui::EventArgs* param)
 {
-	std::string my_id = LoginManager::GetInstance()->GetAccount();
-	auto iter = cached_msgs_bubbles_.rbegin();
-	for (; iter != cached_msgs_bubbles_.rend(); ++iter)
+	if (kEventSelect == param->Type)
 	{
-		MsgBubbleItem* item = (MsgBubbleItem*)(*iter);
-		if (item)
+		std::wstring name = param->pSender->GetName();
+
+		if (name == L"merge_list")
 		{
-			nim::IMMessage message = item->GetMsg();
-			if (message.sender_accid_ != my_id || !item->IsMyMsg())
-			{
-				if (!nim::MsgLog::QueryMessageBeReaded(message))
-				{
-					msg = message;
-					return true;
-				}
-				return false;
-			}
+			// 如果单击了左侧会话盒子项，则找到右侧Tab里对应的会话盒子并选中
+			Control *select_item = merge_list_->GetItemAt(merge_list_->GetCurSel());
+			ASSERT(NULL != select_item);
+			if (NULL == select_item)
+				return true;
+
+			std::wstring session_id = select_item->GetName();
+			ChangeToSessionBox(session_id);
 		}
 	}
+
+	return true;
+}
+
+bool SessionForm::OnMergeItemClose(ui::EventArgs* param, const std::string& session_id)
+{
+	if (param->pSender->GetName() == L"merge_item_close")
+	{
+		CloseSessionBox(session_id);
+	}
+
 	return false;
 }
 
-int SessionForm::RemoveMsgItem(const std::string& client_msg_id)
+SessionBox* SessionForm::FindSessionBox(const std::wstring &session_id)
 {
-	int index = -1;
-	MsgBubbleItem* msg_item = NULL;
-	MsgBubbleNotice* msg_cell = NULL;
-	for (int i = 0; i < msg_list_->GetCount(); i++)
+	for (int i = 0; i < session_box_tab_->GetCount(); i++)
 	{
-		if (msg_list_->GetItemAt(i)->GetUTF8Name() == client_msg_id)
+		Control *box_item = session_box_tab_->GetItemAt(i);
+		ASSERT(NULL != box_item);
+		if (NULL == box_item)
+			return NULL;
+
+		if (box_item->GetName() == session_id)
+			return dynamic_cast<SessionBox*>(box_item);
+	}
+
+	return NULL;
+}
+
+MergeItem* SessionForm::FindMergeItem(const std::wstring &session_id)
+{
+	for (int i = 0; i < merge_list_->GetCount(); i++)
+	{
+		Control *merge_item = merge_list_->GetItemAt(i);
+		ASSERT(NULL != merge_item);
+		if (NULL == merge_item)
+			return NULL;
+
+		if (merge_item->GetName() == session_id)
+			return static_cast<MergeItem*>(merge_item);
+	}
+
+	return NULL;
+}
+
+bool SessionForm::ChangeToSessionBox(const std::wstring &session_id)
+{
+	if (session_id.empty())
+		return false;
+
+	SessionBox *box_item = FindSessionBox(session_id);
+	if (NULL == box_item)
+		return false;
+
+	session_box_tab_->SelectItem(box_item);
+
+	active_session_box_ = box_item;
+
+	// 根据当前激活的会话盒子，更新任务栏的图标和标题
+	active_session_box_->OnActivate();
+
+	return true;
+}
+
+void SessionForm::AdjustFormSize()
+{
+	bool has_advanced_session = false;
+	for (int i = 0; i < session_box_tab_->GetCount(); i++)
+	{
+		Control *box_item = session_box_tab_->GetItemAt(i);
+		if (NULL == box_item)
+			continue;
+
+		SessionBox *session_box = dynamic_cast<SessionBox*>(box_item);
+		if (NULL == session_box)
+			continue;
+
+		if (session_box->IsAdvancedTeam())
 		{
-			msg_item = dynamic_cast<MsgBubbleItem*>(msg_list_->GetItemAt(i));
-			msg_cell = dynamic_cast<MsgBubbleNotice*>(msg_list_->GetItemAt(i));
-			index = i;
+			has_advanced_session = true;
 			break;
 		}
 	}
-	if (!msg_item)
+
+	int extend_width = 0;
+	if (merge_list_->IsVisible())
+		extend_width = merge_list_->GetFixedWidth();
+
+	if (has_advanced_session)
 	{
-		if (msg_cell) //要删除的是一个通知消息，删除后直接return
-			msg_list_->Remove(msg_cell);
-		return index;
+		int width = kLargeSessionBoxWidth + extend_width;
+		int height = kLargeSessionBoxHeight;
+		this->SetMinInfo(kLargeSessionBoxWidth, kLargeSessionBoxHeight);
+		this->SetPos(ui::UiRect(0, 0, width, height), SWP_NOMOVE | SWP_NOACTIVATE);
 	}
-	
-	auto iter2 = std::find(cached_msgs_bubbles_.begin(), cached_msgs_bubbles_.end(), msg_item);
-	if (iter2 != cached_msgs_bubbles_.end())
+	else
 	{
-		if (last_receipt_msg_id_ == client_msg_id) //本条要被删除的消息是显示已读的消息，则把上一条自己发的消息显示为已读。
+		int width = kNormalSessionBoxWidth + extend_width;
+		int height = kNormalSessionBoxHeight;
+		this->SetMinInfo(kNormalSessionBoxWidth, kNormalSessionBoxHeight);
+		this->SetPos(ui::UiRect(0, 0, width, height), SWP_NOMOVE | SWP_NOACTIVATE);
+	}
+}
+
+void SessionForm::SetMergeItemName(const std::wstring &session_id, const std::wstring &name)
+{
+	MergeItem *merge_item = FindMergeItem(session_id);
+	if (NULL != merge_item)
+	{
+		merge_item->SetTitle(name);
+	}
+}
+
+void SessionForm::SetMergeItemHeaderPhoto(const std::wstring &session_id, const std::wstring &photo)
+{
+	MergeItem *merge_item = FindMergeItem(session_id);
+	if (NULL != merge_item)
+	{
+		merge_item->SetIcon(photo);
+	}
+}
+
+void SessionForm::OnNewMsg(bool create, bool flash)
+{
+	if (flash || create)
+	{
+		bool need = false;
+
+		if (create)
 		{
-			auto iter3 = std::reverse_iterator<decltype(iter2)>(iter2); //iter3现在指向iter2的上一个元素
-			std::string my_id = LoginManager::GetInstance()->GetAccount();
-			while (iter3 != cached_msgs_bubbles_.rend())
-			{
-				MsgBubbleItem* item = dynamic_cast<MsgBubbleItem*>(*iter3);
-				if (item)
-				{
-					nim::IMMessage msg = item->GetMsg();
-					if (msg.sender_accid_ == my_id)
-					{
-						item->SetMsgStatus(nim::kNIMMsgLogStatusReceipt);
-						last_receipt_msg_id_ = msg.client_msg_id_;
-						break;
-					}
-				}
-				iter3++;
-			}
-			if (iter3 == cached_msgs_bubbles_.rend())
-				last_receipt_msg_id_ = "";
-		}
-		cached_msgs_bubbles_.erase(iter2); //从cached_msgs_bubbles_中删除
-	}
+			RECT rc;
+			::GetWindowRect(m_hWnd, &rc);
 
-	auto iter1 = id_bubble_pair_.find(client_msg_id);
-	if (iter1 != id_bubble_pair_.end())
-		id_bubble_pair_.erase(client_msg_id); //从id_bubble_pair_删除
+			WINDOWPLACEMENT wp = { sizeof(WINDOWPLACEMENT) };
+			::GetWindowPlacement(m_hWnd, &wp);
+			wp.showCmd = SW_SHOWMINNOACTIVE;
+			wp.rcNormalPosition = rc;
+			::SetWindowPlacement(m_hWnd, &wp);
 
-	msg_list_->Remove(msg_item); //最后从msg_list_中删除并销毁该MsgBubbleItem
-
-	return index;
-}
-
-void SessionForm::OnMsgStatusChangedCallback(const std::string &from_accid, const __int64 timetag, nim::NIMMsgLogStatus status)
-{
-	if (!last_receipt_msg_id_.empty())
-	{
-		auto it = id_bubble_pair_.find(last_receipt_msg_id_);
-		if (it != id_bubble_pair_.end())
-		{
-			MsgBubbleItem* item = it->second;
-			if (item)
-				item->SetMsgStatus(nim::kNIMMsgLogStatusSent);
-		}
-	}
-
-	std::string my_id = LoginManager::GetInstance()->GetAccount();
-	auto iter = cached_msgs_bubbles_.rbegin();
-	for (; iter != cached_msgs_bubbles_.rend(); ++iter)
-	{
-		MsgBubbleItem* item = (MsgBubbleItem*)(*iter);
-		if (item)
-		{
-			nim::IMMessage msg = item->GetMsg();
-			if (msg.sender_accid_ == my_id && item->IsMyMsg() &&/* msg.timetag_ <= timetag*/nim::MsgLog::QueryMessageBeReaded(msg))
-			{
-				item->SetMsgStatus(nim::kNIMMsgLogStatusReceipt);
-				last_receipt_msg_id_ = msg.client_msg_id_;
-				break;
-			}
-		}
-	}
-}
-
-void SessionForm::OnSnapchatRead(const std::string& client_msg_id)
-{
-	RemoveMsgItem(client_msg_id);
-}
-
-void SessionForm::OnDownloadCallback( const std::string &cid, bool success )
-{
-	IdBubblePair::iterator it = id_bubble_pair_.find(cid);
-	if(it != id_bubble_pair_.end())
-	{
-		MsgBubbleItem* item = it->second;
-		if(item)
-		{
-			item->OnDownloadCallback(success);
-		}
-	}
-}
-
-void SessionForm::OnRetweetResDownloadCallback(nim::NIMResCode code, const std::string& file_path, const std::string& sid, const std::string& cid)
-{
-	IdBubblePair::iterator it = id_bubble_pair_.find(cid);
-	if (it != id_bubble_pair_.end())
-	{
-		MsgBubbleItem* item = it->second;
-		if (item)
-		{
-			item->OnDownloadCallback(code == nim::kNIMResSuccess);
-		}
-	}
-}
-
-void SessionForm::OnRelink(const Json::Value &json)
-{
-	bool link = json["link"].asBool();
-	if(link)
-	{
-		RemoveTip(STT_LINK);
-	}
-}
-
-void SessionForm::ShowCustomMsgForm()
-{
-	CustomMsgForm* f = WindowsManager::SingletonShow<CustomMsgForm>(CustomMsgForm::kClassName);
-	f->SetSession(session_id_, session_type_, label_title_->GetText());
-}
-
-bool IsNoticeMsg(const nim::IMMessage& msg)
-{
-	if (msg.type_ == nim::kNIMMessageTypeNotification || msg.type_ == nim::kNIMMessageTypeTips)
-		return true;
-
-	if (msg.type_ == nim::kNIMMessageTypeCustom)
-	{
-		Json::Value json;
-		if (StringToJson(msg.attach_, json))
-		{
-			int sub_type = json["type"].asInt();
-			if (sub_type == CustomMsgType_Rts)
-				return true;
-		}
-	}
-
-	return false;
-}
-
-void SessionForm::CallbackWriteMsglog(const std::wstring &notify_text, nim::NIMResCode res_code, const std::string& msg_id)
-{
-	if (res_code == nim::kNIMResSuccess)
-	{
-		MsgBubbleNotice* cell = new MsgBubbleNotice;
-		GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
-		msg_list_->Add(cell);
-		cell->InitControl();
-		cell->InitCustomInfo(notify_text, session_id_, msg_id);
-	}
-}
-
-void SessionForm::RecallMsg(nim::NIMResCode code, const nim::RecallMsgNotify &notify)
-{
-	if (code != nim::kNIMResSuccess)
-	{
-		std::wstring toast = nbase::StringPrintf(L"recall msg error, code:%d, id:%s", code, nbase::UTF8ToUTF16(notify.msg_id_).c_str());
-		nim_ui::ShowToast(toast, 5000, this->GetHWND());
-		return;
-	}
-	int index = RemoveMsgItem(notify.msg_id_);
-	if (index > -1 && notify.msglog_exist_)			//撤回本地不存在的消息的通知不在消息流中插入通知
-	{
-		std::wstring notify_text;
-		if (notify.from_id_ == LoginManager::GetInstance()->GetAccount())
-		{
-			notify_text = L"我撤回了一条消息";
+			need = true;
 		}
 		else
 		{
-			if (notify.session_type_ == nim::kNIMSessionTypeP2P)
-			{
-				notify_text = L"对方撤回了一条消息";
-			}
-			else
-			{
-				auto info = GetTeamMemberInfo(notify.from_id_);
-				UTF8String name = info.GetNick();
-				if (name.empty())
-				{
-					nim::UserNameCard name_card;
-					UserService::GetInstance()->GetUserInfo(notify.from_id_, name_card);
-					name = name_card.GetName();
-				}
-				if (name.empty())
-					name = notify.from_id_;
-				notify_text = nbase::UTF8ToUTF16(name) + L" 撤回了一条消息";
-			}
+			if (::IsIconic(m_hWnd))
+				need = true;
+			else if (::GetForegroundWindow() != m_hWnd)
+				need = true;
 		}
 
-		nim::IMMessage msg;
-		msg.timetag_ = notify.notify_timetag_;
-		msg.client_msg_id_ = QString::GetGUID();
-		msg.receiver_accid_ = session_id_;
-		msg.session_type_ = session_type_;
-		msg.sender_accid_ = notify.from_id_;
-		msg.status_ = nim::kNIMMsgLogStatusSent;
-		msg.type_ = nim::kNIMMessageTypeText;
-		Json::Value values;
-		values["comment"] = "is_recall_notification";
-		values["notify_from"] = notify.from_id_;
-		msg.attach_ = values.toStyledString();
-		msg.content_ = nbase::UTF16ToUTF8(notify_text);
-		msg.msg_setting_.push_need_badge_ = nim::BS_FALSE; //设置会话列表不需要计入未读数
-		nim::MsgLog::WriteMsglogToLocalAsync(session_id_, msg, true, nbase::Bind(&SessionForm::CallbackWriteMsglog, this, notify_text, std::placeholders::_1, std::placeholders::_2));
+		if (need)
+			FlashTaskbar();
 	}
+}
+
+void SessionForm::FlashTaskbar()
+{
+	FLASHWINFO flash_info = { sizeof(FLASHWINFO), m_hWnd, FLASHW_TRAY, 3, 0 };
+	::FlashWindowEx(&flash_info);
+}
+
+void SessionForm::SetTaskbarIcon(const std::wstring &icon)
+{
+	if (!nbase::FilePathIsExist(icon, false))
+		return;
+
+	if (icon_handle_)
+	{
+		::DestroyIcon(icon_handle_);
+	}
+
+	Gdiplus::Bitmap bm(icon.c_str());
+	bm.GetHICON(&icon_handle_);
+	if (icon_handle_)
+	{
+		::SendMessage(this->GetHWND(), WM_SETICON, (WPARAM)TRUE, (LPARAM)icon_handle_);
+		::SendMessage(this->GetHWND(), WM_SETICON, (WPARAM)FALSE, (LPARAM)icon_handle_);
+	}
+}
+
+bool SessionForm::CheckRichEditLink(WPARAM wParam, LPARAM lParam)
+{
+	if (wParam == EN_LINK)
+	{
+		std::wstring url = *(std::wstring*)lParam;
+		if (!url.empty())
+		{
+			std::wstring ws = url;
+			nbase::LowerString(ws);
+			// 以"file:"开头 或者 包含".." 的超链接不允许打开
+			std::size_t k = ws.find(L"file:", 0, 5);
+			if (k == 0)
+				return true;
+
+			k = ws.find(L"..");
+			if (k != std::wstring::npos)
+				return true;
+
+			Post2GlobalMisc(nbase::Bind(&shared::tools::SafeOpenUrl, url, SW_SHOW));
+			return true;
+		}
+	}
+	return false;
 }
 
 }

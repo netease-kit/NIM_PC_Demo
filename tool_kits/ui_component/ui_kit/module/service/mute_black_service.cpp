@@ -11,44 +11,44 @@ MuteBlackService::MuteBlackService()
 
 const std::set<std::string> &MuteBlackService::GetMuteList()
 {
-	return m_mute_list;
+	return mute_list_;
 }
 
 const std::set<std::string> &MuteBlackService::GetBlackList()
 {
-	return m_black_list;
+	return black_list_;
 }
 
 bool MuteBlackService::IsInMuteList(const std::string& accid)
 {
-	return (m_mute_list.find(accid) != m_mute_list.end());
+	return (mute_list_.find(accid) != mute_list_.end());
 }
 
 bool MuteBlackService::IsInBlackList(const std::string& accid)
 {
-	return (m_black_list.find(accid) != m_black_list.end());
+	return (black_list_.find(accid) != black_list_.end());
 }
 
 void MuteBlackService::OnGetMuteListCallback(nim::NIMResCode res_code, const std::list<nim::MuteListInfo>& lists)
 {
-	m_mute_list.clear();
+	mute_list_.clear();
 	if (res_code == nim::kNIMResSuccess)
 	{
 		for (auto& info : lists)
 		{
-			m_mute_list.insert(info.accid_);
+			mute_list_.insert(info.accid_);
 		}
 	}
 }
 
 void MuteBlackService::OnGetBlackListCallback(nim::NIMResCode res_code, const std::list<nim::BlackListInfo>& lists)
 {
-	m_black_list.clear();
+	black_list_.clear();
 	if (res_code == nim::kNIMResSuccess)
 	{
 		for (auto& info : lists)
 		{
-			m_black_list.insert(info.accid_);
+			black_list_.insert(info.accid_);
 		}
 	}
 }
@@ -62,7 +62,7 @@ void MuteBlackService::OnMuteBlackEventCallback(const nim::SpecialRelationshipCh
 		nim::BlackListInfo info;
 		nim::User::ParseBlackListInfoChange(change_event, info);
 		ModifyBlackList(info.accid_, info.set_black_);
-		for (auto &cb : sync_set_black_cb_list)
+		for (auto &cb : sync_set_black_cb_list_)
 			(*cb.second)(info.accid_, info.set_black_);
 		break;
 	}
@@ -71,7 +71,7 @@ void MuteBlackService::OnMuteBlackEventCallback(const nim::SpecialRelationshipCh
 		nim::MuteListInfo info;
 		nim::User::ParseMuteListInfoChange(change_event, info);
 		ModifyMuteList(info.accid_, info.set_mute_);
-		for (auto &cb : sync_set_mute_cb_list)
+		for (auto &cb : sync_set_mute_cb_list_)
 			(*cb.second)(info.accid_, info.set_mute_);
 		break;
 	}
@@ -117,10 +117,10 @@ void MuteBlackService::ModifyMuteList(const std::string& accid, bool mute)
 	switch (mute)
 	{
 	case true:
-		m_mute_list.insert(accid);
+		mute_list_.insert(accid);
 		break;
 	case false:
-		m_mute_list.erase(accid);
+		mute_list_.erase(accid);
 		break;
 	}
 }
@@ -130,10 +130,10 @@ void MuteBlackService::ModifyBlackList(const std::string& accid, bool black)
 	switch (black)
 	{
 	case true:
-		m_black_list.insert(accid);
+		black_list_.insert(accid);
 		break;
 	case false:
-		m_black_list.erase(accid);
+		black_list_.erase(accid);
 		break;
 	}
 }
@@ -142,9 +142,9 @@ UnregisterCallback MuteBlackService::RegSyncSetMuteCallback(const SetStateCallba
 {
 	SetStateCallback* new_callback = new SetStateCallback(cb);
 	int cb_id = (int)new_callback;
-	sync_set_mute_cb_list[cb_id].reset(new_callback);
+	sync_set_mute_cb_list_[cb_id].reset(new_callback);
 	auto unregister = ToWeakCallback([this, cb_id]() {
-		sync_set_mute_cb_list.erase(cb_id);
+		sync_set_mute_cb_list_.erase(cb_id);
 	});
 	return unregister;
 }
@@ -153,9 +153,9 @@ UnregisterCallback MuteBlackService::RegSyncSetBlackCallback(const SetStateCallb
 {
 	SetStateCallback* new_callback = new SetStateCallback(cb);
 	int cb_id = (int)new_callback;
-	sync_set_black_cb_list[cb_id].reset(new_callback);
+	sync_set_black_cb_list_[cb_id].reset(new_callback);
 	auto unregister = ToWeakCallback([this, cb_id]() {
-		sync_set_black_cb_list.erase(cb_id);
+		sync_set_black_cb_list_.erase(cb_id);
 	});
 	return unregister;
 }

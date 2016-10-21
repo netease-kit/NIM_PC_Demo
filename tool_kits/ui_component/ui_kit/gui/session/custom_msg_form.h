@@ -14,21 +14,25 @@ public:
 	CustomMsgForm();
 	~CustomMsgForm();
 	
+	//覆盖虚函数
 	virtual std::wstring GetSkinFolder() override;
 	virtual std::wstring GetSkinFile() override;
-	virtual ui::UILIB_RESOURCETYPE GetResourceType() const;
-	virtual std::wstring GetZIPFileName() const;
-	
 	virtual std::wstring GetWindowClassName() const override;
 	virtual std::wstring GetWindowId() const override;
 	virtual UINT GetClassStyle() const override;
 	
-	virtual void OnFinalMessage(HWND hWnd);
-	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
-
+	/**
+	* 窗口初始化函数
+	* @return void	无返回值
+	*/
 	virtual void InitWindow() override;
-	virtual bool Notify(ui::EventArgs* param);
-	virtual bool OnClicked(ui::EventArgs* param);
+
+	/**
+	* 处理所有控件单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnClicked(ui::EventArgs* msg);
 
 	/** 
 	* 设置自定义消息窗体所属的会话的信息

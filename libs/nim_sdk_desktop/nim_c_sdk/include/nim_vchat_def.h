@@ -28,6 +28,7 @@ enum NIMVideoChatSessionType{
 	kNIMVideoChatSessionTypeSyncAckNotify	= 12,		/**< 通话接听挂断同步通知 */
 	kNIMVideoChatSessionTypeMp4Notify		= 13,		/**< 通知MP4录制状态，包括开始录制和结束录制 */
 	kNIMVideoChatSessionTypeInfoNotify		= 14,		/**< 通知实时音视频数据状态 */
+	kNIMVideoChatSessionTypeVolumeNotify	= 15,		/**< 通知实时音频发送和混音的音量状态 */
 };
 
 /** @enum NIMVChatControlType 音视频通话控制类型 */
@@ -122,6 +123,19 @@ enum NIMVChatMp4RecordCode{
 	kNIMVChatMp4RecordInvalid			= 404,		/**< 通话不存在 */
 };
 
+/** @enum NIMVChatSetStreamingModeCode 设置推流模式返回码  */
+enum NIMVChatSetStreamingModeCode{
+	kNIMVChatBypassStreamingInvalid					= 0,			/**< 无效的操作 */
+	kNIMVChatBypassStreamingSuccess					= 200,			/**< 设置成功 */
+	kNIMVChatBypassStreamingErrorExceedMax			= 202,			/**< 超过最大允许直播节点数量 */
+	kNIMVChatBypassStreamingErrorHostNotJoined		= 203,			/**< 必须由主播第一个开启直播 */
+	kNIMVChatBypassStreamingErrorServerError		= 204,			/**< 互动直播服务器错误 */
+	kNIMVChatBypassStreamingErrorOtherError			= 205,			/**< 互动直播其他错误 */
+	kNIMVChatBypassStreamingErrorNoResponse			= 404,			/**< 互动直播服务器没有响应 */
+	kNIMVChatBypassStreamingErrorReconnecting		= 405,			/**< 重连过程中无法进行相关操作，稍后再试 */
+	kNIMVChatBypassStreamingErrorTimeout			= 408,			/**< 互动直播设置超时 */
+};
+
 /** @name json extension params for start or ack accept
   * @{
   */
@@ -134,8 +148,8 @@ static const char *kNIMVChatVideoRecord		= "video_record";	/**< int 是否需要
 static const char *kNIMVChatMaxVideoRate	= "max_video_rate";	/**< int 视频发送编码码率 >=100000 <=5000000有效 */
 static const char *kNIMVChatVideoQuality	= "video_quality";	/**< int 视频聊天分辨率选择 NIMVChatVideoQuality */
 static const char *kNIMVChatVideoFrameRate	= "frame_rate";		/**< int 视频画面帧率 NIMVChatVideoFrameRate */
-static const char *kNIMVChatRtmpUrl			= "rtmp_url";		/**< string 直播推流地址(加入多人时有效)，非空代表主播旁路直播，此时kNIMVChatBypassRtmp无效 */
-static const char *kNIMVChatBypassRtmp		= "bypass_rtmp";	/**< int 是否是旁路直播观众(加入多人时有效)， >0表示是 */
+static const char *kNIMVChatRtmpUrl			= "rtmp_url";		/**< string 直播推流地址(加入多人时有效)，非空代表主播旁路直播， kNIMVChatBypassRtmp决定是否开始推流 */
+static const char *kNIMVChatBypassRtmp		= "bypass_rtmp";	/**< int 是否旁路推流（如果rtmpurl为空是连麦观众，非空是主播的推流控制）， >0表示是 */
 static const char *kNIMVChatPushEnable		= "push_enable";	/**< int 是否需要推送 >0表示是 默认是 */
 static const char *kNIMVChatNeedBadge		= "need_badge";		/**< int 是否需要角标计数 >0表示是 默认是 */
 static const char *kNIMVChatNeedFromNick	= "need_nick";		/**< int 是否需要推送昵称 >0表示是 默认是 */
@@ -164,6 +178,9 @@ static const char *kNIMVChatAudio			= "audio";				/**< key 音频 */
 static const char *kNIMVChatStaticInfo		= "static_info";		/**< key 音视频实时状态 */
 static const char *kNIMVChatFPS				= "fps";				/**< int 每秒帧率或者每秒发包数 */
 static const char *kNIMVChatKBPS			= "KBps";				/**< int 每秒流量，单位为“千字节” */
+static const char *kNIMVChatAudioVolume		= "audio_volume";		/**< key 音频实时音量通知，包含发送的音量kNIMVChatSelf和接收音量kNIMVChatReceiver，kNIMVChatStatus的音量值是pcm的平均值最大为int16_max */
+static const char *kNIMVChatSelf			= "self";				/**< key 本人信息 */
+static const char *kNIMVChatReceiver		= "receiver";			/**< key 接收信息 */
 /** @}*/ //json extension params
 
 /** @typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, __int64 channel_id, int code, const char *json_extension, const void *user_data)
@@ -185,6 +202,7 @@ static const char *kNIMVChatKBPS			= "KBps";				/**< int 每秒流量，单位�
   *															//	MP4开始 	{"mp4_start":{ "mp4_file": "d:\\test.mp4", "time": 14496477000000 }} \n
   *															//	MP4结束 	{"mp4_close":{ "mp4_file": "d:\\test.mp4", "time": 120000, "status": 0 }} \n
   *				kNIMVideoChatSessionTypeInfoNotify			//实时状态		{"static_info":{ "video": {"fps":20, "KBps":200, "width":1280,"height":720}, "audio": {"fps":17, "KBps":3}}} \n
+  *				kNIMVideoChatSessionTypeVolumeNotify		//音量状态 		{"audio_volume":{ "self": {"status":600}, "receiver": [{"uid":"id123","status":1000},{"uid":"id456","status":222}] }} \n
   * @param[out] type NIMVideoChatSessionType
   * @param[out] channel_id 通话的通道id
   * @param[out] code 结果类型或错误类型

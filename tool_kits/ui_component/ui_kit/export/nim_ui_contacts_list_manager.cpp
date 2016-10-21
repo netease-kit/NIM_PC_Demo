@@ -5,18 +5,7 @@
 
 namespace nim_ui
 {
-
-ContactsListManager::ContactsListManager()
-{
-
-}
-
-ContactsListManager::~ContactsListManager()
-{
-
-}
-
-bool ContactsListManager::AttachFriendListBox(ui::TreeView *list_box)
+void ContactsListManager::AttachFriendListBox(ui::TreeView *list_box)
 {
 	if (NULL == list_box)
 	{
@@ -26,10 +15,9 @@ bool ContactsListManager::AttachFriendListBox(ui::TreeView *list_box)
 	{
 		friend_list_.reset(new nim_comp::FriendList(list_box));
 	}
-	return true;
 }
 
-bool ContactsListManager::AttachGroupListBox(ui::TreeView *list_box)
+void ContactsListManager::AttachGroupListBox(ui::TreeView *list_box)
 {
 	if (NULL == list_box)
 	{
@@ -39,7 +27,6 @@ bool ContactsListManager::AttachGroupListBox(ui::TreeView *list_box)
 	{
 		group_list_.reset(new nim_comp::GroupList(list_box));
 	}
-	return true;
 }
 
 void ContactsListManager::InvokeGetAllUserInfo()
@@ -61,6 +48,9 @@ void ContactsListManager::OnGetAllFriendInfo(const std::list<nim::UserNameCard> 
 
 void ContactsListManager::FillSearchResultList(ui::ListBox* search_result_list, const UTF8String& search_key)
 {
+	if (NULL == search_result_list)
+		return;
+
 	std::list<UTF8String> searched_ids;
 	search_result_list->RemoveAll();
 

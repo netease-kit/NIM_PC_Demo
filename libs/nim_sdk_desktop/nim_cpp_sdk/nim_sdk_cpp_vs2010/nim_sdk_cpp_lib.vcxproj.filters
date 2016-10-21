@@ -11,6 +11,12 @@
     <Filter Include="helper">
       <UniqueIdentifier>{e6f92ffc-2cff-49e3-b686-5f9eea838874}</UniqueIdentifier>
     </Filter>
+    <Filter Include="third_party">
+      <UniqueIdentifier>{af7f6599-946d-452c-ac8a-adb7e28e0e99}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party\convert_utf">
+      <UniqueIdentifier>{daa88381-673e-4107-a475-2e208bf65653}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="helper\nim_client_helper.cpp">
@@ -98,6 +104,12 @@
       <Filter>api</Filter>
     </ClCompile>
     <ClCompile Include="nim_cpp_api.cpp" />
+    <ClCompile Include="third_party\convert_utf\convert_utf.c">
+      <Filter>third_party\convert_utf</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\nim_string_helper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\nim_client_helper.h">
@@ -184,6 +196,12 @@
     </ClInclude>
     <ClInclude Include="api\nim_cpp_plugin_in.h">
       <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\convert_utf\convert_utf.h">
+      <Filter>third_party\convert_utf</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\nim_string_helper.h">
+      <Filter>helper</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

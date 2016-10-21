@@ -7,6 +7,8 @@
 #ifndef NIM_SDK_DLL_EXPORT_HEADERS_TALK_DEF_H_
 #define NIM_SDK_DLL_EXPORT_HEADERS_TALK_DEF_H_
 
+#include "../util/stdbool.h"
+
 #ifdef __cplusplus
 extern"C"
 {
@@ -95,9 +97,9 @@ static const char *kNIMMsgKeyAttach			= "msg_attach";			/**< string,消息多媒
 static const char *kNIMMsgKeyClientMsgid	= "client_msg_id";		/**< string,客户端消息id */
 static const char *kNIMMsgKeyServerMsgid	= "server_msg_id";		/**< long,服务器端消息id */
 static const char *kNIMMsgKeyResendFlag		= "resend_flag";		/**< int,消息重发标记位,第一次发送0,重发1 */
-static const char *kNIMMsgKeyHistorySave	= "cloud_history";		/**< int,(可选)该消息是否存储云端历史,可选,仅对kNIMMessageTypeCustom有效，0:不支持,1:支持, 默认1 */
-static const char *kNIMMsgKeyMsgRoaming		= "roam_msg";			/**< int,(可选)该消息是否支持漫游,可选,仅对kNIMMessageTypeCustom有效,0:不支持,1:支持, 默认1 */
-static const char *kNIMMsgKeyMsgSync		= "sync_msg";			/**< int,(可选)该消息是否支持发送者多端同步,可选,仅对kNIMMessageTypeCustom有效,0:不支持,1:支持, 默认1 */
+static const char *kNIMMsgKeyHistorySave	= "cloud_history";		/**< int,(可选)该消息是否存储云端历史,可选，0:不支持,1:支持, 默认1 */
+static const char *kNIMMsgKeyMsgRoaming		= "roam_msg";			/**< int,(可选)该消息是否支持漫游,可选,0:不支持,1:支持, 默认1 */
+static const char *kNIMMsgKeyMsgSync		= "sync_msg";			/**< int,(可选)该消息是否支持发送者多端同步,可选,0:不支持,1:支持, 默认1 */
 static const char *kNIMMsgKeyPushNeedBadge	= "push_need_badge";	/**< int,(可选)推送是否要做消息计数(角标)，0:不需要，1:需要，默认1 */
 static const char *kNIMMsgKeyServerExt		= "server_ext";			/**< string,(可选)自定义扩展字段,必须为可以解析为json的非格式化的字符串,长度限制1024 */
 static const char *kNIMMsgKeyPushPayload	= "push_payload";		/**< string,(可选)第三方自定义的推送属性，必须为可以解析为json的非格式化的字符串，长度2048 */

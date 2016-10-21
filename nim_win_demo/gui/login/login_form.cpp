@@ -111,12 +111,12 @@ void LoginForm::StartLogin( std::string username, std::string password )
 
 void LoginForm::RegLoginManagerCallback()
 {
-	nim_ui::OnLoginResult cb_result = [this](int error){
-		this->OnLoginResult(error);
+	nim_ui::OnLoginError cb_result = [this](int error){
+		this->OnLoginError(error);
 	};
 
 	nim_ui::OnCancelLogin cb_cancel = [this]{
-		this->Reset();
+		this->OnCancelLogin();
 	};
 
 	nim_ui::OnHideWindow cb_hide = [this]{
@@ -138,9 +138,9 @@ void LoginForm::RegLoginManagerCallback()
 		ToWeakCallback(cb_show_main));
 }
 
-void LoginForm::OnLoginResult( int error )
+void LoginForm::OnLoginError( int error )
 {
-	Reset();
+	OnCancelLogin();
 
 	if (error == nim::kNIMResUidPassError)
 	{
@@ -163,7 +163,7 @@ void LoginForm::OnLoginResult( int error )
 	}
 }
 
-void LoginForm::Reset()
+void LoginForm::OnCancelLogin()
 {
 	usericon_->SetEnabled(true);
 	passwordicon_->SetEnabled(true);

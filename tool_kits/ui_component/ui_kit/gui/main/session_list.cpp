@@ -26,7 +26,7 @@ SessionList::SessionList(ui::ListBox* session_list)
 	label_unread_sysmsg_ = (Label*)session_list->GetWindow()->FindControl(L"label_unread_sysmsg");
 	box_unread_sysmsg_->SetVisible(false);
 
-	nim::Session::RegChangeCb(nbase::Bind(&SessionList::OnChangeCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	nim::Session::RegChangeCb(nbase::Bind(&SessionList::OnSessionChangeCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	
 	OnUserInfoChangeCallback cb1 = nbase::Bind(&SessionList::OnUserInfoChange, this, std::placeholders::_1);
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(cb1));
@@ -34,11 +34,6 @@ SessionList::SessionList(ui::ListBox* session_list)
 	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(cb2));
 	auto cb3 = nbase::Bind(&SessionList::OnTeamNameChange, this, std::placeholders::_1);
 	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(cb3));
-}
-
-SessionList::~SessionList()
-{
-
 }
 
 int SessionList::AdjustMsg(const nim::SessionData &msg)
@@ -64,7 +59,7 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data)
 	nim::SessionData item_data_new = item_data;
 	if (item)
 	{
-		if (item->GetMsgTime() > item_data.msg_timetag_)
+		if (nim::kNIMSessionCommandMsgDeleted != item_data.command_ && item->GetMsgTime() > item_data.msg_timetag_)
 		{
 			item_data_new = item->GetSessionData();
 			item_data_new.unread_count_ = item_data.unread_count_;
@@ -96,6 +91,14 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data)
 	return item;
 }
 
+void SessionList::DeleteSessionItem(SessionItem* item)
+{
+	assert(item);
+	session_list_->Remove(item);
+	InvokeUnreadCountChange();
+}
+
+
 void SessionList::RemoveAllSessionItem()
 {
 	//回话列表的第一项是多端同步和消息中心，所以要专门写个清除函数
@@ -105,6 +108,18 @@ void SessionList::RemoveAllSessionItem()
 		session_list_->RemoveAt(i);
 	}
 	InvokeUnreadCountChange();
+}
+
+UnregisterCallback SessionList::RegUnreadCountChange(const OnUnreadCountChangeCallback& callback)
+{
+	OnUnreadCountChangeCallback* new_callback = new OnUnreadCountChangeCallback(callback);
+	int cb_id = (int)new_callback;
+	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
+	unread_count_change_cb_list_[cb_id].reset(new_callback);
+	auto cb = ToWeakCallback([this, cb_id]() {
+		unread_count_change_cb_list_.erase(cb_id);
+	});
+	return cb;	
 }
 
 void SessionList::InvokeUnreadCountChange()
@@ -128,18 +143,6 @@ void SessionList::InvokeUnreadCountChange()
 		(*(it.second))(unread_count);
 }
 
-UnregisterCallback SessionList::RegUnreadCountChange(const OnUnreadCountChangeCallback& callback)
-{
-	OnUnreadCountChangeCallback* new_callback = new OnUnreadCountChangeCallback(callback);
-	int cb_id = (int)new_callback;
-	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
-	unread_count_change_cb_list_[cb_id].reset(new_callback);
-	auto cb = ToWeakCallback([this, cb_id]() {
-		unread_count_change_cb_list_.erase(cb_id);
-	});
-	return cb;	
-}
-
 void SessionList::AddUnreadCount(const std::string &id)
 {
 	std::wstring wid = nbase::UTF8ToUTF16(id);
@@ -151,7 +154,7 @@ void SessionList::AddUnreadCount(const std::string &id)
 	}
 }
 
-void SessionList::ResetSessionUnread(const std::string &id)
+void SessionList::ResetUnreadCount(const std::string &id)
 {
 	std::wstring wid = nbase::UTF8ToUTF16(id);
 	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(wid));
@@ -215,13 +218,6 @@ void SessionList::UpdateSessionInfo(const nim::UserNameCard& user_info)
 	}
 }
 
-void SessionList::DeleteSessionItem(SessionItem* item)
-{
-	assert(item);
-	session_list_->Remove(item);
-	InvokeUnreadCountChange();
-}
-
 //多端登录
 //[{"app_account":"abc","client_os":"***","client_type":1,"device_id":"***","mac":"***"}]
 void SessionList::OnMultispotChange(bool online, const std::list<nim::OtherClientPres>& clients)
@@ -241,7 +237,7 @@ void SessionList::OnMultispotChange(bool online, const std::list<nim::OtherClien
 			}
 		}
 	}
-	ShowMultispotUI();
+	UpdateMultispotUI();
 }
 
 void SessionList::OnMultispotKickout(const std::list<std::string> &client_ids)
@@ -257,10 +253,10 @@ void SessionList::OnMultispotKickout(const std::list<std::string> &client_ids)
 			}
 		}
 	}
-	ShowMultispotUI();
+	UpdateMultispotUI();
 }
 
-void SessionList::ShowMultispotUI()
+void SessionList::UpdateMultispotUI()
 {
 	ui::ButtonBox* show_btn = (ui::ButtonBox*)session_list_->GetWindow()->FindControl(L"multispot_info");
 	if (show_btn)
@@ -298,7 +294,7 @@ void SessionList::ShowMultispotUI()
 	}
 }
 
-void SessionList::OnChangeCallback(nim::NIMResCode rescode, const nim::SessionData& data, int total_unread_counts)
+void SessionList::OnSessionChangeCallback(nim::NIMResCode rescode, const nim::SessionData& data, int total_unread_counts)
 {
 	if (rescode != nim::kNIMResSuccess)
 	{
@@ -316,9 +312,9 @@ void SessionList::OnChangeCallback(nim::NIMResCode rescode, const nim::SessionDa
 		if (data.last_updated_msg_)
 		{
 			AddSessionItem(data);
-			if (SessionManager::GetInstance()->IsSessionWndActive(data.id_))
+			if (SessionManager::GetInstance()->IsSessionBoxActive(data.id_))
 			{
-				ResetSessionUnread(data.id_);
+				ResetUnreadCount(data.id_);
 			}
 		}
 	}

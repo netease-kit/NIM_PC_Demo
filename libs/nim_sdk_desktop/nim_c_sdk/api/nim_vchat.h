@@ -188,6 +188,16 @@ NIM_SDK_DLL_API bool nim_vchat_join_room(NIMVideoChatMode mode, const char *room
   */
 NIM_SDK_DLL_API void nim_vchat_set_video_quality(int video_quality, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
+/** @fn void nim_vchat_set_frame_rate(NIMVChatVideoFrameRate frame_rate, const char* json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
+  * NIM 实时设置视频发送帧率上限
+  * @param[in] frame_rate  帧率类型 见NIMVChatVideoFrameRate定义
+  * @param[in] json_extension  无效备用
+  * @param[in] cb 结果回调见nim_vchat_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_vchat_set_frame_rate(NIMVChatVideoFrameRate frame_rate, const char* json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+
 /** @fn void nim_vchat_set_video_bitrate(int video_bitrate, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
   * NIM 通话中修改视频码率，有效区间[100kb,2000kb]，如果设置video_bitrate为0则取默认码率
   * @param[in] video_bitrate 视频码率值
@@ -218,6 +228,16 @@ NIM_SDK_DLL_API void nim_vchat_set_custom_data(bool custom_audio, bool custom_vi
   * @return void 无返回值
   */
 NIM_SDK_DLL_API void nim_vchat_update_rtmp_url(const char *rtmp_url, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+
+/** @fn void nim_vchat_set_streaming_mode(bool streaming, const char* json_info, nim_vchat_opt_cb_func cb, const void *user_data)
+  * NIM 推流开关
+  * @param[in] streaming  是否加入推流
+  * @param[in] json_info  无效备用
+  * @param[in] cb 结果回调见nim_vchat_def.h， code返回参见NIMVChatSetStreamingModeCode
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_vchat_set_streaming_mode(bool streaming, const char* json_info, nim_vchat_opt_cb_func cb, const void *user_data);
 
 #ifdef __cplusplus
 };

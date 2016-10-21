@@ -32,7 +32,7 @@ struct SessionData
 	NIMSessionCommand	command_;			/**< 会话修改命令 */
 	std::string		msg_id_;				/**< 当前会话最新一条消息ID */
 	std::string		msg_sender_accid_;		/**< 当前会话最新一条消息发送方ID */
-	__int64			msg_timetag_;			/**< 当前会话最新一条消息时间戳（毫秒） */
+	int64_t			msg_timetag_;			/**< 当前会话最新一条消息时间戳（毫秒） */
 	NIMMessageType	msg_type_;				/**< 当前会话最新一条消息类型 */
 	std::string		msg_content_;			/**< 当前会话最新一条消息内容 */
 	std::string		msg_attach_;			/**< 当前会话最新一条消息附件 */

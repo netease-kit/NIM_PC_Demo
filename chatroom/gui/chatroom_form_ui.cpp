@@ -1,6 +1,7 @@
 #include "chatroom_form.h"
 #include "gui/emoji/emoji_form.h"
 #include "module/emoji/richedit_util.h"
+#include "module/session/session_util.h"
 #include "shared/ui/ui_menu.h"
 #include "richedit.h"
 
@@ -222,7 +223,7 @@ void ChatroomForm::OnBtnEmoji()
 		::ClientToScreen(m_hWnd, &pt);
 
 		OnSelectEmotion sel = nbase::Bind(&ChatroomForm::OnEmotionSelected, this, std::placeholders::_1);
-		OnSelectEmotion2 sel2 = nbase::Bind(&ChatroomForm::OnEmotionSelectedSticker, this, std::placeholders::_1, std::placeholders::_2);
+		OnSelectSticker sel2 = nbase::Bind(&ChatroomForm::OnEmotionSelectedSticker, this, std::placeholders::_1, std::placeholders::_2);
 		OnEmotionClose  cls = nbase::Bind(&ChatroomForm::OnEmotionClosed, this);
 
 		nim_comp::EmojiForm* emoji_form = new nim_comp::EmojiForm;
@@ -252,7 +253,7 @@ void ChatroomForm::OnEmotionSelected(std::wstring emo)
 	std::wstring file;
 	if (nim_comp::emoji::GetEmojiFileByTag(emo, file))
 	{
-		nim_comp::emoji::InsertFaceToEdit(input_edit_, file, emo);
+		nim_comp::InsertFaceToEdit(input_edit_, file, emo);
 	}
 }
 

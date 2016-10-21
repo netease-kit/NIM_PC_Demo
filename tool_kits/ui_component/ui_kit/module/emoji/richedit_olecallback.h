@@ -1,5 +1,4 @@
-﻿#ifndef RICHEDIT_OLECALLBACK_H
-#define RICHEDIT_OLECALLBACK_H
+﻿#pragma once
 #include <atlbase.h>
 #include <richedit.h>
 #include <richole.h>
@@ -44,72 +43,3 @@ private:
 	bool custom_mode_;
 };
 }
-#ifdef __cplusplus
-#ifndef _SDKDATAOBJECT_H_
-#define _SDKDATAOBJECT_H_
-
-
-typedef struct _DATASTORAGE
-{
-	FORMATETC *m_formatEtc;
-	STGMEDIUM *m_stgMedium;
-
-} DATASTORAGE_t, *LPDATASTORAGE_t;
-
-namespace nim_comp
-{
-class SdkDataObject : public IDataObject
-{
-public:
-
-	SdkDataObject(/*SdkDropSource *pDropSource = NULL*/);
-	BOOL IsDataAvailable(CLIPFORMAT cfFormat);
-	BOOL GetGlobalData(CLIPFORMAT cfFormat, void **ppData);
-	BOOL GetGlobalDataArray(CLIPFORMAT cfFormat, 
-		HGLOBAL *pDataArray, DWORD dwCount);
-	BOOL SetGlobalData(CLIPFORMAT cfFormat, void *pData, BOOL fRelease = TRUE);
-	BOOL SetGlobalDataArray(CLIPFORMAT cfFormat, 
-		HGLOBAL *pDataArray, DWORD dwCount, BOOL fRelease = TRUE);
-	//BOOL SetDropTip(DROPIMAGETYPE type, PCWSTR pszMsg, PCWSTR pszInsert);
-
-	// The com interface.
-	IFACEMETHODIMP QueryInterface(REFIID riid, void **ppv);
-	IFACEMETHODIMP_(ULONG) AddRef();
-	IFACEMETHODIMP_(ULONG) Release();
-	IFACEMETHODIMP GetData(FORMATETC *pformatetcIn, STGMEDIUM *pmedium);
-	IFACEMETHODIMP SetData(FORMATETC *pformatetc,
-		STGMEDIUM *pmedium, BOOL fRelease);
-	IFACEMETHODIMP GetDataHere(FORMATETC *pformatetc , STGMEDIUM *pmedium );
-	IFACEMETHODIMP QueryGetData(FORMATETC *pformatetc);
-	IFACEMETHODIMP GetCanonicalFormatEtc(FORMATETC *pformatetcIn,  
-		FORMATETC *pformatetcOut);
-	IFACEMETHODIMP EnumFormatEtc(DWORD dwDirection, 
-		IEnumFORMATETC **ppenumFormatEtc);
-	IFACEMETHODIMP DAdvise(FORMATETC *pformatetc , DWORD advf , 
-		IAdviseSink *pAdvSnk , DWORD *pdwConnection);
-	IFACEMETHODIMP DUnadvise(DWORD dwConnection);
-	IFACEMETHODIMP EnumDAdvise(IEnumSTATDATA **ppenumAdvise);
-
-private:
-
-	~SdkDataObject(void);
-	SdkDataObject(const SdkDataObject&);
-	SdkDataObject& operator = (const SdkDataObject&);
-	HRESULT CopyMedium(STGMEDIUM* pMedDest, 
-		STGMEDIUM* pMedSrc, FORMATETC* pFmtSrc);
-	HRESULT SetBlob(CLIPFORMAT cf, const void *pvBlob, UINT cbBlob);
-
-private:
-
-	//!< The reference of count
-	volatile LONG           m_lRefCount;      
-	//!< The pointer to CDropSource object  
-	//SdkDropSource          *m_pDropSource;  
-	//!< The collection of DATASTORAGE_t structure    
-	std::vector<DATASTORAGE_t>   m_dataStorageCL;    
-};
-}
-#endif // _SDKDATAOBJECT_H_
-#endif // __cplusplus
-
-#endif //RICHEDIT_OLECALLBACK_H

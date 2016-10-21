@@ -13,7 +13,19 @@ class MsgBubbleFile : public MsgBubbleItem
 {
 public:
 	virtual ~MsgBubbleFile();
+
+	/**
+	* 初始化控件内部指针
+	* @param[in] bubble_right 是否显示到右侧
+	* @return void 无返回值
+	*/
 	virtual void InitControl(bool bubble_right) override;
+
+	/**
+	* 初始化控件外观
+	* @param[in] msg 消息信息结构体
+	* @return void 无返回值
+	*/
 	virtual void InitInfo(const nim::IMMessage &msg) override;
 
 	/**
@@ -32,6 +44,11 @@ public:
 		return nbase::Bind(&MsgBubbleFile::FileUpPrgCallback, this, std::placeholders::_1, std::placeholders::_2);
 	}
 
+	/**
+	* 处理控件的菜单消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool OnMenu(ui::EventArgs* arg);
 protected:
 

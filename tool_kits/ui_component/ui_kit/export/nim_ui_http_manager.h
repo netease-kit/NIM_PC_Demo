@@ -17,11 +17,24 @@ class NIM_UI_DLL_API HttpManager
 {
 public:
 	SINGLETON_DEFINE(HttpManager);
-public:
 	HttpManager() {}
 	~HttpManager() {}
+
 public:
+	/**
+	* 下载图片资源
+	* @param[in] type 资源类型
+	* @param[in] id 资源ID，作为识别标识
+	* @param[in] url 下载地址
+	* @return wstring 图片路径
+	*/
 	std::wstring GetCustomImage(HttpResourceType type, const std::string &id, const std::string &url);
+
+	/**
+	* 注册资源下载完成的回调
+	* @param[in] callback 下载完成的回调函数
+	* @return UnregisterCallback 反注册对象
+	*/
 	UnregisterCallback RegDownloadComplete(const OnDownloadCompleteCallback& callback);
 };
 

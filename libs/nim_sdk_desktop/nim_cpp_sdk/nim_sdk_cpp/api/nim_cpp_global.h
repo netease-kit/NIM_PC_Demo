@@ -8,6 +8,7 @@
 #ifndef _NIM_SDK_CPP_GLOBAL_H_
 #define _NIM_SDK_CPP_GLOBAL_H_
 
+#include <functional>
 #include <string>
 
 /**
@@ -16,7 +17,6 @@
 */
 namespace nim
 {
-
 #include "nim_global_def.h"
 
 /** @class Global
@@ -24,6 +24,8 @@ namespace nim
   */
 class Global
 {
+public:
+	typedef std::function<void(int log_level,const std::string& log)> SDKLogCallback; 
 
 public:
 	/** @fn void FreeStrBuf(char *str)
@@ -50,6 +52,15 @@ public:
     * @return void 无返回值
     */
 	static void SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password);
+
+	/** @fn void nim_client_reg_kickout_other_client_cb(const char *json_extension, nim_json_transport_cb_func cb, const void *user_data)
+	* 注册输出sdk log回调
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb 输出sdk log的回调函数， nim_sdk_log_cb_func回调函数定义见nim_global_def.h
+	* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+	* @return void 无返回值
+	*/
+	static void SetSDKLogCallback(const std::string&json_extension,const SDKLogCallback& callback);
 };
 
 } 

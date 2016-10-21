@@ -60,7 +60,7 @@
 #include "nim_tools_audio_cpp_wrapper.h"
 
 //msg
-#include "module/msglog/msglog.h"
+#include "module/session/session_util.h"
 
 //notify
 #include "module/service/notify_center.h"

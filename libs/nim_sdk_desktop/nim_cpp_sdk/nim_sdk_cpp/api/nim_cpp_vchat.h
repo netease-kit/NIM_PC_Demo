@@ -207,6 +207,16 @@ public:
 	*/
 	static void SetVideoBitrate(int video_bitrate);
 
+	/** @fn void SetFrameRate(NIMVChatVideoFrameRate frame_rate)
+	* NIM 实时设置视频发送帧率上限
+	* @param[in] frame_rate  帧率类型 见NIMVChatVideoFrameRate定义
+	* @param[in] json_extension  无效备用
+	* @param[in] cb 结果回调见nim_vchat_def.h
+	* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+	* @return void 无返回值
+	*/
+	static void SetFrameRate(NIMVChatVideoFrameRate frame_rate);
+
 	/** @fn static void SetCustomData(bool custom_audio, bool custom_video)
 	* NIM 通话中修改自定义音视频数据模式
 	* @param[in] custom_audio true表示使用自定义的音频数据，false表示不使用
@@ -304,6 +314,14 @@ public:
 	* @return void 无返回值
 	*/
 	static void UpdateRtmpUrl(const std::string& rtmp_url, OptCallback cb);
+
+	/** @fn void SetStreamingMode(bool streaming, OptCallback cb)
+	* NIM 设置是否推流
+	* @param[in] streaming 是否推流
+	* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
+	* @return void 无返回值
+	*/
+	static void SetStreamingMode(bool streaming, OptCallback cb);
 };
 }
 

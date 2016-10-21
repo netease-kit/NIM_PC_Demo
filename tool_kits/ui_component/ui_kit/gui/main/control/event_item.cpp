@@ -1,6 +1,6 @@
 ﻿#include "event_item.h"
 #include "module/session/session_manager.h"
-#include "gui/session/control/session_util.h"
+#include "module/session/session_util.h"
 #include "gui/main/team_event_form.h"
 #include "gui/team_info/team_notify.h"
 #include "tool_kits/shared/ui/ui_menu.h"
@@ -129,52 +129,6 @@ bool TeamEventItem::InitInfo(const nim::SysMessage &json)
 	return true;
 }
 
-bool TeamEventItem::OnClicked(ui::EventArgs* arg)
-{
-	std::wstring name = arg->pSender->GetName();
-	if (name == L"btn_ok")
-	{
-		btn_ok_->SetEnabled(false);
-		btn_no_->SetEnabled(false);
-
-		if (msg_type_ == nim::kNIMSysMsgTypeTeamApply)
-			nim::Team::PassJoinApplyAsync(tid_, acc_id_,
-				nbase::Bind(&TeamEventItem::TeamEventCb, msg_id_, std::placeholders::_1));
-		else if (msg_type_ == nim::kNIMSysMsgTypeTeamInvite)
-			nim::Team::AcceptInvitationAsync(tid_, acc_id_,
-				nbase::Bind(&TeamEventItem::TeamEventCb, msg_id_, std::placeholders::_1));
-		else if (msg_type_ == nim::kNIMSysMsgTypeFriendAdd)
-		{
-			nim::Friend::FriendOptCallback cb = ToWeakCallback([this](int res) {
-				nim::SystemMsg::SetStatusAsync(msg_id_, nim::NIMSysMsgStatus::kNIMSysMsgStatusPass,
-					nbase::Bind(&TeamEventItem::SetStatusCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-			});
-			nim::Friend::Request(acc_id_, nim::kNIMVerifyTypeAgree, "", cb);
-		}
-	}
-	else if (name == L"btn_no")
-	{
-		btn_ok_->SetEnabled(false);
-		btn_no_->SetEnabled(false);
-
-		if (msg_type_ == nim::kNIMSysMsgTypeTeamApply)
-			nim::Team::RejectJoinApplyAsync(tid_, acc_id_, "",
-				nbase::Bind(&TeamEventItem::TeamEventCb, msg_id_, std::placeholders::_1));
-		else if (msg_type_ == nim::kNIMSysMsgTypeTeamInvite)
-			nim::Team::RejectInvitationAsync(tid_, acc_id_, "",
-				nbase::Bind(&TeamEventItem::TeamEventCb, msg_id_, std::placeholders::_1));
-		else if (msg_type_ == nim::kNIMSysMsgTypeFriendAdd)
-		{
-			nim::Friend::FriendOptCallback cb = ToWeakCallback([this](int res) {
-				nim::SystemMsg::SetStatusAsync(msg_id_, nim::NIMSysMsgStatus::kNIMSysMsgStatusDecline,
-					nbase::Bind(&TeamEventItem::SetStatusCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-			});
-			nim::Friend::Request(acc_id_, nim::kNIMVerifyTypeReject, "", cb);
-		}
-	}
-	return false;
-}
-
 __int64 TeamEventItem::GetMsgId()
 {
 	return msg_id_;
@@ -230,6 +184,14 @@ void TeamEventItem::OnUserPhotoReady(const std::string & accid, const std::wstri
 {
 	if (accid == acc_id_ && msg_type_ == nim::kNIMSysMsgTypeFriendAdd)
 		btn_head_->SetBkImage(photo_path);
+}
+
+void TeamEventItem::OnTeamNameChange(const nim::TeamInfo& team_info)
+{
+	if (team_info.GetTeamID() == tid_)
+	{
+		evt_team_->SetUTF8Text(team_info.GetName());
+	}
 }
 
 void TeamEventItem::TeamEventCb(__int64 msg_id, const nim::TeamEvent& team_event)
@@ -329,12 +291,50 @@ bool TeamEventItem::DelEventItemMenuItemClick(ui::EventArgs* param)
 	return false;
 }
 
-void TeamEventItem::OnTeamNameChange(const nim::TeamInfo& team_info)
+bool TeamEventItem::OnClicked(ui::EventArgs* arg)
 {
-	if (team_info.GetTeamID() == tid_)
+	std::wstring name = arg->pSender->GetName();
+	if (name == L"btn_ok")
 	{
-		evt_team_->SetUTF8Text(team_info.GetName());
+		btn_ok_->SetEnabled(false);
+		btn_no_->SetEnabled(false);
+
+		if (msg_type_ == nim::kNIMSysMsgTypeTeamApply)
+			nim::Team::PassJoinApplyAsync(tid_, acc_id_,
+			nbase::Bind(&TeamEventItem::TeamEventCb, msg_id_, std::placeholders::_1));
+		else if (msg_type_ == nim::kNIMSysMsgTypeTeamInvite)
+			nim::Team::AcceptInvitationAsync(tid_, acc_id_,
+			nbase::Bind(&TeamEventItem::TeamEventCb, msg_id_, std::placeholders::_1));
+		else if (msg_type_ == nim::kNIMSysMsgTypeFriendAdd)
+		{
+			nim::Friend::FriendOptCallback cb = ToWeakCallback([this](int res) {
+				nim::SystemMsg::SetStatusAsync(msg_id_, nim::NIMSysMsgStatus::kNIMSysMsgStatusPass,
+					nbase::Bind(&TeamEventItem::SetStatusCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+			});
+			nim::Friend::Request(acc_id_, nim::kNIMVerifyTypeAgree, "", cb);
+		}
 	}
+	else if (name == L"btn_no")
+	{
+		btn_ok_->SetEnabled(false);
+		btn_no_->SetEnabled(false);
+
+		if (msg_type_ == nim::kNIMSysMsgTypeTeamApply)
+			nim::Team::RejectJoinApplyAsync(tid_, acc_id_, "",
+			nbase::Bind(&TeamEventItem::TeamEventCb, msg_id_, std::placeholders::_1));
+		else if (msg_type_ == nim::kNIMSysMsgTypeTeamInvite)
+			nim::Team::RejectInvitationAsync(tid_, acc_id_, "",
+			nbase::Bind(&TeamEventItem::TeamEventCb, msg_id_, std::placeholders::_1));
+		else if (msg_type_ == nim::kNIMSysMsgTypeFriendAdd)
+		{
+			nim::Friend::FriendOptCallback cb = ToWeakCallback([this](int res) {
+				nim::SystemMsg::SetStatusAsync(msg_id_, nim::NIMSysMsgStatus::kNIMSysMsgStatusDecline,
+					nbase::Bind(&TeamEventItem::SetStatusCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+			});
+			nim::Friend::Request(acc_id_, nim::kNIMVerifyTypeReject, "", cb);
+		}
+	}
+	return false;
 }
 
 }

@@ -1,11 +1,4 @@
-﻿// Copyright (c) 2013, NetEase Inc. All rights reserved.
-//
-// Author: gaoqi
-// Date: 2014/3/10
-
-#ifndef _UI_BARRAGE_CONTROL_H_
-#define _UI_BARRAGE_CONTROL_H_
-
+﻿#pragma once
 #include <map>
 
 namespace ui
@@ -32,23 +25,64 @@ struct BarrageInfo
 		color_ = 0;
 	}
 };
-class CBarrageControl : public ui::Control
+
+/** @class BarrageControl
+  * @brief 弹幕控件
+  * @copyright (c) 2016, NetEase Inc. All rights reserved
+  * @author gaoqi
+  * @date 2014/3/10
+  */
+class BarrageControl : public ui::Control
 {
 public:
-	CBarrageControl();
-	~CBarrageControl(void);
+	BarrageControl();
+	~BarrageControl(void);
 
+	/**
+	* 重写父类绘制函数
+	* @param[in] hDC 目标DC
+	* @param[in] rcPaint 可绘制范围
+	* @return void	无返回值
+	*/
 	void Paint(HDC hDC, const UiRect& rcPaint) override;
-	//清理数据
+
+	/**
+	* 清理数据
+	* @return void	无返回值
+	*/
 	void Clear();
 
+	/**
+	* 添加一条弹幕
+	* @return bool true 成功，false 失败
+	*/
 	bool AddText(std::wstring text);
 
+	/**
+	* 是否没有弹幕内容
+	* @return bool true 是，false 否
+	*/
 	bool IsEmpty();
 
+	/**
+	* 设置弹幕信息
+	* @param[in] line_num_max 行数限制
+	* @param[in] line_height 行高
+	* @param[in] line_h_random 随机行高
+	* @param[in] top_pos 顶部边距
+	* @return void	无返回值
+	*/
 	void SetBarrageInfo(int32_t line_num_max, int32_t line_height, int32_t line_h_random, int32_t top_pos);
 
 protected:
+	/**
+	* 插入一个弹幕
+	* @param[in] BarrageInfo 弹幕信息
+	* @param[in] single 是否单行
+	* @param[in] random 是否随机位置
+	* @param[in] cover 是否可以覆盖
+	* @return void	无返回值
+	*/
 	bool InsertBarrageItem(BarrageInfo info, bool single, bool random, bool cover);
 
 protected:
@@ -60,5 +94,3 @@ protected:
 };
 
 }
-
-#endif // _UI_BARRAGE_CONTROL_H_

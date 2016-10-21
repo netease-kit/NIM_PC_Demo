@@ -3,6 +3,7 @@
 #include "module/msglog/msg_extend_db.h"
 #include "gui/team_info/team_notify.h"
 #include "gui/main/team_event_form.h"
+#include "export/nim_ui_window_manager.h"
 
 namespace nim_comp
 {
@@ -23,7 +24,7 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 	{
 		if (info.res_code_ == nim::kNIMResSuccess || info.res_code_ == nim::kNIMResTeamInviteSuccess) {
 			TeamService::GetInstance()->InvokeAddTeam(tid, team_info);
-			SessionManager::GetInstance()->OpenSessionForm(tid, nim::kNIMSessionTypeTeam);
+			SessionManager::GetInstance()->OpenSessionBox(tid, nim::kNIMSessionTypeTeam);
 		}
 	}
 	else if (info.notification_id_ == nim::kNIMNotificationIdLocalUpdateMemberProperty || info.notification_id_ == nim::kNIMNotificationIdTeamApplyPass || info.notification_id_ == nim::kNIMNotificationIdTeamSyncUpdateMemberProperty)
@@ -35,7 +36,7 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 			}
 			if (info.notification_id_ == nim::kNIMNotificationIdLocalUpdateMemberProperty || info.notification_id_ == nim::kNIMNotificationIdTeamSyncUpdateMemberProperty)
 			{
-				SessionManager::GetInstance()->QueryMyTList(tid);
+				SessionManager::GetInstance()->QueryMyTeamInfo(tid);
 				std::wstring session_id = nbase::UTF8ToUTF16(tid);
 				TeamInfoForm* team_info_form = (TeamInfoForm*)WindowsManager::GetInstance()->GetWindow\
 					(TeamInfoForm::kClassName, session_id);
@@ -44,7 +45,7 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 					team_info_form->UpdateTeamMember();
 				}
 			}
-			SessionForm* session = SessionManager::GetInstance()->Find(tid);
+			SessionBox* session = SessionManager::GetInstance()->FindSessionBox(tid);
 			if (session)
 				session->InvokeGetTeamMember();
 		}
@@ -53,7 +54,7 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 	{
 		if (info.res_code_ == nim::kNIMResSuccess)
 		{
-			SessionForm* session = SessionManager::GetInstance()->Find(tid);
+			SessionBox* session = SessionManager::GetInstance()->FindSessionBox(tid);
 			if (session)
 				session->InvokeGetTeamInfo();
 
@@ -74,7 +75,7 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 			TeamService::GetInstance()->InvokeAddTeam(tid, team_info);
 			if (info.ids_.front() == team_info.GetOwnerID())
 			{	//ids中的用户是群主，说明是自己接受邀请入群，就添加到群列表并打开群聊窗口
-				SessionManager::GetInstance()->OpenSessionForm(tid, nim::kNIMSessionTypeTeam, true);
+				SessionManager::GetInstance()->OpenSessionBox(tid, nim::kNIMSessionTypeTeam, true);
 			}
 			else
 			{
@@ -102,7 +103,7 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 				}
 			};
 			nim::Team::QueryTeamMembersAsync(tid, cb);
-			SessionManager::GetInstance()->QueryMyTList(tid);
+			SessionManager::GetInstance()->QueryMyTeamInfo(tid);
 		}
 	}
 	else if (info.notification_id_ == nim::kNIMNotificationIdLocalMuteMember || info.notification_id_ == nim::kNIMNotificationIdTeamMuteMember)
@@ -221,7 +222,7 @@ void UIReceiveSysmsgCallback(nim::SysMessage& msg)
 	{
 		nim::IMMessage immsg;
 		CustomSysMessageToIMMessage(msg, immsg);
-		if (msg.support_offline_ != nim::BS_TRUE)//只在线
+		if (msg.msg_setting_.need_offline_ != nim::BS_TRUE)//只在线
 		{
 			if (msg.type_ == nim::kNIMSysMsgTypeCustomP2PMsg)
 			{
@@ -235,7 +236,7 @@ void UIReceiveSysmsgCallback(nim::SysMessage& msg)
 						{
 							std::string id = msg.sender_accid_;
 
-							SessionForm* session = SessionManager::GetInstance()->Find(id);
+							SessionBox* session = SessionManager::GetInstance()->FindSessionBox(id);
 							if (session)
 							{
 								session->AddWritingMsg(immsg);
@@ -254,17 +255,31 @@ void UIReceiveSysmsgCallback(nim::SysMessage& msg)
 		{
 			msg.status_ = nim::kNIMSysMsgStatusNone;
 		}
-		bool add = true;
+		//bool add = true;
 		MsgExDB::GetInstance()->InsertMsgData(msg);
 		TeamEventForm* f = dynamic_cast<TeamEventForm*>(WindowsManager::GetInstance()->GetWindow(TeamEventForm::kClassName, TeamEventForm::kClassName));
 		if (f)
 		{
 			f->OnOneCustomMsg(msg);
-			add = !f->IsCustomList();
+			//add = !f->IsCustomList();
 		}
-		if (add)
+		//if (add)
 		{
-			UpdateCustomSysmsgUnread(true);
+			std::string show_text;
+			if (msg.msg_setting_.push_content_.empty())
+			{
+				Json::Value values;
+				Json::Reader reader;
+				if (reader.parse(msg.attach_, values) && values.isObject() && values.isMember("id") && values.isMember("content"))
+					show_text = values["content"].asString();
+				else
+					show_text = msg.attach_;
+			}
+			else
+				show_text = msg.msg_setting_.push_content_;
+			std::wstring toast = nbase::StringPrintf(L"%s 收到 %s 发的自定义通知: %s", nbase::UTF8ToUTF16(msg.receiver_accid_).c_str(), nbase::UTF8ToUTF16(msg.sender_accid_).c_str(), nbase::UTF8ToUTF16(show_text).c_str());
+			nim_ui::ShowToast(toast, 5000);
+			//UpdateCustomSysmsgUnread(true);
 		}
 
 		return;

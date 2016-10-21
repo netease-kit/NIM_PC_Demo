@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<!--@我消息预览-->
+<Window>
+    <AudioCaptureView height="48" valign="bottom" visible="false" bkimage="bk_tip_dwon.png" padding="10,0,10,0" fadeinoutyfrombottom="true" fadehot="false">      
+		<HBox width="stretch" height="stretch" mouse="false" mousechild="false">
+            <Label name="time_text" width="auto" valign="center" normaltextcolor="darkcolor" font="1" />  
+			<Label name="tip_text" width="stretch" valign="center" margin="2,0,0,0" normaltextcolor="darkcolor" font="1" endellipsis="true"/>           
+		</HBox>
+
+		<Button class="btn_global_green_80x30" name="btn_start_capture" text="录制" width="50" height="25" halign="right" valign="center" margin="0,0,55,0" cursortype="hand"/>
+		<Button class="btn_global_green_80x30" name="btn_send_audio" text="发送" width="50" height="25" halign="right" valign="center" margin="0,0,55,0" cursortype="hand" visible="false" />
+        <Button class="btn_global_green_80x30" name="btn_calcel_capture" text="取消" width="50" height="25" halign="right" valign="center" cursortype="hand"/>
+    </AudioCaptureView>
+</Window>

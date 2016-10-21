@@ -4,13 +4,14 @@
 
 const std::string kAppServerAddress = "http://app.netease.im";
 
-//数据变化类型
+//好友变化类型
 enum FriendChangeType
 {
 	kChangeTypeAdd,
 	kChangeTypeDelete
 };
 
+//用户性别
 enum UserGender
 {
 	UG_UNKNOWN,
@@ -26,10 +27,21 @@ typedef std::function<void(nim::NIMResCode res)> OnUpdateUserInfoCallback;
 
 const static char* g_AppServerAddress = "kAppServerAddress";
 const static char* g_AppKey = "kAppKey";
+
+/**
+* 获取连接服务器的某一个配置信息
+* @param[in] key 需要获取的信息关键字
+* @return string 配置信息
+*/
 std::string GetConfigValue(const std::string& key);
 
 namespace nim_comp
 {
+/** @class UserService
+  * @brief 用户注册、用户信息查询服务
+  * @copyright (c) 2016, NetEase Inc. All rights reserved
+  * @date 2016/09/14
+  */
 class UserService : public nbase::SupportWeakCallback
 {
 public:
@@ -37,26 +49,140 @@ public:
 	UserService();
 
 public:
+	/**
+	* 注册一个新账号
+	* @param[in] username 要注册的用户名
+	* @param[in] password 用户密码
+	* @param[in] nickname 用户昵称
+	* @param[in] cb 注册完毕的回调通知函数
+	* @return void	无返回值
+	*/
 	void InvokeRegisterAccount(const std::string &username, const std::string &password, const std::string &nickname, const OnRegisterAccountCallback& cb);
-	void InvokeGetAllUserInfo(const OnGetUserInfoCallback& cb); // 向数据库和服务器获取全部好友以及近期获取过的用户信息
-	void InvokeUpdateUserInfo(const nim::UserNameCard &new_info, const OnUpdateUserInfoCallback& cb); // 修改自己的个人信息
-	void InvokeChangeUserPhoto(const std::string &url, const OnUpdateUserInfoCallback& cb); // 修改自己的头像
-	const std::map<std::string, nim::UserNameCard>& GetAllUserInfos(); // 获取UserService::all_user_保存的所有用户信息
-	bool GetUserInfo(const std::string &id, nim::UserNameCard &info); // 查询UserService::all_user_中某个用户信息（可能查不到）
-	void GetUserInfos(const std::list<std::string> &ids, std::list<nim::UserNameCard>&uinfos);
-	nim::NIMFriendFlag GetUserType(const std::string &id); // 好友or陌生人？
-	std::wstring GetUserName(const std::string &id, bool alias_prior = true); // 查询用户昵称或备注名
-	std::wstring GetFriendAlias(const std::string &id); //查询好友备注名
-	UnregisterCallback RegFriendListChange(const OnFriendListChangeCallback& callback); // 注册好友列表改变的回调
-	UnregisterCallback RegUserInfoChange(const OnUserInfoChangeCallback& callback); // 注册用户名、头像改变的回调
-	UnregisterCallback RegMiscUInfoChange(const OnUserInfoChangeCallback& callback); // 注册用户其他信息改变的回调
 
+	/**
+	* 向数据库和服务器获取全部好友以及近期获取过的用户信息
+	* @param[in] cb 回调函数
+	* @return void	无返回值
+	*/
+	void InvokeGetAllUserInfo(const OnGetUserInfoCallback& cb);
+
+	/**
+	* 修改用户自己的个人信息
+	* @param[in] new_info 新的用户信息
+	* @param[in] cb 回调函数
+	* @return void	无返回值
+	*/
+	void InvokeUpdateMyInfo(const nim::UserNameCard &new_info, const OnUpdateUserInfoCallback& cb);
+
+	/**
+	* 修改用户自己的头像
+	* @param[in] new_info 新的用户信息
+	* @param[in] cb 回调函数
+	* @return void	无返回值
+	*/
+	void InvokeUpdateMyPhoto(const std::string &url, const OnUpdateUserInfoCallback& cb);
+
+	/**
+	* 获取本地保存的所有用户信息
+	* @return std::map<std::string, nim::UserNameCard>& 用户信息列表
+	*/
+	const std::map<std::string, nim::UserNameCard>& GetAllUserInfos();
+
+	/**
+	* 查询本地保存的用户信息
+	* @param[in] id 用户id
+	* @param[out] info 用户信息
+	* @return bool true 查询到，false 没有查询到
+	*/
+	bool GetUserInfo(const std::string &id, nim::UserNameCard &info);
+
+	/**
+	* 查询本地保存的用户信息
+	* @param[in] ids 用户id列表
+	* @param[out] uinfos 用户信息列表
+	* @return void 无返回值
+	*/
+	void GetUserInfos(const std::list<std::string> &ids, std::list<nim::UserNameCard>&uinfos);
+
+	/**
+	* 获取某个用户的好友类型
+	* @param[in] id 用户id
+	* @return NIMFriendFlag 好友类型
+	*/
+	nim::NIMFriendFlag GetUserType(const std::string &id);
+
+	/**
+	* 获取好友昵称或者备注名
+	* @param[in] id 用户id
+	* @param[in] alias_prior 是否有限查备注名
+	* @return wstring 用户昵称或备注名
+	*/
+	std::wstring GetUserName(const std::string &id, bool alias_prior = true);
+
+	/**
+	* 获取好友备注名
+	* @param[in] id 用户id
+	* @return wstring 用户备注名
+	*/
+	std::wstring GetFriendAlias(const std::string &id);
+
+	/**
+	* 注册好友列表改变的回调
+	* @param[in] callback 回调函数
+	* @return UnregisterCallback 反注册对象
+	*/
+	UnregisterCallback RegFriendListChange(const OnFriendListChangeCallback& callback);
+
+	/**
+	* 注册用户名、头像改变的回调
+	* @param[in] callback 回调函数
+	* @return UnregisterCallback 反注册对象
+	*/
+	UnregisterCallback RegUserInfoChange(const OnUserInfoChangeCallback& callback);
+
+	/**
+	* 注册用户其他信息改变的回调
+	* @param[in] callback 回调函数
+	* @return UnregisterCallback 反注册对象
+	*/
+	UnregisterCallback RegMiscUInfoChange(const OnUserInfoChangeCallback& callback);
+
+	/**
+	* 好友列表改变的回调
+	* @param[in] change_event 好友变更事件
+	* @return void 无返回值
+	*/
 	void OnFriendListChange(const nim::FriendChangeEvent& change_event);
-	void OnUserInfoChange(const std::list<nim::UserNameCard> &json_result);
+
+	/**
+	* 用户名、头像改变的回调
+	* @param[in] json_result 用户名片列表
+	* @return void 无返回值
+	*/
+	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 
 private:
-	void InvokeGetUserInfo(const std::list<std::string>& account_list);// 向数据库和服务器获取指定id的用户信息
+	/**
+	* 向数据库和服务器获取指定id的用户信息
+	* @param[in] account_list 用户id列表
+	* @return void	无返回值
+	*/
+	void InvokeGetUserInfo(const std::list<std::string>& account_list);
+
+	/**
+	* 触发好友列表变更的的回调
+	* @param[in] change_type 好友变化类型
+	* @param[in] accid 用户id
+	* @return void	无返回值
+	*/
 	void InvokeFriendListChangeCallback(FriendChangeType change_type, const std::string& accid);
+
+	/**
+	* 触发好友列表变更的的回调转发到UI线程
+	* @param[in] change_type 好友变化类型
+	* @param[in] accid 用户id
+	* @return void	无返回值
+	*/
 	void UIFriendListChangeCallback(FriendChangeType change_type, const std::string& accid);
 
 private:

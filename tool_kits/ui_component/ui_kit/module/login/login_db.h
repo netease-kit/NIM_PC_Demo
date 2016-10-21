@@ -5,7 +5,6 @@
 #include "base/memory/singleton.h"
 #include "db/db_sqlite3.h"
 
-
 //登录数据状态
 enum LoginDataStatus
 {
@@ -14,6 +13,8 @@ enum LoginDataStatus
 	kLoginDataStatusDeleted,           //已删, 2
 };
 
+namespace nim_comp
+{
 struct LoginData
 {
 	LoginData()
@@ -47,48 +48,142 @@ struct LoginData
 	uint8_t	   auto_login_;			//是否自动登录：1=自动登录，0=不自动登录
 };
 
-namespace nim_comp
-{
+
+/** @class LoginDB
+  * @brief 登陆数据信息记录类
+  * @copyright (c) 2016, NetEase Inc. All rights reserved
+  * @date 2016/09/18
+  */
 class LoginDB
 {
 public:
 	SINGLETON_DEFINE(LoginDB);
-
     LoginDB();
     virtual ~LoginDB();
 
 public:
+	/**
+	* 加载数据库
+	* @return bool true 成功，false 失败
+	*/
     bool	Load();
+
+	/**
+	* 关闭数据库
+	* @return void	无返回值
+	*/
     void	Close();
-    //写入登录数据
+
+	/**
+	* 写入登录数据
+	* @param[in] data 登陆数据
+	* @return bool true 成功，false 失败
+	*/
     bool    WriteLoginData(LoginData &data);
-	//是否需要更新登录帐号的信息
+
+	/**
+	* 是否需要更新登录帐号的信息
+	* @param[in] orgi_login_data 旧的登陆数据
+	* @param[in] current_login_data 当前登陆数据
+	* @param[in] password_changed 登录密码是否改变
+	* @return bool true 是，false 否
+	*/
 	bool    IsNeedUpdateData(const LoginData *orgi_login_data, 
 							 const LoginData *current_login_data, 
 							 bool &password_changed);
-	//更新登录帐号的信息
+
+	/**
+	* 更新登录帐号的信息
+	* @param[in] uid 用户id
+	* @param[in] current_login_data 当前登陆数据
+	* @param[in] status 登录数据状态
+	* @param[in] password_changed 登录密码是否改变
+	* @return bool true 成功，false 失败
+	*/
 	bool    UpdateLoginData(UTF8String &uid, 
 							LoginData *current_login_data, 
 							const uint8_t status, 
 							bool password_changed);
-	//设置登录帐号的状态
+	/**
+	* 设置登录帐号的状态
+	* @param[in] uid 用户id
+	* @param[in] status 登录数据状态
+	* @return bool true 成功，false 失败
+	*/
 	bool    SetStatus(UTF8String &uid, const uint8_t status);
-	//设置是否记住登录帐号的密码
+
+	/**
+	* 设置是否记住登录帐号的密码
+	* @param[in] uid 用户id
+	* @param[in] remember 是否记住密码：1=记住，0=不记住
+	* @return bool true 成功，false 失败
+	*/
 	bool    SetRemember(UTF8String &uid, const uint8_t remember);
-	//设置是否自动登录
+
+	/**
+	* 设置是否自动登录
+	* @param[in] uid 用户id
+	* @param[in] auto_login 是否自动登录：1=自动登录，0=不自动登录
+	* @return bool true 成功，false 失败
+	*/
 	bool    SetAutoLogin(UTF8String &uid, const uint8_t auto_login);
-	//读取登录数据
-    bool    QueryLoginDataByUid(UTF8String &uid, LoginData &data);   
-    // 批量获取登录数据
+
+	/**
+	* 读取登录数据
+	* @param[in] uid 用户id
+	* @param[out] data 登陆数据
+	* @return bool true 成功，false 失败
+	*/
+    bool    QueryLoginDataByUid(UTF8String &uid, LoginData &data);
+
+	/**
+	* 批量获取登录数据
+	* @param[out] all_data 登陆数据
+	* @return uint32_t 获取的数据数量
+	*/
     uint32_t QueryAllLoginData(std::vector<LoginData> &all_data);     
-	//设置所有登录数据为删除状态
+
+	/**
+	* 设置所有登录数据为删除状态
+	* @return bool true 成功，false 失败
+	*/
 	bool    SetAllLoginDataDeleted();
+
+	/**
+	* 获取加密后的密码
+	* @param[in] password_org 原密码
+	* @param[out] password_aes 加密后的密码
+	* @return void	无返回值
+	*/
 	void	GetAESPassword(const UTF8String &password_org, UTF8String &password_aes);
+
+	/**
+	* 获取解密后的密码
+	* @param[in] password_aes 加密后的密码
+	* @param[out] password_org 原密码
+	* @return void	无返回值
+	*/
 	void	GetOrgPassword(const UTF8String &password_aes, UTF8String &password_org);
+
+	/**
+	* 获取数据库对象
+	* @return ndb::SQLiteDB& 数据库对象
+	*/
 	ndb::SQLiteDB& GetSQLiteDB();
 
 private:
+	/**
+	* 创建数据库文件
+	* @return bool true 成功，false 失败
+	*/
     bool    CreateDBFile();
+
+	/**
+	* 从ndb::SQLiteStatement对象数据转换为登陆数据
+	* @param[in] stmt
+	* @param[out] data
+	* @return void	无返回值
+	*/
     void    GetLoginDataFromStatement(ndb::SQLiteStatement &stmt, LoginData &data);
     
 private:

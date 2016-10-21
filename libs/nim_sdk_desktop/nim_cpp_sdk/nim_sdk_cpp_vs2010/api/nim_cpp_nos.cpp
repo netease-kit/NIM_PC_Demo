@@ -1,7 +1,7 @@
 ﻿/** @file nim_cpp_nos.cpp
   * @brief NIM SDK提供的NOS云存储服务接口
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @author towik, Oleg, Harrison
   * @date 2015/2/1
   */
 
@@ -12,13 +12,15 @@
 
 namespace nim
 {
-
+#ifdef NIM_SDK_DLL_IMPORT
 typedef void(*nim_nos_reg_download_cb)(nim_nos_download_cb_func cb, const void *user_data);
 typedef void(*nim_nos_download_media)(const char *json_msg, nim_nos_download_cb_func callback_result, const void *download_user_data, nim_nos_download_prg_cb_func prg_cb, const void *prg_user_data);
 typedef void(*nim_nos_stop_download_media)(const char *json_msg);
 typedef void(*nim_nos_upload)(const char *local_file, nim_nos_upload_cb_func callback_result, const void *res_user_data, nim_nos_upload_prg_cb_func prg_cb, const void *prg_user_data);
 typedef void(*nim_nos_download)(const char *nos_url, nim_nos_download_cb_func callback_result, const void *res_user_data, nim_nos_download_prg_cb_func prg_cb, const void *prg_user_data);
-
+#else
+#include "nim_nos.h"
+#endif
 struct UploadCallbackUserData
 {
 	UploadCallbackUserData() :	callback_result(),	callback_progress_pointer(nullptr) {}
@@ -43,7 +45,7 @@ static void CallbackUpload(int res_code, const char *url, const char *json_exten
 			cb((NIMResCode)res_code, PCharToString(url));
 		}
 		delete ((UploadCallbackUserData*)user_data)->callback_progress_pointer;
-		delete user_data;
+		delete (UploadCallbackUserData*)user_data;
 	}
 }
 
@@ -57,11 +59,11 @@ static void CallbackDownload(int res_code, const char *file_path, const char *ca
 			cb((NIMResCode)res_code, PCharToString(file_path), PCharToString(call_id), PCharToString(res_id));
 		}
 		delete ((DownloadCallbackUserData*)user_data)->callback_progress_pointer;
-		delete user_data;
+		delete (DownloadCallbackUserData*)user_data;
 	}
 }
 
-static void CallbackProgress(__int64 completed_size, __int64 total_size, const char *json_extension, const void *callback)
+static void CallbackProgress(int64_t completed_size, int64_t total_size, const char *json_extension, const void *callback)
 {
 	if (callback)
 	{

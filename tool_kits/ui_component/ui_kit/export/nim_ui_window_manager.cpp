@@ -5,16 +5,6 @@
 namespace nim_ui
 {
 
-WindowsManager::WindowsManager()
-{
-
-}
-
-WindowsManager::~WindowsManager()
-{
-
-}
-
 nim_comp::WindowList WindowsManager::GetAllWindows()
 {
 	return nim_comp::WindowsManager::GetInstance()->GetAllWindows();

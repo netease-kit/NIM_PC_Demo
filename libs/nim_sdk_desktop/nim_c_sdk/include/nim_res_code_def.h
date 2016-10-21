@@ -46,15 +46,12 @@ enum NIMResCode
 	kNIMResTeamAlreadyIn		= 809,		/**< 已经在群里 */
 	kNIMResTeamInviteSuccess	= 810,		/**< 邀请成功 */
 	kNIMResForcePushCountLimit	= 811,		/**< 强推列表账号数量超限 */
-
 	//数据解编错误代码
 	kNIMResInvalidProtocol		= 997,		/**< 协议已失效 */
 	kNIMResEUnpacket			= 998,		/**< 解包错误 */
 	kNIMResEPacket				= 999,		/**< 打包错误 */
-
 	//
 	kNIMResInBlack				= 7101,		/**< 被接收方加入黑名单 SDK版本大于2.5.0支持*/
-
 	//客户端自定义的错误号
 	kNIMLocalRes					= 10000,		/**< 值大于该错误号的都是客户端自定义的错误号。不能随意更改其值！ */
 	kNIMResRoomLocalNeedRequestAgain	= 10001,	/**< 客户端本地错误号，需要重新向IM服务器获取进入聊天室权限 */
@@ -66,6 +63,7 @@ enum NIMResCode
 	kNIMLocalResMsgFileNotExist		= 10404,		/**< 本地资源不存在 */
 	kNIMLocalResParameterError		= 10414,		/**< 本地错误码，参数错误，(收到消息，资源下载地址无效，无法下载) */
 	kNIMLocalResExist				= 10417,		/**< 本地错误码，对象已经存在/重复操作，(收到消息，本地资源已存在，不需要重复下载) */
+	kNIMLocalResParaError			= 10450,		/**< 调用api，传入的参数有误 */
 	kNIMLocalResMsgSendNosError		= 10502,		/**< 发送消息，上传NOS失败 */
 	kNIMLocalResExceedLimit			= 10508,		/**< 本地错误码,超过配置有效期或者所需参数不存在 */
 	kNIMLocalResCheckMsgDBFailed	= 10600,		/**< 导入消息历史时验证身份和加密密钥不通过 */

@@ -33,16 +33,6 @@ std::wstring ProxyForm::GetSkinFile()
 	return L"proxy_form.xml";
 }
 
-std::wstring ProxyForm::GetZIPFileName() const
-{
-	return L"proxy.zip";
-}
-
-ui::UILIB_RESOURCETYPE ProxyForm::GetResourceType() const
-{
-	return ui::UILIB_FILE;
-}
-
 void ProxyForm::InitWindow()
 {
 	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&ProxyForm::Notify, this, std::placeholders::_1));
@@ -227,7 +217,7 @@ void ProxyForm::ApplyProxySetting()
 	}
 
 	nim_http::SetGlobalProxy((NIMProxyType)type, host, (short)port, user, pass);
-	nim::Global::SetProxy((nim::NIMProxyType)type, host, (short)port, user, pass);
+	nim::Global::SetProxy(type, host, port, user, pass);
 	nim_chatroom::ChatRoom::SetProxy((nim_chatroom::NIMChatRoomProxyType)type, host, (short)port, user, pass);
 
 	cur_type = type;

@@ -48,16 +48,6 @@ VideoForm::~VideoForm()
 	custom_video_mode_ = false;
 }
 
-::ui::UILIB_RESOURCETYPE VideoForm::GetResourceType() const
-{
-	return ui::UILIB_FILE; 
-}
-
-std::wstring VideoForm::GetZIPFileName() const
-{
-	return (L"videoform.zip");
-}
-
 std::wstring VideoForm::GetSkinFolder()
 {
 	return L"video";
@@ -72,7 +62,7 @@ ui::Control* VideoForm::CreateControl(const std::wstring& pstrClass)
 {
 	if (pstrClass == _T("BitmapControl"))
 	{
-		return new ui::CBitmapControl(&nim_comp::VideoManager::GetInstance()->video_frame_mng_);
+		return new ui::BitmapControl(&nim_comp::VideoManager::GetInstance()->video_frame_mng_);
 	}
 	return NULL;
 }
@@ -133,9 +123,9 @@ void VideoForm::InitWindow()
 	friend_label_   = (Label*) FindControl(L"friend_name");
 	status_label_   = (Label*) FindControl(L"chat_status");
 
-	video_ctrl_screen_  = (CBitmapControl*) FindControl(L"photo_screen");
+	video_ctrl_screen_  = (BitmapControl*) FindControl(L"photo_screen");
 	video_ctrl_screen_->SetAccount(session_id_);
-	video_ctrl_preview_ = (CBitmapControl*)FindControl(L"photo_preview");
+	video_ctrl_preview_ = (BitmapControl*)FindControl(L"photo_preview");
 	video_ctrl_preview_->SetAutoSize(true);
 	video_ctrl_preview_->SetAccount(session_id_);
 
@@ -617,12 +607,10 @@ bool VideoForm::OnClicked( ui::EventArgs* arg )
 	}
 	else if (name == L"face_open")
 	{
-		QLOG_APP(L"face_open");
 		SetCustomVideoMode(true);
 	}
 	else if (name == L"face_close")
 	{
-		QLOG_APP(L"face_close");
 		SetCustomVideoMode(false);
 	}
 	return false;
@@ -774,23 +762,6 @@ void VideoForm::OnVideoInDeviceChange(uint32_t status)
 		}
 	}
 }
-
-//void VideoForm::ShowPosition( WindowEx* session )
-//{
-//	if( IsIconic( session->GetHWND() ) )
-//	{
-//		this->CenterWindow();
-//	}
-//	else
-//	{
-//		POINT pt = { 0, 0 };
-//		pt = GetBestPosition( session, this );
-//
-//		UiRect rect( pt.x, pt.y, 0, 0 );
-//		this->SetPos( rect, SWP_NOSIZE );
-//	}
-//	ToTopMost(m_hWnd, false);
-//}
 
 void VideoForm::StartCalling( bool video_mode )
 {
@@ -1006,34 +977,6 @@ void VideoForm::CheckFriendName()
 	friend_label_->SetText(UserService::GetInstance()->GetUserName(session_id_));
 }
 
-bool VideoForm::CheckAudioInputDevice()
-{
-	//VideoManager* vm = VideoManager::GetInstance();
-
-	//std::wstring device;
-	//int no = 0;
-	//bool has_microphone = vm->GetDefaultAudioInput( no, device );
-
-	//bool open = vm->GetAudioOpenInput();
-
-	//return has_microphone && open;
-	return true;
-}
-
-bool VideoForm::CheckAudioOutputDevice()
-{
-	//VideoManager* vm = VideoManager::GetInstance();
-
-	//std::wstring device;
-	//int no = 0;
-	//bool has_speaker = vm->GetDefaultAudioOutput(no, device);
-
-	//bool open = vm->GetAudioOpenOutput();
-
-	//return has_speaker && open;
-	return true;
-}
-
 int VideoForm::CheckVideoInputDevice()
 {
 	std::string device;
@@ -1115,7 +1058,7 @@ void VideoForm::InitVolumnSetting()
 
 void VideoForm::ClearBitmapControl( bool mine )
 {
-	CBitmapControl* view = NULL;
+	BitmapControl* view = NULL;
 	Control*		tip  = NULL;
 	if( mine )
 	{
@@ -1147,23 +1090,23 @@ void VideoForm::ClearBitmapControl( bool mine )
 	tip->SetVisible( true );
 }
 
+// void VideoForm::StartTalking( /*const nbiz::VideoChatStartCallbackParam& msg*/ )
+// {
+// 	current_video_mode_ = true;/*(msg.type_ == nbiz::kTagChatTypeVideo)*/;
+// 	is_self_ = false;
+// 
+// 	channel_id_;// = msg.channel_id_;
+// 
+// 	if( current_video_mode_ )
+// 		need_change_form_size_ = true;
+// 
+// 	AdjustWindowSize( current_video_mode_ );
+// 
+// 	CheckTitle();
+// 	ShowStatusPage(SP_DIAL);
+// 	SwitchStatus(STATUS_CONNECTING);
+// }
 
-void VideoForm::StartTalking( /*const nbiz::VideoChatStartCallbackParam& msg*/ )
-{
-	current_video_mode_ = true;/*(msg.type_ == nbiz::kTagChatTypeVideo)*/;
-	is_self_ = false;
-
-	channel_id_;// = msg.channel_id_;
-
-	if( current_video_mode_ )
-		need_change_form_size_ = true;
-
-	AdjustWindowSize( current_video_mode_ );
-
-	CheckTitle();
-	ShowStatusPage(SP_DIAL);
-	SwitchStatus(STATUS_CONNECTING);
-}
 void VideoForm::ShowRecordTip(std::wstring tip, std::wstring tip2, std::wstring path)
 {
 	bool show = false;

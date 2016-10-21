@@ -25,7 +25,7 @@ extern"C"
   */
 NIM_SDK_DLL_API void nim_friend_reg_changed_cb(const char *json_extension, nim_friend_change_cb_func cb, const void *user_data);
 
-/** @fn void nim_friend_request(const char *accid, NIMVerifyType verify_type, const char *msg, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data)
+/** @fn void nim_friend_request(const char *accid, enum NIMVerifyType verify_type, const char *msg, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data)
   * 添加、验证好友
   * @param[in] accid		对方帐号
   * @param[in] verify_type	好友验证类型
@@ -35,7 +35,7 @@ NIM_SDK_DLL_API void nim_friend_reg_changed_cb(const char *json_extension, nim_f
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_friend_request(const char *accid, NIMVerifyType verify_type, const char *msg, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_friend_request(const char *accid, enum NIMVerifyType verify_type, const char *msg, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data);
 
 /** @fn void nim_friend_delete(const char *accid, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data)
   * 删除好友

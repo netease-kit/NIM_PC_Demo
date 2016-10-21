@@ -316,7 +316,7 @@ void TeamInfoForm::OnGetTeamMembers(const std::string& team_id, int count, const
 		}
 	}
 
-	ChangeUIByIdentity();
+	UpdateUIByIdentity();
 }
 
 ui::HBox* TeamInfoForm::CreateTeamMemberListItem(const nim::TeamMemberProperty& member_info)
@@ -708,7 +708,7 @@ void TeamInfoForm::UpdateTeamMember()
 	nim::Team::QueryTeamMembersAsync(tid_, nbase::Bind(&TeamInfoForm::OnGetTeamMembers, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
-void TeamInfoForm::ChangeUIByIdentity()
+void TeamInfoForm::UpdateUIByIdentity()
 {
 	FindControl(L"team_owner_section")->SetEnabled((my_property_.GetUserType() == nim::kNIMTeamUserTypeCreator || my_property_.GetUserType() == nim::kNIMTeamUserTypeManager));
 	if (team_info_.GetType() == nim::kNIMTeamTypeAdvanced)

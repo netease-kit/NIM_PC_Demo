@@ -85,7 +85,7 @@ void PhotoService::DownloadUserPhoto(const nim::UserNameCard &info)
 		return;
 	}
 
-	nim::NOS::DownloadMediaCallback cb = ToWeakCallback([this, info, photo_path](nim::NIMResCode res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
+	nim::NOS::DownloadMediaCallback cb = ToWeakCallback([this, info, photo_path](int res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
 		if (res_code == nim::kNIMResSuccess)
 		{
 			std::wstring ws_file_path = nbase::UTF8ToUTF16(file_path);
@@ -117,7 +117,7 @@ void PhotoService::DownloadTeamIcon(const nim::TeamInfo &info)
 		return;
 	}
 
-	nim::NOS::DownloadMediaCallback cb = ToWeakCallback([this, info, photo_path](nim::NIMResCode res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
+	nim::NOS::DownloadMediaCallback cb = ToWeakCallback([this, info, photo_path](int res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
 		if (res_code == nim::kNIMResSuccess)
 		{
 			std::wstring ws_file_path = nbase::UTF8ToUTF16(file_path);

@@ -16,16 +16,6 @@ RtsReplay::~RtsReplay()
 {
 }
 
-ui::UILIB_RESOURCETYPE RtsReplay::GetResourceType() const
-{
-	return ui::UILIB_FILE; 
-}
-
-std::wstring RtsReplay::GetZIPFileName() const
-{
-	return (L"rts.zip");
-}
-
 std::wstring RtsReplay::GetSkinFolder()
 {
 	return L"rts";

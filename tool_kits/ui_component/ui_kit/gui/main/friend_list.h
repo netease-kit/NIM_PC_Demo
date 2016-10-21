@@ -1,12 +1,12 @@
 #pragma once
 
 #include "shared/list_item_util.h"
-#include "gui/main/friend_list_item_manager.h"
+#include "module/service/photo_service.h"
 
 namespace nim_comp
 {
-/** @class FriendList
-  * @brief 封装FriendListItemManager，保存好友列表句柄并提供给主界面MainForm
+/** @class FriendListItemManager
+  * @brief 负责处理一些与好友列表项相关的事件
   * @copyright (c) 2015, NetEase Inc. All rights reserved
   * @author towik
   * @date 2015/1/1
@@ -14,28 +14,132 @@ namespace nim_comp
 class FriendList : public nbase::SupportWeakCallback
 {
 public:
+	/**
+	* 构造函数
+	* @param[in] friend_list 作为好友列表的TreeView控件指针
+	*/
 	FriendList(ui::TreeView* friend_list);
 	virtual ~FriendList();
 
-	void ScrollToLetter(char letter);
-	
-	ui::TreeView* GetFriendList()
-	{
-		return friend_list_;
-	}
+	/**
+	* 获取作为好友列表的TreeView控件指针
+	* @return ui::TreeView*	作为好友列表的TreeView控件指针
+	*/
+	ui::TreeView* GetFriendList() { return friend_list_; }
 
-	void OnGetFriendList(const std::list<nim::UserNameCard>& uinfos)
-	{
-		nim_list_base_.OnGetFriendList(uinfos);
-	}
+	/**
+	* 响应获取好友列表的回调函数
+	* @param[in] uinfos 好友名片列表
+	* @return void	无返回值
+	*/
+	void OnGetFriendList(const std::list<nim::UserNameCard> &user);
 
 private:
+	/**
+	* 添加一个好友列表项
+	* @param[in] accid 用户id
+	* @return void	无返回值
+	*/
+	void AddListItem(const std::string& accid);
+
+	/**
+	* 添加一个好友列表项到指定的分组内
+	* @param[in] accid 用户id
+	* @param[in] tree_node 分组控件指针
+	* @return void	无返回值
+	*/
+	void AddListItemInGroup(const std::string& accid, ui::TreeNode* tree_node);
+
+	/**
+	* 删除一个好友列表项
+	* @param[in] accid 用户id
+	* @return void	无返回值
+	*/
+	void DeleteListItem(const std::string& accid);
+
+	/**
+	* 从指定的分组内移除一个好友列表项
+	* @param[in] accid 用户id
+	* @param[in] tree_node 分组控件指针
+	* @return void	无返回值
+	*/
+	void DeleteListItemInGroup(const std::string& accid, ui::TreeNode* tree_node);
+
+	/**
+	* 查找一个好友列表项
+	* @param[in] accid 用户id
+	* @return ui::TreeNode* 好友列表项控件指针
+	*/
+	ui::TreeNode* FindFriendItem(const std::string& accid);
+
+	/**
+	* 根据分组类型和分组标签获取分组控件
+	* @param[in] groupType 分组类型
+	* @param[in] letter 分组表亲啊
+	* @return ui::TreeNode*	分组控件
+	*/
+	ui::TreeNode* GetGroup(GroupType groupType, wchar_t letter = L'');
+
+	/**
+	* 控件范围滚动到指定的分组标签
+	* @param[in] letter 分组标签，A到Z
+	* @return void	无返回值
+	*/
+	void ScrollToLetter(char letter);
+
+private:
+	/**
+	* 处理好友列表控件滚动消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool OnScrollChange(ui::EventArgs* param);
+
+	/**
+	* 处理好友控件头像单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnHeadImageClick(const std::string& uid, ui::EventArgs*);
+
+private:
+	/**
+	* 响应用户列表改变的回调函数
+	* @param[in] change_type 好友变化类型
+	* @param[in] accid 用户id
+	* @return void 无返回值
+	*/
+	void OnFriendListChange(FriendChangeType change_type, const std::string& accid);
+
+	/**
+	* 响应用户信息改变的回调函数
+	* @param[in] uinfos 用户信息列表
+	* @return void 无返回值
+	*/
+	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
+
+	/**
+	* 响应黑名单改变的回调函数
+	* @param[in] id 用户id
+	* @param[in] is_black 是否加入黑名单
+	* @return void 无返回值
+	*/
+	void OnBlackListChange(const std::string& id, bool is_black);
+
+	/**
+	* 响应用户头像改变的回调函数
+	* @param[in] type 头像类型
+	* @param[in] accid 用户id
+	* @param[in] photo_path 头像路径
+	* @return void 无返回值
+	*/
+	void OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path);
 
 private:
 	ui::Label* tip_letter_;
 	ui::TreeNode* pos_tip_;
 	ui::TreeView* friend_list_;
-	FriendListItemManager nim_list_base_;
+	vector<ui::TreeNode*> tree_node_ver_;
+	AutoUnregister unregister_cb;
 };
 }

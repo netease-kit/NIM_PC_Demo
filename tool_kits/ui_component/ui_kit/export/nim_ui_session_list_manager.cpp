@@ -6,16 +6,6 @@
 namespace nim_ui
 {
 
-SessionListManager::SessionListManager()
-{
-
-}
-
-SessionListManager::~SessionListManager()
-{
-
-}
-
 bool SessionListManager::AttachListBox(ui::ListBox *list_box)
 {
 	if (NULL == list_box)
@@ -34,24 +24,29 @@ void SessionListManager::InvokeLoadSessionList()
 	nim::Session::QueryAllRecentSessionAsync(nbase::Bind(&nim_comp::TalkCallback::OnQuerySessionListCallback, std::placeholders::_1, std::placeholders::_2));
 }
 
+void SessionListManager::QueryUnreadSysMsgCount()
+{
+	nim::SystemMsg::QueryUnreadCount(nbase::Bind(&nim_ui::SessionListManager::OnQuerySysmsgUnreadCb, this, std::placeholders::_1, std::placeholders::_2));
+}
+
 UnregisterCallback SessionListManager::RegUnreadCountChange(const nim_comp::OnUnreadCountChangeCallback& callback)
 {
 	ASSERT(NULL != session_list_);
 	return session_list_->RegUnreadCountChange(callback);
 }
 
-void SessionListManager::AddUnreadCount(const std::string &id)
+void SessionListManager::InvokeAddSessionUnread(const std::string &id)
 {
 	if (NULL == session_list_)
 		return;
 	session_list_->AddUnreadCount(id);
 }
 
-void SessionListManager::ResetSessionUnread(const std::string &id)
+void SessionListManager::InvokeResetSessionUnread(const std::string &id)
 {
 	if (NULL == session_list_)
 		return;
-	session_list_->ResetSessionUnread(id);
+	session_list_->ResetUnreadCount(id);
 }
 
 void SessionListManager::UISysmsgUnread(int count)
@@ -82,18 +77,13 @@ void SessionListManager::OnMultispotKickout(const std::list<std::string> &client
 	session_list_->OnMultispotKickout(client_ids);
 }
 
-void SessionListManager::QueryUnreadCount()
-{
-	nim::SystemMsg::QueryUnreadCount(nbase::Bind(&nim_ui::SessionListManager::QuerySysmsgUnreadCb, std::placeholders::_1, std::placeholders::_2));
-}
-
-void SessionListManager::QuerySysmsgUnreadCb(nim::NIMResCode res_code, int unread_count)
+void SessionListManager::OnQuerySysmsgUnreadCb(nim::NIMResCode res_code, int unread_count)
 {
 	if (res_code == 200)
 		nim_comp::UpdateSysmsgUnread(unread_count);
 }
 
-void SessionListManager::LoadSessionList(const std::list<nim::SessionData>& sessions)
+void SessionListManager::OnQuerySessionListCallback(const std::list<nim::SessionData>& sessions)
 {
 	if (sessions.empty())
 		return;

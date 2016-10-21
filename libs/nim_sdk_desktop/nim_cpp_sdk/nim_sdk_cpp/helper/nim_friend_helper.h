@@ -13,6 +13,7 @@
 #include <assert.h>
 #include "json.h"
 #include "nim_common_helper.h"
+#include "nim_base_types.h"
 
 /**
 * @namespace nim
@@ -125,14 +126,14 @@ struct FriendProfile
 	}
 
 	/** 设置扩展信息(int64)*/
-	void SetBits(__int64 bits)
+	void SetBits(int64_t bits)
 	{
 		bits_ = bits;
 		value_available_flag_ |= kFriendProfileKeyBits;
 	}
 
 	/** 获取扩展信息(int64) */
-	__int64 GetBits() const
+	int64_t GetBits() const
 	{
 		return bits_;
 	}
@@ -151,25 +152,25 @@ struct FriendProfile
 	}
 
 	/** 设置档案创建时间(毫秒) */
-	void SetCreateTimetag(__int64 timetag)
+	void SetCreateTimetag(int64_t timetag)
 	{
 		create_timetag_ = timetag;
 	}
 
 	/** 获取档案创建时间(毫秒) */
-	__int64 GetCreateTimetag() const
+	int64_t GetCreateTimetag() const
 	{
 		return create_timetag_;
 	}
 
 	/** 设置档案更新时间(毫秒) */
-	void SetUpdateTimetag(__int64 timetag)
+	void SetUpdateTimetag(int64_t timetag)
 	{
 		update_timetag_ = timetag;
 	}
 
 	/** 获取档案更新时间(毫秒) */
-	__int64 GetUpdateTimetag() const
+	int64_t GetUpdateTimetag() const
 	{
 		return update_timetag_;
 	}
@@ -246,13 +247,13 @@ private:
 	NIMFriendFlag	passive_relationship_;		/**< 被动的好友关系 */
 	NIMFriendSource source_;					/**< 好友来源 */
 	std::string		alias_;						/**< 好友别名 */
-	__int64			bits_;						/**< 扩展数据 */
+	int64_t			bits_;						/**< 扩展数据 */
 	Json::Value		expand_;					/**< 扩展数据 */
 	unsigned int	value_available_flag_;		/**< 好友数据有效性，结合好友Key使用 */
 
 private:
-	__int64			create_timetag_;			/**< 好友创建时间戳（毫秒） */
-	__int64			update_timetag_;			/**< 好友更新时间戳（毫秒） */
+	int64_t			create_timetag_;			/**< 好友创建时间戳（毫秒） */
+	int64_t			update_timetag_;			/**< 好友更新时间戳（毫秒） */
 
 };
 

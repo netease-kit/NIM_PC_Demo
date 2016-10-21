@@ -1,5 +1,6 @@
 ﻿#include "bubble_audio.h"
 #include "callback/audio/audio_callback.h"
+#include "module/audio/audio_manager.h"
 #include "util/user.h"
 
 using namespace ui;
@@ -100,9 +101,6 @@ bool MsgBubbleAudio::OnClicked(ui::EventArgs* arg)
 				}
 			}
 
-			AudioCallback::SetPlaySid(sid_);
-			AudioCallback::SetPlayCid(msg_.client_msg_id_);
-
 			nim_audio::nim_audio_type audio_format = nim_audio::AAC;
 			{
 				FILE* audio_file;
@@ -116,7 +114,7 @@ bool MsgBubbleAudio::OnClicked(ui::EventArgs* arg)
 				fclose(audio_file);
 			}
 
-			nim_audio::Audio::PlayAudio(path_.c_str(), sid_.c_str(), msg_.client_msg_id_.c_str(), audio_format);
+			AudioManager::GetInstance()->PlayAudio(path_, sid_, msg_.client_msg_id_, audio_format);
 			nim::MsgLog::SetSubStatusAsync(msg_.client_msg_id_, nim::kNIMMsgLogSubStatusPlayed, nim::MsgLog::SetSubStatusCallback());
 			msg_.sub_status_ = nim::kNIMMsgLogSubStatusPlayed;
 			SetPlayed(true);

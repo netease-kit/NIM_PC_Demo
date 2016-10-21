@@ -266,7 +266,7 @@ protected:
 	Box* m_pRoot;
 	EventMap OnEvent;
 
-private:
+protected:
 	WNDPROC m_OldWndProc;
 	bool m_bSubclassed;
 

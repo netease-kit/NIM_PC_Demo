@@ -21,16 +21,6 @@ AtlistForm::~AtlistForm()
 
 }
 
-ui::UILIB_RESOURCETYPE AtlistForm::GetResourceType() const
-{
-    return ui::UILIB_FILE;
-}
-
-std::wstring AtlistForm::GetZIPFileName() const
-{
-    return L"";
-}
-
 std::wstring AtlistForm::GetSkinFolder()
 {
     return L"session";
@@ -271,7 +261,6 @@ LRESULT AtlistForm::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 bool AtlistForm::Match(const std::wstring& search_key, bool match_visible)
 {
 	std::wstring low_search_key = nbase::MakeLowerString(search_key);
-	//low_search_key = nbase::StringTrim(low_search_key);
 	if (low_search_key.empty()) 
 		return false;
 

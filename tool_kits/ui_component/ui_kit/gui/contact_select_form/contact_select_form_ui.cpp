@@ -44,12 +44,12 @@ ContactSelectForm::~ContactSelectForm()
 
 std::wstring ContactSelectForm::GetSkinFolder()
 {
-	return L"invokechat";
+	return L"contact_select";
 }
 
 std::wstring ContactSelectForm::GetSkinFile()
 {
-	return L"invoke_chat_form.xml";
+	return L"contact_select_form.xml";
 }
 
 std::wstring ContactSelectForm::GetWindowClassName() const
@@ -68,11 +68,6 @@ UINT ContactSelectForm::GetClassStyle() const
 	return (UI_CLASSSTYLE_FRAME | CS_DBLCLKS);
 }
 
-LRESULT ContactSelectForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	return __super::HandleMessage(uMsg, wParam, lParam);
-}
-
 void ContactSelectForm::InitWindow()
 {
 	std::wstring title_id;
@@ -89,8 +84,8 @@ void ContactSelectForm::InitWindow()
 	SetTaskbarTitle(title);
 	((Label*)FindControl(L"title"))->SetText(title);
 
-	friend_list_ = (ui::TreeView*)FindControl(L"user_list");
-	friend_list_->AttachBubbledEvent(kEventClick, nbase::Bind(&ContactSelectForm::OnListItemClick, this, std::placeholders::_1));
+	contract_list_ = (ui::TreeView*)FindControl(L"user_list");
+	contract_list_->AttachBubbledEvent(kEventClick, nbase::Bind(&ContactSelectForm::OnListItemClick, this, std::placeholders::_1));
 	search_result_list_ = static_cast<ui::ListBox*>(FindControl(L"search_result"));
 	search_result_list_->AttachBubbledEvent(kEventClick, nbase::Bind(&ContactSelectForm::OnSearchResultListItemClick, this, std::placeholders::_1));
 	selected_user_list_ = (ui::ListBox*)FindControl(L"selected_user_list");
@@ -131,7 +126,7 @@ void ContactSelectForm::InitWindow()
 	// 添加讨论组和高级群
 	if (need_select_group_)
 	{
-		std::list<nim::TeamInfo> teams = TeamService::GetInstance()->GetCachedTinfos();
+		std::list<nim::TeamInfo> teams = TeamService::GetInstance()->GetCachedTeamsInfo();
 		for (auto &it : teams)
 		{
 			 AddTeamListItem(it.GetTeamID(), true);
@@ -152,6 +147,73 @@ void ContactSelectForm::InitWindow()
 	btn_confirm->AttachClick(nbase::Bind(&ContactSelectForm::OnBtnConfirmClick, this, std::placeholders::_1));
 	ui::Button* btn_cancel = (ui::Button*)FindControl(L"cancel");
 	btn_cancel->AttachClick(nbase::Bind(&ContactSelectForm::OnBtnCancelClick, this, std::placeholders::_1));
+}
+
+bool ContactSelectForm::OnBtnDeleteClick(const UTF8String& user_id, ui::EventArgs* param)
+{
+	for (int i = 0; i < selected_user_list_->GetCount(); i++)
+	{
+		Control* item = selected_user_list_->GetItemAt(i);
+		if (item->GetUTF8DataID() == user_id)
+		{
+			selected_user_list_->RemoveAt(i);
+		}
+	}
+
+	if (search_result_list_->IsVisible())
+	{
+		for (int i = 0; i < search_result_list_->GetCount(); i++)
+		{
+			Control* item = search_result_list_->GetItemAt(i);
+			if (item->GetUTF8DataID() == user_id)
+			{
+				EventArgs args;
+				args.pSender = item;
+				OnSearchResultListItemClick(&args);
+			}
+		}
+	}
+	else{
+		for (auto& it : tree_node_ver_)
+		{
+			for (int i = 0; i < it->GetCount(); i++)
+			{
+				ContactListItemUI* item = (ContactListItemUI*)it->GetItemAt(i);
+				if (item->GetUTF8DataID() == user_id)
+				{
+					EventArgs args;
+					args.pSender = item;
+					OnListItemClick(&args);
+				}
+			}
+		}
+	}
+	return true;
+}
+
+bool ContactSelectForm::OnBtnConfirmClick(ui::EventArgs* param)
+{
+	std::list<UTF8String> friend_list;
+	std::list<UTF8String> team_list;
+	for (int i = 0; i < selected_user_list_->GetCount(); i++)
+	{
+		SelectedContactItemUI* select_item = dynamic_cast<SelectedContactItemUI*>(selected_user_list_->GetItemAt(i));
+		UTF8String id = select_item->GetAccountID();
+		if (select_item->IsTeam())
+			team_list.push_back(id);
+		else
+			friend_list.push_back(id);
+	}
+
+	completedCallback_(friend_list, team_list);
+	Close();
+	return true;
+}
+
+bool ContactSelectForm::OnBtnCancelClick(ui::EventArgs* param)
+{
+	Close();
+	return true;
 }
 
 bool ContactSelectForm::OnSearchEditChange(ui::EventArgs* param)
@@ -247,70 +309,26 @@ bool ContactSelectForm::OnSearchResultListItemClick(ui::EventArgs* param)
 	return true;
 }
 
-bool ContactSelectForm::OnBtnDeleteClick(const UTF8String& user_id, ui::EventArgs* param)
+void ContactSelectForm::OnCheckBox(UTF8String id, bool is_team, bool check)
 {
-	for (int i = 0; i < selected_user_list_->GetCount(); i++)
+	if (check)
 	{
-		Control* item = selected_user_list_->GetItemAt(i);
-		if (item->GetUTF8DataID() == user_id)
-		{
-			selected_user_list_->RemoveAt(i);
-		}
+		SelectedContactItemUI* selected_listitem = CreateSelectedListItem(id, is_team);
+		selected_user_list_->Add(selected_listitem);
+		selected_user_list_->EndDown();
 	}
-
-	if (search_result_list_->IsVisible())
+	else
 	{
-		for (int i = 0; i < search_result_list_->GetCount(); i++)
+		for (int i = 0; i < selected_user_list_->GetCount(); i++)
 		{
-			Control* item = search_result_list_->GetItemAt(i);
-			if (item->GetUTF8DataID() == user_id)
+			SelectedContactItemUI* listitem = (SelectedContactItemUI*)selected_user_list_->GetItemAt(i);
+			if (listitem->GetUTF8DataID() == id)
 			{
-				EventArgs args;
-				args.pSender = item;
-				OnSearchResultListItemClick(&args);
+				selected_user_list_->RemoveAt(i);
+				break;
 			}
 		}
 	}
-	else{
-		for (auto& it : tree_node_ver_)
-		{
-			for (int i = 0; i < it->GetCount(); i++)
-			{
-				ContactListItemUI* item = (ContactListItemUI*)it->GetItemAt(i);
-				if (item->GetUTF8DataID() == user_id)
-				{
-					EventArgs args;
-					args.pSender = item;
-					OnListItemClick(&args);
-				}
-			}
-		}
-	}
-	return true;
 }
 
-bool ContactSelectForm::OnBtnConfirmClick(ui::EventArgs* param)
-{
-	std::list<UTF8String> friend_list;
-	std::list<UTF8String> team_list;
-	for (int i = 0; i < selected_user_list_->GetCount(); i++)
-	{
-		SelectedContactItemUI* select_item = dynamic_cast<SelectedContactItemUI*>(selected_user_list_->GetItemAt(i));
-		UTF8String id = select_item->GetAccountID();
-		if (select_item->IsTeam())
-			team_list.push_back(id);
-		else
-			friend_list.push_back(id);
-	}
-
-	completedCallback_(friend_list, team_list);
-	Close();
-	return true;
-}
-
-bool ContactSelectForm::OnBtnCancelClick(ui::EventArgs* param)
-{
-	Close();
-	return true;
-}
 }

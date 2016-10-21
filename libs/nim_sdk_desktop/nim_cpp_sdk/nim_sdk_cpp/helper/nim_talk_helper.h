@@ -1,7 +1,7 @@
 ﻿/** @file nim_talk_helper.h
   * @brief Talk 辅助方法和数据结构定义
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author Oleg
+  * @author Oleg, Harrison
   * @date 2015/10/16
   */
 
@@ -48,13 +48,13 @@ struct MessageSetting
 	std::string force_push_content_;	/**< 群组消息强推文本 */
 
 	/** 构造函数 */
-	MessageSetting() : server_history_saved_(BS_NOT_INIT)
+	MessageSetting() : resend_flag_(BS_NOT_INIT)
+		, server_history_saved_(BS_NOT_INIT)
 		, roaming_(BS_NOT_INIT)
 		, self_sync_(BS_NOT_INIT)
 		, need_push_(BS_NOT_INIT)
 		, push_need_badge_(BS_NOT_INIT)
 		, push_need_prefix_(BS_NOT_INIT)
-		, resend_flag_(BS_NOT_INIT)
 		, routable_(BS_NOT_INIT)
 		, need_offline_(BS_NOT_INIT)
 		, is_force_push_(BS_NOT_INIT){}
@@ -163,7 +163,7 @@ public:
 	NIMSessionType	session_type_;				/**< 会话类型 */
 	std::string		receiver_accid_;			/**< 接收者ID */
 	std::string		sender_accid_;				/**< 发送者ID */
-	__int64			timetag_;					/**< 消息时间戳（毫秒） */
+	int64_t			timetag_;					/**< 消息时间戳（毫秒） */
 	std::string		content_;					/**< 消息内容 */
 	NIMMessageType	type_;						/**< 消息类型 */
 	std::string		attach_;					/**< 消息附件 */
@@ -181,21 +181,21 @@ public:
 	NIMClientType  readonly_sender_client_type_;	/**< 发送者客户端类型（只读） */
 	std::string	   readonly_sender_device_id_;		/**< 发送者客户端设备ID（只读） */
 	std::string	   readonly_sender_nickname_;		/**< 发送者昵称（只读） */
-	__int64		   readonly_server_id_;				/**< 消息ID（服务器，只读） */
+	int64_t		   readonly_server_id_;				/**< 消息ID（服务器，只读） */
 
 	/** 构造函数 */
-	IMMessage() : readonly_sender_client_type_(kNIMClientTypeDefault) 
+	IMMessage() : feature_(kNIMMessageFeatureDefault)
+				, readonly_sender_client_type_(kNIMClientTypeDefault) 
 				, readonly_server_id_(0)
-				, feature_(kNIMMessageFeatureDefault)
 				, session_type_(kNIMSessionTypeP2P)
 				, timetag_(0)
 				, status_(nim::kNIMMsgLogStatusNone)
 				, sub_status_(nim::kNIMMsgLogSubStatusNone) {}
 
 	/** 构造函数 */
-	IMMessage(const std::string &json_msg) :readonly_sender_client_type_(kNIMClientTypeDefault) 
-		, readonly_server_id_(0)
-		, feature_(kNIMMessageFeatureDefault)
+	IMMessage(const std::string &json_msg) : feature_(kNIMMessageFeatureDefault)
+		, readonly_sender_client_type_(kNIMClientTypeDefault) 
+		, readonly_server_id_(0)		
 		, session_type_(kNIMSessionTypeP2P)
 		, timetag_(0)
 		, status_(nim::kNIMMsgLogStatusNone)
@@ -267,7 +267,7 @@ public:
 struct IMFile
 {
 	std::string	md5_;				/**< 文件内容MD5 */
-	__int64		size_;				/**< 文件大小 */
+	int64_t		size_;				/**< 文件大小 */
 	std::string url_;				/**< 上传云端后得到的文件下载地址 */
 	std::string display_name_;		/**< 用于显示的文件名称 */
 	std::string file_extension_;	/**< 文件扩展名 */
@@ -329,7 +329,7 @@ struct IMImage : IMFile
 		attach[kNIMImgMsgKeyWidth] = width_;
 		attach[kNIMImgMsgKeyHeight] = height_;
 
-		return __super::ToJsonString(attach);
+		return IMFile::ToJsonString(attach);	//remove the Visual C++ __super keyword.
 	}
 };
 
@@ -375,7 +375,7 @@ struct IMAudio : IMFile
 		Json::Value attach;
 		attach[kNIMAudioMsgKeyDuration] = duration_;
 
-		return __super::ToJsonString(attach);
+		return IMFile::ToJsonString(attach);	//remove the Visual C++ __super keyword.
 	}
 };
 
@@ -400,7 +400,7 @@ struct IMVideo : IMFile
 		attach[kNIMVideoMsgKeyHeight] = height_;
 		attach[kNIMVideoMsgKeyDuration] = duration_;
 
-		return __super::ToJsonString(attach);
+		return IMFile::ToJsonString(attach);	//remove the Visual C++ __super keyword.
 	}
 };
 

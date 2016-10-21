@@ -6,7 +6,7 @@
 namespace ui
 {
 
-CBitmapControl::CBitmapControl(nim_comp::VideoFrameMng* video_frame_mng)
+BitmapControl::BitmapControl(nim_comp::VideoFrameMng* video_frame_mng)
 {
 	video_frame_mng_ = video_frame_mng;
 	timestamp_ = 0;
@@ -15,12 +15,12 @@ CBitmapControl::CBitmapControl(nim_comp::VideoFrameMng* video_frame_mng)
 	auto_size_ = false;
 }
 
-CBitmapControl::~CBitmapControl(void)
+BitmapControl::~BitmapControl(void)
 {
 	Clear();
 }
 
-void CBitmapControl::Paint(HDC hDC, const UiRect& rcPaint)
+void BitmapControl::Paint(HDC hDC, const UiRect& rcPaint)
 {
 	try
 	{
@@ -89,7 +89,7 @@ void CBitmapControl::Paint(HDC hDC, const UiRect& rcPaint)
 		throw "CBitmapControl::DoPaint";
 	}
 }
-bool CBitmapControl::Refresh(Window* wnd, bool captrue, bool mirror)
+bool BitmapControl::Refresh(Window* wnd, bool captrue, bool mirror)
 {
 	if (!video_frame_mng_ || (!captrue && account_.empty()))
 	{
@@ -124,13 +124,13 @@ bool CBitmapControl::Refresh(Window* wnd, bool captrue, bool mirror)
 	return ret;
 }
 //清理失效数据
-void CBitmapControl::Clear()
+void BitmapControl::Clear()
 {
 	timestamp_ = 0;
 	width_ = 0;
 	height_ = 0;
 }
-bool CBitmapControl::IsRefreshTimeout()
+bool BitmapControl::IsRefreshTimeout()
 {
 	timeb time_now;
 	ftime(&time_now); // 秒数

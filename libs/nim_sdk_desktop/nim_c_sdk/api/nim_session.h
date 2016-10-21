@@ -33,7 +33,7 @@ NIM_SDK_DLL_API void nim_session_reg_change_cb(const char *json_extension, nim_s
   */
 NIM_SDK_DLL_API void nim_session_query_all_recent_session_async(const char *json_extension, nim_session_query_recent_session_cb_func cb, const void *user_data);
 
-/** @fn void nim_session_delete_recent_session_async(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data)
+/** @fn void nim_session_delete_recent_session_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data)
   * 删除最近联系人
   * @param[in] to_type		会话类型
   * @param[in] id			对方的account id或者群组tid。
@@ -42,7 +42,7 @@ NIM_SDK_DLL_API void nim_session_query_all_recent_session_async(const char *json
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_session_delete_recent_session_async(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_session_delete_recent_session_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 
 /** @fn void nim_session_delete_all_recent_session_async(const char *json_extension, nim_session_change_cb_func cb, const void *user_data)
   * 删除全部最近联系人
@@ -53,7 +53,7 @@ NIM_SDK_DLL_API void nim_session_delete_recent_session_async(NIMSessionType to_t
   */
 NIM_SDK_DLL_API void nim_session_delete_all_recent_session_async(const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 
-/** @fn void nim_session_set_unread_count_zero_async(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data)
+/** @fn void nim_session_set_unread_count_zero_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data)
   * 最近联系人项未读数清零
   * @param[in] to_type		会话类型
   * @param[in] id			对方的account id或者群组tid。
@@ -62,7 +62,7 @@ NIM_SDK_DLL_API void nim_session_delete_all_recent_session_async(const char *jso
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_session_set_unread_count_zero_async(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_session_set_unread_count_zero_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 
 #ifdef __cplusplus
 };

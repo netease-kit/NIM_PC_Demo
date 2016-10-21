@@ -13,15 +13,11 @@
   */
 class MainForm : 
 	public nim_comp::WindowEx,
-	public TrayIconDelegate
+	public ITrayIconDelegate
 {
 public:
 	MainForm();
 	~MainForm();
-
-	virtual void LeftClick() override;
-	virtual void LeftDoubleClick() override;
-	virtual void RightClick() override;
 
 	/**
 	* 虚函数，指定本界面的xml布局文件和图片素材所在的目录的相对路径
@@ -29,77 +25,214 @@ public:
 	*/
 	virtual std::wstring GetSkinFolder() override;
 
-	/**
-	* 虚函数，指定本界面的xml布局文件名
-	* @return std::wstring 返回该文件名
-	*/
+	//覆盖虚函数
 	virtual std::wstring GetSkinFile() override;
-
-	/**
-	* 虚函数，指定本界面使用的资源文件类型（xml或者zip），目前仅支持xml类型
-	* @return ui::UILIB_RESOURCETYPE 返回一个枚举值，表示资源文件类型
-	*/
-	virtual ui::UILIB_RESOURCETYPE GetResourceType() const;
-	virtual std::wstring GetZIPFileName() const;
-	
 	virtual std::wstring GetWindowClassName() const override;
 	virtual std::wstring GetWindowId() const override;
 	virtual UINT GetClassStyle() const override;
 	
+	/**
+	* 处理窗口销毁消息
+	* @return void	无返回值
+	*/
 	virtual void OnFinalMessage(HWND hWnd);
+
+	/**
+	* 拦截并处理WM_CLOSE消息
+	* @param[in] wParam 附加参数
+	* @param[in] lParam 附加参数
+	* @param[in] lParam 附加参数
+	* @param[in out] bHandled 是否处理了消息，如果处理了不继续传递消息
+	* @return void	无返回值
+	*/
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	* 拦截ESC键的消息处理
+	* @param[in out] bHandled 是否处理了消息，如果处理了不继续传递消息
+	* @return void	无返回值
+	*/
 	virtual void OnEsc(BOOL &bHandled);
 
 	/**
-	* 虚函数，处理系统定义的一些UI事件（如窗口创建，窗口关闭，窗口大小变化，鼠标被点击，键盘按键被按下）。
-	* @param[in] uMsg	系统定义的事件类型
-	* @param[in] wParam	uMsg类型限定下，更详细的事件类型
-	* @param[in] lParam	wParam类型限定下，更详细的事件类型
-	* @return LRESULT	返回系统定义的整型值，表示处理结果
-	*/
-	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
-
-	/**
-	* 虚函数，创建WindowEx对象时会自动执行，完成控件的初始化和控件事件处理函数的绑定。
-	* @return void 无返回值
+	* 窗口初始化函数
+	* @return void	无返回值
 	*/
 	virtual void InitWindow() override;
 
+private:
 	/**
-	* Notify, OnCloseBtnClicked, OnClicked: 自定义的界面事件响应函数，一般在InitWindow方法中注册。
-	* @param[in] msg	事件内容
-	* @return bool	返回处理结果
+	* 处理所有控件单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
 	*/
-	bool Notify(ui::EventArgs* msg);
-	bool OnCloseBtnClicked(ui::EventArgs* msg);
 	bool OnClicked(ui::EventArgs* msg);
 
-private:
-	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
-	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
-	void OnUnreadCountChange(int unread_count);
-	void InitHeader();
-
-	bool SearchEditChange(ui::EventArgs* param);
-	bool OnClearInputBtnClicked(ui::EventArgs* param);
+	/**
+	* 处理主窗口弹出菜单按钮的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool MainMenuButtonClick(ui::EventArgs* param);
 
+	/**
+	* 弹出主菜单
+	* @param[in] point 弹出坐标
+	* @return void	无返回值
+	*/
 	void PopupMainMenu(POINT point);
-	void PopupMainTrayMenu(POINT point);
+
+	/**
+	* 处理查看日志目录菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool LookLogMenuItemClick(ui::EventArgs* param);
+
+	/**
+	* 处理我的手机菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool FileTransMenuItemClick(ui::EventArgs* param);
+
+	/**
+	* 处理刷新通讯录菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool AddressMenuItemClick(ui::EventArgs* param);
+
+	/**
+	* 处理导出聊天记录菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool ExportMsglogMenuItemClick(ui::EventArgs* param);
+
+	/**
+	* 处理导入聊天记录菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool ImportMsglogMenuItemClick(ui::EventArgs* param);
+
+	/**
+	* 处理清空所有聊天记录菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool ClearChatRecordMenuItemClick(bool del_session, ui::EventArgs* param);
+
+	/**
+	* 处理清空记录菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool ClearChatRecordBySessionTypeMenuItemClick(bool del_session, nim::NIMSessionType type, ui::EventArgs* param);
+
+	/**
+	* 处理音视频设置菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool VChatSettingMenuItemClick(ui::EventArgs* param);
+
+	/**
+	* 处理白板回放菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool RtsReplayMenuItemClick(ui::EventArgs* param);
+
+	/**
+	* 处理显示会话列表菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool SessionListMenuItemClick(ui::EventArgs* param);
+
+	/**
+	* 处理关于菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool AboutMenuItemClick(ui::EventArgs* param);
+
+	/**
+	* 处理注销菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool LogoffMenuItemClick(ui::EventArgs* param);
+
+	/**
+	* 处理退出菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool QuitMenuItemClick(ui::EventArgs* param);
 
+public:
+	/**
+	* 实现ITrayIconDelegate接口函数
+	* @return void	无返回值
+	*/
+	virtual void LeftClick() override;
+	virtual void LeftDoubleClick() override;
+	virtual void RightClick() override;
+
+private:
+	/**
+	* 处理搜索栏内容改变的消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool SearchEditChange(ui::EventArgs* param);
+
+	/**
+	* 处理清理搜索栏按钮的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnClearInputBtnClicked(ui::EventArgs* param);
+
+	/**
+	* 弹出托盘菜单
+	* @param[in] point 弹出坐标
+	* @return void	无返回值
+	*/
+	void PopupTrayMenu(POINT point);
+
+private:
+	/**
+	* 响应个人资料改变的回调函数
+	* @param[in] uinfos 新的个人资料列表
+	* @return void 无返回值
+	*/
+	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
+
+	/**
+	* 响应头像下载完成的回调函数
+	* @param[in] type 头像类型
+	* @param[in] account 头像下载完成的用户id
+	* @param[in] photo_path 头像本地路径
+	* @return void 无返回值
+	*/
+	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
+
+	/**
+	* 响应头最近会话列表未读消息总数改变的回调函数
+	* @param[in] unread_count 未读总数
+	* @return void 无返回值
+	*/
+	void OnUnreadCountChange(int unread_count);
+
+	/**
+	* 初始化用户头像
+	* @return void	无返回值
+	*/
+	void InitHeader();
 public:
 	static const LPCTSTR kClassName;
 

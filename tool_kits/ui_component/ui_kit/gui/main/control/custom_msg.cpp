@@ -1,5 +1,5 @@
 ﻿#include "custom_msg.h"
-#include "gui/session/control/session_util.h"
+#include "module/session/session_util.h"
 #include "module/emoji/emoji_info.h"
 
 using namespace ui;
@@ -98,7 +98,7 @@ void CustomMsgBubble::InitInfo(const nim::IMMessage &msg)
 
 void CustomMsgBubble::SetMsgText(const std::wstring &str)
 {
-	emoji::InsertToEdit(text_, str);
+	InsertTextToEdit(text_, str);
 	int width = 250;
 
 	ui::CSize sz = text_->GetNaturalSize(width, 0);

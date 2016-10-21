@@ -118,7 +118,11 @@ void VideoManager::OnStartDeviceCb(nim::NIMDeviceType type, bool ret)
 //}
 void VideoManager::OnVChatEvent(nim::NIMVideoChatSessionType type, uint64_t channel_id, int code, const std::string& json)
 {
-	QLOG_APP(L"OnVChatEvent type={0}, channel_id={1}, code={2}, json={3}") << type << channel_id << code << json;
+	if (type != nim::kNIMVideoChatSessionTypeInfoNotify
+		&& type != nim::kNIMVideoChatSessionTypeVolumeNotify)
+	{
+		QLOG_APP(L"OnVChatEvent type={0}, channel_id={1}, code={2}, json={3}") << type << channel_id << code << json;
+	}
 	switch (type)
 	{
 	case nim::kNIMVideoChatSessionTypeStartRes:{
@@ -588,5 +592,11 @@ bool VideoManager::JoinRoom(nim::NIMVideoChatMode mode, const std::string& room_
 	value[nim::kNIMVChatSessionId] = session_id;
 	std::string json_value = fs.write(value);
 	return nim::VChat::JoinRoom(mode, room_name, json_value, cb);
+}
+
+void VideoManager::SetChatRoomCb(ConnectCallback connect_cb /*= nullptr*/, PeopleChangeCallback people_cb /*= nullptr*/)
+{
+	chatroom_connect_cb_ = connect_cb;
+	chatroom_people_cb_ = people_cb;
 }
 }

@@ -1,7 +1,7 @@
 ﻿/** @file nim_cpp_tool.cpp
   * @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @author towik, Oleg, Harrison
   * @date 2015/09/21
   */
 
@@ -12,14 +12,17 @@
 
 namespace nim
 {
-
-typedef	const wchar_t * (*nim_tool_get_user_appdata_dir)(const char * app_account);
-typedef	const wchar_t * (*nim_tool_get_local_appdata_dir)();
-typedef	const wchar_t * (*nim_tool_get_cur_module_dir)();
+#ifdef NIM_SDK_DLL_IMPORT
+typedef	const char * (*nim_tool_get_user_appdata_dir)(const char * app_account);
+typedef	const char * (*nim_tool_get_local_appdata_dir)();
+typedef	const char * (*nim_tool_get_cur_module_dir)();
 typedef	const char * (*nim_tool_get_md5)(const char *input);
 typedef	const char * (*nim_tool_get_file_md5)(const char *file_path);
 typedef	const char * (*nim_tool_get_uuid)();
 typedef void(*nim_tool_get_audio_text_async)(const char *json_audio_info, const char *json_extension, nim_tool_get_audio_text_cb_func cb, const void *user_data);
+#else
+#include "nim_tools.h"
+#endif
 
 static void CallbackGetAudioText(int res_code, const char *text, const char *json_extension, const void *callback)
 {
@@ -32,26 +35,26 @@ static void CallbackGetAudioText(int res_code, const char *text, const char *jso
 	}
 }
 
-std::wstring Tool::GetUserAppdataDir(const std::string& app_account)
+std::string Tool::GetUserAppdataDir(const std::string& app_account)
 {
-	const wchar_t *dir = NIM_SDK_GET_FUNC(nim_tool_get_user_appdata_dir)(app_account.c_str());
-	std::wstring dir_str = (std::wstring)dir;
+	const char *dir = NIM_SDK_GET_FUNC(nim_tool_get_user_appdata_dir)(app_account.c_str());
+	std::string dir_str = (std::string)dir;
 	Global::FreeBuf((void *)dir);
 	return dir_str; 
 }
 
-std::wstring Tool::GetLocalAppdataDir()
+std::string Tool::GetLocalAppdataDir()
 {
-	const wchar_t *dir = NIM_SDK_GET_FUNC(nim_tool_get_local_appdata_dir)();
-	std::wstring dir_str = (std::wstring)dir;
+	const char *dir = NIM_SDK_GET_FUNC(nim_tool_get_local_appdata_dir)();
+	std::string dir_str = (std::string)dir;
 	Global::FreeBuf((void *)dir);
 	return dir_str;
 }
 
-std::wstring Tool::GetCurModuleDir()
+std::string Tool::GetCurModuleDir()
 {
-	const wchar_t *dir = NIM_SDK_GET_FUNC(nim_tool_get_cur_module_dir)();
-	std::wstring dir_str = (std::wstring)dir;
+	const char *dir = NIM_SDK_GET_FUNC(nim_tool_get_cur_module_dir)();
+	std::string dir_str = (std::string)dir;
 	Global::FreeBuf((void *)dir);
 	return dir_str;
 }

@@ -56,7 +56,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\openssl\include\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\openssl\include\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -79,7 +79,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\openssl\include\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_wrapper\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\openssl\include\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
@@ -132,7 +132,6 @@
     <ClInclude Include="gui\main\control\friend_item.h" />
     <ClInclude Include="gui\main\control\session_item.h" />
     <ClInclude Include="gui\main\friend_list.h" />
-    <ClInclude Include="gui\main\friend_list_item_manager.h" />
     <ClInclude Include="gui\main\group_list.h" />
     <ClInclude Include="gui\main\multispot_form.h" />
     <ClInclude Include="gui\main\session_list.h" />
@@ -147,6 +146,7 @@
     <ClInclude Include="gui\session\atlist\at_list_form.h" />
     <ClInclude Include="gui\session\atlist\at_list_item.h" />
     <ClInclude Include="gui\session\control\atme_view.h" />
+    <ClInclude Include="gui\session\control\audio_capture.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_audio.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_file.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_finger.h" />
@@ -160,10 +160,13 @@
     <ClInclude Include="gui\session\control\bubbles\bubble_unknown.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_video.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_writing.h" />
-    <ClInclude Include="gui\session\control\session_util.h" />
+    <ClInclude Include="gui\session\control\merge_item.h" />
     <ClInclude Include="gui\session\control\team_item.h" />
     <ClInclude Include="gui\session\custom_msg_form.h" />
+    <ClInclude Include="gui\session\dragdrop\bitmap_control.h" />
+    <ClInclude Include="gui\session\dragdrop\drag_form.h" />
     <ClInclude Include="gui\session\msg_record.h" />
+    <ClInclude Include="gui\session\session_box.h" />
     <ClInclude Include="gui\session\session_form.h" />
     <ClInclude Include="gui\team_info\member_manager.h" />
     <ClInclude Include="gui\team_info\team_info.h" />
@@ -180,13 +183,14 @@
     <ClInclude Include="gui\video\video_form.h" />
     <ClInclude Include="gui\video\video_setting.h" />
     <ClInclude Include="gui\video\window_select.h" />
+    <ClInclude Include="module\audio\audio_manager.h" />
+    <ClInclude Include="module\dragdrop\drag_drop.h" />
     <ClInclude Include="module\emoji\emoji_info.h" />
     <ClInclude Include="module\emoji\richedit_olecallback.h" />
     <ClInclude Include="module\emoji\richedit_util.h" />
     <ClInclude Include="module\local\local_helper.h" />
     <ClInclude Include="module\login\login_db.h" />
     <ClInclude Include="module\login\login_manager.h" />
-    <ClInclude Include="module\msglog\msglog.h" />
     <ClInclude Include="module\msglog\msg_extend_db.h" />
     <ClInclude Include="module\rts\rts_manager.h" />
     <ClInclude Include="module\service\http_service.h" />
@@ -197,6 +201,7 @@
     <ClInclude Include="module\service\user_service.h" />
     <ClInclude Include="module\session\ring.h" />
     <ClInclude Include="module\session\session_manager.h" />
+    <ClInclude Include="module\session\session_util.h" />
     <ClInclude Include="module\video\audio_frame_mng.h" />
     <ClInclude Include="module\video\video_frame_mng.h" />
     <ClInclude Include="module\video\video_manager.h" />
@@ -241,9 +246,8 @@
     <ClCompile Include="gui\main\control\event_item.cpp" />
     <ClCompile Include="gui\main\control\friend_item.cpp" />
     <ClCompile Include="gui\main\control\session_item.cpp" />
-    <ClCompile Include="gui\main\event_form_custom.cpp" />
+    <ClCompile Include="gui\main\team_event_form_custom.cpp" />
     <ClCompile Include="gui\main\friend_list.cpp" />
-    <ClCompile Include="gui\main\friend_list_item_manager.cpp" />
     <ClCompile Include="gui\main\group_list.cpp" />
     <ClCompile Include="gui\main\multispot_form.cpp" />
     <ClCompile Include="gui\main\session_list.cpp" />
@@ -258,6 +262,7 @@
     <ClCompile Include="gui\session\atlist\at_list_form.cpp" />
     <ClCompile Include="gui\session\atlist\at_list_item.cpp" />
     <ClCompile Include="gui\session\control\atme_view.cpp" />
+    <ClCompile Include="gui\session\control\audio_capture.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_audio.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_file.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_finger.cpp" />
@@ -271,15 +276,21 @@
     <ClCompile Include="gui\session\control\bubbles\bubble_unknown.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_video.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_writing.cpp" />
-    <ClCompile Include="gui\session\control\session_util.cpp" />
+    <ClCompile Include="gui\session\control\merge_item.cpp" />
     <ClCompile Include="gui\session\control\team_item.cpp" />
     <ClCompile Include="gui\session\custom_msg_form.cpp" />
+    <ClCompile Include="gui\session\dragdrop\bitmap_control.cpp" />
+    <ClCompile Include="gui\session\dragdrop\drag_form.cpp" />
     <ClCompile Include="gui\session\msg_record.cpp" />
     <ClCompile Include="gui\session\msg_record_ui.cpp" />
+    <ClCompile Include="gui\session\session_box.cpp" />
+    <ClCompile Include="gui\session\session_box_at.cpp" />
+    <ClCompile Include="gui\session\session_box_audio.cpp" />
+    <ClCompile Include="gui\session\session_box_dragdrop.cpp" />
+    <ClCompile Include="gui\session\session_box_team.cpp" />
+    <ClCompile Include="gui\session\session_box_ui.cpp" />
     <ClCompile Include="gui\session\session_form.cpp" />
-    <ClCompile Include="gui\session\session_form_audio.cpp" />
-    <ClCompile Include="gui\session\session_form_team.cpp" />
-    <ClCompile Include="gui\session\session_form_ui.cpp" />
+    <ClCompile Include="gui\session\session_form_dragdrop.cpp" />
     <ClCompile Include="gui\team_info\member_manager.cpp" />
     <ClCompile Include="gui\team_info\team_info.cpp" />
     <ClCompile Include="gui\team_info\team_notify.cpp" />
@@ -296,13 +307,14 @@
     <ClCompile Include="gui\video\video_form_ui.cpp" />
     <ClCompile Include="gui\video\video_setting.cpp" />
     <ClCompile Include="gui\video\window_select.cpp" />
+    <ClCompile Include="module\audio\audio_manager.cpp" />
+    <ClCompile Include="module\dragdrop\drag_drop.cpp" />
     <ClCompile Include="module\emoji\emoji_info.cpp" />
     <ClCompile Include="module\emoji\richedit_olecallback.cpp" />
     <ClCompile Include="module\emoji\richedit_util.cpp" />
     <ClCompile Include="module\local\local_helper.cpp" />
     <ClCompile Include="module\login\login_db.cpp" />
     <ClCompile Include="module\login\login_manager.cpp" />
-    <ClCompile Include="module\msglog\msglog.cpp" />
     <ClCompile Include="module\msglog\msg_extend_db.cpp" />
     <ClCompile Include="module\rts\rts_manager.cpp" />
     <ClCompile Include="module\service\http_service.cpp" />
@@ -313,6 +325,8 @@
     <ClCompile Include="module\service\user_service.cpp" />
     <ClCompile Include="module\session\ring.cpp" />
     <ClCompile Include="module\session\session_manager.cpp" />
+    <ClCompile Include="module\session\session_manager_dragdrop.cpp" />
+    <ClCompile Include="module\session\session_util.cpp" />
     <ClCompile Include="module\video\audio_frame_mng.cpp" />
     <ClCompile Include="module\video\video_frame_mng.cpp" />
     <ClCompile Include="module\video\video_manager.cpp" />

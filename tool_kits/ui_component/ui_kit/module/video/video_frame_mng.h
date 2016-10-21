@@ -8,7 +8,12 @@
 
 namespace nim_comp
 {
-struct PicRegion //一块颜色数据区的描述，便于参数传递
+/** @struct PicRegion
+  * @brief 一块颜色数据区的描述，便于参数传递
+  * @copyright (c) 2016, NetEase Inc. All rights reserved
+  * @date 2016/09/19
+  */
+struct PicRegion
 {
 	PicRegion()
 	{
@@ -22,6 +27,11 @@ struct PicRegion //一块颜色数据区的描述，便于参数传递
 	{
 		Clear();
 	}
+
+	/**
+	* 清理保存的颜色数据
+	* @return void	无返回值
+	*/
 	void Clear()
 	{
 		if (pdata_)
@@ -32,6 +42,16 @@ struct PicRegion //一块颜色数据区的描述，便于参数传递
 		size_max_ = 0;
 		size_ = 0;
 	}
+
+	/**
+	* 重置颜色数据
+	* @param[in] time 时间戳
+	* @param[in] data 帧数据
+	* @param[in] size 帧数据大小
+	* @param[in] width 视频宽度
+	* @param[in] height 视频高度
+	* @return int 返回传入的size值
+	*/
 	int ResetData(uint64_t time, const char* data, int size, unsigned int width, unsigned int height/*, nim::NIMVideoSubType subtype*/)
 	{
 		if (size > size_max_)
@@ -61,6 +81,12 @@ struct PicRegion //一块颜色数据区的描述，便于参数传递
 	long        height_;        //像素高度
 	uint64_t	timestamp_;     //时间戳（毫秒）
 };
+
+/** @class VideoFrameMng
+  * @brief 视频帧管理器
+  * @copyright (c) 2016, NetEase Inc. All rights reserved
+  * @date 2016/09/19
+  */
 class VideoFrameMng
 {
 public:
@@ -73,8 +99,37 @@ public:
 	VideoFrameMng();
 	~VideoFrameMng();
 
+	/**
+	* 清理保存的视频帧数据
+	* @return void	无返回值
+	*/
 	void Clear();
+
+	/**
+	* 添加一个视频帧数据
+	* @param[in] capture 是否为录制音频的帧
+	* @param[in] time 时间戳
+	* @param[in] data 帧数据
+	* @param[in] size 帧数据大小
+	* @param[in] width 视频宽度
+	* @param[in] height 视频高度
+	* @param[in] json 包含发送者用户id的json串
+	* @param[in] frame_type 帧类型
+	* @return void	无返回值
+	*/
 	void AddVideoFrame(bool capture, int64_t time, const char* data, int size, int width, int height, const std::string& json, FrameType frame_type = Ft_ARGB_r);
+
+	/**
+	* 获取某个用户发来的一个视频帧数据
+	* @param[in] account 用户id
+	* @param[out] time 时间戳
+	* @param[out] out_data 帧数据
+	* @param[out] width 视频宽度
+	* @param[out] height 视频高度
+	* @param[in] mirror 是否需要翻转图像
+	* @param[in] argb_or_yuv 是否需要ARGB格式数据
+	* @return void	无返回值
+	*/
 	bool GetVideoFrame(std::string account, int64_t& time, char* out_data, int& width, int& height, bool mirror = false, bool argb_or_yuv = true);
 private:
 	nbase::NLock  lock_;

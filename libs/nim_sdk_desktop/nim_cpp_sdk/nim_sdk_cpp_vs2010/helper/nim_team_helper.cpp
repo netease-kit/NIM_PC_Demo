@@ -129,7 +129,8 @@ void ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info)
 	team_info.SetMemberCount(team_info_json[nim::kNIMTeamInfoKeyMemberCount].asUInt());
 	team_info.SetProperty(team_info_json[nim::kNIMTeamInfoKeyProperty].asString());
 	team_info.SetValid(team_info_json[nim::kNIMTeamInfoKeyValidFlag].asUInt() == 0 ? false : true);
-	team_info.SetConfigBits(team_info_json[nim::kNIMTeamInfoKeyBits].asUInt64());
+	//服务器用于持久化其他属性的tag（比如群全员mute状态），因此不开放给开发者设置 20161011
+	//team_info.SetConfigBits(team_info_json[nim::kNIMTeamInfoKeyBits].asUInt64());
 	team_info.SetMemberValid(team_info_json[nim::kNIMTeamInfoKeyMemberValid].asUInt() == 0 ? false : true);
 	team_info.SetIcon(team_info_json[nim::kNIMTeamInfoKeyIcon].asString());
 	team_info.SetBeInviteMode(team_info_json[nim::kNIMTeamInfoKeyBeInviteMode].asInt() == 0 ? kNIMTeamBeInviteModeNeedAgree : kNIMTeamBeInviteModeNotNeedAgree);

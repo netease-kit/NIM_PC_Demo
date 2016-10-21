@@ -75,16 +75,6 @@ ui::Control* HeadModifyForm::CreateControl(const std::wstring& pstrClass)
 	return NULL;
 }
 
-ui::UILIB_RESOURCETYPE HeadModifyForm::GetResourceType() const
-{
-	return ui::UILIB_FILE; // 返回资源类型，XML文件
-}
-
-std::wstring HeadModifyForm::GetZIPFileName() const
-{
-	return (L"head_modify.zip");
-}
-
 std::wstring HeadModifyForm::GetSkinFolder()
 {
 	return L"profile_form";
@@ -891,7 +881,7 @@ void HeadModifyForm::OnButtonSaveImage()
 
 		// 在Core线程触发头像修改监听
 		StdClosure notify_head_modify_closure = 
-			nbase::Bind(&HeadModifyForm::NotifyHeadModify, this, temp_file_path, uid_);
+			nbase::Bind(&HeadModifyForm::NotifyHeadModify, this, temp_file_path);
 		nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback(notify_head_modify_closure));
 	}
 	else
@@ -906,7 +896,7 @@ void HeadModifyForm::OnButtonSaveImage()
 ////////////////////////////////////////// 头像修改上传 ///////////////////////////////////////////////
 ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-void HeadModifyForm::NotifyHeadModify(std::wstring new_head_image_path, const std::string uid)
+void HeadModifyForm::NotifyHeadModify(std::wstring new_head_image_path)
 {
 	// 首先上传头像，返回URL
 	UTF8String file_path = nbase::UTF16ToUTF8(new_head_image_path);
@@ -914,7 +904,7 @@ void HeadModifyForm::NotifyHeadModify(std::wstring new_head_image_path, const st
 	nim::NOS::UploadResource(file_path, cb);
 }
 
-void HeadModifyForm::OnUploadHeadIconCallback(nim::NIMResCode res_code, const std::string& url)
+void HeadModifyForm::OnUploadHeadIconCallback(int res_code, const std::string& url)
 {
 	if(res_code == nim::kNIMResSuccess)
 	{

@@ -1,6 +1,6 @@
 ﻿#include "resource.h"
 #include "multispot_form.h"
-#include "gui/session/control/session_util.h"
+#include "module/session/session_util.h"
 #include "export/nim_ui_user_config.h"
 
 using namespace ui;
@@ -30,16 +30,6 @@ std::wstring MultispotForm::GetSkinFile()
 	return L"multispot.xml";
 }
 
-ui::UILIB_RESOURCETYPE MultispotForm::GetResourceType() const
-{
-	return ui::UILIB_FILE;
-}
-
-std::wstring MultispotForm::GetZIPFileName() const
-{
-	return L"multispot.zip";
-}
-
 std::wstring MultispotForm::GetWindowClassName() const 
 {
 	return kClassName;
@@ -57,9 +47,9 @@ UINT MultispotForm::GetClassStyle() const
 
 void MultispotForm::InitWindow()
 {
-	if (nim_ui::UserConfig::GetInstance()->GetIcon() > 0)
+	if (nim_ui::UserConfig::GetInstance()->GetDefaultIcon() > 0)
 	{
-		SetIcon(nim_ui::UserConfig::GetInstance()->GetIcon());
+		SetIcon(nim_ui::UserConfig::GetInstance()->GetDefaultIcon());
 	}
 
 	SetTaskbarTitle(L"多端登录管理");

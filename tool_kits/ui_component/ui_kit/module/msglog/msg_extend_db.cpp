@@ -118,10 +118,10 @@ bool MsgExDB::InsertMsgData(const nim::SysMessage& msg)
 	stmt.BindInt(3, msg.type_);
 	stmt.BindInt64(4, msg.timetag_);
 	stmt.BindInt64(5, msg.id_);
-	stmt.BindInt(6, msg.support_offline_);
+	stmt.BindInt(6, msg.msg_setting_.need_offline_);
 	stmt.BindText(7, msg.content_.c_str(), msg.content_.size());
 	stmt.BindText(8, msg.attach_.c_str(), msg.attach_.size());
-	stmt.BindText(9, msg.apns_text_.c_str(), msg.apns_text_.size());
+	stmt.BindText(9, msg.msg_setting_.push_content_.c_str(), msg.msg_setting_.push_content_.size());
 	stmt.BindInt(10, msg.status_);
 	stmt.BindText(11, "");
 
@@ -158,10 +158,10 @@ std::vector<nim::SysMessage> MsgExDB::QueryMsgData(int64_t time, int limit)
 		msg.type_ = (nim::NIMSysMsgType)stmt.GetIntField(3);
 		msg.timetag_ = stmt.GetInt64Field(4);
 		msg.id_ = stmt.GetInt64Field(5);
-		msg.support_offline_ = stmt.GetIntField(6) > 0 ? nim::BS_TRUE : nim::BS_FALSE;
+		msg.msg_setting_.need_offline_ = stmt.GetIntField(6) > 0 ? nim::BS_TRUE : nim::BS_FALSE;
 		msg.content_ = stmt.GetTextField(7);
 		msg.attach_ = stmt.GetTextField(8);
-		msg.apns_text_ = stmt.GetTextField(9);
+		msg.msg_setting_.push_content_ = stmt.GetTextField(9);
 		msg.status_ = (nim::NIMSysMsgStatus)stmt.GetIntField(10);
 		ret_msgs.push_back(msg);
 		result = stmt.NextRow();

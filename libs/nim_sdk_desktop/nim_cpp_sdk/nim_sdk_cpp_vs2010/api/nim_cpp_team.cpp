@@ -1,7 +1,7 @@
 ﻿/** @file nim_cpp_team.cpp
   * @brief 群组功能；主要包括查询群信息、查询群成员信息、加人、踢人等功能
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @author towik, Oleg, Harrison
   * @date 2015/2/1
   */
 
@@ -12,7 +12,7 @@
 
 namespace nim
 {
-
+#ifdef NIM_SDK_DLL_IMPORT
 typedef void(*nim_team_reg_team_event_cb)(const char *json_extension, nim_team_event_cb_func cb, const void *user_data);
 typedef void(*nim_team_create_team_async)(const char *team_info, const char *jsonlist_uids, const char *invitation_postscript, const char *json_extension, nim_team_event_cb_func cb, const void* user_data);
 typedef void(*nim_team_query_team_info_online_async)(const char *tid, const char *json_extension, nim_team_event_cb_func cb, const void* user_data);
@@ -41,6 +41,9 @@ typedef char*(*nim_team_query_team_member_block)(const char *tid, const char *us
 typedef char*(*nim_team_query_team_info_block)(const char *tid);
 
 typedef void(*nim_team_mute_member_async)(const char *tid, const char *member_id, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
+#else
+#include "nim_team.h"
+#endif
 
 static void CallbackTeamEvent(int res_code, int notification_id, const char *tid, const char *result, const char *json_extension, const void *user_data)
 {

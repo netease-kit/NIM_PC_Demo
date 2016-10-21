@@ -28,16 +28,6 @@ std::wstring LoginForm::GetSkinFile()
 	return L"login.xml";
 }
 
-ui::UILIB_RESOURCETYPE LoginForm::GetResourceType() const
-{
-	return ui::UILIB_FILE;
-}
-
-std::wstring LoginForm::GetZIPFileName() const
-{
-	return L"login.zip";
-}
-
 std::wstring LoginForm::GetWindowClassName() const 
 {
 	return kClassName;
@@ -51,19 +41,6 @@ std::wstring LoginForm::GetWindowId() const
 UINT LoginForm::GetClassStyle() const 
 {
 	return (UI_CLASSSTYLE_FRAME | CS_DBLCLKS);
-}
-
-LRESULT LoginForm::OnClose( UINT u, WPARAM w, LPARAM l, BOOL& bHandled )
-{
-	nim_ui::LoginManager::GetInstance()->DoLogout(false);
-	return 1;
-
-	return __super::OnClose(u, w, l, bHandled);
-}
-
-LRESULT LoginForm::HandleMessage( UINT uMsg, WPARAM wParam, LPARAM lParam )
-{
-	return __super::HandleMessage(uMsg, wParam, lParam);
 }
 
 void LoginForm::InitWindow()
@@ -148,6 +125,19 @@ void LoginForm::InitWindow()
 	this->RegLoginManagerCallback();
 }
 
+LRESULT LoginForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	return __super::HandleMessage(uMsg, wParam, lParam);
+}
+
+LRESULT LoginForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	nim_ui::LoginManager::GetInstance()->DoLogout(false);
+	return 1;
+
+	return __super::OnClose(uMsg, wParam, lParam, bHandled);
+}
+
 bool LoginForm::Notify( ui::EventArgs* msg )
 {
 	std::wstring name = msg->pSender->GetName();
@@ -155,7 +145,7 @@ bool LoginForm::Notify( ui::EventArgs* msg )
 	{
 		if(name == L"username")
 		{
-			Reset();
+			OnCancelLogin();
 			password_edit_->SetText(L"");
 		}
 		else if(name == L"password")

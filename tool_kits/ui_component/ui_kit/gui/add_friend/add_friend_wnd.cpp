@@ -37,47 +37,6 @@ wstring AddFriendWindow::GetSkinFile()
 	return L"add_friend_wnd.xml";
 }
 
-LRESULT AddFriendWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
-{
-	if (uMsg == WM_KEYDOWN) {
-		if(wParam == VK_ESCAPE) {
-			Close();
-			return 1;
-		}
-		else if (wParam == VK_RETURN) {
-			std::wstring page_name = tablayout_->GetItemAt(tablayout_->GetCurSel())->GetName();
-			if (page_name == g_ADDFRIEND_SEARCH_PAGE) {
-				Search(NULL);
-			}
-			else if (page_name == g_ADDFRIEND_USERINFO_PAGE) {
-				if (addfriend_or_chat_->GetCurSel() == 0)
-					AddFriendClick(NULL);
-				if (addfriend_or_chat_->GetCurSel() == 1)
-					ChatClick(NULL);
-				else if (addfriend_or_chat_->GetCurSel() == 2)
-					RemoveFromBlack(NULL);
-			}
-			else if (page_name == g_ADDFRIEND_NOTFOUND_PAGE) {
-				PreOrNextClick(NULL, g_ADDFRIEND_SEARCH_PAGE, SearchAndSendApplyEdit); 
-			}
-			else if (page_name == g_ADDFRIEND_SENDFRIENDAPPLY_PAGE) {
-				SendFriendApplyClick(NULL);
-			}
-			else if (page_name == g_ADDFRIEND_SENDCOMPLETE_PAGE) {
-				PreOrNextClick(NULL, L"", NONE); 
-			}
-			else if (page_name == g_ADDFRIEND_SENDTOOFREQUENT_PAGE) {
-				PreOrNextClick(NULL, L"", NONE); 
-			}
-			else if (page_name == g_ADDFRIEND_ADDSUCCESS_PAGE) {
-				PreOrNextClick(NULL, L"", NONE); 
-			}
-		}
-	}
-
-	return __super::HandleMessage(uMsg, wParam, lParam);
-}
-
 void AddFriendWindow::InitWindow()
 {
 	tablayout_ = static_cast<TabBox*>(FindControl(_T("tablayout")));
@@ -159,6 +118,47 @@ void AddFriendWindow::InitWindow()
 	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(user_photo_ready_cb));
 }
 
+LRESULT AddFriendWindow::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	if (uMsg == WM_KEYDOWN) {
+		if (wParam == VK_ESCAPE) {
+			Close();
+			return 1;
+		}
+		else if (wParam == VK_RETURN) {
+			std::wstring page_name = tablayout_->GetItemAt(tablayout_->GetCurSel())->GetName();
+			if (page_name == g_ADDFRIEND_SEARCH_PAGE) {
+				Search(NULL);
+			}
+			else if (page_name == g_ADDFRIEND_USERINFO_PAGE) {
+				if (addfriend_or_chat_->GetCurSel() == 0)
+					AddFriendClick(NULL);
+				if (addfriend_or_chat_->GetCurSel() == 1)
+					ChatClick(NULL);
+				else if (addfriend_or_chat_->GetCurSel() == 2)
+					RemoveFromBlack(NULL);
+			}
+			else if (page_name == g_ADDFRIEND_NOTFOUND_PAGE) {
+				PreOrNextClick(NULL, g_ADDFRIEND_SEARCH_PAGE, SearchAndSendApplyEdit);
+			}
+			else if (page_name == g_ADDFRIEND_SENDFRIENDAPPLY_PAGE) {
+				SendFriendApplyClick(NULL);
+			}
+			else if (page_name == g_ADDFRIEND_SENDCOMPLETE_PAGE) {
+				PreOrNextClick(NULL, L"", NONE);
+			}
+			else if (page_name == g_ADDFRIEND_SENDTOOFREQUENT_PAGE) {
+				PreOrNextClick(NULL, L"", NONE);
+			}
+			else if (page_name == g_ADDFRIEND_ADDSUCCESS_PAGE) {
+				PreOrNextClick(NULL, L"", NONE);
+			}
+		}
+	}
+
+	return __super::HandleMessage(uMsg, wParam, lParam);
+}
+
 bool AddFriendWindow::Search(ui::EventArgs* param)
 {
 	UTF8String key = search_key_->GetUTF8Text();
@@ -176,6 +176,73 @@ bool AddFriendWindow::Search(ui::EventArgs* param)
 		SetFocus(nullptr);
 	});
 	nim::User::GetUserNameCardOnline(std::list<std::string>(1, key), cb); //直接从服务器搜索
+
+	return true;
+}
+
+bool AddFriendWindow::Cancel(ui::EventArgs* param)
+{
+	Close();
+	return true;
+}
+
+void AddFriendWindow::InitUserProfile(const nim::UserNameCard& uinfo)
+{
+	id_ = uinfo.GetAccId();
+
+	if (LoginManager::GetInstance()->IsEqual(id_))
+	{
+		userinfo_page_add_friend_->SetEnabled(false);
+	}
+	else
+		userinfo_page_add_friend_->SetEnabled(true);
+
+	tablayout_->SelectItem(g_ADDFRIEND_USERINFO_PAGE);
+
+	headimage_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(uinfo.GetAccId()));
+	nick_name_->SetText(UserService::GetInstance()->GetUserName(id_, false));
+	((Label*)FindControl(L"id"))->SetUTF8Text(id_);
+
+	nim::NIMFriendFlag user_type = UserService::GetInstance()->GetUserType(id_);
+	if (MuteBlackService::GetInstance()->IsInBlackList(id_))
+		addfriend_or_chat_->SelectItem(2);
+	else if (user_type == nim::kNIMFriendFlagNotFriend)
+		addfriend_or_chat_->SelectItem(0);
+	else if (user_type == nim::kNIMFriendFlagNormal)
+		addfriend_or_chat_->SelectItem(1);
+}
+
+void AddFriendWindow::InitEdit()
+{
+	search_key_->SetText(L"");
+	apply_words_->SetText(L"");
+}
+
+bool AddFriendWindow::PreOrNextClick(ui::EventArgs* param, const std::wstring& page_name, INIT_TYPE init_edit)
+{
+	if (page_name.empty())
+	{
+		Close();
+	}
+	else
+	{
+		if (init_edit == SearchAndSendApplyEdit)
+		{
+			InitEdit();
+		}
+		else if (init_edit == SendApplyEdit)
+		{
+			apply_words_->SetText(L"");
+		}
+		tablayout_->SelectItem(page_name);
+
+		if (page_name == g_ADDFRIEND_SEARCH_PAGE) {
+			search_key_->SetFocus();
+		}
+		else if (page_name == g_ADDFRIEND_SENDFRIENDAPPLY_PAGE) {
+			apply_words_->SetFocus();
+		}
+	}
 
 	return true;
 }
@@ -203,7 +270,7 @@ bool AddFriendWindow::AddFriendClick(ui::EventArgs* param)
 
 bool AddFriendWindow::ChatClick(ui::EventArgs* param)
 {
-	SessionManager::GetInstance()->OpenSessionForm(id_, nim::NIMSessionType::kNIMSessionTypeP2P);
+	SessionManager::GetInstance()->OpenSessionBox(id_, nim::NIMSessionType::kNIMSessionTypeP2P);
 	Close();
 	return true;
 }
@@ -229,12 +296,6 @@ bool AddFriendWindow::SendFriendApplyClick(ui::EventArgs* param)
 {
 	SetFocus(nullptr);
 	return true;
-}
-
-void AddFriendWindow::InitEdit()
-{
-	search_key_->SetText(L"");
-	apply_words_->SetText(L"");
 }
 
 bool AddFriendWindow::OnSearchKeyEditSetFocus(void* param)
@@ -268,79 +329,6 @@ void nim_comp::AddFriendWindow::OnUserPhotoReady(PhotoType type, const std::stri
 	{
 		headimage_->SetBkImage(photo_path);
 	}
-}
-
-bool AddFriendWindow::PreOrNextClick(ui::EventArgs* param, const std::wstring& page_name, INIT_TYPE init_edit)
-{
-	if (page_name.empty())
-	{
-		Close();
-	}
-	else
-	{
-		if (init_edit == SearchAndSendApplyEdit)
-		{
-			InitEdit();
-		}
-		else if (init_edit == SendApplyEdit)
-		{
-			apply_words_->SetText(L"");
-		}
-		tablayout_->SelectItem(page_name);
-
-		if (page_name == g_ADDFRIEND_SEARCH_PAGE) {
-			search_key_->SetFocus();
-		}
-		else if (page_name == g_ADDFRIEND_SENDFRIENDAPPLY_PAGE) {
-			apply_words_->SetFocus();
-		}
-	}
-
-	return true;
-}
-
-void AddFriendWindow::StartSearch(const std::wstring& search_key)
-{
-	search_key_->SetText(search_key);
-	Search(nullptr);
-}
-
-void AddFriendWindow::InitUserProfile(const nim::UserNameCard& uinfo)
-{
-	id_ = uinfo.GetAccId();
-
-	if (LoginManager::GetInstance()->IsEqual(id_))
-	{
-		userinfo_page_add_friend_->SetEnabled(false);
-	}
-	else
-		userinfo_page_add_friend_->SetEnabled(true);
-
-	tablayout_->SelectItem(g_ADDFRIEND_USERINFO_PAGE);
-	
-	headimage_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(uinfo.GetAccId()));
-	nick_name_->SetText(UserService::GetInstance()->GetUserName(id_, false));
-	((Label*)FindControl(L"id"))->SetUTF8Text(id_);
-
-	nim::NIMFriendFlag user_type = UserService::GetInstance()->GetUserType(id_);
-	if (MuteBlackService::GetInstance()->IsInBlackList(id_))
-		addfriend_or_chat_->SelectItem(2);
-	else if (user_type == nim::kNIMFriendFlagNotFriend)
-		addfriend_or_chat_->SelectItem(0);
-	else if (user_type == nim::kNIMFriendFlagNormal)
-		addfriend_or_chat_->SelectItem(1);
-}
-
-bool AddFriendWindow::Cancel(ui::EventArgs* param)
-{
-	Close();
-
-	return true;
-}
-
-bool AddFriendWindow::SearchTipWrong(ui::EventArgs* param)
-{
-	return true;
 }
 
 }

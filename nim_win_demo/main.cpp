@@ -16,7 +16,7 @@ void MainThread::Init()
 	std::wstring theme_dir = QPath::GetAppPath();
 	ui::GlobalManager::Startup(theme_dir + L"themes\\default", ui::CreateControlCallback());
 
-	nim_ui::UserConfig::GetInstance()->SetIcon(IDI_ICON);
+	nim_ui::UserConfig::GetInstance()->SetDefaultIcon(IDI_ICON);
 
 	std::wstring app_crash = QCommand::Get(kCmdAppCrash);
 	if( app_crash.empty() )

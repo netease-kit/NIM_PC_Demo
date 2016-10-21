@@ -26,16 +26,6 @@ std::wstring WindowSelectForm::GetSkinFile()
 	return L"wnd_select.xml";
 }
 
-ui::UILIB_RESOURCETYPE WindowSelectForm::GetResourceType() const
-{
-	return ui::UILIB_RESOURCETYPE::UILIB_FILE;
-}
-
-std::wstring WindowSelectForm::GetZIPFileName() const
-{
-	return L"";
-}
-
 std::wstring WindowSelectForm::GetWindowClassName() const
 {
 	return kClassName;

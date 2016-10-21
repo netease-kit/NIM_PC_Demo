@@ -53,8 +53,19 @@ private:
 	static std::map<std::string, void*> function_map;
 };
 
+static void nim_print_unfound_func_name(char* name)
+{
+	printf("function [ %s ] not found \n",name);
+}
+
+static void unfound_function_holder()
+{
+
+}
+
 #define NIM_SDK_GET_FUNC(function_ptr)	\
-	((function_ptr)SDKFunction::GetFunction(#function_ptr))
+	((function_ptr)SDKFunction::GetFunction(#function_ptr) != NULL ? ((function_ptr)SDKFunction::GetFunction(#function_ptr)) : (nim_print_unfound_func_name(#function_ptr),(function_ptr)unfound_function_holder))
+
 
 }
 

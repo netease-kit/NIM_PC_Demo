@@ -30,16 +30,6 @@ RtsForm::~RtsForm()
 {
 }
 
-ui::UILIB_RESOURCETYPE RtsForm::GetResourceType() const
-{
-	return ui::UILIB_FILE; 
-}
-
-std::wstring RtsForm::GetZIPFileName() const
-{
-	return (L"rts.zip");
-}
-
 std::wstring RtsForm::GetSkinFolder()
 {
 	return L"rts";
@@ -563,7 +553,7 @@ void RtsForm::SendCreateMsg()
 	msg.attach_ = writer.write(json);
 
 	nim::Talk::SendMsg(msg.ToJsonString(true));
-	SessionForm* session = SessionManager::GetInstance()->Find(uid_);
+	SessionBox* session = SessionManager::GetInstance()->FindSessionBox(uid_);
 	if (session)
 	{
 		session->AddNewMsg(msg, false);
@@ -590,7 +580,7 @@ void RtsForm::ShowEndMsg()
 	msg.attach_ = writer.write(json);
 
 	nim::MsgLog::WriteMsglogToLocalAsync(uid_, msg, false, nim::MsgLog::WriteMsglogCallback());
-	SessionForm* session = SessionManager::GetInstance()->Find(uid_);
+	SessionBox* session = SessionManager::GetInstance()->FindSessionBox(uid_);
 	if (session)
 	{
 		session->AddNewMsg(msg, false);

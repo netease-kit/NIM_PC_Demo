@@ -1,5 +1,5 @@
-/** @file nim_cpp_tool.cpp
-  * @brief NIM SDKÌá¹©µÄÒ»Ğ©¹¤¾ß½Ó¿Ú£¬Ö÷Òª°üÀ¨»ñÈ¡SDKÀïapp account¶ÔÓ¦µÄapp dataÄ¿Â¼£¬¼ÆËãmd5µÈ
+ï»¿/** @file nim_cpp_tool.cpp
+  * @brief NIM SDKæä¾›çš„ä¸€äº›å·¥å…·æ¥å£ï¼Œä¸»è¦åŒ…æ‹¬è·å–SDKé‡Œapp accountå¯¹åº”çš„app dataç›®å½•ï¼Œè®¡ç®—md5ç­‰
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author towik, Oleg
   * @date 2015/09/21
@@ -13,9 +13,9 @@
 namespace nim
 {
 
-typedef	const wchar_t * (*nim_tool_get_user_appdata_dir)(const char * app_account);
-typedef	const wchar_t * (*nim_tool_get_local_appdata_dir)();
-typedef	const wchar_t * (*nim_tool_get_cur_module_dir)();
+typedef	const char * (*nim_tool_get_user_appdata_dir)(const char * app_account);
+typedef	const char * (*nim_tool_get_local_appdata_dir)();
+typedef	const char * (*nim_tool_get_cur_module_dir)();
 typedef	const char * (*nim_tool_get_md5)(const char *input);
 typedef	const char * (*nim_tool_get_file_md5)(const char *file_path);
 typedef	const char * (*nim_tool_get_uuid)();
@@ -35,26 +35,26 @@ static void CallbackGetAudioText(int res_code, const char *text, const char *jso
 	}
 }
 
-std::wstring Tool::GetUserAppdataDir(const std::string& app_account)
+std::string Tool::GetUserAppdataDir(const std::string& app_account)
 {
-	const wchar_t *dir = NIM_SDK_GET_FUNC(nim_tool_get_user_appdata_dir)(app_account.c_str());
-	std::wstring dir_str = (std::wstring)dir;
+	const char *dir = NIM_SDK_GET_FUNC(nim_tool_get_user_appdata_dir)(app_account.c_str());
+	std::string dir_str = (std::string)dir;
 	Global::FreeBuf((void *)dir);
 	return dir_str; 
 }
 
-std::wstring Tool::GetLocalAppdataDir()
+std::string Tool::GetLocalAppdataDir()
 {
-	const wchar_t *dir = NIM_SDK_GET_FUNC(nim_tool_get_local_appdata_dir)();
-	std::wstring dir_str = (std::wstring)dir;
+	const char *dir = NIM_SDK_GET_FUNC(nim_tool_get_local_appdata_dir)();
+	std::string dir_str = (std::string)dir;
 	Global::FreeBuf((void *)dir);
 	return dir_str;
 }
 
-std::wstring Tool::GetCurModuleDir()
+std::string Tool::GetCurModuleDir()
 {
-	const wchar_t *dir = NIM_SDK_GET_FUNC(nim_tool_get_cur_module_dir)();
-	std::wstring dir_str = (std::wstring)dir;
+	const char *dir = NIM_SDK_GET_FUNC(nim_tool_get_cur_module_dir)();
+	std::string dir_str = (std::string)dir;
 	Global::FreeBuf((void *)dir);
 	return dir_str;
 }

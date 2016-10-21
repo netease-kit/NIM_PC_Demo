@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "gui/session/control/session_util.h"
+#include "module/session/session_util.h"
 
 enum BubbleEventType
 {
@@ -24,13 +24,14 @@ static const std::wstring kBubbleBox = L"BubbleBox";
   */
 class MsgBubbleItem : public ui::ListContainerElement
 {
-	friend class SessionForm;
+	friend class SessionBox;
 public:
 	MsgBubbleItem();
 	virtual ~MsgBubbleItem();
 
 	/**
 	* 初始化控件内部指针
+	* @param[in] bubble_right 是否显示到右侧
 	* @return void 无返回值
 	*/
 	virtual void InitControl(bool bubble_right);
@@ -69,10 +70,23 @@ public:
 	*/
 	nim::IMMessage GetMsg();
 
+	/**
+	* 获取消息发送者id
+	* @return string 用户id
+	*/
 	std::string GetSenderId();
 
+	/**
+	* 获取消息类型
+	* @return nim::NIMMessageType 消息类型
+	*/
 	nim::NIMMessageType GetMsgType();
 
+	/**
+	* 更新消息时间戳
+	* @param[in] timetag 时间戳
+	* @return void	无返回值
+	*/
 	void UpdateMsgTime(__int64 timetag) { msg_.timetag_ = timetag; }
 
 	/**
@@ -141,7 +155,9 @@ public:
 protected:
 	/** 
 	* 弹出右键菜单
-	* @param[in] copy 弹出的菜单是否包含复制选项	
+	* @param[in] copy 是否包含复制选项
+	* @param[in] recall 是否包含撤销选项
+	* @param[in] retweet 是否包含转发选项
 	* @return void 无返回值
 	*/
 	void PopupMenu(bool copy, bool recall, bool retweet = true);

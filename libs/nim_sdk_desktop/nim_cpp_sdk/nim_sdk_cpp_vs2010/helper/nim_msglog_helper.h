@@ -24,11 +24,12 @@ namespace nim
 /** @brief 查询到消息历史结果 */
 struct QueryMsglogResult
 {
-	int count_;						/**< 消息数 */
-	std::list<IMMessage> msglogs_;	/**< 消息 */
+	int count_;						/**< 消息历史数 */
+	NIMMsglogQuerySource source_;	/**< 消息历史查询来源 */
+	std::list<IMMessage> msglogs_;	/**< 消息历史 */
 
 	/** 构造函数 */
-	QueryMsglogResult() : count_(0) {}
+	QueryMsglogResult() : count_(0), source_(kNIMMsglogQuerySourceLocal) {}
 };
 
 /** @brief 发送消息已读回执 */
@@ -36,7 +37,7 @@ struct MessageStatusChanged
 {
 	NIMMsgLogStatus status_;	/**< 变更后的状态 */
 	std::string		talk_id_;	/**< 会话ID */
-	__int64			msg_timetag_;	/**< 临界的消息的时间戳 */
+	int64_t			msg_timetag_;	/**< 临界的消息的时间戳 */
 
 	MessageStatusChanged() : msg_timetag_(0) {}
 };

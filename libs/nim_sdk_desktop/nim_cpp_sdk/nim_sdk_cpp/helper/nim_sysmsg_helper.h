@@ -25,24 +25,78 @@ namespace nim
 #include "nim_msglog_def.h"
 #include "nim_res_code_def.h"
 
+/** @brief 系统消息和自定义通知属性设置 */
+struct SysMessageSetting
+{
+	BoolStatus need_push_; 				/**< 是否需要推送 */
+	BoolStatus push_need_badge_;		/**< 是否要做消息计数 */
+	BoolStatus push_need_prefix_;		/**< 需要推送昵称 */
+	BoolStatus need_offline_;			/**< 是否支持离线消息 */
+	Json::Value push_payload_;			/**< 第三方自定义的推送属性，长度2048 */
+	std::string push_content_;			/**< 自定义推送文案，长度限制200字节 */
+
+	/** 构造函数 */
+	SysMessageSetting() : need_push_(BS_NOT_INIT)
+		, push_need_badge_(BS_NOT_INIT)
+		, push_need_prefix_(BS_NOT_INIT)
+		, need_offline_(BS_NOT_INIT){}
+
+	/** @fn void ToJsonValue(Json::Value& message) const
+	  * @brief 组装Json Value字符串
+	  * @param[out] message 消息Json
+	  * @return void
+      */
+	void ToJsonValue(Json::Value& message) const
+	{
+		if (push_need_badge_ != BS_NOT_INIT)
+			message[kNIMSysMsgKeyPushNeedBadge] = push_need_badge_;
+		if (need_push_ != BS_NOT_INIT)
+			message[kNIMSysMsgKeyPushEnable] = need_push_;
+		if (push_need_prefix_ != BS_NOT_INIT)
+			message[kNIMSysMsgKeyPushNeedPrefix] = push_need_prefix_;
+		if (need_offline_ != BS_NOT_INIT)
+			message[kNIMSysMsgKeyCustomSaveFlag] = need_offline_;
+		if (!push_payload_.empty())
+			message[kNIMSysMsgKeyPushPayload] = GetJsonStringWithNoStyled(push_payload_);
+		if (!push_content_.empty())
+			message[kNIMSysMsgKeyCustomApnsText] = push_content_;
+	}
+
+	/** @fn void ParseMessageSetting(const Json::Value& message)
+	  * @brief 从Json Value解析出消息属性设置
+	  * @param[in] message 消息Json
+	  * @return void
+      */
+	void ParseMessageSetting(const Json::Value& message)
+	{
+		if (message.isMember(kNIMSysMsgKeyPushNeedBadge))
+			push_need_badge_ = (BoolStatus)message[kNIMSysMsgKeyPushNeedBadge].asInt() == 1 ? BS_TRUE : BS_FALSE;
+		if (message.isMember(kNIMSysMsgKeyPushEnable))
+			need_push_ = (BoolStatus)message[kNIMSysMsgKeyPushEnable].asInt() == 1 ? BS_TRUE : BS_FALSE;
+		if (message.isMember(kNIMSysMsgKeyPushNeedPrefix))
+			push_need_prefix_ = (BoolStatus)message[kNIMSysMsgKeyPushNeedPrefix].asInt() == 1 ? BS_TRUE : BS_FALSE;
+		if (message.isMember(kNIMSysMsgKeyCustomSaveFlag))
+			need_offline_ = (BoolStatus)message[kNIMSysMsgKeyCustomSaveFlag].asInt() == 1 ? BS_TRUE : BS_FALSE;
+		Json::Reader reader;
+		if (!reader.parse(message[kNIMSysMsgKeyPushPayload].asString(), push_payload_) || !push_payload_.isObject())
+			//assert(0);
+		push_content_ = message[kNIMSysMsgKeyCustomApnsText].asString();
+	}
+};
+
+
 /** @brief 系统消息和自定义通知数据 */
 struct SysMessage
 {
-	__int64		timetag_;			/**< 通知时间戳（毫秒） */
+	int64_t		timetag_;			/**< 通知时间戳（毫秒） */
 	NIMSysMsgType	type_;			/**< 通知类型 */
 	std::string	receiver_accid_;	/**< 接收者ID */
 	std::string sender_accid_;		/**< 发送者ID */
 	std::string content_;			/**< 通知内容 */
 	std::string	attach_;			/**< 通知附件 */
-	__int64		id_;				/**< 通知ID */
-	BoolStatus	support_offline_;	/**< 是否支持离线消息*/
-	std::string	apns_text_;			/**< 推送通知内容 */
+	int64_t		id_;				/**< 通知ID */
 	NIMSysMsgStatus	status_;		/**< 通知状态 */
-
-	Json::Value push_payload_;		/**< 第三方自定义的推送属性，长度2048 */
-	BoolStatus	push_enable_;		/**< 是否需要推送*/
-	BoolStatus	push_need_badge_;	/**< 推送是否需要做消息计数*/
-	BoolStatus	push_need_prefix_;	/**< 推送是否需要昵称*/
+	SysMessageSetting msg_setting_;	/**< 消息属性设置 */
 
 	NIMResCode	rescode_;			/**< 通知错误码 */
 	NIMMessageFeature	feature_;	/**< 通知属性 */
@@ -52,14 +106,10 @@ struct SysMessage
 	/** 构造函数 */
 	SysMessage() : timetag_(0)
 		, id_(0)
-		, support_offline_(BS_NOT_INIT)
 		, total_unread_count_(0)
 		, type_(kNIMSysMsgTypeUnknown)
 		, status_(kNIMSysMsgStatusNone)
-		, feature_(kNIMMessageFeatureDefault) 
-		, push_enable_(BS_NOT_INIT)
-		, push_need_badge_(BS_NOT_INIT)
-		, push_need_prefix_(BS_NOT_INIT) {}
+		, feature_(kNIMMessageFeatureDefault){}
 
 	/** @fn std::string ToJsonString() const
 	  * @brief 组装Json Value字符串
@@ -74,20 +124,10 @@ struct SysMessage
 		values[kNIMSysMsgKeyAttach] = attach_;
 		values[kNIMSysMsgKeyMsg] = content_;
 		values[kNIMSysMsgKeyLocalClientMsgId] = client_msg_id_;
-		if (support_offline_ != BS_NOT_INIT)
-			values[kNIMSysMsgKeyCustomSaveFlag] = support_offline_ == BS_TRUE ? 1 : 0;
-		values[kNIMSysMsgKeyCustomApnsText] = apns_text_;
 		values[kNIMSysMsgKeyTime] = timetag_;
 		values[kNIMSysMsgKeyMsgId] = id_;
 		values[kNIMSysMsgKeyLocalStatus] = status_;
-		if (push_enable_ != BS_NOT_INIT)
-			values[kNIMSysMsgKeyPushEnable] = push_enable_ == BS_TRUE ? 1 : 0;
-		if (push_need_prefix_ != BS_NOT_INIT)
-			values[kNIMSysMsgKeyPushNeedPrefix] = push_need_prefix_ == BS_TRUE ? 1 : 0;
-		if (push_need_badge_ != BS_NOT_INIT)
-			values[kNIMSysMsgKeyPushNeedBadge] = push_need_badge_ == BS_TRUE ? 1 : 0;
-		if (!push_payload_.empty())
-			values[kNIMSysMsgKeyPushPayload] = GetJsonStringWithNoStyled(push_payload_);
+		msg_setting_.ToJsonValue(values);
 		return GetJsonStringWithNoStyled(values);
 	}
 };

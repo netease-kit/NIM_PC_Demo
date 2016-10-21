@@ -42,7 +42,7 @@ std::string PCharToString(const char* str)
 		res_str = str;
 	}
 	else {
-		assert(false);
+		//assert(false);
 	}
 	return res_str;
 }

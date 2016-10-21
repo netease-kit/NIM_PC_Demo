@@ -118,16 +118,6 @@ std::wstring ScreenCaptureTool::GetSkinFile()
 	return L"screen_tool.xml";
 }
 
-ui::UILIB_RESOURCETYPE ScreenCaptureTool::GetResourceType() const
-{
-	return ui::UILIB_RESOURCETYPE::UILIB_FILE;
-}
-
-std::wstring ScreenCaptureTool::GetZIPFileName() const
-{
-	return L"screen_tool.zip";
-}
-
 std::wstring ScreenCaptureTool::GetWindowClassName() const
 {
 	return kClassName;

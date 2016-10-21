@@ -2,25 +2,34 @@
 
 namespace nim_ui
 {
-
-SessionManager::SessionManager()
+void SessionManager::SetEnableMerge(bool enable)
 {
-
+	nim_comp::SessionManager::GetInstance()->SetEnableMerge(enable);
 }
 
-SessionManager::~SessionManager()
+bool SessionManager::IsEnableMerge() const
 {
-
+	return nim_comp::SessionManager::GetInstance()->IsEnableMerge();
 }
 
-nim_comp::SessionForm* SessionManager::OpenSessionForm(std::string id, nim::NIMSessionType type, bool reopen /*= false*/)
+void SessionManager::SetUseCustomDragImage(bool use)
 {
-	return nim_comp::SessionManager::GetInstance()->OpenSessionForm(id, type, reopen);
+	nim_comp::SessionManager::GetInstance()->SetUseCustomDragImage(use);
 }
 
-bool SessionManager::IsSessionWndActive(const std::string& id)
+bool SessionManager::IsUseCustomDragImage() const
 {
-	return nim_comp::SessionManager::GetInstance()->IsSessionWndActive(id);
+	return nim_comp::SessionManager::GetInstance()->IsUseCustomDragImage();
+}
+
+nim_comp::SessionBox* SessionManager::OpenSessionBox(std::string id, nim::NIMSessionType type, bool reopen /*= false*/)
+{
+	return nim_comp::SessionManager::GetInstance()->OpenSessionBox(id, type, reopen);
+}
+
+bool SessionManager::IsSessionBoxActive(const std::string& id)
+{
+	return nim_comp::SessionManager::GetInstance()->IsSessionBoxActive(id);
 }
 
 void SessionManager::AddNewMsg(const nim::IMMessage &msg)
@@ -33,29 +42,14 @@ void SessionManager::ResetUnread(const std::string &id)
 	nim_comp::SessionManager::GetInstance()->ResetUnread(id);
 }
 
-nim_comp::SessionForm* SessionManager::Find(const std::string &id)
+nim_comp::SessionBox* SessionManager::FindSessionBox(const std::string &id)
 {
-	return nim_comp::SessionManager::GetInstance()->Find(id);
+	return nim_comp::SessionManager::GetInstance()->FindSessionBox(id);
 }
 
-void SessionManager::RemoveForm(std::string id)
+void SessionManager::RemoveSessionBox(std::string id)
 {
-	nim_comp::SessionManager::GetInstance()->RemoveForm(id);
-}
-
-void SessionManager::AddFileUpProgressCb(std::string msg_id, nim::Talk::FileUpPrgCallback* cb)
-{
-	nim_comp::SessionManager::GetInstance()->AddFileUpProgressCb(msg_id, cb);
-}
-
-void SessionManager::RemoveFileUpProgressCb(std::string msg_id)
-{
-	nim_comp::SessionManager::GetInstance()->RemoveFileUpProgressCb(msg_id);
-}
-
-void SessionManager::QueryMyTList(const std::string& tid)
-{
-	nim_comp::SessionManager::GetInstance()->QueryMyTList(tid);
+	nim_comp::SessionManager::GetInstance()->RemoveSessionBox(id);
 }
 
 }

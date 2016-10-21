@@ -16,6 +16,7 @@ public:
 
 	/**
 	* 初始化控件内部指针
+	* @param[in] bubble_right 是否显示到右侧
 	* @return void 无返回值
 	*/
 	virtual void InitControl(bool bubble_right);
@@ -65,7 +66,7 @@ private:
 
 	/**
 	* 响应此消息项的单击消息，播放语音
-	*@param[in] param 被单击的按钮的相关信息
+	* @param[in] param 被单击的按钮的相关信息
 	* @return bool 返回值true: 继续传递控件消息， false: 停止传递控件消息
 	*/
 	bool OnClicked(ui::EventArgs* arg);

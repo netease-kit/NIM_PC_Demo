@@ -130,6 +130,21 @@
     <Filter Include="gui\contact_select_form">
       <UniqueIdentifier>{2dd91baf-10a1-49a1-affb-4bf188d7523d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="module\audio">
+      <UniqueIdentifier>{71911015-6541-49ad-8277-a3abbfb96cc5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\dragdrop">
+      <UniqueIdentifier>{f719a14f-c42f-4059-9364-5a7fbc8d32d1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\session\dragdrop">
+      <UniqueIdentifier>{8ea8ad91-1548-4cbe-b651-73f14065dd51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\session\forms">
+      <UniqueIdentifier>{84a5ff34-f6ea-488f-9d56-6efdc5ce1034}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\main\forms">
+      <UniqueIdentifier>{e3b1bc0f-263e-40ee-bc88-539b2a9e14a7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -141,9 +156,6 @@
     <ClInclude Include="module\emoji\emoji_info.h">
       <Filter>module\emoji</Filter>
     </ClInclude>
-    <ClInclude Include="gui\session\control\session_util.h">
-      <Filter>gui\session\control</Filter>
-    </ClInclude>
     <ClInclude Include="gui\session\control\team_item.h">
       <Filter>gui\session\control</Filter>
     </ClInclude>
@@ -152,15 +164,6 @@
     </ClInclude>
     <ClInclude Include="callback\team\team_callback.h">
       <Filter>callback\team</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\custom_msg_form.h">
-      <Filter>gui\session</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\msg_record.h">
-      <Filter>gui\session</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\session\session_form.h">
-      <Filter>gui\session</Filter>
     </ClInclude>
     <ClInclude Include="gui\team_info\member_manager.h">
       <Filter>gui\team_info</Filter>
@@ -204,9 +207,6 @@
     <ClInclude Include="module\msglog\msg_extend_db.h">
       <Filter>module\msglog</Filter>
     </ClInclude>
-    <ClInclude Include="module\msglog\msglog.h">
-      <Filter>module\msglog</Filter>
-    </ClInclude>
     <ClInclude Include="module\rts\rts_manager.h">
       <Filter>module\rts</Filter>
     </ClInclude>
@@ -227,12 +227,6 @@
     </ClInclude>
     <ClInclude Include="gui\main\control\session_item.h">
       <Filter>gui\main\control</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\main\multispot_form.h">
-      <Filter>gui\main</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\main\team_event_form.h">
-      <Filter>gui\main</Filter>
     </ClInclude>
     <ClInclude Include="gui\profile_form\profile_form.h">
       <Filter>gui\profile_form</Filter>
@@ -327,12 +321,6 @@
     <ClInclude Include="gui\main\group_list.h">
       <Filter>gui\main</Filter>
     </ClInclude>
-    <ClInclude Include="gui\main\friend_list.h">
-      <Filter>gui\main</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\main\friend_list_item_manager.h">
-      <Filter>gui\main</Filter>
-    </ClInclude>
     <ClInclude Include="gui\main\control\friend_item.h">
       <Filter>gui\main\control</Filter>
     </ClInclude>
@@ -385,9 +373,6 @@
       <Filter>gui\video</Filter>
     </ClInclude>
     <ClInclude Include="module\service\photo_service.h">
-      <Filter>module\service</Filter>
-    </ClInclude>
-    <ClInclude Include="export\nim_ui_photo_manager.h">
       <Filter>module\service</Filter>
     </ClInclude>
     <ClInclude Include="callback\login\data_sync_callback.h">
@@ -456,6 +441,51 @@
     <ClInclude Include="gui\contact_select_form\contact_select_form.h">
       <Filter>gui\contact_select_form</Filter>
     </ClInclude>
+    <ClInclude Include="module\audio\audio_manager.h">
+      <Filter>module\audio</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_photo_manager.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\audio_capture.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="module\dragdrop\drag_drop.h">
+      <Filter>module\dragdrop</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\dragdrop\bitmap_control.h">
+      <Filter>gui\session\dragdrop</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\dragdrop\drag_form.h">
+      <Filter>gui\session\dragdrop</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\merge_item.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\custom_msg_form.h">
+      <Filter>gui\session\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\msg_record.h">
+      <Filter>gui\session\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\session_box.h">
+      <Filter>gui\session</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\session_form.h">
+      <Filter>gui\session</Filter>
+    </ClInclude>
+    <ClInclude Include="module\session\session_util.h">
+      <Filter>module\session</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\friend_list.h">
+      <Filter>gui\main</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\multispot_form.h">
+      <Filter>gui\main\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\team_event_form.h">
+      <Filter>gui\main\forms</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -463,9 +493,6 @@
     </ClCompile>
     <ClCompile Include="module\emoji\emoji_info.cpp">
       <Filter>module\emoji</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\session_util.cpp">
-      <Filter>gui\session\control</Filter>
     </ClCompile>
     <ClCompile Include="gui\session\control\team_item.cpp">
       <Filter>gui\session\control</Filter>
@@ -475,27 +502,6 @@
     </ClCompile>
     <ClCompile Include="callback\team\team_callback.cpp">
       <Filter>callback\team</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\custom_msg_form.cpp">
-      <Filter>gui\session</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\msg_record.cpp">
-      <Filter>gui\session</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\msg_record_ui.cpp">
-      <Filter>gui\session</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\session_form.cpp">
-      <Filter>gui\session</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\session_form_audio.cpp">
-      <Filter>gui\session</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\session_form_team.cpp">
-      <Filter>gui\session</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\session_form_ui.cpp">
-      <Filter>gui\session</Filter>
     </ClCompile>
     <ClCompile Include="gui\team_info\member_manager.cpp">
       <Filter>gui\team_info</Filter>
@@ -539,9 +545,6 @@
     <ClCompile Include="module\msglog\msg_extend_db.cpp">
       <Filter>module\msglog</Filter>
     </ClCompile>
-    <ClCompile Include="module\msglog\msglog.cpp">
-      <Filter>module\msglog</Filter>
-    </ClCompile>
     <ClCompile Include="module\rts\rts_manager.cpp">
       <Filter>module\rts</Filter>
     </ClCompile>
@@ -565,12 +568,6 @@
     </ClCompile>
     <ClCompile Include="gui\main\control\session_item.cpp">
       <Filter>gui\main\control</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\main\multispot_form.cpp">
-      <Filter>gui\main</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\main\team_event_form.cpp">
-      <Filter>gui\main</Filter>
     </ClCompile>
     <ClCompile Include="gui\profile_form\profile_form.cpp">
       <Filter>gui\profile_form</Filter>
@@ -614,9 +611,6 @@
     <ClCompile Include="gui\main\control\custom_msg.cpp">
       <Filter>gui\main\control</Filter>
     </ClCompile>
-    <ClCompile Include="gui\main\event_form_custom.cpp">
-      <Filter>gui\main</Filter>
-    </ClCompile>
     <ClCompile Include="export\nim_ui_login_manager.cpp">
       <Filter>export</Filter>
     </ClCompile>
@@ -655,12 +649,6 @@
     </ClCompile>
     <ClCompile Include="gui\profile_form\head_modify_form.cpp">
       <Filter>gui\profile_form</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\main\friend_list.cpp">
-      <Filter>gui\main</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\main\friend_list_item_manager.cpp">
-      <Filter>gui\main</Filter>
     </ClCompile>
     <ClCompile Include="gui\main\group_list.cpp">
       <Filter>gui\main</Filter>
@@ -717,9 +705,6 @@
       <Filter>gui\video</Filter>
     </ClCompile>
     <ClCompile Include="module\service\photo_service.cpp">
-      <Filter>module\service</Filter>
-    </ClCompile>
-    <ClCompile Include="export\nim_ui_photo_manager.cpp">
       <Filter>module\service</Filter>
     </ClCompile>
     <ClCompile Include="callback\login\data_sync_callback.cpp">
@@ -790,6 +775,78 @@
     </ClCompile>
     <ClCompile Include="gui\contact_select_form\contact_select_form_ui.cpp">
       <Filter>gui\contact_select_form</Filter>
+    </ClCompile>
+    <ClCompile Include="module\audio\audio_manager.cpp">
+      <Filter>module\audio</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_photo_manager.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\audio_capture.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="module\dragdrop\drag_drop.cpp">
+      <Filter>module\dragdrop</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\dragdrop\bitmap_control.cpp">
+      <Filter>gui\session\dragdrop</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\dragdrop\drag_form.cpp">
+      <Filter>gui\session\dragdrop</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\merge_item.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\custom_msg_form.cpp">
+      <Filter>gui\session\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\msg_record.cpp">
+      <Filter>gui\session\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\msg_record_ui.cpp">
+      <Filter>gui\session\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\session_box.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\session_box_audio.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\session_box_team.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\session_box_ui.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\session_form.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="module\session\session_manager_dragdrop.cpp">
+      <Filter>module\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\session_form_dragdrop.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\session_box_dragdrop.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\session_box_at.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="module\session\session_util.cpp">
+      <Filter>module\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\friend_list.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\multispot_form.cpp">
+      <Filter>gui\main\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\team_event_form.cpp">
+      <Filter>gui\main\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\team_event_form_custom.cpp">
+      <Filter>gui\main\forms</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

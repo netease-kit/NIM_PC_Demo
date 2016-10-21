@@ -1,6 +1,6 @@
 ﻿#include "bubble_snapchat.h"
 #include "image_view/src/image_view_manager.h"
-#include "gui/session/session_form.h"
+#include "module/session/session_manager.h"
 
 namespace nim_comp
 {
@@ -46,9 +46,9 @@ bool MsgBubbleSnapChat::OnClicked(ui::EventArgs* arg)
 		if (nbase::FilePathIsExist(src_image_path_, false)) {
 			ImageViewManager::GetInstance()->StartViewPic(src_image_path_, L"", true, true);
 			nim::MsgLog::DeleteAsync(sid_, type_, msg_.client_msg_id_, nim::MsgLog::DeleteCallback());
-			SessionForm* session_form = dynamic_cast<SessionForm*>(this->GetWindow());
-			if (session_form)
-				session_form->OnSnapchatRead(msg_.client_msg_id_);
+			SessionBox* session = dynamic_cast<SessionBox*>(SessionManager::GetInstance()->FindSessionBox(sid_));
+			if (session)
+				session->OnSnapchatReadCallback(msg_.client_msg_id_);
 		}
 		else {
 			nim::NOS::DownloadResource(url, ToWeakCallback([this](int res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
@@ -59,9 +59,9 @@ bool MsgBubbleSnapChat::OnClicked(ui::EventArgs* arg)
 					{
 						ImageViewManager::GetInstance()->StartViewPic(ws_file_path, L"", true, true);
 						nim::MsgLog::DeleteAsync(sid_, type_, msg_.client_msg_id_, nim::MsgLog::DeleteCallback());
-						SessionForm* session_form = dynamic_cast<SessionForm*>(this->GetWindow());
+						SessionBox* session_form = dynamic_cast<SessionBox*>(SessionManager::GetInstance()->FindSessionBox(sid_));
 						if (session_form)
-							session_form->OnSnapchatRead(msg_.client_msg_id_);
+							session_form->OnSnapchatReadCallback(msg_.client_msg_id_);
 					}
 				}
 			}));

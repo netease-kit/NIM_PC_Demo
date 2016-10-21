@@ -1,7 +1,7 @@
 ﻿/** @file nim_cpp_data_sync.cpp
   * @brief NIM SDK提供的数据同步相关接口
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @author towik, Oleg, Harrison
   * @date 2015/09/23
   */
 
@@ -11,9 +11,11 @@
 
 namespace nim
 {
-
+#ifdef NIM_SDK_DLL_IMPORT
 typedef void(*nim_data_sync_reg_complete_cb)(nim_data_sync_cb_func cb, const void *user_data);
-
+#else
+#include "nim_data_sync.h"
+#endif
 
 static void CallbackSyncComplete(nim::NIMDataSyncType sync_type, nim::NIMDataSyncStatus status, const char *json_attachment, const void *user_data)
 {

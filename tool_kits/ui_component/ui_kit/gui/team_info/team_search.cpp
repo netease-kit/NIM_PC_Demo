@@ -1,6 +1,6 @@
 ﻿#include "team_search.h"
 #include "module/emoji/richedit_util.h"
-#include "gui/session/control/session_util.h"
+#include "module/session/session_util.h"
 #include "callback/team/team_callback.h"
 #include "export/nim_ui_photo_manager.h"
 
@@ -28,16 +28,6 @@ std::wstring TeamSearchForm::GetSkinFolder()
 std::wstring TeamSearchForm::GetSkinFile()
 {
 	return L"team_search.xml";
-}
-
-ui::UILIB_RESOURCETYPE TeamSearchForm::GetResourceType() const
-{
-	return ui::UILIB_FILE;
-}
-
-std::wstring TeamSearchForm::GetZIPFileName() const
-{
-	return L"team_search.zip";
 }
 
 std::wstring TeamSearchForm::GetWindowClassName() const

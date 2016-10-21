@@ -1,5 +1,4 @@
 #pragma once
-
 #include "module/emoji/richedit_util.h"
 #include "module/emoji/richedit_olecallback.h"
 #include <time.h>
@@ -111,7 +110,7 @@ private:
 private:
 	// 提供发送图片消息的例子
 	void SendImage(const std::wstring &src);
-	void OnUploadImageCallback(nim::NIMResCode res_code, const std::string& url, nim::IMImage img);
+	void OnUploadImageCallback(int res_code, const std::string& url, nim::IMImage img);
 
 public:
 	static const LPTSTR kClassName;

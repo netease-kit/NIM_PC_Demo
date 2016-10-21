@@ -52,8 +52,17 @@ void FriendItem::Init(bool is_team, const std::string &accid)
 
 bool FriendItem::OnDbClicked(ui::EventArgs* arg)
 {
-	SessionManager::GetInstance()->OpenSessionForm(id_, is_team_ ? nim::kNIMSessionTypeTeam : nim::kNIMSessionTypeP2P);
+	SessionManager::GetInstance()->OpenSessionBox(id_, is_team_ ? nim::kNIMSessionTypeTeam : nim::kNIMSessionTypeP2P);
 	return true;
+}
+
+void FriendItem::OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path)
+{
+	if (type == kTeam && accid == id_)
+	{
+		auto head_ctrl = FindSubControl(L"head_image");
+		head_ctrl->SetBkImage(photo_path);
+	}
 }
 
 void FriendItem::OnTeamNameChange(const nim::TeamInfo& user_info)
@@ -67,14 +76,4 @@ void FriendItem::OnTeamNameChange(const nim::TeamInfo& user_info)
 		nick_name_simple_spell_ = nbase::MakeLowerString(PinYinHelper::GetInstance()->ConvertToSimpleSpell(nick_name_));
 	}
 }
-
-void FriendItem::OnUserPhotoReady(PhotoType type, const std::string& tid, const std::wstring &photo_path)
-{
-	if (type == kTeam && tid == id_)
-	{
-		auto head_ctrl = FindSubControl(L"head_image");
-		head_ctrl->SetBkImage(photo_path);
-	}
-}
-
 }

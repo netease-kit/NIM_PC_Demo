@@ -1,7 +1,7 @@
 ﻿/** @file nim_cpp_sysmsg.cpp
   * @brief 系统消息接口；主要包括查询系统消息、删除系统消息等功能
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @author towik, Oleg, Harrison
   * @date 2015/2/1
   */
 
@@ -11,18 +11,21 @@
 
 namespace nim
 {
-
+#ifdef NIM_SDK_DLL_IMPORT
 typedef void(*nim_sysmsg_reg_sysmsg_cb)(const char *json_extension, nim_sysmsg_receive_cb_func cb, const void* user_data);
-typedef void(*nim_sysmsg_query_msg_async)(int limit_count, __int64 last_time, const char *json_extension, nim_sysmsg_query_cb_func cb, const void* user_data);
+typedef void(*nim_sysmsg_query_msg_async)(int limit_count, int64_t last_time, const char *json_extension, nim_sysmsg_query_cb_func cb, const void* user_data);
 typedef void(*nim_sysmsg_query_unread_count)(const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
-typedef void(*nim_sysmsg_set_status_async)(__int64 msg_id, nim::NIMSysMsgStatus status, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void* user_data);
+typedef void(*nim_sysmsg_set_status_async)(int64_t msg_id, nim::NIMSysMsgStatus status, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void* user_data);
 typedef void(*nim_sysmsg_read_all_async)(const char *json_extension, nim_sysmsg_res_cb_func cb, const void* user_data);
-typedef void(*nim_sysmsg_delete_async)(__int64 msg_id, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void *user_data);
+typedef void(*nim_sysmsg_delete_async)(int64_t msg_id, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void *user_data);
 typedef void(*nim_sysmsg_delete_all_async)(const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
 typedef void(*nim_sysmsg_reg_custom_notification_ack_cb)(const char *json_extension, nim_custom_sysmsg_ack_cb_func cb, const void *user_data);
 typedef void(*nim_sysmsg_send_custom_notification)(const char *json_msg, const char *json_extension);
 typedef void(*nim_sysmsg_set_logs_status_by_type_async)(NIMSysMsgType type, NIMSysMsgStatus status, const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
 typedef void(*nim_sysmsg_delete_logs_by_type_async)(NIMSysMsgType type, const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
+#else
+#include "nim_sysmsg.h"
+#endif
 
 static void CallbackSysmsgChange(const char *result, const char *json_extension, const void *callback)
 {
@@ -74,7 +77,7 @@ static void CallbackQuerySysmsg(int count, const char *result, const char *json_
 	}
 }
 
-static void CallbackNotifySingleSysmsg(int res_code, __int64 msg_id, int unread_count, const char *json_extension, const void *callback)
+static void CallbackNotifySingleSysmsg(int res_code, int64_t msg_id, int unread_count, const char *json_extension, const void *callback)
 {
 	if (callback)
 	{
@@ -133,20 +136,21 @@ SystemMsg::ReceiveSysmsgCallback* g_cb_receive_sysmsg_ = nullptr;
 	 , const NIMSysMsgType type
 	 , const std::string& client_msg_id
 	 , const std::string& content
-	 , bool support_offline
-	 , const std::string& apns_text/* = ""*/)
+	 , const SysMessageSetting& msg_setting
+	 , int64_t timetag/* = 0*/)
  {
 	 Json::Value values;
 	 values[kNIMSysMsgKeyToAccount] = receiver_id;
 	 values[kNIMSysMsgKeyType] = type;
 	 values[kNIMSysMsgKeyAttach] = content;
 	 values[kNIMSysMsgKeyLocalClientMsgId] = client_msg_id;
-	 values[kNIMSysMsgKeyCustomSaveFlag] = support_offline ? 1 : 0;
-	 values[kNIMSysMsgKeyCustomApnsText] = apns_text;
+	 msg_setting.ToJsonValue(values);
+	 if (timetag > 0)
+		 values[kNIMSysMsgKeyTime] = timetag;
 	 return GetJsonStringWithNoStyled(values);
  }
 
- bool SystemMsg::QueryMsgAsync(int limit_count, __int64 last_time, const QueryMsgCallback& cb, const std::string& json_extension)
+ bool SystemMsg::QueryMsgAsync(int limit_count, int64_t last_time, const QueryMsgCallback& cb, const std::string& json_extension)
  {
 	 if (limit_count <= 0)
 		 return false;
@@ -170,7 +174,7 @@ SystemMsg::ReceiveSysmsgCallback* g_cb_receive_sysmsg_ = nullptr;
 	 return NIM_SDK_GET_FUNC(nim_sysmsg_query_unread_count)(json_extension.c_str(), &CallbackNotifySysmsgRes, cb_pointer);
  }
 
- bool SystemMsg::SetStatusAsync(__int64 msg_id, nim::NIMSysMsgStatus status, const SetStatusCallback& cb, const std::string& json_extension)
+ bool SystemMsg::SetStatusAsync(int64_t msg_id, nim::NIMSysMsgStatus status, const SetStatusCallback& cb, const std::string& json_extension)
  {
 	 SetStatusCallback* cb_pointer = nullptr;
 	 if (cb)
@@ -192,7 +196,7 @@ SystemMsg::ReceiveSysmsgCallback* g_cb_receive_sysmsg_ = nullptr;
 	 return NIM_SDK_GET_FUNC(nim_sysmsg_read_all_async)(json_extension.c_str(), &CallbackNotifySysmsgRes, cb_pointer);
  }
 
- bool SystemMsg::DeleteAsync(__int64 msg_id, const DeleteCallback& cb, const std::string& json_extension /*= ""*/)
+ bool SystemMsg::DeleteAsync(int64_t msg_id, const DeleteCallback& cb, const std::string& json_extension /*= ""*/)
  {
 	 DeleteCallback* cb_pointer = nullptr;
 	 if (cb)

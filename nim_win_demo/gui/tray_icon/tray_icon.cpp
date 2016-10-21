@@ -74,7 +74,7 @@ TrayIcon::~TrayIcon()
 {
 }
 
-void TrayIcon::Init(TrayIconDelegate* tray_icon_delegate)
+void TrayIcon::Init(ITrayIconDelegate* tray_icon_delegate)
 {
 	tray_icon_delegate_ = tray_icon_delegate;
 
@@ -116,82 +116,29 @@ void TrayIcon::SetTrayIcon(HICON icon, const std::wstring& tray_icon_text)
     assert(icon);
 	icon_ = icon;
 	tray_icon_text_ = tray_icon_text;
-    ModifyTrayIcon(wnd_, TRAYICON_ID, WM_TRAYICON_NOTIFY, icon, tray_icon_text);
+    ModifyTrayIcon(TRAYICON_ID, WM_TRAYICON_NOTIFY, icon, tray_icon_text);
 }
 
-void TrayIcon::ModifyTrayIcon(HWND hWnd, UINT uTrayID, DWORD dwTrayMsg, 
-                               HICON hTrayIcon, const std::wstring &tray_icon_text)
+void TrayIcon::LoadIconList(int icon_res_start_index, int count)
 {
-    NOTIFYICONDATAW tnd = {0};
-    tnd.cbSize = sizeof(NOTIFYICONDATA);
-    tnd.hWnd = wnd_; 
-    tnd.uID = uTrayID; 
-    tnd.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP; 
-    tnd.uCallbackMessage = dwTrayMsg; 
-    tnd.hIcon = hTrayIcon;
-#ifdef NDEBUG
-    wcscpy_s(tnd.szTip, 128, tray_icon_text.c_str());
-#else
-	std::wstring debug_text = tray_icon_text + L"[DEBUG]";
-	wcscpy_s(tnd.szTip, 128, debug_text.c_str());
-#endif
-
-    if(!bInit)
-    {
-        bInit = true;
-        BOOL res = ::Shell_NotifyIconW(NIM_ADD, &tnd);
-		//在极端情况下有可能会安装托盘失败，这里再尝试下
-		if (!res)
-		{
-			res = ::Shell_NotifyIconW(NIM_ADD, &tnd);
-		}
-		assert(res);
-    }
-    else
-    {
-        BOOL res = ::Shell_NotifyIcon(NIM_MODIFY, &tnd);
-		assert(res);
-    }
+	for (int i = 0; i < count; ++i)
+	{
+		HICON icon = (HICON)::LoadImage(NULL,
+			MAKEINTRESOURCE(icon_res_start_index + i),
+			IMAGE_ICON,
+			::GetSystemMetrics(SM_CXSMICON),
+			::GetSystemMetrics(SM_CYSMICON),
+			LR_DEFAULTCOLOR | LR_SHARED);
+		assert(icon);
+		index_icon_map_[icon_res_start_index + i] = icon;
+	}
 }
-BOOL TrayIcon::RestoreTrayIcon()
-{
-	if(!IsWindow(wnd_))
-		return FALSE;
-	bInit = false;
-	SetTrayIcon(icon_, tray_icon_text_);
-
-	return TRUE;
-}
-
 
 void TrayIcon::SetAnimateTray(const std::vector<int>& aniIndex, int anim_escape_time)
 {
 	ClearAnimateInfo();
 	anim_index_array_ = aniIndex;
 	anim_escape_time_ = anim_escape_time;
-}
-
-void TrayIcon::OnTimer(UINT event_id) 
-{
-	switch(event_id)
-	{
-	case uTrayIconAnimateID:
-		if(0 != anim_index_array_.size())
-		{
-			anim_current_index_ %= anim_index_array_.size();
-			SetTrayIconIndex(anim_index_array_[anim_current_index_++]);
-		}
-		else
-		{
-			StopTrayIconAnimate();
-		}
-		break;
-	default:
-		{
-			assert(FALSE);
-			break;
-		}
-	}
 }
 
 void TrayIcon::StartTrayIconAnimate()
@@ -208,6 +155,36 @@ void TrayIcon::StopTrayIconAnimate()
 	KillTimer(wnd_, uTrayIconAnimateID);
 }
 
+void TrayIcon::ClearAnimateInfo()
+{
+	anim_index_array_.clear();
+	anim_current_index_ = 0;
+	anim_escape_time_ = 0;
+}
+
+void TrayIcon::OnTimer(UINT event_id)
+{
+	switch (event_id)
+	{
+	case uTrayIconAnimateID:
+		if (0 != anim_index_array_.size())
+		{
+			anim_current_index_ %= anim_index_array_.size();
+			SetTrayIconIndex(anim_index_array_[anim_current_index_++]);
+		}
+		else
+		{
+			StopTrayIconAnimate();
+		}
+		break;
+	default:
+	{
+		assert(FALSE);
+		break;
+	}
+	}
+}
+
 void TrayIcon::SetTrayIconIndex(int index)
 {
 	HICON	hIcon = index_icon_map_[index];
@@ -215,17 +192,47 @@ void TrayIcon::SetTrayIconIndex(int index)
 	SetTrayIcon(hIcon, L"");
 }
 
-void TrayIcon::SetImageListTray(int start_icon, int count)
+BOOL TrayIcon::RestoreTrayIcon()
 {
-	for (int i = 0; i < count; ++i)
+	if (!IsWindow(wnd_))
+		return FALSE;
+	bInit = false;
+	SetTrayIcon(icon_, tray_icon_text_);
+
+	return TRUE;
+}
+
+void TrayIcon::ModifyTrayIcon(UINT uTrayID, DWORD dwTrayMsg,
+	HICON hTrayIcon, const std::wstring &tray_icon_text)
+{
+	NOTIFYICONDATAW tnd = { 0 };
+	tnd.cbSize = sizeof(NOTIFYICONDATA);
+	tnd.hWnd = wnd_;
+	tnd.uID = uTrayID;
+	tnd.uFlags = NIF_MESSAGE | NIF_ICON | NIF_TIP;
+	tnd.uCallbackMessage = dwTrayMsg;
+	tnd.hIcon = hTrayIcon;
+#ifdef NDEBUG
+	wcscpy_s(tnd.szTip, 128, tray_icon_text.c_str());
+#else
+	std::wstring debug_text = tray_icon_text + L"[DEBUG]";
+	wcscpy_s(tnd.szTip, 128, debug_text.c_str());
+#endif
+
+	if (!bInit)
 	{
-		HICON icon = (HICON)::LoadImage(NULL,
-										MAKEINTRESOURCE(start_icon + i),
-										IMAGE_ICON,
-										::GetSystemMetrics(SM_CXSMICON),
-										::GetSystemMetrics(SM_CYSMICON),
-										LR_DEFAULTCOLOR|LR_SHARED);
-		assert(icon);
-		index_icon_map_[start_icon + i] = icon;
+		bInit = true;
+		BOOL res = ::Shell_NotifyIconW(NIM_ADD, &tnd);
+		//在极端情况下有可能会安装托盘失败，这里再尝试下
+		if (!res)
+		{
+			res = ::Shell_NotifyIconW(NIM_ADD, &tnd);
+		}
+		assert(res);
+	}
+	else
+	{
+		BOOL res = ::Shell_NotifyIcon(NIM_MODIFY, &tnd);
+		assert(res);
 	}
 }

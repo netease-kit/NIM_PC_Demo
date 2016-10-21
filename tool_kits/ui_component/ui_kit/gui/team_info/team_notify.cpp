@@ -30,16 +30,6 @@ std::wstring TeamNotifyForm::GetSkinFile()
 	return L"team_notify.xml";
 }
 
-ui::UILIB_RESOURCETYPE TeamNotifyForm::GetResourceType() const
-{
-	return ui::UILIB_FILE;
-}
-
-std::wstring TeamNotifyForm::GetZIPFileName() const
-{
-	return L"team_notify.zip";
-}
-
 std::wstring TeamNotifyForm::GetWindowClassName() const
 {
 	return kClassName;

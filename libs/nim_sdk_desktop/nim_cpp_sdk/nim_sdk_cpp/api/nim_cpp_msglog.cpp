@@ -1,5 +1,5 @@
-/** @file nim_cpp_msglog.cpp
-  * @brief NIM SDK�ṩ����Ϣ��ʷ�ӿ�
+﻿/** @file nim_cpp_msglog.cpp
+  * @brief NIM SDK提供的消息历史接口
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author towik, Oleg
   * @date 2015/2/1
@@ -26,13 +26,14 @@ typedef void(*nim_msglog_query_msg_online_async)(const char *id, nim::NIMSession
 typedef void(*nim_msglog_query_msg_by_id_async)(const char *client_msg_id, const char *json_extension, nim_msglog_query_single_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_query_msg_by_options_async)(NIMMsgLogQueryRange query_range, const char *ids, int limit_count, __int64 from_time, __int64 end_time, const char *end_client_msg_id, bool reverse, NIMMessageType msg_type, const char *search_content, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_update_localext_async)(const char *msg_id, const char *local_ext, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
-
+						
 typedef void(*nim_msglog_export_db_async)(const char *dst_path, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_import_db_async)(const char *src_path, const char *json_extension, nim_msglog_modify_res_cb_func res_cb, const void *res_user_data, nim_msglog_import_prg_cb_func prg_cb, const void *prg_user_data);
 
 typedef void(*nim_msglog_send_receipt_async)(const char *json_msg, const char *json_extension, nim_msglog_status_changed_cb_func cb, const void *user_data);
 typedef bool(*nim_msglog_query_be_readed)(const char *json_msg, const char *json_extension);
 typedef void(*nim_msglog_reg_status_changed_cb)(const char *json_extension, nim_msglog_status_changed_cb_func cb, const void *user_data);
+
 
 struct ImportDbCallbackUserData
 {
@@ -42,9 +43,9 @@ struct ImportDbCallbackUserData
 	{
 
 	}
-	MsgLog::DBFunctionCallback response_cb;
-	MsgLog::ImportDbPrgCallback* progress_cb_pointer;
-};
+	MsgLog::DBFunctionCallback response_cb;		/**< 导入消息历史回调 */
+	MsgLog::ImportDbPrgCallback* progress_cb_pointer;	/**< 导入消息历史过程回调 */
+};	
 
 static void CallbackQueryMsg(int res_code
 	, const char *id
@@ -542,4 +543,5 @@ bool MsgLog::UpdateLocalExtAsync(const std::string& msg_id
 	return true;
 
 }
+
 }

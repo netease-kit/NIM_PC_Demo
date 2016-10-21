@@ -1,4 +1,5 @@
 ﻿#include "msg_record.h"
+#include "module/audio/audio_manager.h"
 
 using namespace ui;
 
@@ -194,15 +195,7 @@ void MsgRecordForm::RefreshRecord(std::string id, nim::NIMSessionType type)
 	msg_list_->RemoveAll();
 	id_bubble_pair_.clear();
 
-	std::string play_sid = AudioCallback::GetPlaySid();
-	std::wstring wsid = nbase::UTF8ToUTF16(play_sid);
-	if(GetWindowId() == wsid)
-	{
-		AudioCallback::SetPlaySid("");
-		AudioCallback::SetPlayCid("");
-
-		nim_audio::Audio::StopPlayAudio();
-	}
+	AudioManager::GetInstance()->StopPlayAudio(nbase::UTF16ToUTF8(GetWindowId()));
 
 	if (type == nim::kNIMSessionTypeTeam)
 	{
@@ -292,7 +285,7 @@ void MsgRecordForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 
 void MsgRecordForm::QueryMsgOnlineCb(nim::NIMResCode code, const std::string& id, nim::NIMSessionType type, const nim::QueryMsglogResult& result)
 {
-	QLOG_APP(L"query online msg end: code={0} id={1} type={2} count={3}") <<code <<id <<type <<result.msglogs_.size();
+	QLOG_APP(L"query online msg end: code={0} id={1} type={2} count={3} source={4}") <<code <<id <<type <<result.msglogs_.size()<< result.source_;
 
 	if (id != session_id_)
 		return;

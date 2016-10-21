@@ -38,7 +38,7 @@ public:
 	typedef NotifySysmsgResCallback	ReadAllCallback;			/**< 设置系统消息自定义通知已读状态回调模板 */
 	typedef NotifySysmsgResCallback	DeleteAllCallback;			/**< 删除全部系统消息自定义通知回调模板 */
 	typedef NotifySysmsgResCallback	BatchSetCallback;			/**< 批量调整系统消息自定义通知回调模板 */
-	typedef std::function<void(nim::NIMResCode res_code, __int64 msg_id, int unread_count)>	NotifySingleSysmsgCallback;	/**< 修改（单条）系统消息自定义通知回调模板 */
+	typedef std::function<void(nim::NIMResCode res_code, int64_t msg_id, int unread_count)>	NotifySingleSysmsgCallback;	/**< 修改（单条）系统消息自定义通知回调模板 */
 	typedef NotifySingleSysmsgCallback SetStatusCallback;		/**< 设置系统消息自定义通知状态回调模板 */
 	typedef NotifySingleSysmsgCallback DeleteCallback;			/**< 删除系统消息自定义通知回调模板 */
 
@@ -71,18 +71,18 @@ public:
 	* @param[in] type   通知类型
 	* @param[in] client_msg_id  本地消息id
 	* @param[in] content 通知内容
-	* @param[in] support_offline 是否需要支持离线
-	* @param[in] apns_text 推送内容，如果为空则不推送
+	* @param[in] msg_setting 通知属性
+	* @param[in] timetag 消息时间
 	* @return std::string 生成自定义通知消息Json字符串
 	*/
 	static std::string CreateCustomNotificationMsg(const std::string& receiver_id
 		, const NIMSysMsgType type
 		, const std::string& client_msg_id
 		, const std::string& content
-		, bool support_offline
-		, const std::string& apns_text = "");
+		, const SysMessageSetting& msg_setting
+		, int64_t timetag = 0);
 
-	/** @fn static bool QueryMsgAsync(int limit_count, __int64 last_time, const QueryMsgCallback& cb, const std::string& json_extension = "")
+	/** @fn static bool QueryMsgAsync(int limit_count, int64_t last_time, const QueryMsgCallback& cb, const std::string& json_extension = "")
 	* 查询本地系统消息
 	* @param[in] limit_count	一次查询数量，建议20
 	* @param[in] last_time	上次查询最后一条消息的时间戳
@@ -90,7 +90,7 @@ public:
 	* @param[in] cb			查询本地系统消息的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
 	*/
-	static bool QueryMsgAsync(int limit_count, __int64 last_time, const QueryMsgCallback& cb, const std::string& json_extension = "");
+	static bool QueryMsgAsync(int limit_count, int64_t last_time, const QueryMsgCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static void QueryUnreadCount(const QuerySysmsgUnreadCallback& cb, const std::string& json_extension = "")
 	* 查询未读消息数
@@ -100,7 +100,7 @@ public:
 	*/
 	static void QueryUnreadCount(const QuerySysmsgUnreadCallback& cb, const std::string& json_extension = "");
 
-	/** @fn static bool SetStatusAsync(__int64 msg_id, nim::NIMSysMsgStatus status, const SetStatusCallback& cb, const std::string& json_extension = "")
+	/** @fn static bool SetStatusAsync(int64_t msg_id, nim::NIMSysMsgStatus status, const SetStatusCallback& cb, const std::string& json_extension = "")
 	* 设置消息状态
 	* @param[in] msg_id		消息id
 	* @param[in] status		消息状态
@@ -108,7 +108,7 @@ public:
 	* @param[in] cb			设置消息状态的回调函数
 	* @return void 无返回值
 	*/
-	static bool SetStatusAsync(__int64 msg_id, nim::NIMSysMsgStatus status, const SetStatusCallback& cb, const std::string& json_extension = "");
+	static bool SetStatusAsync(int64_t msg_id, nim::NIMSysMsgStatus status, const SetStatusCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static void ReadAllAsync(const ReadAllCallback& cb, const std::string& json_extension = "")
 	* 设置全部消息为已读
@@ -118,14 +118,14 @@ public:
 	*/
 	static void ReadAllAsync(const ReadAllCallback& cb, const std::string& json_extension = "");
 
-	/** @fn static bool DeleteAsync(__int64 msg_id, const DeleteCallback& cb, const std::string& json_extension = "")
+	/** @fn static bool DeleteAsync(int64_t msg_id, const DeleteCallback& cb, const std::string& json_extension = "")
 	* 删除消息
 	* @param[in] msg_id		消息id
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			删除消息的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
 	*/
-	static bool DeleteAsync(__int64 msg_id, const DeleteCallback& cb, const std::string& json_extension = "");
+	static bool DeleteAsync(int64_t msg_id, const DeleteCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static void DeleteAllAsync(const DeleteAllCallback& cb, const std::string& json_extension = "")
 	* 全部删除

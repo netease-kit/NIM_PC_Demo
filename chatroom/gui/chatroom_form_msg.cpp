@@ -1,7 +1,7 @@
 #include "chatroom_form.h"
 #include "chatroom_frontpage.h"
 #include "nim_chatroom_helper.h"
-
+#include "module/session/session_util.h"
 
 #define ROOMMSG_R_N _T("\r\n")
 namespace nim_chatroom
@@ -448,7 +448,7 @@ void ChatroomForm::AddMsgItem(const ChatRoomMessage& result, bool is_history)
 		if (reader.parse(result.msg_attach_, json))
 		{
 			int sub_type = json["type"].asInt();
-			if (sub_type == CustomMsgType_Jsb && json["data"].isObject())
+			if (sub_type == nim_comp::CustomMsgType_Jsb && json["data"].isObject())
 			{
 				int value = json["data"]["value"].asInt();
 				AddJsb(value, nbase::UTF8ToUTF16(result.from_nick_), is_history);
@@ -614,7 +614,7 @@ void ChatroomForm::AddText(const std::wstring &text, const std::wstring &sender_
 	lSelEnd++;
 	// 添加正文，并设置他的颜色	
 	msg_list_->SetSel(lSelEnd, lSelEnd);
-	nim_comp::emoji::InsertToEdit(msg_list_, text);
+	nim_comp::InsertTextToEdit(msg_list_, text);
 	//设置文本字体
 	msg_list_->GetDefaultCharFormat(cf); //获取消息字体
 	long lSelBegin2 = 0, lSelEnd2 = 0;
@@ -705,7 +705,7 @@ void ChatroomForm::SendImage(const std::wstring &src)
 // 	nim::NOS::UploadResource(utf8, callback);
 
 	auto weak_flag = this->GetWeakFlag();
-	nim::NOS::UploadResource(utf8, [this, img, weak_flag](nim::NIMResCode res_code, const std::string& url) {
+	nim::NOS::UploadResource(utf8, [this, img, weak_flag](int res_code, const std::string& url) {
 		if (!weak_flag.expired() && res_code == nim::kNIMResSuccess)
 		{
 			nim::IMImage new_img(img);
@@ -716,7 +716,7 @@ void ChatroomForm::SendImage(const std::wstring &src)
 	});
 }
 
-void ChatroomForm::OnUploadImageCallback(nim::NIMResCode res_code, const std::string& url, nim::IMImage img)
+void ChatroomForm::OnUploadImageCallback(int res_code, const std::string& url, nim::IMImage img)
 {
 	std::string send_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeImage, QString::GetGUID(), img.ToJsonString());
 	ChatRoom::SendMsg(room_id_, send_msg);
@@ -744,7 +744,7 @@ void ChatroomForm::OnBtnJsb()
 
 		Json::Value json;
 		Json::FastWriter writer;
-		json["type"] = CustomMsgType_Jsb;
+		json["type"] = nim_comp::CustomMsgType_Jsb;
 		json["data"]["value"] = jsb;
 
 		SendJsb(writer.write(json));

@@ -46,7 +46,7 @@ public:
 	typedef std::function<void(nim::NIMResCode res_code)> DBFunctionCallback;		/**< 消息历史变更回调模板 */
 	typedef DBFunctionCallback DeleteAllCallback;	/**< 删除全部消息历史回调模板 */
 
-	typedef std::function<void(__int64 imported_count, __int64 total_count)> ImportDbPrgCallback;	/**< 导入消息历史回调模板 */
+	typedef std::function<void(int64_t imported_count, int64_t total_count)> ImportDbPrgCallback;	/**< 导入消息历史回调模板 */
 
 	typedef std::function<void(const MessageStatusChangedResult&)>	MessageStatusChangedCallback;	/**< 发送消息已读回执通知回调模板 */
 
@@ -59,7 +59,7 @@ public:
 	 */
 	static bool QueryMsgByIDAysnc(const std::string &client_msg_id, const QuerySingleMsgCallback &cb, const std::string &json_extension = "");
 
-	/** @fn static bool QueryMsgAsync(const std::string& account_id, nim::NIMSessionType to_type, int limit_count, __int64 anchor_msg_time, const QueryMsgCallback& cb, const std::string& json_extension = "")
+	/** @fn static bool QueryMsgAsync(const std::string& account_id, nim::NIMSessionType to_type, int limit_count, int64_t anchor_msg_time, const QueryMsgCallback& cb, const std::string& json_extension = "")
 	* 查询本地消息
 	* @param[in] account_id	查询id，account_id/uid或者tid
 	* @param[in] to_type	    会话类型，双人0，群组1 (见nim_msglog_def.h)
@@ -72,11 +72,11 @@ public:
 	static bool QueryMsgAsync(const std::string& account_id
 		, nim::NIMSessionType to_type
 		, int limit_count
-		, __int64 anchor_msg_time
+		, int64_t anchor_msg_time
 		, const QueryMsgCallback& cb
 		, const std::string& json_extension = "");
 
-	/** @fn static bool QueryMsgOnlineAsync(const std::string &id, nim::NIMSessionType to_type, int limit_count, __int64 from_time, __int64 end_time, __int64 end_msg_id, bool reverse, bool need_save_to_local, const QueryMsgCallback& cb, const std::string& json_extension = "")
+	/** @fn static bool QueryMsgOnlineAsync(const std::string &id, nim::NIMSessionType to_type, int limit_count, int64_t from_time, int64_t end_time, int64_t end_msg_id, bool reverse, bool need_save_to_local, const QueryMsgCallback& cb, const std::string& json_extension = "")
 	* 在线查询消息（不包括系统消息）
 	* @param[in] id				查询id，对方的account id或者群组tid。
 	* @param[in] to_type			会话类型，双人0，群组1 (nim_msglog_def.h)
@@ -93,15 +93,15 @@ public:
 	static bool QueryMsgOnlineAsync(const std::string &id
 		, nim::NIMSessionType to_type
 		, int limit_count
-		, __int64 from_time
-		, __int64 end_time
-		, __int64 end_msg_id
+		, int64_t from_time
+		, int64_t end_time
+		, int64_t end_msg_id
 		, bool reverse
 		, bool need_save_to_local
 		, const QueryMsgCallback& cb
 		, const std::string& json_extension = "");
 
-	/** @fn static bool QueryMsgByOptionsAsync(NIMMsgLogQueryRange query_range, const std::list<std::string> &ids, nim::NIMSessionType to_type, int limit_count, __int64 from_time, __int64 end_time, const std::string &end_client_msg_id, bool reverse, NIMMessageType msg_type, const std::string &search_content, const QueryMsgCallback& cb, const std::string& json_extension = "")
+	/** @fn static bool QueryMsgByOptionsAsync(NIMMsgLogQueryRange query_range, const std::list<std::string> &ids, nim::NIMSessionType to_type, int limit_count, int64_t from_time, int64_t end_time, const std::string &end_client_msg_id, bool reverse, NIMMessageType msg_type, const std::string &search_content, const QueryMsgCallback& cb, const std::string& json_extension = "")
 	* 根据指定条件查询本地消息,使用此接口可以完成全局搜索等功能,具体请参阅开发手册 http://dev.netease.im/docs?doc=pc&#历史记录
 	* @param[in] query_range	消息历史的检索范围（目前暂不支持某些范围的组合检索，详见NIMMsgLogQueryRange说明）
 	* @param[in] ids			会话id（对方的account id或者群组tid）的集合，目前暂不支持多个的组合检索，详见NIMMsgLogQueryRange说明
@@ -119,8 +119,8 @@ public:
 	static bool QueryMsgByOptionsAsync(NIMMsgLogQueryRange query_range
 		, const std::list<std::string> &ids
 		, int limit_count
-		, __int64 from_time
-		, __int64 end_time
+		, int64_t from_time
+		, int64_t end_time
 		, const std::string &end_client_msg_id
 		, bool reverse
 		, NIMMessageType msg_type

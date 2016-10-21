@@ -49,7 +49,7 @@ void HttpService::DownloadResource(HttpResourceType type, const std::string &id,
 		if (CheckImageValid(photo_path)) // 如果已经，就不下载
 			return;
 
-		nim::NOS::DownloadMediaCallback cb = ToWeakCallback([this, type, id, photo_path](nim::NIMResCode res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
+		nim::NOS::DownloadMediaCallback cb = ToWeakCallback([this, type, id, photo_path](int res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
 			if (res_code == nim::kNIMResSuccess)
 			{
 				std::wstring ws_file_path = nbase::UTF8ToUTF16(file_path);

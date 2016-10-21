@@ -71,8 +71,8 @@ NIM_SDK_DLL_API void nim_talk_reg_receive_msgs_cb(const char *json_extension, ni
   */
 NIM_SDK_DLL_API void nim_talk_reg_notification_filter_cb(const char *json_extension, nim_talk_team_notification_filter_func cb, const void *user_data);
 
-/** @fn char *nim_talk_create_retweet_msg(const char* src_msg_json, const char* client_msg_id, const NIMSessionType retweet_to_session_type, const char* retweet_to_session_id, const char* msg_setting, __int64 timetag);
-/* 由其他消息生成转发消息
+/** @fn char *nim_talk_create_retweet_msg(const char* src_msg_json, const char* client_msg_id, enum NIMSessionType retweet_to_session_type, const char* retweet_to_session_id, const char* msg_setting, int64_t timetag)
+* 由其他消息生成转发消息
 *  @param[in] src_msg_json 原消息json
 *  @param[in] client_msg_id 新的客户端消息id,建议uuid
 *  @param[in] retweet_to_session_type 转发目标会话类型 NIMSessionType
@@ -81,7 +81,7 @@ NIM_SDK_DLL_API void nim_talk_reg_notification_filter_cb(const char *json_extens
 *  @param[in] timetag 消息时间
 *  @return char * 位置消息Json字符串,需要上层调用nim_global.h提供的内存释放接口释放。
 */
-NIM_SDK_DLL_API char *nim_talk_create_retweet_msg(const char* src_msg_json, const char* client_msg_id, const NIMSessionType retweet_to_session_type, const char* retweet_to_session_id, const char* msg_setting, __int64 timetag);
+NIM_SDK_DLL_API char *nim_talk_create_retweet_msg(const char* src_msg_json, const char* client_msg_id, enum NIMSessionType retweet_to_session_type, const char* retweet_to_session_id, const char* msg_setting, int64_t timetag);
 
 /** @fn void nim_talk_recall_msg(const char *json_msg, const char *notify, const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data)
   * 撤回消息

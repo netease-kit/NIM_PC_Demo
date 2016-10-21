@@ -87,7 +87,7 @@ void BoardControl::DrawExtraUnits(HDC hdc)
 	if (!extra_bitmap_)
 	{
 		redraw = true;
-		CreareHBitmap(hdc, extra_bitmap_);
+		CreateHBitmap(hdc, extra_bitmap_);
 	}
 	HDC hMemDC = CreateCompatibleDC(hdc);
 	HBITMAP hOldBitmap2 = (HBITMAP)SelectObject(hMemDC, extra_bitmap_);
@@ -609,7 +609,7 @@ void BoardControl::PaintContent()
 {
 	this->Invalidate();
 }
-void BoardControl::CreareHBitmap(HDC hdc, HBITMAP& bitmap)
+void BoardControl::CreateHBitmap(HDC hdc, HBITMAP& bitmap)
 {
 	ReleaseHBitmap(bitmap);
 

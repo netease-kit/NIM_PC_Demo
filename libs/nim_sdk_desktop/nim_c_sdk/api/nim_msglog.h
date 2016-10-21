@@ -24,7 +24,7 @@ extern"C"
   */
 NIM_SDK_DLL_API void nim_msglog_query_msg_by_id_async(const char *client_msg_id, const char *json_extension, nim_msglog_query_single_cb_func cb, const void *user_data);
 
-/** @fn void nim_msglog_query_msg_async(const char *account_id, NIMSessionType to_type, int limit_count, __int64 anchor_msg_time, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
+/** @fn void nim_msglog_query_msg_async(const char *account_id, enum NIMSessionType to_type, int limit_count, int64_t anchor_msg_time, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
   * 查询本地消息（默认为从定位点的消息历史时间开始向前查找）
   * @param[in] account_id	会话id，对方的account id或者群组tid
   * @param[in] to_type	    会话类型
@@ -35,9 +35,9 @@ NIM_SDK_DLL_API void nim_msglog_query_msg_by_id_async(const char *client_msg_id,
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_msglog_query_msg_async(const char *account_id, NIMSessionType to_type, int limit_count, __int64 last_time, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_msglog_query_msg_async(const char *account_id, enum NIMSessionType to_type, int limit_count, int64_t anchor_msg_time, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data);
 
-/** @fn void nim_msglog_query_msg_online_async(const char *id, NIMSessionType to_type, int limit_count, __int64 from_time, __int64 end_time, __int64 end_msg_id, bool reverse, bool need_save_to_local, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
+/** @fn void nim_msglog_query_msg_online_async(const char *id, enum NIMSessionType to_type, int limit_count, int64_t from_time, int64_t end_time, int64_t end_msg_id, bool reverse, bool need_save_to_local, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
   * 在线查询消息
   * @param[in] id				会话id，对方的account id或者群组tid
   * @param[in] to_type			会话类型
@@ -53,18 +53,18 @@ NIM_SDK_DLL_API void nim_msglog_query_msg_async(const char *account_id, NIMSessi
   * @return void 无返回值
   */
 NIM_SDK_DLL_API void nim_msglog_query_msg_online_async(const char *id, 
-													   NIMSessionType to_type, 
+													   enum NIMSessionType to_type, 
 													   int limit_count, 
-													   __int64 from_time, 
-													   __int64 end_time,
-													   __int64 end_msg_id,
+													   int64_t from_time, 
+													   int64_t end_time,
+													   int64_t end_msg_id,
 													   bool reverse,
 													   bool need_save_to_local,
 													   const char *json_extension, 
 													   nim_msglog_query_cb_func cb, 
 													   const void *user_data);
 
-/** @fn void nim_msglog_query_msg_by_options_async(NIMMsgLogQueryRange query_range, const char *ids, int limit_count, __int64 from_time, __int64 end_time, const char *end_client_msg_id, bool reverse, NIMMessageType msg_type, const char *search_content, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
+/** @fn void nim_msglog_query_msg_by_options_async(enum NIMMsgLogQueryRange query_range, const char *ids, int limit_count, int64_t from_time, int64_t end_time, const char *end_client_msg_id, bool reverse, enum NIMMessageType msg_type, const char *search_content, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
   * 根据指定条件查询本地消息,使用此接口可以完成全局搜索等功能,具体请参阅开发手册 http://dev.netease.im/docs?doc=pc&#历史记录
   * @param[in] query_range		消息历史的检索范围（目前暂不支持某些范围的组合检索，详见NIMMsgLogQueryRange说明）
   * @param[in] ids				会话id（对方的account id或者群组tid）的集合，格式为string array json（目前暂不支持多个的组合检索，详见NIMMsgLogQueryRange说明）
@@ -80,20 +80,20 @@ NIM_SDK_DLL_API void nim_msglog_query_msg_online_async(const char *id,
   * @param[in] user_data		APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_msglog_query_msg_by_options_async(NIMMsgLogQueryRange query_range, 
+NIM_SDK_DLL_API void nim_msglog_query_msg_by_options_async(enum NIMMsgLogQueryRange query_range, 
 														   const char *ids, 
 														   int limit_count, 
-														   __int64 from_time, 
-														   __int64 end_time,
+														   int64_t from_time, 
+														   int64_t end_time,
 														   const char *end_client_msg_id,
 														   bool reverse,
-														   NIMMessageType msg_type,
+														   enum NIMMessageType msg_type,
 														   const char *search_content,
 														   const char *json_extension, 
 														   nim_msglog_query_cb_func cb, 
 														   const void *user_data);
 
-/** @fn void nim_msglog_batch_status_read_async(const char *account_id, NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data)
+/** @fn void nim_msglog_batch_status_read_async(const char *account_id, enum NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data)
   * 批量设置未读状态为已读消息状态
   * @param[in] account_id	会话id，对方的account id或者群组tid
   * @param[in] to_type	    会话类型
@@ -102,9 +102,9 @@ NIM_SDK_DLL_API void nim_msglog_query_msg_by_options_async(NIMMsgLogQueryRange q
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_msglog_batch_status_read_async(const char *account_id, NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_msglog_batch_status_read_async(const char *account_id, enum NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
 
-/** @fn void nim_msglog_set_status_async(const char *msg_id, NIMMsgLogStatus msglog_status, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data)
+/** @fn void nim_msglog_set_status_async(const char *msg_id, enum NIMMsgLogStatus msglog_status, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data)
   * 设置消息状态
   * @param[in] msg_id		消息id
   * @param[in] msglog_status 消息状态枚举值
@@ -113,9 +113,9 @@ NIM_SDK_DLL_API void nim_msglog_batch_status_read_async(const char *account_id, 
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_msglog_set_status_async(const char *msg_id, NIMMsgLogStatus msglog_status, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_msglog_set_status_async(const char *msg_id, enum NIMMsgLogStatus msglog_status, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 
-/** @fn void nim_msglog_set_sub_status_async(const char *msg_id, NIMMsgLogSubStatus msglog_sub_status, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data)
+/** @fn void nim_msglog_set_sub_status_async(const char *msg_id, enum NIMMsgLogSubStatus msglog_sub_status, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data)
   * 设置消息子状态
   * @param[in] msg_id		消息id
   * @param[in] msglog_sub_status 消息子状态枚举值
@@ -124,7 +124,7 @@ NIM_SDK_DLL_API void nim_msglog_set_status_async(const char *msg_id, NIMMsgLogSt
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_msglog_set_sub_status_async(const char *msg_id, NIMMsgLogSubStatus msglog_sub_status, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_msglog_set_sub_status_async(const char *msg_id, enum NIMMsgLogSubStatus msglog_sub_status, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 
 /** @fn void nim_msglog_insert_msglog_async(const char *talk_id, const char *json_msg, bool need_update_session, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data)
   * 往本地消息历史数据库里写入一条消息（如果已存在这条消息，则更新。通常是APP的本地自定义消息，并不会发给服务器）
@@ -138,7 +138,7 @@ NIM_SDK_DLL_API void nim_msglog_set_sub_status_async(const char *msg_id, NIMMsgL
   */
 NIM_SDK_DLL_API void nim_msglog_insert_msglog_async(const char *talk_id, const char *json_msg, bool need_update_session, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 
-/** @fn void nim_msglog_batch_status_delete_async(const char *account_id, NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data)
+/** @fn void nim_msglog_batch_status_delete_async(const char *account_id, enum NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data)
   * 批量删除指定对话的消息。删除成功后，将相应会话项的最后一条消息的状态kNIMSessionMsgStatus设置为已删除状态，并通过nim_session_reg_change_cb注册的回调通知上层相应会话项的kNIMSessionCommandMsgDeleted事件。
   * @param[in] account_id	会话id，对方的account id或者群组tid
   * @param[in] to_type	    会话类型
@@ -147,9 +147,9 @@ NIM_SDK_DLL_API void nim_msglog_insert_msglog_async(const char *talk_id, const c
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_msglog_batch_status_delete_async(const char *account_id, NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_msglog_batch_status_delete_async(const char *account_id, enum NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
 
-/** @fn void nim_msglog_delete_by_session_type_async(bool delete_sessions, NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data)
+/** @fn void nim_msglog_delete_by_session_type_async(bool delete_sessions, enum NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data)
   * 删除指定会话类型的所有消息
   * @param[in] delete_sessions 是否删除指定会话类型的所有会话列表项。
   *							   ture则删除，并通过nim_session_reg_change_cb注册的回调通知上层kNIMSessionCommandRemoveAllP2P或kNIMSessionCommandRemoveAllTeam事件（不会触发每个会话项的kNIMSessionCommandRemove事件）；
@@ -160,9 +160,9 @@ NIM_SDK_DLL_API void nim_msglog_batch_status_delete_async(const char *account_id
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_msglog_delete_by_session_type_async(bool delete_sessions, NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_msglog_delete_by_session_type_async(bool delete_sessions, enum NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
 
-/** @fn void nim_msglog_delete_async(const char *account_id, NIMSessionType to_type, const char *msg_id, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data)
+/** @fn void nim_msglog_delete_async(const char *account_id, enum NIMSessionType to_type, const char *msg_id, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data)
   * 删除指定一条消息
   * @param[in] account_id	会话id，对方的account id或者群组tid
   * @param[in] to_type	    会话类型
@@ -172,7 +172,7 @@ NIM_SDK_DLL_API void nim_msglog_delete_by_session_type_async(bool delete_session
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_msglog_delete_async(const char *account_id, NIMSessionType to_type, const char *msg_id, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_msglog_delete_async(const char *account_id, enum NIMSessionType to_type, const char *msg_id, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 
 /** @fn void nim_msglog_delete_all_async(bool delete_sessions, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data)
   * 删除全部消息历史

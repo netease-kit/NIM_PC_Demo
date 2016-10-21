@@ -1,14 +1,12 @@
 //
-//> Author:gq 均方差磨皮
+// Author:gq 均方差磨皮
 // Date: 2016/7/29
 //
-//
-#ifndef IMAGE_EFFECTS_SMOOTH_H
-#define IMAGE_EFFECTS_SMOOTH_H
+#pragma once
 #include <functional>
 #include <algorithm>
 #include <WinDef.h>
-//#include "base/base_types.h"
+
 namespace nim_comp
 {
 	typedef struct smooth_info_s
@@ -30,5 +28,3 @@ namespace nim_comp
 
 	void smooth_process(uint8_t *i420, uint32_t width, uint32_t height, int sigema_level, int radius, uint8_t alpha);
 }
-
-#endif //IMAGE_EFFECTS_SMOOTH_H

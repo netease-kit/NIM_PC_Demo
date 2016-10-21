@@ -15,18 +15,26 @@ namespace nim_comp
 			std::wstring  path; //full path
 		};
 
-		void LoadEmoji(); //加载表情信息
+		/**
+		* 加载表情信息
+		* @return void 无返回值
+		*/
+		void LoadEmoji();
 
-		void GetEmoticon(std::vector<Emoticon> &emoticon); //获取表情信息
+		/**
+		* 获取表情信息
+		* @param[out] emoticon 表情信息列表
+		* @return void 无返回值
+		*/
+		void GetEmoticon(std::vector<Emoticon> &emoticon);
 
-		// tag=/大笑 file=emoji_00.png
+		/**
+		* 获取表情文件名
+		* @param[in] tag 表情名称(如:[大笑])
+		* @param[out] file 表情文件名
+		* @return bool true 获取成功，false 获取失败
+		*/
 		bool GetEmojiFileByTag(const std::wstring tag, std::wstring& file);
-
-		// 插入表情到RichEdit
-		void InsertFaceToEdit(ui::RichEdit* edit, const std::wstring &file_name, const std::wstring &tag);
-
-		// 将一段文字（其中可能包含表情）插入到RichEdit中
-		void InsertToEdit(ui::RichEdit* edit, const std::wstring &str);
 
 	}
 }

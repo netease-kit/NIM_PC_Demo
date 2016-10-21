@@ -1,7 +1,7 @@
 ﻿/** @file nim_cpp_client.h
   * @brief 全局管理功能；主要包括SDK初始化/清理、客户端登录/退出等功能
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @author towik, Oleg, Harrison
   * @date 2015/09/21
   */
 
@@ -37,7 +37,7 @@ public:
 	/** @fn bool Init(const std::string& app_data_dir, const std::string& app_install_dir, const SDKConfig &config)
 	* NIM SDK初始化
 	* @param[in] app_data_dir 使用默认路径时只需传入单个目录名（不以反斜杠结尾)，使用自定义路径时需传入完整路径（以反斜杠结尾，并确保有正确的读写权限！）
-	* @param[in] app_install_dir 目前不需要传入（SDK可以自动获取）
+	* @param[in] app_install_dir SDK动态库所在的目录全路径（如果传入为空，则按照默认规则搜索该动态库）
 	* @param[in] config 初始化参数
 	* @return bool 返回值true: 成功， false: 失败
 	*/
@@ -81,7 +81,7 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
 	*/
-	static void Logout(nim::NIMLogoutType logout_type
+	static void Logout(NIMLogoutType logout_type
 		, const LogoutCallback& cb
 		, const std::string& json_extension = "");
 

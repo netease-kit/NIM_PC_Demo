@@ -13,21 +13,76 @@ namespace nim_comp
 class GroupList : public nbase::SupportWeakCallback
 {
 public:
-
+	/**
+	* 构造函数
+	* @param[in] group_list 作为分组列表的TreeView控件指针
+	*/
 	GroupList(ui::TreeView* group_list);
 	virtual ~GroupList();
-	ui::TreeView* GetGroupList() {
-		return group_list_;
-	}
+
+	/**
+	* 获取作为分组列表的TreeView控件指针
+	* @return ui::TreeView*	作为分组列表的TreeView控件指针
+	*/
+	ui::TreeView* GetGroupList() { return group_list_; }
 private:
+
+	/**
+	* 添加一个群组列表项
+	* @param[in] team_info 群组信息
+	* @return void	无返回值
+	*/
+	void AddListItem(const nim::TeamInfo& team_info);
+
+	/**
+	* 添加一个群组列表项到指定的分组内
+	* @param[in] accid 用户id
+	* @param[in] tree_node 分组控件指针
+	* @return void	无返回值
+	*/
+	void AddListItemInGroup(const nim::TeamInfo& team_info, ui::TreeNode* tree_node);
+
+	/**
+	* 响应查询所有群信息的回调函数
+	* @param[in] team_count 群组总数
+	* @param[in] team_info_list 群组信息列表
+	* @return void 无返回值
+	*/
 	void OnQueryAllMyTeams(int team_count, const std::list<nim::TeamInfo>& team_info_list);
-	void AddListItem(const nim::TeamInfo& user_info);
-	void AddListItemInGroup(const nim::TeamInfo& all_info, ui::TreeNode* tree_node);
+
+	/**
+	* 响应添加群的回调函数
+	* @param[in] tid 群组id
+	* @param[in] tname 群组名字
+	* @param[in] type 群组类型
+	* @return void 无返回值
+	*/
 	void OnAddTeam(const std::string& tid, const std::string& tname, nim::NIMTeamType type);
-	void OnTeamNameChanged(const nim::TeamInfo& team_info);
+	
+	/**
+	* 响应移除群的回调函数
+	* @param[in] tid 群组id
+	* @return void 无返回值
+	*/
 	void OnRemoveTeam(const std::string& tid);
+
+	/**
+	* 响应群名称改变的回调函数
+	* @param[in] team_info 群组信息
+	* @return void 无返回值
+	*/
+	void OnTeamNameChanged(const nim::TeamInfo& team_info);
+
+	/**
+	* 响应用户头像改变的回调函数
+	* @param[in] type 头像类型
+	* @param[in] accid 用户id
+	* @param[in] photo_path 头像路径
+	* @return void 无返回值
+	*/
 	void OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path);
 
+private:
 	ui::TreeView* group_list_;
 	vector<ui::TreeNode*> tree_node_ver_;
 

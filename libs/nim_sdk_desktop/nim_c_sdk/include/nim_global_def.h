@@ -26,6 +26,25 @@ static const char *kNIMResCode		= "err_code";		/**< int, NIMResCode */
   */ 
 typedef void (*nim_json_transport_cb_func)(const char *json_params, const void *user_data);
 
+/** @enum NIMSDKLogLevel NIM SDK log级别，级别越高，log越详细 */
+enum NIMSDKLogLevel
+{
+	kNIMSDKLogLevelFatal = 1,	/**< SDK Fatal级别Log*/
+	kNIMSDKLogLevelError = 2,	/**< SDK Error级别Log*/
+	kNIMSDKLogLevelWarn = 3,	/**< SDK Warn级别Log*/
+	kNIMSDKLogLevelApp = 5,	/**< SDK应用级别Log，正式发布时为了精简sdk log，可采用此级别*/
+	kNIMSDKLogLevelPro = 6,	/**< SDK过程级别Log，更加详细，更有利于开发调试*/
+};
+
+/** @typedef void (*nim_sdk_log_cb_func)(const char *log)
+* 输出sdk log回调
+* @param[out] log_level log级别，见NIMSDKLogLevel
+* @param[out] log log内容
+* @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+* @return void 无返回值
+*/
+typedef void(*nim_sdk_log_cb_func)(int log_level, const char *log, const void *user_data);
+
 /** @enum NIMProxyType 代理类型 */
 enum NIMProxyType
 {

@@ -1,7 +1,7 @@
 ﻿/** @file nim_cpp_talk.h
   * @brief 聊天功能；主要包括发送消息、接收消息等功能
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @author towik, Oleg, Harrison
   * @date 2015/2/1
   */
 
@@ -33,7 +33,7 @@ public:
 	typedef std::function<void(const SendMessageArc&)>	SendMsgAckCallback;	/**< 发送消息回执通知回调模板 */
 	typedef std::function<void(const IMMessage&)>	ReceiveMsgCallback;	/**< 接收消息通知回调模板 */
 	typedef std::function<void(const std::list<IMMessage>&)>	ReceiveMsgsCallback;	/**< 批量接收消息通知回调模板 */
-	typedef std::function<void(__int64, __int64)>	FileUpPrgCallback;	/**< 发送多媒体消息文件上传过程回调模板 */
+	typedef std::function<void(int64_t, int64_t)>	FileUpPrgCallback;	/**< 发送多媒体消息文件上传过程回调模板 */
 	typedef std::function<bool(const IMMessage&)> TeamNotificationFilter; /**< 群通知过滤器 */
 	typedef std::function<void(const NIMResCode, const std::list<RecallMsgNotify>&)>	RecallMsgsCallback;	/**< 消息撤回通知回调模板 */
 
@@ -79,8 +79,8 @@ public:
 	*/
 	static void RegReceiveMessagesCb(const ReceiveMsgsCallback& cb, const std::string& json_extension = "");
 
-	/** @fn static std::string CreateTextMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const std::string& content, const MessageSetting& msg_setting, __int64 timetag  = 0)
-	/* 生成文字消息内容,生成的字符串在调用SendMsg时直接传入 
+	/** @fn static std::string CreateTextMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const std::string& content, const MessageSetting& msg_setting, int64_t timetag  = 0)
+	* 生成文字消息内容,生成的字符串在调用SendMsg时直接传入 
 	*  @param[in] receiver_id 聊天对象的 ID,如果是单聊,为用户帐号,如果是群聊,为群组 ID
 	*  @param[in] session_type NIMSessionType,聊天类型,单聊或群组
 	*  @param[in] client_msg_id 客户端消息id,建议uuid
@@ -94,10 +94,10 @@ public:
 		, const std::string& client_msg_id
 		, const std::string& content
 		, const MessageSetting& msg_setting
-		, __int64 timetag = 0);
+		, int64_t timetag = 0);
 
-	/** @fn static std::string CreateImageMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMImage& image, const std::string& file_path, const MessageSetting& msg_setting, __int64 timetag  = 0)
-	/* 生成图片消息内容,生成的字符串在调用SendMsg时直接传入
+	/** @fn static std::string CreateImageMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMImage& image, const std::string& file_path, const MessageSetting& msg_setting, int64_t timetag  = 0)
+	* 生成图片消息内容,生成的字符串在调用SendMsg时直接传入
 	*  @param[in] receiver_id 聊天对象的 ID,如果是单聊,为用户帐号,如果是群聊,为群组 ID
 	*  @param[in] session_type NIMSessionType,聊天类型,单聊或群组
 	*  @param[in] client_msg_id 客户端消息id,建议uuid
@@ -113,10 +113,10 @@ public:
 		, const IMImage& image
 		, const std::string& file_path
 		, const MessageSetting& msg_setting
-		, __int64 timetag = 0);
+		, int64_t timetag = 0);
 
-	/** @fn static std::string CreateFileMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMFile& file, const std::string& file_path, const MessageSetting& msg_setting, __int64 timetag  = 0)
-	/* 生成文件消息内容,生成的字符串在调用SendMsg时直接传入
+	/** @fn static std::string CreateFileMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMFile& file, const std::string& file_path, const MessageSetting& msg_setting, int64_t timetag  = 0)
+	* 生成文件消息内容,生成的字符串在调用SendMsg时直接传入
 	*  @param[in] receiver_id 聊天对象的 ID,如果是单聊,为用户帐号,如果是群聊,为群组 ID
 	*  @param[in] session_type NIMSessionType,聊天类型,单聊或群组
 	*  @param[in] client_msg_id 客户端消息id,建议uuid
@@ -132,10 +132,10 @@ public:
 		, const IMFile& file
 		, const std::string& file_path
 		, const MessageSetting& msg_setting
-		, __int64 timetag = 0);
+		, int64_t timetag = 0);
 
-	/** @fn static std::string CreateAudioMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMAudio& audio, const std::string& file_path, const MessageSetting& msg_setting, __int64 timetag  = 0)
-	/* 生成语音消息内容,生成的字符串在调用SendMsg时直接传入
+	/** @fn static std::string CreateAudioMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMAudio& audio, const std::string& file_path, const MessageSetting& msg_setting, int64_t timetag  = 0)
+	* 生成语音消息内容,生成的字符串在调用SendMsg时直接传入
 	*  @param[in] receiver_id 聊天对象的 ID,如果是单聊,为用户帐号,如果是群聊,为群组 ID
 	*  @param[in] session_type NIMSessionType,聊天类型,单聊或群组
 	*  @param[in] client_msg_id 客户端消息id,建议uuid
@@ -151,10 +151,10 @@ public:
 		, const IMAudio& audio
 		, const std::string& file_path
 		, const MessageSetting& msg_setting
-		, __int64 timetag = 0);
+		, int64_t timetag = 0);
 
-	/** @fn static std::string CreateVideoMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMVideo& video, const std::string& file_path, const MessageSetting& msg_setting, __int64 timetag  = 0)
-	/* 生成视频消息内容,生成的字符串在调用SendMsg时直接传入
+	/** @fn static std::string CreateVideoMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMVideo& video, const std::string& file_path, const MessageSetting& msg_setting, int64_t timetag  = 0)
+	* 生成视频消息内容,生成的字符串在调用SendMsg时直接传入
 	*  @param[in] receiver_id 聊天对象的 ID,如果是单聊,为用户帐号,如果是群聊,为群组 ID
 	*  @param[in] session_type NIMSessionType,聊天类型,单聊或群组
 	*  @param[in] client_msg_id 客户端消息id,建议uuid
@@ -170,10 +170,10 @@ public:
 		, const IMVideo& video
 		, const std::string& file_path
 		, const MessageSetting& msg_setting
-		, __int64 timetag = 0);
+		, int64_t timetag = 0);
 
-	/** @fn static std::string CreateLocationMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMLocation& location, const MessageSetting& msg_setting, __int64 timetag  = 0)
-	/* 生成位置消息内容,生成的字符串在调用SendMsg时直接传入
+	/** @fn static std::string CreateLocationMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMLocation& location, const MessageSetting& msg_setting, int64_t timetag  = 0)
+	* 生成位置消息内容,生成的字符串在调用SendMsg时直接传入
 	*  @param[in] receiver_id 聊天对象的 ID,如果是单聊,为用户帐号,如果是群聊,为群组 ID
 	*  @param[in] session_type NIMSessionType,聊天类型,单聊或群组
 	*  @param[in] client_msg_id 客户端消息id,建议uuid
@@ -187,10 +187,10 @@ public:
 		, const std::string& client_msg_id
 		, const IMLocation& location
 		, const MessageSetting& msg_setting
-		, __int64 timetag = 0);
+		, int64_t timetag = 0);
 
-	/** @fn static std::string CreateTipMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const std::string& tip_content, const MessageSetting& msg_setting, __int64 timetag  = 0)
-	/* 生成Tip消息内容,生成的字符串在调用SendMsg时直接传入
+	/** @fn static std::string CreateTipMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const std::string& tip_content, const MessageSetting& msg_setting, int64_t timetag  = 0)
+	* 生成Tip消息内容,生成的字符串在调用SendMsg时直接传入
 	*  @param[in] receiver_id 聊天对象的 ID,如果是单聊,为用户帐号,如果是群聊,为群组 ID
 	*  @param[in] session_type NIMSessionType,聊天类型,单聊或群组
 	*  @param[in] client_msg_id 客户端消息id,建议uuid
@@ -204,10 +204,10 @@ public:
 		, const std::string& client_msg_id
 		, const std::string& tip_content
 		, const MessageSetting& msg_setting
-		, __int64 timetag = 0);
+		, int64_t timetag = 0);
 
-	/** @fn static std::string CreateRetweetMessage(const std::string& src_msg_json	, const std::string& client_msg_id	, const NIMSessionType retweet_to_session_type	, const std::string& retweet_to_session_id	, const MessageSetting& msg_setting	, __int64 timetag = 0)
-	/* 由其他消息生成转发消息
+	/** @fn static std::string CreateRetweetMessage(const std::string& src_msg_json	, const std::string& client_msg_id	, const NIMSessionType retweet_to_session_type	, const std::string& retweet_to_session_id	, const MessageSetting& msg_setting	, int64_t timetag = 0)
+	* 由其他消息生成转发消息
 	*  @param[in] src_msg_json 原消息json
 	*  @param[in] client_msg_id 新的客户端消息id,建议uuid
 	*  @param[in] retweet_to_session_type 转发目标会话类型 NIMSessionType
@@ -221,10 +221,10 @@ public:
 		, const NIMSessionType retweet_to_session_type
 		, const std::string& retweet_to_session_id
 		, const MessageSetting& msg_setting
-		, __int64 timetag = 0);
+		, int64_t timetag = 0);
 
 	/** @fn static bool ParseIMMessage(const std::string& json_msg, IMMessage& msg)
-	/* 解析消息Json字符串
+	* 解析消息Json字符串
 	*  @param[in] json_msg 消息内容Json字符串
 	*  @param[out] msg 消息内容
 	*  @return bool 解析是否成功
@@ -232,7 +232,7 @@ public:
 	static bool ParseIMMessage(const std::string& json_msg, IMMessage& msg);
 
 	/** @fn static bool ParseImageMessageAttach(const IMMessage& msg, IMImage& image)
-	/* 通过得到的消息获得图片信息
+	* 通过得到的消息获得图片信息
 	*  @param[in] msg 消息
 	*  @param[out] image 图片信息
 	*  @return bool 解析是否成功
@@ -240,7 +240,7 @@ public:
 	static bool ParseImageMessageAttach(const IMMessage& msg, IMImage& image);
 
 	/** @fn static bool ParseFileMessageAttach(const IMMessage& msg, IMFile& file)
-	/* 通过得到的消息获得文件信息
+	* 通过得到的消息获得文件信息
 	*  @param[in] msg 消息
 	*  @param[out] file 文件信息
 	*  @return bool 解析是否成功
@@ -248,7 +248,7 @@ public:
 	static bool ParseFileMessageAttach(const IMMessage& msg, IMFile& file);
 
 	/** @fn static bool ParseAudioMessageAttach(const IMMessage& msg, IMAudio& audio)
-	/* 通过得到的消息获得语音信息
+	* 通过得到的消息获得语音信息
 	*  @param[in] msg 消息
 	*  @param[out] audio 语音信息
 	*  @return bool 解析是否成功
@@ -256,7 +256,7 @@ public:
 	static bool ParseAudioMessageAttach(const IMMessage& msg, IMAudio& audio);
 
 	/** @fn static bool ParseVideoMessageAttach(const IMMessage& msg, IMVideo& video)
-	/* 通过得到的消息获得视频信息
+	* 通过得到的消息获得视频信息
 	*  @param[in] msg 消息
 	*  @param[out] video 视频信息
 	*  @return bool 解析是否成功
@@ -264,7 +264,7 @@ public:
 	static bool ParseVideoMessageAttach(const IMMessage& msg, IMVideo& video);
 
 	/** @fn static bool ParseLocationMessageAttach(const IMMessage& msg, IMLocation& location)
-	/* 通过得到的消息获得位置信息
+	* 通过得到的消息获得位置信息
 	*  @param[in] msg 消息
 	*  @param[out] location 位置信息
 	*  @return bool 解析是否成功

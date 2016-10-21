@@ -28,7 +28,7 @@ NIM_SDK_DLL_API	void nim_global_free_str_buf(char *str);
   */ 
 NIM_SDK_DLL_API	void nim_global_free_buf(void *data);
 
-/** @fn void nim_global_set_proxy(NIMProxyType type, const char *host, int port, const char *user, const char *password)
+/** @fn void nim_global_set_proxy(enum NIMProxyType type, const char *host, int port, const char *user, const char *password)
   * 设置SDK统一的网络代理。不需要代理时，type设置为kNIMProxyNone，其余参数都传空字符串（端口设为0）。有些代理不需要用户名和密码，相应参数也传空字符串。   
   * @param[in] type 代理类型，见NIMProxyType定义,其中音视频和白板暂时只支持kNIMProxySocks5代理
   * @param[in] host 代理地址
@@ -37,7 +37,16 @@ NIM_SDK_DLL_API	void nim_global_free_buf(void *data);
   * @param[in] password 代理密码
   * @return void 无返回值
   */ 
-NIM_SDK_DLL_API	void nim_global_set_proxy(NIMProxyType type, const char *host, int port, const char *user, const char *password);
+NIM_SDK_DLL_API	void nim_global_set_proxy(enum NIMProxyType type, const char *host, int port, const char *user, const char *password);
+
+/** @fn void nim_global_reg_sdk_log_cb(const char *json_extension, nim_sdk_log_cb_func cb, const void *user_data)
+* (PC SDK该接口无效)注册输出sdk log回调
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] cb 输出sdk log的回调函数， nim_sdk_log_cb_func回调函数定义见nim_global_def.h
+* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+*/
+NIM_SDK_DLL_API void nim_global_reg_sdk_log_cb(const char *json_extension, nim_sdk_log_cb_func cb, const void *user_data);
 
 #ifdef __cplusplus
 };

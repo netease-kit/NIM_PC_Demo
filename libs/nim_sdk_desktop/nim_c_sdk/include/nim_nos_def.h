@@ -8,6 +8,8 @@
 #ifndef NIM_SDK_DLL_EXPORT_HEADERS_NOS_DEF_H_
 #define NIM_SDK_DLL_EXPORT_HEADERS_NOS_DEF_H_
 
+#include "../util/nim_base_types.h"
+
 #ifdef __cplusplus
 extern"C"
 {
@@ -24,7 +26,7 @@ extern"C"
   */ 
 typedef void (*nim_nos_download_cb_func)(int rescode, const char *file_path, const char *call_id, const char *res_id, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_nos_download_prg_cb_func)(__int64 downloaded_size, __int64 file_size, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_nos_download_prg_cb_func)(int64_t downloaded_size, int64_t file_size, const char *json_extension, const void *user_data)
   * nim callback function for nos http download progress
   * @param[out] downloaded_size 		已下载数据大小
   * @param[out] file_size				文件大小
@@ -32,7 +34,7 @@ typedef void (*nim_nos_download_cb_func)(int rescode, const char *file_path, con
   * @param[out] user_data			APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_nos_download_prg_cb_func)(__int64 downloaded_size, __int64 file_size, const char *json_extension, const void *user_data);
+typedef void (*nim_nos_download_prg_cb_func)(int64_t downloaded_size, int64_t file_size, const char *json_extension, const void *user_data);
 
 /** @typedef void (*nim_nos_upload_cb_func)(int rescode, const char *url, const char *json_extension, const void *user_data)
   * nim callback function for nos http upload
@@ -44,7 +46,7 @@ typedef void (*nim_nos_download_prg_cb_func)(__int64 downloaded_size, __int64 fi
   */
 typedef void (*nim_nos_upload_cb_func)(int rescode, const char *url, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_nos_upload_prg_cb_func)(__int64 uploaded_size, __int64 file_size, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_nos_upload_prg_cb_func)(int64_t uploaded_size, int64_t file_size, const char *json_extension, const void *user_data)
   * nim callback function for nos http upload progress
   * @param[out] uploaded_size 			已上传数据大小
   * @param[out] file_size				文件大小
@@ -52,7 +54,7 @@ typedef void (*nim_nos_upload_cb_func)(int rescode, const char *url, const char 
   * @param[out] user_data			APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_nos_upload_prg_cb_func)(__int64 uploaded_size, __int64 file_size, const char *json_extension, const void *user_data);
+typedef void (*nim_nos_upload_prg_cb_func)(int64_t uploaded_size, int64_t file_size, const char *json_extension, const void *user_data);
 
 #ifdef __cplusplus
 };

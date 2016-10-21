@@ -1,5 +1,6 @@
 ﻿#include "msg_record.h"
 #include "export/nim_ui_user_config.h"
+#include "module/audio/audio_manager.h"
 
 using namespace ui;
 
@@ -35,16 +36,6 @@ std::wstring MsgRecordForm::GetSkinFile()
 	return L"msg_record.xml";
 }
 
-ui::UILIB_RESOURCETYPE MsgRecordForm::GetResourceType() const
-{
-	return ui::UILIB_FILE;
-}
-
-std::wstring MsgRecordForm::GetZIPFileName() const
-{
-	return L"msg_record.zip";
-}
-
 std::wstring MsgRecordForm::GetWindowClassName() const 
 {
 	return MsgRecordForm::kClassName;
@@ -62,15 +53,7 @@ UINT MsgRecordForm::GetClassStyle() const
 
 void MsgRecordForm::OnFinalMessage( HWND hWnd )
 {
-	std::string play_sid = AudioCallback::GetPlaySid();
-	std::wstring wsid = nbase::UTF8ToUTF16(play_sid);
-	if(GetWindowId() == wsid)
-	{
-		AudioCallback::SetPlaySid("");
-		AudioCallback::SetPlayCid("");
-
-		nim_audio::Audio::StopPlayAudio();
-	}
+	AudioManager::GetInstance()->StopPlayAudio(nbase::UTF16ToUTF8(GetWindowId()));
 	__super::OnFinalMessage(hWnd);
 }
 
@@ -88,9 +71,9 @@ LRESULT MsgRecordForm::HandleMessage( UINT uMsg, WPARAM wParam, LPARAM lParam )
 
 void MsgRecordForm::InitWindow()
 {
-	if (nim_ui::UserConfig::GetInstance()->GetIcon()>0)
+	if (nim_ui::UserConfig::GetInstance()->GetDefaultIcon()>0)
 	{
-		SetIcon(nim_ui::UserConfig::GetInstance()->GetIcon());
+		SetIcon(nim_ui::UserConfig::GetInstance()->GetDefaultIcon());
 	}
 	
 	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&MsgRecordForm::Notify, this, std::placeholders::_1));
@@ -158,7 +141,7 @@ void MsgRecordForm::OnWndSizeMax( bool max )
 	}
 }
 
-void MsgRecordForm::LoadingTip( bool add )
+void MsgRecordForm::LoadingTip( bool show )
 {
 	const std::wstring kLoadingTipName = L"LoadingOnlineMsg";
 
@@ -166,7 +149,7 @@ void MsgRecordForm::LoadingTip( bool add )
 	if(ctrl)
 		msg_list_->Remove(ctrl);
 
-	if(add)
+	if(show)
 	{
 		ListContainerElement* cell = new ListContainerElement;
 		GlobalManager::FillBoxWithCache(cell, L"session/loading_online_msg.xml");

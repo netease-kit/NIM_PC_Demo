@@ -5,6 +5,23 @@
 
 namespace nim_comp
 {
+void TalkCallback::OnSendMsgCallback(const nim::SendMessageArc& arc)
+{
+	QLOG_APP(L"OnSendMsgCallback: id={0} msg_id={1} code={2}") << arc.talk_id_ << arc.msg_id_ << arc.rescode_;
+
+	//测试用代码
+	// 	nim::MsgLog::UpdateLocalExtAsync(arc.msg_id_, arc.msg_id_, [arc](nim::NIMResCode res_code, const std::string& msg_id){
+	// 		QLOG_APP(L"UpdateLocalExtAsync: id={0} msg_id={1} code={2} local={3}") << arc.talk_id_ << msg_id << res_code << arc.msg_id_;
+	// 		nim::MsgLog::QueryMsgByIDAysnc(arc.msg_id_, [arc](nim::NIMResCode res_code, const std::string& msg_id, const nim::IMMessage& msg){
+	// 			QLOG_APP(L"QueryMsgByIDAysnc: id={0} msg_id={1} code={2}, local:{3}") << arc.talk_id_ << msg_id << res_code << msg.local_ext_;
+	// 		});
+	// 	});
+
+	SessionBox* session_form = SessionManager::GetInstance()->FindSessionBox(arc.talk_id_);
+	if (session_form)
+		session_form->OnSendMsgCallback(arc.msg_id_, arc.rescode_, arc.msg_timetag_);
+}
+
 void TalkCallback::OnReceiveMsgCallback(const nim::IMMessage& message)
 {
 	QLOG_PRO(L"OnReceiveMsgCallback: {0} from client:{1}") << message.client_msg_id_ << message.readonly_sender_client_type_;
@@ -15,7 +32,7 @@ void TalkCallback::OnReceiveMsgCallback(const nim::IMMessage& message)
 	{
 		if (message.type_ == nim::kNIMMessageTypeNotification)
 		{
-			SessionForm* session = SessionManager::GetInstance()->Find(id);
+			SessionBox* session = SessionManager::GetInstance()->FindSessionBox(id);
 			if (session)
 			{
 				session->AddNewMsg(message, false);
@@ -28,7 +45,7 @@ void TalkCallback::OnReceiveMsgCallback(const nim::IMMessage& message)
 	}
 	else if (message.feature_ == nim::kNIMMessageFeatureSyncMsg || message.feature_ == nim::kNIMMessageFeatureRoamMsg)
 	{
-		SessionForm* session = SessionManager::GetInstance()->Find(id);
+		SessionBox* session = SessionManager::GetInstance()->FindSessionBox(id);
 		if (session)
 		{
 			session->AddNewMsg(message, false);
@@ -36,7 +53,7 @@ void TalkCallback::OnReceiveMsgCallback(const nim::IMMessage& message)
 	}
 	else if (message.feature_ == nim::kNIMMessageFeatureCustomizedMsg)
 	{
-		SessionForm* session = SessionManager::GetInstance()->Find(id);
+		SessionBox* session = SessionManager::GetInstance()->FindSessionBox(id);
 		if (session)
 		{
 			session->AddNewMsg(message, false);
@@ -62,10 +79,10 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 			talk_id = notify.to_id_;
 		else
 			talk_id = notify.from_id_ == LoginManager::GetInstance()->GetAccount() ? notify.to_id_ : notify.from_id_;
-		SessionForm* session = SessionManager::GetInstance()->Find(talk_id);
+		SessionBox* session = SessionManager::GetInstance()->FindSessionBox(talk_id);
 		if (session)
 		{
-			session->RecallMsg(code, notify);
+			session->OnRecallMsgCallback(code, notify);
 		}
 		else
 		{
@@ -80,32 +97,7 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 			if (!notify.msglog_exist_)
 				return;
 
-			std::wstring notify_text;
-			if (notify.from_id_ == LoginManager::GetInstance()->GetAccount())
-			{
-				notify_text = L"我撤回了一条消息";
-			}
-			else
-			{
-				if (notify.session_type_ == nim::kNIMSessionTypeP2P)
-				{
-					notify_text = L"对方撤回了一条消息";
-				}
-				else
-				{
-					auto info = nim::Team::QueryTeamMemberBlock(talk_id, notify.from_id_);
-					UTF8String name = info.GetNick();
-					if (name.empty())
-					{
-						nim::UserNameCard name_card;
-						UserService::GetInstance()->GetUserInfo(notify.from_id_, name_card);
-						name = name_card.GetName();
-					}
-					if (name.empty())
-						name = notify.from_id_;
-					notify_text = nbase::UTF8ToUTF16(name) + L" 撤回了一条消息";
-				}
-			}
+			std::wstring notify_text = GetRecallNotifyText(talk_id, notify.session_type_, notify.from_id_);
 
 			nim::IMMessage msg;
 			msg.timetag_ = notify.notify_timetag_;
@@ -126,31 +118,12 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 	}
 }
 
-void TalkCallback::OnSendMsgCallback(const nim::SendMessageArc& arc)
-{
-	QLOG_APP(L"OnSendMsgCallback: id={0} msg_id={1} code={2}") << arc.talk_id_ << arc.msg_id_ << arc.rescode_;
-
-	//测试用代码
-// 	nim::MsgLog::UpdateLocalExtAsync(arc.msg_id_, arc.msg_id_, [arc](nim::NIMResCode res_code, const std::string& msg_id){
-// 		QLOG_APP(L"UpdateLocalExtAsync: id={0} msg_id={1} code={2} local={3}") << arc.talk_id_ << msg_id << res_code << arc.msg_id_;
-// 		nim::MsgLog::QueryMsgByIDAysnc(arc.msg_id_, [arc](nim::NIMResCode res_code, const std::string& msg_id, const nim::IMMessage& msg){
-// 			QLOG_APP(L"QueryMsgByIDAysnc: id={0} msg_id={1} code={2}, local:{3}") << arc.talk_id_ << msg_id << res_code << msg.local_ext_;
-// 		});
-// 	});
-
-	SessionForm* session_form = SessionManager::GetInstance()->Find(arc.talk_id_);
-	if (session_form)
-		session_form->OnSendMsgCallback(arc.msg_id_, arc.rescode_, arc.msg_timetag_);
-
-	SessionManager::GetInstance()->RemoveFileUpProgressCb(arc.talk_id_);
-}
-
 void TalkCallback::OnMsgStatusChangedCallback(const nim::MessageStatusChangedResult& res)
 {
 	QLOG_APP(L"TalkCallback: OnMsgStatusChangedCallback");
 	for (auto res : res.results_)
 	{
-		SessionForm *form = SessionManager::GetInstance()->Find(res.talk_id_);
+		SessionBox *form = SessionManager::GetInstance()->FindSessionBox(res.talk_id_);
 		if (form)
 			form->OnMsgStatusChangedCallback(res.talk_id_, res.msg_timetag_, res.status_);
 	}
@@ -166,7 +139,7 @@ void TalkCallback::OnSendCustomSysmsgCallback(const nim::SendMessageArc& arc)
 
 void TalkCallback::OnQueryMsgCallback(nim::NIMResCode code, const std::string& query_id, nim::NIMSessionType query_type, const nim::QueryMsglogResult& result)
 {
-	QLOG_APP(L"query end: id={0} type={1} code={2}") <<query_id <<query_type <<code;
+	QLOG_APP(L"query end: id={0} type={1} code={2} source={3}") <<query_id <<query_type <<code<< result.source_;
 
 	std::vector<nim::IMMessage> vec;
 	for each (auto msg in result.msglogs_)
@@ -174,7 +147,7 @@ void TalkCallback::OnQueryMsgCallback(nim::NIMResCode code, const std::string& q
 		vec.push_back(msg);
 	}
 
-	SessionForm* session_form = SessionManager::GetInstance()->Find(query_id);
+	SessionBox* session_form = SessionManager::GetInstance()->FindSessionBox(query_id);
 	if (session_form)
 		session_form->ShowMsgs(vec);
 }
@@ -182,7 +155,7 @@ void TalkCallback::OnQueryMsgCallback(nim::NIMResCode code, const std::string& q
 void TalkCallback::OnQuerySessionListCallback(int unread_count, const nim::SessionDataList& session_list)
 {
 	QLOG_PRO(L"local session list: count :{0} - unread :{1}") << session_list.count_ << session_list.unread_count_;
-	nim_ui::SessionListManager::GetInstance()->LoadSessionList(session_list.sessions_);
+	nim_ui::SessionListManager::GetInstance()->OnQuerySessionListCallback(session_list.sessions_);
 }
 
 }

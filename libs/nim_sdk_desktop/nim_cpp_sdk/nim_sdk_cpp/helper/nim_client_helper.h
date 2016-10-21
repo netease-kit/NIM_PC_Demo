@@ -11,6 +11,7 @@
 #include <list>
 #include <functional>
 #include "json.h"
+#include "nim_base_types.h"
 
 /**
 * @namespace nim
@@ -45,9 +46,9 @@ struct SDKConfig
 	/** 构造函数 */
 	SDKConfig() : preload_attach_(true)
 				, preload_image_quality_(-1)
+				, sdk_log_level_(kNIMSDKLogLevelApp)
 				, use_private_server_(false)
-				, rsa_version_(0)
-				, sdk_log_level_(kNIMSDKLogLevelApp) {}
+				, rsa_version_(0) {}
 };
 
 /** @brief 多端登陆客户端信息 */
@@ -58,7 +59,7 @@ struct OtherClientPres
 	std::string	client_os_;				/**< 登录系统类型,比如ios 6.0.1 */
 	std::string	mac_address_;			/**< 登录设备的mac地址 */
 	std::string	device_id_;				/**< 设备id，uuid */
-	__int64		login_time_;			/**< 本次登陆时间, 精度到ms */
+	int64_t		login_time_;			/**< 本次登陆时间, 精度到ms */
 
 	/** 构造函数 */
 	OtherClientPres() : login_time_(0) {}
@@ -71,9 +72,9 @@ struct LoginRes
 	bool relogin_;						/**< 是否为重连过程 */
 	NIMLoginStep	login_step_;		/**< 登录步骤NIMLoginStep */
 	std::list<OtherClientPres> other_clients_;	/**< 其他端的在线状态列表，登录成功才会返回这部分内容 */
-
+	bool retrying_;						/**< SDK是否在重试，如果为false，开发者需要检查登录步骤和错误码，明确问题后调用手动重连接口进行登录操作 */
 	/** 构造函数 */
-	LoginRes() : relogin_(false) {}
+	LoginRes() : relogin_(false), retrying_(true) {}
 };
 
 /** @brief 被踢结果回调信息 */

@@ -39,6 +39,7 @@ static void CallbackLogin(const char* json_res, const void *callback)
 			res.res_code_ = (NIMResCode)values[kNIMResCode].asInt();
 			res.login_step_ = (NIMLoginStep)values[kNIMLoginStep].asUInt();
 			res.relogin_ = values[kNIMRelogin].asBool();
+			res.retrying_ = values[kNIMRetrying].asBool();
 			ParseOtherClientsPres(values[kNIMOtherClientsPres], res.other_clients_);
 		}
 		Client::LoginCallback *cb = (Client::LoginCallback *)callback;
@@ -134,14 +135,14 @@ bool Client::Init(const std::string& app_data_dir
 	, const std::string& app_install_dir
 	, const SDKConfig &config)
 {
-	if (!SDKFunction::LoadSdkDll())
+	if (!SDKFunction::LoadSdkDll(""))
 		return false;
 
 	Json::Value config_root;
 	//sdk能力参数（必填）
 	Json::Value config_values;
 	config_values[nim::kNIMDataBaseEncryptKey] = config.database_encrypt_key_;
-	config_values[nim::kNIMPreloadAttach] = config.preload_attach_;
+	config_values[nim::kNIMPreloadAttach] = config.preload_attach_;	
 	config_values[nim::kNIMPreloadImageQuality] = config.preload_image_quality_;
 	config_values[nim::kNIMPreloadImageResize] = config.preload_image_resize_;
 	config_values[nim::kNIMSDKLogLevel] = config.sdk_log_level_;

@@ -1,18 +1,7 @@
 ﻿#include "nim_ui_muteblack_manager.h"
 
-
 namespace nim_ui
 {
-
-MuteBlackManager::MuteBlackManager()
-{
-
-}
-
-MuteBlackManager::~MuteBlackManager()
-{
-
-}
 
 const std::set<std::string> & MuteBlackManager::GetMuteList()
 {

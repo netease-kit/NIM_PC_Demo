@@ -114,6 +114,7 @@ bool YuvImage::LoadImage(std::wstring path)
 		}
 	}
 
+	return true;
 }
 bool YuvImage::AddText(const std::wstring& text, int width, int height, DWORD color, int iFont, UINT uStyle, BYTE uFade, bool bLineLimit)
 {

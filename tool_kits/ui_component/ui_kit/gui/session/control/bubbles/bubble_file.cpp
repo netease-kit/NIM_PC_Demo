@@ -349,7 +349,6 @@ bool MsgBubbleFile::OnEvent(ui::EventArgs* arg)
 		else
 		{
 			nim::Talk::FileUpPrgCallback* cb_pointer = new nim::Talk::FileUpPrgCallback(GetFileUpPrgCallback());
-			SessionManager::GetInstance()->AddFileUpProgressCb(msg_.client_msg_id_, cb_pointer);
 			nim::Talk::SendMsg(msg_.ToJsonString(true), msg_.client_msg_id_, cb_pointer);
 			SetMsgStatus(nim::kNIMMsgLogStatusSending);
 		}

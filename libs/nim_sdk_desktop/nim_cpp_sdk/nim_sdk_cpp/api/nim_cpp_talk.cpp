@@ -8,7 +8,6 @@
 #include "nim_cpp_talk.h"
 #include "nim_sdk_helper.h"
 #include "nim_common_helper.h"
-#include "shared/log.h"
 #include "nim_cpp_global.h"
 
 namespace nim

@@ -2,10 +2,12 @@
 
 #include "module/session/session_manager.h"
 #include "callback/session/session_callback.h"
+#include "gui/profile_form/profile_form.h"
+#include "gui/session/session_box.h"
+#include "gui/session/session_form.h"
 
 #include "shared/ui/ui_menu.h"
 #include "shared/pin_yin_helper.h"
-#include "gui/profile_form/profile_form.h"
 
 using namespace ui;
 
@@ -36,11 +38,6 @@ void SessionItem::InitCtrl()
 	head_image_->AttachClick(nbase::Bind(&SessionItem::OnHeadImageClicked, this, std::placeholders::_1));
 }
 
-long long SessionItem::GetMsgTime()
-{
-	return msg_.msg_timetag_;
-}
-
 void SessionItem::InitUserProfile()
 {
 	if (msg_.type_ == nim::kNIMSessionTypeP2P)
@@ -48,7 +45,7 @@ void SessionItem::InitUserProfile()
 		if (LoginManager::GetInstance()->IsEqual(msg_.id_))
 		{
 			label_name_->SetText(L"我的手机");
-		} 
+		}
 		else
 		{
 			label_name_->SetText(UserService::GetInstance()->GetUserName(msg_.id_));
@@ -63,7 +60,62 @@ void SessionItem::InitUserProfile()
 	}
 }
 
-static void GetMsgContent(const nim::SessionData &msg, std::wstring &show_text)
+void SessionItem::InitMsg(const nim::SessionData &msg)
+{
+	msg_ = msg;
+	SetUTF8Name(msg_.id_);
+	SetUTF8DataID(msg_.id_);
+
+	InitUserProfile(); //设置用户名和头像
+	UpdateMsgContent(); //更新消息内容
+	UpdateUnread(); //刷新未读条数	
+
+	if (SessionManager::GetInstance()->IsContainAtMeMsg(msg_.id_))
+		ShowAtmeTip(true);
+
+	//更新时间
+	if (msg_.msg_timetag_ > 0 && msg_.msg_status_ != nim::kNIMMsgLogStatusDeleted)
+	{
+		std::wstring str = GetMessageTime(msg_.msg_timetag_, true);
+		label_time_->SetText(str);
+	}
+	else
+		label_time_->SetVisible(false);
+
+	if (msg_.type_ == nim::kNIMSessionTypeTeam) // 需要先获得群里最近一条消息中所有人的昵称，再UpdateMsg
+	{
+		head_image_->SetMouseEnabled(false); //群头像不响应点击
+
+		relate_ids.clear();
+		relate_ids.insert(msg_.msg_sender_accid_);
+		Json::Reader reader;
+		Json::Value attach;
+		if (reader.parse(msg_.msg_attach_, attach))
+		{
+			if (attach.isObject() && attach.isMember(nim::kNIMNotificationKeyData))
+			{
+				Json::Value data = attach[nim::kNIMNotificationKeyData];
+				if (data.isObject() && data.isMember(nim::kNIMNotificationKeyDataId))
+					relate_ids.insert(data[nim::kNIMNotificationKeyDataId].asString());
+				if (data.isObject() && data.isMember(nim::kNIMNotificationKeyUserNameCards) && data[nim::kNIMNotificationKeyUserNameCards].isArray())
+				{
+					Json::Value name_cards_json = data[nim::kNIMNotificationKeyUserNameCards];
+					for (uint32_t i = 0; i < name_cards_json.size(); i++)
+						relate_ids.insert(name_cards_json[i][nim::kNIMNameCardKeyAccid].asString());
+				}
+			}
+		}
+
+		if (!relate_ids.empty())
+		{
+			std::list<std::string> uids(relate_ids.cbegin(), relate_ids.cend());
+			std::list<nim::UserNameCard> uinfos;
+			UserService::GetInstance()->GetUserInfos(uids, uinfos);
+		}
+	}
+}
+
+void GetMsgContent(const nim::SessionData &msg, std::wstring &show_text)
 {
 	if (msg.msg_type_ == nim::kNIMMessageTypeText)
 	{
@@ -135,35 +187,9 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 			{
 				if (values.isMember("notify_from"))
 				{
+					need_prefix = false;
 					std::string from_id = values["notify_from"].asString();
-					if (from_id == LoginManager::GetInstance()->GetAccount())
-					{
-						show_text = L"我撤回了一条消息";
-						need_prefix = false;
-					}
-					else
-					{
-						if (msg_.type_ == nim::kNIMSessionTypeP2P)
-						{
-							show_text = L"对方撤回了一条消息";
-							need_prefix = false;
-						}
-						else
-						{
-							auto info = nim::Team::QueryTeamMemberBlock(msg_.id_, from_id);
-							UTF8String name = info.GetNick();
-							if (name.empty())
-							{
-								nim::UserNameCard name_card;
-								UserService::GetInstance()->GetUserInfo(from_id, name_card);
-								name = name_card.GetName();
-							}
-							if (name.empty())
-								name = from_id;
-							show_text = nbase::UTF8ToUTF16(name) + L" 撤回了一条消息";
-							need_prefix = false;
-						}
-					}
+					show_text = GetRecallNotifyText(msg_.id_, msg_.type_, from_id);
 				}
 			}
 		}
@@ -190,61 +216,6 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 	label_msg_->SetText(show_text);
 }
 
-void SessionItem::InitMsg(const nim::SessionData &msg)
-{
-	msg_ = msg;
-	SetUTF8Name(msg_.id_);
-	SetUTF8DataID(msg_.id_);
-
-	InitUserProfile(); //设置用户名和头像
-	UpdateMsgContent(); //更新消息内容
-	UpdateUnread(); //刷新未读条数	
-
-	if (SessionManager::GetInstance()->IsContainAtMeMsg(msg_.id_))
-		ShowAtmeTip(true);
-
-	//更新时间
-	if (msg_.msg_timetag_ > 0 && msg_.msg_status_ != nim::kNIMMsgLogStatusDeleted)
-	{
-		std::wstring str = GetMessageTime(msg_.msg_timetag_, true);
-		label_time_->SetText(str);
-	}
-	else
-		label_time_->SetVisible(false);
-
-	if (msg_.type_ == nim::kNIMSessionTypeTeam) // 需要先获得群里最近一条消息中所有人的昵称，再UpdateMsg
-	{
-		head_image_->SetMouseEnabled(false); //群头像不响应点击
-
-		relate_ids.clear();
-		relate_ids.insert(msg_.msg_sender_accid_);
-		Json::Reader reader;
-		Json::Value attach;
-		if (reader.parse(msg_.msg_attach_, attach))
-		{
-			if (attach.isObject() && attach.isMember(nim::kNIMNotificationKeyData))
-			{
-				Json::Value data = attach[nim::kNIMNotificationKeyData];
-				if (data.isObject() && data.isMember(nim::kNIMNotificationKeyDataId))
-					relate_ids.insert(data[nim::kNIMNotificationKeyDataId].asString());
-				if (data.isObject() && data.isMember(nim::kNIMNotificationKeyUserNameCards) && data[nim::kNIMNotificationKeyUserNameCards].isArray())
-				{
-					Json::Value name_cards_json = data[nim::kNIMNotificationKeyUserNameCards];
-					for (uint32_t i = 0; i < name_cards_json.size(); i++)
-						relate_ids.insert(name_cards_json[i][nim::kNIMNameCardKeyAccid].asString());
-				}
-			}
-		}
-
-		if (!relate_ids.empty())
-		{
-			std::list<std::string> uids(relate_ids.cbegin(), relate_ids.cend());
-			std::list<nim::UserNameCard> uinfos;
-			UserService::GetInstance()->GetUserInfos(uids, uinfos);
-		}
-	}
-}
-
 void SessionItem::ClearMsg()
 {
 	label_msg_->SetText(L"");
@@ -252,55 +223,9 @@ void SessionItem::ClearMsg()
 	ResetUnread();
 }
 
-bool SessionItem::OnDbClicked(ui::EventArgs* arg)
+long long SessionItem::GetMsgTime()
 {
-	SessionManager::GetInstance()->OpenSessionForm(msg_.id_, msg_.type_);
-	return true;
-}
-
-bool SessionItem::OnSessionItemMenu( ui::EventArgs* arg )
-{
-	POINT point;
-	::GetCursorPos(&point);
-	PopupSessionItemMenu(point);
-	return true;
-}
-
-bool SessionItem::OnHeadImageClicked(ui::EventArgs * arg)
-{
-	ProfileForm::ShowProfileForm(msg_.id_);
-	return true;
-}
-
-void SessionItem::PopupSessionItemMenu( POINT point )
-{
-	CMenuWnd* pMenu = new CMenuWnd(NULL);
-	STRINGorID xml(L"session_item_menu.xml");
-	pMenu->Init(xml, _T("xml"), point);
-
-	CMenuElementUI* del_session_item = (CMenuElementUI*) pMenu->FindControl(L"del_session_item");
-	del_session_item->AttachSelect(nbase::Bind(&SessionItem::DelSessionItemMenuItemClick, this, std::placeholders::_1));
-
-	CMenuElementUI* del_session_msg = (CMenuElementUI*) pMenu->FindControl(L"del_session_msg");
-	del_session_msg->AttachSelect(nbase::Bind(&SessionItem::DelSessionItemMenuItemClick, this, std::placeholders::_1));
-
-	pMenu->Show();
-}
-
-bool SessionItem::DelSessionItemMenuItemClick( ui::EventArgs* param )
-{
-	std::wstring name = param->pSender->GetName();
-	if(name == L"del_session_item")
-	{
-		nim::Session::DeleteRecentSession(msg_.type_, msg_.id_, nbase::Bind(&SessionItem::DeleteRecentSessionCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-
-		m_pWindow->SendNotify(this, ui::kEventNotify, SET_DELETE, 0);
-	}
-	else if(name == L"del_session_msg")
-	{
-		nim::MsgLog::BatchStatusDeleteAsync(msg_.id_, msg_.type_, nbase::Bind(&SessionItem::BatchStatusDeleteCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-	}
-	return true;
+	return msg_.msg_timetag_;
 }
 
 int SessionItem::GetUnread()
@@ -325,7 +250,7 @@ void SessionItem::AddUnread()
 
 void SessionItem::ResetUnread()
 {
-	if(msg_.unread_count_ > 0)
+	if (msg_.unread_count_ > 0)
 	{
 		msg_.unread_count_ = 0;
 		UpdateUnread();
@@ -333,6 +258,16 @@ void SessionItem::ResetUnread()
 
 		InvokeResetUnread(msg_.id_, msg_.type_);
 	}
+}
+
+void SessionItem::DeleteRecentSessionCb(nim::NIMResCode code, const nim::SessionData &result, int total_unread_counts)
+{
+	QLOG_APP(L"delete recent session, code={0} command={1} total_un_cn={2}") << code << result.command_ << total_unread_counts;
+}
+
+void SessionItem::BatchStatusDeleteCb(nim::NIMResCode res_code, const std::string& uid, nim::NIMSessionType to_type)
+{
+	QLOG_APP(L"batch delete msg, id={0} type={1} code={2}") << uid << to_type << res_code;
 }
 
 void SessionItem::ShowAtmeTip(bool show)
@@ -356,16 +291,62 @@ void SessionItem::UpdateUnread()
 	{
 		box_unread_->SetVisible(false);
 	}
+
+	// 通知会话窗口中的会话合并项
+	SessionBox *session_box = SessionManager::GetInstance()->FindSessionBox(msg_.id_);
+	if (session_box)
+		session_box->GetSessionForm()->InvokeSetSessionUnread(msg_.id_, msg_.unread_count_);
 }
 
-void SessionItem::DeleteRecentSessionCb(nim::NIMResCode code, const nim::SessionData &result, int total_unread_counts)
+void SessionItem::PopupSessionItemMenu(POINT point)
 {
-	QLOG_APP(L"delete recent session, code={0} command={1} total_un_cn={2}") <<code <<result.command_ <<total_unread_counts;
+	CMenuWnd* pMenu = new CMenuWnd(NULL);
+	STRINGorID xml(L"session_item_menu.xml");
+	pMenu->Init(xml, _T("xml"), point);
+
+	CMenuElementUI* del_session_item = (CMenuElementUI*)pMenu->FindControl(L"del_session_item");
+	del_session_item->AttachSelect(nbase::Bind(&SessionItem::DelSessionItemMenuItemClick, this, std::placeholders::_1));
+
+	CMenuElementUI* del_session_msg = (CMenuElementUI*)pMenu->FindControl(L"del_session_msg");
+	del_session_msg->AttachSelect(nbase::Bind(&SessionItem::DelSessionItemMenuItemClick, this, std::placeholders::_1));
+
+	pMenu->Show();
 }
 
-void SessionItem::BatchStatusDeleteCb(nim::NIMResCode res_code, const std::string& uid, nim::NIMSessionType to_type)
+bool SessionItem::DelSessionItemMenuItemClick(ui::EventArgs* param)
 {
-	QLOG_APP(L"batch delete msg, id={0} type={1} code={2}") << uid << to_type << res_code;
+	std::wstring name = param->pSender->GetName();
+	if (name == L"del_session_item")
+	{
+		nim::Session::DeleteRecentSession(msg_.type_, msg_.id_, nbase::Bind(&SessionItem::DeleteRecentSessionCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+		m_pWindow->SendNotify(this, ui::kEventNotify, SET_DELETE, 0);
+	}
+	else if (name == L"del_session_msg")
+	{
+		nim::MsgLog::BatchStatusDeleteAsync(msg_.id_, msg_.type_, nbase::Bind(&SessionItem::BatchStatusDeleteCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	}
+	return true;
+}
+
+bool SessionItem::OnDbClicked(ui::EventArgs* arg)
+{
+	SessionManager::GetInstance()->OpenSessionBox(msg_.id_, msg_.type_);
+	return true;
+}
+
+bool SessionItem::OnSessionItemMenu(ui::EventArgs* arg)
+{
+	POINT point;
+	::GetCursorPos(&point);
+	PopupSessionItemMenu(point);
+	return true;
+}
+
+bool SessionItem::OnHeadImageClicked(ui::EventArgs * arg)
+{
+	ProfileForm::ShowProfileForm(msg_.id_);
+	return true;
 }
 
 void InvokeResetUnread(const std::string &id, nim::NIMSessionType type)

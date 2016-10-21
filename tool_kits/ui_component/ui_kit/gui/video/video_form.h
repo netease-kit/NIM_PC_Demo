@@ -16,6 +16,12 @@ const int kDialTimeOut = 45;
 const int kAnswerTimeOut = 60;
 const int kConnectTimeOut = 17;
 
+/** @class VideoForm
+  * @brief 音视频聊天窗口
+  * @copyright (c) 2016, NetEase Inc. All rights reserved
+  * @author gaoqi
+  * @date 2016/09/21
+  */
 class VideoForm : public WindowEx
 {
 	friend class VideoManager;
@@ -59,50 +65,180 @@ public:
 	VideoForm(std::string session_id);
 	virtual ~VideoForm();
 	
+	//覆盖虚函数
 	virtual std::wstring GetSkinFolder() override;
 	virtual std::wstring GetSkinFile() override;
-	virtual ui::Control* CreateControl(const std::wstring& pstrClass) override;
-	virtual ui::UILIB_RESOURCETYPE GetResourceType() const;
-	virtual std::wstring GetZIPFileName() const;
-	
 	virtual std::wstring GetWindowClassName() const override { return kClassName; };
 	virtual std::wstring GetWindowId() const override { return kClassName; };
 	virtual UINT GetClassStyle() const override { return UI_CLASSSTYLE_FRAME | CS_DBLCLKS; };
-	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
-	virtual void OnFinalMessage(HWND hWnd) override;
-	virtual void InitWindow() override; 
 
+	/**
+	* 窗口初始化函数
+	* @return void	无返回值
+	*/
+	virtual void InitWindow() override;
+
+	/**
+	* 拦截并处理底层窗体消息
+	* @param[in] uMsg 消息类型
+	* @param[in] wParam 附加参数
+	* @param[in] lParam 附加参数
+	* @return LRESULT 处理结果
+	*/
+	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
+
+	/**
+	* 处理窗口被销毁的消息
+	* @param[in] hWnd 窗口句柄
+	* @return void	无返回值
+	*/
+	virtual void OnFinalMessage(HWND hWnd) override;
+
+	/**
+	* 根据控件类名创建自定义控件
+	* @param[in] pstrClass 控件类名
+	* @return Control* 创建的控件的指针
+	*/
+	virtual ui::Control* CreateControl(const std::wstring& pstrClass) override;
+
+	/**
+	* 设置显示的页面
+	* @param[in] sp 页面
+	* @return void	无返回值
+	*/
 	void ShowStatusPage(StatusPage sp);
+
+	/**
+	* 调整窗口大小
+	* @param[in] video 是否需要视频功能
+	* @return void	无返回值
+	*/
 	void AdjustWindowSize( bool video );
+
+	/**
+	* 设置是否允许最大化
+	* @param[in] allow 是否允许
+	* @return void	无返回值
+	*/
 	void AllowWindowMaxsize( bool allow );
 
+	/**
+	* 响应自动关闭窗口的回调函数
+	* @return void	无返回值
+	*/
 	void OnAutoCloseWnd();
-	void OnCloseRingEnd( const int32_t mode ); //通话结束时的播放铃声
+
+	/**
+	* 通话结束时的播放铃声
+	* @param[in] mode MCI_MODE类型
+	* @return void	无返回值
+	*/
+	void OnCloseRingEnd( const int32_t mode );
+
+	/**
+	* 显示结束通话页面
+	* @param[in] why 结束原因
+	* @return void	无返回值
+	*/
 	void EnterEndCallPage( EndCallEnum why );
+
+	/**
+	* 用户请求关闭窗口时的提示询问
+	* @return void	无返回值
+	*/
 	void BeforeClose();
+
+	/**
+	* 关闭窗口的提示窗的回调函数
+	* @param[in] ret 提示窗返回值
+	* @return void	无返回值
+	*/
 	void OnQuitMsgBox(MsgBoxRet ret);
 
+	/**
+	* 直接关闭窗口
+	* @return void	无返回值
+	*/
 	void DirectQuit();
 
+	/**
+	* 获取会话id
+	* @return std::string 会话id
+	*/
 	std::string GetSessionId(){	return session_id_; }
-	//void ShowPosition( tool::WindowEx* session );
+	
+	/**
+	* 开启请求通话
+	* @param[in] video_mode 是否包含视频功能
+	* @return void	无返回值
+	*/
 	void StartCalling(bool video_mode);
+
+	/**
+	* 收到通话请求
+	* @param[in] channel_id 通道id
+	* @param[in] video 是否包含视频功能
+	* @return void	无返回值
+	*/
 	void StartReceiving(uint64_t channel_id, bool video);
-	void PrepareQuit(); //退出前的清理操作
-	void OnRepeatRingSend( const int32_t mode );  //语音拨打，先“正在为您接通”，然后重复“叮叮叮”
+
+	/**
+	* 退出前的清理操作
+	* @return void	无返回值
+	*/
+	void PrepareQuit();
+
+	/**
+	* 语音拨打，先“正在为您接通”，然后重复“叮叮叮”
+	* @param[in] mode MCI_MODE值
+	* @return void	无返回值
+	*/
+	void OnRepeatRingSend( const int32_t mode );
+
+	/**
+	* 切换到某个状态的界面显示效果
+	* @param[in] status 状态值
+	* @return void	无返回值
+	*/
 	void SwitchStatus(StatusEnum status);
+
+	/**
+	* 进入视频通话界面
+	* @return void	无返回值
+	*/
 	void IntoVideo();
+
+	/**
+	* 进入语音通话界面
+	* @return void	无返回值
+	*/
 	void IntoAudio();
 
-	void StartTalking(/*const nbiz::VideoChatStartCallbackParam& msg*/);
+	/*void StartTalking(const nbiz::VideoChatStartCallbackParam& msg);*/
 
+	/**
+	* 设置窗口标题
+	* @return void	无返回值
+	*/
 	void CheckTitle();
+
+	/**
+	* 设置头像
+	* @return void	无返回值
+	*/
 	void CheckHeadIcon();
+
+	/**
+	* 设置好友名字
+	* @return void	无返回值
+	*/
 	void CheckFriendName();
 
-	bool  CheckAudioInputDevice();
-	bool  CheckAudioOutputDevice( );
-	int   CheckVideoInputDevice(); //0=有+开；1=有+没开；2=无
+	/**
+	* 检查视频设备状态
+	* @return int 0=有+开；1=有+没开；2=无
+	*/
+	int   CheckVideoInputDevice();
 	void  InitSetting();
 	void  InitVolumnSetting();
 
@@ -115,78 +251,334 @@ public:
 	void OnAudioInDeviceChange(uint32_t status);
 	void OnVideoInDeviceChange(uint32_t status);
 private:	//ui
-	bool Notify(::ui::EventArgs* msg);
-	bool OnClicked(::ui::EventArgs* arg);
+	/**
+	* 处理所有控件的所有消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool Notify(ui::EventArgs* msg);
+
+	/**
+	* 处理所有控件单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnClicked(ui::EventArgs* msg);
+
+	/**
+	* 处理所有控件选中消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool OnSelect(::ui::EventArgs* arg);
+
+	/**
+	* 处理所有控件鼠标移入移出消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool OnMouseMessage(::ui::EventArgs* arg);
-	void OnMaxWindow(bool _max);
+
+	/**
+	* 处理窗体最大化消息
+	* @param[in] max 是否最大化
+	* @return void 无返回值
+	*/
+	void OnMaxWindow(bool max);
+
+	/**
+	* 处理语音输入音量控件失去焦点消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool OnMicrophoneVolumnKillFocus(::ui::EventArgs* arg);
+
+	/**
+	* 处理语音输出音量控件失去焦点消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
 	bool OnSpeakerVolumnKillFocus(::ui::EventArgs* arg);
-private:	//logic
+private:
+	/**
+	* 初始化视频设备
+	* @return bool true 成功，false 失败
+	*/
 	bool InitVideo();
+
+	/**
+	* 结束视频设备
+	* @return void	无返回值
+	*/
 	void FreeVideo();
 
+	/**
+	* 初始化音频设备
+	* @return bool true 成功，false 失败
+	*/
 	bool InitAudio();
+
+	/**
+	* 结束音频设备
+	* @return void	无返回值
+	*/
 	void FreeAudio();
 
 	//void OnVideoData(const std::string &data, ::ui::CSize size, uint64_t timestamp);
 	//void OnRecVideo(const std::string &data, ::ui::CSize size, uint64_t timestamp);
 
+	/**
+	* 设置等待通话的超时响应函数
+	* @return void	无返回值
+	*/
 	void StartDialWaitingTimer();
 
+	/**
+	* 开始音视频通话
+	* @return void	无返回值
+	*/
 	void StartChat();
+
+	/**
+	* 开始语音聊天的回调函数
+	* @param[in] success 是否成功开启
+	* @param[in] channel_id 通道id
+	* @return void	无返回值
+	*/
 	void ChatStartCallback(bool success, int64_t channel_id);
+
+	/**
+	* 切换到视频通话
+	* @return void	无返回值
+	*/
 	void ChangeToVideo();
+
+	/**
+	* 切换到音频通话
+	* @return void	无返回值
+	*/
 	void ChangeToAudio();
+
+	/**
+	* 发送开启音视频功能的控制命令
+	* @param[in] audio 是否发送语音命令
+	* @param[in] open 开启或者关闭功能
+	* @return void	无返回值
+	*/
 	void SendControlCommand(bool audio, bool open);
+
+	/**
+	* 响应音视频通话控制命令
+	* @param[in] channel_id 通道id
+	* @param[in] type 音视频通话控制类型
+	* @return void	无返回值
+	*/
 	void OnControlModeChange(int64_t channel_id, nim::NIMVChatControlType type);
 public:
-	void OnRejected(int64_t channel_id);  //被对方拒绝
-	void OnVideochatSyncNotify( bool accept, int64_t channel_id ); //其他端接收或拒绝后通知pc端
+	/**
+	* 被对方拒绝
+	* @param[in] channel_id 通道id
+	* @return void	无返回值
+	*/
+	void OnRejected(int64_t channel_id);
 
+	/**
+	* 其他端接收或拒绝后通知pc端
+	* @param[in] accept 是否接收
+	* @param[in] channel_id 通道id
+	* @return void	无返回值
+	*/
+	void OnVideochatSyncNotify( bool accept, int64_t channel_id );
+
+	/**
+	* 响应音视频通话控制命令，有成员进入
+	* @param[in] id 用户id
+	* @return void	无返回值
+	*/
 	void OnComeIn(uint64_t id);
+
+	/**
+	* 响应音视频通话控制命令，有成员退出
+	* @param[in] id 用户id
+	* @return void	无返回值
+	*/
 	void OnComeOut(uint64_t id);
+
+	/**
+	* 响应音视频通话控制命令，挂断通话
+	* @param[in] channel_id 通道id
+	* @return void	无返回值
+	*/
 	void OnHangup(uint64_t channel_id);
+
+	/**
+	* 结束会话时被调用
+	* @return void	无返回值
+	*/
 	void EndSession();
 
+	/**
+	* 响应音视频通话控制命令，网络状态改变
+	* @param[in] stat 状态吗
+	* @return void	无返回值
+	*/
 	void OnNetstatChange(uint16_t stat);
 
-	void OnLogin(bool success); //连接数据服务器
+	/**
+	* 响应音视频通话控制命令，连接数据服务器
+	* @param[in] success 是否连接成功
+	* @return void	无返回值
+	*/
+	void OnLogin(bool success);
+
+	/**
+	* 响应启用音频设备的回调函数
+	* @param[in] result 是否成功
+	* @return void	无返回值
+	*/
 	void OnAudioDeviceStartCallback(bool result);
+
+	/**
+	* 响应启用视频设备的回调函数
+	* @param[in] result 是否成功
+	* @return void	无返回值
+	*/
 	void OnVideoDeviceStartCallback(bool result);
 
+	/**
+	* 等待通话超时的回调函数
+	* @return void	无返回值
+	*/
 	void OnDialTimeOut();
+
+	/**
+	* 接收通话超时的回调函数
+	* @return void	无返回值
+	*/
 	void OnAnswerTimeOut();
+
+	/**
+	* 链接通话超时的回调函数
+	* @return void	无返回值
+	*/
 	void OnConnectTimeOut();
 
+	/**
+	* 得到当前时间
+	* @param[in] sec 当前时间戳
+	* @return wstring	格式化为字符串的时间
+	*/
 	std::wstring GetTickTime(long &sec);
+
+	/**
+	* 定时更新界面时间的回调函数
+	* @return void	无返回值
+	*/
 	void OnTick();
 
+	/**
+	* 修改界面视频提示
+	* @param[in] stringID 字符串id
+	* @return void	无返回值
+	*/
 	void ShowVideoTip( const std::wstring stringID ); 
+
+	/**
+	* 自动隐藏视频提示的回调函数
+	* @return void	无返回值
+	*/
 	void OnVideoAudioTip();
 
-	void OnMissionCallback(MsgBoxRet ret); //语音转视频的请求msg box回调处理
+	/**
+	* 语音转视频的请求提示框的回调处理
+	* @param[in] ret 提示框返回值
+	* @return void	无返回值
+	*/
+	void OnMissionCallback(MsgBoxRet ret);
 
+	/**
+	* 选择录制保存路径的回调处理
+	* @param[in] ret 是否选择了路径
+	* @param[in] path 保存路径
+	* @return void	无返回值
+	*/
 	void OnRecordMp4SelFileCb(BOOL ret, std::wstring path);
-	//开始录制回调
+
+	/**
+	* 开始录制的回调
+	* @param[in] ret 是否成功
+	* @param[in] code 视频录制错误码
+	* @param[in] file 保存路径
+	* @param[in] time 开始录制事件
+	* @return void	无返回值
+	*/
 	void StartRecordCb(bool ret, int code, const std::string& file, __int64 time);
-	//结束录制回调，不需要处理，在结束的通知里处理即可
+
+	/**
+	* 结束录制的回调，不需要处理，在结束的通知里处理即可
+	* @param[in] ret 是否成功
+	* @param[in] code 视频录制错误码
+	* @param[in] file 保存路径
+	* @param[in] time 结束录制事件
+	* @return void	无返回值
+	*/
 	void StopRecordCb(bool ret, int code, const std::string& file, __int64 time);
-	//录制开始通知，正式开始录制数据
+
+	/**
+	* 结束录制的通知调，正式开始录制数据
+	* @param[in] file 保存路径
+	* @param[in] time 开始录制事件
+	* @return void	无返回值
+	*/
 	void OnStartRecord(const std::string& file, __int64 time);
-	//录制结束通知
+
+	/**
+	* 结束录制的通知
+	* @param[in] code 视频录制错误码
+	* @param[in] file 保存路径
+	* @param[in] time 结束录制事件
+	* @return void	无返回值
+	*/
 	void OnStopRecord(int code, const std::string& file, __int64 time);
 
+	/**
+	* 显示录制视频时的提示
+	* @param[in] tip 提示内容
+	* @param[in] tip2 提示内容2
+	* @param[in] path 提示内容3
+	* @return void	无返回值
+	*/
 	void ShowRecordTip(std::wstring tip = L"", std::wstring tip2 = L"", std::wstring path = L"");
+
+	/**
+	* 隐藏录制视频提示的回调函数
+	* @return void	无返回值
+	*/
 	void HideRecordTipTime();
 
+	/**
+	* 检测录制视频文件所在磁盘的空间
+	* @param[in] file 文件路径
+	* @return void	无返回值
+	*/
 	void CheckRecordDiskSpace(const std::wstring& file);
 
+	/**
+	* 绘制视频界面
+	* @return void	无返回值
+	*/
 	void PaintVideo();
 
-	//设置自定义数据模式
+	/**
+	* 设置自定义数据模式
+	* @param[in] open 开启或关闭
+	* @return void	无返回值
+	*/
 	void SetCustomVideoMode(bool open);
-	//将自定义数据处理后给底层发送
+	/**
+	* 将自定义数据处理后给底层发送
+	* @return void	无返回值
+	*/
 	void SendCustomVideo();
 public:
 	static const LPCTSTR kClassName; // 类名
@@ -200,8 +592,8 @@ private:
 	::ui::Label*		friend_label_;
 	::ui::Label*		status_label_;
 
-	ui::CBitmapControl* video_ctrl_screen_;  // 视频渲染窗口，大窗口
-	ui::CBitmapControl* video_ctrl_preview_; // 视频渲染窗口，小窗口
+	ui::BitmapControl* video_ctrl_screen_;  // 视频渲染窗口，大窗口
+	ui::BitmapControl* video_ctrl_preview_; // 视频渲染窗口，小窗口
 	::ui::Label*			time_tick_label_;    //视频窗口的计时
 	::ui::Control*		video_border_ctrl_;
 	::ui::Button*			swap_photo_btn_;

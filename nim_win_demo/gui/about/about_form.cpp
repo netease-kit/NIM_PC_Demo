@@ -25,16 +25,6 @@ std::wstring AboutForm::GetSkinFile()
 	return L"about.xml";
 }
 
-ui::UILIB_RESOURCETYPE AboutForm::GetResourceType() const
-{
-	return ui::UILIB_FILE;
-}
-
-std::wstring AboutForm::GetZIPFileName() const
-{
-	return L"about.zip";
-}
-
 std::wstring AboutForm::GetWindowClassName() const
 {
 	return kClassName;
@@ -67,6 +57,5 @@ void AboutForm::InitWindow()
 bool AboutForm::OnClicked( ui::EventArgs* arg )
 {
 	std::wstring name = arg->pSender->GetName();
-	name;
 	return false;
 }

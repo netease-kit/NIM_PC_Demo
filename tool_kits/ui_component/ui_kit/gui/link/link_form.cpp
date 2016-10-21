@@ -30,16 +30,6 @@ std::wstring LinkForm::GetSkinFile()
 	return L"link.xml";
 }
 
-ui::UILIB_RESOURCETYPE LinkForm::GetResourceType() const
-{
-	return ui::UILIB_FILE;
-}
-
-std::wstring LinkForm::GetZIPFileName() const
-{
-	return L"link.zip";
-}
-
 std::wstring LinkForm::GetWindowClassName() const 
 {
 	return kClassName;
@@ -57,9 +47,9 @@ UINT LinkForm::GetClassStyle() const
 
 void LinkForm::InitWindow()
 {
-	if (nim_ui::UserConfig::GetInstance()->GetIcon() > 0)
+	if (nim_ui::UserConfig::GetInstance()->GetDefaultIcon() > 0)
 	{
-		SetIcon(nim_ui::UserConfig::GetInstance()->GetIcon());
+		SetIcon(nim_ui::UserConfig::GetInstance()->GetDefaultIcon());
 	}
 
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&LinkForm::OnClicked, this, std::placeholders::_1));
@@ -119,7 +109,6 @@ void LinkForm::OnTimeup()
 {
 	this->Close();
 }
-
 
 void ShowLinkForm()
 {

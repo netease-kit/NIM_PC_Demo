@@ -30,7 +30,7 @@ struct SendMessageArc
 	std::string talk_id_;	/**< 会话ID */
 	std::string msg_id_;	/**< 消息ID */
 	NIMResCode rescode_;	/**< 错误码 */
-	__int64	msg_timetag_;	/**< 消息时间戳 */
+	int64_t	msg_timetag_;	/**< 消息时间戳 */
 };
 
 /** @brief 消息撤回通知 */
@@ -41,7 +41,7 @@ struct RecallMsgNotify
 	std::string msg_id_;	/**< 客户端消息ID */
 	std::string notify_;	/**< 自定义通知文案 */
 	NIMSessionType session_type_;	/**< 会话类型 */
-	__int64		notify_timetag_;	/**< 消息时间戳 */
+	int64_t		notify_timetag_;	/**< 消息时间戳 */
 	NIMMessageFeature notify_feature_;	/**< 通知的种类 */
 	bool msglog_exist_;		/**< 客户端消息本地是否存在 */
 

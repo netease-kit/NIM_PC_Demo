@@ -1,7 +1,7 @@
 ﻿/** @file nim_cpp_friend.cpp
   * @brief NIM 好友相关接口
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author caowei, Oleg
+  * @author caowei, Oleg, Harrison
   * @date 2015/8/17
   */
 
@@ -11,12 +11,16 @@
 
 namespace nim
 {
+#ifdef NIM_SDK_DLL_IMPORT
 typedef void(*nim_friend_reg_changed_cb)(const char *json_extension, nim_friend_change_cb_func cb, const void *user_data);
 typedef void(*nim_friend_request)(const char *accid, NIMVerifyType verify_type, const char *msg, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data);
 typedef void(*nim_friend_delete)(const char *accid, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data);
 typedef void(*nim_friend_update)(const char *friend_json, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data);
 typedef void(*nim_friend_get_list)(const char *json_extension, nim_friend_get_list_cb_func cb, const void *user_data);
 typedef void(*nim_friend_get_profile)(const char *accid, const char *json_extension, nim_friend_get_profile_cb_func cb, const void *user_data);
+#else
+#include "nim_friend.h"
+#endif
 
 // 好友信息变化执行回调函数，不销毁该回调函数
 static void CallbackFriendChange(NIMFriendChangeType type, const char *result_json, const char *json_extension, const void *user_data)

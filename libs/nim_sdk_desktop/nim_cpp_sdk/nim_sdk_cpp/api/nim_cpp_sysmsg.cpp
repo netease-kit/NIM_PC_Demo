@@ -1,5 +1,5 @@
 /** @file nim_cpp_sysmsg.cpp
-  * @brief 系统消息接口；主要包括查询系统消息、删除系统消息等功能
+  * @brief 绯荤粺娑堟伅鎺ュ彛锛涗富瑕佸寘鎷煡璇㈢郴缁熸秷鎭�佸垹闄ょ郴缁熸秷鎭瓑鍔熻兘
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author towik, Oleg
   * @date 2015/2/1
@@ -138,16 +138,17 @@ SystemMsg::ReceiveSysmsgCallback* g_cb_receive_sysmsg_ = nullptr;
 	 , const NIMSysMsgType type
 	 , const std::string& client_msg_id
 	 , const std::string& content
-	 , bool support_offline
-	 , const std::string& apns_text/* = ""*/)
+	 , const SysMessageSetting& msg_setting
+	 , int64_t timetag/* = 0*/)
  {
 	 Json::Value values;
 	 values[kNIMSysMsgKeyToAccount] = receiver_id;
 	 values[kNIMSysMsgKeyType] = type;
 	 values[kNIMSysMsgKeyAttach] = content;
 	 values[kNIMSysMsgKeyLocalClientMsgId] = client_msg_id;
-	 values[kNIMSysMsgKeyCustomSaveFlag] = support_offline ? 1 : 0;
-	 values[kNIMSysMsgKeyCustomApnsText] = apns_text;
+	 msg_setting.ToJsonValue(values);
+	 if (timetag > 0)
+		 values[kNIMSysMsgKeyTime] = timetag;
 	 return GetJsonStringWithNoStyled(values);
  }
 
