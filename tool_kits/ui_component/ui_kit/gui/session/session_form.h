@@ -1,9 +1,9 @@
 ﻿#pragma once
+#include "taskbar/taskbar_manager.h"
 
 interface IDropTargetHelper;
 namespace nim_comp
 {
-
 /** @class SessionForm
   * @brief 会话窗体,会话盒子的容器.如果开启会话合并功能，则一个会话窗体包含多个会话盒子，否则只包含一个
   * @copyright (c) 2015, NetEase Inc. All rights reserved
@@ -31,7 +31,7 @@ public:
 	* @param[in] uMsg 消息类型
 	* @param[in] wParam 附加参数
 	* @param[in] lParam 附加参数
-	* @param[in] bHandled 是否处理了消息，如果处理了不继续传递消息
+	* @param[in out] bHandled 是否处理了消息，如果处理了不继续传递消息
 	* @return LRESULT 处理结果
 	*/
 	LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -41,7 +41,7 @@ public:
 	* @param[in] wParam 附加参数
 	* @param[in] lParam 附加参数
 	* @param[in] lParam 附加参数
-	* @param[in] bHandled 是否处理了消息，如果处理了不继续传递消息
+	* @param[in out] bHandled 是否处理了消息，如果处理了不继续传递消息
 	* @return void	无返回值
 	*/
 	virtual LRESULT OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
@@ -51,6 +51,13 @@ public:
 	* @return void	无返回值
 	*/
 	virtual void OnFinalMessage(HWND hWnd) override;	
+
+	/**
+	* 根据控件类名创建自定义控件
+	* @param[in] pstrClass 控件类名
+	* @return Control* 创建的控件的指针
+	*/
+	virtual ui::Control* CreateControl(const std::wstring& pstrClass) override;
 
 	/**
 	* 窗口初始化函数
@@ -71,7 +78,7 @@ public:
 	* @return bool true 继续传递控件消息，false 停止传递控件消息
 	*/
 	bool OnClicked(ui::EventArgs* param);
-
+	
 public:
 	/**
 	* 在本窗口内创建一个新会话盒子
@@ -220,17 +227,19 @@ private:
 
 	/**
 	* 收到新消息时,改变窗体状态来通知用户
+	* @param[in] session_box 收到消息的会话盒子
 	* @param[in] create	是否刚创建会话窗体
 	* @param[in] flash	是否需要让任务栏图标闪烁
 	* @return void 无返回值
 	*/
-	void OnNewMsg(bool create, bool flash);
+	void OnNewMsg(SessionBox &session_box, bool create, bool flash);
 
 	/**
 	* 在任务栏闪动
+	* @param[in] session_box 要闪动的会话盒子
 	* @return void	无返回值
 	*/
-	void FlashTaskbar();
+	void FlashTaskbar(SessionBox &session_box);
 
 	/**
 	* 更新当前窗口任务显示的图标
@@ -307,6 +316,9 @@ private:
 	bool				is_drag_state_;
 	POINT				old_drag_point_;
 	std::wstring		draging_session_id_;
+
+	// 任务栏缩略图管理器
+	TaskbarManager		taskbar_manager_;
 };
 
 

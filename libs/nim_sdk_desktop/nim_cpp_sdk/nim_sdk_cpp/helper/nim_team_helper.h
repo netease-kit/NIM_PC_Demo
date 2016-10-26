@@ -26,66 +26,22 @@ namespace nim
 #include "nim_msglog_def.h"
 #include "nim_res_code_def.h"
 
-/** @brief 群组信息数据标记Key,用以标记对应数据的有效性 */
-enum TeamInfoKey
-{
-	kTeamInfoKeyNone = 0,					/**< 无数据 */	
-	kTeamInfoKeyName = 1,					/**< 群组名字 */
-	kTeamInfoKeyType = 1 << 1,				/**< 群组类型 */
-	kTeamInfoKeyOwnerID = 1 << 2,			/**< 群组拥有者ID */
-	kTeamInfoKeyLevel = 1 << 3,				/**< 群组等级 */
-	kTeamInfoKeyProperty = 1 << 4,			/**< 群组属性 */
-	kTeamInfoKeyIntro = 1 << 5,				/**< 群组简介 */
-	kTeamInfoKeyAnnouncement = 1 << 6,		/**< 群组公告 */
-	kTeamInfoKeyJoinMode = 1 << 7,			/**< 群组验证类型 */
-	//kTeamInfoKeyConfigBits = 1 << 8,		/**< 群属性,开发者无需关注 20161011 by Oleg */
-	kTeamInfoKeyCustom = 1 << 9,			/**< 群组扩展项 */
-	kTeamInfoKeyIcon = 1 << 10,				/**< 群头像 */
-	kTeamInfoKeyBeInviteMode = 1 << 11,		/**< 被邀请人同意方式 */
-	kTeamInfoKeyInviteMode = 1 << 12,		/**< 谁可以邀请他人入群 */
-	kTeamInfoKeyUpdateInfoMode = 1 << 13,	/**< 谁可以修改群资料 */
-	kTeamInfoKeyUpdateCustomMode = 1 << 14,	/**< 谁可以更新群自定义属性 */
-	kTeamInfoKeyAll = (1 << 15) - 1			/**< 有数据 */
-};
-
 /** @brief 群组信息 */
 struct TeamInfo
 {
 public:
-	/** 构造函数，推荐使用 */
-	TeamInfo(const std::string& team_id) : member_list_timetag_(0)
-		, create_timetag_(0)
-		, update_timetag_(0)
-		, member_count_(0)
-		, level_(0)
-		, valid_(false)
-		, type_(kNIMTeamTypeNormal)
-		, member_valid_(false)
-		, join_mode_(kNIMTeamJoinModeNoAuth) 
-		, value_available_flag_(0)
-		, be_invite_mode_(kNIMTeamBeInviteModeNeedAgree)
-		, invite_mode_(kNIMTeamInviteModeManager)
-		, update_info_mode_(kNIMTeamUpdateInfoModeManager)
-		, update_custom_mode_(kNIMTeamUpdateCustomModeManager)
+	/** 构造函数 */
+	TeamInfo(const std::string& team_id, const nim::NIMTeamType type)
 	{
-		id_ = team_id;
+		team_info_json_value_[nim::kNIMTeamInfoKeyID] = team_id;
+		team_info_json_value_[nim::kNIMTeamInfoKeyType] = type;
 	}
 
 	/** 构造函数 */
-	TeamInfo() : member_list_timetag_(0)
-			, create_timetag_(0)
-			, update_timetag_(0)
-			, member_count_(0)
-			, level_(0)
-			, valid_(false)
-			, type_(kNIMTeamTypeNormal)
-			, member_valid_(false)
-			, join_mode_(kNIMTeamJoinModeNoAuth) 
-			, value_available_flag_(0) 
-			, be_invite_mode_(kNIMTeamBeInviteModeNeedAgree)
-			, invite_mode_(kNIMTeamInviteModeManager)
-			, update_info_mode_(kNIMTeamUpdateInfoModeManager)
-			, update_custom_mode_(kNIMTeamUpdateCustomModeManager){}
+	TeamInfo()
+	{
+
+	}
 
 public:
 	void operator = (const TeamInfo& new_info)
@@ -93,355 +49,356 @@ public:
 		Update(new_info);
 	}
 
-	void Update(const TeamInfo& info)
+	void Update(const TeamInfo& new_info)
 	{
-		if (info.ExistValue(kTeamInfoKeyName))
-			SetName(info.GetName());
-		if (info.ExistValue(kTeamInfoKeyType))
-			SetType(info.GetType());
-		if (info.ExistValue(kTeamInfoKeyOwnerID))
-			SetOwnerID(info.GetOwnerID());
-		if (info.ExistValue(kTeamInfoKeyLevel))
-			SetLevel(info.GetLevel());
-		if (info.ExistValue(kTeamInfoKeyProperty))
-			SetProperty(info.GetProperty());
-		if (info.ExistValue(kTeamInfoKeyIntro))
-			SetIntro(info.GetIntro());
-		if (info.ExistValue(kTeamInfoKeyAnnouncement))
-			SetAnnouncement(info.GetAnnouncement());
-		if (info.ExistValue(kTeamInfoKeyJoinMode))
-			SetJoinMode(info.GetJoinMode());
+		if (new_info.ExistValue(kNIMTeamInfoKeyName))
+			SetName(new_info.GetName());
+		if (new_info.ExistValue(kNIMTeamInfoKeyType))
+			SetType(new_info.GetType());
+		if (new_info.ExistValue(kNIMTeamInfoKeyCreator))
+			SetOwnerID(new_info.GetOwnerID());
+		if (new_info.ExistValue(kNIMTeamInfoKeyLevel))
+			SetLevel(new_info.GetLevel());
+		if (new_info.ExistValue(kNIMTeamInfoKeyProperty))
+			SetProperty(new_info.GetProperty());
+		if (new_info.ExistValue(kNIMTeamInfoKeyIntro))
+			SetIntro(new_info.GetIntro());
+		if (new_info.ExistValue(kNIMTeamInfoKeyAnnouncement))
+			SetAnnouncement(new_info.GetAnnouncement());
+		if (new_info.ExistValue(kNIMTeamInfoKeyJoinMode))
+			SetJoinMode(new_info.GetJoinMode());
 		//群属性,开发者无需关注 20161011 by Oleg
-		//if (info.ExistValue(kTeamInfoKeyConfigBits))
-		//	SetConfigBits(info.GetConfigBits());
-		if (info.ExistValue(kTeamInfoKeyCustom))
-			SetCustom(info.GetCustom());
-		if (info.ExistValue(kTeamInfoKeyIcon))
-			SetIcon(info.GetIcon());
-		if (info.ExistValue(kTeamInfoKeyBeInviteMode))
-			SetBeInviteMode(info.GetBeInviteMode());
-		if (info.ExistValue(kTeamInfoKeyInviteMode))
-			SetInviteMode(info.GetInviteMode());
-		if (info.ExistValue(kTeamInfoKeyUpdateInfoMode))
-			SetUpdateInfoMode(info.GetUpdateInfoMode());
-		if (info.ExistValue(kTeamInfoKeyUpdateCustomMode))
-			SetUpdateCustomMode(info.GetUpdateCustomMode());
-
-		SetTeamID(info.GetTeamID());
-		SetValid(info.IsValid());
-		SetMemberValid(info.IsMemberValid());
-		if (info.GetMemberCount() > -1)
-			SetMemberCount(info.GetMemberCount());
-		if (info.GetMemberListTimetag() > -1)
-			SetMemberListTimetag(info.GetMemberListTimetag());
-		if (info.GetCreateTimetag() > -1)
-			SetCreateTimetag(info.GetCreateTimetag());
-		if (info.GetUpdateTimetag() > -1)
-			SetUpdateTimetag(info.GetUpdateTimetag());
-		if (!info.GetServerCustom().empty())
-			SetServerCustom(info.GetServerCustom());
+		//if (new_info.ExistValue(kTeamInfoKeyConfigBits))
+		//	SetConfigBits(new_info.GetConfigBits());
+		if (new_info.ExistValue(kNIMTeamInfoKeyCustom))
+			SetCustom(new_info.GetCustom());
+		if (new_info.ExistValue(kNIMTeamInfoKeyIcon))
+			SetIcon(new_info.GetIcon());
+		if (new_info.ExistValue(kNIMTeamInfoKeyBeInviteMode))
+			SetBeInviteMode(new_info.GetBeInviteMode());
+		if (new_info.ExistValue(kNIMTeamInfoKeyInviteMode))
+			SetInviteMode(new_info.GetInviteMode());
+		if (new_info.ExistValue(kNIMTeamInfoKeyUpdateInfoMode))
+			SetUpdateInfoMode(new_info.GetUpdateInfoMode());
+		if (new_info.ExistValue(kNIMTeamInfoKeyUpdateCustomMode))
+			SetUpdateCustomMode(new_info.GetUpdateCustomMode());
+		if (new_info.ExistValue(kNIMTeamInfoKeyID))
+			SetTeamID(new_info.GetTeamID());
+		if (new_info.ExistValue(kNIMTeamInfoKeyValidFlag))
+			SetValid(new_info.IsValid());
+		if (new_info.ExistValue(kNIMTeamInfoKeyMemberValid))
+			SetMemberValid(new_info.IsMemberValid());
+		if (new_info.ExistValue(kNIMTeamInfoKeyMemberCount))
+			SetMemberCount(new_info.GetMemberCount());
+		if (new_info.ExistValue(kNIMTeamInfoKeyListTime))
+			SetMemberListTimetag(new_info.GetMemberListTimetag());
+		if (new_info.ExistValue(kNIMTeamInfoKeyCreateTime))
+			SetCreateTimetag(new_info.GetCreateTimetag());
+		if (new_info.ExistValue(kNIMTeamInfoKeyUpdateTime))
+			SetUpdateTimetag(new_info.GetUpdateTimetag());
+		if (new_info.ExistValue(kNIMTeamInfoKeyServerCustom))
+			SetServerCustom(new_info.GetServerCustom());
+		if (new_info.ExistValue(kNIMTeamInfoKeyMuteAll))
+			SetAllMemberMute(new_info.IsAllMemberMute());
 	}
 
 public:
-	/** 设置群组ID */
+	/** 设置群组ID,通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetTeamID(const std::string& id)
 	{
-		id_ = id;
+		team_info_json_value_[nim::kNIMTeamInfoKeyID] = id;
 	}
 
 	/** 获取群组ID */
 	std::string GetTeamID() const
 	{
-		return id_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyID].asString();
 	}
 
 	/** 设置群组名字 */
 	void SetName(const std::string& name)
 	{
-		name_ = name;
-		value_available_flag_ |= kTeamInfoKeyName;
+		team_info_json_value_[nim::kNIMTeamInfoKeyName] = name;
 	}
 
 	/** 获取群组名字 */
 	std::string GetName() const
 	{
-		return name_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyName].asString();
 	}
 
 	/** 设置群组类型 */
 	void SetType(nim::NIMTeamType type)
 	{
-		type_ = type;
-		value_available_flag_ |= kTeamInfoKeyType;
+		team_info_json_value_[nim::kNIMTeamInfoKeyType] = type;
 	}
 
 	/** 获取群组类型 */
 	nim::NIMTeamType GetType() const
 	{
-		return type_;
+		return (NIMTeamType)team_info_json_value_[nim::kNIMTeamInfoKeyType].asUInt();
 	}
 
-	/** 设置群组拥有者ID */
+	/** 设置群组拥有者ID,通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetOwnerID(const std::string& id)
 	{
-		owner_id_ = id;
-		value_available_flag_ |= kTeamInfoKeyOwnerID;
+		team_info_json_value_[nim::kNIMTeamInfoKeyCreator] = id;
 	}
 
 	/** 获取群组拥有者ID */
 	std::string GetOwnerID() const
 	{
-		return owner_id_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyCreator].asString();
 	}
 
-	/** 设置群组等级 */
+	/** 设置群组等级,通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetLevel(int level)
 	{
-		level_ = level;
-		value_available_flag_ |= kTeamInfoKeyLevel;
+		team_info_json_value_[nim::kNIMTeamInfoKeyLevel] = level;
 	}
 
 	/** 获取群组等级 */
 	int GetLevel() const
 	{
-		return level_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyLevel].asUInt();
 	}
 
 	/** 设置群组属性 */
 	void SetProperty(const std::string& prop)
 	{
-		property_ = prop;
-		value_available_flag_ |= kTeamInfoKeyProperty;
+		team_info_json_value_[nim::kNIMTeamInfoKeyProperty] = prop;
 	}
 
 	/** 获取群组属性 */
 	std::string GetProperty() const
 	{
-		return property_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyProperty].asString();
 	}
 
-	/** 设置群组有效性 */
+	/** 设置群组有效性,通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetValid(bool valid)
 	{
-		valid_ = valid;
+		team_info_json_value_[nim::kNIMTeamInfoKeyValidFlag] = valid ? 1 : 0;
 	}
 
 	/** 获取群组有效性 */
 	bool IsValid() const
 	{
-		return valid_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyValidFlag].asUInt() == 1;
 	}
 
-	/** 设置群组成员数量 */
+	/** 设置群组成员数量,通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetMemberCount(int count)
 	{
-		member_count_ = count;
+		team_info_json_value_[nim::kNIMTeamInfoKeyMemberCount] = count;
 	}
 
 	/** 获取群组成员数量 */
 	int GetMemberCount() const
 	{
-		return member_count_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyMemberCount].asUInt();
 	}
 
-	/** 设置群组成员档案时间戳(毫秒) */
+	/** 设置群组成员档案时间戳(毫秒),通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetMemberListTimetag(int64_t timetag)
 	{
-		member_list_timetag_ = timetag;
+		team_info_json_value_[nim::kNIMTeamInfoKeyListTime] = timetag;
 	}
 
-	/** 获取群组成员档案时间戳(毫秒) */
+	/** 获取群组成员档案时间戳(毫秒),通常情况下由SDK维护,开发者作为只读无需设置 */
 	int64_t GetMemberListTimetag() const
 	{
-		return member_list_timetag_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyListTime].asUInt64();
 	}
 
-	/** 设置群组创建时间戳(毫秒) */
+	/** 设置群组创建时间戳(毫秒),通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetCreateTimetag(int64_t timetag)
 	{
-		create_timetag_ = timetag;
+		team_info_json_value_[nim::kNIMTeamInfoKeyCreateTime] = timetag;
 	}
 
 	/** 获取群组创建时间戳(毫秒) */
 	int64_t GetCreateTimetag() const
 	{
-		return create_timetag_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyCreateTime].asUInt64();
 	}
 
-	/** 设置群组更新时间戳(毫秒) */
+	/** 设置群组更新时间戳(毫秒),通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetUpdateTimetag(int64_t timetag)
 	{
-		update_timetag_ = timetag;
+		team_info_json_value_[nim::kNIMTeamInfoKeyUpdateTime] = timetag;
 	}
 
 	/** 获取群组更新时间戳(毫秒) */
 	int64_t GetUpdateTimetag() const
 	{
-		return update_timetag_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyUpdateTime].asUInt64();
 	}
 
-	/** 设置群组成员有效性 */
+	/** 设置群组成员有效性,通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetMemberValid(bool valid)
 	{
-		member_valid_ = valid;
+		team_info_json_value_[nim::kNIMTeamInfoKeyMemberValid] = valid ? 1 : 0;
 	}
 
 	/** 获取群组成员有效性 */
 	bool IsMemberValid() const
 	{
-		return member_valid_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyMemberValid].asUInt() == 1;
 	}
 
 	/** 设置群组简介 */
 	void SetIntro(const std::string& intro)
 	{
-		intro_ = intro;
-		value_available_flag_ |= kTeamInfoKeyIntro;
+		team_info_json_value_[nim::kNIMTeamInfoKeyIntro] = intro;
 	}
 
 	/** 获取群组简介 */
 	std::string GetIntro() const
 	{
-		return intro_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyIntro].asString();
 	}
 
 	/** 设置群组公告 */
 	void SetAnnouncement(const std::string& announcement)
 	{
-		announcement_ = announcement;
-		value_available_flag_ |= kTeamInfoKeyAnnouncement;
+		team_info_json_value_[nim::kNIMTeamInfoKeyAnnouncement] = announcement;
 	}
 
 	/** 获取群组公告 */
 	std::string GetAnnouncement() const
 	{
-		return announcement_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyAnnouncement].asString();
 	}
 
 	/** 设置群组验证模式 */
 	void SetJoinMode(nim::NIMTeamJoinMode mode)
 	{
-		join_mode_ = mode;
-		value_available_flag_ |= kTeamInfoKeyJoinMode;
+		team_info_json_value_[nim::kNIMTeamInfoKeyJoinMode] = mode;
 	}
 
 	/** 获取群组验证模式 */
 	nim::NIMTeamJoinMode GetJoinMode() const
 	{
-		return join_mode_;
+		return (NIMTeamJoinMode)team_info_json_value_[nim::kNIMTeamInfoKeyJoinMode].asUInt();
 	}
 
 	/** 群属性,开发者无需关注 20161011 by Oleg */
 	//void SetConfigBits(int64_t bit)
 	//{
-	//	config_bits_ = bit;
-	//	value_available_flag_ |= kTeamInfoKeyConfigBits;
+	//	team_info_json_value_[nim::kNIMTeamInfoKeyBits] = bit;
 	//}
 
 	/** 获取群属性,开发者无需关注 20161011 by Oleg */
 	//int64_t GetConfigBits() const
 	//{
-	//	return config_bits_;
+	//	return team_info_json_value_[nim::kNIMTeamInfoKeyBits].asUInt64();
 	//}
 
 	/** 设置群组客户端扩展内容 */
 	void SetCustom(const std::string& custom)
 	{
-		custom_ = custom;
-		value_available_flag_ |= kTeamInfoKeyCustom;
+		team_info_json_value_[nim::kNIMTeamInfoKeyCustom] = custom;
 	}
 
 	/** 获取群组客户端扩展内容 */
 	std::string GetCustom() const
 	{
-		return custom_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyCustom].asString();
 	}
 
 	/** 设置群组服务器端扩展内容 */
 	void SetServerCustom(const std::string& custom)
 	{
-		server_custom_ = custom;
+		team_info_json_value_[nim::kNIMTeamInfoKeyServerCustom] = custom;
 	}
 
 	/** 获取群组服务器端扩展内容 */
 	std::string GetServerCustom() const
 	{
-		return server_custom_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyServerCustom].asString();
 	}
 
 	/** 设置群头像 */
 	void SetIcon(const std::string& icon)
 	{
-		icon_ = icon;
-		value_available_flag_ |= kTeamInfoKeyIcon;
+		team_info_json_value_[nim::kNIMTeamInfoKeyIcon] = icon;
 	}
 
 	/** 获取群头像 */
 	std::string GetIcon() const 
 	{
-		return icon_;
+		return team_info_json_value_[nim::kNIMTeamInfoKeyIcon].asString();
 	}
 
 	/** 设置被邀请人同意方式 */
 	void SetBeInviteMode(NIMTeamBeInviteMode mode)
 	{
-		be_invite_mode_ = mode;
-		value_available_flag_ |= kTeamInfoKeyBeInviteMode;
+		team_info_json_value_[nim::kNIMTeamInfoKeyBeInviteMode] = mode;
 	}
 
 	/** 获得被邀请人同意方式 */
 	NIMTeamBeInviteMode GetBeInviteMode() const
 	{
-		return be_invite_mode_;
+		return (NIMTeamBeInviteMode)team_info_json_value_[nim::kNIMTeamInfoKeyBeInviteMode].asUInt();
 	}
 
 	/** 设置谁可以邀请他人入群 */
 	void SetInviteMode(NIMTeamInviteMode mode)
 	{
-		invite_mode_ = mode;
-		value_available_flag_ |= kTeamInfoKeyInviteMode;
+		team_info_json_value_[nim::kNIMTeamInfoKeyInviteMode] = mode;
 	}
 
 	/** 获取谁可以邀请他人入群 */
 	NIMTeamInviteMode GetInviteMode() const
 	{
-		return invite_mode_;
+		return (NIMTeamInviteMode)team_info_json_value_[nim::kNIMTeamInfoKeyInviteMode].asUInt();
 	}
 
 	/** 设置谁可以修改群资料 */
 	void SetUpdateInfoMode(NIMTeamUpdateInfoMode mode)
 	{
-		update_info_mode_ = mode;
-		value_available_flag_ |= kTeamInfoKeyUpdateInfoMode;
+		team_info_json_value_[nim::kNIMTeamInfoKeyUpdateInfoMode] = mode;
 	}
 
 	/** 获取谁可以修改群资料 */
 	NIMTeamUpdateInfoMode GetUpdateInfoMode() const
 	{
-		return update_info_mode_;
+		return (NIMTeamUpdateInfoMode)team_info_json_value_[nim::kNIMTeamInfoKeyUpdateInfoMode].asUInt();
 	}
 
 	/** 设置谁可以修改群资料属性 */
 	void SetUpdateCustomMode(NIMTeamUpdateCustomMode mode)
 	{
-		update_custom_mode_ = mode;
-		value_available_flag_ |= kTeamInfoKeyUpdateCustomMode;
+		team_info_json_value_[nim::kNIMTeamInfoKeyUpdateCustomMode] = mode;
 	}
 
 	/** 获取谁可以修改群资料属性 */
 	NIMTeamUpdateCustomMode GetUpdateCustomMode() const
 	{
-		return update_custom_mode_;
+		return (NIMTeamUpdateCustomMode)team_info_json_value_[nim::kNIMTeamInfoKeyUpdateCustomMode].asUInt();
 	}
 
-	/** @fn bool ExistValue(TeamInfoKey value_key) const
+	/** 设置全员禁言（除管理员） */
+	void SetAllMemberMute(bool mute)
+	{
+		team_info_json_value_[nim::kNIMTeamInfoKeyMuteAll] = mute ? 1: 0;
+	}
+
+	/** 是否全员禁言（除管理员） */
+	bool IsAllMemberMute() const
+	{
+		return team_info_json_value_[nim::kNIMTeamInfoKeyMuteAll].asUInt() == 1;
+	}
+
+	/** @fn bool ExistValue(const std::string& nim_team_info_key) const
 	  * @brief 群组信息数据标记Key对应的数据是否有效（存在，非初始值状态）
-	  * @param[in] value_key 群组信息数据标记Key
+	  * @param[in] nim_team_info_key 群组信息数据标记Key nim_team_def.h
 	  * @return bool 有效性 
 	  */
-	bool ExistValue(TeamInfoKey value_key) const
+	bool ExistValue(const std::string& nim_team_info_key) const
 	{
-		return (value_available_flag_ & value_key) != 0;
+		return team_info_json_value_.isMember(nim_team_info_key);
 	}
 
 	/** @fn std::string ToJsonString() const
@@ -450,261 +407,169 @@ public:
       */
 	std::string ToJsonString() const
 	{
-		Json::Value json;
-		json[nim::kNIMTeamInfoKeyID] = id_;
-		if (ExistValue(nim::kTeamInfoKeyName))
-			json[nim::kNIMTeamInfoKeyName] = name_;
-		if (ExistValue(nim::kTeamInfoKeyType))
-			json[nim::kNIMTeamInfoKeyType] = (unsigned int)type_;
-		if (ExistValue(nim::kTeamInfoKeyOwnerID))
-			json[nim::kNIMTeamInfoKeyCreator] = owner_id_;
-		if (ExistValue(nim::kTeamInfoKeyLevel))
-			json[nim::kNIMTeamInfoKeyLevel] = level_;
-		if (ExistValue(nim::kTeamInfoKeyProperty))
-			json[nim::kNIMTeamInfoKeyProperty] = property_;
-		json[nim::kNIMTeamInfoKeyValidFlag] = valid_ ? 1 : 0;
-		if (member_count_ > 0)
-			json[nim::kNIMTeamInfoKeyMemberCount] = member_count_;
-		if (member_list_timetag_ > 0)
-			json[nim::kNIMTeamInfoKeyListTime] = member_list_timetag_;
-		if (create_timetag_ > 0)
-			json[nim::kNIMTeamInfoKeyCreateTime] = create_timetag_;
-		if (update_timetag_ > 0)
-			json[nim::kNIMTeamInfoKeyUpdateTime] = update_timetag_;
-		json[nim::kNIMTeamInfoKeyMemberValid] = member_valid_ ? 1 : 0;
-		if (ExistValue(nim::kTeamInfoKeyIntro))
-			json[nim::kNIMTeamInfoKeyIntro] = intro_;
-		if (ExistValue(nim::kTeamInfoKeyAnnouncement))
-			json[nim::kNIMTeamInfoKeyAnnouncement] = announcement_;
-		if (ExistValue(nim::kTeamInfoKeyJoinMode))
-			json[nim::kNIMTeamInfoKeyJoinMode] = (unsigned int)join_mode_;
-		//群属性,开发者无需关注 20161011 by Oleg
-		//if (ExistValue(nim::kTeamInfoKeyConfigBits))
-		//	json[nim::kNIMTeamInfoKeyBits] = config_bits_;
-		if (ExistValue(nim::kTeamInfoKeyCustom))
-			json[nim::kNIMTeamInfoKeyCustom] = custom_;
-		json[nim::kNIMTeamInfoKeyServerCustom] = server_custom_;
-		if (ExistValue(nim::kTeamInfoKeyIcon))
-			json[nim::kNIMTeamInfoKeyIcon] = icon_;
-		if (ExistValue(nim::kTeamInfoKeyBeInviteMode))
-			json[nim::kNIMTeamInfoKeyBeInviteMode] = (unsigned int)be_invite_mode_;
-		if (ExistValue(nim::kTeamInfoKeyInviteMode))
-			json[nim::kNIMTeamInfoKeyInviteMode] = (unsigned int)invite_mode_;
-		if (ExistValue(nim::kTeamInfoKeyUpdateInfoMode))
-			json[nim::kNIMTeamInfoKeyUpdateInfoMode] = (unsigned int)update_info_mode_;
-		if (ExistValue(nim::kTeamInfoKeyUpdateCustomMode))
-			json[nim::kNIMTeamInfoKeyUpdateCustomMode] = (unsigned int)update_custom_mode_;
+		return GetJsonStringWithNoStyled(team_info_json_value_);
+	}
 
-		return GetJsonStringWithNoStyled(json);
+	/** @fn Json::Value ToJsonValue() const
+	  * @brief 获取JsonValue格式的数据
+	  * @return Json::Value 
+      */
+	Json::Value ToJsonValue() const
+	{
+		return team_info_json_value_;
 	}
 
 private:
-	std::string		id_;
-	bool			valid_;
-	int				member_count_;
-	int64_t			member_list_timetag_;
-	int64_t			create_timetag_;
-	int64_t			update_timetag_;
-	std::string		server_custom_;
-
-private:
-	std::string		name_;
-	nim::NIMTeamType	type_;
-	std::string		owner_id_;
-	int				level_;
-	std::string		property_;
-	bool			member_valid_;
-	std::string		intro_;
-	std::string		announcement_;
-	nim::NIMTeamJoinMode join_mode_;
-	//群属性,开发者无需关注 20161011 by Oleg
-	//int64_t			config_bits_;
-	std::string		custom_;
-
-private:
-	std::string		icon_;
-	nim::NIMTeamBeInviteMode be_invite_mode_;
-	nim::NIMTeamInviteMode invite_mode_;
-	nim::NIMTeamUpdateInfoMode update_info_mode_;
-	nim::NIMTeamUpdateCustomMode update_custom_mode_;
-
-	unsigned int	value_available_flag_;
-};
-
-/** @brief 群成员信息数据标记Key,用以标记对应数据的有效性 */
-enum TeamMemberValueKey
-{
-	kTeamMemberPropertyKeyNone = 0,				/**< 无数据 */
-	kTeamMemberPropertyKeyUserType = 1,			/**< 群成员类型 */
-	kTeamMemberPropertyKeyNickName = 1 << 1,	/**< 群成员昵称 */
-	kTeamMemberPropertyKeyBits = 1 << 2,		/**< 群成员配置项 */
-	kTeamMemberPropertyKeyValid = 1 << 3,		/**< 群成员有效性 */
-	kTeamMemberPropertyKeyCustom = 1 << 4,		/**< 群成员自定义扩展字段 */
-	kTeamMemberPropertyKeyMute = 1 << 5,		/**< 群成员是否禁言 */
-	kTeamMemberPropertyKeyAll = (1 << 6) - 1	/**< 有数据 */
+	Json::Value		team_info_json_value_;
 };
 
 /** @brief 群组成员信息 */
 struct TeamMemberProperty
 {
 public:
-	/** 构造函数，推荐使用 */
-	TeamMemberProperty(const std::string& team_id, const std::string& accid) : type_(kNIMTeamUserTypeNomal)
-		, valid_(false)
-		, bits_(0)
-		, create_timetag_(0)
-		, update_timetag_(0)
-		, value_available_flag_(0)
-		, mute_(false)
+	/** 构造函数 */
+	TeamMemberProperty(const std::string& team_id, const std::string& accid, const nim::NIMTeamUserType type)
 	{
-		team_id_ = team_id;
-		account_id_ = accid;
+		member_info_json_value_[kNIMTeamUserKeyID] = team_id;
+		member_info_json_value_[kNIMTeamUserKeyAccID] = accid;
+		member_info_json_value_[kNIMTeamUserKeyType] = type;
 	}
 
 	/** 构造函数 */
-	TeamMemberProperty() : type_(kNIMTeamUserTypeNomal)
-		, valid_(false)
-		, bits_(0)
-		, create_timetag_(0)
-		, update_timetag_(0)
-		, value_available_flag_(0) 
-		, mute_(false){}
+	TeamMemberProperty()
+	{
+
+	}
 
 public:
-	/** 设置群组ID */
+	/** 设置群组ID,通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetTeamID(const std::string& id)
 	{
-		team_id_ = id;
+		member_info_json_value_[kNIMTeamUserKeyID] = id;
 	}
 
 	/** 获取群组ID */
 	std::string GetTeamID() const
 	{
-		return team_id_;
+		return member_info_json_value_[kNIMTeamUserKeyID].asString();
 	}
 
-	/** 设置群成员ID */
+	/** 设置群成员ID,通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetAccountID(const std::string& id)
 	{
-		account_id_ = id;
+		member_info_json_value_[kNIMTeamUserKeyAccID] = id;
 	}
 
 	/** 获取群成员ID */
 	std::string GetAccountID() const
 	{
-		return account_id_;
+		return member_info_json_value_[kNIMTeamUserKeyAccID].asString();
 	}
 
 	/** 设置群成员类型 */
 	void SetUserType(nim::NIMTeamUserType type)
 	{
-		type_ = type;
-		value_available_flag_ |= kTeamMemberPropertyKeyUserType;
+		member_info_json_value_[kNIMTeamUserKeyType] = type;
 	}
 
 	/** 获取群成员类型 */
 	nim::NIMTeamUserType GetUserType() const
 	{
-		return type_;
+		return (nim::NIMTeamUserType)member_info_json_value_[kNIMTeamUserKeyType].asUInt();
 	}
 
 	/** 设置群成员昵称 */
 	void SetNick(const std::string& nick)
 	{
-		nick_ = nick;
-		value_available_flag_ |= kTeamMemberPropertyKeyNickName;
+		member_info_json_value_[kNIMTeamUserKeyNick] = nick;
 	}
 
 	/** 获取群成员昵称 */
 	std::string GetNick() const
 	{
-		return nick_;
+		return member_info_json_value_[kNIMTeamUserKeyNick].asString();
 	}
 
 	/** 设置群成员配置项 */
 	void SetBits(int64_t bit)
 	{
-		bits_ = bit;
-		value_available_flag_ |= kTeamMemberPropertyKeyBits;
+		member_info_json_value_[kNIMTeamUserKeyBits] = bit;
 	}
 
 	/** 获取群成员配置项 */
 	int64_t GetBits() const
 	{
-		return bits_;
+		return member_info_json_value_[kNIMTeamUserKeyBits].asUInt64();
 	}
 
-	/** 设置群成员有效性 */
+	/** 设置群成员有效性,通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetValid(bool valid)
 	{
-		valid_ = valid;
-		value_available_flag_ |= kTeamMemberPropertyKeyValid;
+		member_info_json_value_[kNIMTeamUserKeyValidFlag] = valid ? 1 : 0;
 	}
 
 	/** 获取群成员有效性 */
 	bool IsValid() const
 	{
-		return valid_;
+		return member_info_json_value_[kNIMTeamUserKeyValidFlag].asUInt() == 1;
 	}
 
-	/** 设置群成员创建时间戳(毫秒) */
+	/** 设置群成员创建时间戳(毫秒),通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetCreateTimetag(int64_t timetag)
 	{
-		create_timetag_ = timetag;
+		member_info_json_value_[kNIMTeamUserKeyCreateTime] = timetag;
 	}
 
 	/** 获取群成员创建时间戳(毫秒) */
 	int64_t GetCreateTimetag() const
 	{
-		return create_timetag_;
+		return member_info_json_value_[kNIMTeamUserKeyCreateTime].asUInt64();
 	}
 
-	/** 设置群成员更新时间戳(毫秒) */
+	/** 设置群成员更新时间戳(毫秒),通常情况下由SDK维护,开发者作为只读无需设置 */
 	void SetUpdateTimetag(int64_t timetag)
 	{
-		update_timetag_ = timetag;
+		member_info_json_value_[kNIMTeamUserKeyUpdateTime] = timetag;
 	}
 
 	/** 获取群成员更新时间戳(毫秒) */
 	int64_t GetUpdateTimetag() const
 	{
-		return update_timetag_;
-	}
-
-	/** @fn bool ExistValue(TeamMemberValueKey value_key) const
-	  * @brief 群成员信息信息数据标记Key对应的数据是否有效（存在，非初始值状态）
-	  * @param[in] value_key 群成员信息数据标记Key
-	  * @return bool 有效性 
-	  */
-	bool ExistValue(TeamMemberValueKey value_key) const
-	{
-		return (value_available_flag_ & value_key) != 0;
+		return member_info_json_value_[kNIMTeamUserKeyUpdateTime].asUInt64();
 	}
 
 	/** 设置禁言 */
 	void SetMute(bool mute)
 	{
-		mute_ = mute;
-		value_available_flag_ |= kTeamMemberPropertyKeyMute;
+		member_info_json_value_[kNIMTeamUserKeyMute] = mute ? 1 : 0;
 	}
 
 	/** 是否禁言 */
 	bool IsMute() const
 	{
-		return mute_;
+		return member_info_json_value_[kNIMTeamUserKeyMute].asUInt() == 1;
 	}
 
 	/** 设置扩展字段 */
 	void SetCustom(const std::string& custom)
 	{
-		custom_ = custom;
-		value_available_flag_ |= kTeamMemberPropertyKeyCustom;
+		member_info_json_value_[kNIMTeamUserKeyCustom] = custom;
 	}
 
 	/** 获取扩展字段 */
 	std::string GetCustom() const
 	{
-		return custom_;
+		return member_info_json_value_[kNIMTeamUserKeyCustom].asString();
+	}
+
+	/** @fn bool ExistValue(const std::string& nim_team_user_key) const
+	  * @brief 群成员信息信息数据标记Key对应的数据是否有效（存在，非初始值状态）
+	  * @param[in] nim_team_user_key 群成员信息数据标记Key nim_team_def.h
+	  * @return bool 有效性 
+	  */
+	bool ExistValue(const std::string& nim_team_user_key) const
+	{
+		return member_info_json_value_.isMember(nim_team_user_key);
 	}
 
 	/** @fn std::string ToJsonString() const
@@ -713,46 +578,20 @@ public:
       */
 	std::string ToJsonString() const
 	{
-		Json::Value json;
-		json[nim::kNIMTeamUserKeyID] = team_id_;
-		json[nim::kNIMTeamUserKeyAccID] = account_id_;
-		if (ExistValue(nim::kTeamMemberPropertyKeyUserType))
-			json[nim::kNIMTeamUserKeyType] = (unsigned int)type_;
-		if (ExistValue(nim::kTeamMemberPropertyKeyNickName))
-			json[nim::kNIMTeamUserKeyNick] = nick_;
-		if (ExistValue(nim::kTeamMemberPropertyKeyBits))
-			json[nim::kNIMTeamUserKeyBits] = bits_;
-		if (ExistValue(nim::kTeamMemberPropertyKeyValid))
-			json[nim::kNIMTeamUserKeyValidFlag] = valid_ ? 1 : 0;
-		if (create_timetag_ > 0)
-			json[nim::kNIMTeamUserKeyCreateTime] = create_timetag_;
-		if (update_timetag_ > 0)
-			json[nim::kNIMTeamUserKeyUpdateTime] = update_timetag_;
-		if (ExistValue(nim::kTeamMemberPropertyKeyCustom))
-			json[nim::kNIMTeamUserKeyCustom] = custom_;
-		if (ExistValue(nim::kTeamMemberPropertyKeyMute))
-			json[nim::kNIMTeamUserKeyMute] = mute_ ? 1 : 0;
+		return GetJsonStringWithNoStyled(member_info_json_value_);
+	}
 
-		return GetJsonStringWithNoStyled(json);
+	/** @fn Json::Value ToJsonValue() const
+	  * @brief 获取member info json value
+	  * @return Json::Value 
+      */
+	Json::Value ToJsonValue() const
+	{
+		return member_info_json_value_;
 	}
 
 private:
-	bool			valid_;
-	int64_t			create_timetag_;
-	int64_t			update_timetag_;
-
-private:
-	std::string		team_id_;
-	std::string		account_id_;
-	nim::NIMTeamUserType type_;
-	std::string		nick_;
-	int64_t			bits_;
-
-private:
-	bool			mute_;
-	std::string		custom_;
-
-	unsigned int	value_available_flag_;
+	Json::Value		member_info_json_value_;
 };
 
 /** @brief 群组事件通知 */

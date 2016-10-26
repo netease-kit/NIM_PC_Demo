@@ -35,6 +35,8 @@ public:
 class UILIB_API RenderEngine
 {
 public:
+	static HBITMAP CreateDIBBitmap(HDC hdc, int width, int height, LPVOID* pBits);
+
 	static void GdiDrawImage(HDC hDC, bool bCurCanvasTransparent, const UiRect& rcPaint, HBITMAP hBitmap, bool alphaChannel, 
 		const UiRect& rcImageDest, const UiRect& rcImageSource, const UiRect& rcCorners, BYTE uFade = 255, bool xtiled = false, bool ytiled = false);
 

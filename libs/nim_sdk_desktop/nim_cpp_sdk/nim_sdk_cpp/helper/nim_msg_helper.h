@@ -41,11 +41,12 @@ struct RecallMsgNotify
 	std::string msg_id_;	/**< 客户端消息ID */
 	std::string notify_;	/**< 自定义通知文案 */
 	NIMSessionType session_type_;	/**< 会话类型 */
-	int64_t		notify_timetag_;	/**< 消息时间戳 */
+	int64_t		notify_timetag_;	/**< 通知时间戳 */
 	NIMMessageFeature notify_feature_;	/**< 通知的种类 */
 	bool msglog_exist_;		/**< 客户端消息本地是否存在 */
+	int64_t		msglog_timetag_;	/**< 撤回的消息的消息时间戳 */
 
-	RecallMsgNotify() : notify_timetag_(0), msglog_exist_(true) {}
+	RecallMsgNotify() : notify_timetag_(0), msglog_exist_(true), msglog_timetag_(0) {}
 };
 
 /** @fn bool ParseRecallMsgNotify(const std::string& notify_json, std::list<RecallMsgNotify>& notifys)

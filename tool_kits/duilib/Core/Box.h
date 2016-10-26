@@ -65,7 +65,7 @@ public:
 	void ResetChildIndex(Control* child, std::size_t newIndex);
 
     virtual void SetVisible(bool bVisible = true) override;
-    void SetInternVisible(bool bVisible = true);
+	virtual void SetInternVisible(bool bVisible = true) override;
 	virtual void SetEnabled(bool bEnabled) override;
 	virtual CSize EstimateSize(CSize szAvailable) override;
     virtual bool IsAutoDestroy() const;

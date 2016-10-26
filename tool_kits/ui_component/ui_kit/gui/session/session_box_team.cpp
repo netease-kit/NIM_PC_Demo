@@ -59,6 +59,12 @@ void SessionBox::OnGetTeamInfoCallback(const std::string& tid, const nim::TeamIn
 		InvokeGetTeamMember();
 	}
 
+	if (team_info_.ExistValue(nim::kNIMTeamInfoKeyMuteAll))
+	{
+		bool new_mute_all_status = team_info_.IsAllMemberMute();
+		mute_all_ = new_mute_all_status;
+	}
+
 	is_header_enable_ = true;
 }
 
@@ -97,13 +103,18 @@ void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, cons
 		{
 			TeamItem* item = new TeamItem;
 			GlobalManager::FillBoxWithCache(item, L"session/team_item.xml");
-			if (tm_info.second.GetUserType() == nim::kNIMTeamUserTypeCreator)
+			auto user_type = tm_info.second.GetUserType();
+			if (user_type == nim::kNIMTeamUserTypeCreator)
 				member_list_->AddAt(item, 0);
 			else
 				member_list_->Add(item);
 
 			item->InitControl();
 			item->InitInfo(tm_info.second);
+			if (mute_all_ && user_type != nim::kNIMTeamUserTypeCreator && user_type != nim::kNIMTeamUserTypeManager)
+				SetTeamMemberMute(tid, uid, tm_info.second.IsMute(), mute_all_);
+			else
+				SetTeamMemberMute(tid, uid, tm_info.second.IsMute(), false);
 		}
 		else
 		{
@@ -123,7 +134,13 @@ void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, cons
 		}
 
 		if (LoginManager::GetInstance()->IsEqual(tm_info.second.GetAccountID()))
-			SetTeamMuteUI(tm_info.second.IsMute());
+		{
+			auto user_type = tm_info.second.GetUserType();
+			if (mute_all_ && user_type != nim::kNIMTeamUserTypeCreator && user_type != nim::kNIMTeamUserTypeManager)
+				SetTeamMuteUI(true);
+			else
+				SetTeamMuteUI(tm_info.second.IsMute());
+		}
 	}
 }
 
@@ -155,10 +172,19 @@ void SessionBox::OnTeamMemberAdd(const std::string& tid, const nim::TeamMemberPr
 
 		TeamItem* item = new TeamItem;
 		GlobalManager::FillBoxWithCache(item, L"session/team_item.xml");
-		member_list_->Add(item);
+		auto user_type = team_member_info.GetUserType();
+		if (user_type == nim::kNIMTeamUserTypeCreator)
+			member_list_->AddAt(item, 0);
+		else
+			member_list_->Add(item);
 
 		item->InitControl();
 		item->InitInfo(team_member_info);
+		std::string uid = team_member_info.GetAccountID();
+		if (mute_all_ && user_type != nim::kNIMTeamUserTypeCreator && user_type != nim::kNIMTeamUserTypeManager)
+			SetTeamMemberMute(tid, uid, team_member_info.IsMute(), mute_all_);
+		else
+			SetTeamMemberMute(tid, uid, team_member_info.IsMute(), false);
 
 		std::wstring str = nbase::StringPrintf(L"群成员（共%d人）", member_list_->GetCount());
 		label_member_->SetText(str);
@@ -235,14 +261,12 @@ void SessionBox::OnTeamMuteMember(const std::string& tid, const std::string& uid
 {
 	if (tid == session_id_)
 	{
-		std::wstring wid = nbase::UTF8ToUTF16(uid);
-
-		TeamItem* item = dynamic_cast<TeamItem*>(member_list_->FindSubControl(wid));
-		if (item)
-			item->SetMute(set_mute);
-
-		if (LoginManager::GetInstance()->IsEqual(uid))
-			SetTeamMuteUI(set_mute);
+		auto member_info = GetTeamMemberInfo(uid);
+		auto user_type = member_info.GetUserType();
+		if (mute_all_ && user_type != nim::kNIMTeamUserTypeCreator && user_type != nim::kNIMTeamUserTypeManager)
+			SetTeamMemberMute(tid, uid, set_mute, mute_all_);
+		else
+			SetTeamMemberMute(tid, uid, set_mute, false);
 	}
 }
 
@@ -313,7 +337,7 @@ void SessionBox::SendReceiptIfNeeded(bool auto_detect/* = false*/)
 
 	if (auto_detect)
 	{
-		if (session_form_->IsActiveSessionBox(this) || msg_list_ == nullptr || !msg_list_->IsAtEnd())
+		if (!session_form_->IsActiveSessionBox(this) || msg_list_ == nullptr || !msg_list_->IsAtEnd())
 		{
 			receipt_need_send_ = true;
 			return;
@@ -355,6 +379,19 @@ void SessionBox::RefreshMsglistShowname(const std::string& uid)
 				notice_item->RefreshNotice();
 		}
 	}
+}
+
+void SessionBox::SetTeamMemberMute(const std::string& tid, const std::string& uid, bool set_mute, bool team_mute)
+{
+	std::wstring wid = nbase::UTF8ToUTF16(uid);
+
+	TeamItem* item = dynamic_cast<TeamItem*>(member_list_->FindSubControl(wid));
+	if (item)
+		item->SetMute(set_mute, team_mute);
+
+//	if (LoginManager::GetInstance()->IsEqual(uid))
+//		SetTeamMuteUI(set_mute);
+
 }
 
 void SessionBox::SetTeamMuteUI(bool mute)

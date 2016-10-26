@@ -145,6 +145,9 @@
     <Filter Include="gui\main\forms">
       <UniqueIdentifier>{e3b1bc0f-263e-40ee-bc88-539b2a9e14a7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gui\session\taskbar">
+      <UniqueIdentifier>{5f0ae736-6c32-4650-a304-268853fed22d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -485,6 +488,15 @@
     </ClInclude>
     <ClInclude Include="gui\main\team_event_form.h">
       <Filter>gui\main\forms</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\taskbar\taskbar_manager.h">
+      <Filter>gui\session\taskbar</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\custom_layout.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\taskbar\dwm_util.h">
+      <Filter>gui\session\taskbar</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -847,6 +859,15 @@
     </ClCompile>
     <ClCompile Include="gui\main\team_event_form_custom.cpp">
       <Filter>gui\main\forms</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\taskbar\taskbar_manager.cpp">
+      <Filter>gui\session\taskbar</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\custom_layout.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\taskbar\dwm_util.cpp">
+      <Filter>gui\session\taskbar</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

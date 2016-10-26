@@ -169,7 +169,8 @@ bool SessionBox::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 		return false;
 
 	AtlistForm* at_list_form = (AtlistForm*)WindowsManager::GetInstance()->GetWindow(AtlistForm::kClassName, nbase::UTF8ToUTF16(session_id_));
-	ASSERT(at_list_form != NULL);
+	if (NULL == at_list_form)
+		return false;
 
 	if (wParam == '@')
 	{

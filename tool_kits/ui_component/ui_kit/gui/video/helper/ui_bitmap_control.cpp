@@ -61,7 +61,7 @@ void BitmapControl::Paint(HDC hDC, const UiRect& rcPaint)
 				int dest_byte_width = width * 4;
 				int src_byte_width = source_w * 4;
 				int paint_byte_width = src_w * 4;
-				char* dest_data = (char*)parent_wnd_->GetBits();
+				char* dest_data = (char*)parent_wnd_->GetBackgroundBits();
 				int bottom = height - draw_y - 1;
 				dest_data += bottom * dest_byte_width + draw_x * 4;
 				char* src_data = (char*)data_.c_str();

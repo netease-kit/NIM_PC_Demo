@@ -120,6 +120,9 @@ static const char *kNIMSysMsgKeyPushPayload		= "push_payload";		/**< json string
 static const char *kNIMSysMsgKeyPushEnable		= "push_enable";		/**< int,		(可选)是否需要推送, 0:不需要,1:需要,默认1 */
 static const char *kNIMSysMsgKeyPushNeedBadge	= "push_need_badge";	/**< int,		(可选)推送是否要做消息计数(角标)，0:不需要，1:需要，默认1 */
 static const char *kNIMSysMsgKeyPushNeedPrefix	= "push_prefix";		/**< int,		(可选)推送需要前缀，0：不需要，1：需要，默认0 */
+static const char *kNIMSysMsgKeyAntiSpamEnable	= "anti_spam_enable";	/**< int, (功能暂时不开放)是否需要过易盾反垃圾, 0:不需要,1:需要, 默认0 */
+static const char *kNIMSysMsgKeyAntiSpamContent = "anti_spam_content";	/**< string, (功能暂时不开放)(可选)开发者自定义的反垃圾字段 */
+
 /** @}*/ //接收系统消息Json Keys，协议定义
 
 /** @enum NIMSysMsgStatus 系统消息状态 */

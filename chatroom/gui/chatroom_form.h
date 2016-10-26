@@ -92,6 +92,7 @@ private:
 	void SetMemberMute(const std::string &id, bool is_mute);
 	void SetMemberFixed(const std::string &id, bool is_fixed);
 	void SetMemberTempMute(const std::string &id, bool temp_mute, __int64 duration);
+	void SetRoomMemberMute(bool mute);
 	void RemoveMember(const std::string &uid);
 	void UpdateOnlineCount();	// 刷新在线人数
 	void GetMembers();
@@ -156,6 +157,8 @@ private:
 	AutoUnregister	unregister_cb;
 
 	std::map<std::string, nbase::WeakCallbackFlag> temp_unmute_id_task_map_;
+
+	bool room_mute_;
 };
 
 }

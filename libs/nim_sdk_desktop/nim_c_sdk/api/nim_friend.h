@@ -10,6 +10,7 @@
 
 #include "nim_sdk_dll.h"
 #include "nim_friend_def.h"
+#include "util/stdbool.h"
 
 #ifdef __cplusplus
 extern"C"
@@ -75,6 +76,14 @@ NIM_SDK_DLL_API void nim_friend_get_list(const char *json_extension, nim_friend_
   * @return void 无返回值
   */
 NIM_SDK_DLL_API void nim_friend_get_profile(const char *accid, const char *json_extension, nim_friend_get_profile_cb_func cb, const void *user_data);
+
+/** @fn bool nim_friend_query_friendship_block(const char *accid, const char *json_extension)
+  * 在本地缓存数据中查询accid是否为自己的好友(同步接口，堵塞NIM内部线程，谨慎使用)
+  * @param[in] accid		对方帐号
+  * @param[in] json_extension	json扩展参数（备用，目前不需要）
+  * @return bool 当正向和反向好友关系都为好友时返回true
+  */
+NIM_SDK_DLL_API bool nim_friend_query_friendship_block(const char *accid, const char *json_extension);
 
 #ifdef __cplusplus
 }

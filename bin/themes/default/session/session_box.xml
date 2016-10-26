@@ -50,9 +50,6 @@
 	                    <Button name="btn_file" width="30" height="30" valign="center" margin="4" tooltiptext="文件"
 	                            forenormalimage="file='btn_file.png' dest='4,4,26,26'" foredisabledimage="file='btn_file_disable.png' dest='4,4,26,26' fade='80'"
 	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
-	                    <Option name="btn_capture_audio" width="30" height="30" valign="center" margin="4" tooltiptext="录制语音"
-                                forenormalimage="file='audio_chat.png' dest='5,5,25,25'" foredisabledimage="file='audio_chat_disable.png' dest='5,5,25,25' fade='80'" 
-                                hotimage="icon_hover.png" pushedimage="icon_pushed.png" selectednormalimage="icon_pushed.png" selectedforenormalimage="file='audio_chat.png' dest='5,5,25,25'" selectedforedisabledimage="file='audio_chat_disable.png' dest='5,5,25,25' fade='80'"/>
 	                    <Button name="btn_jsb" width="30" height="30" valign="center" margin="4" tooltiptext="石头剪刀布"
 	                            forenormalimage="jsb.png" foredisabledimage="file='jsb_disable.png' fade='80'"
 	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
@@ -71,6 +68,7 @@
 	                    <Button name="btn_tip" width="30" height="30" valign="center" margin="4" tooltiptext="提醒消息"
 	                            forenormalimage="file='btn_tip.png' dest='5,5,25,25'" foredisabledimage="file='btn_tip_disable.png' dest='5,5,25,25' fade='80'"
 	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
+	                    <Option name="btn_capture_audio" width="30" height="30" valign="center" margin="4" tooltiptext="录制语音" hotimage="icon_hover.png" pushedimage="icon_pushed.png" selectednormalimage="icon_pushed.png" text="语" font="8" normaltextcolor="icongray" disabledtextcolor="iconfadegray"/>
 	                    <Control />
 	                    <!--Button name="add_msglog" dataid="10" valign="center" cursortype="hand" margin="5,0,10,0" normaltextcolor="link_blue" text="+记录"/-->
 	                    <Button name="btn_custom_msg" valign="center" cursortype="hand" normaltextcolor="link_blue" disabledtextcolor="gray" text="自定义通知"/>
@@ -80,7 +78,7 @@
 	                <Control height="6"/>
 	                <Box height="auto">
 	                    <RichEdit class="prompt" name="input_edit" minheight="86" maxheight="300" multiline="true" vscrollbar="true" autovscroll="true" readonly="false" font="2" normaltextcolor="darkcolor" margin="2,2,2,2" padding="8,0,0,0" wantreturnmsg="true" rich="true"/>
-						<Label name="input_edit_mute_tip" valign="center" halign="center" text="你已经被禁言" visible="false" normaltextcolor="gray"/>
+						<Label name="input_edit_mute_tip" valign="center" halign="center" text="禁言" visible="false" normaltextcolor="gray"/>
 	                </Box>
 	                <HBox name="hbox_send" height="30" margin="10,10,0,0">
 	                    <Label valign="bottom" text="提示：Enter发送，Ctrl+Enter换行"/>

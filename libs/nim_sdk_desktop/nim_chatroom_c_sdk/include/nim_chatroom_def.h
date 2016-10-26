@@ -16,7 +16,7 @@ extern"C"
   * 进入的回调函数定义
   * @param[out] room_id		聊天室ID
   * @param[out] enter_step	进入聊天室的过程(NIMChatRoomEnterStep)
-  * @param[out] error_code	错误码(如果错误码为kResRoomLocalNeedRequestAgain，聊天室重连机制结束，则需要向IM服务器重新请求进入该聊天室权限)
+  * @param[out] error_code	错误码(关注但不仅限200,408,415,10001,13001,13002,13003,如果错误码为10001，聊天室重连机制结束，则需要向IM服务器重新请求进入该聊天室权限)
   * @param[out] result		聊天室信息
   * @param[out] json_extension	json扩展数据（备用）
   * @param[out] user_data	APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
@@ -48,7 +48,7 @@ typedef void (*nim_chatroom_link_condition_cb_func)(__int64 room_id, int conditi
 /** @typedef void (*nim_chatroom_sendmsg_arc_cb_func)(__int64 room_id, int error_code, const char *result, const void *user_data)
   * 发送消息回执的回调函数定义
   * @param[out] room_id		聊天室ID
-  * @param[out] error_code	错误码
+  * @param[out] error_code	错误码(关注但不仅限200,408,416,13004,13006)
   * @param[out] result		json string
   * @param[out] json_extension	json扩展数据（备用）
   * @param[out] user_data	APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
@@ -228,10 +228,12 @@ static const char *kNIMChatRoomEnterKeyNotifyExt= "notify_ext";	/**< string, 进
   */
 //协议定义
 static const char *kNIMChatRoomMsgKeyType			= "msg_type";			/**< int, 消息类型(NIMChatRoomMsgType) */
-static const char *kNIMChatRoomMsgKeyAttach			= "msg_attach";			/**< string, 消息内容,如果约定的是json字符串，必须为可以解析为json的非格式化的字符串 */
+static const char *kNIMChatRoomMsgKeyAttach			= "msg_attach";			/**< string, 消息内容,长度限制2048, 如果约定的是json字符串，必须为可以解析为json的非格式化的字符串 */
 static const char *kNIMChatRoomMsgKeyClientMsgid	= "client_msg_id";		/**< string,客户端消息id */
 static const char *kNIMChatRoomMsgKeyResendFlag		= "resend_flag";		/**< int,消息重发标记位,第一次发送0,重发1 */
 static const char *kNIMChatRoomMsgKeyExt			= "ext";				/**< string, 第三方扩展字段, 长度限制4096, 必须为可以解析为Json的非格式化的字符串*/
+static const char *kNIMChatRoomMsgKeyAntiSpamEnable	= "anti_spam_enable";	/**< int, 是否需要过易盾反垃圾, 0:不需要,1:需要, 默认0 */
+static const char *kNIMChatRoomMsgKeyAntiSpamContent= "anti_spam_content";	/**< string, (可选)开发者自定义的反垃圾字段, 长度限制2048 */
 
 //以下定义对于客户端只读
 static const char *kNIMChatRoomMsgKeyRoomID			= "room_id";			/**< long, 消息所属的聊天室id,服务器填写,发送方不需要填写 */
@@ -295,6 +297,8 @@ static const char *kNIMChatRoomInfoKeyCreatorID		= "creator_id";		/**< string, �
 static const char *kNIMChatRoomInfoKeyValidFlag		= "valid_flag";		/**< int, 聊天室有效标记, 1:有效,0:无效 */
 static const char *kNIMChatRoomInfoKeyExt			= "ext";			/**< string, 第三方扩展字段, 必须为可以解析为Json的非格式化的字符串, 长度4k */
 static const char *kNIMChatRoomInfoKeyOnlineCount	= "online_count";	/**< int, 当前在线用户数量 */
+static const char *kNIMChatRoomInfoKeyMuteAll		= "mute_all";		 /**<int, 聊天室禁言标志 1:禁言,0:解除禁言*/
+
 /** @}*/ //聊天室Info Json Keys
 
 /** @enum NIMChatRoomExitReason 聊天室离开原因 */
@@ -329,7 +333,6 @@ static const char *kNIMChatRoomMemberInfoKeyValid		= "valid";			/**<int 记录�
 static const char *kNIMChatRoomMemberInfoKeyUpdateTimetag= "update_timetag";/**<long 固定成员的记录更新时间,用于固定成员列表的排列查询*/
 static const char *kNIMChatRoomMemberInfoKeyTempMute	= "temp_mute";		/**<int 临时禁言*/
 static const char *kNIMChatRoomMemberInfoKeyTempMuteRestDuration= "temp_mute_rest_duration"; /**<long 临时禁言的解除时长,单位秒*/
-
 /** @}*/ //聊天室个人Info Json Keys
 
 /** @enum NIMChatRoomOnlineState 在线状态 */
@@ -425,6 +428,8 @@ enum NIMChatRoomNotificationId
 	kNIMChatRoomNotificationIdMemberTempMute	= 314, /**< 临时禁言*/
 	kNIMChatRoomNotificationIdMemberTempUnMute	= 315, /**< 主动解除临时禁言*/
 	kNIMChatRoomNotificationIdMyRoleUpdated		= 316, /**< 成员主动更新了聊天室内的角色信息(仅指nick/avator/ext)*/
+	kNIMChatRoomNotificationIdRoomMuted			= 318, /**< 聊天室被禁言了,只有管理员可以发言,其他人都处于禁言状态*/
+	kNIMChatRoomNotificationIdRoomDeMuted		= 319, /**< 聊天室解除全体禁言状态*/
 };
 
 /** @enum NIMChatRoomLinkCondition 聊天室链接情况，一般都是有本地网路情况引起 */

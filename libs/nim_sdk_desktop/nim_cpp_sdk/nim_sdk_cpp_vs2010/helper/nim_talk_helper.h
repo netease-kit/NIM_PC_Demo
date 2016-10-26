@@ -46,6 +46,8 @@ struct MessageSetting
 	BoolStatus is_force_push_;			/**< 群组消息强推开关，强推全员设置true并强推列表为空 */
 	std::list<std::string> force_push_ids_list_;	/**< 群组消息强推列表 */
 	std::string force_push_content_;	/**< 群组消息强推文本 */
+	BoolStatus anti_spam_enable_;		/**< 是否需要过易盾反垃圾 */
+	std::string anti_spam_content_;		/**< (可选)开发者自定义的反垃圾字段,长度限制5000 */
 
 	/** 构造函数 */
 	MessageSetting() : resend_flag_(BS_NOT_INIT)
@@ -57,7 +59,8 @@ struct MessageSetting
 		, push_need_prefix_(BS_NOT_INIT)
 		, routable_(BS_NOT_INIT)
 		, need_offline_(BS_NOT_INIT)
-		, is_force_push_(BS_NOT_INIT){}
+		, is_force_push_(BS_NOT_INIT)
+		, anti_spam_enable_(BS_NOT_INIT){}
 
 	/** @fn void ToJsonValue(Json::Value& message) const
 	  * @brief 组装Json Value字符串
@@ -102,6 +105,10 @@ struct MessageSetting
 			StrListToJsonString(force_push_ids_list_, ids_json);
 			message[kNIMMsgKeyForcePushList] = ids_json;
 		}
+		if (anti_spam_enable_ != BS_NOT_INIT)
+			message[kNIMMsgKeyAntiSpamEnable] = anti_spam_enable_ == BS_TRUE ? 1 : 0;
+		if (!anti_spam_content_.empty())
+			message[kNIMMsgKeyAntiSpamContent] = anti_spam_content_;
 	}
 
 	/** @fn void ParseMessageSetting(const Json::Value& message)
@@ -112,23 +119,23 @@ struct MessageSetting
 	void ParseMessageSetting(const Json::Value& message)
 	{
 		if (message.isMember(kNIMMsgKeyHistorySave))
-			server_history_saved_ = (BoolStatus)message[kNIMMsgKeyHistorySave].asInt() == 1 ? BS_TRUE : BS_FALSE;
+			server_history_saved_ = message[kNIMMsgKeyHistorySave].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeyMsgRoaming))
-			roaming_ = (BoolStatus)message[kNIMMsgKeyMsgRoaming].asInt() == 1 ? BS_TRUE : BS_FALSE;
+			roaming_ = message[kNIMMsgKeyMsgRoaming].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeyMsgSync))
-			self_sync_ = (BoolStatus)message[kNIMMsgKeyMsgSync].asInt() == 1 ? BS_TRUE : BS_FALSE;
+			self_sync_ = message[kNIMMsgKeyMsgSync].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeyPushNeedBadge))
-			push_need_badge_ = (BoolStatus)message[kNIMMsgKeyPushNeedBadge].asInt() == 1 ? BS_TRUE : BS_FALSE;
+			push_need_badge_ = message[kNIMMsgKeyPushNeedBadge].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeyPushEnable))
-			need_push_ = (BoolStatus)message[kNIMMsgKeyPushEnable].asInt() == 1 ? BS_TRUE : BS_FALSE;
+			need_push_ = message[kNIMMsgKeyPushEnable].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeyPushNeedPrefix))
-			push_need_prefix_ = (BoolStatus)message[kNIMMsgKeyPushNeedPrefix].asInt() == 1 ? BS_TRUE : BS_FALSE;
+			push_need_prefix_ = message[kNIMMsgKeyPushNeedPrefix].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeyResendFlag))
-			resend_flag_ = (BoolStatus)message[kNIMMsgKeyResendFlag].asInt() == 1 ? BS_TRUE : BS_FALSE;
+			resend_flag_ = message[kNIMMsgKeyResendFlag].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeyMsgRoutable))
-			routable_ = (BoolStatus)message[kNIMMsgKeyMsgRoutable].asInt() == 1 ? BS_TRUE : BS_FALSE;
+			routable_ = message[kNIMMsgKeyMsgRoutable].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeySetMsgOffline))
-			need_offline_ = (BoolStatus)message[kNIMMsgKeySetMsgOffline].asInt() == 1 ? BS_TRUE : BS_FALSE;
+			need_offline_ = message[kNIMMsgKeySetMsgOffline].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		Json::Reader reader;
 		if (!reader.parse(message[kNIMMsgKeyServerExt].asString(), server_ext_) || !server_ext_.isObject())
 			//assert(0);
@@ -149,6 +156,9 @@ struct MessageSetting
 				//assert(0);
 			}
 		}
+		if (message.isMember(kNIMMsgKeyAntiSpamEnable))
+			anti_spam_enable_ = message[kNIMMsgKeyAntiSpamEnable].asInt() == 1 ? BS_TRUE : BS_FALSE;
+		anti_spam_content_ = message[kNIMMsgKeyAntiSpamContent].asString();
 	}
 };
 
@@ -164,7 +174,7 @@ public:
 	std::string		receiver_accid_;			/**< 接收者ID */
 	std::string		sender_accid_;				/**< 发送者ID */
 	int64_t			timetag_;					/**< 消息时间戳（毫秒） */
-	std::string		content_;					/**< 消息内容 */
+	std::string		content_;					/**< 消息内容,长度限制5000 */
 	NIMMessageType	type_;						/**< 消息类型 */
 	std::string		attach_;					/**< 消息附件 */
 	std::string		client_msg_id_;				/**< 消息ID（客户端） */

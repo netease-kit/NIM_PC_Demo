@@ -8,7 +8,7 @@ namespace ui
 	class UILIB_API TabBox : public Box
 	{
 	public:
-		TabBox();
+		TabBox(Layout* pLayout = new Layout());
 
 		virtual bool Add(Control* pControl) override;
 		virtual bool AddAt(Control* pControl, std::size_t iIndex) override;

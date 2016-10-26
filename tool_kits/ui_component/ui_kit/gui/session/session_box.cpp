@@ -3,6 +3,7 @@
 #include "gui/session/control/audio_capture.h"
 #include "gui/session/control/atme_view.h"
 #include "gui/session/atlist/at_list_form.h"
+#include "gui/session/taskbar/taskbar_manager.h"
 #include "module/session/session_util.h"
 #include "module/session/session_manager.h"
 #include "module/audio/audio_manager.h"
@@ -39,6 +40,10 @@ SessionBox::SessionBox(std::string id, nim::NIMSessionType type)
 	has_writing_cell_ = false;
 	writing_time_ = 0;
 	is_team_valid_ = true;
+
+	mute_all_ = false;
+
+	taskbar_item_ = NULL;
 }
 
 SessionBox::~SessionBox()
@@ -129,6 +134,7 @@ void SessionBox::InitSessionBox()
 
 	CheckHeader();
 	CheckTeamType(nim::kNIMTeamTypeNormal);
+	OnWndSizeMax(TRUE == IsZoomed(this->GetWindow()->GetHWND()));
 
 	if (session_type_ == nim::kNIMSessionTypeTeam)
 	{
@@ -136,14 +142,22 @@ void SessionBox::InitSessionBox()
 		InvokeGetTeamInfo();
 
 		OnSelectAtItem cb = nbase::Bind(&SessionBox::OnSelectAtItemCallback, this, std::placeholders::_1);
-		AtlistForm *at_list_fomr = new AtlistForm(session_id_, ToWeakCallback(cb));
-		at_list_fomr->Create(this->GetWindow()->GetHWND(), L"", WS_POPUPWINDOW, 0L);
+		AtlistForm *at_list_form = new AtlistForm(session_id_, ToWeakCallback(cb));
+		at_list_form->Create(this->GetWindow()->GetHWND(), L"", WS_POPUPWINDOW, 0L);
 	}
 	else
 	{
 		is_header_enable_ = true;
 		btn_invite_->SetVisible(true);
 	}
+
+	// 初始化任务栏缩略图
+	{
+		taskbar_item_ = new TaskbarTabItem(this);
+		if (taskbar_item_)
+			taskbar_item_->Init(nbase::UTF8ToUTF16(session_id_));
+	}
+
 
 	unregister_cb.Add(NotifyCenter::GetInstance()->RegNotify(NT_LINK, nbase::Bind(&SessionBox::OnRelink, this, std::placeholders::_1)));
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(nbase::Bind(&SessionBox::OnUserInfoChange, this, std::placeholders::_1)));
@@ -166,11 +180,50 @@ void SessionBox::UninitSessionBox()
 	AudioManager::GetInstance()->StopPlayAudio(session_id_);
 	SessionManager::GetInstance()->RemoveSessionBox(session_id_, this);
 
+	if (taskbar_item_)
+	{
+		taskbar_item_->UnInit();
+	}
+
+	AtlistForm* at_list_form = (AtlistForm*)WindowsManager::GetInstance()->GetWindow(AtlistForm::kClassName, nbase::UTF8ToUTF16(session_id_));
+	if (at_list_form)
+		at_list_form->CloseForm();
+
 	if (input_edit_droptarget_)
 	{
 		input_edit_droptarget_->Release();
 		input_edit_droptarget_ = NULL;
 	}
+}
+
+TaskbarTabItem* SessionBox::GetTaskbarItem()
+{
+	return taskbar_item_;
+}
+
+void SessionBox::SetInternVisible(bool bVisible /*= true*/)
+{
+	Control::SetInternVisible(bVisible);
+	if (m_items.empty()) return;
+	for (auto it = m_items.begin(); it != m_items.end(); it++) {
+		(*it)->SetInternVisible(bVisible);
+	}
+}
+
+void SessionBox::Invalidate() const
+{
+	__super::Invalidate();
+
+	if (taskbar_item_)
+		taskbar_item_->InvalidateTab();
+}
+
+void SessionBox::SetPos(UiRect rc)
+{
+	__super::SetPos(rc);
+
+	if (taskbar_item_)
+		taskbar_item_->InvalidateTab();
 }
 
 void SessionBox::InvokeShowMsgs(bool first_show_msg)
@@ -214,7 +267,7 @@ void SessionBox::AddNewMsg(const nim::IMMessage &msg, bool create)
 	bool flash = true;
 	if (msg.feature_ == nim::kNIMMessageFeatureSyncMsg || msg.type_ == nim::kNIMMessageTypeNotification)
 		flash = false;
-	session_form_->OnNewMsg(create, flash);
+	session_form_->OnNewMsg(*this, create, flash);
 	
 	if(at_end)
 	{

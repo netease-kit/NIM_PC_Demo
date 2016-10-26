@@ -146,7 +146,7 @@ bool MemberManagerForm::OnBtnConfirmClick(ui::EventArgs* param)
 
 	if (new_team_card != team_card)
 	{
-		nim::TeamMemberProperty values(tid_, user_id);
+		nim::TeamMemberProperty values(tid_, user_id, member_info_.GetUserType());
 		values.SetNick(new_team_card);
 		if (user_id != LoginManager::GetInstance()->GetAccount())
 			nim::Team::UpdateOtherNickAsync(values, nbase::Bind(&OnTeamEventCallback, user_id, new_team_card, std::placeholders::_1));

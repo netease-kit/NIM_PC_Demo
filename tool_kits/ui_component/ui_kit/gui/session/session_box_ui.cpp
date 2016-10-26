@@ -118,10 +118,7 @@ bool SessionBox::Notify(ui::EventArgs* param)
 		{
 			if (receipt_need_send_)
 			{
-				bool list_last = msg_list_->IsAtEnd();
-				// 这里要判断当前窗口是否是激活状态，因为在非激活状态下的话也可能会收到Scroll消息导致误发回执消息
-				if (list_last && session_form_->IsActiveSessionBox(this))
-					SendReceiptIfNeeded();
+				SendReceiptIfNeeded(true);
 			}
 		}
 	}

@@ -2,12 +2,17 @@
 #include "session_box.h"
 #include "module/session/session_manager.h"
 #include "gui/session/control/merge_item.h"
+#include "gui/session/control/custom_layout.h"
 
 using namespace ui;
 
 namespace
 {
-	const int kNormalSessionBoxWidth = 500;
+	// 注册这个消息，收到这个消息后表示窗口对应的任务栏按钮被系统创建，这时候初始化ITaskbarList4接口
+	UINT WM_TASKBARBUTTONCREATED = ::RegisterWindowMessage(TEXT("TaskbarButtonCreated"));
+
+	// 定义会话盒子针对P2P、群组会话不同状态下的尺寸
+	const int kNormalSessionBoxWidth = 550;
 	const int kNormalSessionBoxHeight = 600;
 	const int kLargeSessionBoxWidth = 740;
 	const int kLargeSessionBoxHeight = 600;
@@ -147,6 +152,32 @@ LRESULT SessionForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		if (CheckRichEditLink(wParam, lParam))
 			return 0;
 	}
+	else if (uMsg == WM_TASKBARBUTTONCREATED)
+	{
+		taskbar_manager_.Init(this);
+
+		// 因为窗口刚创建时，会话盒子已经创建但是那时还没有收到WM_TASKBARBUTTONCREATED消息，导致RegisterTab函数没有被调用，所以收到消息后重新遍历一下没有被注册的Tab
+		for (int i = 0; i < session_box_tab_->GetCount(); i++)
+		{
+			Control *box_item = session_box_tab_->GetItemAt(i);
+			ASSERT(NULL != box_item);
+			if (NULL == box_item)
+				continue;
+
+			SessionBox* session_box = dynamic_cast<SessionBox*>(box_item);
+			if (NULL == session_box)
+				continue;
+
+			TaskbarTabItem* taskbar_item = session_box->GetTaskbarItem();
+			if (NULL == taskbar_item)
+				continue;;
+			
+			if (NULL == taskbar_item->GetTaskbarManager())
+				taskbar_manager_.RegisterTab(*taskbar_item);
+		}
+
+		return TRUE;
+	}
 
 	if (NULL != active_session_box_)
 	{
@@ -184,6 +215,16 @@ void SessionForm::OnFinalMessage(HWND hWnd)
 	}
 
 	__super::OnFinalMessage(hWnd);
+}
+
+ui::Control* SessionForm::CreateControl(const std::wstring& pstrClass)
+{
+	if (pstrClass == _T("CustomTabBox"))
+	{
+		return new TabBox(new CustomLayout);
+	}
+
+	return NULL;
 }
 
 void SessionForm::InitWindow()
@@ -260,6 +301,7 @@ SessionBox* SessionForm::CreateSessionBox(const std::string &session_id, nim::NI
 	GlobalManager::FillBoxWithCache(session_box, L"session/session_box.xml");
 	session_box->SetName(id);
 	session_box->InitSessionBox();
+	taskbar_manager_.RegisterTab(*session_box->GetTaskbarItem());
 	Button *btn_header_ = (Button*)session_box->FindSubControl(L"btn_header");
 	btn_header_->AttachAllEvents(nbase::Bind(&SessionForm::OnProcessSessionBoxHeaderDrag, this, std::placeholders::_1));
 
@@ -296,6 +338,7 @@ void SessionForm::CloseSessionBox(const std::string &session_id)
 	ASSERT(NULL != session_box);
 	if (NULL != session_box)
 	{
+		taskbar_manager_.UnregisterTab(*session_box->GetTaskbarItem());
 		session_box->UninitSessionBox();
 		// 如果会话盒子的数量大于1就立马移除盒子，否则不移除
 		// 如果最后一个会话盒子在这里立马移除，在窗口关闭时界面会因为没有控件而变成黑色
@@ -349,6 +392,7 @@ bool SessionForm::AttachSessionBox(SessionBox *session_box)
 	// 当另一个窗体创建的session_box会话盒子控件添加到另一个窗体内的容器控件时
 	// Add函数会重新的修改session_box内所有子控件的m_pWindow为新的窗体指针
 	session_box_tab_->Add(session_box);
+	taskbar_manager_.RegisterTab(*session_box->GetTaskbarItem());
 	Button *btn_header_ = (Button*)session_box->FindSubControl(L"btn_header");
 	btn_header_->DetachEvent(kEventAll);
 	btn_header_->AttachAllEvents(nbase::Bind(&SessionForm::OnProcessSessionBoxHeaderDrag, this, std::placeholders::_1));
@@ -381,6 +425,7 @@ bool SessionForm::DetachSessionBox(SessionBox *session_box)
 
 	merge_list_->Remove(session_item);
 
+	taskbar_manager_.UnregisterTab(*session_box->GetTaskbarItem());
 	// 在右侧Tab会话盒子列表中找到会话盒子并且移除盒子
 	// 在这里不能delete session_box
 	bool auto_destroy = session_box_tab_->IsAutoDestroy();
@@ -628,6 +673,9 @@ bool SessionForm::ChangeToSessionBox(const std::wstring &session_id)
 
 void SessionForm::AdjustFormSize()
 {
+	if (IsZoomed(m_hWnd))
+		return;
+
 	bool has_advanced_session = false;
 	for (int i = 0; i < session_box_tab_->GetCount(); i++)
 	{
@@ -684,7 +732,7 @@ void SessionForm::SetMergeItemHeaderPhoto(const std::wstring &session_id, const 
 	}
 }
 
-void SessionForm::OnNewMsg(bool create, bool flash)
+void SessionForm::OnNewMsg(SessionBox &session_box, bool create, bool flash)
 {
 	if (flash || create)
 	{
@@ -707,17 +755,19 @@ void SessionForm::OnNewMsg(bool create, bool flash)
 		{
 			if (::IsIconic(m_hWnd))
 				need = true;
-			else if (::GetForegroundWindow() != m_hWnd)
+			else if (!IsActiveSessionBox(&session_box))
 				need = true;
 		}
 
 		if (need)
-			FlashTaskbar();
+			FlashTaskbar(session_box);
 	}
 }
 
-void SessionForm::FlashTaskbar()
+void SessionForm::FlashTaskbar(SessionBox &session_box)
 {
+	taskbar_manager_.SetTabActive(*session_box.GetTaskbarItem());
+
 	FLASHWINFO flash_info = { sizeof(FLASHWINFO), m_hWnd, FLASHW_TRAY, 3, 0 };
 	::FlashWindowEx(&flash_info);
 }

@@ -20,17 +20,15 @@ void TeamItem::InitControl()
 
 void TeamItem::InitInfo(const nim::TeamMemberProperty &info)
 {
-	team_id_ = info.GetTeamID();
-	uid_ = info.GetAccountID();
+	member_info_ = info;
 	this->SetUTF8Name(info.GetAccountID());
-	team_card_ = info.GetNick();
-	SetMemberName(team_card_);
+	SetMemberName(member_info_.GetNick());
 	member_icon_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(info.GetAccountID()));
 
-	team_user_type_ = info.GetUserType();
-	if (team_user_type_ == nim::kNIMTeamUserTypeCreator || team_user_type_ == nim::kNIMTeamUserTypeManager)
+	nim::NIMTeamUserType team_user_type = member_info_.GetUserType();
+	if (team_user_type == nim::kNIMTeamUserTypeCreator || team_user_type == nim::kNIMTeamUserTypeManager)
 	{
-		icon_admin_->SetBkImage(team_user_type_ == nim::kNIMTeamUserTypeCreator ? L"..\\public\\icon\\team_creator.png" : L"..\\public\\icon\\team_manager.png");
+		icon_admin_->SetBkImage(team_user_type == nim::kNIMTeamUserTypeCreator ? L"..\\public\\icon\\team_creator.png" : L"..\\public\\icon\\team_manager.png");
 		icon_admin_->SetVisible(true);
 	}
 	else
@@ -50,19 +48,19 @@ void TeamItem::SetAdmin( bool admin )
 	icon_admin_->SetVisible(admin);
 	if (admin) 
 	{
-		team_user_type_ = nim::kNIMTeamUserTypeManager;
+		member_info_.SetUserType(nim::kNIMTeamUserTypeManager);
 	}
 	else 
 	{
-		team_user_type_ = nim::kNIMTeamUserTypeNomal;
+		member_info_.SetUserType(nim::kNIMTeamUserTypeNomal);
 	}
 }
 
-void TeamItem::SetMute(bool mute)
+void TeamItem::SetMute(bool mute, bool team_mute/* = false*/)
 {
 	is_mute_ = mute;
 	icon_mute_->SetBkImage(L"..\\public\\icon\\mute.png");
-	icon_mute_->SetVisible(mute);
+	icon_mute_->SetVisible(team_mute || mute);
 }
 
 void TeamItem::SetOwner(bool is_owner)
@@ -71,17 +69,17 @@ void TeamItem::SetOwner(bool is_owner)
 	icon_admin_->SetVisible(is_owner);
 	if (is_owner) 
 	{
-		team_user_type_ = nim::kNIMTeamUserTypeCreator;
+		member_info_.SetUserType(nim::kNIMTeamUserTypeCreator);
 	}
 	else 
 	{
-		team_user_type_ = nim::kNIMTeamUserTypeNomal;
+		member_info_.SetUserType(nim::kNIMTeamUserTypeNomal);
 	}
 }
 
 nim::NIMTeamUserType TeamItem::GetTeamUserType()
 {
-	return team_user_type_;
+	return member_info_.GetUserType();
 }
 
 void TeamItem::SetMemberName(const std::string& team_card)
@@ -92,7 +90,7 @@ void TeamItem::SetMemberName(const std::string& team_card)
 	if (!team_card.empty())
 	{
 		member_name_->SetUTF8Text(team_card);
-		team_card_ = team_card;
+		member_info_.SetNick(team_card);
 	}
 	else
 		member_name_->SetText(UserService::GetInstance()->GetUserName(GetUTF8Name()));
@@ -100,7 +98,7 @@ void TeamItem::SetMemberName(const std::string& team_card)
 
 std::string TeamItem::GetTeamCard() const
 {
-	return team_card_;
+	return member_info_.GetNick();
 }
 
 bool TeamItem::OnItemMenu(ui::EventArgs* arg)
@@ -118,18 +116,20 @@ void TeamItem::PopupItemMenu(POINT point)
 	pMenu->Init(xml, _T("xml"), point);
 
 	nim::NIMTeamUserType my_team_user_type = nim::kNIMTeamUserTypeNomal;
-	SessionBox* session_box = dynamic_cast<SessionBox*>(SessionManager::GetInstance()->FindSessionBox(team_id_));
+	SessionBox* session_box = dynamic_cast<SessionBox*>(SessionManager::GetInstance()->FindSessionBox(member_info_.GetTeamID()));
 	if (session_box)
 	{
 		auto my_pro = session_box->GetTeamMemberInfo(LoginManager::GetInstance()->GetAccount());
 		my_team_user_type = my_pro.GetUserType();
 	}
+	nim::NIMTeamUserType team_user_type = member_info_.GetUserType();
+
 	CMenuElementUI* mute_item = (CMenuElementUI*)pMenu->FindControl(L"mute");
 	if (my_team_user_type == nim::kNIMTeamUserTypeNomal
-		|| my_team_user_type == team_user_type_
-		|| team_user_type_ == nim::kNIMTeamUserTypeCreator
-		|| team_user_type_ == nim::kNIMTeamUserTypeApply
-		|| team_user_type_ == nim::kNIMTeamUserTypeLocalWaitAccept)
+		|| my_team_user_type == team_user_type
+		|| team_user_type == nim::kNIMTeamUserTypeCreator
+		|| team_user_type == nim::kNIMTeamUserTypeApply
+		|| team_user_type == nim::kNIMTeamUserTypeLocalWaitAccept)
 		mute_item->SetEnabled(false);
 	else
 		mute_item->SetEnabled(true);
@@ -152,7 +152,7 @@ bool TeamItem::TeamItemMenuItemClick(ui::EventArgs* param)
 	std::wstring name = param->pSender->GetName();
 	if (name == L"mute")
 	{
-		nim::Team::MuteMemberAsync(team_id_, uid_, !is_mute_, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
+		nim::Team::MuteMemberAsync(member_info_.GetTeamID(), member_info_.GetAccountID(), !is_mute_, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 	}
 	return true;
 }

@@ -36,6 +36,7 @@ public:
 	typedef std::function<void(const std::string& tid, int member_count, const std::list<TeamMemberProperty>& props)>	QueryTeamMembersCallback;	/**< 查询指定群组全部成员信息回调模板 */
 	typedef std::function<void(const TeamMemberProperty& team_member_property)>	QueryTeamMemberCallback;	/**< 查询指定群成员信息回调模板 */
 	typedef std::function<void(const std::string& tid, const TeamInfo& result)>	QueryTeamInfoCallback;		/**< 查询指定群信息回调模板 */
+	typedef std::function<void(NIMResCode error_code, const std::string& tid, const std::list<TeamMemberProperty>& team_member_propertys)>	QueryTeamMembersOnlineCallback;	/**< 查询群成员信息回调模板 */
 
 	/** @fn static void RegTeamEventCb(const TeamEventCallback& cb, const std::string& json_extension = "")
 	* (全局回调)统一注册接收群通知回调函数（创建群,收到邀请等群通知通过此接口广播，注意：服务器推送过来的群通知和APP发起请求的回调统一处理！）
@@ -353,7 +354,7 @@ public:
 		, const std::string& json_extension = "");
 
 	/** @fn static bool QueryTeamMemberBlock(const std::string& tid, const std::string& id)
-	* 查询(单个)群成员信息(同步版本，堵塞NIM内部线程，谨慎使用)
+	* 查询(单个)群成员信息(同步接口，堵塞NIM内部线程，谨慎使用)
 	* @param[in] tid		群组id
 	* @param[in] id		    群成员id
 	* @return 群成员信息
@@ -370,7 +371,7 @@ public:
 	static bool QueryTeamInfoAsync(const std::string& tid, const QueryTeamInfoCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static TeamInfo QueryTeamInfoBlock(const std::string& tid)
-	* 查询群信息(同步版本，堵塞NIM内部线程，谨慎使用)
+	* 查询群信息(同步接口，堵塞NIM内部线程，谨慎使用)
 	* @param[in] tid		群组id
 	* @return 群信息
 	*/
@@ -413,6 +414,16 @@ public:
 	* @return bool 检查参数如果不符合要求则返回失败
 	*/
 	static bool MuteMemberAsync(const std::string& tid, const std::string& member_id, bool set_mute, const TeamEventCallback& cb, const std::string& json_extension = "");
+
+	/** @fn bool QueryMuteListOnlineAsync(const char *tid, const QueryTeamMembersOnlineCallback& cb, const std::string& json_extension = "")
+	 * 获取群禁言成员列表
+	* @param[in] tid	群组id
+	* @param[in] cb		回调函数
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @return bool 检查参数如果不符合要求则返回失败
+	*/
+	static bool QueryMuteListOnlineAsync(const std::string& tid, const QueryTeamMembersOnlineCallback& cb, const std::string& json_extension = "");
+
 };
 
 } 

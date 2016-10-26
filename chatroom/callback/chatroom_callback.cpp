@@ -1,6 +1,7 @@
 ﻿#include "chatroom_callback.h"
 #include "gui/chatroom_form.h"
 #include "gui/chatroom_frontpage.h"
+#include "export/nim_ui_window_manager.h"
 
 namespace nim_chatroom
 {
@@ -26,11 +27,14 @@ void ChatroomCallback::OnSendMsgCallback(__int64 room_id, int error_code, const 
 {
 	QLOG_APP(L"Chatroom:OnSendMsgCallback: id={0} msg_id={1} code={2}") << result.room_id_ << result.client_msg_id_ << error_code;
 
-// 	StdClosure cb = [=](){
-// 
-// 	};
-// 	Post2UI(cb);
-
+	if (error_code != 200)
+	{
+		StdClosure cb = [=](){
+			std::wstring toast = nbase::StringPrintf(L"Send room msg error(%d), content:%s", error_code, nbase::UTF8ToUTF16(result.msg_attach_).c_str());
+			nim_ui::ShowToast(toast, 5000);
+		};
+		Post2UI(cb);
+	}
 }
 
 

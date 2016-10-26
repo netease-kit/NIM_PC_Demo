@@ -80,6 +80,8 @@ enum NIMResCode
 	kNIMResRoomLinkError			= 13001,		/**< 主链接错误 */
 	kNIMResRoomError				= 13002,		/**< 聊天室状态异常 */
 	kNIMResRoomBlackBeOut			= 13003,		/**< 黑名单用户禁止进入 */
+	kNIMResRoomBeMuted				= 13004,		/**< 被禁言 */
+	kNIMResRoomAllMuted				= 13006,		/**< 聊天室处于整体禁言状态,只有管理员能发言 */
 
 	//客户端自定义的api调用问题
 	kNIMLocalResAPIErrorInitUndone	= 20000,		/**< 还未初始化或初始化未正常完成 */

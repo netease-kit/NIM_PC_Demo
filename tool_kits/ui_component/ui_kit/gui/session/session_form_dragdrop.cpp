@@ -260,7 +260,7 @@ HBITMAP SessionForm::GenerateSessionBoxBitmap(const UiRect &src_rect)
 
 	HDC hPaintDC = ::CreateCompatibleDC(this->GetPaintDC());
 	ASSERT(hPaintDC);
-	HBITMAP hOldPaintBitmap = (HBITMAP)::SelectObject(hPaintDC, m_hbmpBackground);
+	HBITMAP hOldPaintBitmap = (HBITMAP)::SelectObject(hPaintDC, this->GetBackgroundBitmap());
 
 	BITMAPINFO bmi = { 0 };
 	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);

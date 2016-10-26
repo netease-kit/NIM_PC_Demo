@@ -20,6 +20,8 @@ ChatroomForm::ChatroomForm(__int64 room_id)
 	msg_list_ = NULL;
 
 	time_start_history = 0;
+
+	room_mute_ = false;
 }
 
 ChatroomForm::~ChatroomForm()
@@ -216,7 +218,7 @@ bool ChatroomForm::OnEditEnter(ui::EventArgs* param)
 void ChatroomForm::OnBtnEmoji()
 {
 	auto my_info = members_list_.find(nim_ui::LoginManager::GetInstance()->GetAccount());
-	if (my_info != members_list_.end() && !my_info->second.is_muted_ && !my_info->second.temp_muted_)
+	if (my_info != members_list_.end() && !room_mute_ && !my_info->second.is_muted_ && !my_info->second.temp_muted_)
 	{
 		RECT rc = btn_face_->GetPos(true);
 		POINT pt = { rc.left - 150, rc.top - 290 };
@@ -660,13 +662,25 @@ void ChatroomForm::SetMemberTempMute(const std::string &id, bool temp_mute, __in
 	}
 }
 
+void ChatroomForm::SetRoomMemberMute(bool mute)
+{
+	if (room_mute_ == mute)
+		return;
+
+	for (auto& it : members_list_)
+	{
+		if (it.second.type_ < 1)
+			SetMemberMute(it.first, mute);
+	}
+}
+
 void ChatroomForm::RemoveMember(const std::string &uid)
 {
 // 现在单击了在线成员列表后会重新刷新成员，无须单独维护成员列表
 	auto exit_member = members_list_.find(uid);
 	if (exit_member != members_list_.end())
 	{
-		if (!exit_member->second.is_blacklist_ && !exit_member->second.is_muted_ && exit_member->second.type_ == 0)
+		if (!exit_member->second.is_blacklist_ && exit_member->second.type_ == 0)
 		{
 			Control* member_item = online_members_list_->FindSubControl(nbase::UTF8ToUTF16(uid));
 			online_members_list_->Remove(member_item);

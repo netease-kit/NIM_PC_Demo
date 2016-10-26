@@ -19,11 +19,11 @@ std::map<std::string, void*> SDKFunction::function_map;
 bool SDKFunction::LoadSdkDll()
 {
 	std::wstring dir = GetCurrentModuleDirectory();
-//#ifdef _DEBUG
-//	dir.append(kSdkNimDll_d);
-//#else
+#ifdef _DEBUG
+	dir.append(kSdkNimDll_d);
+#else
 	dir.append(kSdkNimDll);
-//#endif
+#endif
 	instance_nim_ = ::LoadLibraryW(dir.c_str());
 	if (instance_nim_ == NULL)
 	{

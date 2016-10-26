@@ -129,7 +129,7 @@ void ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info)
 	team_info.SetMemberCount(team_info_json[nim::kNIMTeamInfoKeyMemberCount].asUInt());
 	team_info.SetProperty(team_info_json[nim::kNIMTeamInfoKeyProperty].asString());
 	team_info.SetValid(team_info_json[nim::kNIMTeamInfoKeyValidFlag].asUInt() == 0 ? false : true);
-	//服务器用于持久化其他属性的tag（比如群全员mute状态），因此不开放给开发者设置 20161011
+	//群属性,开发者无需关注 20161011 oleg
 	//team_info.SetConfigBits(team_info_json[nim::kNIMTeamInfoKeyBits].asUInt64());
 	team_info.SetMemberValid(team_info_json[nim::kNIMTeamInfoKeyMemberValid].asUInt() == 0 ? false : true);
 	team_info.SetIcon(team_info_json[nim::kNIMTeamInfoKeyIcon].asString());
@@ -137,6 +137,7 @@ void ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info)
 	team_info.SetInviteMode(team_info_json[nim::kNIMTeamInfoKeyInviteMode].asInt() == 0 ? kNIMTeamInviteModeManager : kNIMTeamInviteModeEveryone);
 	team_info.SetUpdateInfoMode(team_info_json[nim::kNIMTeamInfoKeyUpdateInfoMode].asInt() == 0 ? kNIMTeamUpdateInfoModeManager : kNIMTeamUpdateInfoModeEveryone);
 	team_info.SetUpdateCustomMode(team_info_json[nim::kNIMTeamInfoKeyUpdateCustomMode].asInt() == 0 ? kNIMTeamUpdateCustomModeManager : kNIMTeamUpdateCustomModeEveryone);
+	team_info.SetAllMemberMute(team_info_json[nim::kNIMTeamInfoKeyMuteAll].asInt() == 0 ? false : true);
 }
 
 bool ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info)

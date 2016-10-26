@@ -25,6 +25,7 @@ const int kCellCancelWriting = 7;
 class AtMeView;
 class AudioCaptureView;
 class SessionForm;
+class TaskbarTabItem;
 /** @class SessionBox
   * @brief 会话盒子，作为会话窗口的子控件；用来创建个人会话、讨论组会话、高级群会话
   * @copyright (c) 2015, NetEase Inc. All rights reserved
@@ -483,6 +484,37 @@ public:
 #pragma endregion DragDrop
 
 	//////////////////////////////////////////////////////////////////////////
+	//窗口合并功能相关的操作
+#pragma region Merge
+public:
+	/**
+	* 获取与本会话盒子绑定的Tab指针
+	* @return TaskbarItem*	Tab指针
+	*/
+	TaskbarTabItem* GetTaskbarItem();
+
+	/**
+	* 覆盖基类虚函数，为了在任务栏显示缩略图和预览图，重写了设置子控件SetInternVisible属性的逻辑
+	* @param[in] bVisible 是否显示
+	* @return void	无返回值
+	*/
+	virtual void SetInternVisible(bool bVisible = true) override;
+
+	/**
+	* 覆盖基类虚函数，为了在重绘任务栏显示的缩略图
+	* @return void	无返回值
+	*/
+	virtual void Invalidate() const override;
+
+	/**
+	* 覆盖基类虚函数，为了在重绘任务栏显示的缩略图
+	* @param[in] rc 要设置的控件的位置
+	* @return void	无返回值
+	*/
+	virtual void SetPos(ui::UiRect rc) override;
+#pragma endregion Merge
+
+	//////////////////////////////////////////////////////////////////////////
 	//@功能相关的操作
 #pragma region At
 private:
@@ -902,6 +934,16 @@ private:
 	void SetTeamMuteUI(bool mute);
 
 	/**
+	* 设置群成员列表禁言状态
+	* @param[in] tid 群ID
+	* @param[in] uid 群成员的帐号
+	* @param[in] set_mute 禁言/取消禁言
+	* @param[in] team_mute 设置/取消 群成员全员禁言状态
+	* @return void 无返回值
+	*/
+	void SetTeamMemberMute(const std::string& tid, const std::string& uid, bool set_mute, bool team_mute);
+
+	/**
 	* 更新群公告
 	* @param[in] broad 消息体Json，包含群公告信息
 	* @return void 无返回值
@@ -969,7 +1011,7 @@ private:
 	ui::Button*		btn_refresh_member_;
 	ui::ListBox*	member_list_;
 	std::map<std::string, nim::TeamMemberProperty> team_member_info_list_;
-
+	bool			mute_all_;
 private:
 	// @功能相关变量
 	nbase::WeakCallbackFlag	scroll_weak_flag_;		//一键顶部查看和@me滚动条动画所用的弱引用标志
@@ -982,6 +1024,8 @@ private:
 	// 语音录制相关变量
 	AudioCaptureView		*audio_capture_view_;	//语音录制界面
 
+	// 任务栏缩略图管理
+	TaskbarTabItem				*taskbar_item_;
 private:
 	SessionForm*	session_form_;
 	std::string		session_id_;

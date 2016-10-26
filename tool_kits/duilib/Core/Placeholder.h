@@ -51,6 +51,7 @@ public:
 	}
 
 	virtual bool IsVisible() const;
+	bool IsInternVisible() const;
 	bool IsFloat() const;
 	void SetFloat(bool bFloat = true);
 
@@ -75,7 +76,7 @@ public:
 	virtual void Arrange();
 	virtual void ArrangeAncestor();
 	
-	void Invalidate() const;
+	virtual void Invalidate() const;
 	UiRect GetPosWithScrollOffset() const;
 	bool IsArranged() const;
 	CPoint GetScrollOffset() const;

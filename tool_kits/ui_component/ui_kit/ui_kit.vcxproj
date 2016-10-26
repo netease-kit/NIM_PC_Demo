@@ -161,6 +161,7 @@
     <ClInclude Include="gui\session\control\bubbles\bubble_video.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_writing.h" />
     <ClInclude Include="gui\session\control\merge_item.h" />
+    <ClInclude Include="gui\session\control\custom_layout.h" />
     <ClInclude Include="gui\session\control\team_item.h" />
     <ClInclude Include="gui\session\custom_msg_form.h" />
     <ClInclude Include="gui\session\dragdrop\bitmap_control.h" />
@@ -168,6 +169,8 @@
     <ClInclude Include="gui\session\msg_record.h" />
     <ClInclude Include="gui\session\session_box.h" />
     <ClInclude Include="gui\session\session_form.h" />
+    <ClInclude Include="gui\session\taskbar\dwm_util.h" />
+    <ClInclude Include="gui\session\taskbar\taskbar_manager.h" />
     <ClInclude Include="gui\team_info\member_manager.h" />
     <ClInclude Include="gui\team_info\team_info.h" />
     <ClInclude Include="gui\team_info\team_notify.h" />
@@ -277,6 +280,7 @@
     <ClCompile Include="gui\session\control\bubbles\bubble_video.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_writing.cpp" />
     <ClCompile Include="gui\session\control\merge_item.cpp" />
+    <ClCompile Include="gui\session\control\custom_layout.cpp" />
     <ClCompile Include="gui\session\control\team_item.cpp" />
     <ClCompile Include="gui\session\custom_msg_form.cpp" />
     <ClCompile Include="gui\session\dragdrop\bitmap_control.cpp" />
@@ -291,6 +295,8 @@
     <ClCompile Include="gui\session\session_box_ui.cpp" />
     <ClCompile Include="gui\session\session_form.cpp" />
     <ClCompile Include="gui\session\session_form_dragdrop.cpp" />
+    <ClCompile Include="gui\session\taskbar\dwm_util.cpp" />
+    <ClCompile Include="gui\session\taskbar\taskbar_manager.cpp" />
     <ClCompile Include="gui\team_info\member_manager.cpp" />
     <ClCompile Include="gui\team_info\team_info.cpp" />
     <ClCompile Include="gui\team_info\team_notify.cpp" />

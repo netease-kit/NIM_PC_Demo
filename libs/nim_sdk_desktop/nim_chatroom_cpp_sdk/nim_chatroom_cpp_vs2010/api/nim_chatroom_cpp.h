@@ -136,20 +136,20 @@ static void Cleanup(const std::string& json_extension = "");
   */
 static void SendMsg(const __int64 room_id, const std::string& json_msg, const std::string& json_extension = "");
 
-/** @fn std::string CreateRoomMessage(const NIMChatRoomMsgType msg_type, const std::string& client_msg_id, const std::string& attach, const std::string& ext = "", bool resend = false)
+/** @fn std::string CreateRoomMessage(const NIMChatRoomMsgType msg_type, const std::string& client_msg_id, const std::string& attach, const ChatRoomMessageSetting& msg_setting, __int64 timetag = 0)
   * 生成消息内容（所有支持的消息类型的内容）
   * @param[in] msg_type			消息类型
   * @param[in] client_msg_id	消息ID
   * @param[in] attach			消息内容（包含多媒体的消息类型，此处传入的是约定的可以解析为json的非格式化的字符串，如图片、文件消息等）
-  * @param[in] ext				扩展字段
-  * @param[in] resend			重发标记位
+  * @param[in] msg_setting		消息属性
+  * @param[in] timetag			消息时间
   * @return std::string 消息json string
   */
 static std::string CreateRoomMessage(const NIMChatRoomMsgType msg_type
 	, const std::string& client_msg_id
 	, const std::string& attach
-	, const std::string& ext = ""
-	, bool resend = false);
+	, const ChatRoomMessageSetting& msg_setting
+	, __int64 timetag = 0);
 
 /** @fn void GetMembersOnlineAsync(const __int64 room_id, const ChatRoomGetMembersParameters &parameters, const GetMembersCallback &callback, const std::string& json_extension = "")
   * 异步查询成员列表

@@ -124,6 +124,15 @@ public:
 	* @return void 无返回值
 	*/
 	static void UnregFriendCb();
+
+	/** @fn bool QueryFriendshipBlock(const std::string& accid, const std::string& json_extension = "")
+	* 在本地缓存数据中查询accid是否为自己的好友(同步接口，堵塞NIM内部线程，谨慎使用)
+	* @param[in] accid		对方帐号
+	* @param[in] json_extension	json扩展参数（备用，目前不需要）
+	* @return bool 当正向和反向好友关系都为好友时返回true
+	*/
+	static bool QueryFriendshipBlock(const std::string& accid, const std::string& json_extension = "");
+
 };
 
 }

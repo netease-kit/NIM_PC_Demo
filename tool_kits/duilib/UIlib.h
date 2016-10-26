@@ -81,6 +81,7 @@
 #include "Utils/StringUtil.h"
 #include "Utils/MultiLangSupport.h"
 #include "Utils/TimerManager.h"
+#include "utils/VersionHelpers.h"
 
 #include "Animation/AnimationPlayer.h"
 #include "Animation/AnimationManager.h"

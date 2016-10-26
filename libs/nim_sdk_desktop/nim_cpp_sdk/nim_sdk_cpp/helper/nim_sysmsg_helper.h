@@ -34,12 +34,15 @@ struct SysMessageSetting
 	BoolStatus need_offline_;			/**< 是否支持离线消息 */
 	Json::Value push_payload_;			/**< 第三方自定义的推送属性，长度2048 */
 	std::string push_content_;			/**< 自定义推送文案，长度限制200字节 */
+	BoolStatus anti_spam_enable_;		/**< (功能暂时不开放)是否需要过易盾反垃圾 */
+	std::string anti_spam_content_;		/**< (功能暂时不开放)(可选)开发者自定义的反垃圾字段 */
 
 	/** 构造函数 */
 	SysMessageSetting() : need_push_(BS_NOT_INIT)
 		, push_need_badge_(BS_NOT_INIT)
 		, push_need_prefix_(BS_NOT_INIT)
-		, need_offline_(BS_NOT_INIT){}
+		, need_offline_(BS_NOT_INIT)
+		, anti_spam_enable_(BS_NOT_INIT){}
 
 	/** @fn void ToJsonValue(Json::Value& message) const
 	  * @brief 组装Json Value字符串
@@ -60,6 +63,10 @@ struct SysMessageSetting
 			message[kNIMSysMsgKeyPushPayload] = GetJsonStringWithNoStyled(push_payload_);
 		if (!push_content_.empty())
 			message[kNIMSysMsgKeyCustomApnsText] = push_content_;
+		if (anti_spam_enable_ != BS_NOT_INIT)
+			message[kNIMSysMsgKeyAntiSpamEnable] = anti_spam_enable_ == BS_TRUE ? 1 : 0;
+		if (!anti_spam_content_.empty())
+			message[kNIMSysMsgKeyAntiSpamContent] = anti_spam_content_;
 	}
 
 	/** @fn void ParseMessageSetting(const Json::Value& message)
@@ -81,9 +88,11 @@ struct SysMessageSetting
 		if (!reader.parse(message[kNIMSysMsgKeyPushPayload].asString(), push_payload_) || !push_payload_.isObject())
 			//assert(0);
 		push_content_ = message[kNIMSysMsgKeyCustomApnsText].asString();
+		if (message.isMember(kNIMSysMsgKeyAntiSpamEnable))
+			anti_spam_enable_ = message[kNIMSysMsgKeyAntiSpamEnable].asInt() == 1 ? BS_TRUE : BS_FALSE;
+		anti_spam_content_ = message[kNIMSysMsgKeyAntiSpamContent].asString();
 	}
 };
-
 
 /** @brief 系统消息和自定义通知数据 */
 struct SysMessage

@@ -90,9 +90,10 @@ struct ChatRoomInfo
 	int				valid_flag_;		/**< 聊天室有效标记, 1:有效,0:无效 */
 	std::string		ext_;				/**< 第三方扩展字段, 必须为可以解析为json的非格式化的字符串, 长度4k */
 	int				online_count_;		/**< 在线人数 */
+	int				mute_all_;			/**< 聊天室禁言标志 1:禁言,0:非禁言*/
 
 	/** 构造函数 */
-	ChatRoomInfo() : id_(0), valid_flag_(0) {}
+	ChatRoomInfo() : id_(0), valid_flag_(0), mute_all_(0) {}
 
 	/** @fn void ParseFromJsonValue(const Json::Value &values)
 	  * @brief 从JsonValue中解析得到聊天室信息
@@ -109,6 +110,7 @@ struct ChatRoomInfo
 		valid_flag_ = values[kNIMChatRoomInfoKeyValidFlag].asUInt();
 		ext_ = values[kNIMChatRoomInfoKeyExt].asString();
 		online_count_ = values[kNIMChatRoomInfoKeyOnlineCount].asUInt();
+		mute_all_ = values[kNIMChatRoomInfoKeyMuteAll].asUInt();
 	}
 
 	/** @fn std::string ToJsonString() const
@@ -126,6 +128,7 @@ struct ChatRoomInfo
 		values[kNIMChatRoomInfoKeyValidFlag] = valid_flag_;
 		values[kNIMChatRoomInfoKeyExt] = ext_;
 		values[kNIMChatRoomInfoKeyOnlineCount] = online_count_;
+		values[kNIMChatRoomInfoKeyMuteAll] = mute_all_;
 		return GetJsonStringWithNoStyled(values);
 	}
 };
@@ -162,6 +165,46 @@ struct ChatRoomNotification
 	}
 };
 
+/** @brief 聊天室消息属性设置 */
+struct ChatRoomMessageSetting
+{
+	bool			resend_flag_;				/**< 消息重发标记位 */
+	std::string		ext_;						/**< 第三方扩展字段, 必须为可以解析为json的非格式化的字符串，长度限制4096 */
+	bool			anti_spam_enable_;			/**< 是否需要过易盾反垃圾 */
+	std::string		anti_spam_content_;			/**< (可选)开发者自定义的反垃圾字段,长度限制2048 */
+
+	/** 构造函数 */
+	ChatRoomMessageSetting() : resend_flag_(false)
+		, anti_spam_enable_(false){}
+
+	/** @fn void ToJsonValue(Json::Value& message) const
+	  * @brief 组装Json Value字符串
+	  * @param[out] message 消息Json
+	  * @return void
+      */
+	void ToJsonValue(Json::Value& message) const
+	{
+		message[kNIMChatRoomMsgKeyResendFlag] = resend_flag_ ? 1 : 0;
+		message[kNIMChatRoomMsgKeyExt] = ext_;
+		message[kNIMChatRoomMsgKeyAntiSpamEnable] = anti_spam_enable_ ? 1 : 0;
+		message[kNIMChatRoomMsgKeyAntiSpamContent] = anti_spam_content_;
+	}
+
+	/** @fn void ParseMessageSetting(const Json::Value& message)
+	  * @brief 从Json Value解析出消息属性设置
+	  * @param[in] message 消息Json
+	  * @return void
+      */
+	void ParseMessageSetting(const Json::Value& message)
+	{
+		resend_flag_ = message[kNIMChatRoomMsgKeyResendFlag].asUInt() == 1;
+		ext_ = message[kNIMChatRoomMsgKeyExt].asString();
+		if (message.isMember(kNIMChatRoomMsgKeyAntiSpamEnable))
+			anti_spam_enable_ = message[kNIMChatRoomMsgKeyAntiSpamEnable].asInt() == 1;
+		anti_spam_content_ = message[kNIMChatRoomMsgKeyAntiSpamContent].asString();
+	}
+};
+
 /** @brief 聊天室消息*/
 struct ChatRoomMessage
 {
@@ -169,25 +212,23 @@ public:
 	__int64			room_id_;					/**< 消息所属的聊天室id,服务器填写,发送方不需要填写 */
 	std::string		from_id_;					/**< 消息发送者的账号,服务器填写,发送方不需要填写 */
 	__int64			timetag_;					/**< 消息发送的时间戳(毫秒),服务器填写,发送方不需要填写 */
-	NIMChatRoomClientType from_client_type_;			/**< 消息发送方客户端类型,服务器填写,发送方不需要填写 */
-	
-public:
+	NIMChatRoomClientType from_client_type_;	/**< 消息发送方客户端类型,服务器填写,发送方不需要填写 */
 	std::string		from_nick_;					/**< 发送方昵称,服务器填写,发送方不需要填写 */
 	std::string		from_avatar_;				/**< 发送方头像,服务器填写,发送方不需要填写 */
 	std::string		from_ext_;					/**< 发送方身份扩展字段,服务器填写,发送方不需要填写 */
+
+public:
 	NIMChatRoomMsgType	msg_type_;				/**< 消息类型 */
-	std::string		msg_attach_;				/**< 消息内容,json结构, 文本消息和其他消息保持一致 */
+	std::string		msg_attach_;				/**< 消息内容,长度限制2048,json结构, 文本消息和其他消息保持一致 */
 	std::string		client_msg_id_;				/**< 客户端消息id */
-	bool			resend_flag_;				/**< 消息重发标记位 */
-	std::string		ext_;						/**< 第三方扩展字段, 必须为可以解析为json的非格式化的字符串，长度限制4096 */
+	ChatRoomMessageSetting msg_setting_;		/**< 消息属性设置 */
 
 public:
 	std::string	   local_res_path_;				/**< 媒体文件本地绝对路径（客户端） */
 	std::string	   local_res_id_;				/**< 媒体文件ID（客户端） */
 
 	/** 构造函数 */
-	ChatRoomMessage() : resend_flag_(false)
-		, room_id_(-1)
+	ChatRoomMessage() :room_id_(-1)
 		, from_client_type_(kNIMChatRoomClientTypeDefault)
 		, timetag_(0) {}
 
@@ -208,10 +249,9 @@ public:
 		msg_type_ = (NIMChatRoomMsgType)values[kNIMChatRoomMsgKeyType].asUInt();
 		msg_attach_ = values[kNIMChatRoomMsgKeyAttach].asString();
 		client_msg_id_ = values[kNIMChatRoomMsgKeyClientMsgid].asString();
-		resend_flag_ = values[kNIMChatRoomMsgKeyResendFlag].asUInt() == 1;
-		ext_ = values[kNIMChatRoomMsgKeyExt].asString();
 		local_res_path_ = values[kNIMChatRoomMsgKeyLocalFilePath].asString();
 		local_res_id_ = values[kNIMChatRoomMsgKeyLocalResId].asString();
+		msg_setting_.ParseMessageSetting(values);
 	}
 
 	/** @fn std::string ToJsonString() const
@@ -224,10 +264,9 @@ public:
 		values[kNIMChatRoomMsgKeyType] = msg_type_;
 		values[kNIMChatRoomMsgKeyAttach] = msg_attach_;
 		values[kNIMChatRoomMsgKeyClientMsgid] = client_msg_id_;
-		values[kNIMChatRoomMsgKeyResendFlag] = resend_flag_ ? 1 : 0;
-		values[kNIMChatRoomMsgKeyExt] = ext_;
 		values[kNIMChatRoomMsgKeyLocalFilePath] = local_res_path_;
 		values[kNIMChatRoomMsgKeyLocalResId] = local_res_id_;
+		msg_setting_.ToJsonValue(values);
 		return GetJsonStringWithNoStyled(values);
 	}
 };

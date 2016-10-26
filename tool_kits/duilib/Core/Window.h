@@ -185,7 +185,12 @@ public:
 
 	void KillFocus();
 
-	LPBYTE GetBits() const
+	HBITMAP GetBackgroundBitmap()
+	{
+		return m_hbmpBackground;
+	}
+
+	LPBYTE GetBackgroundBits() const
 	{
 		return  m_pBmpBackgroundBits;
 	}

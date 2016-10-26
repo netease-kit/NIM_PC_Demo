@@ -32,6 +32,7 @@ bool ParseRecallMsgNotify(const std::string& notify_json, std::list<RecallMsgNot
 			notify.notify_timetag_ = value[kNIMRecallMsgKeyTime].asUInt64();
 			notify.notify_feature_ = (NIMMessageFeature)value[kNIMRecallMsgKeyNotifyFeature].asInt();
 			notify.msglog_exist_ = value[kNIMRecallMsgKeyMsgExist].asBool();
+			notify.msglog_timetag_ = value[kNIMRecallMsgKeyMsgTime].asUInt64();
 			notifys.push_back(notify);
 		}
 		return true;

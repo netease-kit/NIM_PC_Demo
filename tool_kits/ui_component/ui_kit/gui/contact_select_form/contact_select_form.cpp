@@ -341,7 +341,7 @@ void ContactSelectForm::OnTeamNameChanged(const nim::TeamInfo& team_info)
 	//选中列表项
 	SelectedContactItemUI* select_item = dynamic_cast<SelectedContactItemUI*>(selected_user_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
 
-	if (team_info.ExistValue(nim::kTeamInfoKeyName))
+	if (team_info.ExistValue(nim::kNIMTeamInfoKeyName))
 	{
 		bool enabled = team_item->IsEnabled();
 		bool checked = ((CheckBox*)team_item->FindSubControl(L"checkbox"))->IsSelected();
@@ -369,7 +369,7 @@ void ContactSelectForm::OnTeamNameChanged(const nim::TeamInfo& team_info)
 			((Label*)select_item->FindSubControl(L"show_name"))->SetText(TeamService::GetInstance()->GetTeamName(accid));
 	}
 
-	if (team_info.ExistValue(nim::kTeamInfoKeyIcon))
+	if (team_info.ExistValue(nim::kNIMTeamInfoKeyIcon))
 	{
 		team_item->FindSubControl(L"head_image")->SetBkImage(PhotoService::GetInstance()->GetTeamPhoto(accid, false));
 

@@ -36,9 +36,10 @@ public:
 	/**
 	* 设置禁言
 	* @param[in] mute 设置/取消 禁言
+	* @param[in] team_mute 设置/取消 群成员全员禁言状态
 	* @return void 无返回值
 	*/
-	void SetMute(bool mute);
+	void SetMute(bool mute, bool team_mute);
 
 	/**
 	* 设置本成员为管理员
@@ -94,11 +95,8 @@ private:
 	ui::Label*		member_name_;
 	ui::Control*	icon_admin_;
 	ui::Control*	icon_mute_;
-	std::string		team_card_;
-	std::string		team_id_;
-	std::string		uid_;
-	nim::NIMTeamUserType team_user_type_;
-	bool			is_mute_ = false;
+	bool			is_mute_ = false; //成员属性
+	nim::TeamMemberProperty member_info_;
 	AutoUnregister	unregister_cb;
 };
 }

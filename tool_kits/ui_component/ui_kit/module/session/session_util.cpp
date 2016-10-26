@@ -616,10 +616,19 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 			{
 				show_text = nbase::StringPrintf(L"%s 更新了群介绍", from_name.c_str());
 			}
+			else if (tinfo_json.isMember(nim::kNIMTeamInfoKeyMuteAll))
+			{
+				bool mute_all = tinfo_json[nim::kNIMTeamInfoKeyMuteAll].asUInt() == 1;
+				if (mute_all)
+					show_text = nbase::StringPrintf(L"%s 设置了全员禁言", from_name.c_str());
+				else
+					show_text = nbase::StringPrintf(L"%s 解除了全员禁言", from_name.c_str());
+			}
 			else
 			{
 				show_text = nbase::StringPrintf(L"%s 更新了%s信息", from_name.c_str(), team_type.c_str());
 			}
+
 		}
 		else if (id == nim::kNIMNotificationIdTeamDismiss)
 		{
