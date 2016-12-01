@@ -6,6 +6,7 @@
   */
 #ifndef NIM_SDK_DLL_EXPORT_HEADERS_NIM_PLUGIN_IN_DEF_H_
 #define NIM_SDK_DLL_EXPORT_HEADERS_NIM_PLUGIN_IN_DEF_H_
+#include "../util/nim_base_types.h"
 
 #ifdef __cplusplus
 extern"C"

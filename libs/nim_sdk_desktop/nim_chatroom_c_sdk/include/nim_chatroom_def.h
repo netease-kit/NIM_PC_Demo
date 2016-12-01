@@ -1,18 +1,20 @@
 ﻿/** @file nim_chatroom_def.h
   * @brief NIM 聊天室 SDK 定义
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author Oleg
+  * @author Oleg, Harrison
   * @date 2015/12/24
   */
-#ifndef NIM_CHATROOM_SDK_DLL_EXPORT_HEADERS_DEF_H_
-#define NIM_CHATROOM_SDK_DLL_EXPORT_HEADERS_DEF_H_
+#ifndef NIM_CHATROOM_SDK_EXPORT_HEADERS_NIM_CHATROOM_DEF_H_
+#define NIM_CHATROOM_SDK_EXPORT_HEADERS_NIM_CHATROOM_DEF_H_
+
+#include "../util/nim_base_types.h"
 
 #ifdef __cplusplus
 extern"C"
 {
 #endif
 
-/** @typedef void (*nim_chatroom_enter_cb_func)(__int64 room_id, int enter_step, int error_code, const char *result, const void *user_data)
+/** @typedef void (*nim_chatroom_enter_cb_func)(int64_t room_id, int enter_step, int error_code, const char *result, const void *user_data)
   * 进入的回调函数定义
   * @param[out] room_id		聊天室ID
   * @param[out] enter_step	进入聊天室的过程(NIMChatRoomEnterStep)
@@ -22,9 +24,9 @@ extern"C"
   * @param[out] user_data	APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_enter_cb_func)(__int64 room_id, int enter_step, int error_code, const char *result, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_enter_cb_func)(int64_t room_id, int enter_step, int error_code, const char *result, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_exit_cb_func)(__int64 room_id, int error_code, int exit_type, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_exit_cb_func)(int64_t room_id, int error_code, int exit_type, const char *json_extension, const void *user_data)
   * 退出、被踢的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -33,9 +35,9 @@ typedef void (*nim_chatroom_enter_cb_func)(__int64 room_id, int enter_step, int 
   * @param[out] user_data	APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_exit_cb_func)(__int64 room_id, int error_code, int exit_type, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_exit_cb_func)(int64_t room_id, int error_code, int exit_type, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_link_condition_cb_func)(__int64 room_id, int condition, const void *user_data)
+/** @typedef void (*nim_chatroom_link_condition_cb_func)(int64_t room_id, int condition, const void *user_data)
   * 聊天室链接状况的回调函数定义
   * @param[out] room_id		聊天室ID
   * @param[out] condition	网络状况
@@ -43,9 +45,9 @@ typedef void (*nim_chatroom_exit_cb_func)(__int64 room_id, int error_code, int e
   * @param[out] user_data	APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_link_condition_cb_func)(__int64 room_id, int condition, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_link_condition_cb_func)(int64_t room_id, int condition, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_sendmsg_arc_cb_func)(__int64 room_id, int error_code, const char *result, const void *user_data)
+/** @typedef void (*nim_chatroom_sendmsg_arc_cb_func)(int64_t room_id, int error_code, const char *result, const void *user_data)
   * 发送消息回执的回调函数定义
   * @param[out] room_id		聊天室ID
   * @param[out] error_code	错误码(关注但不仅限200,408,416,13004,13006)
@@ -54,9 +56,9 @@ typedef void (*nim_chatroom_link_condition_cb_func)(__int64 room_id, int conditi
   * @param[out] user_data	APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_sendmsg_arc_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_sendmsg_arc_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_receive_msg_cb_func)(__int64 room_id, const char *result, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_receive_msg_cb_func)(int64_t room_id, const char *result, const char *json_extension, const void *user_data)
   * 接收消息的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] result			json string
@@ -64,9 +66,9 @@ typedef void (*nim_chatroom_sendmsg_arc_cb_func)(__int64 room_id, int error_code
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_receive_msg_cb_func)(__int64 room_id, const char *result, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_receive_msg_cb_func)(int64_t room_id, const char *result, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_receive_notification_cb_func)(__int64 room_id, const char *result, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_receive_notification_cb_func)(int64_t room_id, const char *result, const char *json_extension, const void *user_data)
   * 聊天室通知的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] result			json string
@@ -74,9 +76,9 @@ typedef void (*nim_chatroom_receive_msg_cb_func)(__int64 room_id, const char *re
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_receive_notification_cb_func)(__int64 room_id, const char *result, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_receive_notification_cb_func)(int64_t room_id, const char *result, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_get_members_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_get_members_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
   * 获取指定/分页获取成员列表的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -85,9 +87,9 @@ typedef void (*nim_chatroom_receive_notification_cb_func)(__int64 room_id, const
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_get_members_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_get_members_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_get_msg_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_get_msg_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
   * 获取历史消息的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -96,9 +98,9 @@ typedef void (*nim_chatroom_get_members_cb_func)(__int64 room_id, int error_code
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_get_msg_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_get_msg_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_set_member_attribute_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_set_member_attribute_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
   * 设定聊天室成员标记身份的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -107,9 +109,9 @@ typedef void (*nim_chatroom_get_msg_cb_func)(__int64 room_id, int error_code, co
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_set_member_attribute_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_set_member_attribute_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_get_info_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_get_info_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
   * 获取当前聊天室信息的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -118,9 +120,9 @@ typedef void (*nim_chatroom_set_member_attribute_cb_func)(__int64 room_id, int e
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_get_info_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_get_info_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_kick_member_cb_func)(__int64 room_id, int error_code, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_kick_member_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data)
   * 踢掉指定成员的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -128,9 +130,9 @@ typedef void (*nim_chatroom_get_info_cb_func)(__int64 room_id, int error_code, c
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_kick_member_cb_func)(__int64 room_id, int error_code, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_kick_member_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_temp_mute_member_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_temp_mute_member_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
   * 临时禁言指定成员的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -139,9 +141,9 @@ typedef void (*nim_chatroom_kick_member_cb_func)(__int64 room_id, int error_code
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_temp_mute_member_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_temp_mute_member_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_update_room_info_cb_func)(__int64 room_id, int error_code, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_update_room_info_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data)
   * 更新聊天室信息的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -149,9 +151,9 @@ typedef void (*nim_chatroom_temp_mute_member_cb_func)(__int64 room_id, int error
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_update_room_info_cb_func)(__int64 room_id, int error_code, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_update_room_info_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_update_my_role_cb_func)(__int64 room_id, int error_code, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_update_my_role_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data)
   * 更新我的信息的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -159,9 +161,9 @@ typedef void (*nim_chatroom_update_room_info_cb_func)(__int64 room_id, int error
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_update_my_role_cb_func)(__int64 room_id, int error_code, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_update_my_role_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_queue_offer_cb_func)(__int64 room_id, int error_code, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_queue_offer_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data)
   * 新加(更新)队列元素的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -169,9 +171,9 @@ typedef void (*nim_chatroom_update_my_role_cb_func)(__int64 room_id, int error_c
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_queue_offer_cb_func)(__int64 room_id, int error_code, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_queue_offer_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_queue_poll_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_queue_poll_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
   * 取出头元素的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -180,9 +182,9 @@ typedef void (*nim_chatroom_queue_offer_cb_func)(__int64 room_id, int error_code
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_queue_poll_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_queue_poll_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_queue_list_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_queue_list_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
   * 排序列出所有元素的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -191,9 +193,9 @@ typedef void (*nim_chatroom_queue_poll_cb_func)(__int64 room_id, int error_code,
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_queue_list_cb_func)(__int64 room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_queue_list_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_queue_drop_cb_func)(__int64 room_id, int error_code, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_queue_drop_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data)
   * 删除麦序队列的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -201,9 +203,9 @@ typedef void (*nim_chatroom_queue_list_cb_func)(__int64 room_id, int error_code,
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_queue_drop_cb_func)(__int64 room_id, int error_code, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_queue_drop_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_chatroom_queue_init_cb_func)(__int64 room_id, int error_code, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_chatroom_queue_init_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data)
   * 麦序队列初始化的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
@@ -211,7 +213,7 @@ typedef void (*nim_chatroom_queue_drop_cb_func)(__int64 room_id, int error_code,
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_chatroom_queue_init_cb_func)(__int64 room_id, int error_code, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_queue_init_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data);
 
 /** @name 进入聊天室的可选填信息Json Keys
 * @{
@@ -334,6 +336,13 @@ static const char *kNIMChatRoomMemberInfoKeyUpdateTimetag= "update_timetag";/**<
 static const char *kNIMChatRoomMemberInfoKeyTempMute	= "temp_mute";		/**<int 临时禁言*/
 static const char *kNIMChatRoomMemberInfoKeyTempMuteRestDuration= "temp_mute_rest_duration"; /**<long 临时禁言的解除时长,单位秒*/
 /** @}*/ //聊天室个人Info Json Keys
+
+/** @enum NIMChatRoomLoginStatus 登录状态 */
+enum NIMChatRoomLoginState
+{
+	kNIMChatRoomLoginStateLogin = 1,		/**< 登录状态*/
+	kNIMChatRoomLoginStateUnLogin = 2,		/**< 未登录状态*/
+};
 
 /** @enum NIMChatRoomOnlineState 在线状态 */
 enum NIMChatRoomOnlineState
@@ -463,4 +472,4 @@ enum NIMChatRoomProxyType
 #ifdef __cplusplus
 };
 #endif //__cplusplus
-#endif //NIM_CHATROOM_SDK_DLL_EXPORT_HEADERS_DEF_H_
+#endif //NIM_CHATROOM_SDK_EXPORT_HEADERS_NIM_CHATROOM_DEF_H_

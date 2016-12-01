@@ -215,6 +215,7 @@ enum NIMMsgLogSubStatus
   */
 static const char *kNIMMsglogQueryJsonExtensionKeyDirection		= "direction"; /**< NIMMsglogSearchDirection，默认为kForward */
 static const char *kNIMMsglogQueryJsonExtensionKeyReverse		= "reverse"; /**< bool，返回的消息历史排序正序(false)/逆序(true),默认为false */
+static const char *kNIMMsglogQueryJsonExtensionKeyEndTime		= "endtime"; /**< __int64，查询消息的截止时间，如果direction为kForward，则截止时间应小于anchor_msg_time，否则大于anchor_msg_time,默认为0代表不限制截止时间 */
 /** @}*/ //接口nim_msglog_query_msg_async扩展参数json key定义
 
 /** @enum NIMMsglogSearchDirection 消息历史查询方向 */

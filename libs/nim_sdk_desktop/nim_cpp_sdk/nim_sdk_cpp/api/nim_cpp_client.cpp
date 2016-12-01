@@ -6,12 +6,14 @@
   */
 
 #include "nim_cpp_client.h"
-#include "nim_sdk_helper.h"
-#include "nim_common_helper.h"
+#include "nim_sdk_util.h"
+#include "nim_json_util.h"
+#include "nim_cpp_win32_demo_helper.h"
+#include "nim_string_util.h"
 
 namespace nim
 {
-
+SDKInstance *g_nim_sdk_instance = NULL;
 typedef bool(*nim_client_init)(const char *app_data_dir, const char *app_install_dir, const char *json_extension);
 typedef void(*nim_client_cleanup)(const char *json_extension);
 typedef void(*nim_client_login)(const char *app_token, const char *account, const char *password, const char *json_extension, nim_json_transport_cb_func cb, const void* user_data);
@@ -135,8 +137,22 @@ bool Client::Init(const std::string& app_data_dir
 	, const std::string& app_install_dir
 	, const SDKConfig &config)
 {
-	if (!SDKFunction::LoadSdkDll(""))
+#ifdef NIM_SDK_DLL_IMPORT
+
+#if !defined (WIN32)
+	static const char *kSdkNimDll = "libnim.so";
+// #elif defined (_DEBUG) || defined (DEBUG)
+// 	static const char *kSdkNimDll = "nim_d.dll";
+#else
+	static const char *kSdkNimDll = "nim.dll";
+#endif
+	if (NULL == g_nim_sdk_instance)
+	{
+		g_nim_sdk_instance = new SDKInstance();
+	}
+	if (!g_nim_sdk_instance->LoadSdkDll(app_install_dir.c_str(), kSdkNimDll))
 		return false;
+#endif
 
 	Json::Value config_root;
 	//sdk能力参数（必填）
@@ -172,7 +188,8 @@ bool Client::Init(const std::string& app_data_dir
 void Client::Cleanup(const std::string& json_extension/* = ""*/)
 {
 	NIM_SDK_GET_FUNC(nim_client_cleanup)(json_extension.c_str());
-	SDKFunction::UnLoadSdkDll();
+	g_nim_sdk_instance->UnLoadSdkDll();
+	delete g_nim_sdk_instance;
 }
 
 bool Client::Login(const std::string& app_key

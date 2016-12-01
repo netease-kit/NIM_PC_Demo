@@ -60,7 +60,8 @@ static const char *kNIMRecallMsgKeyNotify			= "notify";				/**< string,自定义
 static const char *kNIMRecallMsgKeyTime				= "time";				/**< long,撤回操作的消息时间戳(毫秒) */
 static const char *kNIMRecallMsgKeyNotifyFeature	= "feature";			/**< int,撤回通知种类（NIMMessageFeature） */
 static const char *kNIMRecallMsgKeyMsgExist			= "msg_exist";			/**< bool,撤回的消息本地是否存在,比如对方离线时发一条消息又撤回,对方上线收到离线撤回通知该tag为false */
-static const char *kNIMRecallMsgKeyMsgTime			= "msg_time";			/**< long,撤回的消息的时间戳(毫秒) */
+static const char *kNIMRecallMsgKeyMsgTime			= "msg_time";			/**< long,要撤回消息的创建时间戳(毫秒) */
+static const char *kNIMRecallMsgKeyMsgFromNick		= "from_nick";			/**< string,要撤回消息的发送者昵称 */
 /** @}*/ //消息撤回通知Json Keys
 
 /** @name 接收消息Json Keys

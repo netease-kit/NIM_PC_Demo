@@ -11,6 +11,15 @@
     <Filter Include="helper">
       <UniqueIdentifier>{e6f92ffc-2cff-49e3-b686-5f9eea838874}</UniqueIdentifier>
     </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{6c3c1d03-1be6-413d-9592-0821aafe56d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party">
+      <UniqueIdentifier>{525e7203-e0a2-4e15-8c1f-82f1edf81593}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="third_party\convert_utf">
+      <UniqueIdentifier>{4877ce5f-0252-441a-af20-5975a96f4548}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="api\nim_chatroom_cpp.cpp">
@@ -19,16 +28,19 @@
     <ClCompile Include="helper\nim_chatroom_helper.cpp">
       <Filter>helper</Filter>
     </ClCompile>
-    <ClCompile Include="helper\nim_chatroom_common_helper.cpp">
-      <Filter>helper</Filter>
-    </ClCompile>
-    <ClCompile Include="helper\nim_chatroom_file_helper.cpp">
-      <Filter>helper</Filter>
-    </ClCompile>
-    <ClCompile Include="helper\nim_chatroom_sdk_helper.cpp">
-      <Filter>helper</Filter>
-    </ClCompile>
     <ClCompile Include="nim_chatroom_cpp_api.cpp" />
+    <ClCompile Include="util\nim_json_util.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="util\nim_sdk_util.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="util\nim_string_util.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="third_party\convert_utf\convert_utf.c">
+      <Filter>third_party\convert_utf</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api\nim_chatroom_cpp.h">
@@ -38,14 +50,17 @@
       <Filter>helper</Filter>
     </ClInclude>
     <ClInclude Include="nim_chatroom_cpp_api.h" />
-    <ClInclude Include="helper\nim_chatroom_common_helper.h">
-      <Filter>helper</Filter>
+    <ClInclude Include="util\nim_json_util.h">
+      <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="helper\nim_chatroom_file_helper.h">
-      <Filter>helper</Filter>
+    <ClInclude Include="util\nim_sdk_util.h">
+      <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="helper\nim_chatroom_sdk_helper.h">
-      <Filter>helper</Filter>
+    <ClInclude Include="util\nim_string_util.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="third_party\convert_utf\convert_utf.h">
+      <Filter>third_party\convert_utf</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

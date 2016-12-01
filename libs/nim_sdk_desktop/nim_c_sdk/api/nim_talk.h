@@ -41,6 +41,14 @@ NIM_SDK_DLL_API void nim_talk_stop_send_msg(const char *json_msg, const char *js
   * @param[in] cb		发送消息的回调函数, nim_talk_ack_cb_func回调函数定义见nim_talk_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				408:请求过程超时
+  *				414:参数错误
+  *				10200:发送文件消息，NOS上传暂停
+  *				10404:本地资源不存在
+  *				10414:本地错误码，参数错误
+  *				10502:发送消息，上传NOS失败
+  *				
   */
 NIM_SDK_DLL_API void nim_talk_reg_ack_cb(const char *json_extension, nim_talk_ack_cb_func cb, const void *user_data);
 
@@ -50,6 +58,9 @@ NIM_SDK_DLL_API void nim_talk_reg_ack_cb(const char *json_extension, nim_talk_ac
   * @param[in] cb		接收消息的回调函数, nim_talk_receive_cb_func回调函数定义见nim_talk_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				10414:本地错误码，参数错误
+  *				10417:本地错误码，对象已经存在/重复操作
   */
 NIM_SDK_DLL_API void nim_talk_reg_receive_cb(const char *json_extension, nim_talk_receive_cb_func cb, const void *user_data);
 
@@ -59,6 +70,7 @@ NIM_SDK_DLL_API void nim_talk_reg_receive_cb(const char *json_extension, nim_tal
   * @param[in] cb		接收消息的回调函数, nim_talk_receive_cb_func回调函数定义见nim_talk_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_talk_reg_receive_msgs_cb(const char *json_extension, nim_talk_receive_cb_func cb, const void *user_data);
 
@@ -91,6 +103,11 @@ NIM_SDK_DLL_API char *nim_talk_create_retweet_msg(const char* src_msg_json, cons
   * @param[in] cb		nim_talk_recall_msg_func回调函数定义见nim_talk_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				414:参数错误
+  *				508:撤回时间超过配制有效期，默认是2分钟
+  *				10414:本地错误码，参数错误
+  *				10508:本地错误码,超过配置有效期或者所需参数不存在
   */
 NIM_SDK_DLL_API void nim_talk_recall_msg(const char *json_msg, const char *notify, const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data);
 
@@ -100,6 +117,7 @@ NIM_SDK_DLL_API void nim_talk_recall_msg(const char *json_msg, const char *notif
   * @param[in] cb		nim_talk_recall_msg_func回调函数定义见nim_talk_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_talk_reg_recall_msg_cb(const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data);
 

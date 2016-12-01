@@ -233,13 +233,15 @@ HBITMAP TaskbarManager::GenerateBindControlBitmapWithForm(ui::Control *control)
 	rcPaint.Intersect(UiRect(0, 0, window_width, window_height));
 
 	// 这里不设置剪裁区域，就无法正常绘制
-	RenderClip rectClip;
-	rectClip.GenerateClip(hPaintDC, rcPaint, true);
+	{
+		RenderClip rectClip;
+		rectClip.GenerateClip(hPaintDC, rcPaint, true);
 
-	bool visible = control->IsInternVisible();
-	control->SetInternVisible(true);
-	control->Paint(hPaintDC, rcPaint);
-	control->SetInternVisible(visible);
+		bool visible = control->IsInternVisible();
+		control->SetInternVisible(true);
+		control->Paint(hPaintDC, rcPaint);
+		control->SetInternVisible(visible);
+	}
 
 	// 4.修复绘制区域的alpha通道
 	for (int i = rcPaint.top; i < rcPaint.bottom; i++) {
@@ -280,13 +282,15 @@ HBITMAP TaskbarManager::GenerateBindControlBitmap(ui::Control *control, const in
 	rcPaint.Intersect(UiRect(0, 0, window_width, window_height));
 
 	// 这里不设置剪裁区域，就无法正常绘制
-	RenderClip rectClip;
-	rectClip.GenerateClip(hPaintDC, rcPaint, true);
+	{
+		RenderClip rectClip;
+		rectClip.GenerateClip(hPaintDC, rcPaint, true);
 
-	bool visible = control->IsInternVisible();
-	control->SetInternVisible(true);
-	control->Paint(hPaintDC, rcPaint);
-	control->SetInternVisible(visible);
+		bool visible = control->IsInternVisible();
+		control->SetInternVisible(true);
+		control->Paint(hPaintDC, rcPaint);
+		control->SetInternVisible(visible);
+	}
 
 	// 3.修复绘制区域的alpha通道
 	for (int i = rcPaint.top; i < rcPaint.bottom; i++) {

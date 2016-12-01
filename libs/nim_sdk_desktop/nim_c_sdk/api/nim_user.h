@@ -32,6 +32,8 @@ NIM_SDK_DLL_API	void nim_user_reg_special_relationship_changed_cb(const char *js
   * @param[in] cb 操作结果回调
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				419:黑名单数量超过上限 
   */
 NIM_SDK_DLL_API	void nim_user_set_black(const char *accid, bool set_black, const char *json_extension, nim_user_opt_cb_func cb, const void *user_data);
 
@@ -43,6 +45,8 @@ NIM_SDK_DLL_API	void nim_user_set_black(const char *accid, bool set_black, const
   * @param[in] cb 操作结果回调
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				419:静音列表数量超过上限 
   */
 NIM_SDK_DLL_API	void nim_user_set_mute(const char *accid, bool set_mute, const char *json_extension, nim_user_opt_cb_func cb, const void *user_data);
 
@@ -52,6 +56,7 @@ NIM_SDK_DLL_API	void nim_user_set_mute(const char *accid, bool set_mute, const c
   * @param[in] cb 操作结果回调
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API	void nim_user_get_mute_blacklist(const char *json_extension, nim_user_sync_muteandblacklist_cb_func cb, const void *user_data);
 
@@ -91,6 +96,8 @@ NIM_SDK_DLL_API	void nim_user_get_user_name_card_online(const char *accids, cons
   * @param[in] cb 操作结果回调
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				400:非法参数
   */
 NIM_SDK_DLL_API	void nim_user_update_my_user_name_card(const char *info_json, const char *json_extension, nim_user_update_my_name_card_cb_func cb, const void *user_data);
 

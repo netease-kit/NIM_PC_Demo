@@ -149,7 +149,7 @@ static void InitNim()
 
 	bool ret = nim::Client::Init("Netease", "", config); // 载入云信sdk，初始化安装目录和用户目录
 	assert(ret);
-	ret = nim_chatroom::ChatRoom::Init();
+	ret = nim_chatroom::ChatRoom::Init("");
 	assert(ret);
 
 	nim_ui::InitManager::GetInstance()->InitUiKit();

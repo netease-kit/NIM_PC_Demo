@@ -817,7 +817,7 @@ std::wstring GetCustomMsg(const std::string &msg_attach)
 	return show_text;
 }
 
-std::wstring GetRecallNotifyText(const std::string& session_id, nim::NIMSessionType session_type, const std::string& msg_from_id)
+std::wstring GetRecallNotifyText(const std::string& session_id, nim::NIMSessionType session_type, const std::string& msg_from_id, const std::string& msg_from_nick)
 {
 	std::wstring show_text;
 	if (msg_from_id == LoginManager::GetInstance()->GetAccount())
@@ -832,16 +832,25 @@ std::wstring GetRecallNotifyText(const std::string& session_id, nim::NIMSessionT
 		}
 		else
 		{
-			auto info = nim::Team::QueryTeamMemberBlock(session_id, msg_from_id);
-			UTF8String name = info.GetNick();
-			if (name.empty())
+			UTF8String name;
+			if (!msg_from_nick.empty())
 			{
-				nim::UserNameCard name_card;
-				UserService::GetInstance()->GetUserInfo(msg_from_id, name_card);
-				name = name_card.GetName();
+				name = msg_from_nick;
 			}
-			if (name.empty())
-				name = msg_from_id;
+			else
+			{
+				auto info = nim::Team::QueryTeamMemberBlock(session_id, msg_from_id);
+				name = info.GetNick();
+				if (name.empty())
+				{
+					nim::UserNameCard name_card;
+					UserService::GetInstance()->GetUserInfo(msg_from_id, name_card);
+					name = name_card.GetName();
+				}
+				if (name.empty())
+					name = msg_from_id;
+			}
+
 			show_text = nbase::UTF8ToUTF16(name) + L" 撤回了一条消息";
 		}
 	}

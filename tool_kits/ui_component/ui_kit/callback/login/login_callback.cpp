@@ -42,6 +42,8 @@ void _LogRobot()
 //登录之后的处理：比如读取数据
 void _DoAfterLogin()
 {
+	QLOG_APP(L"-----{0} account login-----") << LoginManager::GetInstance()->GetAccount();
+
 	std::string res_audio_path = nbase::UTF16ToUTF8(GetUserDataPath());
 	bool ret = AudioManager::GetInstance()->InitAudio(res_audio_path);
 	assert(ret);
@@ -55,7 +57,7 @@ void _DoAfterLogin()
 //退出程序前的处理：比如保存数据
 void _DoBeforeAppExit()
 {
-
+	QLOG_APP(L"-----{0} account logout-----") << LoginManager::GetInstance()->GetAccount();
 }
 
 //执行sdk退出函数

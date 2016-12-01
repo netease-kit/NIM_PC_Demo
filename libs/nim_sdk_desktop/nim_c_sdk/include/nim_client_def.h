@@ -26,7 +26,7 @@ extern"C"
 typedef void(*nim_client_multiport_push_config_cb_func)(int rescode, const char *content, const char *json_params, const void *user_data);
 
 /** @typedef void (*nim_client_dnd_cb_func)(const char *content, const char *json_params, const void *user_data)
-* ios免打扰设置/同步回调
+* (PC SDK该接口无效)ios免打扰设置/同步回调
 * @param[out] rescode
 * @param[out] content
 * @param[out] json_extension	json扩展数据（备用）
@@ -41,7 +41,7 @@ typedef void(*nim_client_dnd_cb_func)(int rescode,const char *content, const cha
 static const char *kNIMMultiportPushConfigContentKeyOpen	= "switch_open";		/**< int, 1开启，即桌面端在线时移动端不需推送；2关闭，即桌面端在线时移动端需推送 */
 /** @}*/ //多端推送设置/同步 内容Json key
 
-/** @name 免打扰设置 内容Json key
+/** @name (PC SDK该设置无效)免打扰设置 内容Json key 
 客户端传入的属性（如果开启免打扰，请让第三方确保把时间转成东八区，即北京时间，小时是24小时制)
 */
 static const char *kNIMDndShowDetail = "show_detail"; /**< 是否显示详情，1显示详情，2不显示详情，其它按1处理(Integer)*/
@@ -51,6 +51,13 @@ static const char *kNIMDndFromM = "fromm"; /**< 如果开启免打扰，开始�
 static const char *kNIMDndToH = "toh"; /**< 如果开启免打扰，截止小时数(Integer)*/
 static const char *kNIMDndToM = "tom"; /**< 如果开启免打扰，截止分钟数(Integer)*/
 /** @}*/ //免打扰设置 内容Json key
+
+/** @enum NIMLoginState 登录状态 */
+enum NIMLoginState
+{
+	kNIMLoginStateLogin = 1,		/**< 登录状态*/
+	kNIMLoginStateUnLogin = 2,		/**< 未登录状态*/
+};
 
 /** @enum NIMLogoutType Logout类型 */
 enum NIMLogoutType
@@ -110,7 +117,8 @@ static const char *kNIMPreloadAttach			= "preload_attach";			/**< bool, 是否�
 static const char *kNIMPreloadImageQuality		= "preload_image_quality";	/**< int, 预下载图片质量,选填,范围0-100 */
 static const char *kNIMPreloadImageResize		= "preload_image_resize";	/**< string, 预下载图片基于长宽做内缩略,选填,比如宽100高50,则赋值为100x50,中间为字母小写x */
 static const char *kNIMSDKLogLevel				= "sdk_log_level";			/**< int，定义见NIMSDKLogLevel（选填，SDK默认的内置级别为kNIMSDKLogLevelPro） */
-static const char *kNIMPushCerName				= "push_cer_name";			/**< string，推送证书名（选填，iOS端需要） */
+static const char *kNIMPushCerName				= "push_cer_name";			/**< string，推送证书名（选填，iOS端需要,PC SDK该设置无效） */
+static const char *kNIMSyncSessionAck			= "sync_session_ack";		/**< bool，设置是否已读未读状态多端同步，默认true */
 
 static const char *kNIMPrivateServerSetting		= "private_server_setting";	/**< json object, Private Server Setting（一旦设置了私有服务器，则全部连私有服务器，必须确保配置正确！） */
 static const char *kNIMLbsAddress				= "lbs";					/**< string, （必填，lbs地址） */

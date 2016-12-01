@@ -88,15 +88,12 @@ void SessionManager::AddNewMsg(const nim::IMMessage &msg)
 		}
 	}
 
-	// 如果目标会话盒子不在激活状态
-	if (!IsSessionBoxActive(id))
+	// 如果目标会话盒子不在激活状态或者第一次创建会话盒子
+	if (!IsSessionBoxActive(id) || create)
 	{
 		// 更新对应会话中的@me消息为未读
 		if (IsAtMeMsg(msg))
 			seesion_id_atme_[id] = true;
-
-		// 更新会话列表未读消息数
-		nim_ui::SessionListManager::GetInstance()->InvokeAddSessionUnread(id);
 	}
 
 	if (session_box)

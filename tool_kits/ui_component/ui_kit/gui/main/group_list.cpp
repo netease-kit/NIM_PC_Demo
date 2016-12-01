@@ -64,7 +64,8 @@ void GroupList::OnQueryAllMyTeams(int team_count, const std::list<nim::TeamInfo>
 {
 	for (auto it = team_info_list.begin(); it != team_info_list.end(); it++)
 	{
-		AddListItem(*it);
+		if (it->IsValid() && it->IsMemberValid())
+			AddListItem(*it);
 	}
 }
 

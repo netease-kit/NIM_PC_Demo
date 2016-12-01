@@ -29,6 +29,8 @@ class Rts
 public:
 	typedef std::function<void(nim::NIMResCode res_code, const std::string& session_id, int channel_type, const std::string& uid)> StartChannelCallback;
 	typedef std::function<void(const std::string& session_id, int channel_type, const std::string& uid, const std::string& custom_info)> StartNotifyCallback;
+	typedef std::function<void(nim::NIMResCode res_code)> CreateConfCallback;
+	typedef std::function<void(nim::NIMResCode res_code, const std::string& session_id, __int64 channel_id, const std::string& custom_info)> JoinConfCallback;
 	typedef std::function<void(nim::NIMResCode res_code, const std::string& session_id, int channel_type, bool accept)> AckCallback;
 	typedef std::function<void(const std::string& session_id, int channel_type, bool accept, const std::string& uid)> AckNotifyCallback;
 	typedef std::function<void(const std::string& session_id, int channel_type, bool accept)> SyncAckNotifyCallback;
@@ -46,6 +48,12 @@ public:
 
 	//NIM 设置收到会话邀请的通知的回调
 	static void SetStartNotifyCb(const StartNotifyCallback& cb);
+
+	//NIM 向服务器创建多人rts会话，实际加入会话还需要调用加入接口。
+	static void CreateConf(const std::string& name, const std::string& custom_info, const CreateConfCallback& cb);
+
+	//NIM 加入多人rts会话
+	static void JoinConf(const std::string& name, bool record, const JoinConfCallback& cb);
 
 	//NIM 回复收到的邀请
 	static void Ack(const std::string& session_id, int channel_type, bool accept, const AckCallback& cb);
@@ -82,7 +90,7 @@ public:
 
 	//数据相关
 	//NIM 发送数据
-	static void SendData(const std::string& session_id, int channel_type, const std::string& data);
+	static void SendData(const std::string& session_id, int channel_type, const std::string& data, const std::string& uid="");
 
 	//NIM 设置监听数据接收回调
 	static void SetRecDataCb(const RecDataCallback& cb);

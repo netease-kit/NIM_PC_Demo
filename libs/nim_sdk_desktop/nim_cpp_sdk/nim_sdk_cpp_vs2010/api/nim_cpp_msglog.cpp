@@ -6,8 +6,9 @@
   */
 
 #include "nim_cpp_msglog.h"
-#include "nim_sdk_helper.h"
-#include "nim_common_helper.h"
+#include "nim_sdk_util.h"
+#include "nim_json_util.h"
+#include "nim_string_util.h"
 #include "nim_cpp_talk.h"
 
 namespace nim
@@ -32,6 +33,7 @@ typedef void(*nim_msglog_import_db_async)(const char *src_path, const char *json
 
 typedef void(*nim_msglog_send_receipt_async)(const char *json_msg, const char *json_extension, nim_msglog_status_changed_cb_func cb, const void *user_data);
 typedef bool(*nim_msglog_query_be_readed)(const char *json_msg, const char *json_extension);
+typedef bool(*nim_msglog_query_receipt_sent)(const char *json_msg, const char *json_extension);
 typedef void(*nim_msglog_reg_status_changed_cb)(const char *json_extension, nim_msglog_status_changed_cb_func cb, const void *user_data);
 #else
 #include "nim_msglog.h"
@@ -498,9 +500,14 @@ void MsgLog::SendReceiptAsync(const std::string& json_msg, const MsgLog::Message
 	NIM_SDK_GET_FUNC(nim_msglog_send_receipt_async)(json_msg.c_str(), nullptr, &CallbackMsgStatusChanged, callback);
 }
 
-bool MsgLog::QueryMessageBeReaded(const IMMessage& msg)
+bool MsgLog::QuerySentMessageBeReaded(const IMMessage& msg)
 {
 	return NIM_SDK_GET_FUNC(nim_msglog_query_be_readed)(msg.ToJsonString(false).c_str(), nullptr);
+}
+
+bool MsgLog::QueryReceivedMsgReceiptSent(const IMMessage& msg)
+{
+	return NIM_SDK_GET_FUNC(nim_msglog_query_receipt_sent)(msg.ToJsonString(false).c_str(), nullptr);
 }
 
 static MsgLog::MessageStatusChangedCallback* g_cb_msg_status_changed_cb_ = nullptr;

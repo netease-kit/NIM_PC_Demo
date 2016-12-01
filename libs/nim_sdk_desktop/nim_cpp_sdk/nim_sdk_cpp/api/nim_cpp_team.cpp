@@ -6,12 +6,15 @@
   */
 
 #include "nim_cpp_team.h"
-#include "nim_sdk_helper.h"
-#include "nim_common_helper.h"
+#include "nim_sdk_util.h"
+#include "nim_json_util.h"
 #include "nim_cpp_global.h"
+#include "nim_cpp_win32_demo_helper.h"
+#include "nim_string_util.h"
 
 namespace nim
 {
+#include "nim_string_util.h"
 
 typedef void(*nim_team_reg_team_event_cb)(const char *json_extension, nim_team_event_cb_func cb, const void *user_data);
 typedef void(*nim_team_create_team_async)(const char *team_info, const char *jsonlist_uids, const char *invitation_postscript, const char *json_extension, nim_team_event_cb_func cb, const void* user_data);

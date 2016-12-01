@@ -138,11 +138,13 @@ LRESULT SessionForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		{
 			BOOL bHandled = FALSE;
 			if (!SessionManager::GetInstance()->IsDragingSessionBox() && NULL != active_session_box_)
+			{
 				active_session_box_->OnEsc(bHandled);
 
-			if (!bHandled)
-				this->CloseSessionBox(active_session_box_->GetSessionId());
-
+				if (!bHandled)
+					this->CloseSessionBox(active_session_box_->GetSessionId());
+			}
+				
 			return 0;
 		}
 	}
@@ -345,6 +347,8 @@ void SessionForm::CloseSessionBox(const std::string &session_id)
 		// 窗口关闭时，会自动的移除这个会话盒子
 		if (session_box_tab_->GetCount() > 1)
 			session_box_tab_->Remove(session_box);
+		else
+			active_session_box_ = NULL;
 	}
 
 	// 当会话盒子只有一个时，隐藏左侧会话列表
@@ -482,7 +486,7 @@ void SessionForm::SetActiveSessionBox(const std::string &session_id)
 bool SessionForm::IsActiveSessionBox(const SessionBox *session_box)
 {
 	ASSERT(NULL != session_box);
-	return (::GetForegroundWindow() == GetHWND() && session_box == active_session_box_);
+	return (session_box == active_session_box_ && ::GetForegroundWindow() == GetHWND() && !::IsIconic(GetHWND()) && IsWindowVisible(GetHWND()));
 }
 
 bool SessionForm::IsActiveSessionBox(const std::wstring &session_id)

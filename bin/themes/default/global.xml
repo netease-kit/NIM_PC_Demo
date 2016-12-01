@@ -73,12 +73,12 @@
     <TextColor name="link_green" value="#ff21c7a6"/>
     <TextColor name="link_blue" value="#ff006DD9"/>
     <TextColor name="link_red" value="#ffC63535"/>
-	<TextColor name="group_name" value="#ff737980"/>
-	<TextColor name="message_tip" value="#ff999999"/>
-	<TextColor name="search_prompt" value="#9affffff"/>
-	<TextColor name="profile_nickname" value="#ff3a4a59"/>
-	<TextColor name="profile_account" value="#ff6b8299"/>
-	<TextColor name="headimage_bk_color" value="#ffececec"/>
+    <TextColor name="group_name" value="#ff737980"/>
+    <TextColor name="message_tip" value="#ff999999"/>
+    <TextColor name="search_prompt" value="#9affffff"/>
+    <TextColor name="profile_nickname" value="#ff3a4a59"/>
+    <TextColor name="profile_account" value="#ff6b8299"/>
+    <TextColor name="headimage_bk_color" value="#ffececec"/>
     <TextColor name="icongray" value="#ffa0a0a0"/>
     <TextColor name="iconfadegray" value="#88a0a0a0"/>
     <!--会话窗口连接断开提示文字颜色-->

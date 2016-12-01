@@ -6,8 +6,9 @@
   */
 
 #include "nim_cpp_rts.h"
-#include "nim_sdk_helper.h"
-#include "nim_common_helper.h"
+#include "nim_sdk_util.h"
+#include "nim_json_util.h"
+#include "nim_string_util.h"
 
 namespace nim
 {
@@ -15,6 +16,8 @@ namespace nim
 //发起相关
 typedef	void (*nim_rts_start)(int channel_type, const char* uid, const char *json_extension, nim_rts_start_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_set_start_notify_cb_func)(nim_rts_start_notify_cb_func cb, const void *user_data);
+typedef void (*nim_rts_create_conf)(const char *name, const char *custom_info, const char *json_extension, nim_rts_create_cb_func cb, const void *user_data);
+typedef void (*nim_rts_join_conf)(const char *name, const char *json_extension, nim_rts_join_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_ack)(const char *session_id, int channel_type, bool accept, const char *json_extension, nim_rts_ack_res_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_set_ack_notify_cb_func)(nim_rts_ack_notify_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_set_sync_ack_notify_cb_func)(nim_rts_sync_ack_notify_cb_func cb, const void *user_data);
@@ -57,6 +60,40 @@ void StartNotifyCallbackWrapper(const char *session_id, int channel_type, const 
 			}
 			(*cb_pointer)(PCharToString(session_id), channel_type, PCharToString(uid), custom_info);
 		}
+	}
+}
+void CreateConfCallbackWrapper(int code, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		Rts::CreateConfCallback* cb_pointer = (Rts::CreateConfCallback*)user_data;
+		if (*cb_pointer)
+		{
+			(*cb_pointer)((nim::NIMResCode)code);
+		}
+		delete cb_pointer;
+	}
+}
+void JoinConfCallbackWrapper(int code, const char *session_id, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		Rts::JoinConfCallback* cb_pointer = (Rts::JoinConfCallback*)user_data;
+		if (*cb_pointer)
+		{
+			__int64 channel_id = 0;
+			std::string custom_info;
+			Json::Value values;
+			Json::Reader reader;
+			std::string json(json_extension);
+			if (reader.parse(json, values) && values.isObject())
+			{
+				channel_id = values[kNIMRtsChannelId].asInt64();
+				custom_info = values[kNIMRtsCustomInfo].asString();
+			}
+			(*cb_pointer)((nim::NIMResCode)code, PCharToString(session_id), channel_id, custom_info);
+		}
+		delete cb_pointer;
 	}
 }
 void AckCallbackWrapper(int code, const char *session_id, int channel_type, bool accept, const char *json_extension, const void *user_data)
@@ -205,6 +242,33 @@ void Rts::SetStartNotifyCb(const StartNotifyCallback& cb)
 	return NIM_SDK_GET_FUNC(nim_rts_set_start_notify_cb_func)(&StartNotifyCallbackWrapper, g_start_notify_cb_pointer);
 }
 
+//NIM 向服务器创建多人rts会话，实际加入会话还需要调用加入接口。
+void Rts::CreateConf(const std::string& name, const std::string& custom_info, const CreateConfCallback& cb)
+{
+	CreateConfCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new CreateConfCallback(cb);
+	}
+	return NIM_SDK_GET_FUNC(nim_rts_create_conf)(name.c_str(), custom_info.c_str(), "", &CreateConfCallbackWrapper, cb_pointer);
+}
+
+//NIM 加入多人rts会话
+void Rts::JoinConf(const std::string& name, bool record, const JoinConfCallback& cb)
+{
+	JoinConfCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new JoinConfCallback(cb);
+	}
+	std::string json;
+	Json::Value values_temp;
+	values_temp[nim::kNIMRtsDataRecord] = record ? 1 : 0;
+	Json::FastWriter fs;
+	json = fs.write(values_temp);
+	return NIM_SDK_GET_FUNC(nim_rts_join_conf)(name.c_str(), json.c_str(), &JoinConfCallbackWrapper, cb_pointer);
+}
+
 //NIM 回复收到的邀请
 void Rts::Ack(const std::string& session_id, int channel_type, bool accept, const AckCallback& cb)
 {
@@ -326,9 +390,17 @@ void Rts::SetHangupNotifyCb(const HangupNotifyCallback& cb)
 
 //数据相关
 //NIM 发送数据
-void Rts::SendData(const std::string& session_id, int channel_type, const std::string& data)
+void Rts::SendData(const std::string& session_id, int channel_type, const std::string& data, const std::string& uid)
 {
-	return NIM_SDK_GET_FUNC(nim_rts_send_data)(session_id.c_str(), channel_type, data.c_str(), data.size(), "");
+	std::string json;
+	if (!uid.empty())
+	{
+		Json::Value values_temp;
+		values_temp[nim::kNIMRtsUid] = uid;
+		Json::FastWriter fs;
+		json = fs.write(values_temp);
+	}
+	return NIM_SDK_GET_FUNC(nim_rts_send_data)(session_id.c_str(), channel_type, data.c_str(), data.size(), json.c_str());
 }
 
 //NIM 设置监听数据接收回调

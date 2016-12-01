@@ -51,11 +51,31 @@ typedef void (*nim_http_request_response_cb)(const void* user_data, bool result,
   * @param[out] user_data				回传的自定义数据
   * @param[out] total_upload_size		总的待上传的字节数
   * @param[out] uploaded_size			已经上传的字节数
- * @param[out] total_download_size		总的待下载的字节数
+  * @param[out] total_download_size		总的待下载的字节数
   * @param[out] downloaded_size			已经下载的字节数
   * @return void						无返回值
   */
 typedef void(*nim_http_request_progress_cb)(const void* user_data, double total_upload_size, double uploaded_size, double total_download_size, double downloaded_size);
+
+/** @typedef void (*nim_http_request_transfer_cb)(const void* user_data, double total_upload_size, double uploaded_size, double total_download_size, double downloaded_size)
+  * nim callback function that has been registered in nim_http_set_request_transfer_cb API
+  * @param[out] user_data				回传的自定义数据
+  * @param[out] actual_upload_size		实际上传的字节数
+  * @param[out] upload_speed			平均上传速度（字节每秒）
+  * @param[out] actual_download_size	实际下载的字节数
+  * @param[out] download_speed			平均下载速度（字节每秒）
+  * @return void						无返回值
+  */
+typedef void(*nim_http_request_transfer_cb)(const void* user_data, double actual_upload_size, double upload_speed, double actual_download_size, double download_speed);
+
+/** @typedef void (*nim_http_request_speed_cb)(const void* user_data, double, double)
+  * nim callback function that has been registered in nim_http_set_request_speed_cb API
+  * @param[out] user_data		回传的自定义数据
+  * @param[out] upload_speed	实时上传速度（字节每秒）
+  * @param[out] download_speed	实时下载速度（字节每秒）
+  * @return void				无返回值
+  */
+typedef void(*nim_http_request_speed_cb)(const void* user_data, double upload_speed, double download_speed);
 
 /** @fn void nim_http_init()
   * NIM HTTP 初始化
@@ -149,6 +169,24 @@ NET_EXPORT void nim_http_add_request_header(HttpRequestHandle request_handle, co
   */
 NET_EXPORT void nim_http_set_request_progress_cb(HttpRequestHandle request_handle, nim_http_request_progress_cb progress_callback, const void* user_data);
 
+/** @fn void nim_http_set_request_speed_cb(HttpRequestHandle request_handle, nim_http_request_speed_cb speed_callback, const void* user_data)
+  * NIM HTTP 设置实时速度回调
+  * @param[in] request_handle		http任务句柄
+  * @param[in] speed_callback		速度回调函数
+  * @param[in] user_data			自定义数据
+  * @return void					无返回值
+  */
+NET_EXPORT void nim_http_set_request_speed_cb(HttpRequestHandle request_handle, nim_http_request_speed_cb speed_callback, const void* user_data);
+
+/** @fn void nim_http_set_request_transfer_cb(HttpRequestHandle request_handle, nim_http_request_transfer_cb transfer_callback, const void* user_data)
+  * NIM HTTP 设置传输信息回调
+  * @param[in] request_handle		http任务句柄
+  * @param[in] transfer_callback	结束回调，获取实际传输信息
+  * @param[in] user_data			自定义数据
+  * @return void					无返回值
+  */
+NET_EXPORT void nim_http_set_request_transfer_cb(HttpRequestHandle request_handle, nim_http_request_transfer_cb transfer_callback, const void* user_data);
+
 /** @fn void nim_http_set_request_method_as_post(HttpRequestHandle request_handle)
   * NIM HTTP 强制设置http请求方法为post
   * @param[in] request_handle	http任务句柄
@@ -163,6 +201,15 @@ NET_EXPORT void nim_http_set_request_method_as_post(HttpRequestHandle request_ha
   * @return void				无返回值
   */
 NET_EXPORT void nim_http_set_timeout(HttpRequestHandle request_handle, int timeout_ms);
+
+/** @fn void nim_http_set_low_speed(HttpRequestHandle request_handle, int low_speed_limit, int low_speed_time)
+  * NIM HTTP 设置最低传输速度
+  * @param[in] request_handle	http任务句柄
+  * @param[in] low_speed_limit	最低传输的字节数(大于0)
+  * @param[in] low_speed_time	多少秒传输速度不得低于low_speed_limit，不满足条件则会终止传输(大于0)
+  * @return void				无返回值
+  */
+NET_EXPORT void nim_http_set_low_speed(HttpRequestHandle request_handle, int low_speed_limit, int low_speed_time);
 
 /** @fn void nim_http_set_proxy(HttpRequestHandle request_handle, int type, const char* host, short port, const char* user, const char* pass)
   * NIM HTTP 设置代理

@@ -56,7 +56,7 @@
 
 //tool
 #include "nim_tools_http_cpp_wrapper.h"
-#include "nim_tools_audio_cpp_wrapper.h"
+#include "nim_audio_cpp.h"
 
 //helper
 #include "shared/closure.h"

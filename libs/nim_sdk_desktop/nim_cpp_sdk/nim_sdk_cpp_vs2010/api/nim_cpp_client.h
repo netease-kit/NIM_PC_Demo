@@ -67,6 +67,13 @@ public:
 		, const LoginCallback& cb
 		, const std::string& json_extension = "");
 
+	/** @fn NIMLoginState GetLoginState(const std::string& json_extension = "")
+	* 获取客户端登录状态
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @return NIMLoginState 登录状态
+	*/
+	static NIMLoginState GetLoginState(const std::string& json_extension = "");
+
 	/** @fn void Relogin(const std::string& json_extension = "")
 	* NIM客户端手动重连（注意 APP需要统一处理自动重连/手动重连的回调，因为如果处于某次自动重连的过程中调用手动重连接口，不起作用！）
 	* @param[in] json_extension json扩展参数（备用，目前不需要）

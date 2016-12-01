@@ -6,8 +6,10 @@
   */
 
 #include "nim_cpp_friend.h"
-#include "nim_sdk_helper.h"
-#include "nim_common_helper.h"
+#include "nim_sdk_util.h"
+#include "nim_json_util.h"
+#include "nim_cpp_win32_demo_helper.h"
+#include "nim_string_util.h"
 
 namespace nim
 {

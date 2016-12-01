@@ -81,11 +81,11 @@
     <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\nim_tools_http_cpp_wrapper.h">
       <Filter>module\tools_sdk</Filter>
     </ClInclude>
-    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\nim_tools_audio_cpp_wrapper.h">
-      <Filter>module\tools_sdk</Filter>
-    </ClInclude>
     <ClInclude Include="gui\proxy\proxy_form.h">
       <Filter>gui\proxy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\nim_audio_cpp.h">
+      <Filter>module\tools_sdk</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -125,11 +125,11 @@
     <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\nim_tools_http_cpp_wrapper.cpp">
       <Filter>module\tools_sdk</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\nim_tools_audio_cpp_wrapper.cpp">
-      <Filter>module\tools_sdk</Filter>
-    </ClCompile>
     <ClCompile Include="gui\proxy\proxy_form.cpp">
       <Filter>gui\proxy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\nim_audio_cpp.cpp">
+      <Filter>module\tools_sdk</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -48,7 +48,14 @@ public:
 	* @param[out] bHandled 是否处理了消息，如果设置为true则不会继续传递消息
 	* @return LRESULT 处理结果
 	*/
-	virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+	virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
+
+	/**
+	* 重写窗口关闭函数
+	* @param[in] nRet WM_CLOSE消息返回值
+	* @return void	无返回值
+	*/
+	virtual void Close(UINT nRet = IDOK) override;
 
 	/**
 	* 显示表情窗口
@@ -98,6 +105,8 @@ private:
 	OnSelectEmotion sel_cb_;
 	OnSelectSticker sel_sticker_cb_;
 	OnEmotionClose	close_cb_;
+
 	bool			only_emoj_;
+	bool			is_closing_;
 };
 }

@@ -36,6 +36,8 @@ void ParseSession(const Json::Value& session_json, SessionData& session)
 	session.msg_status_ = (NIMMsgLogStatus)session_json[kNIMSessionMsgStatus].asUInt();
 	session.msg_sub_status_ = (NIMMsgLogSubStatus)session_json[kNIMSessionMsgSubStatus].asUInt();
 	session.last_updated_msg_ = session_json[kNIMSessionLastUpdatedMsg].asBool();
+	session.placed_on_top_ = session_json[kNIMSessionOnTop].asBool();
+	session.extend_data_ = session_json[kNIMSessionExtendedData].asString();
 }
 
 bool ParseSessionList(const std::string& sessions_json, SessionDataList& session_list)

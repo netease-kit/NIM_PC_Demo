@@ -1,8 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug_Universal_SDK|Win32">
+      <Configuration>Debug_Universal_SDK</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release_Universal_SDK|Win32">
+      <Configuration>Release_Universal_SDK</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
@@ -21,7 +29,18 @@
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Universal_SDK|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Universal_SDK|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -33,28 +52,46 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Universal_SDK|Win32'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release_Universal_SDK|Win32'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>$(ProjectDir)..\..\bin\</OutDir>
+    <OutDir>$(ProjectDir)..\..\cpp_win_pc\sdk\libs\</OutDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Universal_SDK|Win32'">
+    <OutDir>$(ProjectDir)..\..\..\libs\windows\$(Platform)\$(Configuration)\</OutDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>nim_chatroom_cpp_sdk_d</TargetName>
-    <IntDir>$(ProjectDir)..\..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)..\..\cpp_win_pc\sdk\libs\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Universal_SDK|Win32'">
+    <TargetName>nim_chatroom_cpp_sdk_d</TargetName>
+    <IntDir>$(ProjectDir)..\..\..\tmp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>$(ProjectDir)..\..\bin\</OutDir>
+    <OutDir>$(ProjectDir)..\..\cpp_win_pc\sdk\libs\</OutDir>
     <TargetName>nim_chatroom_cpp_sdk</TargetName>
-    <IntDir>$(ProjectDir)..\..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)..\..\cpp_win_pc\sdk\libs\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release_Universal_SDK|Win32'">
+    <OutDir>$(ProjectDir)..\..\..\libs\windows\$(Platform)\$(Configuration)\</OutDir>
+    <TargetName>nim_chatroom_cpp_sdk</TargetName>
+    <IntDir>$(ProjectDir)..\..\..\tmp\$(ProjectName)\$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\..\third_party\jsoncpp\include\json\;$(ProjectDir)..\nim_chatroom_sdk_dll\export_headers\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)util\;$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\third_party\jsoncpp\include\json\;$(ProjectDir)..\..\c\nim_chatroom\export_headers\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -63,7 +100,26 @@
       <AdditionalDependencies>jsoncpp_d.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\libs\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\cpp_win_pc\sdk\libs/</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug_Universal_SDK|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)util\;$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\third_party\jsoncpp\include\json\;$(ProjectDir)..\..\..\nim_chatroom_sdk\export_headers\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -72,8 +128,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\..\third_party\jsoncpp\include\json\;$(ProjectDir)..\nim_chatroom_sdk_dll\export_headers\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)util\;$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\third_party\jsoncpp\include\json\;$(ProjectDir)..\..\c\nim_chatroom\export_headers\</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -84,24 +140,49 @@
       <AdditionalDependencies>jsoncpp.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>$(ProjectDir)..\..\libs\</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>$(ProjectDir)..\..\cpp_win_pc\sdk\libs/</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release_Universal_SDK|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>$(ProjectDir);$(ProjectDir)util\;$(ProjectDir)api\;$(ProjectDir)helper\;$(ProjectDir)..\third_party\jsoncpp\include\json\;$(ProjectDir)..\..\..\nim_chatroom_sdk\export_headers\</AdditionalIncludeDirectories>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="api\nim_chatroom_cpp.cpp" />
     <ClCompile Include="helper\nim_chatroom_helper.cpp" />
-    <ClCompile Include="helper\nim_chatroom_common_helper.cpp" />
-    <ClCompile Include="helper\nim_chatroom_file_helper.cpp" />
-    <ClCompile Include="helper\nim_chatroom_sdk_helper.cpp" />
     <ClCompile Include="nim_chatroom_cpp_api.cpp" />
+    <ClCompile Include="third_party\convert_utf\convert_utf.c" />
+    <ClCompile Include="util\nim_json_util.cpp" />
+    <ClCompile Include="util\nim_sdk_util.cpp" />
+    <ClCompile Include="util\nim_string_util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="api\nim_chatroom_cpp.h" />
     <ClInclude Include="helper\nim_chatroom_helper.h" />
-    <ClInclude Include="helper\nim_chatroom_common_helper.h" />
-    <ClInclude Include="helper\nim_chatroom_file_helper.h" />
-    <ClInclude Include="helper\nim_chatroom_sdk_helper.h" />
     <ClInclude Include="nim_chatroom_cpp_api.h" />
+    <ClInclude Include="third_party\convert_utf\convert_utf.h" />
+    <ClInclude Include="util\nim_json_util.h" />
+    <ClInclude Include="util\nim_sdk_util.h" />
+    <ClInclude Include="util\nim_string_util.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

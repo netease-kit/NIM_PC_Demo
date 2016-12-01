@@ -54,7 +54,7 @@ public:
 	/** @fn static void StartDevice(nim::NIMDeviceType type, const std::string& device_path, unsigned fps, nim_vchat_start_device_cb_func cb)
 	* NIM VCHAT DEVICE 启动设备，同一NIMDeviceType下设备将不重复启动，不同的设备会先关闭前一个设备开启新设备
 	* @param[in] type NIMDeviceType 见nim_device_def.h
-	* @param[in] device_path 无效的扩展字段
+	* @param[in] device_path 可选参数，通过EnumDeviceDevpath遍历得到的设备路径。空则底层取默认设备
 	* @param[in] fps 摄像头为采样频率,其他NIMDeviceType无效（麦克风采样频率由底层控制，播放器采样频率也由底层控制）
 	* @param[in] width 摄像头采集宽度期望值，取0则底层选默认值
 	* @param[in] height 摄像头采集高度期望值，取0则底层选默认值

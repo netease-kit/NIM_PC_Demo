@@ -81,6 +81,28 @@ public:
 	*/
 	static bool SetUnreadCountZeroAsync(nim::NIMSessionType to_type, const std::string& id, const SetUnreadCountZeroCallback& cb, const std::string& json_extension = "");
 
+	/** @fn static bool SetSessionTop(enum NIMSessionType to_type, const std::string& id, bool top, const ChangeCallback& cb, const std::string& json_extension = "");
+	* 设置会话项是否置顶(置顶属性只保存在本地)
+	* @param[in] to_type		会话类型
+	* @param[in] id			对方的account id或者群组tid。
+	* @param[in] top			true - 置顶 false - 取消置顶
+	* @param[in] cb			回调函数
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @return bool 检查参数如果不符合要求则返回失败
+	*/
+	static bool SetSessionTop(enum NIMSessionType to_type, const std::string& id, bool top, const ChangeCallback& cb, const std::string& json_extension = "");
+
+	/** @fn static bool SetSessionExtendData(enum NIMSessionType to_type, const std::string& id, const std::string& data, const ChangeCallback& cb, const std::string& json_extension = "");
+	* 设置会话项扩展数据(扩展数据只保存在本地)
+	* @param[in] to_type		会话类型
+	* @param[in] id			对方的account id或者群组tid。
+	* @param[in] data			扩展数据,建议使用灵活可扩展的数据结构,例如Json
+	* @param[in] cb			回调函数
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @return bool 检查参数如果不符合要求则返回失败
+	*/
+	static bool SetSessionExtendData(enum NIMSessionType to_type, const std::string& id, const std::string& data, const ChangeCallback& cb, const std::string& json_extension = "");
+
 	/** @fn void UnregSessionCb()
 	* 反注册Session提供的所有回调
 	* @return void 无返回值

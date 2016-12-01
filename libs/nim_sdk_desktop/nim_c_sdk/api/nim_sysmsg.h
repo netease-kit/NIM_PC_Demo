@@ -21,6 +21,7 @@ extern"C"
   * @param[in] cb			操作结果的回调函数， nim_sysmsg_receive_cb_func回调函数定义见nim_sysmsg_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_sysmsg_reg_sysmsg_cb(const char *json_extension, nim_sysmsg_receive_cb_func cb, const void *user_data);
 
@@ -38,6 +39,7 @@ NIM_SDK_DLL_API void nim_sysmsg_send_custom_notification(const char *json_msg, c
   * @param[in] cb		发送透传消息的回调函数, nim_custom_sysmsg_ack_cb_func回调函数定义见nim_sysmsg_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_sysmsg_reg_custom_notification_ack_cb(const char *json_extension, nim_custom_sysmsg_ack_cb_func cb, const void *user_data);
 

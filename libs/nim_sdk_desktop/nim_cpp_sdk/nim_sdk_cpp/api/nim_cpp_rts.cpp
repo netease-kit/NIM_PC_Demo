@@ -6,8 +6,10 @@
   */
 
 #include "nim_cpp_rts.h"
-#include "nim_sdk_helper.h"
-#include "nim_common_helper.h"
+#include "nim_sdk_util.h"
+#include "nim_json_util.h"
+#include "nim_cpp_win32_demo_helper.h"
+#include "nim_string_util.h"
 
 namespace nim
 {
@@ -352,7 +354,7 @@ void Rts::SetHangupNotifyCb(const HangupNotifyCallback& cb)
 
 //数据相关
 //NIM 发送数据
-void Rts::SendData(const std::string& session_id, int channel_type, const std::string& data)
+void Rts::SendData(const std::string& session_id, int channel_type, const std::string& data, const std::string& uid/* = ""*/)
 {
 	return NIM_SDK_GET_FUNC(nim_rts_send_data)(session_id.c_str(), channel_type, data.c_str(), data.size(), "");
 }

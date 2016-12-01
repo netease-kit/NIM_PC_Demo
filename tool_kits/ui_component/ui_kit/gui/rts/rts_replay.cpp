@@ -145,29 +145,39 @@ int RtsReplay::OnParseData(std::string data, std::list<DrawOpInfo>& info_lists)
 {
 	int count = 0;
 	info_lists.clear();
-	int pos = data.find(';');
-	while (pos != -1)
+	while (data.size() > 0)
 	{
-		ui::DrawOpInfo info;
-		std::string cur_data = data.substr(0, pos);
-		sscanf(cur_data.c_str(), "%d:%f,%f", &info.draw_op_type_, &info.x_, &info.y_);
-
-		switch (info.draw_op_type_)
+		//录制存储的格式变为：
+		//长度（uint32） + 时间戳（uint32） + 内容
+		//	长度 = 4 + 4 + 内容长度
+		int size = *(int*)data.c_str();
+		int time = *(int*)(data.c_str() + 4);
+		std::string data_temp = data.substr(8, size - 8);
+		data = data.substr(size);
+		int pos = data_temp.find(';');
+		while (pos != -1)
 		{
-		case DrawOpStart:
-		case DrawOpUndo:
-		case DrawOpMove:
-		case DrawOpEnd:
-		case DrawOpClear:
-			info_lists.push_back(info);
-			count++;
-			break;
-		default:
-			break;
-		}
+			ui::DrawOpInfo info;
+			std::string cur_data = data_temp.substr(0, pos);
+			sscanf(cur_data.c_str(), "%d:%f,%f", &info.draw_op_type_, &info.x_, &info.y_);
 
-		data = data.substr(pos + 1);
-		pos = data.find(';');
+			switch (info.draw_op_type_)
+			{
+			case DrawOpStart:
+			case DrawOpUndo:
+			case DrawOpMove:
+			case DrawOpEnd:
+			case DrawOpClear:
+				info_lists.push_back(info);
+				count++;
+				break;
+			default:
+				break;
+			}
+
+			data_temp = data_temp.substr(pos + 1);
+			pos = data_temp.find(';');
+		}
 	}
 	return count;
 }

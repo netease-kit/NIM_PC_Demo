@@ -54,7 +54,6 @@ int SessionList::AdjustMsg(const nim::SessionData &msg)
 
 SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data)
 {
-	int index = AdjustMsg(item_data);
 	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(nbase::UTF8ToUTF16(item_data.id_)));
 	nim::SessionData item_data_new = item_data;
 	if (item)
@@ -65,6 +64,8 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data)
 			item_data_new.unread_count_ = item_data.unread_count_;
 		}
 	}
+
+	int index = AdjustMsg(item_data_new);
 
 	if (item && (session_list_->GetItemIndex(item) == index - 1 || session_list_->GetItemIndex(item) == index))
 	{

@@ -6,15 +6,18 @@
   */
 
 #include "nim_cpp_client.h"
-#include "nim_sdk_helper.h"
-#include "nim_common_helper.h"
+#include "nim_sdk_util.h"
+#include "nim_json_util.h"
+#include "nim_string_util.h"
 
 namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
+SDKInstance *g_nim_sdk_instance = NULL;
 typedef bool(*nim_client_init)(const char *app_data_dir, const char *app_install_dir, const char *json_extension);
 typedef void(*nim_client_cleanup)(const char *json_extension);
 typedef void(*nim_client_login)(const char *app_token, const char *account, const char *password, const char *json_extension, nim_json_transport_cb_func cb, const void* user_data);
+typedef int (*nim_client_get_login_state)(const char *json_extension);
 typedef void(*nim_client_relogin)(const char *json_extension);
 typedef void(*nim_client_logout)(nim::NIMLogoutType logout_type, const char *json_extension, nim_json_transport_cb_func cb, const void* user_data);
 typedef void(*nim_client_kick_other_client)(const char *json_extension);
@@ -133,7 +136,19 @@ bool Client::Init(const std::string& app_data_dir
 	, const SDKConfig &config)
 {
 #ifdef NIM_SDK_DLL_IMPORT
-	if (!SDKFunction::LoadSdkDll(app_install_dir.c_str()))
+
+#if !defined (WIN32)
+	static const char *kSdkNimDll = "libnim.so";
+#elif defined (_DEBUG) || defined (DEBUG)
+	static const char *kSdkNimDll = "nim_d.dll";
+#else
+	static const char *kSdkNimDll = "nim.dll";
+#endif
+	if (NULL == g_nim_sdk_instance)
+	{
+		g_nim_sdk_instance = new SDKInstance();
+	}
+	if (!g_nim_sdk_instance->LoadSdkDll(app_install_dir.c_str(), kSdkNimDll))
 		return false;
 #endif
 
@@ -145,6 +160,8 @@ bool Client::Init(const std::string& app_data_dir
 	config_values[nim::kNIMPreloadImageQuality] = config.preload_image_quality_;
 	config_values[nim::kNIMPreloadImageResize] = config.preload_image_resize_;
 	config_values[nim::kNIMSDKLogLevel] = config.sdk_log_level_;
+	config_values[nim::kNIMSyncSessionAck] = config.sync_session_ack_;
+	config_values["custom_timeout"] = config.custom_timeout_;
 	config_root[nim::kNIMGlobalConfig] = config_values;
 
 	if (config.use_private_server_)
@@ -172,7 +189,8 @@ void Client::Cleanup(const std::string& json_extension/* = ""*/)
 	NIM_SDK_GET_FUNC(nim_client_cleanup)(json_extension.c_str());
 
 #ifdef NIM_SDK_DLL_IMPORT
-	SDKFunction::UnLoadSdkDll();
+	g_nim_sdk_instance->UnLoadSdkDll();
+	delete g_nim_sdk_instance;
 #endif
 }
 
@@ -199,6 +217,12 @@ bool Client::Login(const std::string& app_key
 										, cb_pointer);
 
 	return true;
+}
+
+NIMLoginState Client::GetLoginState( const std::string& json_extension /*= ""*/ )
+{
+	int login_state = NIM_SDK_GET_FUNC(nim_client_get_login_state)(json_extension.c_str());
+	return (NIMLoginState)login_state;
 }
 
 void Client::Relogin(const std::string& json_extension/* = ""*/)

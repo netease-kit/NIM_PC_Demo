@@ -71,6 +71,12 @@ public:
 	nim::IMMessage GetMsg();
 
 	/**
+	* 获取消息时间戳
+	* @return string 用户id
+	*/
+	int64_t GetMsgTimeTag();
+
+	/**
 	* 获取消息发送者id
 	* @return string 用户id
 	*/

@@ -49,7 +49,7 @@ NIM_SDK_DLL_API void nim_friend_request(const char *accid, enum NIMVerifyType ve
 NIM_SDK_DLL_API void nim_friend_delete(const char *accid, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data);
 
 /** @fn void nim_friend_update(const char *friend_json, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data)
-  * 更新好友资料（自己）
+  * 更新好友资料
   * @param[in] friend_json		好友资料json字符串
   * @param[in] json_extension	json扩展参数（备用，目前不需要）
   * @param[in] cb				操作结果回调

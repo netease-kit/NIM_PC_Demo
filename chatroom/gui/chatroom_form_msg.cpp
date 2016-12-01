@@ -206,7 +206,10 @@ void ChatroomForm::OnGetMembersCallback(__int64 room_id, int error_code, const s
 					}
 					else
 					{
-						online_members_list_->AddAt(room_member_item, 1);
+						if (has_add_creater_)
+							online_members_list_->AddAt(room_member_item, 1);
+						else
+							online_members_list_->AddAt(room_member_item, 0);
 					}
 				}
 				else
@@ -539,7 +542,6 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 			SetMemberTempMute(*it_id, false, notification.temp_mute_duration_);
 		}
 		AddNotify(str, is_history);
-		return;
 	}
 
 	if (notification.id_ == kNIMChatRoomNotificationIdRoomMuted || notification.id_ == kNIMChatRoomNotificationIdRoomDeMuted)
@@ -550,6 +552,11 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 		AddNotify(str, is_history);
 	}
 
+	if (!notification.ext_.empty())
+	{
+		std::string toast = nbase::StringPrintf("notification_id:%d, from_nick:%s(%s), notify_ext:%s", notification.id_, notification.operator_nick_.c_str(), notification.operator_id_.c_str(), notification.ext_.c_str());
+		nim_ui::ShowToast(nbase::UTF8ToUTF16(toast), 5000, this->GetHWND());
+	}
 }
 
 void ChatroomForm::OnBtnSend()

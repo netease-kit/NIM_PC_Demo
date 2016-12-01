@@ -41,8 +41,7 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 			else
 				msg_list_->Add(cell);
 			cell->InitControl();
-			std::wstring notify_text = nbase::UTF8ToUTF16(msg.content_);
-			cell->InitCustomInfo(notify_text, session_id_, msg.client_msg_id_);
+			cell->InitInfo(msg, session_id_, true);
 			return;
 		}
 		else

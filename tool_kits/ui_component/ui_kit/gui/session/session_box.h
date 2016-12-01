@@ -710,6 +710,12 @@ private:
 	bool GetLastNeedSendReceiptMsg(nim::IMMessage &msg);
 
 	/**
+	* 标记最后一条需要已读回执的消息
+	* @return bool true 已标记，false 未标记
+	*/
+	bool ResetLastMsgNeedMarkReceipt();
+
+	/**
 	* 移除某个消息气泡
 	* @param[in] client_msg_id 消息id
 	* @return int 被移除的气泡的索引
@@ -717,11 +723,19 @@ private:
 	int RemoveMsgItem(const std::string& client_msg_id);
 
 	/**
+	* 根据消息时间戳查找消息应在的位置
+	* @param[in] msg_time 消息时间戳
+	* @return int 位置索引
+	*/
+	int FindIndexByMsgTime(int64_t msg_time);
+
+	/**
 	* 获取回撤消息的提示文本
 	* @param[in] msg_from_id 消息发送者的id
+	* @param[in] msg_from_nick 消息发送者的昵称
 	* @return std::wstring 提示文本
 	*/
-	std::wstring GetRecallNotifyText(const std::string& msg_from_id);
+	std::wstring GetRecallNotifyText(const std::string& msg_from_id, const std::string& msg_from_nick);
 
 	/** 
 	* 根据会话的信息，设置投降
@@ -772,12 +786,14 @@ private:
 
 	/**
 	* 在本地数据库写入消息记录后的回调函数
-	* @param[in] notify_text 写入成功后需要在界面显示的一条提示消息
 	* @param[in] res_code 错误码
 	* @param[in] msg_id 消息id
+	* @param[in] msg 写入成功后需要在界面显示的消息
+	* @param[in] index 消息插入的位置
+	* @param[in] is_keep_end 插入消息后是否让滚掉条置底
 	* @return void	无返回值
 	*/
-	void WriteMsglogCallback(const std::wstring &notify_text, nim::NIMResCode res_code, const std::string& msg_id);
+	void WriteMsglogCallback(nim::NIMResCode res_code, const std::string& msg_id, const nim::IMMessage& msg, int index, bool is_keep_end);
 
 	/**
 	* 对方个人资料改变的回调函数
@@ -1034,6 +1050,7 @@ private:
 	bool			is_team_valid_;
 
 	bool			first_show_msg_;
+	bool			mark_receipt_when_load_msgs_;
 	long long		last_msg_time_;  //最近收到的消息时间
 	long long		farst_msg_time_; //最远收到的消息时间
 	

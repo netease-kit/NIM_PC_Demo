@@ -6,7 +6,7 @@
   */
 
 #include "nim_cpp_global.h"
-#include "nim_sdk_helper.h"
+#include "nim_sdk_util.h"
 #include "nim_client_def.h"
 
 namespace nim

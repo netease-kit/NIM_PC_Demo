@@ -17,18 +17,15 @@
     <Filter Include="third_party\convert_utf">
       <UniqueIdentifier>{f8aff025-74ef-44c2-8893-66c2990e8396}</UniqueIdentifier>
     </Filter>
+    <Filter Include="util">
+      <UniqueIdentifier>{59dda0b3-2c52-4b5c-82a4-b140bd9d2d35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="helper\nim_client_helper.cpp">
       <Filter>helper</Filter>
     </ClCompile>
-    <ClCompile Include="helper\nim_common_helper.cpp">
-      <Filter>helper</Filter>
-    </ClCompile>
     <ClCompile Include="helper\nim_file_helper.cpp">
-      <Filter>helper</Filter>
-    </ClCompile>
-    <ClCompile Include="helper\nim_sdk_helper.cpp">
       <Filter>helper</Filter>
     </ClCompile>
     <ClCompile Include="api\nim_cpp_client.cpp">
@@ -107,21 +104,21 @@
     <ClCompile Include="third_party\convert_utf\convert_utf.c">
       <Filter>third_party\convert_utf</Filter>
     </ClCompile>
-    <ClCompile Include="helper\nim_string_helper.cpp">
-      <Filter>helper</Filter>
+    <ClCompile Include="util\nim_json_util.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="util\nim_sdk_util.cpp">
+      <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="util\nim_string_util.cpp">
+      <Filter>util</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\nim_client_helper.h">
       <Filter>helper</Filter>
     </ClInclude>
-    <ClInclude Include="helper\nim_common_helper.h">
-      <Filter>helper</Filter>
-    </ClInclude>
     <ClInclude Include="helper\nim_file_helper.h">
-      <Filter>helper</Filter>
-    </ClInclude>
-    <ClInclude Include="helper\nim_sdk_helper.h">
       <Filter>helper</Filter>
     </ClInclude>
     <ClInclude Include="api\nim_cpp_client.h">
@@ -200,8 +197,14 @@
     <ClInclude Include="third_party\convert_utf\convert_utf.h">
       <Filter>third_party\convert_utf</Filter>
     </ClInclude>
-    <ClInclude Include="helper\nim_string_helper.h">
-      <Filter>helper</Filter>
+    <ClInclude Include="util\nim_json_util.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\nim_sdk_util.h">
+      <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="util\nim_string_util.h">
+      <Filter>util</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

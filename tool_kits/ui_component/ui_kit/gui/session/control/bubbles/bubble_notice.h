@@ -22,9 +22,10 @@ public:
 	* 初始化控件外观
 	* @param[in] msg 消息信息结构体
 	* @param[in] session_id 会话id
+	* @param[in] is_custom_info 是否自定义消息通知内容
 	* @return void 无返回值
 	*/
-	void InitInfo(const nim::IMMessage &msg, const UTF8String& session_id);
+	void InitInfo(const nim::IMMessage &msg, const UTF8String& session_id, bool is_custom_info = false);
 
 	/**
 	* 更新控件的界面显示效果
@@ -33,13 +34,16 @@ public:
 	void RefreshNotice();
 
 	/**
-	* 设置自定义通知消息的内容
-	* @param[in] show_notice 通知消息内容
-	* @param[in] session_id 会话id
-	* @param[in] client_msg_id 消息uuid
-	* @return void	无返回值
+	* 获取此消息项所包含的消息内容
+	* @return MsgData 消息信息结构体
 	*/
-	void InitCustomInfo(const std::wstring &show_notice, const UTF8String& session_id, const UTF8String& client_msg_id);
+	nim::IMMessage GetMsg();
+
+	/**
+	* 获取消息时间戳
+	* @return string 用户id
+	*/
+	int64_t GetMsgTimeTag();
 
 private:
 

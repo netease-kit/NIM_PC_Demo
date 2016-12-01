@@ -15,11 +15,12 @@ extern"C"
 /** @enum NIMDeviceType 设备类型 */
 enum NIMDeviceType
 {
-	kNIMDeviceTypeAudioIn		= 0,	/**< 麦克风设备 */
-	kNIMDeviceTypeAudioOut		= 1,	/**< 听筒设备用于播放本地采集音频数据 */
-	kNIMDeviceTypeAudioOutChat	= 2,	/**< 听筒设备用于通话音频数据（nim_vchat_start_device和nim_vchat_end_device中使用） */
-	kNIMDeviceTypeVideo			= 3,	/**< 摄像头 */
-	kNIMDeviceTypeSoundcardCapturer	= 4,	/**< 声卡声音采集，并在通话结束时会主动关闭，得到的数据只混音到发送的通话声音中，customaudio模式时无效 */
+	kNIMDeviceTypeAudioIn			= 0,	/**< 麦克风设备 */
+	kNIMDeviceTypeAudioOut			= 1,	/**< 听筒设备用于播放本地采集音频数据 */
+	kNIMDeviceTypeAudioOutChat		= 2,	/**< 听筒设备用于通话音频数据（nim_vchat_start_device和nim_vchat_end_device中使用） */
+	kNIMDeviceTypeVideo				= 3,	/**< 摄像头 */
+	kNIMDeviceTypeSoundcardCapturer	= 4,	/**< 声卡声音采集，并在通话结束时会主动关闭，得到的数据只混音到发送的通话声音中，customaudio模式时无效(此模式使用条件苛刻不建议使用) */
+	kNIMDeviceTypeAudioHook			= 5,	/**< 伴音，启动第三方播放器并获取音频数据（只允许存在一个进程钩子）,只混音到发送的通话声音中 */
 };
 
 /** @enum NIMDeviceStatus 设备状态类型 */
@@ -78,7 +79,7 @@ typedef void (*nim_vchat_start_device_cb_func)(NIMDeviceType type, bool ret, con
 
 /** @typedef void (*nim_vchat_device_status_cb_func)(NIMDeviceType type, unsigned int status, const char *device_path, const char *json_extension, const void *user_data)
   * NIM Device 设备状态监听返回接口
-  * @param[out] type 设备类型NIMDeviceType，其中kNIMDeviceTypeAudioIn和kNIMDeviceTypeVideo有效
+  * @param[out] type 设备类型NIMDeviceType，其中kNIMDeviceTypeAudioIn和kNIMDeviceTypeVideo、kNIMDeviceTypeAudioHook有效
   * @param[out] status 为NIMDeviceStatus的多状态
   * @param[out] device_path 当kNIMDeviceStatusReset状态时需要关注此参数，kNIMDeviceStatusReset时有可能选用了非用户选定的设备，这里返回的是重新启动的设备地址
   * @param[out] json_extension 无效的扩展字段

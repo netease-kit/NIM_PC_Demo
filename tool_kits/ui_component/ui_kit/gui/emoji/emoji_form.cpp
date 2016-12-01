@@ -9,6 +9,7 @@ const LPCTSTR EmojiForm::kClassName = L"EmojiForm";
 EmojiForm::EmojiForm()
 {
 	only_emoj_ = false;
+	is_closing_ = false;
 }
 
 EmojiForm::~EmojiForm()
@@ -93,6 +94,12 @@ LRESULT EmojiForm::OnClose(UINT u, WPARAM w, LPARAM l, BOOL& bHandled)
 	return __super::OnClose(u, w, l, bHandled);
 }
 
+void EmojiForm::Close(UINT nRet /*= IDOK*/)
+{
+	is_closing_ = true;
+	__super::Close(nRet);
+}
+
 void EmojiForm::ShowEmoj(POINT pt, OnSelectEmotion sel, OnSelectSticker sel_sticker, OnEmotionClose close_cb, bool only_emoj)
 {
 	sel_cb_ = sel;
@@ -152,6 +159,9 @@ bool EmojiForm::OnSelChanged(ui::EventArgs* param)
 
 bool EmojiForm::OnEmojiClicked( ui::EventArgs* arg )
 {
+	if (is_closing_)
+		return false;
+
 	std::wstring tip = arg->pSender->GetToolTipText();
 	if( tip.empty() )
 	{
@@ -171,6 +181,9 @@ bool EmojiForm::OnEmojiClicked( ui::EventArgs* arg )
 
 bool EmojiForm::OnStickerClicked(ui::EventArgs* arg)
 {
+	if (is_closing_)
+		return false;
+
 	std::wstring id = arg->pSender->GetDataID();
 	if (id.empty())
 	{

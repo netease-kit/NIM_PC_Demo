@@ -1,7 +1,7 @@
 ﻿/** @file nim_chatroom_helper.h
   * @brief 聊天室SDK辅助方法
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author Oleg
+  * @author Oleg, Harrison
   * @date 2015/12/29
   */
 
@@ -12,7 +12,7 @@
 #include <list>
 #include <functional>
 #include "json.h"
-#include "nim_chatroom_common_helper.h"
+#include "nim_json_util.h"
 
 /**
 * @namespace nim_chatroom
@@ -53,7 +53,7 @@ struct ChatRoomEnterInfo
       */
 	void SetExt(const Json::Value &ext)
 	{
-		values_[kNIMChatRoomEnterKeyExt] = GetJsonStringWithNoStyled(ext);
+		values_[kNIMChatRoomEnterKeyExt] = nim::GetJsonStringWithNoStyled(ext);
 	}
 
 	/** @fn void SetNotifyExt(const std::string &notify_ext)
@@ -63,7 +63,7 @@ struct ChatRoomEnterInfo
       */
 	void SetNotifyExt(const Json::Value &notify_ext)
 	{
-		values_[kNIMChatRoomEnterKeyNotifyExt] = GetJsonStringWithNoStyled(notify_ext);
+		values_[kNIMChatRoomEnterKeyNotifyExt] = nim::GetJsonStringWithNoStyled(notify_ext);
 	}
 
 	/** @fn std::string ToJsonString() const
@@ -72,7 +72,7 @@ struct ChatRoomEnterInfo
       */
 	std::string	ToJsonString() const
 	{
-		return values_.empty() ? "" : GetJsonStringWithNoStyled(values_);
+		return values_.empty() ? "" : nim::GetJsonStringWithNoStyled(values_);
 	}
 
 private:
@@ -82,7 +82,7 @@ private:
 /** @brief 聊天室信息*/
 struct ChatRoomInfo
 {
-	__int64			id_;				/**< 聊天室ID */
+	int64_t			id_;				/**< 聊天室ID */
 	std::string		name_;				/**< 聊天室名称 */
 	std::string		announcement_;		/**< 聊天室公告 */
 	std::string		broadcast_url_;		/**< 视频直播拉流地址 */
@@ -129,7 +129,7 @@ struct ChatRoomInfo
 		values[kNIMChatRoomInfoKeyExt] = ext_;
 		values[kNIMChatRoomInfoKeyOnlineCount] = online_count_;
 		values[kNIMChatRoomInfoKeyMuteAll] = mute_all_;
-		return GetJsonStringWithNoStyled(values);
+		return nim::GetJsonStringWithNoStyled(values);
 	}
 };
 
@@ -142,7 +142,7 @@ struct ChatRoomNotification
 	std::string						operator_nick_;/**< 操作者的账号nick */
 	std::list<std::string>			target_nick_;/**< 被操作者的账号nick列表 */
 	std::list<std::string>			target_ids_; /**< 被操作者的accid列表 */
-	__int64							temp_mute_duration_; /**<long 当通知为临时禁言相关时有该值，禁言时代表本次禁言的时长(秒)，解禁时代表本次禁言剩余时长(秒) */
+	int64_t							temp_mute_duration_; /**<long 当通知为临时禁言相关时有该值，禁言时代表本次禁言的时长(秒)，解禁时代表本次禁言剩余时长(秒) */
 
 	/** 构造函数 */
 	ChatRoomNotification() : temp_mute_duration_(0) { }
@@ -158,8 +158,8 @@ struct ChatRoomNotification
 		ext_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyExt].asString();
 		operator_id_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyOpt].asString();
 		operator_nick_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyOptNick].asString();
-		JsonStrArrayToList(values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTargetNick], target_nick_);
-		JsonStrArrayToList(values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTarget], target_ids_);
+		nim::JsonStrArrayToList(values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTargetNick], target_nick_);
+		nim::JsonStrArrayToList(values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTarget], target_ids_);
 		if (id_ == kNIMChatRoomNotificationIdMemberTempMute || id_ == kNIMChatRoomNotificationIdMemberTempUnMute)
 			temp_mute_duration_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTempMuteDuration].asUInt64();
 	}
@@ -209,9 +209,9 @@ struct ChatRoomMessageSetting
 struct ChatRoomMessage
 {
 public:
-	__int64			room_id_;					/**< 消息所属的聊天室id,服务器填写,发送方不需要填写 */
+	int64_t			room_id_;					/**< 消息所属的聊天室id,服务器填写,发送方不需要填写 */
 	std::string		from_id_;					/**< 消息发送者的账号,服务器填写,发送方不需要填写 */
-	__int64			timetag_;					/**< 消息发送的时间戳(毫秒),服务器填写,发送方不需要填写 */
+	int64_t			timetag_;					/**< 消息发送的时间戳(毫秒),服务器填写,发送方不需要填写 */
 	NIMChatRoomClientType from_client_type_;	/**< 消息发送方客户端类型,服务器填写,发送方不需要填写 */
 	std::string		from_nick_;					/**< 发送方昵称,服务器填写,发送方不需要填写 */
 	std::string		from_avatar_;				/**< 发送方头像,服务器填写,发送方不需要填写 */
@@ -267,7 +267,7 @@ public:
 		values[kNIMChatRoomMsgKeyLocalFilePath] = local_res_path_;
 		values[kNIMChatRoomMsgKeyLocalResId] = local_res_id_;
 		msg_setting_.ToJsonValue(values);
-		return GetJsonStringWithNoStyled(values);
+		return nim::GetJsonStringWithNoStyled(values);
 	}
 };
 
@@ -275,7 +275,7 @@ public:
 struct ChatRoomGetMembersParameters
 {
 	NIMChatRoomGetMemberType type_;	/**< 成员类型 */
-	__int64 timestamp_offset_;		/**< 成员时间戳偏移量*/
+	int64_t timestamp_offset_;		/**< 成员时间戳偏移量*/
 	int limit_;						/**< 数量*/
 
 	/** 构造函数 */
@@ -291,14 +291,14 @@ struct ChatRoomGetMembersParameters
 		values[kNIMChatRoomGetMembersKeyType] = type_;
 		values[kNIMChatRoomGetMembersKeyOffset] = timestamp_offset_;
 		values[kNIMChatRoomGetMembersKeyLimit] = limit_;
-		return GetJsonStringWithNoStyled(values);
+		return nim::GetJsonStringWithNoStyled(values);
 	}
 };
 
 /** @brief 获取聊天室消息历史参数*/
 struct ChatRoomGetMsgHistoryParameters
 {
-	__int64 start_timetag_;			/**<开始时间,单位毫秒 */
+	int64_t start_timetag_;			/**<开始时间,单位毫秒 */
 	int limit_;						/**<本次返回的消息数量*/
 
 	/** 构造函数 */
@@ -313,7 +313,7 @@ struct ChatRoomGetMsgHistoryParameters
 		Json::Value values;
 		values[kNIMChatRoomGetMsgHistoryKeyStartTime] = start_timetag_;
 		values[kNIMChatRoomGetMsgHistoryKeyLimit] = limit_;
-		return GetJsonStringWithNoStyled(values);
+		return nim::GetJsonStringWithNoStyled(values);
 	}
 };
 
@@ -339,7 +339,7 @@ struct ChatRoomSetMemberAttributeParameters
 		values[kNIMChatRoomSetMemberAttributeKeyAttribute] = attribute_;
 		values[kNIMChatRoomSetMemberAttributeKeyOpt] = opt_;
 		values[kNIMChatRoomSetMemberAttributeKeyNotifyExt] = notify_ext_;
-		return GetJsonStringWithNoStyled(values);
+		return nim::GetJsonStringWithNoStyled(values);
 	}
 
 private:
@@ -350,7 +350,7 @@ private:
 /** @brief 聊天室成员信息*/
 struct ChatRoomMemberInfo
 {
-	__int64			room_id_;			/**<聊天室id */
+	int64_t			room_id_;			/**<聊天室id */
 	std::string		account_id_;		/**<成员账号 */
 	int				type_;				/**<成员类型, -1:受限用户; 0:普通;1:创建者;2:管理员*/
 	int				level_;				/**<成员级别: >=0表示用户开发者可以自定义的级别*/
@@ -359,13 +359,13 @@ struct ChatRoomMemberInfo
 	std::string		ext_;				/**<开发者扩展字段, 长度限制2k, 必须为可以解析为json的非格式化的字符串*/
 	NIMChatRoomOnlineState	state_;		/**<成员是否处于在线状态, 仅特殊成员才可能离线, 对游客/匿名用户而言只能是在线*/
 	NIMChatRoomGuestFlag	guest_flag_;/**<是否是普通游客类型,0:不是游客,1:是游客; 游客身份在聊天室中没有持久化, 只有在线时才会有内存状态*/
-	__int64			enter_timetag_;		/**<进入聊天室的时间点,对于离线成员该字段为空*/
+	int64_t			enter_timetag_;		/**<进入聊天室的时间点,对于离线成员该字段为空*/
 	bool			is_blacklist_;		/**<是黑名单*/
 	bool			is_muted_;			/**<是禁言用户*/
 	bool			is_valid_;			/**<记录有效标记位*/
-	__int64			update_timetag_;	/**<固定成员的记录更新时间,用于固定成员列表的排列查询*/
+	int64_t			update_timetag_;	/**<固定成员的记录更新时间,用于固定成员列表的排列查询*/
 	bool			temp_muted_;		/**<临时禁言*/
-	__int64			temp_muted_duration_;/**<临时禁言的解除时长,单位秒*/
+	int64_t			temp_muted_duration_;/**<临时禁言的解除时长,单位秒*/
 	/** 构造函数 */
 	ChatRoomMemberInfo() : room_id_(0),
 		type_(0),
@@ -440,7 +440,7 @@ struct ChatRoomMemberInfo
 		values[kNIMChatRoomMemberInfoKeyUpdateTimetag] = update_timetag_;
 		values[kNIMChatRoomMemberInfoKeyTempMute] = temp_muted_ ? 1 : 0;
 		values[kNIMChatRoomMemberInfoKeyTempMuteRestDuration] = temp_muted_duration_;
-		return GetJsonStringWithNoStyled(values);
+		return nim::GetJsonStringWithNoStyled(values);
 	}
 
 };

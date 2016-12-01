@@ -869,6 +869,9 @@
     <ClCompile Include="gui\session\taskbar\dwm_util.cpp">
       <Filter>gui\session\taskbar</Filter>
     </ClCompile>
+    <ClCompile Include="gui\session\session_box_merge.cpp">
+      <Filter>gui\session</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ui_kit.rc">

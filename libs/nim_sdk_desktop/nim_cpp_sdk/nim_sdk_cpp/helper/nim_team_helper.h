@@ -12,7 +12,7 @@
 #include <list>
 #include <functional>
 #include "json.h"
-#include "nim_sdk_helper.h"
+#include "nim_sdk_util.h"
 #include "nim_user_helper.h"
 
 /**

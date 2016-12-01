@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window caption="0,0,0,34">
+<Window caption="0,0,0,34" >
     <VBox bkcolor="bk_wnd_lightcolor" width="555" height="auto">
         <HBox class="caption">
             <Label class="font_title" name="title" width="stretch" valign="center" 
@@ -9,70 +9,71 @@
         </HBox>
         <TileListBox name="user_list" vscrollbar="true" vscrollunit="75" columns="3" height="250"/>
         <Control class="splitline_hor_level1"/>
-        <VBox name="team_owner_section" height="auto">
-			<HBox name="team_info_icon" width="130" height="54">
-				<VBox padding="0,0,0,0" height="auto" width="stretch" valign="center" mouse="false" mousechild="false">
-					<Label text="群头像" font="3" margin="10,0,0,0" />
-				</VBox>
-				<Box width="56" height="auto" margin="0,8,0,8">
-					<Button name="head_image" width="46" height="46" margin="1,1,1,1" borderround="46,46,46,46" cursortype="hand"/>
-					<Button class="icon_headimage_mask_48x48" mouse="false"/>
-				</Box>
-			</HBox>
-            <HBox height="40" name="team_id_panel">
-                <Label name="team_id_label" text="群ID" font="3" margin="10,10,0,0"/>
-                <RichEdit class="simple prompt" name="team_id" width="200" height="auto" margin="8,0,10,0" valign="center" font="2" enabled="false"/>
-            </HBox>
-            <HBox height="40" name="team_name_panel">
-                <Label name="team_name_label" text="群名称" font="3" margin="10,10,0,0"/>
-                <RichEdit class="simple prompt" name="team_name" width="200" height="auto" margin="8,0,10,0" valign="center" font="2" prompttext="输入群名称"/>
-            </HBox>
-            
-            <VBox name="team_info_fields" height="auto">
-                <HBox height="40" name="team_info_panel">
-                    <Label text="群介绍" font="3" margin="10,10,0,0"/>
-                    <RichEdit class="simple prompt" name="team_intro" width="200" height="auto" margin="8,0,10,0" valign="center" font="2" prompttext="输入群介绍"/>
-                </HBox>
+        
+        <VListBox height="auto" maxheight="340" vscrollbar="true" vscrollunit="75">
+	        <VBox name="team_owner_section" height="auto" >
+				<HBox name="team_info_icon" width="130" height="54">
+					<VBox padding="0,0,0,0" height="auto" width="stretch" valign="center" mouse="false" mousechild="false">
+						<Label text="群头像" font="3" margin="10,0,0,0" />
+					</VBox>
+					<Box width="56" height="auto" margin="0,8,0,8">
+						<Button name="head_image" width="46" height="46" margin="1,1,1,1" borderround="46,46,46,46" cursortype="hand"/>
+						<Button class="icon_headimage_mask_48x48" mouse="false"/>
+					</Box>
+				</HBox>
+	            <HBox height="40" name="team_id_panel">
+	                <Label name="team_id_label" text="群ID" font="3" margin="10,10,0,0"/>
+	                <RichEdit class="simple prompt" name="team_id" width="200" height="auto" margin="8,0,10,0" valign="center" font="2" enabled="false"/>
+	            </HBox>
+	            <HBox height="40" name="team_name_panel">
+	                <Label name="team_name_label" text="群名称" font="3" margin="10,10,0,0"/>
+	                <RichEdit class="simple prompt" name="team_name" width="200" height="auto" margin="8,0,10,0" valign="center" font="2" prompttext="输入群名称"/>
+	            </HBox>
+	            
+	            <VBox name="team_info_fields" height="auto" >
+	                <HBox height="40" name="team_info_panel">
+	                    <Label text="群介绍" font="3" margin="10,10,0,0"/>
+	                    <RichEdit class="simple prompt" name="team_intro" width="200" height="auto" margin="8,0,10,0" valign="center" font="2" prompttext="输入群介绍"/>
+	                </HBox>
 
-                <HBox height="40">
-                    <Label text="入群身份验证" font="3" margin="10,10,20,0"/>
-                    <Option class="circle_option_2" group="join_mode" name="join_mode_any" text="允许任何人" margin="0,12,10,0"/>
-                    <Option class="circle_option_2" group="join_mode" name="join_mode_verify" text="需要验证消息" margin="0,12,10,0"/>
-                    <Option class="circle_option_2" group="join_mode" name="join_mode_nobody" text="不允许任何人申请加入" margin="0,12,0,0"/>
-                </HBox>
+	                <HBox height="40">
+	                    <Label text="入群身份验证" font="3" margin="10,10,20,0"/>
+	                    <Option class="circle_option_2" group="join_mode" name="join_mode_any" text="允许任何人" margin="0,12,10,0"/>
+	                    <Option class="circle_option_2" group="join_mode" name="join_mode_verify" text="需要验证消息" margin="0,12,10,0"/>
+	                    <Option class="circle_option_2" group="join_mode" name="join_mode_nobody" text="不允许任何人申请加入" margin="0,12,0,0"/>
+	                </HBox>
 
-                <HBox height="40">
-                    <Label text="是否需要被邀请人同意" font="3" margin="10,10,20,0"/>
-                    <Option class="circle_option_2" group="be_invite_mode" name="be_invite_mode_agree" text="需要" margin="0,12,10,0"/>
-                    <Option class="circle_option_2" group="be_invite_mode" name="be_invite_mode_no_need_agree" text="不需要" margin="0,12,0,0"/>
-                </HBox>
-				
-                <HBox height="40">
-                    <Label text="邀请他人权限" font="3" margin="10,10,20,0"/>
-                    <Option class="circle_option_2" group="invite_mode" name="invite_mode_manager" text="管理员" margin="0,12,10,0"/>
-                    <Option class="circle_option_2" group="invite_mode" name="invite_mode_any" text="所有人" margin="0,12,0,0"/>
-                </HBox>
+	                <HBox height="40">
+	                    <Label text="是否需要被邀请人同意" font="3" margin="10,10,20,0"/>
+	                    <Option class="circle_option_2" group="be_invite_mode" name="be_invite_mode_agree" text="需要" margin="0,12,10,0"/>
+	                    <Option class="circle_option_2" group="be_invite_mode" name="be_invite_mode_no_need_agree" text="不需要" margin="0,12,0,0"/>
+	                </HBox>
+					
+	                <HBox height="40">
+	                    <Label text="邀请他人权限" font="3" margin="10,10,20,0"/>
+	                    <Option class="circle_option_2" group="invite_mode" name="invite_mode_manager" text="管理员" margin="0,12,10,0"/>
+	                    <Option class="circle_option_2" group="invite_mode" name="invite_mode_any" text="所有人" margin="0,12,0,0"/>
+	                </HBox>
 
-                <HBox height="40">
-                    <Label text="群资料修改权限" font="3" margin="10,10,20,0"/>
-                    <Option class="circle_option_2" group="up_tinfo_mode" name="up_tinfo_mode_manager" text="管理员" margin="0,12,10,0"/>
-                    <Option class="circle_option_2" group="up_tinfo_mode" name="up_tinfo_mode_any" text="所有人" margin="0,12,0,0"/>
-                </HBox>
+	                <HBox height="40">
+	                    <Label text="群资料修改权限" font="3" margin="10,10,20,0"/>
+	                    <Option class="circle_option_2" group="up_tinfo_mode" name="up_tinfo_mode_manager" text="管理员" margin="0,12,10,0"/>
+	                    <Option class="circle_option_2" group="up_tinfo_mode" name="up_tinfo_mode_any" text="所有人" margin="0,12,0,0"/>
+	                </HBox>
 
-                <HBox height="40">
-                    <Label text="群自定义属性修改权限" font="3" margin="10,10,20,0"/>
-                    <Option class="circle_option_2" group="up_custom_mode" name="up_custom_mode_manager" text="管理员" margin="0,12,10,0"/>
-                    <Option class="circle_option_2" group="up_custom_mode" name="up_custom_mode_any" text="所有人" margin="0,12,0,0"/>
-                </HBox>
+	                <HBox height="40">
+	                    <Label text="群自定义属性修改权限" font="3" margin="10,10,20,0"/>
+	                    <Option class="circle_option_2" group="up_custom_mode" name="up_custom_mode_manager" text="管理员" margin="0,12,10,0"/>
+	                    <Option class="circle_option_2" group="up_custom_mode" name="up_custom_mode_any" text="所有人" margin="0,12,0,0"/>
+	                </HBox>
 
-            </VBox>
-
-        </VBox>
-			
-		<HBox height="40" margin="0,0,0,20">
-			<Label text="消息通知" font="3" margin="10,10,20,0"/>
-			<CheckBox class="checkbox_font14" name="msg_mode_notify" text="来消息通知" margin="0,12,0,0" enabled="false" />
-		</HBox>
+					<HBox height="40" margin="0,0,0,20">
+						<Label text="消息通知" font="3" margin="10,10,20,0"/>
+						<CheckBox class="checkbox_font14" name="msg_mode_notify" text="来消息通知" margin="0,12,0,0" enabled="false" />
+					</HBox>
+	            </VBox>
+	        </VBox>
+		</VListBox>
 
         <Control class="splitline_hor_level1"/>
 

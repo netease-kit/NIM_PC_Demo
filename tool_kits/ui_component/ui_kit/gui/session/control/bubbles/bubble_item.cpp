@@ -75,6 +75,11 @@ nim::IMMessage MsgBubbleItem::GetMsg()
 	return msg_;
 }
 
+int64_t MsgBubbleItem::GetMsgTimeTag()
+{
+	return msg_.timetag_;
+}
+
 std::string MsgBubbleItem::GetSenderId()
 {
 	return msg_.sender_accid_;

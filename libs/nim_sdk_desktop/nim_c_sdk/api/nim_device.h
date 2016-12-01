@@ -29,7 +29,7 @@ NIM_SDK_DLL_API void nim_vchat_enum_device_devpath(NIMDeviceType type, const cha
 /** @fn void nim_vchat_start_device(NIMDeviceType type, const char *device_path, unsigned fps, const char *json_extension, nim_vchat_start_device_cb_func cb, const void *user_data)
   * NIM VCHAT DEVICE 启动设备，同一NIMDeviceType下设备将不重复启动，不同的设备会先关闭前一个设备开启新设备
   * @param[in] type NIMDeviceType 见nim_device_def.h
-  * @param[in] device_path 设备路径对应kNIMDevicePath
+  * @param[in] device_path 设备路径对应kNIMDevicePath，如果是kNIMDeviceTypeAudioHook，对应播放器本地全路径
   * @param[in] fps 摄像头为采样频率（一般传电源频率取50）,其他NIMDeviceType无效（麦克风采样频率由底层控制，播放器采样频率也由底层控制）
   * @param[in] json_extension 打开摄像头是允许设置 kNIMDeviceWidth 和 kNIMDeviceHeight，最后取最接近设置值的画面模式
   * @param[in] cb 结果回调见nim_device_def.h
@@ -47,8 +47,8 @@ NIM_SDK_DLL_API void nim_vchat_start_device(NIMDeviceType type, const char *devi
 NIM_SDK_DLL_API void nim_vchat_end_device(NIMDeviceType type, const char *json_extension);
 
 /** @fn void nim_vchat_add_device_status_cb(NIMDeviceType type, nim_vchat_device_status_cb_func cb, const void *user_data)
-  * NIM VCHAT DEVICE 添加设备监听（摄像头和麦克风） 注意监听设备后底层会定时检查设备情况，在不需要监听后请移除
-  * @param[in] type NIMDeviceType（kNIMDeviceTypeAudioIn和kNIMDeviceTypeVideo有效） 见nim_device_def.h
+  * NIM VCHAT DEVICE 添加设备监听（摄像头和麦克风，伴音hook） 注意监听设备后底层会定时检查设备情况，在不需要监听后请移除
+  * @param[in] type NIMDeviceType（kNIMDeviceTypeAudioIn和kNIMDeviceTypeVideo、kNIMDeviceTypeAudioHook有效） 见nim_device_def.h
   * @param[in] cb 结果回调见nim_device_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
@@ -56,7 +56,7 @@ NIM_SDK_DLL_API void nim_vchat_end_device(NIMDeviceType type, const char *json_e
 NIM_SDK_DLL_API void nim_vchat_add_device_status_cb(NIMDeviceType type, nim_vchat_device_status_cb_func cb, const void *user_data);
 
 /** @fn void nim_vchat_remove_device_status_cb(NIMDeviceType type)
-  * NIM VCHAT DEVICE 移除设备监听（摄像头和麦克风）
+  * NIM VCHAT DEVICE 移除设备监听（摄像头和麦克风，伴音hook）
   * @param[in] type NIMDeviceType（kNIMDeviceTypeAudioIn和kNIMDeviceTypeVideo有效） 见nim_device_def.h
   * @return void 无返回值
   */

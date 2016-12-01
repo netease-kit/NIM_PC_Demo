@@ -136,6 +136,14 @@ enum NIMVChatSetStreamingModeCode{
 	kNIMVChatBypassStreamingErrorTimeout			= 408,			/**< 互动直播设置超时 */
 };
 
+/** @enum NIMVChatVideoSplitMode 主播设置的直播分屏模式  */
+enum NIMVChatVideoSplitMode{
+	kNIMVChatSplitBottomHorFloating					= 0,			/**< 底部横排浮窗 */
+	kNIMVChatSplitTopHorFloating					= 1,			/**< 顶部横排浮窗 */
+	kNIMVChatSplitLatticeTile						= 2,			/**< 平铺 */
+	kNIMVChatSplitLatticeCuttingTile				= 3,			/**< 裁剪平铺 */
+};
+
 /** @name json extension params for start or ack accept
   * @{
   */
@@ -150,6 +158,7 @@ static const char *kNIMVChatVideoQuality	= "video_quality";	/**< int 视频聊�
 static const char *kNIMVChatVideoFrameRate	= "frame_rate";		/**< int 视频画面帧率 NIMVChatVideoFrameRate */
 static const char *kNIMVChatRtmpUrl			= "rtmp_url";		/**< string 直播推流地址(加入多人时有效)，非空代表主播旁路直播， kNIMVChatBypassRtmp决定是否开始推流 */
 static const char *kNIMVChatBypassRtmp		= "bypass_rtmp";	/**< int 是否旁路推流（如果rtmpurl为空是连麦观众，非空是主播的推流控制）， >0表示是 */
+static const char *kNIMVChatSplitMode		= "split_mode";		/**< int 主播控制的直播推流时的分屏模式，见NIMVChatVideoSplitMode */
 static const char *kNIMVChatPushEnable		= "push_enable";	/**< int 是否需要推送 >0表示是 默认是 */
 static const char *kNIMVChatNeedBadge		= "need_badge";		/**< int 是否需要角标计数 >0表示是 默认是 */
 static const char *kNIMVChatNeedFromNick	= "need_nick";		/**< int 是否需要推送昵称 >0表示是 默认是 */
@@ -239,7 +248,7 @@ typedef void (*nim_vchat_opt_cb_func)(bool ret, int code, const char *json_exten
   * NIM 操作回调，通用的操作回调接口
   * @param[out] code 结果代码，code==200表示成功
   * @param[out] channel_id 通道id
-  * @param[out] json_extension Json string 扩展字段
+  * @param[out] json_extension Json string 扩展字段kNIMVChatSessionId，加入多人的返回中带有kNIMVChatCustomInfo
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */

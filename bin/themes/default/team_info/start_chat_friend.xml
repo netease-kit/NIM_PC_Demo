@@ -6,7 +6,7 @@
                 <Button name="head_image" width="46" height="46" margin="1,1,1,1" borderround="46,46,46,46" cursortype="hand"/>
                 <Button class="icon_headimage_mask_48x48" mouse="false"/>
             </Box>
-            <Button class="btn_delete" name="btn_delete" width="26" height="26" margin="34,4,0,0" visible="false" fadealpha="true"/>
+            <Button class="btn_delete" name="btn_delete" width="26" height="26" margin="30,4,0,0" visible="false" fadealpha="true"/>
             <Control name="admin" width="auto" height="auto" margin="34,34,0,0" visible="false" mouse="false"/>
         </Box>
         <VBox padding="8,0,0,0" height="auto" width="stretch" valign="center" mouse="false" mousechild="false">

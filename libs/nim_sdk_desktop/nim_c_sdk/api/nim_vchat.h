@@ -70,7 +70,7 @@ NIM_SDK_DLL_API bool nim_vchat_set_talking_mode(NIMVideoChatMode mode, const cha
 NIM_SDK_DLL_API bool nim_vchat_callee_ack(__int64 channel_id, bool accept, const char *json_extension, const void *user_data);
 
 /** @fn bool nim_vchat_control(__int64 channel_id, NIMVChatControlType type, const char *json_extension, const void *user_data)
-  * NIM VCHAT 音视频通话控制，异步回调nim_vchat_cb_func 见nim_vchat_def.h
+  * NIM VCHAT 音视频通话控制，点对点通话有效，异步回调nim_vchat_cb_func 见nim_vchat_def.h
   * @param[in] channel_id 音视频通话通道id
   * @param[in] type NIMVChatControlType 见nim_vchat_def.h
   * @param[in] json_extension 无效的扩展字段
@@ -179,8 +179,8 @@ NIM_SDK_DLL_API void nim_vchat_create_room(const char *room_name, const char *cu
 NIM_SDK_DLL_API bool nim_vchat_join_room(NIMVideoChatMode mode, const char *room_name, const char *json_extension, nim_vchat_opt2_cb_func cb, const void *user_data);
 
 /** @fn void nim_vchat_set_video_quality(int video_quality, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
-  * NIM 通话中修改分辨率
-  * @param[in] video_quality 分辨率模式
+  * NIM 通话中修改发送画面分辨率
+  * @param[in] video_quality 分辨率模式 见NIMVChatVideoQuality定义
   * @param[in] json_extension 无效扩展字段
   * @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！

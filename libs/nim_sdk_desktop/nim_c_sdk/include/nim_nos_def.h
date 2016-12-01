@@ -36,6 +36,25 @@ typedef void (*nim_nos_download_cb_func)(int rescode, const char *file_path, con
   */
 typedef void (*nim_nos_download_prg_cb_func)(int64_t downloaded_size, int64_t file_size, const char *json_extension, const void *user_data);
 
+/** @typedef void (*nim_nos_download_speed_cb_func)(int64_t download_speed, const char *json_extension, const void *user_data)
+  * nim callback function for nos http download speed
+  * @param[out] download_speed 		下载速度
+  * @param[out] json_extension		json扩展数据（备用）
+  * @param[out] user_data			APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_nos_download_speed_cb_func)(int64_t download_speed, const char *json_extension, const void *user_data);
+
+/** @typedef void (*nim_nos_download_info_cb_func)(int64_t actual_download_size, int64_t download_speed, const char *json_extension, const void *user_data)
+  * nim callback function for nos http download info
+  * @param[out] actual_download_size 		最终实际下载数据大小
+  * @param[out] download_speed				平均下载速度
+  * @param[out] json_extension		json扩展数据（备用）
+  * @param[out] user_data			APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_nos_download_info_cb_func)(int64_t actual_download_size, int64_t download_speed, const char *json_extension, const void *user_data);
+
 /** @typedef void (*nim_nos_upload_cb_func)(int rescode, const char *url, const char *json_extension, const void *user_data)
   * nim callback function for nos http upload
   * @param[out] rescode 			上传结果，一切正常200
@@ -55,6 +74,30 @@ typedef void (*nim_nos_upload_cb_func)(int rescode, const char *url, const char 
   * @return void 无返回值
   */
 typedef void (*nim_nos_upload_prg_cb_func)(int64_t uploaded_size, int64_t file_size, const char *json_extension, const void *user_data);
+
+/** @typedef void (*nim_nos_upload_speed_cb_func)(int64_t upload_speed, const char *json_extension, const void *user_data)
+  * nim callback function for nos http upload speed
+  * @param[out] upload_speed 		上传速度
+  * @param[out] json_extension		json扩展数据（备用）
+  * @param[out] user_data			APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_nos_upload_speed_cb_func)(int64_t upload_speed, const char *json_extension, const void *user_data);
+
+/** @typedef void (*nim_nos_upload_info_cb_func)(int64_t actual_upload_size, int64_t upload_speed, const char *json_extension, const void *user_data)
+  * nim callback function for nos http upload info
+  * @param[out] actual_upload_size 		最终实际上传数据大小
+  * @param[out] upload_speed			平均上传速度
+  * @param[out] json_extension		json扩展数据（备用）
+  * @param[out] user_data			APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_nos_upload_info_cb_func)(int64_t actual_upload_size, int64_t upload_speed, const char *json_extension, const void *user_data);
+
+/** @name NOS扩展上传\下载API Json key */
+static const char *kNIMNosLowLimit = "low_limit"; /**< 传输速度，每秒字节数（默认10）*/
+static const char *kNIMNosLowTime = "low_time"; /**< 当low_time秒时间内传输速度小于low_limit时(字节每秒)，下载任务会返回超时而取消（默认60）*/
+/** @}*/ //NOS扩展上传\下载API Json key
 
 #ifdef __cplusplus
 };

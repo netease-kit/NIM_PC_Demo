@@ -236,8 +236,9 @@ std::wstring GetCustomMsg(const std::string &msg_attach);
 * @param[in] session_id 会话id
 * @param[in] session_type 会话类型
 * @param[in] msg_from_id 消息发送者的id
+* @param[in] msg_from_nick 消息发送者的昵称
 * @return std::wstring 提示文本
 */
-std::wstring GetRecallNotifyText(const std::string& session_id, nim::NIMSessionType session_type, const std::string& msg_from_id);
+std::wstring GetRecallNotifyText(const std::string& session_id, nim::NIMSessionType session_type, const std::string& msg_from_id, const std::string& msg_from_nick);
 
 }

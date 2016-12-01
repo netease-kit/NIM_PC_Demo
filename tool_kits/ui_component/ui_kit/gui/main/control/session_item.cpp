@@ -78,6 +78,7 @@ void SessionItem::InitMsg(const nim::SessionData &msg)
 	{
 		std::wstring str = GetMessageTime(msg_.msg_timetag_, true);
 		label_time_->SetText(str);
+		label_time_->SetVisible(true);
 	}
 	else
 		label_time_->SetVisible(false);
@@ -189,7 +190,8 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 				{
 					need_prefix = false;
 					std::string from_id = values["notify_from"].asString();
-					show_text = GetRecallNotifyText(msg_.id_, msg_.type_, from_id);
+					std::string from_nick = values["from_nick"].asString();
+					show_text = GetRecallNotifyText(msg_.id_, msg_.type_, from_id, from_nick);
 				}
 			}
 		}

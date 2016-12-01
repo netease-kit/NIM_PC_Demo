@@ -9,7 +9,7 @@
             <VBox name="page_ask_join" visible="false">
                 <RichEdit name="re_ask_join" width="stretch" height="70" rich="true" multiline="true" vscrollbar="false" readonly="true" font="3"/>
                 <Control />
-                <HBox childmargin="10">
+                <HBox childmargin="10" height="auto">
                     <Control />
                     <Button class="btn_global_green_80x30" name="btn_ask_no" normaltextcolor="white" text="拒绝"/>
                     <Button class="btn_global_green_80x30" name="btn_ask_yes" normaltextcolor="white" text="同意"/>
@@ -18,7 +18,7 @@
             <VBox name="page_invite" visible="false">
                 <RichEdit name="re_invite" width="stretch" height="70" rich="true" multiline="true" vscrollbar="false" readonly="true" font="3"/>
                 <Control />
-                <HBox childmargin="10">
+                <HBox childmargin="10" height="auto">
                     <Control />
                     <Button class="btn_global_white_80x30" name="btn_ignore" normaltextcolor="darkcolor" text="忽略"/>
                     <Button class="btn_global_green_80x30" name="btn_reject" normaltextcolor="white" text="拒绝"/>

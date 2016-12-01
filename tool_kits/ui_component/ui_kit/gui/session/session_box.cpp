@@ -44,6 +44,8 @@ SessionBox::SessionBox(std::string id, nim::NIMSessionType type)
 	mute_all_ = false;
 
 	taskbar_item_ = NULL;
+
+	mark_receipt_when_load_msgs_ = false;
 }
 
 SessionBox::~SessionBox()
@@ -196,36 +198,6 @@ void SessionBox::UninitSessionBox()
 	}
 }
 
-TaskbarTabItem* SessionBox::GetTaskbarItem()
-{
-	return taskbar_item_;
-}
-
-void SessionBox::SetInternVisible(bool bVisible /*= true*/)
-{
-	Control::SetInternVisible(bVisible);
-	if (m_items.empty()) return;
-	for (auto it = m_items.begin(); it != m_items.end(); it++) {
-		(*it)->SetInternVisible(bVisible);
-	}
-}
-
-void SessionBox::Invalidate() const
-{
-	__super::Invalidate();
-
-	if (taskbar_item_)
-		taskbar_item_->InvalidateTab();
-}
-
-void SessionBox::SetPos(UiRect rc)
-{
-	__super::SetPos(rc);
-
-	if (taskbar_item_)
-		taskbar_item_->InvalidateTab();
-}
-
 void SessionBox::InvokeShowMsgs(bool first_show_msg)
 {
 	first_show_msg_ = first_show_msg;
@@ -320,11 +292,12 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 			&& values.isMember("comment")
 			&& values["comment"].asString() == "is_recall_notification")
 		{
-			std::wstring notify_text = nbase::UTF8ToUTF16(msg.content_);
+			nim::IMMessage notify_msg = msg;
 			if (values.isMember("notify_from"))
 			{
 				std::string from_id = values["notify_from"].asString();
-				notify_text = GetRecallNotifyText(from_id);
+				std::string from_nick = values["from_nick"].asString();
+				notify_msg.content_ = nbase::UTF16ToUTF8(GetRecallNotifyText(from_id, from_nick));
 			}
 
 			MsgBubbleNotice* cell = new MsgBubbleNotice;
@@ -334,7 +307,7 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 			else
 				msg_list_->Add(cell);
 			cell->InitControl();
-			cell->InitCustomInfo(notify_text, session_id_, msg.client_msg_id_);
+			cell->InitInfo(notify_msg, session_id_, true);
 			return nullptr;
 		}
 		else
@@ -514,19 +487,7 @@ void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 			}
 		}
 
-		if (session_type_ == nim::kNIMSessionTypeP2P)
-		{
-			//检查回执
-			CheckLastReceiptMsg();
-			nim::IMMessage msg;
-			if (GetLastNeedSendReceiptMsg(msg))
-			{
-				nim::MsgLog::SendReceiptAsync(msg.ToJsonString(false), [](const nim::MessageStatusChangedResult& res) {
-					auto iter = res.results_.begin();
-					QLOG_APP(L"mark receipt id:{0} time:{1} rescode:{2}") << iter->talk_id_ << iter->msg_timetag_ << res.rescode_;
-				});
-			}
-		}
+		SendReceiptIfNeeded(false);
 	}
 	else
 	{
@@ -536,6 +497,9 @@ void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 		sz.cy = msg_list_->GetScrollRange().cy - pos - 50;
 		msg_list_->SetScrollPos(sz);
 	}
+
+	if (session_type_ == nim::kNIMSessionTypeP2P && !mark_receipt_when_load_msgs_)
+		ResetLastMsgNeedMarkReceipt();
 	//修正最远时间
 	if (len > 0)
 	{
@@ -654,7 +618,7 @@ void SessionBox::OnMsgStatusChangedCallback(const std::string &from_accid, const
 		if (item)
 		{
 			nim::IMMessage msg = item->GetMsg();
-			if (msg.sender_accid_ == my_id && item->IsMyMsg() &&/* msg.timetag_ <= timetag*/nim::MsgLog::QueryMessageBeReaded(msg))
+			if (msg.sender_accid_ == my_id && item->IsMyMsg() &&/* msg.timetag_ <= timetag*/nim::MsgLog::QuerySentMessageBeReaded(msg))
 			{
 				item->SetMsgStatus(nim::kNIMMsgLogStatusReceipt);
 				last_receipt_msg_id_ = msg.client_msg_id_;
@@ -690,13 +654,31 @@ void SessionBox::OnRecallMsgCallback(nim::NIMResCode code, const nim::RecallMsgN
 		nim_ui::ShowToast(toast, 5000, this->GetWindow()->GetHWND());
 		return;
 	}
+
+	bool is_at_end = msg_list_->IsAtEnd();
 	int index = RemoveMsgItem(notify.msg_id_);
-	if (index > -1 && notify.msglog_exist_)			//撤回本地不存在的消息的通知不在消息流中插入通知
+	if (is_at_end)
+		msg_list_->EndDown(true, false);
+
+// 	if (index < 0)
+// 	{
+// 		QLOG_APP(L"SessionBox::OnRecallMsgCallback RemoveMsgItem faild: code:{0} from_id:{1} to_id:{2} msg_time:{3} msglog_createtime:{4} msg_id:{5}")
+// 			<< code << notify.from_id_ << notify.to_id_ << notify.notify_timetag_ << notify.msglog_timetag_ << notify.msg_id_;
+
+		index = FindIndexByMsgTime(notify.msglog_timetag_);
+// 		if (index < 0)
+// 		{
+// 			QLOG_APP(L"SessionBox::OnRecallMsgCallback FindIndexByMsgTime faild: code:{0} from_id:{1} to_id:{2} msg_time:{3} msglog_createtime:{4} msg_id:{5}")
+// 				<< code << notify.from_id_ << notify.to_id_ << notify.notify_timetag_ << notify.msglog_timetag_ << notify.msg_id_;
+// 		}
+// 	}
+
+	if (index > -1)
 	{
-		std::wstring notify_text = GetRecallNotifyText(notify.from_id_);
+		std::wstring notify_text = GetRecallNotifyText(notify.from_id_, notify.from_nick_);
 
 		nim::IMMessage msg;
-		msg.timetag_ = notify.notify_timetag_;
+		msg.timetag_ = notify.msglog_timetag_;
 		msg.client_msg_id_ = QString::GetGUID();
 		msg.receiver_accid_ = session_id_;
 		msg.session_type_ = session_type_;
@@ -706,10 +688,11 @@ void SessionBox::OnRecallMsgCallback(nim::NIMResCode code, const nim::RecallMsgN
 		Json::Value values;
 		values["comment"] = "is_recall_notification";
 		values["notify_from"] = notify.from_id_;
+		values["from_nick"] = notify.from_nick_;
 		msg.attach_ = values.toStyledString();
 		msg.content_ = nbase::UTF16ToUTF8(notify_text);
 		msg.msg_setting_.push_need_badge_ = nim::BS_FALSE; //设置会话列表不需要计入未读数
-		nim::MsgLog::WriteMsglogToLocalAsync(session_id_, msg, true, nbase::Bind(&SessionBox::WriteMsglogCallback, this, notify_text, std::placeholders::_1, std::placeholders::_2));
+		nim::MsgLog::WriteMsglogToLocalAsync(session_id_, msg, true, nbase::Bind(&SessionBox::WriteMsglogCallback, this, std::placeholders::_1, std::placeholders::_2, msg, index, is_at_end));
 	}
 }
 
@@ -1032,12 +1015,37 @@ bool SessionBox::GetLastNeedSendReceiptMsg(nim::IMMessage &msg)
 			nim::IMMessage message = item->GetMsg();
 			if (message.sender_accid_ != my_id || !item->IsMyMsg())
 			{
-				if (!nim::MsgLog::QueryMessageBeReaded(message))
+				if (!nim::MsgLog::QueryReceivedMsgReceiptSent(message))
 				{
 					msg = message;
 					return true;
 				}
 				return false;
+			}
+		}
+	}
+	return false;
+}
+
+bool SessionBox::ResetLastMsgNeedMarkReceipt()
+{
+	std::string my_id = LoginManager::GetInstance()->GetAccount();
+	auto iter = cached_msgs_bubbles_.rbegin();
+	for (; iter != cached_msgs_bubbles_.rend(); ++iter)
+	{
+		MsgBubbleItem* item = (MsgBubbleItem*)(*iter);
+		if (item)
+		{
+			nim::IMMessage message = item->GetMsg();
+			if (message.sender_accid_ == my_id || item->IsMyMsg())
+			{
+				if (nim::MsgLog::QuerySentMessageBeReaded(message))
+				{
+					item->SetMsgStatus(nim::kNIMMsgLogStatusReceipt);
+					last_receipt_msg_id_ = message.client_msg_id_;
+					mark_receipt_when_load_msgs_ = true;
+					return true;
+				}
 			}
 		}
 	}
@@ -1103,7 +1111,41 @@ int SessionBox::RemoveMsgItem(const std::string& client_msg_id)
 	return index;
 }
 
-std::wstring SessionBox::GetRecallNotifyText(const std::string& msg_from_id)
+int SessionBox::FindIndexByMsgTime(int64_t msg_time)
+{
+	int index = -1;
+	MsgBubbleItem* msg_item = NULL;
+	MsgBubbleNotice* msg_cell = NULL;
+
+	for (int i = 0; i < msg_list_->GetCount(); i++)
+	{
+		msg_item = dynamic_cast<MsgBubbleItem*>(msg_list_->GetItemAt(i));
+		if (msg_item)
+		{
+			if (msg_time <= msg_item->GetMsgTimeTag())
+			{
+				index = i;
+				break;
+			}
+		}
+		else
+		{
+			msg_cell = dynamic_cast<MsgBubbleNotice*>(msg_list_->GetItemAt(i));
+			if (msg_cell && msg_time <= msg_cell->GetMsgTimeTag())
+			{
+				index = i;
+				break;
+			}
+		}
+	}
+
+	if (-1 == index)
+		return msg_list_->GetCount();
+	else
+		return index;
+}
+
+std::wstring SessionBox::GetRecallNotifyText(const std::string& msg_from_id, const std::string& msg_from_nick)
 {
 	std::wstring notify_text;
 	if (msg_from_id == LoginManager::GetInstance()->GetAccount())
@@ -1118,16 +1160,25 @@ std::wstring SessionBox::GetRecallNotifyText(const std::string& msg_from_id)
 		}
 		else
 		{
-			auto info = GetTeamMemberInfo(msg_from_id);
-			UTF8String name = info.GetNick();
-			if (name.empty())
+			UTF8String name;
+			if (!msg_from_nick.empty())
 			{
-				nim::UserNameCard name_card;
-				UserService::GetInstance()->GetUserInfo(msg_from_id, name_card);
-				name = name_card.GetName();
+				name = msg_from_nick;
 			}
-			if (name.empty())
-				name = msg_from_id;
+			else
+			{
+				auto info = GetTeamMemberInfo(msg_from_id);
+				name = info.GetNick();
+				if (name.empty())
+				{
+					nim::UserNameCard name_card;
+					UserService::GetInstance()->GetUserInfo(msg_from_id, name_card);
+					name = name_card.GetName();
+				}
+				if (name.empty())
+					name = msg_from_id;
+			}
+
 			notify_text = nbase::UTF8ToUTF16(name) + L" 撤回了一条消息";
 		}
 	}
@@ -1206,15 +1257,34 @@ void SessionBox::SetTaskbarIcon(const std::wstring &icon)
 	}
 }
 
-void SessionBox::WriteMsglogCallback(const std::wstring &notify_text, nim::NIMResCode res_code, const std::string& msg_id)
+void SessionBox::WriteMsglogCallback(nim::NIMResCode res_code, const std::string& msg_id, const nim::IMMessage& msg, int index, bool is_keep_end)
 {
 	if (res_code == nim::kNIMResSuccess)
 	{
 		MsgBubbleNotice* cell = new MsgBubbleNotice;
 		GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
-		msg_list_->Add(cell);
+		bool succeed = false;
+		if (index > -1)
+			succeed = msg_list_->AddAt(cell, index);
+		else
+			succeed = msg_list_->Add(cell);
+
 		cell->InitControl();
-		cell->InitCustomInfo(notify_text, session_id_, msg_id);
+		cell->InitInfo(msg, session_id_, true);
+
+		if (is_keep_end)
+			msg_list_->EndDown(true, false);
+
+		if (!succeed)
+		{
+			QLOG_APP(L"SessionBox::WriteMsglogCallback Add faild: code:{0} index:{1} msg_id:{2} sender:{3} reveiver:{4}")
+				<< res_code << index << msg_id << msg.sender_accid_ << msg.receiver_accid_;
+		}
+	}
+	else
+	{
+		QLOG_APP(L"SessionBox::WriteMsglogCallback Faild: code:{0} index:{1} msg_id:{2} sender:{3} reveiver:{4}")
+			<< res_code << index << msg_id << msg.sender_accid_ << msg.receiver_accid_;
 	}
 }
 

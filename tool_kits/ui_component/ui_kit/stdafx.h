@@ -57,7 +57,7 @@
 
 //tool
 #include "nim_tools_http_cpp_wrapper.h"
-#include "nim_tools_audio_cpp_wrapper.h"
+#include "nim_audio_cpp.h"
 
 //msg
 #include "module/session/session_util.h"

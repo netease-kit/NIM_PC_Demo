@@ -51,6 +51,9 @@ NIM_SDK_DLL_API void nim_msglog_query_msg_async(const char *account_id, enum NIM
   * @param[in] cb				在线查询消息的回调函数， nim_msglog_query_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data		APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				403:禁止访问(不在该群,只针对群组会话)
+  *				414:参数错误
   */
 NIM_SDK_DLL_API void nim_msglog_query_msg_online_async(const char *id, 
 													   enum NIMSessionType to_type, 
@@ -215,6 +218,10 @@ NIM_SDK_DLL_API void nim_msglog_import_db_async(const char *src_path, const char
   * @param[in] cb				操作结果的回调函数， nim_msglog_status_changed_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data		APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				403:服务器关闭此功能，或者应用没权限
+  *				404:请求的目标（用户或对象）不存在
+  *				10414:本地错误码，参数错误
   */
 NIM_SDK_DLL_API void nim_msglog_send_receipt_async(const char *json_msg, const char *json_extension, nim_msglog_status_changed_cb_func cb, const void *user_data);
 
@@ -226,12 +233,21 @@ NIM_SDK_DLL_API void nim_msglog_send_receipt_async(const char *json_msg, const c
   */
 NIM_SDK_DLL_API bool nim_msglog_query_be_readed(const char *json_msg, const char *json_extension);
 
+/** @fn bool nim_msglog_query_receipt_sent(const char *json_msg, const char *json_extension)
+  * 查询收到的消息是否已经发送过已读回执
+  * @param[in] json_msg			消息json string。
+  * @param[in] json_extension	json扩展参数（备用，目前不需要）
+  * @return bool 是否已发送过
+  */
+NIM_SDK_DLL_API bool nim_msglog_query_receipt_sent(const char *json_msg, const char *json_extension);
+
 /** @fn void nim_msglog_reg_status_changed_cb(const char *json_extension, nim_msglog_status_changed_cb_func cb, const void *user_data)
   * (全局回调)注册全局的消息状态变更通知（目前只支持已读状态的通知）
   * @param[in] json_extension	json扩展参数（备用，目前不需要）
   * @param[in] cb				回调函数， nim_msglog_status_changed_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data		APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_msglog_reg_status_changed_cb(const char *json_extension, nim_msglog_status_changed_cb_func cb, const void *user_data);
 

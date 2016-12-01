@@ -62,7 +62,7 @@ public:
 	static bool Delete(const std::string &accid, const FriendOptCallback &cb, const std::string& json_extension = "");
 	
 	/** @fn static bool Update(const std::string &friend_json, const FriendOptCallback &cb, const std::string& json_extension = "")
-	* 更新好友资料（自己）
+	* 更新好友资料
 	* @param[in] friend_profile 好友资料
 	* @param[in] cb	更新好友资料回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）

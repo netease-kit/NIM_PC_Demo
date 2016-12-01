@@ -262,17 +262,9 @@ HBITMAP SessionForm::GenerateSessionBoxBitmap(const UiRect &src_rect)
 	ASSERT(hPaintDC);
 	HBITMAP hOldPaintBitmap = (HBITMAP)::SelectObject(hPaintDC, this->GetBackgroundBitmap());
 
-	BITMAPINFO bmi = { 0 };
-	bmi.bmiHeader.biSize = sizeof(BITMAPINFOHEADER);
-	bmi.bmiHeader.biWidth = kDragImageWidth;
-	bmi.bmiHeader.biHeight = kDragImageHeight;
-	bmi.bmiHeader.biPlanes = 1;
-	bmi.bmiHeader.biBitCount = 32;
-	bmi.bmiHeader.biCompression = BI_RGB;
-	bmi.bmiHeader.biSizeImage = kDragImageWidth * kDragImageHeight * sizeof(DWORD);
 	LPDWORD pDest = NULL;
 	HDC hCloneDC = ::CreateCompatibleDC(this->GetPaintDC());
-	HBITMAP hBitmap = ::CreateDIBSection(this->GetPaintDC(), &bmi, DIB_RGB_COLORS, (LPVOID*)&pDest, NULL, 0);
+	HBITMAP hBitmap = RenderEngine::CreateDIBBitmap(this->GetPaintDC(), kDragImageWidth, kDragImageHeight, (LPVOID*)&pDest);
 	ASSERT(hCloneDC);
 	ASSERT(hBitmap);
 

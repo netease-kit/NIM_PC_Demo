@@ -734,12 +734,10 @@ void VideoForm::PaintVideo()
 }
 void VideoForm::SetCustomVideoMode(bool open)
 {
-	QLOG_APP(L"SetCustomVideoMode Start");
 	send_custom_video_.Cancel();
 	custom_video_mode_ = open;
 	if (custom_video_mode_)
 	{
-		QLOG_APP(L"CustomVideoMode Task Start");
 		StdClosure task = nbase::Bind(&VideoForm::SendCustomVideo, this);
 		nbase::ThreadManager::PostRepeatedTask(kThreadScreenCapture, send_custom_video_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(60));
 	}
@@ -752,7 +750,6 @@ void VideoForm::SendCustomVideo()
 	nbase::NAutoLock auto_lock(&capture_lock_);
 	if (current_video_mode_ && custom_video_mode_)
 	{
-		QLOG_APP(L"CustomVideoData Start");
 		static int64_t timestamp = 0;
 		std::string data;
 		data.resize(1280 * 720 * 4);
@@ -760,10 +757,8 @@ void VideoForm::SendCustomVideo()
 		w = 0;
 		h = 0;
 		bool ret = nim_comp::VideoManager::GetInstance()->video_frame_mng_.GetVideoFrame("", timestamp, (char*)data.c_str(), w, h, false, false);
-		QLOG_APP(L"CustomVideoData GetFrame End");
 		if (ret)
 		{
-			QLOG_APP(L"CustomVideoData Start");
 			int32_t width = w;
 			int32_t height = h;
 			int32_t wxh = width*height;
@@ -781,14 +776,12 @@ void VideoForm::SendCustomVideo()
 
 			//采用均方差滤波进行磨皮
 			nim_comp::smooth_process((uint8_t*)data.c_str(), width, height, 10, 0, 200);
-			QLOG_APP(L"colorbalance_rgb_u8 End");
 
 			//保存用于预览
 			std::string json;
 			video_frame_mng_.AddVideoFrame(true, 0, data.c_str(), data_size, w, h, json, nim_comp::VideoFrameMng::Ft_I420);
 			//发送
 			nim::VChat::CustomVideoData(0, data.c_str(), data_size, w, h, nullptr);
-			QLOG_APP(L"CustomVideoData End") ;
 		}
 	}
 }

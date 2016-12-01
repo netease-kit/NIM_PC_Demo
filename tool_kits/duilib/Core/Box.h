@@ -77,16 +77,6 @@ public:
 	virtual Layout* GetLayout() const;
 	virtual void RetSetLayout(Layout* pLayout);
 
-	bool GetClip() const
-	{
-		return m_bClip;
-	}
-	void SetClip(bool bClip) 
-	{
-		m_bClip = bClip;
-		Invalidate();
-	}
-
     virtual int FindSelectable(int iIndex, bool bForward = true) const;
     virtual void SetWindow(Window* pManager, Box* pParent, bool bInit = true) override;
     virtual Control* FindControl(FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags, CPoint scrollPos = CPoint()) override;

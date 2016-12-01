@@ -74,11 +74,15 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 {
 	for (auto notify : message)
 	{
+		QLOG_APP(L"TalkCallback::OnReceiveRecallMsgCallback: code:{0} from_id:{1} to_id:{2} msg_time:{3} msglog_createtime:{4} msg_id:{5}")
+			<< code << notify.from_id_ << notify.to_id_ << notify.notify_timetag_ << notify.msglog_timetag_ << notify.msg_id_;
+
 		UTF8String talk_id;
 		if (notify.session_type_ == nim::kNIMSessionTypeTeam)
 			talk_id = notify.to_id_;
 		else
 			talk_id = notify.from_id_ == LoginManager::GetInstance()->GetAccount() ? notify.to_id_ : notify.from_id_;
+
 		SessionBox* session = SessionManager::GetInstance()->FindSessionBox(talk_id);
 		if (session)
 		{
@@ -93,14 +97,9 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 				return;
 			}
 
-			//撤回本地不存在的消息的通知不在消息流中插入通知
-			if (!notify.msglog_exist_)
-				return;
-
-			std::wstring notify_text = GetRecallNotifyText(talk_id, notify.session_type_, notify.from_id_);
-
+			std::wstring notify_text = GetRecallNotifyText(talk_id, notify.session_type_, notify.from_id_, notify.from_nick_);
 			nim::IMMessage msg;
-			msg.timetag_ = notify.notify_timetag_;
+			msg.timetag_ = notify.msglog_timetag_;
 			msg.client_msg_id_ = QString::GetGUID();
 			msg.receiver_accid_ = talk_id;
 			msg.session_type_ = notify.session_type_;
@@ -110,6 +109,7 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 			Json::Value values;
 			values["comment"] = "is_recall_notification";
 			values["notify_from"] = notify.from_id_;
+			values["from_nick"] = notify.from_nick_;
 			msg.attach_ = values.toStyledString();
 			msg.content_ = nbase::UTF16ToUTF8(notify_text);
 			msg.msg_setting_.push_need_badge_ = nim::BS_FALSE; //设置会话列表不需要计入未读数

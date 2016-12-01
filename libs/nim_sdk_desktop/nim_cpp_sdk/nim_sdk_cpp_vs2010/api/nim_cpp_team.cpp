@@ -6,8 +6,9 @@
   */
 
 #include "nim_cpp_team.h"
-#include "nim_sdk_helper.h"
-#include "nim_common_helper.h"
+#include "nim_sdk_util.h"
+#include "nim_json_util.h"
+#include "nim_string_util.h"
 #include "nim_cpp_global.h"
 
 namespace nim
@@ -676,7 +677,7 @@ static void CallbackQueryMembersOnline(int res_code, int count, const char *tid,
 			if (reader.parse(PCharToString(result), values) && values.isArray())
 			{
 				auto size = values.size();
-				for (size_t i = 0; i < size; i++)
+				for (int i = 0; i < size; i++)
 				{
 					TeamMemberProperty prop;
 					ParseTeamMemberPropertyJson(values[i], prop);

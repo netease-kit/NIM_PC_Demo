@@ -36,6 +36,27 @@ NIM_SDK_DLL_API	void nim_rts_start(int channel_type, const char *uid, const char
   */ 
 NIM_SDK_DLL_API	void nim_rts_set_start_notify_cb_func(nim_rts_start_notify_cb_func cb, const void *user_data);
 
+/** @fn void nim_rts_create_conf(const char *name, const char *custom_info, const char *json_extension, nim_rts_create_cb_func cb, const void *user_data)
+  * NIM VCHAT 创建一个多人数据通道房间（后续需要主动调用加入接口进入房间）
+  * @param[in] name 房间名
+  * @param[in] custom_info 自定义的房间信息（加入房间的时候会返回）
+  * @param[in] json_extension 无效扩展字段
+  * @param[in] cb 结果回调见nim_rts_def.h，返回的json_extension无效
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_rts_create_conf(const char *name, const char *custom_info, const char *json_extension, nim_rts_create_cb_func cb, const void *user_data);
+
+/** @fn void nim_rts_join_conf(const char *name, const char *json_extension, nim_rts_join_cb_func cb, const void *user_data)
+  * NIM VCHAT 加入一个多人房间（进入房间后成员变化等，等同点对点nim_vchat_cb_func）
+  * @param[in] name 房间名
+  * @param[in] json_extension 扩展可选参数kNIMRtsDataRecord， 如{"record":1}
+  * @param[in] cb 结果回调见nim_rts_def.h，回调的json_extension若成功返回创建的kNIMRtsCustomInfo及kNIMRtsChannelId，如{"channel_id": 1231, "custom_info":"hello world" }
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_rts_join_conf(const char *name, const char *json_extension, nim_rts_join_cb_func cb, const void *user_data);
+
 /** @fn void nim_rts_ack(const char *session_id, int channel_type, bool accept, const char *json_extension, nim_rts_ack_res_cb_func cb, const void *user_data)
   * NIM 回复收到的邀请  
   * @param[in] session_id 会话id
@@ -83,7 +104,7 @@ NIM_SDK_DLL_API	void nim_rts_set_member_change_cb_func(nim_rts_member_change_cb_
 
 //控制接口
 /** @fn void nim_rts_control(const char *session_id, const char *info, const char *json_extension, nim_rts_control_res_cb_func cb, const void *user_data)
-  * NIM 会话控制（透传）
+  * NIM 会话控制（透传），点对点有效
   * @param[in] session_id 会话id
   * @param[in] info 透传数据
   * @param[in] json_extension 无效的扩展字段
@@ -122,7 +143,7 @@ NIM_SDK_DLL_API	void nim_rts_set_vchat_mode(const char *session_id, int mode, co
 NIM_SDK_DLL_API	void nim_rts_hangup(const char *session_id, const char *json_extension, nim_rts_hangup_res_cb_func cb, const void *user_data);
 
 /** @fn void nim_rts_set_hangup_notify_cb_func(nim_rts_hangup_notify_cb_func cb, const void *user_data)
-  * NIM 设置结束会话通知回调
+  * NIM 设置结束会话通知回调，多人的时候结束后对方无通知。
   * @param[in] cb 见nim_rts_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
@@ -136,7 +157,7 @@ NIM_SDK_DLL_API	void nim_rts_set_hangup_notify_cb_func(nim_rts_hangup_notify_cb_
   * @param[in] channel_type 通道类型, kNIMRtsChannelTypeVchat通道如果要自定义数据调用nim_device.h中nim_vchat_custom_audio_data和nim_vchat_custom_video_data
   * @param[in] data 发送数据
   * @param[in] size data的数据长度，现在只支持50k的长度
-  * @param[in] json_extension 无效的扩展字段
+  * @param[in] json_extension 可扩展kNIMRtsUid（指定发送某人，不填则群发）
   * @return void 无返回值
   */ 
 NIM_SDK_DLL_API	void nim_rts_send_data(const char *session_id, int channel_type, const char *data, unsigned int size, const char *json_extension);

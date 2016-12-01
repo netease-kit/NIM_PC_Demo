@@ -87,7 +87,7 @@ bool MsgBubbleAudio::OnClicked(ui::EventArgs* arg)
 	{
 		if(is_playing_)
 		{
-			nim_audio::Audio::StopPlayAudio();
+			AudioManager::GetInstance()->StopPlayAudio(sid_);
 		}
 		else
 		{

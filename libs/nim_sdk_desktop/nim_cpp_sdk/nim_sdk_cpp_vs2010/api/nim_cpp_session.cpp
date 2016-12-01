@@ -6,8 +6,9 @@
   */
 
 #include "nim_cpp_session.h"
-#include "nim_sdk_helper.h"
-#include "nim_common_helper.h"
+#include "nim_sdk_util.h"
+#include "nim_json_util.h"
+#include "nim_string_util.h"
 
 namespace nim
 {
@@ -17,6 +18,8 @@ typedef void(*nim_session_query_all_recent_session_async)(const char *json_exten
 typedef void(*nim_session_delete_recent_session_async)(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 typedef void(*nim_session_delete_all_recent_session_async)(const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 typedef void(*nim_session_set_unread_count_zero_async)(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+typedef void(*nim_session_set_top)(enum NIMSessionType to_type, const char *id, bool top, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+typedef void(*nim_session_set_extend_data)(enum NIMSessionType to_type, const char *id, const char *data, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 #else
 #include "nim_session.h"
 #endif
@@ -124,6 +127,34 @@ bool Session::SetUnreadCountZeroAsync(nim::NIMSessionType to_type, const std::st
 	}
 	NIM_SDK_GET_FUNC(nim_session_set_unread_count_zero_async)(to_type, id.c_str(), json_extension.c_str(), &CallbackNotifySession, cb_pointer);
 
+	return true;
+}
+
+bool Session::SetSessionTop(enum NIMSessionType to_type, const std::string& id, bool top, const ChangeCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	if (id.empty())
+		return false;
+
+	ChangeCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new ChangeCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_session_set_top)(to_type, id.c_str(), top, json_extension.c_str(), &CallbackSessionChange, cb_pointer);
+	return true;
+}
+
+bool Session::SetSessionExtendData(enum NIMSessionType to_type, const std::string& id, const std::string& data, const ChangeCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	if (id.empty() && data.length() > 4096)
+		return false;
+
+	ChangeCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new ChangeCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_session_set_extend_data)(to_type, id.c_str(), data.c_str(), json_extension.c_str(), &CallbackSessionChange, cb_pointer);
 	return true;
 }
 

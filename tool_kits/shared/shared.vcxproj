@@ -51,7 +51,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\json\;..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\json\;..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -68,7 +68,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\json\;..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\json\;..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>

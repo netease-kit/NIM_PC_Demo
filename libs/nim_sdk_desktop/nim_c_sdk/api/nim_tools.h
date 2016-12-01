@@ -70,6 +70,14 @@ NIM_SDK_DLL_API	const char * nim_tool_get_uuid();
   * @param[in] cb 语音转文字回调
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				403:没有权限
+  *				414:参数错误
+  *				500:未知错误
+  *				6101:语音转码解析失败
+  *				6102:语音时长过长（超过60s
+  *				6103:服务不可用
+  *				6104:audioUrl不合法
   */
 NIM_SDK_DLL_API void nim_tool_get_audio_text_async(const char *json_audio_info, const char *json_extension, nim_tool_get_audio_text_cb_func cb, const void *user_data);
 

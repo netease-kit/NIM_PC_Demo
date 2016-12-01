@@ -31,6 +31,8 @@ struct SDKConfig
 	int				preload_image_quality_;			/**< 预下载图片质量,选填,范围0-100 */
 	std::string		preload_image_resize_;			/**< 预下载图片基于长宽做内缩略,选填,比如宽100高50,则赋值为100x50,中间为字母小写x */
 	NIMSDKLogLevel	sdk_log_level_;					/**< 定义见NIMSDKLogLevel，选填，SDK默认的内置级别为kNIMSDKLogLevelPro */
+	bool			sync_session_ack_;				/**< bool，设置是否已读未读状态多端同步，默认true */
+	int				custom_timeout_;				/**< int，自定义通讯超时时间，暂时不开放设置 */
 
 	//private_server_setting
 	bool			use_private_server_;			/**< 选填，是否使用私有服务器 */
@@ -48,7 +50,9 @@ struct SDKConfig
 				, preload_image_quality_(-1)
 				, sdk_log_level_(kNIMSDKLogLevelApp)
 				, use_private_server_(false)
-				, rsa_version_(0) {}
+				, rsa_version_(0) 
+				, sync_session_ack_(true)
+				, custom_timeout_(30){}
 };
 
 /** @brief 多端登陆客户端信息 */

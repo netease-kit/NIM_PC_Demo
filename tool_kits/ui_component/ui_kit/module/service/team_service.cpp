@@ -23,7 +23,8 @@ void TeamService::InvokeAddTeam(const std::string & tid, const nim::TeamInfo & t
 	cached_tinfo_[tid] = tinfo;
 	for (auto& it : add_team_cb_)
 	{
-		(*it.second)(tid, tinfo.GetName(), tinfo.GetType());
+		if (tinfo.IsValid() && tinfo.IsMemberValid())
+			(*it.second)(tid, tinfo.GetName(), tinfo.GetType());
 	}
 }
 
@@ -362,7 +363,9 @@ void TeamService::UIGetLocalTeamInfoCb(const std::string& tid, const nim::TeamIn
 	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
 
 	if (cached_tinfo_.find(tid) == cached_tinfo_.end())
+	{
 		InvokeAddTeam(tid, result);
+	}
 	else
 	{
 		if (!result.GetName().empty())

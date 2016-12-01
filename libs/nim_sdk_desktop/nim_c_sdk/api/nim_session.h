@@ -10,6 +10,7 @@
 
 #include "nim_sdk_dll.h"
 #include "nim_session_def.h"
+#include "../util/stdbool.h"
 
 #ifdef __cplusplus
 extern"C"
@@ -63,6 +64,30 @@ NIM_SDK_DLL_API void nim_session_delete_all_recent_session_async(const char *jso
   * @return void 无返回值
   */
 NIM_SDK_DLL_API void nim_session_set_unread_count_zero_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+
+/** @fn void nim_session_set_top(enum NIMSessionType to_type, const char *id, bool top, const char *json_extension, nim_session_change_cb_func cb, const void *user_data)
+  * 设置会话项是否置顶(置顶属性只保存在本地)
+  * @param[in] to_type		会话类型
+  * @param[in] id			对方的account id或者群组tid。
+  * @param[in] top			true - 置顶 false - 取消置顶
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb			回调函数
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_session_set_top(enum NIMSessionType to_type, const char *id, bool top, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+
+/** @fn void nim_session_set_extend_data(enum NIMSessionType to_type, const char *id, const char *data, const char *json_extension, nim_session_change_cb_func cb, const void *user_data)
+  * 设置会话项扩展数据(扩展数据只保存在本地)
+  * @param[in] to_type		会话类型
+  * @param[in] id			对方的account id或者群组tid。
+  * @param[in] data			扩展数据,建议使用灵活可扩展的数据结构,例如Json
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb			回调函数
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_session_set_extend_data(enum NIMSessionType to_type, const char *id, const char *data, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 
 #ifdef __cplusplus
 };

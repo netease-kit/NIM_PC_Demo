@@ -12,7 +12,7 @@
 #include <list>
 #include <assert.h>
 #include "json.h"
-#include "nim_common_helper.h"
+#include "nim_json_util.h"
 #include "nim_base_types.h"
 
 /**

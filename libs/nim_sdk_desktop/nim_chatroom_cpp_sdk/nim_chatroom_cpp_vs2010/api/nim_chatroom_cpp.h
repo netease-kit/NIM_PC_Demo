@@ -1,7 +1,7 @@
 ﻿/** @file nim_chatroom_cpp.h
   * @brief 聊天室SDK
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author Oleg
+  * @author Oleg, Harrison
   * @date 2015/12/29
   */
 
@@ -27,23 +27,23 @@ namespace nim_chatroom
 class ChatRoom
 {
 public:
-	typedef std::function<void(__int64 room_id, const NIMChatRoomEnterStep step, int error_code, const ChatRoomInfo& info, const ChatRoomMemberInfo& my_info)>	EnterCallback;	/**< 登录回调, 如果错误码为kResRoomLocalNeedRequestAgain，聊天室重连机制结束，则需要向IM服务器重新请求进入该聊天室权限 */
-	typedef std::function<void(__int64 room_id, int error_code, NIMChatRoomExitReason exit_reason)>	ExitCallback;	/**< 登出、被踢回调 */
-	typedef std::function<void(__int64 room_id, int error_code, const ChatRoomMessage& result)>	SendMsgAckCallback;	/**< 发送消息回执 */
-	typedef std::function<void(__int64 room_id, const ChatRoomMessage& result)>	ReceiveMsgCallback;	/**< 接收消息回调 */
-	typedef std::function<void(__int64 room_id, const ChatRoomNotification& notification)> NotificationCallback; /**< 通知回调 */
-	typedef std::function<void(__int64 room_id, int error_code, const std::list<ChatRoomMemberInfo>& infos)> GetMembersCallback; /**< 在线查询成员列表回调 */
-	typedef std::function<void(__int64 room_id, int error_code, const std::list<ChatRoomMessage>& msgs)> GetMsgHistoryCallback; /**< 在线查询消息历史回调 */
-	typedef std::function<void(__int64 room_id, int error_code, const ChatRoomMemberInfo& info)> SetMemberAttributeCallback; /**< 设置成员身份标识回调*/
-	typedef std::function<void(__int64 room_id, int error_code, const ChatRoomInfo& info)> GetChatRoomInfoCallback; /**< 获取当前聊天室信息回调*/
-	typedef std::function<void(__int64 room_id, int error_code)> KickMemberCallback; /**< 踢掉指定成员回调*/
-	typedef std::function<void(__int64 room_id, const NIMChatRoomLinkCondition condition)> LinkConditionCallback; /**< 服务连接情况回调*/
+	typedef std::function<void(int64_t room_id, const NIMChatRoomEnterStep step, int error_code, const ChatRoomInfo& info, const ChatRoomMemberInfo& my_info)>	EnterCallback;	/**< 登录回调, 如果错误码为kResRoomLocalNeedRequestAgain，聊天室重连机制结束，则需要向IM服务器重新请求进入该聊天室权限 */
+	typedef std::function<void(int64_t room_id, int error_code, NIMChatRoomExitReason exit_reason)>	ExitCallback;	/**< 登出、被踢回调 */
+	typedef std::function<void(int64_t room_id, int error_code, const ChatRoomMessage& result)>	SendMsgAckCallback;	/**< 发送消息回执 */
+	typedef std::function<void(int64_t room_id, const ChatRoomMessage& result)>	ReceiveMsgCallback;	/**< 接收消息回调 */
+	typedef std::function<void(int64_t room_id, const ChatRoomNotification& notification)> NotificationCallback; /**< 通知回调 */
+	typedef std::function<void(int64_t room_id, int error_code, const std::list<ChatRoomMemberInfo>& infos)> GetMembersCallback; /**< 在线查询成员列表回调 */
+	typedef std::function<void(int64_t room_id, int error_code, const std::list<ChatRoomMessage>& msgs)> GetMsgHistoryCallback; /**< 在线查询消息历史回调 */
+	typedef std::function<void(int64_t room_id, int error_code, const ChatRoomMemberInfo& info)> SetMemberAttributeCallback; /**< 设置成员身份标识回调*/
+	typedef std::function<void(int64_t room_id, int error_code, const ChatRoomInfo& info)> GetChatRoomInfoCallback; /**< 获取当前聊天室信息回调*/
+	typedef std::function<void(int64_t room_id, int error_code)> KickMemberCallback; /**< 踢掉指定成员回调*/
+	typedef std::function<void(int64_t room_id, const NIMChatRoomLinkCondition condition)> LinkConditionCallback; /**< 服务连接情况回调*/
 	typedef SetMemberAttributeCallback TempMuteMemberCallback; /**< 临时禁言/解禁回调*/
 	typedef KickMemberCallback UpdateRoomInfoCallback; /**< 更新聊天室信息回调*/
 	typedef KickMemberCallback UpdateMyRoomRoleCallback; /**< 更新我的信息回调*/
 	typedef KickMemberCallback QueueOfferCallback; /**< 新加(更新)麦序队列元素回调*/
-	typedef std::function<void(__int64 room_id, int error_code, const ChatRoomQueueElement& element)> QueuePollCallback; /**< 取出麦序队列头元素回调*/
-	typedef std::function<void(__int64 room_id, int error_code, const ChatRoomQueue& queue)> QueueListCallback; /**< 排序列出麦序队列所有元素回调*/
+	typedef std::function<void(int64_t room_id, int error_code, const ChatRoomQueueElement& element)> QueuePollCallback; /**< 取出麦序队列头元素回调*/
+	typedef std::function<void(int64_t room_id, int error_code, const ChatRoomQueue& queue)> QueueListCallback; /**< 排序列出麦序队列所有元素回调*/
 	typedef KickMemberCallback QueueDropCallback; /**< 删除麦序队列元素回调*/
 
 public:
@@ -95,14 +95,15 @@ static void RegNotificationCb(const NotificationCallback& cb, const std::string&
   */
 static void RegLinkConditionCb(const LinkConditionCallback& cb, const std::string& json_extension = "");
 
-/** @fn void Init(const std::string& json_extension = "")
+/** @fn void Init(const std::string& app_install_dir, const std::string& json_extension = "")
   * 聊天室模块初始化
+  * @param[in] app_install_dir SDK动态库所在的目录全路径（如果传入为空，则按照默认规则搜索该动态库）  
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
   * @return bool 模块加载结果
   */
-static bool Init(const std::string& json_extension = "");
+static bool Init(const std::string& app_install_dir, const std::string& json_extension = "");
 
-/** @fn bool Enter(const __int64 room_id, const std::string& request_login_data, const ChatRoomEnterInfo& info = ChatRoomEnterInfo(), const std::string& json_extension = "")
+/** @fn bool Enter(const int64_t room_id, const std::string& request_login_data, const ChatRoomEnterInfo& info = ChatRoomEnterInfo(), const std::string& json_extension = "")
   * 聊天室登录
   * @param[in] room_id			  聊天室ID
   * @param[in] request_login_data 聊天室登录信息(NIM SDK请求聊天室返回的数据)
@@ -110,15 +111,23 @@ static bool Init(const std::string& json_extension = "");
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
   * @return bool 登录信息是否正确,返回失败则不会促发登录回调
   */
-static bool Enter(const __int64 room_id, const std::string& request_login_data, const ChatRoomEnterInfo& info = ChatRoomEnterInfo(), const std::string& json_extension = "");
+static bool Enter(const int64_t room_id, const std::string& request_login_data, const ChatRoomEnterInfo& info = ChatRoomEnterInfo(), const std::string& json_extension = "");
 
-/** @fn void Exit(const __int64 room_id, const std::string& json_extension = "")
+/** @fn void Exit(const int64_t room_id, const std::string& json_extension = "")
   * 聊天室登出
   * @param[in] room_id			  聊天室ID
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void Exit(const __int64 room_id, const std::string& json_extension = "");
+static void Exit(const int64_t room_id, const std::string& json_extension = "");
+
+/** @fn NIMChatRoomLoginState GetLoginState(const int64_t room_id, const std::string& json_extension = "")
+  * 获取聊天室登录状态
+  * @param[in] room_id			  聊天室ID
+  * @param[in] json_extension	  json扩展参数（备用，目前不需要）
+  * @return void 无返回值
+  */
+static NIMChatRoomLoginState GetLoginState(const int64_t room_id, const std::string& json_extension = "");
 
 /** @fn void Cleanup(const std::string& json_extension = "")
   * 聊天室模块清理
@@ -127,16 +136,16 @@ static void Exit(const __int64 room_id, const std::string& json_extension = "");
   */
 static void Cleanup(const std::string& json_extension = "");
 
-/** @fn void SendMsg(const __int64 room_id, const std::string& json_msg, const std::string& json_extension = "")
+/** @fn void SendMsg(const int64_t room_id, const std::string& json_msg, const std::string& json_extension = "")
   * 发送消息
   * @param[in] room_id			  聊天室ID
   * @param[in] json_msg			  消息json string(可以通过CreateTextMessage生成)
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void SendMsg(const __int64 room_id, const std::string& json_msg, const std::string& json_extension = "");
+static void SendMsg(const int64_t room_id, const std::string& json_msg, const std::string& json_extension = "");
 
-/** @fn std::string CreateRoomMessage(const NIMChatRoomMsgType msg_type, const std::string& client_msg_id, const std::string& attach, const ChatRoomMessageSetting& msg_setting, __int64 timetag = 0)
+/** @fn std::string CreateRoomMessage(const NIMChatRoomMsgType msg_type, const std::string& client_msg_id, const std::string& attach, const ChatRoomMessageSetting& msg_setting, int64_t timetag = 0)
   * 生成消息内容（所有支持的消息类型的内容）
   * @param[in] msg_type			消息类型
   * @param[in] client_msg_id	消息ID
@@ -149,9 +158,9 @@ static std::string CreateRoomMessage(const NIMChatRoomMsgType msg_type
 	, const std::string& client_msg_id
 	, const std::string& attach
 	, const ChatRoomMessageSetting& msg_setting
-	, __int64 timetag = 0);
+	, int64_t timetag = 0);
 
-/** @fn void GetMembersOnlineAsync(const __int64 room_id, const ChatRoomGetMembersParameters &parameters, const GetMembersCallback &callback, const std::string& json_extension = "")
+/** @fn void GetMembersOnlineAsync(const int64_t room_id, const ChatRoomGetMembersParameters &parameters, const GetMembersCallback &callback, const std::string& json_extension = "")
   * 异步查询成员列表
   * @param[in] room_id			  聊天室ID
   * @param[in] parameters		  查询参数
@@ -159,12 +168,12 @@ static std::string CreateRoomMessage(const NIMChatRoomMsgType msg_type
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void GetMembersOnlineAsync(const __int64 room_id, 
+static void GetMembersOnlineAsync(const int64_t room_id, 
 	const ChatRoomGetMembersParameters &parameters, 
 	const GetMembersCallback &callback,
 	const std::string& json_extension = "");
 
-/** @fn void GetMessageHistoryOnlineAsync(const __int64 room_id, const ChatRoomGetMembersParameters &parameters, const GetMembersCallback &callback, const std::string& json_extension = "")
+/** @fn void GetMessageHistoryOnlineAsync(const int64_t room_id, const ChatRoomGetMembersParameters &parameters, const GetMembersCallback &callback, const std::string& json_extension = "")
   * 异步查询消息历史
   * @param[in] room_id			  聊天室ID
   * @param[in] parameters		  查询参数
@@ -172,12 +181,12 @@ static void GetMembersOnlineAsync(const __int64 room_id,
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void GetMessageHistoryOnlineAsync(const __int64 room_id, 
+static void GetMessageHistoryOnlineAsync(const int64_t room_id, 
 	const ChatRoomGetMsgHistoryParameters &parameters, 
 	const GetMsgHistoryCallback &callback,
 	const std::string& json_extension = "");
 
-/** @fn void SetMemberAttributeOnlineAsync(const __int64 room_id, const ChatRoomSetMemberAttributeParameters &parameters, const GetMembersCallback &callback, const std::string& json_extension = "")
+/** @fn void SetMemberAttributeOnlineAsync(const int64_t room_id, const ChatRoomSetMemberAttributeParameters &parameters, const GetMembersCallback &callback, const std::string& json_extension = "")
   * 异步设置成员身份标识
   * @param[in] room_id			  聊天室ID
   * @param[in] parameters		  查询参数
@@ -185,23 +194,23 @@ static void GetMessageHistoryOnlineAsync(const __int64 room_id,
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void SetMemberAttributeOnlineAsync(const __int64 room_id, 
+static void SetMemberAttributeOnlineAsync(const int64_t room_id, 
 	const ChatRoomSetMemberAttributeParameters &parameters, 
 	const SetMemberAttributeCallback &callback,
 	const std::string& json_extension = "");
 
-/** @fn void GetInfoAsync(const __int64 room_id, const GetChatRoomInfoCallback& callback ,const std::string &json_extension)
+/** @fn void GetInfoAsync(const int64_t room_id, const GetChatRoomInfoCallback& callback ,const std::string &json_extension)
   * 异步获取当前聊天室信息
   * @param[in] room_id				聊天室ID
   * @param[in] callback				回调函数
   * @param[in] json_extension		json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void GetInfoAsync(const __int64 room_id, 
+static void GetInfoAsync(const int64_t room_id, 
 	const GetChatRoomInfoCallback& callback ,
 	const std::string &json_extension = "");
 
-/** @fn void GetMemberInfoByIDsAsync(const __int64 room_id, const std::list<std::string>& ids, const GetMembersCallback& callback ,const std::string &json_extension)
+/** @fn void GetMemberInfoByIDsAsync(const int64_t room_id, const std::list<std::string>& ids, const GetMembersCallback& callback ,const std::string &json_extension)
   * 异步获取指定成员信息
   * @param[in] room_id				聊天室ID
   * @param[in] ids					
@@ -209,12 +218,12 @@ static void GetInfoAsync(const __int64 room_id,
   * @param[in] json_extension		json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void GetMemberInfoByIDsAsync(const __int64 room_id, 
+static void GetMemberInfoByIDsAsync(const int64_t room_id, 
 	const std::list<std::string>& ids, 
 	const GetMembersCallback& callback,
 	const std::string &json_extension = "");
 
-/** @fn void KickMemberAsync(const __int64 room_id, const std::string& id, const std::string& notify_ext, const KickMemberCallback &callback ,const std::string &json_extension)
+/** @fn void KickMemberAsync(const int64_t room_id, const std::string& id, const std::string& notify_ext, const KickMemberCallback &callback ,const std::string &json_extension)
   * 异步踢掉指定成员
   * @param[in] room_id				聊天室ID
   * @param[in] id					成员id
@@ -223,7 +232,7 @@ static void GetMemberInfoByIDsAsync(const __int64 room_id,
   * @param[in] json_extension		json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void KickMemberAsync(const __int64 room_id, 
+static void KickMemberAsync(const int64_t room_id, 
 	const std::string& id, 
 	const std::string& notify_ext, 
 	const KickMemberCallback &callback, 
@@ -244,7 +253,7 @@ static void SetProxy(NIMChatRoomProxyType type,
 	const std::string& user, 
 	const std::string& password);
 
-/** @fn static void TempMuteMemberAsync(const __int64 room_id, const std::string& accid, const __int64 duration, bool need_notify, std::string& notify_ext, const TempMuteMemberCallback& callback, const std::string &json_extension = "");
+/** @fn static void TempMuteMemberAsync(const int64_t room_id, const std::string& accid, const int64_t duration, bool need_notify, std::string& notify_ext, const TempMuteMemberCallback& callback, const std::string &json_extension = "");
   * 异步临时禁言/解禁成员
   * @param[in] room_id				聊天室ID
   * @param[in] accid				成员ID
@@ -255,15 +264,15 @@ static void SetProxy(NIMChatRoomProxyType type,
   * @param[in] json_extension		json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void TempMuteMemberAsync(const __int64 room_id
+static void TempMuteMemberAsync(const int64_t room_id
 	, const std::string& accid
-	, const __int64 duration
+	, const int64_t duration
 	, bool need_notify
 	, const std::string& notify_ext
 	, const TempMuteMemberCallback& callback
 	, const std::string &json_extension = "");
 
-/** @fn static void UpdateRoomInfoAsync(const __int64 room_id, const ChatRoomInfo& info, bool need_notify, std::string& notify_ext, const UpdateRoomInfoCallback& callback, const std::string &json_extension = "");
+/** @fn static void UpdateRoomInfoAsync(const int64_t room_id, const ChatRoomInfo& info, bool need_notify, std::string& notify_ext, const UpdateRoomInfoCallback& callback, const std::string &json_extension = "");
   * 更新聊天室信息
   * @param[in] room_id				聊天室ID
   * @param[in] info					聊天室信息
@@ -273,14 +282,14 @@ static void TempMuteMemberAsync(const __int64 room_id
   * @param[in] json_extension		json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void UpdateRoomInfoAsync(const __int64 room_id
+static void UpdateRoomInfoAsync(const int64_t room_id
 	, const ChatRoomInfo& info
 	, bool need_notify
 	, const std::string& notify_ext
 	, const UpdateRoomInfoCallback& callback
 	, const std::string &json_extension = "");
 
-/** @fn static void UpdateMyRoomRoleAsync(const __int64 room_id, const ChatRoomMemberInfo& info, bool need_notify, std::string& notify_ext, const UpdateMyRoomRoleCallback& callback, const std::string &json_extension = "");
+/** @fn static void UpdateMyRoomRoleAsync(const int64_t room_id, const ChatRoomMemberInfo& info, bool need_notify, std::string& notify_ext, const UpdateMyRoomRoleCallback& callback, const std::string &json_extension = "");
   * 更新我的信息
   * @param[in] room_id				聊天室ID
   * @param[in] info					我的信息
@@ -290,14 +299,14 @@ static void UpdateRoomInfoAsync(const __int64 room_id
   * @param[in] json_extension		json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void UpdateMyRoomRoleAsync(const __int64 room_id
+static void UpdateMyRoomRoleAsync(const int64_t room_id
 	, const ChatRoomMemberInfo& info
 	, bool need_notify
 	, const std::string& notify_ext
 	, const UpdateMyRoomRoleCallback& callback
 	, const std::string &json_extension = "");
 
-/** @fn static void QueueOfferAsync(const __int64 room_id, const ChatRoomQueueElement& element, const QueueOfferCallback& callback, const std::string &json_extension = "");
+/** @fn static void QueueOfferAsync(const int64_t room_id, const ChatRoomQueueElement& element, const QueueOfferCallback& callback, const std::string &json_extension = "");
   * (管理员权限)新加(更新)麦序队列元素，如果element.key_对应的元素已经在队列中存在了，那就是更新操作，如果不存在，就放到队列尾部
   * @param[in] room_id				聊天室ID
   * @param[in] element				麦序队列元素
@@ -305,12 +314,12 @@ static void UpdateMyRoomRoleAsync(const __int64 room_id
   * @param[in] json_extension		json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void QueueOfferAsync(const __int64 room_id
+static void QueueOfferAsync(const int64_t room_id
 	, const ChatRoomQueueElement& element
 	, const QueueOfferCallback& callback
 	, const std::string &json_extension = "");
 
-/** @fn static void QueuePollAsync(const __int64 room_id, const std::string& element_key, const QueuePollCallback& callback, const std::string &json_extension = "");
+/** @fn static void QueuePollAsync(const int64_t room_id, const std::string& element_key, const QueuePollCallback& callback, const std::string &json_extension = "");
   * (管理员权限)取出麦序头元素
   * @param[in] room_id				聊天室ID
   * @param[in] element_key			需要取出的元素的UniqKey, 传空传表示取出第一个元素
@@ -318,30 +327,30 @@ static void QueueOfferAsync(const __int64 room_id
   * @param[in] json_extension		json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void QueuePollAsync(const __int64 room_id
+static void QueuePollAsync(const int64_t room_id
 	, const std::string& element_key
 	, const QueuePollCallback& callback
 	, const std::string &json_extension = "");
 
-/** @fn static void QueueListAsync(const __int64 room_id, const QueueListCallback& callback, const std::string &json_extension = "");
+/** @fn static void QueueListAsync(const int64_t room_id, const QueueListCallback& callback, const std::string &json_extension = "");
   * 排序列出所有元素
   * @param[in] room_id				聊天室ID
   * @param[in] callback				回调函数
   * @param[in] json_extension		json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void QueueListAsync(const __int64 room_id
+static void QueueListAsync(const int64_t room_id
 	, const QueueListCallback& callback
 	, const std::string &json_extension = "");
 
-/** @fn static void QueueDropAsync(const __int64 room_id, const QueueDropCallback& callback, const std::string &json_extension = "");
+/** @fn static void QueueDropAsync(const int64_t room_id, const QueueDropCallback& callback, const std::string &json_extension = "");
   * (管理员权限)删除麦序队列
   * @param[in] room_id				聊天室ID
   * @param[in] callback				回调函数
   * @param[in] json_extension		json扩展参数（备用，目前不需要）
   * @return void 无返回值
   */
-static void QueueDropAsync(const __int64 room_id
+static void QueueDropAsync(const int64_t room_id
 	, const QueueDropCallback& callback
 	, const std::string &json_extension = "");
 

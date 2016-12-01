@@ -6,8 +6,9 @@
   */
 
 #include "nim_cpp_tool.h"
-#include "nim_sdk_helper.h"
-#include "nim_common_helper.h"
+#include "nim_sdk_util.h"
+#include "nim_json_util.h"
+#include "nim_string_util.h"
 #include "nim_cpp_global.h"
 
 namespace nim

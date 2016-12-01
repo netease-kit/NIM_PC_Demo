@@ -12,13 +12,23 @@ void MsgBubbleNotice::InitControl()
 	this->AttachResize(nbase::Bind(&MsgBubbleNotice::OnResize, this, std::placeholders::_1));
 }
 
-void MsgBubbleNotice::InitInfo(const nim::IMMessage &msg, const UTF8String& session_id)
+void MsgBubbleNotice::InitInfo(const nim::IMMessage &msg, const UTF8String& session_id, bool is_custom_info)
 {
+	is_custom_info_ = is_custom_info;
 	msg_ = msg;
 	session_id_ = session_id;
 
 	this->SetUTF8Name(msg.client_msg_id_);
-	RefreshNotice();
+
+	if (is_custom_info)
+	{
+		notice_->SetText(nbase::UTF8ToUTF16(msg_.content_));
+		OnResized();
+	}
+	else
+	{
+		RefreshNotice();
+	}
 }
 
 void MsgBubbleNotice::RefreshNotice()
@@ -42,14 +52,14 @@ void MsgBubbleNotice::RefreshNotice()
 	OnResized();
 }
 
-void MsgBubbleNotice::InitCustomInfo(const std::wstring &show_notice, const UTF8String& session_id, const UTF8String& client_msg_id)
+nim::IMMessage MsgBubbleNotice::GetMsg()
 {
-	is_custom_info_ = true;
-	session_id_ = session_id;
-	this->SetUTF8Name(client_msg_id);
+	return msg_;
+}
 
-	notice_->SetText(show_notice);
-	OnResized();
+int64_t MsgBubbleNotice::GetMsgTimeTag()
+{
+	return msg_.timetag_;
 }
 
 bool MsgBubbleNotice::OnResize( ui::EventArgs* arg )

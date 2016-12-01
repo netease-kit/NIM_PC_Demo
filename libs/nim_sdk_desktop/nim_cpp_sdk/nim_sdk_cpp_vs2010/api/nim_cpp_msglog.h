@@ -265,12 +265,19 @@ public:
 	*/
 	static void SendReceiptAsync(const std::string& json_msg, const MessageStatusChangedCallback& cb);
 
-	/** @fn bool QueryMessageBeReaded(const IMMessage& msg)
+	/** @fn bool QuerySentMessageBeReaded(const IMMessage& msg)
 	* 查询自己发送的消息是否被对方已读
 	* @param[in] msg			消息。
 	* @return bool 是否被已读
 	*/
-	static bool QueryMessageBeReaded(const IMMessage& msg);
+	static bool QuerySentMessageBeReaded(const IMMessage& msg);
+
+	/** @fn bool QueryReceivedMsgReceiptSent(const IMMessage& msg)
+	* 查询收到的消息是否已经发送过已读回执
+	* @param[in] msg			消息。
+	* @return bool 是否已发送过
+	*/
+	static bool QueryReceivedMsgReceiptSent(const IMMessage& msg);
 
 	/** @fn void RegMessageStatusChangedCb(const MessageStatusChangedCallback& cb, const std::string &json_extension = "")
 	* (全局回调)注册全局的消息状态变更通知（目前只支持已读状态的通知）

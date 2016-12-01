@@ -12,7 +12,8 @@
 #include <list>
 #include <functional>
 #include "json.h"
-#include "nim_common_helper.h"
+#include "nim_json_util.h"
+#include "nim_sdk_util.h"
 
 /**
 * @namespace nim
