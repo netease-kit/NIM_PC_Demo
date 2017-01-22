@@ -1,6 +1,6 @@
 /** @file nim_client_def.h
   * @brief This file defines base types
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1
   */

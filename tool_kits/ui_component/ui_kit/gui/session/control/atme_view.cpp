@@ -1,4 +1,5 @@
 #include "atme_view.h"
+#include "module/session/force_push_manager.h"
 
 using namespace ui;
 namespace nim_comp
@@ -11,33 +12,12 @@ void AtMeView::InitControl()
 	sender_name_ = static_cast<Label*>(FindSubControl(L"sender_name"));
 }
 
-void AtMeView::AddMessage(const std::string &at_me_json)
+void AtMeView::AddMessage(const AtMeInfo &at_me_info)
 {
-	assert(!at_me_json.empty());
-
-	Json::Reader reader;
-	Json::Value root;
-	if (!reader.parse(at_me_json, root))
+	if (at_me_info.uuid.empty() || at_me_info.sender_name.empty() || at_me_info.msg_body.empty())
 		return;
 
-	if (root.size() == 0)
-		return;
-
-	for (UINT i = 0; i < root.size(); ++i)
-	{
-		AtMeInfo item;
-		Json::Value value = root[i];
-
-		item.msg_body = nbase::UTF8ToUTF16(value["msgbody"].asString());
-		item.sender_name = nbase::UTF8ToUTF16(value["sender"].asString());
-		item.uuid = nbase::UTF8ToUTF16(value["uuid"].asString());
-
-		if (item.uuid.empty() || item.sender_name.empty() || item.msg_body.empty())
-			continue;;
-
-		at_me_info_.push_back(item);
-	}
-
+	at_me_info_.push_back(at_me_info);
 	UpdateView();
 }
 

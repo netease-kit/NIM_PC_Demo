@@ -699,7 +699,7 @@ bool Team::QueryMuteListOnlineAsync(const std::string& tid, const QueryTeamMembe
 	if (cb)
 	{
 		cb_pointer = new QueryTeamMembersOnlineCallback(cb);
-	}
+	}               
 	NIM_SDK_GET_FUNC(nim_team_query_mute_list_online_async)(tid.c_str()
 		, json_extension.c_str()
 		, &CallbackQueryMembersOnline

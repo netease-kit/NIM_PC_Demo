@@ -1,12 +1,14 @@
 ﻿/** @file nim_vchat_def.h
   * @brief NIM VChat提供的音视频接口定义，
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/5/5
   */
 
 #ifndef NIM_SDK_DLL_EXPORT_HEADERS_NIM_VCHAT_DEF_H_
 #define NIM_SDK_DLL_EXPORT_HEADERS_NIM_VCHAT_DEF_H_
+
+#include "../util/nim_base_types.h"
 
 #ifdef __cplusplus
 extern"C"
@@ -144,6 +146,18 @@ enum NIMVChatVideoSplitMode{
 	kNIMVChatSplitLatticeCuttingTile				= 3,			/**< 裁剪平铺 */
 };
 
+/** @name 网络探测回调 内容Json key for nim_vchat_opt_cb_func
+  * @{
+  */
+static const char *kNIMNetDetectTaskId		= "task_id";		/**< uint64 任务id */
+static const char *kNIMNetDetectLoss		= "loss";			/**< int 丢包率百分比 */
+static const char *kNIMNetDetectRttmax		= "rttmax";			/**< int rtt 最大值 */
+static const char *kNIMNetDetectRttmin		= "rttmin";			/**< int rtt 最小值 */
+static const char *kNIMNetDetectRttavg		= "rttavg";			/**< int rtt 平均值 */
+static const char *kNIMNetDetectRttmdev		= "rttmdev";		/**< int rtt 偏差值 mdev */
+static const char *kNIMNetDetectDetail		= "detailinfo";		/**< string 扩展信息 */
+/** @}*/ //网络探测回调 内容Json key
+
 /** @name json extension params for start or ack accept
   * @{
   */
@@ -156,8 +170,10 @@ static const char *kNIMVChatVideoRecord		= "video_record";	/**< int 是否需要
 static const char *kNIMVChatMaxVideoRate	= "max_video_rate";	/**< int 视频发送编码码率 >=100000 <=5000000有效 */
 static const char *kNIMVChatVideoQuality	= "video_quality";	/**< int 视频聊天分辨率选择 NIMVChatVideoQuality */
 static const char *kNIMVChatVideoFrameRate	= "frame_rate";		/**< int 视频画面帧率 NIMVChatVideoFrameRate */
+static const char *kNIMVChatAudioHighRate	= "high_rate";		/**< int 是否使用语音高清模式 >0表示是（默认关闭）3.3.0 之前的版本无法加入已经开启高清语音的多人会议 */
 static const char *kNIMVChatRtmpUrl			= "rtmp_url";		/**< string 直播推流地址(加入多人时有效)，非空代表主播旁路直播， kNIMVChatBypassRtmp决定是否开始推流 */
 static const char *kNIMVChatBypassRtmp		= "bypass_rtmp";	/**< int 是否旁路推流（如果rtmpurl为空是连麦观众，非空是主播的推流控制）， >0表示是 */
+static const char *kNIMVChatRtmpRecord		= "rtmp_record";	/**< int 是否开启服务器对直播推流录制（需要开启服务器能力）， >0表示是 */
 static const char *kNIMVChatSplitMode		= "split_mode";		/**< int 主播控制的直播推流时的分屏模式，见NIMVChatVideoSplitMode */
 static const char *kNIMVChatPushEnable		= "push_enable";	/**< int 是否需要推送 >0表示是 默认是 */
 static const char *kNIMVChatNeedBadge		= "need_badge";		/**< int 是否需要角标计数 >0表示是 默认是 */
@@ -192,7 +208,7 @@ static const char *kNIMVChatSelf			= "self";				/**< key 本人信息 */
 static const char *kNIMVChatReceiver		= "receiver";			/**< key 接收信息 */
 /** @}*/ //json extension params
 
-/** @typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, __int64 channel_id, int code, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, int64_t channel_id, int code, const char *json_extension, const void *user_data)
   * NIM VChat 	音视频通话中状态返回回调接口   \n
   * 			根据NIMVideoChatSessionType的具体参数说明如下： \n
   * 			kNIMVideoChatSessionTypeStartRes,			//创建通话结果 code=200成功，json 返回kNIMVChatSessionId \n
@@ -220,9 +236,9 @@ static const char *kNIMVChatReceiver		= "receiver";			/**< key 接收信息 */
   * @return void 无返回值
   *
   */
-typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, __int64 channel_id, int code, const char *json_extension, const void *user_data);
+typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, int64_t channel_id, int code, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_vchat_mp4_record_opt_cb_func)(bool ret, int code, const char *file, __int64 time, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_vchat_mp4_record_opt_cb_func)(bool ret, int code, const char *file, int64_t time, const char *json_extension, const void *user_data)
   * NIM MP4操作回调，实际的开始录制和结束都会在nim_vchat_cb_func中返回
   * @param[out] ret 结果代码，true表示成功
   * @param[out] code 对应NIMVChatMp4RecordCode，用于获得失败时的错误原因
@@ -232,7 +248,7 @@ typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, __int64 channel_
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_vchat_mp4_record_opt_cb_func)(bool ret, int code, const char *file, __int64 time, const char *json_extension, const void *user_data);
+typedef void (*nim_vchat_mp4_record_opt_cb_func)(bool ret, int code, const char *file, int64_t time, const char *json_extension, const void *user_data);
 
 /** @typedef void (*nim_vchat_opt_cb_func)(bool ret, int code, const char *json_extension, const void *user_data)
   * NIM 操作回调，通用的操作回调接口
@@ -244,7 +260,7 @@ typedef void (*nim_vchat_mp4_record_opt_cb_func)(bool ret, int code, const char 
   */
 typedef void (*nim_vchat_opt_cb_func)(bool ret, int code, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_vchat_opt2_cb_func)(int code, __int64 channel_id, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_vchat_opt2_cb_func)(int code, int64_t channel_id, const char *json_extension, const void *user_data)
   * NIM 操作回调，通用的操作回调接口
   * @param[out] code 结果代码，code==200表示成功
   * @param[out] channel_id 通道id
@@ -252,7 +268,7 @@ typedef void (*nim_vchat_opt_cb_func)(bool ret, int code, const char *json_exten
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-typedef void (*nim_vchat_opt2_cb_func)(int code, __int64 channel_id, const char *json_extension, const void *user_data);
+typedef void (*nim_vchat_opt2_cb_func)(int code, int64_t channel_id, const char *json_extension, const void *user_data);
 
 #ifdef __cplusplus
 };

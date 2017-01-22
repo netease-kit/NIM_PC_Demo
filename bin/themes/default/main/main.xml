@@ -123,7 +123,9 @@
         
         <Control class="splitline_hor_level1" width="stretch"/>
         <HBox height="36">
-        	<Button name="chatroom" width="stretch" height="stretch" text="直播间" font="7" normaltextcolor="white" cursortype="hand" normalcolor="bk_main_wnd_search" hotcolor="bk_main_wnd_title" pushedcolor="bk_main_wnd_search"/>
+            <Button name="chatroom" width="stretch" height="stretch" text="直播间" font="7" normaltextcolor="white" cursortype="hand" normalcolor="bk_main_wnd_search" hotcolor="bk_main_wnd_title" pushedcolor="bk_main_wnd_search"/>
+            <Control class="splitline_ver_level1" height="stretch"/>
+            <Button name="cef_test" width="stretch" height="stretch" text="浏览器测试" font="7" normaltextcolor="white" cursortype="hand" normalcolor="bk_main_wnd_search" hotcolor="bk_main_wnd_title" pushedcolor="bk_main_wnd_search"/>
         </HBox>
         
     </VBox>

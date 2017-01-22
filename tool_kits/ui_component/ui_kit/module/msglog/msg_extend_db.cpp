@@ -17,7 +17,7 @@ MsgExDB::MsgExDB()
 		kMsgLogSQLs.push_back("CREATE TABLE IF NOT EXISTS custom_msglog(serial INTEGER PRIMARY KEY, \
 							  to_account TEXT, from_account TEXT, msg_type INTEGER, msg_time INTEGER, msg_id INTEGER, save_flag INTEGER, \
 							  msg_body TEXT, msg_attach TEXT, apns_text TEXT, msg_status INTEGER, msg_param TEXT)");
-		
+		kMsgLogSQLs.push_back("CREATE TABLE IF NOT EXISTS force_push_data(session_id TEXT PRIMARY KEY, data TEXT)");
 		sqls_created = true;
 	}
 	Load();
@@ -62,6 +62,7 @@ bool MsgExDB::CreateDBFile()
 
 	return result;
 }
+
 bool MsgExDB::InsertData(const std::string& msg_id, const std::string& path, const std::string& extend)
 {
 	ndb::SQLiteStatement stmt;
@@ -82,6 +83,7 @@ bool MsgExDB::InsertData(const std::string& msg_id, const std::string& path, con
 	}
 	return false;
 }
+
 bool MsgExDB::QueryDataWithMsgId(const std::string& msg_id, std::string& path, std::string& extend)
 {
 	nbase::NAutoLock auto_lock(&lock_);
@@ -103,6 +105,7 @@ bool MsgExDB::QueryDataWithMsgId(const std::string& msg_id, std::string& path, s
 	}
 	return find;
 }
+
 //用于保存一些自定义通知消息
 bool MsgExDB::InsertMsgData(const nim::SysMessage& msg)
 {
@@ -133,6 +136,7 @@ bool MsgExDB::InsertMsgData(const nim::SysMessage& msg)
 	}
 	return no_error;
 }
+
 std::vector<nim::SysMessage> MsgExDB::QueryMsgData(int64_t time, int limit)
 {
 	nbase::NAutoLock auto_lock(&lock_);
@@ -168,4 +172,65 @@ std::vector<nim::SysMessage> MsgExDB::QueryMsgData(int64_t time, int limit)
 	}
 	return ret_msgs;
 }
+
+bool MsgExDB::InsertForcePushData(std::map<std::string, std::string> &data)
+{
+	nbase::NAutoLock auto_lock(&lock_);
+	ndb::SQLiteAutoTransaction transaction(&db_);
+	transaction.Begin();
+
+	ndb::SQLiteStatement stmt;
+	db_.Query(stmt, "INSERT OR REPLACE into force_push_data (session_id, data) values (?, ?);");
+
+	bool no_error = true;
+	for (auto &i : data)
+	{
+		stmt.BindText(1, i.first.c_str(), i.first.size());
+		stmt.BindText(2, i.second.c_str(), i.second.size());
+		int32_t result = stmt.NextRow();
+		no_error = result == SQLITE_OK || result == SQLITE_ROW || result == SQLITE_DONE;
+		if (!no_error)
+		{
+		 	QLOG_ERR(L"error: InsertForcePushData for session_id: {0}, reason: {1}") << i.first << result;
+		 	break;
+		}
+		stmt.Rewind();
+	}
+	stmt.Finalize();
+
+	if (no_error)
+		return transaction.Commit();
+	else
+		return transaction.Rollback();
+}
+
+void MsgExDB::QueryAllForcePushData(std::map<std::string, std::string> &data)
+{
+	nbase::NAutoLock auto_lock(&lock_);
+	ndb::SQLiteStatement stmt;
+
+	db_.Query(stmt, "SELECT * FROM force_push_data");
+	int32_t result = stmt.NextRow();
+
+	std::string session_id;
+	std::string session_data;
+	while (result == SQLITE_ROW)
+	{
+		session_id = stmt.GetTextField(0);
+		session_data = stmt.GetTextField(1);
+	
+		data[session_id] = session_data;
+		result = stmt.NextRow();
+	}
+}
+
+void MsgExDB::ClearForcePushData()
+{
+	nbase::NAutoLock auto_lock(&lock_);
+
+	ndb::SQLiteStatement stmt;
+	db_.Query(stmt, "delete from force_push_data;");
+	stmt.NextRow();
+}
+
 }

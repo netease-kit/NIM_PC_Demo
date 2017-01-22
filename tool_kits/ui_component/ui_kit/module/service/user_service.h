@@ -34,6 +34,11 @@ const static char* g_AppKey = "kAppKey";
 * @return string 配置信息
 */
 std::string GetConfigValue(const std::string& key);
+/**
+* 获取应用的app key
+* @return string 配置信息app key
+*/
+std::string GetConfigValueAppKey();
 
 namespace nim_comp
 {
@@ -89,7 +94,7 @@ public:
 	const std::map<std::string, nim::UserNameCard>& GetAllUserInfos();
 
 	/**
-	* 查询本地保存的用户信息
+	* 获取用户信息,如果查询不到则查询服务器
 	* @param[in] id 用户id
 	* @param[out] info 用户信息
 	* @return bool true 查询到，false 没有查询到
@@ -97,12 +102,19 @@ public:
 	bool GetUserInfo(const std::string &id, nim::UserNameCard &info);
 
 	/**
-	* 查询本地保存的用户信息
+	* 获取用户信息,如果查询不到则查询服务器
 	* @param[in] ids 用户id列表
 	* @param[out] uinfos 用户信息列表
 	* @return void 无返回值
 	*/
 	void GetUserInfos(const std::list<std::string> &ids, std::list<nim::UserNameCard>&uinfos);
+
+	/**
+	* 执行批量查询用户信息操作,在可能要使用某些用户信息前进行批量查询,用于优化用户信息查询操作
+	* @param[in] ids 用户id列表
+	* @return void 无返回值
+	*/
+	void DoQueryUserInfos(const std::set<std::string>& ids);
 
 	/**
 	* 获取某个用户的好友类型

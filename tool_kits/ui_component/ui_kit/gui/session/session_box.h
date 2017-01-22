@@ -1,4 +1,7 @@
 ﻿#pragma once
+#include "callback/audio/audio_callback.h"
+#include "module/service/photo_service.h"
+#include "module/session/force_push_manager.h"
 #include "gui/session/control/bubbles/bubble_text.h"
 #include "gui/session/control/bubbles/bubble_image.h"
 #include "gui/session/control/bubbles/bubble_snapchat.h"
@@ -14,8 +17,6 @@
 #include "gui/session/control/team_item.h"
 #include "gui/emoji/emoji_form.h"
 #include "gui/team_info/team_info.h"
-#include "callback/audio/audio_callback.h"
-#include "module/service/photo_service.h"
 
 namespace nim_comp
 {
@@ -517,7 +518,24 @@ public:
 	//////////////////////////////////////////////////////////////////////////
 	//@功能相关的操作
 #pragma region At
+public:
+
+	/**
+	* 填充AtMeView控件内容
+	* @param[in] infos @me消息
+	* @return void	无返回值
+	*/
+	void InitAtMeView(std::vector<ForcePushManager::ForcePushInfo> &infos);
+
 private:
+
+	/**
+	* 如果msg包含atme消息，就添加到AtMeView控件
+	* @param[in] msg 消息
+	* @return void	无返回值
+	*/
+	void AddAtMessage(const nim::IMMessage &msg);
+
 	/**
 	* 开始执行滚动到某个控件位置的动画，用于@me消息查看
 	* @param[in] control 滚动的目标控件
@@ -532,7 +550,6 @@ private:
 	*/
 	void ScrollToControlCallback(const ui::Control *control);
 
-	// 
 	/**
 	* 获取某uid显示的名称，优先显示备注名，其次显示群名片，最后显示昵称
 	* @param[in] uid 用户id

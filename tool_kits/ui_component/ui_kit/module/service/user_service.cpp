@@ -24,6 +24,16 @@ std::string GetConfigValue(const std::string& key)
 
 	return value;
 }
+std::string GetConfigValueAppKey()
+{
+	std::string app_key = DEMO_GLOBAL_APP_KEY;
+	std::string new_app_key = GetConfigValue(g_AppKey);
+	if (!new_app_key.empty())
+	{
+		app_key = new_app_key;
+	}
+	return app_key;
+}
 
 namespace nim_comp
 {
@@ -72,12 +82,7 @@ void UserService::InvokeRegisterAccount(const std::string &username, const std::
 	body += "&password=" + password;
 	body += "&nickname=" + nickname;
 
-	std::string app_key = "45c6af3c98409b18a84451215d0bdd6e";
-	std::string new_app_key = GetConfigValue(g_AppKey);
-	if (!new_app_key.empty())
-	{
-		app_key = new_app_key;
-	}
+	std::string app_key = GetConfigValueAppKey();
 	nim_http::HttpRequest request(addressbook_address, body.c_str(), body.size(), reg_cb);
 	request.AddHeader("Content-Type", "application/x-www-form-urlencoded");
 	request.AddHeader("charset", "utf-8");
@@ -179,6 +184,23 @@ void UserService::GetUserInfos(const std::list<std::string>& ids, std::list<nim:
 			uinfos.push_back(info);
 
 			if(on_query_list_.find(id) == on_query_list_.end()) //不在all_user_里面，也不在查询途中
+				not_get_list.push_back(id);
+		}
+	}
+
+	if (!not_get_list.empty())
+		InvokeGetUserInfo(not_get_list);
+}
+
+void UserService::DoQueryUserInfos(const std::set<std::string>& ids)
+{
+	std::list<std::string> not_get_list;
+
+	for (const auto &id : ids)
+	{
+		if (all_user_.find(id) == all_user_.end())
+		{
+			if (on_query_list_.find(id) == on_query_list_.end()) //不在all_user_里面，也不在查询途中
 				not_get_list.push_back(id);
 		}
 	}
@@ -344,6 +366,7 @@ void UserService::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfo_lis
 
 	std::list<nim::UserNameCard> name_photo_list;
 	std::list<nim::UserNameCard> misc_uinfo_list;
+	std::list<std::string> not_get_list;
 
 	for (auto& info : uinfo_list)
 	{
@@ -351,7 +374,7 @@ void UserService::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfo_lis
 		if (iter != all_user_.end()) //all_user_中存在，就更新
 			iter->second.Update(info);
 		else if (on_query_list_.find(info.GetAccId()) == on_query_list_.cend())//all_user_中不存在，就获取该用户信息并插入all_user_
-			InvokeGetUserInfo(std::list<std::string>(1, info.GetAccId()));
+			not_get_list.push_back(info.GetAccId());
 
 		if (!info.GetIconUrl().empty())
 			PhotoService::GetInstance()->DownloadUserPhoto(info);
@@ -360,9 +383,10 @@ void UserService::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfo_lis
 			name_photo_list.push_back(info);
 		if (info.ExistValue((nim::UserNameCardValueKey)(nim::kUserNameCardKeyAll - nim::kUserNameCardKeyName - nim::kUserNameCardKeyIconUrl))) //用户其他信息变化了
 			misc_uinfo_list.push_back(info);
-
-		//QLOG_APP(L"OnUserInfoChange id : {0}, ext: {1}") << info.GetAccId() << info.GetExpand().toStyledString();
 	}
+
+	if (!not_get_list.empty())
+		InvokeGetUserInfo(not_get_list);
 
 	// 执行回调列表中所有回调
 	for (auto& it : uinfo_change_cb_list_)
@@ -435,10 +459,11 @@ void UserService::InvokeGetUserInfo(const std::list<std::string>& account_list)
 		else
 			nim::User::GetUserNameCardOnline(std::list<std::string>(not_get_set.cbegin(), not_get_set.cend()), cb2);
 	});
-	nim::User::GetUserNameCard(account_list, cb1);
 
 	for (const auto& id : account_list)
 		on_query_list_.insert(id);
+
+	nim::User::GetUserNameCard(account_list, cb1);
 }
 
 void UserService::InvokeFriendListChangeCallback(FriendChangeType change_type, const std::string& accid)

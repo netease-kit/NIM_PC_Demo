@@ -131,7 +131,8 @@ static void CallbackKickother(const char* json_res, const void* callback)
 	}
 }
 
-bool Client::Init(const std::string& app_data_dir
+bool Client::Init(const std::string& app_key
+	, const std::string& app_data_dir
 	, const std::string& app_install_dir
 	, const SDKConfig &config)
 {
@@ -139,8 +140,8 @@ bool Client::Init(const std::string& app_data_dir
 
 #if !defined (WIN32)
 	static const char *kSdkNimDll = "libnim.so";
-#elif defined (_DEBUG) || defined (DEBUG)
-	static const char *kSdkNimDll = "nim_d.dll";
+//#elif defined (_DEBUG) || defined (DEBUG)
+//	static const char *kSdkNimDll = "nim_d.dll";
 #else
 	static const char *kSdkNimDll = "nim.dll";
 #endif
@@ -161,8 +162,9 @@ bool Client::Init(const std::string& app_data_dir
 	config_values[nim::kNIMPreloadImageResize] = config.preload_image_resize_;
 	config_values[nim::kNIMSDKLogLevel] = config.sdk_log_level_;
 	config_values[nim::kNIMSyncSessionAck] = config.sync_session_ack_;
-	config_values["custom_timeout"] = config.custom_timeout_;
+	config_values[nim::kNIMLoginRetryMaxTimes] = config.login_max_retry_times_;
 	config_root[nim::kNIMGlobalConfig] = config_values;
+	config_root[nim::kNIMAppKey] = app_key;
 
 	if (config.use_private_server_)
 	{
@@ -191,6 +193,7 @@ void Client::Cleanup(const std::string& json_extension/* = ""*/)
 #ifdef NIM_SDK_DLL_IMPORT
 	g_nim_sdk_instance->UnLoadSdkDll();
 	delete g_nim_sdk_instance;
+	g_nim_sdk_instance = NULL;
 #endif
 }
 

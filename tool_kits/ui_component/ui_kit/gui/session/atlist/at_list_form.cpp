@@ -56,22 +56,16 @@ void AtlistForm::InitWindow()
 
 	unregister_cb.Add(TeamService::GetInstance()->RegAddTeamMember(nbase::Bind(&AtlistForm::OnTeamMemberAdd, this, std::placeholders::_1, std::placeholders::_2)));
 	unregister_cb.Add(TeamService::GetInstance()->RegRemoveTeamMember(nbase::Bind(&AtlistForm::OnTeamMemberRemove, this, std::placeholders::_1, std::placeholders::_2)));
-
-	nim::Team::QueryTeamMembersAsync(team_id_, nbase::Bind(&AtlistForm::OnGetTeamMemberCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
-void AtlistForm::OnGetTeamMemberCb(const std::string& tid, int count, const std::list<nim::TeamMemberProperty>& team_member_info_list)
+void AtlistForm::InitTeamMembers(const std::map<std::string, nim::TeamMemberProperty>& team_member_info_list)
 {
-	std::string my_uid = LoginManager::GetInstance()->GetAccount();
-
-	for (auto &user_info : team_member_info_list)
+	team_member_info_list_ = team_member_info_list;
+	team_member_info_list_.erase(LoginManager::GetInstance()->GetAccount());
+	for (auto &user_info : team_member_info_list_)
 	{
-		if (!LoginManager::GetInstance()->IsEqual(user_info.GetAccountID()))
-		{
-			AtListItem *member = AddListItem(user_info.GetAccountID());
-			ASSERT(member != NULL);
-			team_member_info_list_[user_info.GetAccountID()] = user_info;
-		}
+		AtListItem *member = AddListItem(user_info.first);
+		ASSERT(member != NULL);
 	}
 }
 

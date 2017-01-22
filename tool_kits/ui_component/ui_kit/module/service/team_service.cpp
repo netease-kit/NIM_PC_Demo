@@ -21,6 +21,9 @@ void TeamService::InvokeAddTeam(const std::string & tid, const nim::TeamInfo & t
 
 	QLOG_APP(L"InvokeAddTeam: tid={0} ") << tid;
 	cached_tinfo_[tid] = tinfo;
+	if (!tinfo.GetIcon().empty())
+		PhotoService::GetInstance()->DownloadTeamIcon(tinfo);
+
 	for (auto& it : add_team_cb_)
 	{
 		if (tinfo.IsValid() && tinfo.IsMemberValid())

@@ -174,6 +174,7 @@ void MsgBubbleFile::SetMsgStatus(nim::NIMMsgLogStatus status)
 		{
 			http_status_->SetText(L"取消发送");
 			file_reup_->SetVisible(true);
+			status_resend_->SetVisible(false);
 		}
 		else if (status == nim::kNIMMsgLogStatusSendFailed
 			|| file_url_.empty())

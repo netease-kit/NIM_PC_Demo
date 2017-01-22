@@ -13,8 +13,10 @@
 namespace nim
 {
 
+#ifdef NIM_SDK_DLL_IMPORT
 typedef	bool(*nim_vchat_init)(const char *json_extension);
 typedef	void(*nim_vchat_cleanup)(const char *json_extension);
+typedef uint64_t(*nim_vchat_net_detect)(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
 typedef void(*nim_vchat_enum_device_devpath)(nim::NIMDeviceType type, const char *json_extension, nim_vchat_enum_device_devpath_sync_cb_func cb, const void *user_data);
 typedef void(*nim_vchat_start_device)(nim::NIMDeviceType type, const char* device_path, unsigned fps, const char* json_extension, nim_vchat_start_device_cb_func cb, const void *user_data);
@@ -30,6 +32,7 @@ typedef void(*nim_vchat_set_audio_volumn)(unsigned char volumn, bool capture);
 typedef unsigned char(*nim_vchat_get_audio_volumn)(bool capture);
 typedef void(*nim_vchat_set_audio_input_auto_volumn)(bool auto_volumn);
 typedef bool(*nim_vchat_get_audio_input_auto_volumn)();
+typedef void(*nim_vchat_set_audio_process_info)(bool aec, bool ns, bool vid);
 
 //设置回掉
 typedef void(*nim_vchat_set_cb_func)(nim_vchat_cb_func cb, const void *user_data);
@@ -142,7 +145,32 @@ typedef bool(*nim_vchat_join_room)(NIMVideoChatMode mode, const char *room_name,
 */
 typedef void(*nim_vchat_update_rtmp_url)(const char *rtmp_url, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 typedef void(*nim_vchat_set_streaming_mode)(bool streaming, const char* json_info, nim_vchat_opt_cb_func cb, const void *user_data);
+#else
+#include "nim_vchat.h"
+#endif
 
+static void CallbackNetDetect(bool ret, int rescode, const char *json_params, const void *user_data)
+{
+	if (user_data != nullptr)
+	{
+		NetDetectCbInfo res;
+		res.res_code_ = rescode;
+		Json::Reader reader;
+		Json::Value values;
+		if (reader.parse(PCharToString(json_params), values) && values.isObject())
+		{
+			res.loss_ = values[kNIMNetDetectLoss].asInt();
+			res.rtt_max_ = values[kNIMNetDetectRttmax].asInt();
+			res.rtt_min_ = values[kNIMNetDetectRttmin].asInt();
+			res.rtt_avg_ = values[kNIMNetDetectRttavg].asInt();
+			res.rtt_mdev_ = values[kNIMNetDetectRttmdev].asInt();
+			res.expand_info_ = values[kNIMNetDetectDetail].asString();
+		}
+		VChat::NetDetectCallback *cb = (VChat::NetDetectCallback *)user_data;
+		(*cb)(rescode, res);
+		delete cb;
+	}
+}
 //dll-------------------------------
 //NIM vchat初始化
 bool VChat::Init(const std::string& json_info)
@@ -153,6 +181,15 @@ bool VChat::Init(const std::string& json_info)
 void VChat::Cleanup()
 {
 	NIM_SDK_GET_FUNC(nim_vchat_cleanup)("");
+}
+void VChat::NetDetect(NetDetectCallback cb)
+{
+	NetDetectCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new NetDetectCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_vchat_net_detect)("", CallbackNetDetect, cb_pointer);
 }
 
 //device ---------------------------
@@ -252,6 +289,10 @@ void VChat::SetAudioInputAutoVolumn(bool auto_volumn)
 bool VChat::GetAudioInputAutoVolumn()
 {
 	return NIM_SDK_GET_FUNC(nim_vchat_get_audio_input_auto_volumn)();
+}
+void VChat::SetAudioProcess(bool aec, bool ns, bool vid)
+{
+	NIM_SDK_GET_FUNC(nim_vchat_set_audio_process_info)(aec, ns, vid);
 }
 
 //音视频通话-------------------------------

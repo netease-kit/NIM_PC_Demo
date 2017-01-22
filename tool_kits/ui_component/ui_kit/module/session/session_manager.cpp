@@ -1,5 +1,6 @@
 ﻿#include "session_manager.h"
 #include "export/nim_ui_session_list_manager.h"
+#include "module/session/force_push_manager.h"
 #include "module/service/mute_black_service.h"
 #include "gui/session/session_form.h"
 #include "gui/session/session_box.h"
@@ -42,11 +43,16 @@ SessionBox* SessionManager::OpenSessionBox(std::string session_id, nim::NIMSessi
 		}
 	}
 
+	std::vector<ForcePushManager::ForcePushInfo> infos;
+	ForcePushManager::GetInstance()->GetAtMeMsgs(session_id, infos);
+
 	SessionBox *session_box = CreateSessionBox(session_id, type);
 	if (NULL == session_box)
 		return NULL;
 
 	session_box->InvokeShowMsgs(true);
+	session_box->InitAtMeView(infos);
+	session_box->GetSessionForm()->ActiveWindow();
 	return session_box;
 }
 
@@ -86,14 +92,6 @@ void SessionManager::AddNewMsg(const nim::IMMessage &msg)
 			if (NULL == session_box)
 				return;
 		}
-	}
-
-	// 如果目标会话盒子不在激活状态或者第一次创建会话盒子
-	if (!IsSessionBoxActive(id) || create)
-	{
-		// 更新对应会话中的@me消息为未读
-		if (IsAtMeMsg(msg))
-			seesion_id_atme_[id] = true;
 	}
 
 	if (session_box)
@@ -193,19 +191,10 @@ nim_comp::SessionBox* SessionManager::CreateSessionBox(const std::string &sessio
 	return session_box;
 }
 
-bool SessionManager::IsContainAtMeMsg(const std::string &id)
-{
-	auto i = seesion_id_atme_.find(id);
-	if (i != seesion_id_atme_.end())
-		return i->second;
-	
-	return false;
-}
-
 void SessionManager::ResetUnread(const std::string &id)
 {
 	// 重置对应会话中的@me消息为已读
-	seesion_id_atme_[id] = false;
+	ForcePushManager::GetInstance()->ResetAtMeMsg(id);
 
 	// 重置会话列表未读消息数
 	nim_ui::SessionListManager::GetInstance()->InvokeResetSessionUnread(id);

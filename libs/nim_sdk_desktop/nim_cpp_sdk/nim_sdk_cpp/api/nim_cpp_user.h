@@ -60,6 +60,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				419:黑名单数量超过上限 
 	*/
 	static bool SetBlack(const std::string& accid, bool set_black, const SetBlackCallback& cb, const std::string& json_extension = "");
 
@@ -70,6 +72,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				419:静音列表数量超过上限 
 	*/
 	static bool SetMute(const std::string& accid, bool set_mute, const SetMuteCallback& cb, const std::string& json_extension = "");
 
@@ -78,6 +82,7 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
 	*/
 	static void GetMutelist(const GetMuteListCallback& cb, const std::string& json_extension = "");
 
@@ -103,6 +108,10 @@ public:
 	* @param[in] cb 操作结果回调
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				414:参数错误
+	*				20000:还未初始化或初始化未正常完成
+	*				20001:还未登陆或登录未完成
 	*/
 	static bool GetUserNameCard(const std::list<std::string>& accids, const GetUserNameCardCallback& cb, const std::string& json_extension = "");
 
@@ -112,6 +121,11 @@ public:
 	* @param[in] cb 操作结果回调
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				414:参数错误
+	*				419:超限
+	*				20000:还未初始化或初始化未正常完成
+	*				20001:还未登陆或登录未完成
 	*/
 	static bool GetUserNameCardOnline(const std::list<std::string>& accids, const GetUserNameCardCallback& cb, const std::string& json_extension = "");
 
@@ -121,6 +135,8 @@ public:
 	* @param[in] cb 操作结果回调
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				400:非法参数
 	*/
 	static bool UpdateMyUserNameCard(const UserNameCard& namecard, const UpdateMyUserNameCardCallback& cb, const std::string& json_extension = "");
 

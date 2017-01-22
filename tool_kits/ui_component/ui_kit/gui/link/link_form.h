@@ -32,6 +32,13 @@ public:
 	*/
 	virtual void InitWindow() override;
 
+	/**
+	* 设置登录结果。
+	* @param[in] res_code SDK状态码
+	* @param[in] retrying SDK是否在重连
+	* @return void	无返回值
+	*/
+	void SetLoginRetryingFlag(nim::NIMResCode res_code, bool retrying);
 private:
 	/**
 	* 处理所有控件单击消息
@@ -59,6 +66,7 @@ private:
 	* @return void	无返回值
 	*/
 	void OnTimeup();
+
 public:
 	static const LPCTSTR kClassName;
 private:
@@ -68,7 +76,9 @@ private:
 
 /**
 * 显示断线重连窗口
+* @param[in] res_code SDK状态码
+* @param[in] retrying SDK是否在重连
 * @return void	无返回值
 */
-void ShowLinkForm();
+void ShowLinkForm(nim::NIMResCode res_code, bool retrying);
 }

@@ -38,6 +38,9 @@ public:
 	* @param[in] cb	好友变更通知回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				404:用户不存在
+	*				500:未知错误
 	*/
 	static void RegChangeCb(const FriendChangeCallback &cb, const std::string& json_extension = "");
 
@@ -49,6 +52,9 @@ public:
 	* @param[in] cb	好友请求回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				404:用户不存在
+	*				500:未知错误
 	*/
 	static bool Request(const std::string &accid, NIMVerifyType verify_type, const std::string &msg, const FriendOptCallback &cb, const std::string& json_extension = "");
 	
@@ -58,6 +64,9 @@ public:
 	* @param[in] cb	删除好友回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				404:用户不存在
+	*				500:未知错误
 	*/
 	static bool Delete(const std::string &accid, const FriendOptCallback &cb, const std::string& json_extension = "");
 	
@@ -67,6 +76,9 @@ public:
 	* @param[in] cb	更新好友资料回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				404:用户不存在
+	*				500:未知错误
 	*/
 	static bool Update(const FriendProfile &friend_profile, const FriendOptCallback &cb, const std::string& json_extension = "");
 	
@@ -75,6 +87,7 @@ public:
 	* @param[in] cb	获取好友列表回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
+	* @note 错误码	200:成功
 	*/
 	static void GetList(const GetFriendsListCallback& cb, const std::string& json_extension = "");
 

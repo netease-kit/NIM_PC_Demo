@@ -66,13 +66,6 @@ public:
 	void ResetUnread(const std::string &id);
 
 	/**
-	* 查找某个会话中是否包含未读的@我的消息
-	* @param[in] id 会话id
-	* @return bool true 包含，false 不包含
-	*/
-	bool IsContainAtMeMsg(const std::string &id);
-
-	/**
 	* 查询当前登录用户在某个群中的信息
 	* @param[in] tid 群组id
 	* @return void 无返回值
@@ -181,7 +174,6 @@ private:
 	SessionForm	*drop_session_form_;	// 拖入会话盒子的会话窗口，用于附加拖拽来的会话盒子
 
 	std::map<std::string, SessionBox*>	session_box_map_;
-	std::map<std::string, bool>			seesion_id_atme_;	// 会话是否包含未读的@me消息
 
 	std::map<std::string, uint64_t>		team_list_bits_;
 	Ring ring_;

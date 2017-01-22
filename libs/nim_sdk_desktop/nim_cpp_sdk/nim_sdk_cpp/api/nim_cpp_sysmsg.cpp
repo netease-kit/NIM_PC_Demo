@@ -232,7 +232,7 @@ void SystemMsg::SetStatusByTypeAsync(NIMSysMsgType type, NIMSysMsgStatus status,
 	return NIM_SDK_GET_FUNC(nim_sysmsg_set_logs_status_by_type_async)(type, status, json_extension.c_str(), &CallbackNotifySysmsgRes, cb_pointer);
 }
 
-void SystemMsg::DeleteStatusByTypeAsync(NIMSysMsgType type, const BatchSetCallback& cb, const std::string& json_extension/* = ""*/)
+void SystemMsg::DeleteByTypeAsync(NIMSysMsgType type, const BatchSetCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	BatchSetCallback* cb_pointer = nullptr;
 	if (cb)

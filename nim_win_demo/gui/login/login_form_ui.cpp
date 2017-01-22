@@ -4,6 +4,7 @@
 #include "shared/tool.h"
 #include "gui/main/main_form.h"
 #include "gui/proxy/proxy_form.h"
+#include "module/login/login_db.h"
 
 using namespace ui;
 
@@ -11,6 +12,7 @@ const LPCTSTR LoginForm::kClassName	= L"LoginForm";
 
 LoginForm::LoginForm()
 {
+	LoginDB::GetInstance()->ReadLoginData();
 }
 
 LoginForm::~LoginForm()

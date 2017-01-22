@@ -198,13 +198,13 @@ public:
 		// must ensure that the buffer size is count of block size
 		if (chiper_->block_size > 0)
 			osize = (sizeof(out)/chiper_->block_size) * chiper_->block_size;
-		uint32_t block = (ssize+osize-1) / osize;
+		uint32_t block = ((uint32_t)ssize+osize-1) / osize;
 
 		uint32_t elen  = 0;
 		int      lout;
 		for (uint32_t i = 0; i < block; i++)
 		{
-			int lin = (ssize-elen)>osize ? osize : ssize-elen;
+			int lin = ((uint32_t)ssize - elen)>osize ? osize : (uint32_t)ssize - elen;
 			if (!EVP_EncryptUpdate(&ctx, out, &lout, ((const unsigned char*)sdata) + elen, lin))
 			{
 				EVP_CIPHER_CTX_cleanup(&ctx);
@@ -242,13 +242,13 @@ public:
 		//    must ensure that the buffer size is count of block size
 		if (chiper_->block_size > 0)
 			osize = (sizeof(out)/chiper_->block_size-1) * chiper_->block_size;
-		uint32_t block = (ssize+osize-1) / osize;
+		uint32_t block = ((uint32_t)ssize + osize - 1) / osize;
 
 		uint32_t elen  = 0;
 		int      lout;
 		for (uint32_t i = 0; i < block; i++)
 		{
-			int lin = ssize-elen>osize ? osize : (ssize-elen);
+			int lin = (uint32_t)ssize - elen>osize ? osize : ((uint32_t)ssize - elen);
 			if (!EVP_DecryptUpdate(&ctx, out, &lout, ((const unsigned char*)sdata) + elen, lin))
 			{
 				EVP_CIPHER_CTX_cleanup(&ctx);
@@ -285,7 +285,7 @@ public:
 #else
 			sprintf(buf,"%X%X", (unsigned int)time(0), (unsigned int)rand());
 #endif
-			int len = strlen(buf);
+			int len = (int)strlen(buf);
 			RAND_add(buf, len, len >> 1);
 			if (!RAND_status())   
 				continue;
@@ -428,7 +428,11 @@ private:
 		case nbase::ENC_MD5:
 			return EVP_md5();
 		case nbase::ENC_MD2:
-			return EVP_md2();
+		{
+			assert(0);
+			return 0;
+			//return EVP_md2();
+		}
 		case nbase::ENC_MD4:
 			return EVP_md4();
 		case nbase::ENC_SHA:
@@ -519,7 +523,7 @@ public:
                 default:
                     break;
             }
-			uint32_t nBlock    = ( ssize + block_size -1 ) / block_size;
+			uint32_t nBlock    = ( (uint32_t)ssize + block_size -1 ) / block_size;
 			const unsigned char * psrc = (const unsigned char *)sdata;
 			for (uint32_t i = 0; i < nBlock; i++)
 			{
@@ -562,7 +566,7 @@ public:
 			rsa->d = d_;      
 			rsa->e = e_;
             uint32_t block_size = RSA_size(rsa);
-			uint32_t nBlock    = ( ssize + block_size -1 ) / block_size;
+			uint32_t nBlock    = ( (uint32_t)ssize + block_size -1 ) / block_size;
 			const unsigned char * psrc = (const unsigned char *)sdata;
 			for (uint32_t i = 0; i < nBlock; i++)
 			{
@@ -666,7 +670,7 @@ public:
 			return 0;
 
 		int lout;
-		if (!EVP_EncryptUpdate(&ectx_, (unsigned char *)obuf, &lout, (const unsigned char *)ibuf, isize))
+		if (!EVP_EncryptUpdate(&ectx_, (unsigned char *)obuf, &lout, (const unsigned char *)ibuf, (int)isize))
 		{
 			assert(false);
 			return 0;
@@ -695,7 +699,7 @@ public:
 			return 0;
 
 		int lout;
-		if (!EVP_DecryptUpdate(&dctx_, (unsigned char *)obuf, &lout, (const unsigned char *)ibuf, isize))
+		if (!EVP_DecryptUpdate(&dctx_, (unsigned char *)obuf, &lout, (const unsigned char *)ibuf, (int)isize))
 		{
 			assert(false);
 			return 0;
@@ -761,7 +765,7 @@ public:
 #else
 			sprintf(buf, "%X%X", (unsigned int)time(0), (unsigned int)rand());
 #endif
-			int len = strlen(buf);
+			int len = (int)strlen(buf);
 			RAND_add(buf,len,len >> 1);
 			if (!RAND_status())
 				continue;
@@ -968,9 +972,12 @@ public:
 			return new Openssl_Encrypt_Symmetry_Key<nbase::ENC_AES256>;
 		case nbase::ENC_DES64:
 			return new Openssl_Encrypt_Symmetry_Key<nbase::ENC_DES64>;
-
 		case nbase::ENC_MD2:
-			return new Openssl_Encrypt_Hash<nbase::ENC_MD2>;
+		{
+			assert(0);
+			return 0;
+			//return new Openssl_Encrypt_Hash<nbase::ENC_MD2>;
+		}
 		case nbase::ENC_MD4:
 			return new Openssl_Encrypt_Hash<nbase::ENC_MD4>;
 		case nbase::ENC_MD5:

@@ -34,6 +34,7 @@ void CMenuWnd::Init(STRINGorID xml, LPCTSTR pSkinType, POINT point, PopupPosType
     HWND hWndParent = m_hWnd;
     while( ::GetParent(hWndParent) != NULL ) hWndParent = ::GetParent(hWndParent);
     ::ShowWindow(m_hWnd, SW_SHOW);
+	::SetWindowPos(m_hWnd, NULL, m_BasedPoint.x, m_BasedPoint.y, 0, 0, SWP_NOSIZE);
     ::SendMessage(hWndParent, WM_NCACTIVATE, TRUE, 0L);
 }
 
@@ -69,8 +70,8 @@ void CMenuWnd::Show()
 	UiRect monitor_rect = oMonitor.rcMonitor;
 	ui::CSize szInit = { rcWork.right - rcWork.left, rcWork.bottom - rcWork.top };
 	szInit = GetRoot()->EstimateSize(szInit);
-	szInit.cx -= GetShadowLength().left + GetShadowLength().right;
-	szInit.cy -= GetShadowLength().top + GetShadowLength().bottom;
+	szInit.cx -= GetShadowCorner().left + GetShadowCorner().right;
+	szInit.cy -= GetShadowCorner().top + GetShadowCorner().bottom;
 	if (m_popupPosType == RIGHT_BOTTOM)
 	{
 		if (m_BasedPoint.y + szInit.cy > monitor_rect.bottom)

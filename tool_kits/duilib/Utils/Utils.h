@@ -272,7 +272,7 @@ public:
 	{
 		std::wstring moduleFilePath;
 		moduleFilePath.resize(MAX_PATH);
-		::GetModuleFileNameW(::GetModuleHandle(NULL), &moduleFilePath[0], moduleFilePath.length());
+		::GetModuleFileNameW(::GetModuleHandle(NULL), &moduleFilePath[0], (DWORD)moduleFilePath.length());
 		return moduleFilePath.substr(0, moduleFilePath.find_last_of(L"\\") + 1);
 	}
 };

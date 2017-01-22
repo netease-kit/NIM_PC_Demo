@@ -40,7 +40,7 @@ public:
 	}
 
 	int GetFrameCount() {
-		return m_vecBitmap.size();
+		return (int)m_vecBitmap.size();
 	}
 
 	int IsGif() {

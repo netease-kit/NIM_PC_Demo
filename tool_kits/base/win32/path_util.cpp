@@ -23,7 +23,7 @@ std::wstring GetModulePathName(HMODULE module_handle)
 	//DCHECK(IsModuleHandleValid(module_handle));
 	std::wstring mod_path;
 	mod_path.resize(MAX_PATH);
-	mod_path.resize(::GetModuleFileNameW(module_handle, &mod_path[0], mod_path.size()));
+	mod_path.resize(::GetModuleFileNameW(module_handle, &mod_path[0], (DWORD)mod_path.size()));
 	return mod_path;
 }
 

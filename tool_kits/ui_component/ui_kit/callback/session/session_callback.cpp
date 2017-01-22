@@ -25,9 +25,8 @@ void TalkCallback::OnSendMsgCallback(const nim::SendMessageArc& arc)
 void TalkCallback::OnReceiveMsgCallback(const nim::IMMessage& message)
 {
 	QLOG_PRO(L"OnReceiveMsgCallback: {0} from client:{1}") << message.client_msg_id_ << message.readonly_sender_client_type_;
-	//QLOG_PRO(L"OnReceiveMsgCallback ext: {0}") << message.msg_setting_.server_ext_.toStyledString();
 	std::string id = GetSessionId(message);
-	//会话窗口
+
 	if (message.feature_ == nim::kNIMMessageFeatureDefault)
 	{
 		if (message.type_ == nim::kNIMMessageTypeNotification)
@@ -43,7 +42,9 @@ void TalkCallback::OnReceiveMsgCallback(const nim::IMMessage& message)
 			SessionManager::GetInstance()->AddNewMsg(message);
 		}
 	}
-	else if (message.feature_ == nim::kNIMMessageFeatureSyncMsg || message.feature_ == nim::kNIMMessageFeatureRoamMsg)
+	else if (message.feature_ == nim::kNIMMessageFeatureSyncMsg ||
+		message.feature_ == nim::kNIMMessageFeatureRoamMsg ||
+		message.feature_ == nim::kNIMMessageFeatureCustomizedMsg)
 	{
 		SessionBox* session = SessionManager::GetInstance()->FindSessionBox(id);
 		if (session)
@@ -51,13 +52,13 @@ void TalkCallback::OnReceiveMsgCallback(const nim::IMMessage& message)
 			session->AddNewMsg(message, false);
 		}
 	}
-	else if (message.feature_ == nim::kNIMMessageFeatureCustomizedMsg)
+	
+	// 如果目标会话盒子不在激活状态
+	if (!SessionManager::GetInstance()->IsSessionBoxActive(id))
 	{
-		SessionBox* session = SessionManager::GetInstance()->FindSessionBox(id);
-		if (session)
-		{
-			session->AddNewMsg(message, false);
-		}
+		// 更新对应会话中的@me消息为未读
+		if (ForcePushManager::GetInstance()->IsAtMeMsg(message))
+			ForcePushManager::GetInstance()->AddAtMeMsg(id, message);
 	}
 }
 
@@ -142,10 +143,15 @@ void TalkCallback::OnQueryMsgCallback(nim::NIMResCode code, const std::string& q
 	QLOG_APP(L"query end: id={0} type={1} code={2} source={3}") <<query_id <<query_type <<code<< result.source_;
 
 	std::vector<nim::IMMessage> vec;
+	std::set<std::string> ids;
 	for each (auto msg in result.msglogs_)
 	{
 		vec.push_back(msg);
+		ids.insert(msg.sender_accid_);
 	}
+
+	// 添加到消息前批量查询用户信息,优化用户查询
+	UserService::GetInstance()->DoQueryUserInfos(ids);
 
 	SessionBox* session_form = SessionManager::GetInstance()->FindSessionBox(query_id);
 	if (session_form)
@@ -155,6 +161,16 @@ void TalkCallback::OnQueryMsgCallback(nim::NIMResCode code, const std::string& q
 void TalkCallback::OnQuerySessionListCallback(int unread_count, const nim::SessionDataList& session_list)
 {
 	QLOG_PRO(L"local session list: count :{0} - unread :{1}") << session_list.count_ << session_list.unread_count_;
+
+	std::set<std::string> ids;
+	for each (auto session in session_list.sessions_)
+	{
+		ids.insert(session.msg_sender_accid_);
+	}
+
+	// 添加到消息前批量查询用户信息,优化用户查询
+	UserService::GetInstance()->DoQueryUserInfos(ids);
+
 	nim_ui::SessionListManager::GetInstance()->OnQuerySessionListCallback(session_list.sessions_);
 }
 

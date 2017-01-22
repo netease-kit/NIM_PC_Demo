@@ -31,6 +31,7 @@ namespace ui
 		void SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue);
 		void PaintStatusImage(HDC hDC);
 
+		virtual void ClearImageCache() override;
 		virtual UiRect GetProgressPos();
 
 	protected:

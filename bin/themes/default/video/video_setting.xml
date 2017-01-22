@@ -10,7 +10,7 @@
             <OptionBox name="option_audio" group="option_group" selected="true" font="2" text="语音" textpadding="0,0,0,6" normaltextcolor="lightcolor" selectedtextcolor="green" selectednormalimage="file='slider_hor.png' dest='0,42,140,44'"/>
             <OptionBox name="option_video" group="option_group" font="2" text="视频" textpadding="0,0,0,6" normaltextcolor="lightcolor" selectedtextcolor="green" selectednormalimage="file='slider_hor.png' dest='0,42,140,44'"/>
         </HBox>
-        <TabBox name="audio_tab_video" fadeswitch="true" clip="true">
+        <TabBox name="audio_tab_video" fadeswitch="true">
             <VBox name="audio_page">
 				<VBox height="128" margin="20,0,20,0">
 					<CheckBox class="checkbox_font12" name="open_output" margin="0,20,0,0" font="2" text="开启播放器"/>

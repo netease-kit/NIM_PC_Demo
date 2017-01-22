@@ -62,13 +62,33 @@ public:
 	*/
 	std::vector<nim::SysMessage> QueryMsgData(int64_t time, int limit = 20);
 
+	/**
+	* 保存强推信息
+	* @param[in] data 强推信息
+	* @return bool true 成功，false 失败
+	*/
+	bool InsertForcePushData(std::map<std::string, std::string> &data);
+
+	/**
+	* 获取所有本地保存的强推信息
+	* @param[out] data 强推信息
+	* @return void 无返回值
+	*/
+	void QueryAllForcePushData(std::map<std::string, std::string> &data);
+
+	/**
+	* 清除所有本地保存的强推信息
+	* @return void 无返回值
+	*/
+	void ClearForcePushData();
+
 private:
 	/**
 	* 创建数据库
 	* @return bool true 成功，false 失败
 	*/
     bool CreateDBFile();
-    
+
 private:
     UTF8String		db_filepath_;
     ndb::SQLiteDB   db_;

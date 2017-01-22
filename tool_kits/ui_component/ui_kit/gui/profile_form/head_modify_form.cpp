@@ -906,7 +906,7 @@ void HeadModifyForm::NotifyHeadModify(std::wstring new_head_image_path)
 
 void HeadModifyForm::OnUploadHeadIconCallback(int res_code, const std::string& url)
 {
-	if(res_code == nim::kNIMResSuccess)
+	if (res_code == nim::kNIMResSuccess)
 	{
 		QLOG_APP(L"Head icon upload success and call callback!");
 

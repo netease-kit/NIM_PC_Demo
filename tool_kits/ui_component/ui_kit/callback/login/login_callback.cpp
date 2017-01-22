@@ -4,8 +4,10 @@
 #include "module/local/local_helper.h"
 #include "module/login/login_manager.h"
 #include "module/session/session_manager.h"
+#include "module/session/force_push_manager.h"
 #include "module/service/user_service.h"
 #include "module/audio/audio_manager.h"
+#include "cef/cef_module/cef_manager.h"
 #include "util/user.h"
 #include "shared/xml_util.h"
 #include "nim_cpp_client.h"
@@ -50,6 +52,8 @@ void _DoAfterLogin()
 
 	TeamService::GetInstance()->QueryAllTeamInfo();
 
+	ForcePushManager::GetInstance()->Load();
+
 	StdClosure task = nbase::Bind(&_LogRobot);
 	nbase::ThreadManager::PostDelayedTask(kThreadGlobalMisc, task, nbase::TimeDelta::FromMinutes(1));
 }
@@ -57,6 +61,7 @@ void _DoAfterLogin()
 //退出程序前的处理：比如保存数据
 void _DoBeforeAppExit()
 {
+	ForcePushManager::GetInstance()->Save();
 	QLOG_APP(L"-----{0} account logout-----") << LoginManager::GetInstance()->GetAccount();
 }
 
@@ -91,12 +96,7 @@ void LoginCallback::DoLogin(std::string user, std::string pass)
 	//注意：
 	//1. app key是应用的标识，不同应用之间的数据（用户、消息、群组等）是完全隔离的。开发自己的应用时，请替换为自己的app key。
 	//2. 用户登录自己的应用是不需要对密码md5加密的，替换app key之后，请记得去掉加密。
-	std::string app_key = "45c6af3c98409b18a84451215d0bdd6e";
-	std::string new_app_key = GetConfigValue(g_AppKey);
-	if (!new_app_key.empty())
-	{
-		app_key = new_app_key;
-	}
+	std::string app_key = GetConfigValueAppKey();
 	auto cb = std::bind(OnLoginCallback, std::placeholders::_1, nullptr);
 	nim::Client::Login(app_key, LoginManager::GetInstance()->GetAccount(), LoginManager::GetInstance()->GetPassword(), cb);
 }
@@ -109,7 +109,7 @@ void LoginCallback::OnLoginCallback(const nim::LoginRes& login_res, const void* 
 	{
 		if (login_res.login_step_ == nim::kNIMLoginStepLogin)
 		{
-			Post2UI(nbase::Bind(&UILoginCallback, login_res.res_code_, false));
+			Post2UI(nbase::Bind(&UILoginCallback, login_res));
 			if (!login_res.other_clients_.empty())
 			{
 				Post2UI(nbase::Bind(LoginCallback::OnMultispotChange, true, login_res.other_clients_));
@@ -118,27 +118,31 @@ void LoginCallback::OnLoginCallback(const nim::LoginRes& login_res, const void* 
 	}
 	else
 	{
-		Post2UI(nbase::Bind(&UILoginCallback, login_res.res_code_, false));
+		Post2UI(nbase::Bind(&UILoginCallback, login_res));
 	}
 }
 
-void LoginCallback::UILoginCallback(nim::NIMResCode code, bool relogin)
+void LoginCallback::UILoginCallback(const nim::LoginRes& login_res)
 {
-	if (relogin)
+	LoginManager::GetInstance()->SetErrorCode(login_res.res_code_);
+	if (login_res.relogin_)
 	{
-		QLOG_APP(L"-----relogin end {0}-----") << code;
+		QLOG_APP(L"-----relogin end {0}-----") << login_res.res_code_;
 
-		if (code == nim::kNIMResSuccess)
+		if (login_res.res_code_ == nim::kNIMResSuccess)
 		{
 			LoginManager::GetInstance()->SetLoginStatus(LoginStatus_SUCCESS);
 			LoginManager::GetInstance()->SetLinkActive(true);
 		}
-		else if (code == nim::kNIMResTimeoutError || code == nim::kNIMResConnectionError)
+		else if (login_res.res_code_ == nim::kNIMResTimeoutError 
+			|| login_res.res_code_ == nim::kNIMResConnectionError
+			|| login_res.res_code_ == nim::kNIMLocalResNetworkError
+			|| login_res.res_code_ == nim::kNIMResTooBuzy)
 		{
 			LoginManager::GetInstance()->SetLoginStatus(LoginStatus_NONE);
 			LoginManager::GetInstance()->SetLinkActive(false);
 
-			ShowLinkForm();
+			ShowLinkForm(login_res.res_code_, login_res.retrying_);
 		}
 		else
 		{
@@ -147,35 +151,30 @@ void LoginCallback::UILoginCallback(nim::NIMResCode code, bool relogin)
 			QCommand::Set(kCmdRestart, L"true");
 			std::wstring wacc = nbase::UTF8ToUTF16(LoginManager::GetInstance()->GetAccount());
 			QCommand::Set(kCmdAccount, wacc);
-			QCommand::Set(kCmdExitWhy, nbase::IntToString16(code));
+			QCommand::Set(kCmdExitWhy, nbase::IntToString16(login_res.res_code_));
 			DoLogout(false, nim::kNIMLogoutChangeAccout);
 		}
 	}
 	else
 	{
-		QLOG_APP(L"-----login end {0}-----") << code;
+		QLOG_APP(L"-----login end {0}-----") << login_res.res_code_;
 
 		if (nim_ui::LoginManager::GetInstance()->IsLoginFormValid())
 		{
 			if (LoginManager::GetInstance()->GetLoginStatus() == LoginStatus_CANCEL)
 			{
 				QLOG_APP(L"-----login cancel end-----");
-				if (code == nim::kNIMResSuccess)
+				if (login_res.res_code_ == nim::kNIMResSuccess)
 					NimLogout(nim::kNIMLogoutChangeAccout);
 				else
 					UILogoutCallback();
 				return;
 			}
 			else
-				LoginManager::GetInstance()->SetLoginStatus(code == nim::kNIMResSuccess ? LoginStatus_SUCCESS : LoginStatus_NONE);
+				LoginManager::GetInstance()->SetLoginStatus(login_res.res_code_ == nim::kNIMResSuccess ? LoginStatus_SUCCESS : LoginStatus_NONE);
 
-			if (code == nim::kNIMResSuccess)
+			if (login_res.res_code_ == nim::kNIMResSuccess)
 			{
-				//LoginManager::GetInstance()->GetLoginData()->status_ = kLoginDataStatusValid;
-				//LoginManager::GetInstance()->GetLoginData()->remember_ = remember_pwd_ckb_->IsSelected() ? 1 : 0;
-				//LoginManager::GetInstance()->GetLoginData()->auto_login_ = auto_login_ckb_->IsSelected() ? 1 : 0;
-				//LoginManager::GetInstance()->SaveLoginData();
-
 				nim_ui::LoginManager::GetInstance()->InvokeHideWindow();
 				_DoAfterLogin();
 				// 登录成功，显示主界面
@@ -184,13 +183,13 @@ void LoginCallback::UILoginCallback(nim::NIMResCode code, bool relogin)
 			}
 			else
 			{
-				nim_ui::LoginManager::GetInstance()->InvokeLoginError(code);
+				nim_ui::LoginManager::GetInstance()->InvokeLoginError(login_res.res_code_);
 			}
 		}
 		else
 		{
 			QLOG_APP(L"login form has been closed");
-			LoginManager::GetInstance()->SetLoginStatus(code == nim::kNIMResSuccess ? LoginStatus_SUCCESS : LoginStatus_NONE);
+			LoginManager::GetInstance()->SetLoginStatus(login_res.res_code_ == nim::kNIMResSuccess ? LoginStatus_SUCCESS : LoginStatus_NONE);
 			LoginCallback::DoLogout(false);
 		}
 	}
@@ -255,7 +254,7 @@ void LoginCallback::UILogoutCallback()
 	}
 	else
 	{
-		PostQuitMessage(0);
+		nim_cef::CefManager::GetInstance()->PostQuitMessage(0);
 		_DoBeforeAppExit();
 	}
 }
@@ -288,12 +287,12 @@ void LoginCallback::OnReLoginCallback(const nim::LoginRes& login_res)
 	{
 		if (login_res.login_step_ == nim::kNIMLoginStepLogin)
 		{
-			Post2UI(nbase::Bind(&UILoginCallback, login_res.res_code_, true));
+			Post2UI(nbase::Bind(&UILoginCallback, login_res));
 		}
 	}
 	else
 	{
-		Post2UI(nbase::Bind(&UILoginCallback, login_res.res_code_, true));
+		Post2UI(nbase::Bind(&UILoginCallback, login_res));
 	}
 }
 

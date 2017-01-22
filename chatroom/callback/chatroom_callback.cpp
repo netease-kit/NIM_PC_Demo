@@ -83,6 +83,9 @@ void ChatroomCallback::OnEnterCallback(__int64 room_id, const NIMChatRoomEnterSt
 			case nim::kNIMResFrequently:
 				kick_tip_str = L"操作太频繁,稍后重试";
 				break;
+			case nim::kNIMResAccountBlock:
+				kick_tip_str = L"账号被禁用";
+				break;
 			default:
 				QLOG_APP(L"enter faled: {0} , {1}") << room_id << error_code;
 				return;

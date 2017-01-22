@@ -1,6 +1,6 @@
 ﻿/** @file nim_friend.h
   * @brief NIM SDK提供的friend接口
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/08/13
   */
@@ -23,6 +23,9 @@ extern"C"
   * @param[in] cb			好友变更通知回调函数, nim_friend_change_cb_func回调函数定义见nim_friend_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				404:用户不存在
+  *				500:未知错误
   */
 NIM_SDK_DLL_API void nim_friend_reg_changed_cb(const char *json_extension, nim_friend_change_cb_func cb, const void *user_data);
 
@@ -35,6 +38,9 @@ NIM_SDK_DLL_API void nim_friend_reg_changed_cb(const char *json_extension, nim_f
   * @param[in] cb			操作结果回调
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				404:用户不存在
+  *				500:未知错误
   */
 NIM_SDK_DLL_API void nim_friend_request(const char *accid, enum NIMVerifyType verify_type, const char *msg, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data);
 
@@ -45,6 +51,9 @@ NIM_SDK_DLL_API void nim_friend_request(const char *accid, enum NIMVerifyType ve
   * @param[in] cb			操作结果回调
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				404:用户不存在
+  *				500:未知错误
   */
 NIM_SDK_DLL_API void nim_friend_delete(const char *accid, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data);
 
@@ -55,6 +64,9 @@ NIM_SDK_DLL_API void nim_friend_delete(const char *accid, const char *json_exten
   * @param[in] cb				操作结果回调
   * @param[in] user_data		APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				404:用户不存在
+  *				500:未知错误
   */
 NIM_SDK_DLL_API void nim_friend_update(const char *friend_json, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data);
 
@@ -64,6 +76,7 @@ NIM_SDK_DLL_API void nim_friend_update(const char *friend_json, const char *json
   * @param[in] cb				操作结果回调
   * @param[in] user_data		APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_friend_get_list(const char *json_extension, nim_friend_get_list_cb_func cb, const void *user_data);
 

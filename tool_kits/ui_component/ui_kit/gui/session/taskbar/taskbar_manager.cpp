@@ -27,17 +27,21 @@ void TaskbarTabItem::Init(const std::wstring &taskbar_title)
 
 	Create(NULL, taskbar_title.c_str(), WS_OVERLAPPED, 0, false);
 
+	HRESULT ret = S_OK;
 	BOOL truth = TRUE;
-	DwmSetWindowAttribute(m_hWnd, DWMWA_HAS_ICONIC_BITMAP, &truth, sizeof(truth));
-	DwmSetWindowAttribute(m_hWnd, DWMWA_FORCE_ICONIC_REPRESENTATION, &truth, sizeof(truth));
+	ret |= DwmSetWindowAttribute(m_hWnd, DWMWA_HAS_ICONIC_BITMAP, &truth, sizeof(truth));
+	ret |= DwmSetWindowAttribute(m_hWnd, DWMWA_FORCE_ICONIC_REPRESENTATION, &truth, sizeof(truth));
+	if (ret != S_OK)
+	{
+		is_win7_or_greater_ = false;
+		QLOG_ERR(L"DwmSetWindowAttribute error: {0}") << ret;
+	}
 }
 
 void TaskbarTabItem::UnInit()
 {
-	if (!is_win7_or_greater_)
-		return;
-
-	DestroyWindow(m_hWnd);
+	if (NULL != m_hWnd)
+		DestroyWindow(m_hWnd);
 }
 
 void TaskbarTabItem::SetTaskbarManager(TaskbarManager *taskbar_manager)
@@ -75,7 +79,7 @@ void TaskbarTabItem::OnSendPreview()
 		return;
 
 	HBITMAP bitmap = taskbar_manager_->GenerateBindControlBitmapWithForm(bind_control_);
-	DwmSetIconicLivePreviewBitmap(m_hWnd, bitmap, NULL, NULL);
+	DwmSetIconicLivePreviewBitmap(m_hWnd, bitmap, NULL, 0);
 
 	DeleteObject(bitmap);
 }
@@ -97,16 +101,20 @@ LRESULT TaskbarTabItem::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		OnSendPreview();
 		return 0;
 	}
+	else if (uMsg == WM_GETICON)
+	{
+		InvalidateTab();
+	}
 	else if (uMsg == WM_CLOSE)
 	{
-		if (is_win7_or_greater_ && NULL != taskbar_manager_)
+		if (NULL != taskbar_manager_)
 			taskbar_manager_->OnTabItemClose(*this);
 
 		return 0;
 	}
 	else if (uMsg == WM_ACTIVATE)
 	{
-		if (is_win7_or_greater_ && NULL != taskbar_manager_)
+		if (NULL != taskbar_manager_)
 		{
 			if (wParam != WA_INACTIVE)
 			{
@@ -155,18 +163,19 @@ void TaskbarManager::Init(SessionForm *parent_window)
 
 bool TaskbarManager::RegisterTab(TaskbarTabItem &tab_item)
 {
-	if (taskbar_list_)
+	if (taskbar_list_ && NULL == tab_item.GetTaskbarManager())
 	{
 		if (S_OK == taskbar_list_->RegisterTab(tab_item.GetHWND(), parent_window_->GetHWND()))
 		{
-			tab_item.SetTaskbarManager(this);
-			return true;
+			if (S_OK == taskbar_list_->SetTabOrder(tab_item.GetHWND(), NULL))
+			{
+				tab_item.SetTaskbarManager(this);
+				return true;
+			}			
 		}
-		else
-			return false;
 	}
-	else
-		return false;
+
+	return false;
 }
 
 bool TaskbarManager::UnregisterTab(TaskbarTabItem &tab_item)
@@ -230,6 +239,8 @@ HBITMAP TaskbarManager::GenerateBindControlBitmapWithForm(ui::Control *control)
 
 	// 3.把某个会话盒子的位图画到内存dc，覆盖原窗口对应位置的位图
 	UiRect rcPaint = control->GetPos();
+	if (rcPaint.IsRectEmpty())
+		return NULL;
 	rcPaint.Intersect(UiRect(0, 0, window_width, window_height));
 
 	// 这里不设置剪裁区域，就无法正常绘制
@@ -279,6 +290,8 @@ HBITMAP TaskbarManager::GenerateBindControlBitmap(ui::Control *control, const in
 
 	// 2.把某个会话盒子的位图画到内存dc，覆盖原窗口对应位置的位图
 	UiRect rcPaint = control->GetPos();
+	if (rcPaint.IsRectEmpty())
+		return NULL;
 	rcPaint.Intersect(UiRect(0, 0, window_width, window_height));
 
 	// 这里不设置剪裁区域，就无法正常绘制
@@ -337,7 +350,7 @@ HBITMAP TaskbarManager::ResizeBitmap(int dest_width, int dest_height, HDC src_dc
 			scale_height = dest_height;
 			scale_width = (int)(dest_height * (float)src_width / (float)src_height);
 		}
-			
+
 		HBITMAP hOldBitmap = (HBITMAP) ::SelectObject(hCloneDC, hBitmap);
 		BLENDFUNCTION ftn = { AC_SRC_OVER, 0, 255, AC_SRC_ALPHA };
 		::AlphaBlend(hCloneDC, (dest_width - scale_width) / 2, (dest_height - scale_height) / 2, scale_width, scale_height, src_dc, src_x, src_y, src_width, src_height, ftn);

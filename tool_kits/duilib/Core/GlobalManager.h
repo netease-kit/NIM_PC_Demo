@@ -24,6 +24,8 @@ public:
 	static std::wstring GetResourcePath();
 	static void SetCurrentPath(const std::wstring& strPath);
 	static void SetResourcePath(const std::wstring& strPath);
+	static void LoadGlobalResource();
+	static void ReloadSkin(const std::wstring& resourcePath);
 
 	static void MessageLoop();
 	static bool TranslateMessage(const LPMSG pMsg);
@@ -35,9 +37,11 @@ public:
 	static void AddTextColor(const std::wstring& strName, const std::wstring& strValue);
 	static std::wstring GetTextColor(const std::wstring& strName);
 	static DWORD ConvertTextColor(const std::wstring& strName);
+	static void RemoveAllTextColors();
 
 	static void AddClass(const std::wstring& strClassName, const std::wstring& strControlAttrList);
 	static std::wstring GetClassAttributes(const std::wstring& strClassName);
+	static void RemoveAllClasss();
 
 	static void AddPreMessage(Window* windowManagerUI)
 	{
@@ -58,6 +62,7 @@ public:
 	static std::shared_ptr<ImageInfo> AddImageCached(const std::shared_ptr<ImageInfo>& shared_image);
 	static std::shared_ptr<ImageInfo> GetImage(const std::wstring& bitmap);
 	static void RemoveFromImageCache(const std::wstring& imageFullPath);
+	static void RemoveAllImages();
 
 	static HFONT AddFont(const std::wstring& strFontName, int nSize, bool bBold, bool bUnderline, bool bItalic);
 	static TFontInfo* GetTFontInfo(std::size_t index);

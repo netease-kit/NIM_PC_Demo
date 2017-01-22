@@ -42,6 +42,16 @@ public:
 	* @param[in] json_extension json扩展参数（备用,目前不需要）
 	* @param[in] cb		发送消息的回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				408:请求过程超时
+	*				414:参数错误
+	*				802:没有权限(群错误码)
+	*				811:强推列表中帐号数量超限(群错误码)
+	*				812:群禁言(群错误码)
+	*				10200:发送文件消息，NOS上传暂停
+	*				10404:本地资源不存在
+	*				10414:本地错误码，参数错误
+	*				10502:发送消息，上传NOS失败
 	*/
 	static void RegSendMsgCb(const SendMsgAckCallback& cb, const std::string& json_extension = "");
 
@@ -68,6 +78,9 @@ public:
 	* @param[in] json_extension json扩展参数（备用,目前不需要）
 	* @param[in] cb		接收消息的回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				10414:本地错误码，参数错误
+	*				10417:本地错误码，对象已经存在/重复操作
 	*/
 	static void RegReceiveCb(const ReceiveMsgCallback& cb, const std::string& json_extension = "");
 
@@ -76,6 +89,7 @@ public:
 	* @param[in] json_extension json扩展参数（备用,目前不需要）
 	* @param[in] cb		接收消息的回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
 	*/
 	static void RegReceiveMessagesCb(const ReceiveMsgsCallback& cb, const std::string& json_extension = "");
 
@@ -290,6 +304,7 @@ public:
 	* @param[in] json_extension json扩展参数（备用,目前不需要）
 	* @param[in] cb	回调
 	* @return void 无返回值
+	* @note 错误码	200:成功
 	*/
 	static void RegRecallMsgsCallback(const RecallMsgsCallback& cb, const std::string& json_extension = "");
 
@@ -300,6 +315,11 @@ public:
 	* @param[in] json_extension json扩展参数（备用,目前不需要）
 	* @param[in] cb	回调
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				414:参数错误
+	*				508:撤回时间超过配制有效期，默认是2分钟
+	*				10414:本地错误码，参数错误
+	*				10508:本地错误码,超过配置有效期或者所需参数不存在
 	*/
 	static void RecallMsg(const IMMessage &msg, const std::string &notify, const RecallMsgsCallback& cb, const std::string& json_extension = "");
 

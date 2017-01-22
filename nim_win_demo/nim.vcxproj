@@ -5,9 +5,17 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -23,7 +31,20 @@
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -36,21 +57,39 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\bin\</OutDir>
-    <IntDir>$(ProjectDir)..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>nim_demo_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>nim_demo_d</TargetName>
+    <LinkIncremental>true</LinkIncremental>
+    <OutDir>$(ProjectDir)..\bin\</OutDir>
+    <IntDir>$(ProjectDir)..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\bin\</OutDir>
-    <IntDir>$(ProjectDir)..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>nim_demo</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>nim_demo</TargetName>
+    <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(ProjectDir)..\bin\</OutDir>
+    <IntDir>$(ProjectDir)..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -59,7 +98,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\api\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\api\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
@@ -68,7 +107,29 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level4</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\api\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+      <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libeay32_d.lib;ssleay32_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <DelayLoadDLLs>libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
+      <IgnoreSpecificDefaultLibraries>LIBCMTD.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -81,7 +142,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWarningAsError>false</TreatWarningAsError>
       <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\api\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\api\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -90,30 +151,61 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>dbghelp.lib;libyuv.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;libyuv.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <TreatWarningAsError>false</TreatWarningAsError>
+      <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\api\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>dbghelp.lib;libyuv.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <DelayLoadDLLs>libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
+      <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\nim_audio_cpp.h" />
-    <ClInclude Include="..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\nim_tools_http_cpp_wrapper.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\nim_audio_cpp.h" />
+    <ClInclude Include="..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\nim_tools_http_cpp.h" />
     <ClInclude Include="app_dump.h" />
     <ClInclude Include="gui\about\about_form.h" />
+    <ClInclude Include="gui\cef\cef_form.h" />
+    <ClInclude Include="gui\cef\cef_native_form.h" />
     <ClInclude Include="gui\login\login_form.h" />
     <ClInclude Include="gui\main\main_form.h" />
     <ClInclude Include="gui\msglogmanage\msglog_manage_form.h" />
     <ClInclude Include="gui\proxy\proxy_form.h" />
     <ClInclude Include="gui\tray_icon\tray_icon.h" />
     <ClInclude Include="main.h" />
+    <ClInclude Include="module\login\login_db.h" />
     <ClInclude Include="module\thread\db_thread.h" />
     <ClInclude Include="module\thread\misc_thread.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\nim_audio_cpp.cpp" />
-    <ClCompile Include="..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\nim_tools_http_cpp_wrapper.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\nim_audio_cpp.cpp" />
+    <ClCompile Include="..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\nim_tools_http_cpp.cpp" />
     <ClCompile Include="gui\about\about_form.cpp" />
+    <ClCompile Include="gui\cef\cef_form.cpp" />
+    <ClCompile Include="gui\cef\cef_native_form.cpp" />
     <ClCompile Include="gui\login\login_form.cpp" />
     <ClCompile Include="gui\login\login_form_ui.cpp" />
     <ClCompile Include="gui\main\main_form.cpp" />
@@ -122,22 +214,28 @@
     <ClCompile Include="gui\proxy\proxy_form.cpp" />
     <ClCompile Include="gui\tray_icon\tray_icon.cpp" />
     <ClCompile Include="main.cpp" />
+    <ClCompile Include="module\login\login_db.cpp" />
     <ClCompile Include="module\thread\db_thread.cpp" />
     <ClCompile Include="module\thread\misc_thread.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\nim_sdk_cpp_lib.vcxproj">
       <Project>{29c9aa69-348d-48b4-a8c0-79f44e3b81eb}</Project>
     </ProjectReference>
-	<ProjectReference Include="..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\nim_chatroom_sdk_cpp_lib.vcxproj">
+    <ProjectReference Include="..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\nim_chatroom_cpp\nim_chatroom_sdk_cpp_lib.vcxproj">
       <Project>{04CBF96D-5FFA-4C18-A934-15FDE57A650D}</Project>
     </ProjectReference>
     <ProjectReference Include="..\tool_kits\base\base.vcxproj">
       <Project>{8d9a6595-717a-41c8-b468-0011a72be3d1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\tool_kits\cef\cef_module\cef_module.vcxproj">
+      <Project>{5650f9c4-7dd0-4c23-bfc7-022d253acbfa}</Project>
     </ProjectReference>
     <ProjectReference Include="..\tool_kits\db\db.vcxproj">
       <Project>{745e6452-9fe1-435b-833a-767617eee1da}</Project>

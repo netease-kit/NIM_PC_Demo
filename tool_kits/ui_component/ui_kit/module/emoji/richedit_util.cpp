@@ -190,7 +190,7 @@ bool Re_InsertFile(ITextServices *text_service, InsertCustomItemErrorCallback ca
 
 int Re_GetTextLength(ITextServices * text_service)
 {
-	HRESULT lRes = 0;
+	LRESULT lRes = 0;
 	text_service->TxSendMessage(WM_GETTEXTLENGTH, 0, 0, &lRes);
 	return (int)lRes;
 }
@@ -198,7 +198,7 @@ int Re_GetTextLength(ITextServices * text_service)
 //文本剩余数， limit-cur+sel
 int Re_GetTextLimitSurplus(ITextServices * text_service)
 {
-	HRESULT lRes = 0;
+	LRESULT lRes = 0;
 	text_service->TxSendMessage(EM_GETLIMITTEXT, 0, 0, &lRes);
 	long text_limit = (int)lRes;
 	int text_cur = Re_GetTextLength(text_service);
@@ -239,7 +239,7 @@ int Re_GetTextRange(ITextServices * text_service, CHARRANGE *lpchrg, std::wstrin
 	tr.chrg = *lpchrg;
 	tr.lpstrText = temp;
 
-	HRESULT lRes = 0;
+	LRESULT lRes = 0;
 	text_service->TxSendMessage(EM_GETTEXTRANGE, 0, (LPARAM)&tr, &lRes);
 
 	text = temp;
@@ -673,7 +673,7 @@ void Re_GetSel(ITextServices * text_service, LONG& start_char, LONG& end_char)
 int Re_SetSel(ITextServices * text_service, LONG start_char, LONG end_char)
 {
 	CHARRANGE cr = { start_char, end_char };
-	HRESULT lRes = 0;
+	LRESULT lRes = 0;
 	text_service->TxSendMessage(EM_EXSETSEL, 0, (LPARAM)&cr, &lRes);
 	return (int)lRes;
 }
@@ -681,7 +681,7 @@ int Re_SetSel(ITextServices * text_service, LONG start_char, LONG end_char)
 DWORD Re_GetDefaultCharFormat(ITextServices * text_service, CHARFORMAT& cf)
 {
 	cf.cbSize = sizeof(CHARFORMAT);
-	HRESULT lRes = 0;
+	LRESULT lRes = 0;
 	text_service->TxSendMessage(EM_GETCHARFORMAT, 0, (LPARAM)&cf, &lRes);
 	return (DWORD)lRes;
 }
@@ -689,7 +689,7 @@ DWORD Re_GetDefaultCharFormat(ITextServices * text_service, CHARFORMAT& cf)
 BOOL Re_SetDefaultCharFormat(ITextServices * text_service, CHARFORMAT& cf)
 {
 	cf.cbSize = sizeof(CHARFORMAT);
-	HRESULT lRes = 0;
+	LRESULT lRes = 0;
 	text_service->TxSendMessage(EM_SETCHARFORMAT, 0, (LPARAM)&cf, &lRes);
 	return (BOOL)lRes;
 }
@@ -825,7 +825,7 @@ BOOL Re_SetStartIndent(ITextServices * text_service, int size)
 	pf2.cbSize = sizeof(PARAFORMAT2);
 	pf2.dwMask = PFM_STARTINDENT;
 	pf2.dxStartIndent = size;
-	HRESULT lRes = 0;
+	LRESULT lRes = 0;
 	text_service->TxSendMessage(EM_SETPARAFORMAT, 0, (LPARAM)&pf2, &lRes);
 	return (BOOL)lRes;
 }

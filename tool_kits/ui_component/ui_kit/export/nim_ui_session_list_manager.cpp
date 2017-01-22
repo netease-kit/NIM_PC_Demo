@@ -88,7 +88,7 @@ void SessionListManager::OnQuerySessionListCallback(const std::list<nim::Session
 	if (sessions.empty())
 		return;
 
-	for each (auto session in sessions)
+	for each (auto& session in sessions)
 	{
 		session_list_->AddSessionItem(session);
 	}

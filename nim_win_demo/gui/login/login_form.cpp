@@ -1,6 +1,6 @@
 #include "login_form.h"
 #include "gui/main/main_form.h"
-
+#include "module/login/login_db.h"
 
 using namespace ui;
 
@@ -124,6 +124,7 @@ void LoginForm::RegLoginManagerCallback()
 	};
 
 	nim_ui::OnDestroyWindow cb_destroy = [this]{
+		LoginDB::GetInstance()->SaveLoginData();
 		::DestroyWindow(this->GetHWND());
 	};
 

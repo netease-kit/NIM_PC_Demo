@@ -31,6 +31,7 @@ namespace ui
 		UiRect GetProgressBarPadding() const;
 		void SetProgressBarPadding(UiRect rc);
 
+		virtual void ClearImageCache() override;
 	protected:
 		CSize m_szThumb;
 		ControlStateType m_uButtonState;

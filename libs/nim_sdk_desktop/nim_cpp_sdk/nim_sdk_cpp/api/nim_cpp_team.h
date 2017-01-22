@@ -47,18 +47,18 @@ public:
 	static void RegTeamEventCb(const TeamEventCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static bool CreateTeamAsync(const TeamInfo& team_info, const std::list<std::string>& ids, const std::string& invitation_postscript, const TeamEventCallback& cb, const std::string& json_extension = "");
-	* 创建群组，回调函数中返回的结果代码：
-	* 200:普通群创建成功；
-	* 810:如果创建的是高级群，返回810表示邀请成功并带上tinfo；
-	* 414:成员不足；
-	* 801:成员数超限制；
-	* 404:成员中有非法用户；
+	* 创建群组
 	* @param[in] team_info 群组信息
 	* @param[in] ids		邀请对象id
 	* @param[in] invitation_postscript 邀请附言
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		群通知的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				810:如果创建的是高级群，返回810表示邀请成功并带上tinfo
+	*				414:成员不足
+	*				801:成员数超限制
+	*				404:成员中有非法用户
 	*/
 	static bool CreateTeamAsync(const TeamInfo& team_info
 		, const std::list<std::string>& ids
@@ -67,19 +67,19 @@ public:
 		, const std::string& json_extension = "");
 
 	/** @fn static bool InviteAsync(const std::string& tid, const std::list<std::string>& ids, const std::string& invitation_postscript, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 邀请，回调函数中返回的结果代码：
-	* 200:普通群拉人成功；
-	* 810:如果是高级群，返回810表示邀请成功并带上timetag；
-	* 404:非法用户；
-	* 801:群人数超限；
-	* 802:没有权限；
-	* 803:群不存在；
+	* 邀请
 	* @param[in] tid		群组id
 	* @param[in] ids		邀请对象id
 	* @param[in] invitation_postscript 邀请附言
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		邀请的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				810:如果是高级群，返回810表示邀请成功并带上timetag
+	*				404:非法用户
+	*				801:群人数超限
+	*				802:没有权限
+	*				803:群不存在
 	*/
 	static bool InviteAsync(const std::string& tid
 		, const std::list<std::string>& ids
@@ -88,52 +88,55 @@ public:
 		, const std::string& json_extension = "");
 
 	/** @fn static bool KickAsync(const std::string& tid, const std::list<std::string>& ids, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 踢人，回调函数中返回的结果代码：
-	* 404:非法用户；
-	* 801:群人数超限；
-	* 802:没有权限；
-	* 803:群不存在；
+	* 踢人
 	* @param[in] tid		群组id
 	* @param[in] ids		被踢对象id
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		踢人的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				403:被踢的是管理员或群主
+	*				404:非法用户
+	*				801:群人数超限
+	*				802:没有权限
+	*				803:群不存在
 	*/
 	static bool KickAsync(const std::string& tid, const std::list<std::string>& ids, const TeamEventCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static bool LeaveAsync(const std::string& tid, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 离开群，回调函数中返回的结果代码：
-	* 803:群不存在；
-	* 804:用户不在群里；
+	* 离开群
 	* @param[in] tid		群组id
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		离开群的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				803:群不存在
+	*				804:用户不在群里
 	*/
 	static bool LeaveAsync(const std::string& tid, const TeamEventCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static bool DismissAsync(const std::string& tid, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 解散群，回调函数中返回的结果代码：
-	* 200:成功；
-	* 802:没有权限；
-	* 803:群不存在；
+	* 解散群
 	* @param[in] tid		群组id
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		解散群的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
 	*/
 	static bool DismissAsync(const std::string& tid, const TeamEventCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static bool UpdateTeamInfoAsync(const std::string& tid, const TeamInfo& team_info, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 更新群信息，回调函数中返回的结果代码：
-	* 200:成功；
-	* 802:没有权限；
-	* 803:群不存在；
+	* 更新群信息
 	* @param[in] tid		群组id
 	* @param[in] team_info	群组信息
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		更新群信息的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
 	*/
 	static bool UpdateTeamInfoAsync(const std::string& tid
 		, const TeamInfo& team_info
@@ -141,19 +144,19 @@ public:
 		, const std::string& json_extension = "");
 
 	/** @fn static bool ApplyJoinAsync(const std::string& tid, const std::string& reason, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 申请入群，回调函数中返回的结果代码：
-	* 200:成功（直接入群）；
-	* 802:群验证方式为拒绝所有人申请；
-	* 808:申请成功，等待验证；
-	* 809:已经在群里；
-	* 801:人数限制；
-	* 803:群不存在；
-	* 805:群类型不对；
+	* 申请入群
 	* @param[in] tid		群组id
 	* @param[in] reason		附言
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		申请入群的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:群验证方式为拒绝所有人申请
+	*				808:申请成功，等待验证
+	*				809:已经在群里
+	*				801:人数限制
+	*				803:群不存在
+	*				805:群类型不对
 	*/
 	static bool ApplyJoinAsync(const std::string& tid
 		, const std::string& reason
@@ -161,19 +164,19 @@ public:
 		, const std::string& json_extension = "");
 
 	/** @fn static bool PassJoinApplyAsync(const std::string& tid, const std::string& applicant_id, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 同意入群申请，回调函数中返回的结果代码：
-	* 200:成功；
-	* 509:操作已失效；
-	* 809:已经在群里；
-	* 801:人数限制；
-	* 802:没有权限；
-	* 803:群不存在；
-	* 805:群类型不对；
+	* 同意入群申请
 	* @param[in] tid			群组id
 	* @param[in] applicant_id	申请者id
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb				同意入群申请的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				509:操作已失效
+	*				809:已经在群里
+	*				801:人数限制
+	*				802:没有权限
+	*				803:群不存在
+	*				805:群类型不对
 	*/
 	static bool PassJoinApplyAsync(const std::string& tid
 		, const std::string& applicant_id
@@ -181,18 +184,18 @@ public:
 		, const std::string& json_extension = "");
 
 	/** @fn static bool RejectJoinApplyAsync(const std::string& tid, const std::string& applicant_id, const std::string& reason, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 拒绝入群申请，回调函数中返回的结果代码：
-	* 200:成功。如果用户处于申请状态则会通知申请用户被拒绝；
-	* 509:操作已失效；
-	* 802:没有权限；
-	* 803:群不存在；
-	* 805:群类型不对；
+	* 拒绝入群申请
 	* @param[in] tid			群组id
 	* @param[in] applicant_id	申请者id
 	* @param[in] reason			附言
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb				拒绝入群申请的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功，如果用户处于申请状态则会通知申请用户被拒绝
+	*				509:操作已失效
+	*				802:没有权限
+	*				803:群不存在
+	*				805:群类型不对
 	*/
 	static bool RejectJoinApplyAsync(const std::string& tid
 		, const std::string& applicant_id
@@ -201,16 +204,16 @@ public:
 		, const std::string& json_extension = "");
 
 	/** @fn static bool AddManagersAsync(const std::string& tid, const std::list<std::string>& ids, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 添加管理员，回调函数中返回的结果代码：
-	* 200:成功；
-	* 802:没有权限；
-	* 803:群不存在；
-	* 805:群类型不对；
+	* 添加管理员
 	* @param[in] tid	群组id
 	* @param[in] ids	管理员id
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		添加管理员的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
+	*				805:群类型不对
 	*/
 	static bool AddManagersAsync(const std::string& tid
 		, const std::list<std::string>& ids
@@ -218,16 +221,16 @@ public:
 		, const std::string& json_extension = "");
 
 	/** @fn static bool RemoveManagersAsync(const std::string& tid, const std::list<std::string>& ids, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 删除管理员，回调函数中返回的结果代码：
-	* 200:成功；
-	* 802:没有权限；
-	* 803:群不存在；
-	* 805:群类型不对；
+	* 删除管理员
 	* @param[in] tid	群组id
 	* @param[in] ids	管理员id
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		删除管理员的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
+	*				805:群类型不对
 	*/
 	static bool RemoveManagersAsync(const std::string& tid
 		, const std::list<std::string>& ids
@@ -235,18 +238,18 @@ public:
 		, const std::string& json_extension = "");
 
 	/** @fn static bool TransferTeamAsync(const std::string& tid, const std::string& new_owner_id, bool is_leave, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 移交群主，回调函数中返回的结果代码：
-	* 200:成功；
-	* 802:没有权限；
-	* 803:群不存在；
-	* 805:群类型不对；
-	* 806:群数量上限；
+	* 移交群主
 	* @param[in] tid			群组id
 	* @param[in] new_owner_id	移交对象id
 	* @param[in] is_leave		是否同时退出群
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		移交群主的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
+	*				805:群类型不对
+	*				806:群数量上限
 	*/
 	static bool TransferTeamAsync(const std::string& tid
 		, const std::string& new_owner_id
@@ -255,42 +258,43 @@ public:
 		, const std::string& json_extension = "");
 
 	/** @fn static bool UpdateMyPropertyAsync(const TeamMemberProperty& prop, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 更新自己的群属性，回调函数中返回的结果代码：
-	* 200:成功；
-	* 803:群不存在；
-	* 804:不在群里；
-	* 805:群类型不对；
+	* 更新自己的群属性
 	* @param[in] prop	群成员属性
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		更新自己的群属性的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				803:群不存在
+	*				804:不在群里
+	*				805:群类型不对
 	*/
 	static bool UpdateMyPropertyAsync(const TeamMemberProperty& prop, const TeamEventCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static bool UpdateOtherNickAsync(const TeamMemberProperty& prop, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 修改别人的群昵称，回调函数中返回的结果代码：
-	* 200:成功；
-	* 802:没有权限；
-	* 803:群不存在；
-	* 804:不在群里；
-	* 805:群类型不对；
+	* 修改别人的群昵称
 	* @param[in] prop	群成员属性
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		修改别人的群昵称的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
+	*				804:不在群里
+	*				805:群类型不对
 	*/
 	static bool UpdateOtherNickAsync(const TeamMemberProperty& prop, const TeamEventCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static bool AcceptInvitationAsync(const std::string& tid, const std::string& invitor_id, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 接受邀请，回调函数中返回的结果代码：
-	* 802:没有权限；
-	* 803:群不存在；
-	* 805:群类型不对；
+	* 接受邀请
 	* @param[in] tid		群组id
 	* @param[in] invitor_id	邀请者id
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		接受邀请的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
+	*				805:群类型不对
 	*/
 	static bool AcceptInvitationAsync(const std::string& tid
 		, const std::string& invitor_id
@@ -298,16 +302,17 @@ public:
 		, const std::string& json_extension = "");
 
 	/** @fn static bool RejectInvitationAsync(const std::string& tid, const std::string& invitor_id, const std::string& reason, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 拒绝邀请，回调函数中返回的结果代码：
-	* 802:没有权限；
-	* 803:群不存在；
-	* 805:群类型不对；
+	* 拒绝邀请
 	* @param[in] tid		群组id
 	* @param[in] invitor_id	邀请者id
 	* @param[in] reason	附言
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		拒绝邀请的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
+	*				805:群类型不对
 	*/
 	static bool RejectInvitationAsync(const std::string& tid
 		, const std::string& invitor_id
@@ -337,6 +342,9 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		查询群成员的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码 200:成功
+	*				406:没有变化
+	*				802:没有权限
 	*/
 	static bool QueryTeamMembersAsync(const std::string& tid, const QueryTeamMembersCallback& cb, const std::string& json_extension = "");
 
@@ -378,11 +386,13 @@ public:
 	static TeamInfo QueryTeamInfoBlock(const std::string& tid);
 
 	/** @fn static bool QueryTeamInfoOnlineAsync(const std::string& tid, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 获取群信息
+	* 获取群信息（从服务器获取）
 	* @param[in] tid		群组id
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		获取群信息的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				803:群不存在
 	*/
 	static bool QueryTeamInfoOnlineAsync(const std::string& tid, const TeamEventCallback& cb, const std::string& json_extension = "");
 
@@ -401,17 +411,17 @@ public:
 	static void UnregTeamCb();
 
 	/** @fn static bool MuteMemberAsync(const std::string& tid, const std::string& member_id, bool set_mute, const TeamEventCallback& cb, const std::string& json_extension = "")
-	* 禁言/解除禁言，回调函数中返回的结果代码：
-	* 404:对象不存在；
-	* 414:参数错误；
-	* 802:没有权限；
-	* 803:群不存在；
+	* 禁言/解除禁言
 	* @param[in] tid		群组id
 	* @param[in] member_id	操作对象id
 	* @param[in] set_mute	禁言/解除禁言
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		踢人的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				404:参数错误
+	*				803:群不存在
+	*				802:没有权限	
 	*/
 	static bool MuteMemberAsync(const std::string& tid, const std::string& member_id, bool set_mute, const TeamEventCallback& cb, const std::string& json_extension = "");
 
@@ -421,6 +431,9 @@ public:
 	* @param[in] cb		回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				803:群不存在
+	*				802:没有权限
 	*/
 	static bool QueryMuteListOnlineAsync(const std::string& tid, const QueryTeamMembersOnlineCallback& cb, const std::string& json_extension = "");
 

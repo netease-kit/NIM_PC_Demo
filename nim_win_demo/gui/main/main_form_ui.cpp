@@ -6,6 +6,9 @@
 #include "util/user.h"
 #include "callback/team/team_callback.h"
 #include "gui/chatroom_frontpage.h"
+#include "cef/cef_module/cef_manager.h"
+#include "gui/cef/cef_form.h"
+#include "gui/cef/cef_native_form.h"
 
 using namespace ui;
 
@@ -185,7 +188,32 @@ bool MainForm::OnClicked( ui::EventArgs* msg )
 		nim_ui::WindowsManager::GetInstance()->ShowProfileForm(nim_ui::LoginManager::GetInstance()->GetAccount());
 	else if (name == L"chatroom")
 		nim_ui::WindowsManager::GetInstance()->SingletonShow<nim_chatroom::ChatroomFrontpage>(nim_chatroom::ChatroomFrontpage::kClassName);
-
+	else if (name == L"cef_test")
+	{
+		// Cefä¯ÀÀÆ÷Ä£¿é
+		if (nim_cef::CefManager::GetInstance()->IsEnableOffsetRender())
+		{
+			// ¿ªÆôÀëÆÁäÖÈ¾
+			CefForm *form = new CefForm;
+			form->Create(NULL, CefForm::kClassName, WS_OVERLAPPEDWINDOW, 0, true);
+			form->CenterWindow();
+			form->ShowWindow();
+		}
+		else
+		{
+			// ÎÞÀëÆÁäÖÈ¾£¬ÓÐ´°¿ÚÄ£Ê½
+			CefNativeForm *form = new CefNativeForm;
+			form->Create(NULL, CefNativeForm::kClassName, WS_OVERLAPPEDWINDOW, 0, false);
+			form->CenterWindow();
+			form->ShowWindow();
+		}
+	}
+	else if (name == L"change_skin")
+	{
+		// »»·ôÊ¾Àý
+		std::wstring theme_dir = QPath::GetAppPath();
+		ui::GlobalManager::ReloadSkin(theme_dir + L"themes\\skin1");
+	}
 	return true;
 }
 

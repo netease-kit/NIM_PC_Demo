@@ -148,6 +148,9 @@
     <Filter Include="gui\session\taskbar">
       <UniqueIdentifier>{5f0ae736-6c32-4650-a304-268853fed22d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gui\session\taskbar">
+      <UniqueIdentifier>{5f0ae736-6c32-4650-a304-268853fed22d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -248,9 +251,6 @@
     </ClInclude>
     <ClInclude Include="module\service\notify_center.h">
       <Filter>module\service</Filter>
-    </ClInclude>
-    <ClInclude Include="module\login\login_db.h">
-      <Filter>module\login</Filter>
     </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
@@ -498,6 +498,9 @@
     <ClInclude Include="gui\session\taskbar\dwm_util.h">
       <Filter>gui\session\taskbar</Filter>
     </ClInclude>
+    <ClInclude Include="module\session\force_push_manager.h">
+      <Filter>module\session</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -598,9 +601,6 @@
     </ClCompile>
     <ClCompile Include="module\service\notify_center.cpp">
       <Filter>module\service</Filter>
-    </ClCompile>
-    <ClCompile Include="module\login\login_db.cpp">
-      <Filter>module\login</Filter>
     </ClCompile>
     <ClCompile Include="callback\audio\audio_callback.cpp">
       <Filter>callback\audio</Filter>
@@ -871,6 +871,9 @@
     </ClCompile>
     <ClCompile Include="gui\session\session_box_merge.cpp">
       <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="module\session\force_push_manager.cpp">
+      <Filter>module\session</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

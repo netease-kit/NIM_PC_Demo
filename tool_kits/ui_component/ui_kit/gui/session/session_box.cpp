@@ -6,6 +6,7 @@
 #include "gui/session/taskbar/taskbar_manager.h"
 #include "module/session/session_util.h"
 #include "module/session/session_manager.h"
+#include "module/session/force_push_manager.h"
 #include "module/audio/audio_manager.h"
 #include "callback/session/session_callback.h"
 #include "export/nim_ui_window_manager.h"
@@ -141,6 +142,7 @@ void SessionBox::InitSessionBox()
 	if (session_type_ == nim::kNIMSessionTypeTeam)
 	{
 		FindSubControl(L"btn_snapchat")->SetVisible(false);
+		InvokeGetTeamMember(); 
 		InvokeGetTeamInfo();
 
 		OnSelectAtItem cb = nbase::Bind(&SessionBox::OnSelectAtItemCallback, this, std::placeholders::_1);
@@ -247,22 +249,7 @@ void SessionBox::AddNewMsg(const nim::IMMessage &msg, bool create)
 	}
 
 	SendReceiptIfNeeded(true);
-
-	// 如果当前msg包含atme消息，就显示提示条
-	if (IsAtMeMsg(msg))
-	{
-		std::string sender_name = GetShowName(msg.sender_accid_);
-		if (!sender_name.empty())
-		{
-			Json::Value root;
-			Json::Value value;
-			value["sender"] = sender_name;
-			value["uuid"] = msg.client_msg_id_;
-			value["msgbody"] = msg.content_;
-			root[0] = value;
-			atme_view_->AddMessage(root.toStyledString());
-		}
-	}
+	AddAtMessage(msg);
 }
 
 MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool show_time)
@@ -724,9 +711,6 @@ void SessionBox::SendText( const std::string &text )
 	//判断是否包含@某人的消息
 	if (session_type_ == nim::kNIMSessionTypeTeam && !uid_at_someone_.empty())
 	{
-		setting.is_force_push_ = nim::BS_TRUE;
-		setting.force_push_content_ = text;
-
 		//检查文本消息中是否存在“@xxx ”的文本
 		for (auto it = uid_at_someone_.begin(); it != uid_at_someone_.end(); ++it)
 		{
@@ -737,6 +721,12 @@ void SessionBox::SendText( const std::string &text )
 
 			if (text.find(at_str) != std::string::npos)
 				setting.force_push_ids_list_.push_back(it->second);
+		}
+
+		if (!setting.force_push_ids_list_.empty())
+		{
+			setting.is_force_push_ = nim::BS_TRUE;
+			setting.force_push_content_ = text;
 		}
 
 		uid_at_someone_.clear();
@@ -839,7 +829,7 @@ void SessionBox::SendSnapChat(const std::wstring &src)
 			new_msg.content_ = nbase::UTF16ToUTF8(L"阅后即焚");
 			new_msg.attach_ = writer.write(json);
 			AddSendingMsg(new_msg);
-	
+
 			nim::Talk::SendMsg(new_msg.ToJsonString(true));
 		}
 	});
@@ -880,6 +870,7 @@ void SessionBox::SendFile(const std::wstring &src)
 	MsgBubbleFile* bubble = dynamic_cast<MsgBubbleFile*>(msg_list_->FindSubControl(nbase::UTF8ToUTF16(msg.client_msg_id_)));
 	if (!msg.local_res_path_.empty() && nbase::FilePathIsExist(nbase::UTF8ToUTF16(msg.local_res_path_), false) && bubble)
 	{
+		cb_pointer = new nim::Talk::FileUpPrgCallback(bubble->GetFileUpPrgCallback());
 	}
 	std::string json_msg = nim::Talk::CreateFileMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, file, msg.local_res_path_, nim::MessageSetting(), msg.timetag_);
 	nim::Talk::SendMsg(json_msg, msg.client_msg_id_, cb_pointer);
@@ -1037,7 +1028,7 @@ bool SessionBox::ResetLastMsgNeedMarkReceipt()
 		if (item)
 		{
 			nim::IMMessage message = item->GetMsg();
-			if (message.sender_accid_ == my_id || item->IsMyMsg())
+			if (message.sender_accid_ == my_id && item->IsMyMsg())
 			{
 				if (nim::MsgLog::QuerySentMessageBeReaded(message))
 				{
@@ -1087,7 +1078,7 @@ int SessionBox::RemoveMsgItem(const std::string& client_msg_id)
 				if (item)
 				{
 					nim::IMMessage msg = item->GetMsg();
-					if (msg.sender_accid_ == my_id)
+					if (msg.sender_accid_ == my_id && item->IsMyMsg())
 					{
 						item->SetMsgStatus(nim::kNIMMsgLogStatusReceipt);
 						last_receipt_msg_id_ = msg.client_msg_id_;

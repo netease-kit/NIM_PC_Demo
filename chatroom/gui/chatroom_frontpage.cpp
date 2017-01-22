@@ -182,10 +182,7 @@ void ChatroomFrontpage::InvokeGetRoomList()
 	if (!new_api_addr.empty())
 		api_addr = new_api_addr;
 
-	std::string app_key = "45c6af3c98409b18a84451215d0bdd6e";
-	std::string new_app_key = GetConfigValue(g_AppKey);
-	if (!new_app_key.empty())
-		app_key = new_app_key;
+	std::string app_key = GetConfigValueAppKey();
 	nim_http::HttpRequest request(api_addr, "", 0, http_cb);
 	request.AddHeader("Content-Type", "application/json; charset=utf-8");
 	request.AddHeader("appKey", app_key);

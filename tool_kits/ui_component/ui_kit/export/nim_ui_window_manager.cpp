@@ -32,7 +32,7 @@ void WindowsManager::ShowProfileForm(UTF8String uid)
 
 void WindowsManager::ShowLinkForm()
 {
-	nim_comp::ShowLinkForm();
+	nim_comp::ShowLinkForm((nim::NIMResCode)nim_comp::LoginManager::GetInstance()->GetErrorCode(), true);
 }
 
 void WindowsManager::ShowVideoSettingForm()

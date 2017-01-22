@@ -1,6 +1,6 @@
 ﻿/** @file nim_chatroom_def.h
   * @brief NIM 聊天室 SDK 定义
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg, Harrison
   * @date 2015/12/24
   */
@@ -337,7 +337,7 @@ static const char *kNIMChatRoomMemberInfoKeyTempMute	= "temp_mute";		/**<int 临
 static const char *kNIMChatRoomMemberInfoKeyTempMuteRestDuration= "temp_mute_rest_duration"; /**<long 临时禁言的解除时长,单位秒*/
 /** @}*/ //聊天室个人Info Json Keys
 
-/** @enum NIMChatRoomLoginStatus 登录状态 */
+/** @enum NIMChatRoomLoginState 登录状态 */
 enum NIMChatRoomLoginState
 {
 	kNIMChatRoomLoginStateLogin = 1,		/**< 登录状态*/
@@ -408,7 +408,10 @@ static const char *kChatRoomNotificationDataKeyOpt	=	"operator";		/**<string 操
 static const char *kChatRoomNotificationDataKeyOptNick		=	"opeNick";		/**<string 操作者的账号nick */
 static const char *kChatRoomNotificationDataKeyTargetNick	=	"tarNick";	/**<string json array 被操作者的nick列表 */
 static const char *kChatRoomNotificationDataKeyTarget=	"target";		/**<string json array 被操作者的accid */
-static const char *kChatRoomNotificationDataKeyTempMuteDuration="muteDuration";	/**<long 当通知为临时禁言相关时有该值，禁言时kNIMChatRoomNotificationIdMemberTempMute代表本次禁言的时长(秒)，解禁时kNIMChatRoomNotificationIdMemberTempUnMute代表本次禁言剩余时长(秒) */
+static const char *kChatRoomNotificationDataKeyTempMuteDuration="muteDuration";	/**<long 当通知为临时禁言相关时有该值，禁言时kNIMChatRoomNotificationIdMemberTempMute代表本次禁言的时长(秒)，解禁时kNIMChatRoomNotificationIdMemberTempUnMute代表本次禁言剩余时长(秒); 其他通知事件不带该数据*/
+static const char *kChatRoomNotificationDataKeyMuteFlag = "muted";	/**<int 当通知为kNIMChatRoomNotificationIdMemberIn才有，代表是否禁言状态，1:是 缺省或0:不是 */
+static const char *kChatRoomNotificationDataKeyTempMutedFlag = "tempMuted"; /**<int 当通知为kNIMChatRoomNotificationIdMemberIn才有，代表是否临时禁言状态，1:是 缺省或0:不是 */
+static const char *kChatRoomNotificationDataKeyMemberInTempMutedDuration = "muteTtl"; /**<long 当通知为kNIMChatRoomNotificationIdMemberIn，代表临时禁言时长(秒)， 其他通知事件不带该数据 */
 /** @}*/ //聊天室通知Keys
 
 /** @name 聊天室麦序队列元素Keys

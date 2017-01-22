@@ -54,9 +54,36 @@ void LinkForm::InitWindow()
 
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&LinkForm::OnClicked, this, std::placeholders::_1));
 
-	SwitchTo(LINK_TIP);
+	//默认SDK一直在重连 20170104 litianyi
+	SwitchTo(LINK_ING);
 
 	unregister_cb.Add(NotifyCenter::GetInstance()->RegNotify(NT_LINK, nbase::Bind(&LinkForm::OnRelink, this, std::placeholders::_1)));
+}
+
+void LinkForm::SetLoginRetryingFlag(nim::NIMResCode res_code, bool retrying)
+{
+	if (!nim_comp::LoginManager::GetInstance()->IsLinkActive())
+	{
+		if (retrying && res_code != nim::kNIMLocalResNetworkError)
+			SwitchTo(LINK_ING);
+		else
+		{
+			SwitchTo(LINK_TIP);
+			Label *tip_label = (Label*)FindControl(L"link_tip_label");
+			if (tip_label)
+			{
+				if (res_code == nim::kNIMLocalResNetworkError)
+				{
+					tip_label->SetText(L"网络连接断开，请检查本地网络");
+				}
+				else
+				{
+					std::wstring tip_string = nbase::StringPrintf(L"网络连接断开(%d)", res_code);
+					tip_label->SetText(tip_string);
+				}
+			}
+		}
+	}
 }
 
 bool LinkForm::OnClicked( ui::EventArgs* msg )
@@ -101,7 +128,8 @@ void LinkForm::OnRelink( const Json::Value &json )
 	}
 	else
 	{
-		SwitchTo(LINK_TIP);
+		//默认SDK一直在重连 20170104 litianyi
+		SwitchTo(LINK_ING);
 	}
 }
 
@@ -110,12 +138,13 @@ void LinkForm::OnTimeup()
 	this->Close();
 }
 
-void ShowLinkForm()
+void ShowLinkForm(nim::NIMResCode res_code, bool retrying)
 {
 	LinkForm* link_form = (LinkForm*)( WindowsManager::GetInstance()->GetWindow(LinkForm::kClassName, LinkForm::kClassName) );
 	if(link_form)
 	{
 		link_form->ActiveWindow();
+		link_form->SetLoginRetryingFlag(res_code, retrying);
 	}
 	else
 	{
@@ -124,6 +153,7 @@ void ShowLinkForm()
 		if(hwnd == NULL)
 			return;
 		link_form->ShowWindow();
+		link_form->SetLoginRetryingFlag(res_code, retrying);
 	}
 
 	POINT pt = GetPopupWindowPos(link_form);

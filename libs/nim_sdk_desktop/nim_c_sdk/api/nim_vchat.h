@@ -1,6 +1,6 @@
 ﻿/** @file nim_vchat.h
   * @brief NIM VChat提供的音视频相关接口
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/4/30
   */
@@ -29,6 +29,24 @@ NIM_SDK_DLL_API	bool nim_vchat_init(const char *json_extension);
   */ 
 NIM_SDK_DLL_API	void nim_vchat_cleanup(const char *json_extension);
 
+/** @fn void nim_vchat_net_detect(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
+  * 音视频网络探测接口，需要在sdk初始化时带上app key
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb 操作结果的回调函数
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return uint64_t 探测任务id
+  * @note 错误码	200:成功
+  *				0:流程错误
+  *				400:非法请求格式
+  *				417:请求数据不对
+  *				606:ip为内网ip
+  *				607:频率超限
+  *				20001:探测类型错误
+  *				20002:ip错误
+  *				20003:sock错误
+  */
+NIM_SDK_DLL_API uint64_t nim_vchat_net_detect(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+
 //通话相关
 
 /** @fn void nim_vchat_set_cb_func(nim_vchat_cb_func cb, const void *user_data)
@@ -36,6 +54,9 @@ NIM_SDK_DLL_API	void nim_vchat_cleanup(const char *json_extension);
   * @param[in] cb 结果回调见nim_vchat_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				9103:已经在其他端接听/拒绝过这通电话
+  *				11001:通话不可送达，对方离线状态
   */
 NIM_SDK_DLL_API void nim_vchat_set_cb_func(nim_vchat_cb_func cb, const void *user_data);
 
@@ -59,7 +80,7 @@ NIM_SDK_DLL_API bool nim_vchat_start(NIMVideoChatMode mode, const char *apns_tex
 NIM_SDK_DLL_API bool nim_vchat_set_talking_mode(NIMVideoChatMode mode, const char *json_extension);
 //回应邀请
 
-/** @fn bool nim_vchat_callee_ack(__int64 channel_id, bool accept, const char *json_extension, const void *user_data)
+/** @fn bool nim_vchat_callee_ack(int64_t channel_id, bool accept, const char *json_extension, const void *user_data)
   * NIM VCHAT 回应音视频通话邀请，异步回调nim_vchat_cb_func 见nim_vchat_def.h
   * @param[in] channel_id 音视频通话通道id
   * @param[in] accept true 接受，false 拒绝
@@ -67,9 +88,9 @@ NIM_SDK_DLL_API bool nim_vchat_set_talking_mode(NIMVideoChatMode mode, const cha
   * @param[in] user_data 无效的扩展字段
   * @return bool true 调用成功，false 调用失败（可能channel_id无匹配，如要接起另一路通话前先结束当前通话）
   */
-NIM_SDK_DLL_API bool nim_vchat_callee_ack(__int64 channel_id, bool accept, const char *json_extension, const void *user_data);
+NIM_SDK_DLL_API bool nim_vchat_callee_ack(int64_t channel_id, bool accept, const char *json_extension, const void *user_data);
 
-/** @fn bool nim_vchat_control(__int64 channel_id, NIMVChatControlType type, const char *json_extension, const void *user_data)
+/** @fn bool nim_vchat_control(int64_t channel_id, NIMVChatControlType type, const char *json_extension, const void *user_data)
   * NIM VCHAT 音视频通话控制，点对点通话有效，异步回调nim_vchat_cb_func 见nim_vchat_def.h
   * @param[in] channel_id 音视频通话通道id
   * @param[in] type NIMVChatControlType 见nim_vchat_def.h
@@ -77,7 +98,7 @@ NIM_SDK_DLL_API bool nim_vchat_callee_ack(__int64 channel_id, bool accept, const
   * @param[in] user_data 无效的扩展字段
   * @return bool true 调用成功，false 调用失败
   */
-NIM_SDK_DLL_API bool nim_vchat_control(__int64 channel_id, NIMVChatControlType type, const char *json_extension, const void *user_data);
+NIM_SDK_DLL_API bool nim_vchat_control(int64_t channel_id, NIMVChatControlType type, const char *json_extension, const void *user_data);
 
 /** @fn void nim_vchat_set_viewer_mode(bool viewer)
   * NIM VCHAT 设置观众模式（多人模式下），全局有效（重新发起时也生效），观众模式能减少运行开销
@@ -127,6 +148,8 @@ NIM_SDK_DLL_API bool nim_vchat_rotate_remote_video_enabled();
   * @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	0:成功
+  *				11403:无效的操作
   */
 NIM_SDK_DLL_API void nim_vchat_set_member_in_blacklist(const char *uid, bool add, bool audio, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
@@ -137,6 +160,10 @@ NIM_SDK_DLL_API void nim_vchat_set_member_in_blacklist(const char *uid, bool add
   * @param[in] cb 结果回调见nim_vchat_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:MP4文件创建
+  *				400:MP4文件已经存在
+  *				403:MP4文件创建失败
+  *				404:通话不存在
   */
 NIM_SDK_DLL_API void nim_vchat_start_record(const char *path, const char *json_extension, nim_vchat_mp4_record_opt_cb_func cb, const void *user_data);
 
@@ -146,6 +173,8 @@ NIM_SDK_DLL_API void nim_vchat_start_record(const char *path, const char *json_e
   * @param[in] cb 结果回调见nim_vchat_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	0:MP4结束
+  *				404:通话不存在
   */
 NIM_SDK_DLL_API void nim_vchat_stop_record(const char *json_extension, nim_vchat_mp4_record_opt_cb_func cb, const void *user_data);
 
@@ -164,6 +193,8 @@ NIM_SDK_DLL_API void nim_vchat_end(const char *json_extension);
   * @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				417:提示已经创建好频道
   */
 NIM_SDK_DLL_API void nim_vchat_create_room(const char *room_name, const char *custom_info, const char *json_extension, nim_vchat_opt2_cb_func cb, const void *user_data);
 
@@ -175,6 +206,7 @@ NIM_SDK_DLL_API void nim_vchat_create_room(const char *room_name, const char *cu
   * @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension扩展字段中包含 kNIMVChatCustomInfo,kNIMVChatSessionId
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return bool true 调用成功，false 调用失败可能有正在进行的通话
+  * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API bool nim_vchat_join_room(NIMVideoChatMode mode, const char *room_name, const char *json_extension, nim_vchat_opt2_cb_func cb, const void *user_data);
 
@@ -185,6 +217,8 @@ NIM_SDK_DLL_API bool nim_vchat_join_room(NIMVideoChatMode mode, const char *room
   * @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	0:成功
+  *				11403:无效的操作
   */
 NIM_SDK_DLL_API void nim_vchat_set_video_quality(int video_quality, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
@@ -195,6 +229,8 @@ NIM_SDK_DLL_API void nim_vchat_set_video_quality(int video_quality, const char *
   * @param[in] cb 结果回调见nim_vchat_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	0:成功
+  *				11403:无效的操作
   */
 NIM_SDK_DLL_API void nim_vchat_set_frame_rate(NIMVChatVideoFrameRate frame_rate, const char* json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
@@ -205,6 +241,8 @@ NIM_SDK_DLL_API void nim_vchat_set_frame_rate(NIMVChatVideoFrameRate frame_rate,
   * @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	0:成功
+  *				11403:无效的操作
   */
 NIM_SDK_DLL_API void nim_vchat_set_video_bitrate(int video_bitrate, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
@@ -216,6 +254,8 @@ NIM_SDK_DLL_API void nim_vchat_set_video_bitrate(int video_bitrate, const char *
   * @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	0:成功
+  *				11403:无效的操作
   */
 NIM_SDK_DLL_API void nim_vchat_set_custom_data(bool custom_audio, bool custom_video, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
@@ -226,6 +266,8 @@ NIM_SDK_DLL_API void nim_vchat_set_custom_data(bool custom_audio, bool custom_vi
   * @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	0:成功
+  *				11403:无效的操作
   */
 NIM_SDK_DLL_API void nim_vchat_update_rtmp_url(const char *rtmp_url, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
@@ -236,6 +278,8 @@ NIM_SDK_DLL_API void nim_vchat_update_rtmp_url(const char *rtmp_url, const char 
   * @param[in] cb 结果回调见nim_vchat_def.h， code返回参见NIMVChatSetStreamingModeCode
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	0:成功
+  *				11403:无效的操作
   */
 NIM_SDK_DLL_API void nim_vchat_set_streaming_mode(bool streaming, const char* json_info, nim_vchat_opt_cb_func cb, const void *user_data);
 

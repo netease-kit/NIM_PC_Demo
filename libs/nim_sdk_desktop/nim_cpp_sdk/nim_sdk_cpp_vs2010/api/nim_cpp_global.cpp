@@ -8,6 +8,7 @@
 #include "nim_cpp_global.h"
 #include "nim_sdk_util.h"
 #include "nim_client_def.h"
+#include "nim_string_util.h"
 
 namespace nim
 {
@@ -19,6 +20,7 @@ typedef void(*nim_global_reg_sdk_log_cb)(const char *json_extension, nim_sdk_log
 #else
 #include "nim_global.h"
 #endif
+
 
 void Global::FreeStrBuf(char *str)
 {

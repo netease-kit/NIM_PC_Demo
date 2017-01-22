@@ -58,6 +58,7 @@ public:
     void SetBorderRound(CSize cxyRound);
 	void GetImage(Image& duiImage) const;
 	bool DrawImage(HDC hDC, Image& duiImage, const std::wstring& pStrModify = L"", int fade = DUI_NOSET_VALUE);
+	virtual void ClearImageCache();
 
 	//±ß¿òÏà¹Ø
 	int GetBorderSize() const;

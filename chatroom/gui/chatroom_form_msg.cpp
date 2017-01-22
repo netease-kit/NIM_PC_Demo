@@ -259,10 +259,18 @@ void ChatroomForm::GetMsgHistoryCallback(__int64 room_id, int error_code, const 
 
 void ChatroomForm::SetMemberAttributeCallback(__int64 room_id, int error_code, const ChatRoomMemberInfo& info)
 {
-	if (error_code != nim::kNIMResSuccess || room_id_ != room_id)
+	if (room_id_ != room_id)
 		return;
 
 	StdClosure cb = [=](){
+
+		if (error_code != nim::kNIMResSuccess)
+		{
+			std::wstring tip = nbase::StringPrintf(L"Set member attribute, error:%d", error_code);
+			nim_ui::ShowToast(tip, 5000);
+			return;
+		}
+
 		auto it = members_list_.find(info.account_id_);
 		if (it != members_list_.end())
 		{
@@ -294,10 +302,18 @@ void ChatroomForm::SetMemberAttributeCallback(__int64 room_id, int error_code, c
 
 void ChatroomForm::TempMuteCallback(__int64 room_id, int error_code, const ChatRoomMemberInfo& info)
 {
-	if (error_code != nim::kNIMResSuccess || room_id_ != room_id)
+	if (room_id_ != room_id)
 		return;
 
 	StdClosure cb = [=](){
+
+		if (error_code != nim::kNIMResSuccess)
+		{
+			std::wstring tip = nbase::StringPrintf(L"TempMute, error:%d", error_code);
+			nim_ui::ShowToast(tip, 5000);
+			return;
+		}
+
 		SetMemberTempMute(info.account_id_, info.temp_muted_, info.temp_muted_ ? info.temp_muted_duration_ : 0);
 	};
 	Post2UI(cb);
@@ -305,10 +321,18 @@ void ChatroomForm::TempMuteCallback(__int64 room_id, int error_code, const ChatR
 
 void ChatroomForm::KickMemberCallback(__int64 room_id, int error_code)
 {
-	if (error_code != nim::kNIMResSuccess || room_id_ != room_id)
+	if (room_id_ != room_id)
 		return;
 
 	StdClosure cb = [=](){
+
+		if (error_code != nim::kNIMResSuccess)
+		{
+			std::wstring tip = nbase::StringPrintf(L"Kick member %s, error:%d", nbase::UTF8ToUTF16(kicked_user_account_).c_str(), error_code);
+			nim_ui::ShowToast(tip, 5000);
+			return;
+		}
+
 		RemoveMember(kicked_user_account_);
 		kicked_user_account_.clear();
 	};
@@ -328,6 +352,7 @@ void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::str
 			|| error_code == nim::kNIMResNotExist
 			|| error_code == nim::kNIMLocalResAPIErrorInitUndone
 			|| error_code == nim::kNIMLocalResAPIErrorLoginUndone
+			|| error_code == nim::kNIMResAccountBlock
 			|| error_code == nim::kNIMResTimeoutError)
 		{
 			StdClosure closure = ToWeakCallback([this, error_code]()
@@ -343,6 +368,8 @@ void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::str
 				std::wstring kick_tip_str = L"进入直播间失败";
 				if (error_code == nim::kNIMResForbidden)
 					kick_tip_str = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_CHATROOM_TIP_BLACKLISTED");
+				else if (error_code == nim::kNIMResAccountBlock)
+					kick_tip_str = L"账号被禁用";
 				else if (error_code == nim::kNIMResNotExist)
 					kick_tip_str = L"直播间不存在";
 				else if (error_code == nim::kNIMLocalResAPIErrorInitUndone 

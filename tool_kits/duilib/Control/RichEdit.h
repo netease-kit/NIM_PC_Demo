@@ -180,6 +180,7 @@ public:
 		return m_textVerAlignType;
 	}
 
+	virtual void ClearImageCache() override;
 
 	void AttachReturn(const EventCallback& callback)
 	{

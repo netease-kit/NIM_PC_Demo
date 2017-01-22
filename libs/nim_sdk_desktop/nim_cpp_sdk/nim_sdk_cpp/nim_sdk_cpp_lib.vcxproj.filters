@@ -113,6 +113,9 @@
     <ClCompile Include="util\nim_string_util.cpp">
       <Filter>util</Filter>
     </ClCompile>
+    <ClCompile Include="helper\nim_nos_helper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\nim_client_helper.h">
@@ -205,6 +208,9 @@
     </ClInclude>
     <ClInclude Include="util\nim_string_util.h">
       <Filter>util</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\nim_nos_helper.h">
+      <Filter>helper</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

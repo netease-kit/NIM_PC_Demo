@@ -1,6 +1,6 @@
 ﻿/** @file nim_user.h
   * @brief NIM SDK提供的用户相关接口
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1
   */
@@ -76,6 +76,10 @@ NIM_SDK_DLL_API	void nim_user_reg_user_name_card_changed_cb(const char *json_ext
   * @param[in] cb 操作结果回调
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				414:参数错误
+  *				20000:还未初始化或初始化未正常完成
+  *				20001:还未登陆或登录未完成
   */
 NIM_SDK_DLL_API	void nim_user_get_user_name_card(const char *accids, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data);
 
@@ -86,6 +90,11 @@ NIM_SDK_DLL_API	void nim_user_get_user_name_card(const char *accids, const char 
   * @param[in] cb 操作结果回调
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				414:参数错误
+  *				419:超限
+  *				20000:还未初始化或初始化未正常完成
+  *				20001:还未登陆或登录未完成
   */
 NIM_SDK_DLL_API	void nim_user_get_user_name_card_online(const char *accids, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data);
 

@@ -176,13 +176,6 @@ void OpenMap(const std::string& title, const std::string& content,  const std::s
 bool IsResourceExist(const nim::IMMessage &msg);
 
 /**
-* 会话消息是否包含@me信息
-* @param[in] msg 会话消
-* @return bool true 包含，false 不包含
-*/
-bool IsAtMeMsg(const nim::IMMessage &msg);
-
-/**
 * 自定义消息转换为会话消息
 * @param[in] sys_msg 自定义消息
 * @param[out] msg 会话消息
@@ -226,10 +219,11 @@ bool IsNetCallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach);
 
 /**
 * 获取自定义消息的提示内容
+* @param[in] sender_accid 发送者帐号
 * @param[in] msg_attach 会话消息附加字段
 * @return wstring 提示内容
 */
-std::wstring GetCustomMsg(const std::string &msg_attach);
+std::wstring GetCustomMsg(const std::string &sender_accid, const std::string &msg_attach);
 
 /**
 * 获取回撤消息的提示文本

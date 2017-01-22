@@ -19,6 +19,7 @@ typedef void(*nim_friend_delete)(const char *accid, const char *json_extension, 
 typedef void(*nim_friend_update)(const char *friend_json, const char *json_extension, nim_friend_opt_cb_func cb, const void *user_data);
 typedef void(*nim_friend_get_list)(const char *json_extension, nim_friend_get_list_cb_func cb, const void *user_data);
 typedef void(*nim_friend_get_profile)(const char *accid, const char *json_extension, nim_friend_get_profile_cb_func cb, const void *user_data);
+typedef bool(*nim_friend_query_friendship_block)(const char *accid, const char *json_extension);
 
 // 好友信息变化执行回调函数，不销毁该回调函数
 static void CallbackFriendChange(NIMFriendChangeType type, const char *result_json, const char *json_extension, const void *user_data)
@@ -230,4 +231,8 @@ void Friend::UnregFriendCb()
 	}
 }
 
+bool Friend::QueryFriendshipBlock(const std::string& accid, const std::string& json_extension/* = ""*/)
+{
+	return 	NIM_SDK_GET_FUNC(nim_friend_query_friendship_block)(accid.c_str(), json_extension.c_str());
+}
 }

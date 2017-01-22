@@ -1,19 +1,24 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window size="270,140" caption="0,0,0,34">
+<Window size="320,140" caption="0,0,0,34">
     <VBox bkcolor="bk_wnd_lightcolor">
         <HBox class="caption">
             <Label class="font_title" width="stretch" valign="center" normaltextcolor="darkcolor" text="云信提示"/>
             <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>
         </HBox>
         <Box>
-            <HBox name="link_tip_page" height="auto" valign="center" visible="false">
-                <Control width="auto" height="auto" margin="20,0,10,0" bkimage="link_tip.png"/>
-                <Label font="4" text="网络连接失败，"/>
-                <Button name="btn_relink" cursortype="hand" font="4" normaltextcolor="link_blue" text="重新连接"/>
-            </HBox>
+			<VBox name="link_tip_page" visible="false">
+				<HBox height="auto" valign="center" margin="0,20,0,0">
+					<Control width="auto" height="auto" margin="20,0,10,0" bkimage="link_tip.png"/>
+					<Label name="link_tip_label" font="4" text="网络连接断开"/>			
+				</HBox>
+				<HBox>
+					<Control />
+					<Button name="btn_relink" margin="0,10,30,0" cursortype="hand" font="4" normaltextcolor="link_blue" text="重新连接"/>
+				</HBox>
+			</VBox>
             <HBox name="link_ing_page" height="auto" valign="center" visible="false">
                 <Control width="auto" height="auto" margin="20,0,10,0" bkimage="link_ing.png"/>
-                <Label font="4" text="网络正在连接中..."/>
+                <Label font="4" text="网络连接断开，正在重连中..."/>
             </HBox>
             <HBox name="link_success_page" height="auto" valign="center" visible="false">
                 <Control width="auto" height="auto" margin="20,0,10,0" valign="center" bkimage="link_success.png"/>

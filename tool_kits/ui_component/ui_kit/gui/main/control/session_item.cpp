@@ -1,6 +1,7 @@
 ﻿#include "session_item.h"
 
 #include "module/session/session_manager.h"
+#include "module/session/force_push_manager.h"
 #include "callback/session/session_callback.h"
 #include "gui/profile_form/profile_form.h"
 #include "gui/session/session_box.h"
@@ -69,9 +70,7 @@ void SessionItem::InitMsg(const nim::SessionData &msg)
 	InitUserProfile(); //设置用户名和头像
 	UpdateMsgContent(); //更新消息内容
 	UpdateUnread(); //刷新未读条数	
-
-	if (SessionManager::GetInstance()->IsContainAtMeMsg(msg_.id_))
-		ShowAtmeTip(true);
+	ShowAtmeTip(true);
 
 	//更新时间
 	if (msg_.msg_timetag_ > 0 && msg_.msg_status_ != nim::kNIMMsgLogStatusDeleted)
@@ -148,7 +147,7 @@ void GetMsgContent(const nim::SessionData &msg, std::wstring &show_text)
 	}
 	else if (msg.msg_type_ == nim::kNIMMessageTypeCustom)
 	{
-		show_text = GetCustomMsg(msg.msg_attach_);
+		show_text = GetCustomMsg(msg.msg_sender_accid_, msg.msg_attach_);
 	}
 	else if (msg.msg_type_ == nim::kNIMMessageTypeTips)
 	{
@@ -246,8 +245,7 @@ void SessionItem::AddUnread()
 	msg_.unread_count_++;
 	UpdateUnread();
 
-	if (SessionManager::GetInstance()->IsContainAtMeMsg(msg_.id_))
-		ShowAtmeTip(true);
+	ShowAtmeTip(true);
 }
 
 void SessionItem::ResetUnread()
@@ -274,7 +272,14 @@ void SessionItem::BatchStatusDeleteCb(nim::NIMResCode res_code, const std::strin
 
 void SessionItem::ShowAtmeTip(bool show)
 {
-	label_atme_->SetVisible(show);
+	if (show)
+	{
+		label_atme_->SetVisible((ForcePushManager::GetInstance()->IsContainAtMeMsg(msg_.id_)));
+	}
+	else
+	{
+		label_atme_->SetVisible(false);
+	}
 }
 
 void SessionItem::UpdateUnread()

@@ -1,5 +1,6 @@
 ﻿#include "session_box.h"
 #include "session_form.h"
+#include "module/session/force_push_manager.h"
 #include "gui/session/control/atme_view.h"
 #include "gui/session/atlist/at_list_form.h"
 
@@ -11,6 +12,38 @@ namespace
 
 namespace nim_comp
 {
+
+void SessionBox::InitAtMeView(std::vector<ForcePushManager::ForcePushInfo> &infos)
+{
+	for (auto& i : infos)
+	{
+		std::string sender_name = GetShowName(i.sender_id);
+		if (!sender_name.empty())
+		{
+			AtMeView::AtMeInfo info;
+			info.msg_body = nbase::UTF8ToUTF16(i.msg_body);
+			info.uuid = nbase::UTF8ToUTF16(i.uuid);
+			info.sender_name = nbase::UTF8ToUTF16(sender_name);
+			atme_view_->AddMessage(info);
+		}
+	}
+}
+
+void SessionBox::AddAtMessage(const nim::IMMessage &msg)
+{
+	if (ForcePushManager::GetInstance()->IsAtMeMsg(msg))
+	{
+		std::string sender_name = GetShowName(msg.sender_accid_);
+		if (!sender_name.empty())
+		{
+			AtMeView::AtMeInfo info;
+			info.msg_body = nbase::UTF8ToUTF16(msg.content_);
+			info.uuid = nbase::UTF8ToUTF16(msg.client_msg_id_);
+			info.sender_name = nbase::UTF8ToUTF16(sender_name);
+			atme_view_->AddMessage(info);
+		}
+	}
+}
 
 void SessionBox::ScrollToControl(const Control *control)
 {
@@ -237,7 +270,7 @@ bool SessionBox::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 				if (last_second_char == L' ')
 				{
 					std::wstring at_name = at_str.substr(0, at_str.length() - 2);
-					//如果当前要删的是空格的后一位，而且空格前包含了完整的@某人的信息，就不继续匹配而继续隐藏@列表，直接返回		
+					//如果当前要删的是空格的后一位，而且空格前包含了完整的@某人的信息，就不继续匹配而隐藏@列表，直接返回		
 					if (uid_at_someone_.find(nbase::UTF16ToUTF8(at_name)) != uid_at_someone_.end())
 					{
 						return false;

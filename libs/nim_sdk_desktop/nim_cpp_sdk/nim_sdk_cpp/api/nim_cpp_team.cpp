@@ -44,6 +44,8 @@ typedef char*(*nim_team_query_team_member_block)(const char *tid, const char *us
 typedef char*(*nim_team_query_team_info_block)(const char *tid);
 
 typedef void(*nim_team_mute_member_async)(const char *tid, const char *member_id, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
+typedef void(*nim_team_query_mute_list_online_async)(const char *tid, 	const char *json_extension, nim_team_query_mute_list_cb_func cb, const void *user_data);
+
 
 static void CallbackTeamEvent(int res_code, int notification_id, const char *tid, const char *result, const char *json_extension, const void *user_data)
 {
@@ -668,5 +670,51 @@ bool Team::MuteMemberAsync(const std::string& tid, const std::string& member_id,
 
 	return true;
 }
+
+static void CallbackQueryMembersOnline(int res_code, int count, const char *tid, const char *result, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		Team::QueryTeamMembersOnlineCallback* cb_pointer = (Team::QueryTeamMembersOnlineCallback*)user_data;
+		if (*cb_pointer)
+		{
+			Json::Value values;
+			Json::Reader reader;
+			std::list<TeamMemberProperty> members;
+			if (reader.parse(PCharToString(result), values) && values.isArray())
+			{
+				int size = (int)values.size();
+				for (int i = 0; i < size; i++)
+				{
+					TeamMemberProperty prop;
+					ParseTeamMemberPropertyJson(values[i], prop);
+					members.push_back(prop);
+				}
+			}
+			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, PCharToString(tid), members));
+			//(*cb_pointer)((NIMResCode)res_code, PCharToString(tid), members);
+		}
+		delete cb_pointer;
+	}
+}
+
+bool Team::QueryMuteListOnlineAsync(const std::string& tid, const QueryTeamMembersOnlineCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty())
+		return false;
+
+	QueryTeamMembersOnlineCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new QueryTeamMembersOnlineCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_team_query_mute_list_online_async)(tid.c_str()
+		, json_extension.c_str()
+		, &CallbackQueryMembersOnline
+		, cb_pointer);
+
+	return true;
+}
+
 
 }

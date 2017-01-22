@@ -1,6 +1,6 @@
 ﻿/** @file nim_session.h
   * @brief NIM SDK提供的session接口
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/2/1
   */
@@ -22,6 +22,7 @@ extern"C"
   * @param[in] cb			最近会话列表项变更的回调函数， nim_session_change_cb_func回调函数定义见nim_session_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_session_reg_change_cb(const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 
@@ -42,6 +43,8 @@ NIM_SDK_DLL_API void nim_session_query_all_recent_session_async(const char *json
   * @param[in] cb			最近会话列表项变更的回调函数， nim_session_change_cb_func回调函数定义见nim_session_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_session_delete_recent_session_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 
@@ -51,6 +54,8 @@ NIM_SDK_DLL_API void nim_session_delete_recent_session_async(enum NIMSessionType
   * @param[in] cb			最近会话列表项变更的回调函数， nim_session_change_cb_func回调函数定义见nim_session_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_session_delete_all_recent_session_async(const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 
@@ -62,6 +67,8 @@ NIM_SDK_DLL_API void nim_session_delete_all_recent_session_async(const char *jso
   * @param[in] cb			最近会话列表项变更的回调函数， nim_session_change_cb_func回调函数定义见nim_session_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_session_set_unread_count_zero_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 
@@ -74,6 +81,8 @@ NIM_SDK_DLL_API void nim_session_set_unread_count_zero_async(enum NIMSessionType
   * @param[in] cb			回调函数
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_session_set_top(enum NIMSessionType to_type, const char *id, bool top, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 
@@ -86,6 +95,8 @@ NIM_SDK_DLL_API void nim_session_set_top(enum NIMSessionType to_type, const char
   * @param[in] cb			回调函数
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_session_set_extend_data(enum NIMSessionType to_type, const char *id, const char *data, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 

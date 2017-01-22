@@ -105,7 +105,7 @@ int ReadFile(const PathChar *filepath, void *data_out, size_t size)
 		return -1;
 
 	DWORD read;
-	if (::ReadFile(file, data_out, size, &read, NULL) &&
+	if (::ReadFile(file, data_out, (DWORD)size, &read, NULL) &&
 		static_cast<int>(read) == size)
 		return read;
 	return -1;
@@ -124,7 +124,7 @@ int WriteFile(const PathChar *filepath, const void *data, size_t size)
 		return -1;
 
 	DWORD written;
-	BOOL result = ::WriteFile(file, data, size, &written, NULL);
+	BOOL result = ::WriteFile(file, data, (DWORD)size, &written, NULL);
 	if (result && static_cast<int>(written) == size)
 		return written;
 

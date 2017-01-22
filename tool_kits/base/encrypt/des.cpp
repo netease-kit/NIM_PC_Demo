@@ -93,11 +93,11 @@ std::string yxDES::Decrypt(const std::string &src, const char* key, int iMode,in
 {
 	std::string des;
 
-	yxDES de_des(src.size());
+	yxDES de_des((int)src.size());
 	de_des.SetModeAndPKCS(iMode,iPKCS);
 
 	de_des.InitializeKey(key,0);
-	de_des.DecryptAnyLength((char*)src.c_str(), src.size(), 0);
+	de_des.DecryptAnyLength((char*)src.c_str(), (int)src.size(), 0);
 
 	des = de_des.GetPlaintextAnyLength();
 	return des;
@@ -105,13 +105,13 @@ std::string yxDES::Decrypt(const std::string &src, const char* key, int iMode,in
 std::string yxDES::Encrypt(const std::string &src, const char* key, int iMode,int iPKCS)
 {
 	std::string des;
-	yxDES en_des(src.size());
+	yxDES en_des((int)src.size());
 	en_des.SetModeAndPKCS(iMode,iPKCS);
 
 	en_des.InitializeKey(key,0);
 	char* src_ch = new char[src.size()];
 	memcpy(src_ch, src.c_str(), sizeof(char) * src.size());
-	en_des.EncryptAnyLength(src_ch,src.size(),0);
+	en_des.EncryptAnyLength(src_ch,(int)src.size(),0);
 	des.append(en_des.GetCiphertextAnyLength(), en_des.m_iLength);
 	delete[] src_ch;
 	return des;
@@ -433,7 +433,7 @@ char* yxDES::GetPlaintextAnyLength()
 	if(1 == m_iPkcs)//cbcm_iMode
 	{
 		int iP = 0;
-		int i = strlen(szFPlaintextAnyLength);
+		int i = (int)strlen(szFPlaintextAnyLength);
 
 		while(iP < i)
 		{
@@ -627,7 +627,7 @@ int yxDES::ConvertHex2Ciphertext(const char *szCipherInBytes)
 	memset(hexCiphertextAnyLength,0,data_base_length_*2);
 	
 
-	iLen = ((strlen(szCipherInBytes)>>2) + (strlen(szCipherInBytes) % 4 == 0 ? 0 : 1))<<4;
+	iLen = (((int)strlen(szCipherInBytes)>>2) + ((int)strlen(szCipherInBytes) % 4 == 0 ? 0 : 1))<<4;
 	
 	memcpy(hexCiphertextAnyLength,szCipherInBytes,strlen(szCipherInBytes));
 	Hex2Bits(hexCiphertextAnyLength,bitsCiphertextAnyLength,iLen);

@@ -62,7 +62,7 @@ public:
 	bool operator < (const FriendItem& elment2) const
 	{
 		static DWORD lcid = MAKELCID(MAKELANGID(LANG_CHINESE_SIMPLIFIED, SUBLANG_CHINESE_SIMPLIFIED), SORT_CHINESE_PRCP);
-		return ::CompareString(lcid, 0, this->nick_name_.c_str(), this->nick_name_.length(), elment2.nick_name_.c_str(),elment2.nick_name_.length()) == 1;
+		return ::CompareString(lcid, 0, this->nick_name_.c_str(), (int)this->nick_name_.length(), elment2.nick_name_.c_str(),(int)elment2.nick_name_.length()) == 1;
 	}
 
 	/**

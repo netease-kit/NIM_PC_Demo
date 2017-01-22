@@ -12,7 +12,11 @@
 
 namespace nim
 {
+#ifdef NIM_SDK_DLL_IMPORT
 typedef void(*nim_plugin_chatroom_request_enter_async)(const __int64 room_id, const char *json_extension, nim_plugin_chatroom_request_enter_cb_func cb, const void *user_data);
+#else
+#include "nim_plugin_in.h"
+#endif
 
 static void CallbackRequestChatRoomEnter(int error_code, const char *result, const char *json_extension, const void *user_data)
 {

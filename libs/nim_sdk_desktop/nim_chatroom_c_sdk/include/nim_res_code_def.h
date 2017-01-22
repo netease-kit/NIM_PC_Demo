@@ -58,10 +58,11 @@ enum NIMResCode
 	//客户端自定义的错误号
 	kNIMLocalRes						= 10000,	/**< 值大于该错误号的都是客户端自定义的错误号。不能随意更改其值！ */
 	kNIMResRoomLocalNeedRequestAgain	= 10001,	/**< 客户端本地错误号，需要重新向IM服务器获取进入聊天室权限 */
+	kNIMLocalResNetworkError			= 10010,	/**< 客户端本地错误号，本地网络错误，需要检查本地网络 */
 
 	//客户端自定义的消息错误号
-	kNIMLocalResMsgNosUploadCancel	= 10200,		/**< 发送文件消息，NOS上传暂停 */
-	kNIMLocalResMsgNosDownloadCancel = 10206,		/**< 收到文件消息，NOS下载暂停 */
+	kNIMLocalResMsgNosUploadCancel	= 10200,		/**< (发送文件消息或者stop_upload_ex)HTTP upload to NOS上传暂停 */
+	kNIMLocalResMsgNosDownloadCancel = 10206,		/**< (收到文件消息或者stop_download_ex)HTTP download from NOS下载暂停 */
 	kNIMLocalResMsgNosDownloadCheckError = 10207,	/**< 收到文件消息，NOS下载完成后本地文件检查错误，一般为下载的文件大小与文件信息不符 */
 	kNIMLocalResMsgFileNotExist = 10404,		/**< 本地资源不存在 */
 	kNIMLocalResParameterError		= 10414,		/**< 本地错误码，参数错误，(收到消息，资源下载地址无效，无法下载) */

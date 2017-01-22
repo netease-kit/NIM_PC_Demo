@@ -1,7 +1,6 @@
 ﻿#pragma once
 
 #include "base/memory/singleton.h"
-#include "login_db.h"
 
 enum LoginStatus
 {
@@ -14,6 +13,7 @@ enum LoginStatus
 
 namespace nim_comp
 {
+
 /** @class LoginManager
   * @brief 登陆管理器
   * @copyright (c) 2016, NetEase Inc. All rights reserved
@@ -92,19 +92,6 @@ public:
 	bool IsLinkActive();
 
 	/**
-	* 保存登录数据
-	* @return void	无返回值
-	*/
-	void SaveLoginData();
-
-	/**
-	* 获取登陆数据
-	* @param[in] 
-	* @return LoginData* 登陆数据
-	*/
-	LoginData* GetLoginData(){ return current_login_data_.get(); }
-
-	/**
 	* 设置日记记录等级
 	* @param[in] level 记录等级
 	* @return void	无返回值
@@ -130,12 +117,20 @@ public:
 	*/
 	int GetFileSizeLimit() { return limit_file_size_; }
 
-private:
 	/**
-	* 从数据库读取登陆数据
-	* @return void	无返回值
+	* 缓存登录错误码
+	* @param[in] error_code 登录错误码
+	* @return void
 	*/
-	void ReadLoginDataFromFile();
+	void SetErrorCode(int error_code) { error_code_ = error_code; }
+
+	/**
+	* 获取缓存的登录码
+	* @return int 登录错误码
+	*/
+	int GetErrorCode() { return error_code_; }
+
+private:
 
 	/**
 	* 从配置文件读取日志记录等级
@@ -148,10 +143,10 @@ private:
 	std::string password_;
 	LoginStatus status_;
 	bool active_;
-	std::unique_ptr<LoginData>	current_login_data_;
-	UTF8String			default_login_account_;     // 注销跳转到登录view的时候用到
 
 	LOG_LEVEL demo_log_level_ = LV_APP;
 	int limit_file_size_ = 15;
+
+	int error_code_ = 200;
 };
 }

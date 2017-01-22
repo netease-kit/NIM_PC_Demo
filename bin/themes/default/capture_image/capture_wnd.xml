@@ -10,7 +10,7 @@
                 <Control name="top_panel" bkcolor="transbkblack1" />
                 <HBox>
                     <Control name="left_panel" bkcolor="transbkblack1" />
-					<Box clip="true" >
+					<Box>
 						<CaptureEdit name="capture_edit" />
 					</Box>
                     <Control name="right_panel" bkcolor="transbkblack1" />

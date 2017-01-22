@@ -61,8 +61,8 @@ bool SQLiteDB::Open(const char* filename,
 	{
 		if (key.length()) 
 		{
-			if( SQLITE_OK != sqlite3_key(sqlite3_,key.c_str(),key.length()))
-				r = sqlite3_rekey(sqlite3_,key.c_str(),key.length());
+			if( SQLITE_OK != sqlite3_key(sqlite3_,key.c_str(),(int)key.length()))
+				r = sqlite3_rekey(sqlite3_,key.c_str(),(int)key.length());
 		}
 	}
 		

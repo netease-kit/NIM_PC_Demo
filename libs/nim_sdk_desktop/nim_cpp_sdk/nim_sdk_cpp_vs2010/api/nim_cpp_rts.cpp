@@ -14,6 +14,7 @@ namespace nim
 {
 
 //发起相关
+#ifdef NIM_SDK_DLL_IMPORT
 typedef	void (*nim_rts_start)(int channel_type, const char* uid, const char *json_extension, nim_rts_start_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_set_start_notify_cb_func)(nim_rts_start_notify_cb_func cb, const void *user_data);
 typedef void (*nim_rts_create_conf)(const char *name, const char *custom_info, const char *json_extension, nim_rts_create_cb_func cb, const void *user_data);
@@ -30,6 +31,9 @@ typedef	void (*nim_rts_hangup)(const char *session_id, const char *json_extensio
 typedef	void (*nim_rts_set_hangup_notify_cb_func)(nim_rts_hangup_notify_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_send_data)(const char *session_id, int channel_type, const char* data, unsigned int size, const char *json_extension);
 typedef	void (*nim_rts_set_rec_data_cb_func)(nim_rts_rec_data_cb_func cb, const void *user_data);
+#else
+#include "nim_rts.h"
+#endif
 
 void StartChannelCallbackWrapper(int code, const char *session_id, int channel_type, const char* uid, const char *json_extension, const void *user_data)
 {
@@ -213,7 +217,7 @@ void RecDataCallbackWrapper(const char *session_id, int channel_type, const char
 
 //发起相关
 //NIM 创建rts会话，传入的JSON参数定义见nim_rts_def.h
-void Rts::StartChannel(int channel_type, const std::string& uid, const std::string& apns, const std::string& custom_info, const StartChannelCallback& cb)
+void Rts::StartChannel(int channel_type, const std::string& uid, const std::string& apns, const std::string& custom_info, bool data_record, bool audio_record, const StartChannelCallback& cb)
 {
 	StartChannelCallback* cb_pointer = nullptr;
 	if (cb)
@@ -224,7 +228,8 @@ void Rts::StartChannel(int channel_type, const std::string& uid, const std::stri
 	Json::Value values_temp;
 	values_temp[nim::kNIMRtsCreateCustomInfo] = custom_info;
 	values_temp[nim::kNIMRtsApnsText] = apns;
-	values_temp[nim::kNIMRtsDataRecord] = 1;
+	values_temp[nim::kNIMRtsDataRecord] = data_record ? 1 : 0;
+	values_temp[nim::kNIMRtsAudioRecord] = audio_record ? 1 : 0;
 	Json::FastWriter fs;
 	json = fs.write(values_temp);
 	return NIM_SDK_GET_FUNC(nim_rts_start)(channel_type, uid.c_str(), json.c_str(), &StartChannelCallbackWrapper, cb_pointer);
@@ -270,7 +275,7 @@ void Rts::JoinConf(const std::string& name, bool record, const JoinConfCallback&
 }
 
 //NIM 回复收到的邀请
-void Rts::Ack(const std::string& session_id, int channel_type, bool accept, const AckCallback& cb)
+void Rts::Ack(const std::string& session_id, int channel_type, bool accept, bool data_record, bool audio_record, const AckCallback& cb)
 {
 	AckCallback* cb_pointer = nullptr;
 	if (cb)
@@ -279,7 +284,8 @@ void Rts::Ack(const std::string& session_id, int channel_type, bool accept, cons
 	}
 	std::string json;
 	Json::Value values_temp;
-	values_temp[nim::kNIMRtsDataRecord] = 1;
+	values_temp[nim::kNIMRtsDataRecord] = data_record ? 1 : 0;
+	values_temp[nim::kNIMRtsAudioRecord] = audio_record ? 1 : 0;
 	Json::FastWriter fs;
 	json = fs.write(values_temp);
 	return NIM_SDK_GET_FUNC(nim_rts_ack)(session_id.c_str(), channel_type, accept, json.c_str(), &AckCallbackWrapper, cb_pointer);

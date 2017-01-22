@@ -38,6 +38,13 @@ public:
 	virtual void InitWindow() override;
    
 	/**
+	* 为@列表初始化群成员信息
+	* @param[in] team_member_info_list 群成员信息表
+	* @return void 无返回值
+	*/
+	void InitTeamMembers(const std::map<std::string, nim::TeamMemberProperty>& team_member_info_list);
+
+	/**
 	* 根据关键字去显示或隐藏@列表项
 	* @param[in] search_key 关键字
 	* @param[in] match_visible true 只遍历列表中已经显示的项目（当匹配关键字增加时使用）,false 重新遍历所有项目（当匹配的关键字减少时使用）
@@ -97,15 +104,6 @@ private:
 	* @return LRESULT 处理结果
 	*/
 	virtual LRESULT OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) override;
-	
-	/**
-	* 获取了群成员信息后自动调用的回调函数
-	* @param[in] tid	群ID
-	* @param[in] count	群成员数
-	* @param[in] team_member_info_list 群成员信息表
-	* @return void 无返回值
-	*/
-	void OnGetTeamMemberCb(const std::string& tid, int count, const std::list<nim::TeamMemberProperty>& team_member_info_list);
 
 	/**
 	* 创建一个列表项控件

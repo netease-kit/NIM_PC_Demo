@@ -39,7 +39,7 @@ void MsgBubbleText::InitInfo(const nim::IMMessage &msg)
 	}
 	else if (msg.type_ == nim::kNIMMessageTypeCustom)
 	{
-		str = GetCustomMsg(msg.attach_);
+		str = GetCustomMsg(msg.sender_accid_, msg.attach_);
 		msg_.content_ = nbase::UTF16ToUTF8(str);
 	}
 

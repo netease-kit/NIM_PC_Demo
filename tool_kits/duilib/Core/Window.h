@@ -102,7 +102,10 @@ public:
 
 	//阴影相关部分
 	void SetShadowAttached(bool bShadowAttached);
-	UiRect GetShadowLength() const;
+	void SetShadowImage(const std::wstring &image);
+	std::wstring GetShadowImage() const;
+	void SetShadowCorner(const UiRect rect);
+	UiRect GetShadowCorner() const;
 
 	UiRect GetPos(bool bContainShadow = false) const;	//bContainShadow为false表示返回值不包含阴影
 	void SetPos(const UiRect& rc, UINT uFlags, HWND hWndInsertAfter = NULL, bool bContainShadow = false);	//bContainShadow为false表示rc不包含阴影
@@ -175,6 +178,8 @@ public:
 	Control* FindSubControlByClass(Control* pParent, const type_info& typeinfo, int iIndex = 0);
 	std::vector<Control*>* FindSubControlsByClass(Control* pParent, const type_info& typeinfo);
 	std::vector<Control*>* GetSubControlsByClass();
+
+	void ClearImageCache();
 
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 	LRESULT DoHandlMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& handled);
@@ -328,25 +333,28 @@ protected:
 	{
 	public:
 		Shadow();
-		
-		void SetShadowAttached(bool bShadowAttached)
-		{
-			m_bShadowAttached = bShadowAttached;
-		}
-		bool IsShadowAttached() const
-		{
-			return m_bShadowAttached;
-		}
 
-		UiRect GetShadowLength() const;
+		void SetShadowAttached(bool bShadowAttached) { m_bShadowAttached = bShadowAttached; }
+		bool IsShadowAttached() const { return m_bShadowAttached; }
+
+		void SetShadowCorner(const UiRect &rect);
+		UiRect GetShadowCorner() const;
+
+		void SetShadowImage(const std::wstring &image);
+		std::wstring GetShadowImage() const;
 
 		Box* AttachShadow(Box* pRoot);
-		void SetFocus(bool bFocused);
 		void MaximizedOrRestored(bool isMaximized);
 
+		Control* GetRoot();
+		void ClearImageCache();
 	private:
-		UiRect m_rcShadowLength;
 		bool m_bShadowAttached;
+		bool m_bUseDefaultImage;
+		std::wstring m_strImage;
+		UiRect m_rcShadowCorner;
+		UiRect m_rcShadowCornerBackup;
+
 		Box* m_pRoot;
 	};
 

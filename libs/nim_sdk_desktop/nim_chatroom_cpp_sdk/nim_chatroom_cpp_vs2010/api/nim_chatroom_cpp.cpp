@@ -217,8 +217,8 @@ bool ChatRoom::Init(const std::string& app_install_dir, const std::string& json_
 
 #if !defined (WIN32)
 	static const char *kSdkNimDll = "libnim_chatroom.so";
-#elif defined (_DEBUG) || defined (DEBUG)
-	static const char *kSdkNimDll = "nim_chatroom_d.dll";
+//#elif defined (_DEBUG) || defined (DEBUG)
+//	static const char *kSdkNimDll = "nim_chatroom_d.dll";
 #else
 	static const char *kSdkNimDll = "nim_chatroom.dll";
 #endif
@@ -258,6 +258,7 @@ void ChatRoom::Cleanup(const std::string& json_extension/* = ""*/)
 #ifdef NIM_SDK_DLL_IMPORT
 	g_nim_sdk_instance->UnLoadSdkDll();
 	delete g_nim_sdk_instance;
+	g_nim_sdk_instance = NULL;
 #endif
 }
 
@@ -643,7 +644,7 @@ static void CallbackQueueList(int64_t room_id, int error_code, const char *resul
 			{
 				ChatRoomQueue queue;
 				auto size = value.size();
-				for (size_t i = 0; i < size; i++)
+				for (int i = 0; i < (int)size; i++)
 				{
 					ChatRoomQueueElement element;
 					element.key_ = value[i][kNIMChatRoomQueueElementKey].asString();
@@ -702,4 +703,42 @@ void ChatRoom::QueueDropAsync(const int64_t room_id
 		cb_pointer);
 }
 
+void ChatRoom::UnregChatroomCb()
+{
+	if (g_cb_enter_)
+	{
+		delete g_cb_enter_;
+		g_cb_enter_ = nullptr;
+	}
+
+	if (g_cb_exit_)
+	{
+		delete g_cb_exit_;
+		g_cb_exit_ = nullptr;
+	}
+
+	if (g_cb_send_msg_ack_)
+	{
+		delete g_cb_send_msg_ack_;
+		g_cb_send_msg_ack_ = nullptr;
+	}
+
+	if (g_cb_receive_msg_)
+	{
+		delete g_cb_receive_msg_;
+		g_cb_receive_msg_ = nullptr;
+	}
+
+	if (g_cb_notification_)
+	{
+		delete g_cb_notification_;
+		g_cb_notification_ = nullptr;
+	}
+
+	if (g_cb_link_condition_)
+	{
+		delete g_cb_link_condition_;
+		g_cb_link_condition_ = nullptr;
+	}
+}
 }

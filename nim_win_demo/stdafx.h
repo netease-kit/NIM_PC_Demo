@@ -55,7 +55,7 @@
 #include "nim_cpp_api.h"
 
 //tool
-#include "nim_tools_http_cpp_wrapper.h"
+#include "nim_tools_http_cpp.h"
 #include "nim_audio_cpp.h"
 
 //helper
@@ -65,4 +65,4 @@
 #include "ui_component/ui_kit/export/nim_ui_all.h"
 
 // chatroom
-#include "nim_chatroom_cpp.h"
+#include "nim_chatroom_cpp_api.h"

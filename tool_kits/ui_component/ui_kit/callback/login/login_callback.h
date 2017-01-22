@@ -23,7 +23,7 @@ public:
 
 	/**
 	* 登录结果回调
-	* @param[in] json_params 返回的信息，Json数据转化的字符串
+	* @param[in] login_res 登录的信息
 	* @param[in] user_data 登录时用户传的数据，sdk原封不动传给回调
 	* @return void	无返回值
 	*/
@@ -31,11 +31,10 @@ public:
 
 	/**
 	* 登录成功或失败时，做一些界面上的显示。
-	* @param[in] code 登录返回码
-	* @param[in] relogin 是否重新登录
+	* @param[in] login_res 登录的信息
 	* @return void	无返回值
 	*/
-	static void UILoginCallback(nim::NIMResCode code, bool relogin);
+	static void UILoginCallback(const nim::LoginRes& login_res);
 
 	/**
 	* 取消登录

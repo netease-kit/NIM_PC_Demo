@@ -1,6 +1,6 @@
 ﻿/** @file nim_plugin_in_def.h
   * @brief plugin def
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/12/24
   */

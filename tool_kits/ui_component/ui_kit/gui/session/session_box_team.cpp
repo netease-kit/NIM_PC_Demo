@@ -1,5 +1,5 @@
 ﻿#include "session_form.h"
-#include "session_form.h"
+#include "gui/session/atlist/at_list_form.h"
 #include "module/session/session_manager.h"
 
 using namespace ui;
@@ -55,8 +55,6 @@ void SessionBox::OnGetTeamInfoCallback(const std::string& tid, const nim::TeamIn
 			edit_broad_->SetUTF8Text(team_info_.GetAnnouncement());
 		}
 		CheckTeamType(nim::kNIMTeamTypeAdvanced);
-
-		InvokeGetTeamMember();
 	}
 
 	if (team_info_.ExistValue(nim::kNIMTeamInfoKeyMuteAll))
@@ -77,25 +75,32 @@ void SessionBox::InvokeGetTeamMember()
 void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, const std::list<nim::TeamMemberProperty>& team_member_info_list)
 {
 	team_member_info_list_.clear();
-	std::list<std::string> acc_list;
+	std::set<std::string> account_set;
 	for (auto& it : team_member_info_list)
 	{
 		if (IsTeamMemberType(it.GetUserType()))
 		{
 			team_member_info_list_[it.GetAccountID()] = it;
-			acc_list.push_back(it.GetAccountID());
+			account_set.insert(it.GetAccountID());
 		}
 	}
 
+	// 设置群信息
 	btn_refresh_member_->SetEnabled(true);
 	member_list_->RemoveAll();
 	label_member_->SetText(nbase::StringPrintf(L"群成员（共%d人）", team_member_info_list_.size()));
-
-	std::list<nim::UserNameCard> uinfos;
-	UserService::GetInstance()->GetUserInfos(acc_list, uinfos); //查询群成员的用户信息
-
 	bool set_new_broad_visible = team_info_.GetUpdateInfoMode() == nim::kNIMTeamUpdateCustomModeEveryone;
 	btn_new_broad_->SetVisible(set_new_broad_visible);
+
+	// 提前批量查询群用户信息,优化用户查询
+	UserService::GetInstance()->DoQueryUserInfos(account_set); 
+
+	// 初始化@列表群成员
+	AtlistForm* at_list_form = (AtlistForm*)WindowsManager::GetInstance()->GetWindow(AtlistForm::kClassName, nbase::UTF8ToUTF16(session_id_));
+	if (at_list_form)
+		at_list_form->InitTeamMembers(team_member_info_list_);
+
+	// 初始化群成员控件
 	for (const auto &tm_info : team_member_info_list_)
 	{
 		std::string uid = tm_info.second.GetAccountID();
@@ -415,7 +420,7 @@ void SessionBox::SetTeamMuteUI(bool mute)
 void SessionBox::UpdateBroad(const Json::Value &broad)
 {
 	std::string output;
-	for (size_t i = 0; i < broad.size(); i++)
+	for (int i = 0; i < (int)broad.size(); i++)
 	{
 		std::string title = broad[i]["title"].asString();
 		std::string content = broad[i]["content"].asString();

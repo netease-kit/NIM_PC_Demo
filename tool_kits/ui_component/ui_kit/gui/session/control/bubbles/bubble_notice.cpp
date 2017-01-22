@@ -38,7 +38,7 @@ void MsgBubbleNotice::RefreshNotice()
 
 	std::wstring wstr;
 	if (msg_.type_ == nim::kNIMMessageTypeCustom)
-		wstr = GetCustomMsg(msg_.attach_);
+		wstr = GetCustomMsg(msg_.sender_accid_, msg_.attach_);
 	else if (msg_.type_ == nim::kNIMMessageTypeNotification)
 		GetNotifyMsg(msg_.attach_, msg_.sender_accid_, msg_.receiver_accid_, wstr, session_id_);
 	else if (msg_.type_ == nim::kNIMMessageTypeTips)

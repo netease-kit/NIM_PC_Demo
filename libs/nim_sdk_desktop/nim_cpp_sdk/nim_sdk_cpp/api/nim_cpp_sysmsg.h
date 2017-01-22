@@ -47,6 +47,7 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			操作结果的回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
 	*/
 	static void RegSysmsgCb(const ReceiveSysmsgCallback& cb, const std::string& json_extension = "");
 
@@ -55,6 +56,7 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb		发送透传消息的回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
 	*/
 	static void RegSendCustomSysmsgCb(const SendCustomSysmsgCallback& cb, const std::string& json_extension = "");
 
@@ -97,6 +99,7 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			查询未读消息数的回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
 	*/
 	static void QueryUnreadCount(const QuerySysmsgUnreadCallback& cb, const std::string& json_extension = "");
 
@@ -107,6 +110,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			设置消息状态的回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool SetStatusAsync(int64_t msg_id, nim::NIMSysMsgStatus status, const SetStatusCallback& cb, const std::string& json_extension = "");
 
@@ -115,6 +120,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			设置全部消息为已读的回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static void ReadAllAsync(const ReadAllCallback& cb, const std::string& json_extension = "");
 
@@ -124,6 +131,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			删除消息的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool DeleteAsync(int64_t msg_id, const DeleteCallback& cb, const std::string& json_extension = "");
 
@@ -132,6 +141,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			删除消息的回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static void DeleteAllAsync(const DeleteAllCallback& cb, const std::string& json_extension = "");
 
@@ -142,17 +153,21 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static void SetStatusByTypeAsync(NIMSysMsgType type, NIMSysMsgStatus status, const BatchSetCallback& cb, const std::string& json_extension = "");
 
-	/** @fn static void DeleteStatusByTypeAsync(NIMSysMsgType type, const BatchSetCallback& cb, const std::string& json_extension = "")
+	/** @fn static void DeleteByTypeAsync(NIMSysMsgType type, const BatchSetCallback& cb, const std::string& json_extension = "")
 	* 按类型删除系统通知
 	* @param[in] type 类型
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
-	static void DeleteStatusByTypeAsync(NIMSysMsgType type, const BatchSetCallback& cb, const std::string& json_extension = "");
+	static void DeleteByTypeAsync(NIMSysMsgType type, const BatchSetCallback& cb, const std::string& json_extension = "");
 
 	/** @fn void UnregSysmsgCb()
 	* 反注册SysMsg提供的所有回调

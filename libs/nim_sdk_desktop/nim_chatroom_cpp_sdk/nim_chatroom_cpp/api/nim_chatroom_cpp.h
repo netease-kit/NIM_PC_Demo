@@ -354,6 +354,12 @@ static void QueueDropAsync(const int64_t room_id
 	, const QueueDropCallback& callback
 	, const std::string &json_extension = "");
 
+/** @fn void UnregChatroomCb()
+* 反注册Chatroom提供的所有回调
+* @return void 无返回值
+*/
+static void UnregChatroomCb();
+
 };
 }
 #endif //_NIM_CHATROOM_SDK_CPP_H_

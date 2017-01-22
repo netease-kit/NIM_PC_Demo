@@ -36,12 +36,14 @@ public:
 public:
 	/** @fn bool Init(const std::string& app_data_dir, const std::string& app_install_dir, const SDKConfig &config)
 	* NIM SDK初始化
+	* @param[in] app_key 应用注册的APP KEY
 	* @param[in] app_data_dir 使用默认路径时只需传入单个目录名（不以反斜杠结尾)，使用自定义路径时需传入完整路径（以反斜杠结尾，并确保有正确的读写权限！）
 	* @param[in] app_install_dir SDK动态库所在的目录全路径（如果传入为空，则按照默认规则搜索该动态库）
 	* @param[in] config 初始化参数
 	* @return bool 返回值true: 成功， false: 失败
 	*/
-	static bool Init(const std::string& app_data_dir
+	static bool Init(const std::string& app_key
+		, const std::string& app_data_dir
 		, const std::string& app_install_dir
 		, const SDKConfig &config);
 
@@ -60,6 +62,14 @@ public:
 	* @param[in] cb 登录流程的回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				302:账号或密码错误
+	*				403:禁止操作
+	*				408:请求超时
+	*				414:参数错误
+	*				415:网络连接出现错误
+	*				416:频率超限
+	*				422:账号被禁用
 	*/
 	static bool Login(const std::string& app_key
 		, const std::string& account
@@ -87,6 +97,8 @@ public:
 	* @param[in] cb 注销/退出的回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				500:未知错误
 	*/
 	static void Logout(NIMLogoutType logout_type
 		, const LogoutCallback& cb
@@ -105,6 +117,13 @@ public:
 	* @param[in] cb 自动重连的回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				403:禁止操作
+	*				408:请求超时
+	*				414:参数错误
+	*				415:网络连接出现错误
+	*				416:频率超限
+	*				422:账号被禁用
 	*/
 	static void RegReloginCb(const LoginCallback& cb, const std::string& json_extension = "");
 
@@ -137,6 +156,7 @@ public:
 	* @param[in] cb 踢下线结果回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
+	* @note 错误码	200:成功
 	*/
 	static void RegKickOtherClientCb(const KickOtherCallback& cb, const std::string& json_extension = "");
 
@@ -154,6 +174,7 @@ public:
 	* @param[in] cb 回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void
+	* @note 错误码	200:成功
 	*/
 	static void SetMultiportPushConfigAsync(bool switch_on, const MultiportPushConfigCallback& cb, const std::string& json_extension = "");
 

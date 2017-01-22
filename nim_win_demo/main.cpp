@@ -7,6 +7,7 @@
 #include "shared/xml_util.h"
 #include "base/util/string_number_conversions.h"
 #include "callback/chatroom_callback.h"
+#include "cef/cef_module/cef_manager.h"
 
 void MainThread::Init()
 {
@@ -147,7 +148,8 @@ static void InitNim()
 	//sdk能力参数（必填）
 	config.database_encrypt_key_ = "Netease"; //string（db key必填，目前只支持最多32个字符的加密密钥！建议使用32个字符）
 
-	bool ret = nim::Client::Init("Netease", "", config); // 载入云信sdk，初始化安装目录和用户目录
+	std::string app_key = GetConfigValueAppKey();
+	bool ret = nim::Client::Init(app_key, "Netease", "", config); // 载入云信sdk，初始化安装目录和用户目录
 	assert(ret);
 	ret = nim_chatroom::ChatRoom::Init("");
 	assert(ret);
@@ -158,6 +160,8 @@ static void InitNim()
 
 int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)
 {
+	// 把cef dll文件的位置添加到程序的"path"环境变量中,这样可以把dll文件放到bin以外的目录，并且不需要手动频繁切换dll文件，这行代码必须写到main的开头
+	nim_cef::CefManager::GetInstance()->AddCefDllToPath();
 	nbase::AtExitManager at_manager;
 
 	CComModule _Module;
@@ -176,19 +180,27 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, in
 
 	::SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);
 
+	//初始化cef
+	if (!nim_cef::CefManager::GetInstance()->Initialize(true))
+		return 0;
+
 	QCommand::ParseCommand(lpszCmdLine);
 
 	HRESULT hr = ::OleInitialize(NULL);
 	if( FAILED(hr) )
 		return 0;
 
-	InitNim(); // 初始化云信和UI组件
+	// 初始化云信和UI组件
+	InitNim();
 
 	{
 		MainThread thread; // 创建主线程
 		thread.RunOnCurrentThreadWithLoop(nbase::MessageLoop::kUIMessageLoop); // 执行主线程循环
 	}
 	QLOG_APP(L"exit ui loop");
+
+	//清理cef
+	nim_cef::CefManager::GetInstance()->UnInitialize();
 
 	// 程序结束之前，清理云信sdk和UI组件
 	nim_ui::InitManager::GetInstance()->CleanupUiKit();

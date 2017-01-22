@@ -542,7 +542,7 @@ int HexStringToBinary(const char *input, size_t length, std::string &output)
 	// i may be shorter than size when an error occurs
 	output.resize(i);
 
-	return i;
+	return (int)i;
 }
 
 std::string HexStringToBinary(const std::string &input)

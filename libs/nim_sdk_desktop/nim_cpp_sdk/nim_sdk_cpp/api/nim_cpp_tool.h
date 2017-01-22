@@ -74,6 +74,14 @@ public:
 	* @param[in] cb 语音转文字回调
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				403:没有权限
+	*				414:参数错误
+	*				500:未知错误
+	*				6101:语音转码解析失败
+	*				6102:语音时长过长（超过60s
+	*				6103:服务不可用
+	*				6104:audioUrl不合法
 	*/
 	static bool GetAudioTextAsync(const AudioInfo& audio_info, const GetAudioTextCallback& cb, const std::string& json_extension = "");
 };

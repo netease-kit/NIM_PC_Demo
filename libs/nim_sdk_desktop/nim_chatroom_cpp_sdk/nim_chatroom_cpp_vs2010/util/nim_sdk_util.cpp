@@ -32,6 +32,8 @@ bool SDKInstance::LoadSdkDll(const char *cur_module_dir, const char *sdk_dll_fil
 	nim::UTF8ToUTF16(dir, utf16_dir);
 	instance_nim_ = ::LoadLibraryW(utf16_dir.c_str());
 #else
+	//int flag = RTLD_GLOBAL | RTLD_LAZY;  //如果是RTLD_GLOBAL，则静态库中定义的全局变量在共享库中名同地址也同
+	//int flag = RTLD_LOCAL | RTLD_LAZY;  //如果是RTLD_LOCAL，则静态库中定义的全局变量在共享库中名同地址不同
 	instance_nim_ = dlopen(dir.c_str(), RTLD_LAZY);//so必须是绝对路径，如Android系统下是“/data/data/{程序包名}/lib/{so文件名}”
 #endif
 

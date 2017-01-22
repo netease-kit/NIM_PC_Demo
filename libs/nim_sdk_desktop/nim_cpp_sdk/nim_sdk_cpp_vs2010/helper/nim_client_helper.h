@@ -32,6 +32,7 @@ struct SDKConfig
 	std::string		preload_image_resize_;			/**< 预下载图片基于长宽做内缩略,选填,比如宽100高50,则赋值为100x50,中间为字母小写x */
 	NIMSDKLogLevel	sdk_log_level_;					/**< 定义见NIMSDKLogLevel，选填，SDK默认的内置级别为kNIMSDKLogLevelPro */
 	bool			sync_session_ack_;				/**< bool，设置是否已读未读状态多端同步，默认true */
+	int				login_max_retry_times_;			/**< int，登录重试最大次数，如需设置建议设置大于3次，默认填0，SDK默认设置次数 */
 	int				custom_timeout_;				/**< int，自定义通讯超时时间，暂时不开放设置 */
 
 	//private_server_setting
@@ -52,6 +53,7 @@ struct SDKConfig
 				, use_private_server_(false)
 				, rsa_version_(0) 
 				, sync_session_ack_(true)
+				, login_max_retry_times_(0)
 				, custom_timeout_(30){}
 };
 

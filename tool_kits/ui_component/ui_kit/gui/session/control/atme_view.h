@@ -1,4 +1,5 @@
 #pragma once
+#include "module/session/force_push_manager.h"
 
 namespace nim_comp
 {
@@ -26,10 +27,10 @@ public:
 
 	/**
 	* 当新的@me消息到来后，追加到@me消息列表末尾
-	* @param[in] at_me_json 包含@me信息的json串
+	* @param[in] at_me_info 强推信息
 	* @return void	无返回值
 	*/
-	void AddMessage(const UTF8String &at_me_json);
+	void AddMessage(const AtMeInfo &at_me_info);
 
 	/**
 	* 显示下一条@me消息

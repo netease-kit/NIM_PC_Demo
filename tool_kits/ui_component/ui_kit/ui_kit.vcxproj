@@ -5,9 +5,17 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -23,7 +31,20 @@
     <PlatformToolset>v120_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v120_xp</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v120_xp</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <PlatformToolset>v120_xp</PlatformToolset>
@@ -36,19 +57,35 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>..\..\..\libs\</OutDir>
-    <IntDir>$(ProjectDir)..\..\..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)..\..\..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>nim_ui_kit_d</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>nim_ui_kit_d</TargetName>
+    <OutDir>..\..\..\libs\x64\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>..\..\..\libs\</OutDir>
-    <IntDir>$(ProjectDir)..\..\..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)..\..\..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>nim_ui_kit</TargetName>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>nim_ui_kit</TargetName>
+    <OutDir>..\..\..\libs\x64\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -56,7 +93,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\openssl\include\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\cef\cef_wrapper\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -67,8 +104,29 @@
       <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\bin\;</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalDependencies>vfw32.lib;jsoncpp_d.lib;tinyxml_d.lib;wxsqlite3_d.lib;libeay32.lib;duilib_d.lib;nim_capture_image_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vfw32.lib;jsoncpp_d.lib;tinyxml_d.lib;wxsqlite3_d.lib;duilib_d.lib;nim_capture_image_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\libs\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\cef\cef_wrapper\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\</AdditionalIncludeDirectories>
+      <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>vfw32.lib;jsoncpp_d.lib;tinyxml_d.lib;wxsqlite3_d.lib;libeay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\bin\;</AdditionalLibraryDirectories>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>vfw32.lib;jsoncpp_d.lib;tinyxml_d.lib;wxsqlite3_d.lib;duilib_d.lib;nim_capture_image_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -79,7 +137,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\openssl\include\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\cef\cef_wrapper\;..\..\..\third_party\;..\..\..\third_party\openssl\include\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
@@ -92,10 +150,37 @@
       <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\bin\;</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalDependencies>vfw32.lib;jsoncpp.lib;tinyxml.lib;wxsqlite3.lib;libeay32.lib;duilib.lib;nim_capture_image.lib</AdditionalDependencies>
+      <AdditionalDependencies>vfw32.lib;jsoncpp.lib;tinyxml.lib;wxsqlite3.lib;duilib.lib;nim_capture_image.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>..\..\..\libs\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\cef\cef_wrapper\;..\..\..\third_party\;..\..\..\third_party\openssl\include\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_sdk_cpp\helper\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>vfw32.lib;jsoncpp.lib;tinyxml.lib;wxsqlite3.lib;libeay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\bin\;</AdditionalLibraryDirectories>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>vfw32.lib;jsoncpp.lib;tinyxml.lib;wxsqlite3.lib;duilib.lib;nim_capture_image.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>..\..\..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -192,7 +277,6 @@
     <ClInclude Include="module\emoji\richedit_olecallback.h" />
     <ClInclude Include="module\emoji\richedit_util.h" />
     <ClInclude Include="module\local\local_helper.h" />
-    <ClInclude Include="module\login\login_db.h" />
     <ClInclude Include="module\login\login_manager.h" />
     <ClInclude Include="module\msglog\msg_extend_db.h" />
     <ClInclude Include="module\rts\rts_manager.h" />
@@ -202,6 +286,7 @@
     <ClInclude Include="module\service\photo_service.h" />
     <ClInclude Include="module\service\team_service.h" />
     <ClInclude Include="module\service\user_service.h" />
+    <ClInclude Include="module\session\force_push_manager.h" />
     <ClInclude Include="module\session\ring.h" />
     <ClInclude Include="module\session\session_manager.h" />
     <ClInclude Include="module\session\session_util.h" />
@@ -320,7 +405,6 @@
     <ClCompile Include="module\emoji\richedit_olecallback.cpp" />
     <ClCompile Include="module\emoji\richedit_util.cpp" />
     <ClCompile Include="module\local\local_helper.cpp" />
-    <ClCompile Include="module\login\login_db.cpp" />
     <ClCompile Include="module\login\login_manager.cpp" />
     <ClCompile Include="module\msglog\msg_extend_db.cpp" />
     <ClCompile Include="module\rts\rts_manager.cpp" />
@@ -330,6 +414,7 @@
     <ClCompile Include="module\service\photo_service.cpp" />
     <ClCompile Include="module\service\team_service.cpp" />
     <ClCompile Include="module\service\user_service.cpp" />
+    <ClCompile Include="module\session\force_push_manager.cpp" />
     <ClCompile Include="module\session\ring.cpp" />
     <ClCompile Include="module\session\session_manager.cpp" />
     <ClCompile Include="module\session\session_manager_dragdrop.cpp" />
@@ -339,7 +424,9 @@
     <ClCompile Include="module\video\video_manager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="util\user.cpp" />
     <ClCompile Include="util\windows_manager.cpp" />
@@ -352,18 +439,12 @@
     <ProjectReference Include="..\..\db\db.vcxproj">
       <Project>{745e6452-9fe1-435b-833a-767617eee1da}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\..\duilib\duilib.vcxproj">
-      <Project>{e106acd7-4e53-4aee-942b-d0dd426db34e}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\net\net.vcxproj">
-      <Project>{93d48c33-d49c-494f-9742-cfef8c54cf08}</Project>
-    </ProjectReference>
+
+
     <ProjectReference Include="..\..\shared\shared.vcxproj">
       <Project>{9951345f-620b-4bed-bb51-4f928cafd454}</Project>
     </ProjectReference>
-    <ProjectReference Include="..\capture_image\capture_image.vcxproj">
-      <Project>{a8b95530-a231-4089-8f84-b1dbad8f3008}</Project>
-    </ProjectReference>
+
     <ProjectReference Include="..\image_view\image_view.vcxproj">
       <Project>{92850844-a8e2-43fb-ae1d-14f72aa0a59c}</Project>
     </ProjectReference>

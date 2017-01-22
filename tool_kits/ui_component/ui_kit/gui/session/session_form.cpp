@@ -172,10 +172,9 @@ LRESULT SessionForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 			TaskbarTabItem* taskbar_item = session_box->GetTaskbarItem();
 			if (NULL == taskbar_item)
-				continue;;
+				continue;
 			
-			if (NULL == taskbar_item->GetTaskbarManager())
-				taskbar_manager_.RegisterTab(*taskbar_item);
+			taskbar_manager_.RegisterTab(*taskbar_item);
 		}
 
 		return TRUE;
@@ -492,7 +491,7 @@ bool SessionForm::IsActiveSessionBox(const SessionBox *session_box)
 bool SessionForm::IsActiveSessionBox(const std::wstring &session_id)
 {
 	ASSERT(!session_id.empty());
-	return (::GetForegroundWindow() == GetHWND() && FindSessionBox(session_id) == active_session_box_);
+	return (::GetForegroundWindow() == GetHWND() && !::IsIconic(GetHWND()) && IsWindowVisible(GetHWND()) && FindSessionBox(session_id) == active_session_box_);
 }
 
 int SessionForm::GetSessionBoxCount() const

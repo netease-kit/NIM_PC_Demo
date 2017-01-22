@@ -1,12 +1,14 @@
 ﻿/** @file nim_device_def.h
   * @brief NIM VChat提供的设备相关接口定义
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/4/24
   */
 
 #ifndef NIM_SDK_DLL_EXPORT_HEADERS_NIM_DEVICE_DEF_H_
 #define NIM_SDK_DLL_EXPORT_HEADERS_NIM_DEVICE_DEF_H_
+
+#include "../util/nim_base_types.h"
 
 #ifdef __cplusplus
 extern"C"
@@ -88,7 +90,7 @@ typedef void (*nim_vchat_start_device_cb_func)(NIMDeviceType type, bool ret, con
   */ 
 typedef void (*nim_vchat_device_status_cb_func)(NIMDeviceType type, unsigned int status, const char *device_path, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_vchat_audio_data_cb_func)(unsigned __int64 time, const char *data, unsigned int size, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_vchat_audio_data_cb_func)(uint64_t time, const char *data, unsigned int size, const char *json_extension, const void *user_data)
   * NIM Device 音频数据监听接口
   * @param[out] time 时间毫秒级
   * @param[out] data 音频数据pcm格式
@@ -97,9 +99,9 @@ typedef void (*nim_vchat_device_status_cb_func)(NIMDeviceType type, unsigned int
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */ 
-typedef void (*nim_vchat_audio_data_cb_func)(unsigned __int64 time, const char *data, unsigned int size, const char *json_extension, const void *user_data);
+typedef void (*nim_vchat_audio_data_cb_func)(uint64_t time, const char *data, unsigned int size, const char *json_extension, const void *user_data);
 
-/** @typedef void (*nim_vchat_video_data_cb_func)(unsigned __int64 time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension, const void *user_data)
+/** @typedef void (*nim_vchat_video_data_cb_func)(uint64_t time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension, const void *user_data)
   * NIM Device 视频数据监听接口
   * @param[out] time 时间毫秒级
   * @param[out] data 视频数据，默认为ARGB格式
@@ -110,7 +112,7 @@ typedef void (*nim_vchat_audio_data_cb_func)(unsigned __int64 time, const char *
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */ 
-typedef void (*nim_vchat_video_data_cb_func)(unsigned __int64 time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension, const void *user_data);
+typedef void (*nim_vchat_video_data_cb_func)(uint64_t time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension, const void *user_data);
 
 #ifdef __cplusplus
 };

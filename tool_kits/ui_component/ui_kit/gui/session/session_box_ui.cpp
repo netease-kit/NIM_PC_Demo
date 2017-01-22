@@ -373,7 +373,7 @@ void SessionBox::OnClipCallback(bool ret, const std::wstring& file_path)
 {
 	if (ret)
 	{
-		SendImage(file_path);
+		InsertImageToEdit(input_edit_, file_path, false);
 	}
 };
 
@@ -383,7 +383,7 @@ void SessionBox::OnBtnSend()
 	{
 		AddTip(STT_LINK);
 
-		ShowLinkForm();
+		ShowLinkForm((nim::NIMResCode)LoginManager::GetInstance()->GetErrorCode(), true);
 		return;
 	}
 
@@ -477,9 +477,15 @@ void SessionBox::OnImageSelected(bool is_snapchat, BOOL ret, std::wstring file_p
 {
 	if (ret)
 	{
-		if (!nbase::FilePathIsExist(file_path, FALSE))
+		if (!nbase::FilePathIsExist(file_path, FALSE) || 0 == nbase::GetFileSize(file_path))
 			return;
-	
+		
+		std::wstring file_ext;
+		nbase::FilePathExtension(file_path, file_ext);
+		nbase::LowerString(file_ext);
+		if (file_ext != L".jpg" && file_ext != L".jpeg" && file_ext != L".png" && file_ext != L".bmp")
+			return;
+
 		if (!is_snapchat)
 		{
 			InsertImageToEdit(input_edit_, file_path, false);

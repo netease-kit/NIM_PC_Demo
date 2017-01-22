@@ -1,6 +1,6 @@
 ﻿/** @file nim_talk.h
   * @brief NIM SDK提供的talk接口
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/2/1
   */
@@ -44,11 +44,13 @@ NIM_SDK_DLL_API void nim_talk_stop_send_msg(const char *json_msg, const char *js
   * @note 错误码	200:成功
   *				408:请求过程超时
   *				414:参数错误
+  *				802:没有权限(群错误码)
+  *				811:强推列表中帐号数量超限(群错误码)
+  *				812:群禁言(群错误码)
   *				10200:发送文件消息，NOS上传暂停
   *				10404:本地资源不存在
   *				10414:本地错误码，参数错误
   *				10502:发送消息，上传NOS失败
-  *				
   */
 NIM_SDK_DLL_API void nim_talk_reg_ack_cb(const char *json_extension, nim_talk_ack_cb_func cb, const void *user_data);
 

@@ -69,6 +69,7 @@ namespace ui
 		void PaintThumb(HDC hDC);
 		void PaintRail(HDC hDC);
 
+		virtual void ClearImageCache() override;
 		ControlStateType GetThumbState()
 		{
 			return m_uThumbState;

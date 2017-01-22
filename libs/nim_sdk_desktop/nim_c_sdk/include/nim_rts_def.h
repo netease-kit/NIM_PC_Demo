@@ -1,6 +1,6 @@
 ﻿/** @file nim_rts_def.h
   * @brief NIM RTS提供的实时会话（数据通道）接口定义
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/6/30
   */
@@ -52,13 +52,14 @@ enum NIMRtsConnectStatus
 
 /** @name json extension params for nim_rts_start and nim_rts_ack
   * for example: 参数可选，例子中是不填时的默认值
-  * {"mode": 1, "custom_video":0, "custom_audio":0, "record":0 }
+  * {"mode": 1, "custom_video":0, "custom_audio":0, "data_record":0 }
   * @{
   */
 static const char *kNIMRtsVChatMode			= "mode";			/**< int NIMRtsVideoChatMode，非视频模式时不会发送视频数据 */
 static const char *kNIMRtsVChatCustomVideo	= "custom_video";	/**< int 是否用自主的视频数据 >0表示是 */
 static const char *kNIMRtsVChatCustomAudio	= "custom_audio";	/**< int 是否用自主的音频数据 >0表示是 */
-static const char *kNIMRtsDataRecord		= "record";			/**< int 是否需要录制数据 >0表示是 */
+static const char *kNIMRtsDataRecord		= "data_record";	/**< int 是否需要服务器录制白板数据 >0表示是 */
+static const char *kNIMRtsAudioRecord		= "audio_record";	/**< int 是否需要服务器录制音频数据 >0表示是 */
 static const char *kNIMRtsApnsText			= "apns";			/**< string 推送用的文本 nim_rts_ack无效 */
 static const char *kNIMRtsCreateCustomInfo	= "custom_info";	/**< string 自定义数据，透传给被邀请方 nim_rts_ack无效 */
 static const char *kNIMRtsPushEnable		= "push_enable";	/**< int 是否需要推送 >0表示是 默认是 */

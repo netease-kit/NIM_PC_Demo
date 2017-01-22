@@ -1,6 +1,6 @@
 ﻿/** @file nim_msglog.h
   * @brief NIM SDK提供的消息历史接口 
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/2/1
   */
@@ -21,6 +21,8 @@ extern"C"
   * @param[in] cb			查询本地消息的回调函数， nim_msglog_query_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_query_msg_by_id_async(const char *client_msg_id, const char *json_extension, nim_msglog_query_single_cb_func cb, const void *user_data);
 
@@ -34,6 +36,7 @@ NIM_SDK_DLL_API void nim_msglog_query_msg_by_id_async(const char *client_msg_id,
   * @param[in] cb			查询本地消息的回调函数， nim_msglog_query_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_msglog_query_msg_async(const char *account_id, enum NIMSessionType to_type, int limit_count, int64_t anchor_msg_time, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data);
 
@@ -82,6 +85,7 @@ NIM_SDK_DLL_API void nim_msglog_query_msg_online_async(const char *id,
   * @param[in] cb				本地查询消息的回调函数， nim_msglog_query_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data		APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_msglog_query_msg_by_options_async(enum NIMMsgLogQueryRange query_range, 
 														   const char *ids, 
@@ -104,6 +108,8 @@ NIM_SDK_DLL_API void nim_msglog_query_msg_by_options_async(enum NIMMsgLogQueryRa
   * @param[in] cb			操作结果的回调函数， nim_msglog_res_ex_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_batch_status_read_async(const char *account_id, enum NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
 
@@ -115,6 +121,8 @@ NIM_SDK_DLL_API void nim_msglog_batch_status_read_async(const char *account_id, 
   * @param[in] cb			操作结果的回调函数， nim_msglog_res_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_set_status_async(const char *msg_id, enum NIMMsgLogStatus msglog_status, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 
@@ -126,6 +134,8 @@ NIM_SDK_DLL_API void nim_msglog_set_status_async(const char *msg_id, enum NIMMsg
   * @param[in] cb			操作结果的回调函数， nim_msglog_res_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_set_sub_status_async(const char *msg_id, enum NIMMsgLogSubStatus msglog_sub_status, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 
@@ -138,6 +148,8 @@ NIM_SDK_DLL_API void nim_msglog_set_sub_status_async(const char *msg_id, enum NI
   * @param[in] cb			操作结果的回调函数， nim_msglog_res_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_insert_msglog_async(const char *talk_id, const char *json_msg, bool need_update_session, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 
@@ -149,6 +161,8 @@ NIM_SDK_DLL_API void nim_msglog_insert_msglog_async(const char *talk_id, const c
   * @param[in] cb			操作结果的回调函数， nim_msglog_res_ex_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_batch_status_delete_async(const char *account_id, enum NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
 
@@ -162,6 +176,8 @@ NIM_SDK_DLL_API void nim_msglog_batch_status_delete_async(const char *account_id
   * @param[in] cb			操作结果的回调函数， nim_msglog_res_ex_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_delete_by_session_type_async(bool delete_sessions, enum NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
 
@@ -174,6 +190,8 @@ NIM_SDK_DLL_API void nim_msglog_delete_by_session_type_async(bool delete_session
   * @param[in] cb			操作结果的回调函数， nim_msglog_res_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_delete_async(const char *account_id, enum NIMSessionType to_type, const char *msg_id, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 
@@ -186,6 +204,8 @@ NIM_SDK_DLL_API void nim_msglog_delete_async(const char *account_id, enum NIMSes
   * @param[in] cb			操作结果的回调函数， nim_msglog_modify_res_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_delete_all_async(bool delete_sessions, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
 
@@ -196,6 +216,8 @@ NIM_SDK_DLL_API void nim_msglog_delete_all_async(bool delete_sessions, const cha
   * @param[in] cb			操作结果的回调函数， nim_msglog_modify_res_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_export_db_async(const char *dst_path, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
 
@@ -208,6 +230,9 @@ NIM_SDK_DLL_API void nim_msglog_export_db_async(const char *dst_path, const char
   * @param[in] prg_cb			导入进度的回调函数， nim_msglog_import_prg_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] prg_user_data	APP的自定义用户数据，SDK只负责传回给回调函数prg_cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				10600:导入消息历史时验证身份和加密密钥不通过
+  *				10601:导入消息历史时写记录失败
   */
 NIM_SDK_DLL_API void nim_msglog_import_db_async(const char *src_path, const char *json_extension, nim_msglog_modify_res_cb_func res_cb, const void *res_user_data, nim_msglog_import_prg_cb_func prg_cb, const void *prg_user_data);
 
@@ -259,6 +284,8 @@ NIM_SDK_DLL_API void nim_msglog_reg_status_changed_cb(const char *json_extension
   * @param[in] cb			操作结果的回调函数， nim_msglog_res_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_update_localext_async(const char *msg_id, const char *local_ext, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 

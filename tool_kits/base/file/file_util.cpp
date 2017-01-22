@@ -217,7 +217,7 @@ bool ReadFileToString(const PathString &filepath, std::string &out)
 		return false;
 
 	int64_t file_size = GetFileSize(filepath);
-	if (file_size > std::numeric_limits<size_t>::max())
+	if (file_size > (int64_t)std::numeric_limits<size_t>::max())
 		return false; // Too large
 
 	bool read_ok = true;

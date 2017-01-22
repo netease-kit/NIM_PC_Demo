@@ -56,6 +56,8 @@ public:
 	 * @param[in] json_extension	json扩展参数（备用，目前不需要）
 	 * @param[in] cb				查询本地消息的回调函数
 	 * @return bool 检查参数如果不符合要求则返回失败
+	 * @note 错误码	200:成功
+	 *				0:失败
 	 */
 	static bool QueryMsgByIDAysnc(const std::string &client_msg_id, const QuerySingleMsgCallback &cb, const std::string &json_extension = "");
 
@@ -68,6 +70,7 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			查询本地消息的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
 	*/
 	static bool QueryMsgAsync(const std::string& account_id
 		, nim::NIMSessionType to_type
@@ -89,6 +92,9 @@ public:
 	* @param[in] json_extension	json扩展参数（备用，目前不需要）
 	* @param[in] cb				在线查询消息的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				403:禁止访问(不在该群,只针对群组会话)
+	*				414:参数错误
 	*/
 	static bool QueryMsgOnlineAsync(const std::string &id
 		, nim::NIMSessionType to_type
@@ -115,6 +121,7 @@ public:
 	* @param[in] json_extension	json扩展参数（备用，目前不需要）
 	* @param[in] cb				在线查询消息的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
 	*/
 	static bool QueryMsgByOptionsAsync(NIMMsgLogQueryRange query_range
 		, const std::list<std::string> &ids
@@ -135,6 +142,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			操作结果的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool BatchStatusReadAsync(const std::string& account_id
 		, nim::NIMSessionType to_type
@@ -148,6 +157,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			操作结果的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool BatchStatusDeleteAsync(const std::string& account_id
 		, nim::NIMSessionType to_type
@@ -161,6 +172,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			操作结果的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool SetStatusAsync(const std::string& msg_id
 		, nim::NIMMsgLogStatus msglog_status
@@ -174,6 +187,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			操作结果的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool SetSubStatusAsync(const std::string& msg_id
 		, nim::NIMMsgLogSubStatus msglog_sub_status
@@ -188,6 +203,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			操作结果的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool WriteMsglogToLocalAsync(const std::string& talk_id
 		, const IMMessage& msg
@@ -203,6 +220,8 @@ public:
 	* @param[in] cb			操作结果的回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool DeleteBySessionTypeAsync(bool delete_sessions
 		, NIMSessionType to_type
@@ -217,6 +236,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			操作结果的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool DeleteAsync(const std::string& session_id
 		, NIMSessionType to_type
@@ -232,6 +253,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			操作结果的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool DeleteAllAsync(bool delete_sessions, const DeleteAllCallback& cb, const std::string& json_extension = "");
 
@@ -241,6 +264,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			操作结果的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool ExportDbAsync(const std::string& dst_path, const DBFunctionCallback& cb, const std::string& json_extension = "");
 
@@ -251,6 +276,9 @@ public:
 	* @param[in] cb			操作结果的回调函数
 	* @param[in] prg_cb			导入进度的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				10600:导入消息历史时验证身份和加密密钥不通过
+	*				10601:导入消息历史时写记录失败
 	*/
 	static bool ImportDbAsync(const std::string& src_path
 		, const DBFunctionCallback& cb
@@ -262,6 +290,10 @@ public:
 	* @param[in] json_msg			已读消息json string。
 	* @param[in] cb				操作结果的回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				403:服务器关闭此功能，或者应用没权限
+	*				404:请求的目标（用户或对象）不存在
+	*				10414:本地错误码，参数错误
 	*/
 	static void SendReceiptAsync(const std::string& json_msg, const MessageStatusChangedCallback& cb);
 
@@ -284,6 +316,7 @@ public:
 	* @param[in] cb				回调函数
 	* @param[in] json_extension	json扩展参数（备用，目前不需要）
 	* @return void 无返回值
+	* @note 错误码	200:成功
 	*/
 	static void RegMessageStatusChangedCb(const MessageStatusChangedCallback& cb, const std::string &json_extension = "");
 
@@ -294,6 +327,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			操作结果的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool UpdateLocalExtAsync(const std::string& msg_id
 		, const std::string& local_ext

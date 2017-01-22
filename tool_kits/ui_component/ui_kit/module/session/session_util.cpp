@@ -431,32 +431,6 @@ bool IsResourceExist(const nim::IMMessage &msg)
 	}
 }
 
-bool IsAtMeMsg(const nim::IMMessage &msg)
-{
-	// 是否包含atme消息，如果当前msg包含atme消息，就不显示提示条，否则显示
-	if (msg.session_type_ == nim::kNIMSessionTypeTeam && msg.type_ == nim::kNIMMessageTypeText && !LoginManager::GetInstance()->IsEqual(msg.sender_accid_))
-	{
-		if (msg.msg_setting_.is_force_push_ == nim::BS_TRUE)
-		{
-			//@所有人
-			if (msg.msg_setting_.force_push_ids_list_.empty())
-			{
-				return true;
-			}
-			else
-			{
-				for (auto &id : msg.msg_setting_.force_push_ids_list_)
-				{
-					if (LoginManager::GetInstance()->IsEqual(id))
-						return true;
-				}
-			}
-		}
-	}
-
-	return false;
-}
-
 void CustomSysMessageToIMMessage(const nim::SysMessage &sys_msg, nim::IMMessage &msg)
 {
 	//无法对等
@@ -778,7 +752,7 @@ bool IsNetCallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
 	return false;
 }
 
-std::wstring GetCustomMsg(const std::string &msg_attach)
+std::wstring GetCustomMsg(const std::string &sender_accid, const std::string &msg_attach)
 {
 	std::wstring show_text = L"[自定义消息]";
 	Json::Value json;
@@ -805,7 +779,17 @@ std::wstring GetCustomMsg(const std::string &msg_attach)
 				int flag = json["data"]["flag"].asInt();
 				if (flag == 0)
 				{
-					show_text = L"我已发起了[白板演示]";
+					if (LoginManager::GetInstance()->IsEqual(sender_accid))
+					{
+						show_text = L"我已发起了[白板演示]";
+					}
+					else
+					{
+						nim::UserNameCard card;
+						UserService::GetInstance()->GetUserInfo(sender_accid, card);
+						show_text = nbase::UTF8ToUTF16(card.GetName());
+						show_text += L"已发起了[白板演示]";
+					}
 				}
 				else if (flag == 1)
 				{

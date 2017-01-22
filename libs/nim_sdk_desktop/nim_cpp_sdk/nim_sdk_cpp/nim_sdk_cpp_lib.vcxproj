@@ -5,9 +5,17 @@
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
     </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
   <PropertyGroup Label="Globals">
@@ -22,7 +30,20 @@
     <CharacterSet>Unicode</CharacterSet>
     <PlatformToolset>v120_xp</PlatformToolset>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>StaticLibrary</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+    <PlatformToolset>v120_xp</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
@@ -35,21 +56,38 @@
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="PropertySheets">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
   <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="PropertySheets">
     <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <OutDir>$(ProjectDir)..\..\..\..\libs\</OutDir>
   </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <TargetName>nim_cpp_sdk_d</TargetName>
-    <IntDir>$(ProjectDir)..\..\..\..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)..\..\..\..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <TargetName>nim_cpp_sdk_d</TargetName>
+    <OutDir>$(ProjectDir)..\..\..\..\libs\x64\</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <OutDir>$(ProjectDir)..\..\..\..\libs\</OutDir>
     <TargetName>nim_cpp_sdk</TargetName>
-    <IntDir>$(ProjectDir)..\..\..\..\tmp\$(ProjectName)\$(Configuration)\</IntDir>
+    <IntDir>$(ProjectDir)..\..\..\..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <TargetName>nim_cpp_sdk</TargetName>
+    <OutDir>$(ProjectDir)..\..\..\..\libs\x64</OutDir>
+    <IntDir>$(ProjectDir)..\..\..\..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -67,6 +105,24 @@
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>..\..\..\</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..\third_party\jsoncpp\include\json\;$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)util\;$(ProjectDir)helper\;$(ProjectDir)..\..\nim_c_sdk\include\;$(ProjectDir)..\..\nim_c_sdk\util\;..\..\..\..\tool_kits\;..\..\..\..\..\tool_kits\;..\;..\..\;..\..\..\;..\..\..\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>jsoncpp_d.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>..\..\..\x64\</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -91,6 +147,28 @@
       <AdditionalLibraryDirectories>..\..\..\</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>..\..\..\..\third_party\jsoncpp\include\json\;$(ProjectDir);$(ProjectDir)api\;$(ProjectDir)util\;$(ProjectDir)helper\;$(ProjectDir)..\..\nim_c_sdk\include\;$(ProjectDir)..\..\nim_c_sdk\util\;..\..\..\..\tool_kits\;..\..\..\..\..\tool_kits\;..\;..\..\;..\..\..\;..\..\..\..\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+    </ClCompile>
+    <Link>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>jsoncpp.lib</AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>..\..\..\x64\</AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="api\nim_cpp_client.cpp" />
     <ClCompile Include="api\nim_cpp_data_sync.cpp" />
@@ -112,6 +190,7 @@
     <ClCompile Include="helper\nim_friend_helper.cpp" />
     <ClCompile Include="helper\nim_msglog_helper.cpp" />
     <ClCompile Include="helper\nim_msg_helper.cpp" />
+    <ClCompile Include="helper\nim_nos_helper.cpp" />
     <ClCompile Include="helper\nim_session_helper.cpp" />
     <ClCompile Include="helper\nim_sysmsg_helper.cpp" />
     <ClCompile Include="helper\nim_talk_helper.cpp" />
@@ -145,6 +224,7 @@
     <ClInclude Include="helper\nim_friend_helper.h" />
     <ClInclude Include="helper\nim_msglog_helper.h" />
     <ClInclude Include="helper\nim_msg_helper.h" />
+    <ClInclude Include="helper\nim_nos_helper.h" />
     <ClInclude Include="helper\nim_session_helper.h" />
     <ClInclude Include="helper\nim_sysmsg_helper.h" />
     <ClInclude Include="helper\nim_talk_helper.h" />
@@ -156,11 +236,6 @@
     <ClInclude Include="util\nim_json_util.h" />
     <ClInclude Include="util\nim_sdk_util.h" />
     <ClInclude Include="util\nim_string_util.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ProjectReference Include="..\..\..\..\tool_kits\base\base.vcxproj">
-      <Project>{8d9a6595-717a-41c8-b468-0011a72be3d1}</Project>
-    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,6 +1,6 @@
 ﻿/** @file nim_device.h
   * @brief NIM VChat提供的音视频设备相关接口，使用前请先调用nim_vchat.h中nim_vchat_init
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/4/30
   */
@@ -30,7 +30,7 @@ NIM_SDK_DLL_API void nim_vchat_enum_device_devpath(NIMDeviceType type, const cha
   * NIM VCHAT DEVICE 启动设备，同一NIMDeviceType下设备将不重复启动，不同的设备会先关闭前一个设备开启新设备
   * @param[in] type NIMDeviceType 见nim_device_def.h
   * @param[in] device_path 设备路径对应kNIMDevicePath，如果是kNIMDeviceTypeAudioHook，对应播放器本地全路径
-  * @param[in] fps 摄像头为采样频率（一般传电源频率取50）,其他NIMDeviceType无效（麦克风采样频率由底层控制，播放器采样频率也由底层控制）
+  * @param[in] fps 摄像头为采样频率（一般取30）,其他NIMDeviceType无效（麦克风采样频率由底层控制，播放器采样频率也由底层控制）
   * @param[in] json_extension 打开摄像头是允许设置 kNIMDeviceWidth 和 kNIMDeviceHeight，最后取最接近设置值的画面模式
   * @param[in] cb 结果回调见nim_device_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
@@ -130,7 +130,16 @@ NIM_SDK_DLL_API void nim_vchat_set_audio_input_auto_volumn(bool auto_volumn);
   */
 NIM_SDK_DLL_API bool nim_vchat_get_audio_input_auto_volumn();
 
-/** @fn void nim_vchat_custom_audio_data(unsigned __int64 time, const char *data, unsigned int size, const char *json_extension);
+/** @fn void nim_vchat_set_audio_process_info(bool aec, bool ns, bool vid)
+  * NIM VCHAT DEVICE 设置底层针对麦克风采集数据处理开关接口，默认全开（此接口是全局接口，在sdk初始化后设置一直有效）
+  * @param[in] aec true 标识打开回音消除功能，false 标识关闭
+  * @param[in] ns true 标识打开降噪功能，false 标识关闭
+  * @param[in] vid true 标识打开人言检测功能，false 标识关闭
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_vchat_set_audio_process_info(bool aec, bool ns, bool vid);
+
+/** @fn void nim_vchat_custom_audio_data(uint64_t time, const char *data, unsigned int size, const char *json_extension);
   * NIM VCHAT 自定义音频数据接口, 采样位深只支持16或32， kNIMDeviceSampleRate支持8000，16000，32000，44100
   * @param[in] time 时间毫秒级
   * @param[in] data 音频数据pcm格式
@@ -138,9 +147,9 @@ NIM_SDK_DLL_API bool nim_vchat_get_audio_input_auto_volumn();
   * @param[in] json_extension 扩展Json string kNIMDeviceSampleRate采样频和kNIMDeviceSampleBit采样位深 默认如{"sample_rate":16000, "sample_bit":16}
   * @return bool true 调用成功，false 调用失败
   */ 
-NIM_SDK_DLL_API bool nim_vchat_custom_audio_data(unsigned __int64 time, const char *data, unsigned int size, const char *json_extension);
+NIM_SDK_DLL_API bool nim_vchat_custom_audio_data(uint64_t time, const char *data, unsigned int size, const char *json_extension);
 
-/** @typedef void nim_vchat_custom_video_data(unsigned __int64 time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension)
+/** @typedef void nim_vchat_custom_video_data(uint64_t time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension)
   * NIM VCHAT 自定义视频数据接口
   * @param[in] time 时间毫秒级
   * @param[in] data 视频数据， 默认为yuv420格式
@@ -150,7 +159,7 @@ NIM_SDK_DLL_API bool nim_vchat_custom_audio_data(unsigned __int64 time, const ch
   * @param[in] json_extension  扩展Json string，kNIMVideoSubType视频数据格式（缺省为kNIMVideoSubTypeI420）
   * @return bool true 调用成功，false 调用失败
   */ 
-NIM_SDK_DLL_API bool nim_vchat_custom_video_data(unsigned __int64 time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension);
+NIM_SDK_DLL_API bool nim_vchat_custom_video_data(uint64_t time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension);
 
 #ifdef __cplusplus
 };

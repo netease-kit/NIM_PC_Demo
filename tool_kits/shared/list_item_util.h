@@ -102,7 +102,7 @@ public:
 	bool operator < (const ListItemUserData& elment2)
 	{
 		static DWORD lcid = MAKELCID(MAKELANGID(LANG_CHINESE_SIMPLIFIED, SUBLANG_CHINESE_SIMPLIFIED), SORT_CHINESE_PRCP);
-		return ::CompareString(lcid, 0, this->show_name.c_str(), this->show_name.length(), elment2.show_name.c_str(), elment2.show_name.length()) == 1;
+		return ::CompareString(lcid, 0, this->show_name.c_str(), (int)this->show_name.length(), elment2.show_name.c_str(), (int)elment2.show_name.length()) == 1;
 	}
 
 	UTF8String show_name_first_letter;

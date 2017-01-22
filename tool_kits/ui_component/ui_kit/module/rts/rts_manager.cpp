@@ -62,7 +62,7 @@ void RtsManager::OnStartRtsNotify(const std::string& session_id, int channel_typ
 {
 	if (!StartRtsForm(channel_type, uid, session_id))
 	{
-		nim::Rts::Ack(session_id, channel_type, false, nim::Rts::AckCallback());
+		nim::Rts::Ack(session_id, channel_type, false, true, true, nim::Rts::AckCallback());
 	}
 }
 

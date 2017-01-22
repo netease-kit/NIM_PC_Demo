@@ -1,6 +1,6 @@
 ﻿/** @file nim_chatroom.h
   * @brief NIM 聊天室 SDK提供的接口
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg, Harrison
   * @date 2015/12/28
   */
@@ -22,6 +22,14 @@ extern"C"
   * @param[in] cb			  回调函数, 定义见nim_chatroom_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				414:参数错误
+  *				404:聊天室不存在
+  *				403:无权限
+  *				500:服务器内部错误
+  *				13001:IM主连接状态异常
+  *				13002:聊天室状态异常
+  *				13003:黑名单用户禁止进入聊天室
   */
 NIM_SDK_DLL_API void nim_chatroom_reg_enter_cb(const char *json_extension, nim_chatroom_enter_cb_func cb, const void *user_data);
 
@@ -31,6 +39,7 @@ NIM_SDK_DLL_API void nim_chatroom_reg_enter_cb(const char *json_extension, nim_c
   * @param[in] cb			  回调函数, 定义见nim_chatroom_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_chatroom_reg_exit_cb(const char *json_extension, nim_chatroom_exit_cb_func cb, const void *user_data);
 
@@ -49,6 +58,11 @@ NIM_SDK_DLL_API void nim_chatroom_reg_link_condition_cb(const char *json_extensi
   * @param[in] cb			  回调函数, 定义见nim_chatroom_def.h
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				414:参数错误
+  *				416:频率受限(目前配置5分钟300条)
+  *				13004:被禁言
+  *				13006:聊天室处于整体禁言状态,只有管理员能发言
   */
 NIM_SDK_DLL_API void nim_chatroom_reg_send_msg_ack_cb(const char *json_extension, nim_chatroom_sendmsg_arc_cb_func cb, const void *user_data);
 
@@ -83,7 +97,7 @@ NIM_SDK_DLL_API void nim_chatroom_init(const char *json_extension);
   * @param[in] request_enter_data 聊天室进入信息(NIM SDK请求聊天室返回的数据)
   * @param[in] enter_info		  聊天室可选信息
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
-  * @return bool 进入信息是否正确,返回失败则不会促发进入回调
+  * @return bool 进入信息是否正确,返回失败则不会触发进入回调
   */
 NIM_SDK_DLL_API bool nim_chatroom_enter(const int64_t room_id, const char *request_enter_data, const char *enter_info, const char *json_extension);
 
@@ -95,7 +109,7 @@ NIM_SDK_DLL_API bool nim_chatroom_enter(const int64_t room_id, const char *reque
   */
 NIM_SDK_DLL_API void nim_chatroom_exit(const int64_t room_id, const char *json_extension);
 
-/** @fn int nim_chatroom_get_login_state(const char *json_extension)
+/** @fn int nim_chatroom_get_login_state(const int64_t room_id, const char *json_extension)
   * 获取登录状态
   * @param[in] room_id			  聊天室ID
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
@@ -149,6 +163,14 @@ NIM_SDK_DLL_API void nim_chatroom_get_msg_history_online_async(const int64_t roo
   * @param[in] cb					回调函数, 定义见nim_chatroom_def.h
   * @param[in] user_data			APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				414:参数异常
+  *				417:重复操作
+  *				403:无权限
+  *				500:服务器错误
+  *				13002: 聊天室状态异常
+  *				13003:在黑名单中
+  *				13004:在禁言名单中
   */
 NIM_SDK_DLL_API void nim_chatroom_set_member_attribute_async(const int64_t room_id, const char *notify_ext, const char *json_extension, nim_chatroom_set_member_attribute_cb_func cb, const void *user_data);
 
@@ -170,6 +192,8 @@ NIM_SDK_DLL_API void nim_chatroom_get_info_async(const int64_t room_id, const ch
   * @param[in] cb					回调函数, 定义见nim_chatroom_def.h
   * @param[in] user_data			APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				414:参数错误
   */
 NIM_SDK_DLL_API void nim_chatroom_get_members_by_ids_online_async(const int64_t room_id, const char *ids_json_array_string, const char *json_extension, nim_chatroom_get_members_cb_func cb, const void *user_data);
 
@@ -182,6 +206,9 @@ NIM_SDK_DLL_API void nim_chatroom_get_members_by_ids_online_async(const int64_t 
   * @param[in] cb					回调函数, 定义见nim_chatroom_def.h
   * @param[in] user_data			APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				403:无权限
+  *				404:被踢账号无效或非在线
   */
 NIM_SDK_DLL_API void nim_chatroom_kick_member_async(const int64_t room_id, const char *id, const char *notify_ext, const char *json_extension, nim_chatroom_kick_member_cb_func cb, const void *user_data);
 
@@ -207,6 +234,10 @@ NIM_SDK_DLL_API void nim_chatroom_set_proxy(enum NIMChatRoomProxyType type, cons
   * @param[in] cb					回调函数, 定义见nim_chatroom_def.h
   * @param[in] user_data			APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				403:无权限操作，只有管理员可以操作，管理员只能被创建者操作，自己不能操作自己
+  *				414:参数错误
+  *				417:重复操作，如果已经是黑名单或永久禁言状态，不能设置为临时禁言状态
   */
 NIM_SDK_DLL_API void nim_chatroom_temp_mute_member_async(const int64_t room_id, const char *accid, const int64_t duration, bool need_notify, const char *notify_ext, const char *json_extension, nim_chatroom_temp_mute_member_cb_func cb, const void *user_data);
 
@@ -245,6 +276,9 @@ NIM_SDK_DLL_API void nim_chatroom_update_my_role_async(const int64_t room_id, co
   * @param[in] cb					回调函数, 定义见nim_chatroom_def.h
   * @param[in] user_data			APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				403:无权限,只有管理员能操作
+  *				414:参数错误
   */
 NIM_SDK_DLL_API void nim_chatroom_queue_offer_async(const int64_t room_id, const char *element_key, const char *element_value, const char *json_extension, nim_chatroom_queue_offer_cb_func cb, const void *user_data);
 
@@ -256,6 +290,9 @@ NIM_SDK_DLL_API void nim_chatroom_queue_offer_async(const int64_t room_id, const
   * @param[in] cb					回调函数, 定义见nim_chatroom_def.h
   * @param[in] user_data			APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				403:无权限，只有管理员才能操作
+  *				404:没有元素可取出
   */
 NIM_SDK_DLL_API void nim_chatroom_queue_poll_async(const int64_t room_id, const char *element_key, const char *json_extension, nim_chatroom_queue_poll_cb_func cb, const void *user_data);
 

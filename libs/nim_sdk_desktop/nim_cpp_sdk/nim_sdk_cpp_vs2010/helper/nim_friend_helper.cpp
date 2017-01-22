@@ -49,7 +49,10 @@ void ParseFriendProfile(const Json::Value& friend_profile_json, FriendProfile& p
 	profile.SetSource((NIMFriendSource)friend_profile_json[kNIMFriendKeySource].asUInt());
 	profile.SetAlias(friend_profile_json[kNIMFriendKeyAlias].asString());
 	profile.SetBits(friend_profile_json[kNIMFriendKeyBits].asUInt64());
-	profile.SetEx(friend_profile_json[kNIMFriendKeyEx].asString());
+	Json::Value ext;
+	Json::Reader reader;
+	if (reader.parse(friend_profile_json[kNIMFriendKeyEx].asString(), ext) && ext.isObject())
+		profile.SetEx(ext);
 	profile.SetCreateTimetag(friend_profile_json[kNIMFriendKeyCreateTime].asUInt64());
 	profile.SetUpdateTimetag(friend_profile_json[kNIMFriendKeyUpdateTime].asUInt64());
 }

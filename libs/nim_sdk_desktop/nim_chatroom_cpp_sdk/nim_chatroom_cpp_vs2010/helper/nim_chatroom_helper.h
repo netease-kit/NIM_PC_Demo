@@ -142,10 +142,12 @@ struct ChatRoomNotification
 	std::string						operator_nick_;/**< 操作者的账号nick */
 	std::list<std::string>			target_nick_;/**< 被操作者的账号nick列表 */
 	std::list<std::string>			target_ids_; /**< 被操作者的accid列表 */
-	int64_t							temp_mute_duration_; /**<long 当通知为临时禁言相关时有该值，禁言时代表本次禁言的时长(秒)，解禁时代表本次禁言剩余时长(秒) */
+	int64_t							temp_mute_duration_; /**<当通知为临时禁言相关时有该值，禁言时代表本次禁言的时长(秒)，解禁时代表本次禁言剩余时长(秒); 当通知为聊天室进入事件，代表临时禁言时长(秒); 其他通知事件不带该数据*/
+	bool							muted_;		 /**< 当通知为聊天室进入事件才有，代表是否禁言状态 */
+	bool							temp_muted_; /**< 当通知为聊天室进入事件才有，代表是否临时禁言状态 */
 
 	/** 构造函数 */
-	ChatRoomNotification() : temp_mute_duration_(0) { }
+	ChatRoomNotification() : temp_mute_duration_(0), muted_(false), temp_muted_(false) { }
 
 	/** @fn void ParseFromJsonValue(const Json::Value &values)
 	  * @brief 从JsonValue中解析得到聊天室通知
@@ -161,7 +163,15 @@ struct ChatRoomNotification
 		nim::JsonStrArrayToList(values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTargetNick], target_nick_);
 		nim::JsonStrArrayToList(values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTarget], target_ids_);
 		if (id_ == kNIMChatRoomNotificationIdMemberTempMute || id_ == kNIMChatRoomNotificationIdMemberTempUnMute)
-			temp_mute_duration_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTempMuteDuration].asUInt64();
+			temp_mute_duration_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTempMuteDuration].asInt64();
+		if (id_ == kNIMChatRoomNotificationIdMemberIn)
+		{
+			if (values[kChatRoomNotificationKeyData].isMember(kChatRoomNotificationDataKeyMuteFlag))
+				muted_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyMuteFlag].asUInt() == 1;
+			if (values[kChatRoomNotificationKeyData].isMember(kChatRoomNotificationDataKeyTempMutedFlag))
+				temp_muted_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTempMutedFlag].asUInt() == 1;
+			temp_mute_duration_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyMemberInTempMutedDuration].asInt64();
+		}
 	}
 };
 

@@ -101,7 +101,7 @@ void RtsForm::OnFinalMessage(HWND hWnd)
 	}
 	if (need_ack_)
 	{
-		nim::Rts::Ack(session_id_, type_, false, nim::Rts::AckCallback());
+		nim::Rts::Ack(session_id_, type_, false, false, false, nim::Rts::AckCallback());
 	} 
 	else
 	{
@@ -152,13 +152,15 @@ bool RtsForm::OnClicked(ui::EventArgs* arg)
 	std::wstring name = arg->pSender->GetName();		
 	if(name == L"btn_accept")
 	{
+		bool data_record = atoi(GetConfigValue("rts_record").c_str()) > 0;
+		bool audio_record = atoi(GetConfigValue("audio_record").c_str()) > 0;
 		need_ack_ = false;
-		nim::Rts::Ack(session_id_, type_, true, nbase::Bind(&RtsForm::OnAckCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+		nim::Rts::Ack(session_id_, type_, true, data_record, audio_record, nbase::Bind(&RtsForm::OnAckCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 	}
 	else if (name == L"btn_reject")
 	{
 		need_ack_ = false;
-		nim::Rts::Ack(session_id_, type_, false, nim::Rts::AckCallback());
+		nim::Rts::Ack(session_id_, type_, false, false, false, nim::Rts::AckCallback());
 		DelayClose();
 	}
 	else if (name == L"btn_cancel")
@@ -360,8 +362,10 @@ void RtsForm::ShowStartUI(bool creater)
 
 	if (creater)
 	{
+		bool data_record = atoi(GetConfigValue("rts_record").c_str()) > 0;
+		bool audio_record = atoi(GetConfigValue("audio_record").c_str()) > 0;
 		nim::Rts::StartChannelCallback cb = nbase::Bind(&RtsForm::OnStartRtsCb, this, session_id_, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
-		nim::Rts::StartChannel(type_, uid_, nbase::UTF16ToUTF8(L"白板通话邀请test"), "rts custom info", cb);
+		nim::Rts::StartChannel(type_, uid_, nbase::UTF16ToUTF8(L"白板通话邀请test"), "rts custom info", data_record, audio_record, cb);
 	}
 	auto closure = nbase::Bind(&RtsForm::NoActiveTimer, this);
 	nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(40));
@@ -445,7 +449,7 @@ void RtsForm::SendCurData()
 }
 void RtsForm::OnParseTcpData(std::string data)
 {
-	int pos = data.find(';');
+	int pos = (int)data.find(';');
 	std::list<ui::DrawOpInfo> info_list;
 	while (pos != -1)
 	{
@@ -455,7 +459,7 @@ void RtsForm::OnParseTcpData(std::string data)
 		info_list.push_back(info);
 
 		data = data.substr(pos + 1);
-		pos = data.find(';');
+		pos = (int)data.find(';');
 	}
 	if (info_list.size() > 0)
 	{

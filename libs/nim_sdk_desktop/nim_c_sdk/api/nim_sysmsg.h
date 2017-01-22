@@ -1,6 +1,6 @@
 ﻿/** @file nim_sysmsg.h
   * @brief NIM SDK提供的系统消息历史接口 
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/2/1
   */
@@ -60,6 +60,7 @@ NIM_SDK_DLL_API void nim_sysmsg_query_msg_async(int limit_count, int64_t last_ti
   * @param[in] cb			查询未读消息数的回调函数， nim_sysmsg_res_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_sysmsg_query_unread_count(const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
 
@@ -71,6 +72,8 @@ NIM_SDK_DLL_API void nim_sysmsg_query_unread_count(const char *json_extension, n
   * @param[in] cb			设置消息状态的回调函数， nim_sysmsg_res_ex_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_sysmsg_set_status_async(int64_t msg_id, enum NIMSysMsgStatus status, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void *user_data);
 
@@ -80,6 +83,8 @@ NIM_SDK_DLL_API void nim_sysmsg_set_status_async(int64_t msg_id, enum NIMSysMsgS
   * @param[in] cb			设置全部消息为已读的回调函数， nim_sysmsg_res_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_sysmsg_read_all_async(const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
 
@@ -90,6 +95,8 @@ NIM_SDK_DLL_API void nim_sysmsg_read_all_async(const char *json_extension, nim_s
   * @param[in] cb			删除消息的回调函数， nim_sysmsg_res_ex_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_sysmsg_delete_async(int64_t msg_id, const char *json_extension, nim_sysmsg_res_ex_cb_func cb, const void *user_data);
 
@@ -99,6 +106,8 @@ NIM_SDK_DLL_API void nim_sysmsg_delete_async(int64_t msg_id, const char *json_ex
   * @param[in] cb			删除消息的回调函数， nim_sysmsg_res_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_sysmsg_delete_all_async(const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
 
@@ -110,6 +119,8 @@ NIM_SDK_DLL_API void nim_sysmsg_delete_all_async(const char *json_extension, nim
   * @param[in] cb			回调函数， nim_sysmsg_res_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_sysmsg_set_logs_status_by_type_async(enum NIMSysMsgType type, enum NIMSysMsgStatus status, const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
 
@@ -120,6 +131,8 @@ NIM_SDK_DLL_API void nim_sysmsg_set_logs_status_by_type_async(enum NIMSysMsgType
   * @param[in] cb			回调函数， nim_sysmsg_res_cb_func回调函数定义见nim_msglog_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
   */
 NIM_SDK_DLL_API void nim_sysmsg_delete_logs_by_type_async(enum NIMSysMsgType type, const char *json_extension, nim_sysmsg_res_cb_func cb, const void *user_data);
 

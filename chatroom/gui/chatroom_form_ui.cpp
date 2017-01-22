@@ -330,12 +330,8 @@ void ChatroomForm::ShowMemberMenu(std::wstring &name)
 
 	// 只有创建者和管理员可以操作
 	bool show_admin = false;
-	if (my_id == creater_id_)
+	if (my_id == creater_id_ || managers_list_.find(my_id) != managers_list_.end())
 		show_admin = true;
-	else if (managers_list_.find(my_id) != managers_list_.end())
-	{
-		//do nothing
-	}
 	else
 		return;
 
@@ -344,6 +340,7 @@ void ChatroomForm::ShowMemberMenu(std::wstring &name)
 	if (it == nick_account_map_.end())
 		return;
 
+	//如果目标用户是创建者，不能操作，直接返回
 	if (it->second == creater_id_)
 		return;
 
@@ -351,6 +348,11 @@ void ChatroomForm::ShowMemberMenu(std::wstring &name)
 	auto it_member = members_list_.find(it->second);
 	if (it_member != members_list_.end())
 		member_info = it_member->second;
+
+	//如果目标用户和自己都是管理员，不能操作，直接返回
+	bool my_room = my_id == creater_id_;
+	if (!my_room && member_info.type_ == 2)
+		return;
 
 	clicked_user_account_ = it->second;
 

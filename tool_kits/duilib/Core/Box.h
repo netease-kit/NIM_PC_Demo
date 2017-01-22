@@ -84,6 +84,7 @@ public:
 
 	virtual void HandleMessageTemplate(EventArgs& msg) override;
 
+	virtual void ClearImageCache() override;
 	virtual void InvokeLoadImageCache() override;
 	virtual void UnLoadImageCache() override;
 
@@ -205,6 +206,8 @@ public:
 	{
 		OnEvent[kEventScrollChange] += callback;
 	}
+
+	virtual void ClearImageCache() override;
 
 private:
 	void LoadImageCache(bool bFromTopLeft);

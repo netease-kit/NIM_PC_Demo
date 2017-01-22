@@ -42,6 +42,7 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			最近会话列表项变更的回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
 	*/
 	static void RegChangeCb(const ChangeCallback& cb, const std::string& json_extension = "");
 
@@ -60,6 +61,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			最近会话列表项变更的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool DeleteRecentSession(nim::NIMSessionType to_type, const std::string& id, const DeleteRecentSessionCallabck& cb, const std::string& json_extension = "");
 
@@ -68,6 +71,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			最近会话列表项变更的回调函数
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static void DeleteAllRecentSession(const DeleteAllRecentSessionCallabck& cb, const std::string& json_extension = "");
 
@@ -78,6 +83,8 @@ public:
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			最近会话列表项变更的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool SetUnreadCountZeroAsync(nim::NIMSessionType to_type, const std::string& id, const SetUnreadCountZeroCallback& cb, const std::string& json_extension = "");
 
@@ -89,6 +96,8 @@ public:
 	* @param[in] cb			回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool SetSessionTop(enum NIMSessionType to_type, const std::string& id, bool top, const ChangeCallback& cb, const std::string& json_extension = "");
 
@@ -100,6 +109,8 @@ public:
 	* @param[in] cb			回调函数
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
 	*/
 	static bool SetSessionExtendData(enum NIMSessionType to_type, const std::string& id, const std::string& data, const ChangeCallback& cb, const std::string& json_extension = "");
 

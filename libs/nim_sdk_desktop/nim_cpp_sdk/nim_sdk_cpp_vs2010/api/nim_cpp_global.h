@@ -10,6 +10,7 @@
 
 #include <functional>
 #include <string>
+#include "nim_base_types.h"
 
 /**
 * @namespace nim

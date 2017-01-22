@@ -10,6 +10,7 @@
 
 #include <string>
 #include <functional>
+#include "nim_base_types.h"
 
 /**
 * @namespace nim
@@ -21,10 +22,32 @@ namespace nim
 #include "nim_vchat_def.h"
 #include "nim_device_def.h"
 
+/** @brief 网络探测回调信息 */
+struct NetDetectCbInfo
+{
+	int32_t res_code_;					/**< 返回的错误码 */
+	int32_t loss_;
+	int32_t rtt_max_;
+	int32_t rtt_min_;
+	int32_t rtt_avg_;
+	int32_t rtt_mdev_;
+	std::string expand_info_;
+
+	NetDetectCbInfo()
+	{
+		res_code_ = 0;
+		loss_ = 0;
+		rtt_max_ = 0;
+		rtt_min_ = 0;
+		rtt_avg_ = 0;
+		rtt_mdev_ = 0;
+	}
+};
 class VChat
 {
 
 public:
+	typedef std::function<void(int, NetDetectCbInfo)> NetDetectCallback;	/**< 网络探测回调模板 */
 	typedef std::function<void(bool ret, int code, const std::string& file, __int64 time)>  Mp4OptCallback;		/**< MP4录制事件通知回调模板 */
 	typedef std::function<void(bool ret, int code, const std::string& json_extension)> OptCallback;				/**< 操作回调模板 */
 	typedef std::function<void(int code, __int64 channel_id, const std::string& json_extension)> Opt2Callback;	/**< 操作回调模板 */
@@ -42,6 +65,22 @@ public:
 	* @return void 无返回值
 	*/
 	static void Cleanup();
+
+	/** @fn void NetDetect(NetDetectCallback cb)
+	* 音视频网络探测
+	* @param[in] cb 操作结果的回调函数
+	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				0:流程错误
+	*				400:非法请求格式
+	*				417:请求数据不对
+	*				606:ip为内网ip
+	*				607:频率超限
+	*				20001:探测类型错误
+	*				20002:ip错误
+	*				20003:sock错误
+	*/
+	static void NetDetect(NetDetectCallback cb);
 
 	/** @fn static void EnumDeviceDevpath(nim::NIMDeviceType type, nim_vchat_enum_device_devpath_sync_cb_func cb)
 	* NIM VCHAT DEVICE 遍历设备
@@ -129,10 +168,22 @@ public:
 	*/
 	static bool GetAudioInputAutoVolumn();
 
+	/** @fn static void SetAudioProcess(bool aec, bool ns, bool vid)
+	* NIM VCHAT DEVICE 设置底层针对麦克风采集数据处理开关接口，默认全开（此接口是全局接口，在sdk初始化后设置一直有效）
+	* @param[in] aec true 标识打开回音消除功能，false 标识关闭
+	* @param[in] ns true 标识打开降噪功能，false 标识关闭
+	* @param[in] vid true 标识打开人言检测功能，false 标识关闭
+	* @return void 无返回值
+	*/
+	static void SetAudioProcess(bool aec, bool ns, bool vid);
+
 	/** @fn static void SetCbFunc(nim_vchat_cb_func cb)
 	* NIM VCHAT 设置通话回调或者服务器通知
 	* @param[in] cb 结果回调见nim_vchat_def.h
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				9103:已经在其他端接听/拒绝过这通电话
+	*				11001:通话不可送达，对方离线状态
 	*/
 	static void SetCbFunc(nim_vchat_cb_func cb);
 
@@ -176,6 +227,10 @@ public:
 	* @param[in] path 文件录制路径
 	* @param[in] cb 结果回调
 	* @return void 无返回值
+	* @note 错误码	200:MP4文件创建
+	*				400:MP4文件已经存在
+	*				403:MP4文件创建失败
+	*				404:通话不存在
 	*/
 	static void StartRecord(const std::string& path, Mp4OptCallback cb);
 
@@ -183,6 +238,8 @@ public:
 	* NRTC 停止录制MP4文件
 	* @param[in] cb 结果回调
 	* @return void 无返回值
+	* @note 错误码	0:MP4结束
+	*				404:通话不存在
 	*/
 	static void StopRecord(Mp4OptCallback cb);
 
@@ -197,6 +254,8 @@ public:
 	* NIM 通话中修改分辨率，只在多人中支持
 	* @param[in] video_quality 分辨率模式
 	* @return void 无返回值
+	* @note 错误码	0:成功
+	*				11403:无效的操作
 	*/
 	static void SetVideoQuality(int video_quality);
 
@@ -204,6 +263,8 @@ public:
 	* NIM 通话中修改视频码率，有效区间[100kb,2000kb]，如果设置video_bitrate为0则取默认码率
 	* @param[in] video_bitrate 视频码率值
 	* @return void 无返回值
+	* @note 错误码	0:成功
+	*				11403:无效的操作
 	*/
 	static void SetVideoBitrate(int video_bitrate);
 
@@ -214,6 +275,8 @@ public:
 	* @param[in] cb 结果回调见nim_vchat_def.h
 	* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
 	* @return void 无返回值
+	* @note 错误码	0:成功
+	*				11403:无效的操作
 	*/
 	static void SetFrameRate(NIMVChatVideoFrameRate frame_rate);
 
@@ -222,6 +285,8 @@ public:
 	* @param[in] custom_audio true表示使用自定义的音频数据，false表示不使用
 	* @param[in] custom_video true表示使用自定义的视频数据，false表示不使用
 	* @return void 无返回值
+	* @note 错误码	0:成功
+	*				11403:无效的操作
 	*/
 	static void SetCustomData(bool custom_audio, bool custom_video);
 
@@ -284,6 +349,8 @@ public:
 	* @param[in] json_extension 无效扩展字段
 	* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
 	* @return void 无返回值
+	* @note 错误码	0:成功
+	*				11403:无效的操作
 	*/
 	static void SetMemberBlacklist(const std::string& uid, bool add, bool audio, const std::string& json_extension, OptCallback cb);
 
@@ -294,6 +361,8 @@ public:
 	* @param[in] json_extension 无效扩展字段
 	* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
 	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				417:提示已经创建好频道
 	*/
 	static void CreateRoom(const std::string& room_name, const std::string& custom_info, const std::string& json_extension, Opt2Callback cb);
 
@@ -304,6 +373,7 @@ public:
 	* @param[in] json_extension 可选 如{"custom_video":0, "custom_audio":0, "video_quality":0, "session_id":"1231sda"}
 	* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension扩展字段中包含 kNIMVChatCustomInfo,kNIMVChatSessionId
 	* @return bool true 调用成功，false 调用失败可能有正在进行的通话
+	* @note 错误码	200:成功
 	*/
 	static bool JoinRoom(NIMVideoChatMode mode, const std::string& room_name, const std::string& json_extension, Opt2Callback cb);
 
@@ -312,6 +382,8 @@ public:
 	* @param[in] rtmp_url 新的rtmp推流地址
 	* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
 	* @return void 无返回值
+	* @note 错误码	0:成功
+	*				11403:无效的操作
 	*/
 	static void UpdateRtmpUrl(const std::string& rtmp_url, OptCallback cb);
 
@@ -320,6 +392,8 @@ public:
 	* @param[in] streaming 是否推流
 	* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
 	* @return void 无返回值
+	* @note 错误码	0:成功
+	*				11403:无效的操作
 	*/
 	static void SetStreamingMode(bool streaming, OptCallback cb);
 };
