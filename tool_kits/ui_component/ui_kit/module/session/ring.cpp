@@ -1,11 +1,11 @@
 ﻿#include "ring.h"
 
 static const std::wstring kNewMessage = L"new_message.wav";
-static const std::wstring kVoipConnecting	= L"voip_connecting.mp3";
-static const std::wstring kVoipNoResponse	= L"voip_no_response.mp3";
-static const std::wstring kVoipPeerBusy		= L"voip_peer_busy.mp3";
-static const std::wstring kVoipPeerReject 	= L"voip_peer_reject.mp3";
-static const std::wstring kVoipRing 		= L"voip_ring.mp3";
+static const std::wstring kVoipConnecting	= L"voip_connecting.wav";
+static const std::wstring kVoipNoResponse	= L"voip_no_response.wav";
+static const std::wstring kVoipPeerBusy		= L"voip_peer_busy.wav";
+static const std::wstring kVoipPeerReject 	= L"voip_peer_reject.wav";
+static const std::wstring kVoipRing 		= L"voip_ring.wav";
 
 namespace nim_comp
 {

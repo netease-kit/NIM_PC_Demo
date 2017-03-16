@@ -155,12 +155,22 @@ public:
 	void OnSnapchatReadCallback(const std::string& client_msg_id);
 
 	/** 
-	* 对方发送文件过来，获取是否成功下载文件的回调函数
-	* @param[in] cid		消息id 
-	* @param[in] success	是否下载成功			
+	* 下载文件的回调函数
+	* @param[in] res_id		消息id 
+	* @param[in] success	是否下载成功	
+	* @param[in] file_path	下载路径
 	* @return void 无返回值
 	*/
-	void OnDownloadCallback(const std::string &cid, bool success);
+	void OnDownloadCallback(const std::string &res_id, bool success, const std::string& file_path);
+
+	/**
+	* 上传文件的回调函数
+	* @param[in] res_id		消息id
+	* @param[in] success	是否上传成功
+	* @param[in] url		上传地址
+	* @return void 无返回值
+	*/
+	void OnUploadCallback(const std::string &res_id, bool success, const std::string& url);
 
 	/**
 	* 消息撤回的结果回调

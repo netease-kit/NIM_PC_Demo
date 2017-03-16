@@ -132,27 +132,21 @@ private:
 class DrawUnitText : public	DrawUnit
 {
 public:
-	DrawUnitText(int x, int y, const RECT& rcValid, DWORD font_color, BOOL is_generated);
+	DrawUnitText(int x, int y, const RECT& rcValid, BOOL is_generated);
+	void SetText(const std::wstring& str_text)	{ str_text_ = str_text; }
+	void SetFontIndex(int font_index)			{ font_index_ = font_index; }
 
-	void SetText(const std::wstring& str_text)	{	str_text_ = str_text; }
-	void SetTextColor(COLORREF color)			{	font_color_ = color;}
-	void SetItalic(BOOL is_italic)				{	is_font_italic_ = is_italic;}
-	void SetBold(BOOL is_bold)					{	is_bold_ = is_bold;}
-	void SetUnderLine(BOOL is_underLine)		{	is_font_underline_ = is_underLine;}
-	void SetFontSize(int font_height)			{	font_height_ = font_height;}
 protected:
 	virtual	void RenderSelf(HDC hdc, HBITMAP bitmap, bool is_continue);
+
 private:
 	void DrawText(HDC hdc);
 	void DrawRect(HDC hdc);
+
 private:
 	BOOL				is_text_has_generated_;		// 是否已经完成
 	std::wstring		str_text_;					// 文字
-	COLORREF			font_color_;				// 字体颜色
-	BOOL				is_font_italic_;			// 是否倾斜
-	BOOL				is_font_underline_;			// 是否加下划线
-	int					font_height_;				// 字体大小
-	BOOL				is_bold_;					// 加粗
+	int					font_index_;				// 字体在GlobalManager中的序号
 };
 
 #endif  // _NIM_GUI_CAPTURE_FORM_DRAW_UNIT_H_

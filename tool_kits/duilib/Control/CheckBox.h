@@ -1,11 +1,10 @@
-#ifndef UI_CONTROL_OPTION_H_
-#define UI_CONTROL_OPTION_H_
+#ifndef UI_CONTROL_CHECKBOX_H_
+#define UI_CONTROL_CHECKBOX_H_
 
 #pragma once
 
 namespace ui
 {
-
 
 template<typename InheritType = Control>
 class UILIB_API CheckBoxTemplate : public ButtonTemplate<InheritType>
@@ -15,38 +14,30 @@ public:
 
 	virtual void Activate() override;
 
-	std::wstring GetSelectedStateImage(ControlStateType stateType);
-	void SetSelectedStateImage(ControlStateType stateType, const std::wstring& pStrImage);
-
-	void SetSelectedTextColor(const std::wstring& dwTextColor);
-	std::wstring GetSelectedTextColor();
-
-	void SetSelectedStateColor(ControlStateType stateType, const std::wstring& stateColor);
-	std::wstring GetSelectStateColor(ControlStateType stateType);
-
-	std::wstring GetSelectedForeStateImage(ControlStateType stateType);
-	void SetSelectedForeStateImage(ControlStateType stateType, const std::wstring& pStrImage);
-
-	bool IsSelected() const;
+	bool IsSelected() const { return m_bSelected; }
 	virtual void Selected(bool bSelected, bool bTriggerEvent = false);
 
-	virtual void SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue) override;
+	virtual Image* GetEstimateImage() override;
+	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
 
 	virtual void PaintStatusColor(HDC hDC) override;
 	virtual void PaintStatusImage(HDC hDC) override;
 	virtual void PaintText(HDC hDC) override;
 
-	virtual Image* GetEstimateImage() override;
+	std::wstring GetSelectedStateImage(ControlStateType stateType);
+	void SetSelectedStateImage(ControlStateType stateType, const std::wstring& pStrImage);
 
-	void AttachSelect(const EventCallback& callback)
-	{
-		OnEvent[kEventSelect] += callback;
-	}
+	std::wstring GetSelectedTextColor();
+	void SetSelectedTextColor(const std::wstring& dwTextColor);
 
-	void AttachUnSelect(const EventCallback& callback)
-	{
-		OnEvent[kEventUnSelect] += callback;
-	}
+	std::wstring GetSelectStateColor(ControlStateType stateType);
+	void SetSelectedStateColor(ControlStateType stateType, const std::wstring& stateColor);
+
+	std::wstring GetSelectedForeStateImage(ControlStateType stateType);
+	void SetSelectedForeStateImage(ControlStateType stateType, const std::wstring& pStrImage);
+
+	void AttachSelect(const EventCallback& callback) { OnEvent[kEventSelect] += callback; }
+	void AttachUnSelect(const EventCallback& callback) { OnEvent[kEventUnSelect] += callback; }
 
 protected:
 	bool			m_bSelected;
@@ -54,14 +45,11 @@ protected:
 	StateColorMap	m_selectedColorMap;
 };
 
-
 #include "CheckBoxImpl.h"
 
 typedef CheckBoxTemplate<Control> CheckBox;
 typedef CheckBoxTemplate<Box> CheckBoxBox;
 
-
-
 } // namespace ui
 
-#endif // UI_CONTROL_OPTION_H_
+#endif // UI_CONTROL_CHECKBOX_H_

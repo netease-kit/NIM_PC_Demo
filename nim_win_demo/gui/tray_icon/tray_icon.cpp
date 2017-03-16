@@ -228,7 +228,6 @@ void TrayIcon::ModifyTrayIcon(UINT uTrayID, DWORD dwTrayMsg,
 		{
 			res = ::Shell_NotifyIconW(NIM_ADD, &tnd);
 		}
-		assert(res);
 	}
 	else
 	{

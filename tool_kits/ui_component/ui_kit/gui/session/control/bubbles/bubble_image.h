@@ -41,7 +41,7 @@ public:
 	bool OnMenu(ui::EventArgs* arg);
 
 	/**
-	* 是否需要下载图片消息文件
+	* 是否需要下载图片消息的原图
 	* @return bool 返回值true: 需要， false: 不需要
 	*/
 	virtual bool NeedDownloadResource();
@@ -51,6 +51,12 @@ private:
 	* @return void 无返回值
 	*/
 	void InitResPath();
+
+	/**
+	* 检查用于在消息气泡中展示的缩略图是否已存在，如果存在就展示
+	* @return bool 返回值true: 缩略图存在且完好， false: 缩略图不存在或图片有错误
+	*/
+	bool CheckImageBubble();
 
 	/** 
 	* 设置图片消息项的图片是否可以预览
@@ -62,9 +68,10 @@ private:
 	/**
 	* 此消息接收的图片资源，是否成功下载到本地的回调函数
 	* @param[in] success	是否下载成功
+	* @param[in] file_path  文件下载路径
 	* @return void 无返回值
 	*/
-	void OnDownloadCallback( bool success );
+	void OnDownloadCallback( bool success, const std::string& file_path );
 
 	/** 
 	* 设置图片消息项显示的缩略图	
@@ -77,5 +84,7 @@ protected:
 
 	std::wstring	thumb_;
 	std::wstring	path_;
+
+	bool			image_checked_ = false;
 };
 }

@@ -60,7 +60,6 @@ LRESULT TeamNotifyForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void TeamNotifyForm::InitWindow()
 {
-	SetTaskbarTitle(L"群提醒");
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&TeamNotifyForm::OnClicked, this, std::placeholders::_1));
 
 	tnp_[0] = FindControl(L"page_ask_join");
@@ -134,7 +133,7 @@ void TeamNotifyForm::SetAskJoinText()
 {
 	std::wstring user = UserService::GetInstance()->GetUserName(uid_);
 	std::wstring team = TeamService::GetInstance()->GetTeamName(tid_);
-	re_ask_join_->SetText( nbase::StringPrintf(L"%s 申请加入群 %s", user.c_str(), team.c_str()) );
+	re_ask_join_->SetText( nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_NOTIFY_APPLY_JOIN").c_str(), user.c_str(), team.c_str()) );
 }
 
 void TeamNotifyForm::OnAskJoin(const nim::SysMessage &json)
@@ -149,7 +148,7 @@ void TeamNotifyForm::OnAskJoin(const nim::SysMessage &json)
 void TeamNotifyForm::SetInviteText()
 {
 	std::wstring team = TeamService::GetInstance()->GetTeamName(tid_);
-	re_invite_->SetText( nbase::StringPrintf(L"群 %s 管理员邀请你加入群", team.c_str()) );
+	re_invite_->SetText(nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_NOTIFY_ADMIN_INVITE_YOU").c_str(), team.c_str()));
 }
 
 void TeamNotifyForm::OnInviteYou(const nim::SysMessage &json)
@@ -171,9 +170,9 @@ void TeamNotifyForm::OnInviteYou(const nim::SysMessage &json)
 			nim::Team::ParseTeamInfo(json.attach_, team_info);
 	}
 	if (team_info.GetInviteMode() == nim::kNIMTeamInviteModeManager)
-		re_invite_->SetText(nbase::StringPrintf(L"群 %s 管理员邀请你加入群", nbase::UTF8ToUTF16(team_info.GetName()).c_str()));
+		re_invite_->SetText(nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_NOTIFY_ADMIN_INVITE_YOU").c_str(), nbase::UTF8ToUTF16(team_info.GetName()).c_str()));
 	else
-		re_invite_->SetText(nbase::StringPrintf(L"群 %s 邀请你加入群", nbase::UTF8ToUTF16(team_info.GetName()).c_str()));
+		re_invite_->SetText(nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_NOTIFY_INVITE_YOU").c_str(), nbase::UTF8ToUTF16(team_info.GetName()).c_str()));
 	//SetInviteText();
 	GotoPage(1);
 }
@@ -182,7 +181,7 @@ void TeamNotifyForm::SetRejectInviteText()
 {
 	std::wstring user = UserService::GetInstance()->GetUserName(uid_);
 	std::wstring team = TeamService::GetInstance()->GetTeamName(tid_);
-	re_reject_->SetText( nbase::StringPrintf(L"%s 拒绝加入群 %s", user.c_str(), team.c_str()) );
+	re_reject_->SetText(nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_NOTIFY_REFUSE_INVITE").c_str(), user.c_str(), team.c_str()));
 }
 
 void TeamNotifyForm::OnRejectInvite(const nim::SysMessage &json)
@@ -197,7 +196,7 @@ void TeamNotifyForm::OnRejectInvite(const nim::SysMessage &json)
 void TeamNotifyForm::SetRejectJoinText()
 {
 	std::wstring team = TeamService::GetInstance()->GetTeamName(tid_);
-	re_reject_->SetText( nbase::StringPrintf(L"群 %s 管理员拒绝了你的入群请求", team.c_str()) );
+	re_reject_->SetText(nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_NOTIFY_REFUSE_APPLY").c_str(), team.c_str()));
 }
 
 void TeamNotifyForm::OnRejectJoin(const nim::SysMessage &json)

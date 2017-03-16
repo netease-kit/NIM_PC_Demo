@@ -50,8 +50,9 @@ void InitManager::InitUiKit()
 	nim::SystemMsg::RegSendCustomSysmsgCb(nbase::Bind(&nim_comp::TalkCallback::OnSendCustomSysmsgCallback, std::placeholders::_1));
 	nim::SystemMsg::RegSysmsgCb(nbase::Bind(&nim_comp::TeamCallback::OnReceiveSysmsgCallback, std::placeholders::_1));
 
-	//注册NOS下载回调
+	//注册NOS下载上传回调
 	nim::NOS::RegDownloadCb(nbase::Bind(&nim_comp::HttpCallback::OnHttpDownloadCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+	nim::NOS::RegUploadCb(nbase::Bind(&nim_comp::HttpCallback::OnHttpUploadCallback, std::placeholders::_1, std::placeholders::_2));
 
 	//注册音视频回调
 	nim::VChat::SetVideoDataCb(true, nim_comp::VChatCallback::VideoCaptureData);

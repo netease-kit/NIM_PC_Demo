@@ -88,6 +88,22 @@ void SessionListManager::OnQuerySessionListCallback(const std::list<nim::Session
 	if (sessions.empty())
 		return;
 
+	// 最近会话列表会在登录后较早的收到，这时批量的拉取涉及到的用户信息把这些用户添加到查询队列里
+	// 避免创建会话列表项时，列表项控件查询用户信息而导致频繁调用用户信息获取接口
+	std::list<std::string> user_ids;
+	for each (auto& session in sessions)
+	{
+		if (session.type_ == nim::kNIMSessionTypeP2P)
+		{
+			user_ids.push_back(session.id_);
+		}
+		else
+		{
+			user_ids.push_back(session.msg_sender_accid_);
+		}
+	}
+	nim_comp::UserService::GetInstance()->DoQueryUserInfos(user_ids);
+
 	for each (auto& session in sessions)
 	{
 		session_list_->AddSessionItem(session);

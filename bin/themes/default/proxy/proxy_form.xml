@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window size="280,350" caption="0,0,0,34" textid="STRID_PROXY_SETTING">
+<Window size="280,0" caption="0,0,0,34" textid="STRID_PROXY_SETTING_TITLE">
     <Class name="MyEdit" value="width=&quot;stretch&quot; height=&quot;stretch&quot; align=&quot;vcenter&quot; margin=&quot;20,0,0,0&quot; padding=&quot;5,0,5,0&quot; font=&quot;1&quot;"/>
     
-    <VBox bkcolor="bk_wnd_lightcolor">
+    <VBox bkcolor="bk_wnd_lightcolor" width="280" height="auto">
         <HBox class="caption">
-            <Label class="font_title" width="stretch" name="title" valign="center" normaltextcolor="darkcolor" textid="STRID_PROXY_SETTING"/>
+            <Label class="font_title" width="stretch" name="title" valign="center" normaltextcolor="darkcolor" textid="STRID_PROXY_SETTING_TITLE"/>
             <Button class="btn_wnd_min" name="minbtn" margin="4,6,0,0"/>
             <Button class="btn_wnd_close" name="closebtn" margin="4,6,0,0"/>
         </HBox>
 		
-		<Label text="注：白板、音视频只支持SOCKS5代理" font="2" normaltextcolor="link_red" margin="20,15,0,10"/>
+		<Label textid="STRID_PROXY_TIP" font="2" normaltextcolor="link_red" width="240" margin="20,15,20,10" singleline="false"/>
 
-        <VBox name="settingpanel" margin="20,10,20,20">
+        <VBox name="settingpanel" width="stretch" height="auto" margin="20,10,20,20">
             <HBox height="30">
-                <Label text="代理类型" name="type" valign="center" font="2"/>
+                <Label textid="STRID_PROXY_TYPE" name="type" valign="center" font="2"/>
 				<Control width="stretch"/>
                 <Combo class="list" name="proxytypecomb" width="160" halign="right" 
                        bkimage="file='../public/combo/normal.png' corner='5,5,30,5'" >
@@ -26,56 +26,48 @@
             </HBox>
 
             <HBox height="30" margin="0,10,0,0">
-                <Label text="代理地址" valign="center" font="2"/>
+                <Label textid="STRID_PROXY_ADDRESS" valign="center" font="2"/>
 				<Control width="stretch"/>
                 <RichEdit class="simple input MyEdit" name="proxyaddr" width="160" halign="right"/>
             </HBox>
 
             <HBox height="30" margin="0,10,0,0">
-                <Label text="端" valign="center" font="2"/>
-                <Control width="28"/>
-                <Label text="口" valign="center" font="2"/>
+                <Label textid="STRID_PROXY_PORT" valign="center" font="2"/>
 				<Control width="stretch"/>
                 <RichEdit class="simple input MyEdit" name="proxyport" number="true" width="160" halign="right"/>
             </HBox>
 
             <HBox height="30" margin="0,10,0,0">
-                <Label text="用" valign="center" font="2"/>
-                <Control width="7"/>
-                <Label text="户" valign="center" font="2"/>
-                <Control width="7"/>
-                <Label text="名" valign="center" font="2"/>
+                <Label textid="STRID_PROXY_USERNAME" valign="center" font="2"/>
 				<Control width="stretch"/>
                 <RichEdit class="simple input MyEdit" name="account" width="160" halign="right"/>
             </HBox>
 
             <HBox height="30" margin="0,10,0,0">
-                <Label text="密" valign="center" font="2"/>
-                <Control width="28"/>
-                <Label text="码" valign="center" font="2"/>
+                <Label textid="STRID_PROXY_PASSWORD" valign="center" font="2"/>
 				<Control width="stretch"/>
                 <RichEdit class="simple input MyEdit" name="password" password="true" width="160" halign="right"/>
             </HBox>
 
             <HBox height="30" margin="0,10,0,0" visible="false">
-                <Label text="域（选填）" valign="center" font="2"/>
+                <Label textid="STRID_PROXY_DOMAIN" valign="center" font="2"/>
 				<Control width="stretch"/>
                 <RichEdit class="simple input MyEdit" name="domain" margin="6,0,0,0" width="160" halign="right"/>
             </HBox>
             
-            <HBox height="40" visible="false">
+            <HBox height="40" margin="0,10,0,0">
                 <Control />
                 <Control name="gifanim" width="auto" height="auto" bkimage="..\public\animation\ani_loading.gif" valign="center"/>
                 <Button class="btn_global_white_80x30" name="testconnect" margin="5,0,0,0" halign="right" valign="center"
                         font="2" normaltextcolor="darkcolor" textid="STRID_PROXY_TEST_CONNECT"/>
             </HBox>
             
-            <HBox margin="0,20,0,0">
+            <HBox margin="0,10,0,0" height="auto">
                 <Control />
                 <Button class="btn_global_green_80x30" name="apply" textid="STRID_PROXY_APPLY" visible="false"/>
-                <Button class="btn_global_white_80x30" name="close" textid="STRID_PROXY_CLOSE"/>
+                <Button class="btn_global_white_80x30" name="close" textid="STRING_NO_"/>
                 <Control width="10"/>
-                <Button class="btn_global_green_80x30" name="confirm" textid="STRID_PROXY_CONFIRM"/>
+                <Button class="btn_global_green_80x30" name="confirm" textid="STRING_OK_"/>
             </HBox>
         </VBox>
     </VBox>

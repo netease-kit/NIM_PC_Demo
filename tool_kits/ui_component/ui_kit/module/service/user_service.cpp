@@ -41,10 +41,10 @@ namespace nim_comp
 UserService::UserService()
 {
 	//向SDK注册监听好友列表变化
-	nim::Friend::RegChangeCb(nbase::Bind(&UserService::OnFriendListChange, this, std::placeholders::_1));
+	nim::Friend::RegChangeCb(nbase::Bind(&UserService::OnFriendListChangeBySDK, this, std::placeholders::_1));
 
 	//向SDK注册监听用户名片变化
-	nim::User::RegUserNameCardChangedCb(nbase::Bind(&UserService::OnUserInfoChange, this, std::placeholders::_1));
+	nim::User::RegUserNameCardChangedCb(nbase::Bind(&UserService::OnUserInfoChangeBySDK, this, std::placeholders::_1));
 }
 
 void UserService::InvokeRegisterAccount(const std::string &username, const std::string &password, const std::string &nickname, const OnRegisterAccountCallback& cb)
@@ -127,11 +127,7 @@ void UserService::InvokeUpdateMyInfo(const nim::UserNameCard &new_info, const On
 		if (cb != nullptr)
 			cb(res);
 	});
-	//Json::Value values;
-	//Json::Reader reader;
-	//std::string test_string = "{\"remote\":{\"mapmap\":{\"int\":1,\"boolean\":false,\"list\":[1,2,3],\"string\":\"string, lalala\"}}}";
-	//if (reader.parse(test_string, values))
-	//	info.SetExpand(values);
+
 	nim::User::UpdateMyUserNameCard(info, update_uinfo_cb);
 }
 
@@ -192,12 +188,41 @@ void UserService::GetUserInfos(const std::list<std::string>& ids, std::list<nim:
 		InvokeGetUserInfo(not_get_list);
 }
 
-void UserService::DoQueryUserInfos(const std::set<std::string>& ids)
+void UserService::DoQueryUserInfos(const std::list<std::string>& ids)
 {
+	if (ids.empty())
+		return;
+	
 	std::list<std::string> not_get_list;
 
 	for (const auto &id : ids)
 	{
+		if (id.empty())
+			continue;
+
+		if (all_user_.find(id) == all_user_.end())
+		{
+			if (on_query_list_.find(id) == on_query_list_.end()) //不在all_user_里面，也不在查询途中
+				not_get_list.push_back(id);
+		}
+	}
+
+	if (!not_get_list.empty())
+		InvokeGetUserInfo(not_get_list);
+}
+
+void UserService::DoQueryUserInfos(const std::set<std::string>& ids)
+{
+	if (ids.empty())
+		return;
+
+	std::list<std::string> not_get_list;
+
+	for (const auto &id : ids)
+	{
+		if (id.empty())
+			continue;
+
 		if (all_user_.find(id) == all_user_.end())
 		{
 			if (on_query_list_.find(id) == on_query_list_.end()) //不在all_user_里面，也不在查询途中
@@ -269,7 +294,7 @@ UnregisterCallback nim_comp::UserService::RegMiscUInfoChange(const OnUserInfoCha
 	return cb;
 }
 
-void UserService::OnFriendListChange(const nim::FriendChangeEvent& change_event)
+void UserService::OnFriendListChangeBySDK(const nim::FriendChangeEvent& change_event)
 {
 	std::list<std::string> add_list;
 	std::list<std::string> delete_list;
@@ -304,32 +329,9 @@ void UserService::OnFriendListChange(const nim::FriendChangeEvent& change_event)
 	}
 	case nim::kNIMFriendChangeTypeSyncList:
 	{
-		nim::FriendProfileSyncEvent sync_event;
-		nim::Friend::ParseFriendProfileSyncEvent(change_event, sync_event);
-		for (auto& info : sync_event.profiles_)
-		{
-			std::string accid = info.GetAccId();
-			if (info.GetRelationship() == nim::kNIMFriendFlagNormal)
-			{
-				if (GetUserType(accid) == nim::kNIMFriendFlagNotFriend) //不在friend_list_里面，就添加进去
-				{
-					add_list.push_back(accid);
-					friend_list_.insert(decltype(friend_list_)::value_type(accid, info));
-				}
-				else //在friend_list_里面，则更新之
-				{
-					update_list.push_back(accid);
-					friend_list_.at(accid).Update(info);
-				}
-			}
-			else
-			{
-				delete_list.push_back(accid);
-				update_list.push_back(accid); // 删除好友之后，其原来的备注名改为其昵称
-				friend_list_.erase(accid); // 从friend_list_删除
-			}
-		}
-		break;
+		// 单独处理好友同步消息
+		OnSyncFriendList(change_event);
+		return;
 	}
 	case nim::kNIMFriendChangeTypeUpdate:
 	{
@@ -360,21 +362,64 @@ void UserService::OnFriendListChange(const nim::FriendChangeEvent& change_event)
 	}
 }
 
-void UserService::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfo_list)
+void UserService::OnSyncFriendList(const nim::FriendChangeEvent& change_event)
+{
+	std::list<std::string> add_list;
+	std::list<std::string> delete_list;
+	std::list<std::string> update_list; // 需要更换备注名的用户列表
+
+	nim::FriendProfileSyncEvent sync_event;
+	nim::Friend::ParseFriendProfileSyncEvent(change_event, sync_event);
+	for (auto& info : sync_event.profiles_)
+	{
+		std::string accid = info.GetAccId();
+		if (info.GetRelationship() == nim::kNIMFriendFlagNormal)
+		{
+			if (GetUserType(accid) == nim::kNIMFriendFlagNotFriend) //不在friend_list_里面，就添加进去
+			{
+				add_list.push_back(accid);
+				friend_list_.insert(decltype(friend_list_)::value_type(accid, info));
+			}
+			else //在friend_list_里面，则更新之
+			{
+				update_list.push_back(accid);
+				friend_list_.at(accid).Update(info);
+			}
+		}
+		else
+		{
+			delete_list.push_back(accid);
+			update_list.push_back(accid); // 删除好友之后，其原来的备注名改为其昵称
+			friend_list_.erase(accid); // 从friend_list_删除
+		}
+	}
+
+	// 好友同步消息会在登录后较早的收到，这时批量的拉取用户信息把这些好友添加到查询队列里
+	// 避免创建好友列表项时，列表项控件查询用户信息而导致频繁调用用户信息获取接口
+	DoQueryUserInfos(add_list);
+	DoQueryUserInfos(update_list);
+
+	for each (const auto& id in add_list)
+		InvokeFriendListChangeCallback(kChangeTypeAdd, id);
+
+	for each (const auto& id in delete_list)
+		InvokeFriendListChangeCallback(kChangeTypeDelete, id);
+}
+
+void UserService::OnUserInfoChangeBySDK(const std::list<nim::UserNameCard> &uinfo_list)
 {
 	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
 
 	std::list<nim::UserNameCard> name_photo_list;
 	std::list<nim::UserNameCard> misc_uinfo_list;
-	std::list<std::string> not_get_list;
 
 	for (auto& info : uinfo_list)
 	{
 		auto iter = all_user_.find(info.GetAccId());
 		if (iter != all_user_.end()) //all_user_中存在，就更新
 			iter->second.Update(info);
-		else if (on_query_list_.find(info.GetAccId()) == on_query_list_.cend())//all_user_中不存在，就获取该用户信息并插入all_user_
-			not_get_list.push_back(info.GetAccId());
+		else
+			all_user_[info.GetAccId()] = info;
 
 		if (!info.GetIconUrl().empty())
 			PhotoService::GetInstance()->DownloadUserPhoto(info);
@@ -385,8 +430,30 @@ void UserService::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfo_lis
 			misc_uinfo_list.push_back(info);
 	}
 
-	if (!not_get_list.empty())
-		InvokeGetUserInfo(not_get_list);
+	// 执行回调列表中所有回调
+	for (auto& it : uinfo_change_cb_list_)
+		(*(it.second))(name_photo_list);
+	for (auto& it : misc_uinfo_change_cb_list_)
+		(*(it.second))(misc_uinfo_list);
+}
+
+void UserService::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfo_list)
+{
+	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
+
+	std::list<nim::UserNameCard> name_photo_list;
+	std::list<nim::UserNameCard> misc_uinfo_list;
+
+	for (auto& info : uinfo_list)
+	{
+		if (!info.GetIconUrl().empty())
+			PhotoService::GetInstance()->DownloadUserPhoto(info);
+
+		if (info.ExistValue(nim::kUserNameCardKeyName) || info.ExistValue(nim::kUserNameCardKeyIconUrl)) //用户名或头像变化了
+			name_photo_list.push_back(info);
+		if (info.ExistValue((nim::UserNameCardValueKey)(nim::kUserNameCardKeyAll - nim::kUserNameCardKeyName - nim::kUserNameCardKeyIconUrl))) //用户其他信息变化了
+			misc_uinfo_list.push_back(info);
+	}
 
 	// 执行回调列表中所有回调
 	for (auto& it : uinfo_change_cb_list_)
@@ -467,12 +534,6 @@ void UserService::InvokeGetUserInfo(const std::list<std::string>& account_list)
 }
 
 void UserService::InvokeFriendListChangeCallback(FriendChangeType change_type, const std::string& accid)
-{
-	auto task = nbase::Bind(&UserService::UIFriendListChangeCallback, this, change_type, accid);
-	nbase::ThreadManager::PostTask(kThreadUI, task);
-}
-
-void UserService::UIFriendListChangeCallback(FriendChangeType change_type, const std::string& accid)
 {
 	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
 	for (auto& it : friend_list_change_cb_list_)

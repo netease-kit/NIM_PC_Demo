@@ -291,14 +291,38 @@ void VideoManager::OnVChatEvent(nim::NIMVideoChatSessionType type, uint64_t chan
 				{
 					std::string path = valus[nim::kNIMVChatMp4Start][nim::kNIMVChatMp4File].asString();
 					int64_t time = valus[nim::kNIMVChatMp4Start][nim::kNIMVChatTime].asInt64();
-					window->OnStartRecord(path, time);
+					window->OnStartRecord(true, path, time);
 				}
 				else if (valus[nim::kNIMVChatMp4Close].isObject())
 				{
 					std::string path = valus[nim::kNIMVChatMp4Close][nim::kNIMVChatMp4File].asString();
 					int code = valus[nim::kNIMVChatMp4Close][nim::kNIMVChatStatus].asInt();
 					int64_t time = valus[nim::kNIMVChatMp4Close][nim::kNIMVChatTime].asInt64();
-					window->OnStopRecord(code, path, time);
+					window->OnStopRecord(true, code, path, time);
+				}
+			}
+		}
+	}break;
+	case nim::kNIMVideoChatSessionTypeAuRecordNotify:{
+		Json::Value valus;
+		Json::Reader reader;
+		if (reader.parse(json, valus))
+		{
+			VideoForm *window = (VideoForm*)(WindowsManager::GetInstance()->GetWindow(VideoForm::kClassName, VideoForm::kClassName));
+			if (window && window->IsStart())
+			{
+				if (valus[nim::kNIMVChatAuRecordStart].isObject())
+				{
+					std::string path = valus[nim::kNIMVChatAuRecordStart][nim::kNIMVChatFile].asString();
+					int64_t time = valus[nim::kNIMVChatAuRecordStart][nim::kNIMVChatTime].asInt64();
+					window->OnStartRecord(false, path, time);
+				}
+				else if (valus[nim::kNIMVChatAuRecordClose].isObject())
+				{
+					std::string path = valus[nim::kNIMVChatAuRecordClose][nim::kNIMVChatFile].asString();
+					int code = valus[nim::kNIMVChatAuRecordClose][nim::kNIMVChatStatus].asInt();
+					int64_t time = valus[nim::kNIMVChatAuRecordClose][nim::kNIMVChatTime].asInt64();
+					window->OnStopRecord(false, code, path, time);
 				}
 			}
 		}
@@ -315,7 +339,7 @@ bool VideoManager::ShowVideoChatForm(std::string id, bool video, uint64_t channe
 	else
 	{
 		VideoForm *window = new VideoForm(id);
-		window->Create(NULL, L"音视频通话", WS_OVERLAPPEDWINDOW, 0, false);
+		window->Create(NULL, L"", WS_OVERLAPPEDWINDOW, 0, false);
 		window->CenterWindow();
 		window->ShowWindow();
 		if (channel_id == 0)
@@ -355,7 +379,7 @@ bool VideoManager::ShowVideoSetting(bool video)
 	else
 	{
 		window = new VideoSettingForm();
-		window->Create(NULL, L"音视频设置", WS_OVERLAPPEDWINDOW, 0);
+		window->Create(NULL, L"", WS_OVERLAPPEDWINDOW, 0);
 		window->CenterWindow();
 		window->ShowWindow();
 		window->ShowPage(video);
@@ -506,12 +530,18 @@ bool VideoManager::StartChat(nim::NIMVideoChatMode mode, const std::string& apns
 		std::string video_quality = GetConfigValue("video_quality");
 		std::string audio_record = GetConfigValue("audio_record");
 		std::string video_record = GetConfigValue("video_record");
+		std::string keep_calling = GetConfigValue("keep_calling");
 		value[nim::kNIMVChatVideoQuality] = atoi(video_quality.c_str());
 		value[nim::kNIMVChatRecord] = atoi(audio_record.c_str());
 		value[nim::kNIMVChatVideoRecord] = atoi(video_record.c_str());
+		if (!keep_calling.empty())
+		{
+			value[nim::kNIMVChatKeepCalling] = atoi(keep_calling.c_str());
+		}
 	}
 	std::string json_value = fs.write(value);
-	return nim::VChat::Start(mode, nbase::UTF16ToUTF8(mode == nim::kNIMVideoChatModeAudio ? L"语音通话邀请test" : L"视频通话邀请test"), "test custom info", json_value);
+	std::wstring apns = ui::MutiLanSupport::GetInstance()->GetStringViaID(mode == nim::kNIMVideoChatModeAudio ? L"STRID_VIDEO_AUDIO_INVITING_TEST" : L"STRID_VIDEO_VIDEO_INVITING_TEST");
+	return nim::VChat::Start(mode, nbase::UTF16ToUTF8(apns), "test custom info", json_value);
 }
 //设置视频类型
 bool VideoManager::SetVoipMode(nim::NIMVideoChatMode mode)

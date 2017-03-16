@@ -46,6 +46,7 @@ void CustomMsgBubble::InitInfo(const nim::IMMessage &msg)
 	std::wstring tm = GetMessageTime(msg.timetag_, false);
 	time_->SetText(tm);
 
+	MutiLanSupport* mls = MutiLanSupport::GetInstance();
 	std::wstring msg_body;
 	if (msg.msg_setting_.server_history_saved_)
 	{
@@ -53,7 +54,7 @@ void CustomMsgBubble::InitInfo(const nim::IMMessage &msg)
 	}
 	else
 	{
-		msg_body = L"【在线通知】";
+		msg_body = mls->GetStringViaID(L"STRID_MSG_CENTER_ONLINE_NOTIFY");
 	}
 // 	if (!msg.custom_apns_text.empty())
 // 	{
@@ -69,7 +70,7 @@ void CustomMsgBubble::InitInfo(const nim::IMMessage &msg)
 		{
 			msg_body += L"\r\n";
 		}
-		msg_body += L"【附言】" + nbase::UTF8ToUTF16(msg.content_);
+		msg_body += mls->GetStringViaID(L"STRID_MSG_CENTER_POSTSCRIPT") + nbase::UTF8ToUTF16(msg.content_);
 	}
 	bool fetch_data = false;
 	Json::Value json;
@@ -83,7 +84,7 @@ void CustomMsgBubble::InitInfo(const nim::IMMessage &msg)
 			{
 				if (!msg_body.empty())
 				{
-					msg_body += L"\r\n【内容】";
+					msg_body += L"\r\n" + mls->GetStringViaID(L"STRID_MSG_CENTER_CONTENT");
 				}
 				msg_body = nbase::UTF8ToUTF16(content);
 				fetch_data = true;

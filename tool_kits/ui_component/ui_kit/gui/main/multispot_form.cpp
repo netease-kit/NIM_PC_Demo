@@ -52,7 +52,6 @@ void MultispotForm::InitWindow()
 		SetIcon(nim_ui::UserConfig::GetInstance()->GetDefaultIcon());
 	}
 
-	SetTaskbarTitle(L"多端登录管理");
 	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&MultispotForm::Notify, this, std::placeholders::_1));
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&MultispotForm::OnClicked, this, std::placeholders::_1));
 	//dev_list_ = (ui::ListBox*)FindControl(L"dev_list");

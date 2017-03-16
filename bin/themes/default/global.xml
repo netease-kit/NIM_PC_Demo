@@ -145,17 +145,22 @@
     <!--视频边框颜色-->
     <TextColor name="border_alpha_white" value="#c8ffffff"/>
     <TextColor name="border_alpha_blue" value="#ff007ffe"/>
-    
-    <!--调色板色值-->
-    <TextColor name="color_palette1" value="#ff2600"/>
-    <TextColor name="color_palette2" value="#ffeb00"/>
-    <TextColor name="color_palette3" value="#61ed00"/>
-    <TextColor name="color_palette4" value="#00b4ff"/>
-    <TextColor name="color_palette5" value="#a100ff"/>
-    <TextColor name="color_palette6" value="#000000"/>
-    <TextColor name="color_palette7" value="#545454"/>
-    <TextColor name="color_palette8" value="#a8a8a8"/>
-    <TextColor name="color_palette9" value="#ffffff"/>
+
+	<!--截屏窗口相关颜色-->
+	<TextColor name="font_size_bknormal" value="#ff3b3f43"/>
+	<TextColor name="font_size_bkhot" value="#ff4b4f53"/>
+	<TextColor name="font_size_bkselected" value="#ff2b2f33"/>
+
+	<!--调色板色值-->
+    <TextColor name="color_palette1" value="#ffff2600"/>
+    <TextColor name="color_palette2" value="#ffffeb00"/>
+    <TextColor name="color_palette3" value="#ff61ed00"/>
+    <TextColor name="color_palette4" value="#ff00b4ff"/>
+    <TextColor name="color_palette5" value="#ffa100ff"/>
+    <TextColor name="color_palette6" value="#ff000000"/>
+    <TextColor name="color_palette7" value="#ff545454"/>
+    <TextColor name="color_palette8" value="#ffa8a8a8"/>
+    <TextColor name="color_palette9" value="#ffffffff"/>
 	
     <!--会话窗口tip底色-->
     <TextColor name="tip_blue" value="#fffafdff"/>
@@ -196,6 +201,8 @@
     <Class name="btn_global_green_80x30" value="font=&quot;7&quot; normaltextcolor=&quot;white&quot; normalimage=&quot;file='../public/button/btn_global_green_80x30_normal.png'&quot; hotimage=&quot;file='../public/button/btn_global_green_80x30_hovered.png'&quot; pushedimage=&quot;file='../public/button/btn_global_green_80x30_pushed.png'&quot; disabledimage=&quot;file='../public/button/btn_global_green_80x30_normal.png' fade='80'&quot;"/>
     
     <Class name="btn_global_white_80x30" value="font=&quot;7&quot; normaltextcolor=&quot;btn_global_white&quot; normalimage=&quot;file='../public/button/btn_global_white_80x30_normal.png'&quot; hotimage=&quot;file='../public/button/btn_global_white_80x30_hovered.png'&quot; pushedimage=&quot;file='../public/button/btn_global_white_80x30_pushed.png'&quot; disabledimage=&quot;file='../public/button/btn_global_white_80x30_normal.png' fade='128'&quot;"/>
+	
+    <Class name="btn_global_red_80x30" value="font=&quot;7&quot; normaltextcolor=&quot;white&quot; normalimage=&quot;file='../public/button/btn_global_red_80x30_normal.png'&quot; hotimage=&quot;file='../public/button/btn_global_red_80x30_hovered.png'&quot; pushedimage=&quot;file='../public/button/btn_global_red_80x30_pushed.png'&quot; disabledimage=&quot;file='../public/button/btn_global_red_80x30_normal.png' fade='80'&quot;"/>
     
     <!--窗口右上角按钮-->
 	<!-- 灰色版 -->

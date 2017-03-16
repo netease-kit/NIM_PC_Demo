@@ -365,18 +365,30 @@ void TeamService::UIGetLocalTeamInfoCb(const std::string& tid, const nim::TeamIn
 {
 	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
 
-	if (cached_tinfo_.find(tid) == cached_tinfo_.end())
+	if (result.IsMemberValid())
 	{
-		InvokeAddTeam(tid, result);
+		if (cached_tinfo_.find(tid) == cached_tinfo_.end())
+		{
+			InvokeAddTeam(tid, result);
+		}
+		else
+		{
+			if (!result.GetName().empty())
+				InvokeChangeTeamName(result);
+			if (!result.GetIcon().empty())
+				PhotoService::GetInstance()->DownloadTeamIcon(result);
+		}
+
+		cached_tinfo_[tid] = result;
 	}
 	else
 	{
-		if (!result.GetName().empty())
-			InvokeChangeTeamName(result);
-		if (!result.GetIcon().empty())
-			PhotoService::GetInstance()->DownloadTeamIcon(result);
+		if (cached_tinfo_.find(tid) != cached_tinfo_.end())
+		{
+			InvokeRemoveTeam(tid);
+		}
 	}
-	cached_tinfo_[tid] = result;
+	
 	on_query_tids_.erase(tid); //已经查到，从post_tids_中删除
 }
 

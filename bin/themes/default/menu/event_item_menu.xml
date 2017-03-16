@@ -2,7 +2,7 @@
 <Window>
     <VListBox class="menu">
         <MenuElement class="MenuElement" name="del_event_item" width="138">
-            <Label class="menu_text" text="删除"/>
+            <Label class="menu_text" textid="STRING_DELETE"/>
         </MenuElement>
     </VListBox>
 </Window>

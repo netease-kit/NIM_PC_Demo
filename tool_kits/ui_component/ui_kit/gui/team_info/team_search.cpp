@@ -84,7 +84,6 @@ LRESULT TeamSearchForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void TeamSearchForm::InitWindow()
 {
-	SetTaskbarTitle(L"搜索加入群");
 	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&TeamSearchForm::Notify, this, std::placeholders::_1));
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&TeamSearchForm::OnClicked, this, std::placeholders::_1));
 
@@ -194,7 +193,7 @@ bool TeamSearchForm::OnClicked( ui::EventArgs* arg )
 			StringHelper::Trim(str);
 			if( str.empty() )
 			{
-				error_tip_->SetText(L"群号不可为空");
+				error_tip_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_SEARCH_ID_NON_EMPTY"));
 				error_tip_->SetVisible(true);
 
 				btn_search_->SetEnabled(false);
@@ -238,7 +237,7 @@ void TeamSearchForm::OnGetTeamInfoCb(const nim::TeamEvent& team_event)
 	}
 	else
 	{
-		error_tip_->SetText(L"群不存在");
+		error_tip_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_SEARCH_TEAM_NOT_EXISTS"));
 		error_tip_->SetVisible(true);
 	}
 }
@@ -247,25 +246,27 @@ void TeamSearchForm::OnApplyJoinCb(const nim::TeamEvent& team_event)
 {
 	QLOG_APP(L"apply join: {0}") << team_event.res_code_;
 	
+	MutiLanSupport* mls = MutiLanSupport::GetInstance();
+	
 	switch (team_event.res_code_)
 	{
 	case nim::kNIMResTeamAlreadyIn:
 	{
-		re_apply_->SetText(nbase::StringPrintf(L"已经在群里", tname_.c_str()));
+		re_apply_->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_TEAM_SEARCH_ALREADY_IN").c_str(), tname_.c_str()));
 	}
 	break;
 	case nim::kNIMResSuccess:
 	{
 		nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(TeamCallback::OnTeamEventCallback, team_event));
-		re_apply_->SetText(nbase::StringPrintf(L"群 %s 管理员同意了你的加群请求", tname_.c_str()));
+		re_apply_->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_TEAM_SEARCH_AGREE_APPLY").c_str(), tname_.c_str()));
 	}
 	break;
 	case nim::kNIMResTeamApplySuccess:
-		re_apply_->SetText(L"你的加群请求已发送成功，请等候群主/管理员验证");
+		re_apply_->SetText(mls->GetStringViaID(L"STRID_TEAM_SEARCH_WAIT_VERIFY"));
 		break;
 	default:
 	{
-		re_apply_->SetText(nbase::StringPrintf(L"群 %s 管理员拒绝了你的加群请求", tname_.c_str()));
+		re_apply_->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_TEAM_SEARCH_REFUSE_APPLY").c_str(), tname_.c_str()));
 	}
 	break;
 	}

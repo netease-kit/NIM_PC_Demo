@@ -32,7 +32,7 @@ bool RtsManager::StartRtsForm(int channel_type, std::string uid, std::string ses
 			my_rts = true;
 		}
 		RtsForm *window = new RtsForm(channel_type, uid, session_id);
-		window->Create(NULL, L"白板", WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
+		window->Create(NULL, L"", WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
 		window->CenterWindow();
 		window->ShowWindow();
 		window->ShowStartUI(my_rts);

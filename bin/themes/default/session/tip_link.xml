@@ -2,6 +2,6 @@
 <Window>
     <HBox height="40" bkcolor="bk_link_tip">
         <Control width="22" height="22" margin="9,9,9,9" bkimage="link_tip.png"/>
-        <Label valign="center" font="2" normaltextcolor="link_tip" text="网络连接失败，无法发送消息，请连接成功后重试"/>
+        <Label valign="center" font="2" normaltextcolor="link_tip" textid="STRID_SESSION_TIP_NETWORK_ERROR"/>
     </HBox>
 </Window>

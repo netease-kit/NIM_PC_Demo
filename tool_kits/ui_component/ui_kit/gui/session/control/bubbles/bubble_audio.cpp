@@ -190,7 +190,7 @@ void MsgBubbleAudio::DoStop()
 	timer_.Cancel();
 }
 
-void MsgBubbleAudio::OnDownloadCallback( bool success )
+void MsgBubbleAudio::OnDownloadCallback( bool success, const std::string& file_path )
 {
 	if( success )
 	{
@@ -203,7 +203,17 @@ void MsgBubbleAudio::OnDownloadCallback( bool success )
 	}
 }
 
-void MsgBubbleAudio::OnPlayCallback( int code )
+void MsgBubbleAudio::OnUploadCallback(bool success, const std::string& url)
+{
+	nim::IMAudio audio;
+	nim::Talk::ParseAudioMessageAttach(msg_, audio);
+	if (audio.url_.empty())
+		audio.url_ = url;
+
+	msg_.attach_ = audio.ToJsonString();
+}
+
+void MsgBubbleAudio::OnPlayCallback(int code)
 {
 	if (code == nim::kNIMResSuccess)
 	{

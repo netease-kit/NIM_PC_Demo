@@ -283,16 +283,16 @@ void VideoSettingForm::InitDeviceList( bool video, bool input )
 	{
 		std::wstring str;
 		if(video)
-			str = L"未找到摄像头";
+			str = L"STRID_VIDEO_SET_CAMERA_NOT_FOUND";
 		else if(input)
-			str = L"未检测到麦克风";
+			str = L"STRID_VIDEO_SET_MICROPHONE_NOT_FOUND";
 		else
-			str = L"未检测到播放器";
+			str = L"STRID_VIDEO_SET_PLAYER_NOT_FOUND";
 
 		ListContainerElement* label = new ListContainerElement;
 		label->SetFixedHeight(30);
 		label->SetTextPadding(UiRect(10, 1, 30, 1));
-		label->SetText(str);
+		label->SetTextId(str);
 		label->SetEnabled( false );
 
 		combo->Add(label);

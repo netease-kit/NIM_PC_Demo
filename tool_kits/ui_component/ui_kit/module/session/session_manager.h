@@ -71,6 +71,12 @@ public:
 	* @return void 无返回值
 	*/
 	void QueryMyTeamInfo(const std::string& tid);
+
+	/**
+	* 查询当前登录用户在所有群中的信息
+	* @return void 无返回值
+	*/
+	void QueryMyAllTeamMemberInfos();
 public:
 	/**
 	* 设置是否开启会话合并功能
@@ -159,6 +165,14 @@ private:
 	* @return void 无返回值
 	*/
 	void OnQueryMyTeamInfo(const std::string& tid, const nim::TeamMemberProperty& team_member_info);
+
+	/**
+	* 查询当前登录用户在所有群中自己的成员信息的回调函数
+	* @param[in] count 查询到的总数
+	* @param[in] all_my_member_info_list 自己的群成员信息
+	* @return void 无返回值
+	*/
+	void OnQueryMyAllTeamMemberInfos(int count, const std::list<nim::TeamMemberProperty>& all_my_member_info_list);
 
 	/**
 	* 查找某个群的消息是否需要通知提示

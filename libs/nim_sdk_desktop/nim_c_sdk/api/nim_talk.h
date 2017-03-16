@@ -123,6 +123,13 @@ NIM_SDK_DLL_API void nim_talk_recall_msg(const char *json_msg, const char *notif
   */
 NIM_SDK_DLL_API void nim_talk_reg_recall_msg_cb(const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data);
 
+/** @fn char *nim_talk_get_attachment_path_from_msg(const char *json_msg)
+* 从消息的json字符串中获取附件（图片、语音、视频等）的本地路径
+* @param[in] json_msg	消息体Json string (Keys SEE MORE `nim_talk_def.h` 『消息结构 Json Keys』)
+* @return	 char *		消息如果有附件，不管是否已下载，返回附件的本地路径；消息如果没有附件，返回空字符串""。
+*/
+NIM_SDK_DLL_API char *nim_talk_get_attachment_path_from_msg(const char *json_msg);
+
 #ifdef __cplusplus
 };
 #endif //__cplusplus

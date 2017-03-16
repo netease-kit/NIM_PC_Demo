@@ -146,3 +146,15 @@ void ImageViewManager::GetImagePage(long& cur, long& sum)
 		}
 	}
 }
+
+void ImageViewManager::OnImageReady(std::wstring &path_pic, bool size)
+{
+	if (!image_view_window_)
+		return;
+
+	if (image_view_window_->CurrentImagePath() == path_pic)
+	{
+		StartViewPic(path_pic, L"", size);
+		image_view_window_->CenterWindow();
+	}
+}

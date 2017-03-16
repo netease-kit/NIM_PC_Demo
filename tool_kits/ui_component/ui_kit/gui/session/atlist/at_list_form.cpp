@@ -351,7 +351,7 @@ void AtlistForm::SetShowPos(POINT pt)
 	}
 
 	ui::UiRect rc(pt.x, pt.y, 0, 0);
-	this->SetPos(rc, SWP_NOSIZE|SWP_SHOWWINDOW|SWP_NOACTIVATE);	
+	this->SetPos(rc, false, SWP_NOSIZE|SWP_SHOWWINDOW|SWP_NOACTIVATE);	
 
 	//强制刷新一下，否则列表项的选中状态会有问题
 	::InvalidateRect(m_hWnd,NULL, FALSE);

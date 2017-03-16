@@ -785,7 +785,7 @@ void HeadModifyForm::OnButtonSelectImage()
 		return;
 
 	select_image_btn_->SetEnabled(false);
-	std::wstring file_type = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_PIC_FILE");
+	std::wstring file_type = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_HEAD_MODIFY_PIC_FILE");
 	LPCTSTR filter_text = L"*.jpg;*.jpeg;*.png";
 	std::wstring text = nbase::StringPrintf(L"%s(%s)", file_type.c_str(),filter_text);
 	CFileDialogEx* file_dlg = new CFileDialogEx();
@@ -947,13 +947,9 @@ void HeadModifyForm::OnNotifyHeadModifyCallback()
 
 void HeadModifyForm::OnNotifyHeadModifyFailed()
 {
-	auto multilan = MutiLanSupport::GetInstance();
-	std::wstring content = multilan->GetStringViaID(L"STRID_HEAD_MODIFY_SAVE_FAILED");
-	std::wstring title = multilan->GetStringViaID(L"STRID_HEAD_MODIFY_TITLE");
-	std::wstring yes = multilan->GetStringViaID(L"STRING_OK");
 	MsgboxCallback cb = nbase::Bind(&HeadModifyForm::OnButtonCloseTipCallback, this, std::placeholders::_1);
 	cb = ToWeakCallback(cb);
-	ShowMsgBox(m_hWnd, content, cb, title, yes, L"");
+	ShowMsgBox(m_hWnd, cb, L"STRID_HEAD_MODIFY_SAVE_FAILED", true, L"STRID_HEAD_MODIFY_TITLE");
 
 	//删除缓存头像
 	StdClosure closure = nbase::Bind(&HeadModifyForm::DeleteFileCallback, new_temp_head_image_path_);
@@ -991,14 +987,10 @@ void HeadModifyForm::OnButtonClose(bool forced_close /*= false*/)
 			if(head_view_ctrl_->CheckHasLoadImage())
 			{
 				// 退出提示：是否放弃修改？
-				auto multilan = MutiLanSupport::GetInstance();
-				std::wstring content = multilan->GetStringViaID(L"STRID_HEAD_MODIFY_CLOSE_TIP");
-				std::wstring title = multilan->GetStringViaID(L"STRID_HEAD_MODIFY_TITLE");
-				std::wstring yes = multilan->GetStringViaID(L"STRID_HEAD_MODIFY_GIVEUP_MODIFY");
-				std::wstring no = multilan->GetStringViaID(L"STRID_HEAD_MODIFY_CONTINUE_MODIFY");
 				MsgboxCallback cb = nbase::Bind(&HeadModifyForm::OnButtonCloseTipCallback, this, std::placeholders::_1); 
 				cb = ToWeakCallback(cb);
-				ShowMsgBox(m_hWnd, content, cb, title, yes, no);
+				ShowMsgBox(m_hWnd, cb, L"STRID_HEAD_MODIFY_CLOSE_TIP", true, L"STRID_HEAD_MODIFY_TITLE", true, \
+					L"STRID_HEAD_MODIFY_GIVEUP_MODIFY", true, L"STRID_HEAD_MODIFY_CONTINUE_MODIFY", true);
 			}
 			else
 			{
@@ -1060,13 +1052,9 @@ void HeadModifyForm::ShowPreviewWhileLoading()
 void HeadModifyForm::OnNotifyImageInvalid()
 {
 	// 提示图片无效，不是图片或者图片为超过200*200
-	auto multilan = MutiLanSupport::GetInstance();
-	std::wstring content = multilan->GetStringViaID(L"STRID_HEAD_MODIFY_IMAGE_VALID");
-	std::wstring title = multilan->GetStringViaID(L"STRID_HEAD_MODIFY_BUTTON_LOCAL_UPLOAD");
-	std::wstring yes = multilan->GetStringViaID(L"STRING_OK");
 	MsgboxCallback cb = nbase::Bind(&HeadModifyForm::OnButtonCloseTipCallback, this, std::placeholders::_1);
 	cb = ToWeakCallback(cb);
-	ShowMsgBox(m_hWnd, content, MsgboxCallback(), title, yes, L"");
+	ShowMsgBox(m_hWnd, MsgboxCallback(), L"STRID_HEAD_MODIFY_IMAGE_VALID", true, L"STRID_HEAD_MODIFY_BUTTON_LOCAL_UPLOAD");
 
 	select_image_btn_->SetEnabled(true);
 }

@@ -2,6 +2,7 @@
 
 #include "gui/tray_icon/tray_icon.h"
 #include "shared/ui/ui_menu.h"
+#include "shared/ui/msgbox.h"
 #include "base/framework/task.h"
 
 
@@ -144,6 +145,42 @@ private:
 	* @return bool true 继续传递控件消息，false 停止传递控件消息
 	*/
 	bool RtsReplayMenuItemClick(ui::EventArgs* param);
+
+	/**
+	* 处理适配DPI菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool AdaptDpiMenuItemClick(ui::EventArgs* param);
+
+	/**
+	* 显示语言列表
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool ShowLanguageList(ui::EventArgs* param);
+
+	/**
+	* 关闭语言列表
+	* @param[in] msg 消息的相关信息
+	* @param[in] check_mouse true: 检查到鼠标在语言列表上就不关闭；false：不检查鼠标位置，直接关闭
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool CloseLanguageList(ui::EventArgs* param, bool check_mouse);
+
+	/**
+	* 选择语言
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnSelectLanguage(ui::EventArgs* param);
+
+	/**
+	* 选择语言的回调
+	* @param[in] ret 选择的按钮
+	* @return void 无返回值
+	*/
+	void OnSelectLanguageCallback(MsgBoxRet ret, const std::string& language);
 
 	/**
 	* 处理显示会话列表菜单项的单击消息

@@ -2,6 +2,6 @@
 <Window>
     <HBox name="msg_unknown" width="auto" height="auto" padding="20,10,20,10" bkimage="file='bubble_right.png' corner='15,15,25,15'">
         <Control width="auto" height="auto" bkimage="msg_unkown.png"/>
-        <Label name="unknown_tip" margin="5,0,0,0" valign="center" font="2" normaltextcolor="white" text="未知消息"/>
+        <Label name="unknown_tip" margin="5,0,0,0" valign="center" font="2" normaltextcolor="white" textid="STRID_SESSION_UNKNOWN_MSG"/>
     </HBox>
 </Window>

@@ -16,6 +16,7 @@ std::string ProxyForm::cur_pass = "";
 
 ProxyForm::ProxyForm()
 {
+	being_test_connect_ = false;
 }
 
 ProxyForm::~ProxyForm()
@@ -80,13 +81,26 @@ bool ProxyForm::Notify(ui::EventArgs* msg)
 		{
 			Close();
 		}
+		else if (name == L"testconnect")
+		{
+			if (!CheckProxyLegality())
+			{
+				return true;
+			}
+			being_test_connect_ = true;
+			test_connect_btn_->SetEnabled(false);
+			gifanim_ctrl_->SetVisible(true);
+			DetectProxyLegality();
+		}
 	}
 	else if(msg->Type == kEventTextChange)
 	{
 		if(name == L"proxyaddr" || name == L"proxyport")
 		{
-			confirm_btn_->SetEnabled(CheckProxyLegality());
-		}		
+			bool enable = CheckProxyLegality();
+			test_connect_btn_->SetEnabled(enable);
+			confirm_btn_->SetEnabled(enable);
+		}
 	}
 	else if(msg->Type == kEventTab)
 	{
@@ -144,6 +158,56 @@ bool ProxyForm::OnProxyTypeSelected(ui::EventArgs * msg)
 	}
 
 	return true;
+}
+
+void ProxyForm::DetectProxyLegality()
+{
+ 	SetPanelEnabled(false);
+
+	nim::NIMProxyType type = ConvertIndexToProxyType(proxy_type_comb_->GetCurSel());
+	std::string host;
+	int port = 0;
+	std::string user;
+	std::string pass;
+
+	if (type != nim::kNIMProxyNone)
+	{
+		PTR_VOID(!addr_ctrl_->GetUTF8Text().empty() && !port_ctrl_->GetText().empty())
+			host = addr_ctrl_->GetUTF8Text();
+		nbase::StringToInt(port_ctrl_->GetUTF8Text(), &port);
+		user = user_ctrl_->GetUTF8Text();
+		pass = pass_ctrl_->GetUTF8Text();
+	}
+
+	nim::Global::DetectProxy(type, host, port, user, pass, nbase::Bind(&ProxyForm::CallbackDetectProxy, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+}
+
+void ProxyForm::CallbackDetectProxy(bool connect, nim::NIMProxyDetectStep step, const std::string& json_extention)
+{
+	if (step == nim::kNIMProxyDetectStepAllComplete)
+	{
+		being_test_connect_ = false;
+		test_connect_btn_->SetEnabled(true);
+		gifanim_ctrl_->SetVisible(false);
+		SetPanelEnabled(true);
+		if (connect)
+		{
+			ShowMsgBox(m_hWnd, MsgboxCallback(), L"STRID_LOGIN_FORM_DETECT_PROXY_OK");
+		}
+		else
+		{
+			ShowMsgBox(m_hWnd, MsgboxCallback(), L"STRID_LOGIN_FORM_DETECT_PROXY_ERROR");
+		}
+	}
+}
+
+void ProxyForm::SetPanelEnabled(bool enable)
+{
+	addr_ctrl_->SetEnabled(enable);
+	port_ctrl_->SetEnabled(enable);
+	user_ctrl_->SetEnabled(enable);
+	pass_ctrl_->SetEnabled(enable);
+	proxy_type_comb_->SetEnabled(enable);
 }
 
 bool ProxyForm::CheckProxyLegality()

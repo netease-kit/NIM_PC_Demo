@@ -34,7 +34,7 @@ public:
 	};
 
 	CMenuWnd(HWND hParent = NULL);
-	void Init(STRINGorID xml, LPCTSTR pSkinType, POINT point, PopupPosType popupPosType = RIGHT_BOTTOM);
+	void Init(STRINGorID xml, LPCTSTR pSkinType, POINT point, PopupPosType popupPosType = RIGHT_BOTTOM, bool no_focus = false);
     std::wstring GetWindowClassName() const;
 
     LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
@@ -53,6 +53,7 @@ public:
 	PopupPosType m_popupPosType;
 	STRINGorID m_xml;
 	std::wstring m_sType;
+	bool no_focus_;
 };
 
 class ListContainerElement;

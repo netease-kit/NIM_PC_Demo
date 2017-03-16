@@ -14,7 +14,7 @@ void LoginForm::DoBeforeLogin()
 	if( username.empty() )
 	{
 		usericon_->SetEnabled(false);
-		ShowLoginTip(L"帐号为空");
+		ShowLoginTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ACCOUNT_EMPTY"));
 		return;
 	}
 
@@ -23,7 +23,7 @@ void LoginForm::DoBeforeLogin()
 	if( password.empty() )
 	{
 		passwordicon_->SetEnabled(false);
-		ShowLoginTip(L"密码为空");
+		ShowLoginTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_TIP_PASSWORD_EMPTY"));
 		return;
 	}
 
@@ -35,6 +35,7 @@ void LoginForm::DoBeforeLogin()
 
 void LoginForm::DoRegisterAccount()
 {
+	MutiLanSupport* mls = MutiLanSupport::GetInstance();
 	std::string username = user_name_edit_->GetUTF8Text();
 	StringHelper::Trim(username);
 	std::string password = password_edit_->GetUTF8Text();
@@ -43,11 +44,11 @@ void LoginForm::DoRegisterAccount()
 	StringHelper::Trim(nickname);
 	if (password.length() < 6 || password.length() > 128)
 	{
-		ShowLoginTip(L"密码为6~128位字母或者数字组合");
+		ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_PASSWORD_RESTRICT"));
 	}
 	else if (nickname.empty())
 	{
-		ShowLoginTip(L"昵称为汉字、字母或数字的组合");
+		ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_NICKNAME_RESTRICT"));
 	}
 	else 
 	{
@@ -64,7 +65,7 @@ void LoginForm::DoRegisterAccount()
 				}), nbase::TimeDelta::FromSeconds(2));
 
 				nbase::ThreadManager::PostDelayedTask(ToWeakCallback([this]() {
-					SetTaskbarTitle(L"登录");
+					SetTaskbarTitle(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_LOGIN"));
 					FindControl(L"enter_panel")->SetBkImage(L"user_password.png");
 					FindControl(L"nick_name_panel")->SetVisible(false);
 					FindControl(L"enter_login")->SetVisible(false);
@@ -76,14 +77,15 @@ void LoginForm::DoRegisterAccount()
 			}
 			else
 			{
+				MutiLanSupport* mls = MutiLanSupport::GetInstance();
 				if (res == 601) {
-					ShowLoginTip(L"帐号为6~32位字母或者数字组合");
+					ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ACCOUNT_RESTRICT"));
 				}
 				else if (res == 602) {
-					ShowLoginTip(L"此帐号已存在");
+					ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ACCOUNT_EXIST"));
 				}
 				else if (res == 603) {
-					ShowLoginTip(L"输入昵称超长");
+					ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_NICKNAME_TOO_LONG"));
 				}
 				else {
 					ShowLoginTip(nbase::UTF8ToUTF16(err_msg));
@@ -143,23 +145,24 @@ void LoginForm::OnLoginError( int error )
 {
 	OnCancelLogin();
 
+	MutiLanSupport* mls = MutiLanSupport::GetInstance();
 	if (error == nim::kNIMResUidPassError)
 	{
 		usericon_->SetEnabled(false);
 		passwordicon_->SetEnabled(false);
-		ShowLoginTip(L"用户名或密码错误，请重新输入");
+		ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_PASSWORD_ERROR"));
 	}
 	else if (error == nim::kNIMResConnectionError)
 	{
-		ShowLoginTip(L"网络出现问题，请确认网络连接");
+		ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_NETWORK_ERROR"));
 	}
 	else if (error == nim::kNIMResExist)
 	{
-		ShowLoginTip(L"你在其他设备上登录过，请重新登录");
+		ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_LOCATION_CHANGED"));
 	}
 	else
 	{
-		std::wstring tip = nbase::StringPrintf(L"登录失败，错误码：%d", error);
+		std::wstring tip = nbase::StringPrintf(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ERROR_CODE").c_str(), error);
 		ShowLoginTip(tip);
 	}
 }

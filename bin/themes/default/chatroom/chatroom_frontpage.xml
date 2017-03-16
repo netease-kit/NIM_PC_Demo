@@ -21,9 +21,9 @@
                         <Button class="btn_wnd_close" name="closebtn" margin="4,6,0,0"/>
                     </HBox>
                     <Control height="stretch"/>
-                    <Button class="btn_word_border" name="be_host" width="26" height="26" halign="right" margin="0,0,0,6" tooltiptext="我要当主播"
+                    <Button class="btn_word_border" name="be_host" width="26" height="26" halign="right" margin="0,0,0,6" tooltiptextid="STRID_CHATROOM_I_WANT_HOST"
                             forenormalimage="file='btn_create_room.png' dest='5,5,20,20'"/>
-                    <Button class="btn_word_border" name="my_room" width="26" height="26" halign="right" margin="0,0,0,6" tooltiptext="我的直播间"
+                    <Button class="btn_word_border" name="my_room" width="26" height="26" halign="right" margin="0,0,0,6" tooltiptextid="STRID_CHATROOM_MY_CHATROOM"
                             forenormalimage="file='btn_create_room.png' dest='5,5,20,20'" visible="false"/>
                 </VBox>
             </HBox>
@@ -42,12 +42,12 @@
         
         <VBox name="loading_tip" width="auto" height="auto" halign="center" valign="top" margin="0,150,0,0" visible="false">
             <Control width="auto" height="auto" halign="center" bkimage="../public/animation/ani_loading.gif"/>
-            <Label width="auto" height="auto" text="房间加载中..." normaltextcolor="lightcolor" font="3" margin="0,8"/>
+            <Label width="auto" height="auto" textid="STRID_CHATROOM_ROOM_LOADING" normaltextcolor="lightcolor" font="3" margin="0,8"/>
         </VBox>
 
         <HBox name="load_error_tip" width="auto" height="auto" halign="center" valign="top" margin="0,150,0,0" visible="false">
-            <Label width="auto" height="auto" valign="center" text="加载房间列表失败" normaltextcolor="lightcolor" font="3"/>
-            <Button class="btn_global_green_80x30" name="retry" valign="center" margin="8" text="重试"/>
+            <Label width="auto" height="auto" valign="center" textid="STRID_CHATROOM_ROOM_LOADING_FAIL" normaltextcolor="lightcolor" font="3"/>
+            <Button class="btn_global_green_80x30" name="retry" valign="center" margin="8" textid="STRING_RETRY"/>
         </HBox>
     </Box>
 </Window>

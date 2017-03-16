@@ -1,5 +1,5 @@
-/** @file nim_audio_cpp.cpp
-* @brief NIMÃ·π©µƒ”Ô“Ù≤•∑≈π§æﬂ
+Ôªø/** @file nim_audio_cpp.cpp
+* @brief NIM ?????????≈π??ﬂΩ”ø?CPP?”ø?
 * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
 * @author towik, Oleg
 * @date 2015/2/10
@@ -39,9 +39,9 @@ typedef bool(*nim_audio_reg_enum_capture_device_cb)(nim_enum_capture_device_cb c
 
 bool Audio::Init(const std::string& user_data_parent_path)
 {
-// #ifdef _DEBUG
-// 	instance_audio_ = ::LoadLibraryW(kSdkAudioDll_d.c_str());
-// #else
+//#ifdef _DEBUG
+//	instance_audio_ = ::LoadLibraryW(kSdkAudioDll_d.c_str());
+//#else
 	instance_audio_ = ::LoadLibraryW(kSdkAudioDll.c_str());
 //#endif
 	assert(instance_audio_);

@@ -33,13 +33,13 @@ GroupList::GroupList(ui::TreeView* group_list) :
 
 	//初始化分组项
 	ui::TreeNode* tree_node;
-	tree_node = ListItemUtil::CreateFirstLetterListItem(L"高级群");
+	tree_node = ListItemUtil::CreateFirstLetterListItem(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_ADVANCED_TEAM"));
 	group_list_->GetRootNode()->AddChildNode(tree_node);
 	tree_node_ver_.push_back(tree_node);
 	tree_node->SetVisible(false);
 	tree_node->SetEnabled(false);
 
-	tree_node = ListItemUtil::CreateFirstLetterListItem(L"讨论组");
+	tree_node = ListItemUtil::CreateFirstLetterListItem(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_NORMAL_TEAM"));
 	group_list_->GetRootNode()->AddChildNode(tree_node);
 	tree_node_ver_.push_back(tree_node);
 	tree_node->SetVisible(false);
@@ -67,6 +67,10 @@ void GroupList::OnQueryAllMyTeams(int team_count, const std::list<nim::TeamInfo>
 		if (it->IsValid() && it->IsMemberValid())
 			AddListItem(*it);
 	}
+
+	// 批量查询自己在每个群里的成员信息
+	if (!team_info_list.empty())
+		SessionManager::GetInstance()->QueryMyAllTeamMemberInfos();
 }
 
 GroupList::~GroupList()
@@ -120,7 +124,6 @@ void GroupList::AddListItemInGroup(const nim::TeamInfo& team_info, ui::TreeNode*
 	{
 		tree_node->AddChildNodeAt(container_element, index);
 	}
-	SessionManager::GetInstance()->QueryMyTeamInfo(team_info.GetTeamID());
 }
 
 void GroupList::OnAddTeam(const std::string& tid, const std::string& tname, nim::NIMTeamType type)

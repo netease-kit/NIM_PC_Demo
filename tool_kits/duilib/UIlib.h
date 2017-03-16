@@ -77,11 +77,14 @@
 
 #include "Utils/Macros.h"
 #include "Utils/Utils.h"
+#include "Utils/VersionHelpers.h"
+#include "Utils/ApiWrapper.h"
+#include "Utils/DpiManager.h"
 #include "Utils/Delegate.h"
 #include "Utils/StringUtil.h"
 #include "Utils/MultiLangSupport.h"
 #include "Utils/TimerManager.h"
-#include "utils/VersionHelpers.h"
+#include "Utils/Shadow.h"
 
 #include "Animation/AnimationPlayer.h"
 #include "Animation/AnimationManager.h"
@@ -118,5 +121,5 @@
 #include "Control/Slider.h"
 
 #include "Control/RichEdit.h"
-
+#include "Control/VirtualListBox.h"
 

@@ -17,7 +17,7 @@
 			</HBox>
 			
 			<HBox height="34" width="stretch" margin="12" mouse="false">
-				<Label name="http_status" width="55" valign="center" font="1" normaltextcolor="darkcolor" mouse="false"/>
+				<Label name="http_status" width="auto" valign="center" font="1" normaltextcolor="darkcolor" mouse="false"/>
 				<Control width="stretch" mouse="false"/>
 				<Button name="file_saveas" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>
 				<Button name="file_open" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>

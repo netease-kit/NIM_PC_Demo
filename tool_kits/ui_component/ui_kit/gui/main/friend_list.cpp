@@ -356,10 +356,15 @@ void FriendList::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 			{
 				if (info.ExistValue(nim::kUserNameCardKeyName))
 				{
-					//nim::UserNameCard all_info;
-					//UserService::GetInstance()->GetUserInfo(info.GetAccId(), all_info);
-					DeleteListItem(accid);
-					AddListItem(accid);
+					if (item->GetNickName() == nbase::UTF8ToUTF16(info.GetName()) )
+					{
+						item->Init(false, accid);
+					}
+					else
+					{
+						DeleteListItem(accid);
+						AddListItem(accid);
+					}	
 				}
 				else
 					item->Init(false, accid);

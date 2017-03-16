@@ -143,15 +143,10 @@ void TalkCallback::OnQueryMsgCallback(nim::NIMResCode code, const std::string& q
 	QLOG_APP(L"query end: id={0} type={1} code={2} source={3}") <<query_id <<query_type <<code<< result.source_;
 
 	std::vector<nim::IMMessage> vec;
-	std::set<std::string> ids;
 	for each (auto msg in result.msglogs_)
 	{
 		vec.push_back(msg);
-		ids.insert(msg.sender_accid_);
 	}
-
-	// 添加到消息前批量查询用户信息,优化用户查询
-	UserService::GetInstance()->DoQueryUserInfos(ids);
 
 	SessionBox* session_form = SessionManager::GetInstance()->FindSessionBox(query_id);
 	if (session_form)
@@ -161,16 +156,6 @@ void TalkCallback::OnQueryMsgCallback(nim::NIMResCode code, const std::string& q
 void TalkCallback::OnQuerySessionListCallback(int unread_count, const nim::SessionDataList& session_list)
 {
 	QLOG_PRO(L"local session list: count :{0} - unread :{1}") << session_list.count_ << session_list.unread_count_;
-
-	std::set<std::string> ids;
-	for each (auto session in session_list.sessions_)
-	{
-		ids.insert(session.msg_sender_accid_);
-	}
-
-	// 添加到消息前批量查询用户信息,优化用户查询
-	UserService::GetInstance()->DoQueryUserInfos(ids);
-
 	nim_ui::SessionListManager::GetInstance()->OnQuerySessionListCallback(session_list.sessions_);
 }
 

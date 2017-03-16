@@ -48,7 +48,7 @@ void ChatroomForm::OnDropFile(HDROP hDrop)
 	}
 	if (large_file)
 	{
-		ShowMsgBox(m_hWnd, L"暂时只支持小于15MB的非空文件", MsgboxCallback(), L"提示", L"确定", L"");
+		ShowMsgBox(m_hWnd, MsgboxCallback(), L"STRID_CHATROOM_SUPPORT_15MB");
 	}
 	//目前是通过RichEdit的拖曳来处理
 	//DragFinish(hDrop);
@@ -159,7 +159,7 @@ std::wstring ChatroomForm::GetCurrentTimeString()
 	TCHAR szTime[MAX_PATH] = { 0 };
 	::GetLocalTime(&time);
 
-	_stprintf_s(szTime, MAX_PATH, _T("   %04d年%02d月%02d日 %02d:%02d:%02d\r\n"), time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
+	_stprintf_s(szTime, MAX_PATH, _T("   %04d-%02d-%02d %02d:%02d:%02d\r\n"), time.wYear, time.wMonth, time.wDay, time.wHour, time.wMinute, time.wSecond);
 
 	return szTime;
 }

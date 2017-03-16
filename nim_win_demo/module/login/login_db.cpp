@@ -16,11 +16,12 @@ LoginDB::LoginDB()
         kLoginDataSQLs.push_back("CREATE TABLE IF NOT EXISTS logindata(uid TEXT PRIMARY KEY, \
                                   name TEXT, password TEXT, type INTEGER, status INTEGER, remember INTEGER, autologin INTEGER)");
         kLoginDataSQLs.push_back("CREATE INDEX IF NOT EXISTS logindatauidindex ON logindata(uid)");
+
 		kLoginDataSQLs.push_back("CREATE TABLE IF NOT EXISTS proxysettingdata(proxytype INTEGER PRIMARY KEY, \
 								 address TEXT, port TEXT,name TEXT, password TEXT, domain TEXT,valid INTEGER)");
 		kLoginDataSQLs.push_back("CREATE INDEX IF NOT EXISTS proxydataindex ON proxysettingdata(proxytype)");
-		kLoginDataSQLs.push_back("CREATE TABLE IF NOT EXISTS foreignarea(id INTEGER PRIMARY KEY, searchcode TEXT)");
-		kLoginDataSQLs.push_back("CREATE TABLE IF NOT EXISTS loginforeigncode(uid TEXT PRIMARY KEY, code TEXT)");
+
+		kLoginDataSQLs.push_back("CREATE TABLE IF NOT EXISTS config_info(key TEXT PRIMARY KEY, value TEXT)");
         sqls_created = true;
     }
 	aes_key_ = "12345500072bf3390c79f01004dabcde";//32位
@@ -112,20 +113,20 @@ bool LoginDB::UpdateLoginData(UTF8String &uid,
 		GetAESPassword(current_login_data->user_password_, password_aes);
 		nbase::StringPrintf(query_sql, "UPDATE OR ROLLBACK logindata SET name = '%s', password = '%s', type = %d, status = %d \
 									   WHERE uid = '%s'", 
-									   current_login_data->user_name_.c_str(),
+									   shared::tools::FormatSQLText(current_login_data->user_name_).c_str(),
 									   password_aes.c_str(), 
 									   current_login_data->type_, 
 									   status, 
-									   uid.c_str());
+									   shared::tools::FormatSQLText(uid).c_str());
 	}
 	else
 	{
 		nbase::StringPrintf(query_sql, "UPDATE OR ROLLBACK logindata SET name = '%s', type = %d, status = %d \
 									   WHERE uid = '%s'", 
-									   current_login_data->user_name_.c_str(), 
+									   shared::tools::FormatSQLText(current_login_data->user_name_).c_str(),
 									   current_login_data->type_, 
 									   status, 
-									   uid.c_str());
+									   shared::tools::FormatSQLText(uid).c_str());
 	}
     
     int32_t result = db_.Query(query_sql.c_str());
@@ -139,12 +140,12 @@ bool LoginDB::UpdateLoginData(UTF8String &uid,
     return no_error;
 }
 
-bool    LoginDB::SetStatus(UTF8String &uid, const uint8_t status)
+bool LoginDB::SetStatus(UTF8String &uid, const uint8_t status)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	UTF8String query_sql;
 	nbase::StringPrintf(query_sql, "UPDATE OR ROLLBACK logindata SET status = %d \
-								   WHERE uid = '%s'", status, uid.c_str());
+								   WHERE uid = '%s'", status, shared::tools::FormatSQLText(uid).c_str());
 
 	int32_t result = db_.Query(query_sql.c_str());
 	bool no_error = result == SQLITE_OK || result == SQLITE_ROW || result == SQLITE_DONE;
@@ -157,12 +158,12 @@ bool    LoginDB::SetStatus(UTF8String &uid, const uint8_t status)
 	return no_error;
 }
 
-bool    LoginDB::SetRemember(UTF8String &uid, const uint8_t remember)
+bool LoginDB::SetRemember(UTF8String &uid, const uint8_t remember)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	UTF8String query_sql;
 	nbase::StringPrintf(query_sql, "UPDATE OR ROLLBACK logindata SET remember = %d \
-								   WHERE uid = '%s'", remember, uid.c_str());
+								   WHERE uid = '%s'", remember, shared::tools::FormatSQLText(uid).c_str());
 
 	int32_t result = db_.Query(query_sql.c_str());
 	bool no_error = result == SQLITE_OK || result == SQLITE_ROW || result == SQLITE_DONE;
@@ -175,12 +176,12 @@ bool    LoginDB::SetRemember(UTF8String &uid, const uint8_t remember)
 	return no_error;
 }
 
-bool    LoginDB::SetAutoLogin(UTF8String &uid, const uint8_t auto_login)
+bool LoginDB::SetAutoLogin(UTF8String &uid, const uint8_t auto_login)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	UTF8String query_sql;
 	nbase::StringPrintf(query_sql, "UPDATE OR ROLLBACK logindata SET autologin = %d \
-								   WHERE uid = '%s'", auto_login, uid.c_str());
+								   WHERE uid = '%s'", auto_login, shared::tools::FormatSQLText(uid).c_str());
 
 	int32_t result = db_.Query(query_sql.c_str());
 	bool no_error = result == SQLITE_OK || result == SQLITE_ROW || result == SQLITE_DONE;
@@ -193,7 +194,7 @@ bool    LoginDB::SetAutoLogin(UTF8String &uid, const uint8_t auto_login)
 	return no_error;
 }
 
-bool    LoginDB::QueryLoginDataByUid(UTF8String &uid, LoginData &data)
+bool LoginDB::QueryLoginDataByUid(UTF8String &uid, LoginData &data)
 {
     nbase::NAutoLock auto_lock(&lock_);
     bool result = false;
@@ -211,7 +212,7 @@ bool    LoginDB::QueryLoginDataByUid(UTF8String &uid, LoginData &data)
 }
 
 
-uint32_t  LoginDB::QueryAllLoginData(std::vector<LoginData> &all_data)
+uint32_t LoginDB::QueryAllLoginData(std::vector<LoginData> &all_data)
 {
     all_data.clear();
     nbase::NAutoLock auto_lock(&lock_);
@@ -229,8 +230,11 @@ uint32_t  LoginDB::QueryAllLoginData(std::vector<LoginData> &all_data)
     return (uint32_t)all_data.size();
 }
 
-bool    LoginDB::CreateDBFile()
+bool LoginDB::CreateDBFile()
 {
+	if (db_.IsValid())
+		return true;
+
     bool result = false;
 	UTF8String dirctory = nbase::UTF16ToUTF8(QPath::GetNimAppDataDir());
 	UTF8String dbfile = dirctory + LOGIN_DATA_FILE;
@@ -252,7 +256,7 @@ bool    LoginDB::CreateDBFile()
     return result;
 }
 
-void    LoginDB::GetLoginDataFromStatement(ndb::SQLiteStatement &stmt, LoginData &data)
+void LoginDB::GetLoginDataFromStatement(ndb::SQLiteStatement &stmt, LoginData &data)
 {
     data.user_id_       = stmt.GetTextField(0);
     data.user_name_     = stmt.GetTextField(1);
@@ -266,7 +270,7 @@ void    LoginDB::GetLoginDataFromStatement(ndb::SQLiteStatement &stmt, LoginData
 	data.auto_login_    = stmt.GetIntField(6); 
 }
 
-void	LoginDB::GetAESPassword(const UTF8String &password_org, UTF8String &password_aes)
+void LoginDB::GetAESPassword(const UTF8String &password_org, UTF8String &password_aes)
 {
 	nbase::EncryptInterface_var encrypt_enc(new nbase::Encrypt_Impl());
 	encrypt_enc->SetMethod(nbase::ENC_AES128);
@@ -275,7 +279,7 @@ void	LoginDB::GetAESPassword(const UTF8String &password_org, UTF8String &passwor
 	password_aes = nbase::BinaryToHexString(password_aes);
 }
 
-void	LoginDB::GetOrgPassword(const UTF8String &password_aes, UTF8String &password_org)
+void LoginDB::GetOrgPassword(const UTF8String &password_aes, UTF8String &password_org)
 {
 	nbase::EncryptInterface_var encrypt_dec(new nbase::Encrypt_Impl());
 	encrypt_dec->SetMethod(nbase::ENC_AES128);
@@ -284,7 +288,7 @@ void	LoginDB::GetOrgPassword(const UTF8String &password_aes, UTF8String &passwor
 	encrypt_dec->Decrypt(password_enc, password_org);
 }
 
-bool    LoginDB::SetAllLoginDataDeleted()
+bool LoginDB::SetAllLoginDataDeleted()
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	UTF8String query_sql;
@@ -299,7 +303,7 @@ bool    LoginDB::SetAllLoginDataDeleted()
 	return no_error;
 }
 
-void	LoginDB::ReadLoginData()
+void LoginDB::ReadLoginData()
 {
 	try
 	{
@@ -325,7 +329,7 @@ void	LoginDB::ReadLoginData()
 	}
 }
 
-void	LoginDB::SaveLoginData()
+void LoginDB::SaveLoginData()
 {
 	LoginData login_data;
 	bool ret = this->QueryLoginDataByUid(current_login_data_.user_id_, login_data);
@@ -356,4 +360,46 @@ void	LoginDB::SaveLoginData()
 		//是否自动登录
 		this->SetAutoLogin(current_login_data_.user_id_, current_login_data_.auto_login_);
 	}
+}
+
+bool LoginDB::InsertConfigData(const std::string& key, const std::string& value)
+{
+	nbase::NAutoLock auto_lock(&lock_);
+
+	ndb::SQLiteStatement stmt;
+	db_.Query(stmt, "INSERT OR REPLACE into config_info (key, value) values (?, ?);");
+	stmt.BindText(1, key.c_str(), (int)key.size());
+	stmt.BindText(2, value.c_str(), (int)value.size());
+	int32_t result = stmt.NextRow();
+	stmt.Finalize();
+
+	bool no_error = result == SQLITE_OK || result == SQLITE_ROW || result == SQLITE_DONE;
+	if (!no_error)
+	{
+		QLOG_ERR(L"error: InsertConfigData for key: {0}, reason: {1}") << key << result;
+	}
+
+	return no_error;
+}
+
+void LoginDB::QueryConfigData(const std::string& key, std::string& value)
+{
+	nbase::NAutoLock auto_lock(&lock_);
+	ndb::SQLiteStatement stmt;
+
+	db_.Query(stmt, "SELECT value FROM config_info WHERE key=?");
+	stmt.BindText(1, key.c_str(), (int)key.size());
+	int32_t result = stmt.NextRow();
+
+	if (result == SQLITE_ROW)
+		value = stmt.GetTextField(0);
+}
+
+void LoginDB::ClearConfigData()
+{
+	nbase::NAutoLock auto_lock(&lock_);
+
+	ndb::SQLiteStatement stmt;
+	db_.Query(stmt, "delete from config_info;");
+	stmt.NextRow();
 }

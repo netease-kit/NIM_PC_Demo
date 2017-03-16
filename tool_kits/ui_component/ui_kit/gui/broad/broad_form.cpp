@@ -46,7 +46,6 @@ UINT BroadForm::GetClassStyle() const
 }
 void BroadForm::InitWindow()
 {
-	SetTaskbarTitle(L"发布新公告");
 	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&BroadForm::Notify, this, std::placeholders::_1));
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&BroadForm::OnClicked, this, std::placeholders::_1));
 
@@ -106,13 +105,14 @@ bool BroadForm::OnClicked( ui::EventArgs* arg )
 	std::wstring name = arg->pSender->GetName();
 	if(name == L"commit")
 	{
+		
 		std::string title;
 		{
 			std::wstring str = GetRichText(re_title_);
 			StringHelper::Trim(str);
 			if( str.empty() )
 			{
-				error_1_->SetText(L"标题不可为空");
+				error_1_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_BOARD_TITLE_NON_EMPTY"));
 				error_1_->SetVisible(true);
 				return false;
 			}
@@ -125,7 +125,7 @@ bool BroadForm::OnClicked( ui::EventArgs* arg )
 			StringHelper::Trim(str);
 			if( str.empty() )
 			{
-				error_2_->SetText(L"公告内容不可为空");
+				error_2_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_BOARD_CONTENT_NON_EMPTY"));
 				error_2_->SetVisible(true);
 				return false;
 			}
@@ -168,8 +168,7 @@ void BroadForm::OnUpdateBroadCb(const nim::TeamEvent& team_event)
 	else
 	{
 		btn_commit_->SetEnabled(true);
-
-		ShowMsgBox(m_hWnd, L"发布公告失败", MsgboxCallback(), L"提示", L"确定", L"");
+		ShowMsgBox(m_hWnd, MsgboxCallback(), L"STRID_TEAM_BOARD_PUBLISH_FAIL");
 	}
 }
 }

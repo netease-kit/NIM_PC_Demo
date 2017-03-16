@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window size="360,600" caption="0,0,0,34">
+<Window size="360,600" caption="0,0,0,34" textid="STRID_MSG_CENTER_TITLE">
     <VBox bkcolor="bk_wnd_lightcolor">
         <HBox class="caption">
-            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" text="消息中心"/>
-            <Button class="btn_recycle" name="btn_recycle" margin="4,6,0,0" tooltiptext="清空消息"/>
+            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" textid="STRID_MAINWINDOW_MSG_CENTER"/>
+            <Button class="btn_recycle" name="btn_recycle" margin="4,6,0,0" tooltiptextid="STRID_MAINWINDOW_EMPTY_MSGS"/>
             <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>
         </HBox>
         <HBox height="36">
@@ -29,7 +29,7 @@
                     </HBox>
                 </TabBox>
 
-                <Label name="label_sysmsg" mouse="false" width="auto" height="auto" halign="center" valign="center" normaltextcolor="dark2color" pushedtextcolor="link_blue" font="7" text="系统通知"/>
+                <Label name="label_sysmsg" mouse="false" width="auto" height="auto" halign="center" valign="center" normaltextcolor="dark2color" pushedtextcolor="link_blue" font="7" textid="STRID_MAINWINDOW_SYSTEM_NOTIFICATION"/>
             </OptionBox>
 
             <OptionBox group="list_tab" name="btn_custom_list" cursortype="hand">
@@ -52,7 +52,7 @@
                     </HBox>
                 </TabBox>
 
-                <Label name="label_custom" mouse="false" width="auto" height="auto" halign="center" valign="center" normaltextcolor="dark2color" pushedtextcolor="link_blue" font="7" text="自定义通知"/>
+                <Label name="label_custom" mouse="false" width="auto" height="auto" halign="center" valign="center" normaltextcolor="dark2color" pushedtextcolor="link_blue" font="7" textid="STRID_MAINWINDOW_CUSTOM_NOTIFICATION"/>
             </OptionBox>
         </HBox>
 

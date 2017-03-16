@@ -63,7 +63,7 @@ void AtMeView::ShowLoadingTip(bool show)
 {
 	if (show)
 	{
-		content_->SetText(L"消息加载中···");
+		content_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MSG_LOADING"));
 		sender_name_->SetVisible(false);
 		this->SetEnabled(false);
 	}

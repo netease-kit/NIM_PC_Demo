@@ -136,11 +136,11 @@ void TeamItem::PopupItemMenu(POINT point)
 
 	if (is_mute_)
 	{
-		((Label*)(mute_item->FindSubControl(L"mute_text")))->SetText(L"解除禁言");
+		((Label*)(mute_item->FindSubControl(L"mute_text")))->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_TEAM_ITEM_MENU_UNMUTE"));
 	}
 	else
 	{
-		((Label*)(mute_item->FindSubControl(L"mute_text")))->SetText(L"禁言");
+		((Label*)(mute_item->FindSubControl(L"mute_text")))->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_TEAM_ITEM_MENU_MUTE"));
 	}
 	mute_item->AttachSelect(nbase::Bind(&TeamItem::TeamItemMenuItemClick, this, std::placeholders::_1));
 

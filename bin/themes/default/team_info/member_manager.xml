@@ -3,7 +3,7 @@
     <VBox bkcolor="bk_wnd_lightcolor" width="460" height="auto">
         <HBox class="caption">
             <Label class="font_title" name="title" width="stretch" valign="center" 
-                   normaltextcolor="darkcolor" text="群成员管理"/>				   
+                   normaltextcolor="darkcolor" textid="STRID_MEMBER_MANAGE_TITLE"/>				   
             <Button class="btn_wnd_min" name="minbtn" margin="4,6,0,0"/>
             <Button class="btn_wnd_close" name="closebtn" margin="4,6,0,0"/>
         </HBox>
@@ -21,24 +21,24 @@
         </HBox>
 
         <HBox height="55">
-            <Label text="群名片" font="3" margin="10,15,20,0"/>
-            <RichEdit class="simple prompt" name="team_card" margin="0,15,0,0" font="2" prompttext="输入群名片"/>
+            <Label textid="STRID_MEMBER_MANAGE_TEAM_NAMECARD" font="3" margin="10,15,20,0"/>
+            <RichEdit class="simple prompt" name="team_card" margin="0,15,0,0" font="2" prompttextid="STRID_MEMBER_MANAGE_INPUT_NAMECARD"/>
         </HBox>
         
         <HBox name="privilege_panel" height="55">
-            <Label text="身份" font="3" margin="10,15,20,0"/>
-            <Option class="circle_option_2" group="identity" name="owner" text="转移群主" margin="0,15,0,0"/>
-            <Option class="circle_option_2" group="identity" name="manager" text="管理员" margin="0,15,0,0"/>
-            <Option class="circle_option_2" group="identity" name="member" text="成员" margin="10,15,0,0"/>
+            <Label textid="STRID_MEMBER_MANAGE_STATUS" font="3" margin="10,15,20,0"/>
+            <Option class="circle_option_2" group="identity" name="owner" textid="STRID_MEMBER_MANAGE_TRANSFER_OWNER" margin="0,15,0,0"/>
+            <Option class="circle_option_2" group="identity" name="manager" textid="STRID_MEMBER_MANAGE_ADMIN" margin="0,15,0,0"/>
+            <Option class="circle_option_2" group="identity" name="member" textid="STRID_MEMBER_MANAGE_MEMBER" margin="10,15,0,0"/>
         </HBox>
         
         <Control class="splitline_hor_level1"/>
 
         <HBox bkcolor="bk_wnd_darkcolor" height="50">
             <Control />
-            <Button class="btn_global_white_80x30" name="cancel" valign="center" text="取消"/>
+            <Button class="btn_global_white_80x30" name="cancel" valign="center" textid="STRING_NO"/>
             <Control width="10"/>
-            <Button class="btn_global_green_80x30" name="confirm" valign="center" text="确定"/>
+            <Button class="btn_global_green_80x30" name="confirm" valign="center" textid="STRING_OK"/>
             <Control width="10"/>
         </HBox>
     </VBox>

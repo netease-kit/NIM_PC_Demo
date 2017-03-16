@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window size="380,180" caption="0,0,0,34">
+<Window size="380,180" caption="0,0,0,34" textid="STRID_TEAM_SEARCH_TITLE">
     <VBox bkcolor="bk_wnd_lightcolor">
         <HBox class="caption">
-            <Label class="font_title" width="stretch" valign="center" normaltextcolor="darkcolor" text="搜索加入群"/>				   
+            <Label class="font_title" width="stretch" valign="center" normaltextcolor="darkcolor" textid="STRID_TEAM_SEARCH_TITLE"/>				   
             <Button class="btn_wnd_close" name="closebtn" margin="4,6,0,0"/>
         </HBox>
         <Box padding="20,20,20,10">
             <VBox name="page_search" visible="false">
-                <RichEdit class="simple prompt input" name="re_tid" width="stretch" height="32" margin="0,15,0,5" padding="5,5,5,0" font="2" prompttext="请输入群号进行搜索"/>
+                <RichEdit class="simple prompt input" name="re_tid" width="stretch" height="32" margin="0,15,0,5" padding="5,5,5,0" font="2" prompttextid="STRID_TEAM_SEARCH_INPUT_PROMPT"/>
                 <Label name="error_tip" normaltextcolor="obvious_tip" visible="false"/>
                 <Control />
-                <Button class="btn_global_green_80x30" name="btn_search" halign="right" normaltextcolor="white" text="搜索"/>
+                <Button class="btn_global_green_80x30" name="btn_search" halign="right" normaltextcolor="white" textid="STRING_SEARCH"/>
             </VBox>
             
             <VBox name="page_apply" visible="false">
@@ -24,20 +24,20 @@
                         <Label name="team_id" normaltextcolor="lightcolor"/>
                     </VBox>
                 </HBox>
-                <Label name="label_group" margin="0,5,0,0" normaltextcolor="obvious_tip" text="提示：临时群不支持加入" visible="false"/>
+                <Label name="label_group" margin="0,5,0,0" normaltextcolor="obvious_tip" textid="STRID_TEAM_SEARCH_TEMPORARY_TEAM_TIP" visible="false"/>
                 <Control />
                 <HBox height="auto">
                     <Control />
-                    <Button class="btn_global_white_80x30" name="btn_return_search" text="返回搜索"/>
+                    <Button class="btn_global_white_80x30" name="btn_return_search" textid="STRID_TEAM_SEARCH_RETURN_SEARCH"/>
                     <Control width="10"/>
-                    <Button class="btn_global_green_80x30" name="btn_apply" normaltextcolor="white" text="加入"/>
+                    <Button class="btn_global_green_80x30" name="btn_apply" normaltextcolor="white" textid="STRID_TEAM_SEARCH_JOIN"/>
                 </HBox>
             </VBox>
             
             <VBox name="page_apply_ok" visible="false">
                 <RichEdit name="re_apply" width="stretch" height="80" rich="true" multiline="true" vscrollbar="false" readonly="true" font="3"/>
                 <Control />
-                <Button class="btn_global_green_80x30" name="btn_apply_ok" halign="right" normaltextcolor="white" text="完成"/>
+                <Button class="btn_global_green_80x30" name="btn_apply_ok" halign="right" normaltextcolor="white" textid="STRING_COMPLETE"/>
             </VBox>
         </Box>
     </VBox>

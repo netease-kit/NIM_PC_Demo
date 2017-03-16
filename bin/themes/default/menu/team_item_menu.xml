@@ -2,7 +2,7 @@
 <Window>
     <VListBox class="menu">
         <MenuElement class="MenuElement" name="mute" width="158">
-            <Label class="menu_text" name="mute_text" text="禁言"/>
+            <Label class="menu_text" name="mute_text" textid="STRID_SESSION_TEAM_ITEM_MENU_MUTE"/>
         </MenuElement>
     </VListBox>
 </Window>

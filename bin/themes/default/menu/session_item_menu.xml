@@ -2,10 +2,10 @@
 <Window>
     <VListBox class="menu">
         <MenuElement class="MenuElement" name="del_session_item" width="158">
-            <Label class="menu_text" text="从最近联系人删除"/>
+            <Label class="menu_text" textid="STRID_SESSION_ITEM_DELETE_SESSION"/>
         </MenuElement>
         <MenuElement class="MenuElement" name="del_session_msg" width="158">
-            <Label class="menu_text" text="删除聊天记录"/>
+            <Label class="menu_text" textid="STRID_SESSION_ITEM_DELETE_MSGLOG"/>
         </MenuElement>
     </VListBox>
 </Window>

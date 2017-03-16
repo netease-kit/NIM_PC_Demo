@@ -5,45 +5,45 @@
 
 namespace ui
 {
-	class UILIB_API Progress : public LabelTemplate<Control>
-	{
-	public:
-		Progress();
 
-		bool IsHorizontal();
-		void SetHorizontal(bool bHorizontal = true);
-		bool IsStretchForeImage();
-		void SetStretchForeImage(bool bStretchForeImage = true);
-		int GetMinValue() const;
-		void SetMinValue(int nMin);
-		int GetMaxValue() const;
-		void SetMaxValue(int nMax);
-		double GetValue() const;
-		void SetValue(double nValue);
-		std::wstring GetProgressImage() const;
-		void SetProgressImage(const std::wstring& pStrImage);
-		std::wstring GetProgressColor() const
-		{
-			return m_dwProgressColor;
-		}
-		void SetProgressColor(const std::wstring& dwProgressColor);
+class UILIB_API Progress : public LabelTemplate<Control>
+{
+public:
+	Progress();
 
-		void SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue);
-		void PaintStatusImage(HDC hDC);
+	bool IsHorizontal();
+	void SetHorizontal(bool bHorizontal = true);
+	int GetMinValue() const;
+	void SetMinValue(int nMin);
+	int GetMaxValue() const;
+	void SetMaxValue(int nMax);
+	double GetValue() const;
+	void SetValue(double nValue);
 
-		virtual void ClearImageCache() override;
-		virtual UiRect GetProgressPos();
+	bool IsStretchForeImage();
+	void SetStretchForeImage(bool bStretchForeImage = true);
+	std::wstring GetProgressImage() const;
+	void SetProgressImage(const std::wstring& strImage);
+	std::wstring GetProgressColor() const;
+	void SetProgressColor(const std::wstring& dwProgressColor);
 
-	protected:
-		bool m_bHorizontal;
-		bool m_bStretchForeImage;
-		int m_nMax;
-		int m_nMin;
-		double m_nValue;
-		std::wstring m_dwProgressColor;
-		Image m_progressImage;
-		std::wstring m_progressImageModify;
-	};
+	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
+	virtual void PaintStatusImage(HDC hDC) override;
+
+	virtual UiRect GetProgressPos();
+
+	virtual void ClearImageCache() override;
+
+protected:
+	bool m_bHorizontal;
+	bool m_bStretchForeImage;
+	int m_nMax;
+	int m_nMin;
+	double m_nValue;
+	Image m_progressImage;
+	std::wstring m_sProgressColor;
+	std::wstring m_sProgressImageModify;
+};
 
 } // namespace ui
 

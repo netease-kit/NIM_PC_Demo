@@ -216,12 +216,12 @@ bool ReadFileToString(const PathString &filepath, std::string &out)
 	if (!file)
 		return false;
 
-	int64_t file_size = GetFileSize(filepath);
-	if (file_size > (int64_t)std::numeric_limits<size_t>::max())
+	size_t file_size = (size_t)GetFileSize(filepath);
+	if (file_size > std::numeric_limits<size_t>::max()) //x64编译条件下，size_t的最大值转为int64_t会溢出，因此用无符号
 		return false; // Too large
 
 	bool read_ok = true;
-	out.resize((size_t)file_size);
+	out.resize(file_size);
 	if (!out.empty()) {
 		read_ok = fread(&out[0], 1, out.size(), file.get()) == out.size();
 	}

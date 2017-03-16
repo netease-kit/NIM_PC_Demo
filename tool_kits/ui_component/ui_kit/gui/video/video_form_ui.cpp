@@ -1,4 +1,5 @@
 ﻿#include "video_form.h"
+#include "record_select.h"
 #include "util/windows_manager.h"
 #include "module/video/video_manager.h"
 #include "shared/modal_wnd/file_dialog_ex.h"
@@ -246,7 +247,7 @@ void VideoForm::ShowStatusPage( StatusPage sp )
 			refuse_btn_->SetClass( L"RefuseVideo" );
 
 			status_label_->SetText(lang->GetStringViaID(L"STRID_VIDEO_INVITE_VIDEO"));
-			complete_btn_->SetText(lang->GetStringViaID(L"STRID_VIDEO_INVITE_ACCEPT_VIDEO"));
+			complete_btn_->SetText(lang->GetStringViaID(L"STRING_ACCEPT"));
 		}
 		else
 		{
@@ -295,7 +296,7 @@ void VideoForm::AdjustWindowSize( bool video )
 	}
 
 	UiRect dest( 0, 0, FORM_CX, FORM_CY );
-	this->SetPos( dest, SWP_NOMOVE );
+	this->SetPos( dest, true, SWP_NOMOVE );
 }
 
 void VideoForm::AllowWindowMaxsize( bool allow )
@@ -336,10 +337,6 @@ void VideoForm::EnterEndCallPage( EndCallEnum why )
 	if (end_call_ != END_CALL_NONE)
 	{
 		return;
-	}
-	if (mp4_recording_)
-	{
-		nim::VChat::StopRecord(std::bind(&VideoForm::StopRecordCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 	}
 	Control* min = FindControl( L"minbtn" );
 	ASSERT( min );
@@ -452,12 +449,12 @@ void VideoForm::EnterEndCallPage( EndCallEnum why )
 
 void VideoForm::BeforeClose()
 {
-	std::wstring content, button;
-	content = (current_video_mode_ ? L"是否要退出当前视频" : L"是否要退出当前通话");
-	button = (current_video_mode_ ? L"返回视频" : L"返回通话");
+	std::wstring content_id, button_id;
+	content_id = (current_video_mode_ ? L"STRID_VIDEO_QUIT_QUERY_VIDEO" : L"STRID_VIDEO_QUIT_QUERY_AUDIO");
+	button_id = (current_video_mode_ ? L"STRID_VIDEO_QUIT_RETURN_VIDEO" : L"STRID_VIDEO_QUIT_RETURN_AUDIO");
 	
 	MsgboxCallback mb = nbase::Bind(&VideoForm::OnQuitMsgBox, this, std::placeholders::_1);
-	ShowMsgBox(m_hWnd, content, mb, L"提示", L"退出", button);
+	ShowMsgBox(m_hWnd, mb, content_id, true, L"STRING_TIPS", true, L"STRID_VIDEO_QUIT_YES", true, button_id, true);
 }
 
 void VideoForm::OnQuitMsgBox( MsgBoxRet ret )
@@ -583,23 +580,17 @@ bool VideoForm::OnClicked( ui::EventArgs* arg )
 	else if (name == L"record_start")
 	{
 		// 要保存的文件名
-		CFileDialogEx* file_dlg = new CFileDialogEx();
-		std::map<LPCTSTR, LPCTSTR> filters;
-		filters[L"文件格式(*.mp4)"] = L"*.mp4";
-		file_dlg->SetFilter(filters);
-		timeb time_now;
-		ftime(&time_now); // 秒数
-		std::wstring file_name = nbase::StringPrintf(L"%d.mp4", time_now.time);
-		file_dlg->SetFileName(file_name.c_str());
-		file_dlg->SetDefExt(L".mp4");
-		file_dlg->SetParentWnd(GetHWND());
-		// 弹出非模态对话框
-		CFileDialogEx::FileDialogCallback2 callback2 = nbase::Bind(&VideoForm::OnRecordMp4SelFileCb, this, std::placeholders::_1, std::placeholders::_2);
-		file_dlg->AyncShowSaveFileDlg(callback2);
+		auto sel = nim_comp::WindowsManager::SingletonShow<nim_comp::RecordSelectForm>(nim_comp::RecordSelectForm::kClassName);
+		if (sel)
+		{
+			sel->SetSelFileCb(std::bind(&VideoForm::OnRecordSelFileCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		}
+
 	}
 	else if (name == L"record_stop")
 	{
-		nim::VChat::StopRecord(std::bind(&VideoForm::StopRecordCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+		nim::VChat::StopRecord(std::bind(&VideoForm::StopRecordCb, this, true, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+		nim::VChat::StopAudioRecord(std::bind(&VideoForm::StopRecordCb, this, false, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 	}
 	else if (name == L"rotate")
 	{
@@ -845,7 +836,6 @@ void VideoForm::SwitchStatus( StatusEnum status )
 	case STATUS_CALLING:
 		{
 			status_label_->SetText(lang->GetStringViaID(L"STRID_VIDEO_CALLING"));
-
 			camera_checkbox_->SetVisible( current_video_mode_ );
 		}
 		break;
@@ -1008,12 +998,12 @@ void VideoForm::InitSetting()
 			if (rs == 0)
 			{
 				camera_checkbox_->SetClass(L"Camera1");
-				camera_checkbox_->SetToolTipText(L"关闭摄像头");
+				camera_checkbox_->SetToolTipText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_CLOSE_CAMERA"));
 			}
 			else
 			{
 				camera_checkbox_->SetClass(L"Camera2");
-				camera_checkbox_->SetToolTipText(L"打开摄像头");
+				camera_checkbox_->SetToolTipText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_OPEN_CAMERA"));
 			}
 			if (status_ == STATUS_TALKING)
 				camera_checkbox_->SetEnabled(true);
@@ -1117,7 +1107,7 @@ void VideoForm::ShowRecordTip(std::wstring tip, std::wstring tip2, std::wstring 
 		record_tip_label3_->SetVisible(false);
 		if (mp4_recording_)
 		{
-			recording_tip_label_->SetText(L"录制中");
+			recording_tip_label_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_RECORDING"));
 			recording_tip_label_->SetVisible(true);
 			show = true;
 		}

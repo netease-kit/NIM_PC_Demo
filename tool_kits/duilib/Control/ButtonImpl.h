@@ -1,6 +1,3 @@
-
-
-
 template<typename InheritType>
 ButtonTemplate<InheritType>::ButtonTemplate()
 {

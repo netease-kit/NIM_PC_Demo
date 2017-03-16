@@ -362,6 +362,19 @@ NIM_SDK_DLL_API void nim_team_query_all_my_teams_info_async(const char *json_ext
 	nim_team_query_all_my_teams_info_cb_func cb, 
 	const void *user_data);
 
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+/** @fn void nim_team_query_my_all_member_infos_async(const char *json_extension, nim_team_query_my_all_member_infos_cb_func cb, const void *user_data)
+  * 查询本地所有群里我的成员信息（使用场景：获取了所有群列表后，需要查询自己在每个群里自己的成员信息，使用成员信息里的bits字段，可以判断当某个群发来消息后，是否做消息通知）
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		 查询我的所有群里我的成员信息的回调函数, nim_team_query_my_all_member_infos_cb_func回调函数定义见nim_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_team_query_my_all_member_infos_async(const char *json_extension,
+	nim_team_query_my_all_member_infos_cb_func cb,
+	const void *user_data);
+#endif
+
 /** @fn void nim_team_query_team_members_async(const char *tid, bool include_user_info, const char *json_extension, nim_team_query_team_members_cb_func cb, const void *user_data)
   * 查询群成员（默认查询有效群成员-在群里-）
   * @param[in] tid		群组id

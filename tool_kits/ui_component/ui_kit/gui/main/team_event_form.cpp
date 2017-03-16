@@ -58,7 +58,6 @@ void TeamEventForm::InitWindow()
 		SetIcon(nim_ui::UserConfig::GetInstance()->GetDefaultIcon());
 	}
 
-	SetTaskbarTitle(L"消息中心");
 	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&TeamEventForm::Notify, this, std::placeholders::_1));
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&TeamEventForm::OnClicked, this, std::placeholders::_1));
 

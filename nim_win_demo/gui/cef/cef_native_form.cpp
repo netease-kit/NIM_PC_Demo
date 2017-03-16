@@ -48,7 +48,6 @@ ui::Control* CefNativeForm::CreateControl(const std::wstring& pstrClass)
 
 void CefNativeForm::InitWindow()
 {
-	SetTaskbarTitle(L"Cef有窗模式测试");
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&CefNativeForm::OnClicked, this, std::placeholders::_1));
 	btn_max_restore_ = static_cast<Button*>(FindControl(L"btn_max_restore"));
 
@@ -183,10 +182,8 @@ void CefNativeForm::OnJsCallback(const CefString& fun_name, const CefString& par
 {
 	if (fun_name == L"NimCefWebFunction")
 	{
-		std::wstring content = std::wstring(L"收到来自JS的消息：");
-		if (!param.empty())
-			content += param.c_str();
-
-		ShowMsgBox(GetHWND(), content, MsgboxCallback(), L"提示", L"确定", L"");
+		MutiLanSupport* multilan = MutiLanSupport::GetInstance();
+		std::wstring content = nbase::StringPrintf(multilan->GetStringViaID(L"STRID_CEF_BROWSER_RECEIVE_JS_MSG").c_str(), param.c_str());
+		ShowMsgBox(GetHWND(), MsgboxCallback(), content, false);
 	}
 }

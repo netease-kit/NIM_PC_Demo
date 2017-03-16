@@ -172,7 +172,7 @@ void ScreenCaptureTool::InitWindow()
 	SetWindowLong(m_hWnd, GWL_EXSTYLE, windowLongEx | WS_EX_TOOLWINDOW | WS_EX_TOPMOST);
 
 	// 调试时用  HWND_NOTOPMOST，用完换回来 HWND_TOPMOST
-	SetPos(ui::UiRect(screen_x_, screen_y_, screen_x_ + screen_width_, screen_y_ + screen_height_), SWP_NOACTIVATE, HWND_TOPMOST);
+	SetPos(ui::UiRect(screen_x_, screen_y_, screen_x_ + screen_width_, screen_y_ + screen_height_), false, SWP_NOACTIVATE, HWND_TOPMOST);
 
 	//StartCapture(GetDesktopWindow(), 60);
 

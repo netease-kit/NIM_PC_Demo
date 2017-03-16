@@ -499,47 +499,52 @@ public:
 	/**
 	* 选择录制保存路径的回调处理
 	* @param[in] ret 是否选择了路径
-	* @param[in] path 保存路径
+	* @param[in] mp4_path 保存MP4路径
+	* @param[in] audio_path 保存音频路径
 	* @return void	无返回值
 	*/
-	void OnRecordMp4SelFileCb(BOOL ret, std::wstring path);
+	void OnRecordSelFileCb(BOOL ret, std::wstring mp4_path, std::wstring audio_path);
 
 	/**
 	* 开始录制的回调
+	* @param[in] mp4 是否是MP4录制
 	* @param[in] ret 是否成功
 	* @param[in] code 视频录制错误码
 	* @param[in] file 保存路径
 	* @param[in] time 开始录制事件
 	* @return void	无返回值
 	*/
-	void StartRecordCb(bool ret, int code, const std::string& file, __int64 time);
+	void StartRecordCb(bool mp4, bool ret, int code, const std::string& file, __int64 time);
 
 	/**
 	* 结束录制的回调，不需要处理，在结束的通知里处理即可
+	* @param[in] mp4 是否是MP4录制
 	* @param[in] ret 是否成功
 	* @param[in] code 视频录制错误码
 	* @param[in] file 保存路径
 	* @param[in] time 结束录制事件
 	* @return void	无返回值
 	*/
-	void StopRecordCb(bool ret, int code, const std::string& file, __int64 time);
+	void StopRecordCb(bool mp4, bool ret, int code, const std::string& file, __int64 time);
 
 	/**
 	* 结束录制的通知调，正式开始录制数据
+	* @param[in] mp4 是否是MP4录制
 	* @param[in] file 保存路径
 	* @param[in] time 开始录制事件
 	* @return void	无返回值
 	*/
-	void OnStartRecord(const std::string& file, __int64 time);
+	void OnStartRecord(bool mp4, const std::string& file, __int64 time);
 
 	/**
 	* 结束录制的通知
+	* @param[in] mp4 是否是MP4录制
 	* @param[in] code 视频录制错误码
 	* @param[in] file 保存路径
 	* @param[in] time 结束录制事件
 	* @return void	无返回值
 	*/
-	void OnStopRecord(int code, const std::string& file, __int64 time);
+	void OnStopRecord(bool mp4, int code, const std::string& file, __int64 time);
 
 	/**
 	* 显示录制视频时的提示

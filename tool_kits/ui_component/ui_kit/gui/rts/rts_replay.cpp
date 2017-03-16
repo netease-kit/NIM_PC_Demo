@@ -46,11 +46,6 @@ LRESULT RtsReplay::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 void RtsReplay::InitWindow()
 {
-	std::wstring title_text = L"白板回放";
-	SetTaskbarTitle(title_text);
-	Label* title = (Label*)FindControl(L"title");
-	title->SetText(title_text);
-
 	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&RtsReplay::Notify, this, std::placeholders::_1));
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&RtsReplay::OnClicked, this, std::placeholders::_1));
 
@@ -93,19 +88,20 @@ bool RtsReplay::OnClicked(ui::EventArgs* arg)
 	std::wstring name = arg->pSender->GetName();		
 	if(name == L"btn_showtype")
 	{
+		MutiLanSupport* mls = MutiLanSupport::GetInstance();
 		switch (show_type_)
 		{
 		case ShowOpAll:
 			show_type_ = ShowOpMine;
-			((Button*)(arg->pSender))->SetText(L"显示自己");
+			((Button*)(arg->pSender))->SetText(mls->GetStringViaID(L"STRID_RTS_SHOW_MINE"));
 			break;
 		case ShowOpMine:
 			show_type_ = ShowOpOther;
-			((Button*)(arg->pSender))->SetText(L"显示对方");
+			((Button*)(arg->pSender))->SetText(mls->GetStringViaID(L"STRID_RTS_SHOW_OTHERS"));
 			break;
 		case ShowOpOther:
 			show_type_ = ShowOpAll;
-			((Button*)(arg->pSender))->SetText(L"显示全部");
+			((Button*)(arg->pSender))->SetText(mls->GetStringViaID(L"STRID_RTS_SHOW_ALL"));
 			break;
 		}
 		board_->SetShowType(show_type_);
@@ -145,45 +141,52 @@ int RtsReplay::OnParseData(std::string data, std::list<DrawOpInfo>& info_lists)
 {
 	int count = 0;
 	info_lists.clear();
-	while (data.size() > 0)
+	try
 	{
-		//录制存储的格式变为：
-		//长度（uint32） + 时间戳（uint32） + 内容
-		//	长度 = 4 + 4 + 内容长度
-		int size = *(int*)data.c_str();
-		int time = *(int*)(data.c_str() + 4);
-		std::string data_temp = data.substr(8, size - 8);
-		data = data.substr(size);
-		int pos = data_temp.find(';');
-		while (pos != -1)
+		while (data.size() > 8)
 		{
-			ui::DrawOpInfo info;
-			std::string cur_data = data_temp.substr(0, pos);
-			sscanf(cur_data.c_str(), "%d:%f,%f", &info.draw_op_type_, &info.x_, &info.y_);
-
-			switch (info.draw_op_type_)
+			//录制存储的格式变为：
+			//长度（uint32） + 时间戳（uint32） + 内容
+			//	长度 = 4 + 4 + 内容长度
+			int size = *(int*)data.c_str();
+			int time = *(int*)(data.c_str() + 4);
+			std::string data_temp = data.substr(8, size - 8);
+			data = data.substr(size);
+			int pos = data_temp.find(';');
+			while (pos != -1)
 			{
-			case DrawOpStart:
-			case DrawOpUndo:
-			case DrawOpMove:
-			case DrawOpEnd:
-			case DrawOpClear:
-				info_lists.push_back(info);
-				count++;
-				break;
-			default:
-				break;
-			}
+				ui::DrawOpInfo info;
+				std::string cur_data = data_temp.substr(0, pos);
+				sscanf(cur_data.c_str(), "%d:%f,%f", &info.draw_op_type_, &info.x_, &info.y_);
 
-			data_temp = data_temp.substr(pos + 1);
-			pos = data_temp.find(';');
+				switch (info.draw_op_type_)
+				{
+				case DrawOpStart:
+				case DrawOpUndo:
+				case DrawOpMove:
+				case DrawOpEnd:
+				case DrawOpClear:
+					info_lists.push_back(info);
+					count++;
+					break;
+				default:
+					break;
+				}
+
+				data_temp = data_temp.substr(pos + 1);
+				pos = data_temp.find(';');
+			}
 		}
+	}
+	catch (std::exception& e)
+	{
+		QLOG_ERR(L"Parse rts data error: {0}.") << nbase::UTF8ToUTF16(e.what());
 	}
 	return count;
 }
 void RtsReplay::OnBtnFile(bool mine)
 {
-	std::wstring file_type = L"文件格式(*.*)";
+	std::wstring file_type = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_FILE_FORMAT");
 	LPCTSTR filter = L"*.*";
 	std::map<LPCTSTR, LPCTSTR> filters;
 	filters[file_type.c_str()] = filter;
@@ -208,7 +211,7 @@ void RtsReplay::OnFileSelected(bool mine, BOOL ret, std::wstring file_path)
 				int count = OnParseData(file_data, info_lists_mine_);
 				mine_slider_->SetMaxValue(count);
 				mine_slider_->SetValue(count);
-				std::wstring text_size = nbase::StringPrintf(L"本人数据节点%d", count);
+				std::wstring text_size = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_MY_DATA_NODE").c_str(), count);
 				mine_size_label_->SetText(text_size);
 				ReShowInfo(true);
 			} 
@@ -218,7 +221,7 @@ void RtsReplay::OnFileSelected(bool mine, BOOL ret, std::wstring file_path)
 				int count = OnParseData(file_data, info_lists_other_);
 				other_slider_->SetMaxValue(count);
 				other_slider_->SetValue(count);
-				std::wstring text_size = nbase::StringPrintf(L"对方数据节点%d", count);
+				std::wstring text_size = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_OTHERS_DATA_NODE").c_str(), count);
 				other_size_label_->SetText(text_size);
 				ReShowInfo(false);
 			}

@@ -3,81 +3,96 @@
     <VListBox class="menu">
         <MenuElement class="MenuElement" name="look_log" width="180">
             <Button margin="2,0,0,0" normalimage="icon_watch_out.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="查看Log" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_LOOK_OVER_LOG" margin="27,0,0,0"/>
         </MenuElement>
 		<MenuElement class="MenuElement" name="file_helper" width="180">
             <Button margin="2,0,0,0" normalimage="icon_file_trans_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="我的手机" margin="27,0,0,0" mouse="false"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_MY_MOBILEPHONE" margin="27,0,0,0" mouse="false"/>
         </MenuElement>
         
         <MenuElement class="MenuElement" name="address" width="180">
             <Button normalimage="icon_refresh_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="刷新通讯录" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_REFRESH_ADDRESS_BOOK" margin="27,0,0,0"/>
         </MenuElement>
 		
         <MenuElement class="MenuElement" name="export_msglog" width="180">
             <Button margin="3,0,0,0" normalimage="icon_export.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="导出聊天记录" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_EXPORT_MSG_LOG" margin="27,0,0,0"/>
         </MenuElement>
 		
         <MenuElement class="MenuElement" name="import_msglog" width="180">
             <Button margin="3,0,0,0" normalimage="icon_import.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="导入聊天记录" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_IMPORT_MSG_LOG" margin="27,0,0,0"/>
         </MenuElement>
 
         <MenuElement class="MenuElement" name="clear_chat_record" width="180">
             <Button normalimage="icon_recycle_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="清空所有聊天记录" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_CLEAR_CHAT_RECORD" margin="27,0,0,0"/>
         </MenuElement>
 		
         <MenuElement class="MenuElement" name="clear_chat_record_ex" width="180" visible="false">
             <Button normalimage="icon_recycle_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="清空记录(保留会话)" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_CLEAR_REMAIN_SESSION" margin="27,0,0,0"/>
         </MenuElement>
 		
         <MenuElement class="MenuElement" name="clear_chat_record_p2p" width="180" visible="true">
             <Button normalimage="icon_recycle_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="清空p2p聊天记录" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_CLEAR_P2P" margin="27,0,0,0"/>
         </MenuElement>
 		
         <MenuElement class="MenuElement" name="clear_chat_record_p2p_ex" width="180" visible="false">
             <Button normalimage="icon_recycle_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="清空p2p(保留会话)" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_CLEAR_P2P_REMAIN_SESSION" margin="27,0,0,0"/>
         </MenuElement>
 		
         <MenuElement class="MenuElement" name="clear_chat_record_team" width="180" visible="false">
             <Button normalimage="icon_recycle_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="清空群聊天记录" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_CLEAR_TEAM" margin="27,0,0,0"/>
         </MenuElement>
 		
         <MenuElement class="MenuElement" name="clear_chat_record_team_ex" width="180" visible="false">
             <Button normalimage="icon_recycle_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="清空群(保留会话)" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_CLEAR_TEAM_REMAIN_SESSION" margin="27,0,0,0"/>
         </MenuElement>
 
         <MenuElement class="MenuElement" name="vchat_setting" width="180">
             <Button margin="2,0,0,0" normalimage="icon_setting_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="音视频设置" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_AUDIO_VIDEO_SETTING" margin="27,0,0,0"/>
         </MenuElement>
 		
         <MenuElement class="MenuElement" name="rts_replay" width="180">
             <Button margin="2,0,0,0" normalimage="icon_setting_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="白板回放" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_RTS_REPLAY" margin="27,0,0,0"/>
         </MenuElement>
+
+		<MenuElement class="MenuElement" name="adapt_dpi" width="180" tooltiptextid="STRID_MAINWINDOW_MENU_ADAPT_DPI_TIP">
+            <Event type="mouseenter" receiver=".\check_dpi" applyattribute="state=&quot;hot&quot;"/>
+            <Event type="mouseleave" receiver=".\check_dpi" applyattribute="state=&quot;normal&quot;"/>
+            
+            <Box>
+                <CheckBox class="option" margin="2,0,0,0" name="check_dpi" valign="center" mouse="false"/>
+                <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_ADAPT_DPI" margin="27,0,0,0"/>
+            </Box>
+        </MenuElement>
+
+		<MenuElement class="MenuElement" name="language" width="180">
+			<Button margin="2,0,0,0" normalimage="icon_language_normal.png" valign="center" mouse="false"/>
+			<Label class="menu_text" textid="STRID_MAINWINDOW_MENU_LANGUAGE" margin="27,0,0,0" mouse="false"/>
+		</MenuElement>
 
         <MenuElement class="MenuElement" name="about" width="180">
             <Button margin="2,0,0,0" normalimage="icon_about_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="关于" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_ABOUT" margin="27,0,0,0"/>
         </MenuElement>
 
         <MenuElement class="MenuElement" name="logoff" width="180">
             <Button margin="2,0,0,0" normalimage="icon_logout_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="注销" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_LOGOUT" margin="27,0,0,0"/>
         </MenuElement>
 
         <MenuElement class="MenuElement" name="quit" width="180">
             <Button margin="2,0,0,0" normalimage="icon_exit_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="退出" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_QUIT" margin="27,0,0,0"/>
         </MenuElement>
     </VListBox>
 </Window>

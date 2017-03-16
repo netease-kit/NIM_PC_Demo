@@ -12,8 +12,11 @@ typedef std::function<void(MsgBoxRet)> MsgboxCallback;
 class MsgBox : public ui::WindowImplBase//WindowEx
 {
 public:
-	friend void ShowMsgBox(HWND hwnd, const std::wstring &content, MsgboxCallback cb, 
-		const std::wstring &title = L"提示", const std::wstring &yes = L"确定", const std::wstring &no = L"取消");
+	friend void ShowMsgBox(HWND hwnd, MsgboxCallback cb,
+		const std::wstring &content = L"", bool content_is_id = true,
+		const std::wstring &title = L"STRING_TIPS", bool title_is_id = true,
+		const std::wstring &yes = L"STRING_OK", bool btn_yes_is_id = true,
+		const std::wstring &no = L"", bool btn_no_is_id = false);
 public:
 	MsgBox();
 	virtual ~MsgBox();

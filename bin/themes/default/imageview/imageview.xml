@@ -19,7 +19,7 @@
             <Button name="close_btn_max" normalimage="file='close_max.png' source='0,0,42,42'" hotimage="file='close_max.png' source='43,0,85,42'" pushedimage="file='close_max.png' source='86,0,128,42'" disabledimage="file='close_max.png' source='129,0,172,42'"/>
         </HBox>
 
-        <VBox name="tool_bar" height="auto" valign="bottom" margin="0,0,0,16" fadealpha="true" visible="false" fadealpha="true">
+        <VBox name="tool_bar" height="auto" valign="bottom" margin="0,0,0,16" fadealpha="true" visible="false">
             <Box name="num_tip_bg" bkimage="file='num_tip.png'  corner='20,0,20,0'" height="20" width="auto" minwidth="50" padding="10,0,10,2" visible="false" halign="center">
                 <Label name="num_info" normaltextcolor="white" font="11" halign="center" valign="center" />
             </Box>

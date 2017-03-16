@@ -9,6 +9,7 @@
 #define NIM_SDK_DLL_EXPORT_HEADERS_TEAM_DEF_H_
 
 #include "../util/stdbool.h"
+#include "../util/nim_build_config.h"
 
 #ifdef __cplusplus
 extern"C"
@@ -50,6 +51,18 @@ typedef void (*nim_team_query_all_my_teams_cb_func)(int team_count, const char *
   * @return void 无返回值
   */
 typedef void (*nim_team_query_all_my_teams_info_cb_func)(int team_count, const char *result, const char *json_extension, const void *user_data);
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+/** @typedef void (*nim_team_query_my_all_member_infos_cb_func)(int team_count, const char *result, const char *json_extension, const void *user_data)
+  * 查询我的所有群里我的成员信息的回调函数定义
+  * @param[out] team_count		有效群组数量
+  * @param[out] result			群成员信息 Json string array
+  * @param[out] json_extension	json扩展数据（备用）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void(*nim_team_query_my_all_member_infos_cb_func)(int team_count, const char *result, const char *json_extension, const void *user_data);
+#endif
 
 /** @typedef void (*nim_team_query_team_members_cb_func)(const char *tid, int member_count, bool include_user_info, const char *result, const char *json_extension, const void *user_data)
   * 查询群成员的回调函数定义

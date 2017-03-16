@@ -35,7 +35,7 @@ void SessionBox::OnDropFile(HDROP hDrop)
 		std::wstring path(buff, len);
 		if (nbase::FilePathIsExist(path, true))
 		{
-			ShowMsgBox(this->GetWindow()->GetHWND(), L"不能发送文件夹", MsgboxCallback(), L"提示", L"确定", L"");
+			ShowMsgBox(this->GetWindow()->GetHWND(), MsgboxCallback(), L"STRID_SESSION_CANT_SEND_FOLDER");
 			continue;
 		}
 		if (!nbase::FilePathIsExist(path, false))
@@ -60,7 +60,7 @@ void SessionBox::OnDropFile(HDROP hDrop)
 	}
 	if (large_file)
 	{
-		ShowMsgBox(this->GetWindow()->GetHWND(), L"暂时只支持小于15MB的非空文件", MsgboxCallback(), L"提示", L"确定", L"");
+		ShowMsgBox(this->GetWindow()->GetHWND(), MsgboxCallback(), L"STRID_SESSION_SUPPORT_15MB");
 	}
 
 }

@@ -65,7 +65,6 @@ void SessionManager::AddNewMsg(const nim::IMMessage &msg)
 	{
 		SessionForm *parent_form = session_box->GetSessionForm();
 		parent_form->CloseSessionBox(id);
-		RemoveSessionBox(id);
 		session_box = NULL;
 	}
 
@@ -159,7 +158,7 @@ nim_comp::SessionBox* SessionManager::CreateSessionBox(const std::string &sessio
 		else
 		{
 			session_form = new SessionForm;
-			HWND hwnd = session_form->Create(NULL, L"会话窗口", UI_WNDSTYLE_FRAME, 0);
+			HWND hwnd = session_form->Create(NULL, L"Session", UI_WNDSTYLE_FRAME, 0);
 			if (hwnd == NULL)
 			{
 				session_form = NULL;
@@ -176,7 +175,7 @@ nim_comp::SessionBox* SessionManager::CreateSessionBox(const std::string &sessio
 	else
 	{
 		session_form = new SessionForm;
-		HWND hwnd = session_form->Create(NULL, L"会话窗口", UI_WNDSTYLE_FRAME, 0);
+		HWND hwnd = session_form->Create(NULL, L"Session", UI_WNDSTYLE_FRAME, 0);
 		if (hwnd == NULL)
 			return NULL;
 
@@ -205,9 +204,22 @@ void SessionManager::QueryMyTeamInfo(const std::string& tid)
 	nim::Team::QueryTeamMemberAsync(tid, LoginManager::GetInstance()->GetAccount(), nbase::Bind(&SessionManager::OnQueryMyTeamInfo, this, tid, std::placeholders::_1));
 }
 
+void SessionManager::QueryMyAllTeamMemberInfos()
+{
+	nim::Team::QueryMyAllMemberInfosAsync(nbase::Bind(&SessionManager::OnQueryMyAllTeamMemberInfos, this, std::placeholders::_1, std::placeholders::_2));
+}
+
 void SessionManager::OnQueryMyTeamInfo(const std::string& tid, const nim::TeamMemberProperty& team_member_info)
 {
 	team_list_bits_[tid] = team_member_info.GetBits();
+}
+
+void SessionManager::OnQueryMyAllTeamMemberInfos(int count, const std::list<nim::TeamMemberProperty>& all_my_member_info_list)
+{
+	for (auto it : all_my_member_info_list)
+	{		
+		team_list_bits_[it.GetTeamID()] = it.GetBits();
+	}
 }
 
 bool SessionManager::IsTeamMsgNotify(const std::string& tid)

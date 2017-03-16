@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<VListBox class="menu">
+		<MenuElement class="MenuElement" name="zh_CN" width="100">
+			<Label class="menu_text" width="stretch" text="简体中文" mouse="false"/>
+		</MenuElement>
+		<MenuElement class="MenuElement" name="en_US" width="100">
+			<Label class="menu_text" width="stretch" text="English" mouse="false"/>
+		</MenuElement>
+	</VListBox>
+</Window>

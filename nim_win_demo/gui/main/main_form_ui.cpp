@@ -1,10 +1,11 @@
 #include "resource.h"
 #include "main_form.h"
+#include "util/user.h"
+#include "callback/team/team_callback.h"
+#include "module/config/config_helper.h"
 #include "gui/about/about_form.h"
 #include "gui/msglogmanage/msglog_manage_form.h"
 #include "gui/contact_select_form/contact_select_form.h"
-#include "util/user.h"
-#include "callback/team/team_callback.h"
 #include "gui/chatroom_frontpage.h"
 #include "cef/cef_module/cef_manager.h"
 #include "gui/cef/cef_form.h"
@@ -80,7 +81,6 @@ LRESULT MainForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 void MainForm::InitWindow()
 {
 	SetIcon(IDI_ICON);
-	SetTaskbarTitle(L"云信 Demo");
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&MainForm::OnClicked, this, std::placeholders::_1));
 
 	btn_header_ = (Button*) FindControl(L"btn_header");
@@ -112,7 +112,7 @@ void MainForm::InitWindow()
 	search_result_list_ = static_cast<ui::ListBox*>(FindControl(_T("search_result_list")));
 
 	TrayIcon::GetInstance()->Init(this);
-	TrayIcon::GetInstance()->SetTrayIcon(::LoadIconW(nbase::win32::GetCurrentModuleHandle(), MAKEINTRESOURCE(IDI_ICON)), L"云信 Demo");
+	TrayIcon::GetInstance()->SetTrayIcon(::LoadIconW(nbase::win32::GetCurrentModuleHandle(), MAKEINTRESOURCE(IDI_ICON)), MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MIANWINDOW_TITLE"));
 
 	nim_ui::ContactsListManager::GetInstance()->InvokeGetAllUserInfo();
 	nim_ui::SessionListManager::GetInstance()->InvokeLoadSessionList();
@@ -143,7 +143,7 @@ bool MainForm::OnClicked( ui::EventArgs* msg )
 			{
 				if (friend_list.empty())
 				{
-					ShowMsgBox(m_hWnd, L"创建失败，请邀请好友", nullptr, L"提示", L"确定", L"");
+					ShowMsgBox(m_hWnd, MsgboxCallback(), L"STRID_MAINWINDOW_PLEASE_INVITE_FRIEND");
 					return;
 				}
 
@@ -269,6 +269,16 @@ void MainForm::PopupMainMenu(POINT point)
 	CMenuElementUI* rts_replay = (CMenuElementUI*)pMenu->FindControl(L"rts_replay");
 	rts_replay->AttachSelect(nbase::Bind(&MainForm::RtsReplayMenuItemClick, this, std::placeholders::_1));
 
+	CMenuElementUI* adapt_dpi = (CMenuElementUI*)pMenu->FindControl(L"adapt_dpi");
+	adapt_dpi->AttachSelect(nbase::Bind(&MainForm::AdaptDpiMenuItemClick, this, std::placeholders::_1));
+	CheckBox* check_dpi = (CheckBox*)adapt_dpi->FindSubControl(L"check_dpi");
+	check_dpi->Selected(ConfigHelper::GetInstance()->IsAdaptDpi());
+
+	CMenuElementUI* language = (CMenuElementUI*)pMenu->FindControl(L"language");
+	language->AttachMouseEnter(nbase::Bind(&MainForm::ShowLanguageList, this, std::placeholders::_1));
+	language->AttachMouseLeave(nbase::Bind(&MainForm::CloseLanguageList, this, std::placeholders::_1, true));
+	pMenu->AttachWindowClose(nbase::Bind(&MainForm::CloseLanguageList, this, std::placeholders::_1, false));
+
 	CMenuElementUI* about = (CMenuElementUI*)pMenu->FindControl(L"about");
 	about->AttachSelect(nbase::Bind(&MainForm::AboutMenuItemClick, this, std::placeholders::_1));
 
@@ -285,8 +295,8 @@ static void LookLogClick(HWND m_hWnd)
 {
 	//TODO：暂时显示用户数据所在的目录，方便收集用户反馈！
 	std::wstring dir = nim_ui::UserConfig::GetInstance()->GetUserDataPath();
-	std::wstring tip = nbase::StringPrintf(L"当前用户数据目录：%s", dir.c_str());
-	ShowMsgBox(m_hWnd, tip, MsgboxCallback(), L"提示", L"知道了", L"");	
+	std::wstring tip = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_MENU_CURRENT_USER_DIR").c_str(), dir.c_str());
+	ShowMsgBox(m_hWnd, MsgboxCallback(), tip, false, L"STRING_TIPS", true, L"STRID_MAINWINDOW_MENU_GOT_IT", true);
 	HINSTANCE inst = ::ShellExecute(NULL, L"open", dir.c_str(), NULL, NULL, SW_SHOW);
 	int ret = (int) inst;
 	if(ret > 32)
@@ -358,6 +368,96 @@ bool MainForm::RtsReplayMenuItemClick(ui::EventArgs* param)
 {
 	nim_ui::WindowsManager::SingletonShow<nim_comp::RtsReplay>(nim_comp::RtsReplay::kClassName);
 	return true;
+}
+
+bool MainForm::AdaptDpiMenuItemClick(ui::EventArgs* param)
+{
+	CMenuElementUI* menu_item = (CMenuElementUI*)(param->pSender);
+	CheckBox* check_dpi = (CheckBox*)menu_item->FindSubControl(L"check_dpi");
+	ConfigHelper::GetInstance()->SetAdaptDpi(!check_dpi->IsSelected());
+	return true;
+}
+
+bool MainForm::ShowLanguageList(ui::EventArgs* param)
+{
+	std::wstring menu_name = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_MENU_LANGUAGE_LIST");
+	HWND hWnd = ::FindWindow(L"MenuWnd", menu_name.c_str());
+	if (hWnd) //语言列表已经打开
+	{
+		::ShowWindow(hWnd, SW_SHOWNOACTIVATE);
+		return true;
+	}
+
+	CMenuWnd* pMenu = new CMenuWnd(NULL);
+	STRINGorID xml(L"language_list.xml");
+	ui::UiRect menu_pos = param->pSender->GetWindow()->GetPos(true);
+	ui::UiRect elem_pos = param->pSender->GetPos(true);
+	ui::CPoint popup_pt(menu_pos.left + elem_pos.right + 2, menu_pos.top + elem_pos.top);
+	pMenu->Init(xml, _T("xml"), popup_pt, CMenuWnd::RIGHT_BOTTOM, true);
+	::SetWindowText(pMenu->GetHWND(), menu_name.c_str());
+	//注册回调
+	std::string current_language = ConfigHelper::GetInstance()->GetLanguage();
+	Box* language_list = (Box*)((Box*)pMenu->GetRoot())->GetItemAt(0);
+	if (language_list)
+	for (int i = 0; i < language_list->GetCount(); i++)
+	{
+		CMenuElementUI* language_item = dynamic_cast<CMenuElementUI*>(language_list->GetItemAt(i));
+		if (language_item)
+		{
+			if (current_language == language_item->GetUTF8Name())
+				language_item->Selected(true, false);
+			language_item->AttachSelect(nbase::Bind(&MainForm::OnSelectLanguage, this, std::placeholders::_1));
+		}
+	}
+
+	//显示
+	pMenu->Show();
+	return true;
+}
+
+bool MainForm::CloseLanguageList(ui::EventArgs* param, bool check_mouse)
+{
+	std::wstring menu_name = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_MENU_LANGUAGE_LIST");
+	HWND hWnd = ::FindWindow(L"MenuWnd", menu_name.c_str());
+	if (!hWnd)
+		return true;
+
+	if (check_mouse)
+	{
+		RECT menu_rect;
+		::GetWindowRect(hWnd, &menu_rect);
+		POINT mouse_pt;
+		::GetCursorPos(&mouse_pt);
+		if (::PtInRect(&menu_rect, mouse_pt))
+			return true; //鼠标在语言列表上，就不关闭
+	}
+
+	::DestroyWindow(hWnd);
+
+	return true;
+}
+
+bool MainForm::OnSelectLanguage(ui::EventArgs* param)
+{
+	std::string current_language = ConfigHelper::GetInstance()->GetLanguage();
+	std::string selected_language = param->pSender->GetUTF8Name();
+	if (current_language == selected_language)
+		return true;
+
+	MsgboxCallback cb = nbase::Bind(&MainForm::OnSelectLanguageCallback, this, std::placeholders::_1, selected_language);
+	ShowMsgBox(m_hWnd, cb, L"STRID_MAINWINDOW_CHANGE_LANGUAGE_TIP", true, L"STRING_TIPS", true, L"STRING_OK", true, L"STRING_NO", true);
+
+	return true;
+}
+
+void MainForm::OnSelectLanguageCallback(MsgBoxRet ret, const std::string& language)
+{
+	if (ret == MB_YES)
+	{
+		ConfigHelper::GetInstance()->SetLanguage(language);
+		LogoffMenuItemClick(NULL);
+		QLOG_APP(L"Selected language: {0}") << nbase::UTF8ToUTF16(language);
+	}
 }
 
 bool MainForm::SessionListMenuItemClick(ui::EventArgs* param)

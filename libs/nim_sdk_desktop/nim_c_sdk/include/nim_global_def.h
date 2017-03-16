@@ -8,6 +8,9 @@
 #ifndef NIM_SDK_DLL_EXPORT_HEADERS_NIM_GLOBAL_DEF_H_
 #define NIM_SDK_DLL_EXPORT_HEADERS_NIM_GLOBAL_DEF_H_
 
+#include "../util/stdbool.h"
+#include "../util/nim_build_config.h"
+
 #ifdef __cplusplus
 extern"C"
 {
@@ -44,6 +47,24 @@ enum NIMSDKLogLevel
 * @return void 无返回值
 */
 typedef void(*nim_sdk_log_cb_func)(int log_level, const char *log, const void *user_data);
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+/** @enum NIMProxyDetectStep 代理测试步骤 */
+enum NIMProxyDetectStep
+{
+	kNIMProxyDetectStepAllComplete			= 5,	/**< 探测代理有效性结束*/
+};
+
+/** @typedef void (*nim_global_detect_proxy_cb_func)(bool network_connect, NIMProxyDetectStep step, const char *network_log, const void *user_data)
+* 探测代理回调
+* @param[out] network_connect 探测结果
+* @param[out] step 探测步骤
+* @param[out] json_params 输出的json字符串内容
+* @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+* @return void 无返回值
+*/
+typedef void(*nim_global_detect_proxy_cb_func)(bool network_connect, enum NIMProxyDetectStep step, const char *json_params, const void *user_data);
+#endif
 
 /** @enum NIMProxyType 代理类型 */
 enum NIMProxyType

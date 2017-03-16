@@ -154,7 +154,7 @@ NIM_SDK_DLL_API bool nim_vchat_rotate_remote_video_enabled();
 NIM_SDK_DLL_API void nim_vchat_set_member_in_blacklist(const char *uid, bool add, bool audio, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
 /** @fn void nim_vchat_start_record(const char *path, const char *json_extension, nim_vchat_mp4_record_opt_cb_func cb, const void *user_data)
-  * NIM VCHAT 开始录制MP4文件，一次只允许一个录制文件，在通话开始的时候才有实际数据
+  * NIM VCHAT 开始录制MP4文件，一次只允许一个MP4录制文件，在通话开始的时候才有实际数据
   * @param[in] path 文件录制路径
   * @param[in] json_extension 无效扩展字段
   * @param[in] cb 结果回调见nim_vchat_def.h
@@ -177,6 +177,25 @@ NIM_SDK_DLL_API void nim_vchat_start_record(const char *path, const char *json_e
   *				404:通话不存在
   */
 NIM_SDK_DLL_API void nim_vchat_stop_record(const char *json_extension, nim_vchat_mp4_record_opt_cb_func cb, const void *user_data);
+
+/** @fn void nim_vchat_start_audio_record(const char *path, const char *json_extension, nim_vchat_audio_record_opt_cb_func cb, const void *user_data)
+  * NIM VCHAT 开始录制音频文件，一次只允许一个音频录制文件
+  * @param[in] path 文件录制路径
+  * @param[in] json_extension 无效扩展字段
+  * @param[in] cb 结果回调见nim_vchat_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_vchat_start_audio_record(const char *path, const char *json_extension, nim_vchat_audio_record_opt_cb_func cb, const void *user_data);
+
+/** @fn void nim_vchat_stop_audio_record(const char *json_extension, nim_vchat_audio_record_opt_cb_func cb, const void *user_data)
+  * NIM VCHAT 停止录制音频文件
+  * @param[in] json_extension 无效扩展字段
+  * @param[in] cb 结果回调见nim_vchat_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_vchat_stop_audio_record(const char *json_extension, nim_vchat_audio_record_opt_cb_func cb, const void *user_data);
 
 /** @fn void nim_vchat_end(const char *json_extension)
   * NIM VCHAT 结束通话(需要主动在通话结束后调用，用于底层挂断和清理数据)

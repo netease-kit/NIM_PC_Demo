@@ -94,7 +94,16 @@ bool IsSameWeekDay(nbase::Time::TimeStruct msg_time,nbase::Time::TimeStruct now_
 
 std::wstring GetWeekOfDate(int iWeek)
 {
-	static const std::wstring weekday[8] = { L"", L"星期一", L"星期二", L"星期三", L"星期四", L"星期五", L"星期六", L"星期日" };
+	ui::MutiLanSupport* mls = ui::MutiLanSupport::GetInstance();
+	static const std::wstring weekday[8] = { L"",
+		mls->GetStringViaID(L"STRID_SESSION_ITEM_DAY_MONDAY"),
+		mls->GetStringViaID(L"STRID_SESSION_ITEM_DAY_TUESDAY"),
+		mls->GetStringViaID(L"STRID_SESSION_ITEM_DAY_WEDNESDAY"),
+		mls->GetStringViaID(L"STRID_SESSION_ITEM_DAY_THURSDAY"),
+		mls->GetStringViaID(L"STRID_SESSION_ITEM_DAY_FRIDAY"),
+		mls->GetStringViaID(L"STRID_SESSION_ITEM_DAY_SATURDAY"),
+		mls->GetStringViaID(L"STRID_SESSION_ITEM_DAY_SUNDAY")
+	};
 	
 	assert(iWeek <= 7 && iWeek >= 1);
 	return weekday[iWeek];
@@ -122,25 +131,27 @@ std::wstring GetMessageTime( const long long t, bool abbreviate )
 	nbase::Time::TimeStruct yesterday_time_tm = yesterday_time_time.ToTimeStruct(true);
 	nbase::Time::TimeStruct preyesterday_time_tm = preyesterday_time_time.ToTimeStruct(true);
 
+	ui::MutiLanSupport* mls = ui::MutiLanSupport::GetInstance();
 	if (now_time_tm.year() == msg_time_tm.year() 
 		&& now_time_tm.month() == msg_time_tm.month() 
 		&& now_time_tm.day_of_month() == msg_time_tm.day_of_month())//today
 	{
 		bToday = true;
-		show_data = L"今天";
+		show_data = mls->GetStringViaID(L"STRID_SESSION_ITEM_DAY_TODAY");
 	}
 	else if (yesterday_time_tm.year() == msg_time_tm.year() 
 		&& yesterday_time_tm.month() == msg_time_tm.month() 
 		&& yesterday_time_tm.day_of_month() == msg_time_tm.day_of_month())//yesterday
 	{
-		show_data = L"昨天";
+		show_data = mls->GetStringViaID(L"STRID_SESSION_ITEM_DAY_YESTERDAY");
 	}
-	else if (preyesterday_time_tm.year() == msg_time_tm.year() 
-		&& preyesterday_time_tm.month() == msg_time_tm.month() 
-		&& preyesterday_time_tm.day_of_month() == msg_time_tm.day_of_month())//preyesterday
-	{
-		show_data = L"前天";
-	}
+	//前天的英文太长，且不是十分必要
+	//else if (preyesterday_time_tm.year() == msg_time_tm.year() 
+	//	&& preyesterday_time_tm.month() == msg_time_tm.month() 
+	//	&& preyesterday_time_tm.day_of_month() == msg_time_tm.day_of_month())//preyesterday
+	//{
+	//	show_data = mls->GetStringViaID(L"STRID_SESSION_ITEM_DAY_DAY_BEFORE");
+	//}
 	else if (IsSameWeekDay(msg_time_tm,now_time_tm,msg_time_t,now_time_t))//week
 	{
 		int now_time_day_of_week = msg_time_tm.day_of_week() == 0 ? 7 : msg_time_tm.day_of_week();
@@ -418,11 +429,8 @@ bool IsResourceExist(const nim::IMMessage &msg)
 
 	if (wpath.empty() || !nbase::FilePathIsExist(wpath, false))
 	{
-		nim::IMImage img;
-		nim::Talk::ParseImageMessageAttach(msg, img);
-		std::wstring filename = nbase::UTF8ToUTF16(img.md5_);
-		wpath = GetUserImagePath() + filename;
-
+		std::string path = nim::Talk::GetAttachmentPathFromMsg(msg);
+		wpath = nbase::UTF8ToUTF16(path);
 		return nbase::FilePathIsExist(wpath, false);
 	}
 	else
@@ -476,6 +484,7 @@ bool IsNoticeMsg(const nim::IMMessage& msg)
 
 void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account, const std::string& to_account, std::wstring &show_text, const std::string& session_id)
 {
+	ui::MutiLanSupport* mls = ui::MutiLanSupport::GetInstance();
 	show_text.clear();
 
 	Json::Value json;
@@ -496,12 +505,15 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 			}
 		}
 
-		std::wstring team_type = TeamService::GetInstance()->GetTeamType(session_id) == 0 ? L"讨论组" : L"群";
+		std::wstring team_type = mls->GetStringViaID(TeamService::GetInstance()->GetTeamType(session_id) == 0 ? L"STRID_SESSION_ITEM_GROUP" : L"STRID_SESSION_ITEM_TEAM");
+		std::wstring you = mls->GetStringViaID(L"STRID_SESSION_ITEM_YOU");
+		std::wstring admin = mls->GetStringViaID(L"STRID_SESSION_ITEM_ADMIN");
+
 		SessionBox* session_wnd = dynamic_cast<SessionBox*>(SessionManager::GetInstance()->FindSessionBox(session_id));
 
 		std::wstring from_name;
 		if (LoginManager::GetInstance()->IsEqual(from_account))
-			from_name = L"你";
+			from_name = you;
 		else
 		{
 			if (session_wnd)
@@ -515,7 +527,7 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 		if (obj_account.empty())
 			obj_name = L"";
 		else if (LoginManager::GetInstance()->IsEqual(obj_account))
-			obj_name = L"你";
+			obj_name = you;
 		else
 		{
 			if (session_wnd)
@@ -528,25 +540,25 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 		{
 			bool set_mute = json[nim::kNIMNotificationKeyData]["mute"].asInt() == 1;
 			if (set_mute)
-				show_text = nbase::StringPrintf(L"%s 被 %s 禁言", obj_name.c_str(), LoginManager::GetInstance()->IsEqual(from_account) ? L"你" : L"管理员");
+				show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_MUTED").c_str(), obj_name.c_str(), LoginManager::GetInstance()->IsEqual(from_account) ? you.c_str() : admin.c_str());
 			else
-				show_text = nbase::StringPrintf(L"%s 被 %s 解除禁言", obj_name.c_str(), LoginManager::GetInstance()->IsEqual(from_account) ? L"你" : L"管理员");
+				show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_UNMUTED").c_str(), obj_name.c_str(), LoginManager::GetInstance()->IsEqual(from_account) ? you.c_str() : admin.c_str());
 		}
 		else if (id == nim::kNIMNotificationIdTeamApplyPass)
 		{
 			if (from_account == obj_account) //此群允许任何人加入，有用户通过搜索高级群加入该群，这种情况下from_account等于uid，用户直接入群。
-				show_text = nbase::StringPrintf(L"欢迎 %s 进入群聊", obj_name.c_str());
+				show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_WELCOME").c_str(), obj_name.c_str());
 			else
-				show_text = nbase::StringPrintf(L"%s 通过了 %s 的入群申请", from_name.c_str(), obj_name.c_str());
+				show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_PASS_APPLY").c_str(), from_name.c_str(), obj_name.c_str());
 		}
 		else if (id == nim::kNIMNotificationIdTeamInviteAccept)
 		{
 			std::string invitor_id = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationKeyUserNameCards][1]["accid"].asString();
 			std::wstring invitor_name;
 			if (invitor_id.empty())
-				invitor_name = L"管理员";
+				invitor_name = admin;
 			else if (LoginManager::GetInstance()->IsEqual(invitor_id))
-				invitor_name = L"你";
+				invitor_name = you;
 			else
 			{
 				if (session_wnd)
@@ -554,11 +566,11 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 				if (invitor_name.empty())
 					invitor_name = UserService::GetInstance()->GetUserName(invitor_id);
 			}
-			show_text = nbase::StringPrintf(L"%s 接受了 %s 的入群邀请", from_name.c_str(), invitor_name.c_str());
+			show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_ACCEPT_INVITE").c_str(), from_name.c_str(), invitor_name.c_str());
 		}
 		else if (id == nim::kNIMNotificationIdTeamLeave)
 		{
-			show_text = nbase::StringPrintf(L"%s 离开了%s", from_name.c_str(), team_type.c_str());
+			show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_QUIT_TEAM").c_str(), from_name.c_str(), team_type.c_str());
 		}
 		else if (id == nim::kNIMNotificationIdTeamUpdate)
 		{
@@ -566,51 +578,51 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 			if (tinfo_json.isMember(nim::kNIMTeamInfoKeyName))
 			{
 				std::wstring team_name = nbase::UTF8ToUTF16(tinfo_json[nim::kNIMTeamInfoKeyName].asString());
-				show_text = nbase::StringPrintf(L"%s名称被更新为 %s", team_type.c_str(), team_name.c_str());
+				show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_UPDATE_TEAM_NAME").c_str(), team_type.c_str(), team_name.c_str());
 			}
 			else if (tinfo_json.isMember(nim::kNIMTeamInfoKeyAnnouncement))
 			{
-				show_text = nbase::StringPrintf(L"%s 更新了群公告", from_name.c_str());
+				show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_UPDATE_TEAM_BOARD").c_str(), from_name.c_str());
 			}
 			else if (tinfo_json.isMember(nim::kNIMTeamInfoKeyJoinMode))
 			{
 				std::string mode = tinfo_json[nim::kNIMTeamInfoKeyJoinMode].asString();
-				show_text = L"群身份验证模式更新为";
+				show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_UPDATE_VERIFY_MODE");
 
 				if (mode == "0")
-					show_text += L"允许任何人加入";
+					show_text += mls->GetStringViaID(L"STRID_TEAM_INFO_ALLOW_ANYBODY");
 				else if (mode == "1")
-					show_text += L"需要验证消息";
+					show_text += mls->GetStringViaID(L"STRID_TEAM_INFO_NEED_VERIFY");
 				else if (mode == "2")
-					show_text += L"不允许任何人申请加入";
+					show_text += mls->GetStringViaID(L"STRID_TEAM_INFO_FORBID_EVERYBODY");
 				else
-					show_text = L"群身份验证模式已更新";
+					show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_VERIFY_MODE_UPDATED");
 			}
 			else if (tinfo_json.isMember(nim::kNIMTeamInfoKeyIntro))
 			{
-				show_text = nbase::StringPrintf(L"%s 更新了群介绍", from_name.c_str());
+				show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_UPDATE_TEAM_INTRO").c_str(), from_name.c_str());
 			}
 			else if (tinfo_json.isMember(nim::kNIMTeamInfoKeyMuteAll))
 			{
 				bool mute_all = tinfo_json[nim::kNIMTeamInfoKeyMuteAll].asUInt() == 1;
 				if (mute_all)
-					show_text = nbase::StringPrintf(L"%s 设置了全员禁言", from_name.c_str());
+					show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_MUTE_ALL").c_str(), from_name.c_str());
 				else
-					show_text = nbase::StringPrintf(L"%s 解除了全员禁言", from_name.c_str());
+					show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_UNMUTE_ALL").c_str(), from_name.c_str());
 			}
 			else
 			{
-				show_text = nbase::StringPrintf(L"%s 更新了%s信息", from_name.c_str(), team_type.c_str());
+				show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_UPDATE_TEAM_INFO").c_str(), from_name.c_str(), team_type.c_str());
 			}
 
 		}
 		else if (id == nim::kNIMNotificationIdTeamDismiss)
 		{
-			show_text = L"群已被解散";
+			show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_TEAM_DISSOLVED");
 		}
 		else if (id == nim::kNIMNotificationIdTeamOwnerTransfer)
 		{
-			show_text = nbase::StringPrintf(L"%s 将群转让给 %s", from_name.c_str(), obj_name.c_str());
+			show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_TRANSFER_TEAM").c_str(), from_name.c_str(), obj_name.c_str());
 		}
 		else if (id == nim::kNIMNotificationIdNetcallBill || \
 			id == nim::kNIMNotificationIdNetcallMiss || \
@@ -622,57 +634,52 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 			int type = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationIdNetCallTypeKey].asUInt();
 			std::string creater = from_account;
 			bool b_create = LoginManager::GetInstance()->IsEqual(creater);
-			std::wstring tm;// = GetMessageTime(time, false);
+
+			std::wstring chat_mode;
 			if (type == nim::kNIMRtsVideoChatModeAudio)
 			{
-				show_text = tm + L"[语音通话]";
+				chat_mode = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_AUDIO_CHAT");
 			}
 			else
 			{
-				show_text = tm + L"[视频通话]";
+				chat_mode = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_VIDEO_CHAT");
 			}
+
+			std::wstring time_tip;
 			if (id == nim::kNIMNotificationIdNetcallMiss)
 			{
-				show_text += L" 未接";
+				time_tip = mls->GetStringViaID(L"STRID_SESSION_ITEM_UNLISTENED");
 			}
 			else if (id == nim::kNIMNotificationIdNetcallBill)
 			{
 				__int64 duration = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationIdNetCallDurationKey].asInt64();
 				int h = (int)(duration / 3600), m = (int)((duration % 3600) / 60), s = (int)(duration % 60);
-				std::wstring time_tip;
 				if (h > 0)
-					nbase::StringPrintf(time_tip, L"%d小时%d分%d秒", h, m, s);
+					nbase::StringPrintf(time_tip, mls->GetStringViaID(L"STRID_SESSION_ITEM_HMS").c_str(), h, m, s);
 				else if (m > 0)
 				{
-					nbase::StringPrintf(time_tip, L"%d分%d秒", m, s);
+					nbase::StringPrintf(time_tip, mls->GetStringViaID(L"STRID_SESSION_ITEM_MINUTE_SECOND").c_str(), m, s);
 				}
 				else
-					nbase::StringPrintf(time_tip, L"%d秒", s);
-				if (type == nim::kNIMRtsVideoChatModeAudio)
-				{
-					show_text = nbase::StringPrintf(L"%s 时长%s", show_text.c_str(), time_tip.c_str());
-				}
-				else
-				{
-					show_text = nbase::StringPrintf(L"%s 时长%s", show_text.c_str(), time_tip.c_str());
-				}
+					nbase::StringPrintf(time_tip, mls->GetStringViaID(L"STRID_SESSION_ITEM_SECOND").c_str(), s);
 			}
 			else if (id == nim::kNIMNotificationIdLocalNetcallReject)
 			{
 				if (b_create)
 				{
-					show_text += L" 对方正忙";
+					time_tip = mls->GetStringViaID(L"STRID_SESSION_ITEM_OTHER_BUSY");
 				}
 				else
 				{
-					show_text += L" 拒绝接听";
+					time_tip = mls->GetStringViaID(L"STRID_SESSION_ITEM_REFUSE_LISTEN");
 				}
 			}
 			else if (id == nim::kNIMNotificationIdLocalNetcallNoResponse)
 			{
-				show_text += L" 未接通，已取消";
+				time_tip = mls->GetStringViaID(L"STRID_SESSION_ITEM_UNCONNECTED");
 			}
 
+			show_text = nbase::StringPrintf(L"%s %s", chat_mode.c_str(), time_tip.c_str());
 		}
 		else
 		{
@@ -693,11 +700,11 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 					for (; i < n && i < 3; i++)
 					{
 						if (!obj.empty())
-							obj.append(L"，");
+							obj.append(L", ");
 
 						std::wstring show_name;
 						if (LoginManager::GetInstance()->IsEqual(ids[i]))
-							show_name = L"你";
+							show_name = you;
 						else
 						{
 							std::string team_nick;
@@ -709,24 +716,23 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 					}
 					if (i < n - 1)
 					{
-						obj.append(nbase::StringPrintf(L"等%d人", n));
+						obj.append(nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_SEVERAL").c_str(), n));
 					}
 
-					std::wstring ttype = TeamService::GetInstance()->GetTeamType(session_id) == 0 ? L"讨论组" : L"群聊";
 					if (id == nim::kNIMNotificationIdTeamInvite)
-						show_text = nbase::StringPrintf(L"%s 邀请 %s 加入了%s", from_name.c_str(), obj.c_str(), ttype.c_str());
+						show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_INVITED").c_str(), from_name.c_str(), obj.c_str(), team_type.c_str());
 					else if (id == nim::kNIMNotificationIdTeamKick)
-						show_text = nbase::StringPrintf(L"%s 已被移出%s", obj.c_str(), ttype.c_str());
+						show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_KICKED").c_str(), obj.c_str(), team_type.c_str());
 					else if (id == nim::kNIMNotificationIdTeamAddManager)
-						show_text = nbase::StringPrintf(L"%s 被任命为管理员", obj.c_str());
+						show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_APPOINT_ADMIN").c_str(), obj.c_str());
 					else if (id == nim::kNIMNotificationIdTeamRemoveManager)
-						show_text = nbase::StringPrintf(L"%s 被取消管理员资格", obj.c_str());
+						show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_DISMISS_ADMIN").c_str(), obj.c_str());
 				}
 			}
 		}
 	}
 	if (show_text.empty())
-		show_text = L"[通知消息]";
+		show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_TIP");
 }
 
 bool IsNetCallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
@@ -754,26 +760,27 @@ bool IsNetCallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
 
 std::wstring GetCustomMsg(const std::string &sender_accid, const std::string &msg_attach)
 {
-	std::wstring show_text = L"[自定义消息]";
+	ui::MutiLanSupport* mls = ui::MutiLanSupport::GetInstance();
+	std::wstring show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_CUSTOM_MSG");
 	Json::Value json;
 	if (StringToJson(msg_attach, json))
 	{
 		int sub_type = json["type"].asInt();
 		if (sub_type == CustomMsgType_Jsb) //finger
 		{
-			show_text = L"[猜拳]";
+			show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_JSB");
 		}
 		else if (sub_type == CustomMsgType_SnapChat)
 		{
-			show_text = L"[阅后即焚]";
+			show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_SNAPCHAT");
 		}
 		else if (sub_type == CustomMsgType_Sticker)
 		{
-			show_text = L"[贴图]";
+			show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_CHARTLET");
 		}
 		else if (sub_type == CustomMsgType_Rts)
 		{
-			show_text = L"[白板]";
+			show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_RTS");
 			if (json["data"].isObject())
 			{
 				int flag = json["data"]["flag"].asInt();
@@ -781,19 +788,18 @@ std::wstring GetCustomMsg(const std::string &sender_accid, const std::string &ms
 				{
 					if (LoginManager::GetInstance()->IsEqual(sender_accid))
 					{
-						show_text = L"我已发起了[白板演示]";
+						show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_I_START_RTS");
 					}
 					else
 					{
 						nim::UserNameCard card;
 						UserService::GetInstance()->GetUserInfo(sender_accid, card);
-						show_text = nbase::UTF8ToUTF16(card.GetName());
-						show_text += L"已发起了[白板演示]";
+						show_text = nbase::UTF8ToUTF16(card.GetName()) + L" " + mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_OTHER_START_RTS");
 					}
 				}
 				else if (flag == 1)
 				{
-					show_text = L"白板演示已结束";
+					show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_RTS_END");
 				}
 			}
 		}
@@ -803,16 +809,17 @@ std::wstring GetCustomMsg(const std::string &sender_accid, const std::string &ms
 
 std::wstring GetRecallNotifyText(const std::string& session_id, nim::NIMSessionType session_type, const std::string& msg_from_id, const std::string& msg_from_nick)
 {
+	ui::MutiLanSupport* mls = ui::MutiLanSupport::GetInstance();
 	std::wstring show_text;
 	if (msg_from_id == LoginManager::GetInstance()->GetAccount())
 	{
-		show_text = L"我撤回了一条消息";
+		show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_I_RECALL_MSG");
 	}
 	else
 	{
 		if (session_type == nim::kNIMSessionTypeP2P)
 		{
-			show_text = L"对方撤回了一条消息";
+			show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_OTHER_RECALL_MSG");
 		}
 		else
 		{
@@ -835,7 +842,7 @@ std::wstring GetRecallNotifyText(const std::string& session_id, nim::NIMSessionT
 					name = msg_from_id;
 			}
 
-			show_text = nbase::UTF8ToUTF16(name) + L" 撤回了一条消息";
+			show_text = nbase::UTF8ToUTF16(name) + L" " + mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_RECALL_MSG");
 		}
 	}
 

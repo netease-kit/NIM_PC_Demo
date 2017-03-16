@@ -9,12 +9,11 @@ namespace nim_chatroom
 
 using namespace ui;
 
-
 void ChatroomForm::RequestEnter(const __int64 room_id)
 {
 	if (room_id == 0)
 	{
-		RequestRoomError();
+		OnRequestRoomError();
 		return;
 	}
 
@@ -34,10 +33,10 @@ void ChatroomForm::OnReceiveMsgCallback(const ChatRoomMessage& result)
 	{
 		// 登录成功后，会收到一个“欢迎进入直播间”的通知消息，这个消息的时间戳作为获取历史消息的标准
 		// 通知消息由OnNotificationCallback回调处理，这里不做处理
-		if (time_start_history == 0)
-			time_start_history = result.timetag_ - 1;
-		if (time_start_history < 0)
-			time_start_history = 0;
+		if (time_start_history_ == 0)
+			time_start_history_ = result.timetag_ - 1;
+		if (time_start_history_ < 0)
+			time_start_history_ = 0;
 		return;
 	}
 		
@@ -54,7 +53,7 @@ void ChatroomForm::OnEnterCallback(int error_code, const ChatRoomInfo& info, con
 		kicked_tip_box->SetVisible(true);
 		std::wstring kick_tip_str;
 		ui::MutiLanSupport *multilan = ui::MutiLanSupport::GetInstance();
-		kick_tip_str = L"登录中";
+		kick_tip_str = multilan->GetStringViaID(L"STRID_CHATROOM_TIP_ENTERING");
 		ui::Label* kick_tip_label = (ui::Label*)kicked_tip_box->FindSubControl(L"kick_tip");
 		kick_tip_label->SetText(kick_tip_str);
 
@@ -63,7 +62,7 @@ void ChatroomForm::OnEnterCallback(int error_code, const ChatRoomInfo& info, con
 // 		if (!info.name_.empty())
 // 			room_name_label->SetUTF8Text(info.name_);
 // 		else
-// 			room_name_label->SetText(nbase::StringPrintf(L"直播间(id %lld)", info.id_));
+// 			room_name_label->SetText(nbase::StringPrintf(multilan->GetStringViaID(L"STRID_CHATROOM_ROOM_ID").c_str(), info.id_));
 
 		//Close();
 		return;
@@ -84,12 +83,12 @@ void ChatroomForm::OnEnterCallback(int error_code, const ChatRoomInfo& info, con
 
 	StdClosure task = [=](){
 		if (!my_info.avatar_.empty() && my_info.avatar_.find_first_of("http") == 0)
-			header_icon_->SetBkImage(nim_ui::HttpManager::GetInstance()->GetCustomImage(kChatroomMemberIcon, my_info.account_id_, my_info.avatar_));
+			my_icon_->SetBkImage(nim_ui::HttpManager::GetInstance()->GetCustomImage(kChatroomMemberIcon, my_info.account_id_, my_info.avatar_));
 		else
-			header_icon_->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(my_info.account_id_));
+			my_icon_->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(my_info.account_id_));
 
 		std::wstring name = my_info.nick_.empty() ? nim_ui::UserManager::GetInstance()->GetUserName(my_info.account_id_, false) : nbase::UTF8ToUTF16(my_info.nick_);
-		name_->SetText(name);
+		my_name_->SetText(name);
 
 	};
 	Post2UI(task);
@@ -111,8 +110,9 @@ void ChatroomForm::OnGetChatRoomInfoCallback(__int64 room_id, int error_code, co
 		ASSERT(!info.creator_id_.empty());
 		creater_id_ = info.creator_id_;
 
+		MutiLanSupport* mls = MutiLanSupport::GetInstance();
 		host_icon_->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(info.creator_id_));
-		host_name_->SetText(std::wstring(L"主播：") + nim_ui::UserManager::GetInstance()->GetUserName(info.creator_id_, false));
+		host_name_->SetText(mls->GetStringViaID(L"STRID_CHATROOM_HOST_") + nim_ui::UserManager::GetInstance()->GetUserName(info.creator_id_, false));
 
 		std::wstring room_name = nbase::UTF8ToUTF16(info.name_);
 		if (room_name.length() > 15)
@@ -120,9 +120,9 @@ void ChatroomForm::OnGetChatRoomInfoCallback(__int64 room_id, int error_code, co
 		room_name_->SetText(room_name);
 
 		if (info.online_count_ >= 10000)
-			online_num_->SetText(nbase::StringPrintf(L"在线人数：%.1f万人", (float)info.online_count_ / (float)10000));
+			online_num_->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_ONLINE_NUM_EX2").c_str(), (float)info.online_count_ / (float)10000));
 		else
-			online_num_->SetText(nbase::StringPrintf(L"在线人数：%d人", info.online_count_));
+			online_num_->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_ONLINE_NUM_EX1").c_str(), info.online_count_));
 
 		if (!info.announcement_.empty())
 		{
@@ -145,210 +145,15 @@ void ChatroomForm::OnNotificationCallback(const ChatRoomNotification& notificati
 	AddNotifyItem(notification, false);
 }
 
-void ChatroomForm::GetMembers()
-{
-	ChatRoomGetMembersParameters member_param;
-	member_param.type_ = kNIMChatRoomGetMemberTypeSolid;
-	ChatRoom::GetMembersOnlineAsync(room_id_, member_param, nbase::Bind(&ChatroomForm::OnGetMembersCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-
-	member_param.type_ = kNIMChatRoomGetMemberTypeTemp;
-	ChatRoom::GetMembersOnlineAsync(room_id_, member_param, nbase::Bind(&ChatroomForm::OnGetMembersCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-}
-
-void ChatroomForm::OnGetMembersCallback(__int64 room_id, int error_code, const std::list<ChatRoomMemberInfo>& infos)
-{
-	if (error_code != nim::kNIMResSuccess || room_id_ != room_id)
-		return;
-
-	StdClosure cb = [=](){
-		empty_members_list_->SetVisible(false);
-
-		for (auto& it : infos)
-		{
-			// 不加入离线的游客
-			if (it.guest_flag_ == kNIMChatRoomGuestFlagGuest && it.state_ == kNIMChatRoomOnlineStateOffline)
-				continue;
-
-			if (NULL != online_members_list_->FindSubControl(nbase::UTF8ToUTF16(it.account_id_)))
-				continue;
-
-			members_list_[it.account_id_] = it;
-			nick_account_map_[it.nick_] = it.account_id_;
-
-			ui::ButtonBox* room_member_item = (ui::ButtonBox*)ui::GlobalManager::CreateBoxWithCache(L"chatroom/room_member_item.xml");
-			if (room_member_item)
-			{
-// #ifdef _DEBUG
-				room_member_item->AttachMenu(nbase::Bind(&ChatroomForm::OnMemberMenu, this, std::placeholders::_1));
-// #endif
-				ui::Control* member_type = (ui::Control*)room_member_item->FindSubControl(L"member_type");
-				ui::Control* header_image = (ui::Control*)room_member_item->FindSubControl(L"header_image");
-				ui::Label* name = (ui::Label*)room_member_item->FindSubControl(L"name");
-
-				if (it.type_ == 1)//创建者
-				{
-					if (!it.avatar_.empty() && it.avatar_.find_first_of("http") == 0)
-						host_icon_->SetBkImage(nim_ui::HttpManager::GetInstance()->GetCustomImage(kChatroomMemberIcon, it.account_id_, it.avatar_));
-					else
-						host_icon_->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(it.account_id_));
-					host_name_->SetText(std::wstring(L"主播：") + nbase::UTF8ToUTF16(it.nick_));
-					member_type->SetBkImage(L"icon_anchor.png");
-					online_members_list_->AddAt(room_member_item, 0);
-					has_add_creater_ = true;
-				}
-				else if (it.type_ == 2)//管理员
-				{
-					member_type->SetBkImage(L"icon_manager.png");
-					managers_list_[it.account_id_] = it;
-					if (online_members_list_->GetCount() == 0)
-					{
-						online_members_list_->Add(room_member_item);
-					}
-					else
-					{
-						if (has_add_creater_)
-							online_members_list_->AddAt(room_member_item, 1);
-						else
-							online_members_list_->AddAt(room_member_item, 0);
-					}
-				}
-				else
-				{
-					online_members_list_->Add(room_member_item);
-				}
-
-				name->SetUTF8Text(it.nick_);
-				if (!it.avatar_.empty() && it.avatar_.find_first_of("http") == 0)
-					header_image->SetBkImage(nim_ui::HttpManager::GetInstance()->GetCustomImage(kChatroomMemberIcon, it.account_id_, it.avatar_));
-				else
-					header_image->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(it.account_id_));
-
-				room_member_item->SetUTF8Name(it.account_id_);
-			}
-		}
-	};
-	Post2UI(cb);
-}
-
-void ChatroomForm::GetHistorys()
-{
-	ChatRoomGetMsgHistoryParameters history_param;
-	history_param.limit_ = 10;
-	history_param.start_timetag_ = time_start_history;
-	ChatRoom::GetMessageHistoryOnlineAsync(room_id_, history_param, nbase::Bind(&ChatroomForm::GetMsgHistoryCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-}
-
-void ChatroomForm::GetMsgHistoryCallback(__int64 room_id, int error_code, const std::list<ChatRoomMessage>& msgs)
-{
-	if (error_code != nim::kNIMResSuccess || room_id_ != room_id)
-		return;
-
-	StdClosure cb = [=](){
-		is_loading_history_ = false;
-		for (auto it = msgs.begin(); it != msgs.end(); it++)
-		{
-			AddMsgItem(*it, true);
-			time_start_history = it->timetag_ - 1;
-			if (time_start_history < 0)
-				time_start_history = 0;
-		}
-	};
-	Post2UI(cb);
-
-}
-
-void ChatroomForm::SetMemberAttributeCallback(__int64 room_id, int error_code, const ChatRoomMemberInfo& info)
-{
-	if (room_id_ != room_id)
-		return;
-
-	StdClosure cb = [=](){
-
-		if (error_code != nim::kNIMResSuccess)
-		{
-			std::wstring tip = nbase::StringPrintf(L"Set member attribute, error:%d", error_code);
-			nim_ui::ShowToast(tip, 5000);
-			return;
-		}
-
-		auto it = members_list_.find(info.account_id_);
-		if (it != members_list_.end())
-		{
-			if (it->second.type_ == 2 && info.type_ != 2)
-			{
-				SetMemberAdmin(info.account_id_, false);
-			}
-			else if (it->second.type_ != 2 && info.type_ == 2)
-			{
-				SetMemberAdmin(info.account_id_, true);
-			}
-		}
-		else
-		{
-			if (info.type_ != 2)
-			{
-				SetMemberAdmin(info.account_id_, false);
-			}
-			else if (info.type_ == 2)
-			{
-				SetMemberAdmin(info.account_id_, true);
-			}
-		}
-		members_list_[info.account_id_] = info;
-	};
-	Post2UI(cb);
-
-}
-
-void ChatroomForm::TempMuteCallback(__int64 room_id, int error_code, const ChatRoomMemberInfo& info)
-{
-	if (room_id_ != room_id)
-		return;
-
-	StdClosure cb = [=](){
-
-		if (error_code != nim::kNIMResSuccess)
-		{
-			std::wstring tip = nbase::StringPrintf(L"TempMute, error:%d", error_code);
-			nim_ui::ShowToast(tip, 5000);
-			return;
-		}
-
-		SetMemberTempMute(info.account_id_, info.temp_muted_, info.temp_muted_ ? info.temp_muted_duration_ : 0);
-	};
-	Post2UI(cb);
-}
-
-void ChatroomForm::KickMemberCallback(__int64 room_id, int error_code)
-{
-	if (room_id_ != room_id)
-		return;
-
-	StdClosure cb = [=](){
-
-		if (error_code != nim::kNIMResSuccess)
-		{
-			std::wstring tip = nbase::StringPrintf(L"Kick member %s, error:%d", nbase::UTF8ToUTF16(kicked_user_account_).c_str(), error_code);
-			nim_ui::ShowToast(tip, 5000);
-			return;
-		}
-
-		RemoveMember(kicked_user_account_);
-		kicked_user_account_.clear();
-	};
-	Post2UI(cb);
-
-}
-
 void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::string& result)
 {
 	StdClosure closure_err = ToWeakCallback([this, error_code]()
 	{
-		RequestRoomError();
+		OnRequestRoomError();
 	});
 	if (error_code != nim::kNIMResSuccess)
 	{
-		if (error_code == nim::kNIMResForbidden 
+		if (error_code == nim::kNIMResForbidden
 			|| error_code == nim::kNIMResNotExist
 			|| error_code == nim::kNIMLocalResAPIErrorInitUndone
 			|| error_code == nim::kNIMLocalResAPIErrorLoginUndone
@@ -365,17 +170,18 @@ void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::str
 					kicked_tip_box->SetVisible(false);
 				}), nbase::TimeDelta::FromSeconds(2));
 
-				std::wstring kick_tip_str = L"进入直播间失败";
+				MutiLanSupport* mls = MutiLanSupport::GetInstance();
+				std::wstring kick_tip_str = mls->GetStringViaID(L"STRID_CHATROOM_TIP_ENTER_FAIL");
 				if (error_code == nim::kNIMResForbidden)
-					kick_tip_str = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_CHATROOM_TIP_BLACKLISTED");
+					kick_tip_str = mls->GetStringViaID(L"STRID_CHATROOM_TIP_BLACKLISTED");
 				else if (error_code == nim::kNIMResAccountBlock)
-					kick_tip_str = L"账号被禁用";
+					kick_tip_str = mls->GetStringViaID(L"STRID_CHATROOM_TIP_ACCOUNT_BLOCK");
 				else if (error_code == nim::kNIMResNotExist)
-					kick_tip_str = L"直播间不存在";
+					kick_tip_str = mls->GetStringViaID(L"STRID_CHATROOM_TIP_ROOM_NOT_EXIST");
 				else if (error_code == nim::kNIMLocalResAPIErrorInitUndone 
 					|| error_code == nim::kNIMLocalResAPIErrorLoginUndone
 					|| error_code == nim::kNIMResTimeoutError)
-					kick_tip_str = L"网络异常，请稍后尝试";
+					kick_tip_str = mls->GetStringViaID(L"STRID_CHATROOM_TIP_NETWORK_ERROR");
 				ui::Label* kick_tip_label = (ui::Label*)kicked_tip_box->FindSubControl(L"kick_tip");
 				kick_tip_label->SetText(kick_tip_str);
 
@@ -387,11 +193,11 @@ void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::str
 					if (!info.name_.empty())
 						room_name_label->SetUTF8Text(info.name_);
 					else
-						room_name_label->SetText(nbase::StringPrintf(L"直播间(id %lld)", room_id_));
+						room_name_label->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_ROOM_ID").c_str(), room_id_));
 				}
 				else if (error_code == nim::kNIMResNotExist)
 					room_name_label->SetText(L"");
-				RequestRoomError();
+				OnRequestRoomError();
 			});
 			Post2UI(closure);
 		}
@@ -402,7 +208,7 @@ void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::str
 		}
 		return;
 	}
-	
+
 	if (!result.empty())
 	{
 		StdClosure cb = [result, this](){
@@ -426,9 +232,9 @@ void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::str
 
 				ChatroomFrontpage* front_page = (ChatroomFrontpage*)nim_ui::WindowsManager::GetInstance()->GetWindow(ChatroomFrontpage::kClassName, ChatroomFrontpage::kClassName);
 				if (!front_page) return;
-				ShowMsgBox(front_page->GetHWND(), L"进入直播间失败，请重试", nullptr, L"提示", L"确定", L"");
+				ShowMsgBox(front_page->GetHWND(), MsgboxCallback(), L"STRID_CHATROOM_ENTER_ROOM_FAIL");
 
-				RequestRoomError();
+				OnRequestRoomError();
 			}
 		};
 		Post2UI(cb);
@@ -454,6 +260,224 @@ void ChatroomForm::OnRegLinkConditionCallback(__int64 room_id, const NIMChatRoom
 		msg_list_->SetText(L"");
 		input_edit_->SetText(L"");
 	}
+}
+
+void ChatroomForm::OnSetMemberAttributeCallback(__int64 room_id, int error_code, const ChatRoomMemberInfo& info)
+{
+	if (room_id_ != room_id)
+		return;
+
+	StdClosure cb = [=](){
+
+		if (error_code != nim::kNIMResSuccess)
+		{
+			std::wstring tip = nbase::StringPrintf(L"Set member attribute, error:%d", error_code);
+			nim_ui::ShowToast(tip, 5000);
+			return;
+		}
+
+		auto it = members_map_.find(info.account_id_);
+		if (it != members_map_.end())
+		{
+			if (it->second.type_ == 2 && info.type_ != 2)
+			{
+				SetMemberAdmin(info.account_id_, false);
+			}
+			else if (it->second.type_ != 2 && info.type_ == 2)
+			{
+				SetMemberAdmin(info.account_id_, true);
+			}
+		}
+		else
+		{
+			if (info.type_ != 2)
+			{
+				SetMemberAdmin(info.account_id_, false);
+			}
+			else if (info.type_ == 2)
+			{
+				SetMemberAdmin(info.account_id_, true);
+			}
+
+			members_map_[info.account_id_] = info;
+		}	
+	};
+	Post2UI(cb);
+}
+
+void ChatroomForm::OnKickMemberCallback(__int64 room_id, int error_code)
+{
+	if (room_id_ != room_id)
+		return;
+
+	StdClosure cb = [=](){
+
+		if (error_code != nim::kNIMResSuccess)
+		{
+			std::wstring tip = nbase::StringPrintf(L"Kick member %s, error:%d", nbase::UTF8ToUTF16(kicked_user_account_).c_str(), error_code);
+			nim_ui::ShowToast(tip, 5000);
+			return;
+		}
+
+		RemoveMember(kicked_user_account_);
+		kicked_user_account_.clear();
+	};
+	Post2UI(cb);
+
+}
+
+void ChatroomForm::OnTempMuteCallback(__int64 room_id, int error_code, const ChatRoomMemberInfo& info)
+{
+	if (room_id_ != room_id)
+		return;
+
+	StdClosure cb = [=](){
+
+		if (error_code != nim::kNIMResSuccess)
+		{
+			std::wstring tip = nbase::StringPrintf(L"TempMute, error:%d", error_code);
+			nim_ui::ShowToast(tip, 5000);
+			return;
+		}
+
+		SetMemberTempMute(info.account_id_, info.temp_muted_, info.temp_muted_ ? info.temp_muted_duration_ : 0);
+	};
+	Post2UI(cb);
+}
+
+void ChatroomForm::InitHeader()
+{
+	std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
+	my_icon_->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(my_id));
+	my_name_->SetText(nim_ui::UserManager::GetInstance()->GetUserName(my_id, false));
+}
+
+void ChatroomForm::GetOnlineCount()
+{
+	ChatRoom::GetInfoAsync(room_id_, nbase::Bind(&ChatroomForm::OnGetChatRoomInfoCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+}
+
+void ChatroomForm::GetMembers()
+{
+	ChatRoomGetMembersParameters member_param;
+	member_param.type_ = kNIMChatRoomGetMemberTypeSolid;
+	ChatRoom::GetMembersOnlineAsync(room_id_, member_param, nbase::Bind(&ChatroomForm::OnGetMembersCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+
+	member_param.type_ = kNIMChatRoomGetMemberTypeTemp;
+	ChatRoom::GetMembersOnlineAsync(room_id_, member_param, nbase::Bind(&ChatroomForm::OnGetMembersCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+}
+
+void ChatroomForm::OnGetMembersCallback(__int64 room_id, int error_code, const std::list<ChatRoomMemberInfo>& infos)
+{
+	if (error_code != nim::kNIMResSuccess || room_id_ != room_id)
+		return;
+
+	StdClosure cb = [=](){
+		empty_members_list_->SetVisible(false);
+
+		for (auto& iter : infos)
+		{
+			// 不加入离线的游客
+			if (iter.guest_flag_ == kNIMChatRoomGuestFlagGuest && iter.state_ == kNIMChatRoomOnlineStateOffline)
+				continue;
+
+			if (members_map_.find(iter.account_id_) != members_map_.end())
+				continue;
+
+			members_map_[iter.account_id_] = iter;
+			nick_account_map_[iter.nick_] = iter.account_id_;
+
+			if (iter.type_ == 1)
+			{
+				if (!iter.avatar_.empty() && iter.avatar_.find_first_of("http") == 0)
+					host_icon_->SetBkImage(nim_ui::HttpManager::GetInstance()->GetCustomImage(kChatroomMemberIcon, iter.account_id_, iter.avatar_));
+				else
+					host_icon_->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(iter.account_id_));
+				host_name_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_CHATROOM_HOST_") + nbase::UTF8ToUTF16(iter.nick_));
+
+				has_add_creater_ = true;
+			}
+			else if (iter.type_ == 2)
+				managers_list_.push_back(iter.account_id_);
+			else
+				members_list_.push_back(iter.account_id_);
+
+//			AddMemberItem(iter);
+		}
+
+		online_members_virtual_list_->Refresh();
+	};
+
+	Post2UI(cb);
+}
+
+void ChatroomForm::GetHistorys()
+{
+	ChatRoomGetMsgHistoryParameters history_param;
+	history_param.limit_ = 10;
+	history_param.start_timetag_ = time_start_history_;;
+	//history_param.reverse_ = false;
+	ChatRoom::GetMessageHistoryOnlineAsync(room_id_, history_param, nbase::Bind(&ChatroomForm::GetMsgHistoryCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+}
+
+void ChatroomForm::GetMsgHistoryCallback(__int64 room_id, int error_code, const std::list<ChatRoomMessage>& msgs)
+{
+	if (error_code != nim::kNIMResSuccess || room_id_ != room_id)
+	{
+		StdClosure cb = [=](){
+			is_loading_history_ = false;
+		};
+		Post2UI(cb);
+		return;
+	}
+
+	StdClosure cb = [=](){
+		is_loading_history_ = false;
+		for (auto it = msgs.begin(); it != msgs.end(); it++)
+		{
+			AddMsgItem(*it, true);
+			time_start_history_ = it->timetag_ - 1;
+			if (time_start_history_ < 0)
+				time_start_history_ = 0;
+		}
+	};
+	Post2UI(cb);
+
+}
+
+void ChatroomForm::OnHttoDownloadReady(HttpResourceType type, const std::string& account, const std::wstring& photo_path)
+{
+	if (type == kChatroomMemberIcon)
+	{
+		if (nim_ui::LoginManager::GetInstance()->IsEqual(account))
+			my_icon_->SetBkImage(photo_path);
+
+		if (account == creater_id_)
+			host_icon_->SetBkImage(photo_path);
+
+		// 单击了在线成员列表后会重新刷新成员，所以只有切换到在线成员列表页时，才操作UI
+		if (option_online_members_->IsSelected())
+		{
+			ui::ButtonBox* room_member_item = (ui::ButtonBox*)online_members_virtual_list_->FindSubControl(nbase::UTF8ToUTF16(account));
+			if (room_member_item != NULL)
+			{
+				ui::Control* header_image = (ui::Control*)room_member_item->FindSubControl(L"header_image");
+				header_image->SetBkImage(photo_path);
+			}
+
+// 			room_member_item = (ui::ButtonBox*)online_members_list_->FindSubControl(nbase::UTF8ToUTF16(account));
+// 			if (room_member_item != NULL)
+// 			{
+// 				ui::Control* header_image = (ui::Control*)room_member_item->FindSubControl(L"header_image");
+// 				header_image->SetBkImage(photo_path);
+// 			}
+		}
+	}
+}
+
+void ChatroomForm::OnRequestRoomError()
+{
+	this->Close();
 }
 
 void ChatroomForm::AddMsgItem(const ChatRoomMessage& result, bool is_history)
@@ -494,6 +518,7 @@ void ChatroomForm::AddMsgItem(const ChatRoomMessage& result, bool is_history)
 
 void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool is_history)
 {
+	MutiLanSupport* mls = MutiLanSupport::GetInstance();
 	std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
 
 	auto it_nick = notification.target_nick_.cbegin();
@@ -503,46 +528,46 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 	{
 		std::wstring nick = nbase::UTF8ToUTF16(*it_nick);
 		if (*it_id == my_id)
-			nick = L"你";
+			nick = mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_YOU");
 
 		std::wstring str;
 		if (notification.id_ == kNIMChatRoomNotificationIdMemberIn)
 		{
-			str = nbase::StringPrintf(L"欢迎%s进入直播间", nick.c_str());
+			str = nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_WELCOME").c_str(), nick.c_str());
 		}
 		else if (notification.id_ == kNIMChatRoomNotificationIdMemberExit)
 		{
-			str = nbase::StringPrintf(L"%s退出直播间", nick.c_str());
+			str = nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_EXIT").c_str(), nick.c_str());
 			RemoveMember(*it_id);
 		}
 		else if (notification.id_ == kNIMChatRoomNotificationIdAddBlack)
 		{
-			str = nbase::StringPrintf(L"%s被管理员拉入黑名单", nick.c_str());
+			str = nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_BLACKLISTED").c_str(), nick.c_str());
 			SetMemberBlacklist(*it_id, true);
 		}
 		else if (notification.id_ == kNIMChatRoomNotificationIdRemoveBlack)
 		{
-			str = nbase::StringPrintf(L"%s被管理员解除拉黑", nick.c_str());
+			str = nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_UNBLACKLISTED").c_str(), nick.c_str());
 			SetMemberBlacklist(*it_id, false);
 		}
 		else if (notification.id_ == kNIMChatRoomNotificationIdAddMute)
 		{
-			str = nbase::StringPrintf(L"%s被管理员禁言", nick.c_str());
+			str = nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_MUTE").c_str(), nick.c_str());
 			SetMemberMute(*it_id, true);
 		}
 		else if (notification.id_ == kNIMChatRoomNotificationIdRemoveMute)
 		{
-			str = nbase::StringPrintf(L"%s被管理员解除禁言", nick.c_str());
+			str = nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_UNMUTE").c_str(), nick.c_str());
 			SetMemberMute(*it_id, false);
 		}
 		else if (notification.id_ == kNIMChatRoomNotificationIdAddManager)
 		{
-			str = nbase::StringPrintf(L"%s被任命管理员身份", nick.c_str());
+			str = nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_APPOINT").c_str(), nick.c_str());
 			SetMemberAdmin(*it_id, true);
 		}
 		else if (notification.id_ == kNIMChatRoomNotificationIdRemoveManager)
 		{
-			str = nbase::StringPrintf(L"%s被解除管理员身份", nick.c_str());
+			str = nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_DISMISS").c_str(), nick.c_str());
 			SetMemberAdmin(*it_id, false);
 		}
 		else if (notification.id_ == kNIMChatRoomNotificationIdAddFixed)
@@ -555,17 +580,17 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 		}
 		else if (notification.id_ == kNIMChatRoomNotificationIdMemberKicked)
 		{
-			str = nbase::StringPrintf(L"%s被管理员移出直播间", nick.c_str());
+			str = nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_KICK").c_str(), nick.c_str());
 			RemoveMember(*it_id);
 		}
 		else if (notification.id_ == kNIMChatRoomNotificationIdMemberTempMute)
 		{
-			str = nbase::StringPrintf(L"%s被管理员临时禁言%lld秒", nick.c_str(), notification.temp_mute_duration_);
+			str = nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_TEMP_MUTE").c_str(), nick.c_str(), notification.temp_mute_duration_);
 			SetMemberTempMute(*it_id, true, notification.temp_mute_duration_);
 		}
 		else if (notification.id_ == kNIMChatRoomNotificationIdMemberTempUnMute)
 		{
-			str = nbase::StringPrintf(L"%s被管理员解除临时禁言，此时离自动解除还有%lld秒", nick.c_str(), notification.temp_mute_duration_);
+			str = nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_TEMP_UNMUTE").c_str(), nick.c_str(), notification.temp_mute_duration_);
 			SetMemberTempMute(*it_id, false, notification.temp_mute_duration_);
 		}
 		AddNotify(str, is_history);
@@ -574,7 +599,7 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 	if (notification.id_ == kNIMChatRoomNotificationIdRoomMuted || notification.id_ == kNIMChatRoomNotificationIdRoomDeMuted)
 	{
 		std::wstring str;
-		str = nbase::StringPrintf(L"聊天室%s", notification.id_ == kNIMChatRoomNotificationIdRoomMuted ? L"全员禁言" : L"解除全员禁言");
+		str = mls->GetStringViaID(notification.id_ == kNIMChatRoomNotificationIdRoomMuted ? L"STRID_CHATROOM_NOTIFY_ROOM_MUTE" : L"STRID_CHATROOM_NOTIFY_ROOM_UNMUTE");
 		room_mute_ = notification.id_ == kNIMChatRoomNotificationIdRoomMuted;
 		AddNotify(str, is_history);
 	}
@@ -594,24 +619,26 @@ void ChatroomForm::OnBtnSend()
 		return;
 	}
 
+	MutiLanSupport* mls = MutiLanSupport::GetInstance();
+
 	if (room_mute_)
 	{
-		std::wstring toast = nbase::StringPrintf(L"聊天室全员禁言中。");
+		std::wstring toast = mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_ROOM_MUTING");
 		nim_ui::ShowToast(toast, 5000, this->GetHWND());
 	}
 	else
 	{
-		auto my_info = members_list_.find(nim_ui::LoginManager::GetInstance()->GetAccount());
-		if (my_info != members_list_.end())
+		auto my_info = members_map_.find(nim_ui::LoginManager::GetInstance()->GetAccount());
+		if (my_info != members_map_.end())
 		{
 			if (my_info->second.is_muted_)
 			{
-				std::wstring toast = nbase::StringPrintf(L"你被禁言了。");
+				std::wstring toast = mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_YOU_MUTED");
 				nim_ui::ShowToast(toast, 5000, this->GetHWND());
 			}
 			else if (my_info->second.temp_muted_)
 			{
-				std::wstring toast = nbase::StringPrintf(L"你被临时禁言了。");
+				std::wstring toast = mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_YOU_TEMP_MUTED");
 				nim_ui::ShowToast(toast, 5000, this->GetHWND());
 			}
 			else
@@ -744,49 +771,6 @@ void ChatroomForm::AddNotify(const std::wstring &notify, bool is_history)
 		msg_list_->EndDown();
 }
 
-void ChatroomForm::SendImage(const std::wstring &src)
-{
-	nim::IMImage img;
-	std::string utf8 = nbase::UTF16ToUTF8(src);
-	img.md5_ = nim::Tool::GetFileMd5(utf8);
-	img.size_ = (long)nbase::GetFileSize(src);
-	std::wstring file_name, file_ext;
-	nbase::FilePathApartFileName(src, file_name);
-	nbase::FilePathExtension(src, file_ext);
-	img.display_name_ = nbase::UTF16ToUTF8(file_name);
-	img.file_extension_ = nbase::UTF16ToUTF8(file_ext);
-	Gdiplus::Image image(src.c_str());
-	if (image.GetLastStatus() != Gdiplus::Ok)
-	{
-		assert(0);
-	}
-	else
-	{
-		img.width_ = image.GetWidth();
-		img.height_ = image.GetHeight();
-	}
-
-// 	auto callback = nbase::Bind(&ChatroomForm::OnUploadImageCallback, this, std::placeholders::_1, std::placeholders::_2, img);
-// 	nim::NOS::UploadResource(utf8, callback);
-
-	auto weak_flag = this->GetWeakFlag();
-	nim::NOS::UploadResource(utf8, [this, img, weak_flag](int res_code, const std::string& url) {
-		if (!weak_flag.expired() && res_code == nim::kNIMResSuccess)
-		{
-			nim::IMImage new_img(img);
-			new_img.url_ = url;
-			std::string send_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeImage, QString::GetGUID(), new_img.ToJsonString(), ChatRoomMessageSetting());
-			ChatRoom::SendMsg(room_id_, send_msg);
-		}
-	});
-}
-
-void ChatroomForm::OnUploadImageCallback(int res_code, const std::string& url, nim::IMImage img)
-{
-	std::string send_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeImage, QString::GetGUID(), img.ToJsonString(), ChatRoomMessageSetting());
-	ChatRoom::SendMsg(room_id_, send_msg);
-}
-
 void ChatroomForm::SendText(const std::string &text)
 {
 	//std::string test_string = "{\"remote\":{\"mapmap\":{\"int\":1,\"boolean\":false,\"list\":[1,2,3],\"string\":\"string, lalala\"}}}";
@@ -802,8 +786,8 @@ void ChatroomForm::OnBtnJsb()
 		return;
 	}
 
-	auto my_info = members_list_.find(nim_ui::LoginManager::GetInstance()->GetAccount());
-	if (my_info != members_list_.end() && !room_mute_ && !my_info->second.is_muted_ && !my_info->second.temp_muted_)
+	auto my_info = members_map_.find(nim_ui::LoginManager::GetInstance()->GetAccount());
+	if (my_info != members_map_.end() && !room_mute_ && !my_info->second.is_muted_ && !my_info->second.temp_muted_)
 	{
 		int jsb = (rand() % 3 + rand() % 4 + rand() % 5) % 3 + 1;
 
@@ -908,4 +892,204 @@ void ChatroomForm::SendJsb(const std::string & attach)
 	ChatRoom::SendMsg(room_id_, send_msg);
 
 }
+
+void ChatroomForm::SendImage(const std::wstring &src)
+{
+	nim::IMImage img;
+	std::string utf8 = nbase::UTF16ToUTF8(src);
+	img.md5_ = nim::Tool::GetFileMd5(utf8);
+	img.size_ = (long)nbase::GetFileSize(src);
+	std::wstring file_name, file_ext;
+	nbase::FilePathApartFileName(src, file_name);
+	nbase::FilePathExtension(src, file_ext);
+	img.display_name_ = nbase::UTF16ToUTF8(file_name);
+	img.file_extension_ = nbase::UTF16ToUTF8(file_ext);
+	Gdiplus::Image image(src.c_str());
+	if (image.GetLastStatus() != Gdiplus::Ok)
+	{
+		assert(0);
+	}
+	else
+	{
+		img.width_ = image.GetWidth();
+		img.height_ = image.GetHeight();
+	}
+
+	auto weak_flag = this->GetWeakFlag();
+	nim::NOS::UploadResource(utf8, [this, img, weak_flag](int res_code, const std::string& url) {
+		if (!weak_flag.expired() && res_code == nim::kNIMResSuccess)
+		{
+			nim::IMImage new_img(img);
+			new_img.url_ = url;
+			std::string send_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeImage, QString::GetGUID(), new_img.ToJsonString(), ChatRoomMessageSetting());
+			ChatRoom::SendMsg(room_id_, send_msg);
+		}
+	});
+}
+
+void ChatroomForm::SetMemberAdmin(const std::string &id, bool is_admin)
+{
+	if (id == creater_id_)
+		return;
+
+	if (id == nim_ui::LoginManager::GetInstance()->GetAccount())
+		bulletin_->SetReadOnly(!is_admin);
+
+	auto info = members_map_.find(id);
+	if (info == members_map_.end())
+		return;
+
+	auto iter = std::find(managers_list_.begin(), managers_list_.end(), id);
+	if (is_admin)
+	{
+		if (iter != managers_list_.end())
+			return;
+
+		managers_list_.push_back(id);
+
+		auto iter_member = std::find(members_list_.begin(), members_list_.end(), id);
+		if (iter_member != members_list_.end())
+			members_list_.erase(iter_member);
+
+		info->second.type_ = 2;
+		members_map_[id] = info->second;
+	}
+	else
+	{
+		if (iter == managers_list_.end())
+			return;
+
+		members_list_.push_back(id);
+		managers_list_.erase(iter);
+
+		info->second.type_ = 0;
+		members_map_[id] = info->second;
+	}
+
+	// 单击了在线成员列表后会重新刷新成员，所以只有切换到在线成员列表页时，才操作UI
+	if (option_online_members_->IsSelected())
+	{
+		if (NULL != online_members_virtual_list_->FindSubControl(nbase::UTF8ToUTF16(id)))
+			online_members_virtual_list_->Refresh();
+
+// 		ui::ButtonBox* member_item = (ui::ButtonBox*)online_members_list_->FindSubControl(nbase::UTF8ToUTF16(id));
+// 		if (member_item)
+// 		{
+// 			ui::Control* member_type = (ui::Control*)member_item->FindSubControl(L"member_type");
+// 
+// 			if (is_admin)
+// 			{
+// 				member_type->SetBkImage(L"icon_manager.png");
+// 				online_members_list_->SetItemIndex(member_item, 1);
+// 			}
+// 			else
+// 			{
+// 				member_type->SetBkImage(L"");
+// 				online_members_list_->SetItemIndex(member_item, online_members_list_->GetCount() - 1);
+// 			}
+// 		}
+	}
+}
+
+void ChatroomForm::SetMemberBlacklist(const std::string &id, bool is_black)
+{
+	if (id == creater_id_)
+		return;
+
+	auto info = members_map_.find(id);
+	if (info != members_map_.end())
+	{
+		info->second.is_blacklist_ = is_black;
+		members_map_[id] = info->second;
+	}
+}
+
+void ChatroomForm::SetMemberMute(const std::string &id, bool is_mute)
+{
+	if (id == creater_id_)
+		return;
+
+	auto info = members_map_.find(id);
+	if (info != members_map_.end())
+	{
+		info->second.is_muted_ = is_mute;
+		members_map_[id] = info->second;
+	}
+}
+
+void ChatroomForm::SetMemberFixed(const std::string &id, bool is_fixed)
+{
+	if (id == creater_id_)
+		return;
+
+	auto info = members_map_.find(id);
+	if (info != members_map_.end())
+	{
+		info->second.guest_flag_ = is_fixed ? kNIMChatRoomGuestFlagNoGuest : kNIMChatRoomGuestFlagGuest;
+		members_map_[id] = info->second;
+	}
+}
+
+void ChatroomForm::SetMemberTempMute(const std::string &id, bool temp_mute, __int64 duration)
+{
+	auto info = members_map_.find(id);
+	if (info != members_map_.end())
+	{
+		info->second.temp_muted_ = temp_mute;
+		info->second.temp_muted_duration_ = temp_mute ? duration : 0;
+		members_map_[id] = info->second;
+		auto iter = temp_unmute_id_task_map_.find(id);
+		if (iter != temp_unmute_id_task_map_.end())
+		{
+			(*iter).second.Cancel();
+			temp_unmute_id_task_map_.erase(iter);
+		}
+		if (temp_mute)
+		{
+			StdClosure task = nbase::Bind(&ChatroomForm::SetMemberTempMute, this, id, false, 0);
+			nbase::WeakCallbackFlag weak_flag;
+			task = weak_flag.ToWeakCallback(task);
+			temp_unmute_id_task_map_[id] = weak_flag;
+			nbase::ThreadManager::PostDelayedTask(task, nbase::TimeDelta::FromSeconds(duration));
+		}
+	}
+}
+
+void ChatroomForm::SetRoomMemberMute(bool mute)
+{
+	if (room_mute_ == mute)
+		return;
+
+	for (auto& it : members_map_)
+	{
+		if (it.second.type_ < 1)
+			SetMemberMute(it.first, mute);
+	}
+}
+
+void ChatroomForm::RemoveMember(const std::string &uid)
+{
+	// 单击了在线成员列表后会重新刷新成员，所以只有切换到在线成员列表页时，才操作UI
+	auto exit_member = members_map_.find(uid);
+	if (exit_member != members_map_.end())
+	{
+		if (!exit_member->second.is_blacklist_ && exit_member->second.type_ == 0)
+		{
+			members_map_.erase(exit_member);
+
+			if (option_online_members_->IsSelected())
+			{
+				auto iter_member = std::find(members_list_.begin(), members_list_.end(), uid);
+				if (iter_member != members_list_.end())
+					members_list_.erase(iter_member);
+
+				online_members_virtual_list_->Refresh();
+
+// 				Control* member_item = online_members_list_->FindSubControl(nbase::UTF8ToUTF16(uid));
+// 				online_members_list_->Remove(member_item);
+			}
+		}
+	}
+}
+
 }

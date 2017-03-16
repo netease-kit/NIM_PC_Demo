@@ -49,6 +49,9 @@
     <Filter Include="module\login">
       <UniqueIdentifier>{202a8a44-0416-40ea-be5f-960bdbf83438}</UniqueIdentifier>
     </Filter>
+    <Filter Include="module\config">
+      <UniqueIdentifier>{4ddd863d-2e74-436b-8ec2-427454fa773d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui\login\login_form.h">
@@ -102,6 +105,9 @@
     <ClInclude Include="gui\cef\cef_native_form.h">
       <Filter>gui\cef</Filter>
     </ClInclude>
+    <ClInclude Include="module\config\config_helper.h">
+      <Filter>module\config</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -154,6 +160,9 @@
     </ClCompile>
     <ClCompile Include="gui\cef\cef_native_form.cpp">
       <Filter>gui\cef</Filter>
+    </ClCompile>
+    <ClCompile Include="module\config\config_helper.cpp">
+      <Filter>module\config</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

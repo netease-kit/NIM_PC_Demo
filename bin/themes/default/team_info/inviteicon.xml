@@ -3,6 +3,6 @@
     <HBox width="170" height="64" margin="0,5,0,5" name="invite_add_button">
 		<Button name="InviteBtn" normalimage="..\public\button\invite_normal.png" hotimage="..\public\button\invite_hover.png" pushedimage="..\public\button\invite_pushed.png" 
 			width="44" height="44" margin="10,10,0,10" cursortype="hand"/>
-		<Label name="uname" font="2" normaltextcolor="darkcolor" textid="STRID_TEAM_ICON_INVITE" width="stretch" maxwidth="90" margin="10,0,0,0" valign="center" mouse="false"/>
+		<Label name="uname" font="2" normaltextcolor="darkcolor" textid="STRID_TEAM_INFO_INVITE" width="stretch" maxwidth="90" margin="10,0,0,0" valign="center" mouse="false"/>
     </HBox>
 </Window>

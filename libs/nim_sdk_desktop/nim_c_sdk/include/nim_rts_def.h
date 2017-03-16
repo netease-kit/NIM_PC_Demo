@@ -67,6 +67,7 @@ static const char *kNIMRtsNeedBadge			= "need_badge";		/**< int 是否需要角�
 static const char *kNIMRtsNeedFromNick		= "need_nick";		/**< int 是否需要推送昵称 >0表示是 默认是 */
 static const char *kNIMRtsApnsPayload		= "payload";		/**< string JSON格式,推送payload */
 static const char *kNIMRtsSound				= "sound";			/**< string 推送声音 */
+static const char *kNIMRtsKeepCalling		= "keepcalling";	/**< int, 是否强制持续呼叫（对方离线也会呼叫）,1表示是，0表示否。默认是 */
 /** @}*/ //json extension params for nim_rts_start and nim_rts_ack
 
 /** @name json extension params for nim_rts_start_cb_func nim_rts_connect_notify_cb_func

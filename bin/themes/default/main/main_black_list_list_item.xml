@@ -6,7 +6,7 @@
 				<CheckBox name="black_list" width="36" height="36" valign="center" margin="2,2,0,0"
 					normalimage="black_list.png"/>
 			</Box>
-            <Button text="黑名单" normaltextcolor="darkcolor" font="2" valign="center" margin="10,0,0,0"/>
+            <Button textid="STRID_MAINWINDOW_BLACK_LIST" normaltextcolor="darkcolor" font="2" valign="center" margin="10,0,0,0"/>
         </HBox>
         <Control class="splitline_hor_level2" valign="bottom"/>
     </TreeNode>

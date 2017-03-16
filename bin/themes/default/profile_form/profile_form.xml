@@ -14,7 +14,7 @@
 			</HBox>
 			<HBox width="auto" height="auto" margin="23,36,0,36">
 				<Box width="auto" height="auto" valign="center" >
-					<Button name="head_image" width="86" height="86" margin="1,1,1,1" borderround="86,86" mouse="false" cursortype="hand" tooltiptext="更换头像"/>
+					<Button name="head_image" width="86" height="86" margin="1,1,1,1" borderround="86,86" mouse="false" cursortype="hand" tooltiptextid="STRID_PROFILE_FORM_MODIFY_HEAD_IMAGE"/>
 					<Control bkimage="../public/headmask/icon_headimage_mask_88x88.png" mouse="false"/>
 				</Box>
 				<VBox width="auto" height="auto" margin="19,0,0,0" valign="center" childmargin="10" mousechild="false">
@@ -32,32 +32,32 @@
 			<HBox width="stretch" height="auto" margin="0,0,0,13">
 				<Button name="modify_info" width="auto" height="22" valign="center" visible="false" 
 						normalimage="file='btn_edit_normal.png' corner='11,11,11,11'" hotimage="file='btn_edit_pressed.png' corner='11,11,11,11'" pushedimage="file='btn_edit_normal.png' corner='11,11,11,11'"
-						text="基本信息编辑" textpadding="10,4,10,4" normaltextcolor="profile_account" font="1"/>
-				<Button class="btn_global_white_80x30" name="cancel_modify" width="44" height="22" valign="center" text="取消" font="1" visible="false"/>
-				<Button class="btn_global_green_80x30" name="save_modify" width="44" height="22" valign="center" text="保存" font="1" margin="6" visible="false"/>
+						textid="STRID_PROFILE_FORM_BASIC_INFO_MODIFY" textpadding="10,4,10,4" normaltextcolor="profile_account" font="1"/>
+				<Button class="btn_global_white_80x30" name="cancel_modify" width="44" height="22" valign="center" textid="STRING_NO" font="1" visible="false"/>
+				<Button class="btn_global_green_80x30" name="save_modify" width="44" height="22" valign="center" textid="STRING_SAVE" font="1" margin="6" visible="false"/>
 			</HBox>
             <HBox class="item_box_attrib" name="alias_box" visible="false">
-                <Label class="label_attrib" text="备注名"/>
+                <Label class="label_attrib" textid="STRID_PROFILE_FORM_ALIAS"/>
                 <Control class="space" width="12"/>
-                <RichEdit class="simple prompt edit_attrib" name="alias_edit" maxwidth="280" padding="4,0,4,0" prompttext="请设置备注名" bordersize="0"/>
+                <RichEdit class="simple prompt edit_attrib" name="alias_edit" maxwidth="280" padding="4,0,4,0" prompttextid="STRID_PROFILE_FORM_ALIAS_PROMPT" bordersize="0"/>
             </HBox>
 			<HBox class="item_box_attrib" name="nickname_box" visible="false">
-				<Label class="label_attrib" text="昵称"/>
+				<Label class="label_attrib" textid="STRID_PROFILE_FORM_NICKNAME"/>
 				<Control class="space"/>
 				<RichEdit class="simple prompt edit_attrib" name="nickname_edit"/>
 				<Label name="nickname_error_tip" margin="10,0,0,0" valign="center" font="1" normaltextcolor="obvious_tip" visible="false"/>
 			</HBox>
 			<HBox class="item_box_attrib" name="sex_box" visible="false">
-				<Label class="label_attrib" text="性别"/>
+				<Label class="label_attrib" textid="STRID_PROFILE_FORM_SEX"/>
 				<Control class="space"/>
 				<Combo class="combo_attrib" name="sex_option">
-					<ListContainerElement class="listitem" textpadding="10,1,1,1" height="30" text="男" font="2" normaltextcolor="profile_account"/>
-					<ListContainerElement class="listitem" textpadding="10,1,1,1" height="30" text="女" font="2" normaltextcolor="profile_account"/>
+					<ListContainerElement class="listitem" textpadding="10,1,1,1" height="30" textid="STRID_PROFILE_FORM_SEX_MALE" font="2" normaltextcolor="profile_account"/>
+					<ListContainerElement class="listitem" textpadding="10,1,1,1" height="30" textid="STRID_PROFILE_FORM_SEX_FEMALE" font="2" normaltextcolor="profile_account"/>
 				</Combo>
 				
 			</HBox>
 			<HBox class="item_box_attrib">
-				<Label class="label_attrib" text="生日"/>
+				<Label class="label_attrib" textid="STRID_PROFILE_FORM_BIRTHDAY"/>
 				<Control class="space"/>
 				<Label class="label_attrib" name="birthday" normaltextcolor="profile_account"/>
 				<HBox name="birthday_combobox" width="stretch" height="auto" valign="center" childmargin="4" visible="false">
@@ -67,21 +67,21 @@
 				</HBox>
 			</HBox>
 			<HBox class="item_box_attrib">
-				<Label class="label_attrib" text="手机"/>
+				<Label class="label_attrib" textid="STRID_PROFILE_FORM_MOBILEPHONE"/>
 				<Control class="space"/>
 				<Label class="label_attrib" name="phone" width="300" normaltextcolor="profile_account"/>
 				<RichEdit class="simple prompt edit_attrib" name="phone_edit" visible="false"/>
 				<!--<Label name="phone_error_tip" margin="10,0,0,0" valign="center" font="1" normaltextcolor="obvious_tip" visible="false"/>-->
 			</HBox>
 			<HBox class="item_box_attrib">
-				<Label class="label_attrib" text="邮箱"/>
+				<Label class="label_attrib" textid="STRID_PROFILE_FORM_EMAIL"/>
 				<Control class="space"/>
 				<Label class="label_attrib" name="email" width="300" normaltextcolor="profile_account"/>
 				<RichEdit class="simple prompt edit_attrib" name="email_edit" visible="false"/>
 				<!--<Label name="email_error_tip" margin="10,0,0,0" valign="center" font="1" normaltextcolor="obvious_tip" visible="false"/>-->
 			</HBox>
 			<HBox width="stretch" height="auto">
-				<Label valign="top" margin="0,10,0,0" font="2" text="签名"/>
+				<Label valign="top" margin="0,10,0,0" font="2" textid="STRID_PROFILE_FORM_SIGN"/>
 				<Control class="space"/>
 				<Label name="signature" valign="top" width="295" maxheight="38" margin="0,10,0,0" font="2" singleline="false" linelimit="true" normaltextcolor="profile_account"/>
 				<RichEdit class="prompt" name="signature_edit" width="295" height="60" margin="0,4,0,0" valign="top"
@@ -94,7 +94,7 @@
 			<Control class="splitline_hor_level1" width="stretch"/>
 			<VBox width="stretch" height="auto" padding="30,30,30,30" childmargin="25">
 				<HBox width="stretch" height="auto">
-					<Label text="多端推送" font="2"/>
+					<Label textid="STRID_PROFILE_FORM_MULTISPOT_PUSH_SET" font="2"/>
 					<Control width="stretch"/>
 					<CheckBox class="switch" name="multi_push_switch" selected="true"/>
 				</HBox>
@@ -104,17 +104,17 @@
 			<Control class="splitline_hor_level1" width="stretch"/>
 			<VBox width="stretch" height="auto" padding="30,30,30,30" childmargin="25">
 				<HBox width="stretch" height="auto">
-					<Label text="消息提醒" font="2"/>
+					<Label textid="STRID_PROFILE_FORM_MSG_NOTIFY" font="2"/>
 					<Control width="stretch"/>
 					<CheckBox class="switch" name="notify_switch" selected="true"/>
 				</HBox>
 				<HBox width="stretch" height="auto">
-					<Label text="黑名单" font="2"/>
+					<Label textid="STRID_PROFILE_FORM_ADD_BLACK" font="2"/>
 					<Control width="stretch"/>
 					<CheckBox class="switch" name="black_switch" selected="false"/>
 				</HBox>
 				<HBox name="mute_switch_box" width="stretch" height="auto">
-					<Label text="设置禁言" font="2"/>
+					<Label textid="STRID_PROFILE_FORM_SET_MUTE" font="2"/>
 					<Control width="stretch"/>
 					<CheckBox class="switch" name="mute_switch" selected="false"/>
 				</HBox>
@@ -123,10 +123,10 @@
 			<HBox width="stretch" height="62">
 				<Control width="stretch"/>
 				<TabBox name="add_or_del" width="auto" height="auto" valign="bottom" margin="0,0,10,10">
-					<Button class="btn_global_white_80x30" name="delete_friend" width="80" height="30" font="2" text="删除好友"/>
-					<Button class="btn_global_white_80x30" name="add_friend" width="80" height="30" font="2" text="加为好友"/>
+					<Button class="btn_global_white_80x30" name="delete_friend" width="80" height="30" font="2" textid="STRID_PROFILE_FORM_DELETE_FRIEND"/>
+					<Button class="btn_global_white_80x30" name="add_friend" width="80" height="30" font="2" textid="STRID_PROFILE_FORM_ADD_FRIEND"/>
 				</TabBox>
-				<Button class="btn_global_green_80x30" name="start_chat" width="80" height="30" valign="bottom" margin="0,0,20,10" font="2" text="聊天"/>
+				<Button class="btn_global_green_80x30" name="start_chat" width="80" height="30" valign="bottom" margin="0,0,20,10" font="2" textid="STRID_PROFILE_FORM_CHAT"/>
 			</HBox>
 		</VBox>
 	</VBox>

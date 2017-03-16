@@ -52,7 +52,7 @@ private:
 	std::vector<DrawUnit*>			vec_history_draw_units_;	// 撤销/回滚绘制单元列表
 	DrawUnit*						current_draw_unit_;         // 当前正在绘制的单元
 	BOOL							is_begin_draw_;				// 是否开始绘制
-	ui::UiRect				track_rect_;				// 当前截图的区域（也是编辑的可行域）
+	ui::UiRect						track_rect_;				// 当前截图的区域（也是编辑的可行域）
 	EditMode						edit_mode_;					// 当前编辑的模式（确定绘制的图形）
 	TCHAR*							str_cursor_;				// 当前编辑操作要显示的鼠标指针
 	CCaptureTextEdit*				text_edit_;					// 文本编辑指针

@@ -12,8 +12,8 @@
             
             <Control width="auto" height="auto" bkimage="btn_create_room.png" valign="center"/>
             <TabBox width="auto" height="auto" valign="center" margin="8,0,15,0">
-                <Button name="create_room" text="我要当主播" font="1" normaltextcolor="lightcolor" />
-                <Button name="my_rooms" text="我的直播间" font="1" normaltextcolor="lightcolor" />
+                <Button name="create_room" textid="STRID_CHATROOM_I_WANT_HOST" font="1" normaltextcolor="lightcolor" />
+                <Button name="my_rooms" textid="STRID_CHATROOM_MY_CHATROOM" font="1" normaltextcolor="lightcolor" />
             </TabBox>
             <HBox width="auto" height="auto" valign="top" margin="0,6">
                 <Button class="btn_wnd_min" name="minbtn" margin="4,6,0,0"/>
@@ -34,28 +34,28 @@
                         <Control width="60" height="60" bkimage="mask_56x56.png" mouse="false"/>
                     </Box>
                     <VBox width="auto" height="auto" valign="center" margin="10">
-                        <Label name="room_name" text="" font="4" normaltextcolor="dark2color"/>
+                        <Label name="room_name" font="4" normaltextcolor="dark2color"/>
                         <HBox width="auto" height="auto" margin="0,4">
-                            <Label name="host_name" text="主播：" font="2" normaltextcolor="dark2color"/>
-                            <Label name="online_num" text="在线人数：0" font="2" normaltextcolor="dark2color" margin="20"/>
+                            <Label name="host_name" textid="STRID_CHATROOM_HOST_" font="2" normaltextcolor="dark2color"/>
+                            <Label name="online_num" textid="STRID_CHATROOM_ONLINE_NUM" font="2" normaltextcolor="dark2color" margin="20"/>
                         </HBox>
                     </VBox>
                     
                     <Control width="stretch"/>
                     
-                    <Button name="close_cast" width="76" height="34" valign="center" margin="0,0,14,0" bkimage="close_cast_btn_bk.png" text="关闭直播" font="1" normaltextcolor="close_cast"/>
+                    <Button name="close_cast" width="76" height="34" valign="center" margin="0,0,14,0" bkimage="close_cast_btn_bk.png" textid="STRID_CHATROOM_CLOSE_CHATROOM" font="1" normaltextcolor="close_cast"/>
                 </HBox>
                 <Box width="stretch" height="stretch">
                     <Control width="stretch" height="stretch" bkimage="cast_shot.png"/>
                 </Box>
                 <HBox width="stretch" height="45">
                     <Control width="stretch"/>
-                    <Button width="44" height="20" valign="center" margin="0,0,14,0" font="1" normaltextcolor="white" text="流畅" 
+                    <Button width="auto" height="20" valign="center" margin="0,0,14,0" font="1" normaltextcolor="white" textid="STRID_CHATROOM_SMOOTH" textpadding="2,0,2,0"
                             normalimage="file='round_btn_normal.png' corner='9,0,9,0'" hotimage="file='round_btn_hovered.png' corner='9,0,9,0'" pushedimage="file='round_btn_normal.png' corner='9,0,9,0'"/>
                 </HBox>
             </VBox>
             <VBox width="246" height="stretch" margin="4" bkcolor="bk_wnd_lightcolor">
-                <Label width="stretch" height="26" text="直播公告" align="vcenter" font="2" normaltextcolor="darkcolor"/>
+                <Label width="stretch" height="26" textid="STRID_CHATROOM_BOARD" align="vcenter" font="2" normaltextcolor="darkcolor"/>
                 
                 <Control normalcolor="bk_listitem_selected" width="stretch" height="1"/>
                 
@@ -65,10 +65,10 @@
                 
                 <HBox width="stretch" height="37">
                     <Option name="option_intercommunicate" width="stretch" height="stretch" cursortype="hand" group="option_list_group" selected="true"
-                               text="直播互动" font="2" align="vcenter" textpadding="0,0,0,2" normaltextcolor="darkcolor" selectedtextcolor="tab_text_selected"
+                               textid="STRID_CHATROOM_INTERACTION" font="2" align="vcenter" textpadding="0,0,0,2" normaltextcolor="darkcolor" selectedtextcolor="tab_text_selected"
                                normalimage="bk_tab_unselected.png" selectednormalimage="file='bk_tab_selected.png' corner='0,0,0,2'"/>
                     <Option name="option_online_members" width="stretch" height="stretch" cursortype="hand" group="option_list_group"
-                               text="在线成员" font="2" align="vcenter" textpadding="0,0,0,2" normaltextcolor="darkcolor" selectedtextcolor="tab_text_selected" normalimage="bk_tab_unselected.png" selectednormalimage="file='bk_tab_selected.png' corner='0,0,0,2'"/>
+                               textid="STRID_CHATROOM_ONLINE_MEMBER" font="2" align="vcenter" textpadding="0,0,0,2" normaltextcolor="darkcolor" selectedtextcolor="tab_text_selected" normalimage="bk_tab_unselected.png" selectednormalimage="file='bk_tab_selected.png' corner='0,0,0,2'"/>
                 </HBox>
 
                 <Control normalcolor="bk_listitem_selected" width="stretch" height="1"/>
@@ -76,7 +76,9 @@
                 <TabBox name="list_tab" width="stretch" height="stretch" margin="1,0,1,0">
                     <RichEdit name="intercommunicate_list" width="stretch" rich="true" multiline="true" readonly="true" vscrollbar="true" autovscroll="true" font="1" />
                     <Box>
-                    	<VListBox class="list" name="online_members_list" vscrollunit="80"/>
+                    	<VBox>
+	                    	<VirtualListBox class="list" name="online_members_virtual_list" vscrollunit="80"/>
+	                    </VBox>
                     	<Box name="empty_members_list">
                     		<Control halign="center" valign="center" width="auto" height="auto" bkimage="icon_nodata.png" />
                     	</Box>
@@ -86,21 +88,21 @@
                 
                 <Control normalcolor="bk_listitem_selected" width="stretch" height="1"/>
                 
-                <RichEdit name="input_edit" width="stretch" height="54" prompttext="和大家一起愉快聊天" font="1" padding="6,2,6,2" rich="true" multiline="true" wantreturnmsg="true" vscrollbar="true" autovscroll="true"/>
+                <RichEdit name="input_edit" width="stretch" height="54" prompttextid="STRID_CHATROOM_ENJOY_CHAT" font="1" padding="6,2,6,2" rich="true" multiline="true" wantreturnmsg="true" vscrollbar="true" autovscroll="true"/>
                 
                 <HBox width="stretch" height="auto" margin="10,0,10,10">
                     <Control width="stretch"/>
                     
-                    <CheckBox name="btn_face" width="30" height="30" valign="center" margin="0" tooltiptext="表情"
+                    <CheckBox name="btn_face" width="30" height="30" valign="center" margin="0" tooltiptextid="STRID_CHATROOM_EMOTICON"
                                   forenormalimage="file='btn_face.png' dest='5,5,25,25'" foredisabledimage="file='btn_face.png' dest='5,5,25,25' fade='80'"
                                   hotimage="icon_hover.png" pushedimage="icon_pushed.png" selectednormalimage="icon_pushed.png"
                                   selectedforenormalimage="file='btn_face.png' dest='5,5,25,25'" selectedforedisabledimage="file='btn_face.png' dest='5,5,25,25' fade='80'"/>
 
-                    <Button name="btn_jsb" width="30" height="30" valign="center" margin="7,0,12,0" tooltiptext="石头剪刀布"
+                    <Button name="btn_jsb" width="30" height="30" valign="center" margin="7,0,12,0" tooltiptextid="STRID_CHATROOM_JSB"
                                 forenormalimage="btn_jsb.png" foredisabledimage="file='btn_jsb.png' fade='80'"
                                 hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
                     
-                    <Button class="btn_global_green_80x30" name="send" text="发送" textpadding="4,0,4,0"/>
+                    <Button class="btn_global_green_80x30" name="send" textid="STRING_SEND" textpadding="4,0,4,0"/>
                 </HBox>
             </VBox>
         </HBox>

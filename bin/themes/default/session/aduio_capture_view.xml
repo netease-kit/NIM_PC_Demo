@@ -7,8 +7,8 @@
 			<Label name="tip_text" width="stretch" valign="center" margin="2,0,0,0" normaltextcolor="darkcolor" font="1" endellipsis="true"/>           
 		</HBox>
 
-		<Button class="btn_global_green_80x30" name="btn_start_capture" text="录制" width="50" height="25" halign="right" valign="center" margin="0,0,55,0" cursortype="hand"/>
-		<Button class="btn_global_green_80x30" name="btn_send_audio" text="发送" width="50" height="25" halign="right" valign="center" margin="0,0,55,0" cursortype="hand" visible="false" />
-        <Button class="btn_global_green_80x30" name="btn_calcel_capture" text="取消" width="50" height="25" halign="right" valign="center" cursortype="hand"/>
+		<Button class="btn_global_green_80x30" name="btn_start_capture" textid="STRID_AUDIO_CAPTURE_RECORD" width="50" height="25" halign="right" valign="center" margin="0,0,55,0" cursortype="hand"/>
+		<Button class="btn_global_green_80x30" name="btn_send_audio" textid="STRING_SEND" width="50" height="25" halign="right" valign="center" margin="0,0,55,0" cursortype="hand" visible="false" />
+        <Button class="btn_global_green_80x30" name="btn_calcel_capture" textid="STRING_NO" width="50" height="25" halign="right" valign="center" cursortype="hand"/>
     </AudioCaptureView>
 </Window>

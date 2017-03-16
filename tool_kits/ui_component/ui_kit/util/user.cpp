@@ -5,6 +5,7 @@ namespace
 {
 	static const std::wstring kResImage = L"image\\";
 	static const std::wstring kResAudio = L"audio\\";
+	static const std::wstring kResOther = L"res\\";
 }
 
 namespace nim_comp
@@ -30,4 +31,12 @@ std::wstring GetUserAudioPath()
 	dir.append(kResAudio);
 	return dir;
 }
+
+std::wstring GetUserOtherResPath()
+{
+	std::wstring dir = GetUserDataPath();
+	dir.append(kResOther);
+	return dir;
+}
+
 }

@@ -7,13 +7,13 @@
         </HBox>
 
         <HBox height="44" bkimage="file='slider_hor_bk.png' dest='0,42,280,44'">
-            <OptionBox name="option_audio" group="option_group" selected="true" font="2" text="语音" textpadding="0,0,0,6" normaltextcolor="lightcolor" selectedtextcolor="green" selectednormalimage="file='slider_hor.png' dest='0,42,140,44'"/>
-            <OptionBox name="option_video" group="option_group" font="2" text="视频" textpadding="0,0,0,6" normaltextcolor="lightcolor" selectedtextcolor="green" selectednormalimage="file='slider_hor.png' dest='0,42,140,44'"/>
+            <OptionBox name="option_audio" group="option_group" selected="true" font="2" textid="STRID_VIDEO_SET_AUDIO" textpadding="0,0,0,6" normaltextcolor="lightcolor" selectedtextcolor="green" selectednormalimage="file='slider_hor.png' dest='0,42,140,44'"/>
+            <OptionBox name="option_video" group="option_group" font="2" textid="STRID_VIDEO_SET_VIDEO" textpadding="0,0,0,6" normaltextcolor="lightcolor" selectedtextcolor="green" selectednormalimage="file='slider_hor.png' dest='0,42,140,44'"/>
         </HBox>
         <TabBox name="audio_tab_video" fadeswitch="true">
             <VBox name="audio_page">
 				<VBox height="128" margin="20,0,20,0">
-					<CheckBox class="checkbox_font12" name="open_output" margin="0,20,0,0" font="2" text="开启播放器"/>
+					<CheckBox class="checkbox_font12" name="open_output" margin="0,20,0,0" font="2" textid="STRID_VIDEO_SET_SOUND_ON"/>
 					<Combo class="list" height="30" name="output_audio" margin="0,12,0,0" bkimage="file='../public/combo/normal.png' corner='5,5,30,5'"/>
 					<HBox height="auto" margin="0,14,0,0">
 						<CheckBox name="output_silent" width="22" height="22" valign="center" selectednormalimage="set_speaker1.png" normalimage="set_speaker0.png"/>
@@ -25,7 +25,7 @@
                 <Control class="splitline_hor_level2"/>
 				
 				<VBox height="128" margin="20,0,20,0">
-					<CheckBox class="checkbox_font12" name="open_input" margin="0,20,0,0" font="2" text="开启麦克风"/>
+					<CheckBox class="checkbox_font12" name="open_input" margin="0,20,0,0" font="2" textid="STRID_VIDEO_SET_MICROPHONE_ON"/>
 					<Combo class="list" height="27" name="input_audio" margin="0,12,0,0" bkimage="file='../public/combo/normal.png' corner='5,5,30,5'"/>
 					<HBox height="auto" margin="0,14,0,0">
 						<CheckBox name="input_silent" width="22" height="22" valign="center" selectednormalimage="set_micro1.png" normalimage="set_micro0.png"/>
@@ -36,21 +36,21 @@
 
                 <!--Control class="splitline_hor_level2"/-->
 
-                <CheckBox class="checkbox_font12" name="auto_input_volumn" margin="20,10,20,20" text="自动调节麦克风音量"/>
+                <CheckBox class="checkbox_font12" name="auto_input_volumn" margin="20,10,20,20" textid="STRID_VIDEO_SET_AUTO_ADJUST_MICROPHONE_VOLUME"/>
 
                 <!--Control class="splitline_hor_level2"/>
 
-                <Button class="btn_global_white_80x30" name="reset_setting" margin="20,12,20,0" halign="right" font="2" text="恢复默认"/-->
+                <Button class="btn_global_white_80x30" name="reset_setting" margin="20,12,20,0" halign="right" font="2" textid="STRID_VIDEO_SET_RECOVER_DEFAULT"/-->
             </VBox>
 
             <VBox name="video_page" margin="20,0,20,0">
-                <CheckBox class="checkbox_font12" name="open_video" margin="0,20,0,0" font="2" text="开启摄像头"/>
+                <CheckBox class="checkbox_font12" name="open_video" margin="0,20,0,0" font="2" textid="STRID_VIDEO_SET_CAMERA_ON"/>
                 <Combo class="list" name="input_video" height="30" margin="0,12,0,0" bkimage="file='../public/combo/normal.png' corner='5,5,30,5'"/>
 
                 <Box width="240" height="180" margin="0,20,0,20">
                     <BitmapControl name="video_show" width="240" height="180" bkcolor="bk_video_content"/>
                     <Control name="camera_fail" width="68" height="42" halign="center" valign="center" bkimage="camera_open_fail.png" visible="false"/>
-                    <Label name="error_notice" margin="0,0,0,10" halign="center" valign="bottom" font="2" normaltextcolor="obvious_tip" text="摄像头无法启动，请检查后重试" visible="false"/>
+                    <Label name="error_notice" margin="0,0,0,10" halign="center" valign="bottom" font="2" normaltextcolor="obvious_tip" textid="STRID_VIDEO_SET_TURN_ON_CAMERA_FAIL" visible="false"/>
                 </Box>
             </VBox>
         </TabBox>

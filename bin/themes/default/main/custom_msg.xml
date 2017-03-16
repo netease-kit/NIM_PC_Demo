@@ -2,7 +2,7 @@
 <Window>
     <ListContainerElement height="auto">
         <VBox height="auto" margin="10,10,0,0" >
-            <Label name="msg_time" margin="0,0,0,10" halign="center" normaltextcolor="lightcolor" text="消息时间"/>
+            <Label name="msg_time" margin="0,0,0,10" halign="center" normaltextcolor="lightcolor" textid="STRID_CUSTOM_MSG_MSG_TIME"/>
 
             <HBox height="auto">
                 <Box name="header_panel" width="auto" height="auto" mouse="false" >

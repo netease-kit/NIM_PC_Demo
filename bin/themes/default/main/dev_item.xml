@@ -6,7 +6,7 @@
 				<Label name="name" margin="10,0,0,0" valign="center" font="2"/>
 				<Label name="time" margin="10,10,0,0" valign="center" font="1"/>
 			</VBox>
-            <Button name="kick" width="38" height="38" valign="center" text="踢下线" cursortype="hand" normaltextcolor="btn_green" />
+            <Button name="kick" width="38" height="38" valign="center" textid="STRID_MAINWINDOW_KICK_MOBILE" cursortype="hand" normaltextcolor="btn_green" />
         </HBox>
         <Control class="splitline_hor_level1" name="split_line" valign="bottom"/>
     </ListContainerElement>

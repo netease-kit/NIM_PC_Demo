@@ -31,24 +31,33 @@ void MsgBubbleImage::InitInfo(const nim::IMMessage &msg)
 	SetCanView(false);
 	InitResPath();
 
-	if( nbase::FilePathIsExist(path_, false) )
+	if (nbase::FilePathIsExist(thumb_, false)) //thumb_图片存在
+	{
+		if (CheckImageBubble())
+		{
+			SetLoadStatus(RS_LOAD_OK);
+			SetCanView(true);
+		}
+		else //图片有错误
+			SetLoadStatus(RS_LOAD_NO);
+	}
+	else if (nbase::FilePathIsExist(path_, false)) //缩略图不存在，而原图存在
 	{
 		DoZoom();
 	}
-	else
+	else //thumb_图片和原图都不存在
 	{
-		if(msg_.rescode_ == 0) //读取消息历史
+		if (msg_.rescode_ == 0) //读取消息历史
 		{
 			SetLoadStatus(RS_LOADING);
 		}
 		else //接收
 		{
-			if (msg_.rescode_ == nim::kNIMResSuccess)
+			if (msg_.rescode_ == nim::kNIMResSuccess
+				|| msg_.rescode_ == nim::kNIMLocalResExist)
 				SetLoadStatus(RS_LOADING);
 			else if (msg_.rescode_ == nim::kNIMLocalResParameterError)
 				SetLoadStatus(RS_LOAD_NO);
-			else if (msg_.rescode_ == nim::kNIMLocalResExist)
-				DoZoom();
 			else
 			{
 				SetLoadStatus(RS_LOAD_NO);
@@ -64,29 +73,78 @@ bool MsgBubbleImage::OnClicked( ui::EventArgs* arg )
 	{
 		ImageViewManager::GetInstance()->StartViewPic(path_, L"", true);
 	}
+	else //原图不存在
+	{
+		ImageViewManager::GetInstance()->StartViewPic(path_, L"", true);
+		nim::NOS::DownloadMediaCallback cb = [](nim::NIMResCode res_code, const std::string& file_path, const std::string&, const std::string&)
+		{
+			if (res_code == nim::kNIMResSuccess)
+			{
+				ImageViewManager* image_view_mgr = ImageViewManager::GetInstance();
+				if (image_view_mgr)
+					image_view_mgr->OnImageReady(nbase::UTF8ToUTF16(file_path), true);
+			}
+		};
+		nim::NOS::FetchMedia(msg_, cb, nim::NOS::ProgressCallback());
+	}
 	return true;
 }
 
 void MsgBubbleImage::InitResPath()
 {
 	std::wstring wpath = nbase::UTF8ToUTF16(msg_.local_res_path_);
+	std::string path = nim::Talk::GetAttachmentPathFromMsg(msg_);
+	ASSERT(!path.empty());
 
 	if (wpath.empty() || !nbase::FilePathIsExist(wpath, false))
 	{
-		nim::IMImage img;
-		nim::Talk::ParseImageMessageAttach(msg_, img);
-		std::wstring filename = nbase::UTF8ToUTF16(img.md5_);
-		thumb_ = GetUserImagePath() + L"thumb_" + filename;
-		path_ = GetUserImagePath() + filename;
-
+		path_ = nbase::UTF8ToUTF16(path);
+		std::wstring directory, filename;
+		nbase::FilePathApartDirectory(path_, directory);
+		nbase::FilePathApartFileName(path_, filename);
+		thumb_ = directory + L"thumb_" + filename;
 	}
 	else
 	{
-		std::wstring filename;
+		std::wstring directory, filename;
+		nbase::FilePathApartDirectory(nbase::UTF8ToUTF16(path), directory);
 		nbase::FilePathApartFileName(wpath, filename);
-		thumb_ = GetUserImagePath() + L"thumb_" + filename;
+		thumb_ = directory + L"thumb_" + filename;
 		path_ = wpath;
 	}
+}
+
+bool MsgBubbleImage::CheckImageBubble()
+{
+	if (image_checked_)
+		return true;
+
+	if (thumb_.empty() || !nbase::FilePathIsExist(thumb_, false))
+		return false;
+
+	//gif图片经过压缩下载后，虽然格式仍是gif，但变成只有一帧，没有动画，尺寸也可能变小了。
+	Gdiplus::Image thumb_image(thumb_.c_str());
+	Gdiplus::Status status = thumb_image.GetLastStatus();
+	if (status != Gdiplus::Ok) //图片有错误
+	{
+		QLOG_ERR(L"Image {0} error {1}") << thumb_ << status;
+		return false;
+	}
+
+	int width = thumb_image.GetWidth();
+	int height = thumb_image.GetHeight();
+	if (width == 0 || height == 0)
+	{
+		QLOG_ERR(L"Get image size error: {0}, {1}.") << width << height;
+		return false;
+	}
+	
+	image_->SetFixedWidth(width, false); //压缩下载的图片直接做消息气泡的图片
+	image_->SetFixedHeight(height);
+	image_->SetBkImage(thumb_);
+	image_checked_ = true;
+
+	return true;
 }
 
 void MsgBubbleImage::SetCanView(bool can)
@@ -94,29 +152,60 @@ void MsgBubbleImage::SetCanView(bool can)
 	msg_image_->SetEnabled(can);
 }
 
-void MsgBubbleImage::OnDownloadCallback( bool success )
+void MsgBubbleImage::OnDownloadCallback( bool success, const std::string& file_path )
 {
-	if( success )
+	if (image_checked_)
+		return;
+
+	ASSERT(!file_path.empty());
+	std::wstring wpath = nbase::UTF8ToUTF16(file_path);
+	if (wpath == thumb_) //下载的是缩略图
 	{
-		SetLoadStatus(RS_LOAD_OK);
+		if (success)
+		{
+			ListBox* lbx = dynamic_cast<ListBox*>(this->GetParent());
+			ASSERT(lbx);
+			bool at_end = lbx->IsAtEnd();
 
-		ListBox* lbx = dynamic_cast<ListBox*>( this->GetParent() );
-		ASSERT(lbx);
-		bool at_end = lbx->IsAtEnd();
-
-		DoZoom();
-
-		if(at_end)
-			lbx->EndDown(true, false);
+			SetLoadStatus(RS_LOAD_OK);
+			CheckImageBubble();
+			SetCanView(true);
+			
+			if (at_end)
+				lbx->EndDown(true, false);
+		}
+		else
+		{
+			SetLoadStatus(RS_LOAD_NO);
+		}
 	}
-	else
+	else if (wpath == path_) //下载的是原图
 	{
-		SetLoadStatus(RS_RELOAD);
+		if (success)
+		{
+			ListBox* lbx = dynamic_cast<ListBox*>(this->GetParent());
+			ASSERT(lbx);
+			bool at_end = lbx->IsAtEnd();
+
+			SetLoadStatus(RS_LOAD_OK);
+
+			DoZoom();
+
+			if (at_end)
+				lbx->EndDown(true, false);
+		}
+		else
+		{
+			SetLoadStatus(RS_LOAD_NO);
+		}
 	}
 }
 
 void MsgBubbleImage::DoZoom()
 {
+	if (image_checked_)
+		return;
+
 	if( !nbase::FilePathIsExist(path_, false) )
 	{
 		InitResPath();
@@ -151,20 +240,21 @@ void MsgBubbleImage::DoZoom()
 	{
 		if(resize)
 		{
-			ZoomImageF(path_, thumb_, cx, cy);
+			ZoomImageF(path_, thumb_, sz.cx, sz.cy);
 			image_->SetBkImage(thumb_);
 		}
 		else
 		{
-			image_->SetBkImage(path_);
+			nbase::CopyFile(path_, thumb_);
+			image_->SetBkImage(thumb_);
 			if(sz.cx < xf && sz.cy < yf)
 			{
 				image_->SetForeStateImage(kControlStateNormal, L"");
 			}
 		}
 	}
+	image_checked_ = true;
 }
-
 
 bool MsgBubbleImage::OnMenu( ui::EventArgs* arg )
 {
@@ -185,9 +275,9 @@ bool MsgBubbleImage::OnMenu( ui::EventArgs* arg )
 
 bool MsgBubbleImage::NeedDownloadResource()
 {
-	if( nbase::FilePathIsExist(path_, false) )
+	//if( nbase::FilePathIsExist(thumb_, false) )
 		return false;
-	else
-		return true;
+	//else
+	//	return true;
 }
 }

@@ -12,7 +12,7 @@
                     <Control />
                     <Label name="label_name" width="stretch" font="2"/>
                     <HBox height="auto" margin="0,4,0,0" mouse="false" mousechild="false">
-						<Label name="at_me_label" text="[有人@我] " visible="false" width="auto" valign="center" normaltextcolor="link_red" font="1"/> 
+						<Label name="at_me_label" textid="STRID_SESSION_SOMEONE_AT_ME" visible="false" width="auto" valign="center" margin="0,0,4,0" normaltextcolor="link_red" font="1"/> 
                     	<Label name="label_msg" width="stretch" font="1" normaltextcolor="lightcolor"/>
 					</HBox>
                     <Control />

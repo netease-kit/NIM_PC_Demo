@@ -211,7 +211,7 @@ TeamNotifyForm* GetTeamNotifyForm(const std::string &tid)
 
 		POINT pt = GetPopupWindowPos(notify);
 		ui::UiRect rc(pt.x, pt.y, 0, 0);
-		notify->SetPos(rc, SWP_NOSIZE, NULL, true);
+		notify->SetPos(rc, false, SWP_NOSIZE, NULL, true);
 		return notify;
 	}
 }
@@ -277,7 +277,9 @@ void UIReceiveSysmsgCallback(nim::SysMessage& msg)
 			}
 			else
 				show_text = msg.msg_setting_.push_content_;
-			std::wstring toast = nbase::StringPrintf(L"%s 收到 %s 发的自定义通知: %s", nbase::UTF8ToUTF16(msg.receiver_accid_).c_str(), nbase::UTF8ToUTF16(msg.sender_accid_).c_str(), nbase::UTF8ToUTF16(show_text).c_str());
+
+			std::wstring format = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_RECEIVE_CUSTOM_MSG");
+			std::wstring toast = nbase::StringPrintf(format.c_str(), nbase::UTF8ToUTF16(msg.receiver_accid_).c_str(), nbase::UTF8ToUTF16(msg.sender_accid_).c_str(), nbase::UTF8ToUTF16(show_text).c_str());
 			nim_ui::ShowToast(toast, 5000);
 			//UpdateCustomSysmsgUnread(true);
 		}

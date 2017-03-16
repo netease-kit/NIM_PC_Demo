@@ -6,7 +6,7 @@
 				<CheckBox name="btn_add_friend" width="36" height="36" valign="center" margin="2,2,0,0"
 					normalimage="btn_add_friend_normal.png"/>
 			</Box>
-            <Button text="添加好友" normaltextcolor="darkcolor" font="2" valign="center" margin="10,0,0,0"/>
+            <Button textid="STRID_MAINWINDOW_ADD_FRIEND" normaltextcolor="darkcolor" font="2" valign="center" margin="10,0,0,0"/>
         </HBox>
         <Control class="splitline_hor_level2" valign="bottom"/>
     </TreeNode>

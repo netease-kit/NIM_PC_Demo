@@ -6,6 +6,7 @@
 
 namespace ui
 {
+
 class UILIB_API HelperThread : public nbase::FrameworkThread
 {
 public:
@@ -19,5 +20,6 @@ private:
 private:
 	ThreadId thread_id_;
 };
+
 }  
 #endif //UI_CORE_HELPER_THREAD_H_

@@ -105,7 +105,7 @@ void SessionBox::OnEsc(BOOL &bHandled)
 		bHandled = TRUE;
 
 		MsgboxCallback cb = nbase::Bind(&SessionBox::OnCloseInputMsgBoxCallback, this, std::placeholders::_1);
-		ShowMsgBox(this->GetWindow()->GetHWND(), L"输入框有未发送内容，确定要关闭窗口吗？", cb);
+		ShowMsgBox(this->GetWindow()->GetHWND(), cb, L"STRID_SESSION_CONTENT_NOT_SENT");
 	}
 }
 
@@ -166,10 +166,10 @@ bool SessionBox::Notify(ui::EventArgs* param)
 
 			nim::Tool::GetAudioTextAsync(audio_info, ToWeakCallback([this](int rescode, const std::string& text) {
 				if (rescode == nim::kNIMResSuccess) {
-					ShowMsgBox(this->GetWindow()->GetHWND(), nbase::UTF8ToUTF16(text), MsgboxCallback(), L"转文字", L"确定", L"");
+					ShowMsgBox(this->GetWindow()->GetHWND(), MsgboxCallback(), nbase::UTF8ToUTF16(text), false, L"STRID_SESSION_TRANSCODE_TIP_TITLE");
 				}
 				else {
-					ShowMsgBox(this->GetWindow()->GetHWND(), L"语音转化失败", MsgboxCallback(), L"转文字", L"确定", L"");
+					ShowMsgBox(this->GetWindow()->GetHWND(), MsgboxCallback(), L"STRID_SESSION_TRANSCODE_FAIL", true, L"STRID_SESSION_TRANSCODE_TIP_TITLE");
 					QLOG_ERR(L"audio convert to text failed errorcode={0}") << rescode;
 				}
 			}));
@@ -263,7 +263,7 @@ bool SessionBox::OnClicked(ui::EventArgs* param)
 	}
 	else if (name == L"btn_tip")
 	{
-		SendTip(L"这是一条提醒消息");
+		SendTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_THIS_IS_A_TIP_MSG"));
 	}
 	else if (name == CELL_BTN_LOAD_MORE_MSG)
 	{
@@ -437,7 +437,7 @@ void SessionBox::OnBtnSend()
 			}
 			else
 			{
-				ShowMsgBox(this->GetWindow()->GetHWND(), L"暂时只支持小于15MB的非空文件", MsgboxCallback(), L"提示", L"确定", L"");
+				ShowMsgBox(this->GetWindow()->GetHWND(), MsgboxCallback(), L"STRID_SESSION_SUPPORT_15MB");
 			}
 		}
 		break;
@@ -447,8 +447,7 @@ void SessionBox::OnBtnSend()
 	if (empty_msg)
 	{
 		input_edit_->SetText(L"");
-		ShowMsgBox(this->GetWindow()->GetHWND(), L"请输入内容后再发送哦", MsgboxCallback(),
-			L"提示", L"确定", L"");
+		ShowMsgBox(this->GetWindow()->GetHWND(), MsgboxCallback(), L"STRID_SESSION_EDIT_EMPTY");
 		return;
 	}
 
@@ -458,7 +457,7 @@ void SessionBox::OnBtnSend()
 
 void SessionBox::OnBtnImage(bool is_snapchat)
 {
-	std::wstring file_type = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_PIC_FILE");
+	std::wstring file_type = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_PIC_FILE");
 	LPCTSTR filter = L"*.jpg;*.jpeg;*.png;*.bmp";
 	std::wstring text = nbase::StringPrintf(L"%s(%s)", file_type.c_str(), filter);
 	std::map<LPCTSTR, LPCTSTR> filters;
@@ -499,7 +498,7 @@ void SessionBox::OnImageSelected(bool is_snapchat, BOOL ret, std::wstring file_p
 
 void SessionBox::OnBtnFile()
 {
-	std::wstring file_type = L"文件格式(*.*)";
+	std::wstring file_type = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_FILE_FORMAT") + L"(*.*)";
 	LPCTSTR filter = L"*.*";
 	std::map<LPCTSTR, LPCTSTR> filters;
 	filters[file_type.c_str()] = filter;
@@ -523,7 +522,7 @@ void SessionBox::OnFileSelected(BOOL ret, std::wstring file_path)
 		}
 		else
 		{
-			ShowMsgBox(this->GetWindow()->GetHWND(), L"暂时只支持小于15MB的非空文件", MsgboxCallback(), L"提示", L"确定", L"");
+			ShowMsgBox(this->GetWindow()->GetHWND(), MsgboxCallback(), L"STRID_SESSION_SUPPORT_15MB");
 		}
 	}
 }
@@ -559,7 +558,9 @@ void SessionBox::OnAudioCaptureComplete(int rescode, const std::string& sid, con
 void SessionBox::OnBtnEmoji()
 {
 	RECT rc = btn_face_->GetPos(true);
-	POINT pt = { rc.left - 150, rc.top - 350 };
+	POINT pt_offset = { 150, 350 };
+	DpiManager::GetInstance()->ScalePoint(pt_offset);
+	POINT pt = { rc.left - pt_offset.x, rc.top - pt_offset.y };
 	::ClientToScreen(this->GetWindow()->GetHWND(), &pt);
 
 	OnSelectEmotion sel = nbase::Bind(&SessionBox::OnEmotionSelected, this, std::placeholders::_1);
@@ -799,9 +800,8 @@ bool SessionBox::OnBtnHeaderClick(ui::EventArgs* param)
 			(TeamInfoForm::kClassName, session_id);
 		if (team_info_form == NULL)
 		{
-			std::wstring title = team_info_.GetType() == nim::kNIMTeamTypeNormal ? L"讨论组资料" : L"群资料";
 			team_info_form = new TeamInfoForm(false, team_info_.GetType(), session_id_, team_info_);
-			team_info_form->Create(NULL, title.c_str(), WS_OVERLAPPEDWINDOW& ~WS_MAXIMIZEBOX, 0L);
+			team_info_form->Create(NULL, L"", WS_OVERLAPPEDWINDOW& ~WS_MAXIMIZEBOX, 0L);
 			team_info_form->CenterWindow();
 			team_info_form->ShowWindow(true);
 		}

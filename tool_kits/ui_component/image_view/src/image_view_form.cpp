@@ -166,7 +166,7 @@ bool ImageViewForm::StartViewPic(std::wstring path_pic, bool size, bool nosave)
 	if (path_pic.empty())
 		return false;
 
-	image_path_.clear();
+	image_path_ = path_pic;
 	button_save_->SetEnabled(!nosave);
 	SetMinInfo(MINWNDWIDTH, MINWNDHEIGHT);
 	ShowImageScale(false);
@@ -180,49 +180,51 @@ bool ImageViewForm::StartViewPic(std::wstring path_pic, bool size, bool nosave)
 		ui_image_view_->SetMargin(ui::UiRect(0, 0, 0, 0));
 	}
 
-	SetPos(ui::UiRect(0, 0, 0, 0), SWP_NOSIZE | SWP_NOMOVE, HWND_NOTOPMOST);
+	gif_image_->SetVisible(false);
+	ui_image_view_->SetVisible(true);
+	show_scale_ = true;
 
-	image_path_ = path_pic;
-	int wnd_width = 0;
-	int wnd_height = 0;
-	int bg_corner = 0;
-	int framecount = ui_image_view_->SetPicPath(path_pic);
-	GetDefaultWindowSize(wnd_width, wnd_height, bg_corner);
-
-	if (size)
+	if (nbase::FilePathIsExist(path_pic, false))
 	{
-		int width = wnd_width + bg_corner > MINWNDWIDTH ? wnd_width + bg_corner : MINWNDWIDTH;
-		int height = wnd_height + bg_corner > MINWNDHEIGHT ? wnd_height + bg_corner : MINWNDHEIGHT;
-		SetPos(ui::UiRect(0, 0, width, height), SWP_NOMOVE);
-	}
+		int wnd_width = 0;
+		int wnd_height = 0;
+		int bg_corner = 0;
+		int framecount = ui_image_view_->SetPicPath(path_pic);
+		GetDefaultWindowSize(wnd_width, wnd_height, bg_corner);
 
-	if (framecount > 1)
-	{
-		SetMinInfo(wnd_width + bg_corner > MINWNDWIDTH ? wnd_width + bg_corner : MINWNDWIDTH,
-			wnd_height + bg_corner > MINWNDHEIGHT ? wnd_height + bg_corner : MINWNDHEIGHT);
-		gif_image_->SetBkImage(path_pic.c_str());
-		gif_image_->SetFixedWidth(wnd_width);
-		gif_image_->SetFixedHeight(wnd_height);
+		if (size)
+		{
+			int width = wnd_width + bg_corner > MINWNDWIDTH ? wnd_width + bg_corner : MINWNDWIDTH;
+			int height = wnd_height + bg_corner > MINWNDHEIGHT ? wnd_height + bg_corner : MINWNDHEIGHT;
+			SetPos(ui::UiRect(0, 0, width, height), true, SWP_NOMOVE);
+		}
 
-		gif_image_->SetVisible(true);
-		ui_image_view_->SetVisible(false);
-		
-		//CenterWindow();
-		SetToolbarEnable(false);
-		return true;
+		if (framecount > 1)
+		{
+			SetMinInfo(wnd_width + bg_corner > MINWNDWIDTH ? wnd_width + bg_corner : MINWNDWIDTH,
+				wnd_height + bg_corner > MINWNDHEIGHT ? wnd_height + bg_corner : MINWNDHEIGHT);
+			gif_image_->SetBkImage(path_pic.c_str());
+			gif_image_->SetFixedWidth(wnd_width);
+			gif_image_->SetFixedHeight(wnd_height);
+
+			gif_image_->SetVisible(true);
+			ui_image_view_->SetVisible(false);
+
+			//CenterWindow();
+			SetToolbarEnable(false);
+			return true;
+		}
+
+		SetPos(ui::UiRect(0, 0, 0, 0), true, SWP_NOSIZE | SWP_NOMOVE, HWND_NOTOPMOST);
 	}
 	else
 	{
-		gif_image_->SetVisible(false);
-		ui_image_view_->SetVisible(true);
-
-		show_scale_ = true;
-		//CenterWindow();
+		show_scale_ = false;
+		SetPos(ui::UiRect(0, 0, 0, 0), true, SWP_NOMOVE, HWND_NOTOPMOST);
 	}
-	
+
 	CheckNextOrPreImageBtnStatus();
 	return true;
-
 }
 
 void ImageViewForm::ShowImageScale(bool show)
@@ -437,7 +439,7 @@ void ImageViewForm::MaxWindowSize()
 {
 	back_image_->SetBkImage(kMaxWindowBg);
 	ui_image_view_->SetMargin(ui::UiRect(0, 0, 0, 0));
-	SetPos(ui::UiRect(0, 0, 0, 0), SWP_NOSIZE | SWP_NOMOVE, HWND_TOPMOST);
+	SetPos(ui::UiRect(0, 0, 0, 0), true, SWP_NOSIZE | SWP_NOMOVE, HWND_TOPMOST);
 
 	button_max_->SetVisible(false);
 	button_restore_->SetVisible(true);
@@ -449,7 +451,7 @@ void ImageViewForm::RestoredWindowSize()
 {
 	back_image_->SetBkImage(kRestoredWindowBg);
 	ui_image_view_->SetMargin(ui::UiRect(kBackgroundCorner, kBackgroundCorner, kBackgroundCorner, kBackgroundCorner));
-	SetPos(ui::UiRect(0, 0, 0, 0), SWP_NOSIZE | SWP_NOMOVE, HWND_NOTOPMOST);
+	SetPos(ui::UiRect(0, 0, 0, 0), true, SWP_NOSIZE | SWP_NOMOVE, HWND_NOTOPMOST);
 
 	button_max_->SetVisible(true);
 	button_restore_->SetVisible(false);

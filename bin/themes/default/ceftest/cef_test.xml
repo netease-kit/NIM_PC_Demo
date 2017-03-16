@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Window size="650,520" caption="0,0,0,34" sizebox="4,4,4,4">
+<Window size="650,520" caption="0,0,0,34" sizebox="4,4,4,4" textid="STRID_CEF_BROWSER_OFF_SCREEN_MODE">
 <VBox bkcolor="bk_wnd_lightcolor">
     <HBox class="caption" height="34">
-        <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" text="离屏渲染Cef浏览器组件测试"/>
+        <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" textid="STRID_CEF_BROWSER_OFF_SCREEN_MODE"/>
         <Button class="btn_wnd_min" name="minbtn" margin="10,6,0,0"/>
         <Button class="btn_wnd_max" name="btn_max_restore" margin="10,6,0,0"/>
         <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>
@@ -10,17 +10,17 @@
 
     <VBox height="64" margin="0,2,0,0">
         <HBox height="30" margin="10,0,10,2" >
-            <Button class="btn_global_green_80x30" name="btn_back" width="50" height="30" text="后退" valign="center" font="1" />
-            <Button class="btn_global_green_80x30" name="btn_forward" text="前进" width="50" height="30" valign="center" font="1" margin="3,0,3,0" />        
+            <Button class="btn_global_green_80x30" name="btn_back" width="50" height="30" textid="STRID_CEF_BROWSER_BACKWARD" valign="center" font="1" />
+            <Button class="btn_global_green_80x30" name="btn_forward" textid="STRID_CEF_BROWSER_FORWARD" width="50" height="30" valign="center" font="1" margin="3,0,3,0" />        
             <RichEdit class="simple prompt" name="edit_url" width="stretch" padding="5,2,5,0"  valign="center" 
-            bordercolor="gray" bordersize="1" font="2" prompttext="请输入地址" vscrollbar="false" autovscroll="false" hscrollbar="false" autohscroll="true" wantreturnmsg="true" />
-            <Button class="btn_global_green_80x30" name="btn_navigate" text="转到" width="50" height="30" valign="center" font="1" margin="3,0,0,0" />  
-            <Button class="btn_global_green_80x30" name="btn_refresh" width="50" height="30" text="刷新" valign="center" font="1" margin="3,0,0,0" />    
+            bordercolor="gray" bordersize="1" font="2" prompttextid="STRID_CEF_BROWSER_INPUT_ADDRESS" vscrollbar="false" autovscroll="false" hscrollbar="false" autohscroll="true" wantreturnmsg="true" />
+            <Button class="btn_global_green_80x30" name="btn_navigate" textid="STRID_CEF_BROWSER_BROWSE_TO" width="50" height="30" valign="center" font="1" margin="3,0,0,0" />  
+            <Button class="btn_global_green_80x30" name="btn_refresh" width="50" height="30" textid="STRID_CEF_BROWSER_REFRESH" valign="center" font="1" margin="3,0,0,0" />    
         </HBox>
         <HBox height="30" margin="10,0,10,2" >
-            <RichEdit class="simple prompt" name="edit_js" text="你好JS！" width="stretch" padding="5,2,5,0" valign="center" 
-            bordercolor="gray" bordersize="1" font="2" prompttext="输入发送给JS的文本" vscrollbar="false" autovscroll="false" hscrollbar="false" autohscroll="true" wantreturnmsg="true" />
-            <Button class="btn_global_green_80x30" name="btn_send_js" text="发送给JS" height="30" valign="center" font="1" margin="3,0,0,0" />  
+            <RichEdit class="simple prompt" name="edit_js" textid="STRID_CEF_BROWSER_HELLO_JS" width="stretch" padding="5,2,5,0" valign="center" 
+            bordercolor="gray" bordersize="1" font="2" prompttextid="STRID_CEF_BROWSER_INPUT_TEXT" vscrollbar="false" autovscroll="false" hscrollbar="false" autohscroll="true" wantreturnmsg="true" />
+            <Button class="btn_global_green_80x30" name="btn_send_js" textid="STRID_CEF_BROWSER_SEND_TO_JS" height="30" valign="center" font="1" margin="3,0,0,0" />  
         </HBox>
     </VBox>
     <Control class="splitline_hor_level1" margin="0,0,0,0" />

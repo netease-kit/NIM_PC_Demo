@@ -12,8 +12,8 @@
 
             <Control width="auto" height="auto" bkimage="btn_create_room.png" valign="center"/>
             <TabBox width="auto" height="auto" valign="center" margin="3,0,16,0">
-                <Button name="create_room" text="我要当主播" font="1" normaltextcolor="lightcolor" />
-                <Button name="my_rooms" text="我的直播间" font="1" normaltextcolor="lightcolor" />
+                <Button name="create_room" textid="STRID_CHATROOM_I_WANT_HOST" font="1" normaltextcolor="lightcolor" />
+                <Button name="my_rooms" textid="STRID_CHATROOM_MY_CHATROOM" font="1" normaltextcolor="lightcolor" />
             </TabBox>
             <HBox width="auto" height="auto" valign="top" margin="0,6">
                 <Button class="btn_wnd_min" name="minbtn" margin="4,6,0,0"/>
@@ -23,7 +23,7 @@
 
         <HBox width="stretch" height="stretch">
             <VBox width="230" height="stretch">
-                <Label width="auto" height="45" margin="22" font="20" text="个人中心" textpadding="0,16"/>
+                <Label width="auto" height="45" margin="22" font="20" textid="STRID_CHATROOM_PERSONAL_CENTER" textpadding="0,16"/>
                 <OptionBox name="manage_room" group="personal_center_option" width="stretch" height="35" selectednormalcolor="bk_listitem_selected" mousechild="false">
                     <Event type="select" receiver=".\manage_icon" applyattribute="bkimage=&quot;manage_selected.png&quot;"/>
                     <Event type="unselect" receiver=".\manage_icon" applyattribute="bkimage=&quot;manage_unselected.png&quot;"/>
@@ -33,7 +33,7 @@
                     <Event type="unselect" receiver=".\right_border" applyattribute="visible=&quot;false&quot;"/>
                     <HBox name="manage_box" width="auto" height="auto" margin="20,1" valign="center">
                         <Control name="manage_icon" width="auto" height="auto" margin="0,3"/>
-                        <Label name="manage_label" width="auto" height="auto" valign="center" margin="6" font="2" text="房间管理"/>
+                        <Label name="manage_label" width="auto" height="auto" valign="center" margin="6" font="2" textid="STRID_CHATROOM_ROOM_MANAGE"/>
                     </HBox>
                     <Control name="right_border" width="3" height="stretch" halign="right" bkcolor="tab_text_selected"/>
                 </OptionBox> 
@@ -46,7 +46,7 @@
                     <Event type="unselect" receiver=".\right_border" applyattribute="visible=&quot;false&quot;"/>
                     <HBox width="auto" height="auto" margin="20,1" valign="center">
                         <Control name="apply_icon" width="auto" height="auto" margin="0,3"/>
-                        <Label name="apply_label" width="auto" height="auto" valign="center" margin="6" font="2" text="申请直播间"/>
+                        <Label name="apply_label" width="auto" height="auto" valign="center" margin="6" font="2" textid="STRID_CHATROOM_APPLY_CHATROOM"/>
                     </HBox>
                     <Control name="right_border" width="3" height="stretch" halign="right" bkcolor="tab_text_selected"/>
                 </OptionBox>
@@ -55,9 +55,9 @@
             <TabBox name="page_tab" width="stretch" height="stretch">
                 <Control width="auto" height="auto" halign="center" valign="top" bkimage="room_manage_list.png"/>
                 <VBox width="auto" height="auto" halign="center" valign="top" margin="0,118">
-                    <Label width="auto" height="auto" halign="center" text="后台审核成功即可成为主播" font="3" normaltextcolor="darkcolor"/>
-                    <Label width="auto" height="auto" halign="center" margin="0,13" text="该功能只用于Demo展示，具体请咨询我们的技术、销售人员。" font="2" normaltextcolor="lightcolor"/>
-                    <Button class="btn_global_green_80x30" width="auto" height="auto" halign="center" margin="0,19" text="申 请" enabled="false"/>
+                    <Label width="auto" height="auto" halign="center" textid="STRID_CHATROOM_WAIT_FOR_REVIEW" font="3" normaltextcolor="darkcolor"/>
+                    <Label width="auto" height="auto" halign="center" margin="0,13" textid="STRID_CHATROOM_ONLY_DISPLAY_DEMO" font="2" normaltextcolor="lightcolor"/>
+                    <Button class="btn_global_green_80x30" width="auto" height="auto" halign="center" margin="0,19" textid="STRID_CHATROOM_APPLY_" enabled="false"/>
                 </VBox>
             </TabBox>
         </HBox>

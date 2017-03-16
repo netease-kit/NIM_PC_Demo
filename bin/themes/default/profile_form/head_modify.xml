@@ -25,13 +25,13 @@
                     <HeadPreviewControl name="big_head_preview_ctrl" width="stretch" height="stretch"/>
                     <Button class="icon_headimage_mask_168x168" mouse="false"/>
                 </Box>
-                <Label text="160×160像素" margin="0,10,0,30" halign="center" mouse="false"/>
+                <Label textid="STRID_HEAD_MODIFY_160_160_PIX" margin="0,10,0,30" halign="center" mouse="false"/>
                 
                 <Box width="52" height="52" halign="center">
                     <HeadPreviewControl name="small_head_preview_ctrl" width="52" height="52" halign="center"/>
                     <Button class="btn_headimage_mask_52x52_small" mouse="false"/>
                 </Box>
-                <Label text="40×40像素" margin="0,10,0,0" halign="center" mouse="false"/>
+                <Label textid="STRID_HEAD_MODIFY_40_40_PIX" margin="0,10,0,0" halign="center" mouse="false"/>
             </VBox>
         </HBox>
 
@@ -39,7 +39,7 @@
 		
         <HBox height="30" margin="0,0,20,20">
             <Control />
-            <Button class="btn_global_white_80x30" name="cancel_btn" textid="STRID_HEAD_MODIFY_BUTTON_CANCEL"/>
+            <Button class="btn_global_white_80x30" name="cancel_btn" textid="STRING_NO_"/>
             <Control width="10"/>
             <Button class="btn_global_white_80x30" name="select_image_btn" textid="STRID_HEAD_MODIFY_BUTTON_SELECT_IMAGE"/>
             <Control width="10"/>

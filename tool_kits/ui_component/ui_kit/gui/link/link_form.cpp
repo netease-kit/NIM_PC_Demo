@@ -74,11 +74,11 @@ void LinkForm::SetLoginRetryingFlag(nim::NIMResCode res_code, bool retrying)
 			{
 				if (res_code == nim::kNIMLocalResNetworkError)
 				{
-					tip_label->SetText(L"网络连接断开，请检查本地网络");
+					tip_label->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LINK_FORM_CHECK_NETWORK"));
 				}
 				else
 				{
-					std::wstring tip_string = nbase::StringPrintf(L"网络连接断开(%d)", res_code);
+					std::wstring tip_string = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LINK_FORM_ERROR_CODE").c_str(), res_code);
 					tip_label->SetText(tip_string);
 				}
 			}
@@ -158,6 +158,6 @@ void ShowLinkForm(nim::NIMResCode res_code, bool retrying)
 
 	POINT pt = GetPopupWindowPos(link_form);
 	UiRect rc(pt.x, pt.y, 0, 0);
-	link_form->SetPos(rc, SWP_NOSIZE, NULL, true);
+	link_form->SetPos(rc, false, SWP_NOSIZE, NULL, true);
 }
 }

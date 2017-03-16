@@ -13,15 +13,13 @@ public:
 	Layout();
 	virtual ~Layout() {}
 
-	Layout& Copy(const Layout& container);
-
 	void SetOwner(Box* pOwner);
 
-	static CSize SetFloatPos(Control* pControl, UiRect containerRect);
+	static CSize SetFloatPos(Control* pControl, UiRect rcContainer);
 
-	virtual bool SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue);
-	virtual CSize ArrangeChild(const std::vector<Control*>& m_items, UiRect rc);
-	virtual CSize AjustSizeByChild(const std::vector<Control*>& m_items, CSize szAvailable);
+	virtual bool SetAttribute(const std::wstring& strName, const std::wstring& strValue);
+	virtual CSize ArrangeChild(const std::vector<Control*>& items, UiRect rc);
+	virtual CSize AjustSizeByChild(const std::vector<Control*>& items, CSize szAvailable);
 
 	virtual UiRect GetPadding() const;
 	virtual void SetPadding(UiRect rcPadding); // 设置内边距，相当于设置客户区
@@ -32,7 +30,7 @@ public:
 protected:
 	UiRect m_rcPadding;
 	int m_iChildMargin;
-	Box* m_pOwner;
+	Box *m_pOwner;
 };
 
 
@@ -47,10 +45,18 @@ public:
     virtual ~Box();
 
 public:
-	virtual void SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue) override;
+	virtual void SetWindow(Window* pManager, Box* pParent, bool bInit = true) override;
+	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
 	virtual void SetPos(UiRect rc) override;
-	virtual	UiRect GetPaddingPos() const;
+	virtual void HandleMessageTemplate(EventArgs& msg) override;
 	virtual void Paint(HDC hDC, const UiRect& rcPaint) override;
+	virtual void SetVisible(bool bVisible = true) override;
+	virtual void SetInternVisible(bool bVisible = true) override;
+	virtual void SetEnabled(bool bEnabled) override;
+	virtual CSize EstimateSize(CSize szAvailable) override;
+	virtual Control* FindControl(FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags, CPoint scrollPos = CPoint()) override;
+	Control* FindSubControl(const std::wstring& pstrSubControlName);
+	virtual int FindSelectable(int iIndex, bool bForward = true) const;
 
 	virtual Control* GetItemAt(std::size_t iIndex) const;
 	virtual int GetItemIndex(Control* pControl) const;
@@ -61,13 +67,9 @@ public:
 	virtual bool Remove(Control* pControl);
 	virtual bool RemoveAt(std::size_t iIndex);
 	virtual void RemoveAll();
-	void SwapChild(Control* child1, Control* child2);
-	void ResetChildIndex(Control* child, std::size_t newIndex);
+	void SwapChild(Control* pChild1, Control* pChild2);
+	void ResetChildIndex(Control* pChild, std::size_t iIndex);
 
-    virtual void SetVisible(bool bVisible = true) override;
-	virtual void SetInternVisible(bool bVisible = true) override;
-	virtual void SetEnabled(bool bEnabled) override;
-	virtual CSize EstimateSize(CSize szAvailable) override;
     virtual bool IsAutoDestroy() const;
     virtual void SetAutoDestroy(bool bAuto);
     virtual bool IsDelayedDestroy() const;
@@ -76,31 +78,17 @@ public:
     virtual void SetMouseChildEnabled(bool bEnable = true);
 	virtual Layout* GetLayout() const;
 	virtual void RetSetLayout(Layout* pLayout);
+	virtual	UiRect GetPaddingPos() const;
 
-    virtual int FindSelectable(int iIndex, bool bForward = true) const;
-    virtual void SetWindow(Window* pManager, Box* pParent, bool bInit = true) override;
-    virtual Control* FindControl(FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags, CPoint scrollPos = CPoint()) override;
-	Control* FindSubControl(const std::wstring& pstrSubControlName);
-
-	virtual void HandleMessageTemplate(EventArgs& msg) override;
-
-	virtual void ClearImageCache() override;
 	virtual void InvokeLoadImageCache() override;
 	virtual void UnLoadImageCache() override;
+	virtual void ClearImageCache() override;
 
-public:
-	void AttachBubbledEvent(EventType eventType, const EventCallback& callback)
-	{
-		OnBubbledEvent[eventType] += callback;
-	}
+	void AttachBubbledEvent(EventType eventType, const EventCallback& callback)	{ OnBubbledEvent[eventType] += callback; }
 
 private:
 	friend WindowBuilder;
-
-	void AttachXmlBubbledEvent(EventType eventType, const EventCallback& callback)
-	{
-		OnXmlBubbledEvent[eventType] += callback;
-	}
+	void AttachXmlBubbledEvent(EventType eventType, const EventCallback& callback) { OnXmlBubbledEvent[eventType] += callback; }
 
 	EventMap OnXmlBubbledEvent;
 
@@ -124,6 +112,9 @@ public:
 	virtual bool MouseEnter(EventArgs& msg) override;
 	virtual bool MouseLeave(EventArgs& msg) override;
 	virtual void Paint(HDC hDC, const UiRect& rcPaint) override;
+	virtual void SetMouseEnabled(bool bEnable = true) override;
+	virtual void SetWindow(Window* pManager, Box* pParent, bool bInit) override;
+	virtual Control* FindControl(FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags, CPoint scrollPos = CPoint()) override;
 
 	virtual CSize GetScrollPos() const;
 	virtual CSize GetScrollRange() const;
@@ -135,79 +126,41 @@ public:
 	virtual void PageDown();
 	virtual void HomeUp();
 	virtual void EndDown(bool arrange = true, bool withAnimation = true);
-	void ReomveLastItemAnimation();
-	bool IsAtEnd() const;
-	void PlayRenderOffsetYAnimation(int renderY);
 	virtual void LineLeft();
 	virtual void LineRight();
 	virtual void PageLeft();
 	virtual void PageRight();
 	virtual void HomeLeft();
 	virtual void EndRight();
+	virtual void TouchUp(int detaValue);
+	virtual void TouchDown(int detaValue);
 	virtual void EnableScrollBar(bool bEnableVertical = true, bool bEnableHorizontal = false);
 	virtual ScrollBar* GetVerticalScrollBar() const;
 	virtual ScrollBar* GetHorizontalScrollBar() const;
-	bool IsVScrollBarValid() const;
-	bool IsHScrollBarValid() const;
 	virtual void ProcessVScrollBar(UiRect rc, int cyRequired);
 	virtual void ProcessHScrollBar(UiRect rc, int cxRequired);
+	bool IsVScrollBarValid() const;
+	bool IsHScrollBarValid() const;
 
-	virtual void SetMouseEnabled(bool bEnable = true) override;
-	virtual void SetWindow(Window* pManager, Box* pParent, bool bInit) override;
-	virtual Control* FindControl(FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags, CPoint scrollPos = CPoint()) override;
+	void ReomveLastItemAnimation();
+	void PlayRenderOffsetYAnimation(int nRenderY);
 
-	int GetVerScrollUnitPixels() const
-	{
-		return nVerScrollUnitPixels;
-	}
-	void SetVerScrollUnitPixels(int verScrollUnitPixels)
-	{
-		nVerScrollUnitPixels = verScrollUnitPixels;
-	}
+	bool IsAtEnd() const;
+	bool IsHoldEnd() const;
+	void SetHoldEnd(bool bHoldEnd);
 
-	bool GetScrollBarFloat() const
-	{
-		return m_bScrollBarFloat;
-	}
-	void SetScrollBarFloat(bool bScrollBarFloat)
-	{
-		m_bScrollBarFloat = bScrollBarFloat;
-	}
-
-	UiRect GetScrollBarPadding() const
-	{
-		return m_rcScrollBarPadding;
-	}
-	void SetScrollBarPadding(UiRect rcScrollBarPadding)
-	{
-		m_rcScrollBarPadding = rcScrollBarPadding;
-	}
-
-	bool GetDefaultDisplayScrollbar() const
-	{
-		return m_bDefaultDisplayScrollbar;
-	}
-	void SetDefaultDisplayScrollbar(bool bDefaultDisplay) 
-	{
-		m_bDefaultDisplayScrollbar = bDefaultDisplay;
-	}
-
-	bool GetHoldEnd() const
-	{
-		return m_bHoldEnd;
-	}
-	void SetHoldEnd(bool bHoldEnd) 
-	{
-		m_bHoldEnd = bHoldEnd;
-	}
-
-
-	void AttachScrollChange(const EventCallback& callback)
-	{
-		OnEvent[kEventScrollChange] += callback;
-	}
+	int GetVerScrollUnitPixels() const;
+	void SetVerScrollUnitPixels(int nUnitPixels);
+	bool GetScrollBarFloat() const;
+	void SetScrollBarFloat(bool bScrollBarFloat);
+	UiRect GetScrollBarPadding() const;
+	void SetScrollBarPadding(UiRect rcScrollBarPadding);
+	bool GetDefaultDisplayScrollbar() const;
+	void SetDefaultDisplayScrollbar(bool bDefaultDisplay);
 
 	virtual void ClearImageCache() override;
+
+	void AttachScrollChange(const EventCallback& callback) { OnEvent[kEventScrollChange] += callback; }
 
 private:
 	void LoadImageCache(bool bFromTopLeft);
@@ -216,12 +169,15 @@ private:
 protected:
 	std::unique_ptr<ScrollBar> m_pVerticalScrollBar;
 	std::unique_ptr<ScrollBar> m_pHorizontalScrollBar;
+
+	int m_nVerScrollUnitPixels;
 	bool m_bScrollProcess; // 防止SetPos循环调用
-	int nVerScrollUnitPixels;
-	bool m_bScrollBarFloat;
-	UiRect m_rcScrollBarPadding;
-	bool m_bDefaultDisplayScrollbar;
 	bool m_bHoldEnd;
+	bool m_bScrollBarFloat;
+	bool m_bDefaultDisplayScrollbar;
+	UiRect m_rcScrollBarPadding;
+
+	CPoint m_ptLastTouchPos;
 	AnimationPlayer m_scrollAnimation;
 	AnimationPlayer m_renderOffsetYAnimation;
 };

@@ -218,10 +218,10 @@ typedef void (*nim_chatroom_queue_init_cb_func)(int64_t room_id, int error_code,
 /** @name 进入聊天室的可选填信息Json Keys
 * @{
 */
-static const char *kNIMChatRoomEnterKeyNick		= "nick";		/**< string, 进入聊天室后展示的昵称,选填 */
-static const char *kNIMChatRoomEnterKeyAvatar	= "avatar";		/**< string, 进入聊天室后展示的头像,选填 */
-static const char *kNIMChatRoomEnterKeyExt		= "ext";		/**< string, 聊天室可用的扩展字段,必须为可以解析为Json的非格式化的字符串,选填 */
-static const char *kNIMChatRoomEnterKeyNotifyExt= "notify_ext";	/**< string, 进入聊天室通知开发者扩展字段,必须为可以解析为Json的非格式化的字符串,选填*/
+static const char *kNIMChatRoomEnterKeyNick		= "nick";		/**< string, 进入聊天室后展示的昵称,选填,聊天室成员收到聊天室进入通知中可以获取该数据 */
+static const char *kNIMChatRoomEnterKeyAvatar	= "avatar";		/**< string, 进入聊天室后展示的头像,选填,设置后通过获取聊天室成员信息接口可以获取该数据 */
+static const char *kNIMChatRoomEnterKeyExt		= "ext";		/**< string, 聊天室可用的扩展字段,必须为可以解析为Json的非格式化的字符串,选填,设置后通过获取聊天室成员信息接口可以获取该数据 */
+static const char *kNIMChatRoomEnterKeyNotifyExt= "notify_ext";	/**< string, 进入聊天室通知开发者扩展字段,必须为可以解析为Json的非格式化的字符串,选填,聊天室成员收到聊天室进入通知中可以获取该数据 */
 /** @}*/ //登录Json Keys
 
 
@@ -385,8 +385,9 @@ static const char *kNIMChatRoomGetMembersKeyLimit	= "limit";	/**<int 数量*/
 /** @name 分获取历史消息条件Keys
   * @{
   */
-static const char *kNIMChatRoomGetMsgHistoryKeyStartTime = "start";	/**<long 开始时间,单位毫秒 */
-static const char *kNIMChatRoomGetMsgHistoryKeyLimit	 = "limit";	/**<int 本次返回的消息数量*/
+static const char *kNIMChatRoomGetMsgHistoryKeyStartTime = "start";		/**<long 开始时间,单位毫秒 */
+static const char *kNIMChatRoomGetMsgHistoryKeyLimit	 = "limit";		/**<int 本次返回的消息数量*/
+static const char *kNIMChatRoomGetMsgHistoryKeyReverse	 = "reverse";	/**<boolean: true:按时间正序起查，正序排列,false:按时间逆序起查，逆序排列*/
 /** @}*/ //分获取历史消息条件Keys
 
 /** @name 设定聊天室成员标记身份条件Keys

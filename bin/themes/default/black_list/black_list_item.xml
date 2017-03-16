@@ -8,7 +8,7 @@
 			</Box>
 			<Label name="contact" margin="10,0,0,0" valign="center" font="2"/>
 			<Control width="stretch"/>
-			<Button class="btn_global_green_80x30" name="confirm" width="54" height="30" valign="center" text="解除"/>
+			<Button class="btn_global_green_80x30" name="confirm" width="54" height="30" valign="center" textid="STRID_BLACK_LIST_RELIEVE"/>
 		</HBox>
 		<Control class="splitline_hor_level1" name="split_line" valign="bottom"/>
 	</ListContainerElement>

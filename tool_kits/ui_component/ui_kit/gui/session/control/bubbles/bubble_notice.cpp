@@ -45,7 +45,7 @@ void MsgBubbleNotice::RefreshNotice()
 	{
 		wstr = nbase::UTF8ToUTF16(msg_.content_);
 		if (wstr.empty())
-			wstr = L"空提醒消息";
+			wstr = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_EMPTY_TIP_MSG");
 	}
 	
 	notice_->SetText(wstr);
@@ -71,7 +71,8 @@ bool MsgBubbleNotice::OnResize( ui::EventArgs* arg )
 void MsgBubbleNotice::OnResized()
 {
 	UiRect rc = m_pWindow->GetPos(false);
-	int width = rc.GetWidth() - 100;
+	int sub_width = 100;
+	int width = rc.GetWidth() - DpiManager::GetInstance()->ScaleInt(sub_width);
 
 	notice_->SetMaxWidth(width);
 }

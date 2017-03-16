@@ -140,7 +140,7 @@ bool MemberManagerForm::OnBtnConfirmClick(ui::EventArgs* param)
 		MsgboxCallback cb = ToWeakCallback([this](MsgBoxRet ret) {
 			this->ActiveWindow();
 		});
-		ShowMsgBox(m_hWnd, L"群昵称不能为空", ToWeakCallback(cb), L"提示", L"确定", L"");
+		ShowMsgBox(m_hWnd, ToWeakCallback(cb), L"STRID_MEMBER_MANAGE_NICKNAME_NOT_EMPTY");
 		return true;
 	}
 

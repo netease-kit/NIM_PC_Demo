@@ -45,7 +45,7 @@ void SessionItem::InitUserProfile()
 	{
 		if (LoginManager::GetInstance()->IsEqual(msg_.id_))
 		{
-			label_name_->SetText(L"我的手机");
+			label_name_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_MY_MOBILEPHONE"));
 		}
 		else
 		{
@@ -117,29 +117,30 @@ void SessionItem::InitMsg(const nim::SessionData &msg)
 
 void GetMsgContent(const nim::SessionData &msg, std::wstring &show_text)
 {
+	MutiLanSupport* mls = MutiLanSupport::GetInstance();
 	if (msg.msg_type_ == nim::kNIMMessageTypeText)
 	{
 		show_text = nbase::UTF8ToUTF16(msg.msg_content_);
 	}
 	else if (msg.msg_type_ == nim::kNIMMessageTypeImage)
 	{
-		show_text = L"[图片]";
+		show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_IMAGE");
 	}
 	else if (msg.msg_type_ == nim::kNIMMessageTypeAudio)
 	{
-		show_text = L"[语音]";
+		show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_AUDIO");
 	}
 	else if (msg.msg_type_ == nim::kNIMMessageTypeVideo)
 	{
-		show_text = L"[视频]";
+		show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_VIDEO");
 	}
 	else if (msg.msg_type_ == nim::kNIMMessageTypeFile)
 	{
-		show_text = L"[文件]";
+		show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_FILE");
 	}
 	else if (msg.msg_type_ == nim::kNIMMessageTypeLocation)
 	{
-		show_text = L"[位置]";
+		show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_LOCATION");
 	}
 	else if (msg.msg_type_ == nim::kNIMMessageTypeNotification)
 	{
@@ -151,15 +152,15 @@ void GetMsgContent(const nim::SessionData &msg, std::wstring &show_text)
 	}
 	else if (msg.msg_type_ == nim::kNIMMessageTypeTips)
 	{
-		show_text = L"[提醒消息]";
+		show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_NOTIFY");
 	}
 	else if (msg.msg_type_ == nim::kNIMMessageTypeUnknown)
 	{
-		show_text = L"[未定义消息]";
+		show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_UNDEFINED");
 	}
 	else
 	{
-		show_text = L"[未知消息]";
+		show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_UNKNOWN");
 		std::string id = msg.id_;
 		QLOG_WAR(L"unknown msg: id_type={0}_{1} msg_type={2}") << id << msg.type_ << msg.msg_type_;
 	}
@@ -211,7 +212,7 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 
 		if (msg_.msg_status_ == nim::kNIMMsgLogStatusSendFailed)
 		{
-			show_text = L"[失败]" + show_text;
+			show_text = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_FAILED") + show_text;
 		}
 	}
 	label_msg_->SetText(show_text);
@@ -298,6 +299,10 @@ void SessionItem::UpdateUnread()
 	{
 		box_unread_->SetVisible(false);
 	}
+
+	if (msg_.unread_count_ == 0)
+		// 重置对应会话中的@me消息为已读
+		ForcePushManager::GetInstance()->ResetAtMeMsg(msg_.id_);
 
 	// 通知会话窗口中的会话合并项
 	SessionBox *session_box = SessionManager::GetInstance()->FindSessionBox(msg_.id_);

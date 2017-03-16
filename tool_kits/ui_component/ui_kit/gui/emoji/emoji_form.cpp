@@ -112,7 +112,7 @@ void EmojiForm::ShowEmoj(POINT pt, OnSelectEmotion sel, OnSelectSticker sel_stic
 		return;
 
 	UiRect rc(pt.x, pt.y, 0, 0);
-	this->SetPos(rc, SWP_NOSIZE | SWP_SHOWWINDOW, HWND_TOPMOST);
+	this->SetPos(rc, false, SWP_NOSIZE | SWP_SHOWWINDOW, HWND_TOPMOST);
 }
 
 void EmojiForm::AddSticker(std::wstring name, int num)

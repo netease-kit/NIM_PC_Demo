@@ -83,20 +83,36 @@ void TeamInfoForm::InitWindow()
 	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(nbase::Bind(&TeamInfoForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 	unregister_cb.Add(TeamService::GetInstance()->RegRemoveTeam(nbase::Bind(&TeamInfoForm::OnTeamRemove, this, std::placeholders::_1)));
 
-	std::wstring team_type = type_ == nim::kNIMTeamTypeNormal ? L"讨论组" : L"群";
-	ui::Label* title_text = (ui::Label*)FindControl(L"title");
+	MutiLanSupport* mls = MutiLanSupport::GetInstance();
+	std::wstring title_text;
+	ui::Label* label_title = (ui::Label*)FindControl(L"title");
 	if (create_or_display_) {
 		if(type_ == nim::kNIMTeamTypeNormal)
-			title_text->SetText(L"创建讨论组");
+			title_text = mls->GetStringViaID(L"STRID_TEAM_INFO_CREATE_GROUP");
 		else if(type_ == nim::kNIMTeamTypeAdvanced)
-			title_text->SetText(L"创建高级群");
+			title_text = mls->GetStringViaID(L"STRID_TEAM_INFO_CREATE_ADVANCED_TEAM");
 	}
 	else {
-		title_text->SetText(team_type + L"资料");
+		if (type_ == nim::kNIMTeamTypeNormal)
+			title_text = mls->GetStringViaID(L"STRID_TEAM_INFO_GROUP_INFO");
+		else if (type_ == nim::kNIMTeamTypeAdvanced)
+			title_text = mls->GetStringViaID(L"STRID_TEAM_INFO_TEAM_INFO");
 	}
+	label_title->SetText(title_text);
+	SetTaskbarTitle(title_text);
 
-	((ui::Label*)FindControl(L"team_id_label"))->SetText(team_type + L"ID");
-	((ui::Label*)FindControl(L"team_name_label"))->SetText(team_type + L"名称");
+	ui::Label* team_id_label = (ui::Label*)FindControl(L"team_id_label");
+	ui::Label* team_name_label = (ui::Label*)FindControl(L"team_name_label");
+	if (type_ == nim::kNIMTeamTypeNormal)
+	{
+		team_id_label->SetText(mls->GetStringViaID(L"STRID_TEAM_INFO_GROUP_ID"));
+		team_name_label->SetText(mls->GetStringViaID(L"STRID_TEAM_INFO_GROUP_NAME"));
+	}
+	else if (type_ == nim::kNIMTeamTypeAdvanced)
+	{
+		team_id_label->SetText(mls->GetStringViaID(L"STRID_TEAM_INFO_TEAM_ID"));
+		team_name_label->SetText(mls->GetStringViaID(L"STRID_TEAM_INFO_TEAM_NAME"));
+	}
 
 	tile_box_ = (ui::ListBox*)FindControl(L"user_list");
 	ui::Button* btn_confirm = (ui::Button*)FindControl(L"confirm");
@@ -104,7 +120,10 @@ void TeamInfoForm::InitWindow()
 	ui::Button* btn_cancel = (ui::Button*)FindControl(L"cancel");
 	btn_cancel->AttachClick(nbase::Bind(&TeamInfoForm::OnBtnCancelClick, this, std::placeholders::_1));
 	btn_quit_ = (ui::Button*)FindControl(L"quit");
-	btn_quit_->SetText(L"退出" + team_type);
+	if (type_ == nim::kNIMTeamTypeNormal)
+		btn_quit_->SetText(mls->GetStringViaID(L"STRID_TEAM_INFO_QUIT_GROUP"));
+	else if (type_ == nim::kNIMTeamTypeAdvanced)
+		btn_quit_->SetText(mls->GetStringViaID(L"STRID_TEAM_INFO_QUIT_TEAM"));
 	btn_quit_->AttachClick(nbase::Bind(&TeamInfoForm::OnBtnQuitClick, this, std::placeholders::_1));
 	btn_dismiss_ = (ui::Button*)FindControl(L"dismiss");
 	btn_dismiss_->AttachClick(nbase::Bind(&TeamInfoForm::OnBtnDissmissClick, this, std::placeholders::_1));
@@ -376,7 +395,7 @@ bool TeamInfoForm::OnBtnDeleteClick(ui::Box* container_element, const UTF8String
 {
 	if (!create_or_display_) {
 		auto cb = nbase::Bind(&TeamInfoForm::OnMsgbox, this, user_id, std::placeholders::_1);
-		ShowMsgBox(m_hWnd, L"确实要删除该成员吗？", cb, L"提示", L"确定", L"取消");
+		ShowMsgBox(m_hWnd, cb, L"STRID_TEAM_INFO_DELETE_MEMBER_TIP", true, L"STRING_TIPS", true, L"STRING_OK", true, L"STRING_NO", true);
 	}
 	else {
 		tile_box_->Remove(container_element);
@@ -441,7 +460,7 @@ bool TeamInfoForm::OnBtnConfirmClick(ui::EventArgs* param)
 	if (team_name.empty())
 	{
 
-		ShowMsgBox(m_hWnd, L"请设置群名称", ToWeakCallback(cb), L"提示", L"确定", L"");
+		ShowMsgBox(m_hWnd, ToWeakCallback(cb), L"STRID_TEAM_INFO_SHOULD_SET_TEAM_NAME");
 		((RichEdit*)FindControl(L"team_name"))->SetText(L"");
 		return true;
 	}
@@ -449,7 +468,7 @@ bool TeamInfoForm::OnBtnConfirmClick(ui::EventArgs* param)
 	//高级群不需要一定邀请
 	if (type_ == nim::kNIMTeamTypeNormal && tile_box_->GetCount() <= 1)	//tile_box_中包含一个添加按钮
 	{
-		ShowMsgBox(m_hWnd, L"创建失败，请邀请好友", ToWeakCallback(cb), L"提示", L"确定", L"");
+		ShowMsgBox(m_hWnd, ToWeakCallback(cb), L"STRID_TEAM_INFO_PLEASE_INVITE_FRIEND");
 		return true;
 	}
 

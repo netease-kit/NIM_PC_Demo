@@ -10,6 +10,7 @@
 #include "nim_session_def.h"
 #include "../util/stdbool.h"
 #include "../util/nim_base_types.h"
+#include "../util/nim_build_config.h"
 
 #ifdef __cplusplus
 extern"C"
@@ -217,6 +218,14 @@ static const char *kNIMMsglogQueryJsonExtensionKeyDirection		= "direction"; /**<
 static const char *kNIMMsglogQueryJsonExtensionKeyReverse		= "reverse"; /**< bool，返回的消息历史排序正序(false)/逆序(true),默认为false */
 static const char *kNIMMsglogQueryJsonExtensionKeyEndTime		= "endtime"; /**< __int64，查询消息的截止时间，如果direction为kForward，则截止时间应小于anchor_msg_time，否则大于anchor_msg_time,默认为0代表不限制截止时间 */
 /** @}*/ //接口nim_msglog_query_msg_async扩展参数json key定义
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+/** @name 接口nim_msglog_query_msg_online_async扩展参数json_extension key定义
+* @{
+*/
+static const char *kNIMMsglogJsonExtKeyNeedAutoDownloadAttachment = "need_auto_download_attachment";		/**< bool 查询结果回来后，是否需要sdk自动下载消息附件。true：需要，false：不需要*/
+/** @}*/ //接口nim_msglog_query_msg_online_async扩展参数json_extension key定义
+#endif
 
 /** @enum NIMMsglogSearchDirection 消息历史查询方向 */
 enum NIMMsglogSearchDirection

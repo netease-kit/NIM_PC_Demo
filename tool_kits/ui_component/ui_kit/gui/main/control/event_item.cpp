@@ -52,27 +52,28 @@ bool TeamEventItem::InitInfo(const nim::SysMessage &json)
 	evt_team_->SetText(TeamService::GetInstance()->GetTeamName(tid_));
 	evt_time_->SetText(GetMessageTime(msg_time_, false));
 
+	MutiLanSupport* mls = MutiLanSupport::GetInstance();
 	std::wstring uname = UserService::GetInstance()->GetUserName(acc_id_);
 
 	if (msg_type_ == nim::kNIMSysMsgTypeTeamApply)
 	{
-		evt_tip_->SetText(nbase::StringPrintf(L"%s 申请加入群", uname.c_str()));
+		evt_tip_->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_MSG_CENTER_APPLY_JOIN_TEAM").c_str(), uname.c_str()));
 		btn_ok_->SetVisible(true);
 		btn_no_->SetVisible(true);
 	}
 	else if (msg_type_ == nim::kNIMSysMsgTypeTeamInvite)
 	{
-		evt_tip_->SetText(nbase::StringPrintf(L"%s 邀请你加入群", uname.c_str()));
+		evt_tip_->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_MSG_CENTER_INVITE_YOU_JOIN_TEAM").c_str(), uname.c_str()));
 		btn_ok_->SetVisible(true);
 		btn_no_->SetVisible(true);
 	}
 	else if (msg_type_ == nim::kNIMSysMsgTypeTeamReject)
 	{
-		evt_tip_->SetText(nbase::StringPrintf(L"%s 拒绝了你的入群请求", uname.c_str()));
+		evt_tip_->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_MSG_CENTER_REFUSE_YOU_JOIN_TEAM").c_str(), uname.c_str()));
 	}
 	else if (msg_type_ == nim::kNIMSysMsgTypeTeamInviteReject)
 	{
-		evt_tip_->SetText(nbase::StringPrintf(L"%s 拒绝加入群", uname.c_str()));
+		evt_tip_->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_MSG_CENTER_REFUSE_JOIN_TEAM").c_str(), uname.c_str()));
 	}
 	else if (msg_type_ == nim::kNIMSysMsgTypeFriendAdd)
 	{
@@ -84,11 +85,11 @@ bool TeamEventItem::InitInfo(const nim::SysMessage &json)
 		reader.parse(json.attach_, attach);
 		nim::NIMVerifyType verify_type = (nim::NIMVerifyType)attach["vt"].asInt();
 		if (verify_type == nim::kNIMVerifyTypeAdd)
-			evt_tip_->SetText(nbase::StringPrintf(L"已经加你为好友"));
+			evt_tip_->SetText(mls->GetStringViaID(L"STRID_MSG_CENTER_ADD_YOU_FRIEND"));
 		else if (verify_type == nim::kNIMVerifyTypeAsk)
 		{
 			std::wstring msg_content = nbase::UTF8ToUTF16(json.content_);
-			evt_tip_->SetText(nbase::StringPrintf(L"请求加你为好友，附言：%s", msg_content.c_str()));
+			evt_tip_->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_MSG_CENTER_APPLY_YOU_FRIEND").c_str(), msg_content.c_str()));
 			evt_tip_->SetToolTipText(msg_content);
 			if (UserService::GetInstance()->GetUserType(acc_id_) == nim::kNIMFriendFlagNotFriend)
 			{
@@ -106,7 +107,7 @@ bool TeamEventItem::InitInfo(const nim::SysMessage &json)
 	else
 	{
 		QLOG_ERR(L"error sysmsg, type={0}") << msg_type_;
-		evt_tip_->SetText(L"错误消息");
+		evt_tip_->SetText(mls->GetStringViaID(L"STRID_MSG_CENTER_ERROR_MSG"));
 	}
 
 	if (msg_status_ == nim::kNIMSysMsgStatusPass || msg_status_ == nim::kNIMSysMsgStatusDecline || msg_status_ == nim::kNIMSysMsgStatusInvalid)
@@ -114,11 +115,11 @@ bool TeamEventItem::InitInfo(const nim::SysMessage &json)
 		btn_ok_->SetVisible(false);
 		btn_no_->SetVisible(false);
 		if (msg_status_ == nim::kNIMSysMsgStatusPass)
-			result_->SetText(L"已同意");
+			result_->SetText(mls->GetStringViaID(L"STRID_MSG_CENTER_AGREED"));
 		else if (msg_status_ == nim::kNIMSysMsgStatusDecline)
-			result_->SetText(L"已拒绝");
+			result_->SetText(mls->GetStringViaID(L"STRID_MSG_CENTER_REFUSED"));
 		else
-			result_->SetText(L"已失效");
+			result_->SetText(mls->GetStringViaID(L"STRID_MSG_CENTER_INVALID"));
 		result_->SetVisible(true);
 	}
 	else if (msg_status_ == nim::kNIMSysMsgStatusDeleted)
@@ -143,12 +144,13 @@ void TeamEventItem::OnTeamEventCb(nim::NIMSysMsgStatus status)
 {
 	btn_ok_->SetVisible(false);
 	btn_no_->SetVisible(false);
+	MutiLanSupport* mls = MutiLanSupport::GetInstance();
 	if (status == nim::kNIMSysMsgStatusPass)
-		result_->SetText(L"已同意");
+		result_->SetText(mls->GetStringViaID(L"STRID_MSG_CENTER_AGREED"));
 	else if (status == nim::kNIMSysMsgStatusDecline)
-		result_->SetText(L"已拒绝");
+		result_->SetText(mls->GetStringViaID(L"STRID_MSG_CENTER_REFUSED"));
 	else if (status == nim::kNIMSysMsgStatusInvalid)
-		result_->SetText(L"已失效");
+		result_->SetText(mls->GetStringViaID(L"STRID_MSG_CENTER_INVALID"));
 	result_->SetVisible(true);
 }
 

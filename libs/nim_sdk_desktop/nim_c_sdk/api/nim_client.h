@@ -22,7 +22,7 @@ extern"C"
   * NIM SDK初始化，传入的JSON参数定义见nim_client_def.h    
   * @param[in] app_data_dir 使用默认路径时只需传入单个目录名（不以反斜杠结尾)，使用自定义路径时需传入完整路径（以反斜杠结尾，并确保有正确的读写权限！）
   * @param[in] app_install_dir 目前不需要传入（SDK可以自动获取）
-  * @param[in] json_extension json扩展参数。目前可以用于支持一些全局配置（必填，如数据库的加密密钥等）和私有服务器的设置（选填）
+  * @param[in] json_extension json扩展参数。目前可以用于支持一些全局配置（必填，如APP_KEY、数据库的加密密钥等）和私有服务器的设置（选填）
   * @return bool 返回值true: 成功， false: 失败
   */ 
 NIM_SDK_DLL_API	bool nim_client_init(const char *app_data_dir, const char *app_install_dir, const char *json_extension);

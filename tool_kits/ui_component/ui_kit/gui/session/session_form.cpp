@@ -110,7 +110,7 @@ LRESULT SessionForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 						}
 					}				
 				});
-				ShowMsgBox(this->GetHWND(), L"当前窗口包含多个会话，确定要关闭窗口吗？", cb);
+				ShowMsgBox(this->GetHWND(), cb, L"STRID_SESSION_CLOSING_MULTI_SESSION", true, L"STRING_TIPS", true, L"STRING_OK", true, L"STRING_NO", true);
 			}
 
 			bHandled = TRUE;
@@ -706,14 +706,14 @@ void SessionForm::AdjustFormSize()
 		int width = kLargeSessionBoxWidth + extend_width;
 		int height = kLargeSessionBoxHeight;
 		this->SetMinInfo(kLargeSessionBoxWidth, kLargeSessionBoxHeight);
-		this->SetPos(ui::UiRect(0, 0, width, height), SWP_NOMOVE | SWP_NOACTIVATE);
+		this->SetPos(ui::UiRect(0, 0, width, height), true, SWP_NOMOVE | SWP_NOACTIVATE);
 	}
 	else
 	{
 		int width = kNormalSessionBoxWidth + extend_width;
 		int height = kNormalSessionBoxHeight;
 		this->SetMinInfo(kNormalSessionBoxWidth, kNormalSessionBoxHeight);
-		this->SetPos(ui::UiRect(0, 0, width, height), SWP_NOMOVE | SWP_NOACTIVATE);
+		this->SetPos(ui::UiRect(0, 0, width, height), true, SWP_NOMOVE | SWP_NOACTIVATE);
 	}
 }
 

@@ -161,10 +161,10 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 	if (msg.type_ == nim::kNIMMessageTypeAudio)
 		item->SetPlayed(true);
 
-	if( item->NeedDownloadResource() )
-	{
-		nim::NOS::FetchMedia(msg, nbase::Bind(&MsgRecordForm::OnDownloadCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4), nim::NOS::ProgressCallback());
-	}
+	//if( item->NeedDownloadResource() )
+	//{
+	//	nim::NOS::FetchMedia(msg, nbase::Bind(&MsgRecordForm::OnDownloadCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4), nim::NOS::ProgressCallback());
+	//}
 }
 
 void MsgRecordForm::RefreshRecord(std::string id, nim::NIMSessionType type)
@@ -215,8 +215,12 @@ void MsgRecordForm::ShowMore(bool more)
 {
 	is_loading_ = true;
 	QLOG_APP(L"query online msg begin: id={0} type={1} last_time={2} last_server_id={3}") <<session_id_ <<session_type_ <<farst_msg_time_ <<last_server_id_;
+	Json::Value extension;
+	Json::FastWriter writer;
+	extension[nim::kNIMMsglogJsonExtKeyNeedAutoDownloadAttachment] = true;
+	std::string json_extension = writer.write(extension);
 	nim::MsgLog::QueryMsgCallback cb = nbase::Bind(&MsgRecordForm::QueryMsgOnlineCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
-	nim::MsgLog::QueryMsgOnlineAsync(session_id_, session_type_, kMsgLogNumberShow, 0, farst_msg_time_, last_server_id_, false, true, cb);
+	nim::MsgLog::QueryMsgOnlineAsync(session_id_, session_type_, kMsgLogNumberShow, 0, farst_msg_time_, last_server_id_, false, true, cb, json_extension);
 }
 
 void MsgRecordForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)
@@ -310,13 +314,16 @@ void MsgRecordForm::QueryMsgOnlineCb(nim::NIMResCode code, const std::string& id
 
 void MsgRecordForm::OnDownloadCallback(nim::NIMResCode code, const std::string& file_path, const std::string& sid, const std::string& cid)
 {
+	if (sid != session_id_)
+		return;
+
 	IdBubblePair::iterator it = id_bubble_pair_.find(cid);
 	if(it != id_bubble_pair_.end())
 	{
 		MsgBubbleItem* item = it->second;
 		if(item)
 		{
-			item->OnDownloadCallback(code == nim::kNIMResSuccess);
+			item->OnDownloadCallback(code == nim::kNIMResSuccess, file_path);
 		}
 	}
 }
@@ -334,8 +341,8 @@ void MsgRecordForm::OnPlayAudioCallback( const std::string &cid, int code )
 	}
 	if (code != nim::kNIMResSuccess)
 	{
-		std::wstring tip = nbase::StringPrintf(L"语音播放失败，错误码：%d", code);
-		ShowMsgBox(m_hWnd, tip, MsgboxCallback(), L"提示", L"确定", L"");
+		std::wstring tip = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSG_RECORD_PLAY_AUDIO_ERROR").c_str(), code);
+		ShowMsgBox(m_hWnd, MsgboxCallback(), tip, false);
 	}
 }
 

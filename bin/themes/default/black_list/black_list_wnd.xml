@@ -3,7 +3,7 @@
     <Class name="TipEdit" value="width=&quot;348&quot; height=&quot;60&quot; font=&quot;20&quot; multiline=&quot;true&quot; vscrollbar=&quot;false&quot; autovscroll=&quot;false&quot; enabled=&quot;false&quot; rich=&quot;false&quot;"/>
 	<VBox height="stretch" bkcolor="bk_wnd_lightcolor">
 		<HBox class="caption">
-			<Label class="font_title" text="黑名单" width="auto" valign="center" normaltextcolor="darkcolor"/>
+			<Label class="font_title" textid="STRID_BLACK_LIST_TITLE" width="auto" valign="center" normaltextcolor="darkcolor"/>
 			<Control width="stretch"/>
 			<Button class="btn_wnd_min" name="minbtn" margin="0,6,0,0"/>
 			<Button class="btn_wnd_close" name="closebtn" margin="2,6,0,0"/>

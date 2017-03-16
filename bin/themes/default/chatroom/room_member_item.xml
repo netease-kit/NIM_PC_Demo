@@ -6,6 +6,6 @@
             <Control name="header_image" width="27" height="27" borderround="27,27" margin="1,1,1,1" mouse="false"/>
             <Control width="29" height="29" bkimage="mask_25x25.png"/>
         </Box>
-        <Label name="name" text="" font="2" height="stretch" align="vcenter" normaltextcolor="darkcolor" textpadding="7,0,0,0"/>
+        <Label name="name" font="2" height="stretch" align="vcenter" normaltextcolor="darkcolor" textpadding="7,0,0,0"/>
     </HBox>
 </Window>

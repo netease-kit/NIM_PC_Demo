@@ -1,3 +1,10 @@
+/** @file stdbool.h
+  * @brief
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
+  * @author Harrison
+  * @date 2015/7/23
+  */
+
 /* stdbool.h header */
 /* Copyright 2003-2010 IAR Systems AB.  */
 

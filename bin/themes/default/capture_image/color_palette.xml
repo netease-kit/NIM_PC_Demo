@@ -2,28 +2,47 @@
 <Window> 
 	<Box height="32">
 		<Control bkimage="hor_shadow.png" height="5"/>
-		<HBox name="color_palette" padding="4,0,4,0" visible="true" childmargin="4" >
-			<BrushBlock name="brush1" group="brush" margin="0,4,0,4" brush_width="1" brush_width2="10" brush_paint_width="2" width="24" height="24" selectednormalimage="pressed_bk.png" hotimage="option_bk.png" selected="true" />
-			<BrushBlock name="brush2" group="brush" margin="0,4,0,4" brush_width="4" brush_width2="20" brush_paint_width="4" width="24" height="24" selectednormalimage="pressed_bk.png" hotimage="option_bk.png" selected="false" />
-			<BrushBlock name="brush3" group="brush" margin="0,4,0,4" brush_width="8" brush_width2="30" brush_paint_width="6" width="24" height="24" selectednormalimage="pressed_bk.png" hotimage="option_bk.png" selected="false" />
-			<Control bkcolor="splitline_hor_level4" width="1" margin="1,0,1,0"/>
-			<Box>
-				<HBox name="range_box" visible="false">
-					<Label normaltextcolor="lightcolor" font="11" valign="center" margin="2,0,4,0" text="画笔模糊度" />
-					<Slider name="range" height="14" margin="4,0,4,0" valign="center" thumbsize="14,14" min="1" max="10" progressbarpadding="0,6,0,6" bkimage="slider_hor_bk.png" progresscolor="bk_progress_progress" thumbnormalimage="slider_thumb.png"/>
-				</HBox>
-				<HBox name="color_block" childmargin="4" margin="2,7,0,7" >
-					<ColorBlock name="color1" color="color_palette1" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
-					<ColorBlock name="color2" color="color_palette2" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
-					<ColorBlock name="color3" color="color_palette3" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
-					<ColorBlock name="color4" color="color_palette4" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
-					<ColorBlock name="color5" color="color_palette5" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
-					<ColorBlock name="color6" color="color_palette6" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
-					<ColorBlock name="color7" color="color_palette7" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
-					<ColorBlock name="color8" color="color_palette8" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
-					<ColorBlock name="color9" color="color_palette9" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
-				</HBox>
-			</Box>
+		<HBox name="color_palette" padding="4,0,4,0">
+			<HBox name="brush_width_box" width="auto" childmargin="4">
+				<BrushBlock name="brush1" group="brush" margin="0,4,0,4" brush_width="1" brush_width2="10" brush_paint_width="2" width="24" height="24" selectednormalimage="pressed_bk.png" hotimage="option_bk.png" selected="true" />
+				<BrushBlock name="brush2" group="brush" margin="0,4,0,4" brush_width="4" brush_width2="20" brush_paint_width="4" width="24" height="24" selectednormalimage="pressed_bk.png" hotimage="option_bk.png" selected="false" />
+				<BrushBlock name="brush3" group="brush" margin="0,4,0,4" brush_width="8" brush_width2="30" brush_paint_width="6" width="24" height="24" selectednormalimage="pressed_bk.png" hotimage="option_bk.png" selected="false" />
+				<Control name="splitline" bkcolor="splitline_hor_level4" width="1" margin="0,0,4,0"/>
+			</HBox>
+			<HBox name="font_size_box" width="auto" childmargin="4" visible="false">
+				<Label normaltextcolor="white" font="11" valign="center" margin="2,0,4,0" textid="STRID_CAPTUREFORM_FONT_SIZE"/>
+				<Combo class="list" name="font_size_combo" width="60" height="24" valign="center" bkimage="file='combo_bk.png' corner='5,5,30,5'">
+					<ListContainerElement  bkcolor="font_size_bknormal" normalcolor="font_size_bknormal" hotcolor="font_size_bkhot" pushedcolor="font_size_bkselected" selectednormalcolor="font_size_bkselected" fadehot="false"
+							height="24" font="1" normaltextcolor="white" textpadding="10,1,1,1" name="0_font_index"/> <!-- name中的数字表示此字号在global.xml中的索引 -->
+					<ListContainerElement  bkcolor="font_size_bknormal" normalcolor="font_size_bknormal" hotcolor="font_size_bkhot" pushedcolor="font_size_bkselected" selectednormalcolor="font_size_bkselected" fadehot="false"
+							height="24" font="1" normaltextcolor="white" textpadding="10,1,1,1" name="1_font_index"/>
+					<ListContainerElement  bkcolor="font_size_bknormal" normalcolor="font_size_bknormal" hotcolor="font_size_bkhot" pushedcolor="font_size_bkselected" selectednormalcolor="font_size_bkselected" fadehot="false"
+							height="24" font="1" normaltextcolor="white" textpadding="10,1,1,1" name="2_font_index"/>
+					<ListContainerElement  bkcolor="font_size_bknormal" normalcolor="font_size_bknormal" hotcolor="font_size_bkhot" pushedcolor="font_size_bkselected" selectednormalcolor="font_size_bkselected" fadehot="false"
+							height="24" font="1" normaltextcolor="white" textpadding="10,1,1,1" name="3_font_index"/>
+					<ListContainerElement  bkcolor="font_size_bknormal" normalcolor="font_size_bknormal" hotcolor="font_size_bkhot" pushedcolor="font_size_bkselected" selectednormalcolor="font_size_bkselected" fadehot="false"
+							height="24" font="1" normaltextcolor="white" textpadding="10,1,1,1" name="4_font_index"/>
+					<ListContainerElement  bkcolor="font_size_bknormal" normalcolor="font_size_bknormal" hotcolor="font_size_bkhot" pushedcolor="font_size_bkselected" selectednormalcolor="font_size_bkselected" fadehot="false"
+							height="24" font="1" normaltextcolor="white" textpadding="10,1,1,1" name="20_font_index"/>
+				</Combo>
+				<Control name="splitline" bkcolor="splitline_hor_level4" width="1" margin="1,0,4,0"/>
+			</HBox>
+			<HBox name="range_box" width="auto" visible="false">
+				<Label normaltextcolor="lightcolor" font="11" valign="center" margin="2,0,4,0" textid="STRID_CAPTUREFORM_BRUSH_BLURRINESS" />
+				<Slider name="range" height="14" margin="4,0,4,0" valign="center" thumbsize="14,14" min="1" max="10" progressbarpadding="0,6,0,6" bkimage="slider_hor_bk.png" progresscolor="bk_progress_progress" thumbnormalimage="slider_thumb.png"/>
+				<Control name="splitline" bkcolor="splitline_hor_level4" width="1" margin="1,0,4,0"/>
+			</HBox>
+			<HBox name="color_block" width="auto" childmargin="4" margin="2,7,0,7">
+				<ColorBlock name="color1" color="color_palette1" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
+				<ColorBlock name="color2" color="color_palette2" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
+				<ColorBlock name="color3" color="color_palette3" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
+				<ColorBlock name="color4" color="color_palette4" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
+				<ColorBlock name="color5" color="color_palette5" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
+				<ColorBlock name="color6" color="color_palette6" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
+				<ColorBlock name="color7" color="color_palette7" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
+				<ColorBlock name="color8" color="color_palette8" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
+				<ColorBlock name="color9" color="color_palette9" width="18" height="18" group="color_block" selectednormalimage="pressed_bk.png" pushedimage="option_bk.png" />
+			</HBox>
 		</HBox>
 	</Box>
 </Window>

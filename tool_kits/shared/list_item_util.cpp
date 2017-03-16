@@ -58,8 +58,9 @@ TreeNode* ListItemUtil::CreateFirstLetterListItem(const wstring& letter_name)
 	Label* group_caption = new Label;
 	if (letter_name == L"*" || letter_name == L"群组")
 	{
-
-		group_caption->SetText(letter_name.compare(L"*") == 0 ? L"星标好友" : L"群组");
+		MutiLanSupport* multilan = MutiLanSupport::GetInstance();
+		std::wstring caption = multilan->GetStringViaID(letter_name.compare(L"*") == 0 ? L"STRID_MAINWINDOW_STAR_FRIENDS" : L"STRID_MAINWINDOW_TEAMS");
+		group_caption->SetText(caption);
 		group_caption->SetFont(1);
 	}
 	else

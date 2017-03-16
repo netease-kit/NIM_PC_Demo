@@ -68,7 +68,7 @@ void SessionManager::SetEnableMerge(bool enable)
 			else if (parent_form->DetachSessionBox(it_box.second))
 			{
 				SessionForm *session_form = new SessionForm;
-				HWND hwnd = session_form->Create(NULL, L"会话窗口", UI_WNDSTYLE_FRAME, 0);
+				HWND hwnd = session_form->Create(NULL, L"Session", UI_WNDSTYLE_FRAME, 0);
 				if (hwnd == NULL)
 				{
 					ASSERT(0);
@@ -96,7 +96,7 @@ void SessionManager::SetEnableMerge(bool enable)
 				{
 					rect_old_form.left += kSplitFormXOffset;
 					rect_old_form.top += kSplitFormXOffset;
-					sort_form->SetPos(rect_old_form, SWP_NOSIZE, NULL, true);
+					sort_form->SetPos(rect_old_form, true, SWP_NOSIZE, NULL, true);
 				}
 			}
 		}
@@ -276,7 +276,7 @@ void SessionManager::OnAfterDragSessionBox()
 			if (drag_session_form->DetachSessionBox(draging_session_box_))
 			{
 				SessionForm *session_form = new SessionForm;
-				HWND hwnd = session_form->Create(NULL, L"会话窗口", UI_WNDSTYLE_FRAME, 0);
+				HWND hwnd = session_form->Create(NULL, L"Session", UI_WNDSTYLE_FRAME, 0);
 				if (hwnd != NULL)
 				{
 					if (session_form->AttachSessionBox(draging_session_box_))
@@ -285,7 +285,7 @@ void SessionManager::OnAfterDragSessionBox()
 						POINT pt_mouse;
 						::GetCursorPos(&pt_mouse);
 						ui::UiRect rect(pt_mouse.x + kDragFormXOffset, pt_mouse.y + kDragFormYOffset, 0, 0);
-						session_form->SetPos(rect, SWP_NOSIZE);
+						session_form->SetPos(rect, false, SWP_NOSIZE);
 					}
 				}
 			}

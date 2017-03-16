@@ -14,6 +14,7 @@ public:
 	virtual void Paint(HDC hDC, const ui::UiRect& rcPaint) override;
 	virtual void SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue) override;
 	DWORD GetColor() { return color_; };
+	std::wstring GetColorName() { return color_name_; }
 
 private:
 	void DrawColorBlock(HDC hdc, const ui::UiRect &rect);
@@ -23,6 +24,7 @@ private:
 	HBRUSH select_rect_brush_;
 	HPEN select_rect_pen_;
 	DWORD color_;
+	std::wstring color_name_;
 };
 
 // »­Ë¢¿é
@@ -52,13 +54,15 @@ public:
 	CColorPalette();
 	virtual ~CColorPalette();
 	ui::Box* CreateColorPaletteUI(ui::CreateControlCallback callback, bool visible = true);
-	void ShowRange(bool show);
+	void ShowRange(bool show_brush_width, bool show_font_size, bool show_range, bool show_color);
 	void InitChildControls();
 	DWORD GetSelectedColorRGB();
+	std::wstring GetSelectedColorName();
 	int GetSelectedBrushWidth();
 	int GetSelectedBrushWidth2();
 	int GetRangePos();
 	int GetToolbarHeight();
+	int GetSelectedFontIndex();
 
 private:
 	bool OnClick(ui::EventArgs* param);
@@ -68,5 +72,7 @@ private:
 	int selected_brush_width_;
 	int selected_brush_width2_;
 	DWORD color_;
+	std::wstring color_name_;
+	ui::Combo* font_size_combo_;
 };
 #endif  // _NIM_GUI_CAPTURE_FORM_UI_COLOR_PALETTE_H_

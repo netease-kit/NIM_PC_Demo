@@ -57,18 +57,18 @@
             </Box>
             
             <HBox name="volumn_page" height="40" valign="bottom" bkimage="file='hbox_bottom.png' corner='15,15,15,15'">                
-                    <Button name="microphone" width="28" height="28" margin="5,0,0,0" valign="center" tooltiptext="麦克风" enabled="false"/>
-                    <Button name="speaker" width="28" height="28" margin="5,0,0,0" valign="center" tooltiptext="音量" enabled="false"/>
+                    <Button name="microphone" width="28" height="28" margin="5,0,0,0" valign="center" tooltiptextid="STRID_VIDEO_MICROPHONE" enabled="false"/>
+                    <Button name="speaker" width="28" height="28" margin="5,0,0,0" valign="center" tooltiptextid="STRID_VIDEO_VOLUME" enabled="false"/>
                     <CheckBox name="camera" width="28" height="28" margin="5,0,0,0" valign="center" enabled="false"/>
-                    <Button class="Record1" name="record_start" width="28" height="28" margin="5,0,0,0" tooltiptext="开始录制" valign="center" visible="false" />
-                    <Button class="Record2" name="record_stop" width="28" height="28" margin="5,0,0,0" tooltiptext="结束录制" valign="center" visible="false"/>
-                    <Button class="Face1" name="face_open" width="28" height="28" margin="5,0,0,0" tooltiptext="打开美颜" valign="center" visible="false"/>
-                    <Button class="Face2" name="face_close" width="28" height="28" margin="5,0,0,0" tooltiptext="关闭美颜" valign="center" visible="false"/>
+                    <Button class="Record1" name="record_start" width="28" height="28" margin="5,0,0,0" tooltiptextid="STRID_VIDEO_BEGIN_RECORD" valign="center" visible="false" />
+                    <Button class="Record2" name="record_stop" width="28" height="28" margin="5,0,0,0" tooltiptextid="STRID_VIDEO_END_RECORD" valign="center" visible="false"/>
+                    <Button class="Face1" name="face_open" width="28" height="28" margin="5,0,0,0" tooltiptextid="STRID_VIDEO_OPEN_FACIAL" valign="center" visible="false"/>
+                    <Button class="Face2" name="face_close" width="28" height="28" margin="5,0,0,0" tooltiptextid="STRID_VIDEO_CLOSE_FACIAL" valign="center" visible="false"/>
 
                     <Button name="into_video" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_VIDEO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
                     <Button name="into_audio" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_AUDIO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
 					
-                    <Button name="rotate" margin="10,0,0,0" valign="center" visible="false" tooltiptext="旋转开关" text="旋转开关" normaltextcolor="white" font="1" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
+                    <Button name="rotate" margin="10,0,0,0" valign="center" visible="false" tooltiptextid="STRID_VIDEO_ROTATE_SWITCH" textid="STRID_VIDEO_ROTATE_SWITCH" normaltextcolor="white" font="1" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
 
                     <Control />
                     <Label name="time_tick" normaltextcolor="white" font="1" valign="center" visible="false"/>
@@ -79,7 +79,7 @@
                 <Control />
                 <Button name="complete" font="3" normaltextcolor="white" normalimage="confirm_ok0.png" hotimage="confirm_ok1.png" pushedimage="confirm_ok2.png"/>
                 <Control width="10"/>
-                <Button name="refuse" font="3" normaltextcolor="white" textid="STRID_VIDEO_INVITE_REFUSE" normalimage="confirm_no0.png" hotimage="confirm_no1.png" pushedimage="confirm_no2.png"/>
+                <Button name="refuse" font="3" normaltextcolor="white" textid="STRING_REFUSE" normalimage="confirm_no0.png" hotimage="confirm_no1.png" pushedimage="confirm_no2.png"/>
                 <Control />
             </HBox>
 
@@ -96,7 +96,7 @@
             <Label name="netstat" width="200" height="32" margin="130,0,0,36" valign="bottom" bkimage="file='netstat.png' corner='30,10,10,10'" textpadding="10,4,0,0" font="2" normaltextcolor="obvious_tip" textid="STRID_VIDEO_TIP_NETSTAT_BAD"/>
             <HBox name="hbox_camera_fail" width="158" height="32" margin="70,0,0,36" valign="bottom" bkimage="file='netstat.png' corner='30,10,10,10'">
                 <Label margin="10,4,0,0" font="2" normaltextcolor="obvious_tip" textid="STRID_VIDEO_TIP_START_VIDEO_FAIL"/>
-                <Button name="go_setting" margin="3,4,0,0" normaltextcolor="link_green" cursortype="hand" font="26" text="设置"/>
+                <Button name="go_setting" margin="3,4,0,0" normaltextcolor="link_green" cursortype="hand" font="26" textid="STRID_VIDEO_SETTING"/>
             </HBox>
             <Box name="vbox_video_audio_tip" width="auto" height="38" margin="0,0,0,60" halign="center" valign="bottom" visible="false" bkimage="status_tip.png">
                 <Label name="label_of_tip" margin="5,0,5,0" valign="center" font="2" normaltextcolor="white"/>

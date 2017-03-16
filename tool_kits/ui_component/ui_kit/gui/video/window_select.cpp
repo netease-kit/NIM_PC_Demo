@@ -118,10 +118,10 @@ void WindowSelectForm::RefreshWndlist()
 	ScreenCapture::GetCaptureWindowList(&wnd_list);
 	CaptureWindowInfo dest_info;
 	dest_info.id = 0;
-	dest_info.title = L"桌面区域取屏";
+	dest_info.title = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_WND_SELECT_AREA_CLIP");
 	wnd_list.insert(wnd_list.begin(), dest_info);
 	dest_info.id = GetDesktopWindow();
-	dest_info.title = L"全屏桌面";
+	dest_info.title = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_WND_SELECT_FULL_SCREEN");
 	wnd_list.insert(wnd_list.begin(), dest_info);
 	for (auto& it : wnd_list)
 	{

@@ -48,7 +48,6 @@ void CustomMsgForm::InitWindow()
 	if (nim_ui::UserConfig::GetInstance()->GetDefaultIcon() > 0)
 		SetIcon(nim_ui::UserConfig::GetInstance()->GetDefaultIcon());
 
-	SetTaskbarTitle(L"自定义消息通知");
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&CustomMsgForm::OnClicked, this, std::placeholders::_1));
 
 	richedit_apns_ = (RichEdit*)FindControl(L"re_apns");
@@ -92,7 +91,7 @@ void CustomMsgForm::SetSession(const std::string& id, nim::NIMSessionType type, 
 	}
 	session_id_ = id;
 	session_type_ = type;
-	std::wstring show_text = nbase::StringPrintf(L"发送给 %s", name.c_str());
+	std::wstring show_text = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_CUSTOM_MSG_SEND_TO").c_str(), name.c_str());
 	rec_name_->SetText(show_text.c_str());
 }
 }

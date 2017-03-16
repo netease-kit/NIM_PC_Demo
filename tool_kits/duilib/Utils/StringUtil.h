@@ -15,7 +15,6 @@ public:
 	// replace all 'find' with 'replace' in the string
 	static size_t ReplaceAll(const std::wstring& find, const std::wstring& replace, std::wstring& output);
 
-
 	static std::wstring MakeLowerString(const std::wstring &str);
 	static std::wstring MakeUpperString(const std::wstring &str);
 
@@ -23,7 +22,6 @@ public:
 	static bool MBCSToUnicode(const std::string &input, std::wstring& output, int code_page = CP_ACP);
 	static bool UnicodeToMBCS(const wchar_t *input, std::string &output, int code_page = CP_ACP);
 	static bool UnicodeToMBCS(const std::wstring& input, std::string &output, int code_page = CP_ACP);
-
 
 	// trimming, removing extra spaces
 	static std::string TrimLeft(const char *input);
@@ -39,12 +37,9 @@ public:
 	static std::wstring& TrimRight(std::wstring &input);
 	static std::wstring& Trim(std::wstring &input); /* both left and right */
 
-
-
 	// find all tokens splitted by one of the characters in 'delimitor'
 	static std::list<std::string> Split(const std::string& input, const std::string& delimitor);
 	static std::list<std::wstring> Split(const std::wstring& input, const std::wstring& delimitor);
-
 };
 
 }

@@ -132,6 +132,7 @@ bool RtsForm::Notify(ui::EventArgs* msg)
 	{
 		if (talking_)
 		{
+			MutiLanSupport* mls = MutiLanSupport::GetInstance();
 			if (msg->Type == kEventSelect)
 			{
 				InitMic();
@@ -190,19 +191,20 @@ bool RtsForm::OnClicked(ui::EventArgs* arg)
 	{
 		if (talking_)
 		{
+			MutiLanSupport* mls = MutiLanSupport::GetInstance();
 			switch (show_type_)
 			{
 			case ShowOpAll:
 				show_type_ = ShowOpMine;
-				((Button*)(arg->pSender))->SetText(L"显示自己");
+				((Button*)(arg->pSender))->SetText(mls->GetStringViaID(L"STRID_RTS_SHOW_MINE"));
 				break;
 			case ShowOpMine:
 				show_type_ = ShowOpOther;
-				((Button*)(arg->pSender))->SetText(L"显示对方");
+				((Button*)(arg->pSender))->SetText(mls->GetStringViaID(L"STRID_RTS_SHOW_OTHERS"));
 				break;
 			case ShowOpOther:
 				show_type_ = ShowOpAll;
-				((Button*)(arg->pSender))->SetText(L"显示全部");
+				((Button*)(arg->pSender))->SetText(mls->GetStringViaID(L"STRID_RTS_SHOW_ALL"));
 				break;
 			}
 			board_->SetShowType(show_type_);
@@ -229,12 +231,12 @@ void RtsForm::OnAckCallback(nim::NIMResCode res_code, const std::string& session
 	{
 		if (res_code == nim::kNIMResSuccess)
 		{
-			ShowTip(L"正在连接");
+			ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_CONNECTING"));
 			ShowBoardUI();
 		} 
 		else
 		{
-			ShowTip(L"接受失败");
+			ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_ACK_FAIL"));
 			DelayClose();
 		}
 	}
@@ -245,12 +247,12 @@ void RtsForm::OnAckNotifyCallback(const std::string& session_id, int channel_typ
 	{
 		if (accept)
 		{
-			ShowTip(L"正在连接");
+			ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_CONNECTING"));
 			ShowBoardUI();
 		} 
 		else
 		{
-			ShowTip(L"对方拒绝");
+			ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_OTHER_REJECT"));
 			DelayClose();
 		}
 	}
@@ -261,11 +263,11 @@ void RtsForm::OnSyncAckNotifyCallback(const std::string& session_id, int channel
 	{
 		if (accept)
 		{
-			ShowTip(L"已在其他端接受");
+			ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_OTHER_CLIENT_ACK"));
 		} 
 		else
 		{
-			ShowTip(L"已在其他端拒绝");
+			ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_OTHER_CLIENT_REJECT"));
 		}
 		DelayClose();
 	}
@@ -278,12 +280,12 @@ void RtsForm::OnConnectNotifyCallback(const std::string& session_id, int channel
 		{
 			if (code == nim::kNIMRtsConnectStatusSuccess)
 			{
-				ShowTip(L"链接成功，等待对方进入");
+				ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_OTHER_CONNECT_OK"));
 				talking_ = true;
 			}
 			else
 			{
-				ShowTip(L"链接失败");
+				ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_OTHER_CONNECT_FAIL"));
 				DelayClose();
 			}
 		}
@@ -302,11 +304,11 @@ void RtsForm::OnMemberNotifyCallback(const std::string& session_id, int channel_
 		case nim::kNIMRtsChannelTypeTcp:
 			if (code == nim::kNIMRtsMemberStatusJoined)
 			{
-				ShowTip(L"正在会话");
+				ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_OTHER_SESSION_ON"));
 			}
 			else
 			{
-				ShowTip(L"对方离开");
+				ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_OTHER_OTHER_LEAVE"));
 				DelayClose();
 			}
 			break;
@@ -325,7 +327,7 @@ void RtsForm::OnHangupNotifyCallback(const std::string& session_id, const std::s
 {
 	if (session_id == session_id_)
 	{
-		ShowTip(L"对方挂断");
+		ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_OTHER_OTHER_HANG_UP"));
 		DelayClose();
 	}
 }
@@ -346,11 +348,11 @@ void RtsForm::ShowStartUI(bool creater)
 	need_ack_ = !creater;
 	if (creater)
 	{
-		ShowTip(L"正在邀请对方，请稍后");
+		ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_INVITING_OTHER"));
 	} 
 	else
 	{
-		ShowTip(L"邀请你加入白板");
+		ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_INVITING_YOU"));
 		show_endmsg_ = true;
 	}
 	Control* accept = FindControl(L"btn_accept");
@@ -365,7 +367,7 @@ void RtsForm::ShowStartUI(bool creater)
 		bool data_record = atoi(GetConfigValue("rts_record").c_str()) > 0;
 		bool audio_record = atoi(GetConfigValue("audio_record").c_str()) > 0;
 		nim::Rts::StartChannelCallback cb = nbase::Bind(&RtsForm::OnStartRtsCb, this, session_id_, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
-		nim::Rts::StartChannel(type_, uid_, nbase::UTF16ToUTF8(L"白板通话邀请test"), "rts custom info", data_record, audio_record, cb);
+		nim::Rts::StartChannel(type_, uid_, nbase::UTF16ToUTF8(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_INVITE_TEST")), "rts custom info", data_record, audio_record, cb);
 	}
 	auto closure = nbase::Bind(&RtsForm::NoActiveTimer, this);
 	nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(40));
@@ -380,7 +382,7 @@ void RtsForm::StartResult(nim::NIMResCode code, std::string session_id)
 	} 
 	else
 	{
-		ShowTip(L"发起失败");
+		ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_START_FAIL"));
 		DelayClose();
 	}
 }
@@ -398,7 +400,7 @@ void RtsForm::ShowHeader()
 	Label* friend_name = (Label*)FindControl(L"friend_name");
 	friend_name->SetText(name);
 
-	std::wstring title_text = L"与" + name + L"的白板";
+	std::wstring title_text = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_RTS_WITH").c_str(), name.c_str());
 	SetTaskbarTitle(title_text);
 	Label* title = (Label*)FindControl(L"title");
 	title->SetText(title_text);
@@ -420,7 +422,7 @@ void RtsForm::NoActiveTimer()
 {
 	if (!talking_)
 	{
-		ShowTip(L"等待超时");
+		ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_TIMEOUT"));
 		DelayClose();
 	}
 }
@@ -504,7 +506,7 @@ void RtsForm::OnBtnClose()
 	if (!closing_)
 	{
 		MsgboxCallback mb = nbase::Bind(&RtsForm::OnQuitMsgBox, this, std::placeholders::_1);
-		ShowMsgBox(m_hWnd, L"退出后，你将不再接收白板演示的消息内容", mb, L"退出白板提示", L"确定", L"取消");
+		ShowMsgBox(m_hWnd, mb, L"STRID_RTS_QUIT_TIP", true, L"STRID_RTS_QUIT_TIP_TITLE", true, L"STRING_OK", true, L"STRING_NO", true);
 	} 
 	else
 	{
@@ -553,7 +555,7 @@ void RtsForm::SendCreateMsg()
 	json["type"] = CustomMsgType_Rts;
 	json["data"]["flag"] = 0;
 
-	msg.content_ = nbase::UTF16ToUTF8(L"白板");
+	msg.content_ = nbase::UTF16ToUTF8(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_RTS"));
 	msg.attach_ = writer.write(json);
 
 	nim::Talk::SendMsg(msg.ToJsonString(true));
@@ -580,7 +582,7 @@ void RtsForm::ShowEndMsg()
 	json["type"] = CustomMsgType_Rts;
 	json["data"]["flag"] = 1;
 
-	msg.content_ = nbase::UTF16ToUTF8(L"白板");
+	msg.content_ = nbase::UTF16ToUTF8(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_RTS"));
 	msg.attach_ = writer.write(json);
 
 	nim::MsgLog::WriteMsglogToLocalAsync(uid_, msg, false, nim::MsgLog::WriteMsglogCallback());
@@ -596,7 +598,7 @@ void RtsForm::OnControlNotify(const std::string& session_id, const std::string& 
 	std::wstring name = UserService::GetInstance()->GetUserName(uid);
 	if (name.empty())
 		name = nbase::UTF8ToUTF16(uid);
-	ctrl_notify_->SetText(name + L":" + nbase::UTF8ToUTF16(text));
+	ctrl_notify_->SetText(name + L": " + nbase::UTF8ToUTF16(text));
 	ctrl_notify_->SetVisible(true);
 	auto closure = nbase::Bind(&RtsForm::HideCtrlNotifyTip, this);
 	nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(3));

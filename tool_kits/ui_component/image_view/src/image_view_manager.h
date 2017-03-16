@@ -34,6 +34,9 @@ public:
 	bool IsExistNextImage(bool next);
 	void GetImagePage(long& cur, long& sum);
 
+	//图片准备好了
+	void OnImageReady(std::wstring &path_pic, bool size);
+
 private:
 	ImageViewForm *image_view_window_;
 	std::wstring   message_id_;

@@ -15,9 +15,15 @@ class STRINGorID
 {
 public:
 	STRINGorID(LPCTSTR lpString) : m_lpstr(lpString)
-	{ }
+	{
+	
+	}
+
 	STRINGorID(UINT nID) : m_lpstr(MAKEINTRESOURCE(nID))
-	{ }
+	{
+	
+	}
+
 	LPCTSTR m_lpstr;
 };
 
@@ -50,13 +56,13 @@ public:
 		y = GET_Y_LPARAM(lParam);
 	}
 
-	inline void Offset(int offsetX, int offsetY)
+	void Offset(int offsetX, int offsetY)
 	{
 		x += offsetX;
 		y += offsetY;
 	}
 
-	inline void Offset(CPoint offsetPoint)
+	void Offset(CPoint offsetPoint)
 	{
 		x += offsetPoint.x;
 		y += offsetPoint.y;
@@ -86,13 +92,13 @@ public:
 		cy = _cy;
 	}
 
-	inline void Offset(int offsetCX, int offsetCY)
+	void Offset(int offsetCX, int offsetCY)
 	{
 		cx += offsetCX;
 		cy += offsetCY;
 	}
 
-	inline void Offset(CSize offsetPoint)
+	void Offset(CSize offsetPoint)
 	{
 		cx += offsetPoint.cx;
 		cy += offsetPoint.cy;
@@ -105,12 +111,12 @@ public:
 class UILIB_API UiRect : public tagRECT
 {
 public:
-	inline UiRect()
+	UiRect()
 	{
 		left = top = right = bottom = 0;
 	}
 
-	inline UiRect(const RECT& src)
+	UiRect(const RECT& src)
 	{
 		left = src.left;
 		top = src.top;
@@ -118,7 +124,7 @@ public:
 		bottom = src.bottom;
 	}
 
-	inline UiRect(int iLeft, int iTop, int iRight, int iBottom)
+	UiRect(int iLeft, int iTop, int iRight, int iBottom)
 	{
 		left = iLeft;
 		top = iTop;
@@ -126,53 +132,53 @@ public:
 		bottom = iBottom;
 	}
 
-	inline int GetWidth() const
+	int GetWidth() const
 	{
 		return right - left;
 	}
 
-	inline int GetHeight() const
+	int GetHeight() const
 	{
 		return bottom - top;
 	}
 
-	inline void Clear()
+	void Clear()
 	{
 		left = top = right = bottom = 0;
 	}
 
-	inline bool IsRectEmpty() const
+	bool IsRectEmpty() const
 	{
 		return ::IsRectEmpty(this) == TRUE; 
 	}
 
-	inline void ResetOffset()
+	void ResetOffset()
 	{
 		::OffsetRect(this, -left, -top);
 	}
 
-	inline void Normalize()
+	void Normalize()
 	{
 		if( left > right ) { int iTemp = left; left = right; right = iTemp; }
 		if( top > bottom ) { int iTemp = top; top = bottom; bottom = iTemp; }
 	}
 
-	inline void Offset(int cx, int cy)
+	void Offset(int cx, int cy)
 	{
 		::OffsetRect(this, cx, cy);
 	}
 
-	inline void Offset(const CPoint& offset)
+	void Offset(const CPoint& offset)
 	{
 		::OffsetRect(this, offset.x, offset.y);
 	}
 
-	inline void Inflate(int cx, int cy)
+	void Inflate(int cx, int cy)
 	{
 		::InflateRect(this, cx, cy);
 	}
 
-	inline void Inflate(const UiRect& rect)
+	void Inflate(const UiRect& rect)
 	{
 		this->left -= rect.left;
 		this->top -= rect.top;
@@ -180,12 +186,12 @@ public:
 		this->bottom += rect.bottom;
 	}
 
-	inline void Deflate(int cx, int cy)
+	void Deflate(int cx, int cy)
 	{
 		::InflateRect(this, -cx, -cy);
 	}
 
-	inline void Deflate(const UiRect& rect)
+	void Deflate(const UiRect& rect)
 	{
 		this->left += rect.left;
 		this->top += rect.top;
@@ -193,27 +199,27 @@ public:
 		this->bottom -= rect.bottom;
 	}
 
-	inline void Union(const UiRect& rc)
+	void Union(const UiRect& rc)
 	{
 		::UnionRect(this, this, &rc);
 	}
 
-	inline void Intersect(const UiRect& rc)
+	void Intersect(const UiRect& rc)
 	{
 		::IntersectRect(this, this, &rc);
 	}
 
-	inline void Subtract(const UiRect& rc)
+	void Subtract(const UiRect& rc)
 	{
 		::SubtractRect(this, this, &rc);
 	}
 
-	inline bool IsPointIn(const CPoint& point) const
+	bool IsPointIn(const CPoint& point) const
 	{
 		return ::PtInRect(this, point) == TRUE;
 	}
 
-	inline bool Equal(const UiRect& rect) const
+	bool Equal(const UiRect& rect) const
 	{
 		return this->left == rect.left && this->top == rect.top 
 			&& this->right == rect.right && this->bottom == rect.bottom;
@@ -230,24 +236,28 @@ public:
 	{ 
 		VariantInit(this); 
 	}
+
 	CVariant(int i)
 	{
 		VariantInit(this);
 		this->vt = VT_I4;
 		this->intVal = i;
 	}
+
 	CVariant(float f)
 	{
 		VariantInit(this);
 		this->vt = VT_R4;
 		this->fltVal = f;
 	}
+
 	CVariant(LPOLESTR s)
 	{
 		VariantInit(this);
 		this->vt = VT_BSTR;
 		this->bstrVal = s;
 	}
+
 	CVariant(IDispatch *disp)
 	{
 		VariantInit(this);
@@ -261,25 +271,17 @@ public:
 	}
 };
 
-
-
-
-
 class PathUtil
 {
 public:
 	static std::wstring GetCurrentModuleDir()
 	{
-		std::wstring moduleFilePath;
-		moduleFilePath.resize(MAX_PATH);
-		::GetModuleFileNameW(::GetModuleHandle(NULL), &moduleFilePath[0], (DWORD)moduleFilePath.length());
-		return moduleFilePath.substr(0, moduleFilePath.find_last_of(L"\\") + 1);
+		std::wstring strModulePath;
+		strModulePath.resize(MAX_PATH);
+		::GetModuleFileNameW(::GetModuleHandle(NULL), &strModulePath[0], (DWORD)strModulePath.length());
+		return strModulePath.substr(0, strModulePath.find_last_of(L"\\") + 1);
 	}
 };
-
-
-	
-
 
 }// namespace ui
 

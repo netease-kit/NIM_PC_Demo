@@ -210,9 +210,9 @@ void ChatroomFrontpage::CreateRoomItem(const ChatRoomInfo& room_info)
 		room_name_label->SetUTF8Text(room_info.name_);
 		ui::Label* online_count_label = (ui::Label*)room_item->FindSubControl(L"online_num");
 		if(room_info.online_count_ >= 10000)
-			online_count_label->SetText(nbase::StringPrintf(L"在线人数：%.1f万人", (float)room_info.online_count_ / (float)10000));
+			online_count_label->SetText(nbase::StringPrintf(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_CHATROOM_ONLINE_NUM_EX2").c_str(), (float)room_info.online_count_ / (float)10000));
 		else
-			online_count_label->SetText(nbase::StringPrintf(L"在线人数：%d人", room_info.online_count_));
+			online_count_label->SetText(nbase::StringPrintf(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_CHATROOM_ONLINE_NUM_EX1").c_str(), room_info.online_count_));
 
 		ui::Button* room_shot = (ui::Button*)room_item->FindSubControl(L"room_shot");
 		room_shot->SetDataID(nbase::Int64ToString16(room_info.id_));

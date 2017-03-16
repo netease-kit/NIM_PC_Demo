@@ -48,7 +48,6 @@ UINT LoginForm::GetClassStyle() const
 void LoginForm::InitWindow()
 {
 	SetIcon(IDI_ICON);
-	SetTaskbarTitle(L"登录");
 	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&LoginForm::Notify, this, std::placeholders::_1));
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&LoginForm::OnClicked, this, std::placeholders::_1));
 
@@ -73,18 +72,19 @@ void LoginForm::InitWindow()
 	std::wstring account = QCommand::Get(kCmdAccount);
 	user_name_edit_->SetText(account);
 
+	MutiLanSupport* multilan = MutiLanSupport::GetInstance();
 	std::wstring why = QCommand::Get(kCmdExitWhy);
 	if( !why.empty() )
 	{
 		int reason = _wtoi( why.c_str() );
 		if (reason == nim::kNIMLogoutKickout)
-			ShowLoginTip(L"你已被踢出");
+			ShowLoginTip(multilan->GetStringViaID(L"STRID_LOGIN_FORM_TIP_KICKED"));
 		else if (reason == nim::kNIMLogoutRelogin)
-			ShowLoginTip(L"网络连接已断开");
+			ShowLoginTip(multilan->GetStringViaID(L"STRID_LOGIN_FORM_TIP_NETWAORK_DISCONNECTED"));
 		else if (reason == nim::kNIMResExist)
-			ShowLoginTip(L"你在其他设备上登录过，请重新登录");
+			ShowLoginTip(multilan->GetStringViaID(L"STRID_LOGIN_FORM_TIP_LOCATION_CHANGED"));
 		else
-			ShowLoginTip(nbase::StringPrintf(L"登录失败，错误码：%d", reason));
+			ShowLoginTip(nbase::StringPrintf(multilan->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ERROR_CODE").c_str(), reason));
 
 		QCommand::Erase(kCmdExitWhy);
 	}
@@ -93,34 +93,36 @@ void LoginForm::InitWindow()
 	nick_name_edit_->SetLimitText(64);
 	password_edit_->SetLimitText(128);
 	((ui::Button*)FindControl(L"register_account"))->AttachClick([this](ui::EventArgs* msg) {
-		SetTaskbarTitle(L"注册");
+		MutiLanSupport* multilan = MutiLanSupport::GetInstance();
+		SetTaskbarTitle(multilan->GetStringViaID(L"STRID_LOGIN_FORM_REGISTER"));
 		FindControl(L"enter_panel")->SetBkImage(L"user_password_nickname.png");
 		msg->pSender->GetWindow()->FindControl(L"nick_name_panel")->SetVisible();
 		msg->pSender->GetWindow()->FindControl(L"enter_login")->SetVisible();
 		btn_register_->SetVisible();
 		btn_login_->SetVisible(false);
 		user_name_edit_->SetText(L"");
-		user_name_edit_->SetPromptText(L"帐号限32位字母或数字");
+		user_name_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ACCOUNT_RESTRICT"));
 		usericon_->SetEnabled(true);
 		password_edit_->SetText(L"");
-		password_edit_->SetPromptText(L"密码限6~128位字母或数字");
+		password_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_TIP_PASSWORD_RESTRICT"));
 		passwordicon_->SetEnabled(true);
 		nick_name_edit_->SetText(L"");
-		nick_name_edit_->SetPromptText(L"昵称为汉字、字母或数字的组合");
+		nick_name_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_TIP_NICKNAME_RESTRICT"));
 		msg->pSender->GetWindow()->FindControl(L"register_account")->SetVisible(false);
 		return true; });
 
 	((ui::Button*)FindControl(L"enter_login"))->AttachClick([this](ui::EventArgs* msg) {
-		SetTaskbarTitle(L"登录");
+		MutiLanSupport* multilan = MutiLanSupport::GetInstance();
+		SetTaskbarTitle(multilan->GetStringViaID(L"STRID_LOGIN_FORM_LOGIN"));
 		FindControl(L"enter_panel")->SetBkImage(L"user_password.png");
 		msg->pSender->GetWindow()->FindControl(L"nick_name_panel")->SetVisible(false);
 		msg->pSender->GetWindow()->FindControl(L"enter_login")->SetVisible(false);
 		btn_register_->SetVisible(false);
 		btn_login_->SetVisible();
 		user_name_edit_->SetText(L"");
-		user_name_edit_->SetPromptText(L"帐号");
+		user_name_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_ACCOUNT"));
 		password_edit_->SetText(L"");
-		password_edit_->SetPromptText(L"密码");
+		password_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_PASSWORD"));
 		msg->pSender->GetWindow()->FindControl(L"register_account")->SetVisible(true);
 		return true; });
 
@@ -166,7 +168,8 @@ bool LoginForm::Notify( ui::EventArgs* msg )
 
 			if (has_chinise)
 			{
-				ShowLoginTip(L"密码不能含有中文字符");
+				MutiLanSupport* multilan = MutiLanSupport::GetInstance();
+				ShowLoginTip(multilan->GetStringViaID(L"STRID_LOGIN_FORM_TIP_PASSWORD_RESTRICT2"));
 				passwordicon_->SetEnabled(false);
 			}
 			else 

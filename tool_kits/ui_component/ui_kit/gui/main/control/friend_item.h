@@ -37,6 +37,12 @@ public:
 	std::string GetId()	{ return id_; }
 
 	/**
+	* 获取用户名或者群组名
+	* @return string 用户id或者群组id
+	*/
+	std::wstring GetNickName() { return nick_name_; }
+
+	/**
 	* 用昵称、用户名等信息匹配搜索关键字
 	* @param[in] search_key 关键字
 	* @return bool true 匹配成功，false 匹配失败

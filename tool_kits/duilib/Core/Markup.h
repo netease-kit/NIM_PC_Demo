@@ -3,7 +3,8 @@
 
 #pragma once
 
-namespace ui {
+namespace ui 
+{
 
 enum
 {
@@ -12,9 +13,7 @@ enum
     XMLFILE_ENCODING_ASNI = 2,
 };
 
-class CMarkup;
 class CMarkupNode;
-
 
 class UILIB_API CMarkup
 {

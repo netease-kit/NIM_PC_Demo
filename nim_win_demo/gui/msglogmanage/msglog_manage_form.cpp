@@ -67,7 +67,6 @@ LRESULT MsglogManageForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 void MsglogManageForm::InitWindow()
 {
 	SetIcon(IDI_ICON);
-	SetTaskbarTitle(L"消息管理");
 
 	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&MsglogManageForm::Notify, this, std::placeholders::_1));
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&MsglogManageForm::OnClicked, this, std::placeholders::_1));
@@ -98,7 +97,7 @@ bool MsglogManageForm::OnClicked(ui::EventArgs* param)
 		{
 			if (path.empty())
 			{
-				ShowMsgBox(m_hWnd, L"请选择导出路径", MsgboxCallback(), L"提示", L"确定", L"");
+				ShowMsgBox(m_hWnd, MsgboxCallback(), L"STRID_MSGLOG_MANAGE_SELECT_EXPORT_PATH");
 				return true;
 			}
 		}
@@ -106,7 +105,7 @@ bool MsglogManageForm::OnClicked(ui::EventArgs* param)
 		{
 			if (path.empty())
 			{
-				ShowMsgBox(m_hWnd, L"请选择导入文件", MsgboxCallback(), L"提示", L"确定", L"");
+				ShowMsgBox(m_hWnd, MsgboxCallback(), L"STRID_MSGLOG_MANAGE_SELECT_IMPORT_FILE");
 				return true;
 			}
 		}
@@ -151,15 +150,16 @@ bool MsglogManageForm::SetType(bool export_or_import)
 	path_box_->SetEnabled(true);
 	prg_box_->SetVisible(false);
 	progress_text_->SetText(L"");
+	MutiLanSupport* multilan = MutiLanSupport::GetInstance();
 	if (export_or_import_)
 	{
-		tip_text_->SetText(L"导出消息记录");
-		btn_run_->SetText(L"导出");
+		tip_text_->SetText(multilan->GetStringViaID(L"STRID_MSGLOG_MANAGE_EXPORT_MSGLOG"));
+		btn_run_->SetText(multilan->GetStringViaID(L"STRID_MSGLOG_MANAGE_EXPORT"));
 	}
 	else
 	{
-		tip_text_->SetText(L"导入消息记录");
-		btn_run_->SetText(L"导入");
+		tip_text_->SetText(multilan->GetStringViaID(L"STRID_MSGLOG_MANAGE_IMPORT_MSGLOG"));
+		btn_run_->SetText(multilan->GetStringViaID(L"STRID_MSGLOG_MANAGE_IMPORT"));
 	}
 	path_edit_->SetText(L"");
 	btn_run_->SetEnabled(true);
@@ -169,7 +169,7 @@ bool MsglogManageForm::SetType(bool export_or_import)
 void MsglogManageForm::SelectPath()
 {
 	open_file_ = true;
-	std::wstring file_type = L"文件格式";
+	std::wstring file_type = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOG_MANAGE_FORMAT");
 	std::wstring text = nbase::StringPrintf(L"%s(*.db)", file_type.c_str());
 	std::wstring file_exten = L".db";
 	std::wstring file_name;
@@ -206,7 +206,7 @@ void MsglogManageForm::OnSelectPathCallback(BOOL ret, std::wstring file_path)
 void MsglogManageForm::Export(const std::string& path)
 {
 	SetDbStatus(true);
-	result_text_->SetText(L"正在导出");
+	result_text_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOG_MANAGE_EXPORTING"));
 	nim::MsgLog::ExportDbAsync(path, nbase::Bind(&MsglogManageForm::OnExportCompeleteCallback, this, std::placeholders::_1));
 }
 
@@ -215,13 +215,13 @@ void MsglogManageForm::OnExportCompeleteCallback(nim::NIMResCode res_code)
 	SetDbStatus(false);
 	if (res_code == nim::kNIMResSuccess)
 	{
-		result_text_->SetText(L"导出完成");
+		result_text_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOG_MANAGE_EXPORT_COMPLETE"));
 		DelayClose();
 	}
 	else
 	{
 		path_box_->SetEnabled(true);
-		result_text_->SetText(L"导出失败");
+		result_text_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOG_MANAGE_EXPORT_FAIL"));
 		btn_run_->SetEnabled(true);
 	}
 }
@@ -229,7 +229,7 @@ void MsglogManageForm::OnExportCompeleteCallback(nim::NIMResCode res_code)
 void MsglogManageForm::Import(const std::string& path)
 {
 	SetDbStatus(true);
-	result_text_->SetText(L"正在导入");
+	result_text_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOG_MANAGE_IMPORTING"));
 	progress_text_->SetText(L"0%");
 	nim::MsgLog::ImportDbAsync(path, nbase::Bind(&MsglogManageForm::OnImportCompeleteCallback, this, std::placeholders::_1), 
 		nbase::Bind(&MsglogManageForm::OnImportProgressCallback, this, std::placeholders::_1, std::placeholders::_2));
@@ -249,7 +249,7 @@ void MsglogManageForm::OnImportCompeleteCallback(nim::NIMResCode res_code)
 	if (res_code == nim::kNIMResSuccess)
 	{
 		OnImportProgressCallback(1, 1);
-		result_text_->SetText(L"导入完成");
+		result_text_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOG_MANAGE_IMPORT_COMPLETE"));
 		nim_ui::SessionListManager::GetInstance()->InvokeLoadSessionList();
 
 		DelayClose();
@@ -257,7 +257,7 @@ void MsglogManageForm::OnImportCompeleteCallback(nim::NIMResCode res_code)
 	else
 	{
 		path_box_->SetEnabled(true);
-		result_text_->SetText(L"导入失败");
+		result_text_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOG_MANAGE_IMPORT_FAIL"));
 		btn_run_->SetEnabled(true);
 	}
 }

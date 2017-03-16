@@ -2,7 +2,7 @@
 <Window size="500,600" mininfo="500,600" caption="0,0,0,34" sizebox="4,4,4,4">
     <VBox bkcolor="bk_wnd_lightcolor">
         <HBox class="caption">
-            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" text="消息记录"/>
+            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" textid="STRID_MSG_RECORD_TITLE"/>
             <Button class="btn_wnd_min" name="minbtn" margin="10,6,0,0"/>
             <Button class="btn_wnd_max" name="btn_max_restore" margin="10,6,0,0"/>
             <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>

@@ -501,6 +501,9 @@
     <ClInclude Include="module\session\force_push_manager.h">
       <Filter>module\session</Filter>
     </ClInclude>
+    <ClInclude Include="gui\video\record_select.h">
+      <Filter>gui\video</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -874,6 +877,9 @@
     </ClCompile>
     <ClCompile Include="module\session\force_push_manager.cpp">
       <Filter>module\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\record_select.cpp">
+      <Filter>gui\video</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

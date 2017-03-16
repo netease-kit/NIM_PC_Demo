@@ -26,7 +26,7 @@ LRESULT CALLBACK DragForm::LowLevelMouseProc(int nCode, WPARAM wParam, LPARAM lP
 					//WS_EX_TOPMOST--WS_EX_TRANSPARENT--WS_EX_PALETTEWINDOW--WS_EX_LAYERED--WS_EX_TOOLWINDOW
 
 					ui::UiRect rc(pMouseStruct->pt.x - s_point_offset.x, pMouseStruct->pt.y - s_point_offset.y, 0, 0);
-					s_drag_form->SetPos(rc, SWP_NOSIZE);
+					s_drag_form->SetPos(rc, false, SWP_NOSIZE);
 				}
 			}
 		}
@@ -78,7 +78,7 @@ DragForm* DragForm::CreateDragForm(HBITMAP bitmap, POINT pt_offset)
 	rect.top = pt.y - pt_offset.y;
 	rect.right = rect.left + bitmap_info.bmWidth;
 	rect.bottom = rect.top + bitmap_info.bmHeight;
-	drag_form->SetPos(rect, SWP_SHOWWINDOW);
+	drag_form->SetPos(rect, false, SWP_SHOWWINDOW);
 
 	return drag_form;
 }

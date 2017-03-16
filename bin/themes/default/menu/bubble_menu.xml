@@ -2,23 +2,23 @@
 <Window>
     <VListBox class="menu">
         <MenuElement class="MenuElement" name="copy" width="170">
-            <Label class="menu_text" text="复制"/>
+            <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_COPY"/>
         </MenuElement>
 
         <MenuElement class="MenuElement" name="delete" width="170">
-            <Label class="menu_text" text="删除"/>
+            <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_DELETE"/>
         </MenuElement>
 
         <MenuElement class="MenuElement" name="transform" width="170">
-            <Label class="menu_text" text="转文字"/>
+            <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_TRANS"/>
         </MenuElement>
 		
         <MenuElement class="MenuElement" name="recall" width="170">
-            <Label class="menu_text" text="撤回"/>
+            <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_RECALL"/>
         </MenuElement>
 		
         <MenuElement class="MenuElement" name="retweet" width="170">
-            <Label class="menu_text" text="转发"/>
+            <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_RETWEET"/>
         </MenuElement>
     </VListBox>
 </Window>

@@ -1,13 +1,15 @@
 #include "main.h"
 #include "resource.h"
-#include "gui/login/login_form.h"
-#include "gui/main/main_form.h"
 #include "app_dump.h"
 #include "base/util/at_exit.h"
-#include "shared/xml_util.h"
 #include "base/util/string_number_conversions.h"
+#include "shared/xml_util.h"
+#include "gui/login/login_form.h"
+#include "gui/main/main_form.h"
 #include "callback/chatroom_callback.h"
+#include "module/config/config_helper.h"
 #include "cef/cef_module/cef_manager.h"
+#include "duilib/Utils/MultiLangSupport.h"
 
 void MainThread::Init()
 {
@@ -15,7 +17,9 @@ void MainThread::Init()
 	PreMessageLoop();
 
 	std::wstring theme_dir = QPath::GetAppPath();
-	ui::GlobalManager::Startup(theme_dir + L"themes\\default", ui::CreateControlCallback());
+	bool adapt_api = ConfigHelper::GetInstance()->IsAdaptDpi();
+	std::wstring language = nbase::UTF8ToUTF16(ConfigHelper::GetInstance()->GetLanguage());
+	ui::GlobalManager::Startup(theme_dir + L"themes\\default", ui::CreateControlCallback(), adapt_api, language);
 
 	nim_ui::UserConfig::GetInstance()->SetDefaultIcon(IDI_ICON);
 
@@ -26,11 +30,9 @@ void MainThread::Init()
 	}
 	else
 	{
-		std::wstring content(L"程序崩溃了，崩溃日志：");
-		content.append(app_crash);
-
+		std::wstring content = nbase::StringPrintf(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_APP_DUMP_DUMP_TIP").c_str(), app_crash.c_str());
 		MsgboxCallback cb = nbase::Bind(&MainThread::OnMsgBoxCallback, this, std::placeholders::_1);
-		ShowMsgBox(NULL, content, cb, L"提示", L"打开", L"取消");
+		ShowMsgBox(NULL, cb, content, false, L"STRING_TIPS", true, L"STRID_APP_DUMP_OPEN", true, L"STRING_NO", true);
 	}
 }
 
@@ -181,7 +183,7 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, in
 	::SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);
 
 	//初始化cef
-	if (!nim_cef::CefManager::GetInstance()->Initialize(true))
+	if (!nim_cef::CefManager::GetInstance()->Initialize(atoi(GetConfigValue("cef_osr_enabled").c_str()) > 0))
 		return 0;
 
 	QCommand::ParseCommand(lpszCmdLine);

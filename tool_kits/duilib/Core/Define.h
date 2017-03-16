@@ -3,7 +3,6 @@
 
 #pragma once
 
-
 namespace ui
 {
 
@@ -105,24 +104,29 @@ enum EventType
 	kEventMouseScrollWheel,
 	kEventMouseEnd,
 
+	kEventTouchBegin,
+	kEventTouchDown,
+	kEventTouchMove,
+	kEventTouchUp,
+	kEventTouchEnd,
+
 	kEventSetFocus,
 	kEventKillFocus,
 	kEventWindowSize,
+	kEventWindowClose,
 	kEventSetCursor,
 
 	kEventClick,
 	kEventSelect,
 	kEventUnSelect,
+
 	kEventTextChange,
+	kEventReturn,
+	kEventTab,
 	kEventCustomLinkClick,
 
 	kEventScrollChange,
-
 	kEventValueChange,
-	kEventReturn,
-	kEventTab,
-	kEventWindowClose,
-
 	kEventResize,
 
 	kEventNotify,	//仅作简单的通知，有复杂数据请通过其他方式实现
@@ -164,11 +168,10 @@ enum EventType
 #define EVENTSTR_WINDOWCLOSE		(_T("windowclose"))
 
 
-
 struct EventArgs
 {
-	EventArgs()
-	: Type(kEventNone),
+	EventArgs():
+	 Type(kEventNone),
      pSender(nullptr),
 	 dwTimestamp(0),
 	 chKey(0),
@@ -216,6 +219,7 @@ EventType StringToEnum(const std::wstring& messageType);
 #define  DUI_CTR_LISTBOX						 (_T("ListBox"))
 #define  DUI_CTR_HLISTBOX						 (_T("HListBox"))
 #define  DUI_CTR_VLISTBOX                        (_T("VListBox"))
+#define  DUI_CTR_VIRTUALLISTBOX                  (_T("VirtualListBox"))
 #define  DUI_CTR_TILELISTBOX                     (_T("TileListBox"))
 
 #define  DUI_CTR_TREENODE                        (_T("TreeNode"))

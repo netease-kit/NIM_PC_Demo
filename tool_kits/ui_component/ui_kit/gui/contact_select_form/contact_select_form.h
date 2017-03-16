@@ -267,7 +267,7 @@ private:
 	* @param[in] letter 标签
 	* @return ContactTileListUI* 联系人列表控件的指针
 	*/
-	ContactTileListUI* GetGroup(GroupType groupType, wchar_t letter = L'');
+	ContactTileListUI* GetGroup(GroupType groupType, wchar_t letter = L'\0');
 
 private:
 	/**

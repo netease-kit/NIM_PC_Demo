@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window size="380,450" mininfo="380,200" caption="0,0,0,34">
+    <VBox bkcolor="bk_wnd_lightcolor" height="auto" >
+        <HBox class="caption">
+            <Label class="font_title" name="title" textid="STRID_RECORD_SELECT_TITLE" width="stretch" valign="center" normaltextcolor="darkcolor"/>
+			<Box width="21" margin="4,6,0,0">
+				<Button class="btn_wnd_max" name="maxbtn"/>
+				<Button class="btn_wnd_restore" name="restorebtn" visible="false"/>
+			</Box>
+            <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>
+        </HBox>
+		<Label textid="STRID_RECORD_SELECT_CONTENT" font="2" normaltextcolor="darkcolor" margin="10,12,0,0"/>
+		<HBox height="auto" margin="10,26,0,0" >
+			<Label textid="STRID_RECORD_SELECT_AUDIO_CHAT" font="2" normaltextcolor="darkcolor" valign="center" width="100" />
+			<CheckBox class="checkbox_font12" name="audio_sel" valign="center" />
+		</HBox>
+		<HBox height="auto" margin="10,16,0,0" >
+			<Label textid="STRID_RECORD_SELECT_MY_AUDIO_VIDEO" font="2" normaltextcolor="darkcolor" valign="center" width="100" />
+			<CheckBox class="checkbox_font12" name="mp4_sel" valign="center" />
+		</HBox>
+		<HBox height="auto" margin="10,26,10,30" >
+			<Label textid="STRID_RECORD_SELECT_SAVE_PATH" font="2" normaltextcolor="darkcolor" valign="center" />
+			<Box height="auto" margin="10,0,10,0" bkimage="file='../public/edit/edit0.png' corner='10,10,10,10'" padding="2,4,2,4" valign="center">
+				<RichEdit class="simple prompt" name="path_edit" height="20" font="2" vscrollbar="false" autovscroll="false" rich="true"/>
+			</Box>
+			<Button class="btn_global_white_80x30" name="path" textid="STRID_RECORD_SELECT_SCAN" width="50" valign="center" />
+		</HBox>
+
+		<Control normalcolor="splitline_level1" width="stretch" height="1" />
+        <HBox height="46" >
+			<Control />
+			<Button class="btn_global_red_80x30" name="close" textid="STRING_NO" width="50" valign="center" />
+			<Button class="btn_global_green_80x30" name="select" textid="STRID_RECORD_SELECT_BEGIN_RECORD" valign="center" margin="10,0,10,0" />
+        </HBox>
+    </VBox>
+</Window>

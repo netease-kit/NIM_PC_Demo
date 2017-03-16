@@ -2,6 +2,6 @@
 <Window>
     <HBox height="40" bkcolor="bk_link_tip">
         <Control width="22" height="22" margin="9,9,9,9" bkimage="warn.png"/>
-        <Label valign="center" font="2" normaltextcolor="link_tip" text="对方不是你的好友"/>
+        <Label valign="center" font="2" normaltextcolor="link_tip" textid="STRID_SESSION_TIP_NOT_FRIEND"/>
     </HBox>
 </Window>

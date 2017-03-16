@@ -260,6 +260,15 @@ std::string FilterUCS4(const std::string& str, bool replace_spaces)
 	}
 	return str_out;
 }
+
+UTF8String FormatSQLText(const UTF8String &sql_text)
+{
+	UTF8String formated_text(sql_text);
+	//SQL标准规定，在字符串中，单引号需要使用逃逸字符，即在一行中使用两个单引号。
+	nbase::StringReplaceAll("'", "''", formated_text);
+	return formated_text;
+}
+
 //////////////////////////////////////////////////////
 ////regex
 //bool IsMobilePhoneNumber(const std::string &str)

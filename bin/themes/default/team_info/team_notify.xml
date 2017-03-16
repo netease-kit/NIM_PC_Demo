@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window size="380,180" caption="0,0,0,34">
+<Window size="380,180" caption="0,0,0,34" textid="STRID_TEAM_NOTIFY_TITLE">
     <VBox bkcolor="bk_wnd_lightcolor">
         <HBox class="caption">
-            <Label class="font_title" width="stretch" valign="center" normaltextcolor="darkcolor" text="群提醒"/>				   
+            <Label class="font_title" width="stretch" valign="center" normaltextcolor="darkcolor" textid="STRID_TEAM_NOTIFY_TITLE"/>				   
             <Button class="btn_wnd_close" name="closebtn" margin="4,6,0,0"/>
         </HBox>
         <Box padding="20,20,20,20">
@@ -11,8 +11,8 @@
                 <Control />
                 <HBox childmargin="10" height="auto">
                     <Control />
-                    <Button class="btn_global_green_80x30" name="btn_ask_no" normaltextcolor="white" text="拒绝"/>
-                    <Button class="btn_global_green_80x30" name="btn_ask_yes" normaltextcolor="white" text="同意"/>
+                    <Button class="btn_global_green_80x30" name="btn_ask_no" normaltextcolor="white" textid="STRING_REFUSE"/>
+                    <Button class="btn_global_green_80x30" name="btn_ask_yes" normaltextcolor="white" textid="STRING_AGREE"/>
                 </HBox>
             </VBox>
             <VBox name="page_invite" visible="false">
@@ -20,15 +20,15 @@
                 <Control />
                 <HBox childmargin="10" height="auto">
                     <Control />
-                    <Button class="btn_global_white_80x30" name="btn_ignore" normaltextcolor="darkcolor" text="忽略"/>
-                    <Button class="btn_global_green_80x30" name="btn_reject" normaltextcolor="white" text="拒绝"/>
-                    <Button class="btn_global_green_80x30" name="btn_accept" normaltextcolor="white" text="同意"/>
+                    <Button class="btn_global_white_80x30" name="btn_ignore" normaltextcolor="darkcolor" textid="STRING_IGNORE"/>
+                    <Button class="btn_global_green_80x30" name="btn_reject" normaltextcolor="white" textid="STRING_REFUSE"/>
+                    <Button class="btn_global_green_80x30" name="btn_accept" normaltextcolor="white" textid="STRING_AGREE"/>
                 </HBox>
             </VBox>
             <VBox name="page_reject" visible="false">
                 <RichEdit name="re_reject" width="stretch" height="70" rich="true" multiline="true" vscrollbar="false" readonly="true" font="3"/>
                 <Control />
-                <Button class="btn_global_green_80x30" name="btn_ok" halign="right" normaltextcolor="white" text="确定"/>
+                <Button class="btn_global_green_80x30" name="btn_ok" halign="right" normaltextcolor="white" textid="STRING_OK"/>
             </VBox>
         </Box>
     </VBox>

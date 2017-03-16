@@ -452,7 +452,7 @@ void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 		assert(box);
 		Button* btn = (Button*)box->FindSubControl(CELL_BTN_LOAD_MORE_MSG);
 		assert(btn);
-		btn->SetText(L"已显示全部历史消息");
+		btn->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_ALL_MSGS_SHOWN"));
 		btn->SetEnabled(false);
 	}
 	//修正最近时间
@@ -620,15 +620,28 @@ void SessionBox::OnSnapchatReadCallback(const std::string& client_msg_id)
 	RemoveMsgItem(client_msg_id);
 }
 
-void SessionBox::OnDownloadCallback(const std::string &cid, bool success)
+void SessionBox::OnDownloadCallback(const std::string &res_id, bool success, const std::string& file_path)
 {
-	IdBubblePair::iterator it = id_bubble_pair_.find(cid);
+	IdBubblePair::iterator it = id_bubble_pair_.find(res_id);
 	if (it != id_bubble_pair_.end())
 	{
 		MsgBubbleItem* item = it->second;
 		if (item)
 		{
-			item->OnDownloadCallback(success);
+			item->OnDownloadCallback(success, file_path);
+		}
+	}
+}
+
+void SessionBox::OnUploadCallback(const std::string &res_id, bool success, const std::string& url)
+{
+	IdBubblePair::iterator it = id_bubble_pair_.find(res_id);
+	if (it != id_bubble_pair_.end())
+	{
+		MsgBubbleItem* item = it->second;
+		if (item)
+		{
+			item->OnUploadCallback(success, url);
 		}
 	}
 }
@@ -691,7 +704,7 @@ void SessionBox::OnRetweetResDownloadCallback(nim::NIMResCode code, const std::s
 		MsgBubbleItem* item = it->second;
 		if (item)
 		{
-			item->OnDownloadCallback(code == nim::kNIMResSuccess);
+			item->OnDownloadCallback(code == nim::kNIMResSuccess, file_path);
 		}
 	}
 }
@@ -742,17 +755,39 @@ void SessionBox::SendImage( const std::wstring &src )
 	PackageMsg(msg);
 	msg.type_ = nim::kNIMMessageTypeImage;
 
-	std::wstring filename = nbase::UTF8ToUTF16(msg.client_msg_id_);
-	std::wstring dest = GetUserImagePath();
-	if (!nbase::FilePathIsExist(dest, true))
-		nbase::CreateDirectory(dest);
+	//先以消息id为图片名，生成用于上传的图片
+	std::wstring image_dir = GetUserImagePath();
+	if (!nbase::FilePathIsExist(image_dir, true))
+		nbase::CreateDirectory(image_dir);
+	std::wstring zoom_path = image_dir + nbase::UTF8ToUTF16(msg.client_msg_id_);
+	if (!nbase::FilePathIsExist(zoom_path, false))
+	{
+		GenerateUploadImage(src, zoom_path);
+		if (!nbase::FilePathIsExist(zoom_path, false))
+		{
+			QLOG_ERR(L"Zoomed image does not exist.");
+			return;
+		}	
+	}
+
+	//再计算用于上传的图片的md5，以md5重命名之
+	std::string image_md5 = GetFileMD5(zoom_path);
+	std::wstring dest = image_dir + nbase::UTF8ToUTF16(image_md5);
+	if (!nbase::FilePathIsExist(dest, false))
+	{
+		if (!::MoveFileEx(zoom_path.c_str(), dest.c_str(), 0))
+		{
+			QLOG_ERR(L"Rename image error: {0}.") << ::GetLastError();
+			return;
+		}
+	}
+	else
+		nbase::DeleteFile(zoom_path);
 	
-	dest += filename;
-	GenerateUploadImage(src, dest);
 	msg.local_res_path_ = nbase::UTF16ToUTF8(dest);
 
 	nim::IMImage img;
-	img.md5_ = GetFileMD5(dest);
+	img.md5_ = image_md5;
 	img.size_ = (long)nbase::GetFileSize(dest);
 
 	Gdiplus::Image image(dest.c_str());
@@ -806,27 +841,46 @@ void SessionBox::SendSnapChat(const std::wstring &src)
 	msg.msg_setting_.roaming_ = nim::BS_FALSE;
 	msg.msg_setting_.self_sync_ = nim::BS_FALSE;
 	//TODO(litianyi)
-	std::wstring filename = nbase::UTF8ToUTF16(msg.client_msg_id_);
-	std::wstring dest = GetUserImagePath() + filename;
-	GenerateUploadImage(src, dest);
+	std::wstring zoom_path = GetUserOtherResPath() + nbase::UTF8ToUTF16(msg.client_msg_id_);
+	if (!nbase::FilePathIsExist(zoom_path, false))
+	{
+		GenerateUploadImage(src, zoom_path);
+		if (!nbase::FilePathIsExist(zoom_path, false))
+		{
+			QLOG_ERR(L"Zoomed image does not exist.");
+			return;
+		}
+	}
+	std::string image_md5 = GetFileMD5(zoom_path);
+	std::wstring dest = GetUserOtherResPath() + nbase::UTF8ToUTF16(image_md5);
+	if (!nbase::FilePathIsExist(dest, false))
+	{
+		if (!::MoveFileEx(zoom_path.c_str(), dest.c_str(), 0))
+		{
+			QLOG_ERR(L"Rename image error: {0}.") << ::GetLastError();
+			return;
+		}
+	}
+	else
+		nbase::DeleteFile(zoom_path);
+
 	msg.local_res_path_ = nbase::UTF16ToUTF8(dest);
 
-	nim::NOS::UploadResource(msg.local_res_path_, [this, msg, weak_flag](int res_code, const std::string& url) {
+	nim::NOS::UploadResource(msg.local_res_path_, [this, msg, image_md5, weak_flag](int res_code, const std::string& url) {
 		if (!weak_flag.expired() && res_code == nim::kNIMResSuccess)
 		{
 			nim::IMMessage new_msg = msg;
-			std::string md5 = GetFileMD5(nbase::UTF8ToUTF16(new_msg.local_res_path_));
 			int file_size = (int)nbase::GetFileSize(nbase::UTF8ToUTF16(new_msg.local_res_path_));
 			new_msg.type_ = nim::kNIMMessageTypeCustom;
 			Json::Value json;
 			Json::Value json_data;
 			Json::FastWriter writer;
 			json_data["size"] = file_size;
-			json_data["md5"] = md5;
+			json_data["md5"] = image_md5;
 			json_data["url"] = url;
 			json["type"] = CustomMsgType_SnapChat;
 			json["data"] = json_data;
-			new_msg.content_ = nbase::UTF16ToUTF8(L"阅后即焚");
+			new_msg.content_ = nbase::UTF16ToUTF8(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_SNAPCHAT"));
 			new_msg.attach_ = writer.write(json);
 			AddSendingMsg(new_msg);
 
@@ -882,7 +936,7 @@ void SessionBox::SendJsb( const std::string &attach )
 	PackageMsg(msg);
 	msg.type_ = nim::kNIMMessageTypeCustom;
 
-	msg.content_ = nbase::UTF16ToUTF8(L"这是一个猜拳");
+	msg.content_ = nbase::UTF16ToUTF8(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_THIS_IS_A_JSB"));
 	msg.attach_ = attach;
 	
 	AddSendingMsg(msg);
@@ -902,7 +956,7 @@ void SessionBox::SendSticker(const std::string &catalog, const std::string &name
 	json["data"]["catalog"] = catalog;
 	json["data"]["chartlet"] = name;
 
-	msg.content_ = nbase::UTF16ToUTF8(L"贴图");
+	msg.content_ = nbase::UTF16ToUTF8(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_CHARLET"));
 	msg.attach_ = writer.write(json);
 
 	AddSendingMsg(msg);
@@ -1138,16 +1192,17 @@ int SessionBox::FindIndexByMsgTime(int64_t msg_time)
 
 std::wstring SessionBox::GetRecallNotifyText(const std::string& msg_from_id, const std::string& msg_from_nick)
 {
+	ui::MutiLanSupport* mls = ui::MutiLanSupport::GetInstance();
 	std::wstring notify_text;
 	if (msg_from_id == LoginManager::GetInstance()->GetAccount())
 	{
-		notify_text = L"我撤回了一条消息";
+		notify_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_I_RECALL_MSG");
 	}
 	else
 	{
 		if (session_type_ == nim::kNIMSessionTypeP2P)
 		{
-			notify_text = L"对方撤回了一条消息";
+			notify_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_OTHER_RECALL_MSG");
 		}
 		else
 		{
@@ -1170,7 +1225,7 @@ std::wstring SessionBox::GetRecallNotifyText(const std::string& msg_from_id, con
 					name = msg_from_id;
 			}
 
-			notify_text = nbase::UTF8ToUTF16(name) + L" 撤回了一条消息";
+			notify_text = nbase::UTF8ToUTF16(name) + L" " + mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_RECALL_MSG");
 		}
 	}
 
@@ -1192,7 +1247,10 @@ void SessionBox::CheckHeader()
 	else
 	{
 		label_tid_->SetVisible(false);
-		name = IsFileTransPhone() ? L"我的手机" : UserService::GetInstance()->GetUserName(session_id_);
+		if (IsFileTransPhone())
+			name = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MY_MOBILEPHONE");
+		else
+			name = UserService::GetInstance()->GetUserName(session_id_);
 		photo = PhotoService::GetInstance()->GetUserPhoto(session_id_);
 	}
 

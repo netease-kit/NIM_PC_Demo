@@ -217,7 +217,7 @@ bool ImageViewForm::Notify(ui::EventArgs* msg)
 					now.hour(), now.minute(), now.second());
 				file_name += extension;
 
-				std::wstring  file_type = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_PIC_FILE");
+				std::wstring  file_type = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_IMAGEVIEWFORM_PIC_FILE");
 				std::wstring info = nbase::StringPrintf(L"%s(*%s)", file_type.c_str(), extension.c_str());
 				CFileDialogEx* fileDlg = new CFileDialogEx();
 				std::wstring filter = L"*" + extension;

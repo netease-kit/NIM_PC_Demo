@@ -1,8 +1,8 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Window size="340,180" caption="0,0,0,34">
+<Window size="340,180" caption="0,0,0,34" textid="STRID_ABOUTFORM_TITLE">
     <VBox width="340" height="180" bkcolor="bk_wnd_lightcolor">
         <HBox class="caption">
-            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" text="关于"/>
+            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" textid="STRID_ABOUTFORM_TITLE"/>
             <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>
         </HBox>
 

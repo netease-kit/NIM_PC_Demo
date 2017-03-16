@@ -1,18 +1,15 @@
-
-
 template<typename InheritType>
-CheckBoxTemplate<InheritType>::CheckBoxTemplate() :
-	m_bSelected(false),
-	m_dwSelectedTextColor(),
-	m_selectedColorMap()
+CheckBoxTemplate<InheritType>::CheckBoxTemplate() :	m_bSelected(false),	m_dwSelectedTextColor(), m_selectedColorMap()
 {
 	m_selectedColorMap.SetControl(this);
 }
 
 template<typename InheritType>
-bool CheckBoxTemplate<InheritType>::IsSelected() const
+void CheckBoxTemplate<InheritType>::Activate()
 {
-	return m_bSelected;
+	if (!IsActivatable())
+		return;
+	Selected(!m_bSelected, true);
 }
 
 template<typename InheritType>
@@ -22,8 +19,7 @@ void CheckBoxTemplate<InheritType>::Selected(bool bSelected, bool bTriggerEvent)
 	m_bSelected = bSelected;
 
 	if( m_pWindow != NULL ) {
-		if (bTriggerEvent)
-		{
+		if (bTriggerEvent) {
 			if (m_bSelected) {
 				m_pWindow->SendNotify(this, kEventSelect);
 			}
@@ -37,11 +33,79 @@ void CheckBoxTemplate<InheritType>::Selected(bool bSelected, bool bTriggerEvent)
 }
 
 template<typename InheritType>
-void CheckBoxTemplate<InheritType>::Activate()
+Image* CheckBoxTemplate<InheritType>::GetEstimateImage()
 {
-	if( !IsActivatable() ) 
+	Image* estimateImage = __super::GetEstimateImage();
+	if (!estimateImage) {
+		estimateImage = m_imageMap.GetEstimateImage(kStateImageSelectedBk);
+	}
+
+	return estimateImage;
+}
+
+template<typename InheritType>
+void CheckBoxTemplate<InheritType>::SetAttribute(const std::wstring& strName, const std::wstring& strValue)
+{
+	if( strName == _T("selected") ) Selected(strValue == _T("true"), true);
+	else if( strName == _T("selectednormalimage") ) SetSelectedStateImage(kControlStateNormal, strValue);
+	else if( strName == _T("selectedhotimage") ) SetSelectedStateImage(kControlStateHot, strValue);
+	else if( strName == _T("selectedpushedimage") ) SetSelectedStateImage(kControlStatePushed, strValue);
+	else if( strName == _T("selecteddisabledimage") ) SetSelectedStateImage(kControlStateDisabled, strValue);
+	else if( strName == _T("selectedtextcolor") ) SetSelectedTextColor(strValue);
+	else if( strName == _T("selectednormalcolor") ) SetSelectedStateColor(kControlStateNormal, strValue);
+	else if( strName == _T("selectedhotcolor") ) SetSelectedStateColor(kControlStateHot, strValue);
+	else if( strName == _T("selectedpushedcolor") ) SetSelectedStateColor(kControlStatePushed, strValue);
+	else if( strName == _T("selecteddisabledcolor") ) SetSelectedStateColor(kControlStateDisabled, strValue);
+	else if (strName == _T("selectedforenormalimage")) SetSelectedForeStateImage(kControlStateNormal, strValue);
+	else if (strName == _T("selectedforehotimage")) SetSelectedForeStateImage(kControlStateHot, strValue);
+	else if (strName == _T("selectedforepushedimage")) SetSelectedForeStateImage(kControlStatePushed, strValue);
+	else if (strName == _T("selectedforedisabledimage")) SetSelectedForeStateImage(kControlStateDisabled, strValue);
+	else __super::SetAttribute(strName, strValue);
+}
+
+template<typename InheritType>
+void CheckBoxTemplate<InheritType>::PaintStatusColor(HDC hDC) 
+{
+	if (!IsSelected()) {
+		__super::PaintStatusColor(hDC);
 		return;
-	Selected(!m_bSelected, true);
+	}
+
+	m_selectedColorMap.PaintStatusColor(hDC, m_rcPaint, m_uButtonState);
+}
+
+template<typename InheritType>
+void CheckBoxTemplate<InheritType>::PaintStatusImage(HDC hDC)
+{
+	if (!IsSelected()) {
+		__super::PaintStatusImage(hDC);
+		return;
+	}
+
+	m_imageMap.PaintStatusImage(hDC, kStateImageSelectedBk, m_uButtonState);
+	m_imageMap.PaintStatusImage(hDC, kStateImageSelectedFore, m_uButtonState);
+}
+
+template<typename InheritType>
+void CheckBoxTemplate<InheritType>::PaintText(HDC hDC)
+{
+	if (!IsSelected()) {
+		__super::PaintText(hDC);
+		return;
+	}
+
+	if( GetText().empty() ) return;
+	UiRect rc = m_rcItem;
+	rc.left += m_rcTextPadding.left;
+	rc.right -= m_rcTextPadding.right;
+	rc.top += m_rcTextPadding.top;
+	rc.bottom -= m_rcTextPadding.bottom;
+
+	std::wstring newTextColor = m_dwSelectedTextColor.empty() ? m_textColorMap[kControlStateNormal] : m_dwSelectedTextColor;
+	DWORD dwTextColor = GlobalManager::GetTextColor(newTextColor);
+	DWORD dwDisabledTextColor = GlobalManager::GetTextColor(m_textColorMap[kControlStateDisabled]);
+	RenderEngine::DrawText(hDC, rc, GetText(), IsEnabled() ? dwTextColor : dwDisabledTextColor, \
+		m_iFont, m_uTextStyle);
 }
 
 template<typename InheritType>
@@ -63,6 +127,12 @@ void CheckBoxTemplate<InheritType>::SetSelectedStateImage(ControlStateType state
 }
 
 template<typename InheritType>
+std::wstring CheckBoxTemplate<InheritType>::GetSelectedTextColor()
+{
+	return m_dwSelectedTextColor;
+}
+
+template<typename InheritType>
 void CheckBoxTemplate<InheritType>::SetSelectedTextColor(const std::wstring& dwTextColor)
 {
 	m_dwSelectedTextColor = dwTextColor;
@@ -70,9 +140,9 @@ void CheckBoxTemplate<InheritType>::SetSelectedTextColor(const std::wstring& dwT
 }
 
 template<typename InheritType>
-std::wstring CheckBoxTemplate<InheritType>::GetSelectedTextColor()
+std::wstring CheckBoxTemplate<InheritType>::GetSelectStateColor(ControlStateType stateType)
 {
-	return m_dwSelectedTextColor;
+	return m_selectedColorMap[stateType];
 }
 
 template<typename InheritType>
@@ -80,12 +150,6 @@ void CheckBoxTemplate<InheritType>::SetSelectedStateColor(ControlStateType state
 {
 	m_selectedColorMap[stateType] = stateColor;
 	Invalidate();
-}
-
-template<typename InheritType>
-std::wstring CheckBoxTemplate<InheritType>::GetSelectStateColor(ControlStateType stateType)
-{
-	return m_selectedColorMap[stateType];
 }
 
 template<typename InheritType>
@@ -105,87 +169,3 @@ void CheckBoxTemplate<InheritType>::SetSelectedForeStateImage(ControlStateType s
 		Invalidate();
 	}
 }
-
-template<typename InheritType>
-void CheckBoxTemplate<InheritType>::SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue)
-{
-	if( pstrName == _T("selected") ) Selected(pstrValue == _T("true"), true);
-	else if( pstrName == _T("selectednormalimage") ) SetSelectedStateImage(kControlStateNormal, pstrValue);
-	else if( pstrName == _T("selectedhotimage") ) SetSelectedStateImage(kControlStateHot, pstrValue);
-	else if( pstrName == _T("selectedpushedimage") ) SetSelectedStateImage(kControlStatePushed, pstrValue);
-	else if( pstrName == _T("selecteddisabledimage") ) SetSelectedStateImage(kControlStateDisabled, pstrValue);
-	else if( pstrName == _T("selectedtextcolor") ) {
-		SetSelectedTextColor(pstrValue);
-	}
-	else if( pstrName == _T("selectednormalcolor") ) SetSelectedStateColor(kControlStateNormal, pstrValue);
-	else if( pstrName == _T("selectedhotcolor") ) SetSelectedStateColor(kControlStateHot, pstrValue);
-	else if( pstrName == _T("selectedpushedcolor") ) SetSelectedStateColor(kControlStatePushed, pstrValue);
-	else if( pstrName == _T("selecteddisabledcolor") ) SetSelectedStateColor(kControlStateDisabled, pstrValue);
-	else if (pstrName == _T("selectedforenormalimage")) SetSelectedForeStateImage(kControlStateNormal, pstrValue);
-	else if (pstrName == _T("selectedforehotimage")) SetSelectedForeStateImage(kControlStateHot, pstrValue);
-	else if (pstrName == _T("selectedforepushedimage")) SetSelectedForeStateImage(kControlStatePushed, pstrValue);
-	else if (pstrName == _T("selectedforedisabledimage")) SetSelectedForeStateImage(kControlStateDisabled, pstrValue);
-	else __super::SetAttribute(pstrName, pstrValue);
-}
-
-template<typename InheritType>
-void CheckBoxTemplate<InheritType>::PaintStatusColor(HDC hDC) 
-{
-	if (!IsSelected())
-	{
-		__super::PaintStatusColor(hDC);
-		return;
-	}
-
-	m_selectedColorMap.PaintStatusColor(hDC, m_rcPaint, m_uButtonState);
-}
-
-template<typename InheritType>
-void CheckBoxTemplate<InheritType>::PaintStatusImage(HDC hDC)
-{
-	if (!IsSelected())
-	{
-		__super::PaintStatusImage(hDC);
-		return;
-	}
-
-	m_imageMap.PaintStatusImage(hDC, kStateImageSelectedBk, m_uButtonState);
-	m_imageMap.PaintStatusImage(hDC, kStateImageSelectedFore, m_uButtonState);
-}
-
-template<typename InheritType>
-void CheckBoxTemplate<InheritType>::PaintText(HDC hDC)
-{
-	if (!IsSelected())
-	{
-		__super::PaintText(hDC);
-		return;
-	}
-
-	if( GetText().empty() ) return;
-	UiRect rc = m_rcItem;
-	rc.left += m_rcTextPadding.left;
-	rc.right -= m_rcTextPadding.right;
-	rc.top += m_rcTextPadding.top;
-	rc.bottom -= m_rcTextPadding.bottom;
-
-	std::wstring newTextColor = m_dwSelectedTextColor.empty() ? m_textColorMap[kControlStateNormal] : m_dwSelectedTextColor;
-	DWORD dwTextColor = GlobalManager::ConvertTextColor(newTextColor);
-	DWORD dwDisabledTextColor = GlobalManager::ConvertTextColor(m_textColorMap[kControlStateDisabled]);
-	RenderEngine::DrawText(hDC, rc, GetText(), IsEnabled()?dwTextColor:dwDisabledTextColor, \
-		m_iFont, m_uTextStyle);
-}
-
-template<typename InheritType>
-Image* CheckBoxTemplate<InheritType>::GetEstimateImage()
-{
-	Image* estimateImage = __super::GetEstimateImage();
-	if (!estimateImage) {
-		estimateImage = m_imageMap.GetEstimateImage(kStateImageSelectedBk);
-	}
-
-	return estimateImage;
-}
-
-
-

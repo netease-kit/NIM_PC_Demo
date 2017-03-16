@@ -17,10 +17,11 @@ Control* CMenuWnd::CreateControl(const std::wstring& pstrClass)
 
 CMenuWnd::CMenuWnd(HWND hParent):
 m_hParent(hParent),
-m_xml(_T(""))
+m_xml(_T("")),
+no_focus_(false)
 {}
 
-void CMenuWnd::Init(STRINGorID xml, LPCTSTR pSkinType, POINT point, PopupPosType popupPosType)
+void CMenuWnd::Init(STRINGorID xml, LPCTSTR pSkinType, POINT point, PopupPosType popupPosType, bool no_focus)
 {
 	m_BasedPoint = point;
 	m_popupPosType = popupPosType;
@@ -29,12 +30,14 @@ void CMenuWnd::Init(STRINGorID xml, LPCTSTR pSkinType, POINT point, PopupPosType
 		m_sType = pSkinType;
 
 	m_xml = xml;
-	Create(m_hParent, L"²Ëµ¥", WS_POPUP, WS_EX_TOOLWINDOW | WS_EX_TOPMOST, true, UiRect());
+	no_focus_ = no_focus;
+	std::wstring title = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MENU_TITLE");
+	Create(m_hParent, title.c_str(), WS_POPUP, WS_EX_TOOLWINDOW | WS_EX_TOPMOST, true, UiRect());
     // HACK: Don't deselect the parent's caption
     HWND hWndParent = m_hWnd;
     while( ::GetParent(hWndParent) != NULL ) hWndParent = ::GetParent(hWndParent);
-    ::ShowWindow(m_hWnd, SW_SHOW);
-	::SetWindowPos(m_hWnd, NULL, m_BasedPoint.x, m_BasedPoint.y, 0, 0, SWP_NOSIZE);
+	::ShowWindow(m_hWnd, no_focus ? SW_SHOWNOACTIVATE : SW_SHOW);
+	::SetWindowPos(m_hWnd, NULL, m_BasedPoint.x, m_BasedPoint.y, 0, 0, SWP_NOSIZE | (no_focus ? SWP_NOACTIVATE : 0));
     ::SendMessage(hWndParent, WM_NCACTIVATE, TRUE, 0L);
 }
 
@@ -110,8 +113,9 @@ void CMenuWnd::Show()
 	rc.right = rc.left + szInit.cx;
 	rc.bottom = rc.top + szInit.cy;
 
-	SetPos(rc, SWP_SHOWWINDOW, HWND_TOPMOST, false);
-	SetForegroundWindow(m_hWnd);
+	SetPos(rc, false, SWP_SHOWWINDOW | (no_focus_ ? SWP_NOACTIVATE : 0), HWND_TOPMOST, false);
+	if (!no_focus_)
+		SetForegroundWindow(m_hWnd);
 }
 
 // MenuElementUI

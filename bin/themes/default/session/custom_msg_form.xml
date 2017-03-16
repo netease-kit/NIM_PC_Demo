@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window caption="0,0,0,34" sizebox="4,4,4,4">
+<Window caption="0,0,0,34" sizebox="4,4,4,4" textid="STRID_CUSTOM_MSG_TITLE">
     <VBox bkcolor="bk_wnd_lightcolor" width="500" height="auto">
         <HBox class="caption">
-            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" text="自定义消息通知"/>
+            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" textid="STRID_CUSTOM_MSG_TITLE"/>
             <Button class="btn_wnd_min" name="minbtn" margin="10,6,0,0"/>
             <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>
         </HBox>
 		
         <Label class="font_title" name="receiver" margin="10,10,10,0" width="stretch" normaltextcolor="darkcolor" />		
         <!--Box margin="10,10,10,0" height="auto">
-            <Label class="font_title" width="stretch" normaltextcolor="darkcolor" text="推送"/>
+            <Label class="font_title" width="stretch" normaltextcolor="darkcolor" textid="STRID_CUSTOM_MSG_PUSH"/>
             <RichEdit class="prompt input" name="re_apns" height="30" multiline="true" vscrollbar="true" autovscroll="true" readonly="false" font="2" normaltextcolor="darkcolor" margin="50,0,0,0" padding="8,2,2,0" rich="true"/>
         </Box>
         <Box margin="10,10,10,0" height="auto" >
-            <Label class="font_title" width="stretch" normaltextcolor="darkcolor" text="附言"/>
+            <Label class="font_title" width="stretch" normaltextcolor="darkcolor" textid="STRID_CUSTOM_MSG_POSTSCRIPT"/>
             <RichEdit class="prompt input" name="re_msg" height="30" multiline="true" vscrollbar="true" autovscroll="true" readonly="false" font="2" normaltextcolor="darkcolor" margin="50,0,0,0" padding="8,2,2,0" rich="true"/>
         </Box-->
-        <Box margin="10,10,10,0" height="auto" >
-            <Label class="font_title" width="stretch" normaltextcolor="darkcolor" text="内容"/>
-            <RichEdit class="prompt input" name="re_attach" height="80" multiline="true" vscrollbar="true" autovscroll="true" readonly="false" font="2" normaltextcolor="darkcolor" margin="50,0,0,0" padding="8,2,2,0" rich="true"/>
-        </Box>
+        <HBox margin="10,10,10,0" height="auto" >
+            <Label class="font_title" width="auto" normaltextcolor="darkcolor" textid="STRID_CUSTOM_MSG_CONTENT"/>
+            <RichEdit class="prompt input" name="re_attach" height="80" multiline="true" vscrollbar="true" autovscroll="true" readonly="false" font="2" normaltextcolor="darkcolor" margin="10,0,0,0" padding="8,2,2,0" rich="true"/>
+        </HBox>
 		<HBox name="hbox_send" height="30" margin="10,10,10,10">
-			<CheckBox class="checkbox_font14" name="msg_mode" text="只发在线" enabled="false" />
+			<CheckBox class="checkbox_font14" name="msg_mode" textid="STRID_CUSTOM_MSG_SEND_ONLINE_ONLY" enabled="false" />
 			<Control />
-			<Button name="btn_send" normaltextcolor="white" font="7" text="发送" normalimage="send0.png" hotimage="send1.png" pushedimage="send2.png"/>
+			<Button name="btn_send" normaltextcolor="white" font="7" textid="STRING_SEND" normalimage="send0.png" hotimage="send1.png" pushedimage="send2.png"/>
 		</HBox>
     </VBox>
 </Window>

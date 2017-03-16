@@ -22,6 +22,6 @@ void MsgBubbleUnknown::InitInfo(const nim::IMMessage &msg)
 {
 	__super::InitInfo(msg);
 	if (msg.type_ == nim::kNIMMessageTypeCustom)
-		unknown_tip_->SetText(L"自定义消息");
+		unknown_tip_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_CUSTOM_MSG"));
 }
 }

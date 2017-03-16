@@ -31,6 +31,7 @@ enum NIMVideoChatSessionType{
 	kNIMVideoChatSessionTypeMp4Notify		= 13,		/**< 通知MP4录制状态，包括开始录制和结束录制 */
 	kNIMVideoChatSessionTypeInfoNotify		= 14,		/**< 通知实时音视频数据状态 */
 	kNIMVideoChatSessionTypeVolumeNotify	= 15,		/**< 通知实时音频发送和混音的音量状态 */
+	kNIMVideoChatSessionTypeAuRecordNotify  = 16,		/**< 通知音频录制状态，包括开始录制和结束录制 */
 };
 
 /** @enum NIMVChatControlType 音视频通话控制类型 */
@@ -125,6 +126,16 @@ enum NIMVChatMp4RecordCode{
 	kNIMVChatMp4RecordInvalid			= 404,		/**< 通话不存在 */
 };
 
+/** @enum NIMVChatAudioRecordCode 音频录制状态 */
+enum NIMVChatAudioRecordCode{
+	kNIMVChatAudioRecordClose			= 0,		/**< 录制正常结束 */
+	kNIMVChatAudioRecordOutDiskSpace	= 2,		/**< 录制结束，磁盘空间不足 */
+	kNIMVChatAudioRecordCreate			= 200,		/**< 文件创建成功 */
+	kNIMVChatAudioRecordExsit			= 400,		/**< 已经存在 */
+	kNIMVChatAudioRecordCreateError		= 403,		/**< 文件创建失败 */
+	kNIMVChatAudioRecordInvalid			= 404,		/**< 通话不存在 */
+};
+
 /** @enum NIMVChatSetStreamingModeCode 设置推流模式返回码  */
 enum NIMVChatSetStreamingModeCode{
 	kNIMVChatBypassStreamingInvalid					= 0,			/**< 无效的操作 */
@@ -180,6 +191,7 @@ static const char *kNIMVChatNeedBadge		= "need_badge";		/**< int 是否需要角
 static const char *kNIMVChatNeedFromNick	= "need_nick";		/**< int 是否需要推送昵称 >0表示是 默认是 */
 static const char *kNIMVChatApnsPayload		= "payload";		/**< string JSON格式,推送payload */
 static const char *kNIMVChatSound			= "sound";			/**< string 推送声音 */
+static const char *kNIMVChatKeepCalling		= "keepcalling";	/**< int, 是否强制持续呼叫（对方离线也会呼叫）,1表示是，0表示否。默认是 */
 /** @}*/ //json extension params
 
 /** @name json extension params for nim_vchat_cb_func
@@ -197,6 +209,9 @@ static const char *kNIMVChatClient			= "client";				/**< int 客户端类型 NIM
 static const char *kNIMVChatMp4Start		= "mp4_start";			/**< key Mp4写入数据开始 kNIMVChatMp4File kNIMVChatTime(本地时间点) */
 static const char *kNIMVChatMp4Close		= "mp4_close";			/**< key 结束Mp4录制，返回时长及原因 kNIMVChatStatus(NIMVChatMp4RecordCode) kNIMVChatTime(时长) kNIMVChatMp4File */
 static const char *kNIMVChatMp4File			= "mp4_file";			/**< string mp4录制地址 */
+static const char *kNIMVChatAuRecordStart	= "audio_record_start";	/**< key 音频录制写入数据开始 kNIMVChatFile kNIMVChatTime */
+static const char *kNIMVChatAuRecordClose	= "audio_record_close";	/**< key 结束音频录制，返回时长及原因 kNIMVChatStatus(NIMVChatAudioRecordCode) kNIMVChatTime kNIMVChatFile */
+static const char *kNIMVChatFile			= "file";				/**< string 文件地址 */
 static const char *kNIMVChatCustomInfo		= "custom_info";		/**< string 自定义数据 */
 static const char *kNIMVChatVideo			= "video";				/**< key 视频 */
 static const char *kNIMVChatAudio			= "audio";				/**< key 音频 */
@@ -226,6 +241,9 @@ static const char *kNIMVChatReceiver		= "receiver";			/**< key 接收信息 */
   *				kNIMVideoChatSessionTypeMp4Notify			//通知MP4录制状态，包括开始录制和结束录制 code无效，json 返回如下 \n
   *															//	MP4开始 	{"mp4_start":{ "mp4_file": "d:\\test.mp4", "time": 14496477000000 }} \n
   *															//	MP4结束 	{"mp4_close":{ "mp4_file": "d:\\test.mp4", "time": 120000, "status": 0 }} \n
+  *				kNIMVideoChatSessionTypeAuRecordNotify		//通知音频录制状态，包括开始录制和结束录制 code无效，json 返回如下 \n
+  *															//	录制开始 	{"audio_record_start":{ "file": "d:\\test.aac", "time": 14496477000000 }} \n
+  *															//	录制结束 	{"audio_record_close":{ "file": "d:\\test.aac", "time": 120000, "status": 0 }} \n
   *				kNIMVideoChatSessionTypeInfoNotify			//实时状态		{"static_info":{ "video": {"fps":20, "KBps":200, "width":1280,"height":720}, "audio": {"fps":17, "KBps":3}}} \n
   *				kNIMVideoChatSessionTypeVolumeNotify		//音量状态 		{"audio_volume":{ "self": {"status":600}, "receiver": [{"uid":"id123","status":1000},{"uid":"id456","status":222}] }} \n
   * @param[out] type NIMVideoChatSessionType
@@ -249,6 +267,18 @@ typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, int64_t channel_
   * @return void 无返回值
   */
 typedef void (*nim_vchat_mp4_record_opt_cb_func)(bool ret, int code, const char *file, int64_t time, const char *json_extension, const void *user_data);
+
+/** @typedef void (*nim_vchat_audio_record_opt_cb_func)(bool ret, int code, const char *file, __int64 time, const char *json_extension, const void *user_data)
+  * NIM 音频录制操作回调，实际的开始录制和结束都会在nim_vchat_cb_func中返回
+  * @param[out] ret 结果代码，true表示成功
+  * @param[out] code 对应NIMVChatAudioRecordCode，用于获得失败时的错误原因
+  * @param[out] file 文件路径
+  * @param[out] time 录制结束时有效，对应毫秒级的录制时长
+  * @param[out] json_extension Json string 无效扩展字段
+  * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_vchat_audio_record_opt_cb_func)(bool ret, int code, const char *file, __int64 time, const char *json_extension, const void *user_data);
 
 /** @typedef void (*nim_vchat_opt_cb_func)(bool ret, int code, const char *json_extension, const void *user_data)
   * NIM 操作回调，通用的操作回调接口

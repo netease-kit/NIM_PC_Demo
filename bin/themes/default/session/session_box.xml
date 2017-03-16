@@ -21,7 +21,7 @@
 	            </HBox>
 	            <HBox mouse="false">
 	                <Control mouse="false"/>
-	                <Button name="btn_invite" valign="center" margin="0,5,5,10" tooltiptext="邀请好友加入" 
+	                <Button name="btn_invite" valign="center" margin="0,5,5,10" tooltiptextid="STRID_SESSION_INVITE_FRIEND" 
 	                       normalimage="btn_invite_normal.png" hotimage="btn_invite_hovered.png" pushedimage="btn_invite_pushed.png"/>
 	            </HBox>
 	        </VBox>
@@ -37,53 +37,53 @@
 	            </VBox>
 	            <VBox name="bottom_panel" height="auto" padding="0,1,10,10">
 	                <HBox name="hbox_toolbar" height="30" margin="5,0,5,0">
-	                    <CheckBox name="btn_face" width="30" height="30" valign="center" margin="0" tooltiptext="表情"
+	                    <CheckBox name="btn_face" width="30" height="30" valign="center" margin="0" tooltiptextid="STRID_SESSION_EMOTICON"
 	                              forenormalimage="file='btn_face.png' dest='5,5,25,25'" foredisabledimage="file='btn_face_disable.png' dest='5,5,25,25' fade='80'"
 	                              hotimage="icon_hover.png" pushedimage="icon_pushed.png" selectednormalimage="icon_pushed.png"
 	                              selectedforenormalimage="file='btn_face.png' dest='5,5,25,25'" selectedforedisabledimage="file='btn_face_disable.png' dest='5,5,25,25' fade='80'"/>
-	                    <Button name="btn_image" width="30" height="30" valign="center" margin="4" tooltiptext="图片"
+	                    <Button name="btn_image" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_IMAGE"
 	                            forenormalimage="file='btn_image.png' dest='4,4,26,26'" foredisabledimage="file='btn_image_disable.png' dest='4,4,26,26' fade='80'"
 	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
-	                    <Button name="btn_snapchat" width="30" height="30" valign="center" margin="4" tooltiptext="阅后即焚"
+	                    <Button name="btn_snapchat" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_SNAPCHAT"
 	                            forenormalimage="file='btn_snapchat.png' dest='4,4,26,26'" foredisabledimage="file='btn_snapchat_disable.png' dest='4,4,26,26' fade='80'"
 	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
-	                    <Button name="btn_file" width="30" height="30" valign="center" margin="4" tooltiptext="文件"
+	                    <Button name="btn_file" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_FILE"
 	                            forenormalimage="file='btn_file.png' dest='4,4,26,26'" foredisabledimage="file='btn_file_disable.png' dest='4,4,26,26' fade='80'"
 	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
-	                    <Button name="btn_jsb" width="30" height="30" valign="center" margin="4" tooltiptext="石头剪刀布"
+	                    <Button name="btn_jsb" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_JSB"
 	                            forenormalimage="jsb.png" foredisabledimage="file='jsb_disable.png' fade='80'"
 	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
-	                    <Button name="btn_clip" width="30" height="30" valign="center" margin="4" tooltiptext="截图"
+	                    <Button name="btn_clip" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_CLIP"
 	                            forenormalimage="file='btn_clip.png' dest='5,5,25,25'" foredisabledimage="file='btn_clip_disable.png' dest='5,5,25,25' fade='80'"
 	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
-						<Button name="btn_audio" width="30" height="30" valign="center" margin="4" tooltiptext="免费通话"
+						<Button name="btn_audio" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_AUDIO_CHAT"
 	                            forenormalimage="file='audio_chat.png' dest='5,5,25,25'" foredisabledimage="file='audio_chat_disable.png' dest='5,5,25,25' fade='80'" 
 	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png" visible="false"/>
-						<Button name="btn_video" width="30" height="30" valign="center" margin="5" tooltiptext="免费视频" 
+						<Button name="btn_video" width="30" height="30" valign="center" margin="5" tooltiptextid="STRID_SESSION_VIDEO_CHAT" 
 	                            forenormalimage="file='video_chat.png' dest='4,5,25,25'" foredisabledimage="file='video_chat_disable.png' dest='4,5,25,25' fade='80'"
 	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png" visible="false"/>
-						<Button name="btn_rts" width="30" height="30" valign="center" margin="5" tooltiptext="白板" 
+						<Button name="btn_rts" width="30" height="30" valign="center" margin="5" tooltiptextid="STRID_SESSION_RTS" 
 	                            forenormalimage="file='rts.png' dest='4,5,25,25'" foredisabledimage="file='rts_disable.png' dest='4,5,25,25' fade='80'"
 	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png" visible="false"/>
-	                    <Button name="btn_tip" width="30" height="30" valign="center" margin="4" tooltiptext="提醒消息"
+	                    <Button name="btn_tip" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_NOTIFICATION_MSG"
 	                            forenormalimage="file='btn_tip.png' dest='5,5,25,25'" foredisabledimage="file='btn_tip_disable.png' dest='5,5,25,25' fade='80'"
 	                            hotimage="icon_hover.png" pushedimage="icon_pushed.png"/>
-	                    <Option name="btn_capture_audio" width="30" height="30" valign="center" margin="4" tooltiptext="录制语音" hotimage="icon_hover.png" pushedimage="icon_pushed.png" selectednormalimage="icon_pushed.png" text="语" font="8" normaltextcolor="icongray" disabledtextcolor="iconfadegray"/>
+	                    <Option name="btn_capture_audio" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_RECORD_AUDIO" hotimage="icon_hover.png" pushedimage="icon_pushed.png" selectednormalimage="icon_pushed.png" textid="STRID_SESSION_RECORD_AUDIO_ICON" font="8" normaltextcolor="icongray" disabledtextcolor="iconfadegray"/>
 	                    <Control />
-	                    <!--Button name="add_msglog" dataid="10" valign="center" cursortype="hand" margin="5,0,10,0" normaltextcolor="link_blue" text="+记录"/-->
-	                    <Button name="btn_custom_msg" valign="center" cursortype="hand" normaltextcolor="link_blue" disabledtextcolor="gray" text="自定义通知"/>
+	                    <!--Button name="add_msglog" dataid="10" valign="center" cursortype="hand" margin="5,0,10,0" normaltextcolor="link_blue" textid="STRID_SESSION_ADD_MSGLOG"/-->
+	                    <Button name="btn_custom_msg" valign="center" cursortype="hand" normaltextcolor="link_blue" disabledtextcolor="gray" textid="STRID_SESSION_CUSTOM_NOTIFICATION"/>
 	                    <Control width="10" />
-	                    <Button name="btn_msg_record" valign="center" cursortype="hand" normaltextcolor="link_blue" text="消息记录"/>
+	                    <Button name="btn_msg_record" valign="center" cursortype="hand" normaltextcolor="link_blue" textid="STRID_SESSION_MSG_RECORD"/>
 	                </HBox>
 	                <Control height="6"/>
 	                <Box height="auto">
 	                    <RichEdit class="prompt" name="input_edit" minheight="86" maxheight="300" multiline="true" vscrollbar="true" autovscroll="true" readonly="false" font="2" normaltextcolor="darkcolor" margin="2,2,2,2" padding="8,0,0,0" wantreturnmsg="true" rich="true"/>
-						<Label name="input_edit_mute_tip" valign="center" halign="center" text="禁言" visible="false" normaltextcolor="gray"/>
+						<Label name="input_edit_mute_tip" valign="center" halign="center" textid="STRID_SESSION_MUTE" visible="false" normaltextcolor="gray"/>
 	                </Box>
 	                <HBox name="hbox_send" height="30" margin="10,10,0,0">
-	                    <Label valign="bottom" text="提示：Enter发送，Ctrl+Enter换行"/>
+	                    <Label valign="bottom" textid="STRID_SESSION_SEND_TIP"/>
 	                    <Control />
-	                    <Button name="btn_send" normaltextcolor="white" font="7" text="发送" normalimage="send0.png" hotimage="send1.png" pushedimage="send2.png" disabledimage="send_disable.png"/>
+	                    <Button name="btn_send" normaltextcolor="white" font="7" textid="STRING_SEND" normalimage="send0.png" hotimage="send1.png" pushedimage="send2.png" disabledimage="send_disable.png"/>
 	                </HBox>
 	            </VBox>
 	        </VBox>
@@ -92,16 +92,16 @@
 	        <!--右侧：公告-->
 	        <VBox name="frame_right" width="240" visible="false">
 	            <HBox height="30">
-	                <Label width="stretch" margin="10,0,0,0" valign="center" normaltextcolor="lightcolor" text="群公告"/>
-	                <Button name="btn_new_broad" margin="0,0,10,0" valign="center" cursortype="hand" normaltextcolor="link_blue" text="新公告"/>
+	                <Label width="stretch" margin="10,0,0,0" valign="center" normaltextcolor="lightcolor" textid="STRID_SESSION_TEAM_BOARD"/>
+	                <Button name="btn_new_broad" margin="0,0,10,0" valign="center" cursortype="hand" normaltextcolor="link_blue" textid="STRID_SESSION_NEW_BOARD"/>
 	            </HBox>
 	            <Control class="splitline_hor_level1"/>
 	            <RichEdit name="re_broad" width="stretch" height="200" padding="5,5,0,0" readonly="true" multiline="true" rich="true" 
 	                      vscrollbar="true" hscrollbar="false" font="2"/>
 	            <Control class="splitline_hor_level1"/>
 	            <HBox height="30">
-	                <Label name="label_member" width="stretch" margin="10,0,0,0" valign="center" text="群成员（共0人）"/>
-	                <Button name="btn_refresh_member" margin="0,0,10,0" valign="center" cursortype="hand" normaltextcolor="link_blue" text="刷新"/>
+	                <Label name="label_member" width="stretch" margin="10,0,0,0" valign="center" textid="STRID_SESSION_MEMBER_NUM"/>
+	                <Button name="btn_refresh_member" margin="0,0,10,0" valign="center" cursortype="hand" normaltextcolor="link_blue" textid="STRID_SESSION_REFRESH"/>
 	            </HBox>
 	            <Control class="splitline_hor_level1"/>
 	            <VListBox name="member_list" vscrollbar="true" hscrollbar="false" vscrollunit="50"/>

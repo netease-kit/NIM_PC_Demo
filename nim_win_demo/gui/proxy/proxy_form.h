@@ -48,6 +48,12 @@ private:
 	bool CheckProxyLegality();
 
 	/**
+	* 检查输入的代理地址和端口是否有效
+	* @return void
+	*/
+	void DetectProxyLegality();
+
+	/**
 	* 把代理类型组合框的选中索引转换为对应的代理类型
 	* @param[in] index 选中索引
 	* @return nim::NIMProxyTyp 代理类型
@@ -67,6 +73,16 @@ private:
 	*/
 	void ApplyProxySetting();
 
+	/**
+	* 设置面板可用
+	* @param[in] enable 可用
+	* @return void	无返回值
+	*/
+	void SetPanelEnabled(bool enable);
+
+private:
+	void CallbackDetectProxy(bool connect, nim::NIMProxyDetectStep step, const std::string& json_extention);
+
 private:
 	ui::Combo*    proxy_type_comb_;
 	ui::RichEdit* addr_ctrl_;
@@ -77,6 +93,9 @@ private:
 	ui::Button*	 confirm_btn_;
 	ui::Button*   apply_btn_;
 	ui::Control*  gifanim_ctrl_;
+
+private:
+	bool being_test_connect_;
 
 public:
 	static const LPCTSTR kClassName;

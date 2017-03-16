@@ -372,7 +372,7 @@ bool ProfileForm::OnStartChatBtnClicked(ui::EventArgs* args)
 bool ProfileForm::OnDeleteFriendBtnClicked(ui::EventArgs* args)
 {
 	MsgboxCallback cb = nbase::Bind(&ProfileForm::OnDeleteFriendMsgBox, this, std::placeholders::_1);
-	ShowMsgBox(m_hWnd, L"删除好友后，将同时解除双方的好友关系", cb, L"提示", L"确定", L"取消");
+	ShowMsgBox(m_hWnd, cb, L"STRID_PROFILE_FORM_DELETE_FRIEND_TIP", true, L"STRING_TIPS", true, L"STRING_OK", true, L"STRING_NO", true);
 	return true;
 }
 
@@ -460,7 +460,7 @@ bool ProfileForm::OnSaveInfoBtnClicked(ui::EventArgs * args)
 	std::wstring nick = nbase::StringTrim(nickname_edit->GetText());
 	if (nick.empty())
 	{
-		nickname_error_tip->SetText(L"昵称不能为空");
+		nickname_error_tip->SetText(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_PROFILE_FORM_NICKNAME_NON_EMPTY"));
 		nickname_error_tip->SetVisible(true);
 		return false;
 	}
@@ -744,7 +744,8 @@ void ProfileForm::InitLabels()
 		}
 	}
 
-	user_id_label->SetText(L"帐号：" + nbase::UTF8ToUTF16(m_uinfo.GetAccId()));//帐号
+	std::wstring account = nbase::StringPrintf(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_PROFILE_FORM_ACCOUNT_").c_str(), nbase::UTF8ToUTF16(m_uinfo.GetAccId()).c_str());
+	user_id_label->SetText(account);//帐号
 
 	if (m_uinfo.ExistValue(nim::kUserNameCardKeyBirthday))
 		birthday_label->SetText(nbase::UTF8ToUTF16(m_uinfo.GetBirth())); //生日
@@ -761,7 +762,9 @@ void ProfileForm::SetShowName()
 	UserService* user_service = UserService::GetInstance();
 	std::wstring show_name = user_service->GetUserName(m_uinfo.GetAccId());
 	show_name_label->SetText(show_name);
-	SetTaskbarTitle(show_name + L"的名片"); //任务栏标题
+	ui::MutiLanSupport* mls = ui::MutiLanSupport::GetInstance();
+	std::wstring title = nbase::StringPrintf(mls->GetStringViaID(L"STRID_PROFILE_FORM_WHOSE_NAMECARD").c_str(), show_name.c_str());
+	SetTaskbarTitle(title); //任务栏标题
 
 	if (user_type == nim::kNIMFriendFlagNormal) //好友
 	{
@@ -774,7 +777,8 @@ void ProfileForm::SetShowName()
 		if (!alias.empty())
 		{
 			nickname_label->SetVisible(true); //账号下面显示昵称
-			nickname_label->SetText(L"昵称：" + user_service->GetUserName(m_uinfo.GetAccId(), false));
+			std::wstring nickname = nbase::StringPrintf(mls->GetStringViaID(L"STRID_PROFILE_FORM_NICKNAME_").c_str(), user_service->GetUserName(m_uinfo.GetAccId(), false).c_str());
+			nickname_label->SetText(nickname);
 		}
 		else
 			nickname_label->SetVisible(false);

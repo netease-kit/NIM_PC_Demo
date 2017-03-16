@@ -151,6 +151,7 @@ void MsgBubbleFile::SetMsgStatus(nim::NIMMsgLogStatus status)
 	file_reup_->SetVisible(false);
 	file_redl_->SetVisible(false);
 
+	ui::MutiLanSupport* mls = ui::MutiLanSupport::GetInstance();
 	if (my_msg_)
 	{
 		if (status == nim::kNIMMsgLogStatusSent
@@ -158,11 +159,11 @@ void MsgBubbleFile::SetMsgStatus(nim::NIMMsgLogStatus status)
 			|| !file_url_.empty())
 		{
 			progress_vertlayout_->SetVisible(false);
-			http_status_->SetText(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_FILESTATUS_UPLOADED").c_str());
+			http_status_->SetText(mls->GetStringViaID(L"STRID_SESSION_FILESTATUS_UPLOADED"));
 		}
 		else if (msg_.local_res_path_.empty() || !nbase::FilePathIsExist(nbase::UTF8ToUTF16(msg_.local_res_path_), false))
 		{
-			http_status_->SetText(L"路径错误");
+			http_status_->SetText(mls->GetStringViaID(L"STRID_SESSION_FILESTATUS_PATH_ERROR"));
 			status_resend_->SetVisible(false);
 		}
 		else if (status == nim::kNIMMsgLogStatusSending)
@@ -172,14 +173,14 @@ void MsgBubbleFile::SetMsgStatus(nim::NIMMsgLogStatus status)
 		}
 		else if (status == nim::kNIMMsgLogStatusSendCancel)
 		{
-			http_status_->SetText(L"取消发送");
+			http_status_->SetText(mls->GetStringViaID(L"STRID_SESSION_FILESTATUS_CANCEL_SEND"));
 			file_reup_->SetVisible(true);
 			status_resend_->SetVisible(false);
 		}
 		else if (status == nim::kNIMMsgLogStatusSendFailed
 			|| file_url_.empty())
 		{
-			http_status_->SetText(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_FILESTATUS_UPLOADERROR").c_str());
+			http_status_->SetText(mls->GetStringViaID(L"STRID_SESSION_FILESTATUS_UPLOADERROR"));
 			file_reup_->SetVisible(true);
 		}
 	} 
@@ -188,7 +189,7 @@ void MsgBubbleFile::SetMsgStatus(nim::NIMMsgLogStatus status)
 		if (loading_)
 		{
 			progress_vertlayout_->SetVisible();
-			http_status_->SetText(L"正在下载");
+			http_status_->SetText(mls->GetStringViaID(L"STRID_SESSION_FILESTATUS_DOWNLOADING"));
 			file_cancel_->SetVisible(true);
 		} 
 		else if (download_fail_)
@@ -198,7 +199,7 @@ void MsgBubbleFile::SetMsgStatus(nim::NIMMsgLogStatus status)
 			//progress_vertlayout_->SetVisible(false);
 			if (download_cancel_)
 			{
-				http_status_->SetText(L"取消下载");
+				http_status_->SetText(mls->GetStringViaID(L"STRID_SESSION_FILESTATUS_CANCEL_DOWNLOAD"));
 			} 
 			else
 			{
@@ -390,7 +391,7 @@ void MsgBubbleFile::SetProgressValue(int prog_value)
 
 void MsgBubbleFile::SaveAs()
 {
-	std::wstring file_type = L"文件格式";
+	std::wstring file_type = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_FILE_FORMAT");
 	std::wstring text = nbase::StringPrintf(L"%s(*.*)", file_type.c_str());
 	std::wstring file_exten;
 	std::wstring file_name = nbase::UTF8ToUTF16(file_name_);

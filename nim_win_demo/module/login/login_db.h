@@ -85,20 +85,20 @@ public:
 	* 加载数据库
 	* @return bool true 成功，false 失败
 	*/
-    bool	Load();
+    bool Load();
 
 	/**
 	* 关闭数据库
 	* @return void	无返回值
 	*/
-    void	Close();
+    void Close();
 
 	/**
 	* 写入登录数据
 	* @param[in] data 登陆数据
 	* @return bool true 成功，false 失败
 	*/
-    bool    WriteLoginData(LoginData &data);
+    bool WriteLoginData(LoginData &data);
 
 	/**
 	* 是否需要更新登录帐号的信息
@@ -107,7 +107,7 @@ public:
 	* @param[in] password_changed 登录密码是否改变
 	* @return bool true 是，false 否
 	*/
-	bool    IsNeedUpdateData(const LoginData *orgi_login_data, 
+	bool IsNeedUpdateData(const LoginData *orgi_login_data, 
 							 const LoginData *current_login_data, 
 							 bool &password_changed);
 
@@ -119,7 +119,7 @@ public:
 	* @param[in] password_changed 登录密码是否改变
 	* @return bool true 成功，false 失败
 	*/
-	bool    UpdateLoginData(UTF8String &uid, 
+	bool UpdateLoginData(UTF8String &uid, 
 							LoginData *current_login_data, 
 							const uint8_t status, 
 							bool password_changed);
@@ -129,7 +129,7 @@ public:
 	* @param[in] status 登录数据状态
 	* @return bool true 成功，false 失败
 	*/
-	bool    SetStatus(UTF8String &uid, const uint8_t status);
+	bool SetStatus(UTF8String &uid, const uint8_t status);
 
 	/**
 	* 设置是否记住登录帐号的密码
@@ -137,7 +137,7 @@ public:
 	* @param[in] remember 是否记住密码：1=记住，0=不记住
 	* @return bool true 成功，false 失败
 	*/
-	bool    SetRemember(UTF8String &uid, const uint8_t remember);
+	bool SetRemember(UTF8String &uid, const uint8_t remember);
 
 	/**
 	* 设置是否自动登录
@@ -145,7 +145,7 @@ public:
 	* @param[in] auto_login 是否自动登录：1=自动登录，0=不自动登录
 	* @return bool true 成功，false 失败
 	*/
-	bool    SetAutoLogin(UTF8String &uid, const uint8_t auto_login);
+	bool SetAutoLogin(UTF8String &uid, const uint8_t auto_login);
 
 	/**
 	* 读取登录数据
@@ -153,7 +153,7 @@ public:
 	* @param[out] data 登陆数据
 	* @return bool true 成功，false 失败
 	*/
-    bool    QueryLoginDataByUid(UTF8String &uid, LoginData &data);
+    bool QueryLoginDataByUid(UTF8String &uid, LoginData &data);
 
 	/**
 	* 批量获取登录数据
@@ -166,7 +166,7 @@ public:
 	* 设置所有登录数据为删除状态
 	* @return bool true 成功，false 失败
 	*/
-	bool    SetAllLoginDataDeleted();
+	bool SetAllLoginDataDeleted();
 
 	/**
 	* 获取加密后的密码
@@ -174,7 +174,7 @@ public:
 	* @param[out] password_aes 加密后的密码
 	* @return void	无返回值
 	*/
-	void	GetAESPassword(const UTF8String &password_org, UTF8String &password_aes);
+	void GetAESPassword(const UTF8String &password_org, UTF8String &password_aes);
 
 	/**
 	* 获取解密后的密码
@@ -182,13 +182,36 @@ public:
 	* @param[out] password_org 原密码
 	* @return void	无返回值
 	*/
-	void	GetOrgPassword(const UTF8String &password_aes, UTF8String &password_org);
+	void GetOrgPassword(const UTF8String &password_aes, UTF8String &password_org);
 
 	/**
 	* 获取数据库对象
 	* @return ndb::SQLiteDB& 数据库对象
 	*/
 	ndb::SQLiteDB& GetSQLiteDB();
+
+public:
+	/**
+	* 写入配置信息
+	* @param[in] key 配置项名称
+	* @param[in] value 配置信息
+	* @return bool true 成功，false 失败
+	*/
+	bool InsertConfigData(const std::string& key, const std::string& value);
+
+	/**
+	* 获取配置信息
+	* @param[in] key 配置项名称
+	* @param[out] value 配置信息
+	* @return void	无返回值
+	*/
+	void QueryConfigData(const std::string& key, std::string& value);
+
+	/**
+	* 清理所有配置信息
+	* @return void	无返回值
+	*/
+	void ClearConfigData();
 
 private:
 	/**

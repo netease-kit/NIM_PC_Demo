@@ -1,6 +1,6 @@
-/** @file nim_tools_http_cpp_wrapper.cpp
-* @brief NIM NIMÌá¹©µÄHTTP¹¤¾ß
-* @copyright (c) 2015, NetEase Inc. All rights reserved
+ï»¿/** @file nim_tools_http_cpp.cpp
+* @brief NIM HTTPï¿½á¹©ï¿½Ä´ï¿½ï¿½ä¹¤ï¿½ß½Ó¿ï¿½(CPPï¿½Ó¿ï¿½)
+* @copyright (c) 2015-2016, NetEase Inc. All rights reserved
 * @author towik, Oleg
 * @date 2015/4/30
 */
@@ -84,9 +84,9 @@ struct ResponseCallbackUserData
 void Init()
 {
 	HMODULE hmod;
-// #ifdef _DEBUG
-// 	hmod = ::LoadLibrary(L"nim_tools_http_d.dll");
-// #else
+//#ifdef _DEBUG
+//	hmod = ::LoadLibrary(L"nim_tools_http_d.dll");
+//#else
 	hmod = ::LoadLibrary(L"nim_tools_http.dll");
 //#endif
 
@@ -127,7 +127,7 @@ bool IsInitLog()
 	return g_nim_http_is_init_log();
 }
 
-//ÉèÖÃcpp·â×°²ãµÄÈ«¾Ö´úÀí
+//ï¿½ï¿½ï¿½ï¿½cppï¿½ï¿½×°ï¿½ï¿½ï¿½È«ï¿½Ö´ï¿½ï¿½ï¿½
 NIMProxyType proxy_type_ = kNIMProxyNone;
 std::string proxy_host_;
 short proxy_port_ = 0;

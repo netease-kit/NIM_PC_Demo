@@ -3,7 +3,7 @@
     <VBox bkcolor="bk_wnd_lightcolor" width="555" height="auto">
         <HBox class="caption">
             <Label class="font_title" name="title" width="stretch" valign="center" 
-                   normaltextcolor="darkcolor" text="创建群组"/>				   
+                   normaltextcolor="darkcolor" textid="STRID_TEAM_INFO_CREATE_TEAM"/>				   
             <Button class="btn_wnd_min" name="minbtn" margin="4,6,0,0"/>
             <Button class="btn_wnd_close" name="closebtn" margin="4,6,0,0"/>
         </HBox>
@@ -12,64 +12,64 @@
         
         <VListBox height="auto" maxheight="340" vscrollbar="true" vscrollunit="75">
 	        <VBox name="team_owner_section" height="auto" >
-				<HBox name="team_info_icon" width="130" height="54">
-					<VBox padding="0,0,0,0" height="auto" width="stretch" valign="center" mouse="false" mousechild="false">
-						<Label text="群头像" font="3" margin="10,0,0,0" />
+				<HBox name="team_info_icon" width="auto" height="54">
+					<VBox padding="0,0,0,0" width="auto" height="auto" valign="center" mouse="false" mousechild="false">
+						<Label textid="STRID_TEAM_INFO_TEAM_HEAD" width="auto" font="3" margin="10,0,0,0" />
 					</VBox>
-					<Box width="56" height="auto" margin="0,8,0,8">
+					<Box width="56" height="auto" margin="10,8,0,8">
 						<Button name="head_image" width="46" height="46" margin="1,1,1,1" borderround="46,46,46,46" cursortype="hand"/>
 						<Button class="icon_headimage_mask_48x48" mouse="false"/>
 					</Box>
 				</HBox>
 	            <HBox height="40" name="team_id_panel">
-	                <Label name="team_id_label" text="群ID" font="3" margin="10,10,0,0"/>
+	                <Label name="team_id_label" textid="STRID_TEAM_INFO_TEAM_ID" font="3" margin="10,10,0,0"/>
 	                <RichEdit class="simple prompt" name="team_id" width="200" height="auto" margin="8,0,10,0" valign="center" font="2" enabled="false"/>
 	            </HBox>
 	            <HBox height="40" name="team_name_panel">
-	                <Label name="team_name_label" text="群名称" font="3" margin="10,10,0,0"/>
-	                <RichEdit class="simple prompt" name="team_name" width="200" height="auto" margin="8,0,10,0" valign="center" font="2" prompttext="输入群名称"/>
+	                <Label name="team_name_label" textid="STRID_TEAM_INFO_TEAM_NAME" font="3" margin="10,10,0,0"/>
+	                <RichEdit class="simple prompt" name="team_name" width="200" height="auto" margin="8,0,10,0" valign="center" font="2" prompttextid="STRID_TEAM_INFO_INPUT_TEAM_NAME"/>
 	            </HBox>
 	            
 	            <VBox name="team_info_fields" height="auto" >
 	                <HBox height="40" name="team_info_panel">
-	                    <Label text="群介绍" font="3" margin="10,10,0,0"/>
-	                    <RichEdit class="simple prompt" name="team_intro" width="200" height="auto" margin="8,0,10,0" valign="center" font="2" prompttext="输入群介绍"/>
+	                    <Label textid="STRID_TEAM_INFO_TEAM_INTRODUCTION" font="3" margin="10,10,0,0"/>
+	                    <RichEdit class="simple prompt" name="team_intro" width="200" height="auto" margin="8,0,10,0" valign="center" font="2" prompttextid="STRID_TEAM_INFO_INPUT_TEAM_INTRODUCTION"/>
 	                </HBox>
 
 	                <HBox height="40">
-	                    <Label text="入群身份验证" font="3" margin="10,10,20,0"/>
-	                    <Option class="circle_option_2" group="join_mode" name="join_mode_any" text="允许任何人" margin="0,12,10,0"/>
-	                    <Option class="circle_option_2" group="join_mode" name="join_mode_verify" text="需要验证消息" margin="0,12,10,0"/>
-	                    <Option class="circle_option_2" group="join_mode" name="join_mode_nobody" text="不允许任何人申请加入" margin="0,12,0,0"/>
+	                    <Label textid="STRID_TEAM_INFO_ENTER_TEAM_VERIFY" font="3" margin="10,10,20,0"/>
+	                    <Option class="circle_option_2" group="join_mode" name="join_mode_any" textid="STRID_TEAM_INFO_ALLOW_ANYBODY" margin="0,12,10,0"/>
+	                    <Option class="circle_option_2" group="join_mode" name="join_mode_verify" textid="STRID_TEAM_INFO_NEED_VERIFY" margin="0,12,10,0"/>
+	                    <Option class="circle_option_2" group="join_mode" name="join_mode_nobody" textid="STRID_TEAM_INFO_FORBID_EVERYBODY" margin="0,12,0,0"/>
 	                </HBox>
 
 	                <HBox height="40">
-	                    <Label text="是否需要被邀请人同意" font="3" margin="10,10,20,0"/>
-	                    <Option class="circle_option_2" group="be_invite_mode" name="be_invite_mode_agree" text="需要" margin="0,12,10,0"/>
-	                    <Option class="circle_option_2" group="be_invite_mode" name="be_invite_mode_no_need_agree" text="不需要" margin="0,12,0,0"/>
+	                    <Label textid="STRID_TEAM_INFO_IF_NEED_ACCEPT" font="3" margin="10,10,20,0"/>
+	                    <Option class="circle_option_2" group="be_invite_mode" name="be_invite_mode_agree" textid="STRID_TEAM_INFO_NEED" margin="0,12,10,0"/>
+	                    <Option class="circle_option_2" group="be_invite_mode" name="be_invite_mode_no_need_agree" textid="STRID_TEAM_INFO_DONT_NEED" margin="0,12,0,0"/>
 	                </HBox>
 					
 	                <HBox height="40">
-	                    <Label text="邀请他人权限" font="3" margin="10,10,20,0"/>
-	                    <Option class="circle_option_2" group="invite_mode" name="invite_mode_manager" text="管理员" margin="0,12,10,0"/>
-	                    <Option class="circle_option_2" group="invite_mode" name="invite_mode_any" text="所有人" margin="0,12,0,0"/>
+	                    <Label textid="STRID_TEAM_INFO_INVITE_AUTHORITY" font="3" margin="10,10,20,0"/>
+	                    <Option class="circle_option_2" group="invite_mode" name="invite_mode_manager" textid="STRID_TEAM_INFO_ADMIN" margin="0,12,10,0"/>
+	                    <Option class="circle_option_2" group="invite_mode" name="invite_mode_any" textid="STRID_TEAM_INFO_EVERYBODY" margin="0,12,0,0"/>
 	                </HBox>
 
 	                <HBox height="40">
-	                    <Label text="群资料修改权限" font="3" margin="10,10,20,0"/>
-	                    <Option class="circle_option_2" group="up_tinfo_mode" name="up_tinfo_mode_manager" text="管理员" margin="0,12,10,0"/>
-	                    <Option class="circle_option_2" group="up_tinfo_mode" name="up_tinfo_mode_any" text="所有人" margin="0,12,0,0"/>
+	                    <Label textid="STRID_TEAM_INFO_MODIFY_AUTHORITY" font="3" margin="10,10,20,0"/>
+	                    <Option class="circle_option_2" group="up_tinfo_mode" name="up_tinfo_mode_manager" textid="STRID_TEAM_INFO_ADMIN" margin="0,12,10,0"/>
+	                    <Option class="circle_option_2" group="up_tinfo_mode" name="up_tinfo_mode_any" textid="STRID_TEAM_INFO_EVERYBODY" margin="0,12,0,0"/>
 	                </HBox>
 
 	                <HBox height="40">
-	                    <Label text="群自定义属性修改权限" font="3" margin="10,10,20,0"/>
-	                    <Option class="circle_option_2" group="up_custom_mode" name="up_custom_mode_manager" text="管理员" margin="0,12,10,0"/>
-	                    <Option class="circle_option_2" group="up_custom_mode" name="up_custom_mode_any" text="所有人" margin="0,12,0,0"/>
+	                    <Label textid="STRID_TEAM_INFO_CUSTOM_ATTRIBS_MODIFY_AUTHORITY" font="3" margin="10,10,20,0"/>
+	                    <Option class="circle_option_2" group="up_custom_mode" name="up_custom_mode_manager" textid="STRID_TEAM_INFO_ADMIN" margin="0,12,10,0"/>
+	                    <Option class="circle_option_2" group="up_custom_mode" name="up_custom_mode_any" textid="STRID_TEAM_INFO_EVERYBODY" margin="0,12,0,0"/>
 	                </HBox>
 
 					<HBox height="40" margin="0,0,0,20">
-						<Label text="消息通知" font="3" margin="10,10,20,0"/>
-						<CheckBox class="checkbox_font14" name="msg_mode_notify" text="来消息通知" margin="0,12,0,0" enabled="false" />
+						<Label textid="STRID_TEAM_INFO_MSG_NOTIFY" font="3" margin="10,10,20,0"/>
+						<CheckBox class="checkbox_font14" name="msg_mode_notify" textid="STRID_TEAM_INFO_NOTIFY_MSG" margin="0,12,0,0" enabled="false" />
 					</HBox>
 	            </VBox>
 	        </VBox>
@@ -79,13 +79,13 @@
 
         <HBox bkcolor="bk_wnd_darkcolor" height="50">
             <Control />
-            <Button class="btn_global_white_80x30" name="cancel" valign="center" text="取消"/>
+            <Button class="btn_global_white_80x30" name="cancel" valign="center" textid="STRING_NO"/>
             <Control width="10"/>
-            <Button class="btn_global_green_80x30" name="confirm" valign="center" text="确定"/>
+            <Button class="btn_global_green_80x30" name="confirm" valign="center" textid="STRING_OK"/>
             <Control width="10"/>
-            <Button class="btn_global_green_80x30" name="quit" valign="center" text="退出群"/>
+            <Button class="btn_global_green_80x30" name="quit" valign="center" textid="STRID_TEAM_INFO_QUIT_TEAM"/>
             <Control width="10"/>
-            <Button class="btn_global_green_80x30" name="dismiss" valign="center" text="解散群"/>
+            <Button class="btn_global_green_80x30" name="dismiss" valign="center" textid="STRID_TEAM_INFO_DISSOLVE_TEAM"/>
             <Control />
         </HBox>
     </VBox>

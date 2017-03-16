@@ -1,29 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window caption="0,0,0,34" sizebox="4,4,4,4">
+<Window caption="0,0,0,34" sizebox="4,4,4,4" textid="STRID_MSGLOG_MANAGE_TITLE">
     <VBox bkcolor="bk_wnd_lightcolor" width="500" height="auto">
         <HBox class="caption">
-            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" text="消息管理"/>
+            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" textid="STRID_MSGLOG_MANAGE_TITLE"/>
             <Button class="btn_wnd_min" name="minbtn" margin="10,6,0,0"/>
             <Button class="btn_wnd_close" name="btn_close" margin="10,6,0,0"/>
         </HBox>
 		
         <Label class="font_title" name="tip_text" margin="10,10,10,10" width="stretch" normaltextcolor="darkcolor" />	
 		<HBox margin="10,10,10,10" height="30" name="path_box" >
-			<Label class="font_title" normaltextcolor="lightcolor" valign="center" text="路径："/>
+			<Label class="font_title" normaltextcolor="lightcolor" valign="center" textid="STRID_MSGLOG_MANAGE_PATH"/>
 			<RichEdit class="simple input" name="path_edit" font="12" margin="10,0,10,0" padding="5,5,5,5"/>
-			<Button  class="btn_global_white_80x30" name="btn_sel" normaltextcolor="darkcolor" text="选择"/>
+			<Button  class="btn_global_white_80x30" name="btn_sel" normaltextcolor="darkcolor" textid="STRID_MSGLOG_MANAGE_SELECT"/>
 		</HBox>
 		<VBox margin="10,10,10,10" height="auto" name="prg_box" childmargin="10" >
 			<Progress name="progress" width="stretch" height="4" margin="0,0,0,0" bkcolor="bk_progress_bk" progresscolor="bk_progress_progress" mouse="false"/>
 			<HBox height="auto" >
-				<Label class="font_title" name="result_text" normaltextcolor="lightcolor" text=""/>
+				<Label class="font_title" name="result_text" normaltextcolor="lightcolor"/>
 				<Control />
-				<Label class="font_title" name="progress_text" normaltextcolor="lightcolor" text=""/>
+				<Label class="font_title" name="progress_text" normaltextcolor="lightcolor"/>
 			</HBox>
 		</VBox>
 		<HBox name="hbox_send" height="30" margin="10,10,10,10">
 			<Control />
-            <Button  class="btn_global_green_80x30" name="btn_run" normaltextcolor="white" text="导出"/>
+            <Button  class="btn_global_green_80x30" name="btn_run" normaltextcolor="white" textid="STRID_MSGLOG_MANAGE_EXPORT"/>
 		</HBox>
     </VBox>
 </Window>

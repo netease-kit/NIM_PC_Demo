@@ -55,20 +55,21 @@ void AudioCaptureView::ShowControl(bool show)
 bool AudioCaptureView::OnClicked(ui::EventArgs* param)
 {
 	std::wstring name = param->pSender->GetName();
+	MutiLanSupport* mls = MutiLanSupport::GetInstance();
 	if (name == L"btn_start_capture")
 	{
 		if (AudioManager::GetInstance()->IsCapturing())
 		{
 			button_start_->SetEnabled(false);
 			button_stop_->SetEnabled(false);
-			tip_text->SetText(L"设备正在录制中！");
+			tip_text->SetText(mls->GetStringViaID(L"STRID_AUDIO_CAPTURE_RECORDING"));
 			return true;
 		}
 		else if (AudioManager::GetInstance()->IsPlaying())
 		{
 			button_start_->SetEnabled(false);
 			button_stop_->SetEnabled(false);
-			tip_text->SetText(L"设备正在播放语音中！");
+			tip_text->SetText(mls->GetStringViaID(L"STRID_AUDIO_CAPTURE_PLAYING"));
 			return true;
 		}
 
@@ -77,7 +78,7 @@ bool AudioCaptureView::OnClicked(ui::EventArgs* param)
 		{
 			button_start_->SetEnabled(false);
 			button_stop_->SetEnabled(false);
-			tip_text->SetText(L"设备正在录制中！");
+			tip_text->SetText(mls->GetStringViaID(L"STRID_AUDIO_CAPTURE_RECORDING"));
 		}	
 	}
 	else if(name == L"btn_send_audio")
@@ -119,19 +120,20 @@ void AudioCaptureView::OnStartCaptureCallback(const std::string& session_id, int
 		button_start_->SetEnabled(false);
 		button_stop_->SetEnabled(false);
 
+		MutiLanSupport* mls = MutiLanSupport::GetInstance();
 		switch (code)
 		{
 		case nim_audio::kUninitError:
-			tip_text->SetText(L"录制设备初始化失败！");
+			tip_text->SetText(mls->GetStringViaID(L"STRID_AUDIO_CAPTURE_RECORD_DEVICE_INIT_FAIL"));
 			break;
 		case nim_audio::kClientPlaying:
-			tip_text->SetText(L"正在播放中，无法录制！");
+			tip_text->SetText(mls->GetStringViaID(L"STRID_AUDIO_CAPTURE_PLAYING_CANT_RECORD"));
 			break;
 		case nim_audio::kClientCapturing:
-			tip_text->SetText(L"设备正在录制中！");
+			tip_text->SetText(mls->GetStringViaID(L"STRID_AUDIO_CAPTURE_RECORDING"));
 			break;
 		case nim_audio::kCaptureDeviceInitError:
-			tip_text->SetText(L"采集设备初始化失败！");
+			tip_text->SetText(mls->GetStringViaID(L"STRID_AUDIO_CAPTURE_CAPTURE_DEVICE_INIT_FAIL"));
 			break;
 		default:
 			break;
@@ -171,10 +173,11 @@ void AudioCaptureView::OnEnumCaptureDeviceCallback(int rescode, const wchar_t* d
 	if (AudioManager::GetInstance()->GetCaptureSid() == session_id_)
 		return;
 
+	MutiLanSupport* mls = MutiLanSupport::GetInstance();
 	if (rescode != nim_audio::kSuccess || NULL == device_list)
 	{
 		time_text_->SetVisible(false);
-		tip_text->SetText(L"未发现录音设备！");
+		tip_text->SetText(mls->GetStringViaID(L"STRID_AUDIO_CAPTURE_DEVICE_NOT_FOUND"));
 		button_start_->SetEnabled(false);
 		button_stop_->SetEnabled(false);
 	}
@@ -184,7 +187,7 @@ void AudioCaptureView::OnEnumCaptureDeviceCallback(int rescode, const wchar_t* d
 		{
 			time_text_->SetVisible(true);
 			time_text_->SetText(L"[00:00]");
-			tip_text->SetText(L"单击录制按钮即可录音");
+			tip_text->SetText(mls->GetStringViaID(L"STRID_AUDIO_CAPTURE_CLICK_TO_RECORD"));
 			button_start_->SetEnabled(true);
 			button_stop_->SetEnabled(true);
 		}

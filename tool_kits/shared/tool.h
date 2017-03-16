@@ -28,6 +28,8 @@ void SplitString(const std::wstring &str, const std::wstring &seperator, std::ve
 std::string StringReverse(const std::string &input);
 //过滤无法显示的表情字符
 std::string FilterUCS4(const std::string& str, bool replace_spaces = true);
+//格式化SQL语句里的字符串（如转义单引号），避免执行SQL语句抛出异常
+UTF8String FormatSQLText(const UTF8String &sql_text);
 
 // regex
 bool IsMobilePhoneNumber(const std::string &str);

@@ -68,23 +68,23 @@ void ChatroomCallback::OnEnterCallback(__int64 room_id, const NIMChatRoomEnterSt
 			switch (error_code)
 			{
 			case nim::kNIMResNotExist:
-				kick_tip_str = L"聊天室不存在";
+				kick_tip_str = multilan->GetStringViaID(L"STRID_CHATROOM_TIP_ROOM_NOT_EXIST");
 				break;
 			case nim::kNIMResForbidden:
-				kick_tip_str = L"权限问题";
+				kick_tip_str = multilan->GetStringViaID(L"STRID_CHATROOM_TIP_NO_AUTHORITY");
 				break;
 			case nim::kNIMResRoomLinkError:
 			case nim::kNIMResRoomError:
-				kick_tip_str = L"聊天室异常";
+				kick_tip_str = multilan->GetStringViaID(L"STRID_CHATROOM_TIP_ROOM_ERROR");
 				break;
 			case nim::kNIMResRoomBlackBeOut:
-				kick_tip_str = L"黑名单用户禁止进入聊天室";
+				kick_tip_str = multilan->GetStringViaID(L"STRID_CHATROOM_TIP_BLACKLISTED2");
 				break;
 			case nim::kNIMResFrequently:
-				kick_tip_str = L"操作太频繁,稍后重试";
+				kick_tip_str = multilan->GetStringViaID(L"STRID_CHATROOM_TIP_FREQUENTLY");
 				break;
 			case nim::kNIMResAccountBlock:
-				kick_tip_str = L"账号被禁用";
+				kick_tip_str = multilan->GetStringViaID(L"STRID_CHATROOM_TIP_ACCOUNT_BLOCK");
 				break;
 			default:
 				QLOG_APP(L"enter faled: {0} , {1}") << room_id << error_code;
@@ -98,7 +98,8 @@ void ChatroomCallback::OnEnterCallback(__int64 room_id, const NIMChatRoomEnterSt
 			}), nbase::TimeDelta::FromSeconds(2));
 
 			ui::Label* kick_tip_label = (ui::Label*)kicked_tip_box->FindSubControl(L"kick_tip");
-			kick_tip_label->SetText(kick_tip_str);
+			kick_tip_label->SetText(L"");
+			kick_tip_label->SetTextId(kick_tip_str);
 
 			ui::Label* room_name_label = (ui::Label*)kicked_tip_box->FindSubControl(L"room_name");
 			room_name_label->SetDataID(nbase::Int64ToString16(room_id));
@@ -106,7 +107,7 @@ void ChatroomCallback::OnEnterCallback(__int64 room_id, const NIMChatRoomEnterSt
 			if (!info.name_.empty())
 				room_name_label->SetUTF8Text(info.name_);
 			else
-				room_name_label->SetText(nbase::StringPrintf(L"直播间(id %lld)", room_id));
+				room_name_label->SetText(nbase::StringPrintf(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_CHATROOM_ROOM_ID").c_str(), room_id));
 		}
 		else
 		{
@@ -167,7 +168,7 @@ void ChatroomCallback::OnExitCallback(__int64 room_id, int error_code, NIMChatRo
 		if (!info.name_.empty())
 			room_name_label->SetUTF8Text(info.name_);
 		else
-			room_name_label->SetText(nbase::StringPrintf(L"直播间(id %lld)", room_id));
+			room_name_label->SetText(nbase::StringPrintf(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_CHATROOM_ROOM_ID").c_str(), room_id));
 	};
 	Post2UI(cb);
 }

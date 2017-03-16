@@ -29,4 +29,10 @@ std::wstring GetUserImagePath();
 * @return wstring 用户语音数据目录
 */
 std::wstring GetUserAudioPath();
+
+/**
+* 获取用户其他文件目录位置，"\\"结尾
+* @return wstring 用户其他文件文件目录
+*/
+std::wstring GetUserOtherResPath();
 }

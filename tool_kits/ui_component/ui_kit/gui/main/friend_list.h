@@ -75,10 +75,10 @@ private:
 	/**
 	* 根据分组类型和分组标签获取分组控件
 	* @param[in] groupType 分组类型
-	* @param[in] letter 分组表亲啊
+	* @param[in] letter 分组标签
 	* @return ui::TreeNode*	分组控件
 	*/
-	ui::TreeNode* GetGroup(GroupType groupType, wchar_t letter = L'');
+	ui::TreeNode* GetGroup(GroupType groupType, wchar_t letter = L'\0');
 
 	/**
 	* 控件范围滚动到指定的分组标签

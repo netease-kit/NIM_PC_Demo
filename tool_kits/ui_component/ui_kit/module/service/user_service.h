@@ -117,6 +117,13 @@ public:
 	void DoQueryUserInfos(const std::set<std::string>& ids);
 
 	/**
+	* 执行批量查询用户信息操作,在可能要使用某些用户信息前进行批量查询,用于优化用户信息查询操作
+	* @param[in] ids 用户id列表
+	* @return void 无返回值
+	*/
+	void DoQueryUserInfos(const std::list<std::string>& ids);
+
+	/**
 	* 获取某个用户的好友类型
 	* @param[in] id 用户id
 	* @return NIMFriendFlag 好友类型
@@ -164,15 +171,28 @@ public:
 	* @param[in] change_event 好友变更事件
 	* @return void 无返回值
 	*/
-	void OnFriendListChange(const nim::FriendChangeEvent& change_event);
+	void OnFriendListChangeBySDK(const nim::FriendChangeEvent& change_event);
 
 	/**
-	* 用户名、头像改变的回调
-	* @param[in] json_result 用户名片列表
+	* 同步好友列表的回调
+	* @param[in] change_event 同步好友列表事件
 	* @return void 无返回值
 	*/
-	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
+	void OnSyncFriendList(const nim::FriendChangeEvent& change_event);
 
+	/**
+	* 用户名、头像改变的回调(由SDk触发)
+	* @param[in] uinfo_list 用户名片列表
+	* @return void 无返回值
+	*/
+	void OnUserInfoChangeBySDK(const std::list<nim::UserNameCard> &uinfo_list);
+
+	/**
+	* 用户名、头像改变的回调（由Demo触发）
+	* @param[in] uinfo_list 用户名片列表
+	* @return void 无返回值
+	*/
+	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfo_list);
 private:
 	/**
 	* 向数据库和服务器获取指定id的用户信息
@@ -188,14 +208,6 @@ private:
 	* @return void	无返回值
 	*/
 	void InvokeFriendListChangeCallback(FriendChangeType change_type, const std::string& accid);
-
-	/**
-	* 触发好友列表变更的的回调转发到UI线程
-	* @param[in] change_type 好友变化类型
-	* @param[in] accid 用户id
-	* @return void	无返回值
-	*/
-	void UIFriendListChangeCallback(FriendChangeType change_type, const std::string& accid);
 
 private:
 	std::map<std::string, nim::UserNameCard> all_user_; //好友+陌生人

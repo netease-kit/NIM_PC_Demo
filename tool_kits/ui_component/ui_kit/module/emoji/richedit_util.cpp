@@ -169,7 +169,9 @@ bool Re_InsertCustomItem(ITextServices *text_service, InsertCustomItemErrorCallb
 }
 bool Re_InsertFace(ITextServices *text_service, const std::wstring& file, const std::wstring& face_tag)
 {
-	return  Re_InsertCustomItem( text_service, InsertCustomItemErrorCallback(), file, face_tag, RE_OLE_TYPE_FACE, 0, true, EMOJI_SIZE, 0 );
+	int emoji_size = EMOJI_SIZE;
+	ui::DpiManager::GetInstance()->ScaleInt(emoji_size);
+	return  Re_InsertCustomItem(text_service, InsertCustomItemErrorCallback(), file, face_tag, RE_OLE_TYPE_FACE, 0, true, emoji_size, 0);
 }
 bool Re_InsertJsb(ITextServices *text_service, const std::wstring& file, const std::wstring& face_tag)
 {

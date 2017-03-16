@@ -64,11 +64,12 @@ ui::CSize MsgBubbleText::EstimateSize(ui::CSize szAvailable)
 	if (msg_.content_.empty())
 		return Box::EstimateSize(szAvailable);
 
-	int width = szAvailable.cx - 200;
+	int sub_width = 200;
+	int width = szAvailable.cx - DpiManager::GetInstance()->ScaleInt(sub_width);
 
 	ui::CSize sz = text_->GetNaturalSize(width, 0);
-	text_->SetFixedWidth(sz.cx);
-	text_->SetFixedHeight(sz.cy);
+	text_->SetFixedWidth(sz.cx, true, false);
+	text_->SetFixedHeight(sz.cy, false);
 
 	return Box::EstimateSize(szAvailable);
 }

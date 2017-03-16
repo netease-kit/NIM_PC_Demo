@@ -88,7 +88,7 @@ void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, cons
 	// 设置群信息
 	btn_refresh_member_->SetEnabled(true);
 	member_list_->RemoveAll();
-	label_member_->SetText(nbase::StringPrintf(L"群成员（共%d人）", team_member_info_list_.size()));
+	label_member_->SetText(nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MEMBER_NUM_EX").c_str(), team_member_info_list_.size()));
 	bool set_new_broad_visible = team_info_.GetUpdateInfoMode() == nim::kNIMTeamUpdateCustomModeEveryone;
 	btn_new_broad_->SetVisible(set_new_broad_visible);
 
@@ -191,7 +191,7 @@ void SessionBox::OnTeamMemberAdd(const std::string& tid, const nim::TeamMemberPr
 		else
 			SetTeamMemberMute(tid, uid, team_member_info.IsMute(), false);
 
-		std::wstring str = nbase::StringPrintf(L"群成员（共%d人）", member_list_->GetCount());
+		std::wstring str = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MEMBER_NUM_EX").c_str(), member_list_->GetCount());
 		label_member_->SetText(str);
 
 		if (LoginManager::GetInstance()->IsEqual(team_member_info.GetAccountID()))
@@ -213,7 +213,7 @@ void SessionBox::OnTeamMemberRemove(const std::string& tid, const std::string& u
 			member_list_->Remove(ctrl);
 		}
 
-		std::wstring str = nbase::StringPrintf(L"群成员（共%d人）", member_list_->GetCount());
+		std::wstring str = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MEMBER_NUM_EX").c_str(), member_list_->GetCount());
 		label_member_->SetText(str);
 
 		team_member_info_list_.erase(uid);

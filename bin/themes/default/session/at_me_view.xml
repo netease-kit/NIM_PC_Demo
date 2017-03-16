@@ -3,7 +3,7 @@
 <Window>
     <AtMeView name="btn_at_me" height="48" valign="bottom" visible="false" bkimage="bk_tip_dwon.png" padding="10,0,10,0" fadeinoutyfrombottom="true" fadehot="false" cursortype="hand">      
 		<HBox name="btn_at_me" height="stretch" mouse="false" mousechild="false">
-			<Label text="[有人@我] " width="auto" valign="center" normaltextcolor="link_red" font="1" visible="false"/> 
+			<Label textid="STRID_SESSION_SOMEONE_AT_ME" width="auto" valign="center" normaltextcolor="link_red" font="1" visible="false" margin="0,0,4,0"/> 
             <Label name="sender_name" width="auto" valign="center" normaltextcolor="lightcolor" font="1" />  
 			<Label name="msg_body" width="stretch" margin="0,0,30,0" valign="center" normaltextcolor="darkcolor" font="1" endellipsis="true"/>           
 		</HBox>

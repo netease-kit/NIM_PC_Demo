@@ -42,7 +42,7 @@ UINT AboutForm::GetClassStyle() const
 
 void AboutForm::InitWindow()
 {
-	SetTaskbarTitle(L"关于云信");
+	MutiLanSupport* multilan = MutiLanSupport::GetInstance();
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&AboutForm::OnClicked, this, std::placeholders::_1));
 
 	Label* version = (Label*) FindControl(L"version");
@@ -50,7 +50,8 @@ void AboutForm::InitWindow()
 		int ver = 0;
 		std::wstring vf;
 		nim_ui::UserConfig::GetInstance()->GetAppLocalVersion(ver, vf);
-		version->SetText(nbase::StringPrintf(L"版本: %s.%d", vf.c_str(), ver));
+		std::wstring format = multilan->GetStringViaID(L"STRID_ABOUTFORM_VERSION");
+		version->SetText(nbase::StringPrintf(format.c_str(), vf.c_str(), ver));
 	}
 }
 

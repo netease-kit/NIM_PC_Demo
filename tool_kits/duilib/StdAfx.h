@@ -8,7 +8,6 @@
 
 #pragma once
 
-
 #ifndef __FILET__
 #define __DUILIB_STR2WSTR(str)	L##str
 #define _DUILIB_STR2WSTR(str)	__DUILIB_STR2WSTR(str)
@@ -43,11 +42,8 @@
 #define _WIN32_WINNT _WIN32_WINNT_WINXP
 #endif
 
-
 #include "UIlib.h"
-
 #include <olectl.h>
-
 
 #define lengthof(x) (sizeof(x)/sizeof(*x))
 #define MAX max

@@ -2,7 +2,7 @@
 <Window>
     <VListBox class="menu">
         <MenuElement class="MenuElement" name="display_session_list" width="152">
-            <Label class="menu_text" text="显示会话列表"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_SHOW_SESSION_LIST"/>
         </MenuElement>
 
         <MenuElement width="152" height="1">
@@ -11,12 +11,12 @@
         
         <MenuElement class="MenuElement" name="logoff" width="152">
             <Button normalimage="icon_logout_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="注销" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_LOGOUT" margin="27,0,0,0"/>
         </MenuElement>
 
         <MenuElement class="MenuElement" name="quit" width="152">
             <Button normalimage="icon_exit_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" text="退出" margin="27,0,0,0"/>
+            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_QUIT" margin="27,0,0,0"/>
         </MenuElement>
     </VListBox>
 </Window>

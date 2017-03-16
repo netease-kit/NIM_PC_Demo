@@ -11,11 +11,7 @@ class UILIB_API AnimationManager
 public:
 	AnimationManager();
 
-	void Init(Control* control)
-	{
-		m_pControl = control;
-	}
-
+	void Init(Control* control)	{ m_pControl = control;	}
 	AnimationPlayer* GetAnimationPlayer(AnimationType animationType) const;
 
 	AnimationPlayer* SetFadeHot(bool bFadeHot);
@@ -31,7 +27,7 @@ public:
 	void MouseLeave();
 
 private:
-	Control* m_pControl;
+	Control *m_pControl;
 	std::map<AnimationType, std::unique_ptr<AnimationPlayer>> m_animationMap;
 };
 

@@ -1,41 +1,41 @@
-/** @file nim_sdk_api.h
-  * @brief ½Ó¿ÚÍ·ÎÄ¼ş¼¯ºÏ
+ï»¿/** @file nim_sdk_api.h
+  * @brief æ¥å£å¤´æ–‡ä»¶é›†åˆ
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2017/01/01
   */
 
-//¿Í»§¶ËµÇÂ¼£¬×¢ÏúÒÔ¼°Ïà¹Ø»Øµ÷½Ó¿Ú×¢²áAPI
+//å®¢æˆ·ç«¯ç™»å½•ï¼Œæ³¨é”€ä»¥åŠç›¸å…³å›è°ƒæ¥å£æ³¨å†ŒAPI
 #include "nim_client.h"
-//´úÀíÉèÖÃµÈ¹¤¾ßÀàAPI
+//ä»£ç†è®¾ç½®ç­‰å·¥å…·ç±»API
 #include "nim_global.h"
-//Êı¾İÍ¬²½Í¨ÖªAPI
+//æ•°æ®åŒæ­¥é€šçŸ¥API
 #include "nim_data_sync.h"
-//ÒôÊÓÆµÉè±¸Ïà¹ØAPI
+//éŸ³è§†é¢‘è®¾å¤‡ç›¸å…³API
 #include "nim_devie.h"
-//ÒôÊÓÆµÏà¹ØAPI
+//éŸ³è§†é¢‘ç›¸å…³API
 #include "nim_vchat"
-//Êı¾İÍ¨µÀÏà¹ØAPI(°×°åµÈ)
+//æ•°æ®é€šé“ç›¸å…³API(ç™½æ¿ç­‰)
 #include "nim_rts.h"
-//ÎÄµµ¹²ÏíÏà¹ØAPI
+//æ–‡æ¡£å…±äº«ç›¸å…³API
 #include "nim_doc_trans.h"
-//ºÃÓÑ¹ØÏµÏà¹ØAPI
+//å¥½å‹å…³ç³»ç›¸å…³API
 #include "nim_friend.h"
-//ÓÃ»§ĞÅÏ¢Ïà¹ØAPI
+//ç”¨æˆ·ä¿¡æ¯ç›¸å…³API
 #include "nim_user.h"
-//ÏûÏ¢ÀúÊ·Ïà¹ØAPI
+//æ¶ˆæ¯å†å²ç›¸å…³API
 #include "nim_msglog.h"
-//»á»°Ïà¹ØAPI
+//ä¼šè¯ç›¸å…³API
 #include "nim_talk.h"
-//ÏµÍ³Í¨ÖªÏà¹ØAPI
+//ç³»ç»Ÿé€šçŸ¥ç›¸å…³API
 #include "nim_sysmsg.h"
-//Èº×éÏà¹ØAPI
+//ç¾¤ç»„ç›¸å…³API
 #include "nim_team.h"
-//NOSÔÆ´æ´¢·şÎñÏà¹ØAPI
+//NOSäº‘å­˜å‚¨æœåŠ¡ç›¸å…³API
 #include "nim_nos.h"
-//»á»°ÁĞ±íÏà¹ØAPI
+//ä¼šè¯åˆ—è¡¨ç›¸å…³API
 #include "nim_session.h"
-//²å¼şÀàÏà¹ØAPI(ÁÄÌìÊÒ)
+//æ’ä»¶ç±»ç›¸å…³API(èŠå¤©å®¤)
 #include "nim_plugin_in.h"
-//¹¤¾ß¸¨ÖúÀàAPI
+//å·¥å…·è¾…åŠ©ç±»API
 #include "nim_tools.h"

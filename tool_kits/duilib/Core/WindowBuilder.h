@@ -3,14 +3,12 @@
 
 #pragma once
 
-namespace ui {
+namespace ui 
+{
 
 class Box;
 class Window;
-
-
 typedef std::function<Control* (const std::wstring&)> CreateControlCallback;
-
 
 class UILIB_API WindowBuilder
 {
@@ -18,9 +16,9 @@ public:
     WindowBuilder();
 
 	Box* Create(STRINGorID xml, CreateControlCallback pCallback = CreateControlCallback(),
-		Window* pManager = nullptr, Box* pParent = nullptr, Box* userDefinedBox = nullptr);
+		Window* pManager = nullptr, Box* pParent = nullptr, Box* pUserDefinedBox = nullptr);
 	Box* Create(CreateControlCallback pCallback = CreateControlCallback(), Window* pManager = nullptr,
-		Box* pParent = nullptr, Box* userDefinedBox = nullptr);
+		Box* pParent = nullptr, Box* pUserDefinedBox = nullptr);
 
     CMarkup* GetMarkup();
 
@@ -29,8 +27,8 @@ public:
 
 private:
     Control* _Parse(CMarkupNode* parent, Control* pParent = NULL, Window* pManager = NULL);
-	Control* GetUiLibControl(const std::wstring& pstrClass);
-	void AttachXmlEvent(bool isBubbled, CMarkupNode& node, Control* pParent);
+	Control* CreateControlByClass(const std::wstring& strControlClass);
+	void AttachXmlEvent(bool bBubbled, CMarkupNode& node, Control* pParent);
 
 private:
     CMarkup m_xml;

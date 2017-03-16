@@ -2,7 +2,7 @@
 <Window>
     <ListContainerElement height="auto">
         <VBox height="auto">
-            <Button name="CELL_BTN_LOAD_MORE_MSG" halign="center" cursortype="hand" normaltextcolor="darkcolor" text="点击加载历史消息"/>
+            <Button name="CELL_BTN_LOAD_MORE_MSG" halign="center" cursortype="hand" normaltextcolor="darkcolor" textid="STRID_SESSION_CLICK_SEE_MORE_MSG"/>
         </VBox>
     </ListContainerElement>
 </Window>

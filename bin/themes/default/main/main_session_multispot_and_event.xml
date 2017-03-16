@@ -3,12 +3,12 @@
 	<VBox height="auto">
 	    <ButtonBox name="multispot_info" height="61" cursortype="hand" mousechild="false" normalcolor="bk_wnd_lightcolor" hotcolor="bk_listitem_hovered" pushedcolor="bk_listitem_selected" visible="false" >
 	        <Control bkimage="duoduan.png" margin="10,0,0,0" valign="center" width="auto" height="auto"/>
-	        <Label margin="58,0,0,1" valign="center" font="2" text="正在使用云信手机版"/>
+	        <Label margin="58,0,0,1" valign="center" font="2" textid="STRID_MAINWINDOW_USING_NIM_ON_MOBILEPHONE"/>
 			<Control class="splitline_hor_level1" valign="bottom" name="split_line"/>
 	    </ButtonBox>
 	    <ButtonBox name="btn_events" height="60" cursortype="hand" mousechild="false" normalcolor="bk_wnd_lightcolor" hotcolor="bk_listitem_hovered" pushedcolor="bk_listitem_selected">
 	        <Control bkimage="msg_center.png" margin="10,0,0,0" valign="center" width="auto" height="auto"/>
-	        <Label margin="58,0,0,0" valign="center" font="2" text="消息中心"/>
+	        <Label margin="58,0,0,0" valign="center" font="2" textid="STRID_MAINWINDOW_MSG_CENTER"/>
 	        <Box name="box_unread_sysmsg" width="26" height="auto" margin="0,0,10,0" halign="right" valign="center" padding="0,2,0,4" bkimage="file='icon_number.png' corner='8,7,8,7'" visible="false">
 	            <Label name="label_unread_sysmsg" halign="center" normaltextcolor="white"/>
 	        </Box>

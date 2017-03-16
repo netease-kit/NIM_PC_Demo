@@ -54,9 +54,18 @@ protected:
 	/**
 	* 此消息接收的语音资源，是否成功下载到本地的回调函数
 	* @param[in] success	是否下载成功
+	* @param[in] file_path  文件下载路径
 	* @return void 无返回值
 	*/
-	virtual void OnDownloadCallback(bool success);
+	virtual void OnDownloadCallback(bool success, const std::string& file_path);
+
+	/**
+	* 此消息项上传的语音等，上传结果的回调函数
+	* @param[in] success	是否上传成功
+	* @param[in] url		文件上传地址
+	* @return void 无返回值
+	*/
+	virtual void OnUploadCallback(bool success, const std::string& url);
 private:
 	/**
 	* 设置语音资源的路径

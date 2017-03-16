@@ -2,7 +2,7 @@
 <Window>
     <ListContainerElement height="auto">
         <VBox height="auto">
-            <Label name="msg_time" margin="0,0,0,10" halign="center" normaltextcolor="lightcolor" text="消息时间"/>
+            <Label name="msg_time" margin="0,0,0,10" halign="center" normaltextcolor="lightcolor" textid="STRID_SESSION_MSG_TIME"/>
 
             <HBox height="auto">
                 <VBox height="auto">
@@ -11,14 +11,14 @@
                         <Control />
                         <Box name="status" width="auto" padding="0,0,5,0">
                             <Control name="status_sending" width="auto" height="auto" valign="bottom" bkimage="sending.gif" visible="true"/>
-                            <Button name="status_resend" valign="bottom" cursortype="hand" font="24" normaltextcolor="link_green" text="重新发送" visible="false"/>
-                            <Label name="status_send_failed" valign="bottom" font="24" normaltextcolor="link_red" text="发送失败" visible="false"/>
+                            <Button name="status_resend" valign="bottom" cursortype="hand" font="24" normaltextcolor="link_green" textid="STRID_SESSION_RESEND" visible="false"/>
+                            <Label name="status_send_failed" valign="bottom" font="24" normaltextcolor="link_red" textid="STRID_SESSION_SEND_FAIL" visible="false"/>
                             
                             <Control name="status_loading" width="auto" height="auto" valign="center" bkimage="loading.gif" visible="false"/>
-                            <Button name="status_reload" valign="center" cursortype="hand" font="24" normaltextcolor="link_green" text="重新下载" visible="false"/>
-                            <Label name="status_load_failed" valign="center" font="24" normaltextcolor="link_red" text="下载失败" visible="false"/>
+                            <Button name="status_reload" valign="center" cursortype="hand" font="24" normaltextcolor="link_green" textid="STRID_SESSION_REDOWNLOAD" visible="false"/>
+                            <Label name="status_load_failed" valign="center" font="24" normaltextcolor="link_red" textid="STRID_SESSION_DOWNLOAD_FAIL" visible="false"/>
 							
-                            <Label name="status_receipt" valign="center" font="1" text="已读" visible="false"/>						
+                            <Label name="status_receipt" valign="center" font="1" textid="STRID_SESSION_READ" visible="false"/>						
                         </Box>
                         <Box name="BubbleBox" width="auto" height="auto"/>
                     </HBox>

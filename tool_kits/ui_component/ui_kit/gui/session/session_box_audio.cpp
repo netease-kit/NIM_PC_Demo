@@ -17,8 +17,8 @@ void SessionBox::OnPlayAudioCallback( const std::string &cid, int code )
 	}
 	if (code != nim::kNIMResSuccess)
 	{
-		std::wstring tip = nbase::StringPrintf(L"语音播放失败，错误码：%d", code);
-		ShowMsgBox(this->GetWindow()->GetHWND(), tip, MsgboxCallback(), L"提示", L"确定", L"");
+		std::wstring tip = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_PLAY_AUDIO_ERROR").c_str(), code);
+		ShowMsgBox(this->GetWindow()->GetHWND(), MsgboxCallback(), tip, false);
 	}
 }
 

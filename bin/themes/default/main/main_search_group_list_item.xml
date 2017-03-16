@@ -3,7 +3,7 @@
     <TreeNode class="listitem" name="btn_search_team" height="auto" cursortype="hand">
         <Box height="60" cursortype="hand" mousechild="false" mouse="false" >
             <Control bkimage="search_add_team.png" margin="10,0,0,0" valign="center" width="auto" height="auto"/>
-            <Label margin="58,0,0,0" valign="center" font="2" text="搜索高级群"/>
+            <Label margin="58,0,0,0" valign="center" font="2" textid="STRID_MAINWINDOW_SEARCH_ADVANCED_TEAM"/>
         </Box>
         <Control class="splitline_hor_level1" name="split_line"/>
     </TreeNode>

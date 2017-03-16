@@ -5,19 +5,22 @@
 
 using namespace ui;
 
-void ShowMsgBox(HWND hwnd, const std::wstring &content, MsgboxCallback cb,
-	const std::wstring &title, const std::wstring &yes, const std::wstring &no)
+void ShowMsgBox(HWND hwnd, MsgboxCallback cb,
+	const std::wstring &content, bool content_is_id,
+	const std::wstring &title, bool title_is_id,
+	const std::wstring &yes, bool btn_yes_is_id,
+	const std::wstring &no, bool btn_no_is_id)
 {
 	MsgBox* msgbox = new MsgBox;
 	HWND hWnd = msgbox->Create(hwnd, L"", WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
 	if(hWnd == NULL)
 		return;
-	msgbox->SetTitle(title);
-	msgbox->SetContent(content);
-	msgbox->SetButton(yes, no);
+	MutiLanSupport *multilan = MutiLanSupport::GetInstance();
+	msgbox->SetTitle(title_is_id ? multilan->GetStringViaID(title) : title);
+	msgbox->SetContent(content_is_id ? multilan->GetStringViaID(content) : content);
+	msgbox->SetButton(btn_yes_is_id ? multilan->GetStringViaID(yes) : yes, btn_no_is_id ? multilan->GetStringViaID(no) : no);
 	msgbox->Show(hwnd, cb);
 }
-
 
 const LPCTSTR MsgBox::kClassName = L"MsgBox";
 

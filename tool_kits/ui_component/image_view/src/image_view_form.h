@@ -75,6 +75,8 @@ public:
 	void MaxWindowSize();
 	void RestoredWindowSize();
 
+	std::wstring CurrentImagePath() { return image_path_; }
+
 private:
 	//外屏坐标调整
 	void ScreenToClientEx(POINT &pt);
