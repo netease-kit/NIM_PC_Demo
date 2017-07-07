@@ -329,5 +329,3 @@ private:
 	std::wstring	specific_cached_file_;
 };
 }
-using namespace nbase;
-DISABLE_RUNNABLE_METHOD_REFCOUNT(nim_comp::HeadModifyForm);

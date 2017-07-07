@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <VListBox class="menu">
+        <MenuElement class="MenuElement" name="send_message" width="138" visible="false">
+            <Button class="menu_text" text="发送消息"/>
+        </MenuElement>
+
+        <MenuElement class="MenuElement" name="view_profile" width="138"  visible="false">
+            <Button class="menu_text" text="查看资料"/>
+        </MenuElement>
+
+        <MenuElement class="MenuElement" name="at_ta" width="138">
+            <Button class="menu_text" text="@Ta"/>
+        </MenuElement>
+    </VListBox>
+</Window>

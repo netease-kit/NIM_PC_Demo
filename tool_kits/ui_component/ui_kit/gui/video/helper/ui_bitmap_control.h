@@ -50,7 +50,7 @@ public:
 	* @param[in] rcPaint 可绘制区域
 	* @return void	无返回值
 	*/
-	void Paint(HDC hDC, const UiRect& rcPaint) override;
+	void Paint(IRenderContext* pRender, const UiRect& rcPaint) override;
 
 	/**
 	* 清理数据

@@ -12,7 +12,7 @@ class CCaptureEdit : public ui::Control
 public:
 	CCaptureEdit();
 	~CCaptureEdit();
-	virtual void Paint(HDC hDC, const ui::UiRect& rcPaint) override;
+	virtual void Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint) override;
 	
 public:
 	// Êó±ê²Ù×÷»æÍ¼

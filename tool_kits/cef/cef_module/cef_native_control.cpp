@@ -11,7 +11,7 @@ void CefNativeControl::AttachJsCallback(const OnJsCallbackEvent& callback)
 	cb_js_callback_ = callback;
 }
 
-void CefNativeControl::OnPaint(CefRefPtr<CefBrowser> browser, CefRenderHandler::PaintElementType type, const CefRenderHandler::RectList& dirtyRects, const void* buffer, int width, int height)
+void CefNativeControl::OnPaint(CefRefPtr<CefBrowser> browser, CefRenderHandler::PaintElementType type, const CefRenderHandler::RectList& dirtyRects, const std::string* buffer, int width, int height)
 {
 	return;
 }
@@ -29,6 +29,20 @@ void CefNativeControl::OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect&
 void CefNativeControl::UpdateWindowPos()
 {
 	this->SetPos(this->GetPos());
+}
+
+void CefNativeControl::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model)
+{
+	if (cb_before_menu_)
+		cb_before_menu_(params, model);
+}
+
+bool CefNativeControl::OnContextMenuCommand(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, int command_id, CefContextMenuHandler::EventFlags event_flags)
+{
+	if (cb_menu_command_)
+		return cb_menu_command_(params, command_id, event_flags);
+
+	return false;
 }
 
 void CefNativeControl::OnAddressChange(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& url)

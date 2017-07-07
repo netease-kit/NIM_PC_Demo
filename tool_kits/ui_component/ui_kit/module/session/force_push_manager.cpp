@@ -1,12 +1,12 @@
 ﻿#include "force_push_manager.h"
-#include "module/msglog/msg_extend_db.h"
+#include "module/db/user_db.h"
 
 namespace nim_comp
 {
 void ForcePushManager::Load()
 {
 	std::map<std::string, std::string> data;
-	MsgExDB::GetInstance()->QueryAllForcePushData(data);
+	UserDB::GetInstance()->QueryAllForcePushData(data);
 
 	Json::Reader reader;
 	Json::Value value;
@@ -33,7 +33,7 @@ void ForcePushManager::Load()
 
 void ForcePushManager::Save()
 {
-	MsgExDB::GetInstance()->ClearForcePushData();
+	UserDB::GetInstance()->ClearForcePushData();
 
 	Json::FastWriter writer;
 	Json::Value root;
@@ -55,7 +55,7 @@ void ForcePushManager::Save()
 		root.clear();
 	}
 
-	MsgExDB::GetInstance()->InsertForcePushData(data);
+	UserDB::GetInstance()->InsertForcePushData(data);
 }
 
 bool ForcePushManager::IsAtMeMsg(const nim::IMMessage &msg)

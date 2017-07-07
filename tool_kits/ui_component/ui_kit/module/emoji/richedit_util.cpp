@@ -177,9 +177,9 @@ bool Re_InsertJsb(ITextServices *text_service, const std::wstring& file, const s
 {
 	return  Re_InsertCustomItem(text_service, InsertCustomItemErrorCallback(), file, face_tag, RE_OLE_TYPE_FACE, 0, false, MAX_CUSTOM_ITEM_W, MAX_CUSTOM_ITEM_H);
 }
-bool Re_InsertImage(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file, bool loading, LONG cp)
+bool Re_InsertImage(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file, const std::wstring& file_tag, bool loading, LONG cp)
 {
-	return  Re_InsertCustomItem(text_service, callback, loading?L"":file, file, loading?RE_OLE_TYPE_IMAGELOADING:RE_OLE_TYPE_IMAGE, 0, false, MAX_CUSTOM_ITEM_W, MAX_CUSTOM_ITEM_H, cp);
+	return  Re_InsertCustomItem(text_service, callback, loading ? L"" : file, file_tag.empty() ? file : file_tag, loading ? RE_OLE_TYPE_IMAGELOADING : RE_OLE_TYPE_IMAGE, 0, false, MAX_CUSTOM_ITEM_W, MAX_CUSTOM_ITEM_H, cp);
 }
 bool Re_InsertFile(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file)
 {
@@ -1001,6 +1001,7 @@ int Re_ImageLoadingFinish(ITextServices * text_service, const std::wstring& file
 			if (NULL == reobject.poleobj)
 				continue;
 			bool find = false;
+			std::wstring image_tag;
 			if (CLSID_ImageOle == reobject.clsid)
 			{
 				IImageOle * pImageOle = NULL;
@@ -1013,7 +1014,7 @@ int Re_ImageLoadingFinish(ITextServices * text_service, const std::wstring& file
 					{
 						wchar_t* image_info;
 						pImageOle->GetFaceTag(&image_info);
-						std::wstring image_tag = image_info;
+						image_tag = image_info;
 						if (image_tag == file_path)
 						{
 							find = true;
@@ -1035,7 +1036,7 @@ int Re_ImageLoadingFinish(ITextServices * text_service, const std::wstring& file
 				Re_ReplaceSel(text_service, L"");
 				if (succeed)
 				{
-					Re_InsertImage(text_service, InsertCustomItemErrorCallback(), file_path, false, i);
+					Re_InsertImage(text_service, InsertCustomItemErrorCallback(), file_path, image_tag, false, i);
 				} 
 				else
 				{

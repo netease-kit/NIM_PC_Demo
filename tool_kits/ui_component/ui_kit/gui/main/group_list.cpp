@@ -47,19 +47,6 @@ GroupList::GroupList(ui::TreeView* group_list) :
 
 }
 
-void GroupList::OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path)
-{
-	if (type == kTeam)
-	{
-		FriendItem* friend_item = (FriendItem*)group_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
-		if (friend_item)
-		{
-			if (friend_item->GetId() == accid)
-				friend_item->FindSubControl(L"head_image")->SetBkImage(photo_path);
-		}
-	}
-}
-
 void GroupList::OnQueryAllMyTeams(int team_count, const std::list<nim::TeamInfo>& team_info_list)
 {
 	for (auto it = team_info_list.begin(); it != team_info_list.end(); it++)
@@ -101,7 +88,7 @@ void GroupList::AddListItemInGroup(const nim::TeamInfo& team_info, ui::TreeNode*
 
 	FriendItem* item = new FriendItem;
 	ui::GlobalManager::FillBoxWithCache( item, L"main/friend_item.xml" );
-	item->Init(true, team_info.GetTeamID());
+	item->Init(kFriendItemTypeTeam, team_info.GetTeamID());
 	FriendItem* container_element = item;
 	std::size_t index = 0;
 	for (index = 0; index < tree_node->GetChildNodeCount(); index++)
@@ -136,22 +123,6 @@ void GroupList::OnAddTeam(const std::string& tid, const std::string& tname, nim:
 	AddListItem(user_info);
 }
 
-void GroupList::OnTeamNameChanged(const nim::TeamInfo& team_info)
-{
-	for (int i = 0; i < group_list_->GetCount(); i++)
-	{
-		FriendItem* friend_item = dynamic_cast<FriendItem*>(group_list_->GetItemAt(i));
-		if (friend_item)
-		{
-			if (friend_item->GetId() == team_info.GetTeamID())
-			{
-				OnAddTeam(team_info.GetTeamID(), team_info.GetName(), team_info.GetType());
-				break;
-			}
-		}
-	}
-}
-
 void GroupList::OnRemoveTeam(const std::string& tid)
 {
 	for (int i = 0; i < group_list_->GetCount(); i++)
@@ -164,6 +135,35 @@ void GroupList::OnRemoveTeam(const std::string& tid)
 				friend_item->GetParentNode()->RemoveChildNode(friend_item);
 				break;
 			}
+		}
+	}
+}
+
+void GroupList::OnTeamNameChanged(const nim::TeamInfo& team_info)
+{
+	for (int i = 0; i < group_list_->GetCount(); i++)
+	{
+		FriendItem* friend_item = dynamic_cast<FriendItem*>(group_list_->GetItemAt(i));
+		if (friend_item)
+		{
+			if (friend_item->GetId() == team_info.GetTeamID())
+			{
+				friend_item->OnTeamNameChange(team_info);
+				break;
+			}
+		}
+	}
+}
+
+void GroupList::OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path)
+{
+	if (type == kTeam)
+	{
+		FriendItem* friend_item = (FriendItem*)group_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
+		if (friend_item)
+		{
+			if (friend_item->GetId() == accid)
+				friend_item->FindSubControl(L"head_image")->SetBkImage(photo_path);
 		}
 	}
 }

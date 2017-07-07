@@ -419,6 +419,33 @@ struct IMVideo : IMFile
 	}
 };
 
+/** @brief 波特机器人消息附件 */
+struct IMBotRobot
+{
+	bool	out_msg_;				/**< 是否为机器人回复，是:true，不是:false，默认false */
+	std::string robot_accid_;		/**< 机器人云信ID */
+	Json::Value sent_param_;		/**< 给机器人发送时需要填的字段，字段内容定义可见Demo源码或参考波特开发文档 */
+	
+	std::string related_msg_id_;	/**< 机器人回复时带的字段，表示该条回复相关联的消息ID */
+	std::string robot_msg_flag_;	/**< 机器人回复时带的字段，表示该条回复类型，类型定义可见Demo源码或参考波特开发文档*/
+	Json::Value robot_msg_content_;	/**< 机器人回复时带的字段，表示该条回复内容，字段内容定义可见Demo源码或参考波特开发文档 */
+	
+	/** 构造函数 */
+	IMBotRobot() : out_msg_(false) {}
+
+	/** @fn std::string ToJsonString() const
+	  * @brief 组装Json Value字符串
+	  * @return string Json Value字符串 
+      */	std::string ToJsonString() const
+	{
+		Json::Value attach;
+		attach[kNIMBotRobotMsgKeyRobotID] = robot_accid_;
+		attach[kNIMBotRobotSentMsgKeyParam] = sent_param_;
+
+		return GetJsonStringWithNoStyled(attach);
+	}
+};
+
 /** @fn bool ParseMessage(const std::string& msg_json, IMMessage& message)
   * @brief 解析消息
   * @param[in] msg_json 消息(Json Value数据字符串)

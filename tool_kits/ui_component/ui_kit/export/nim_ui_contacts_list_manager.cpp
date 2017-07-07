@@ -1,4 +1,5 @@
 ﻿#include "nim_ui_contacts_list_manager.h"
+#include "module/subscribe_event/subscribe_event_manager.h"
 #include "gui/main/friend_list.h"
 #include "gui/main/group_list.h"
 #include "gui/main/control/friend_item.h"
@@ -40,9 +41,17 @@ void ContactsListManager::InvokeGetAllUserInfo()
 
 void ContactsListManager::OnGetAllFriendInfo(const std::list<nim::UserNameCard> &uinfos)
 {
+	nim_comp::SubscribeEventManager::GetInstance()->SubscribeAllFriendEvent();
+
 	if (NULL != friend_list_)
 	{
 		friend_list_->OnGetFriendList(uinfos);
+	}
+
+	auto robot_list = nim_comp::UserService::GetInstance()->InvokeGetAllRobotsInfoBlock();
+	if (NULL != friend_list_)
+	{
+		friend_list_->OnGetRobotList(robot_list);
 	}
 }
 
@@ -63,7 +72,7 @@ void ContactsListManager::FillSearchResultList(ui::ListBox* search_result_list, 
 			{
 				nim_comp::FriendItem* search_res_friend_item = new nim_comp::FriendItem;
 				ui::GlobalManager::FillBoxWithCache(search_res_friend_item, L"main/friend_item.xml");
-				search_res_friend_item->Init(friend_item->GetIsTeam(), friend_item->GetId());
+				search_res_friend_item->Init(friend_item->GetFriendItemType(), friend_item->GetId());
 				if (std::find(searched_ids.begin(), searched_ids.end(), friend_item->GetId()) == searched_ids.end())
 				{
 					search_result_list->Add(search_res_friend_item);
@@ -81,7 +90,7 @@ void ContactsListManager::FillSearchResultList(ui::ListBox* search_result_list, 
 			{
 				nim_comp::FriendItem* search_res_friend_item = new nim_comp::FriendItem;
 				ui::GlobalManager::FillBoxWithCache(search_res_friend_item, L"main/friend_item.xml");
-				search_res_friend_item->Init(friend_item->GetIsTeam(), friend_item->GetId());
+				search_res_friend_item->Init(friend_item->GetFriendItemType(), friend_item->GetId());
 				if (std::find(searched_ids.begin(), searched_ids.end(), friend_item->GetId()) == searched_ids.end())
 				{
 					search_result_list->Add(search_res_friend_item);

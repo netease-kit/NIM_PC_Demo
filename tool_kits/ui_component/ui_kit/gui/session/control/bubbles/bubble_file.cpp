@@ -1,6 +1,6 @@
 ﻿#include "bubble_file.h"
 #include "shared/modal_wnd/file_dialog_ex.h"
-#include "module/msglog/msg_extend_db.h"
+#include "module/db/user_db.h"
 #include "module/session/session_manager.h"
 #include "shared/tool.h"
 
@@ -81,7 +81,7 @@ void MsgBubbleFile::InitInfo(const nim::IMMessage &msg)
 	file_url_ = file_data.url_;
 
 	std::string path, extend;
-	MsgExDB::GetInstance()->QueryDataWithMsgId(msg.client_msg_id_, path, extend);
+	UserDB::GetInstance()->QueryDataWithMsgId(msg.client_msg_id_, path, extend);
 	if (!path.empty())
 	{
 		local_path_ = path;
@@ -318,14 +318,14 @@ bool MsgBubbleFile::OnEvent(ui::EventArgs* arg)
 	}
 	else if (name == L"file_open")
 	{
-		nbase::ThreadManager::PostTask(kThreadGlobalMisc, nbase::Bind(&shared::tools::SafeOpenUrlEx, local_path_, SW_SHOW));
+		nbase::ThreadManager::PostTask(shared::kThreadGlobalMisc, nbase::Bind(&shared::tools::SafeOpenUrlEx, local_path_, SW_SHOW));
 		return false;
 	}
 	else if (name == L"file_opendocu")
 	{
 		std::string file_path;
 		shared::FilePathApartDirectory(local_path_, file_path);
-		nbase::ThreadManager::PostTask(kThreadGlobalMisc, nbase::Bind(&shared::tools::SafeOpenUrlEx, file_path, SW_SHOW));
+		nbase::ThreadManager::PostTask(shared::kThreadGlobalMisc, nbase::Bind(&shared::tools::SafeOpenUrlEx, file_path, SW_SHOW));
 		return false;
 	}
 	else if (name == L"file_cancel")
@@ -483,7 +483,7 @@ void MsgBubbleFile::DownloadResourceCallback(bool is_ok, int response_code)
 		}
 		if (!download_fail_)
 		{
-			MsgExDB::GetInstance()->InsertData(msg_.client_msg_id_, local_path_, "");
+			UserDB::GetInstance()->InsertData(msg_.client_msg_id_, local_path_, "");
 		}
 	}
 	SetMsgStatus(nim::kNIMMsgLogStatusNone);

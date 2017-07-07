@@ -31,6 +31,8 @@ private:
 	bool OnClicked(ui::EventArgs* arg);
 	bool OnReturn(ui::EventArgs* arg);
 
+	void OnBeforeMenu(CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model);
+	bool OnMenuCommand(CefRefPtr<CefContextMenuParams> params, int command_id, CefContextMenuHandler::EventFlags event_flags);
 	void OnTitleChange(const std::wstring& title);
 	void OnUrlChange(const std::wstring& url);
 	bool OnLinkClick(const std::wstring& url);

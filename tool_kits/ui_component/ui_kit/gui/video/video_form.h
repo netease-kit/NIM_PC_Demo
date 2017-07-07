@@ -501,9 +501,10 @@ public:
 	* @param[in] ret 是否选择了路径
 	* @param[in] mp4_path 保存MP4路径
 	* @param[in] audio_path 保存音频路径
+	* @param[in] mp4_path2 保存对方MP4路径
 	* @return void	无返回值
 	*/
-	void OnRecordSelFileCb(BOOL ret, std::wstring mp4_path, std::wstring audio_path);
+	void OnRecordSelFileCb(BOOL ret, std::wstring mp4_path, std::wstring audio_path, std::wstring mp4_path2);
 
 	/**
 	* 开始录制的回调

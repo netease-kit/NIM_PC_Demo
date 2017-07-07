@@ -13,7 +13,7 @@
 
 void MainThread::Init()
 {
-	nbase::ThreadManager::RegisterThread(kThreadUI);
+	nbase::ThreadManager::RegisterThread(shared::kThreadUI);
 	PreMessageLoop();
 
 	std::wstring theme_dir = QPath::GetAppPath();
@@ -49,13 +49,13 @@ void MainThread::Cleanup()
 
 void MainThread::PreMessageLoop()
 {
-	misc_thread_.reset( new MiscThread(kThreadGlobalMisc, "Global Misc Thread") );
+	misc_thread_.reset( new MiscThread(shared::kThreadGlobalMisc, "Global Misc Thread") );
 	misc_thread_->Start();
 
-	screen_capture_thread_.reset(new MiscThread(kThreadScreenCapture, "screen capture"));
+	screen_capture_thread_.reset(new MiscThread(shared::kThreadScreenCapture, "screen capture"));
 	screen_capture_thread_->Start();
 
-	db_thread_.reset( new DBThread(kThreadDatabase, "Database Thread") );
+	db_thread_.reset( new DBThread(shared::kThreadDatabase, "Database Thread") );
 	db_thread_->Start();
 }
 
@@ -75,7 +75,7 @@ void MainThread::OnMsgBoxCallback( MsgBoxRet ret )
 {
 	if(ret == MB_YES)
 	{
-		std::wstring dir = QPath::GetNimAppDataDir();
+		std::wstring dir = QPath::GetUserAppDataDir("");
 		QCommand::AppStartWidthCommand(dir, L"");
 	}
 
@@ -83,8 +83,8 @@ void MainThread::OnMsgBoxCallback( MsgBoxRet ret )
 }
 
 /**
-* È«¾Öº¯Êı£¬³õÊ¼»¯ÔÆĞÅ¡£°üÀ¨¶ÁÈ¡Ó¦ÓÃ·şÎñÆ÷µØÖ·£¬ÔØÈëÔÆĞÅsdk£¬³õÊ¼»¯°²×°Ä¿Â¼ºÍÓÃ»§Ä¿Â¼£¬×¢²áÊÕµ½ÍÆËÍÊ±Ö´ĞĞµÄ»Øµ÷º¯Êı¡£
-* @return void ÎŞ·µ»ØÖµ
+* å…¨å±€å‡½æ•°ï¼Œåˆå§‹åŒ–äº‘ä¿¡ã€‚åŒ…æ‹¬è¯»å–åº”ç”¨æœåŠ¡å™¨åœ°å€ï¼Œè½½å…¥äº‘ä¿¡sdkï¼Œåˆå§‹åŒ–å®‰è£…ç›®å½•å’Œç”¨æˆ·ç›®å½•ï¼Œæ³¨å†Œæ”¶åˆ°æ¨é€æ—¶æ‰§è¡Œçš„å›è°ƒå‡½æ•°ã€‚
+* @return void æ— è¿”å›å€¼
 */
 static void InitNim()
 {
@@ -147,22 +147,26 @@ static void InitNim()
 		}
 	}
 
-	//sdkÄÜÁ¦²ÎÊı£¨±ØÌî£©
-	config.database_encrypt_key_ = "Netease"; //string£¨db key±ØÌî£¬Ä¿Ç°Ö»Ö§³Ö×î¶à32¸ö×Ö·ûµÄ¼ÓÃÜÃÜÔ¿£¡½¨ÒéÊ¹ÓÃ32¸ö×Ö·û£©
+	if (nbase::FilePathIsExist(QPath::GetAppPath() + L"use_https", false))
+		config.use_https_ = true;
+
+	config.database_encrypt_key_ = "Netease"; //stringï¼ˆdb keyå¿…å¡«ï¼Œç›®å‰åªæ”¯æŒæœ€å¤š32ä¸ªå­—ç¬¦çš„åŠ å¯†å¯†é’¥ï¼å»ºè®®ä½¿ç”¨32ä¸ªå­—ç¬¦ï¼‰
 
 	std::string app_key = GetConfigValueAppKey();
-	bool ret = nim::Client::Init(app_key, "Netease", "", config); // ÔØÈëÔÆĞÅsdk£¬³õÊ¼»¯°²×°Ä¿Â¼ºÍÓÃ»§Ä¿Â¼
+	bool ret = nim::Client::Init(app_key, "Netease", "", config); // è½½å…¥äº‘ä¿¡sdkï¼Œåˆå§‹åŒ–å®‰è£…ç›®å½•å’Œç”¨æˆ·ç›®å½•
 	assert(ret);
 	ret = nim_chatroom::ChatRoom::Init("");
 	assert(ret);
 
-	nim_ui::InitManager::GetInstance()->InitUiKit();
+	// InitUiKitæ¥å£å‚æ•°å†³å®šæ˜¯å¦å¯ç”¨äº‹ä»¶è®¢é˜…æ¨¡å—ï¼Œé»˜è®¤ä¸ºfalseï¼Œå¦‚æœæ˜¯äº‘ä¿¡demo appåˆ™ä¸ºtrue
+	// å¦‚æœä½ çš„Appå¼€å¯äº†äº‹ä»¶è®¢é˜…åŠŸèƒ½ï¼Œåˆ™æ­¤å‚æ•°æ”¹ä¸ºtrue
+	nim_ui::InitManager::GetInstance()->InitUiKit(IsNimDemoAppKey(app_key)); 
 	nim_chatroom::ChatroomCallback::InitChatroomCallback();
 }
 
 int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)
 {
-	// °Ñcef dllÎÄ¼şµÄÎ»ÖÃÌí¼Óµ½³ÌĞòµÄ"path"»·¾³±äÁ¿ÖĞ,ÕâÑù¿ÉÒÔ°ÑdllÎÄ¼ş·Åµ½binÒÔÍâµÄÄ¿Â¼£¬²¢ÇÒ²»ĞèÒªÊÖ¶¯Æµ·±ÇĞ»»dllÎÄ¼ş£¬ÕâĞĞ´úÂë±ØĞëĞ´µ½mainµÄ¿ªÍ·
+	// æŠŠcef dllæ–‡ä»¶çš„ä½ç½®æ·»åŠ åˆ°ç¨‹åºçš„"path"ç¯å¢ƒå˜é‡ä¸­,è¿™æ ·å¯ä»¥æŠŠdllæ–‡ä»¶æ”¾åˆ°binä»¥å¤–çš„ç›®å½•ï¼Œå¹¶ä¸”ä¸éœ€è¦æ‰‹åŠ¨é¢‘ç¹åˆ‡æ¢dllæ–‡ä»¶ï¼Œè¿™è¡Œä»£ç å¿…é¡»å†™åˆ°mainçš„å¼€å¤´
 	nim_cef::CefManager::GetInstance()->AddCefDllToPath();
 	nbase::AtExitManager at_manager;
 
@@ -182,8 +186,9 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, in
 
 	::SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);
 
-	//³õÊ¼»¯cef
-	if (!nim_cef::CefManager::GetInstance()->Initialize(atoi(GetConfigValue("cef_osr_enabled").c_str()) > 0))
+	//åˆå§‹åŒ–cef
+	CefSettings settings;
+	if (!nim_cef::CefManager::GetInstance()->Initialize(QPath::GetNimAppDataDir(L"Netease"), settings, atoi(GetConfigValue("cef_osr_enabled").c_str()) > 0))
 		return 0;
 
 	QCommand::ParseCommand(lpszCmdLine);
@@ -192,24 +197,24 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, in
 	if( FAILED(hr) )
 		return 0;
 
-	// ³õÊ¼»¯ÔÆĞÅºÍUI×é¼ş
+	// åˆå§‹åŒ–äº‘ä¿¡å’ŒUIç»„ä»¶
 	InitNim();
 
 	{
-		MainThread thread; // ´´½¨Ö÷Ïß³Ì
-		thread.RunOnCurrentThreadWithLoop(nbase::MessageLoop::kUIMessageLoop); // Ö´ĞĞÖ÷Ïß³ÌÑ­»·
+		MainThread thread; // åˆ›å»ºä¸»çº¿ç¨‹
+		thread.RunOnCurrentThreadWithLoop(nbase::MessageLoop::kUIMessageLoop); // æ‰§è¡Œä¸»çº¿ç¨‹å¾ªç¯
 	}
 	QLOG_APP(L"exit ui loop");
 
-	//ÇåÀícef
+	//æ¸…ç†cef
 	nim_cef::CefManager::GetInstance()->UnInitialize();
 
-	// ³ÌĞò½áÊøÖ®Ç°£¬ÇåÀíÔÆĞÅsdkºÍUI×é¼ş
+	// ç¨‹åºç»“æŸä¹‹å‰ï¼Œæ¸…ç†äº‘ä¿¡sdkå’ŒUIç»„ä»¶
 	nim_ui::InitManager::GetInstance()->CleanupUiKit();
 
 	QLOG_APP(L"app exit");
 
-	// ÊÇ·ñÖØĞÂÔËĞĞ³ÌĞò
+	// æ˜¯å¦é‡æ–°è¿è¡Œç¨‹åº
 	std::wstring restart = QCommand::Get(kCmdRestart);
 	if( !restart.empty() )
 	{

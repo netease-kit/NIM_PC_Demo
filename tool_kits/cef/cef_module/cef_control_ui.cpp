@@ -46,7 +46,6 @@ void CefControl::Init()
 		// 使用无窗模式，离屏渲染
 		CefWindowInfo window_info;
 		window_info.SetAsWindowless(m_pWindow->GetHWND(), false);
-
 		CefBrowserSettings browser_settings;
 		CefBrowserHost::CreateBrowser(window_info, browser_handler_, L"", browser_settings, NULL);
 	}
@@ -105,14 +104,14 @@ void CefControl::SetInternVisible(bool bVisible)
 	}	
 }
 
-void CefControl::Paint(HDC hDC, const UiRect& rcPaint)
+void CefControl::Paint(IRenderContext* pRender, const UiRect& rcPaint)
 {
-	__super::Paint(hDC, rcPaint);
+	__super::Paint(pRender, rcPaint);
 
 	if (dc_cef_.IsValid() && browser_handler_.get() && browser_handler_->GetBrowser().get())
 	{
 		// 绘制cef PET_VIEW类型的位图
-		BitBlt(hDC, m_rcItem.left, m_rcItem.top, m_rcItem.GetWidth(), m_rcItem.GetHeight(), dc_cef_.GetDC(), 0, 0, SRCCOPY);
+		BitBlt(pRender->GetDC(), m_rcItem.left, m_rcItem.top, m_rcItem.GetWidth(), m_rcItem.GetHeight(), dc_cef_.GetDC(), 0, 0, SRCCOPY);
 
 		// 绘制cef PET_POPUP类型的位图
 		if (!rect_popup_.IsEmpty() && dc_cef_popup_.IsValid())
@@ -133,7 +132,7 @@ void CefControl::Paint(HDC hDC, const UiRect& rcPaint)
 				paint_buffer_y = -rect_popup_.y;
 			}
 
-			BitBlt(hDC, m_rcItem.left + paint_x, m_rcItem.top + paint_y, rect_popup_.width, rect_popup_.height, dc_cef_popup_.GetDC(), paint_buffer_x, paint_buffer_y, SRCCOPY);
+			BitBlt(pRender->GetDC(), m_rcItem.left + paint_x, m_rcItem.top + paint_y, rect_popup_.width, rect_popup_.height, dc_cef_popup_.GetDC(), paint_buffer_x, paint_buffer_y, SRCCOPY);
 		}
 	}
 }
@@ -295,8 +294,17 @@ LRESULT CefControl::SendButtonUpEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, b
 		return 0;
 
 	CefMouseEvent mouse_event;
-	mouse_event.x = pt.x - m_rcItem.left;
-	mouse_event.y = pt.y - m_rcItem.top;
+	if (uMsg == WM_RBUTTONUP)
+	{
+		mouse_event.x = pt.x/* - m_rcItem.left*/;	// 这里不进行坐标转换，否则右键菜单位置不正确
+		mouse_event.y = pt.y/* - m_rcItem.top*/;
+	}
+	else
+	{
+		mouse_event.x = pt.x - m_rcItem.left;
+		mouse_event.y = pt.y - m_rcItem.top;
+	}
+
 	mouse_event.modifiers = GetCefMouseModifiers(wParam);
 
 	CefBrowserHost::MouseButtonType btnType =

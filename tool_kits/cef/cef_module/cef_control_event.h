@@ -7,9 +7,13 @@
 #pragma once
 #include "include/cef_load_handler.h"
 #include "include/cef_request_handler.h"
+#include "include/cef_context_menu_handler.h"
 
 namespace ui 
 {
+	typedef std::function<void(CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model)> OnBeforeMenuEvent;
+	typedef std::function<bool(CefRefPtr<CefContextMenuParams> params, int command_id, CefContextMenuHandler::EventFlags event_flags)> OnMenuCommandEvent;
+
 	typedef std::function<void(const std::wstring& title)> OnTitleChangeEvent;
 	typedef std::function<void(const std::wstring& url)> OnUrlChangeEvent;
 

@@ -1,6 +1,6 @@
 ﻿#include "team_callback.h"
 #include "module/session/session_manager.h"
-#include "module/msglog/msg_extend_db.h"
+#include "module/db/user_db.h"
 #include "gui/team_info/team_notify.h"
 #include "gui/main/team_event_form.h"
 #include "export/nim_ui_window_manager.h"
@@ -256,7 +256,7 @@ void UIReceiveSysmsgCallback(nim::SysMessage& msg)
 			msg.status_ = nim::kNIMSysMsgStatusNone;
 		}
 		//bool add = true;
-		MsgExDB::GetInstance()->InsertMsgData(msg);
+		UserDB::GetInstance()->InsertMsgData(msg);
 		TeamEventForm* f = dynamic_cast<TeamEventForm*>(WindowsManager::GetInstance()->GetWindow(TeamEventForm::kClassName, TeamEventForm::kClassName));
 		if (f)
 		{

@@ -4,31 +4,32 @@
 
 namespace nim_comp
 {
-/** @class MsgExDB
-  * @brief 本地消息数据库
+/** @class UserDB
+  * @brief 用户数据库，存储某个用户的数据
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @date 2016/09/18
   */
-class MsgExDB
+class UserDB
 {
 public:
-	SINGLETON_DEFINE(MsgExDB);
-	MsgExDB();
-	virtual ~MsgExDB();
+	SINGLETON_DEFINE(UserDB);
+	UserDB();
+	virtual ~UserDB();
 
 public:
 	/**
 	* 加载数据库
 	* @return bool true 成功，false 失败
 	*/
-	bool	Load();
+	bool Load();
 
 	/**
 	* 关闭数据库
 	* @return void	无返回值
 	*/
-	void	Close();
+	void Close();
 
+public:
 	/**
 	* 保存文件传输中的文件保存路径
 	* @param[in] msg_id 消息id
@@ -47,6 +48,7 @@ public:
 	*/
 	bool QueryDataWithMsgId(const std::string& msg_id, std::string& path, std::string& extend);
 
+public:
 	/**
 	* 保存自定义通知消息
 	* @param[in] msg 自定义通知消息
@@ -62,6 +64,7 @@ public:
 	*/
 	std::vector<nim::SysMessage> QueryMsgData(int64_t time, int limit = 20);
 
+public:
 	/**
 	* 保存强推信息
 	* @param[in] data 强推信息
@@ -81,6 +84,28 @@ public:
 	* @return void 无返回值
 	*/
 	void ClearForcePushData();
+
+public:
+	enum TimeTagType
+	{
+		kTimeTagTypeSubscribeEvent	= 0
+	};
+
+	/**
+	* 插入某种类型的时间戳
+	* @param[in] type 时间戳类型
+	* @param[in] timetag 时间戳
+	* @return bool true 成功，false 失败
+	*/
+	bool InsertTimetag(TimeTagType type, uint64_t timetag);
+
+	/**
+	* 获取某种类型的时间戳
+	* @param[in] type 时间戳类型
+	* @param[out] timetag 时间戳
+	* @return bool true 成功，false 失败
+	*/
+	bool QueryTimetag(TimeTagType type, uint64_t &timetag);
 
 private:
 	/**

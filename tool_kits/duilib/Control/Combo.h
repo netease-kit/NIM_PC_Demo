@@ -20,7 +20,7 @@ public:
 
 	virtual void Activate() override;
 	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
-	virtual void PaintText(HDC hDC) override;
+	virtual void PaintText(IRenderContext* pRender) override;
 
     std::wstring GetText() const;
 	ListBox* GetListBox() { return m_pLayout.get(); }

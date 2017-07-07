@@ -17,6 +17,7 @@ const LPCTSTR MainForm::kClassName	= L"MainForm";
 
 MainForm::MainForm()
 {
+	is_busy_ = false;
 	is_trayicon_left_double_clicked_ = false;
 
 	OnUserInfoChangeCallback cb1 = nbase::Bind(&MainForm::OnUserInfoChange, this, std::placeholders::_1);
@@ -85,6 +86,9 @@ void MainForm::InitWindow()
 
 	btn_header_ = (Button*) FindControl(L"btn_header");
 	label_name_ = (Label*) FindControl(L"label_name");
+	btn_online_state_ = (Button*)FindControl(L"btn_online_state");
+	btn_online_state_->SetVisible(nim_comp::SubscribeEventManager::GetInstance()->IsEnabled());
+	btn_online_state_->AttachClick(nbase::Bind(&MainForm::OnlineStateMenuButtonClick, this, std::placeholders::_1));
 	InitHeader();
 
 	box_unread_ = (Box*) this->FindControl(L"box_unread");
@@ -114,9 +118,12 @@ void MainForm::InitWindow()
 	TrayIcon::GetInstance()->Init(this);
 	TrayIcon::GetInstance()->SetTrayIcon(::LoadIconW(nbase::win32::GetCurrentModuleHandle(), MAKEINTRESOURCE(IDI_ICON)), MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MIANWINDOW_TITLE"));
 
+	nim_ui::NotifyCenter::GetInstance()->RegNotify(NT_LINK, nbase::Bind(&MainForm::CheckOnlineState, this, std::placeholders::_1));
+
 	nim_ui::ContactsListManager::GetInstance()->InvokeGetAllUserInfo();
 	nim_ui::SessionListManager::GetInstance()->InvokeLoadSessionList();
 	nim_ui::SessionListManager::GetInstance()->QueryUnreadSysMsgCount();
+	nim_ui::SubscribeEventManager::GetInstance()->StartAutoSubscribe();
 }
 
 bool MainForm::OnClicked( ui::EventArgs* msg )
@@ -313,7 +320,7 @@ static void LookLogClick(HWND m_hWnd)
 
 bool MainForm::LookLogMenuItemClick(ui::EventArgs* param)
 {
-	nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&LookLogClick, GetHWND()));
+	nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(&LookLogClick, GetHWND()));
 	return false;
 }
 
@@ -488,3 +495,81 @@ bool MainForm::QuitMenuItemClick(ui::EventArgs* param)
 	nim_ui::LoginManager::GetInstance()->DoLogout(false);
 	return true;
 }
+
+bool MainForm::OnlineStateMenuButtonClick(ui::EventArgs* param)
+{
+	RECT rect = param->pSender->GetPos();
+	CPoint point;
+	point.x = rect.left - 15;
+	point.y = rect.bottom + 10;
+	ClientToScreen(m_hWnd, &point);
+	
+	//创建菜单窗口
+	CMenuWnd* pMenu = new CMenuWnd(NULL);
+	STRINGorID xml(L"online_state_menu.xml");
+	pMenu->Init(xml, _T("xml"), point);
+	//注册回调
+	CMenuElementUI* look_log = (CMenuElementUI*)pMenu->FindControl(L"online");
+	look_log->AttachSelect(nbase::Bind(&MainForm::OnlineStateMenuItemClick, this, std::placeholders::_1));
+
+	CMenuElementUI* file_trans = (CMenuElementUI*)pMenu->FindControl(L"busy");
+	file_trans->AttachSelect(nbase::Bind(&MainForm::OnlineStateMenuItemClick, this, std::placeholders::_1));
+
+	//显示
+	pMenu->Show();
+	return true;
+}
+
+bool MainForm::OnlineStateMenuItemClick(ui::EventArgs* param)
+{
+	std::wstring name = param->pSender->GetName();
+	if (name == L"online")
+	{		
+		if (!is_busy_)
+			return true;
+
+		is_busy_ = false;
+	}
+	else if (name == L"busy")
+	{
+		if (is_busy_)
+			return true;
+
+		is_busy_ = true;
+	}
+
+	SetOnlineState();
+	return true;
+}
+
+void MainForm::CheckOnlineState(const Json::Value& json)
+{
+	bool link = json["link"].asBool();
+	if (link)
+	{
+		SetOnlineState();
+	}
+}
+
+void MainForm::SetOnlineState()
+{
+	if (!nim_comp::SubscribeEventManager::GetInstance()->IsEnabled())
+		return;
+
+	nim::EventData event_data = nim_ui::SubscribeEventManager::GetInstance()->CreateBusyEvent(is_busy_);
+	nim::SubscribeEvent::Publish(event_data,
+		this->ToWeakCallback([this](nim::NIMResCode res_code, int event_type, const nim::EventData& event_data){
+		if (res_code == nim::kNIMResSuccess)
+		{
+			if (is_busy_)
+				btn_online_state_->SetBkImage(L"..\\menu\\icon_busy.png");
+			else
+				btn_online_state_->SetBkImage(L"..\\menu\\icon_online.png");
+		}
+		else
+		{
+			QLOG_ERR(L"OnlineStateMenuItemClick publish busy event error, code:{0}, event_type:{1}") << res_code << event_type;
+		}
+	}));
+}
+

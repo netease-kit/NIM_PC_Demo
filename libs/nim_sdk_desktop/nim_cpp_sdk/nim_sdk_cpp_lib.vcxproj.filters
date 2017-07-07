@@ -113,6 +113,18 @@
     <ClCompile Include="helper\nim_friend_helper.cpp">
       <Filter>helper</Filter>
     </ClCompile>
+    <ClCompile Include="helper\nim_subscribe_event_helper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="api\nim_cpp_subscribe_event.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\nim_robot_helper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="api\nim_cpp_robot.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\nim_client_helper.h">
@@ -205,6 +217,18 @@
     </ClInclude>
     <ClInclude Include="helper\nim_nos_helper.h">
       <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\nim_subscribe_event_helper.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="api\nim_cpp_subscribe_event.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\nim_robot_helper.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="api\nim_cpp_robot.h">
+      <Filter>api</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

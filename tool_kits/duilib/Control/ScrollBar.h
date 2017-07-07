@@ -24,13 +24,13 @@ public:
 	virtual void SetPos(UiRect rc) override;
 	virtual void HandleMessage(EventArgs& event) override;
 	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
-	virtual void Paint(HDC hDC, const UiRect& rcPaint) override;
+	virtual void Paint(IRenderContext* pRender, const UiRect& rcPaint) override;
 
-	void PaintBk(HDC hDC);
-	void PaintButton1(HDC hDC);
-	void PaintButton2(HDC hDC);
-	void PaintThumb(HDC hDC);
-	void PaintRail(HDC hDC);
+	void PaintBk(IRenderContext* pRender);
+	void PaintButton1(IRenderContext* pRender);
+	void PaintButton2(IRenderContext* pRender);
+	void PaintThumb(IRenderContext* pRender);
+	void PaintRail(IRenderContext* pRender);
 
 	bool IsHorizontal();
 	void SetHorizontal(bool bHorizontal = true);

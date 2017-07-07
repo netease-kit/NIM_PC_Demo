@@ -1,5 +1,5 @@
 ï»¿/** @file nim_tools_http_def.h
-* @brief NIM HTTPÌá¹©µÄ´«Êä½Ó¿ÚµÄÏà¹Ø¶¨ÒåµÄÍ·ÎÄ¼ş
+* @brief NIM HTTPæä¾›çš„ä¼ è¾“æ¥å£çš„ç›¸å…³å®šä¹‰çš„å¤´æ–‡ä»¶
 * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
 * @author towik, Oleg
 * @date 2015/4/30
@@ -10,10 +10,10 @@ extern"C"
 {
 #endif
 
-/** @enum NIMProxyType ´úÀíÀàĞÍ */
+/** @enum NIMProxyType ä»£ç†ç±»å‹ */
 enum NIMProxyType
 {
-	kNIMProxyNone		= 0,	/**< ²»Ê¹ÓÃ´úÀí*/
+	kNIMProxyNone		= 0,	/**< ä¸ä½¿ç”¨ä»£ç†*/
 	kNIMProxyHttp11		= 1,	/**< HTTP 1.1 Proxy*/
 	kNIMProxySocks4		= 4,	/**< Socks4 Proxy*/
 	kNIMProxySocks4a	= 5,	/**< Socks4a Proxy*/
@@ -21,57 +21,57 @@ enum NIMProxyType
 };
 
 /** @typedef void* HttpRequestHandle
-  * httpÈÎÎñ¾ä±ú
+  * httpä»»åŠ¡å¥æŸ„
   */
 typedef void* HttpRequestHandle;
 
 /** @typedef void (*nim_http_request_completed_cb)(const void* user_data, bool, int)
   * nim callback function that has been registered in nim_http_create_*** API
-  * @param[out] user_data		»Ø´«µÄ×Ô¶¨ÒåÊı¾İ
-  * @param[out] result			´«Êä½á¹û£¬true´ú±í´«Êä³É¹¦£¬false´ú±í´«ÊäÊ§°Ü
-  * @param[out] response_code	httpÏìÓ¦Âë
-  * @return void				ÎŞ·µ»ØÖµ
+  * @param[out] user_data		å›ä¼ çš„è‡ªå®šä¹‰æ•°æ®
+  * @param[out] result			ä¼ è¾“ç»“æœï¼Œtrueä»£è¡¨ä¼ è¾“æˆåŠŸï¼Œfalseä»£è¡¨ä¼ è¾“å¤±è´¥
+  * @param[out] response_code	httpå“åº”ç 
+  * @return void				æ— è¿”å›å€¼
   */
 typedef void (*nim_http_request_completed_cb)(const void* user_data, bool result, int response_code);
 
 /** @typedef void (*nim_http_request_response_cb)(const void* user_data, bool, int)
   * nim callback function that has been registered in nim_http_create_*** API
-  * @param[out] user_data			»Ø´«µÄ×Ô¶¨ÒåÊı¾İ
-  * @param[out] result				´«Êä½á¹û£¬true´ú±í´«Êä³É¹¦£¬false´ú±í´«ÊäÊ§°Ü
-  * @param[out] response_code		httpÏìÓ¦Âë
-  * @param[out] response_content	httpÏìÓ¦ÊµÌåÄÚÈİ
-  * @return void					ÎŞ·µ»ØÖµ
+  * @param[out] user_data			å›ä¼ çš„è‡ªå®šä¹‰æ•°æ®
+  * @param[out] result				ä¼ è¾“ç»“æœï¼Œtrueä»£è¡¨ä¼ è¾“æˆåŠŸï¼Œfalseä»£è¡¨ä¼ è¾“å¤±è´¥
+  * @param[out] response_code		httpå“åº”ç 
+  * @param[out] response_content	httpå“åº”å®ä½“å†…å®¹
+  * @return void					æ— è¿”å›å€¼
   */
 typedef void (*nim_http_request_response_cb)(const void* user_data, bool result, int response_code, const char* response_content);
 
 /** @typedef void (*nim_http_request_progress_cb)(const void* user_data, double total_upload_size, double uploaded_size, double total_download_size, double downloaded_size)
   * nim callback function that has been registered in nim_http_set_request_progress_cb API
-  * @param[out] user_data				»Ø´«µÄ×Ô¶¨ÒåÊı¾İ
-  * @param[out] total_upload_size		×ÜµÄ´ıÉÏ´«µÄ×Ö½ÚÊı
-  * @param[out] uploaded_size			ÒÑ¾­ÉÏ´«µÄ×Ö½ÚÊı
-  * @param[out] total_download_size		×ÜµÄ´ıÏÂÔØµÄ×Ö½ÚÊı
-  * @param[out] downloaded_size			ÒÑ¾­ÏÂÔØµÄ×Ö½ÚÊı
-  * @return void						ÎŞ·µ»ØÖµ
+  * @param[out] user_data				å›ä¼ çš„è‡ªå®šä¹‰æ•°æ®
+  * @param[out] total_upload_size		æ€»çš„å¾…ä¸Šä¼ çš„å­—èŠ‚æ•°
+  * @param[out] uploaded_size			å·²ç»ä¸Šä¼ çš„å­—èŠ‚æ•°
+  * @param[out] total_download_size		æ€»çš„å¾…ä¸‹è½½çš„å­—èŠ‚æ•°
+  * @param[out] downloaded_size			å·²ç»ä¸‹è½½çš„å­—èŠ‚æ•°
+  * @return void						æ— è¿”å›å€¼
   */
 typedef void(*nim_http_request_progress_cb)(const void* user_data, double total_upload_size, double uploaded_size, double total_download_size, double downloaded_size);
 
 /** @typedef void (*nim_http_request_transfer_cb)(const void* user_data, double total_upload_size, double uploaded_size, double total_download_size, double downloaded_size)
   * nim callback function that has been registered in nim_http_set_request_transfer_cb API
-  * @param[out] user_data				»Ø´«µÄ×Ô¶¨ÒåÊı¾İ
-  * @param[out] actual_upload_size		Êµ¼ÊÉÏ´«µÄ×Ö½ÚÊı
-  * @param[out] upload_speed			Æ½¾ùÉÏ´«ËÙ¶È£¨×Ö½ÚÃ¿Ãë£©
-  * @param[out] actual_download_size	Êµ¼ÊÏÂÔØµÄ×Ö½ÚÊı
-  * @param[out] download_speed			Æ½¾ùÏÂÔØËÙ¶È£¨×Ö½ÚÃ¿Ãë£©
-  * @return void						ÎŞ·µ»ØÖµ
+  * @param[out] user_data				å›ä¼ çš„è‡ªå®šä¹‰æ•°æ®
+  * @param[out] actual_upload_size		å®é™…ä¸Šä¼ çš„å­—èŠ‚æ•°
+  * @param[out] upload_speed			å¹³å‡ä¸Šä¼ é€Ÿåº¦ï¼ˆå­—èŠ‚æ¯ç§’ï¼‰
+  * @param[out] actual_download_size	å®é™…ä¸‹è½½çš„å­—èŠ‚æ•°
+  * @param[out] download_speed			å¹³å‡ä¸‹è½½é€Ÿåº¦ï¼ˆå­—èŠ‚æ¯ç§’ï¼‰
+  * @return void						æ— è¿”å›å€¼
   */
 typedef void(*nim_http_request_transfer_cb)(const void* user_data, double actual_upload_size, double upload_speed, double actual_download_size, double download_speed);
 
 /** @typedef void (*nim_http_request_speed_cb)(const void* user_data, double, double)
   * nim callback function that has been registered in nim_http_set_request_speed_cb API
-  * @param[out] user_data		»Ø´«µÄ×Ô¶¨ÒåÊı¾İ
-  * @param[out] upload_speed	ÊµÊ±ÉÏ´«ËÙ¶È£¨×Ö½ÚÃ¿Ãë£©
-  * @param[out] download_speed	ÊµÊ±ÏÂÔØËÙ¶È£¨×Ö½ÚÃ¿Ãë£©
-  * @return void				ÎŞ·µ»ØÖµ
+  * @param[out] user_data		å›ä¼ çš„è‡ªå®šä¹‰æ•°æ®
+  * @param[out] upload_speed	å®æ—¶ä¸Šä¼ é€Ÿåº¦ï¼ˆå­—èŠ‚æ¯ç§’ï¼‰
+  * @param[out] download_speed	å®æ—¶ä¸‹è½½é€Ÿåº¦ï¼ˆå­—èŠ‚æ¯ç§’ï¼‰
+  * @return void				æ— è¿”å›å€¼
   */
 typedef void(*nim_http_request_speed_cb)(const void* user_data, double upload_speed, double download_speed);
 

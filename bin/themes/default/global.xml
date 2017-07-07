@@ -275,6 +275,7 @@
 	<!--menu-->
     <Class name="menu" value="width=&quot;auto&quot; height=&quot;auto&quot; bkcolor=&quot;bk_wnd_lightcolor&quot;"/>
     <Class name="MenuElement" value="padding=&quot;20,0,20,0&quot; height=&quot;40&quot; hotcolor=&quot;bk_menuitem_hovered&quot; pushedcolor=&quot;bk_menuitem_selected&quot; selectednormalcolor=&quot;bk_menuitem_selected&quot;"/>
+    <Class name="OnlineStateMenuElement" value="padding=&quot;7,0,0,0&quot; height=&quot;30&quot; hotcolor=&quot;bk_menuitem_hovered&quot; pushedcolor=&quot;bk_menuitem_selected&quot; selectednormalcolor=&quot;bk_menuitem_selected&quot;"/>
     <Class name="menu_text" value="normaltextcolor=&quot;darkcolor&quot; font=&quot;2&quot; valign=&quot;center&quot;"/>
 
     <!--分割线-->

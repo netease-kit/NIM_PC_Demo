@@ -1,5 +1,7 @@
 ﻿#include "nim_ui_init_manager.h"
 #include "module/emoji/emoji_info.h"
+#include "module/service/user_service.h"
+#include "module/subscribe_event/subscribe_event_manager.h"
 #include "callback/login/login_callback.h"
 #include "callback/session/session_callback.h"
 #include "callback/http/http_callback.h"
@@ -9,12 +11,13 @@
 #include "callback/rts/rts_callback.h"
 #include "callback/login/data_sync_callback.h"
 #include "callback/multiport/multiport_push_callback.h"
-#include "module/service/user_service.h"
+#include "callback/subscribe_event/subscribe_event_callback.h"
 #include "shared/modal_wnd/async_do_modal.h"
 
 namespace nim_ui
 {
-void InitManager::InitUiKit()
+
+void InitManager::InitUiKit(bool enable_subscribe_event)
 {
 	// 初始化云信音视频
 	bool ret = nim::VChat::Init("");
@@ -54,6 +57,10 @@ void InitManager::InitUiKit()
 	nim::NOS::RegDownloadCb(nbase::Bind(&nim_comp::HttpCallback::OnHttpDownloadCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 	nim::NOS::RegUploadCb(nbase::Bind(&nim_comp::HttpCallback::OnHttpUploadCallback, std::placeholders::_1, std::placeholders::_2));
 
+	//注册事件订阅回调
+	nim::SubscribeEvent::RegPushEventCb(nbase::Bind(&nim_comp::SubscribeEventCallback::OnPushEventCallback, std::placeholders::_1, std::placeholders::_2));
+	nim::SubscribeEvent::RegBatchPushEventCb(nbase::Bind(&nim_comp::SubscribeEventCallback::OnBatchPushEventCallback, std::placeholders::_1, std::placeholders::_2));
+
 	//注册音视频回调
 	nim::VChat::SetVideoDataCb(true, nim_comp::VChatCallback::VideoCaptureData);
 	nim::VChat::SetVideoDataCb(false, nim_comp::VChatCallback::VideoRecData);
@@ -72,6 +79,8 @@ void InitManager::InitUiKit()
 	//加载聊天表情
 	nim_comp::emoji::LoadEmoji();
 
+	//启用事件订阅模块
+	nim_comp::SubscribeEventManager::GetInstance()->SetEnabled(enable_subscribe_event);
 	//语音组件回调函数在登录后注册
 }
 

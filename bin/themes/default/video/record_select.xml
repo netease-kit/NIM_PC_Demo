@@ -15,8 +15,12 @@
 			<CheckBox class="checkbox_font12" name="audio_sel" valign="center" />
 		</HBox>
 		<HBox height="auto" margin="10,16,0,0" >
-			<Label textid="STRID_RECORD_SELECT_MY_AUDIO_VIDEO" font="2" normaltextcolor="darkcolor" valign="center" width="100" />
+			<Label textid="STRID_RECORD_SELECT_MY_AUDIO_VIDEO" name="mp4_sel_label" font="2" normaltextcolor="darkcolor" valign="center" width="100" />
 			<CheckBox class="checkbox_font12" name="mp4_sel" valign="center" />
+		</HBox>
+		<HBox height="auto" margin="10,16,0,0" >
+			<Label textid="STRID_RECORD_SELECT_OTHER_AUDIO_VIDEO" name="mp4_sel2_label" font="2" normaltextcolor="darkcolor" valign="center" width="100" />
+			<CheckBox class="checkbox_font12" name="mp4_sel2" valign="center" />
 		</HBox>
 		<HBox height="auto" margin="10,26,10,30" >
 			<Label textid="STRID_RECORD_SELECT_SAVE_PATH" font="2" normaltextcolor="darkcolor" valign="center" />

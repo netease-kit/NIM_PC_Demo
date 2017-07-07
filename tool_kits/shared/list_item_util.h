@@ -10,6 +10,14 @@ enum GroupType
 	GT_TEAM,
 	GT_COMMON_FRIEND,
 	GT_COMMON_NUMBER,
+	GT_ROBOT,
+};
+
+enum FriendItemType
+{
+	kFriendItemTypeP2P,
+	kFriendItemTypeRobot,
+	kFriendItemTypeTeam,
 };
 
 class GroupTitle: public ui::TreeNode
@@ -30,16 +38,7 @@ struct UserAllInfo
 class ListItemUtil
 {
 public:
-	enum ListeItemType
-	{
-		FRIEND_LIST_TEAM,			//好友列表
-		FRIEND_LIST_FRIEND,	
-
-		START_CHAT_SEARCH_TEAM,		//发起聊天窗口搜索结果
-		START_CHAT_SEARCH_FRIEND,
-	};
-
-	static int GetGroup(GroupType groupType, wchar_t letter);
+	static int GetGroup(GroupType groupType, wchar_t letter, bool has_robot_node);
 	static ui::TreeNode* CreateFirstLetterListItem(const wstring& letter_name);
 	
 };

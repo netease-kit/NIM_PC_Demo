@@ -23,7 +23,7 @@ public:
 	virtual UiRect GetProgressPos() override;
 	virtual void HandleMessage(EventArgs& event) override;
 	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
-	virtual void PaintStatusImage(HDC hDC) override;
+	virtual void PaintStatusImage(IRenderContext* pRender) override;
 
 	virtual void ClearImageCache() override;
 

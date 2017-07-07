@@ -12,7 +12,7 @@ namespace ui
 {
 
 class CTxtWinHost;
-class UILIB_API RichEdit : public ScrollableBox, public IUIMessageFilter
+class UILIB_API RichEdit : public ScrollableBox
 {
 public:
     RichEdit();
@@ -135,17 +135,26 @@ public:
 	virtual CSize EstimateSize(CSize szAvailable) override;
 	virtual void SetPos(UiRect rc) override;
 	virtual void HandleMessage(EventArgs& event) override;
-	virtual void Paint(HDC hDC, const UiRect& rcPaint) override;
-	virtual void SetWindow(Window* pManager, Box* pParent, bool bInit = true) override;
+	void OnSetCursor(EventArgs& event);
+	void OnSetFocus(EventArgs& event);
+	void OnKillFocus(EventArgs& event);
+	void OnChar(EventArgs& event);
+	void OnKeyDown(EventArgs& event);
+	void OnImeStartComposition(EventArgs& event);
+	void OnImeEndComposition(EventArgs& event);
+	void OnMouseMessage(UINT uMsg, EventArgs& event);
+
+	virtual void Paint(IRenderContext* pRender, const UiRect& rcPaint) override;
 	virtual void SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue) override;
-	virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled) override;
 
 	BOOL CreateCaret(INT xWidth, INT yHeight);
 	BOOL ShowCaret(BOOL fShow);
+	void SetCaretColor(const std::wstring& dwColor);
+	std::wstring GetCaretColor();
 	RECT GetCaretRect();
 	BOOL SetCaretPos(INT x, INT y);
 	void ChangeCaretVisiable();
-	void PaintCaret(HDC hDC, const UiRect& rcPaint);
+	void PaintCaret(IRenderContext* pRender, const UiRect& rcPaint);
 
 	void SetPromptMode(bool bPrompt);
 	std::wstring GetPromptText() const;
@@ -154,11 +163,11 @@ public:
 	void SetUTF8PromptText(const std::string& strText);
 	void SetPromptTextId(const std::wstring& strTextId);
 	void SetUTF8PromptTextId(const std::string& strTextId);
-	void PaintPromptText(HDC hDC);
+	void PaintPromptText(IRenderContext* pRender);
 
 	std::wstring GetFocusedImage();
 	void SetFocusedImage(const std::wstring& strImage);
-	virtual void PaintStatusImage(HDC hDC) override;
+	virtual void PaintStatusImage(IRenderContext* pRender) override;
 
 	void SetNoSelOnKillFocus(bool bOnSel);
 	void SetSelAllOnFocus(bool bSelAll);
@@ -207,6 +216,7 @@ protected:
 	std::wstring m_sTextColor;
 	std::wstring m_sDisabledTextColor;
 	std::wstring m_sPromptColor;
+	std::wstring m_sCaretColor;
 	std::wstring m_sText;
 	std::wstring m_sPromptText;
 	std::wstring m_sPromptTextId;

@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window size="350,300" caption="0,0,0,34" textid="STRID_MULTISPOT_TITLE">
-    <VBox bkcolor="bk_wnd_lightcolor">
+<Window caption="0,0,0,34" textid="STRID_MULTISPOT_TITLE">
+    <VBox width="350" height="auto" bkcolor="bk_wnd_lightcolor">
         <HBox class="caption">
             <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" textid="STRID_MULTISPOT_TITLE"/>
             <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>
         </HBox>
-		<!--VListBox class="list" name="dev_list" vscrollbar="true" hscrollbar="false" vscrollunit="120" padding="0,0,0,10"/-->
-		<VBox height="auto" >
-            <Control bkimage="duoduan01.png" margin="0,30,0,10" halign="center" width="auto" height="auto"/>
-            <HBox bkimage="file='../public/edit/edit0.png' corner='10,10,10,10'" height="40" margin="50,0,50,0" padding="20,0,20,0" >
-				<Label class="font_title" width="stretch" valign="center" normaltextcolor="darkcolor" textid="STRID_MULTISPOT_NIM_MOBILEPHONE_CLIENT"/>
-				<Button name="kick" valign="center" cursortype="hand" font="1" normaltextcolor="btn_green" textid="STRID_MULTISPOT_KICK" />
-            </HBox>
-		</VBox>
+        <Control bkimage="duoduan01.png" margin="0,30,0,10" halign="center" width="auto" height="auto"/>
+		<VListBox class="list" name="dev_list" height="auto" vscrollbar="false" hscrollbar="false" margin="50,0,50,30" bkimage="file='../public/edit/edit0.png' corner='10,10,10,10'"/>
     </VBox>
 </Window>

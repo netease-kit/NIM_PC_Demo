@@ -196,7 +196,7 @@ SelectedContactItemUI* ContactSelectForm::CreateSelectedListItem(const std::stri
 
 ContactTileListUI* ContactSelectForm::GetGroup(GroupType groupType, wchar_t letter)
 {
-	return tree_node_ver_[ListItemUtil::GetGroup(groupType, letter)];
+	return tree_node_ver_[ListItemUtil::GetGroup(groupType, letter, false)];
 }
 
 void ContactSelectForm::OnFriendListChange(FriendChangeType change_type, const std::string& accid)

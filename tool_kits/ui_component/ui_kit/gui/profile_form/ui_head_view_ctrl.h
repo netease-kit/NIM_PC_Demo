@@ -1,5 +1,4 @@
 ﻿#pragma once
-using namespace Gdiplus;
 
 namespace nim_comp
 {
@@ -51,7 +50,7 @@ public:
 	* @param[in] use_original_image 是否在原图中抠图
 	* @return Bitmap* 位图指针
 	*/
-	Bitmap* GetSelectBitmap(RECT select_rect, bool use_original_image = false);
+	Gdiplus::Bitmap* GetSelectBitmap(RECT select_rect, bool use_original_image = false);
 
 	/**
 	* 获取加载的图片的尺寸
@@ -89,7 +88,7 @@ protected:
 	* @param[in] hDC 目标DC
 	* @return void	无返回值
 	*/
-	virtual void PaintBkImage(HDC hDC) override;
+	virtual void PaintBkImage(ui::IRenderContext* pRender) override;
 private:
 
 	/**
@@ -99,21 +98,21 @@ private:
 	* @param[in] select_rect 选区位置
 	* @return Bitmap* 位图指针
 	*/
-	Bitmap* GetSelectBitmapFromTempCanvas(RECT select_rect);
+	Gdiplus::Bitmap* GetSelectBitmapFromTempCanvas(RECT select_rect);
 
 	/**
 	* 采用原图中抠图(清晰，但图像大时每次压缩到200*200效率很低)
 	* @param[in] select_rect 选区位置
 	* @return Bitmap* 位图指针
 	*/
-	Bitmap* GetSelectBitmapFromImage(RECT select_rect); 
+	Gdiplus::Bitmap* GetSelectBitmapFromImage(RECT select_rect);
 
 	/**
 	* 采用显示区的画布抠图(适合原图比显示区画布小的情况)
 	* @param[in] select_rect 选区位置
 	* @return Bitmap* 位图指针
 	*/
-	Bitmap* GetSelectBitmapFormCanvas(RECT select_rect); 
+	Gdiplus::Bitmap* GetSelectBitmapFormCanvas(RECT select_rect);
 
 	/**
 	* 判断是否要生成或使用临时画布
@@ -127,13 +126,13 @@ private:
 	* @param[in] gp 绘图对象
 	* @return void	无返回值
 	*/
-	virtual void SetGraphicsMode(Graphics &gp);
+	virtual void SetGraphicsMode(Gdiplus::Graphics &gp);
 private:
 	std::wstring last_image_path_;			  // 最后一次真实图片路径
-	std::unique_ptr<Bitmap> image_;		  // 真实图片（或压缩到2000的压缩图）
-	std::unique_ptr<Bitmap> canvas_;		  // 显示区画布
-	std::unique_ptr<Bitmap> temp_canvas_;   // 临时的画布（抠图用）
-	std::unique_ptr<Bitmap> select_bitmap_; // 选区图像（预览用）
+	std::unique_ptr<Gdiplus::Bitmap> image_;		  // 真实图片（或压缩到2000的压缩图）
+	std::unique_ptr<Gdiplus::Bitmap> canvas_;		  // 显示区画布
+	std::unique_ptr<Gdiplus::Bitmap> temp_canvas_;   // 临时的画布（抠图用）
+	std::unique_ptr<Gdiplus::Bitmap> select_bitmap_; // 选区图像（预览用）
 	float zoom_ratio_;						  // 真实图的缩放比例(真图/画布)
 	float temp_zoom_ratio_;					  // 临时图的缩放比例(临时图/画布)
 	int last_select_width_;					  // 最后一次选区的宽度（如果宽度变化，需要重新生成临时图）
@@ -168,7 +167,7 @@ public:
 	* @param[in] select_bitmap 位图指针
 	* @return void	无返回值
 	*/
-	void SetPaintBitmap(Bitmap* select_bitmap);
+	void SetPaintBitmap(Gdiplus::Bitmap* select_bitmap);
 
 	/**
 	* 设置蒙板位图
@@ -182,7 +181,7 @@ public:
 	* 获取背景位图
 	* @return Bitmap* 位图指针
 	*/
-	Bitmap* GetPaintBitmap(){ return select_bitmap_; };
+	Gdiplus::Bitmap* GetPaintBitmap(){ return select_bitmap_; };
 protected:
 	/**
 	* 覆盖父类虚函数
@@ -190,10 +189,10 @@ protected:
 	* @param[in] rcPaint 可用绘制区域
 	* @return void	无返回值
 	*/
-	virtual void Paint(HDC hDC, const ui::UiRect& rcPaint) override; 
+	virtual void Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint) override;
 private:
-	Bitmap* select_bitmap_;					// 选区图像
-	std::unique_ptr<Bitmap> mask_image_;	// 蒙版图像 
+	Gdiplus::Bitmap* select_bitmap_;					// 选区图像
+	std::unique_ptr<Gdiplus::Bitmap> mask_image_;	// 蒙版图像 
 	RECT padding_rect_;						// 头像与蒙版的间距
 	ui::Image headimage_mask_;
 };
@@ -222,7 +221,7 @@ public:
 	* @param[in] quality_num 保存质量
 	* @return bool true 成功，false 失败
 	*/
-	static bool SaveImage(Bitmap *image,const std::wstring &file_path, 
+	static bool SaveImage(Gdiplus::Bitmap *image, const std::wstring &file_path,
 		const std::wstring &mime_type, long quality_num = 100); 
 
 	/**
@@ -230,14 +229,14 @@ public:
 	* @param[in] file_path 图片路径
 	* @return Bitmap* 生成后的位图指针
 	*/
-	static Bitmap* GetFormatBitmap(const std::wstring &file_path);
+	static Gdiplus::Bitmap* GetFormatBitmap(const std::wstring &file_path);
 
 	/**
 	* 把某个图片转换为200x200大小
 	* @param[in] bitmap 位图指针
 	* @return Bitmap* 生成后的位图指针
 	*/
-	static Bitmap* GetFormatBitmap(Bitmap* bitmap);
+	static Gdiplus::Bitmap* GetFormatBitmap(Gdiplus::Bitmap* bitmap);
 private:	
 
 	/**

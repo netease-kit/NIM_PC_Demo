@@ -54,7 +54,7 @@ void MultispotForm::InitWindow()
 
 	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&MultispotForm::Notify, this, std::placeholders::_1));
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&MultispotForm::OnClicked, this, std::placeholders::_1));
-	//dev_list_ = (ui::ListBox*)FindControl(L"dev_list");
+	dev_list_ = (ui::ListBox*)FindControl(L"dev_list");
 }
 
 bool MultispotForm::Notify( ui::EventArgs* msg )
@@ -76,27 +76,42 @@ bool MultispotForm::OnClicked( ui::EventArgs* msg )
 }
 void MultispotForm::OnMultispotChange(const std::map<nim::NIMClientType, nim::OtherClientPres>& map_multispot_infos)
 {
-	if (map_multispot_infos.size() > 0)
+	static std::wstring tip_template = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MULTISPOT_NIM_MOBILEPHONE_CLIENT");
+	dev_list_->RemoveAll();
+	for (auto& it : map_multispot_infos)
 	{
-		Button* kick = (Button*)FindControl(L"kick");
+		ui::ListContainerElement * item = new ui::ListContainerElement;
+
+		GlobalManager::FillBoxWithCache(item, L"main/dev_item.xml");
+
+		ui::Label *multi_des = (ui::Label*)item->FindSubControl(L"multi_des");
+		
+		std::wstring client_des;
+		switch (it.second.client_type_)
+		{
+		case nim::kNIMClientTypeAndroid:
+			client_des = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MULTISPOT_NIM_AOS");
+			break;
+		case nim::kNIMClientTypeiOS:
+			client_des = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MULTISPOT_NIM_IOS");
+			break;
+		case nim::kNIMClientTypePCWindows:
+			client_des = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MULTISPOT_NIM_PC");
+			break;
+		case nim::kNIMClientTypeWeb:
+			client_des = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MULTISPOT_NIM_WEB");
+			break;
+		default:
+			client_des = nbase::UTF8ToUTF16(map_multispot_infos.begin()->second.client_os_);
+			break;
+		}
+		std::wstring show_tip = nbase::StringPrintf(tip_template.c_str(), client_des.c_str());
+		multi_des->SetText(show_tip);
+
+		Button* kick = (Button*)item->FindSubControl(L"kick");
 		kick->SetDataID(nbase::UTF8ToUTF16(map_multispot_infos.begin()->second.device_id_));
+
+		dev_list_->Add(item);
 	}
-	//dev_list_->RemoveAll();
-	//for (auto& it : map_multispot_infos)
-	//{
-	//	ui::ListContainerElement * item = new ui::ListContainerElement;
-
-	//	GlobalManager::FillBoxWithCache(item, L"main/dev_item.xml");
-
-	//	Label* name = (Label*)item->FindSubControl(L"name");
-	//	name->SetUTF8Text(it.second.client_os_);
-	//	Label* time = (Label*)item->FindSubControl(L"time");
-	//	time->SetText(GetMessageTime(it.second.login_time_, false));
-
-	//	Button* kick = (Button*)item->FindSubControl(L"kick");
-	//	kick->SetDataID(nbase::UTF8ToUTF16(it.second.device_id_));
-
-	//	dev_list_->Add(item);
-	//}
 }
 }

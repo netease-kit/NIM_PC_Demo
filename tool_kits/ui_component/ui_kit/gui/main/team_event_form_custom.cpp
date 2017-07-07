@@ -1,13 +1,13 @@
 ﻿#include "gui/main/team_event_form.h"
 #include "gui/main/control/custom_msg.h"
-#include "module/msglog/msg_extend_db.h"
+#include "module/db/user_db.h"
 
 namespace nim_comp
 {
 void TeamEventForm::GetMoreCustomMsg()
 {
 	uint32_t limit = 10;
-	std::vector<nim::SysMessage> msgs = MsgExDB::GetInstance()->QueryMsgData(last_custom_msg_time_, limit);
+	std::vector<nim::SysMessage> msgs = UserDB::GetInstance()->QueryMsgData(last_custom_msg_time_, limit);
 	if (msgs.size() < limit)
 	{
 		has_more_custom_ = false;

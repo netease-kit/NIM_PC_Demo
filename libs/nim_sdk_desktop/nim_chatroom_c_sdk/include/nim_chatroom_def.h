@@ -8,6 +8,7 @@
 #define NIM_CHATROOM_SDK_EXPORT_HEADERS_NIM_CHATROOM_DEF_H_
 
 #include "../util/nim_base_types.h"
+#include "../util/nim_build_config.h"
 
 #ifdef __cplusplus
 extern"C"
@@ -236,7 +237,9 @@ static const char *kNIMChatRoomMsgKeyResendFlag		= "resend_flag";		/**< int,消�
 static const char *kNIMChatRoomMsgKeyExt			= "ext";				/**< string, 第三方扩展字段, 长度限制4096, 必须为可以解析为Json的非格式化的字符串*/
 static const char *kNIMChatRoomMsgKeyAntiSpamEnable	= "anti_spam_enable";	/**< int, 是否需要过易盾反垃圾, 0:不需要,1:需要, 默认0 */
 static const char *kNIMChatRoomMsgKeyAntiSpamContent= "anti_spam_content";	/**< string, (可选)开发者自定义的反垃圾字段, 长度限制2048 */
-
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+static const char *kNIMChatRoomMsgKeyHistorySave	= "history_save";	/**< int,(可选)该消息是否存储云端历史,可选，0:不是,1:是, 默认1 */
+#endif NIMAPI_UNDER_WIN_DESKTOP_ONLY
 //以下定义对于客户端只读
 static const char *kNIMChatRoomMsgKeyRoomID			= "room_id";			/**< long, 消息所属的聊天室id,服务器填写,发送方不需要填写 */
 static const char *kNIMChatRoomMsgKeyFromAccount	= "from_id";			/**< string, 消息发送者的账号,服务器填写,发送方不需要填写 */
@@ -337,6 +340,12 @@ static const char *kNIMChatRoomMemberInfoKeyTempMute	= "temp_mute";		/**<int 临
 static const char *kNIMChatRoomMemberInfoKeyTempMuteRestDuration= "temp_mute_rest_duration"; /**<long 临时禁言的解除时长,单位秒*/
 /** @}*/ //聊天室个人Info Json Keys
 
+/** @name 更新我的信息扩展字段 Json Keys
+  * @{
+  */
+static const char *kNIMChatRoomUpdateMyRoleExtNeedSave	= "need_save";	/**<bool 我的资料是否需要持久化保存，默认false*/
+/** @}*/ //更新我的信息扩展字段 Json Keys
+
 /** @enum NIMChatRoomLoginState 登录状态 */
 enum NIMChatRoomLoginState
 {
@@ -407,12 +416,13 @@ static const char *kChatRoomNotificationKeyID		=	"id";			/**<string 通知类型
 static const char *kChatRoomNotificationDataKeyExt	=	"ext";			/**<string 上层开发自定义的事件通知扩展字段, 必须为可以解析为Json的非格式化的字符串 */
 static const char *kChatRoomNotificationDataKeyOpt	=	"operator";		/**<string 操作者的账号accid */
 static const char *kChatRoomNotificationDataKeyOptNick		=	"opeNick";		/**<string 操作者的账号nick */
-static const char *kChatRoomNotificationDataKeyTargetNick	=	"tarNick";	/**<string json array 被操作者的nick列表 */
+static const char *kChatRoomNotificationDataKeyTargetNick	=	"tarNick";		/**<string json array 被操作者的nick列表 */
 static const char *kChatRoomNotificationDataKeyTarget=	"target";		/**<string json array 被操作者的accid */
 static const char *kChatRoomNotificationDataKeyTempMuteDuration="muteDuration";	/**<long 当通知为临时禁言相关时有该值，禁言时kNIMChatRoomNotificationIdMemberTempMute代表本次禁言的时长(秒)，解禁时kNIMChatRoomNotificationIdMemberTempUnMute代表本次禁言剩余时长(秒); 其他通知事件不带该数据*/
-static const char *kChatRoomNotificationDataKeyMuteFlag = "muted";	/**<int 当通知为kNIMChatRoomNotificationIdMemberIn才有，代表是否禁言状态，1:是 缺省或0:不是 */
-static const char *kChatRoomNotificationDataKeyTempMutedFlag = "tempMuted"; /**<int 当通知为kNIMChatRoomNotificationIdMemberIn才有，代表是否临时禁言状态，1:是 缺省或0:不是 */
+static const char *kChatRoomNotificationDataKeyMuteFlag = "muted";		/**<int 当通知为kNIMChatRoomNotificationIdMemberIn才有，代表是否禁言状态，1:是 缺省或0:不是 */
+static const char *kChatRoomNotificationDataKeyTempMutedFlag = "tempMuted";		/**<int 当通知为kNIMChatRoomNotificationIdMemberIn才有，代表是否临时禁言状态，1:是 缺省或0:不是 */
 static const char *kChatRoomNotificationDataKeyMemberInTempMutedDuration = "muteTtl"; /**<long 当通知为kNIMChatRoomNotificationIdMemberIn，代表临时禁言时长(秒)， 其他通知事件不带该数据 */
+static const char *kChatRoomNotificationDataKeyQueueChange = "queueChange"; /**<string 当通知为kNIMChatRoomNotificationIdQueueChange，代表队列变更具体内容，内容解析 参考麦序队列变更通知扩展字段queueChange keys */
 /** @}*/ //聊天室通知Keys
 
 /** @name 聊天室麦序队列元素Keys
@@ -422,7 +432,15 @@ static const char *kNIMChatRoomQueueElementKey		= "key";	/**<string 元素key */
 static const char *kNIMChatRoomQueueElementValue	= "value";	/**<string 元素value */
 /** @}*/ //聊天室麦序队列元素Keys
 
-/** @enum NIMChatRoomNotificationId 聊天室通知类型 */
+/** @name 聊天室通知 麦序队列变更通知扩展字段queueChange keys
+  * @{
+  */
+static const char *kNIMChatRoomNotificationQueueChangedKeyType		= "_e";		/**<string 变更类型，目前有OFFER,POLL,DROP三个类型*/
+static const char *kNIMChatRoomNotificationQueueChangedKeyKey		= "key";	/**<string 变更元素的key */
+static const char *kNIMChatRoomNotificationQueueChangedKeyValue		= "content";/**<string 变更元素的内容 */
+/** @}*/ //聊天室通知 麦序队列变更通知扩展字段queueChange keys
+
+/** @enum NIMChatRoomNotificationId 聊天室通知类型 {"data" : {"ext":"", "operator":"", "opeNick":"", "tarNick":["",...], "target":["",...], ...}, "id": 301}*/
 enum NIMChatRoomNotificationId
 {
 	kNIMChatRoomNotificationIdMemberIn			= 301, /**< 成员进入聊天室*/
@@ -441,6 +459,7 @@ enum NIMChatRoomNotificationId
 	kNIMChatRoomNotificationIdMemberTempMute	= 314, /**< 临时禁言*/
 	kNIMChatRoomNotificationIdMemberTempUnMute	= 315, /**< 主动解除临时禁言*/
 	kNIMChatRoomNotificationIdMyRoleUpdated		= 316, /**< 成员主动更新了聊天室内的角色信息(仅指nick/avator/ext)*/
+	kNIMChatRoomNotificationIdQueueChanged		= 317, /**< 麦序队列中有变更 "ext" : {"_e":"OFFER", "key":"element_key", "content":"element_value"}*/
 	kNIMChatRoomNotificationIdRoomMuted			= 318, /**< 聊天室被禁言了,只有管理员可以发言,其他人都处于禁言状态*/
 	kNIMChatRoomNotificationIdRoomDeMuted		= 319, /**< 聊天室解除全体禁言状态*/
 };

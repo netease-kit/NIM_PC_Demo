@@ -1,7 +1,7 @@
 /** @file nim_cpp_session.cpp
   * @brief 会话列表管理功能；主要包括查询会话列表、删除会话列表等功能
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
+  * @author towik, Oleg, Harrison
   * @date 2015/2/1
   */
 
@@ -13,7 +13,7 @@
 
 namespace nim
 {
-
+#ifdef NIM_SDK_DLL_IMPORT
 typedef void(*nim_session_reg_change_cb)(const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 typedef void(*nim_session_query_all_recent_session_async)(const char *json_extension, nim_session_query_recent_session_cb_func cb, const void* user_data);
 typedef void(*nim_session_delete_recent_session_async)(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
@@ -21,6 +21,9 @@ typedef void(*nim_session_delete_all_recent_session_async)(const char *json_exte
 typedef void(*nim_session_set_unread_count_zero_async)(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 typedef void(*nim_session_set_top)(enum NIMSessionType to_type, const char *id, bool top, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 typedef void(*nim_session_set_extend_data)(enum NIMSessionType to_type, const char *id, const char *data, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+#else
+#include "nim_session.h"
+#endif
 
 static void CallbackQuerySession(int total_unread_count, const char *result, const char *json_extension, const void *user_data)
 {

@@ -22,9 +22,8 @@ public:
 public:
 	virtual void DoInit() override;
 	virtual void HandleMessage(ui::EventArgs& event) override;
-	virtual void Paint(HDC hDC, const ui::UiRect& rcPaint) override;
+	virtual void Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint) override;
 	
-
 	//外部接口
 public:
 	//旋转图片

@@ -1,23 +1,28 @@
 ﻿#include "config_helper.h"
-#include "module/login/login_db.h"
+#include "module/db/public_db.h"
 
 
 ConfigHelper::ConfigHelper() :
 	adapt_dpi_(true)
 {
-	LoginDB::GetInstance()->Load();
 	ReadConfig();
 }
 
 ConfigHelper::~ConfigHelper()
 {
-	SaveConfig();
-	LoginDB::GetInstance()->Close();
+
 }
 
 void ConfigHelper::SetAdaptDpi(bool adapt_dpi)
 {
 	adapt_dpi_ = adapt_dpi;
+
+	Json::FastWriter writer;
+	Json::Value value;
+	value["adapt_dpi"] = adapt_dpi_;
+
+	std::string dpi_config = writer.write(value);
+	PublicDB::GetInstance()->InsertConfigData("adapt_dpi", dpi_config);
 }
 
 bool ConfigHelper::IsAdaptDpi()
@@ -31,7 +36,7 @@ void ConfigHelper::SetLanguage(const std::string& language)
 	Json::Value value;
 	value["language"] = language;
 	std::string language_config = writer.write(value);
-	bool ret = LoginDB::GetInstance()->InsertConfigData("language", language_config);
+	bool ret = PublicDB::GetInstance()->InsertConfigData("language", language_config);
 	if (ret)
 		language_ = language;
 	else
@@ -55,7 +60,7 @@ void ConfigHelper::ReadConfig()
 
 	//dpi
 	std::string dpi_config;
-	LoginDB::GetInstance()->QueryConfigData("adapt_dpi", dpi_config);
+	PublicDB::GetInstance()->QueryConfigData("adapt_dpi", dpi_config);
 	if (reader.parse(dpi_config, value))
 	{
 		if (value.isMember("adapt_dpi"))
@@ -64,20 +69,10 @@ void ConfigHelper::ReadConfig()
 
 	//语言
 	std::string language_config;
-	LoginDB::GetInstance()->QueryConfigData("language", language_config);
+	PublicDB::GetInstance()->QueryConfigData("language", language_config);
 	if (reader.parse(language_config, value))
 	{
 		if (value.isMember("language"))
 			language_ = value["language"].asString();
 	}
-}
-
-void ConfigHelper::SaveConfig()
-{
-	Json::FastWriter writer;
-	Json::Value value;
-	value["adapt_dpi"] = adapt_dpi_;
-
-	std::string dpi_config = writer.write(value);
-	LoginDB::GetInstance()->InsertConfigData("adapt_dpi", dpi_config);
 }

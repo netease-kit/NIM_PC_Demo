@@ -133,6 +133,7 @@ enum NIMMessageType
 	kNIMMessageTypeNotification	= 5,		/**< 系统类型通知（包括入群出群通知等） NIMNotificationId*/
 	kNIMMessageTypeFile		 = 6,			/**< 文件类型消息*/
 	kNIMMessageTypeTips		 = 10,			/**< 提醒类型消息,Tip内容根据格式要求填入消息结构中的kNIMMsgKeyServerExt字段*/
+	kNIMMessageTypeRobot	 = 11,			/**< 波特机器人消息*/
 	kNIMMessageTypeCustom    = 100,			/**< 自定义消息*/
 
 	kNIMMessageTypeUnknown	 = 1000,		/**< 未知类型消息，本地使用，发送时勿使用，作为默认值*/
@@ -216,7 +217,7 @@ enum NIMMsgLogSubStatus
   */
 static const char *kNIMMsglogQueryJsonExtensionKeyDirection		= "direction"; /**< NIMMsglogSearchDirection，默认为kForward */
 static const char *kNIMMsglogQueryJsonExtensionKeyReverse		= "reverse"; /**< bool，返回的消息历史排序正序(false)/逆序(true),默认为false */
-static const char *kNIMMsglogQueryJsonExtensionKeyEndTime		= "endtime"; /**< __int64，查询消息的截止时间，如果direction为kForward，则截止时间应小于anchor_msg_time，否则大于anchor_msg_time,默认为0代表不限制截止时间 */
+static const char *kNIMMsglogQueryJsonExtensionKeyEndTime		= "endtime"; /**< int64_t，查询消息的截止时间，如果direction为kForward，则截止时间应小于anchor_msg_time，否则大于anchor_msg_time,默认为0代表不限制截止时间 */
 /** @}*/ //接口nim_msglog_query_msg_async扩展参数json key定义
 
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY

@@ -65,6 +65,9 @@ void SessionBox::InitSessionBox()
 {
 	ASSERT(session_form_ != NULL);
 
+	UserService::GetInstance()->GetRobotInfo(session_id_, robot_info_);
+	is_robot_session_ = !robot_info_.GetAccid().empty();
+
 	this->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&SessionBox::Notify, this, std::placeholders::_1));
 	this->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&SessionBox::OnClicked, this, std::placeholders::_1));
 	this->AttachBubbledEvent(ui::kEventSelect, nbase::Bind(&SessionBox::OnSelChanged, this, std::placeholders::_1));
@@ -72,6 +75,7 @@ void SessionBox::InitSessionBox()
 
 	label_title_ = (Label*)FindSubControl(L"label_title");
 	label_tid_ = (Label*)FindSubControl(L"label_tid");
+	label_online_state_ = (Label*)FindSubControl(L"label_online_state");
 
 	btn_header_ = (Button*)FindSubControl(L"btn_header");
 	btn_header_->AttachClick(nbase::Bind(&SessionBox::OnBtnHeaderClick, this, std::placeholders::_1));
@@ -135,6 +139,38 @@ void SessionBox::InitSessionBox()
 	audio_capture_view_->InitControl(session_id_, nbase::Bind(&SessionBox::OnAudioCaptureComplete, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5, std::placeholders::_6));
 	msg_content_->Add(audio_capture_view_);
 
+	// 初始化任务栏缩略图
+	{
+		taskbar_item_ = new TaskbarTabItem(this);
+		if (taskbar_item_)
+			taskbar_item_->Init(nbase::UTF8ToUTF16(session_id_));
+	}
+
+	if (is_robot_session_)
+	{
+		btn_audio->SetVisible(false);
+		btn_video->SetVisible(false);
+		btn_rts->SetVisible(false);
+		btn_face_->SetVisible(false);
+		btn_capture_audio_->SetVisible(false);
+		FindSubControl(L"btn_image")->SetVisible(false);
+		FindSubControl(L"btn_snapchat")->SetVisible(false);
+		FindSubControl(L"btn_file")->SetVisible(false);
+		FindSubControl(L"btn_jsb")->SetVisible(false);
+		FindSubControl(L"btn_tip")->SetVisible(false);
+		FindSubControl(L"btn_clip")->SetVisible(false);
+		FindSubControl(L"btn_custom_msg")->SetVisible(false);
+	}
+	else
+	{
+		OnSelectAtItem cb = nbase::Bind(&SessionBox::OnSelectAtItemCallback, this, std::placeholders::_1, std::placeholders::_2);
+		AtlistForm *at_list_form = new AtlistForm(session_id_, session_type_, ToWeakCallback(cb));
+		at_list_form->Create(this->GetWindow()->GetHWND(), L"", WS_POPUPWINDOW, 0L);
+		nim::RobotInfos infos;
+		UserService::GetInstance()->GetAllRobotInfo(infos);
+		at_list_form->InitRobotInfos(infos);
+	}
+
 	CheckHeader();
 	CheckTeamType(nim::kNIMTeamTypeNormal);
 	OnWndSizeMax(TRUE == IsZoomed(this->GetWindow()->GetHWND()));
@@ -144,24 +180,11 @@ void SessionBox::InitSessionBox()
 		FindSubControl(L"btn_snapchat")->SetVisible(false);
 		InvokeGetTeamMember(); 
 		InvokeGetTeamInfo();
-
-		OnSelectAtItem cb = nbase::Bind(&SessionBox::OnSelectAtItemCallback, this, std::placeholders::_1);
-		AtlistForm *at_list_form = new AtlistForm(session_id_, ToWeakCallback(cb));
-		at_list_form->Create(this->GetWindow()->GetHWND(), L"", WS_POPUPWINDOW, 0L);
 	}
 	else
 	{
 		is_header_enable_ = true;
-		btn_invite_->SetVisible(true);
 	}
-
-	// 初始化任务栏缩略图
-	{
-		taskbar_item_ = new TaskbarTabItem(this);
-		if (taskbar_item_)
-			taskbar_item_->Init(nbase::UTF8ToUTF16(session_id_));
-	}
-
 
 	unregister_cb.Add(NotifyCenter::GetInstance()->RegNotify(NT_LINK, nbase::Bind(&SessionBox::OnRelink, this, std::placeholders::_1)));
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(nbase::Bind(&SessionBox::OnUserInfoChange, this, std::placeholders::_1)));
@@ -177,6 +200,14 @@ void SessionBox::InitSessionBox()
 		unregister_cb.Add(TeamService::GetInstance()->RegRemoveTeam(nbase::Bind(&SessionBox::OnTeamRemove, this, std::placeholders::_1)));
 		unregister_cb.Add(TeamService::GetInstance()->RegMuteMember(nbase::Bind(&SessionBox::OnTeamMuteMember, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 	}
+	else
+	{
+		auto receive_event_cb = nbase::Bind(&SessionBox::OnReceiveEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+		unregister_cb.Add(SubscribeEventManager::GetInstance()->RegReceiveEventCallback(receive_event_cb));
+	}
+
+	auto robot_list_change_cb = nbase::Bind(&SessionBox::OnRobotChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	unregister_cb.Add(UserService::GetInstance()->RegRobotListChange(robot_list_change_cb));
 }
 
 void SessionBox::UninitSessionBox()
@@ -270,7 +301,8 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 
 	MsgBubbleItem* item = NULL;
 
-	if (msg.type_ == nim::kNIMMessageTypeText || IsNetCallMsg(msg.type_, msg.attach_))
+	if (msg.type_ == nim::kNIMMessageTypeText 
+		|| IsNetCallMsg(msg.type_, msg.attach_))
 	{
 		Json::Value values;
 		Json::Reader reader;
@@ -370,6 +402,10 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 				}
 			}
 		}
+	}
+	else if (msg.type_ == nim::kNIMMessageTypeRobot)
+	{
+		item = new MsgBubbleRobot;
 	}
 	if (item == nullptr)
 	{
@@ -712,17 +748,11 @@ void SessionBox::OnRetweetResDownloadCallback(nim::NIMResCode code, const std::s
 void SessionBox::SendText( const std::string &text )
 {
 	nim::IMMessage msg;
-	//TODO(litianyi)
 	PackageMsg(msg);
-	msg.type_ = nim::kNIMMessageTypeText;
-	msg.content_ = text;
-	//nickname客户端不需要填写
-
-	AddSendingMsg(msg);
-
 	nim::MessageSetting setting;
+	std::string robot_accid;
 	//判断是否包含@某人的消息
-	if (session_type_ == nim::kNIMSessionTypeTeam && !uid_at_someone_.empty())
+	if (!uid_at_someone_.empty())
 	{
 		//检查文本消息中是否存在“@xxx ”的文本
 		for (auto it = uid_at_someone_.begin(); it != uid_at_someone_.end(); ++it)
@@ -732,8 +762,20 @@ void SessionBox::SendText( const std::string &text )
 			at_str.append(nick_name);
 			at_str.append(" ");
 
-			if (text.find(at_str) != std::string::npos)
-				setting.force_push_ids_list_.push_back(it->second);
+			int index = text.find(at_str);
+			if (index != std::string::npos)
+			{
+				if (!it->second.is_robot_)
+				{
+					setting.force_push_ids_list_.push_back(it->second.uid_);
+				}
+				else
+				{
+					msg.type_ = nim::kNIMMessageTypeRobot;
+					if (robot_accid.empty())//只允许第一个
+						robot_accid = it->second.uid_;
+				}
+			}
 		}
 
 		if (!setting.force_push_ids_list_.empty())
@@ -744,8 +786,42 @@ void SessionBox::SendText( const std::string &text )
 
 		uid_at_someone_.clear();
 	}
+	if (is_robot_session_)
+		msg.type_ = nim::kNIMMessageTypeRobot;
 
-	std::string json_msg = nim::Talk::CreateTextMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, msg.content_, setting, msg.timetag_);
+	std::string json_msg;
+	msg.content_ = text;
+	if (msg.type_ != nim::kNIMMessageTypeRobot)
+	{
+		msg.type_ = nim::kNIMMessageTypeText;
+		json_msg = nim::Talk::CreateTextMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, msg.content_, setting, msg.timetag_);
+	}
+	else
+	{
+		nim::IMBotRobot bot;
+		bot.robot_accid_ = is_robot_session_ ? session_id_ : robot_accid;
+		std::wstring robot_content = nbase::UTF8ToUTF16(text);
+		int index = robot_content.find(L"@");
+		if (index != -1)
+		{
+			int space_index = 0;
+			while (space_index != -1 && index != -1)
+			{
+				space_index = robot_content.find(L" ", index);
+				if (space_index != -1)
+				{
+					robot_content = robot_content.replace(index, space_index - index + 1, L"");
+					index = robot_content.find(L"@", index);
+				}
+			}
+		}
+		bot.sent_param_["content"] = robot_content.empty() ? " " : nbase::UTF16ToUTF8(robot_content);
+		bot.sent_param_["type"] = "01";
+		msg.attach_ = bot.ToJsonString();
+		json_msg = nim::Talk::CreateBotRobotMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, text, bot, setting, msg.timetag_);
+	}
+
+	AddSendingMsg(msg);
 	nim::Talk::SendMsg(json_msg);
 }
 
@@ -1239,19 +1315,39 @@ void SessionBox::CheckHeader()
 
 	if (is_team)
 	{
+		label_tid_->SetVisible(true);
 		label_tid_->SetUTF8Text(session_id_);
+		label_online_state_->SetVisible(false);
 		name = TeamService::GetInstance()->GetTeamName(session_id_);
 		photo = PhotoService::GetInstance()->GetTeamPhoto(session_id_, true);
-
 	}
 	else
 	{
-		label_tid_->SetVisible(false);
-		if (IsFileTransPhone())
-			name = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MY_MOBILEPHONE");
+		if (SubscribeEventManager::GetInstance()->IsEnabled())
+		{
+			label_online_state_->SetVisible(true);
+			EventDataEx data;
+			if (!is_robot_session_)
+				SubscribeEventManager::GetInstance()->GetEventData(nim::kNIMEventTypeOnlineState, session_id_, data);
+			else
+				data.online_client_.online_client_type_.insert(nim::kNIMClientTypeDefault);
+			SetOnlineState(data);
+		}
+
+		if (!is_robot_session_)
+		{
+			btn_invite_->SetVisible(true);
+			label_tid_->SetVisible(false);
+			if (IsFileTransPhone())
+				name = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MY_MOBILEPHONE");
+			else
+				name = UserService::GetInstance()->GetUserName(session_id_);
+		}
 		else
-			name = UserService::GetInstance()->GetUserName(session_id_);
-		photo = PhotoService::GetInstance()->GetUserPhoto(session_id_);
+		{
+			name = nbase::UTF8ToUTF16(robot_info_.GetName());
+		}
+		photo = PhotoService::GetInstance()->GetUserPhoto(session_id_, is_robot_session_);
 	}
 
 	SetTitleName(name);
@@ -1276,10 +1372,22 @@ bool SessionBox::IsFileTransPhone()
 	return false;
 }
 
+void SessionBox::SetOnlineState(const EventDataEx &data)
+{
+	if (session_type_ != nim::kNIMSessionTypeTeam)
+	{
+		label_online_state_->SetText(OnlineStateEventHelper::GetOnlineState(data.online_client_, data.multi_config_, false));
+	}
+}
+
 void SessionBox::SetTitleName(const std::wstring &name)
 {
 	label_title_->SetText(name);
 	session_form_->SetMergeItemName(nbase::UTF8ToUTF16(session_id_), name);
+
+	if (taskbar_item_)
+		taskbar_item_->SetTaskbarTitle(name);
+
 	SetTaskbarTitle(name);
 }
 
@@ -1337,6 +1445,38 @@ void SessionBox::WriteMsglogCallback(nim::NIMResCode res_code, const std::string
 	}
 }
 
+void SessionBox::OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots)
+{
+	if (rescode == nim::kNIMResSuccess)
+	{
+		for (auto &robot : robots)
+		{
+			if (robot.GetAccid() == session_id_)
+			{
+				is_robot_session_ = true;
+				robot_info_ = robot;
+				FindSubControl(L"btn_audio")->SetVisible(false);
+				FindSubControl(L"btn_video")->SetVisible(false);
+				FindSubControl(L"btn_rts")->SetVisible(false);
+				btn_capture_audio_->SetVisible(false);
+				btn_face_->SetVisible(false);
+				FindSubControl(L"btn_image")->SetVisible(false);
+				FindSubControl(L"btn_snapchat")->SetVisible(false);
+				FindSubControl(L"btn_file")->SetVisible(false);
+				FindSubControl(L"btn_jsb")->SetVisible(false);
+				FindSubControl(L"btn_tip")->SetVisible(false);
+				FindSubControl(L"btn_clip")->SetVisible(false);
+				FindSubControl(L"btn_custom_msg")->SetVisible(false);
+				CheckHeader();			
+				break;
+			}
+		}
+		auto form = (AtlistForm *)WindowsManager::GetInstance()->GetWindow(AtlistForm::kClassName, nbase::UTF8ToUTF16(session_id_));
+		if (form)
+			form->InitRobotInfos(robots);
+	}
+}
+
 void SessionBox::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 {
 	auto refresh_msglist = [this](const nim::UserNameCard& info) //更新消息列表中消息气泡的头像和名称
@@ -1356,8 +1496,18 @@ void SessionBox::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 			for (int i = 0; i < msg_count; i++)
 			{
 				MsgBubbleItem* bubble_item = dynamic_cast<MsgBubbleItem*>(msg_list_->GetItemAt(i));
-				if (bubble_item != NULL && bubble_item->msg_.sender_accid_ == info.GetAccId())
-					bubble_item->SetShowHeader();
+				if (bubble_item)
+				{
+					bool refresh_header = bubble_item->msg_.sender_accid_ == info.GetAccId();
+					if (bubble_item->GetMsg().type_ == nim::kNIMMessageTypeRobot)
+					{
+						nim::IMBotRobot robot;
+						nim::Talk::ParseBotRobotMessageAttach(bubble_item->GetMsg(), robot);
+						refresh_header = !robot.out_msg_;
+					}
+					if (refresh_header)
+						bubble_item->SetShowHeader();
+				}
 			}
 		}
 
@@ -1399,8 +1549,48 @@ void SessionBox::OnUserPhotoReady(PhotoType type, const std::string& accid, cons
 		for (int i = 0; i < msg_count; i++)
 		{
 			MsgBubbleItem* bubble_item = dynamic_cast<MsgBubbleItem*>(msg_list_->GetItemAt(i));
-			if (bubble_item != NULL && bubble_item->msg_.sender_accid_ == accid)
-				bubble_item->msg_header_button_->SetBkImage(photo_path);
+			if (bubble_item != NULL)
+			{
+				if (bubble_item->msg_.sender_accid_ == accid)
+				{
+					bool refresh_header = true;
+					if (bubble_item->msg_.type_ == nim::kNIMMessageTypeRobot)
+					{
+						nim::IMBotRobot robot_attach;
+						nim::Talk::ParseBotRobotMessageAttach(bubble_item->msg_, robot_attach);
+						refresh_header = !robot_attach.out_msg_;
+					}
+					if (refresh_header)
+					{
+						bubble_item->SetShowHeader();
+					}
+				}
+			}
+		}
+	};
+
+	auto refresh_msglist_robot_photo = [=]() //更新消息列表头像
+	{
+		int msg_count = msg_list_->GetCount();
+		for (int i = 0; i < msg_count; i++)
+		{
+			MsgBubbleItem* bubble_item = dynamic_cast<MsgBubbleItem*>(msg_list_->GetItemAt(i));
+			if (bubble_item != NULL)
+			{
+				bool is_robot_response = false;
+				std::string robot_id;
+				if (bubble_item->msg_.type_ == nim::kNIMMessageTypeRobot)
+				{
+					nim::IMBotRobot robot_attach;
+					nim::Talk::ParseBotRobotMessageAttach(bubble_item->msg_, robot_attach);
+					is_robot_response = robot_attach.out_msg_;
+					robot_id = robot_attach.robot_accid_;
+				}
+				if (robot_id == accid && is_robot_response)
+				{
+					((MsgBubbleRobot *)bubble_item)->SetShowHeader();
+				}
+			}
 		}
 	};
 
@@ -1427,6 +1617,19 @@ void SessionBox::OnUserPhotoReady(PhotoType type, const std::string& accid, cons
 		}
 		else
 			refresh_msglist_photo();
+	}
+	else if (type == kRobot)
+		refresh_msglist_robot_photo();
+}
+
+void SessionBox::OnReceiveEvent(int event_type, const std::string &accid, const EventDataEx &data)
+{
+	if (event_type == nim::kNIMEventTypeOnlineState)
+	{
+		if (session_type_ == nim::kNIMSessionTypeP2P && session_id_ == accid)
+		{
+			SetOnlineState(data);
+		}
 	}
 }
 

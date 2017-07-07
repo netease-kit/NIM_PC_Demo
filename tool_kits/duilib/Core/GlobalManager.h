@@ -20,6 +20,8 @@ public:
 	static void SetResourcePath(const std::wstring& strPath);
 	static void ReloadSkin(const std::wstring& resourcePath);
 
+	static std::unique_ptr<IRenderContext> CreateRenderContext();
+
 	static void MessageLoop();
 	static bool TranslateMessage(const LPMSG pMsg);
 	static void AddPreMessage(Window* pWindow);

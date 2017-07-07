@@ -16,8 +16,7 @@ class NIM_UI_DLL_API UserConfig
 {
 public:
 	SINGLETON_DEFINE(UserConfig);
-	UserConfig(){};
-	~UserConfig(){};
+
 public:
 	/**
 	* 获取用户数据目录位置
@@ -59,6 +58,9 @@ public:
 	bool GetAppLocalVersion(int &version, std::wstring &version_flag);
 
 private:
+	UserConfig(){};
+	~UserConfig(){};
+
 	UINT icon_id_;
 };
 

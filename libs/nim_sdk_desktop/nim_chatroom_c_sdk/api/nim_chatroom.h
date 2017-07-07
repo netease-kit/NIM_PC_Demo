@@ -8,8 +8,8 @@
 #ifndef NIM_CHATROOM_SDK_API_NIM_CHATROOM_H_
 #define NIM_CHATROOM_SDK_API_NIM_CHATROOM_H_
 
-#include "nim_chatroom_sdk_dll.h"
-#include "nim_chatroom_def.h"
+#include "../nim_chatroom_sdk_dll.h"
+#include "../export_headers/nim_chatroom_def.h"
 #include "../util/stdbool.h"
 
 #ifdef __cplusplus
@@ -85,11 +85,18 @@ NIM_SDK_DLL_API void nim_chatroom_reg_receive_msg_cb(const char *json_extension,
 NIM_SDK_DLL_API void nim_chatroom_reg_receive_notification_cb(const char *json_extension, nim_chatroom_receive_notification_cb_func cb, const void *user_data);
 
 /** @fn void nim_chatroom_init(const char *json_extension)
-  * 聊天室模块初始化
+  * 聊天室模块初始化(SDK初始化时调用一次)
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
   * @return void
   */
 NIM_SDK_DLL_API void nim_chatroom_init(const char *json_extension);
+
+/** @fn void nim_chatroom_cleanup(const char *json_extension)
+  * 聊天室模块清理(SDK卸载前调用一次)
+  * @param[in] json_extension	  json扩展参数（备用，目前不需要）
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_chatroom_cleanup(const char *json_extension);
 
 /** @fn bool nim_chatroom_enter(const int64_t room_id, const char *request_enter_data, const char *enter_info, const char *json_extension)
   * 聊天室进入
@@ -116,13 +123,6 @@ NIM_SDK_DLL_API void nim_chatroom_exit(const int64_t room_id, const char *json_e
   * @return int 登录状态
   */
 NIM_SDK_DLL_API int nim_chatroom_get_login_state(const int64_t room_id, const char *json_extension);
-
-/** @fn void nim_chatroom_cleanup(const char *json_extension)
-  * 聊天室模块清理
-  * @param[in] json_extension	  json扩展参数（备用，目前不需要）
-  * @return void 无返回值
-  */
-NIM_SDK_DLL_API void nim_chatroom_cleanup(const char *json_extension);
 
 /** @fn void nim_chatroom_send_msg(const int64_t room_id, const char *msg, const char *json_extension)
   * 发送消息
@@ -260,7 +260,7 @@ NIM_SDK_DLL_API void nim_chatroom_update_room_info_async(const int64_t room_id, 
   * @param[in] role_info_json_str	我的信息
   * @param[in] need_notify			是否聊天室内广播通知
   * @param[in] notify_ext			通知中的自定义字段，长度限制2048
-  * @param[in] json_extension		json扩展参数（备用，目前不需要）
+  * @param[in] json_extension		json扩展参数，针对固定成员，可配置更新的信息是否需要持久化，默认不持久化，{"need_save" : false}
   * @param[in] cb					回调函数, 定义见nim_chatroom_def.h
   * @param[in] user_data			APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值

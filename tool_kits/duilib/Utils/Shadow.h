@@ -27,6 +27,9 @@ public:
 	Control* GetRoot();
 	void ClearImageCache();
 private:
+	void SetPadding();
+
+private:
 	bool m_bShadowAttached;
 	bool m_bUseDefaultImage;
 	std::wstring m_strImage;

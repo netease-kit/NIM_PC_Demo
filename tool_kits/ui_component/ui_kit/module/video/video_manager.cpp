@@ -531,9 +531,11 @@ bool VideoManager::StartChat(nim::NIMVideoChatMode mode, const std::string& apns
 		std::string audio_record = GetConfigValue("audio_record");
 		std::string video_record = GetConfigValue("video_record");
 		std::string keep_calling = GetConfigValue("keep_calling");
+		std::string webrtc = GetConfigValue("webrtc");
 		value[nim::kNIMVChatVideoQuality] = atoi(video_quality.c_str());
 		value[nim::kNIMVChatRecord] = atoi(audio_record.c_str());
 		value[nim::kNIMVChatVideoRecord] = atoi(video_record.c_str());
+		value[nim::kNIMVChatWebrtc] = atoi(webrtc.c_str());
 		if (!keep_calling.empty())
 		{
 			value[nim::kNIMVChatKeepCalling] = atoi(keep_calling.c_str());

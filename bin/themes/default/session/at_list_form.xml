@@ -1,4 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Window>
-    <VListBox name="team_list_box" width="140" height="auto" maxheight="200" vscrollbar="true" hscrollbar="false" bkcolor="white" vscrollunit="80"/>
+	<VBox width="140" height="auto" bkcolor="bk_wnd_darkcolor">
+		<Label name="robot" valign="bottom" font="2" mouse="false" width="stretch" textid="STDID_ATLISTFORM_ROBOT" visible="false"/>
+		<VListBox name="robot_list_box" width="140" height="auto" maxheight="200" vscrollbar="true" hscrollbar="false" bkcolor="white" vscrollunit="80" visible="false"/>
+		<Label name="team_member" valign="bottom" font="2" mouse="false" width="stretch" textid="STDID_ATLISTFORM_TEAMMEMBER" visible="false"/>	
+		<VListBox name="team_list_box" width="140" height="auto" maxheight="200" vscrollbar="true" hscrollbar="false" bkcolor="white" vscrollunit="80" visible="false"/>
+	</VBox>
 </Window>

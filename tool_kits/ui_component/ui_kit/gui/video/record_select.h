@@ -2,7 +2,7 @@
 
 namespace nim_comp
 {
-typedef std::function<void(bool ret, std::wstring, std::wstring)> SelectRecordFileCallback;
+	typedef std::function<void(bool ret, std::wstring, std::wstring, std::wstring)> SelectRecordFileCallback;
 
 /** @class RecordSelectForm
   * @brief 提供选择音视频通话时录制选择的功能
@@ -61,10 +61,11 @@ public:
 
 	/**
 	* 设置选择窗口完毕的回调函数
+	* @param[in] video_mode 是否是视频模式
 	* @param[in] cb 回调函数
 	* @return void 无返回值
 	*/
-	void SetSelFileCb(SelectRecordFileCallback cb){ select_file_cb_ = cb; }
+	void SetSelFileCb(bool video_mode, SelectRecordFileCallback cb);
 
 private:
 
@@ -75,6 +76,7 @@ private:
 	SelectRecordFileCallback select_file_cb_; 
 	ui::RichEdit* path_edit_;
 	ui::CheckBox* mp4_sel_;
+	ui::CheckBox* mp4_sel2_;
 	ui::CheckBox* audio_sel_;
 };
 }

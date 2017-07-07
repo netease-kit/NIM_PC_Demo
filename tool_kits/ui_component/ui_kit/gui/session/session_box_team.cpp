@@ -64,6 +64,8 @@ void SessionBox::OnGetTeamInfoCallback(const std::string& tid, const nim::TeamIn
 	}
 
 	is_header_enable_ = true;
+
+	ResetNewBroadButtonVisible();
 }
 
 void SessionBox::InvokeGetTeamMember()
@@ -89,8 +91,7 @@ void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, cons
 	btn_refresh_member_->SetEnabled(true);
 	member_list_->RemoveAll();
 	label_member_->SetText(nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MEMBER_NUM_EX").c_str(), team_member_info_list_.size()));
-	bool set_new_broad_visible = team_info_.GetUpdateInfoMode() == nim::kNIMTeamUpdateCustomModeEveryone;
-	btn_new_broad_->SetVisible(set_new_broad_visible);
+	//btn_new_broad_->SetVisible(set_new_broad_visible);
 
 	// 提前批量查询群用户信息,优化用户查询
 	UserService::GetInstance()->DoQueryUserInfos(account_set); 
@@ -128,6 +129,7 @@ void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, cons
 
 		RefreshMsglistShowname(uid); //刷新消息列表中显示的名字
 
+		bool set_new_broad_visible = team_info_.GetUpdateInfoMode() == nim::kNIMTeamUpdateCustomModeEveryone;
 		if (!set_new_broad_visible)
 		{
 			if (LoginManager::GetInstance()->IsEqual(tm_info.second.GetAccountID()))
@@ -147,6 +149,26 @@ void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, cons
 				SetTeamMuteUI(tm_info.second.IsMute());
 		}
 	}
+}
+
+void SessionBox::ResetNewBroadButtonVisible()
+{
+	if (team_info_.GetUpdateInfoMode() != nim::kNIMTeamUpdateCustomModeEveryone)
+	{
+		for (const auto &tm_info : team_member_info_list_)
+		{
+			if (LoginManager::GetInstance()->IsEqual(tm_info.second.GetAccountID()))
+			{
+				if (tm_info.second.GetUserType() == nim::kNIMTeamUserTypeCreator || tm_info.second.GetUserType() == nim::kNIMTeamUserTypeManager)
+					btn_new_broad_->SetVisible(true);
+				else
+					btn_new_broad_->SetVisible(false);
+				break;
+			}
+		}
+	}
+	else
+		btn_new_broad_->SetVisible(true);
 }
 
 nim::TeamMemberProperty SessionBox::GetTeamMemberInfo(const std::string& uid)

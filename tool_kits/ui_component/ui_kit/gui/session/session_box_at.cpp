@@ -198,7 +198,7 @@ bool SessionBox::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 	if ((input_edit_ == NULL) || !input_edit_->IsFocused())
 		return false;
 
-	if (session_type_ != nim::kNIMSessionTypeTeam)
+	if (is_robot_session_)
 		return false;
 
 	AtlistForm* at_list_form = (AtlistForm*)WindowsManager::GetInstance()->GetWindow(AtlistForm::kClassName, nbase::UTF8ToUTF16(session_id_));
@@ -211,9 +211,12 @@ bool SessionBox::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 		POINT pt = { rc.left, rc.bottom };
 		::ClientToScreen(this->GetWindow()->GetHWND(), &pt);
 
-		std::list<std::string> uid_last_five;
-		GetLastFiveSender(uid_last_five);
-		at_list_form->ShowAllItems(uid_last_five);
+		if (session_type_ == nim::kNIMSessionTypeTeam)
+		{
+			std::list<std::string> uid_last_five;
+			GetLastFiveSender(uid_last_five);
+			at_list_form->ShowMemberItems(uid_last_five);
+		}
 		at_list_form->SetShowPos(pt);
 
 		return false;
@@ -243,9 +246,12 @@ bool SessionBox::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 				pt.y = input_edit_->GetCaretRect().bottom;
 				::ClientToScreen(this->GetWindow()->GetHWND(), &pt);
 
-				std::list<std::string> uid_last_five;
-				GetLastFiveSender(uid_last_five);
-				at_list_form->ShowAllItems(uid_last_five);
+				if (session_type_ == nim::kNIMSessionTypeTeam)
+				{
+					std::list<std::string> uid_last_five;
+					GetLastFiveSender(uid_last_five);
+					at_list_form->ShowMemberItems(uid_last_five);
+				}
 				at_list_form->SetShowPos(pt);
 				return false;
 			}
@@ -333,7 +339,7 @@ bool SessionBox::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 			::ClientToScreen(this->GetWindow()->GetHWND(), &pt);
 
 			// 如果匹配的关键字只有一个，则是第一次匹配
-			// 由于响应@时ShowAllItems函数隐藏了列表中最近发言的5个人，所以第一次匹配时，match_visible设为false不让Match函数忽略隐藏项
+			// 由于响应@时ShowMemberItems函数隐藏了列表中最近发言的5个人，所以第一次匹配时，match_visible设为false不让Match函数忽略隐藏项
 			bool match_visible = at_str.length() > 1;
 			if (at_list_form->Match(at_str, match_visible))
 			{
@@ -351,7 +357,7 @@ bool SessionBox::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 
 bool SessionBox::HandleAtMouseWheel(WPARAM wParam, LPARAM lParam)
 {
-	if (session_type_ != nim::kNIMSessionTypeTeam)
+	if (is_robot_session_)
 		return false;
 
 	AtlistForm* at_list_form = (AtlistForm*)WindowsManager::GetInstance()->GetWindow(AtlistForm::kClassName, nbase::UTF8ToUTF16(session_id_));
@@ -369,7 +375,7 @@ bool SessionBox::HandleAtMouseWheel(WPARAM wParam, LPARAM lParam)
 
 void SessionBox::HideAtListForm()
 {
-	if (session_type_ != nim::kNIMSessionTypeTeam)
+	if (is_robot_session_)
 		return;
 
 	AtlistForm* at_list_form = (AtlistForm*)WindowsManager::GetInstance()->GetWindow(AtlistForm::kClassName, nbase::UTF8ToUTF16(session_id_));
@@ -382,7 +388,7 @@ void SessionBox::HideAtListForm()
 	}
 }
 
-void SessionBox::OnSelectAtItemCallback(const std::string& uid)
+void SessionBox::OnSelectAtItemCallback(const std::string& uid, bool is_robot)
 {
 	if (uid.empty())
 		return;
@@ -400,17 +406,29 @@ void SessionBox::OnSelectAtItemCallback(const std::string& uid)
 			return;
 		
 		std::string show_name;
-		auto i = team_member_info_list_.find(uid);
-		if (i != team_member_info_list_.end())
+		if (!is_robot)
 		{
-			show_name = i->second.GetNick();
+			auto i = team_member_info_list_.find(uid);
+			if (i != team_member_info_list_.end())
+			{
+				show_name = i->second.GetNick();
+			}
+			if (show_name.empty())
+			{
+				show_name = nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(uid, false));
+			}
 		}
-		if (show_name.empty())
+		else
 		{
-			show_name = nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(uid, false));
+			nim::RobotInfo info;
+			UserService::GetInstance()->GetRobotInfo(uid, info);
+			show_name = info.GetName();
 		}
 
-		uid_at_someone_[show_name] = uid;
+		AtSomeone da;
+		da.uid_ = uid;
+		da.is_robot_ = is_robot;
+		uid_at_someone_[show_name] = da;
 
 		std::wstring show_text = nbase::UTF8ToUTF16(show_name);
 		show_text.append(L" ");

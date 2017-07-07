@@ -100,7 +100,8 @@ CSize LabelTemplate<InheritType>::EstimateText(CSize szAvailable, bool& bReEstim
 	}
 	CSize fixedSize;
 	if (!GetText().empty()) {
-		UiRect rect = RenderEngine::MeasureText(m_pWindow->GetPaintDC(), GetText(), m_iFont, m_uTextStyle, width);
+		auto pRender = m_pWindow->GetRenderContext();
+		UiRect rect = pRender->MeasureText(GetText(), m_iFont, m_uTextStyle, width);
 		if (GetFixedWidth() == DUI_LENGTH_AUTO) {
 			fixedSize.cx = rect.right - rect.left + m_rcTextPadding.left + m_rcTextPadding.right;
 		}
@@ -113,7 +114,7 @@ CSize LabelTemplate<InheritType>::EstimateText(CSize szAvailable, bool& bReEstim
 				int maxWidth = szAvailable.cx - m_rcTextPadding.left - m_rcTextPadding.right;
 				if (estimateWidth > maxWidth) {
 					estimateWidth = maxWidth;
-					UiRect newRect = RenderEngine::MeasureText(m_pWindow->GetPaintDC(), GetText(), m_iFont, m_uTextStyle, estimateWidth);
+					UiRect newRect = pRender->MeasureText(GetText(), m_iFont, m_uTextStyle, estimateWidth);
 					estimateHeight = newRect.bottom - newRect.top;
 				}
 			}
@@ -180,7 +181,7 @@ void LabelTemplate<InheritType>::SetAttribute(const std::wstring& strName, const
 }
 
 template<typename InheritType>
-void LabelTemplate<InheritType>::PaintText(HDC hDC)
+void LabelTemplate<InheritType>::PaintText(IRenderContext* pRender)
 {
 	if (GetText().empty()) return;
 	UiRect rc = m_rcItem;
@@ -213,14 +214,14 @@ void LabelTemplate<InheritType>::PaintText(HDC hDC)
 			std::wstring clrColor = GetStateTextColor(kControlStateNormal);
 			if (!clrColor.empty()) {
 				DWORD dwClrColor = GlobalManager::GetTextColor(clrColor);
-				RenderEngine::DrawText(hDC, rc, GetText(), dwClrColor, m_iFont, m_uTextStyle, 255, m_bLineLimit);
+				pRender->DrawText(rc, GetText(), dwClrColor, m_iFont, m_uTextStyle, 255, m_bLineLimit);
 			}
 
 			if (m_nHotAlpha > 0) {
 				std::wstring clrColor = GetStateTextColor(kControlStateHot);
 				if (!clrColor.empty()) {
 					DWORD dwClrColor = GlobalManager::GetTextColor(clrColor);
-					RenderEngine::DrawText(hDC, rc, GetText(), dwClrColor, m_iFont, m_uTextStyle, m_nHotAlpha, m_bLineLimit);
+					pRender->DrawText(rc, GetText(), dwClrColor, m_iFont, m_uTextStyle, m_nHotAlpha, m_bLineLimit);
 				}
 			}
 
@@ -228,7 +229,7 @@ void LabelTemplate<InheritType>::PaintText(HDC hDC)
 		}
 	}
 
-	RenderEngine::DrawText(hDC, rc, GetText(), dwClrColor, m_iFont, m_uTextStyle, 255, m_bLineLimit);
+	pRender->DrawText(rc, GetText(), dwClrColor, m_iFont, m_uTextStyle, 255, m_bLineLimit);
 }
 
 template<typename InheritType>

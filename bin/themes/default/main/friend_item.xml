@@ -6,7 +6,12 @@
 				<ButtonBox name="head_image" width="38" height="38" borderround="38,38" margin="1,1,0,0" cursortype="hand"/>
 				<Button class="icon_headimage_mask_40x40" name="head_image_mask" mouse="false"/>
             </Box>
-            <Label name="contact" margin="10,0,0,0" valign="center" font="2" mouse="false" width="stretch"/>
+            <VBox margin="10,0,0,0" mouse="false" mousechild="false">
+            	<Control />
+	            <Label name="contact" valign="bottom" font="2" mouse="false" width="stretch" />
+	            <Label name="online_state" valign="center" margin="0,0,4,0" font="1" mouse="false" width="stretch" normaltextcolor="lightcolor" />
+	            <Control />
+	        </VBox>
         </HBox>
         <Control class="splitline_hor_level1" name="split_line" valign="bottom"/>
     </ListContainerElement>

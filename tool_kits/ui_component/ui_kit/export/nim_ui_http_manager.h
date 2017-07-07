@@ -17,8 +17,6 @@ class NIM_UI_DLL_API HttpManager
 {
 public:
 	SINGLETON_DEFINE(HttpManager);
-	HttpManager() {}
-	~HttpManager() {}
 
 public:
 	/**
@@ -36,6 +34,10 @@ public:
 	* @return UnregisterCallback ·´×¢²á¶ÔÏó
 	*/
 	UnregisterCallback RegDownloadComplete(const OnDownloadCompleteCallback& callback);
+
+private:
+	HttpManager() {}
+	~HttpManager() {}
 };
 
 }

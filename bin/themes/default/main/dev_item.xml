@@ -1,12 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Window>
-    <ListContainerElement class="listitem" normalcolor="bk_wnd_lightcolor" height="60">
-        <HBox padding="10,5,10,5" mouse="false" >
-			<VBox>
-				<Label name="name" margin="10,0,0,0" valign="center" font="2"/>
-				<Label name="time" margin="10,10,0,0" valign="center" font="1"/>
-			</VBox>
-            <Button name="kick" width="38" height="38" valign="center" textid="STRID_MAINWINDOW_KICK_MOBILE" cursortype="hand" normaltextcolor="btn_green" />
+    <ListContainerElement height="40">
+        <HBox padding="20,0,20,0" >
+            <Label class="font_title" name="multi_des" width="stretch" valign="center" normaltextcolor="darkcolor" textid="STRID_MULTISPOT_NIM_MOBILEPHONE_CLIENT"/>
+            <Button name="kick" valign="center" cursortype="hand" font="1" normaltextcolor="btn_green" textid="STRID_MULTISPOT_KICK" />
         </HBox>
         <Control class="splitline_hor_level1" name="split_line" valign="bottom"/>
     </ListContainerElement>

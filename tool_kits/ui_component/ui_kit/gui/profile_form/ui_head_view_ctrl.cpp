@@ -1,5 +1,5 @@
 ﻿#include "ui_head_view_ctrl.h"
-
+using namespace Gdiplus;
 /*
 	优化策略: hj 2013-12-09
 	[1].原图默认压缩到最大宽高不超过2000，保存在内存中作为替代原图的抠图对象。
@@ -30,9 +30,9 @@ HeadViewControl::~HeadViewControl()
 	
 }
 
-void HeadViewControl::PaintBkImage(HDC hDC)
+void HeadViewControl::PaintBkImage(ui::IRenderContext* pRender)
 {
-	Graphics graph(hDC);
+	Graphics graph(pRender->GetDC());
 	graph.DrawImage(canvas_.get(),m_rcItem.left,m_rcItem.top);
 }
 
@@ -322,13 +322,13 @@ bool HeadPreviewControl::SetMaskPicturePath( std::wstring mask_path, RECT paddin
 	return false;
 }
 
-void HeadPreviewControl::Paint( HDC hDC, const ui::UiRect& rcPaint )
+void HeadPreviewControl::Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint)
 {
-	__super::Paint(hDC, rcPaint);
+	__super::Paint(pRender, rcPaint);
 
 	if(select_bitmap_ != NULL)
 	{
-		Graphics graph(hDC);
+		Graphics graph(pRender->GetDC());
 		graph.SetSmoothingMode(SmoothingModeAntiAlias);
 #if (GDIPVER >= 0x0110)
 		graph.SetSmoothingMode(SmoothingModeAntiAlias8x8);
@@ -360,7 +360,7 @@ void HeadPreviewControl::Paint( HDC hDC, const ui::UiRect& rcPaint )
 		//	graph.DrawImage(mask_image_.get(), dest_rectf);
 
 		// 释放句柄
-		graph.ReleaseHDC(hDC);
+		graph.ReleaseHDC(pRender->GetDC());
 	}
 }
 

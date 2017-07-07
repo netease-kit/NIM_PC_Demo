@@ -41,7 +41,7 @@ public:
 		virtual void OnPaint(CefRefPtr<CefBrowser> browser,
 			CefRenderHandler::PaintElementType type,
 			const CefRenderHandler::RectList& dirtyRects,
-			const void* buffer,
+			const std::string* buffer,
 			int width,
 			int height) = 0;
 
@@ -50,6 +50,16 @@ public:
 		virtual void OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect& rect) = 0;
 
 		virtual void UpdateWindowPos() = 0;
+
+		// 在非UI线程中被调用
+		virtual void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model) = 0;
+
+		// 在非UI线程中被调用
+		virtual bool OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
+			CefRefPtr<CefFrame> frame,
+			CefRefPtr<CefContextMenuParams> params,
+			int command_id,
+			EventFlags event_flags) = 0;
 
 		virtual void OnAddressChange(CefRefPtr<CefBrowser> browser,	CefRefPtr<CefFrame> frame, const CefString& url) = 0;
 
@@ -169,6 +179,21 @@ public:
 
 	// CefContextMenuHandler methods
 	virtual void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model) OVERRIDE;
+
+	virtual bool RunContextMenu(CefRefPtr<CefBrowser> browser,
+		CefRefPtr<CefFrame> frame,
+		CefRefPtr<CefContextMenuParams> params,
+		CefRefPtr<CefMenuModel> model,
+		CefRefPtr<CefRunContextMenuCallback> callback)  OVERRIDE;
+
+	virtual bool OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
+		CefRefPtr<CefFrame> frame,
+		CefRefPtr<CefContextMenuParams> params,
+		int command_id,
+		EventFlags event_flags) OVERRIDE;
+
+	virtual void OnContextMenuDismissed(CefRefPtr<CefBrowser> browser,
+		CefRefPtr<CefFrame> frame) OVERRIDE;
 
 	// CefDisplayHandler methods
 	virtual void OnAddressChange(CefRefPtr<CefBrowser> browser,	CefRefPtr<CefFrame> frame, const CefString& url) OVERRIDE;

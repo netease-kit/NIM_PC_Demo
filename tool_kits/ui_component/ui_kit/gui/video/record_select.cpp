@@ -63,6 +63,7 @@ void RecordSelectForm::InitWindow()
 	path_edit_->SetText(def_path_);
 	audio_sel_ = (ui::CheckBox*)FindControl(L"audio_sel");
 	mp4_sel_ = (ui::CheckBox*)FindControl(L"mp4_sel");
+	mp4_sel2_ = (ui::CheckBox*)FindControl(L"mp4_sel2");
 }
 
 LRESULT RecordSelectForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -90,15 +91,20 @@ bool RecordSelectForm::OnClicked(ui::EventArgs * msg)
 				ftime(&time_now); // ÃëÊý
 				std::wstring aac_file_name;
 				std::wstring mp4_file_name;
+				std::wstring mp42_file_name;
 				if (audio_sel_->IsSelected())
 				{
 					aac_file_name = nbase::StringPrintf(L"%s/%d.aac", path.c_str(), time_now.time);
 				}
 				if (mp4_sel_->IsSelected())
 				{
-					mp4_file_name = nbase::StringPrintf(L"%s/%d.mp4", path.c_str(), time_now.time);
+					mp4_file_name = nbase::StringPrintf(L"%s/%d_self.mp4", path.c_str(), time_now.time);
 				}
-				select_file_cb_(true, mp4_file_name, aac_file_name);
+				if (mp4_sel2_->IsSelected())
+				{
+					mp42_file_name = nbase::StringPrintf(L"%s/%d_other.mp4", path.c_str(), time_now.time);
+				}
+				select_file_cb_(true, mp4_file_name, aac_file_name, mp42_file_name);
 			}
 		}
 		Close();
@@ -141,5 +147,13 @@ bool RecordSelectForm::OnSelected(ui::EventArgs * msg)
 	}
 
 	return false;
+}
+void RecordSelectForm::SetSelFileCb(bool video_mode, SelectRecordFileCallback cb)
+{
+	ui::Label*mp4_sel_label = (ui::Label*)FindControl(L"mp4_sel_label");
+	mp4_sel_label->SetTextId(video_mode ? L"STRID_RECORD_SELECT_MY_AUDIO_VIDEO" : L"STRID_RECORD_SELECT_MY_AUDIO");
+	ui::Label*mp4_sel2_label = (ui::Label*)FindControl(L"mp4_sel2_label");
+	mp4_sel2_label->SetTextId(video_mode ? L"STRID_RECORD_SELECT_OTHER_AUDIO_VIDEO" : L"STRID_RECORD_SELECT_OTHER_AUDIO");
+	select_file_cb_ = cb;
 }
 }

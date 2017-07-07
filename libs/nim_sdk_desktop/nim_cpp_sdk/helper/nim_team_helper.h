@@ -619,7 +619,7 @@ struct TeamEvent
   */
 void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificationId notification_id, const std::string& team_event_json, TeamEvent& team_event);
 
-/** @fn ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info)
+/** @fn bool ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info)
   * @brief 解析群组信息
   * @param[in] team_info_json 群组信息（Json Value数据）
   * @param[out] team_info 群组信息
@@ -627,7 +627,7 @@ void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificati
   */
 void ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info);
 
-/** @fn ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info)
+/** @fn bool ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info)
   * @brief 解析群组信息
   * @param[in] team_info_json 群组信息（Json Value数据字符串）
   * @param[out] team_info 群组信息
@@ -635,7 +635,7 @@ void ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info);
   */
 bool ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info);
 
-/** @fn const std::string& team_infos_json, bool include_invalid_team, std::list<TeamInfo>& team_infos
+/** @fn bool ParseTeamInfosJson(const std::string& team_infos_json, std::list<TeamInfo>& team_infos)
   * @brief 解析群组信息
   * @param[in] team_info_json 群组信息（Json Value数据字符串）
   * @param[out] team_infos 群组信息

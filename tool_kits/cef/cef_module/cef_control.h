@@ -24,7 +24,7 @@ public:
 	virtual void HandleMessage(EventArgs& event) override;
 	virtual void SetVisible(bool bVisible = true) override;
 	virtual void SetInternVisible(bool bVisible = true) override;
-	virtual void Paint(HDC hDC, const UiRect& rcPaint) override;
+	virtual void Paint(IRenderContext* pRender, const UiRect& rcPaint) override;
 
 	// 处理窗体消息，转发到Cef浏览器对象
 	virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled) override;
@@ -63,6 +63,8 @@ public:
 
 public:
 	// 事件处理接口回调函数，当浏览器发生这些事件后会调用回调函数来通知
+	void AttachBeforeContextMenu(const OnBeforeMenuEvent& callback){ cb_before_menu_ = callback; }
+	void AttachMenuCommand(const OnMenuCommandEvent& callback){ cb_menu_command_ = callback; }
 	void AttachTitleChange(const OnTitleChangeEvent& callback){ cb_title_change_ = callback; }
 	void AttachUrlChange(const OnUrlChangeEvent& callback){ cb_url_change_ = callback; }
 	void AttachMainURLChange(OnMainURLChengeEvent cb){ cb_main_url_change_ = cb; }
@@ -83,7 +85,7 @@ private:
 	virtual void OnPaint(CefRefPtr<CefBrowser> browser,
 		CefRenderHandler::PaintElementType type,
 		const CefRenderHandler::RectList& dirtyRects,
-		const void* buffer,
+		const std::string* buffer,
 		int width,
 		int height) OVERRIDE;
 
@@ -92,6 +94,14 @@ private:
 	virtual void OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect& rect) OVERRIDE;
 
 	virtual void UpdateWindowPos() OVERRIDE;
+
+	virtual void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model) OVERRIDE;
+
+	virtual bool OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
+		CefRefPtr<CefFrame> frame,
+		CefRefPtr<CefContextMenuParams> params,
+		int command_id,
+		CefContextMenuHandler::EventFlags event_flags) OVERRIDE;
 
 	virtual void OnAddressChange(CefRefPtr<CefBrowser> browser,	CefRefPtr<CefFrame> frame, const CefString& url) OVERRIDE;
 
@@ -144,6 +154,8 @@ private:
 	CefRect				rect_popup_;	// 当网页的组合框一类的控件弹出时，记录弹出的位置
 	CefString			url_;
 
+	OnBeforeMenuEvent	cb_before_menu_ = nullptr;
+	OnMenuCommandEvent	cb_menu_command_ = nullptr;
 	OnTitleChangeEvent	cb_title_change_ = nullptr;
 	OnBeforeBrowseEvent	cb_before_navigate_ = nullptr;
 	OnUrlChangeEvent	cb_url_change_ = nullptr;

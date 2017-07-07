@@ -10,7 +10,7 @@ namespace nim_comp
 {
 const LPCTSTR ProfileForm::kClassName = L"ProfileForm";
 
-ProfileForm * ProfileForm::ShowProfileForm(UTF8String uid)
+ProfileForm * ProfileForm::ShowProfileForm(UTF8String uid, bool is_robot/* = false*/)
 {
 	ProfileForm* form = (ProfileForm*)WindowsManager::GetInstance()->GetWindow(kClassName, kClassName);
 	if (form != NULL && form->m_uinfo.GetAccId().compare(uid) == 0) //当前已经打开的名片正是希望打开的名片
@@ -22,10 +22,19 @@ ProfileForm * ProfileForm::ShowProfileForm(UTF8String uid)
 		form = new ProfileForm();
 		form->Create(NULL, L"", WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0L);
 		
-		// 获取用户信息
-		nim::UserNameCard info;
-		UserService::GetInstance()->GetUserInfo(uid, info);
-		form->InitUserInfo(info);
+		if (!is_robot)
+		{
+			// 获取用户信息
+			nim::UserNameCard info;
+			UserService::GetInstance()->GetUserInfo(uid, info);
+			form->InitUserInfo(info);
+		}
+		else
+		{
+			nim::RobotInfo info;
+			UserService::GetInstance()->GetRobotInfo(uid, info);
+			form->InitRobotInfo(info);
+		}
 	}
 	if (!::IsWindowVisible(form->m_hWnd))
 	{
@@ -75,6 +84,9 @@ ProfileForm::ProfileForm()
 
 	auto friend_list_change_cb = nbase::Bind(&ProfileForm::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2);
 	unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(friend_list_change_cb));
+
+	auto robot_list_change_cb = nbase::Bind(&ProfileForm::OnRobotChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	unregister_cb.Add(UserService::GetInstance()->RegRobotListChange(robot_list_change_cb));
 }
 
 ProfileForm::~ProfileForm()
@@ -151,6 +163,11 @@ void ProfileForm::InitWindow()
 	signature_label = static_cast<ui::Label*>(FindControl(L"signature"));
 	signature_edit = static_cast<ui::RichEdit*>(FindControl(L"signature_edit"));
 
+	common_info_ = static_cast<ui::VBox*>(FindControl(L"common_info"));
+	robot_info_ = static_cast<ui::VBox*>(FindControl(L"robot_info"));
+	common_other_ = static_cast<ui::VBox*>(FindControl(L"common_other"));
+	robot_intro_ = static_cast<ui::RichEdit*>(FindControl(L"robot_intro"));
+
 	if (tid_.empty())
 	{
 		ui::Box* panel = static_cast<ui::Box*>(FindControl(L"mute_switch_box"));
@@ -163,6 +180,27 @@ void ProfileForm::InitWindow()
 		else
 			have_mute_right_ = true;
 	}
+}
+
+void ProfileForm::InitRobotInfo(const nim::RobotInfo & info)
+{
+	m_robot = info;
+	common_info_->SetVisible(false);
+	common_other_->SetVisible(false);
+	sex_icon->SetVisible(false);
+	FindControl(L"only_me")->SetVisible(false);
+	robot_info_->SetVisible(true);
+	user_id_label->SetUTF8Text(info.GetAccid());
+	show_name_label->SetUTF8Text(info.GetName());
+	robot_intro_->SetText(nbase::UTF8ToUTF16(info.GetIntro()));
+	head_image_btn->SetEnabled(false);
+	head_image_btn->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(info.GetAccid(), true));
+	add_or_del->SetVisible(false);
+	start_chat->AttachClick(nbase::Bind(&ProfileForm::OnStartChatBtnClicked, this, std::placeholders::_1));
+
+	ui::MutiLanSupport* mls = ui::MutiLanSupport::GetInstance();
+	std::wstring title = nbase::StringPrintf(mls->GetStringViaID(L"STRID_PROFILE_FORM_WHOSE_NAMECARD").c_str(), nbase::UTF8ToUTF16(info.GetName()).c_str());
+	SetTaskbarTitle(title); //任务栏标题
 }
 
 void ProfileForm::InitUserInfo(const nim::UserNameCard &info)
@@ -365,7 +403,10 @@ void ProfileForm::OnBlackChangeCallback(std::string id, bool black)
 
 bool ProfileForm::OnStartChatBtnClicked(ui::EventArgs* args)
 {
-	SessionManager::GetInstance()->OpenSessionBox(m_uinfo.GetAccId(), nim::kNIMSessionTypeP2P);
+	if (!m_uinfo.GetAccId().empty())
+		SessionManager::GetInstance()->OpenSessionBox(m_uinfo.GetAccId(), nim::kNIMSessionTypeP2P);
+	else
+		SessionManager::GetInstance()->OpenSessionBox(m_robot.GetAccid(), nim::kNIMSessionTypeP2P);
 	return true;
 }
 
@@ -670,6 +711,20 @@ void ProfileForm::OnFriendListChange(FriendChangeType change_type, const std::st
 		
 		add_or_del->SelectItem(user_type == nim::kNIMFriendFlagNormal ? 0 : 1);
 		SetShowName();
+	}
+}
+
+void ProfileForm::OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots)
+{
+	if (rescode == nim::kNIMResSuccess)
+	{
+		for (auto &robot : robots)
+		{
+			if (m_robot.GetAccid() == robot.GetAccid())
+			{
+				InitRobotInfo(robot);
+			}
+		}
 	}
 }
 

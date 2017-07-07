@@ -1,6 +1,8 @@
 ﻿#ifndef SHARED_THREADS_H_
 #define SHARED_THREADS_H_
 
+namespace shared
+{
 // thread ids
 enum ThreadId
 {
@@ -11,5 +13,7 @@ enum ThreadId
 	kThreadLiveStreaming,//直播线程
 	kThreadScreenCapture,//取屏线程
 };
+
+}
 
 #endif // SHARED_THREADS_H_

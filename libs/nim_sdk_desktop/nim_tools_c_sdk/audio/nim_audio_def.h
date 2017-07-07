@@ -1,6 +1,6 @@
 ﻿/** @file nim_audio_def.h
   * @brief NIM 提供的语音录制和播放工具接口的相关定义的头文件
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/2/10
   */

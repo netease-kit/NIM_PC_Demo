@@ -53,6 +53,12 @@ void MsgBubbleItem::InitInfo(const nim::IMMessage &msg)
 	//只显示最后一个回执
 	if (msg.status_ != nim::kNIMMsgLogStatusReceipt)
 		SetMsgStatus(msg.status_);
+
+	if (!my_msg_ && msg_.session_type_ == nim::kNIMSessionTypeTeam)
+	{
+		msg_header_button_->SetContextMenuUsed(true);
+		msg_header_button_->AttachMenu(nbase::Bind(&MsgBubbleItem::OnRightClick, this, std::placeholders::_1));
+	}
 }
 
 void MsgBubbleItem::SetSessionId( const std::string &sid )
@@ -102,7 +108,7 @@ void MsgBubbleItem::SetShowTime(bool show)
 
 void MsgBubbleItem::SetShowHeader()
 {
-	msg_header_button_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(msg_.sender_accid_));
+	msg_header_button_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(msg_.sender_accid_, false));
 }
 
 void MsgBubbleItem::SetShowName(bool show, const std::string& from_nick)
@@ -166,6 +172,24 @@ void MsgBubbleItem::SetPlayed(bool play)
 	{
 		play_status_->SetVisible(!play);
 	}
+}
+
+bool MsgBubbleItem::OnRightClick(ui::EventArgs* param)
+{
+	POINT point;
+	::GetCursorPos(&point);
+
+	CMenuWnd* pMenu = new CMenuWnd(NULL);
+	STRINGorID xml(L"cell_head_menu.xml");
+	pMenu->Init(xml, _T("xml"), point);
+
+	CMenuElementUI* at_ta = (CMenuElementUI*)pMenu->FindControl(L"at_ta");
+	at_ta->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
+	at_ta->SetVisible(true);
+
+	pMenu->Show();
+
+	return true;
 }
 
 bool MsgBubbleItem::OnClicked(ui::EventArgs* arg)
@@ -251,6 +275,8 @@ bool MsgBubbleItem::OnMenu( ui::EventArgs* arg )
 		m_pWindow->SendNotify(this, ui::kEventNotify, BET_RETWEET, 0);
 	else if (name == L"recall")
 		m_pWindow->SendNotify(this, ui::kEventNotify, BET_RECALL, 0);
+	else if (name == L"at_ta")
+		m_pWindow->SendNotify(this, ui::kEventNotify, BET_MENUATTA, 0);
 	return false;
 }
 

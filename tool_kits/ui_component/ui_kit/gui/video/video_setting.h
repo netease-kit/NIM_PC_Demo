@@ -201,7 +201,5 @@ private:
 	//std::list<MEDIA_DEVICE_DRIVE_INFO> input_videos_;
 };
 }
-using namespace nbase;
-DISABLE_RUNNABLE_METHOD_REFCOUNT(nim_comp::VideoSettingForm);
 
 #endif

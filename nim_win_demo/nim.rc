@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 3,5,0,20494
- PRODUCTVERSION 3,5,0,0
+ FILEVERSION 3,9,1,31577
+ PRODUCTVERSION 3,9,1,0
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "网易"
             VALUE "FileDescription", "启动网易云信"
-            VALUE "FileVersion", "3.5.0.20494"
+            VALUE "FileVersion", "3.9.1.31577"
             VALUE "InternalName", "nim.exe"
             VALUE "LegalCopyright", "网易公司 Copyright (C) 2017"
             VALUE "OriginalFilename", "nim.exe"
             VALUE "ProductName", "网易云信"
-            VALUE "ProductVersion", "3.5.0.0"
+            VALUE "ProductVersion", "3.9.1.0"
         END
     END
     BLOCK "VarFileInfo"
@@ -106,4 +106,10 @@ IDI_ICON                ICON                    "nim.ico"
 
 /////////////////////////////////////////////////////////////////////////////
 #endif    // not APSTUDIO_INVOKED
+
+
+
+
+
+
 

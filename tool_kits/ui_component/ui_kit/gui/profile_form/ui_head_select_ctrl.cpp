@@ -30,11 +30,11 @@ void HeadSelectControl::HandleMessage( ui::EventArgs& event )
 	return ui::Control::HandleMessage(event); 
 }
 
-void HeadSelectControl::Paint( HDC hDC, const ui::UiRect& rcPaint )
+void HeadSelectControl::Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint)
 {
 	// 先绘制背景图片
-	__super::Paint(hDC, rcPaint);  
-	Gdiplus::Graphics gp(hDC);
+	__super::Paint(pRender, rcPaint);  
+	Gdiplus::Graphics gp(pRender->GetDC());
 
 	// 保证宽度和高度相等
 	ui::UiRect paint_rect = m_rcItem;
@@ -61,22 +61,22 @@ void HeadSelectControl::Paint( HDC hDC, const ui::UiRect& rcPaint )
 	rect.right = rect.left + box_width_;
 	rect.bottom = rect.top + box_width_;
 	box_rect_NW_ = rect;
-	DrawBox(hDC, rect);
+	DrawBox(pRender->GetDC(), rect);
 	rect = paint_rect;
 	rect.left = rect.right - box_width_;
 	rect.bottom = rect.top + box_width_;
 	box_rect_NE_= rect;
-	DrawBox(hDC, rect);
+	DrawBox(pRender->GetDC(), rect);
 	rect = paint_rect;
 	rect.right = rect.left + box_width_;
 	rect.top = rect.bottom - box_width_;
 	box_rect_SW_ = rect;
-	DrawBox(hDC, rect);
+	DrawBox(pRender->GetDC(), rect);
 	rect = paint_rect;
 	rect.left = rect.right - box_width_;
 	rect.top = rect.bottom - box_width_;
 	box_rect_SE_ = rect;
-	DrawBox(hDC, rect);
+	DrawBox(pRender->GetDC(), rect);
 
 	// 绘制圆形
 	rect = paint_rect;

@@ -81,12 +81,12 @@ static void CallbackSendMsgAck(int64_t room_id, int error_code, const char *resu
 		if (*cb_pointer)
 		{
 			Json::Value value;
+			ChatRoomMessage msg;
 			if (ParseJsonValue(PCharToString(result), value))
 			{
-				ChatRoomMessage msg;
 				msg.ParseFromJsonValue(value);
-				(*cb_pointer)(room_id, error_code, msg);
 			}
+			(*cb_pointer)(room_id, error_code, msg);
 		}
 	}
 }
@@ -215,13 +215,13 @@ bool ChatRoom::Init(const std::string& app_install_dir, const std::string& json_
 {
 #ifdef NIM_SDK_DLL_IMPORT
 
-#if !defined (WIN32)
-	static const char *kSdkNimDll = "libnim_chatroom.so";
-//#elif defined (_DEBUG) || defined (DEBUG)
-//	static const char *kSdkNimDll = "nim_chatroom_d.dll";
-#else
+// #if !defined (WIN32)
+// 	static const char *kSdkNimDll = "libnim_chatroom.so";
+// #elif defined (_DEBUG) || defined (DEBUG)
+// 	static const char *kSdkNimDll = "nim_chatroom_d.dll";
+// #else
 	static const char *kSdkNimDll = "nim_chatroom.dll";
-#endif
+// #endif
 
 	if (NULL == g_nim_sdk_instance)
 	{

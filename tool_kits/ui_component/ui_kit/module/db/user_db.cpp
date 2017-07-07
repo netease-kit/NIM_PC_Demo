@@ -1,45 +1,48 @@
-﻿
-#include "msg_extend_db.h"
+﻿#include "user_db.h"
 #include "module/login/login_manager.h"
 
 namespace nim_comp
 {
 #define MSG_EX_FILE		"msg_extend.db"
-static std::vector<UTF8String> kMsgLogSQLs;
+static std::vector<UTF8String> kCreateDBSQLs;
 
-MsgExDB::MsgExDB()
+UserDB::UserDB()
 {
 	static bool sqls_created = false;
 	if (!sqls_created)
 	{
-		kMsgLogSQLs.push_back("CREATE TABLE IF NOT EXISTS msg_local_file(msg_id TEXT PRIMARY KEY, path TEXT, extend TEXT)");
+		kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS msg_local_file(msg_id TEXT PRIMARY KEY, path TEXT, extend TEXT)");
 
-		kMsgLogSQLs.push_back("CREATE TABLE IF NOT EXISTS custom_msglog(serial INTEGER PRIMARY KEY, \
-							  to_account TEXT, from_account TEXT, msg_type INTEGER, msg_time INTEGER, msg_id INTEGER, save_flag INTEGER, \
-							  msg_body TEXT, msg_attach TEXT, apns_text TEXT, msg_status INTEGER, msg_param TEXT)");
+		kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS custom_msglog(serial INTEGER PRIMARY KEY, "
+							  "to_account TEXT, from_account TEXT, msg_type INTEGER, msg_time INTEGER, msg_id INTEGER, save_flag INTEGER, "
+							  "msg_body TEXT, msg_attach TEXT, apns_text TEXT, msg_status INTEGER, msg_param TEXT)");
 
-		kMsgLogSQLs.push_back("CREATE TABLE IF NOT EXISTS force_push_data(session_id TEXT PRIMARY KEY, data TEXT)");
+		kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS force_push_data(session_id TEXT PRIMARY KEY, data TEXT)");
+
+		kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS user_timetag(type TEXT PRIMARY KEY, timetag INTEGER, longex INTERGER, textex TEXT)");
+
 		sqls_created = true;
 	}
-	Load();
+
+	this->Load();
 }
 
-MsgExDB::~MsgExDB()
+UserDB::~UserDB()
 {
-
+	this->Close();
 }
 
-bool MsgExDB::Load()
+bool UserDB::Load()
 {
 	return CreateDBFile();
 }
 
-void MsgExDB::Close()
+void UserDB::Close()
 {
 	db_.Close();
 }
 
-bool MsgExDB::CreateDBFile()
+bool UserDB::CreateDBFile()
 {
 	bool result = false;
 	std::string acc = LoginManager::GetInstance()->GetAccount();
@@ -54,9 +57,9 @@ bool MsgExDB::CreateDBFile()
 	if (result)
 	{
 		int dbresult = SQLITE_OK;
-		for (size_t i = 0; i < kMsgLogSQLs.size(); i++)
+		for (size_t i = 0; i < kCreateDBSQLs.size(); i++)
 		{
-			dbresult |= db_.Query(kMsgLogSQLs[i].c_str());
+			dbresult |= db_.Query(kCreateDBSQLs[i].c_str());
 		}
 		result = dbresult == SQLITE_OK;
 	}
@@ -64,8 +67,9 @@ bool MsgExDB::CreateDBFile()
 	return result;
 }
 
-bool MsgExDB::InsertData(const std::string& msg_id, const std::string& path, const std::string& extend)
+bool UserDB::InsertData(const std::string& msg_id, const std::string& path, const std::string& extend)
 {
+	nbase::NAutoLock auto_lock(&lock_);
 	ndb::SQLiteStatement stmt;
 	db_.Query(stmt, "INSERT OR REPLACE into msg_local_file (msg_id, path, extend) values (?, ?, ?);");
 
@@ -85,7 +89,7 @@ bool MsgExDB::InsertData(const std::string& msg_id, const std::string& path, con
 	return false;
 }
 
-bool MsgExDB::QueryDataWithMsgId(const std::string& msg_id, std::string& path, std::string& extend)
+bool UserDB::QueryDataWithMsgId(const std::string& msg_id, std::string& path, std::string& extend)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	ndb::SQLiteStatement stmt;
@@ -108,7 +112,7 @@ bool MsgExDB::QueryDataWithMsgId(const std::string& msg_id, std::string& path, s
 }
 
 //用于保存一些自定义通知消息
-bool MsgExDB::InsertMsgData(const nim::SysMessage& msg)
+bool UserDB::InsertMsgData(const nim::SysMessage& msg)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	ndb::SQLiteStatement stmt;
@@ -138,7 +142,7 @@ bool MsgExDB::InsertMsgData(const nim::SysMessage& msg)
 	return no_error;
 }
 
-std::vector<nim::SysMessage> MsgExDB::QueryMsgData(int64_t time, int limit)
+std::vector<nim::SysMessage> UserDB::QueryMsgData(int64_t time, int limit)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	std::vector<nim::SysMessage> ret_msgs;
@@ -174,7 +178,7 @@ std::vector<nim::SysMessage> MsgExDB::QueryMsgData(int64_t time, int limit)
 	return ret_msgs;
 }
 
-bool MsgExDB::InsertForcePushData(std::map<std::string, std::string> &data)
+bool UserDB::InsertForcePushData(std::map<std::string, std::string> &data)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	ndb::SQLiteAutoTransaction transaction(&db_);
@@ -205,7 +209,7 @@ bool MsgExDB::InsertForcePushData(std::map<std::string, std::string> &data)
 		return transaction.Rollback();
 }
 
-void MsgExDB::QueryAllForcePushData(std::map<std::string, std::string> &data)
+void UserDB::QueryAllForcePushData(std::map<std::string, std::string> &data)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	ndb::SQLiteStatement stmt;
@@ -225,13 +229,53 @@ void MsgExDB::QueryAllForcePushData(std::map<std::string, std::string> &data)
 	}
 }
 
-void MsgExDB::ClearForcePushData()
+void UserDB::ClearForcePushData()
 {
 	nbase::NAutoLock auto_lock(&lock_);
 
 	ndb::SQLiteStatement stmt;
 	db_.Query(stmt, "delete from force_push_data;");
 	stmt.NextRow();
+}
+
+bool UserDB::InsertTimetag(TimeTagType type, uint64_t timetag)
+{
+	nbase::NAutoLock auto_lock(&lock_);
+
+	ndb::SQLiteStatement stmt;
+	db_.Query(stmt, "INSERT OR REPLACE into timetag (type, timetag, longex, textex) values (?, ?, ?, ?);");
+	std::string string_type = nbase::StringPrintf("%d", type);
+	stmt.BindText(1, string_type.c_str(), (int)string_type.size());
+	stmt.BindInt64(2, timetag);
+	stmt.BindInt64(3, 0);
+	stmt.BindText(4, "", 0);
+
+	int32_t result = stmt.NextRow();
+	bool no_error = (result == SQLITE_OK || result == SQLITE_ROW || result == SQLITE_DONE);
+	if (!no_error)
+	{
+		QLOG_ERR(L"error: Set user db timetag For {0}, reason: {1}") << type << result;
+	}
+
+	return no_error;
+}
+
+bool UserDB::QueryTimetag(TimeTagType type, uint64_t &timetag)
+{
+	nbase::NAutoLock auto_lock(&lock_);
+
+	timetag = 0;
+	ndb::SQLiteStatement stmt;
+	db_.Query(stmt, "SELECT timetag FROM timetag WHERE type=?");
+	std::string string_type = nbase::StringPrintf("%d", type);
+	stmt.BindText(1, string_type.c_str(), (int)string_type.size());
+
+	int32_t result = stmt.NextRow();
+	bool no_error = (result == SQLITE_OK || result == SQLITE_ROW || result == SQLITE_DONE);
+	if (no_error)
+		timetag = stmt.GetInt64Field(0);
+
+	return no_error;
 }
 
 }

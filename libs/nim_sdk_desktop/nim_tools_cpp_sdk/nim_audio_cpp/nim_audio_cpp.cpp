@@ -1,5 +1,5 @@
 ﻿/** @file nim_audio_cpp.cpp
-* @brief NIM ?????????Ź??߽ӿ?CPP?ӿ?
+* @brief NIM 提供的语音播放工具接口(CPP接口)
 * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
 * @author towik, Oleg
 * @date 2015/2/10
@@ -16,17 +16,17 @@ static const std::wstring kSdkAudioDll = L"nim_audio.dll";
 HINSTANCE Audio::instance_audio_ = NULL;
 
 //init
-typedef bool(*nim_audio_init_module)(const char* user_data_parent_path);
+typedef bool(*nim_audio_init_module)(const wchar_t* user_data_parent_path);
 typedef bool(*nim_audio_uninit_module)();
 
 //play and stop
-typedef bool(*nim_audio_play_audio)(const char* file_path, const char* call_id, const char* res_id, int audio_format);
+typedef bool(*nim_audio_play_audio)(const wchar_t* file_path, const char* call_id, const char* res_id, int audio_format);
 typedef bool(*nim_audio_stop_play_audio)();
 
 //capture
-typedef bool(*nim_audio_start_capture)(const char* call_id, const char* res_id, int audio_format, int volume, int loudness, const wchar_t* capture_device);
+typedef bool(*nim_audio_start_capture)(const char* call_id, const char* res_id, int audio_format, int volume, const wchar_t* capture_device);
 typedef bool(*nim_audio_stop_capture)();
-typedef bool(*nim_audio_cancel_audio)(const char* file_path);
+typedef bool(*nim_audio_cancel_audio)(const wchar_t* file_path);
 typedef bool(*nim_audio_enum_capture_device)();
 
 //reg callback
@@ -37,14 +37,14 @@ typedef bool(*nim_audio_reg_stop_capture_cb)(nim_stop_capture_cb cb);
 typedef bool(*nim_audio_reg_cancel_audio_cb)(nim_rescode_cb cb);
 typedef bool(*nim_audio_reg_enum_capture_device_cb)(nim_enum_capture_device_cb cb);
 
-bool Audio::Init(const std::string& user_data_parent_path)
+bool Audio::Init(const std::wstring& user_data_parent_path)
 {
-//#ifdef _DEBUG
-//	instance_audio_ = ::LoadLibraryW(kSdkAudioDll_d.c_str());
-//#else
+// #ifdef _DEBUG
+// 	instance_audio_ = ::LoadLibraryW(kSdkAudioDll_d.c_str());
+// #else
 	instance_audio_ = ::LoadLibraryW(kSdkAudioDll.c_str());
-//#endif
-	assert(instance_audio_);
+// #endif
+// 	assert(instance_audio_);
 	if (instance_audio_ == NULL)
 		return false;
 
@@ -68,7 +68,7 @@ void Audio::Cleanup()
 	}
 }
 
-bool Audio::PlayAudio(const char* file_path, const char* call_id, const char* res_id, nim_audio_type audio_format)
+bool Audio::PlayAudio(const wchar_t* file_path, const char* call_id, const char* res_id, nim_audio_type audio_format)
 {
 	nim_audio_play_audio f_uninit = Function<nim_audio_play_audio>("nim_audio_play_audio");
 	return f_uninit(file_path, call_id, res_id, audio_format);
@@ -110,10 +110,10 @@ bool Audio::RegCancelAudioCb(nim_rescode_cb cb)
 	return f_uninit(cb);
 }
 
-bool Audio::StartCapture(const char* call_id, const char* res_id, nim_audio_type audio_format/* = AAC*/, int volume/* = 180*/, int loudness/* = 0*/, const wchar_t* capture_device/* = nullptr*/)
+bool Audio::StartCapture(const char* call_id, const char* res_id, nim_audio_type audio_format/* = AAC*/, int volume/* = 180*/, const wchar_t* capture_device/* = nullptr*/)
 {
 	nim_audio_start_capture f_uninit = Function<nim_audio_start_capture>("nim_audio_start_capture");
-	return f_uninit(call_id, res_id, audio_format, volume, loudness, capture_device);
+	return f_uninit(call_id, res_id, audio_format, volume, capture_device);
 }
 
 bool Audio::StopCapture()
@@ -122,7 +122,7 @@ bool Audio::StopCapture()
 	return f_uninit();
 }
 
-bool Audio::CancelAudio(const char* file_path)
+bool Audio::CancelAudio(const wchar_t* file_path)
 {
 	nim_audio_cancel_audio f_uninit = Function<nim_audio_cancel_audio>("nim_audio_cancel_audio");
 	return f_uninit(file_path);

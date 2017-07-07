@@ -41,6 +41,7 @@ struct SessionData
 	bool			last_updated_msg_;		/**< (批量)消息变更或增加时是否是最后一条变更的信息 */
 	bool			placed_on_top_;			/**< 置顶标识 */
 	std::string		extend_data_;			/**< 本地扩展字段,限制4096 */
+	bool			is_robot_session_;		/**< 是否为机器人会话, 默认为false */
 
 	/** 构造函数 */
 	SessionData() : unread_count_(0)
@@ -51,7 +52,8 @@ struct SessionData
 				, msg_status_(kNIMMsgLogStatusNone)
 				, msg_sub_status_(kNIMMsgLogSubStatusNone)
 				, last_updated_msg_(true)
-				, placed_on_top_(false){}
+				, placed_on_top_(false)
+				, is_robot_session_(false){}
 };
 
 /** @brief 会话列表数据 */

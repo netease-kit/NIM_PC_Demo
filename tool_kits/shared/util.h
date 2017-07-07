@@ -2,7 +2,8 @@
 #include <string>
 #include <map>
 
-#define DEMO_GLOBAL_APP_KEY		"45c6af3c98409b18a84451215d0bdd6e"
+#define DEMO_GLOBAL_APP_KEY			"45c6af3c98409b18a84451215d0bdd6e"
+#define DEMO_GLOBAL_TEST_APP_KEY	"fe416640c8e8a72734219e1847ad2547"
 
 class QString
 {
@@ -18,7 +19,7 @@ public:
 	static std::wstring GetAppPath(); //获取exe所在目录，最后有"\\"
 	static std::wstring GetUserAppDataDir(const std::string& app_account);
 	static std::wstring GetLocalAppDataDir();
-	static std::wstring GetNimAppDataDir(); // "...Local\\Netease\\Nim\\"
+	static std::wstring GetNimAppDataDir(const std::wstring& app_data_dir); // "...Local\\Netease\\Nim\\"
 };
 
 class QCommand

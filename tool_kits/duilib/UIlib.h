@@ -89,6 +89,11 @@
 #include "Animation/AnimationPlayer.h"
 #include "Animation/AnimationManager.h"
 
+#include "Render/IRender.h"
+#include "Render/Clip.h"
+#include "Render/Bitmap.h"
+#include "Render/Render.h"
+
 #include "Core/Define.h"
 #include "Core/Markup.h"
 #include "Core/WindowBuilder.h"
@@ -97,7 +102,6 @@
 #include "Core/Placeholder.h"
 #include "Core/Control.h"
 #include "Core/Box.h"
-#include "Core/Render.h"
 #include "Core/HelperThread.h"
 #include "Utils/WinImplBase.h"
 

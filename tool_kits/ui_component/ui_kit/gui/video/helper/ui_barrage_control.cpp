@@ -24,13 +24,13 @@ void BarrageControl::SetBarrageInfo(int32_t line_num_max, int32_t line_height, i
 	barrage_top_pos_ = top_pos;
 }
 
-void BarrageControl::Paint(HDC hDC, const UiRect& rcPaint)
+void BarrageControl::Paint(IRenderContext* pRender, const UiRect& rcPaint)
 {
 	try
 	{
 		if( !::IntersectRect( &m_rcPaint, &rcPaint, &m_rcItem ) ) 
 			return;
-		Control::Paint(hDC, rcPaint);
+		Control::Paint(pRender, rcPaint);
 
 		for (int i = 0; i < barrage_line_num_max_; ++i)
 		{
@@ -57,7 +57,7 @@ void BarrageControl::Paint(HDC hDC, const UiRect& rcPaint)
 								rc.top = y;
 								rc.right = min(x + barrage_info.text_w_, m_rcPaint.right);
 								rc.bottom = min(y + barrage_info.text_h_, m_rcPaint.bottom);
-								RenderEngine::DrawText(hDC, rc, barrage_info.text_, barrage_info.color_, barrage_info.font_, DT_SINGLELINE, 255, false);
+								pRender->DrawText(rc, barrage_info.text_, barrage_info.color_, barrage_info.font_, DT_SINGLELINE, 255, false);
 							}
 						}
 					}
@@ -130,9 +130,7 @@ bool BarrageControl::AddText(std::wstring text)
 		break;
 	}
 	barrage_info.text_ = text;
-	HWND hwnd = this->GetWindow()->GetHWND();
-	HDC hdc = GetDC(hwnd);
-	UiRect rc = RenderEngine::MeasureText(hdc, text, barrage_info.font_, DT_SINGLELINE, 2000);
+	UiRect rc = this->GetWindow()->GetRenderContext()->MeasureText(text, barrage_info.font_, DT_SINGLELINE, 2000);
 	barrage_info.text_w_ = rc.GetWidth();
 	barrage_info.text_h_ = rc.GetHeight();
 	barrage_info.speed_ = rand() % 4 + rand() % 4 + 4;

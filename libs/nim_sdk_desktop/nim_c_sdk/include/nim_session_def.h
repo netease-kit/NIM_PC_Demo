@@ -54,6 +54,7 @@ static const char *kNIMSessionMsgSubStatus	= "msg_sub_status";		/**< int, 本地
 static const char *kNIMSessionLastUpdatedMsg= "last_updated_msg";	/**< bool, (批量)消息变更或增加时是否是最后一条变更的信息 */
 static const char *kNIMSessionOnTop			= "top";				/**< bool, 是否置顶 */
 static const char *kNIMSessionExtendedData	= "extend_data";		/**< string, 本地扩展字段, 限4096 */
+static const char *kNIMSessionRobotFlag		= "robot_session";		/**< bool, 是否为机器人会话, 默认为false */
 /** @}*/ //会话列表的Json Keys
 
 /** @enum NIMSessionType 会话类型 */

@@ -191,6 +191,7 @@
     <ClInclude Include="callback\multiport\multiport_push_callback.h" />
     <ClInclude Include="callback\rts\rts_callback.h" />
     <ClInclude Include="callback\session\session_callback.h" />
+    <ClInclude Include="callback\subscribe_event\subscribe_event_callback.h" />
     <ClInclude Include="callback\team\team_callback.h" />
     <ClInclude Include="callback\vchat\vchat_callback.h" />
     <ClInclude Include="export\nim_ui_all.h" />
@@ -199,9 +200,11 @@
     <ClInclude Include="export\nim_ui_init_manager.h" />
     <ClInclude Include="export\nim_ui_login_manager.h" />
     <ClInclude Include="export\nim_ui_muteblack_manager.h" />
+    <ClInclude Include="export\nim_ui_notify_center.h" />
     <ClInclude Include="export\nim_ui_photo_manager.h" />
     <ClInclude Include="export\nim_ui_session_list_manager.h" />
     <ClInclude Include="export\nim_ui_session_manager.h" />
+    <ClInclude Include="export\nim_ui_subscribe_event_manager.h" />
     <ClInclude Include="export\nim_ui_team_manager.h" />
     <ClInclude Include="export\nim_ui_user_config.h" />
     <ClInclude Include="export\nim_ui_user_manager.h" />
@@ -239,6 +242,7 @@
     <ClInclude Include="gui\session\control\bubbles\bubble_item.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_location.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_notice.h" />
+    <ClInclude Include="gui\session\control\bubbles\bubble_robot.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_snapchat.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_sticker.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_text.h" />
@@ -273,13 +277,13 @@
     <ClInclude Include="gui\video\video_setting.h" />
     <ClInclude Include="gui\video\window_select.h" />
     <ClInclude Include="module\audio\audio_manager.h" />
+    <ClInclude Include="module\db\user_db.h" />
     <ClInclude Include="module\dragdrop\drag_drop.h" />
     <ClInclude Include="module\emoji\emoji_info.h" />
     <ClInclude Include="module\emoji\richedit_olecallback.h" />
     <ClInclude Include="module\emoji\richedit_util.h" />
     <ClInclude Include="module\local\local_helper.h" />
     <ClInclude Include="module\login\login_manager.h" />
-    <ClInclude Include="module\msglog\msg_extend_db.h" />
     <ClInclude Include="module\rts\rts_manager.h" />
     <ClInclude Include="module\service\http_service.h" />
     <ClInclude Include="module\service\mute_black_service.h" />
@@ -291,6 +295,8 @@
     <ClInclude Include="module\session\ring.h" />
     <ClInclude Include="module\session\session_manager.h" />
     <ClInclude Include="module\session\session_util.h" />
+    <ClInclude Include="module\subscribe_event\online_state_event_helper.h" />
+    <ClInclude Include="module\subscribe_event\subscribe_event_manager.h" />
     <ClInclude Include="module\video\audio_frame_mng.h" />
     <ClInclude Include="module\video\video_frame_mng.h" />
     <ClInclude Include="module\video\video_manager.h" />
@@ -310,6 +316,7 @@
     <ClCompile Include="callback\multiport\multiport_push_callback.cpp" />
     <ClCompile Include="callback\rts\rts_callback.cpp" />
     <ClCompile Include="callback\session\session_callback.cpp" />
+    <ClCompile Include="callback\subscribe_event\subscribe_event_callback.cpp" />
     <ClCompile Include="callback\team\team_callback.cpp" />
     <ClCompile Include="callback\vchat\vchat_callback.cpp" />
     <ClCompile Include="export\nim_ui_contacts_list_manager.cpp" />
@@ -317,9 +324,11 @@
     <ClCompile Include="export\nim_ui_init_manager.cpp" />
     <ClCompile Include="export\nim_ui_login_manager.cpp" />
     <ClCompile Include="export\nim_ui_muteblack_manager.cpp" />
+    <ClCompile Include="export\nim_ui_notify_center.cpp" />
     <ClCompile Include="export\nim_ui_photo_manager.cpp" />
     <ClCompile Include="export\nim_ui_session_list_manager.cpp" />
     <ClCompile Include="export\nim_ui_session_manager.cpp" />
+    <ClCompile Include="export\nim_ui_subscribe_event_manager.cpp" />
     <ClCompile Include="export\nim_ui_team_manager.cpp" />
     <ClCompile Include="export\nim_ui_user_config.cpp" />
     <ClCompile Include="export\nim_ui_user_manager.cpp" />
@@ -359,6 +368,7 @@
     <ClCompile Include="gui\session\control\bubbles\bubble_item.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_location.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_notice.cpp" />
+    <ClCompile Include="gui\session\control\bubbles\bubble_robot.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_snapchat.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_sticker.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_text.cpp" />
@@ -402,13 +412,13 @@
     <ClCompile Include="gui\video\video_setting.cpp" />
     <ClCompile Include="gui\video\window_select.cpp" />
     <ClCompile Include="module\audio\audio_manager.cpp" />
+    <ClCompile Include="module\db\user_db.cpp" />
     <ClCompile Include="module\dragdrop\drag_drop.cpp" />
     <ClCompile Include="module\emoji\emoji_info.cpp" />
     <ClCompile Include="module\emoji\richedit_olecallback.cpp" />
     <ClCompile Include="module\emoji\richedit_util.cpp" />
     <ClCompile Include="module\local\local_helper.cpp" />
     <ClCompile Include="module\login\login_manager.cpp" />
-    <ClCompile Include="module\msglog\msg_extend_db.cpp" />
     <ClCompile Include="module\rts\rts_manager.cpp" />
     <ClCompile Include="module\service\http_service.cpp" />
     <ClCompile Include="module\service\mute_black_service.cpp" />
@@ -421,6 +431,8 @@
     <ClCompile Include="module\session\session_manager.cpp" />
     <ClCompile Include="module\session\session_manager_dragdrop.cpp" />
     <ClCompile Include="module\session\session_util.cpp" />
+    <ClCompile Include="module\subscribe_event\online_state_event_helper.cpp" />
+    <ClCompile Include="module\subscribe_event\subscribe_event_manager.cpp" />
     <ClCompile Include="module\video\audio_frame_mng.cpp" />
     <ClCompile Include="module\video\video_frame_mng.cpp" />
     <ClCompile Include="module\video\video_manager.cpp" />

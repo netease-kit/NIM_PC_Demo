@@ -1,53 +1,55 @@
-﻿#include "login_db.h"
+﻿#include "public_db.h"
 #include "base/encrypt/encrypt_impl.h"
 #include "shared/tool.h"
 
 namespace
 {
 #define LOGIN_DATA_FILE		"app_login_data.db"
-static std::vector<UTF8String> kLoginDataSQLs;
+static std::vector<UTF8String> kCreateDBSQLs;
 }
 
-LoginDB::LoginDB()
+PublicDB::PublicDB()
 {
     static bool sqls_created = false;
     if (!sqls_created)
     {
-        kLoginDataSQLs.push_back("CREATE TABLE IF NOT EXISTS logindata(uid TEXT PRIMARY KEY, \
+        kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS logindata(uid TEXT PRIMARY KEY, \
                                   name TEXT, password TEXT, type INTEGER, status INTEGER, remember INTEGER, autologin INTEGER)");
-        kLoginDataSQLs.push_back("CREATE INDEX IF NOT EXISTS logindatauidindex ON logindata(uid)");
+        kCreateDBSQLs.push_back("CREATE INDEX IF NOT EXISTS logindatauidindex ON logindata(uid)");
 
-		kLoginDataSQLs.push_back("CREATE TABLE IF NOT EXISTS proxysettingdata(proxytype INTEGER PRIMARY KEY, \
+		kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS proxysettingdata(proxytype INTEGER PRIMARY KEY, \
 								 address TEXT, port TEXT,name TEXT, password TEXT, domain TEXT,valid INTEGER)");
-		kLoginDataSQLs.push_back("CREATE INDEX IF NOT EXISTS proxydataindex ON proxysettingdata(proxytype)");
+		kCreateDBSQLs.push_back("CREATE INDEX IF NOT EXISTS proxydataindex ON proxysettingdata(proxytype)");
 
-		kLoginDataSQLs.push_back("CREATE TABLE IF NOT EXISTS config_info(key TEXT PRIMARY KEY, value TEXT)");
+		kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS config_info(key TEXT PRIMARY KEY, value TEXT)");
         sqls_created = true;
     }
 	aes_key_ = "12345500072bf3390c79f01004dabcde";//32位
 	db_encrypt_key_ = "1234560247a0619f07548fb1b8abcedf";//注意：只支持最多32个字符的加密密钥！
+
+	this->Load();
 }
 
-LoginDB::~LoginDB()
+PublicDB::~PublicDB()
 {
-
+	this->Close();
 }
 
-ndb::SQLiteDB& LoginDB::GetSQLiteDB()
+ndb::SQLiteDB& PublicDB::GetSQLiteDB()
 {
 	return db_;
 }
-bool LoginDB::Load()
+bool PublicDB::Load()
 {
 	return CreateDBFile();
 }
 
-void LoginDB::Close()
+void PublicDB::Close()
 {
     db_.Close();
 }
 
-bool LoginDB::WriteLoginData(LoginData &data)
+bool PublicDB::WriteLoginData(LoginData &data)
 {
     nbase::NAutoLock auto_lock(&lock_);
     ndb::SQLiteStatement stmt;
@@ -75,7 +77,7 @@ bool LoginDB::WriteLoginData(LoginData &data)
     return no_error;
 }
 
-bool LoginDB::IsNeedUpdateData(const LoginData *orgi_login_data, 
+bool PublicDB::IsNeedUpdateData(const LoginData *orgi_login_data, 
 	const LoginData *current_login_data, 
 	bool &password_changed)
 {
@@ -100,7 +102,7 @@ bool LoginDB::IsNeedUpdateData(const LoginData *orgi_login_data,
 	}
 }
 
-bool LoginDB::UpdateLoginData(UTF8String &uid, 
+bool PublicDB::UpdateLoginData(UTF8String &uid, 
 	LoginData *current_login_data, 
 	const uint8_t status, 
 	bool password_changed)
@@ -140,7 +142,7 @@ bool LoginDB::UpdateLoginData(UTF8String &uid,
     return no_error;
 }
 
-bool LoginDB::SetStatus(UTF8String &uid, const uint8_t status)
+bool PublicDB::SetStatus(UTF8String &uid, const uint8_t status)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	UTF8String query_sql;
@@ -158,7 +160,7 @@ bool LoginDB::SetStatus(UTF8String &uid, const uint8_t status)
 	return no_error;
 }
 
-bool LoginDB::SetRemember(UTF8String &uid, const uint8_t remember)
+bool PublicDB::SetRemember(UTF8String &uid, const uint8_t remember)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	UTF8String query_sql;
@@ -176,7 +178,7 @@ bool LoginDB::SetRemember(UTF8String &uid, const uint8_t remember)
 	return no_error;
 }
 
-bool LoginDB::SetAutoLogin(UTF8String &uid, const uint8_t auto_login)
+bool PublicDB::SetAutoLogin(UTF8String &uid, const uint8_t auto_login)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	UTF8String query_sql;
@@ -194,7 +196,7 @@ bool LoginDB::SetAutoLogin(UTF8String &uid, const uint8_t auto_login)
 	return no_error;
 }
 
-bool LoginDB::QueryLoginDataByUid(UTF8String &uid, LoginData &data)
+bool PublicDB::QueryLoginDataByUid(UTF8String &uid, LoginData &data)
 {
     nbase::NAutoLock auto_lock(&lock_);
     bool result = false;
@@ -212,7 +214,7 @@ bool LoginDB::QueryLoginDataByUid(UTF8String &uid, LoginData &data)
 }
 
 
-uint32_t LoginDB::QueryAllLoginData(std::vector<LoginData> &all_data)
+uint32_t PublicDB::QueryAllLoginData(std::vector<LoginData> &all_data)
 {
     all_data.clear();
     nbase::NAutoLock auto_lock(&lock_);
@@ -230,13 +232,13 @@ uint32_t LoginDB::QueryAllLoginData(std::vector<LoginData> &all_data)
     return (uint32_t)all_data.size();
 }
 
-bool LoginDB::CreateDBFile()
+bool PublicDB::CreateDBFile()
 {
 	if (db_.IsValid())
 		return true;
 
     bool result = false;
-	UTF8String dirctory = nbase::UTF16ToUTF8(QPath::GetNimAppDataDir());
+	UTF8String dirctory = nbase::UTF16ToUTF8(QPath::GetNimAppDataDir(L""));
 	UTF8String dbfile = dirctory + LOGIN_DATA_FILE;
 	db_filepath_ = dbfile;
 	result = db_.Open(dbfile.c_str(),
@@ -246,9 +248,9 @@ bool LoginDB::CreateDBFile()
 	if (result)
 	{
 		int dbresult = SQLITE_OK;
-		for (size_t i = 0; i < kLoginDataSQLs.size(); i++)
+		for (size_t i = 0; i < kCreateDBSQLs.size(); i++)
 		{
-			dbresult |= db_.Query(kLoginDataSQLs[i].c_str());
+			dbresult |= db_.Query(kCreateDBSQLs[i].c_str());
 		}
 		result = dbresult == SQLITE_OK;
 	}
@@ -256,7 +258,7 @@ bool LoginDB::CreateDBFile()
     return result;
 }
 
-void LoginDB::GetLoginDataFromStatement(ndb::SQLiteStatement &stmt, LoginData &data)
+void PublicDB::GetLoginDataFromStatement(ndb::SQLiteStatement &stmt, LoginData &data)
 {
     data.user_id_       = stmt.GetTextField(0);
     data.user_name_     = stmt.GetTextField(1);
@@ -270,7 +272,7 @@ void LoginDB::GetLoginDataFromStatement(ndb::SQLiteStatement &stmt, LoginData &d
 	data.auto_login_    = stmt.GetIntField(6); 
 }
 
-void LoginDB::GetAESPassword(const UTF8String &password_org, UTF8String &password_aes)
+void PublicDB::GetAESPassword(const UTF8String &password_org, UTF8String &password_aes)
 {
 	nbase::EncryptInterface_var encrypt_enc(new nbase::Encrypt_Impl());
 	encrypt_enc->SetMethod(nbase::ENC_AES128);
@@ -279,7 +281,7 @@ void LoginDB::GetAESPassword(const UTF8String &password_org, UTF8String &passwor
 	password_aes = nbase::BinaryToHexString(password_aes);
 }
 
-void LoginDB::GetOrgPassword(const UTF8String &password_aes, UTF8String &password_org)
+void PublicDB::GetOrgPassword(const UTF8String &password_aes, UTF8String &password_org)
 {
 	nbase::EncryptInterface_var encrypt_dec(new nbase::Encrypt_Impl());
 	encrypt_dec->SetMethod(nbase::ENC_AES128);
@@ -288,7 +290,7 @@ void LoginDB::GetOrgPassword(const UTF8String &password_aes, UTF8String &passwor
 	encrypt_dec->Decrypt(password_enc, password_org);
 }
 
-bool LoginDB::SetAllLoginDataDeleted()
+bool PublicDB::SetAllLoginDataDeleted()
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	UTF8String query_sql;
@@ -303,11 +305,10 @@ bool LoginDB::SetAllLoginDataDeleted()
 	return no_error;
 }
 
-void LoginDB::ReadLoginData()
+void PublicDB::ReadLoginData()
 {
 	try
 	{
-		this->Load();
 		std::vector<LoginData> all_data;
 		this->QueryAllLoginData(all_data);
 		if (all_data.size() > 0)
@@ -329,7 +330,7 @@ void LoginDB::ReadLoginData()
 	}
 }
 
-void LoginDB::SaveLoginData()
+void PublicDB::SaveLoginData()
 {
 	LoginData login_data;
 	bool ret = this->QueryLoginDataByUid(current_login_data_.user_id_, login_data);
@@ -362,7 +363,7 @@ void LoginDB::SaveLoginData()
 	}
 }
 
-bool LoginDB::InsertConfigData(const std::string& key, const std::string& value)
+bool PublicDB::InsertConfigData(const std::string& key, const std::string& value)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 
@@ -382,7 +383,7 @@ bool LoginDB::InsertConfigData(const std::string& key, const std::string& value)
 	return no_error;
 }
 
-void LoginDB::QueryConfigData(const std::string& key, std::string& value)
+void PublicDB::QueryConfigData(const std::string& key, std::string& value)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	ndb::SQLiteStatement stmt;
@@ -395,7 +396,7 @@ void LoginDB::QueryConfigData(const std::string& key, std::string& value)
 		value = stmt.GetTextField(0);
 }
 
-void LoginDB::ClearConfigData()
+void PublicDB::ClearConfigData()
 {
 	nbase::NAutoLock auto_lock(&lock_);
 

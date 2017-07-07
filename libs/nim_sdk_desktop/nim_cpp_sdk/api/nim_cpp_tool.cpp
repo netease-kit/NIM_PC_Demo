@@ -1,20 +1,20 @@
 ﻿/** @file nim_cpp_tool.cpp
   * @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
+  * @author towik, Oleg, Harrison
   * @date 2015/09/21
   */
 
 #include "nim_cpp_tool.h"
 #include "nim_sdk_util.h"
 #include "nim_json_util.h"
+#include "nim_string_util.h"
 #include "nim_cpp_global.h"
 #include "nim_cpp_win32_demo_helper.h"
-#include "nim_string_util.h"
 
 namespace nim
 {
-
+#ifdef NIM_SDK_DLL_IMPORT
 typedef	const char * (*nim_tool_get_user_appdata_dir)(const char * app_account);
 typedef	const char * (*nim_tool_get_local_appdata_dir)();
 typedef	const char * (*nim_tool_get_cur_module_dir)();
@@ -22,6 +22,9 @@ typedef	const char * (*nim_tool_get_md5)(const char *input);
 typedef	const char * (*nim_tool_get_file_md5)(const char *file_path);
 typedef	const char * (*nim_tool_get_uuid)();
 typedef void(*nim_tool_get_audio_text_async)(const char *json_audio_info, const char *json_extension, nim_tool_get_audio_text_cb_func cb, const void *user_data);
+#else
+#include "nim_tools.h"
+#endif
 
 static void CallbackGetAudioText(int res_code, const char *text, const char *json_extension, const void *callback)
 {

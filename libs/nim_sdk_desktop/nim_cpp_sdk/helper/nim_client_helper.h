@@ -34,9 +34,10 @@ struct SDKConfig
 	bool			sync_session_ack_;				/**< bool，设置是否已读未读状态多端同步，默认true */
 	int				login_max_retry_times_;			/**< int，登录重试最大次数，如需设置建议设置大于3次，默认填0，SDK默认设置次数 */
 	int				custom_timeout_;				/**< int，自定义通讯超时时间，暂时不开放设置 */
+	bool			use_https_;						/**< bool，是否启用HTTPS协议，默认为false */
 
 	//private_server_setting
-	bool			use_private_server_;			/**< 选填，是否使用私有服务器 */
+	bool			use_private_server_;			/**< 是否使用私有服务器，如果使用私有服务器，则必须设置为true */
 	std::string		lbs_address_;					/**< lbs地址，如果选择使用私有服务器，则必填 */
 	std::string  	nos_lbs_address_;				/**< nos lbs地址，如果选择使用私有服务器，则必填 */
 	std::list<std::string>	default_link_address_;			/**< 默认link服务器地址，如果选择使用私有服务器，则必填 */
@@ -54,7 +55,8 @@ struct SDKConfig
 				, rsa_version_(0) 
 				, sync_session_ack_(true)
 				, login_max_retry_times_(0)
-				, custom_timeout_(30){}
+				, custom_timeout_(30)
+				, use_https_(false){}
 };
 
 /** @brief 多端登陆客户端信息 */

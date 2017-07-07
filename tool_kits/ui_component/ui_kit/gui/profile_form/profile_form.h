@@ -8,7 +8,7 @@ namespace nim_comp
 class ProfileForm : public WindowEx
 {
 public:
-	static ProfileForm *ShowProfileForm(UTF8String uid);
+	static ProfileForm *ShowProfileForm(UTF8String uid, bool is_robot = false);
 	static ProfileForm *ShowProfileForm(UTF8String tid, UTF8String uid, nim::NIMTeamUserType my_type);
 private:
 	ProfileForm();
@@ -198,6 +198,13 @@ private:
 	void InitUserInfo(const nim::UserNameCard & info);
 
 	/**
+	* 初始化机器人信息，只能使用一次，否则会多次注册回调
+	* @param[in] info 机器人信息
+	* @return void	无返回值
+	*/
+	void InitRobotInfo(const nim::RobotInfo & info);
+
+	/**
 	* 打开名片后，初始化各项提示信息
 	* @return void	无返回值
 	*/
@@ -241,6 +248,15 @@ private:
 	* @return void 无返回值
 	*/
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
+
+	/**
+	* 响应机器人信息改变的回调函数
+	* @param[in] rescode 错误码
+	* @param[in] type 类型
+	* @param[in] robots 机器人列表
+	* @return void 无返回值
+	*/
+	void OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots);
 
 	/**
 	* 响应用户头像改变的回调函数
@@ -290,6 +306,7 @@ public:
 
 private:
 	nim::UserNameCard	m_uinfo;
+	nim::RobotInfo	m_robot;
 	int				user_type; // -1：自己，0：陌生人，1：好友
 	AutoUnregister	unregister_cb;
 
@@ -298,6 +315,12 @@ private:
 	ui::Label*		show_name_label = NULL;
 	ui::Label*		user_id_label = NULL;
 	ui::Label*		nickname_label = NULL;
+
+	ui::VBox*		common_info_ = NULL;
+	ui::VBox*		robot_info_ = NULL;
+	ui::VBox*		common_other_ = NULL;
+	ui::RichEdit*	robot_intro_ = NULL;
+
 	ui::CheckBox*	multi_push_switch = NULL;
 	ui::CheckBox*	notify_switch = NULL;
 	ui::CheckBox*	black_switch = NULL;

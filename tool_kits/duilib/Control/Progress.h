@@ -28,7 +28,7 @@ public:
 	void SetProgressColor(const std::wstring& dwProgressColor);
 
 	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
-	virtual void PaintStatusImage(HDC hDC) override;
+	virtual void PaintStatusImage(IRenderContext* pRender) override;
 
 	virtual UiRect GetProgressPos();
 

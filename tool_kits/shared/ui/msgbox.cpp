@@ -140,7 +140,7 @@ void MsgBox::SetContent( const std::wstring &str )
 	int width = content_->GetFixedWidth();
 
 	ui::CSize sz = content_->GetNaturalSize(width, 0);
-	content_->SetFixedHeight(sz.cy);
+	content_->SetFixedHeight(sz.cy, false);
 }
 
 void MsgBox::SetButton( const std::wstring &yes, const std::wstring &no )

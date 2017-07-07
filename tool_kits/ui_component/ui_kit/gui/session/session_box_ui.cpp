@@ -112,7 +112,52 @@ void SessionBox::OnEsc(BOOL &bHandled)
 bool SessionBox::Notify(ui::EventArgs* param)
 {
 	std::wstring name = param->pSender->GetName();
-	if (param->Type == kEventScrollChange)
+	if (param->Type == kEventCustomLinkClick)
+	{
+		RichEdit* text_edit = dynamic_cast<RichEdit*>(param->pSender);
+		std::wstring link_info;
+		if (text_edit->HittestCustomLink(param->ptMouse, link_info))
+		{
+			Json::Value values;
+			Json::Reader reader;
+			if (reader.parse(nbase::UTF16ToUTF8((std::wstring)link_info), values) && values.isObject())
+			{
+				std::string type = values["type"].asString();
+				if (type == "url")
+				{
+					std::string url = values["target"].asString();
+					Post2GlobalMisc(nbase::Bind(&shared::tools::SafeOpenUrl, nbase::UTF8ToUTF16(url), SW_SHOW));
+				}
+				else if (type == "block")
+				{
+					std::string robot_id = values[nim::kNIMBotRobotMsgKeyRobotID].asString();
+					std::string content = values["link_text"].asString();
+					nim::IMMessage msg;
+					PackageMsg(msg);
+					nim::MessageSetting setting;
+					msg.type_ = nim::kNIMMessageTypeRobot;
+					msg.content_ = content;
+					nim::IMBotRobot bot;
+					bot.robot_accid_ = robot_id;
+					bot.sent_param_["target"] = values["target"].asString();
+					bot.sent_param_["type"] = "03";
+					bot.sent_param_["params"] = values["params"].asString();
+					msg.attach_ = bot.ToJsonString();
+					std::string json_msg = nim::Talk::CreateBotRobotMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, content, bot, setting, msg.timetag_);
+					AddSendingMsg(msg);
+					nim::Talk::SendMsg(json_msg);
+
+				}
+				else
+				{
+					assert(0);
+					QLOG_ERR(L"\r\nError custom click: {0}") << (std::wstring)link_info;
+				}
+			}
+		}
+
+	}
+	else if (param->Type == kEventScrollChange)
 	{
 		if (name == L"msg_list")
 		{
@@ -176,15 +221,64 @@ bool SessionBox::Notify(ui::EventArgs* param)
 		}
 		else if (param->wParam == BET_SHOWPROFILE)
 		{
+			bool is_robot_id = false;
+			std::string robot_id;
+			if (md.type_ == nim::kNIMMessageTypeRobot)
+			{
+				nim::IMBotRobot robot;
+				nim::Talk::ParseBotRobotMessageAttach(md, robot);
+				is_robot_id = robot.out_msg_;
+				robot_id = robot.robot_accid_;
+			}
+
 			if (session_type_ == nim::kNIMSessionTypeTeam)
 			{
-				nim::NIMTeamUserType type = team_member_info_list_[LoginManager::GetInstance()->GetAccount()].GetUserType();
-				ProfileForm::ShowProfileForm(session_id_, md.sender_accid_, type);
+				if (is_robot_id)
+				{
+					ProfileForm::ShowProfileForm(robot_id, is_robot_id);
+				}
+				else
+				{
+					nim::NIMTeamUserType type = team_member_info_list_[LoginManager::GetInstance()->GetAccount()].GetUserType();
+					ProfileForm::ShowProfileForm(session_id_, md.sender_accid_, type);
+				}
 			}
 			else
 			{
-				ProfileForm::ShowProfileForm(md.sender_accid_);
+				ProfileForm::ShowProfileForm(is_robot_id ? robot_id : md.sender_accid_, is_robot_id);
 			}
+		}
+		else if (param->wParam == BET_MENUATTA)
+		{
+			AtSomeone at;
+			at.is_robot_ = md.type_ == nim::kNIMMessageTypeRobot;
+			at.uid_ = item->GetSenderId();
+			std::string show_name;
+			if (!at.is_robot_)
+			{
+				auto i = team_member_info_list_.find(at.uid_);
+				if (i != team_member_info_list_.end())
+				{
+					show_name = i->second.GetNick();
+				}
+				if (show_name.empty())
+				{
+					show_name = nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(at.uid_, false));
+				}
+			}
+			else
+			{
+				nim::RobotInfo info;
+				UserService::GetInstance()->GetRobotInfo(at.uid_, info);
+				show_name = info.GetName();
+			}
+			uid_at_someone_[show_name] = at;
+
+			std::wstring show_text = L"@";
+			show_text.append(nbase::UTF8ToUTF16(show_name));
+			show_text.append(L" ");
+
+			input_edit_->ReplaceSel(show_text, false);
 		}
 	}
 	else if (param->Type == ui::kEventTextChange)
@@ -282,7 +376,7 @@ bool SessionBox::OnClicked(ui::EventArgs* param)
 
 		//::ShowWindow( m_hWnd, SW_SHOWMINIMIZED );
 		StdClosure callback = nbase::Bind(&SessionBox::DoClip, this);
-		nbase::ThreadManager::PostDelayedTask(kThreadUI, callback, nbase::TimeDelta::FromMilliseconds(500));
+		nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, callback, nbase::TimeDelta::FromMilliseconds(500));
 	}
 	else if (name == L"btn_msg_record")
 	{
@@ -813,7 +907,7 @@ bool SessionBox::OnBtnHeaderClick(ui::EventArgs* param)
 	else if (session_type_ == nim::kNIMSessionTypeP2P)
 	{
 		std::wstring session_id = nbase::UTF8ToUTF16(session_id_);
-		ProfileForm::ShowProfileForm(nbase::UTF16ToUTF8(session_id));
+		ProfileForm::ShowProfileForm(nbase::UTF16ToUTF8(session_id), is_robot_session_);
 	}
 	return true;
 }

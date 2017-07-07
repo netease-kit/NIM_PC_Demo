@@ -96,12 +96,19 @@ static void RegNotificationCb(const NotificationCallback& cb, const std::string&
 static void RegLinkConditionCb(const LinkConditionCallback& cb, const std::string& json_extension = "");
 
 /** @fn void Init(const std::string& app_install_dir, const std::string& json_extension = "")
-  * 聊天室模块初始化
+  * 聊天室模块初始化(SDK初始化时调用一次)
   * @param[in] app_install_dir SDK动态库所在的目录全路径（如果传入为空，则按照默认规则搜索该动态库）  
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
   * @return bool 模块加载结果
   */
 static bool Init(const std::string& app_install_dir, const std::string& json_extension = "");
+
+/** @fn void Cleanup(const std::string& json_extension = "")
+  * 聊天室模块清理(SDK卸载前调用一次)
+  * @param[in] json_extension	  json扩展参数（备用，目前不需要）
+  * @return void 无返回值
+  */
+static void Cleanup(const std::string& json_extension = "");
 
 /** @fn bool Enter(const int64_t room_id, const std::string& request_login_data, const ChatRoomEnterInfo& info = ChatRoomEnterInfo(), const std::string& json_extension = "")
   * 聊天室登录
@@ -128,13 +135,6 @@ static void Exit(const int64_t room_id, const std::string& json_extension = "");
   * @return void 无返回值
   */
 static NIMChatRoomLoginState GetLoginState(const int64_t room_id, const std::string& json_extension = "");
-
-/** @fn void Cleanup(const std::string& json_extension = "")
-  * 聊天室模块清理
-  * @param[in] json_extension	  json扩展参数（备用，目前不需要）
-  * @return void 无返回值
-  */
-static void Cleanup(const std::string& json_extension = "");
 
 /** @fn void SendMsg(const int64_t room_id, const std::string& json_msg, const std::string& json_extension = "")
   * 发送消息
@@ -296,7 +296,7 @@ static void UpdateRoomInfoAsync(const int64_t room_id
   * @param[in] need_notify			是否聊天室内广播通知
   * @param[in] notify_ext			通知中的自定义字段，长度限制2048
   * @param[in] callback				回调函数
-  * @param[in] json_extension		json扩展参数（备用，目前不需要）
+  * @param[in] json_extension		json扩展参数，针对固定成员，可配置更新的信息是否需要持久化，默认不持久化，{"need_save" : false}
   * @return void 无返回值
   */
 static void UpdateMyRoomRoleAsync(const int64_t room_id

@@ -54,7 +54,7 @@ public:
 	* @param[in] rcPaint 目标绘制区域
 	* @return void	无返回值
 	*/
-	void Paint(HDC hDC, const UiRect& rcPaint) override;
+	void Paint(IRenderContext* pRender, const UiRect& rcPaint) override;
 
 	/**
 	* 设置绘制白板时的回调函数

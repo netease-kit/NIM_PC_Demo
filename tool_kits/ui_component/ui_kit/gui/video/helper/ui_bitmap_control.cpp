@@ -20,13 +20,13 @@ BitmapControl::~BitmapControl(void)
 	Clear();
 }
 
-void BitmapControl::Paint(HDC hDC, const UiRect& rcPaint)
+void BitmapControl::Paint(IRenderContext* pRender, const UiRect& rcPaint)
 {
 	try
 	{
 		if( !::IntersectRect( &m_rcPaint, &rcPaint, &m_rcItem ) ) 
 			return;
-		Control::Paint(hDC, rcPaint);
+		Control::Paint(pRender, rcPaint);
 		//paint bitmap
 		if (width_ * height_ > 0)
 		{
@@ -61,7 +61,7 @@ void BitmapControl::Paint(HDC hDC, const UiRect& rcPaint)
 				int dest_byte_width = width * 4;
 				int src_byte_width = source_w * 4;
 				int paint_byte_width = src_w * 4;
-				char* dest_data = (char*)parent_wnd_->GetBackgroundBits();
+				char* dest_data = (char*)parent_wnd_->GetRenderContext()->GetBits();
 				int bottom = draw_y;// height - draw_y - 1;
 				dest_data += bottom * dest_byte_width + draw_x * 4;
 				char* src_data = (char*)data_.c_str();
@@ -81,7 +81,7 @@ void BitmapControl::Paint(HDC hDC, const UiRect& rcPaint)
 			if( !pControl->IsVisible() ) continue;
 			UiRect controlPos = pControl->GetPos();
 			if( !::IntersectRect( &m_rcPaint, &rcPaint, &controlPos ) ) continue;
-			pControl->AlphaPaint( hDC, rcPaint );
+			pControl->AlphaPaint( pRender, rcPaint );
 		}
 	}
 	catch (...)

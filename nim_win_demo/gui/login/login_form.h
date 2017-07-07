@@ -102,6 +102,7 @@ private:
 	* @return void	Œﬁ∑µªÿ÷µ
 	*/
 	void ShowLoginTip(std::wstring tip_text);
+
 public:
 	static const LPCTSTR kClassName;
 private:

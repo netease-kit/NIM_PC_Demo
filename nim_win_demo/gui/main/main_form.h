@@ -210,6 +210,33 @@ private:
 	*/
 	bool QuitMenuItemClick(ui::EventArgs* param);
 
+	/**
+	* 在线状态菜单按钮的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnlineStateMenuButtonClick(ui::EventArgs* param);
+
+	/**
+	* 在线状态菜单项的单击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnlineStateMenuItemClick(ui::EventArgs* param);
+
+	/**
+	* 如果断网重连了则重新发送在线状态
+	* @param[in] json 断网重连信息
+	* @return void	无返回值
+	*/
+	void CheckOnlineState(const Json::Value& json);
+
+	/**
+	* 设置在线状态
+	* @return void	无返回值
+	*/
+	void SetOnlineState();
+
 public:
 	/**
 	* 实现ITrayIconDelegate接口函数
@@ -276,6 +303,8 @@ public:
 private:
 	ui::Button*		btn_header_;
 	ui::Label*		label_name_;
+	ui::Button*		btn_online_state_;
+	bool			is_busy_;
 
 	ui::Box*		box_unread_;
 	ui::Label*		label_unread_;

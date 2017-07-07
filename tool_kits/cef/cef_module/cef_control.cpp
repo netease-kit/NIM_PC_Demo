@@ -11,8 +11,11 @@ void CefControl::AttachJsCallback(const OnJsCallbackEvent& callback)
 	cb_js_callback_ = callback;
 }
 
-void CefControl::OnPaint(CefRefPtr<CefBrowser> browser, CefRenderHandler::PaintElementType type, const CefRenderHandler::RectList& dirtyRects, const void* buffer, int width, int height)
+void CefControl::OnPaint(CefRefPtr<CefBrowser> browser, CefRenderHandler::PaintElementType type, const CefRenderHandler::RectList& dirtyRects, const std::string* buffer, int width, int height)
 {
+	if (NULL == buffer)
+		return;
+
 	if (type == PET_VIEW)
 	{
 		if (dc_cef_.GetWidth() != width || dc_cef_.GetHeight() != height)
@@ -20,24 +23,7 @@ void CefControl::OnPaint(CefRefPtr<CefBrowser> browser, CefRenderHandler::PaintE
 		
 		LPBYTE pDst = (LPBYTE)dc_cef_.GetBits();
 		if (pDst)
-		{
-			for (size_t i = 0; i < dirtyRects.size(); i++)
-			{
-				CefRect rect = dirtyRects[i];
-
-				// Ã¿¸öÏñËØ4×Ö½Ú
-				int offset = rect.y * width * 4 + rect.x * 4;
-				char* startPos = (char*)pDst + offset;
-				char* bufferStartPos = (char*)buffer + offset;
-
-				// copy every line of current dirty Rect
-				for (int j = 0; j < rect.height; j++)
-				{
-					int lineOffset = j * width * 4;
-					memcpy(startPos + lineOffset, bufferStartPos + lineOffset, rect.width * 4);
-				}
-			}
-		}
+			memcpy(pDst, (char*)buffer->c_str(), height * width * 4);
 	}
 	else if (type == PET_POPUP && dc_cef_.IsValid() && rect_popup_.width > 0 && rect_popup_.height > 0)
 	{
@@ -47,7 +33,7 @@ void CefControl::OnPaint(CefRefPtr<CefBrowser> browser, CefRenderHandler::PaintE
 
 		LPBYTE pDst = (LPBYTE)dc_cef_popup_.GetBits();
 		if (pDst)
-			memcpy(pDst, (char*)buffer, width * height * 4);
+			memcpy(pDst, (char*)buffer->c_str(), width * height * 4);
 	}
 
 	this->Invalidate();
@@ -75,6 +61,20 @@ void CefControl::OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect& rect)
 void CefControl::UpdateWindowPos()
 {
 	this->SetPos(this->GetPos());
+}
+
+void CefControl::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model)
+{
+	if (cb_before_menu_)
+		cb_before_menu_(params, model);
+}
+
+bool CefControl::OnContextMenuCommand(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, int command_id, CefContextMenuHandler::EventFlags event_flags)
+{
+	if (cb_menu_command_)
+		return cb_menu_command_(params, command_id, event_flags);
+
+	return false;
 }
 
 void CefControl::OnAddressChange(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, const CefString& url)

@@ -14,3 +14,5 @@
 #include "nim_ui_team_manager.h"
 #include "nim_ui_http_manager.h"
 #include "nim_ui_photo_manager.h"
+#include "nim_ui_subscribe_event_manager.h"
+#include "nim_ui_notify_center.h"

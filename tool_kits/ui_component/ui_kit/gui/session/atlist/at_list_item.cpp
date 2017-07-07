@@ -7,10 +7,11 @@ namespace nim_comp
 {
 const char *AtListItem::kLastFiveItemName = "last_five";
 
-AtListItem::AtListItem(bool is_last_five)
+AtListItem::AtListItem(bool is_last_five, bool is_robot)
 	: head_icon_(NULL)
 	, name_label_(NULL)
 	, is_last_five_(is_last_five)
+	, is_robot_(is_robot)
 {
 
 }

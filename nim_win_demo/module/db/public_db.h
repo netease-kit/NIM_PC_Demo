@@ -1,5 +1,4 @@
-﻿#ifndef NIM_WIN_FM_LOGIN_LOGIN_DB_H_
-#define NIM_WIN_FM_LOGIN_LOGIN_DB_H_
+﻿#pragma once
 
 #include "base/synchronization/lock.h"
 #include "base/memory/singleton.h"
@@ -47,20 +46,19 @@ struct LoginData
 };
 
 
-/** @class LoginDB
-  * @brief 登陆数据信息记录类
+/** @class PublicDB
+  * @brief 公共数据库，存储所有用户的共有数据
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @date 2016/09/18
   */
-class LoginDB
+class PublicDB
 {
 public:
-	SINGLETON_DEFINE(LoginDB);
-    LoginDB();
-    virtual ~LoginDB();
+	SINGLETON_DEFINE(PublicDB);
+    PublicDB();
+    virtual ~PublicDB();
 
 public:
-
 	/**
 	* 从数据库读取登陆数据
 	* @return void	无返回值
@@ -218,7 +216,7 @@ private:
 	* 创建数据库文件
 	* @return bool true 成功，false 失败
 	*/
-    bool    CreateDBFile();
+    bool CreateDBFile();
 
 	/**
 	* 从ndb::SQLiteStatement对象数据转换为登陆数据
@@ -226,7 +224,7 @@ private:
 	* @param[out] data
 	* @return void	无返回值
 	*/
-    void    GetLoginDataFromStatement(ndb::SQLiteStatement &stmt, LoginData &data);
+    void GetLoginDataFromStatement(ndb::SQLiteStatement &stmt, LoginData &data);
     
 private:
     UTF8String		db_filepath_;
@@ -237,5 +235,3 @@ private:
 
 	LoginData current_login_data_;
 };
-
-#endif //NIM_WIN_FM_LOGIN_LOGIN_DB_H_

@@ -2,6 +2,7 @@
 #include "callback/audio/audio_callback.h"
 #include "module/service/photo_service.h"
 #include "module/session/force_push_manager.h"
+#include "module/subscribe_event/subscribe_event_manager.h"
 #include "gui/session/control/bubbles/bubble_text.h"
 #include "gui/session/control/bubbles/bubble_image.h"
 #include "gui/session/control/bubbles/bubble_snapchat.h"
@@ -14,6 +15,7 @@
 #include "gui/session/control/bubbles/bubble_file.h"
 #include "gui/session/control/bubbles/bubble_sticker.h"
 #include "gui/session/control/bubbles/bubble_video.h"
+#include "gui/session/control/bubbles/bubble_robot.h"
 #include "gui/session/control/team_item.h"
 #include "gui/emoji/emoji_form.h"
 #include "gui/team_info/team_info.h"
@@ -608,7 +610,7 @@ private:
 	* @param[in] uid 被选择的用户id
 	* @return void	无返回值
 	*/
-	void OnSelectAtItemCallback(const std::string& uid);
+	void OnSelectAtItemCallback(const std::string& uid, bool is_robot);
 
 	/**
 	* 获取最近发消息的5个人（不包括自己）,最新发言的在列表最前
@@ -765,7 +767,7 @@ private:
 	std::wstring GetRecallNotifyText(const std::string& msg_from_id, const std::string& msg_from_nick);
 
 	/** 
-	* 根据会话的信息，设置投降
+	* 根据会话的信息，设置头像
 	* @return void 无返回值
 	*/
 	void CheckHeader();
@@ -782,6 +784,12 @@ private:
 	* @return bool 返回值true: 是， false: 否
 	*/ 
 	bool IsFileTransPhone();
+
+	/**
+	* 根据事件信息，设置在线状态
+	* @return void 无返回值
+	*/
+	void SetOnlineState(const EventDataEx &data);
 
 	/**
 	* 设置会话盒子的标题
@@ -830,12 +838,31 @@ private:
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 
 	/**
+	* 响应机器人信息改变的回调函数
+	* @param[in] rescode 错误码
+	* @param[in] type 类型
+	* @param[in] robots 机器人列表
+	* @return void 无返回值
+	*/
+	void OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots);
+
+	/**
 	* 会话框中某人的头像下载完成的回调函数
 	* @param[in] accid 头像下载完成的用户id
 	* @param[in] photo_path 头像本地路径
 	* @return void 无返回值
 	*/
 	void OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path);
+
+	/**
+	* 响应接收事件的回调函数
+	* @param[in] event_type 事件类型
+	* @param[in] accid 用户id
+	* @param[in] data 事件信息
+	* @return void 无返回值
+	*/
+	void OnReceiveEvent(int event_type, const std::string &accid, const EventDataEx &data);
+
 #pragma endregion Logic
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1023,6 +1050,12 @@ private:
 	* @return void	无返回值
 	*/
 	void HandleDismissTeamEvent();
+
+	/**
+	* 重置新建公告入口
+	* @return void 无返回值
+	*/
+	void ResetNewBroadButtonVisible();
 #pragma endregion Team
 
 public:
@@ -1033,6 +1066,7 @@ private:
 	ui::Button*		btn_max_restore_;
 	ui::Label*		label_title_;
 	ui::Label*		label_tid_;
+	ui::Label*		label_online_state_;
 	bool			is_header_enable_;	// 因为拖拽效果的需要，现在头像按钮一直可用，通过这个变量记录是否响应头像的单击事件
 	ui::Button*		btn_header_;
 	ui::Button*		btn_invite_;
@@ -1062,7 +1096,13 @@ private:
 	bool					scroll_top_;			//单击@me消息滚动的方向
 
 	AtMeView				*atme_view_;			//@我 消息预览
-	std::map<std::string, std::string>	uid_at_someone_;//当前输入框被@的人的昵称和uid
+
+	struct AtSomeone
+	{
+		std::string uid_;
+		bool is_robot_ = false;
+	};
+	std::map<std::string, AtSomeone>	uid_at_someone_;//当前输入框被@的人的昵称和uid
 
 	// 语音录制相关变量
 	AudioCaptureView		*audio_capture_view_;	//语音录制界面
@@ -1072,6 +1112,8 @@ private:
 private:
 	SessionForm*	session_form_;
 	std::string		session_id_;
+	bool			is_robot_session_ = false;
+	nim::RobotInfo	robot_info_;
 	nim::NIMSessionType session_type_;
 	nim::TeamInfo	team_info_;
 	bool			is_team_valid_;

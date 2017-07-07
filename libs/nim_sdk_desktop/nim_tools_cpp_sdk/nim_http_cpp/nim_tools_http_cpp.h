@@ -21,21 +21,50 @@
 namespace nim_http
 {
 
+/** 请求完成回调
+	@param[out] 传输结果，true代表传输成功，false代表传输失败
+	@param[out] http响应码
+ */
 typedef std::function<void(bool, int)> CompletedCallback;
+
+/** 请求响应回调
+	@param[out] 传输结果，true代表传输成功，false代表传输失败
+	@param[out] http响应码
+	@param[out] http响应实体内容
+ */
 typedef std::function<void(bool, int, const std::string&)> ResponseCallback;
+
+/** 请求过程回调
+	@param[out] 总的待上传字节数
+	@param[out] 当前上传字节数
+	@param[out] 总的待下载字节数
+	@param[out] 当前下载字节数
+ */
 typedef std::function<void(double, double, double, double)> ProgressCallback;
+
+/** 请求速度回报回调
+	@param[out] 实时上传速度（字节每秒）
+	@param[out] 实时下载速度（字节每秒）
+ */
 typedef std::function<void(double, double)> SpeedCallback;
+
+/** 请求汇报回调
+	@param[out] 实际上传字节数
+	@param[out] 平均上传速度（字节每秒）
+	@param[out] 实际下载字节数
+	@param[out] 平均下载速度（字节每秒）
+ */
 typedef std::function<void(double, double, double, double)> TransferCallback;
 
 class HttpRequest;
 
-/** @fn void nim_http_init()
+/** @fn void Init()
 * NIM HTTP 初始化
 * @return void 无返回值
 */
 void Init();
 
-/** @fn void nim_http_uninit()
+/** @fn void Uninit()
 * NIM HTTP 反初始化
 * @return void 无返回值
 */
@@ -54,17 +83,25 @@ void InitLog(const std::string& log_file_path);
 */
 bool IsInitLog();
 
-//设置cpp封装层的全局代理
+/** @fn void SetGlobalProxy(NIMProxyType type, const std::string& host, short port, const std::string& user, const std::string& pass)
+* NIM HTTP 设置cpp封装层的全局代理
+* @param[in] type				代理类型NIMProxyType
+* @param[in] host				代理地址
+* @param[in] port				代理端口
+* @param[in] user				代理账号
+* @param[in] pass				代理密码
+* @return void
+*/
 void SetGlobalProxy(NIMProxyType type, const std::string& host, short port, const std::string& user, const std::string& pass);
 
-/** @fn int nim_http_post_request(HttpRequestHandle)
+/** @fn int PostRequest(const HttpRequest& http_request)
 * NIM HTTP 发起任务
 * @param[in] request_handle	http任务句柄
 * @return int				任务id
 */
 int PostRequest(const HttpRequest& http_request);
 
-/** @fn void nim_http_remove_request(int http_request_id)
+/** @fn void RemoveRequest(int http_request_id)
 * NIM HTTP 取消任务
 * @param[in] http_request_id	任务id
 * @return void					无返回值

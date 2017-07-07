@@ -28,7 +28,7 @@
 			</HBox>
 		</Box>
 		<Control class="splitline_hor_level1" width="stretch"/>
-		<VBox width="stretch" height="auto" padding="30,30,30,30">
+		<VBox name="common_info" width="stretch" height="auto" padding="30,30,30,30">
 			<HBox width="stretch" height="auto" margin="0,0,0,13">
 				<Button name="modify_info" width="auto" height="22" valign="center" visible="false" 
 						normalimage="file='btn_edit_normal.png' corner='11,11,11,11'" hotimage="file='btn_edit_pressed.png' corner='11,11,11,11'" pushedimage="file='btn_edit_normal.png' corner='11,11,11,11'"
@@ -90,6 +90,10 @@
 					bordersize="1" bordercolor="profile_account" visible="false"/>
 			</HBox>
 		</VBox>
+		<VBox name="robot_info" width="stretch" height="auto" padding="30,30,30,30" visible="false">
+			<RichEdit name="robot_intro" width="stretch" height="150" padding="0,0,0,0" readonly="true" multiline="true" rich="true" 
+	                      vscrollbar="true" hscrollbar="false" font="2"/>
+		</VBox>
 		<VBox name="only_me" width="stretch" height="auto">
 			<Control class="splitline_hor_level1" width="stretch"/>
 			<VBox width="stretch" height="auto" padding="30,30,30,30" childmargin="25">
@@ -101,23 +105,25 @@
 			</VBox>
 		</VBox>
 		<VBox name="only_other" width="stretch" height="auto">
-			<Control class="splitline_hor_level1" width="stretch"/>
-			<VBox width="stretch" height="auto" padding="30,30,30,30" childmargin="25">
-				<HBox width="stretch" height="auto">
-					<Label textid="STRID_PROFILE_FORM_MSG_NOTIFY" font="2"/>
-					<Control width="stretch"/>
-					<CheckBox class="switch" name="notify_switch" selected="true"/>
-				</HBox>
-				<HBox width="stretch" height="auto">
-					<Label textid="STRID_PROFILE_FORM_ADD_BLACK" font="2"/>
-					<Control width="stretch"/>
-					<CheckBox class="switch" name="black_switch" selected="false"/>
-				</HBox>
-				<HBox name="mute_switch_box" width="stretch" height="auto">
-					<Label textid="STRID_PROFILE_FORM_SET_MUTE" font="2"/>
-					<Control width="stretch"/>
-					<CheckBox class="switch" name="mute_switch" selected="false"/>
-				</HBox>
+			<VBox name="common_other" width="stretch" height="auto">
+				<Control class="splitline_hor_level1" width="stretch"/>
+				<VBox width="stretch" height="auto" padding="30,30,30,30" childmargin="25">
+					<HBox width="stretch" height="auto">
+						<Label textid="STRID_PROFILE_FORM_MSG_NOTIFY" font="2"/>
+						<Control width="stretch"/>
+						<CheckBox class="switch" name="notify_switch" selected="true"/>
+					</HBox>
+					<HBox width="stretch" height="auto">
+						<Label textid="STRID_PROFILE_FORM_ADD_BLACK" font="2"/>
+						<Control width="stretch"/>
+						<CheckBox class="switch" name="black_switch" selected="false"/>
+					</HBox>
+					<HBox name="mute_switch_box" width="stretch" height="auto">
+						<Label textid="STRID_PROFILE_FORM_SET_MUTE" font="2"/>
+						<Control width="stretch"/>
+						<CheckBox class="switch" name="mute_switch" selected="false"/>
+					</HBox>
+				</VBox>
 			</VBox>
 			<Control class="splitline_hor_level1" width="stretch"/>
 			<HBox width="stretch" height="62">

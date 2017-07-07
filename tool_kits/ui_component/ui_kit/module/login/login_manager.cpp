@@ -3,6 +3,12 @@
 
 namespace nim_comp
 {
+
+namespace
+{
+	const wchar_t kMutexName[] = L"Netease.IM.PC.Instance.";
+}
+
 LoginManager::LoginManager()
 {
 	account_ = "";
@@ -67,6 +73,33 @@ void LoginManager::SetLinkActive( bool active )
 bool LoginManager::IsLinkActive()
 {
 	return active_;
+}
+
+void LoginManager::CreateSingletonRunMutex()
+{
+	std::string config = GetConfigValue("check_singleton");
+	if (!config.empty() && 0 == atoi(config.c_str()))
+		return;
+
+	std::wstring mutex_name = kMutexName + nbase::UTF8ToUTF16(account_);
+	::CreateMutex(NULL, TRUE, mutex_name.c_str());
+}
+
+bool LoginManager::CheckSingletonRun(const std::wstring& username)
+{
+	std::string config = GetConfigValue("check_singleton");
+	if (!config.empty() && 0 == atoi(config.c_str()))
+		return true;
+
+	// 同一PC不允许重复登录同一账号
+	std::wstring mutex_name = kMutexName + username;
+	HANDLE mutex = ::OpenMutex(MUTEX_ALL_ACCESS, FALSE, mutex_name.c_str());
+	if (mutex != NULL)
+	{
+		::CloseHandle(mutex);
+		return false;
+	}
+	return true;
 }
 
 void LoginManager::ReadDemoLogLevel()

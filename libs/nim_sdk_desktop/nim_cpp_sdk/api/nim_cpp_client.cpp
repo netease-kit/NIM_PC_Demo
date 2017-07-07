@@ -1,7 +1,7 @@
 ﻿/** @file nim_cpp_client.cpp
   * @brief 全局管理功能；主要包括SDK初始化/清理、客户端登录/退出等功能
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
+  * @author towik, Oleg, Harrison
   * @date 2015/09/21
   */
 
@@ -13,6 +13,7 @@
 
 namespace nim
 {
+#ifdef NIM_SDK_DLL_IMPORT
 SDKInstance *g_nim_sdk_instance = NULL;
 typedef bool(*nim_client_init)(const char *app_data_dir, const char *app_install_dir, const char *json_extension);
 typedef void(*nim_client_cleanup)(const char *json_extension);
@@ -29,6 +30,9 @@ typedef void(*nim_client_reg_kickout_other_client_cb)(const char *json_extension
 typedef void(*nim_client_reg_sync_multiport_push_config_cb)(const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
 typedef void(*nim_client_set_multiport_push_config)(const char *switch_content, const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
 typedef void(*nim_client_get_multiport_push_config)(const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
+#else
+#include "nim_client.h"
+#endif
 
 static void CallbackLogin(const char* json_res, const void *callback)
 {
@@ -141,13 +145,13 @@ bool Client::Init(const std::string& app_key
 {
 #ifdef NIM_SDK_DLL_IMPORT
 
-#if !defined (WIN32)
-	static const char *kSdkNimDll = "libnim.so";
-//#elif defined (_DEBUG) || defined (DEBUG)
-//	static const char *kSdkNimDll = "nim_d.dll";
-#else
+// #if !defined (WIN32)
+// 	static const char *kSdkNimDll = "libnim.so";
+// #elif defined (_DEBUG) || defined (DEBUG)
+// 	static const char *kSdkNimDll = "nim_d.dll";
+// #else
 	static const char *kSdkNimDll = "nim.dll";
-#endif
+// #endif
 	if (NULL == g_nim_sdk_instance)
 	{
 		g_nim_sdk_instance = new SDKInstance();
@@ -166,6 +170,7 @@ bool Client::Init(const std::string& app_key
 	config_values[nim::kNIMSDKLogLevel] = config.sdk_log_level_;
 	config_values[nim::kNIMSyncSessionAck] = config.sync_session_ack_;
 	config_values[nim::kNIMLoginRetryMaxTimes] = config.login_max_retry_times_;
+	config_values[nim::kNIMUseHttps] = config.use_https_;
 	config_root[nim::kNIMGlobalConfig] = config_values;
 	config_root[nim::kNIMAppKey] = app_key;
 

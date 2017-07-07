@@ -58,9 +58,6 @@
     <Filter Include="gui\rts">
       <UniqueIdentifier>{ec9cd0a6-8fca-4b33-bfc9-514fbd131199}</UniqueIdentifier>
     </Filter>
-    <Filter Include="module\msglog">
-      <UniqueIdentifier>{54433311-9ad6-413d-aa23-1681460bcc54}</UniqueIdentifier>
-    </Filter>
     <Filter Include="module\rts">
       <UniqueIdentifier>{c03c1ee5-ff25-4336-aecb-ab84b523f58a}</UniqueIdentifier>
     </Filter>
@@ -151,6 +148,15 @@
     <Filter Include="gui\session\taskbar">
       <UniqueIdentifier>{5f0ae736-6c32-4650-a304-268853fed22d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="callback\subscribe_event">
+      <UniqueIdentifier>{04e47936-3e23-4cdd-9419-5e985a5f04ab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\db">
+      <UniqueIdentifier>{54433311-9ad6-413d-aa23-1681460bcc54}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\subscribe_event">
+      <UniqueIdentifier>{9d182767-6a6c-4456-a818-a099ba4c461a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -209,9 +215,6 @@
     </ClInclude>
     <ClInclude Include="gui\rts\rts_replay.h">
       <Filter>gui\rts</Filter>
-    </ClInclude>
-    <ClInclude Include="module\msglog\msg_extend_db.h">
-      <Filter>module\msglog</Filter>
     </ClInclude>
     <ClInclude Include="module\rts\rts_manager.h">
       <Filter>module\rts</Filter>
@@ -504,6 +507,27 @@
     <ClInclude Include="gui\video\record_select.h">
       <Filter>gui\video</Filter>
     </ClInclude>
+    <ClInclude Include="callback\subscribe_event\subscribe_event_callback.h">
+      <Filter>callback\subscribe_event</Filter>
+    </ClInclude>
+    <ClInclude Include="module\db\user_db.h">
+      <Filter>module\db</Filter>
+    </ClInclude>
+    <ClInclude Include="module\subscribe_event\subscribe_event_manager.h">
+      <Filter>module\subscribe_event</Filter>
+    </ClInclude>
+    <ClInclude Include="module\subscribe_event\online_state_event_helper.h">
+      <Filter>module\subscribe_event</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_subscribe_event_manager.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_notify_center.h">
+      <Filter>export</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_robot.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -559,9 +583,6 @@
     </ClCompile>
     <ClCompile Include="gui\rts\ui_board_control.cpp">
       <Filter>gui\rts</Filter>
-    </ClCompile>
-    <ClCompile Include="module\msglog\msg_extend_db.cpp">
-      <Filter>module\msglog</Filter>
     </ClCompile>
     <ClCompile Include="module\rts\rts_manager.cpp">
       <Filter>module\rts</Filter>
@@ -880,6 +901,27 @@
     </ClCompile>
     <ClCompile Include="gui\video\record_select.cpp">
       <Filter>gui\video</Filter>
+    </ClCompile>
+    <ClCompile Include="callback\subscribe_event\subscribe_event_callback.cpp">
+      <Filter>callback\subscribe_event</Filter>
+    </ClCompile>
+    <ClCompile Include="module\db\user_db.cpp">
+      <Filter>module\db</Filter>
+    </ClCompile>
+    <ClCompile Include="module\subscribe_event\subscribe_event_manager.cpp">
+      <Filter>module\subscribe_event</Filter>
+    </ClCompile>
+    <ClCompile Include="module\subscribe_event\online_state_event_helper.cpp">
+      <Filter>module\subscribe_event</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_subscribe_event_manager.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_notify_center.cpp">
+      <Filter>export</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_robot.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

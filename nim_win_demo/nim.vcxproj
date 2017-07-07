@@ -100,7 +100,7 @@
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
     <Link>
@@ -195,7 +195,7 @@
     <ClInclude Include="gui\tray_icon\tray_icon.h" />
     <ClInclude Include="main.h" />
     <ClInclude Include="module\config\config_helper.h" />
-    <ClInclude Include="module\login\login_db.h" />
+    <ClInclude Include="module\db\public_db.h" />
     <ClInclude Include="module\thread\db_thread.h" />
     <ClInclude Include="module\thread\misc_thread.h" />
     <ClInclude Include="resource.h" />
@@ -216,7 +216,7 @@
     <ClCompile Include="gui\tray_icon\tray_icon.cpp" />
     <ClCompile Include="main.cpp" />
     <ClCompile Include="module\config\config_helper.cpp" />
-    <ClCompile Include="module\login\login_db.cpp" />
+    <ClCompile Include="module\db\public_db.cpp" />
     <ClCompile Include="module\thread\db_thread.cpp" />
     <ClCompile Include="module\thread\misc_thread.cpp" />
     <ClCompile Include="stdafx.cpp">

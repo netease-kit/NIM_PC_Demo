@@ -57,6 +57,8 @@ void CefNativeForm::InitWindow()
 	cef_control_ = static_cast<CefNativeControl*>(FindControl(L"cef_native_control"));
 	edit_url_->AttachReturn(nbase::Bind(&CefNativeForm::OnReturn, this, std::placeholders::_1));
 
+	cef_control_->AttachBeforeContextMenu(nbase::Bind(&CefNativeForm::OnBeforeMenu, this, std::placeholders::_1, std::placeholders::_2));
+	cef_control_->AttachMenuCommand(nbase::Bind(&CefNativeForm::OnMenuCommand, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	cef_control_->AttachTitleChange(nbase::Bind(&CefNativeForm::OnTitleChange, this, std::placeholders::_1));
 	cef_control_->AttachUrlChange(nbase::Bind(&CefNativeForm::OnUrlChange, this, std::placeholders::_1));
 	cef_control_->AttachLinkClick(nbase::Bind(&CefNativeForm::OnLinkClick, this, std::placeholders::_1));
@@ -134,6 +136,16 @@ bool CefNativeForm::OnReturn(ui::EventArgs* arg)
 		cef_control_->LoadURL(edit_url_->GetText());
 	}
 
+	return false;
+}
+
+void CefNativeForm::OnBeforeMenu(CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model)
+{
+
+}
+
+bool CefNativeForm::OnMenuCommand(CefRefPtr<CefContextMenuParams> params, int command_id, CefContextMenuHandler::EventFlags event_flags)
+{
 	return false;
 }
 

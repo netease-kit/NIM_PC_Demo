@@ -24,6 +24,14 @@ void SessionListManager::InvokeLoadSessionList()
 	nim::Session::QueryAllRecentSessionAsync(nbase::Bind(&nim_comp::TalkCallback::OnQuerySessionListCallback, std::placeholders::_1, std::placeholders::_2));
 }
 
+nim_comp::SessionItem* SessionListManager::GetSessionItem(const std::string &session_id)
+{
+	if (NULL == session_list_)
+		return NULL;
+	
+	return session_list_->GetSessionItem(session_id);
+}
+
 void SessionListManager::QueryUnreadSysMsgCount()
 {
 	nim::SystemMsg::QueryUnreadCount(nbase::Bind(&nim_ui::SessionListManager::OnQuerySysmsgUnreadCb, this, std::placeholders::_1, std::placeholders::_2));
@@ -103,6 +111,7 @@ void SessionListManager::OnQuerySessionListCallback(const std::list<nim::Session
 		}
 	}
 	nim_comp::UserService::GetInstance()->DoQueryUserInfos(user_ids);
+	nim_comp::SubscribeEventManager::GetInstance()->SubscribeAllSessionEvent(sessions);
 
 	for each (auto& session in sessions)
 	{

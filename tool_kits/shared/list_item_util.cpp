@@ -8,34 +8,40 @@ using namespace ui;
 using namespace std;
 using namespace nbase;
 
-
-int ListItemUtil::GetGroup(GroupType groupType, wchar_t letter)
+//TODO 以下代码烂到家 oleg
+int ListItemUtil::GetGroup(GroupType groupType, wchar_t letter, bool has_robot_node)
 {
 	int index = 0;
-	if (groupType == GT_CLOSE_FRIEND)
+	if (groupType == GT_ROBOT)
 	{
 		index = 0;
 	}
+	else if (groupType == GT_CLOSE_FRIEND)
+	{
+		index = has_robot_node ? 1 : 0;
+	}
 	else if (groupType == GT_TEAM)
 	{
-		index = 1;
+		index = has_robot_node ? 2 : 1;
 	}
 	else if (groupType == GT_COMMON_FRIEND) {
 		if (letter >= L'A' && letter <= L'Z')
 		{
-			index = letter - 'A' + 3;
+			index = letter - 'A';
+			index += has_robot_node ? 4 : 3;
 		}
 		else if (letter >= L'a' && letter <= L'z')
 		{
-			index = letter - 'a' + 3;
+			index = letter - 'a';
+			index += has_robot_node ? 4 : 3;
 		}
 		else
 		{
-			index = 2;
+			index = has_robot_node ? 3 : 2;
 		}
 	}
 	else if (groupType == GT_COMMON_NUMBER) {
-		index = 2;
+		index = has_robot_node ? 3 : 2;
 	}
 	else {
 		ASSERT(FALSE);
@@ -61,6 +67,11 @@ TreeNode* ListItemUtil::CreateFirstLetterListItem(const wstring& letter_name)
 		MutiLanSupport* multilan = MutiLanSupport::GetInstance();
 		std::wstring caption = multilan->GetStringViaID(letter_name.compare(L"*") == 0 ? L"STRID_MAINWINDOW_STAR_FRIENDS" : L"STRID_MAINWINDOW_TEAMS");
 		group_caption->SetText(caption);
+		group_caption->SetFont(1);
+	}
+	else if (letter_name == L"Robot")
+	{
+		group_caption->SetTextId(L"STRID_MAINWINDOW_ROBOTS");
 		group_caption->SetFont(1);
 	}
 	else

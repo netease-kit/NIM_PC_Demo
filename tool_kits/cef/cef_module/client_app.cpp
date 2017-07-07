@@ -41,16 +41,13 @@ void ClientApp::OnBeforeCommandLineProcessing(const CefString& process_type, Cef
 
 		//同一个域下的使用同一个渲染进程
 		command_line->AppendSwitch("process-per-site");
-		command_line->AppendSwitch("enable-caret-browsing");
-		command_line->AppendSwitch("auto-positioned-ime-window");
+		command_line->AppendSwitch("disable-gpu");
+		command_line->AppendSwitch("disable-gpu-compositing");
 
 		// 开启离屏渲染
 		if (CefManager::GetInstance()->IsEnableOffsetRender())
 		{
-			// 禁用一些选项，提升cef性能
 			command_line->AppendSwitch("disable-surfaces");
-			command_line->AppendSwitch("disable-gpu");
-			command_line->AppendSwitch("disable-gpu-compositing");
 			command_line->AppendSwitch("enable-begin-frame-scheduling");
 		}
 	}

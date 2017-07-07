@@ -173,7 +173,7 @@ void CFileDialogEx::SyncShowModal()
 			if (file_name.size() == 0)
 			{
 				StdClosure closure = nbase::Bind(file_dialog_callback2_, ret, file_directory);
-				nbase::ThreadManager::PostTask(kThreadUI, closure);
+				nbase::ThreadManager::PostTask(shared::kThreadUI, closure);
 			}
 			else
 			{
@@ -183,7 +183,7 @@ void CFileDialogEx::SyncShowModal()
 					if (nbase::FilePathIsExist(file_path, false))
 					{
 						StdClosure closure = nbase::Bind(file_dialog_callback2_, ret, file_path);
-						nbase::ThreadManager::PostTask(kThreadUI, closure);
+						nbase::ThreadManager::PostTask(shared::kThreadUI, closure);
 					}
 					get_length += file_name.size()+1;
 					file_name = m_stOFN.lpstrFile + get_length;
@@ -193,14 +193,14 @@ void CFileDialogEx::SyncShowModal()
 		else
 		{
 			StdClosure closure = nbase::Bind(file_dialog_callback2_, ret, GetPathName());
-			nbase::ThreadManager::PostTask(kThreadUI, closure);
+			nbase::ThreadManager::PostTask(shared::kThreadUI, closure);
 		}
 	}
 	else if (file_dialog_type_ == FDT_SaveFile)
 	{
 		BOOL ret = ::GetSaveFileName(&m_stOFN);
 		StdClosure closure = nbase::Bind(file_dialog_callback2_, ret, GetPathName());
-		nbase::ThreadManager::PostTask(kThreadUI, closure);
+		nbase::ThreadManager::PostTask(shared::kThreadUI, closure);
 	}
 	else
 	{

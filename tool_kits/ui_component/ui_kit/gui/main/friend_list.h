@@ -1,7 +1,7 @@
 #pragma once
-
 #include "shared/list_item_util.h"
 #include "module/service/photo_service.h"
+#include "module/subscribe_event/subscribe_event_manager.h"
 
 namespace nim_comp
 {
@@ -34,36 +34,48 @@ public:
 	*/
 	void OnGetFriendList(const std::list<nim::UserNameCard> &user);
 
+	/**
+	* 响应获取机器人列表的回调函数
+	* @param[in] robots 机器人信息列表
+	* @return void	无返回值
+	*/
+	void OnGetRobotList(const nim::RobotInfos &robots);
+
+
 private:
 	/**
 	* 添加一个好友列表项
 	* @param[in] accid 用户id
+	* @param[in] type 类型
 	* @return void	无返回值
 	*/
-	void AddListItem(const std::string& accid);
+	void AddListItem(const std::string& accid, FriendItemType type);
 
 	/**
 	* 添加一个好友列表项到指定的分组内
 	* @param[in] accid 用户id
+	* @param[in] type 类型
 	* @param[in] tree_node 分组控件指针
 	* @return void	无返回值
 	*/
-	void AddListItemInGroup(const std::string& accid, ui::TreeNode* tree_node);
+	void AddListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node);
 
 	/**
 	* 删除一个好友列表项
 	* @param[in] accid 用户id
+	* @param[in] type 类型
 	* @return void	无返回值
 	*/
-	void DeleteListItem(const std::string& accid);
+	void DeleteListItem(const std::string& accid, FriendItemType type);
 
 	/**
 	* 从指定的分组内移除一个好友列表项
 	* @param[in] accid 用户id
+	* @param[in] type 类型
 	* @param[in] tree_node 分组控件指针
 	* @return void	无返回值
 	*/
-	void DeleteListItemInGroup(const std::string& accid, ui::TreeNode* tree_node);
+	void DeleteListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node);
 
 	/**
 	* 查找一个好友列表项
@@ -98,11 +110,22 @@ private:
 	/**
 	* 处理好友控件头像单击消息
 	* @param[in] msg 消息的相关信息
+	* @param[in] type 类型
 	* @return bool true 继续传递控件消息，false 停止传递控件消息
 	*/
-	bool OnHeadImageClick(const std::string& uid, ui::EventArgs*);
+	bool OnHeadImageClick(const std::string& uid, FriendItemType type, ui::EventArgs*);
 
 private:
+
+	/**
+	* 响应机器人列表列表改变的回调函数
+	* @param[in] rescode 错误码
+	* @param[in] type 类型
+	* @param[in] robots 机器人列表
+	* @return void 无返回值
+	*/
+	void OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots);
+
 	/**
 	* 响应用户列表改变的回调函数
 	* @param[in] change_type 好友变化类型
@@ -134,6 +157,15 @@ private:
 	* @return void 无返回值
 	*/
 	void OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path);
+
+	/**
+	* 响应接收事件的回调函数
+	* @param[in] event_type 事件类型
+	* @param[in] accid 用户id
+	* @param[in] data 事件信息
+	* @return void 无返回值
+	*/
+	void OnReceiveEvent(int event_type, const std::string &accid, const EventDataEx &data);
 
 private:
 	ui::Label* tip_letter_;

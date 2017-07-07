@@ -39,6 +39,13 @@ public:
 	void UnInit();
 
 	/**
+	* 设置本Tab缩略图的标题
+	* @param[in] title 标题
+	* @return void	无返回值
+	*/
+	void SetTaskbarTitle(const std::wstring &title);
+
+	/**
 	* 设置本Tab所属的窗体对应的TaskbarManager
 	* @param[in] taskbar_manager TaskbarManager指针
 	* @return void	无返回值

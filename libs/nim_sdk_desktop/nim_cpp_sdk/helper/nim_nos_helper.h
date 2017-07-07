@@ -12,6 +12,7 @@
 #include <list>
 #include <functional>
 #include "json.h"
+#include "../util/nim_build_config.h"
 
 /**
 * @namespace nim
@@ -24,8 +25,10 @@ namespace nim
 struct UploadMediaResult
 {
 	std::string url_;				/**< 上传地址 */
-	std::string call_id_;
 	std::string res_id_;			
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+	std::string call_id_;
+#endif
 
 	/** 构造函数 */
 	UploadMediaResult() {}

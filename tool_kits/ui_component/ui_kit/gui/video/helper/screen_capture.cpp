@@ -187,7 +187,7 @@ void ScreenCapture::StartCapture(HWND id, int time_ms)
 	capture_hwnd_ = id;
 	//paint_timer_.Cancel();
 	//StdClosure task = nbase::Bind(&ScreenCapture::CustomFrame, this);
-	//nbase::ThreadManager::PostRepeatedTask(kThreadScreenCapture, paint_timer_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(time_ms));
+	//nbase::ThreadManager::PostRepeatedTask(shared::kThreadScreenCapture, paint_timer_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(time_ms));
 }
 void ScreenCapture::SetCutMode(bool cut, RECT rect)
 {

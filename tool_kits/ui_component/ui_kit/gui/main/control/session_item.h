@@ -2,6 +2,7 @@
 #include "module/session/session_util.h"
 #include "module/login/login_manager.h"
 #include "module/service/user_service.h"
+#include "module/subscribe_event/subscribe_event_manager.h"
 
 enum SessionEventType
 {
@@ -21,25 +22,22 @@ class SessionItem : public ui::ListContainerElement
 public:
 	SessionItem();
 	virtual ~SessionItem();
+
 	virtual void InitCtrl();
+
+	/**
+	* 初始化该会话列表项的显示
+	* @param[in] msg 消息内容和信息
+	* @return void	无返回值
+	*/
+	void InitMsg(const nim::SessionData &msg);
 
 	/**
 	* 用昵称、用户名等信息匹配搜索关键字
 	* @param[in] search_key 关键字
 	* @return bool true 匹配成功，false 匹配失败
 	*/
-	bool Match(const UTF8String& search_key)
-	{
-		//std::wstring ws_search_key = nbase::UTF8ToUTF16(search_key);
-		//ws_search_key = nbase::MakeLowerString(ws_search_key);
-		//if (nick_name_.find(ws_search_key) != std::wstring::npos
-		//	|| nick_name_full_spell_.find(search_key) != UTF8String::npos
-		//	|| nick_name_simple_spell_.find(search_key) != UTF8String::npos)
-		//{
-		//	return true;
-		//}
-		return false;
-	}
+	bool Match(const UTF8String& search_key) { return false; }
 
 	/**
 	* 是否为群组项
@@ -54,11 +52,18 @@ public:
 	void InitUserProfile();
 
 	/**
-	* 初始化该会话列表项的显示
-	* @param[in] msg 消息内容和信息
+	* 初始化机器人信息
 	* @return void	无返回值
 	*/
-	void InitMsg(const nim::SessionData &msg);
+	void InitRobotProfile();
+
+
+	/**
+	* 设置好友在线状态
+	* @param[in] EventDataEx 事件数据
+	* @return void	无返回值
+	*/
+	void SetOnlineState(const EventDataEx& data);
 
 	/**
 	* 更新会话列表项的显示内容
@@ -83,7 +88,7 @@ public:
 	* 获取会话消息数据
 	* @return nim::SessionData 消息内容
 	*/
-	nim::SessionData GetSessionData() { return msg_; }
+	nim::SessionData& GetSessionData() { return msg_; }
 	
 	/**
 	* 获取本会话项未读数
@@ -174,11 +179,13 @@ private:
 	* @param[in] msg 消息的相关信息
 	* @return bool true 继续传递控件消息，false 停止传递控件消息
 	*/
-	bool OnHeadImageClicked(ui::EventArgs* arg);
+	bool OnHeadImageClicked(bool is_robot, ui::EventArgs* arg);
+
 private:
 	ui::ButtonBox*	head_image_;
 	ui::Label*		label_name_;
 	ui::Label*		label_msg_;
+	ui::Label*		label_online_state_;
 	ui::Label*		label_atme_;
 	ui::Label*		label_time_;
 	ui::Box*		box_unread_;

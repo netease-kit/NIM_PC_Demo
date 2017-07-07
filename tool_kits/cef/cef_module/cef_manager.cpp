@@ -1,7 +1,7 @@
 #include "cef_manager.h"
-#include "include/cef_client.h"
-#include "include/cef_app.h"
 #include "include/cef_sandbox_win.h"
+#include "include/wrapper/cef_closure_task.h"
+#include "include/base/cef_bind.h"
 
 #include "client_app.h"
 #include "browser_handler.h"
@@ -61,6 +61,19 @@ bool CefMessageLoopDispatcher::Dispatch(const MSG &msg)
 }
 
 ///////////////////////////////////////////////////////////////////////////////////
+
+// 发现一个非常奇葩的bug，离屏渲染+多线程消息循环模式下，在浏览器对象上右击弹出菜单，是无法正常关闭的
+// 翻cef源码后发现菜单是用TrackPopupMenu函数创建的，在MSDN资料上查看后发现调用TrackPopupMenu前
+// 需要给其父窗口调用SetForegroundWindow。但是在cef源码中没有调用
+// 最终翻cef源码后得到的解决方法是在cef的UI线程创建一个窗口，这个窗体的父窗口必须是在主程序UI线程创建的
+// 这样操作之后就不会出现菜单无法关闭的bug了，虽然不知道为什么但是bug解决了
+void FixContextMenuBug(HWND hwnd)
+{
+	CreateWindow(L"Static", L"", WS_CHILD, 0, 0, 0, 0, hwnd, NULL, NULL, NULL);
+	PostMessage(hwnd, WM_CLOSE, 0, 0);
+}
+
+///////////////////////////////////////////////////////////////////////////////////
 CefManager::CefManager()
 {
 	browser_count_ = 0;
@@ -99,7 +112,7 @@ void CefManager::AddCefDllToPath()
 // Cef2357版本无法使用，当程序处理重定向信息并且重新加载页面后，渲染进程会崩掉
 // Cef2526、2623版本对各种新页面都支持，唯一的坑就是debug模式在多线程消息循环开启下，程序退出时会中断，但是release模式正常。
 //		(PS:如果开发者不使用负责Cef功能的开发，可以切换到release模式的cef dll文件，这样即使在deubg下也不会报错，修改AddCefDllToPath代码可以切换到release目录)
-bool CefManager::Initialize(bool is_enable_offset_render)
+bool CefManager::Initialize(const std::wstring& app_data_dir, CefSettings &settings, bool is_enable_offset_render /*= true*/)
 {
 #if !defined(SUPPORT_CEF)
 	return true;
@@ -122,41 +135,16 @@ bool CefManager::Initialize(bool is_enable_offset_render)
 	if (exit_code >= 0)
 		return false;
 
-	CefSettings settings;
-#if !defined(SUPPORT_CEF_FLASH)
-	settings.no_sandbox = true;
-#endif
-
-	// 设置localstorage，不要在路径末尾加"\\"，则运行时会报错
-	std::wstring app_data = nbase::win32::GetLocalAppDataDir();
-#ifdef _DEBUG
-	app_data.append(L"Netease\\NIM_Debug\\");
-#else
-	app_data.append(L"Netease\\NIM\\");
-#endif
-
-	CefString(&settings.cache_path) = app_data + L"CefLocalStorage";
-
-	// 设置debug log文件位置
-	CefString(&settings.log_file) = app_data + L"cef.log";
-
-	// 调试模型下使用单进程，但是千万不要在release发布版本中使用，官方已经不推荐使用单进程模式
-	// cef1916版本debug模式:在单进程模式下程序退出时会触发中断
-#ifdef _DEBUG
-	settings.single_process = true;
-#else
-	settings.single_process = false;
-#endif
-
-	// cef2623、2526版本debug模式:在使用multi_threaded_message_loop时退出程序会触发中断
-	// 加入disable-extensions参数可以修复这个问题，但是会导致一些页面打开时报错
-	// 开启Cef多线程消息循环，兼容nbase库消息循环
-	settings.multi_threaded_message_loop = true;
-
-	// 开启离屏渲染
-	settings.windowless_rendering_enabled = is_enable_offset_render_;
+	GetCefSetting(app_data_dir, settings);
 
 	bool bRet = CefInitialize(main_args, settings, app.get(), sandbox_info);
+	
+	if (is_enable_offset_render_)
+	{
+		HWND hwnd = CreateWindow(L"Static", L"", WS_POPUP, 0, 0, 0, 0, NULL, NULL, NULL, NULL);
+		CefPostTask(TID_UI, base::Bind(&FixContextMenuBug, hwnd));
+	}
+
 	return bRet;
 }
 
@@ -218,8 +206,42 @@ void CefManager::PostQuitMessage(int nExitCode)
 			CefManager::GetInstance()->PostQuitMessage(nExitCode);
 		};
 
-		nbase::ThreadManager::PostDelayedTask(kThreadUI, cb, nbase::TimeDelta::FromMilliseconds(500));
+		nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, cb, nbase::TimeDelta::FromMilliseconds(500));
 	}
+}
+
+void CefManager::GetCefSetting(const std::wstring& app_data_dir, CefSettings &settings)
+{
+	if (false == nbase::FilePathIsExist(app_data_dir, true))
+	{
+		nbase::CreateDirectory(app_data_dir);
+	}
+
+#if !defined(SUPPORT_CEF_FLASH)
+	settings.no_sandbox = true;
+#endif
+
+	// 设置localstorage，不要在路径末尾加"\\"，否则运行时会报错
+	CefString(&settings.cache_path) = app_data_dir + L"CefLocalStorage";
+
+	// 设置debug log文件位置
+	CefString(&settings.log_file) = app_data_dir + L"cef.log";
+
+	// 调试模型下使用单进程，但是千万不要在release发布版本中使用，官方已经不推荐使用单进程模式
+	// cef1916版本debug模式:在单进程模式下程序退出时会触发中断
+#ifdef _DEBUG
+	settings.single_process = true;
+#else
+	settings.single_process = false;
+#endif
+
+	// cef2623、2526版本debug模式:在使用multi_threaded_message_loop时退出程序会触发中断
+	// 加入disable-extensions参数可以修复这个问题，但是会导致一些页面打开时报错
+	// 开启Cef多线程消息循环，兼容nbase库消息循环
+	settings.multi_threaded_message_loop = true;
+
+	// 开启离屏渲染
+	settings.windowless_rendering_enabled = is_enable_offset_render_;
 }
 
 }

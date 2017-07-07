@@ -21,7 +21,7 @@ public:
 
 	virtual CSize EstimateText(CSize szAvailable, bool& bReEstimateSize) override;
 	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
-	virtual void PaintText(HDC hDC) override;
+	virtual void PaintText(IRenderContext* pRender) override;
 
 	void SetTextStyle(UINT uStyle);
 	UINT GetTextStyle() const;

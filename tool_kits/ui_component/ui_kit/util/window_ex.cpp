@@ -96,7 +96,6 @@ void WindowEx::SetTaskbarTitle( const std::wstring &title )
 	::SetWindowTextW(m_hWnd, title.c_str());
 }
 
-
 POINT GetPopupWindowPos( WindowEx* window )
 {
 	ASSERT( window && IsWindow( window->GetHWND() ) );

@@ -114,7 +114,7 @@ static const char *kNIMMsgKeyForcePushList	= "force_push_list";			/**< string,(�
 static const char *kNIMMsgKeyForcePushContent= "force_push_content";		/**< string,(可选)群组消息强推文本 */
 static const char *kNIMMsgKeyIsForcePush	= "is_force_push";		/**< int,(可选)群组消息是否强推,0:不强推, 1:强推，属性只针对群组消息强推列表 */
 static const char *kNIMMsgKeyAntiSpamEnable	= "anti_spam_enable";	/**< int, 是否需要过易盾反垃圾, 0:不需要,1:需要, 默认0 */
-static const char *kNIMMsgKeyAntiSpamContent= "anti_spam_content";	/**< string, (可选)开发者自定义的反垃圾字段,长度限制：5000字符 */
+static const char *kNIMMsgKeyAntiSpamContent= "anti_spam_content";	/**< string, (可选)开发者自定义的反垃圾字段,长度限制：5000字符, 格式为json string,{"type" : 1:文本，2：图片，3视频, "data" : "文本内容or图片地址or视频地址"}*/
 //本地定义
 static const char *kNIMMsgKeyLocalFilePath			= "local_res_path";		/**< string,多媒体消息资源本地绝对路径,SDK本地维护,发送多媒体消息时必填 */
 static const char *kNIMMsgKeyLocalTalkId			= "talk_id";			/**< string,会话id,发送方选填,接收方收到的是消息发送方id */
@@ -134,7 +134,7 @@ static const char *kNIMSendAckKeyTimetag	= "msg_timetag";	/**< long,消息时间
 
 /** @}*/ //发送消息回执Json Keys
 
-/** @name 多媒体资源参数通用键名定义，可替代不同类型多媒体所使用的相同的参数的键名.
+/** @name attach多媒体资源参数通用键名定义，可替代不同类型多媒体所使用的相同的参数的键名.
   * @{
   */
 static const char *kNIMMsgAttachKeyMd5		= "md5";			/**< string,资源MD5,发送方选填 */
@@ -142,9 +142,9 @@ static const char *kNIMMsgAttachKeySize		= "size";			/**< long,资源大小(KB),
 static const char *kNIMMsgAttachKeyUrl		= "url";			/**< long,资源URL, 发送方不需要填写 */
 static const char *kNIMMsgAttachKeyExt		= "ext";			/**< string,资源扩展名,不包括符号'.',发送方若选填需要保证资源本地路径包含扩展名 */
 static const char *kNIMMsgAttachKeyDisplayName	= "name";		/**< string,用于显示的文件名,发送方选填,默认文件名 */
-/** @}*/ //多媒体资源参数通用键名定义，可替代不同类型多媒体所使用的相同的参数的键名.
+/** @}*/ //attach多媒体资源参数通用键名定义，可替代不同类型多媒体所使用的相同的参数的键名.
 
-/** @name 图片类型多媒体资源参数键名定义
+/** @name attach图片类型多媒体资源参数键名定义
   * @{
   */
 static const char *kNIMImgMsgKeyMd5		= "md5";			/**< string,资源MD5,发送方选填 */
@@ -154,9 +154,9 @@ static const char *kNIMImgMsgKeyHeight	= "h";				/**< int,图片高度,发送方
 static const char *kNIMImgMsgKeyUrl		= "url";			/**< string,资源URL, 发送方不需要填写 */
 static const char *kNIMImgMsgKeyExt		= "ext";			/**< string,资源扩展名,不包括符号'.',发送方若选填需要保证资源本地路径包含扩展名 */
 static const char *kNIMImgMsgKeyDisplayName	= "name";		/**< string,用于显示的文件名,发送方选填,默认文件名 */
-/** @}*/ //图片类型多媒体资源参数键名定义
+/** @}*/ //attach图片类型多媒体资源参数键名定义
 
-/** @name 语音类型多媒体资源参数键名定义
+/** @name attach语音类型多媒体资源参数键名定义
   * @{
   */
 static const char *kNIMAudioMsgKeyMd5		= "md5";			/**< string,资源MD5,发送方选填 */
@@ -165,9 +165,9 @@ static const char *kNIMAudioMsgKeyDuration	= "dur";			/**< int,语音资源时�
 static const char *kNIMAudioMsgKeyUrl		= "url";			/**< string,资源URL, 发送方不需要填写 */
 static const char *kNIMAudioMsgKeyExt		= "ext";			/**< string,资源扩展名,不包括符号'.',发送方若选填需要保证资源本地路径包含扩展名 */
 static const char *kNIMAudioMsgKeyDisplayName	= "name";		/**< string,用于显示的文件名,发送方选填,默认文件名 */
-/** @}*/ //语音类型多媒体资源参数键名定义
+/** @}*/ //attach语音类型多媒体资源参数键名定义
 
-/** @name 短视频类型多媒体资源参数键名定义
+/** @name attach短视频类型多媒体资源参数键名定义
   * @{
   */
 static const char *kNIMVideoMsgKeyMd5			= "md5";			/**< string,资源MD5,发送方选填 */
@@ -178,9 +178,9 @@ static const char *kNIMVideoMsgKeyWidth			= "w";				/**< int,短视频画面宽�
 static const char *kNIMVideoMsgKeyHeight		= "h";				/**< int,短视频画面高度,发送方必填 */
 static const char *kNIMVideoMsgKeyUrl			= "url";			/**< string,资源URL, 发送方不需要填写 */
 static const char *kNIMVideoMsgKeyExt			= "ext";			/**< string,资源扩展名,不包括符号'.',发送方若选填需要保证资源本地路径包含扩展名 */
-/** @}*/ //短视频类型多媒体资源参数键名定义
+/** @}*/ //attach短视频类型多媒体资源参数键名定义
 
-/** @name 文件类型多媒体资源参数键名定义
+/** @name attach文件类型多媒体资源参数键名定义
 * @{
 */
 static const char *kNIMFileMsgKeyMd5			= "md5";			/**< string,资源MD5,发送方选填 */
@@ -188,15 +188,28 @@ static const char *kNIMFileMsgKeySize			= "size";			/**< long,资源大小(KB),�
 static const char *kNIMFileMsgKeyDisplayName	= "name";			/**< string,用于显示的文件名,发送方选填,默认文件名 */
 static const char *kNIMFileMsgKeyUrl			= "url";			/**< string,资源URL, 发送方不需要填写 */
 static const char *kNIMFileMsgKeyExt			= "ext";			/**< string,资源扩展名,不包括符号'.',发送方若选填需要保证资源本地路径包含扩展名 */
-/** @}*/ //文件类型多媒体资源参数键名定义
+/** @}*/ //attach文件类型多媒体资源参数键名定义
 
-/** @name 位置类型多媒体资源参数键名定义
+/** @name attach位置类型多媒体资源参数键名定义
   * @{
   */
 static const char *kNIMLocationMsgKeyLatitude	= "lat";			/**< double,纬度 */
 static const char *kNIMLocationMsgKeyLongitude	= "lng";			/**< double,经度 */
 static const char *kNIMLocationMsgKeyTitle		= "title";			/**< string,位置信息 */
-/** @}*/ //位置类型多媒体资源参数键名定义
+/** @}*/ //attach位置类型多媒体资源参数键名定义
+
+/** @name attach波特机器人类型多媒体资源参数键名定义
+  * @{
+  */
+static const char *kNIMBotRobotMsgKeyRobotID	= "robotAccid";	/**< string，机器人云信ID */
+static const char *kNIMBotRobotSentMsgKeyParam	= "param";		/**< json string，给机器人发送时需要填的字段，字段内容定义可见Demo源码或参考波特开发文档 */
+static const char *kNIMBotRobotReceivedMsgKeyClientMsgID	= "clientMsgId";/**< string，机器人回复时带的字段，表示该条回复相关联的消息ID */
+static const char *kNIMBotRobotReceivedMsgKeyMsgOut			= "msgOut";		/**< bool，是否为机器人回复，默认为true */
+static const char *kNIMBotRobotReceivedMsgKeyRobotMsg		= "robotMsg";	/**< json string，机器人回复时带的字段，波特机器人消息 */
+static const char *kNIMBotRobotReceivedMsgKeyRobotMsgFlag	= "flag";		/**< string，机器人回复时带的字段，表示该条回复类型，类型定义可见Demo源码或参考波特开发文档，bot或faq */
+static const char *kNIMBotRobotReceivedMsgKeyRobotMsgMessage= "message";	/**< json object，机器人回复时带的字段，表示该条回复内容，字段内容定义可见Demo源码或参考波特开发文档 */
+//static const char *kNIMBotRobotReceivedMsgKeyRobotMsgS		= "s";			/**< string，未知 */
+/** @}*/ //attach波特机器人类型多媒体资源参数键名定义
 
 #ifdef __cplusplus
 };

@@ -25,7 +25,7 @@ public:
 	* @param[in] user_data_path 语音文件缓存目录
 	* @return bool true 初始化成功，false 初始化失败
 	*/
-	bool InitAudio(const std::string user_data_path);
+	bool InitAudio(const std::wstring user_data_path);
 
 	/**
 	* 播放语音
@@ -56,11 +56,10 @@ public:
 	* @param[in] msd_id 消息id
 	* @param[in] audio_format 音频格式，AAC : 0， AMR : 1
 	* @param[in] volume 音量(0 - 255, 默认180)
-	* @param[in] loudness 默认0
 	* @param[in] capture_device 采集设备
 	* @return bool true 调用成功，false 调用失败
 	*/
-	bool StartCapture(const std::string session_id, const std::string msg_id, nim_audio::nim_audio_type audio_format = nim_audio::AAC, int volume = 180, int loudness = 0, const wchar_t* capture_device = nullptr);
+	bool StartCapture(const std::string session_id, const std::string msg_id, nim_audio::nim_audio_type audio_format = nim_audio::AAC, int volume = 180, const wchar_t* capture_device = nullptr);
 
 	/** 
 	* 停止录制语音

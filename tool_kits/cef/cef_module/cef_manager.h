@@ -5,6 +5,7 @@
  * @date 2016/7/19
  */
 #pragma once
+#include "include/cef_app.h"
 
 namespace nim_cef
 { 
@@ -45,10 +46,12 @@ public:
 
 	/**
 	* 初始化cef组件
+	* @param[in] app_data_dir 应用路径名称，见nim::Client::Init的说明
+	* @param[in] settings Cef全部配置
 	* @param[in] is_enable_offset_render 是否开启离屏渲染
 	* @return bool true 继续运行，false 应该结束程序
 	*/
-	bool Initialize(bool is_enable_offset_render = true);
+	bool Initialize(const std::wstring& app_data_dir, CefSettings &settings, bool is_enable_offset_render = true);
 
 	/**
 	* 清理cef组件
@@ -75,6 +78,15 @@ public:
 
 	// 在Cef浏览器对象销毁后发送WM_QUIT消息
 	void PostQuitMessage(int nExitCode);
+
+private:
+	/**
+	* 设置cef配置信息
+	* @param[in] app_data_dir 应用路径名称，见nim::Client::Init的说明
+	* @param[out] settings cef配置类
+	* @return void	无返回值
+	*/
+	void GetCefSetting(const std::wstring& app_data_dir, CefSettings &settings);
 
 private:
 	CefMessageLoopDispatcher message_dispatcher_;

@@ -1,20 +1,19 @@
 ﻿/** @file nim_cpp_user.cpp
   * @brief NIM SDK提供的用户相关接口
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
+  * @author towik, Oleg, Harrison
   * @date 2015/8/17
   */
 
 #include "nim_cpp_user.h"
 #include "nim_sdk_util.h"
 #include "nim_json_util.h"
+#include "nim_string_util.h"
 #include "nim_cpp_win32_demo_helper.h"
-#include "nim_string_util.h"
-#include "nim_string_util.h"
 
 namespace nim
 {
-
+#ifdef NIM_SDK_DLL_IMPORT
 typedef	void (*nim_user_reg_special_relationship_changed_cb)(const char *json_extension, nim_user_special_relationship_change_cb_func cb, const void *user_data);
 typedef	void (*nim_user_set_black)(const char *accid, bool set_black, const char *json_extension, nim_user_opt_cb_func cb, const void *user_data);
 typedef	void (*nim_user_set_mute)(const char *accid, bool set_mute, const char *json_extension, nim_user_opt_cb_func cb, const void *user_data);
@@ -24,6 +23,9 @@ typedef void (*nim_user_reg_user_name_card_changed_cb)(const char *json_extensio
 typedef void (*nim_user_get_user_name_card)(const char *accids, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data);
 typedef void (*nim_user_get_user_name_card_online)(const char *accids, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data);
 typedef void (*nim_user_update_my_user_name_card)(const char *info_json, const char *json_extension, nim_user_update_my_name_card_cb_func cb, const void *user_data);
+#else
+#include "nim_user.h"
+#endif
 
 static void CallbackSetRelation(int res_code, const char *accid, bool opt, const char *json_extension, const void *callback)
 {

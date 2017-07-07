@@ -99,6 +99,7 @@ enum EventType
 	kEventMouseButtonDown,
 	kEventMouseButtonUp,
 	kEventMouseRightButtonDown,
+	kEventMouseRightButtonUp,
 	kEventMouseDoubleClick,
 	kEventMouseMenu,
 	kEventMouseScrollWheel,
@@ -124,6 +125,9 @@ enum EventType
 	kEventReturn,
 	kEventTab,
 	kEventCustomLinkClick,
+
+	kEventImeStartComposition,
+	kEventImeEndComposition,
 
 	kEventScrollChange,
 	kEventValueChange,

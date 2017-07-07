@@ -10,7 +10,7 @@ namespace ui
 class UILIB_API HelperThread : public nbase::FrameworkThread
 {
 public:
-	HelperThread(ThreadId thread_id, const char *name);
+	HelperThread(shared::ThreadId thread_id, const char *name);
 	~HelperThread(void);
 
 private:
@@ -18,7 +18,7 @@ private:
 	virtual void Cleanup() override;
 
 private:
-	ThreadId thread_id_;
+	shared::ThreadId thread_id_;
 };
 
 }  

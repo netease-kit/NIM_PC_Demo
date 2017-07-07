@@ -413,7 +413,7 @@ void VideoForm::EnterEndCallPage( EndCallEnum why )
 		}
 
 		StdClosure closure = nbase::Bind(&VideoForm::OnAutoCloseWnd, this);
-		nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(3));
+		nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, closure, nbase::TimeDelta::FromSeconds(3));
 		break;
 	}
 	case VideoForm::END_CALL_RESPONSE:
@@ -443,7 +443,7 @@ void VideoForm::EnterEndCallPage( EndCallEnum why )
 	if( need_save_close )
 	{
 		auto closure = nbase::Bind( &VideoForm::OnAutoCloseWnd, this );
-		nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(6));
+		nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, closure, nbase::TimeDelta::FromSeconds(6));
 	}
 }
 
@@ -583,14 +583,15 @@ bool VideoForm::OnClicked( ui::EventArgs* arg )
 		auto sel = nim_comp::WindowsManager::SingletonShow<nim_comp::RecordSelectForm>(nim_comp::RecordSelectForm::kClassName);
 		if (sel)
 		{
-			sel->SetSelFileCb(std::bind(&VideoForm::OnRecordSelFileCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+			sel->SetSelFileCb(current_video_mode_, nbase::Bind(&VideoForm::OnRecordSelFileCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 		}
 
 	}
 	else if (name == L"record_stop")
 	{
-		nim::VChat::StopRecord(std::bind(&VideoForm::StopRecordCb, this, true, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
-		nim::VChat::StopAudioRecord(std::bind(&VideoForm::StopRecordCb, this, false, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+		nim::VChat::StopRecord("", nbase::Bind(&VideoForm::StopRecordCb, this, true, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+		nim::VChat::StopRecord(session_id_, nbase::Bind(&VideoForm::StopRecordCb, this, true, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+		nim::VChat::StopAudioRecord(nbase::Bind(&VideoForm::StopRecordCb, this, false, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 	}
 	else if (name == L"rotate")
 	{
@@ -1125,7 +1126,7 @@ void VideoForm::ShowRecordTip(std::wstring tip, std::wstring tip2, std::wstring 
 		record_tip_timer_.Cancel();
 		StdClosure task = nbase::Bind(&VideoForm::HideRecordTipTime, this);
 		task = record_tip_timer_.ToWeakCallback(task);
-		nbase::ThreadManager::PostDelayedTask(kThreadUI, task, nbase::TimeDelta::FromSeconds(3));
+		nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, task, nbase::TimeDelta::FromSeconds(3));
 	}
 	record_tip_box_->SetVisible(show);
 }

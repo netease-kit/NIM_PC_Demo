@@ -1,5 +1,5 @@
 ﻿/** @file nim_tools_http_cpp.cpp
-* @brief NIM HTTP�ṩ�Ĵ��乤�߽ӿ�(CPP�ӿ�)
+* @brief NIM HTTP提供的传输工具接口(CPP接口)
 * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
 * @author towik, Oleg
 * @date 2015/4/30
@@ -84,11 +84,11 @@ struct ResponseCallbackUserData
 void Init()
 {
 	HMODULE hmod;
-//#ifdef _DEBUG
-//	hmod = ::LoadLibrary(L"nim_tools_http_d.dll");
-//#else
+// #ifdef _DEBUG
+// 	hmod = ::LoadLibrary(L"nim_tools_http_d.dll");
+// #else
 	hmod = ::LoadLibrary(L"nim_tools_http.dll");
-//#endif
+// #endif
 
 	g_nim_http_init = (typeof_nim_http_init)GetProcAddress(hmod,"nim_http_init");
 	g_nim_http_uninit = (typeof_nim_http_uninit)GetProcAddress(hmod,"nim_http_uninit");
@@ -127,7 +127,7 @@ bool IsInitLog()
 	return g_nim_http_is_init_log();
 }
 
-//����cpp��װ���ȫ�ִ���
+//设置cpp封装层的全局代理
 NIMProxyType proxy_type_ = kNIMProxyNone;
 std::string proxy_host_;
 short proxy_port_ = 0;

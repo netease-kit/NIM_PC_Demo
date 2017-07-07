@@ -57,6 +57,8 @@ void CefForm::InitWindow()
 	cef_control_ = static_cast<CefControl*>(FindControl(L"cef_control"));
 	edit_url_->AttachReturn(nbase::Bind(&CefForm::OnReturn, this, std::placeholders::_1));
 
+	cef_control_->AttachBeforeContextMenu(nbase::Bind(&CefForm::OnBeforeMenu, this, std::placeholders::_1, std::placeholders::_2));
+	cef_control_->AttachMenuCommand(nbase::Bind(&CefForm::OnMenuCommand, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	cef_control_->AttachTitleChange(nbase::Bind(&CefForm::OnTitleChange, this, std::placeholders::_1));
 	cef_control_->AttachUrlChange(nbase::Bind(&CefForm::OnUrlChange, this, std::placeholders::_1));
 	cef_control_->AttachLinkClick(nbase::Bind(&CefForm::OnLinkClick, this, std::placeholders::_1));
@@ -134,6 +136,16 @@ bool CefForm::OnReturn(ui::EventArgs* arg)
 		cef_control_->LoadURL(edit_url_->GetText());
 	}
 
+	return false;
+}
+
+void CefForm::OnBeforeMenu(CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model)
+{
+
+}
+
+bool CefForm::OnMenuCommand(CefRefPtr<CefContextMenuParams> params, int command_id, CefContextMenuHandler::EventFlags event_flags)
+{
 	return false;
 }
 

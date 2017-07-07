@@ -16,9 +16,7 @@ class NIM_UI_DLL_API MuteBlackManager
 {
 public:
 	SINGLETON_DEFINE(MuteBlackManager);
-public:
-	MuteBlackManager(){};
-	~MuteBlackManager(){};
+
 public:
 	/**
 	* 获取静音名单
@@ -75,6 +73,10 @@ public:
 	* @return UnregisterCallback	反注册对象
 	*/
 	UnregisterCallback RegSyncSetBlackCallback(const SetStateCallback& cb);
+
+private:
+	MuteBlackManager(){};
+	~MuteBlackManager(){};
 };
 
 }

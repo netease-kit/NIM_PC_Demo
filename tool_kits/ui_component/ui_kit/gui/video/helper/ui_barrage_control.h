@@ -44,7 +44,7 @@ public:
 	* @param[in] rcPaint 可绘制范围
 	* @return void	无返回值
 	*/
-	void Paint(HDC hDC, const UiRect& rcPaint) override;
+	void Paint(IRenderContext* pRender, const UiRect& rcPaint) override;
 
 	/**
 	* 清理数据

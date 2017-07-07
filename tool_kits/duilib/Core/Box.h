@@ -49,7 +49,7 @@ public:
 	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
 	virtual void SetPos(UiRect rc) override;
 	virtual void HandleMessageTemplate(EventArgs& msg) override;
-	virtual void Paint(HDC hDC, const UiRect& rcPaint) override;
+	virtual void Paint(IRenderContext* pRender, const UiRect& rcPaint) override;
 	virtual void SetVisible(bool bVisible = true) override;
 	virtual void SetInternVisible(bool bVisible = true) override;
 	virtual void SetEnabled(bool bEnabled) override;
@@ -111,7 +111,7 @@ public:
 	virtual void HandleMessage(EventArgs& event) override;
 	virtual bool MouseEnter(EventArgs& msg) override;
 	virtual bool MouseLeave(EventArgs& msg) override;
-	virtual void Paint(HDC hDC, const UiRect& rcPaint) override;
+	virtual void Paint(IRenderContext* pRender, const UiRect& rcPaint) override;
 	virtual void SetMouseEnabled(bool bEnable = true) override;
 	virtual void SetWindow(Window* pManager, Box* pParent, bool bInit) override;
 	virtual Control* FindControl(FINDCONTROLPROC Proc, LPVOID pData, UINT uFlags, CPoint scrollPos = CPoint()) override;

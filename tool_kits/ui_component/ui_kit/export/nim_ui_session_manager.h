@@ -17,8 +17,7 @@ class NIM_UI_DLL_API SessionManager
 {
 public:
 	SINGLETON_DEFINE(SessionManager);
-	SessionManager(){};
-	~SessionManager(){};
+
 public:
 	/**
 	* 是否开启会话合并功能
@@ -76,6 +75,10 @@ public:
 	* @return void 无返回值
 	*/
 	void RemoveSessionBox(std::string id);
+
+private:
+	SessionManager(){};
+	~SessionManager(){};
 };
 
 }

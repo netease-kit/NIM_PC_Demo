@@ -14,7 +14,7 @@
 //音视频设备相关API
 #include "nim_devie.h"
 //音视频相关API
-#include "nim_vchat"
+#include "nim_vchat.h"
 //数据通道相关API(白板等)
 #include "nim_rts.h"
 //文档共享相关API
@@ -39,3 +39,5 @@
 #include "nim_plugin_in.h"
 //工具辅助类API
 #include "nim_tools.h"
+//机器人
+#include "nim_robot.h"

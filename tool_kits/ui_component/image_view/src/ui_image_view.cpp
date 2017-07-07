@@ -31,7 +31,7 @@ void UiImageView::HandleMessage(ui::EventArgs& event)
 	return Control::HandleMessage(event);
 }
 
-void UiImageView::Paint(HDC hDC, const ui::UiRect& rcPaint)
+void UiImageView::Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint)
 {
 	 if( !::IntersectRect(&m_rcPaint, &rcPaint, &m_rcItem) ) return;
 
@@ -85,7 +85,7 @@ void UiImageView::Paint(HDC hDC, const ui::UiRect& rcPaint)
 	 rect_image_.right = min(rect_image_.left + image_transform_width, m_rcItem.right);
 	 rect_image_.bottom = min(rect_image_.top + image_transform_height, m_rcItem.bottom);
 
-	 Gdiplus::Graphics graph(hDC); 
+	 Gdiplus::Graphics graph(pRender->GetDC()); 
 
 	 //图片的绘制范围，可能超出显示范围
 	 Gdiplus::RectF rect_image((Gdiplus::REAL)rect_image_.left, (Gdiplus::REAL)rect_image_.top, 
@@ -99,7 +99,7 @@ void UiImageView::Paint(HDC hDC, const ui::UiRect& rcPaint)
 	 int src_y = int(rect_show.GetTop() - default_y + offset_y_);
 
 	 graph.DrawImage(image_transform_.get(), rect_show, (Gdiplus::REAL)src_x, (Gdiplus::REAL)src_y, rect_show.Width, rect_show.Height, Gdiplus::UnitPixel);
-	 graph.ReleaseHDC(hDC);
+	 graph.ReleaseHDC(pRender->GetDC());
 }
 
 void UiImageView::RotatePic(PicDirectionOfRotation direction)

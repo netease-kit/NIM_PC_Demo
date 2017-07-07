@@ -17,8 +17,6 @@ class NIM_UI_DLL_API PhotoManager
 {
 public:
 	SINGLETON_DEFINE(PhotoManager);
-	PhotoManager() {}
-	~PhotoManager() {}
 
 public:
 
@@ -44,6 +42,9 @@ public:
 	*/
 	UnregisterCallback RegPhotoReady(const OnPhotoReadyCallback& callback);
 
+private:
+	PhotoManager() {}
+	~PhotoManager() {}
 };
 
 }

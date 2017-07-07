@@ -113,12 +113,6 @@ void CefNativeControl::SetInternVisible(bool bVisible)
 	}
 }
 
-void CefNativeControl::Paint(HDC hDC, const UiRect& rcPaint)
-{
-//	return;
-	__super::Paint(hDC, rcPaint);
-}
-
 HWND CefNativeControl::GetCefHandle() const 
 {
 	if (browser_handler_.get() && browser_handler_->GetBrowserHost().get())

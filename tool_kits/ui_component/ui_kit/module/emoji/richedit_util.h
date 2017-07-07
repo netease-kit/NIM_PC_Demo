@@ -100,11 +100,12 @@ bool Re_InsertJsb(ITextServices *text_service, const std::wstring& file, const s
 * @param[in] text_service RichEdit控件内部ITextServices*指针
 * @param[in] callback 插入错误的回调通知函数
 * @param[in] file 图片文件路径
+* @param[in] file_tag 图片对应的标签
 * @param[in] loading 是否插入正在加载中的图片
 * @param[in] cp 图片在RichEdit中插入的位置
 * @return bool true 成功，false 失败
 */
-bool Re_InsertImage(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file, bool loading = false, LONG cp=REO_CP_SELECTION);
+bool Re_InsertImage(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file, const std::wstring& file_tag = L"", bool loading = false, LONG cp = REO_CP_SELECTION);
 
 /**
 * 向RichEdit插入一个文件图片

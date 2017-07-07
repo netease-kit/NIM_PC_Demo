@@ -40,6 +40,13 @@ public:
 	SessionItem* AddSessionItem(const nim::SessionData &msg);
 
 	/**
+	* 从会话列表查找会话控件
+	* @param[in] session_id 会话id
+	* @return SessionItem* 会话控件的指针
+	*/
+	SessionItem* GetSessionItem(const std::string &session_id);
+
+	/**
 	* 移除某个会话控件
 	* @param[in] item 会话控件指针
 	* @return void 无返回值
@@ -153,6 +160,24 @@ private:
 	* @return void 无返回值
 	*/
 	void OnTeamNameChange(const nim::TeamInfo& team_info);
+
+	/**
+	* 响应接收事件的回调函数
+	* @param[in] event_type 事件类型
+	* @param[in] accid 用户id
+	* @param[in] data 事件信息
+	* @return void 无返回值
+	*/
+	void OnReceiveEvent(int event_type, const std::string &accid, const EventDataEx &data);
+
+	/**
+	* 响应机器人信息改变的回调函数
+	* @param[in] rescode 错误码
+	* @param[in] type 类型
+	* @param[in] robots 机器人列表
+	* @return void 无返回值
+	*/
+	void OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots);
 
 private:
 	/**

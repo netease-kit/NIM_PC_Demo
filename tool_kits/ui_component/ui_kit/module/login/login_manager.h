@@ -120,7 +120,7 @@ public:
 	/**
 	* 缓存登录错误码
 	* @param[in] error_code 登录错误码
-	* @return void
+	* @return void	无返回值
 	*/
 	void SetErrorCode(int error_code) { error_code_ = error_code; }
 
@@ -129,6 +129,19 @@ public:
 	* @return int 登录错误码
 	*/
 	int GetErrorCode() { return error_code_; }
+
+	/**
+	* 创建互斥量用于检测帐号重复登录
+	* @return void	无返回值
+	*/
+	void CreateSingletonRunMutex();
+
+	/**
+	* 检查是否重复登录帐号
+	* @param[in] username 用户id
+	* @return bool	true：没有重复，false：重复
+	*/
+	bool CheckSingletonRun(const std::wstring& username);
 
 private:
 

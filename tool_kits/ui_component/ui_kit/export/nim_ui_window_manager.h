@@ -27,8 +27,7 @@ class NIM_UI_DLL_API WindowsManager
 {
 public:
 	SINGLETON_DEFINE(WindowsManager);
-	WindowsManager(){};
-	~WindowsManager(){};
+
 public:
 
 	/**
@@ -88,6 +87,10 @@ public:
 	* @return void	无返回值
 	*/
 	void ShowVideoSettingForm();
+
+private:
+	WindowsManager(){};
+	~WindowsManager(){};
 };
 
 /**

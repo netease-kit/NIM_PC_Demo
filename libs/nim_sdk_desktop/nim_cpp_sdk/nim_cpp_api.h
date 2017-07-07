@@ -42,6 +42,10 @@
 #include "nim_cpp_vchat.h"
 //文档共享相关API
 #include "nim_cpp_doc_trans.h"
+//事件订阅
+#include "nim_cpp_subscribe_event.h"
+//机器人
+#include "nim_cpp_robot.h"
 #endif
 
 /**

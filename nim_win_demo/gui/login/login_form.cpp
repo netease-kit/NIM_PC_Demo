@@ -1,6 +1,6 @@
 #include "login_form.h"
 #include "gui/main/main_form.h"
-#include "module/login/login_db.h"
+#include "module/db/public_db.h"
 
 using namespace ui;
 
@@ -99,6 +99,12 @@ void LoginForm::DoRegisterAccount()
 
 void LoginForm::StartLogin( std::string username, std::string password )
 {
+	if (!nim_ui::LoginManager::GetInstance()->CheckSingletonRun(nbase::UTF8ToUTF16(username)))
+	{
+		ShowMsgBox(this->GetHWND(), MsgboxCallback(), L"STRID_CHECK_SINGLETON_RUN", true);
+		return;
+	}
+		
 	user_name_edit_->SetEnabled(false);
 	password_edit_->SetEnabled(false);
 
@@ -126,7 +132,7 @@ void LoginForm::RegLoginManagerCallback()
 	};
 
 	nim_ui::OnDestroyWindow cb_destroy = [this]{
-		LoginDB::GetInstance()->SaveLoginData();
+		PublicDB::GetInstance()->SaveLoginData();
 		::DestroyWindow(this->GetHWND());
 	};
 

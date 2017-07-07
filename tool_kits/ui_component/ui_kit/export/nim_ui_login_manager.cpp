@@ -80,5 +80,10 @@ bool LoginManager::IsLinkActive()
 	return nim_comp::LoginManager::GetInstance()->IsLinkActive();
 }
 
+bool LoginManager::CheckSingletonRun(const std::wstring& username)
+{
+	return nim_comp::LoginManager::GetInstance()->CheckSingletonRun(username);
+}
+
 }
 

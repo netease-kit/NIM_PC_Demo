@@ -20,9 +20,9 @@ public:
 	virtual Image* GetEstimateImage() override;
 	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
 
-	virtual void PaintStatusColor(HDC hDC) override;
-	virtual void PaintStatusImage(HDC hDC) override;
-	virtual void PaintText(HDC hDC) override;
+	virtual void PaintStatusColor(IRenderContext* pRender) override;
+	virtual void PaintStatusImage(IRenderContext* pRender) override;
+	virtual void PaintText(IRenderContext* pRender) override;
 
 	std::wstring GetSelectedStateImage(ControlStateType stateType);
 	void SetSelectedStateImage(ControlStateType stateType, const std::wstring& pStrImage);

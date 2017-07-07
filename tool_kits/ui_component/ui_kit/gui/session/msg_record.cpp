@@ -25,7 +25,8 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 
 	MsgBubbleItem* item = NULL;
 
-	if (msg.type_ == nim::kNIMMessageTypeText || IsNetCallMsg(msg.type_, msg.attach_))
+	if (msg.type_ == nim::kNIMMessageTypeText 
+		|| IsNetCallMsg(msg.type_, msg.attach_))
 	{
 		Json::Value values;
 		Json::Reader reader;
@@ -45,7 +46,9 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 			return;
 		}
 		else
+		{
 			item = new MsgBubbleText;
+		}
 	}
 	else if (msg.type_ == nim::kNIMMessageTypeImage)
 		item = new MsgBubbleImage;
@@ -116,6 +119,10 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 			}
 		}
 	}
+	else if (msg.type_ == nim::kNIMMessageTypeRobot)
+	{
+		item = new MsgBubbleRobot;
+	}
 
 	if (item == nullptr)
 	{
@@ -148,13 +155,24 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 		item->SetShowName(false, "");
 	else
 	{
-		auto iter = team_member_info_list_.find(msg.sender_accid_);
-		if (iter != team_member_info_list_.cend() && !iter->second.GetNick().empty())
-			item->SetShowName(true, iter->second.GetNick()); //显示群名片
+		if (msg.type_ != nim::kNIMMessageTypeRobot)
+		{
+			auto iter = team_member_info_list_.find(msg.sender_accid_);
+			if (iter != team_member_info_list_.cend() && !iter->second.GetNick().empty())
+				item->SetShowName(true, iter->second.GetNick()); //显示群名片
+			else
+			{
+				std::string show_name = nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(msg.sender_accid_));
+				item->SetShowName(true, show_name); //显示备注名或昵称
+			}
+		}
 		else
 		{
-			std::string show_name = nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(msg.sender_accid_));
-			item->SetShowName(true, show_name); //显示备注名或昵称
+			nim::IMBotRobot robot_attach;
+			nim::Talk::ParseBotRobotMessageAttach(msg, robot_attach);
+			nim::RobotInfo robot_info;
+			UserService::GetInstance()->GetRobotInfo(robot_attach.robot_accid_, robot_info);
+			item->SetShowName(!robot_info.GetName().empty(), robot_info.GetName());
 		}
 	}
 

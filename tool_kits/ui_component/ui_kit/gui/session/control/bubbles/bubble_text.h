@@ -26,13 +26,13 @@ public:
 	*/
 	virtual void InitInfo(const nim::IMMessage &msg);
 
-	/** 
+protected:
+	/**
 	* 设置此消息项显示的文本
-	* @param[in] str 设置显示的文本 (可能包含表情信息)		
+	* @param[in] str 设置显示的文本 (可能包含表情信息)
 	* @return void 无返回值
 	*/
 	void SetMsgText(const std::wstring &str);
-protected:
 
 	/**
 	* 计算此消息项所需的控件大小

@@ -1,6 +1,8 @@
 #pragma once
 
+#include "shared/list_item_util.h"
 #include "shared/pin_yin_helper.h"
+#include "module/subscribe_event/subscribe_event_manager.h"
 
 namespace nim_comp
 {
@@ -18,17 +20,17 @@ public:
 
 	/**
 	* 初始化控件
-	* @param[in] is_team 是否为群组项
+	* @param[in] type 类型
 	* @param[in] accid 用户id或者群组id
 	* @return void	无返回值
 	*/
-	virtual void Init(bool is_team, const std::string &accid);
+	virtual void Init(FriendItemType type, const std::string &accid);
 
 	/**
-	* 是否为群组项
-	* @return bool true 是，false 否
+	* 查询类型
+	* @return FriendItemType
 	*/
-	bool GetIsTeam() const { return is_team_; }
+	FriendItemType GetFriendItemType() const { return type_; }
 
 	/**
 	* 获取用户id或者群组id
@@ -47,18 +49,14 @@ public:
 	* @param[in] search_key 关键字
 	* @return bool true 匹配成功，false 匹配失败
 	*/
-	bool Match(const UTF8String& search_key)
-	{
-		std::wstring ws_search_key = nbase::UTF8ToUTF16(search_key);
-		ws_search_key = nbase::MakeLowerString(ws_search_key);
-		if (nick_name_.find(ws_search_key) != std::wstring::npos
-			|| nick_name_full_spell_.find(search_key) != UTF8String::npos
-			|| nick_name_simple_spell_.find(search_key) != UTF8String::npos)
-		{
-			return true;
-		}
-		return false;
-	}
+	bool Match(const UTF8String& search_key);
+
+	/**
+	* 设置好友在线状态
+	* @param[in] EventDataEx 事件数据
+	* @return void	无返回值
+	*/
+	void SetOnlineState(const EventDataEx& data);
 
 	/**
 	* 与另一个好友项控件进行比较，根据昵称判断大小
@@ -87,15 +85,6 @@ public:
 	* @return bool true 继续传递控件消息，false 停止传递控件消息
 	*/
 	bool OnDbClicked(ui::EventArgs* arg);
-private:
-	/**
-	* 响应用户头像改变的回调函数
-	* @param[in] type 头像类型
-	* @param[in] accid 用户id或者群组id
-	* @param[in] photo_path 头像路径
-	* @return void 无返回值
-	*/
-	void OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring& photo_path);
 
 	/**
 	* 响应群名称改变的回调函数
@@ -103,10 +92,12 @@ private:
 	* @return void 无返回值
 	*/
 	void OnTeamNameChange(const nim::TeamInfo& team_info);
+
 private:
+	ui::Label*		label_online_state_;
 	ui::Label*		contact_;
 
-	bool			is_team_;
+	FriendItemType	type_;
 	std::string		id_;
 
 	std::wstring	nick_name_;

@@ -27,7 +27,9 @@ class Global
 {
 public:
 	typedef std::function<void(int log_level,const std::string& log)> SDKLogCallback; 
-	typedef std::function<void(bool conncet, NIMProxyDetectStep step, const std::string& json_extension)> DetectProxyCallback;
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+	typedef std::function<void(bool conncet, NIMProxyDetectStep step, const std::string& json_extention)> DetectProxyCallback; 
+#endif
 
 public:
 	/** @fn void FreeStrBuf(char *str)
@@ -43,7 +45,7 @@ public:
 	* @return void 无返回值
 	*/
 	static void FreeBuf(void *data);
-	
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/** @fn void SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password)
     * 设置SDK统一的网络代理。不需要代理时，type设置为kNIMProxyNone，其余参数都传空字符串（端口设为0）。有些代理不需要用户名和密码，相应参数也传空字符串。   
     * @param[in] type 代理类型，见NIMProxyType定义
@@ -56,16 +58,17 @@ public:
 	static void SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password);
 
 	/** @fn void DetectProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password, const DetectProxyCallback& callback)
-	* 测试代理
-	* @param[in] type 代理类型，见NIMProxyType定义
-	* @param[in] host 代理地址
-	* @param[in] port 代理端口
-	* @param[in] user 代理用户名
+    * 测试代理   
+    * @param[in] type 代理类型，见NIMProxyType定义
+    * @param[in] host 代理地址
+    * @param[in] port 代理端口
+    * @param[in] user 代理用户名
 	* @param[in] password 代理密码
 	* @param[in] callback 回调函数
-	* @return void 无返回值
-	*/
+    * @return void 无返回值
+    */
 	static void DetectProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password, const Global::DetectProxyCallback& callback);
+#endif
 
 	/** @fn void nim_client_reg_kickout_other_client_cb(const char *json_extension, nim_json_transport_cb_func cb, const void *user_data)
 	* 注册输出sdk log回调

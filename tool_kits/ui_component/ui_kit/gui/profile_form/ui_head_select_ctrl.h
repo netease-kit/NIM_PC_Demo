@@ -24,7 +24,7 @@ public:
 	* 重写父类虚函数
 	* @return void	无返回值
 	*/
-	virtual void Paint(HDC hDC, const ui::UiRect& rcPaint) override; 
+	virtual void Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint) override;
 
 	/**
 	* 根据鼠标坐标返回鼠标指针样式

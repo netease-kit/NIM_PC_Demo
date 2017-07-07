@@ -23,15 +23,15 @@ BoardControl::~BoardControl(void)
 	ReleaseAllDrawUnits();
 }
 
-void BoardControl::Paint(HDC hDC, const UiRect& rcPaint)
+void BoardControl::Paint(IRenderContext* pRender, const UiRect& rcPaint)
 {
 	try
 	{
 		if( !::IntersectRect( &m_rcPaint, &rcPaint, &m_rcItem ) ) 
 			return;
-		Control::Paint(hDC, rcPaint);
+		Control::Paint(pRender, rcPaint);
 		//paint custom
-		DrawExtraUnits(hDC);
+		DrawExtraUnits(pRender->GetDC());
 
 		//绘制子控件
 		for (auto it = m_items.begin(); it != m_items.end(); it++)
@@ -40,7 +40,7 @@ void BoardControl::Paint(HDC hDC, const UiRect& rcPaint)
 			if (!pControl->IsVisible()) continue;
 			UiRect controlPos = pControl->GetPos();
 			if (!::IntersectRect(&m_rcPaint, &rcPaint, &controlPos)) continue;
-			pControl->AlphaPaint(hDC, rcPaint);
+			pControl->AlphaPaint(pRender, rcPaint);
 		}
 	}
 	catch (...)

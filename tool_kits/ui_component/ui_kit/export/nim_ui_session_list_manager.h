@@ -16,8 +16,7 @@ class NIM_UI_DLL_API SessionListManager : public nbase::SupportWeakCallback
 {
 public:
 	SINGLETON_DEFINE(SessionListManager);
-	SessionListManager(){};
-	~SessionListManager(){};
+
 public:
 	/**
 	* 把传入的列表控件作为最近会话列表控件，控制列表控件来展示最近会话
@@ -31,6 +30,13 @@ public:
 	* @return void 无返回值
 	*/
 	void InvokeLoadSessionList();
+
+	/**
+	* 从会话列表查找会话控件
+	* @param[in] session_id 会话id
+	* @return SessionItem* 会话控件的指针
+	*/
+	nim_comp::SessionItem* GetSessionItem(const std::string &session_id);
 
 	/**
 	* 主动向sdk查询未读的系统消息数
@@ -104,6 +110,8 @@ public:
 	void OnQuerySessionListCallback(const std::list<nim::SessionData>& sessions);
 
 private:
+	SessionListManager(){};
+	~SessionListManager(){};
 	std::unique_ptr<nim_comp::SessionList> session_list_;
 };
 

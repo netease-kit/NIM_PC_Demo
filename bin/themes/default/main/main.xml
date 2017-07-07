@@ -14,6 +14,7 @@
 					<Control bkimage="head_mask.png" mouse="false"/>
 				</Box>
                 <Label name="label_name" width="auto" maxwidth="180" margin="10,0,0,0" valign="center" normaltextcolor="white" font="7"/>
+                <Button name="btn_online_state" bkimage="..\menu\icon_online.png" margin="5,0,0,0" valign="center" tooltiptextid="STRID_MAINWINDOW_ONLINE_STATE" />
             </HBox>
         </VBox>
 

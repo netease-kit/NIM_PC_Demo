@@ -18,8 +18,6 @@ class NIM_UI_DLL_API ContactsListManager : public nbase::SupportWeakCallback
 {
 public:
 	SINGLETON_DEFINE(ContactsListManager);
-	ContactsListManager(){};
-	~ContactsListManager(){};
 
 public:
 	/**
@@ -59,6 +57,9 @@ private:
 	void OnGetAllFriendInfo(const std::list<nim::UserNameCard> &uinfos);
 	
 private:
+	ContactsListManager(){};
+	~ContactsListManager(){};
+
 	std::unique_ptr<nim_comp::FriendList> friend_list_;
 	std::unique_ptr<nim_comp::GroupList> group_list_;
 };

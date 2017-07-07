@@ -93,7 +93,7 @@ public:
 	void SetControl(Control* control) {	m_pControl = control; }
 	Image& operator[](ControlStateType stateType) {	return m_stateImageMap[stateType]; }
 
-	bool PaintStatusImage(HDC hDC, ControlStateType stateType, const std::wstring& sImageModify = L"");
+	bool PaintStatusImage(IRenderContext* pRender, ControlStateType stateType, const std::wstring& sImageModify = L"");
 	Image* GetEstimateImage();
 	void ClearCache();
 
@@ -112,7 +112,7 @@ public:
 	void SetImage(StateImageType stateImageType, ControlStateType stateType, const std::wstring& strImagePath);
 	std::wstring GetImagePath(StateImageType stateImageType, ControlStateType stateType);
 
-	bool PaintStatusImage(HDC hDC, StateImageType stateImageType, ControlStateType stateType, const std::wstring& sImageModify = L"");
+	bool PaintStatusImage(IRenderContext* pRender, StateImageType stateImageType, ControlStateType stateType, const std::wstring& sImageModify = L"");
 	Image* GetEstimateImage(StateImageType stateImageType);
 
 	void ClearCache();
@@ -129,7 +129,7 @@ public:
 	void SetControl(Control* control);
 	std::wstring& operator[](ControlStateType stateType) { return m_stateColorMap[stateType]; }
 
-	void PaintStatusColor(HDC hDC, UiRect rcPaint, ControlStateType stateType);
+	void PaintStatusColor(IRenderContext* pRender, UiRect rcPaint, ControlStateType stateType);
 
 private:
 	Control* m_pControl;

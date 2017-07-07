@@ -1,6 +1,6 @@
-﻿/** @file nim_cpp_cod_trans.h
+﻿/** @file nim_cpp_doc_trans.h
   * @brief NIM SDK提供的文档转换相关接口，其中文档上传下载,请使用nos接口nim_nos_upload_ex/nim_nos_download/nim_nos_download_ex
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author redrain
   * @date 2016/12/15
   */
@@ -12,14 +12,17 @@
 
 namespace nim
 {
-
+#ifdef NIM_SDK_DLL_IMPORT
 typedef	void (*nim_doctrans_reg_notify_cb)(const char *json_extension, nim_doctrans_opt_cb_func cb, const void *user_data);
 typedef	void (*nim_doctrans_get_info)(const char *id, const char *json_extension, nim_doctrans_opt_cb_func cb, const void *user_data);
 typedef	void (*nim_doctrans_get_info_list)(const char *id, int32_t limit, const char *json_extension, nim_doctrans_opt_cb_func cb, const void *user_data);
 typedef void (*nim_doctrans_del_info)(const char *id, const char *json_extension, nim_doctrans_opt_cb_func cb, const void *user_data);
 typedef char* (*nim_doctrans_get_source_file_url)(const char *url_prefix, NIMDocTranscodingFileType file_type);
 typedef char* (*nim_doctrans_get_page_url)(const char *url_prefix, NIMDocTranscodingImageType img_type, NIMDocTranscodingQuality quality, int32_t page_num);
-	
+#else
+#include "nim_doc_trans.h"
+#endif
+
 static void CallbackNotify(int32_t code, const char *json_extension, const void *user_data)
 {
 	DocTrans::DocInfoCallback* cb = (DocTrans::DocInfoCallback*)user_data;

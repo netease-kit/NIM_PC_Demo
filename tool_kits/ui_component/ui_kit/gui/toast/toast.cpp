@@ -89,7 +89,7 @@ void Toast::SetDuration(int duration)
 	if (duration <= 0)
 		return;
 	
-	nbase::ThreadManager::PostDelayedTask(kThreadUI, ToWeakCallback([this]()
+	nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, ToWeakCallback([this]()
 	{
 		this->Close();
 	}), nbase::TimeDelta::FromMilliseconds(duration));

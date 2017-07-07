@@ -5,6 +5,7 @@
 #include "module/login/login_manager.h"
 #include "module/session/session_manager.h"
 #include "module/session/force_push_manager.h"
+#include "module/subscribe_event/subscribe_event_manager.h"
 #include "module/service/user_service.h"
 #include "module/audio/audio_manager.h"
 #include "cef/cef_module/cef_manager.h"
@@ -16,9 +17,10 @@ namespace nim_comp
 {
 void _InitUserFolder()
 {
-	nbase::CreateDirectory( GetUserDataPath() );
-	nbase::CreateDirectory( GetUserImagePath() );
-	nbase::CreateDirectory( GetUserAudioPath() );
+	nbase::CreateDirectory(GetUserDataPath());
+	nbase::CreateDirectory(GetUserImagePath());
+	nbase::CreateDirectory(GetUserAudioPath());
+	nbase::CreateDirectory(GetUserOtherResPath());
 }
 
 void _InitLog()
@@ -38,7 +40,7 @@ void _LogRobot()
 	QLogImpl::GetInstance()->HalfTo(m2, m1);
 
 	StdClosure task = nbase::Bind(&_LogRobot);
-	nbase::ThreadManager::PostDelayedTask(kThreadGlobalMisc, task, nbase::TimeDelta::FromMinutes(10));
+	nbase::ThreadManager::PostDelayedTask(shared::kThreadGlobalMisc, task, nbase::TimeDelta::FromMinutes(10));
 }
 
 //登录之后的处理：比如读取数据
@@ -46,16 +48,16 @@ void _DoAfterLogin()
 {
 	QLOG_APP(L"-----{0} account login-----") << LoginManager::GetInstance()->GetAccount();
 
-	std::string res_audio_path = nbase::UTF16ToUTF8(GetUserDataPath());
-	bool ret = AudioManager::GetInstance()->InitAudio(res_audio_path);
+	bool ret = AudioManager::GetInstance()->InitAudio(GetUserDataPath());
 	assert(ret);
 
+	LoginManager::GetInstance()->CreateSingletonRunMutex();
 	TeamService::GetInstance()->QueryAllTeamInfo();
 
 	ForcePushManager::GetInstance()->Load();
 
 	StdClosure task = nbase::Bind(&_LogRobot);
-	nbase::ThreadManager::PostDelayedTask(kThreadGlobalMisc, task, nbase::TimeDelta::FromMinutes(1));
+	nbase::ThreadManager::PostDelayedTask(shared::kThreadGlobalMisc, task, nbase::TimeDelta::FromMinutes(1));
 }
 
 //退出程序前的处理：比如保存数据
@@ -277,6 +279,7 @@ void LoginCallback::OnKickoutCallback(const nim::KickoutRes& res)
 void LoginCallback::OnDisconnectCallback()
 {
 	QLOG_APP(L"OnDisconnectCallback");
+	LoginManager::GetInstance()->SetLinkActive(false);
 }
 
 void LoginCallback::OnReLoginCallback(const nim::LoginRes& login_res)

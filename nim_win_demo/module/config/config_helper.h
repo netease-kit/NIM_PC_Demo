@@ -48,12 +48,6 @@ private:
 	*/
 	void ReadConfig();
 
-	/**
-	* 保存配置信息
-	* @return void 无返回值
-	*/
-	void SaveConfig();
-
 private:
 	bool adapt_dpi_;
 	std::string language_;

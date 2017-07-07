@@ -16,8 +16,7 @@ class NIM_UI_DLL_API TeamManager
 {
 public:
 	SINGLETON_DEFINE(TeamManager);
-	TeamManager(){};
-	~TeamManager(){};
+
 public:
 	/**
 	* 注册增加群的回调(比如新加入群或者创建了群)
@@ -88,6 +87,10 @@ public:
 	* @return wstring 群名称
 	*/
 	std::wstring GetTeamName(const std::string& tid);
+
+private:
+	TeamManager(){};
+	~TeamManager(){};
 };
 
 }

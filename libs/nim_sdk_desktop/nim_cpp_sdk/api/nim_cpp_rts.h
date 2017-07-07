@@ -10,6 +10,8 @@
 
 #include <string>
 #include <functional>
+#include "nim_base_types.h"
+#include "nim_json_util.h"
 
 /**
 * @namespace nim
@@ -21,6 +23,58 @@ namespace nim
 #include "nim_rts_def.h"
 #include "nim_res_code_def.h"
 
+/** @brief 点对点白板发起的参数信息 */
+struct RtsStartInfo
+{
+	bool custom_video_;			/**< 是否用自主的视频数据 */
+	bool custom_audio_;			/**< 是否用自主的音频数据 */
+	bool data_record_;			/**< 是否需要服务器录制白板数据 */
+	bool audio_record_;			/**< 是否需要服务器录制音频数据 */
+	std::string apns_;			/**< 推送用的文本 */
+	std::string custom_info_;	/**< string 自定义数据，透传给被邀请方 */
+	bool push_enable_;			/**< 是否需要推送 */
+	bool need_badge_;			/**< 是否需要角标计数 */
+	bool need_nick_;			/**< 是否需要推送昵称 */
+	std::string payload_;		/**< JSON格式,推送payload */
+	std::string sound_;			/**< 推送声音 */
+	bool keepcalling_;			/**< 是否强制持续呼叫（对方离线也会呼叫） */
+	bool webrtc_;				/**< 是否支持webrtc互通（针对点对点中的音频通话） */
+
+	RtsStartInfo()
+	{
+		custom_video_ = false;
+		custom_audio_ = false;
+		data_record_ = false;
+		audio_record_ = false;
+		push_enable_ = true;
+		need_badge_ = true;
+		need_nick_ = true;
+		keepcalling_ = true;
+		webrtc_ = false;
+	}
+	std::string GetJsonStr()
+	{
+		std::string json;
+		Json::Value values_temp;
+		values_temp[nim::kNIMRtsVChatCustomAudio] = custom_audio_ ? 1 : 0;
+		values_temp[nim::kNIMRtsVChatCustomVideo] = custom_video_ ? 1 : 0;
+		values_temp[nim::kNIMRtsDataRecord] = data_record_ ? 1 : 0;
+		values_temp[nim::kNIMRtsAudioRecord] = audio_record_ ? 1 : 0;
+		values_temp[nim::kNIMRtsApnsText] = apns_;
+		values_temp[nim::kNIMRtsCreateCustomInfo] = custom_info_;
+		values_temp[nim::kNIMRtsPushEnable] = push_enable_ ? 1 : 0;
+		values_temp[nim::kNIMRtsNeedBadge] = need_badge_ ? 1 : 0;
+		values_temp[nim::kNIMRtsNeedFromNick] = need_nick_ ? 1 : 0;
+		values_temp[nim::kNIMRtsApnsPayload] = payload_;
+		values_temp[nim::kNIMRtsSound] = sound_;
+		values_temp[nim::kNIMRtsKeepCalling] = keepcalling_ ? 1 : 0;
+		values_temp[nim::kNIMRtsWebrtc] = webrtc_ ? 1 : 0;
+		Json::FastWriter fs;
+		json = fs.write(values_temp);
+		return json;
+	}
+};
+
 /** @class Rts
   * @brief NIM Rts提供的相关接口
   */
@@ -30,7 +84,7 @@ public:
 	typedef std::function<void(nim::NIMResCode res_code, const std::string& session_id, int channel_type, const std::string& uid)> StartChannelCallback;
 	typedef std::function<void(const std::string& session_id, int channel_type, const std::string& uid, const std::string& custom_info)> StartNotifyCallback;
 	typedef std::function<void(nim::NIMResCode res_code)> CreateConfCallback;
-	typedef std::function<void(nim::NIMResCode res_code, const std::string& session_id, __int64 channel_id, const std::string& custom_info)> JoinConfCallback;
+	typedef std::function<void(nim::NIMResCode res_code, const std::string& session_id, int64_t channel_id, const std::string& custom_info)> JoinConfCallback;
 	typedef std::function<void(nim::NIMResCode res_code, const std::string& session_id, int channel_type, bool accept)> AckCallback;
 	typedef std::function<void(const std::string& session_id, int channel_type, bool accept, const std::string& uid)> AckNotifyCallback;
 	typedef std::function<void(const std::string& session_id, int channel_type, bool accept)> SyncAckNotifyCallback;
@@ -47,10 +101,7 @@ public:
 	  * NIM 创建rts会话，传入的JSON参数定义见nim_rts_def.h    
 	  * @param[in] channel_type 通道类型 如要tcp+音视频，则channel_type=kNIMRtsChannelTypeTcp|kNIMRtsChannelTypeVchat，同时整个SDK只允许一个音视频通道存在（包括vchat）
 	  * @param[in] uid 对方帐号
-	  * @param[in] apns json_extension Json string 扩展
-	  * @param[in] custom_info json_extension Json string 扩展
-	  * @param[in] data_record 服务器白板数据录制标记
-	  * @param[in] audio_record 服务器音频数据录制标记
+	  * @param[in] info 发起参数
 	  * @param[in] cb 结果回调见nim_rts_def.h
 	  * @return void 无返回值
 	  * @note 错误码	200:成功
@@ -60,7 +111,7 @@ public:
 	  *				514:服务不可用 
 	  *				11001:无可送达的被叫方,主叫方可直接挂断		
 	  */ 
-	static void StartChannel(int channel_type, const std::string& uid, const std::string& apns, const std::string& custom_info, bool data_record, bool audio_record, const StartChannelCallback& cb);
+	static void StartChannel(int channel_type, const std::string& uid, RtsStartInfo info, const StartChannelCallback& cb);
 
 	/** @fn void SetStartNotifyCb(const StartNotifyCallback& cb)
 	  * NIM 设置收到会话邀请的通知的回调   

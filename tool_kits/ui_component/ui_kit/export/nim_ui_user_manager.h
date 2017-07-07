@@ -17,8 +17,7 @@ class NIM_UI_DLL_API UserManager
 {
 public:
 	SINGLETON_DEFINE(UserManager);
-	UserManager(){};
-	~UserManager(){};
+
 public:
 	/**
 	* 注册一个新账号
@@ -93,6 +92,11 @@ public:
 	* @return UnregisterCallback 反注册对象
 	*/
 	UnregisterCallback RegMiscUInfoChange(const OnUserInfoChangeCallback& callback);
+
+private:
+	UserManager(){};
+	~UserManager(){};
+
 };
 
 }

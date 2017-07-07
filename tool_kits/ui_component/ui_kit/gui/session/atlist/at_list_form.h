@@ -2,7 +2,7 @@
 #include "util/window_ex.h"
 #include "at_list_item.h"
 
-typedef std::function<void(const std::string& uid)> OnSelectAtItem;
+typedef std::function<void(const std::string& uid, bool is_robot)> OnSelectAtItem;
 
 namespace nim_comp
 {
@@ -18,11 +18,12 @@ class AtlistForm : public WindowEx
 public:
 	/**
 	* 构造函数
-	* @param[in] tid 群组id
+	* @param[in] session_id 会话ID
+	* @param[in] session_type 会话类型
 	* @param[in] cb 某项被选中的回调函数
 	* @return void	无返回值
 	*/
-	AtlistForm(std::string tid, OnSelectAtItem cb);
+	AtlistForm(std::string session_id, nim::NIMSessionType session_type, OnSelectAtItem cb);
 	virtual ~AtlistForm();
 
 	//覆盖虚函数
@@ -45,6 +46,13 @@ public:
 	void InitTeamMembers(const std::map<std::string, nim::TeamMemberProperty>& team_member_info_list);
 
 	/**
+	* 为@列表初始化机器人信息
+	* @param[in] infos 机器人信息
+	* @return void 无返回值
+	*/
+	void InitRobotInfos(const nim::RobotInfos &infos);
+
+	/**
 	* 根据关键字去显示或隐藏@列表项
 	* @param[in] search_key 关键字
 	* @param[in] match_visible true 只遍历列表中已经显示的项目（当匹配关键字增加时使用）,false 重新遍历所有项目（当匹配的关键字减少时使用）
@@ -57,7 +65,7 @@ public:
 	* @param[in] last_five 最后5个发言人
 	* @return void	无返回值
 	*/
-	void ShowAllItems(std::list<std::string> &last_five);
+	void ShowMemberItems(std::list<std::string> &last_five);
 
 	/**
 	* 重置@列表显示的位置，同时具有显示和刷新@列表的功能
@@ -111,7 +119,7 @@ private:
 	* @param[in] is_last_five 是否为最近发言人
 	* @return AtListItem* 列表项控件
 	*/
-	AtListItem* CreateAtListItem(const std::string& uid, bool is_last_five = false);
+	AtListItem* CreateAtListItem(const std::string& uid, bool is_last_five, bool is_robot);
 
 	/**
 	* 添加一个列表项控件到列表
@@ -120,7 +128,7 @@ private:
 	* @param[in] is_last_five 是否为最近发言人
 	* @return AtListItem* 列表项控件
 	*/
-	AtListItem* AddListItem(const std::string& uid, int index = -1, bool is_last_five = false);
+	AtListItem* AddListItem(const std::string& uid, int index, bool is_last_five, bool is_robot = false);
 
 	/**
 	* 移除一个列表项控件
@@ -224,10 +232,13 @@ public:
     static const LPCTSTR kClassName;
 
 private:
-    std::string	team_id_;
+    std::string	session_id_;
+	nim::NIMSessionType session_type_;
 
+	nim::RobotInfos robots_info_;
 	std::map<std::string, nim::TeamMemberProperty> team_member_info_list_;
-	ui::ListBox				*team_members_container_;
+	ui::ListBox				*robot_members_container_ = nullptr;
+	ui::ListBox				*team_members_container_ = nullptr;
 
 	std::list<std::string>	uid_last_five_;	//最近发消息的5个人（不包括自己）,最新发言的在列表最后
 

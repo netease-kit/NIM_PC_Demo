@@ -80,7 +80,7 @@ void RtsForm::InitWindow()
 	ShowHeader();
 
 	auto closure = nbase::Bind(&RtsForm::SendCurData, this);
-	nbase::ThreadManager::PostRepeatedTask(kThreadUI, closure, nbase::TimeDelta::FromMilliseconds(60));
+	nbase::ThreadManager::PostRepeatedTask(shared::kThreadUI, closure, nbase::TimeDelta::FromMilliseconds(60));
 
 	if (type_ & nim::kNIMRtsChannelTypeVchat)
 	{
@@ -366,11 +366,18 @@ void RtsForm::ShowStartUI(bool creater)
 	{
 		bool data_record = atoi(GetConfigValue("rts_record").c_str()) > 0;
 		bool audio_record = atoi(GetConfigValue("audio_record").c_str()) > 0;
+		bool webrtc = atoi(GetConfigValue("webrtc").c_str()) > 0;
+		nim::RtsStartInfo info;
+		info.apns_ = nbase::UTF16ToUTF8(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_INVITE_TEST"));
+		info.custom_info_ = "rts custom info";
+		info.data_record_ = data_record;
+		info.audio_record_ = audio_record;
+		info.webrtc_ = webrtc;
 		nim::Rts::StartChannelCallback cb = nbase::Bind(&RtsForm::OnStartRtsCb, this, session_id_, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
-		nim::Rts::StartChannel(type_, uid_, nbase::UTF16ToUTF8(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_INVITE_TEST")), "rts custom info", data_record, audio_record, cb);
+		nim::Rts::StartChannel(type_, uid_, info, cb);
 	}
 	auto closure = nbase::Bind(&RtsForm::NoActiveTimer, this);
-	nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(40));
+	nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, closure, nbase::TimeDelta::FromSeconds(40));
 }
 void RtsForm::StartResult(nim::NIMResCode code, std::string session_id)
 {
@@ -416,7 +423,7 @@ void RtsForm::DelayClose()
 	Box* ack_box = (Box*)FindControl(L"ack_box");
 	ack_box->SetVisible(false);
 	auto closure = nbase::Bind(&RtsForm::Close, this, IDOK);
-	nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(2));
+	nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, closure, nbase::TimeDelta::FromSeconds(2));
 }
 void RtsForm::NoActiveTimer()
 {
@@ -601,7 +608,7 @@ void RtsForm::OnControlNotify(const std::string& session_id, const std::string& 
 	ctrl_notify_->SetText(name + L": " + nbase::UTF8ToUTF16(text));
 	ctrl_notify_->SetVisible(true);
 	auto closure = nbase::Bind(&RtsForm::HideCtrlNotifyTip, this);
-	nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(3));
+	nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, closure, nbase::TimeDelta::FromSeconds(3));
 }
 
 void RtsForm::HideCtrlNotifyTip()

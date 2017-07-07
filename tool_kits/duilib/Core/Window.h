@@ -154,7 +154,7 @@ public:
 	// bContainShadow为false表示cx cy不包含阴影
 	void SetMinInfo(int cx, int cy, bool bContainShadow = false);
 	void SetMaxInfo(int cx, int cy, bool bContainShadow = false);
-	void SetInitSize(int cx, int cy, bool bContainShadow = false);	
+	void SetInitSize(int cx, int cy, bool bContainShadow = false, bool bNeedDpiScale = true);
 
 	// 窗口内部消息处理
 	bool AddPreMessageFilter(IUIMessageFilter* pFilter);
@@ -206,15 +206,13 @@ public:
 
 	// 绘制相关
 	HDC GetPaintDC() const;
+	IRenderContext* GetRenderContext() const;
 	void Invalidate(const UiRect& rcItem);
 	void Paint();
 	void SetAlpha(int nAlpha);
 
-	HBITMAP GetBackgroundBitmap();
-	LPBYTE GetBackgroundBits() const;
-
-	bool IsCanvasTransparent() const;
-	bool SelectCanvasTransparent(bool bCanvasTransparent);
+	bool IsRenderTransparent() const;
+	bool SetRenderTransparent(bool bCanvasTransparent);
 
 	virtual void OnInitLayout();
 
@@ -254,11 +252,8 @@ protected:
 	double m_heightPercent;
 
 	HDC m_hDcPaint;
-	HDC m_hDcOffset;
-	HBITMAP m_hBmpOffset;
-	LPBYTE m_pBmpOffsetBits;
+	std::unique_ptr<IRenderContext> m_renderContext;
 	bool m_bIsLayeredWindow;
-	bool m_bIsCanvasTransparent;
 	int m_nAlpha;
 	CPoint m_renderOffset;
 	bool m_bFirstLayout;

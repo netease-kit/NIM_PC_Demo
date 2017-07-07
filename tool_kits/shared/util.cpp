@@ -35,13 +35,22 @@ std::wstring QPath::GetLocalAppDataDir()
 	return nbase::UTF8ToUTF16(nim::Tool::GetLocalAppdataDir());
 }
 
-std::wstring QPath::GetNimAppDataDir()
+std::wstring QPath::GetNimAppDataDir(const std::wstring& app_data_dir)
 {
-	std::wstring dir = QPath::GetLocalAppDataDir();
+	std::wstring dir = nbase::win32::GetLocalAppDataDir();
+	if (app_data_dir.empty() || app_data_dir.find(L"\\") != std::wstring::npos)
+	{
+		dir.append(L"Netease");
+	}
+	else
+	{
+		dir.append(app_data_dir);
+	}
+
 #ifdef _DEBUG
-	dir.append(L"Netease\\NIM_Debug\\");
+	dir.append(L"\\NIM_Debug\\");
 #else
-	dir.append(L"Netease\\NIM\\");
+	dir.append(L"\\NIM\\");
 #endif
 
 	return dir;

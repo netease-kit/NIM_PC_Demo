@@ -136,15 +136,16 @@ struct ChatRoomInfo
 /** @brief 聊天室通知*/
 struct ChatRoomNotification
 {
-	NIMChatRoomNotificationId		id_;		/**< 通知类型 */
-	std::string						ext_;		/**< 上层开发自定义的事件通知扩展字段, 必须为可以解析为json的非格式化的字符串 */
-	std::string						operator_id_;/**< 操作者的账号accid */
-	std::string						operator_nick_;/**< 操作者的账号nick */
-	std::list<std::string>			target_nick_;/**< 被操作者的账号nick列表 */
-	std::list<std::string>			target_ids_; /**< 被操作者的accid列表 */
+	NIMChatRoomNotificationId		id_;			/**< 通知类型 */
+	std::string						ext_;			/**< 上层开发自定义的事件通知扩展字段, 必须为可以解析为json的非格式化的字符串 */
+	std::string						operator_id_;	/**< 操作者的账号accid */
+	std::string						operator_nick_;	/**< 操作者的账号nick */
+	std::list<std::string>			target_nick_;	/**< 被操作者的账号nick列表 */
+	std::list<std::string>			target_ids_;	/**< 被操作者的accid列表 */
 	int64_t							temp_mute_duration_; /**<当通知为临时禁言相关时有该值，禁言时代表本次禁言的时长(秒)，解禁时代表本次禁言剩余时长(秒); 当通知为聊天室进入事件，代表临时禁言时长(秒); 其他通知事件不带该数据*/
-	bool							muted_;		 /**< 当通知为聊天室进入事件才有，代表是否禁言状态 */
-	bool							temp_muted_; /**< 当通知为聊天室进入事件才有，代表是否临时禁言状态 */
+	bool							muted_;			/**< 当通知为聊天室进入事件才有，代表是否禁言状态 */
+	bool							temp_muted_;	/**< 当通知为聊天室进入事件才有，代表是否临时禁言状态 */
+	std::string						queue_change_;	/**< 当通知为聊天室队列变更事件才有，代表变更的内容 */
 
 	/** 构造函数 */
 	ChatRoomNotification() : temp_mute_duration_(0), muted_(false), temp_muted_(false) { }
@@ -172,6 +173,35 @@ struct ChatRoomNotification
 				temp_muted_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTempMutedFlag].asUInt() == 1;
 			temp_mute_duration_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyMemberInTempMutedDuration].asInt64();
 		}
+		if (id_ == kNIMChatRoomNotificationIdQueueChanged)
+		{
+			queue_change_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyQueueChange].asString();
+		}
+	}
+};
+
+/** @brief 聊天室队列通知内容*/
+struct ChatRoomQueueChangedNotification
+{
+	std::string		type_;		/**< 队列变更类型 OFFER, POLL, DROP*/
+	std::string		key_;		/**< 队列变更元素的Key*/
+	std::string		value_;		/**< 队列变更元素的Value*/
+
+	/** @fn void ParseFromNotification(const ChatRoomNotification& notification)
+	  * @brief 从聊天室通知中解析得到队列变更具体内容
+	  * @param[in] notification 聊天室通知
+	  * @return void 
+      */
+	void ParseFromNotification(const ChatRoomNotification& notification)
+	{
+		Json::Value values;
+		Json::Reader reader;
+		if (reader.parse(notification.queue_change_, values) && values.isObject())
+		{
+			type_ = values[kNIMChatRoomNotificationQueueChangedKeyType].asString();
+			key_ = values[kNIMChatRoomNotificationQueueChangedKeyKey].asString();
+			value_ = values[kNIMChatRoomNotificationQueueChangedKeyValue].asString();
+		}
 	}
 };
 
@@ -182,10 +212,12 @@ struct ChatRoomMessageSetting
 	std::string		ext_;						/**< 第三方扩展字段, 必须为可以解析为json的非格式化的字符串，长度限制4096 */
 	bool			anti_spam_enable_;			/**< 是否需要过易盾反垃圾 */
 	std::string		anti_spam_content_;			/**< (可选)开发者自定义的反垃圾字段,长度限制2048 */
+	bool			history_save_;				/**< (可选)是否存云端消息历史，默认存 */
 
 	/** 构造函数 */
 	ChatRoomMessageSetting() : resend_flag_(false)
-		, anti_spam_enable_(false){}
+		, anti_spam_enable_(false)
+		, history_save_(true){}
 
 	/** @fn void ToJsonValue(Json::Value& message) const
 	  * @brief 组装Json Value字符串
@@ -198,6 +230,7 @@ struct ChatRoomMessageSetting
 		message[kNIMChatRoomMsgKeyExt] = ext_;
 		message[kNIMChatRoomMsgKeyAntiSpamEnable] = anti_spam_enable_ ? 1 : 0;
 		message[kNIMChatRoomMsgKeyAntiSpamContent] = anti_spam_content_;
+		message[kNIMChatRoomMsgKeyHistorySave] = history_save_ ? 1 : 0;
 	}
 
 	/** @fn void ParseMessageSetting(const Json::Value& message)

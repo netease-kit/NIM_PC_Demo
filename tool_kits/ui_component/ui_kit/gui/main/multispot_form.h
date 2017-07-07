@@ -52,6 +52,6 @@ private:
 public:
 	static const LPCTSTR kClassName;
 private:
-	//ui::ListBox* dev_list_;
+	ui::ListBox* dev_list_;
 };
 }

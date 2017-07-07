@@ -20,8 +20,6 @@ public:
 	};
 
 	SINGLETON_DEFINE(ForcePushManager);
-	ForcePushManager(){};
-	~ForcePushManager(){};
 
 	/**
 	* 从本地数据库读取强推信息
@@ -73,6 +71,8 @@ public:
 	bool IsContainAtMeMsg(const std::string &session_id);
 
 private:
+	ForcePushManager() {};
+	~ForcePushManager() {};
 
 	std::map<std::string, std::vector<ForcePushInfo>> session_id_atme_;	// 会话是否包含未读的@me消息
 

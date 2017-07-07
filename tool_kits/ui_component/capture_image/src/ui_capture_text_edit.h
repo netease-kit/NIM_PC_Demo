@@ -12,13 +12,13 @@ public:
 	
 	void InitInfos();
 	virtual void HandleMessage(ui::EventArgs& event);
-	virtual void Paint(HDC hDC, const ui::UiRect& rcPaint) override; 
+	virtual void Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint) override;
 	ui::UiRect GetCaptureTextEditRect(){ return rc_valid_; }
 	void SetDotPenColor(DWORD color){ color_pen_ = color; }
 	void SetTextFinishedCallback(const StdClosure& cb) { text_finished_cb_ = cb; }
 
 private:
-	void DrawRect(HDC hdc);
+	void DrawRect(HDC hDC);
 
 private:
 	ui::UiRect		rc_valid_;			// 有效位置(窗口绘制的位置)

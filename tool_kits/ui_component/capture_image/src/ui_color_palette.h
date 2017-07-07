@@ -11,7 +11,7 @@ class CColorBlock : public ui::Option
 public:
 	CColorBlock();
 	virtual ~CColorBlock();
-	virtual void Paint(HDC hDC, const ui::UiRect& rcPaint) override;
+	virtual void Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint) override;
 	virtual void SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue) override;
 	DWORD GetColor() { return color_; };
 	std::wstring GetColorName() { return color_name_; }
@@ -34,7 +34,7 @@ public:
 	CBrushBlock();
 	virtual ~CBrushBlock();
 	virtual void HandleMessage(ui::EventArgs& event);
-	virtual void Paint(HDC hDC, const ui::UiRect& rcPaint) override;
+	virtual void Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint) override;
 	virtual void SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue) override;
 	int GetBrushWidth() { return brush_width_; };
 	int GetBrushWidth2() { return brush_width2_; };
@@ -43,7 +43,7 @@ private:
 	int brush_width_; // 画刷宽度
 	int brush_width2_; // 模糊区域直径
 	int brush_paint_width_;//显示的时候圆点直径
-	void DrawCircleBlock(HDC hdc, const ui::UiRect &rect);
+	void DrawCircleBlock(HDC hDc, const ui::UiRect &rect);
 	std::unique_ptr<Gdiplus::SolidBrush> brush_;
 };
 

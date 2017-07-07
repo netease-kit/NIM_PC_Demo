@@ -10,6 +10,7 @@
 	            <VBox margin="5,0,70,0" height="auto" valign="center">
 	                <Label name="label_title" width="stretch" mouse="false" font="2"/>
 	                <Label name="label_tid" margin="0,5,0,0" mouse="false" normaltextcolor="lightcolor"/>
+	                <Label name="label_online_state" margin="0,5,0,0" mouse="false" normaltextcolor="lightcolor"/>
 	            </VBox>
 	        </HBox>
 	        <VBox mouse="false">

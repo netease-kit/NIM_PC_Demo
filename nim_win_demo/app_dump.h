@@ -58,7 +58,7 @@ LONG WINAPI MyUnhandledExceptionFilter(EXCEPTION_POINTERS* exp)
 	nbase::Time::TimeStruct qt = nbase::Time::Now().ToTimeStruct(true);
 	std::wstring file = nbase::StringPrintf(L"%04d%02d%02d_%02d%02d%02d.dmp", 
 		qt.year_, qt.month_, qt.day_of_month_, qt.hour_, qt.minute_, qt.second_);
-	std::wstring dir = QPath::GetNimAppDataDir();
+	std::wstring dir = QPath::GetUserAppDataDir("");
 	dir.append(file);
 
 	WriteDump(exp, dir);

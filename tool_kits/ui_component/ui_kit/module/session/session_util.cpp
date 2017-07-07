@@ -36,6 +36,12 @@ bool IsBubbleRight(const nim::IMMessage &msg)
 {
 	if (LoginManager::GetInstance()->IsEqual(msg.sender_accid_))
 	{
+		if (msg.type_ == nim::kNIMMessageTypeRobot)
+		{
+			nim::IMBotRobot robot;
+			nim::Talk::ParseBotRobotMessageAttach(msg, robot);
+			return !robot.out_msg_;
+		}
 		if (msg.receiver_accid_ == msg.sender_accid_)//给自己的其他端的消息
 		{
 			//nim::kNIMClientTypePCWindows
@@ -348,7 +354,7 @@ void InsertImageToEdit(ui::RichEdit* edit, const std::wstring& image_src, bool l
 	{
 		Re_GetSel(text_service, start_char, end_char);
 		Re_SetSel(text_service, end_char, end_char);
-		ret = Re_InsertImage(text_service, InsertCustomItemErrorCallback(), image_src, loading);
+		ret = Re_InsertImage(text_service, InsertCustomItemErrorCallback(), image_src, L"", loading);
 
 		text_service->Release();
 	}

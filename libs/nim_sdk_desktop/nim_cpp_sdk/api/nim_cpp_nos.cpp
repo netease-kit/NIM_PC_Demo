@@ -1,7 +1,7 @@
 ﻿/** @file nim_cpp_nos.cpp
   * @brief NIM SDK提供的NOS云存储服务接口
-  * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
-  * @author towik, Oleg
+  * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
+  * @author towik, Oleg, Harrison
   * @date 2015/2/1
   */
 
@@ -11,9 +11,10 @@
 #include "nim_string_util.h"
 #include "nim_cpp_talk.h"
 #include "nim_cpp_win32_demo_helper.h"
+
 namespace nim
 {
-
+#ifdef NIM_SDK_DLL_IMPORT
 typedef void(*nim_nos_reg_download_cb)(nim_nos_download_cb_func cb, const void *user_data);
 typedef void(*nim_nos_reg_upload_cb)(nim_nos_upload_cb_func cb, const void *user_data);
 typedef void(*nim_nos_download_media)(const char *json_msg, nim_nos_download_cb_func callback_result, const void *download_user_data, nim_nos_download_prg_cb_func prg_cb, const void *prg_user_data);
@@ -21,8 +22,13 @@ typedef void(*nim_nos_download_media_ex)(const char *json_msg, const char *json_
 typedef void(*nim_nos_stop_download_media)(const char *json_msg);
 typedef void(*nim_nos_upload)(const char *local_file, nim_nos_upload_cb_func callback_result, const void *res_user_data, nim_nos_upload_prg_cb_func prg_cb, const void *prg_user_data);
 typedef void(*nim_nos_upload_ex)(const char *local_file, const char *json_extension, nim_nos_upload_cb_func callback_result, const void *res_user_data, nim_nos_upload_prg_cb_func prg_cb, const void *prg_user_data, nim_nos_upload_speed_cb_func speed_cb, const void *speed_user_data, nim_nos_upload_info_cb_func info_cb, const void *info_user_data);
+typedef void(*nim_nos_stop_upload_ex)(const char *task_id, const char *json_extension);
 typedef void(*nim_nos_download)(const char *nos_url, nim_nos_download_cb_func callback_result, const void *res_user_data, nim_nos_download_prg_cb_func prg_cb, const void *prg_user_data);
 typedef void(*nim_nos_download_ex)(const char *nos_url, const char *json_extension, nim_nos_download_cb_func callback_result, const void *res_user_data, nim_nos_download_prg_cb_func prg_cb, const void *prg_user_data, nim_nos_download_speed_cb_func speed_cb, const void *speed_user_data, nim_nos_download_info_cb_func info_cb, const void *info_user_data);
+typedef void(*nim_nos_stop_download_ex)(const char *task_id, const char *json_extension);
+#else
+#include "nim_nos.h"
+#endif
 
 struct UploadCallbackUserData
 {
@@ -153,7 +159,7 @@ static void CallbackProgressEx(int64_t completed_size, int64_t total_size, const
 		if (*cb)
 		{
 			ProgressData data;
-			ParseProgressData(json_extension, data);
+			ParseProgressData(PCharToString(json_extension), data);
 			PostTaskToUIThread(std::bind((*cb), completed_size, total_size, data));
 			//(*cb)(completed_size, total_size, data);
 		}
@@ -350,6 +356,12 @@ bool NOS::UploadResourceEx( const std::string& local_file, const std::string& js
 	return true;
 }
 
+bool NOS::StopUploadResourceEx(const std::string& task_id, const std::string& json_extension/* = ""*/)
+{
+	NIM_SDK_GET_FUNC(nim_nos_stop_upload_ex)(task_id.c_str(), json_extension.c_str());
+	return true;
+}
+
 bool NOS::DownloadResource( const std::string& nos_url, const DownloadMediaCallback& callback_result, const ProgressCallback& callback_progress /*= ProgressCallback()*/ )
 {
 	if (nos_url.empty())
@@ -401,6 +413,12 @@ bool NOS::DownloadResourceEx( const std::string& nos_url, const std::string& jso
 
 	NIM_SDK_GET_FUNC(nim_nos_download_ex)(nos_url.c_str(), json_extension.c_str(), &CallbackDownloadEx, callback_result_userdata, &CallbackProgressEx, callback_progress_pointer, &CallbackSpeed, callback_speed_pointer, &CallbackTransferInfo, callback_transfer_pointer);
 
+	return true;
+}
+
+bool NOS::StopDownloadResourceEx(const std::string& task_id, const std::string& json_extension/* = ""*/)
+{
+	NIM_SDK_GET_FUNC(nim_nos_stop_download_ex)(task_id.c_str(), json_extension.c_str());
 	return true;
 }
 

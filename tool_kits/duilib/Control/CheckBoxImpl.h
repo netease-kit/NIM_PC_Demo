@@ -64,33 +64,33 @@ void CheckBoxTemplate<InheritType>::SetAttribute(const std::wstring& strName, co
 }
 
 template<typename InheritType>
-void CheckBoxTemplate<InheritType>::PaintStatusColor(HDC hDC) 
+void CheckBoxTemplate<InheritType>::PaintStatusColor(IRenderContext* pRender)
 {
 	if (!IsSelected()) {
-		__super::PaintStatusColor(hDC);
+		__super::PaintStatusColor(pRender);
 		return;
 	}
 
-	m_selectedColorMap.PaintStatusColor(hDC, m_rcPaint, m_uButtonState);
+	m_selectedColorMap.PaintStatusColor(pRender, m_rcPaint, m_uButtonState);
 }
 
 template<typename InheritType>
-void CheckBoxTemplate<InheritType>::PaintStatusImage(HDC hDC)
+void CheckBoxTemplate<InheritType>::PaintStatusImage(IRenderContext* pRender)
 {
 	if (!IsSelected()) {
-		__super::PaintStatusImage(hDC);
+		__super::PaintStatusImage(pRender);
 		return;
 	}
 
-	m_imageMap.PaintStatusImage(hDC, kStateImageSelectedBk, m_uButtonState);
-	m_imageMap.PaintStatusImage(hDC, kStateImageSelectedFore, m_uButtonState);
+	m_imageMap.PaintStatusImage(pRender, kStateImageSelectedBk, m_uButtonState);
+	m_imageMap.PaintStatusImage(pRender, kStateImageSelectedFore, m_uButtonState);
 }
 
 template<typename InheritType>
-void CheckBoxTemplate<InheritType>::PaintText(HDC hDC)
+void CheckBoxTemplate<InheritType>::PaintText(IRenderContext* pRender)
 {
 	if (!IsSelected()) {
-		__super::PaintText(hDC);
+		__super::PaintText(pRender);
 		return;
 	}
 
@@ -104,8 +104,7 @@ void CheckBoxTemplate<InheritType>::PaintText(HDC hDC)
 	std::wstring newTextColor = m_dwSelectedTextColor.empty() ? m_textColorMap[kControlStateNormal] : m_dwSelectedTextColor;
 	DWORD dwTextColor = GlobalManager::GetTextColor(newTextColor);
 	DWORD dwDisabledTextColor = GlobalManager::GetTextColor(m_textColorMap[kControlStateDisabled]);
-	RenderEngine::DrawText(hDC, rc, GetText(), IsEnabled() ? dwTextColor : dwDisabledTextColor, \
-		m_iFont, m_uTextStyle);
+	pRender->DrawText(rc, GetText(), IsEnabled() ? dwTextColor : dwDisabledTextColor, m_iFont, m_uTextStyle);
 }
 
 template<typename InheritType>

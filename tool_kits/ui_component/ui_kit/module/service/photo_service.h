@@ -5,7 +5,9 @@
 enum PhotoType
 {
 	kUser,
+	kRobot,
 	kTeam,
+	kOther,
 };
 
 typedef std::function<void(PhotoType type, const std::string& id, const std::wstring &photo_path)> OnPhotoReadyCallback;
@@ -36,9 +38,10 @@ public:
 	/**
 	* 获取用户头像
 	* @param[in] accid 用户id
+	* @param[in] is_robot 该id是不是机器人
 	* @return wstring 头像的路径
 	*/
-	std::wstring GetUserPhoto(const std::string &accid);
+	std::wstring GetUserPhoto(const std::string &accid, bool is_robot = false);
 
 	/**
 	* 获取群组头像
@@ -57,6 +60,13 @@ public:
 	void DownloadUserPhoto(const nim::UserNameCard &info);
 
 	/**
+	* 获取机器人信息后，或者机器人信息修改后，下载机器人头像(不对外开放，提供给其他service调用)
+	* @param[in] info 要下载头像的机器人信息
+	* @return void	无返回值
+	*/
+	void DownloadRobotPhoto(const nim::RobotInfo &info);
+
+	/**
 	* 获取群信息后，或者群信息修改后，下载群头像(不对外开放，提供给其他service调用)
 	* @param[in] info 要下载头像的群信息
 	* @return void	无返回值
@@ -70,14 +80,15 @@ public:
 	*/
 	std::wstring GetPhotoDir(PhotoType type);
 
-private:
-
 	/**
 	* 检查某个头像图片是否完好
 	* @param[in] photo_path 头像文件路径
 	* @return bool true 完好，false 不完好
 	*/
 	bool CheckPhotoOK(std::wstring photo_path);
+
+private:
+
 
 	/**
 	* 检查某个url对应的头像图片在本地是否完好

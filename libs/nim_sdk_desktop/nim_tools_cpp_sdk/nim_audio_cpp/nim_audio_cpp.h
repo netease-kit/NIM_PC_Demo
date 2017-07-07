@@ -30,12 +30,12 @@ class Audio
 {
 
 public:
-	/** bool Init(const std::string& user_data_parent_path)
+	/** bool Init(const std::wstring& user_data_parent_path)
 	* NIM SDK 初始化语音模块
 	* @param[in] user_data_parent_path 缓存目录
 	* @return bool true 调用成功，false 调用失败
 	*/
-	static bool Init(const std::string& user_data_parent_path);
+	static bool Init(const std::wstring& user_data_parent_path);
 
 	/** void Cleanup()
 	* NIM SDK 卸载语音模块（只有在主程序关闭时才有必要调用此接口）
@@ -43,7 +43,7 @@ public:
 	*/
 	static void Cleanup();
 
-	/** bool PlayAudio(const char* file_path, const char* call_id, const char* res_id, nim_audio_type audio_format)
+	/** bool PlayAudio(const wchar_t* file_path, const char* call_id, const char* res_id, nim_audio_type audio_format)
 	* NIM SDK 播放,通过回调获取开始播放状态
 	* @param[in] file_path 播放文件绝对路径
 	* @param[in] call_id 用以定位资源的一级ID，可选
@@ -51,7 +51,7 @@ public:
 	* @param[in] audio_format 播放音频格式，AAC : 0， AMR : 1
 	* @return bool true 调用成功，false 调用失败
 	*/
-	static bool PlayAudio(const char* file_path, const char* call_id, const char* res_id, nim_audio_type audio_format);
+	static bool PlayAudio(const wchar_t* file_path, const char* call_id, const char* res_id, nim_audio_type audio_format);
 
 	/** bool StopPlayAudio()
 	* NIM SDK 停止播放,通过回调获取停止播放状态
@@ -80,7 +80,7 @@ public:
 	*/
 	static bool RegStartCaptureCb(nim_rescode_cb cb);
 
-	/** @fn bool nim_audio_stop_capture()
+	/** @fn bool RegStopCaptureCb()
 	* 注册录制语音结束回调
 	* @param[in] cb 回调函数 见nim_audio_def.h
 	* @return bool true 调用成功，false 调用失败
@@ -94,17 +94,16 @@ public:
 	*/
 	static bool RegCancelAudioCb(nim_rescode_cb cb);
 
-	/** @fn bool StartCapture(const char* call_id, const char* res_id, nim_audio_type audio_format = AAC, int volume = 180, int loudness = 0, const wchar_t* capture_device = nullptr)
+	/** @fn bool StartCapture(const char* call_id, const char* res_id, nim_audio_type audio_format = AAC, int volume = 180, const wchar_t* capture_device = nullptr)
 	* NIM SDK 录制语音
 	* @param[in] call_id 用以定位资源的一级ID，可选
 	* @param[in] res_id 用以定位资源的二级ID，可选
 	* @param[in] audio_format 音频格式，AAC : 0， AMR : 1
 	* @param[in] volume 音量(0 - 255, 默认180)
-	* @param[in] loudness 默认0
 	* @param[in] capture_device 采集设备
 	* @return bool true 调用成功，false 调用失败
 	*/
-	static bool StartCapture(const char* call_id, const char* res_id, nim_audio_type audio_format = AAC, int volume = 180, int loudness = 0, const wchar_t* capture_device = nullptr);
+	static bool StartCapture(const char* call_id, const char* res_id, nim_audio_type audio_format = AAC, int volume = 180, const wchar_t* capture_device = nullptr);
 
 	/** @fn bool StopCapture()
 	* NIM SDK 停止录制语音
@@ -112,11 +111,11 @@ public:
 	*/
 	static bool StopCapture();
 
-	/** @fn bool CancelAudio(const char* file_path)
+	/** @fn bool CancelAudio(const wchar_t* file_path)
 	* NIM SDK 取消录制并删除临时文件
 	* @return bool true 调用成功，false 调用失败
 	*/
-	static bool CancelAudio(const char* file_path);
+	static bool CancelAudio(const wchar_t* file_path);
 
 	/** @fn bool RegEnumCaptureDeviceCb(nim_enum_capture_device_cb cb)
 	* 注册枚举本地录音采集设备回调
