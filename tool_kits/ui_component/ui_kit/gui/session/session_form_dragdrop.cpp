@@ -84,6 +84,7 @@ HRESULT SessionForm::DragEnter(IDataObject * pDataObject, DWORD grfKeyState, POI
 		if (NULL != active_session_box_)
 		{
 			active_session_box_->DragEnter(pDataObject, grfKeyState, pt, pdwEffect);
+			ActiveWindow();
 		}
 	}
 	else

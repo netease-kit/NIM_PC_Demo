@@ -976,6 +976,15 @@ private:
 	void OnTeamRemove(const std::string& tid);
 
 	/**
+	* 入群的回调函数
+	* @param[in] tid 群id
+	* @param[in] tname 群名称
+	* @param[in] ttype 群类型
+	* @return void 无返回值
+	*/
+	void OnTeamAdd(const std::string& tid, const std::string& tname, nim::NIMTeamType ttype);
+
+	/**
 	* 判断用户类型是否可以显示在群成员中
 	* @param[in] user_type 用户信息
 	* @return void 无返回值

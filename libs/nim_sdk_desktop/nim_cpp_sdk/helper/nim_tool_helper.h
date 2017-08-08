@@ -12,6 +12,7 @@
 #include <string>
 #include "assert.h"
 #include "nim_base_types.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -19,9 +20,6 @@
 */
 namespace nim
 {
-
-#include "nim_res_code_def.h"
-
 /** @brief 语音信息，用于语音转文字 */
 struct AudioInfo
 {

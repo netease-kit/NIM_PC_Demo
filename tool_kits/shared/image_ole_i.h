@@ -4,7 +4,7 @@
 
 
  /* File created by MIDL compiler version 7.00.0555 */
-/* at Fri Feb 06 09:23:11 2015
+/* at Thu Jul 20 13:21:34 2017
  */
 /* Compiler settings for image_ole.idl:
     Oicf, W1, Zp8, env=Win32 (32b run), target_arch=X86 7.00.0555 
@@ -337,6 +337,9 @@ EXTERN_C const IID IID_IImageOle;
         virtual /* [id] */ HRESULT STDMETHODCALLTYPE GetScale( 
             LONG *scale) = 0;
         
+        virtual /* [id] */ HRESULT STDMETHODCALLTYPE LoadFromDescription( 
+            /* [in] */ BSTR des) = 0;
+        
     };
     
 #else 	/* C style interface */
@@ -461,6 +464,10 @@ EXTERN_C const IID IID_IImageOle;
             IImageOle * This,
             LONG *scale);
         
+        /* [id] */ HRESULT ( STDMETHODCALLTYPE *LoadFromDescription )( 
+            IImageOle * This,
+            /* [in] */ BSTR des);
+        
         END_INTERFACE
     } IImageOleVtbl;
 
@@ -550,6 +557,9 @@ EXTERN_C const IID IID_IImageOle;
 
 #define IImageOle_GetScale(This,scale)	\
     ( (This)->lpVtbl -> GetScale(This,scale) ) 
+
+#define IImageOle_LoadFromDescription(This,des)	\
+    ( (This)->lpVtbl -> LoadFromDescription(This,des) ) 
 
 #endif /* COBJMACROS */
 

@@ -12,6 +12,7 @@
 #include <list>
 #include <functional>
 #include "json.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -19,10 +20,6 @@
 */
 namespace nim
 {
-
-#include "nim_res_code_def.h"
-#include "nim_session_def.h"
-#include "nim_msglog_def.h"
 
 /** @brief 发送消息回执 */
 struct SendMessageArc

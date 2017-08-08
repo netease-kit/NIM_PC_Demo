@@ -1,5 +1,5 @@
-/** @file nim_robot_def.h
-  * @brief NIM SDK robotÏà¹ØµÄ¶¨Òå
+ï»¿/** @file nim_robot_def.h
+  * @brief NIM SDK robotç›¸å…³çš„å®šä¹‰
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2017/06/24
@@ -12,34 +12,34 @@ extern"C"
 {
 #endif
 
-/** @name »úÆ÷ÈËĞÅÏ¢ Json Keys
-* Àı×Ó  { "accid" : "", "create_timetag" : 1430101821372, "icon" : "", "intro":"", "name" : "", "update_timetag" : 1430101821372, "rid":"" }
+/** @name æœºå™¨äººä¿¡æ¯ Json Keys
+* ä¾‹å­  { "accid" : "", "create_timetag" : 1430101821372, "icon" : "", "intro":"", "name" : "", "update_timetag" : 1430101821372, "rid":"" }
   * @{
   */
-//Ğ­Òé¶¨Òå
-static const char *kNIMRobotInfoKeyAccid	= "accid";	/**< string ÕÊºÅ*/
-static const char *kNIMRobotInfoKeyName		= "name";	/**< string Ãû×Ö*/
-static const char *kNIMRobotInfoKeyIcon		= "icon";	/**< string Í·Ïñ*/
-static const char *kNIMRobotInfoKeyIntro	= "intro";	/**< string ½éÉÜ*/
-static const char *kNIMRobotInfoKeyRobotId	= "rid";	/**< string »úÆ÷ÈËID*/
-static const char *kNIMRobotInfoKeyCreateTime	= "create_timetag";	/**< long ´´½¨Ê±¼ä´Á ºÁÃë*/
-static const char *kNIMRobotInfoKeyUpdateTime	= "update_timetag";	/**< long ¸üĞÂÊ±¼ä´Á ºÁÃë*/
-/** @}*/ //»úÆ÷ÈËĞÅÏ¢ Json Keys
+//åè®®å®šä¹‰
+static const char *kNIMRobotInfoKeyAccid	= "accid";	/**< string å¸å·*/
+static const char *kNIMRobotInfoKeyName		= "name";	/**< string åå­—*/
+static const char *kNIMRobotInfoKeyIcon		= "icon";	/**< string å¤´åƒ*/
+static const char *kNIMRobotInfoKeyIntro	= "intro";	/**< string ä»‹ç»*/
+static const char *kNIMRobotInfoKeyRobotId	= "rid";	/**< string æœºå™¨äººID*/
+static const char *kNIMRobotInfoKeyCreateTime	= "create_timetag";	/**< long åˆ›å»ºæ—¶é—´æˆ³ æ¯«ç§’*/
+static const char *kNIMRobotInfoKeyUpdateTime	= "update_timetag";	/**< long æ›´æ–°æ—¶é—´æˆ³ æ¯«ç§’*/
+/** @}*/ //æœºå™¨äººä¿¡æ¯ Json Keys
 
 /** @enum NIMRobotInfoChangeType*/
 enum NIMRobotInfoChangeType
 {
-	kNIMRobotInfoChangeTypeAll      = 0,			/**< È«Á¿¸üĞÂ*/
+	kNIMRobotInfoChangeTypeAll      = 0,			/**< å…¨é‡æ›´æ–°*/
 };
 
 /** @typedef void (*nim_robot_change_cb_func)(int rescode, NIMRobotInfoChangeType type, const char *result, const char *json_extension, const void *user_data)
-  * »úÆ÷ÈË±ä¸üµÄÍ¨Öªº¯Êı¶¨Òå
-  * @param[out] rescode			´íÎóÂë,200:Ò»ÇĞÕı³£
-  * @param[out] type			¸üĞÂÀàĞÍ 0£ºÈ«Á¿¸üĞÂ
-  * @param[out] result			»úÆ÷ÈËĞÅÏ¢ Json string array
-  * @param[out] json_extension	jsonÀ©Õ¹Êı¾İ£¨±¸ÓÃ£©
-  * @param[out] user_data		APPµÄ×Ô¶¨ÒåÓÃ»§Êı¾İ£¬SDKÖ»¸ºÔğ´«»Ø¸ø»Øµ÷º¯Êı£¬²»×öÈÎºÎ´¦Àí£¡
-  * @return void ÎŞ·µ»ØÖµ
+  * æœºå™¨äººå˜æ›´çš„é€šçŸ¥å‡½æ•°å®šä¹‰
+  * @param[out] rescode			é”™è¯¯ç ,200:ä¸€åˆ‡æ­£å¸¸
+  * @param[out] type			æ›´æ–°ç±»å‹ 0ï¼šå…¨é‡æ›´æ–°
+  * @param[out] result			æœºå™¨äººä¿¡æ¯ Json string array
+  * @param[out] json_extension	jsonæ‰©å±•æ•°æ®ï¼ˆå¤‡ç”¨ï¼‰
+  * @param[out] user_data		APPçš„è‡ªå®šä¹‰ç”¨æˆ·æ•°æ®ï¼ŒSDKåªè´Ÿè´£ä¼ å›ç»™å›è°ƒå‡½æ•°ï¼Œä¸åšä»»ä½•å¤„ç†ï¼
+  * @return void æ— è¿”å›å€¼
   */
 typedef void (*nim_robot_change_cb_func)(int rescode, NIMRobotInfoChangeType type, const char *result, const char *json_extension, const void *user_data);
 

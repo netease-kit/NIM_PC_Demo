@@ -20,9 +20,6 @@
 namespace nim
 {
 
-#include "nim_nos_def.h"
-#include "nim_sysmsg_def.h"
-
 /** @class Talk
   * @brief 聊天功能；主要包括发送消息、接收消息等功能
   */

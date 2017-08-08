@@ -167,6 +167,97 @@ bool Re_InsertCustomItem(ITextServices *text_service, InsertCustomItemErrorCallb
 
 	return hr == S_OK;
 }
+
+bool Re_InsertDescriptionItem(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& description
+	, const std::wstring& face_tag, int ole_type, COLORREF clrBg/* = RGB(255, 255, 255)*/, LONG cp/* = REO_CP_SELECTION*/)
+{
+	if (ole_type >= RE_OLE_TYPE_CUSTOM && Re_GetCustomImageOleCount(text_service) >= MAX_CUSTOM_ITEM_NUM)
+	{
+		if( callback )
+		{
+			Post2UI(callback);
+		}
+		return false;
+	}
+	if (text_service == NULL)
+		return false;
+
+	//m_RichEdit为您的RichEdit对象
+	IRichEditOle* lpRichEditOle = Re_GetOleInterface(text_service);
+
+	if (lpRichEditOle == NULL)
+		return false;
+
+	//OLE对象
+	IOleObject*  lpOleObject = NULL;
+	IOleClientSite* lpOleClientSite = NULL; 
+	CComPtr<IImageOle> image_ole;
+	CLSID   clsid;
+	REOBJECT  reobject;
+	HRESULT   hr = S_FALSE;
+	do 
+	{
+		{
+			if (!CreateImageObject((LPVOID*)&image_ole))
+				break;
+		}
+
+		//获得数据对象接口
+		hr = image_ole->QueryInterface(IID_IOleObject, (void**)&lpOleObject);
+		if (hr != S_OK)
+			break;
+
+		hr = lpOleObject->GetUserClassID(&clsid);
+		if (hr != S_OK)
+			break;
+
+		hr = lpRichEditOle->GetClientSite(&lpOleClientSite);
+		if (hr != S_OK)
+			break;
+
+		//初始化一个对象
+		ZeroMemory(&reobject, sizeof(REOBJECT));
+		reobject.cbStruct = sizeof(REOBJECT);
+		reobject.clsid = clsid;
+		reobject.cp = cp;
+		reobject.dvaspect = DVASPECT_CONTENT;
+		reobject.dwFlags = REO_BELOWBASELINE;
+		reobject.poleobj = lpOleObject;
+		reobject.polesite = lpOleClientSite;
+		reobject.pstg = NULL;// lpStorage;
+
+		lpOleObject->SetClientSite(lpOleClientSite);
+// 		std::wstring image_path = file;
+		image_ole->SetFaceTag((BSTR)(face_tag.c_str()));
+		image_ole->SetFaceIndex(ole_type);
+// 		image_ole->SetFaceId(face_id);
+
+		OSVERSIONINFO os = { sizeof(OSVERSIONINFO) };
+		::GetVersionEx(&os);
+		std::wstring fontName = os.dwMajorVersion >= 6 ? L"微软雅黑" : L"新宋体";
+		image_ole->SetFont((BSTR)(fontName.c_str()), 20, RGB(35, 142, 250));
+		image_ole->SetBgColor(clrBg);
+
+//		image_ole->SetScaleSize(scale, scale_width, scale_height);
+		image_ole->LoadFromDescription((BSTR)(description.c_str()));
+		std::wstring guid = nbase::UTF8ToUTF16(QString::GetGUID());
+		image_ole->SetGUID((BSTR)guid.c_str());
+		OleSetContainedObject(lpOleObject, TRUE);
+
+		hr = lpRichEditOle->InsertObject(&reobject);
+
+	} while (0);
+
+	if( lpOleObject  != NULL )
+		lpOleObject->Release();
+	if( lpOleClientSite != NULL )
+		lpOleClientSite->Release();
+
+	lpRichEditOle->Release();
+
+	return hr == S_OK;
+}
+
 bool Re_InsertFace(ITextServices *text_service, const std::wstring& file, const std::wstring& face_tag)
 {
 	int emoji_size = EMOJI_SIZE;
@@ -978,6 +1069,78 @@ RE_OLE_ITEM_CONTENT Re_CustomImageOleHitTest(ITextServices * text_service, POINT
 
 	return ret;
 }
+
+int Re_RemoveCustomItem(ITextServices * text_service, const std::wstring& face_tag)
+{
+	int ret = 0;
+	REOBJECT reobject;
+	IRichEditOle * pRichEditOle = Re_GetOleInterface(text_service);
+	if (NULL == pRichEditOle)
+		return ret;
+
+	CHARRANGE chrg = { 0, Re_GetTextLength(text_service) };
+
+	for (LONG i = 0; i < chrg.cpMax; i++)
+	{
+		memset(&reobject, 0, sizeof(REOBJECT));
+		reobject.cbStruct = sizeof(REOBJECT);
+		reobject.cp = i;
+		HRESULT hr = pRichEditOle->GetObject(REO_IOB_USE_CP, &reobject, REO_GETOBJ_POLEOBJ);
+		if (SUCCEEDED(hr))
+		{
+			i = reobject.cp;
+
+			if (NULL == reobject.poleobj)
+				continue;
+			bool find = false;
+			std::wstring image_tag;
+			if (CLSID_ImageOle == reobject.clsid)
+			{
+				IImageOle * pImageOle = NULL;
+				hr = reobject.poleobj->QueryInterface(__uuidof(IImageOle), (void**)&pImageOle);
+				if (SUCCEEDED(hr))
+				{
+					long nImageIndex;
+					pImageOle->GetFaceIndex(&nImageIndex);
+					if (nImageIndex == RE_OLE_TYPE_IMAGELOADING)
+					{
+						wchar_t* image_info;
+						pImageOle->GetFaceTag(&image_info);
+						image_tag = image_info;
+						if (image_tag == face_tag)
+						{
+							find = true;
+							++ret;
+						}
+					}
+					if (pImageOle)
+					{
+						pImageOle->Release();
+					}
+				}
+			}
+			reobject.poleobj->Release();
+			if (find)
+			{
+				long start_char = 0, end_char = 0;
+				Re_GetSel(text_service, start_char, end_char);
+				Re_SetSel(text_service, i, i + 1);
+				Re_ReplaceSel(text_service, L"");
+				{
+					if (i < start_char)
+						start_char--;
+					if (i < end_char)
+						end_char--;
+				}
+				Re_SetSel(text_service, start_char, end_char);
+			}
+		}
+	}
+	pRichEditOle->Release();
+
+	return ret;
+}
+
 int Re_ImageLoadingFinish(ITextServices * text_service, const std::wstring& file_path, bool succeed)
 {
 	int ret = 0;
@@ -1053,6 +1216,7 @@ int Re_ImageLoadingFinish(ITextServices * text_service, const std::wstring& file
 
 	return ret;
 }
+
 void Re_RemoveCustomItem(ITextServices * text_service)
 {
 	REOBJECT reobject;

@@ -62,5 +62,8 @@
     <ClInclude Include="third_party\convert_utf\convert_utf.h">
       <Filter>third_party\convert_utf</Filter>
     </ClInclude>
+    <ClInclude Include="util\nim_chatroom_sdk_defines.h">
+      <Filter>util</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

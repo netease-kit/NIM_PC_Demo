@@ -10,6 +10,7 @@
 
 #include <string>
 #include <functional>
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -18,7 +19,7 @@
 namespace nim
 {
 
-#include "nim_plugin_in_def.h"
+
 /** @class PluginIn
   * @brief NIM SDK 提供的plugin接入接口类
   */

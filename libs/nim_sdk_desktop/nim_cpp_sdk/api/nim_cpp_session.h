@@ -19,10 +19,6 @@
 namespace nim
 {
 
-#include "nim_session_def.h"
-#include "nim_res_code_def.h"
-#include "nim_msglog_def.h"
-
 /** @class Session
   * @brief 会话列表管理功能；主要包括查询会话列表、删除会话列表等功能
   */

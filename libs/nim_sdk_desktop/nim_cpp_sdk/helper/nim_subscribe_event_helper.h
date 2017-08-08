@@ -14,6 +14,7 @@
 #include <functional>
 #include "json.h"
 #include "nim_json_util.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -21,9 +22,6 @@
 */
 namespace nim
 {
-#include "nim_client_def.h"
-#include "nim_subscribe_event_def.h"
-
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
 /** @brief 事件数据 */

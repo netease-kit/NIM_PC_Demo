@@ -14,6 +14,7 @@
 #include "json.h"
 #include "nim_json_util.h"
 #include "nim_base_types.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -21,9 +22,6 @@
 */
 namespace nim
 {
-
-#include "nim_robot_def.h"
-
 /** @brief 机器人信息 */
 struct RobotInfo
 {

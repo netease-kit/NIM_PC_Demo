@@ -77,8 +77,7 @@ ui::CSize MsgBubbleText::EstimateSize(ui::CSize szAvailable)
 bool MsgBubbleText::OnMenu( ui::EventArgs* arg )
 {
 	bool can_recall = !IsNetCallMsg(msg_.type_, msg_.attach_);
-	bool can_retweet = msg_.type_ != nim::kNIMMessageTypeNotification;
-
+	bool can_retweet = msg_.type_ != nim::kNIMMessageTypeNotification && msg_.type_ != nim::kNIMMessageTypeRobot;
 	PopupMenu(true, can_recall, can_retweet);
 	return false;
 }

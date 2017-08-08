@@ -2,6 +2,7 @@
 #include "callback/multiport/multiport_push_callback.h"
 #include "module/session/session_manager.h"
 #include "module/service/mute_black_service.h"
+#include "module/video/video_manager.h"
 #include "head_modify_form.h"
 #include "api/nim_cpp_friend.h"
 #include "callback/team/team_callback.h"
@@ -126,6 +127,7 @@ void ProfileForm::InitWindow()
 	sex_icon = static_cast<ui::CheckBox*>(FindControl(L"sex_icon"));
 
 	multi_push_switch = static_cast<ui::CheckBox*>(FindControl(L"multi_push_switch"));
+	webrtc_setting_ = static_cast<ui::CheckBox*>(FindControl(L"webrtc_setting"));
 	notify_switch = static_cast<ui::CheckBox*>(FindControl(L"notify_switch"));
 	black_switch = static_cast<ui::CheckBox*>(FindControl(L"black_switch"));
 	mute_switch = static_cast<ui::CheckBox*>(FindControl(L"mute_switch"));
@@ -240,6 +242,9 @@ void ProfileForm::InitUserInfo(const nim::UserNameCard &info)
 
 		multi_push_switch->AttachSelect(nbase::Bind(&ProfileForm::OnMultiPushSwitchSelected, this, std::placeholders::_1));
 		multi_push_switch->AttachUnSelect(nbase::Bind(&ProfileForm::OnMultiPushSwitchUnSelected, this, std::placeholders::_1));
+		webrtc_setting_->Selected(nim_comp::VideoManager::GetInstance()->GetWebrtc(), false);
+		webrtc_setting_->AttachSelect(nbase::Bind(&ProfileForm::OnWebRtcSelected, this, std::placeholders::_1));
+		webrtc_setting_->AttachUnSelect(nbase::Bind(&ProfileForm::OnWebRtcUnSelected, this, std::placeholders::_1));
 	}
 	else
 	{
@@ -339,6 +344,17 @@ bool ProfileForm::OnMultiPushSwitchSelected(ui::EventArgs* args)
 bool ProfileForm::OnMultiPushSwitchUnSelected(ui::EventArgs* args)
 {
 	nim::Client::SetMultiportPushConfigAsync(false, &MultiportPushCallback::OnMultiportPushConfigChange);
+	return true;
+}
+bool ProfileForm::OnWebRtcSelected(ui::EventArgs* args)
+{
+	nim_comp::VideoManager::GetInstance()->SetWebrtc(true);
+	return true;
+}
+
+bool ProfileForm::OnWebRtcUnSelected(ui::EventArgs* args)
+{
+	nim_comp::VideoManager::GetInstance()->SetWebrtc(false);
 	return true;
 }
 

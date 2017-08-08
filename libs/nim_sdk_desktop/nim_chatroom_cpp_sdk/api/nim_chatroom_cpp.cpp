@@ -40,6 +40,7 @@ typedef void(*nim_chatroom_update_my_role_async)(const int64_t room_id, const ch
 typedef void(*nim_chatroom_queue_offer_async)(const int64_t room_id, const char *element_key, const char *element_value, const char *json_extension, nim_chatroom_queue_offer_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_queue_poll_async)(const int64_t room_id, const char *element_key, const char *json_extension, nim_chatroom_queue_poll_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_queue_list_async)(const int64_t room_id, const char *json_extension, nim_chatroom_queue_list_cb_func cb, const void *user_data);
+typedef void(*nim_chatroom_queue_header_async)(const int64_t room_id, const char *json_extension, nim_chatroom_queue_header_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_queue_drop_async)(const int64_t room_id, const char *json_extension, nim_chatroom_queue_drop_cb_func cb, const void *user_data);
 #else
 #include "nim_chatroom.h"
@@ -659,6 +660,28 @@ static void CallbackQueueList(int64_t room_id, int error_code, const char *resul
 	}
 }
 
+static void CallbackQueueHeader(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		ChatRoom::QueueHeaderCallback *cb = (ChatRoom::QueueHeaderCallback*)user_data;
+		if (*cb)
+		{
+			Json::Value value;
+			Json::Reader reader;
+			if (reader.parse(PCharToString(result), value) && value.isObject())
+			{
+				ChatRoomQueueElement element;
+				element.key_ = value[kNIMChatRoomQueueElementKey].asString();
+				element.value_ = value[kNIMChatRoomQueueElementValue].asString();
+				(*cb)(room_id, error_code, element);
+				return;
+			}
+			(*cb)(room_id, error_code, ChatRoomQueueElement());
+		}
+	}
+}
+
 void ChatRoom::QueuePollAsync(const int64_t room_id
 	, const std::string& element_key
 	, const QueuePollCallback& callback
@@ -686,6 +709,20 @@ void ChatRoom::QueueListAsync(const int64_t room_id
 	return NIM_SDK_GET_FUNC(nim_chatroom_queue_list_async)(room_id, 
 		json_extension.c_str(),
 		&CallbackQueueList,
+		cb_pointer);
+}
+
+void ChatRoom::QueueHeaderAsync(const int64_t room_id
+	, const QueueHeaderCallback& callback
+	, const std::string &json_extension/* = ""*/)
+{
+	QueueHeaderCallback* cb_pointer = nullptr;
+	if (callback)
+		cb_pointer = new QueueHeaderCallback(callback);
+
+	return NIM_SDK_GET_FUNC(nim_chatroom_queue_header_async)(room_id, 
+		json_extension.c_str(),
+		&CallbackQueueHeader,
 		cb_pointer);
 }
 

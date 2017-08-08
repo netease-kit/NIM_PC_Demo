@@ -14,6 +14,7 @@
 #include "json.h"
 #include "nim_json_util.h"
 #include "nim_base_types.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -21,9 +22,6 @@
 */
 namespace nim
 {
-
-#include "nim_friend_def.h"
-
 /** @enum 云信好友数据标记Key,用以标记对应数据的有效性 */
 enum FriendProfileKey
 {

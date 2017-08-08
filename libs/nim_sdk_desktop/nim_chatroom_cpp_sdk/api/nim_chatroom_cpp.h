@@ -18,9 +18,6 @@
 */
 namespace nim_chatroom
 {
-
-#include "nim_chatroom_def.h"
-
 /** @class ChatRoom
   * @brief 聊天室
   */
@@ -42,9 +39,10 @@ public:
 	typedef KickMemberCallback UpdateRoomInfoCallback; /**< 更新聊天室信息回调*/
 	typedef KickMemberCallback UpdateMyRoomRoleCallback; /**< 更新我的信息回调*/
 	typedef KickMemberCallback QueueOfferCallback; /**< 新加(更新)麦序队列元素回调*/
-	typedef std::function<void(int64_t room_id, int error_code, const ChatRoomQueueElement& element)> QueuePollCallback; /**< 取出麦序队列头元素回调*/
+	typedef std::function<void(int64_t room_id, int error_code, const ChatRoomQueueElement& element)> QueuePollCallback; /**< 取出麦序队列元素回调*/
 	typedef std::function<void(int64_t room_id, int error_code, const ChatRoomQueue& queue)> QueueListCallback; /**< 排序列出麦序队列所有元素回调*/
 	typedef KickMemberCallback QueueDropCallback; /**< 删除麦序队列元素回调*/
+	typedef QueuePollCallback QueueHeaderCallback; /**< 查看麦序队列头元素回调*/
 
 public:
 /** @fn void RegEnterCb(const EnterCallback& cb, const std::string& json_extension = "")
@@ -307,7 +305,7 @@ static void UpdateMyRoomRoleAsync(const int64_t room_id
 	, const std::string &json_extension = "");
 
 /** @fn static void QueueOfferAsync(const int64_t room_id, const ChatRoomQueueElement& element, const QueueOfferCallback& callback, const std::string &json_extension = "");
-  * (管理员权限)新加(更新)麦序队列元素，如果element.key_对应的元素已经在队列中存在了，那就是更新操作，如果不存在，就放到队列尾部
+  * 新加(更新)麦序队列元素，如果element.key_对应的元素已经在队列中存在了，那就是更新操作，如果不存在，就放到队列尾部
   * @param[in] room_id				聊天室ID
   * @param[in] element				麦序队列元素
   * @param[in] callback				回调函数
@@ -320,7 +318,7 @@ static void QueueOfferAsync(const int64_t room_id
 	, const std::string &json_extension = "");
 
 /** @fn static void QueuePollAsync(const int64_t room_id, const std::string& element_key, const QueuePollCallback& callback, const std::string &json_extension = "");
-  * (管理员权限)取出麦序头元素
+  * 取出麦序元素
   * @param[in] room_id				聊天室ID
   * @param[in] element_key			需要取出的元素的UniqKey, 传空传表示取出第一个元素
   * @param[in] callback				回调函数
@@ -341,6 +339,17 @@ static void QueuePollAsync(const int64_t room_id
   */
 static void QueueListAsync(const int64_t room_id
 	, const QueueListCallback& callback
+	, const std::string &json_extension = "");
+
+/** @fn static void QueueHeaderAsync(const int64_t room_id, const QueueHeaderCallback& callback, const std::string &json_extension = "");
+  * 查看麦序头元素
+  * @param[in] room_id				聊天室ID
+  * @param[in] callback				回调函数
+  * @param[in] json_extension		json扩展参数（备用，目前不需要）
+  * @return void 无返回值
+  */
+static void QueueHeaderAsync(const int64_t room_id
+	, const QueueHeaderCallback& callback
 	, const std::string &json_extension = "");
 
 /** @fn static void QueueDropAsync(const int64_t room_id, const QueueDropCallback& callback, const std::string &json_extension = "");

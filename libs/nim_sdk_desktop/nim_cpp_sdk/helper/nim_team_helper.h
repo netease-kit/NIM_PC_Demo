@@ -14,6 +14,7 @@
 #include "json.h"
 #include "nim_sdk_util.h"
 #include "nim_user_helper.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -21,11 +22,6 @@
 */
 namespace nim
 {
-
-#include "nim_team_def.h"
-#include "nim_msglog_def.h"
-#include "nim_res_code_def.h"
-
 /** @brief 群组信息 */
 struct TeamInfo
 {

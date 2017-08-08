@@ -172,6 +172,7 @@
   <ItemGroup>
     <ClCompile Include="api\nim_cpp_client.cpp" />
     <ClCompile Include="api\nim_cpp_data_sync.cpp" />
+    <ClCompile Include="api\nim_cpp_doc_trans.cpp" />
     <ClCompile Include="api\nim_cpp_friend.cpp" />
     <ClCompile Include="api\nim_cpp_global.cpp" />
     <ClCompile Include="api\nim_cpp_msglog.cpp" />
@@ -209,6 +210,7 @@
   <ItemGroup>
     <ClInclude Include="api\nim_cpp_client.h" />
     <ClInclude Include="api\nim_cpp_data_sync.h" />
+    <ClInclude Include="api\nim_cpp_doc_trans.h" />
     <ClInclude Include="api\nim_cpp_friend.h" />
     <ClInclude Include="api\nim_cpp_global.h" />
     <ClInclude Include="api\nim_cpp_msglog.h" />
@@ -238,8 +240,10 @@
     <ClInclude Include="helper\nim_tool_helper.h" />
     <ClInclude Include="helper\nim_user_helper.h" />
     <ClInclude Include="nim_cpp_api.h" />
+    <ClInclude Include="nim_cpp_win32_demo_helper.h" />
     <ClInclude Include="third_party\convert_utf\convert_utf.h" />
     <ClInclude Include="util\nim_json_util.h" />
+    <ClInclude Include="util\nim_sdk_defines.h" />
     <ClInclude Include="util\nim_sdk_util.h" />
     <ClInclude Include="util\nim_string_util.h" />
   </ItemGroup>

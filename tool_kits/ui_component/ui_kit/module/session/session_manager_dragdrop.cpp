@@ -147,7 +147,7 @@ bool SessionManager::DoDragSessionBox(SessionBox *session_box, HBITMAP bitmap, P
 	// 无论什么时候都让拖拽时光标显示为箭头
 	drop_src->SetFeedbackCursor(::LoadCursor(NULL, MAKEINTRESOURCE(IDC_ARROW)));
 
-	OnBeforeDargSessionBox(session_box, bitmap, pt_offset);
+	OnBeforeDragSessionBox(session_box, bitmap, pt_offset);
 
 	// 此函数会阻塞直到拖拽完成
 	DWORD dwEffect;
@@ -204,7 +204,7 @@ SdkDataObject* SessionManager::CreateDragDataObject(HBITMAP bitmap, POINT pt_off
 	return data_object;
 }
 
-void SessionManager::OnBeforeDargSessionBox(SessionBox *session_box, HBITMAP bitmap, POINT pt_offset)
+void SessionManager::OnBeforeDragSessionBox(SessionBox *session_box, HBITMAP bitmap, POINT pt_offset)
 {
 	// 获取当前被拖拽的会话盒子所属的会话窗口
 	draging_session_box_ = session_box;
@@ -216,7 +216,7 @@ void SessionManager::OnBeforeDargSessionBox(SessionBox *session_box, HBITMAP bit
 	ASSERT(box_count > 0);
 	drop_session_form_ = NULL;
 
-	drag_session_form->OnBeforeDargSessionBoxCallback(nbase::UTF8ToUTF16(draging_session_box_->GetSessionId()));
+	drag_session_form->OnBeforeDragSessionBoxCallback(nbase::UTF8ToUTF16(draging_session_box_->GetSessionId()));
 
 	if (use_custom_drag_image_)
 		DragForm::CreateCustomDragImage(bitmap, pt_offset);

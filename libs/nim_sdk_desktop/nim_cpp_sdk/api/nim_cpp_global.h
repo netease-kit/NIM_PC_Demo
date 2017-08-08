@@ -11,6 +11,7 @@
 #include <functional>
 #include <string>
 #include "nim_base_types.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -18,7 +19,7 @@
 */
 namespace nim
 {
-#include "nim_global_def.h"
+
 
 /** @class Global
   * @brief NIM SDK提供的一些全局接口

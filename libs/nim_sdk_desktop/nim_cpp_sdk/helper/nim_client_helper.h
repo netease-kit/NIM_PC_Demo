@@ -12,6 +12,7 @@
 #include <functional>
 #include "json.h"
 #include "nim_base_types.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -19,8 +20,6 @@
 */
 namespace nim
 {
-#include "nim_client_def.h"
-#include "nim_res_code_def.h"
 
 /** @brief SDK设置项 */
 struct SDKConfig

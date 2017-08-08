@@ -84,9 +84,9 @@ enum NIMClientType
 	kNIMClientTypeAndroid		= 1,  /**< Android*/
 	kNIMClientTypeiOS			= 2,  /**< iOS*/
 	kNIMClientTypePCWindows		= 4,  /**< PC Windows*/
-	kNIMClientTypeWindowsPhone	= 8,  /**< Windows Phone*/
 	kNIMClientTypeWeb			= 16, /**< Web*/
 	kNIMClientTypeRestAPI		= 32, /**< RestAPI*/
+	kNIMClientTypeMacOS			= 64, /**< Mac*/
 };
 
 /** @enum NIMLoginStep 登录步骤 */

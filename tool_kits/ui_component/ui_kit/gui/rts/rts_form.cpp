@@ -366,7 +366,7 @@ void RtsForm::ShowStartUI(bool creater)
 	{
 		bool data_record = atoi(GetConfigValue("rts_record").c_str()) > 0;
 		bool audio_record = atoi(GetConfigValue("audio_record").c_str()) > 0;
-		bool webrtc = atoi(GetConfigValue("webrtc").c_str()) > 0;
+		bool webrtc = VideoManager::GetInstance()->GetWebrtc();
 		nim::RtsStartInfo info;
 		info.apns_ = nbase::UTF16ToUTF8(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_INVITE_TEST"));
 		info.custom_info_ = "rts custom info";

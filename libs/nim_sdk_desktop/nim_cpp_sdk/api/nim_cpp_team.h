@@ -20,9 +20,6 @@
 namespace nim
 {
 
-#include "nim_res_code_def.h"
-#include "nim_msglog_def.h"
-
 /** @class Team
   * @brief 群组功能；主要包括查询群信息、查询群成员信息、加人、踢人等功能
   */

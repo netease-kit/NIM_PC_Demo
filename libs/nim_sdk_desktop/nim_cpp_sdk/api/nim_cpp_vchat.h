@@ -11,6 +11,7 @@
 #include <string>
 #include <functional>
 #include "nim_base_types.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -18,10 +19,6 @@
 */
 namespace nim
 {
-
-#include "nim_vchat_def.h"
-#include "nim_device_def.h"
-
 /** @brief 网络探测回调信息 */
 struct NetDetectCbInfo
 {

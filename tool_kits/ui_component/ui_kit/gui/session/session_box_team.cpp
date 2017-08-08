@@ -346,6 +346,16 @@ void SessionBox::OnTeamRemove(const std::string& tid)
 	}
 }
 
+void SessionBox::OnTeamAdd(const std::string& tid, const std::string& tname, nim::NIMTeamType ttype)
+{
+	//只处理这种场景 lty 20170807
+	if (!is_team_valid_ && tid == session_id_)
+	{
+		InvokeGetTeamMember();
+		InvokeGetTeamInfo();
+	}
+}
+
 bool SessionBox::IsTeamMemberType(const nim::NIMTeamUserType user_type)
 {
 	if (user_type == nim::kNIMTeamUserTypeNomal || 

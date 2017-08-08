@@ -105,8 +105,6 @@ void ChatroomForm::OnGetChatRoomInfoCallback(__int64 room_id, int error_code, co
 	}
 
 	StdClosure cb = [=](){
-		time_refresh_ = time(NULL);
-
 		ASSERT(!info.creator_id_.empty());
 		creater_id_ = info.creator_id_;
 
@@ -405,7 +403,8 @@ void ChatroomForm::OnGetMembersCallback(__int64 room_id, int error_code, const s
 //			AddMemberItem(iter);
 		}
 
-		online_members_virtual_list_->Refresh();
+		if (option_online_members_->IsSelected())
+			online_members_virtual_list_->Refresh();
 	};
 
 	Post2UI(cb);
@@ -1084,12 +1083,8 @@ void ChatroomForm::RemoveMember(const std::string &uid)
 					members_list_.erase(iter_member);
 
 				online_members_virtual_list_->Refresh();
-
-// 				Control* member_item = online_members_list_->FindSubControl(nbase::UTF8ToUTF16(uid));
-// 				online_members_list_->Remove(member_item);
 			}
 		}
 	}
 }
-
 }

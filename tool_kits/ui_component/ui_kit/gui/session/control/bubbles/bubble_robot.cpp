@@ -51,33 +51,38 @@ void MsgBubbleRobot::InsertImage(const std::string &url, const std::wstring &fil
 		Re_InsertImage(text_service, InsertCustomItemErrorCallback(), photo_path, file_tag, true);
 		text_service->Release();
 		//InsertTextToEdit(text_, L"\r\n");
-		std::string session_id = msg_.local_talk_id_;
-		std::string msg_id = msg_.client_msg_id_;
-		nim::NOS::DownloadMediaCallback cb = ToWeakCallback([this, photo_path, session_id, msg_id](int res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
-			if (res_code == nim::kNIMResSuccess)
-			{
-				std::wstring ws_file_path = nbase::UTF8ToUTF16(file_path);
-				if (nbase::FilePathIsExist(ws_file_path, false))
-				{
-					nbase::CopyFileW(ws_file_path, photo_path);
-					nbase::DeleteFile(ws_file_path);
-				}
-				std::string s_photo_path = nbase::UTF16ToUTF8(photo_path);
-				SessionBox* session_box = dynamic_cast<SessionBox*>(SessionManager::GetInstance()->FindSessionBox(session_id));
-				if (session_box)
-				{
-					session_box->OnDownloadCallback(msg_id, res_code == nim::kNIMResSuccess, s_photo_path);
-				}
-
-				MsgRecordForm* msg_record = dynamic_cast<MsgRecordForm*>(WindowsManager::GetInstance()->GetWindow(MsgRecordForm::kClassName, MsgRecordForm::kClassName));
-				if (msg_record)
-				{
-					msg_record->OnDownloadCallback((nim::NIMResCode)res_code, s_photo_path, session_id, msg_id);
-				}
-			}
-		});
-		nim::NOS::DownloadResource(url, cb);
+		DownloadImage(url, photo_path);
 	}
+}
+
+void MsgBubbleRobot::DownloadImage(const std::string &url, const std::wstring &photo_path)
+{
+	std::string session_id = msg_.local_talk_id_;
+	std::string msg_id = msg_.client_msg_id_;
+	nim::NOS::DownloadMediaCallback cb = ToWeakCallback([this, photo_path, session_id, msg_id](int res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
+		if (res_code == nim::kNIMResSuccess)
+		{
+			std::wstring ws_file_path = nbase::UTF8ToUTF16(file_path);
+			if (nbase::FilePathIsExist(ws_file_path, false))
+			{
+				nbase::CopyFileW(ws_file_path, photo_path);
+				nbase::DeleteFile(ws_file_path);
+			}
+			std::string s_photo_path = nbase::UTF16ToUTF8(photo_path);
+			SessionBox* session_box = dynamic_cast<SessionBox*>(SessionManager::GetInstance()->FindSessionBox(session_id));
+			if (session_box)
+			{
+				session_box->OnDownloadCallback(msg_id, res_code == nim::kNIMResSuccess, s_photo_path);
+			}
+
+			MsgRecordForm* msg_record = dynamic_cast<MsgRecordForm*>(WindowsManager::GetInstance()->GetWindow(MsgRecordForm::kClassName, MsgRecordForm::kClassName));
+			if (msg_record)
+			{
+				msg_record->OnDownloadCallback((nim::NIMResCode)res_code, s_photo_path, session_id, msg_id);
+			}
+		}
+	});
+	nim::NOS::DownloadResource(url, cb);
 }
 
 void MsgBubbleRobot::SetShowHeader()
@@ -227,12 +232,16 @@ void MsgBubbleRobot::InitInfo(const nim::IMMessage &msg)
 									values["params"] = (std::string)val;
 								values[nim::kNIMBotRobotMsgKeyRobotID] = robot_attach_.robot_accid_;
 								std::string show_text;
+								bool need_download = false;
+								std::list<std::string> need_download_urls;
+								Json::Value link_json;
+								link_json["id"] = values["target"];
 								auto sub_node = node->FirstChild();
 								bool first_sub_node = true;
 								while (sub_node)
 								{
-									if (!first_sub_node)
-										InsertTextToEdit(text_, L"\r\n");
+// 									if (!first_sub_node)
+// 										InsertTextToEdit(text_, L"\r\n");
 									if (sub_node->ValueStr() == "text")
 									{
 										val = sub_node->ToElement()->GetText();
@@ -240,8 +249,12 @@ void MsgBubbleRobot::InitInfo(const nim::IMMessage &msg)
 										{
 											show_text = (std::string)val;
 											values["link_text"] = show_text;
-											std::string link_info = values.toStyledString();
-											text_->AddLinkColorText(nbase::UTF8ToUTF16(show_text), L"link_blue", nbase::UTF8ToUTF16(link_info));
+											//std::string link_info = values.toStyledString();
+											//text_->AddLinkColorText(nbase::UTF8ToUTF16(show_text), L"link_blue", nbase::UTF8ToUTF16(link_info));
+											Json::Value txt;
+											txt["type"] = "text";
+											txt["content"] = show_text;
+											link_json["element"].append(txt);
 										}
 									}
 									else if (sub_node->ValueStr() == "image")
@@ -249,16 +262,66 @@ void MsgBubbleRobot::InitInfo(const nim::IMMessage &msg)
 										val = sub_node->ToElement()->Attribute("url");
 										if (val)
 										{
-											values["link_text"] = "[模板触发消息]";
+											//values["link_text"] = "[模板触发消息]";
 											std::string url = (std::string)val;
-											InsertImage(url);
-											//InsertImage(url, nbase::UTF8ToUTF16(values.toStyledString()));
+											//InsertImage(url);
+											std::string img_id = QString::GetMd5(url);
+											Json::Value img;
+											img["type"] = "img";
+											img["id"] = img_id;
+											std::wstring photo_path = PhotoService::GetInstance()->GetPhotoDir(kOther) + nbase::UTF8ToUTF16(img_id);
+											if (!PhotoService::GetInstance()->CheckPhotoOK(photo_path))
+											{
+												need_download_urls.push_back(url);
+												need_download = true;
+											}
+											img["file"] = nbase::UTF16ToUTF8(photo_path);
+											img["width"] = 200;
+											link_json["element"].append(img);
 										}
 									}
 
 									sub_node = sub_node->NextSibling();
 									if (first_sub_node)
 										first_sub_node = false;
+								}
+								link_json["link_info"] = values;
+								complex_json_.append(link_json);
+								if (need_download)
+								{
+									ITextServices *text_service = text_->GetTextServices();
+									if (text_service)
+									{
+										Re_InsertImage(text_service, InsertCustomItemErrorCallback(), L"", nbase::UTF8ToUTF16(link_json["id"].asString()), true);
+										text_service->Release();
+									}
+									for (auto &url : need_download_urls)
+									{
+										std::wstring photo_path = PhotoService::GetInstance()->GetPhotoDir(kOther) + nbase::UTF8ToUTF16(QString::GetMd5(url));
+										DownloadImage(url, photo_path);
+									}
+								}
+								else
+								{
+									ITextServices *service = text_->GetTextServices();
+									if (service)
+									{
+										auto old_len = text_->GetTextLength();
+										Re_InsertDescriptionItem(service
+											, InsertCustomItemErrorCallback()
+											, nbase::UTF8ToUTF16(link_json["element"].toStyledString())
+											, nbase::UTF8ToUTF16(link_json["id"].asString())
+											, RE_OLE_TYPE_DESCRIPTION
+											, my_msg_ ? RGB(35, 142, 250) : RGB(225,230,235));
+										service->Release();
+										text_->ReplaceSel(L" ", false);//每个button后面增加一个空格
+										auto new_len = text_->GetTextLength();
+										text_->SetSel(old_len, new_len);
+										CHARRANGE cr;
+										text_->GetSel(cr);
+										text_->AddLinkInfo(cr, nbase::UTF8ToUTF16(values.toStyledString()));
+										text_->SetSelNone();
+									}
 								}
 							}
 							else
@@ -339,6 +402,56 @@ void MsgBubbleRobot::OnMenuCopy()
 
 void MsgBubbleRobot::OnDownloadCallback(bool success, const std::string& file_path)
 {
+	bool continued = false;
+	if (complex_json_.size() > 0)
+	{
+		Json::Value new_complex_json;
+		int len = complex_json_.size();
+		for (int i = 0; i < len; i++)
+		{
+			bool all_ready = true;
+			int link_len = complex_json_[i].size();
+			Json::Value &link_elements = complex_json_[i]["element"];
+			for (int j = 0; j < link_len; j++)
+			{
+				continued = file_path != link_elements[j]["file"].asString();
+				all_ready = PhotoService::GetInstance()->CheckPhotoOK(nbase::UTF8ToUTF16(file_path));
+			}
+			if (all_ready)
+			{
+				ITextServices *service = text_->GetTextServices();
+				if (service)
+				{
+					std::string id = complex_json_[i]["id"].toStyledString();
+					Re_RemoveCustomItem(service, nbase::UTF8ToUTF16(id));
+					auto old_len = text_->GetTextLength();
+					Re_InsertDescriptionItem(service
+						, InsertCustomItemErrorCallback()
+						, nbase::UTF8ToUTF16(link_elements.toStyledString())
+						, nbase::UTF8ToUTF16(id)
+						, RE_OLE_TYPE_DESCRIPTION
+						, my_msg_ ? RGB(35, 142, 250) : RGB(225, 230, 235));
+					service->Release();
+					text_->ReplaceSel(L" ", false);//每个button后面增加一个空格
+					auto new_len = text_->GetTextLength();
+					text_->SetSel(old_len, new_len);
+					CHARRANGE cr;
+					text_->GetSel(cr);
+					text_->AddLinkInfo(cr, nbase::UTF8ToUTF16(complex_json_[i]["link_info"].toStyledString()));
+					text_->SetSelNone();
+					ui::CSize max_size(9999, 9999);
+					EstimateSize(max_size);
+				}
+			}
+			else
+			{
+				new_complex_json.append(complex_json_[i]);
+			}
+		}
+		complex_json_ = new_complex_json;
+	}
+	if (!continued)
+		return;
 	ITextServices *service = text_->GetTextServices();
 	if (service)
 	{

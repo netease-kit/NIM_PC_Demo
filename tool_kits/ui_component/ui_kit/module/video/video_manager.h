@@ -258,6 +258,18 @@ public:
 	* @return void	无返回值
 	*/
 	void SetChatRoomCb(ConnectCallback connect_cb = nullptr, PeopleChangeCallback people_cb = nullptr);
+
+	/**
+	* 设置webrtc开关
+	* @param[in] webrtc 是否webrtc兼容
+	* @return void	无返回值
+	*/
+	void SetWebrtc(bool webrtc){ webrtc_setting_ = webrtc; }
+	/**
+	* 获取webrtc开关
+	* @return bool	是否打开webrtc开关
+	*/
+	bool GetWebrtc(){ return webrtc_setting_; }
 public:
 	VideoFrameMng video_frame_mng_;
 	AudioFrameMng audio_frame_mng_;
@@ -267,6 +279,7 @@ private:
 	DWORD device_session_type_[4];
 	ConnectCallback			chatroom_connect_cb_ = nullptr;
 	PeopleChangeCallback	chatroom_people_cb_ = nullptr;
+	bool webrtc_setting_;
 
 };
 }

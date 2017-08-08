@@ -12,6 +12,7 @@
 #include <list>
 #include <functional>
 #include "json.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -19,9 +20,6 @@
 */
 namespace nim
 {
-
-#include "nim_session_def.h"
-#include "nim_msglog_def.h"
 
 /** @brief 会话数据 */
 struct SessionData

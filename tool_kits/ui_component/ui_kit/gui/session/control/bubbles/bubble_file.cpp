@@ -141,7 +141,6 @@ void MsgBubbleFile::InitInfo(const nim::IMMessage &msg)
 void MsgBubbleFile::SetMsgStatus(nim::NIMMsgLogStatus status)
 {
 	__super::SetMsgStatus(status);
-	msg_.status_ = status;
 
 	file_saveas_->SetVisible(false);
 	//file_save_->SetVisible(false);

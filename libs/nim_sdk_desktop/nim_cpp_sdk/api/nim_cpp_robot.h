@@ -19,9 +19,6 @@
 namespace nim
 {
 
-#include "nim_robot_def.h"
-#include "nim_res_code_def.h"
-
 /** @class Robot
   * @brief NIM SDK提供的Robot接口
   */

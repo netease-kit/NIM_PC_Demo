@@ -122,6 +122,7 @@ void MsgBubbleItem::SetShowName(bool show, const std::string& from_nick)
 void MsgBubbleItem::SetMsgStatus(nim::NIMMsgLogStatus status)
 {
 	HideAllStatus(0);
+	msg_.status_ = status;
 	switch(status)
 	{
 	case nim::kNIMMsgLogStatusSending:

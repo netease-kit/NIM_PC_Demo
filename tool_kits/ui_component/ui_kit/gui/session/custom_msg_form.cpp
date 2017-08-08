@@ -84,11 +84,11 @@ bool CustomMsgForm::OnClicked(ui::EventArgs* param)
 
 void CustomMsgForm::SetSession(const std::string& id, nim::NIMSessionType type, const std::wstring& name)
 {
-	msg_mode_->SetEnabled(type == nim::kNIMSessionTypeP2P);
-	if (type == nim::kNIMSessionTypeTeam)
-	{
-		msg_mode_->Selected(true, false);
-	}
+// 	msg_mode_->SetEnabled(type == nim::kNIMSessionTypeP2P);
+// 	if (type == nim::kNIMSessionTypeTeam)
+// 	{
+// 		msg_mode_->Selected(true, false);
+// 	}
 	session_id_ = id;
 	session_type_ = type;
 	std::wstring show_text = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_CUSTOM_MSG_SEND_TO").c_str(), name.c_str());

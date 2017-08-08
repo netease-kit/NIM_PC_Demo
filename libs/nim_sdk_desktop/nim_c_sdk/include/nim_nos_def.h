@@ -106,7 +106,7 @@ enum NIMNosUploadType
 static const char *kNIMNosLowLimit				= "low_limit";	/**< int HTTP通用配置，传输速度，每秒字节数（默认10）*/
 static const char *kNIMNosLowTime				= "low_time";	/**< int HTTP通用配置，传输过程中当low_time秒时间内传输速度小于low_limit时(字节每秒)，下载任务会返回超时而取消（默认60）*/
 static const char *kNIMNosTimeout				= "timeout";	/**< int HTTP通用配置，超时时间，单位ms，下载时最小10000，上传时最小30000，不设置默认30000*/
-static const char *kNIMNosTaskId				= "task_id";		/**< string HTTP通用配置，任务ID，上传下载断点续传必填，如果传入的ID是曾经未完成的传输任务，则会开始续传（用户需要保证ID的唯一性） */
+static const char *kNIMNosTaskId				= "task_id";		/**< string HTTP通用配置，任务ID，上传下载断点续传必填，如果传入的ID是曾经未完成的需要续传功能的传输任务的ID，则会开始续传（用户需要保证ID的唯一性） */
 static const char *kNIMNosNeedContinueTrans		= "continue_trans"; /**< bool HTTP通用配置，任务是否需要续传功能*/
 static const char *kNIMNosFileSize				= "download_filesize"; /**< int64 HTTP下载任务的文件大小，需要续传功能必填，单位Byte，其他情况不需要填*/
 static const char *kNIMNosSaveAsFilePath		= "saveas_filepath"; /**< string HTTP下载任务的文件存放本地路径，不填则默认路径回调中返回*/

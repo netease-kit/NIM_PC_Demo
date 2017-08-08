@@ -268,7 +268,7 @@ NIM_SDK_DLL_API void nim_chatroom_update_room_info_async(const int64_t room_id, 
 NIM_SDK_DLL_API void nim_chatroom_update_my_role_async(const int64_t room_id, const char *role_info_json_str, bool need_notify, const char *notify_ext, const char *json_extension, nim_chatroom_update_my_role_cb_func cb, const void *user_data);
 
 /** @fn void nim_chatroom_queue_offer_async(const int64_t room_id, const char *element_key, const char *element_value, const char *json_extension, nim_chatroom_queue_offer_cb_func cb, const void *user_data)
-  * (聊天室管理员权限)新加(更新)麦序队列元素,如果element_key对应的元素已经在队列中存在了，那就是更新操作，如果不存在，就放到队列尾部 
+  * 新加(更新)麦序队列元素,如果element_key对应的元素已经在队列中存在了，那就是更新操作，如果不存在，就放到队列尾部 
   * @param[in] room_id				聊天室ID
   * @param[in] element_key			新元素的UniqKey,长度限制128字节 
   * @param[in] element_value		新元素内容，长度限制4096字节 
@@ -283,7 +283,7 @@ NIM_SDK_DLL_API void nim_chatroom_update_my_role_async(const int64_t room_id, co
 NIM_SDK_DLL_API void nim_chatroom_queue_offer_async(const int64_t room_id, const char *element_key, const char *element_value, const char *json_extension, nim_chatroom_queue_offer_cb_func cb, const void *user_data);
 
 /** @fn void nim_chatroom_queue_poll_async(const int64_t room_id, const char *element_key, const char *json_extension, nim_chatroom_queue_poll_cb_func cb, const void *user_data)
-  * (聊天室管理员权限)取出麦序头元素 
+  * 取出麦序头元素 
   * @param[in] room_id				聊天室ID
   * @param[in] element_key			需要取出的元素的UniqKey,长度限制128字节,传空传表示取出第一个元素
   * @param[in] json_extension		json扩展参数（备用，目前不需要）
@@ -305,6 +305,16 @@ NIM_SDK_DLL_API void nim_chatroom_queue_poll_async(const int64_t room_id, const 
   * @return void 无返回值
   */
 NIM_SDK_DLL_API void nim_chatroom_queue_list_async(const int64_t room_id, const char *json_extension, nim_chatroom_queue_list_cb_func cb, const void *user_data);
+
+/** @fn void nim_chatroom_queue_header_async(const int64_t room_id, const char *json_extension, nim_chatroom_queue_header_cb_func cb, const void *user_data)
+  * 查看麦序头元素 
+  * @param[in] room_id				聊天室ID
+  * @param[in] json_extension		json扩展参数（备用，目前不需要）
+  * @param[in] cb					回调函数, 定义见nim_chatroom_def.h
+  * @param[in] user_data			APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_chatroom_queue_header_async(const int64_t room_id, const char *json_extension, nim_chatroom_queue_header_cb_func cb, const void *user_data);
 
 /** @fn void nim_chatroom_queue_drop_async(const int64_t room_id, const char *json_extension, nim_chatroom_queue_drop_cb_func cb, const void *user_data)
   * (聊天室管理员权限)删除麦序队列

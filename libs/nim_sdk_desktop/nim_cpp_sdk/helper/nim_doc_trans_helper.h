@@ -12,6 +12,7 @@
 #include <list>
 #include <functional>
 #include "json.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -19,11 +20,6 @@
 */
 namespace nim
 {
-
-#include "nim_res_code_def.h"
-#include "nim_session_def.h"
-#include "nim_doc_trans_def.h"
-
 /** @brief 文档传输的图片信息 */
 struct PictureInfo
 {

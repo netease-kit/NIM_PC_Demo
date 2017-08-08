@@ -2,7 +2,7 @@
   * @brief 接口头文件集合
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
-  * @date 2017/01/01
+  * @date 2017/02/01
   */
 
 //客户端登录，注销以及相关回调接口注册API

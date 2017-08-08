@@ -14,6 +14,7 @@
 #include "json.h"
 #include "nim_json_util.h"
 #include "nim_sdk_util.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -21,11 +22,6 @@
 */
 namespace nim
 {
-
-#include "nim_sysmsg_def.h"
-#include "nim_msglog_def.h"
-#include "nim_res_code_def.h"
-
 /** @brief 系统消息和自定义通知属性设置 */
 struct SysMessageSetting
 {

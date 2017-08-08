@@ -198,6 +198,7 @@ void SessionBox::InitSessionBox()
 		unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamOwner(nbase::Bind(&SessionBox::OnTeamOwnerChange, this, std::placeholders::_1, std::placeholders::_2)));
 		unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(nbase::Bind(&SessionBox::OnTeamNameChange, this, std::placeholders::_1)));
 		unregister_cb.Add(TeamService::GetInstance()->RegRemoveTeam(nbase::Bind(&SessionBox::OnTeamRemove, this, std::placeholders::_1)));
+		unregister_cb.Add(TeamService::GetInstance()->RegAddTeam(nbase::Bind(&SessionBox::OnTeamAdd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 		unregister_cb.Add(TeamService::GetInstance()->RegMuteMember(nbase::Bind(&SessionBox::OnTeamMuteMember, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 	}
 	else
@@ -641,7 +642,7 @@ void SessionBox::OnMsgStatusChangedCallback(const std::string &from_accid, const
 		if (item)
 		{
 			nim::IMMessage msg = item->GetMsg();
-			if (msg.sender_accid_ == my_id && item->IsMyMsg() &&/* msg.timetag_ <= timetag*/nim::MsgLog::QuerySentMessageBeReaded(msg))
+			if (msg.sender_accid_ == my_id && item->IsMyMsg() && msg.status_ == nim::kNIMMsgLogStatusSent && nim::MsgLog::QuerySentMessageBeReaded(msg))
 			{
 				item->SetMsgStatus(nim::kNIMMsgLogStatusReceipt);
 				last_receipt_msg_id_ = msg.client_msg_id_;

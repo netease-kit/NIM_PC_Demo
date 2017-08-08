@@ -220,10 +220,31 @@ HBITMAP TaskbarManager::GenerateBindControlBitmapWithForm(ui::Control *control)
 	if ( NULL == control)
 		return NULL;
 
-	WINDOWPLACEMENT placement = { sizeof(WINDOWPLACEMENT) };
-	::GetWindowPlacement(parent_window_->GetHWND(), &placement);
-	int window_width = placement.rcNormalPosition.right - placement.rcNormalPosition.left;
-	int window_height = placement.rcNormalPosition.bottom - placement.rcNormalPosition.top;
+	int window_width = 0, window_height = 0;
+	RECT rc_wnd;
+	bool check_wnd_size = false;
+	if (::IsIconic(parent_window_->GetHWND())) //当前是最小化状态
+	{
+		WINDOWPLACEMENT placement{ sizeof(WINDOWPLACEMENT) };
+		::GetWindowPlacement(parent_window_->GetHWND(), &placement);
+		if (placement.flags == WPF_RESTORETOMAXIMIZED) //最小化前是最大化状态
+		{
+			MONITORINFO oMonitor = { sizeof(MONITORINFO) };
+			::GetMonitorInfo(::MonitorFromWindow(parent_window_->GetHWND(), MONITOR_DEFAULTTONEAREST), &oMonitor);
+			rc_wnd = oMonitor.rcWork;
+		}
+		else
+		{
+			rc_wnd = placement.rcNormalPosition;
+			check_wnd_size = true; //少数情况下，WINDOWPLACEMENT::rcNormalPosition不正确
+		}
+	}
+	else
+		::GetWindowRect(parent_window_->GetHWND(), &rc_wnd);
+	window_width = rc_wnd.right - rc_wnd.left;
+	window_height = rc_wnd.bottom - rc_wnd.top;
+	if (window_width == 0 || window_height == 0)
+		return nullptr;
 
 	// 1.创建内存dc
 	auto render = GlobalManager::CreateRenderContext();
@@ -260,10 +281,31 @@ HBITMAP TaskbarManager::GenerateBindControlBitmap(ui::Control *control, const in
 	if (dest_width <= 0 || dest_height <= 0 || NULL == control)
 		return NULL;
 
-	WINDOWPLACEMENT placement = { sizeof(WINDOWPLACEMENT) };
-	::GetWindowPlacement(parent_window_->GetHWND(), &placement);
-	int window_width = placement.rcNormalPosition.right - placement.rcNormalPosition.left;
-	int window_height = placement.rcNormalPosition.bottom - placement.rcNormalPosition.top;
+	int window_width = 0, window_height = 0;
+	RECT rc_wnd;
+	bool check_wnd_size = false;
+	if (::IsIconic(parent_window_->GetHWND())) //当前是最小化状态
+	{
+		WINDOWPLACEMENT placement{ sizeof(WINDOWPLACEMENT) };
+		::GetWindowPlacement(parent_window_->GetHWND(), &placement);
+		if (placement.flags == WPF_RESTORETOMAXIMIZED) //最小化前是最大化状态
+		{
+			MONITORINFO oMonitor = { sizeof(MONITORINFO) };
+			::GetMonitorInfo(::MonitorFromWindow(parent_window_->GetHWND(), MONITOR_DEFAULTTONEAREST), &oMonitor);
+			rc_wnd = oMonitor.rcWork;
+		}
+		else
+		{
+			rc_wnd = placement.rcNormalPosition;
+			check_wnd_size = true; //少数情况下，WINDOWPLACEMENT::rcNormalPosition不正确
+		}
+	}
+	else
+		::GetWindowRect(parent_window_->GetHWND(), &rc_wnd);
+	window_width = rc_wnd.right - rc_wnd.left;
+	window_height = rc_wnd.bottom - rc_wnd.top;
+	if (window_width == 0 || window_height == 0)
+		return nullptr;
 
 	// 1.创建内存dc
 	auto render = GlobalManager::CreateRenderContext();

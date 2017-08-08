@@ -10,6 +10,7 @@
 
 #include "../util/nim_base_types.h"
 #include "../util/stdbool.h"
+#include "../util/nim_build_config.h"
 
 #ifdef __cplusplus
 extern"C"
@@ -29,11 +30,13 @@ enum NIMVideoChatSessionType{
 	kNIMVideoChatSessionTypeHangupRes		= 10,		/**< 通话挂断结果 */
 	kNIMVideoChatSessionTypeHangupNotify	= 11,		/**< 通话被挂断通知 */
 	kNIMVideoChatSessionTypeSyncAckNotify	= 12,		/**< 通话接听挂断同步通知 */
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	kNIMVideoChatSessionTypeMp4Notify		= 13,		/**< 通知MP4录制状态，包括开始录制和结束录制 */
 	kNIMVideoChatSessionTypeInfoNotify		= 14,		/**< 通知实时音视频数据状态 */
 	kNIMVideoChatSessionTypeVolumeNotify	= 15,		/**< 通知实时音频发送和混音的音量状态 */
 	kNIMVideoChatSessionTypeAuRecordNotify  = 16,		/**< 通知音频录制状态，包括开始录制和结束录制 */
 	kNIMVideoChatSessionTypeLiveState		= 17,		/**< 通知直播推流的服务器状态 */
+#endif
 };
 
 /** @enum NIMVChatControlType 音视频通话控制类型 */
@@ -62,25 +65,81 @@ enum NIMVideoChatMode{
 };
 
 /** @enum NIMVChatVideoQuality 视频通话分辨率，最终长宽比不保证 */
-enum NIMVChatVideoQuality{
-	kNIMVChatVideoQualityNormal		= 0,		/**< 视频默认分辨率 480x320*/
-	kNIMVChatVideoQualityLow		= 1,		/**< 视频低分辨率 176x144*/
-	kNIMVChatVideoQualityMedium		= 2,		/**< 视频中分辨率 352x288*/
-	kNIMVChatVideoQualityHigh		= 3,		/**< 视频高分辨率 480x320*/
-	kNIMVChatVideoQualitySuper		= 4,		/**< 视频超高分辨率 640x480*/
-	kNIMVChatVideoQuality720p		= 5,		/**< 用于桌面分享级别的分辨率1280x720，需要使用高清摄像头并指定对应的分辨率，或者自定义通道传输 */
-	kNIMVChatVideoQuality540p		= 6,		/**< 介于720P与480P之间的类型，默认 960*540 */
+enum NIMVChatVideoQuality {
+	kNIMVChatVideoQualityNormal = 0,		/**< 视频默认分辨率 480x320*/
+	kNIMVChatVideoQualityLow = 1,		/**< 视频低分辨率 176x144*/
+	kNIMVChatVideoQualityMedium = 2,		/**< 视频中分辨率 352x288*/
+	kNIMVChatVideoQualityHigh = 3,		/**< 视频高分辨率 480x320*/
+	kNIMVChatVideoQualitySuper = 4,		/**< 视频超高分辨率 640x480*/
+	kNIMVChatVideoQuality720p = 5,		/**< 用于桌面分享级别的分辨率1280x720，需要使用高清摄像头并指定对应的分辨率，或者自定义通道传输 */
+	kNIMVChatVideoQuality540p = 6,		/**< 介于720P与480P之间的类型，默认 960*540 */
 };
 
 /** @enum NIMVChatVideoFrameRate 视频通话帧率，实际帧率因画面采集频率和机器性能限制可能达不到期望值 */
-enum NIMVChatVideoFrameRate{
-	kNIMVChatVideoFrameRateNormal	= 0,		/**< 视频通话帧率默认值,最大取每秒15帧 */
-	kNIMVChatVideoFrameRate5		= 1,		/**< 视频通话帧率 最大取每秒5帧 */
-	kNIMVChatVideoFrameRate10		= 2,		/**< 视频通话帧率 最大取每秒10帧 */
-	kNIMVChatVideoFrameRate15		= 3,		/**< 视频通话帧率 最大取每秒15帧 */
-	kNIMVChatVideoFrameRate20		= 4,		/**< 视频通话帧率 最大取每秒20帧 */
-	kNIMVChatVideoFrameRate25		= 5,		/**< 视频通话帧率 最大取每秒25帧 */
+enum NIMVChatVideoFrameRate {
+	kNIMVChatVideoFrameRateNormal = 0,		/**< 视频通话帧率默认值,最大取每秒15帧 */
+	kNIMVChatVideoFrameRate5 = 1,		/**< 视频通话帧率 最大取每秒5帧 */
+	kNIMVChatVideoFrameRate10 = 2,		/**< 视频通话帧率 最大取每秒10帧 */
+	kNIMVChatVideoFrameRate15 = 3,		/**< 视频通话帧率 最大取每秒15帧 */
+	kNIMVChatVideoFrameRate20 = 4,		/**< 视频通话帧率 最大取每秒20帧 */
+	kNIMVChatVideoFrameRate25 = 5,		/**< 视频通话帧率 最大取每秒25帧 */
 };
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
+/** @enum NIMVChatMp4RecordCode mp4录制状态 */
+enum NIMVChatMp4RecordCode {
+	kNIMVChatMp4RecordClose				= 0,		/**< MP4结束 */
+	kNIMVChatMp4RecordVideoSizeError	= 1,		/**< MP4结束，视频画面大小变化 */
+	kNIMVChatMp4RecordOutDiskSpace		= 2,		/**< MP4结束，磁盘空间不足 */
+	kNIMVChatMp4RecordCreate			= 200,		/**< MP4文件创建 */
+	kNIMVChatMp4RecordExsit				= 400,		/**< MP4文件已经存在 */
+	kNIMVChatMp4RecordCreateError		= 403,		/**< MP4文件创建失败 */
+	kNIMVChatMp4RecordInvalid			= 404,		/**< 通话不存在 */
+};
+
+/** @enum NIMVChatAudioRecordCode 音频录制状态 */
+enum NIMVChatAudioRecordCode {
+	kNIMVChatAudioRecordClose			= 0,		/**< 录制正常结束 */
+	kNIMVChatAudioRecordOutDiskSpace	= 2,		/**< 录制结束，磁盘空间不足 */
+	kNIMVChatAudioRecordCreate			= 200,		/**< 文件创建成功 */
+	kNIMVChatAudioRecordExsit			= 400,		/**< 已经存在 */
+	kNIMVChatAudioRecordCreateError		= 403,		/**< 文件创建失败 */
+	kNIMVChatAudioRecordInvalid			= 404,		/**< 通话不存在 */
+};
+
+/** @enum NIMVChatVideoSplitMode 主播设置的直播分屏模式  */
+enum NIMVChatVideoSplitMode {
+	kNIMVChatSplitBottomHorFloating		= 0,			/**< 底部横排浮窗 */
+	kNIMVChatSplitTopHorFloating		= 1,			/**< 顶部横排浮窗 */
+	kNIMVChatSplitLatticeTile			= 2,			/**< 平铺 */
+	kNIMVChatSplitLatticeCuttingTile	= 3,			/**< 裁剪平铺 */
+	kNIMVChatSplitCustomLayout			= 4,			/**< 自定义布局 */
+};
+
+/** @enum NIMVChatVideoFrameScaleType 视频画面长宽比，裁剪时不改变横竖屏，如4：3，代表宽高横屏4：3或者竖屏3：4  */
+enum NIMVChatVideoFrameScaleType {
+	kNIMVChatVideoFrameScaleNone	= 0,			/**< 默认，不裁剪 */
+	kNIMVChatVideoFrameScale1x1		= 1,			/**< 裁剪成1：1的形状 */
+	kNIMVChatVideoFrameScale4x3		= 2,			/**< 裁剪成4：3的形状，如果是 */
+	kNIMVChatVideoFrameScale16x9	= 3,			/**< 裁剪成16：9的形状 */
+};
+
+/** @enum NIMVChatLiveStateCode 直播时的状态码。服务器定时更新，一些存在时间短的状态会获取不到  */
+enum NIMVChatLiveStateCode
+{
+	kNIMVChatLiveStateInitial			= 500,
+	kNIMVChatLiveStateLayoutError		= 501,		/**< 主播设置定制布局，布局参数错误 */
+	kNIMVChatLiveStateStartConnecting	= 502,		/**< 开始连接 */
+	kNIMVChatLiveStateConnectted		= 503,		/**< 连接成功 */
+	kNIMVChatLiveStateConnectFail		= 504,		/**< 连接失败 */
+	kNIMVChatLiveStatePushing			= 505,		/**< 推流中 */
+	kNIMVChatLiveStatePushFail			= 506,		/**< 互动直播推流失败 */
+	kNIMVChatLiveStateInnerError		= 507,		/**< 内部错误 */
+	kNIMVChatLiveStatePeopleLimit		= 508,		/**< 人数超出限制 */
+};
+
+#endif
 
 /** @enum NIMVideoChatSessionStatus 音视频通话成员变化类型 */
 enum NIMVideoChatSessionStatus{
@@ -119,57 +178,7 @@ enum NIMVChatConnectErrorCode{
 	kNIMVChatVersionRemoteLow			= 11003,	/**< 对方SDK版本太低不兼容 */
 };
 
-/** @enum NIMVChatMp4RecordCode mp4录制状态 */
-enum NIMVChatMp4RecordCode{
-	kNIMVChatMp4RecordClose				= 0,		/**< MP4结束 */
-	kNIMVChatMp4RecordVideoSizeError	= 1,		/**< MP4结束，视频画面大小变化 */
-	kNIMVChatMp4RecordOutDiskSpace		= 2,		/**< MP4结束，磁盘空间不足 */
-	kNIMVChatMp4RecordCreate			= 200,		/**< MP4文件创建 */
-	kNIMVChatMp4RecordExsit				= 400,		/**< MP4文件已经存在 */
-	kNIMVChatMp4RecordCreateError		= 403,		/**< MP4文件创建失败 */
-	kNIMVChatMp4RecordInvalid			= 404,		/**< 通话不存在 */
-};
 
-/** @enum NIMVChatAudioRecordCode 音频录制状态 */
-enum NIMVChatAudioRecordCode{
-	kNIMVChatAudioRecordClose			= 0,		/**< 录制正常结束 */
-	kNIMVChatAudioRecordOutDiskSpace	= 2,		/**< 录制结束，磁盘空间不足 */
-	kNIMVChatAudioRecordCreate			= 200,		/**< 文件创建成功 */
-	kNIMVChatAudioRecordExsit			= 400,		/**< 已经存在 */
-	kNIMVChatAudioRecordCreateError		= 403,		/**< 文件创建失败 */
-	kNIMVChatAudioRecordInvalid			= 404,		/**< 通话不存在 */
-};
-
-/** @enum NIMVChatVideoSplitMode 主播设置的直播分屏模式  */
-enum NIMVChatVideoSplitMode{
-	kNIMVChatSplitBottomHorFloating					= 0,			/**< 底部横排浮窗 */
-	kNIMVChatSplitTopHorFloating					= 1,			/**< 顶部横排浮窗 */
-	kNIMVChatSplitLatticeTile						= 2,			/**< 平铺 */
-	kNIMVChatSplitLatticeCuttingTile				= 3,			/**< 裁剪平铺 */
-	kNIMVChatSplitCustomLayout						= 4,			/**< 自定义布局 */
-};
-
-/** @enum NIMVChatVideoFrameScaleType 视频画面长宽比，裁剪时不改变横竖屏，如4：3，代表宽高横屏4：3或者竖屏3：4  */
-enum NIMVChatVideoFrameScaleType{
-	kNIMVChatVideoFrameScaleNone					= 0,			/**< 默认，不裁剪 */
-	kNIMVChatVideoFrameScale1x1						= 1,			/**< 裁剪成1：1的形状 */
-	kNIMVChatVideoFrameScale4x3						= 2,			/**< 裁剪成4：3的形状，如果是 */
-	kNIMVChatVideoFrameScale16x9					= 3,			/**< 裁剪成16：9的形状 */
-}; 
-
-/** @enum NIMVChatLiveStateCode 直播时的状态码。服务器定时更新，一些存在时间短的状态会获取不到  */
-enum NIMVChatLiveStateCode
-{
-	kNIMVChatLiveStateInitial				= 500,
-	kNIMVChatLiveStateLayoutError			= 501,		/**< 主播设置定制布局，布局参数错误 */
-	kNIMVChatLiveStateStartConnecting		= 502,		/**< 开始连接 */
-	kNIMVChatLiveStateConnectted			= 503,		/**< 连接成功 */
-	kNIMVChatLiveStateConnectFail			= 504,		/**< 连接失败 */
-	kNIMVChatLiveStatePushing				= 505,		/**< 推流中 */
-	kNIMVChatLiveStatePushFail				= 506,		/**< 互动直播推流失败 */
-	kNIMVChatLiveStateInnerError			= 507,		/**< 内部错误 */
-	kNIMVChatLiveStatePeopleLimit			= 508,		/**< 人数超出限制 */
-};
 
 /** @name 网络探测回调 内容Json key for nim_vchat_opt_cb_func
   * @{
@@ -240,6 +249,7 @@ static const char *kNIMVChatAudioVolume		= "audio_volume";		/**< key 音频实�
 static const char *kNIMVChatSelf			= "self";				/**< key 本人信息 */
 static const char *kNIMVChatReceiver		= "receiver";			/**< key 接收信息 */
 static const char *kNIMVChatLiveState		= "live_state";			/**< key 直播状态 kNIMVChatStatus(NIMVChatLiveStateCode) */
+static const char *kNIMVChatMp4AudioType	= "mp4_audio";			/**< int mp4录制时音频情况，0标识只录制当前成员，1标识录制通话全部混音（等同音频文件录制的声音） */
 /** @}*/ //json extension params
 
 /** @typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, int64_t channel_id, int code, const char *json_extension, const void *user_data)
@@ -257,15 +267,15 @@ static const char *kNIMVChatLiveState		= "live_state";			/**< key 直播状态 k
   * 			kNIMVideoChatSessionTypeHangupRes,			//通话主动结果 code=200成功，json无效 \n
   * 			kNIMVideoChatSessionTypeHangupNotify,		//通话被挂断通知 code无效，json无效 \n
   * 			kNIMVideoChatSessionTypeSyncAckNotify,		//其他端接听挂断后的同步通知 json 返回 kNIMVChatTime，kNIMVChatType对应NIMVideoChatMode，kNIMVChatAccept，kNIMVChatClient  \n
-  *				kNIMVideoChatSessionTypeMp4Notify			//通知MP4录制状态，包括开始录制和结束录制， code无效，json(其他成员的录制通知带uid，自己的不带) 返回如下 \n
+  *				kNIMVideoChatSessionTypeMp4Notify			//windows(pc)有效.通知MP4录制状态，包括开始录制和结束录制， code无效，json(其他成员的录制通知带uid，自己的不带) 返回如下 \n
   *															//	MP4开始 	{"mp4_start":{ "mp4_file": "d:\\test.mp4", "time": 14496477000000, "uid":"id123" }} \n
   *															//	MP4结束 	{"mp4_close":{ "mp4_file": "d:\\test.mp4", "time": 120000, "status": 0, "uid":"id123" }} \n
-  *				kNIMVideoChatSessionTypeAuRecordNotify		//通知音频录制状态，包括开始录制和结束录制 code无效，json 返回如下 \n
+  *				kNIMVideoChatSessionTypeAuRecordNotify		//windows(pc)有效.通知音频录制状态，包括开始录制和结束录制 code无效，json 返回如下 \n
   *															//	录制开始 	{"audio_record_start":{ "file": "d:\\test.aac", "time": 14496477000000 }} \n
   *															//	录制结束 	{"audio_record_close":{ "file": "d:\\test.aac", "time": 120000, "status": 0 }} \n
-  *				kNIMVideoChatSessionTypeInfoNotify			//实时状态		{"static_info":{"rtt":20, "video": {"fps":20, "KBps":200, "lost_rate":5, "width":1280,"height":720}, "audio": {"fps":17, "KBps":3", lost_rate":3 }}} \n
-  *				kNIMVideoChatSessionTypeVolumeNotify		//音量状态 		{"audio_volume":{ "self": {"status":600}, "receiver": [{"uid":"id123","status":1000},{"uid":"id456","status":222}] }} \n
-  *				kNIMVideoChatSessionTypeLiveState			//直播状态		{"live_state":{"status":505 }} \n
+  *				kNIMVideoChatSessionTypeInfoNotify			//windows(pc)有效.实时状态		{"static_info":{"rtt":20, "video": {"fps":20, "KBps":200, "lost_rate":5, "width":1280,"height":720}, "audio": {"fps":17, "KBps":3", lost_rate":3 }}} \n
+  *				kNIMVideoChatSessionTypeVolumeNotify		//windows(pc)有效.音量状态 		{"audio_volume":{ "self": {"status":600}, "receiver": [{"uid":"id123","status":1000},{"uid":"id456","status":222}] }} \n
+  *				kNIMVideoChatSessionTypeLiveState			//windows(pc)有效.直播状态		{"live_state":{"status":505 }} \n
   * @param[out] type NIMVideoChatSessionType
   * @param[out] channel_id 通话的通道id
   * @param[out] code 结果类型或错误类型
@@ -276,6 +286,7 @@ static const char *kNIMVChatLiveState		= "live_state";			/**< key 直播状态 k
   */
 typedef void (*nim_vchat_cb_func)(enum NIMVideoChatSessionType type, int64_t channel_id, int code, const char *json_extension, const void *user_data);
 
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @typedef void (*nim_vchat_mp4_record_opt_cb_func)(bool ret, int code, const char *file, int64_t time, const char *json_extension, const void *user_data)
   * NIM MP4操作回调，实际的开始录制和结束都会在nim_vchat_cb_func中返回
   * @param[out] ret 结果代码，true表示成功
@@ -300,6 +311,7 @@ typedef void (*nim_vchat_mp4_record_opt_cb_func)(bool ret, int code, const char 
   */
 typedef void (*nim_vchat_audio_record_opt_cb_func)(bool ret, int code, const char *file, int64_t time, const char *json_extension, const void *user_data);
 
+#endif
 /** @typedef void (*nim_vchat_opt_cb_func)(bool ret, int code, const char *json_extension, const void *user_data)
   * NIM 操作回调，通用的操作回调接口
   * @param[out] ret 结果代码，true表示成功

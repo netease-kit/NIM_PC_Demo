@@ -14,6 +14,7 @@
 #include "json.h"
 #include "nim_json_util.h"
 #include "nim_sdk_util.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -21,12 +22,6 @@
 */
 namespace nim
 {
-
-#include "nim_talk_def.h"
-#include "nim_session_def.h"
-#include "nim_msglog_def.h"
-#include "nim_res_code_def.h"
-#include "nim_client_def.h"
 
 /** @brief 消息属性设置 */
 struct MessageSetting

@@ -19,8 +19,6 @@
 */
 namespace nim
 {
-#include "nim_user_def.h"
-#include "nim_res_code_def.h"
 
 /** @class User
   * @brief NIM SDK提供的用户相关接口

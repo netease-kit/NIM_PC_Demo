@@ -20,6 +20,7 @@ enum
 	RE_OLE_TYPE_IMAGELOADING,//正在加载的图片
 	RE_OLE_TYPE_FILE,
 	RE_OLE_TYPE_ERROR,
+	RE_OLE_TYPE_DESCRIPTION,
 };
 
 struct RE_OLE_ITEM_CONTENT 
@@ -74,6 +75,9 @@ IRichEditOle* Re_GetOleInterface(ITextServices *text_service);
 */
 bool Re_InsertCustomItem(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file, const std::wstring& face_tag, int ole_type
 					, int face_id, bool scale, int scale_width = 0, int scale_height = 0, LONG cp = REO_CP_SELECTION);
+
+bool Re_InsertDescriptionItem(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& description
+	, const std::wstring& face_tag, int ole_type, COLORREF clrBg = RGB(255, 255, 255), LONG cp = REO_CP_SELECTION);
 
 /**
 * 向RichEdit插入一个表情
@@ -312,6 +316,8 @@ RE_OLE_ITEM_CONTENT Re_CustomImageOleHitTest(ITextServices * text_service, POINT
 * @return int ole对象的位置
 */
 int Re_ImageLoadingFinish(ITextServices * text_service, const std::wstring& file_path, bool succeed);
+
+int Re_RemoveCustomItem(ITextServices * text_service, const std::wstring& face_tag);
 
 /**
 * 清除RichEditt中所有ole对象

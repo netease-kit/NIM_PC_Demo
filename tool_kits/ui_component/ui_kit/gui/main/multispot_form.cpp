@@ -96,6 +96,7 @@ void MultispotForm::OnMultispotChange(const std::map<nim::NIMClientType, nim::Ot
 			client_des = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MULTISPOT_NIM_IOS");
 			break;
 		case nim::kNIMClientTypePCWindows:
+		case nim::kNIMClientTypeMacOS:
 			client_des = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MULTISPOT_NIM_PC");
 			break;
 		case nim::kNIMClientTypeWeb:

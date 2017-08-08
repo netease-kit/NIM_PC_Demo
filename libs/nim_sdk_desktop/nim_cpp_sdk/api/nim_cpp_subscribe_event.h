@@ -20,8 +20,6 @@
 */
 namespace nim
 {
-#include "nim_res_code_def.h"
-
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @class SubscribeEvent
   * @brief NIM 好友相关接口

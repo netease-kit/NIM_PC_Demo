@@ -13,6 +13,7 @@
 #include <functional>
 #include "json.h"
 #include "nim_json_util.h"
+#include "nim_chatroom_sdk_defines.h"
 
 /**
 * @namespace nim_chatroom
@@ -20,9 +21,6 @@
 */
 namespace nim_chatroom
 {
-#include "nim_chatroom_def.h"
-#include "nim_res_code_def.h"
-
 /** @brief 聊天室登录信息*/
 struct ChatRoomEnterInfo
 {

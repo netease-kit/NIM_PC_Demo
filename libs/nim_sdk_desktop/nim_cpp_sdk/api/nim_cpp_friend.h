@@ -19,8 +19,6 @@
 */
 namespace nim
 {
-#include "nim_res_code_def.h"
-
 /** @class Friend
   * @brief NIM 好友相关接口
   */

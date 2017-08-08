@@ -157,7 +157,7 @@ private:
 	std::string		clicked_user_account_;	//被单击了的消息列表中的帐号
 	std::string		kicked_user_account_;	//被踢出的帐号
 	__int64			time_start_history_;		//获取的最早的历史消息时间
-	time_t			time_refresh_;			//上一次刷新在线成员列表的时间
+	time_t			time_refresh_ = 0;			//上一次刷新在线成员列表的时间
 	bool			is_loading_history_ = false;
 
 	IDropTarget		*droptarget_;

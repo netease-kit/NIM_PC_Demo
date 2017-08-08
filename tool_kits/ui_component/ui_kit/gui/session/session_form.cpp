@@ -303,8 +303,8 @@ SessionBox* SessionForm::CreateSessionBox(const std::string &session_id, nim::NI
 	session_box->SetName(id);
 	session_box->InitSessionBox();
 	taskbar_manager_.RegisterTab(*session_box->GetTaskbarItem());
-	Button *btn_header_ = (Button*)session_box->FindSubControl(L"btn_header");
-	btn_header_->AttachAllEvents(nbase::Bind(&SessionForm::OnProcessSessionBoxHeaderDrag, this, std::placeholders::_1));
+	//Button *btn_header_ = (Button*)session_box->FindSubControl(L"btn_header");
+	//btn_header_->AttachAllEvents(nbase::Bind(&SessionForm::OnProcessSessionBoxHeaderDrag, this, std::placeholders::_1));
 
 	if (merge_list_->GetCount() <= 1)
 		active_session_box_ = session_box;
@@ -396,9 +396,9 @@ bool SessionForm::AttachSessionBox(SessionBox *session_box)
 	// Add函数会重新的修改session_box内所有子控件的m_pWindow为新的窗体指针
 	session_box_tab_->Add(session_box);
 	taskbar_manager_.RegisterTab(*session_box->GetTaskbarItem());
-	Button *btn_header_ = (Button*)session_box->FindSubControl(L"btn_header");
-	btn_header_->DetachEvent(kEventAll);
-	btn_header_->AttachAllEvents(nbase::Bind(&SessionForm::OnProcessSessionBoxHeaderDrag, this, std::placeholders::_1));
+	//Button *btn_header_ = (Button*)session_box->FindSubControl(L"btn_header");
+	//btn_header_->DetachEvent(kEventAll);
+	//btn_header_->AttachAllEvents(nbase::Bind(&SessionForm::OnProcessSessionBoxHeaderDrag, this, std::placeholders::_1));
 
 	if (merge_list_->GetCount() <= 1)
 		active_session_box_ = session_box;
@@ -499,7 +499,7 @@ int SessionForm::GetSessionBoxCount() const
 	return session_box_tab_->GetCount();
 }
 
-void SessionForm::OnBeforeDargSessionBoxCallback(const std::wstring &session_id)
+void SessionForm::OnBeforeDragSessionBoxCallback(const std::wstring &session_id)
 {
 	// 如果当前被拖拽的会话盒子所属的会话窗口只有一个会话盒子，则在拖拽时隐藏会话窗口
 	int box_count = this->GetSessionBoxCount();

@@ -63,6 +63,20 @@ private:
 	bool OnMultiPushSwitchUnSelected(ui::EventArgs* args);
 
 	/**
+	* WebRTC打开
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnWebRtcSelected(ui::EventArgs* args);
+
+	/**
+	* WebRTC关闭
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnWebRtcUnSelected(ui::EventArgs* args);
+
+	/**
 	* 消息提醒打开（接收该用户的消息）
 	* @param[in] msg 消息的相关信息
 	* @return bool true 继续传递控件消息，false 停止传递控件消息
@@ -322,6 +336,7 @@ private:
 	ui::RichEdit*	robot_intro_ = NULL;
 
 	ui::CheckBox*	multi_push_switch = NULL;
+	ui::CheckBox*	webrtc_setting_ = NULL;
 	ui::CheckBox*	notify_switch = NULL;
 	ui::CheckBox*	black_switch = NULL;
 	ui::CheckBox*	mute_switch = NULL;

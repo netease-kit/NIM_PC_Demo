@@ -220,6 +220,10 @@ bool ChatroomForm::OnSelectChanged(ui::EventArgs* param)
 		time_t	sub_time = time(NULL) - time_refresh_;
 		if (sub_time <= 60)
 			return true;
+		time_refresh_ = time(NULL);
+
+		if (!managers_list_.empty() && !members_list_.empty() && !members_map_.empty())
+			online_members_virtual_list_->Refresh();
 
 //		online_members_list_->RemoveAll();
 		has_add_creater_ = false;

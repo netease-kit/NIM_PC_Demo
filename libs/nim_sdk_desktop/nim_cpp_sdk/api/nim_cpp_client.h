@@ -20,7 +20,6 @@ namespace nim
 /** @class Client
   * @brief 全局管理功能；主要包括SDK初始化/清理、客户端登录/退出等功能
   */
-
 class Client
 {
 

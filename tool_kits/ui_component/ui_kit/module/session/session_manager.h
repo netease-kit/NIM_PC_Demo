@@ -149,7 +149,7 @@ private:
 	* 执行拖拽操作前被调用
 	* @return void	无返回值
 	*/
-	void OnBeforeDargSessionBox(SessionBox *session_box, HBITMAP bitmap, POINT pt_offset);
+	void OnBeforeDragSessionBox(SessionBox *session_box, HBITMAP bitmap, POINT pt_offset);
 
 	/**
 	* 执行拖拽操作后被调用

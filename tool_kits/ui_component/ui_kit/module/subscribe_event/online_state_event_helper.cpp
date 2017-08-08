@@ -142,7 +142,7 @@ std::wstring OnlineStateEventHelper::GetOnlineState(const nim::EventOnlineClient
 
 	static const std::wstring online_string = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STDID_SUBSCRIBE_EVENT_ONLINE");
 	static const std::wstring offline_string = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STDID_SUBSCRIBE_EVENT_OFFLINE");	
-	static const std::wstring pc_string = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STDID_SUBSCRIBE_EVENT_PC");
+	static const std::wstring pc_string = L"PC";
 
 	std::wstring online_state = offline_string;
 	const std::set<nim::NIMClientType> &online_client = online_client_type.online_client_type_;
@@ -160,6 +160,19 @@ std::wstring OnlineStateEventHelper::GetOnlineState(const nim::EventOnlineClient
 		online_state = pc_string + online_string;
 
 		auto iter = multi_config.find(nim::kNIMClientTypePCWindows);
+		if (iter != multi_config.end())
+		{
+			if (EventConfig::kOnlineStateOnline != iter->second.online_state_)
+			{
+				online_state = GenerateOnlineString(iter->second.online_state_);
+			}
+		}
+	}
+	else if (online_client.find(nim::kNIMClientTypeMacOS) != online_client.end())
+	{
+		online_state = L"Mac" + online_string;
+
+		auto iter = multi_config.find(nim::kNIMClientTypeMacOS);
 		if (iter != multi_config.end())
 		{
 			if (EventConfig::kOnlineStateOnline != iter->second.online_state_)

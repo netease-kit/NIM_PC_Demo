@@ -20,9 +20,6 @@
 namespace nim
 {
 
-#include "nim_nos_def.h"
-#include "nim_res_code_def.h"
-
 /** @class NOS
   * @brief NIM SDK提供的NOS云存储服务接口
   */

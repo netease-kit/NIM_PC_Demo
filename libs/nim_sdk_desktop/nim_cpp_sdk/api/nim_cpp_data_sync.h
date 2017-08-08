@@ -10,6 +10,7 @@
 
 #include <string>
 #include <functional>
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -17,8 +18,6 @@
 */
 namespace nim
 {
-#include "nim_data_sync_def.h"
-
 /** @class DataSync
   * @brief NIM SDK提供的数据同步相关接口
   */

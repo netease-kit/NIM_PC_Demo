@@ -175,7 +175,7 @@ typedef void (*nim_chatroom_update_my_role_cb_func)(int64_t room_id, int error_c
 typedef void (*nim_chatroom_queue_offer_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data);
 
 /** @typedef void (*nim_chatroom_queue_poll_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
-  * 取出头元素的回调函数定义
+  * 取出元素的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
   * @param[out] result			json object string (聊天室麦序队列元素Keys)
@@ -195,6 +195,17 @@ typedef void (*nim_chatroom_queue_poll_cb_func)(int64_t room_id, int error_code,
   * @return void 无返回值
   */
 typedef void (*nim_chatroom_queue_list_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
+
+/** @typedef void (*nim_chatroom_queue_header_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
+  * 查看头元素的回调函数定义
+  * @param[out] room_id			聊天室ID
+  * @param[out] error_code		错误码
+  * @param[out] result			json object string (聊天室麦序队列元素Keys)
+  * @param[out] json_extension	json扩展数据（备用）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_chatroom_queue_header_cb_func)(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data);
 
 /** @typedef void (*nim_chatroom_queue_drop_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data)
   * 删除麦序队列的回调函数定义
@@ -281,6 +292,7 @@ enum NIMChatRoomClientType
 	kNIMChatRoomClientTypeWindowsPhone	   = 8,		/**< WindowsPhone*/
 	kNIMChatRoomClientTypeWeb              = 16,	/**< Web*/
 	kNIMChatRoomClientTypeRestAPI		   = 32,	/**< RestAPI*/
+	kNIMChatRoomClientTypeMacOS			   = 64,	/**< Mac*/
 };
 
 /** @name 进入聊天室回调结果Json Keys

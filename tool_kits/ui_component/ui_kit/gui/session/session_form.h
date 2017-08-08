@@ -147,7 +147,7 @@ public:
 	* @param[in] session_id 会话id
 	* @return void	无返回值
 	*/
-	void OnBeforeDargSessionBoxCallback(const std::wstring &session_id);
+	void OnBeforeDragSessionBoxCallback(const std::wstring &session_id);
 
 	/**
 	* 在执行拖拽操作后，如果被拖拽的会话盒子属于本窗口，则通知本窗口操作结果

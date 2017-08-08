@@ -12,6 +12,7 @@
 #include <functional>
 #include "nim_base_types.h"
 #include "nim_json_util.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim
@@ -19,9 +20,6 @@
 */
 namespace nim
 {
-
-#include "nim_rts_def.h"
-#include "nim_res_code_def.h"
 
 /** @brief 点对点白板发起的参数信息 */
 struct RtsStartInfo

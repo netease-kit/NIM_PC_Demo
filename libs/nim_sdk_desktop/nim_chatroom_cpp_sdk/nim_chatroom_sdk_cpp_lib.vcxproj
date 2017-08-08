@@ -183,6 +183,7 @@
     <ClInclude Include="helper\nim_chatroom_helper.h" />
     <ClInclude Include="nim_chatroom_cpp_api.h" />
     <ClInclude Include="third_party\convert_utf\convert_utf.h" />
+    <ClInclude Include="util\nim_chatroom_sdk_defines.h" />
     <ClInclude Include="util\nim_json_util.h" />
     <ClInclude Include="util\nim_sdk_util.h" />
     <ClInclude Include="util\nim_string_util.h" />

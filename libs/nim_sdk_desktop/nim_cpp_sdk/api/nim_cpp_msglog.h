@@ -20,9 +20,6 @@
 namespace nim
 {
 
-#include "nim_msglog_def.h"
-#include "nim_res_code_def.h"
-
 /** @class MsgLog
   * @brief NIM SDK提供的消息历史接口
   */

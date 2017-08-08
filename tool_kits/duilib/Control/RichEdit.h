@@ -175,6 +175,7 @@ public:
 
 	void AddColorText(const std::wstring &str, const std::wstring &color);
 	void AddLinkColorText(const std::wstring &str, const std::wstring &color, const std::wstring &linkInfo = L"");
+	void AddLinkInfo(const CHARRANGE cr, const std::wstring &linkInfo);
 	//根据point来hittest自定义link的数据，返回true表示在link上，info是link的自定义属性
 	bool HittestCustomLink(CPoint pt, std::wstring& info);
 

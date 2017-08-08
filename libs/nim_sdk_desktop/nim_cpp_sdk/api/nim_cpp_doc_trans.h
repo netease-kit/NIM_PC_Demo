@@ -18,8 +18,6 @@
 */
 namespace nim
 {
-#include "nim_doc_trans_def.h"
-
 /** @class DocTrans
   * @brief NIM SDK提供的文档转换相关接口
   */

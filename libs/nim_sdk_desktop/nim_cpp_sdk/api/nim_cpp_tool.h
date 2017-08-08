@@ -17,7 +17,7 @@
 */
 namespace nim
 {
-#include "nim_tools_def.h"
+
 
 /** @class Tool
   * @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等

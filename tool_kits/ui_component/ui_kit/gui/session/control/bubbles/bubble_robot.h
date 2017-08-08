@@ -92,11 +92,21 @@ private:
 	*/
 	void InsertImage(const std::string &url, const std::wstring &file_tag = L"");
 
+	/**
+	* 下载图片
+	* @param[in] url 图片地址
+	* @param[in] photo_path 本地路径
+	* @return void 无返回值
+	*/
+	void DownloadImage(const std::string &url, const std::wstring &photo_path);
+
 private:
 	ui::Box*		msg_text_;
 	ui::RichEdit*	text_;
 
 	nim::IMBotRobot robot_attach_;
+
+	Json::Value		complex_json_;
 };
 
 }

@@ -19,10 +19,6 @@
 namespace nim
 {
 
-#include "nim_sysmsg_def.h"
-#include "nim_res_code_def.h"
-#include "nim_session_def.h"
-
 /** @class SystemMsg
   * @brief 系统消息接口；主要包括查询系统消息、删除系统消息等功能
   */

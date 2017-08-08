@@ -33,7 +33,7 @@ typedef void(*nim_vchat_set_audio_volumn)(unsigned char volumn, bool capture);
 typedef unsigned char(*nim_vchat_get_audio_volumn)(bool capture);
 typedef void(*nim_vchat_set_audio_input_auto_volumn)(bool auto_volumn);
 typedef bool(*nim_vchat_get_audio_input_auto_volumn)();
-typedef void(*nim_vchat_set_audio_process_info)(bool aec, bool ns, bool vid);
+typedef void(*nim_vchat_set_audio_process_info)(bool aec, bool ns, bool vad);
 
 //设置回掉
 typedef void(*nim_vchat_set_cb_func)(nim_vchat_cb_func cb, const void *user_data);
@@ -297,9 +297,9 @@ bool VChat::GetAudioInputAutoVolumn()
 {
 	return NIM_SDK_GET_FUNC(nim_vchat_get_audio_input_auto_volumn)();
 }
-void VChat::SetAudioProcess(bool aec, bool ns, bool vid)
+void VChat::SetAudioProcess(bool aec, bool ns, bool vad)
 {
-	NIM_SDK_GET_FUNC(nim_vchat_set_audio_process_info)(aec, ns, vid);
+	NIM_SDK_GET_FUNC(nim_vchat_set_audio_process_info)(aec, ns, vad);
 }
 
 //音视频通话-------------------------------
