@@ -83,8 +83,8 @@ void MainThread::OnMsgBoxCallback( MsgBoxRet ret )
 }
 
 /**
-* å…¨å±€å‡½æ•°ï¼Œåˆå§‹åŒ–äº‘ä¿¡ã€‚åŒ…æ‹¬è¯»å–åº”ç”¨æœåŠ¡å™¨åœ°å€ï¼Œè½½å…¥äº‘ä¿¡sdkï¼Œåˆå§‹åŒ–å®‰è£…ç›®å½•å’Œç”¨æˆ·ç›®å½•ï¼Œæ³¨å†Œæ”¶åˆ°æ¨é€æ—¶æ‰§è¡Œçš„å›è°ƒå‡½æ•°ã€‚
-* @return void æ— è¿”å›å€¼
+* È«¾Öº¯Êı£¬³õÊ¼»¯ÔÆĞÅ¡£°üÀ¨¶ÁÈ¡Ó¦ÓÃ·şÎñÆ÷µØÖ·£¬ÔØÈëÔÆĞÅsdk£¬³õÊ¼»¯°²×°Ä¿Â¼ºÍÓÃ»§Ä¿Â¼£¬×¢²áÊÕµ½ÍÆËÍÊ±Ö´ĞĞµÄ»Øµ÷º¯Êı¡£
+* @return void ÎŞ·µ»ØÖµ
 */
 static void InitNim()
 {
@@ -150,23 +150,23 @@ static void InitNim()
 	if (nbase::FilePathIsExist(QPath::GetAppPath() + L"use_https", false))
 		config.use_https_ = true;
 
-	config.database_encrypt_key_ = "Netease"; //stringï¼ˆdb keyå¿…å¡«ï¼Œç›®å‰åªæ”¯æŒæœ€å¤š32ä¸ªå­—ç¬¦çš„åŠ å¯†å¯†é’¥ï¼å»ºè®®ä½¿ç”¨32ä¸ªå­—ç¬¦ï¼‰
+	config.database_encrypt_key_ = "Netease"; //string£¨db key±ØÌî£¬Ä¿Ç°Ö»Ö§³Ö×î¶à32¸ö×Ö·ûµÄ¼ÓÃÜÃÜÔ¿£¡½¨ÒéÊ¹ÓÃ32¸ö×Ö·û£©
 
 	std::string app_key = GetConfigValueAppKey();
-	bool ret = nim::Client::Init(app_key, "Netease", "", config); // è½½å…¥äº‘ä¿¡sdkï¼Œåˆå§‹åŒ–å®‰è£…ç›®å½•å’Œç”¨æˆ·ç›®å½•
+	bool ret = nim::Client::Init(app_key, "Netease", "", config); // ÔØÈëÔÆĞÅsdk£¬³õÊ¼»¯°²×°Ä¿Â¼ºÍÓÃ»§Ä¿Â¼
 	assert(ret);
 	ret = nim_chatroom::ChatRoom::Init("");
 	assert(ret);
 
-	// InitUiKitæ¥å£å‚æ•°å†³å®šæ˜¯å¦å¯ç”¨äº‹ä»¶è®¢é˜…æ¨¡å—ï¼Œé»˜è®¤ä¸ºfalseï¼Œå¦‚æœæ˜¯äº‘ä¿¡demo appåˆ™ä¸ºtrue
-	// å¦‚æœä½ çš„Appå¼€å¯äº†äº‹ä»¶è®¢é˜…åŠŸèƒ½ï¼Œåˆ™æ­¤å‚æ•°æ”¹ä¸ºtrue
+	// InitUiKit½Ó¿Ú²ÎÊı¾ö¶¨ÊÇ·ñÆôÓÃÊÂ¼ş¶©ÔÄÄ£¿é£¬Ä¬ÈÏÎªfalse£¬Èç¹ûÊÇÔÆĞÅdemo appÔòÎªtrue
+	// Èç¹ûÄãµÄApp¿ªÆôÁËÊÂ¼ş¶©ÔÄ¹¦ÄÜ£¬Ôò´Ë²ÎÊı¸ÄÎªtrue
 	nim_ui::InitManager::GetInstance()->InitUiKit(IsNimDemoAppKey(app_key)); 
 	nim_chatroom::ChatroomCallback::InitChatroomCallback();
 }
 
 int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)
 {
-	// æŠŠcef dllæ–‡ä»¶çš„ä½ç½®æ·»åŠ åˆ°ç¨‹åºçš„"path"ç¯å¢ƒå˜é‡ä¸­,è¿™æ ·å¯ä»¥æŠŠdllæ–‡ä»¶æ”¾åˆ°binä»¥å¤–çš„ç›®å½•ï¼Œå¹¶ä¸”ä¸éœ€è¦æ‰‹åŠ¨é¢‘ç¹åˆ‡æ¢dllæ–‡ä»¶ï¼Œè¿™è¡Œä»£ç å¿…é¡»å†™åˆ°mainçš„å¼€å¤´
+	// °Ñcef dllÎÄ¼şµÄÎ»ÖÃÌí¼Óµ½³ÌĞòµÄ"path"»·¾³±äÁ¿ÖĞ,ÕâÑù¿ÉÒÔ°ÑdllÎÄ¼ş·Åµ½binÒÔÍâµÄÄ¿Â¼£¬²¢ÇÒ²»ĞèÒªÊÖ¶¯Æµ·±ÇĞ»»dllÎÄ¼ş£¬ÕâĞĞ´úÂë±ØĞëĞ´µ½mainµÄ¿ªÍ·
 	nim_cef::CefManager::GetInstance()->AddCefDllToPath();
 	nbase::AtExitManager at_manager;
 
@@ -186,7 +186,7 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, in
 
 	::SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);
 
-	//åˆå§‹åŒ–cef
+	//³õÊ¼»¯cef
 	CefSettings settings;
 	if (!nim_cef::CefManager::GetInstance()->Initialize(QPath::GetNimAppDataDir(L"Netease"), settings, atoi(GetConfigValue("cef_osr_enabled").c_str()) > 0))
 		return 0;
@@ -197,24 +197,24 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, in
 	if( FAILED(hr) )
 		return 0;
 
-	// åˆå§‹åŒ–äº‘ä¿¡å’ŒUIç»„ä»¶
+	// ³õÊ¼»¯ÔÆĞÅºÍUI×é¼ş
 	InitNim();
 
 	{
-		MainThread thread; // åˆ›å»ºä¸»çº¿ç¨‹
-		thread.RunOnCurrentThreadWithLoop(nbase::MessageLoop::kUIMessageLoop); // æ‰§è¡Œä¸»çº¿ç¨‹å¾ªç¯
+		MainThread thread; // ´´½¨Ö÷Ïß³Ì
+		thread.RunOnCurrentThreadWithLoop(nbase::MessageLoop::kUIMessageLoop); // Ö´ĞĞÖ÷Ïß³ÌÑ­»·
 	}
 	QLOG_APP(L"exit ui loop");
 
-	//æ¸…ç†cef
+	//ÇåÀícef
 	nim_cef::CefManager::GetInstance()->UnInitialize();
 
-	// ç¨‹åºç»“æŸä¹‹å‰ï¼Œæ¸…ç†äº‘ä¿¡sdkå’ŒUIç»„ä»¶
+	// ³ÌĞò½áÊøÖ®Ç°£¬ÇåÀíÔÆĞÅsdkºÍUI×é¼ş
 	nim_ui::InitManager::GetInstance()->CleanupUiKit();
 
 	QLOG_APP(L"app exit");
 
-	// æ˜¯å¦é‡æ–°è¿è¡Œç¨‹åº
+	// ÊÇ·ñÖØĞÂÔËĞĞ³ÌĞò
 	std::wstring restart = QCommand::Get(kCmdRestart);
 	if( !restart.empty() )
 	{
