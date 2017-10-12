@@ -1,5 +1,5 @@
 ﻿/** @file nim_tools_def.h
-  * @brief NIM SDK提供的一些工具相关定义，主要包括获取SDK里app account对应的app data目录，计算md5等
+  * @brief 工具类 接口相关的常量函数等定义头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1

@@ -1,5 +1,5 @@
 ﻿/** @file nim_session.h
-  * @brief NIM SDK提供的session接口
+  * @brief 最近会话列表 接口头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/2/1

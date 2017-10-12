@@ -1,5 +1,5 @@
 ﻿/** @file nim_user_def.h
-  * @brief NIM SDK提供的User相关定义
+  * @brief 用户数据 接口相关的常量函数等定义头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1

@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_msglog.h
-  * @brief NIM SDK提供的消息历史接口
+  * @brief 消息历史
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author towik, Oleg
   * @date 2015/2/1

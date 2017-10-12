@@ -148,6 +148,7 @@ static void SendMsg(const int64_t room_id, const std::string& json_msg, const st
   * @param[in] msg_type			消息类型
   * @param[in] client_msg_id	消息ID
   * @param[in] attach			消息内容（包含多媒体的消息类型，此处传入的是约定的可以解析为json的非格式化的字符串，如图片、文件消息等）
+  * @param[in] msg_body			文本消息内容（目前只用到聊天室机器人文本消息）
   * @param[in] msg_setting		消息属性
   * @param[in] timetag			消息时间
   * @return std::string 消息json string
@@ -155,6 +156,7 @@ static void SendMsg(const int64_t room_id, const std::string& json_msg, const st
 static std::string CreateRoomMessage(const NIMChatRoomMsgType msg_type
 	, const std::string& client_msg_id
 	, const std::string& attach
+	, const std::string& msg_body
 	, const ChatRoomMessageSetting& msg_setting
 	, int64_t timetag = 0);
 

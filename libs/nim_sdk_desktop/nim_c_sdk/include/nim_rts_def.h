@@ -1,5 +1,5 @@
 ﻿/** @file nim_rts_def.h
-  * @brief NIM RTS提供的实时会话（数据通道）接口定义
+  * @brief 实时会话（数据通道） 接口相关的常量函数等定义头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/6/30

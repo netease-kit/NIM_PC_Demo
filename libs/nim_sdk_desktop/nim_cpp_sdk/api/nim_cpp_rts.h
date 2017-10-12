@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_rts.h
-  * @brief NIM Rts提供的相关接口
+  * @brief 实时会话（数据通道）
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/7/3

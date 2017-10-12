@@ -1,5 +1,5 @@
 ﻿/** @file nim_talk.h
-  * @brief NIM SDK提供的talk接口
+  * @brief P2P和群组聊天 接口头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/2/1

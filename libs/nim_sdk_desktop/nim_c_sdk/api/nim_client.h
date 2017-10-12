@@ -1,5 +1,5 @@
 ﻿/** @file nim_client.h
-  * @brief NIM SDK提供的Client接口，主要包括SDK初始化/清理、客户端登录/退出/重连/掉线/被踢等流程
+  * @brief SDK接入 接口头文件，主要包括SDK初始化/清理、客户端登录/退出/重连/掉线/被踢等流程
   * NIM SDK所有接口命名说明: nim_***(模块)_***(功能)，如nim_client_init
   * NIM SDK所有接口参数说明: 所有与字符串相关的参数(char *)全部为UTF-8编码。
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
@@ -196,7 +196,6 @@ NIM_SDK_DLL_API void nim_client_set_dnd_config(const char* cfg_json, const char 
 * @return void 无返回值 通过注册nim_client_reg_kickout_other_client_cb回调得到结果
 */
 NIM_SDK_DLL_API void nim_client_get_dnd_config(nim_client_dnd_cb_func cb, const void *user_data);
-
 
 /** @fn const char * nim_tool_get_version()
 * (PC SDK该接口无效)获取SDK 版本号

@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_session.h
-  * @brief 会话列表管理功能；主要包括查询会话列表、删除会话列表等功能
+  * @brief 最近会话列表
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author towik, Oleg
   * @date 2015/2/1

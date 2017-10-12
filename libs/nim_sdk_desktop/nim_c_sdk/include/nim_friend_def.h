@@ -1,5 +1,5 @@
 ﻿/** @file nim_friend_def.h
-  * @brief NIM SDK friend相关的定义
+  * @brief 好友 接口相关的常量函数等定义头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/08/13

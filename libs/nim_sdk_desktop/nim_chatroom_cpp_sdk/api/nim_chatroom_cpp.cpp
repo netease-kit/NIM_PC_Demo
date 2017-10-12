@@ -271,6 +271,7 @@ void ChatRoom::SendMsg(const int64_t room_id, const std::string& json_msg, const
 std::string ChatRoom::CreateRoomMessage(const NIMChatRoomMsgType msg_type
 	, const std::string& client_msg_id
 	, const std::string& attach
+	, const std::string& msg_body
 	, const ChatRoomMessageSetting& msg_setting
 	, int64_t timetag/* = 0*/)
 {
@@ -278,6 +279,7 @@ std::string ChatRoom::CreateRoomMessage(const NIMChatRoomMsgType msg_type
 	values[kNIMChatRoomMsgKeyType] = msg_type;
 	values[kNIMChatRoomMsgKeyAttach] = attach;
 	values[kNIMChatRoomMsgKeyClientMsgid] = client_msg_id;
+	values[kNIMChatRoomMsgKeyBody] = msg_body;
 	msg_setting.ToJsonValue(values);
 	return GetJsonStringWithNoStyled(values);
 }

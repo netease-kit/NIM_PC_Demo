@@ -1,5 +1,5 @@
 ﻿/** @file nim_sysmsg_def.h
-  * @brief system msg define
+  * @brief 系统（自定义）消息 接口相关的常量函数等定义头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/2/1

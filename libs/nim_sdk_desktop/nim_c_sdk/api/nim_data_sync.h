@@ -1,5 +1,5 @@
 ﻿/** @file nim_data_sync.h
-  * @brief NIM SDK提供的数据同步相关接口(登录时)
+  * @brief 数据同步 接口头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1

@@ -66,10 +66,10 @@ IRichEditOle* Re_GetOleInterface(ITextServices *text_service)
 	return pRichEditOle;
 }
 
-bool Re_InsertCustomItem(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file, const std::wstring& face_tag, int ole_type
+bool Re_InsertCustomItem(ITextServices *text_service, InsertCustomItemErrorCallback callback, bool total_count_limit, const std::wstring& file, const std::wstring& face_tag, int ole_type
 					, int face_id, bool scale, int scale_width, int scale_height, LONG cp)
 {
-	if (ole_type >= RE_OLE_TYPE_CUSTOM && Re_GetCustomImageOleCount(text_service) >= MAX_CUSTOM_ITEM_NUM)
+	if (total_count_limit && ole_type >= RE_OLE_TYPE_CUSTOM && Re_GetCustomImageOleCount(text_service) >= MAX_CUSTOM_ITEM_NUM)
 	{
 		if( callback )
 		{
@@ -168,10 +168,10 @@ bool Re_InsertCustomItem(ITextServices *text_service, InsertCustomItemErrorCallb
 	return hr == S_OK;
 }
 
-bool Re_InsertDescriptionItem(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& description
-	, const std::wstring& face_tag, int ole_type, COLORREF clrBg/* = RGB(255, 255, 255)*/, LONG cp/* = REO_CP_SELECTION*/)
+bool Re_InsertDescriptionItem(ITextServices *text_service, InsertCustomItemErrorCallback callback, bool total_count_limit, const std::wstring& description
+	, const std::wstring& face_tag, int ole_type, COLORREF clrBg/* = RGB(255, 255, 255)*/, COLORREF clrfont/* = RGB(35, 142, 250)*/, int fontSize/* = 20*/, LONG cp/* = REO_CP_SELECTION*/)
 {
-	if (ole_type >= RE_OLE_TYPE_CUSTOM && Re_GetCustomImageOleCount(text_service) >= MAX_CUSTOM_ITEM_NUM)
+	if (total_count_limit && ole_type >= RE_OLE_TYPE_CUSTOM && Re_GetCustomImageOleCount(text_service) >= MAX_CUSTOM_ITEM_NUM)
 	{
 		if( callback )
 		{
@@ -235,7 +235,7 @@ bool Re_InsertDescriptionItem(ITextServices *text_service, InsertCustomItemError
 		OSVERSIONINFO os = { sizeof(OSVERSIONINFO) };
 		::GetVersionEx(&os);
 		std::wstring fontName = os.dwMajorVersion >= 6 ? L"微软雅黑" : L"新宋体";
-		image_ole->SetFont((BSTR)(fontName.c_str()), 20, RGB(35, 142, 250));
+		image_ole->SetFont((BSTR)(fontName.c_str()), fontSize, clrfont);
 		image_ole->SetBgColor(clrBg);
 
 //		image_ole->SetScaleSize(scale, scale_width, scale_height);
@@ -262,23 +262,26 @@ bool Re_InsertFace(ITextServices *text_service, const std::wstring& file, const 
 {
 	int emoji_size = EMOJI_SIZE;
 	ui::DpiManager::GetInstance()->ScaleInt(emoji_size);
-	return  Re_InsertCustomItem(text_service, InsertCustomItemErrorCallback(), file, face_tag, RE_OLE_TYPE_FACE, 0, true, emoji_size, 0);
+	return  Re_InsertCustomItem(text_service, InsertCustomItemErrorCallback(), true, file, face_tag, RE_OLE_TYPE_FACE, 0, true, emoji_size, 0);
 }
+
 bool Re_InsertJsb(ITextServices *text_service, const std::wstring& file, const std::wstring& face_tag)
 {
-	return  Re_InsertCustomItem(text_service, InsertCustomItemErrorCallback(), file, face_tag, RE_OLE_TYPE_FACE, 0, false, MAX_CUSTOM_ITEM_W, MAX_CUSTOM_ITEM_H);
+	return  Re_InsertCustomItem(text_service, InsertCustomItemErrorCallback(), true, file, face_tag, RE_OLE_TYPE_FACE, 0, false, MAX_CUSTOM_ITEM_W, MAX_CUSTOM_ITEM_H);
 }
-bool Re_InsertImage(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file, const std::wstring& file_tag, bool loading, LONG cp)
+
+bool Re_InsertImage(ITextServices *text_service, InsertCustomItemErrorCallback callback, bool total_count_limit, const std::wstring& file, const std::wstring& file_tag, bool loading, LONG cp)
 {
-	return  Re_InsertCustomItem(text_service, callback, loading ? L"" : file, file_tag.empty() ? file : file_tag, loading ? RE_OLE_TYPE_IMAGELOADING : RE_OLE_TYPE_IMAGE, 0, false, MAX_CUSTOM_ITEM_W, MAX_CUSTOM_ITEM_H, cp);
+	return  Re_InsertCustomItem(text_service, callback, total_count_limit, loading ? L"" : file, file_tag.empty() ? file : file_tag, loading ? RE_OLE_TYPE_IMAGELOADING : RE_OLE_TYPE_IMAGE, 0, false, MAX_CUSTOM_ITEM_W, MAX_CUSTOM_ITEM_H, cp);
 }
+
 bool Re_InsertFile(ITextServices *text_service, InsertCustomItemErrorCallback callback, const std::wstring& file)
 {
 	if (Re_FindFile(text_service, file))
 	{
 		return false;
 	}
-	return  Re_InsertCustomItem(text_service, callback, L"", file, RE_OLE_TYPE_FILE, 0, false, MAX_CUSTOM_FILE_W, MAX_CUSTOM_ITEM_H);
+	return  Re_InsertCustomItem(text_service, callback, true, L"", file, RE_OLE_TYPE_FILE, 0, false, MAX_CUSTOM_FILE_W, MAX_CUSTOM_ITEM_H);
 }
 
 int Re_GetTextLength(ITextServices * text_service)
@@ -715,7 +718,7 @@ void Re_InsertNimTextInfo(ITextServices * text_service, std::string& nim_text, b
 							{
 								std::string tmp = element->Attribute("filepath");
 								std::wstring file_path = nbase::UTF8ToUTF16(tmp);
-								Re_InsertImage(text_service, callback, file_path);
+								Re_InsertImage(text_service, callback, true, file_path);
 							}
 							break;
 							case RE_OLE_TYPE_FILE:
@@ -1072,7 +1075,7 @@ RE_OLE_ITEM_CONTENT Re_CustomImageOleHitTest(ITextServices * text_service, POINT
 
 int Re_RemoveCustomItem(ITextServices * text_service, const std::wstring& face_tag)
 {
-	int ret = 0;
+	int ret = -1;
 	REOBJECT reobject;
 	IRichEditOle * pRichEditOle = Re_GetOleInterface(text_service);
 	if (NULL == pRichEditOle)
@@ -1110,7 +1113,8 @@ int Re_RemoveCustomItem(ITextServices * text_service, const std::wstring& face_t
 						if (image_tag == face_tag)
 						{
 							find = true;
-							++ret;
+							ret = i;
+// 							++ret;
 						}
 					}
 					if (pImageOle)
@@ -1141,7 +1145,7 @@ int Re_RemoveCustomItem(ITextServices * text_service, const std::wstring& face_t
 	return ret;
 }
 
-int Re_ImageLoadingFinish(ITextServices * text_service, const std::wstring& file_path, bool succeed)
+int Re_ImageLoadingFinish(ITextServices * text_service, const std::wstring& file_path, bool succeed, bool total_count_limit)
 {
 	int ret = 0;
 	REOBJECT reobject;
@@ -1199,7 +1203,7 @@ int Re_ImageLoadingFinish(ITextServices * text_service, const std::wstring& file
 				Re_ReplaceSel(text_service, L"");
 				if (succeed)
 				{
-					Re_InsertImage(text_service, InsertCustomItemErrorCallback(), file_path, image_tag, false, i);
+					Re_InsertImage(text_service, InsertCustomItemErrorCallback(), total_count_limit, file_path, image_tag, false, i);
 				} 
 				else
 				{

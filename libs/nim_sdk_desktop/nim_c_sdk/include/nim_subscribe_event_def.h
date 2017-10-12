@@ -1,5 +1,5 @@
 ﻿/** @file nim_subscribe_event_def.h
-  * @brief NIM SDK subscribe event相关的定义
+  * @brief 事件订阅 接口相关的常量函数等定义头文件
   * @copyright (c) 2017, NetEase Inc. All rights reserved
   * @author Redrain
   * @date 2017/03/23

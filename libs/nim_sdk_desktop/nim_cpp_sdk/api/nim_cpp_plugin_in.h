@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_plugin_in.h
-  * @brief NIM SDK 提供的plugin接入接口
+  * @brief 插件接入，接入聊天室需要调用该接口
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/12/29

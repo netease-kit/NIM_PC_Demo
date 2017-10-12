@@ -25,6 +25,19 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 		if (info.res_code_ == nim::kNIMResSuccess || info.res_code_ == nim::kNIMResTeamInviteSuccess) {
 			TeamService::GetInstance()->InvokeAddTeam(tid, team_info);
 			SessionManager::GetInstance()->OpenSessionBox(tid, nim::kNIMSessionTypeTeam);
+
+			if (!info.invalid_ids_.empty())
+			{
+				std::wstring ids;
+				for (auto id : info.invalid_ids_)
+				{
+					ids.append(nbase::UTF8ToUTF16(id));
+					ids.append(L",");
+				}
+				ids.pop_back();
+				std::wstring toast = nbase::StringPrintf(L"以下成员入群失败，原因是他们所有的群数量超限\r\n%s", ids.c_str());
+				nim_ui::ShowToast(toast, 5000);
+			}
 		}
 	}
 	else if (info.notification_id_ == nim::kNIMNotificationIdLocalUpdateMemberProperty || info.notification_id_ == nim::kNIMNotificationIdTeamApplyPass || info.notification_id_ == nim::kNIMNotificationIdTeamSyncUpdateMemberProperty)
@@ -116,23 +129,43 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 			}
 		}
 	}
+	else if (info.notification_id_ == nim::kNIMNotificationIdTeamInvite)
+	{
+		QLOG_APP(L"UITeamEventCallback invite : {0}") << info.attach_;
+
+		if (info.res_code_ == nim::kNIMResSuccess)
+		{
+			TeamService::GetInstance()->InvokeAddTeam(tid, team_info);
+			for (auto& id : info.ids_)
+			{
+				nim::Team::QueryTeamMemberAsync(tid, id, [tid](const nim::TeamMemberProperty& team_member_info) {
+					TeamService::GetInstance()->InvokeAddTeamMember(tid, team_member_info);
+				});
+			}
+		}
+		else if (info.res_code_ == nim::kNIMResTeamMemberLimit)
+		{
+			std::wstring ids;
+			for (auto id : info.invalid_ids_)
+			{
+				ids.append(nbase::UTF8ToUTF16(id));
+				ids.append(L",");
+			}
+			ids.pop_back();
+			std::wstring toast = nbase::StringPrintf(L"以下成员入群失败，原因是他们所有的群数量超限\r\n%s", ids.c_str());
+			nim_ui::ShowToast(toast, 5000);
+		}
+		else if (info.res_code_ == nim::kNIMResTeamInviteSuccess)
+		{
+			std::wstring toast = L"邀请已发送,等待对方通过";
+			nim_ui::ShowToast(toast, 5000);
+		}
+	}
 	else
 	{
 		if (info.res_code_ == nim::kNIMResSuccess)
 		{
-			if (info.notification_id_ == nim::kNIMNotificationIdTeamInvite)
-			{
-				QLOG_APP(L"UITeamEventCallback invite : {0}") << info.attach_;
-
-				TeamService::GetInstance()->InvokeAddTeam(tid, team_info);
-				for (auto& id : info.ids_)
-				{
-					nim::Team::QueryTeamMemberAsync(tid, id, [tid](const nim::TeamMemberProperty& team_member_info) {
-						TeamService::GetInstance()->InvokeAddTeamMember(tid, team_member_info);
-					});
-				}
-			}
-			else if (info.notification_id_ == nim::kNIMNotificationIdTeamKick)
+			if (info.notification_id_ == nim::kNIMNotificationIdTeamKick)
 			{
 				QLOG_APP(L"UITeamEventCallback Kick : {0}") << info.attach_;
 

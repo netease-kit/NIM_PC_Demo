@@ -597,6 +597,7 @@ struct TeamEvent
 	NIMNotificationId notification_id_;		/**< 通知类型ID */
 	std::string team_id_;					/**< 群组ID */
 	std::list<std::string> ids_;			/**< 通知可能涉及到的群成员ID */
+	std::list<std::string> invalid_ids_;	/**< 通知可能涉及到的失效的群成员ID，比如邀请入群的成员的群数量超限导致当次邀请失败 */
 	std::list<UserNameCard> namecards_;		/**< 通知可能涉及到的群成员的用户名片 */
 	TeamInfo	team_info_;					/**< 通知可能涉及到的群信息 */
 	TeamMemberProperty member_property_;	/**< 群成员属性 */

@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_team.h
-  * @brief 群组功能；主要包括查询群信息、查询群成员信息、加人、踢人等功能
+  * @brief 群组
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author towik, Oleg
   * @date 2015/2/1

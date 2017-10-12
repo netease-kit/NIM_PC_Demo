@@ -188,7 +188,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="callback\chatroom_callback.cpp" />
+    <ClCompile Include="gui\chatroom_form_at.cpp" />
     <ClCompile Include="gui\chatroom_form_msg.cpp" />
+    <ClCompile Include="gui\chatroom_form_robot.cpp" />
     <ClCompile Include="gui\chatroom_form_ui.cpp" />
     <ClCompile Include="gui\chatroom_frontpage.cpp" />
     <ClCompile Include="gui\chatform_richedit.cpp" />

@@ -1,5 +1,5 @@
 ﻿/** @file nim_msglog_def.h
-  * @brief msglog define
+  * @brief 消息历史 接口相关的常量函数等定义头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/02/12
@@ -257,6 +257,7 @@ enum NIMMsgLogQueryRange
 static const char *kNIMNotificationKeyId		= "id";				/**< int, 见NIMNotificationId */
 static const char *kNIMNotificationKeyData		= "data";			/**< json object 包含以下5种可能的数据结构*/
 static const char *kNIMNotificationKeyDataIds	= "ids";			/**< string array */
+static const char *kNIMNotificationKeyDataInvalidIds	= "invalid_ids";		/**< string array */
 static const char *kNIMNotificationKeyDataId	= "id";				/**< string */
 static const char *kNIMNotificationKeyDataLeave = "leave";			/**< bool */
 static const char *kNIMNotificationKeyDataMute	= "mute";			/**< int */

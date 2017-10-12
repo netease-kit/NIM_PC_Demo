@@ -1,5 +1,5 @@
 ﻿/** @file nim_robot_def.h
-  * @brief NIM SDK robot相关的定义
+  * @brief 智能机器人 接口相关的常量函数等定义头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2017/06/24

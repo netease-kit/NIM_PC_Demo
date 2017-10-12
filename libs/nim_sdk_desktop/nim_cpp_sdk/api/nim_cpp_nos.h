@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_nos.h
-  * @brief NIM SDK提供的NOS云存储服务接口
+  * @brief NOS云存储服务
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author towik, Oleg
   * @date 2015/2/1

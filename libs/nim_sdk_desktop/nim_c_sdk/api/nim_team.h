@@ -1,5 +1,5 @@
 ﻿/** @file nim_team.h
-  * @brief NIM SDK提供的team接口
+  * @brief 群组 接口头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1

@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_talk.h
-  * @brief 聊天功能；主要包括发送消息、接收消息等功能
+  * @brief P2P和群组聊天
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author towik, Oleg, Harrison
   * @date 2015/2/1
@@ -81,7 +81,7 @@ public:
 	*/
 	static void RegReceiveCb(const ReceiveMsgCallback& cb, const std::string& json_extension = "");
 
-	/** @fn static void RegReceiveCb(const ReceiveMsgCallback& cb, const std::string& json_extension = "")
+	/** @fn static void RegReceiveMessagesCb(const ReceiveMsgsCallback& cb, const std::string& json_extension = "")
 	* (全局回调)注册批量接收消息回调 （建议全局注册,统一接受回调后分发消息到具体的会话）
 	* @param[in] json_extension json扩展参数（备用,目前不需要）
 	* @param[in] cb		接收消息的回调函数
@@ -217,12 +217,13 @@ public:
 		, const MessageSetting& msg_setting
 		, int64_t timetag = 0);
 
-	/** @fn static std::string CreateTipMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const std::string& tip_content, const MessageSetting& msg_setting, int64_t timetag  = 0)
+	/** @fn static std::string CreateBotRobotMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const std::string& content, const IMBotRobot& bot_msg, const MessageSetting& msg_setting, int64_t timetag  = 0)
 	* 生成Tip消息内容,生成的字符串在调用SendMsg时直接传入
 	*  @param[in] receiver_id 聊天对象的 ID,如果是单聊,为用户帐号,如果是群聊,为群组 ID
 	*  @param[in] session_type NIMSessionType,聊天类型,单聊或群组
 	*  @param[in] client_msg_id 客户端消息id,建议uuid
-	*  @param[in] tip_content Tip文本内容
+	*  @param[in] content 内容
+	*  @param[in] bot_msg 机器人消息信息
 	*  @param[in] msg_setting 消息属性设置
 	*  @param[in] timetag 消息时间
 	*  @return std::string 位置消息Json字符串
@@ -346,7 +347,7 @@ public:
 	*/
 	static void RecallMsg(const IMMessage &msg, const std::string &notify, const RecallMsgsCallback& cb, const std::string& json_extension = "");
 	
-	/** @fn static std::string CreateRetweetMessage(const std::string& src_msg_json	, const std::string& client_msg_id	, const NIMSessionType retweet_to_session_type	, const std::string& retweet_to_session_id	, const MessageSetting& msg_setting	, int64_t timetag = 0)
+	/** @fn static std::string GetAttachmentPathFromMsg(const IMMessage& msg)
 	*  从消息体中获取附件（图片、语音、视频等）的本地路径
 	*  @param[in]  msg	消息
 	*  @return char *	消息如果有附件，不管是否已下载，返回附件的本地路径；消息如果没有附件，返回空字符串。

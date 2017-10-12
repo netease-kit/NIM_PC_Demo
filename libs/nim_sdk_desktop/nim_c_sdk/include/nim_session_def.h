@@ -1,5 +1,5 @@
 ﻿/** @file nim_session_def.h
-  * @brief session define
+  * @brief 最近会话列表 接口相关的常量函数等定义头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/2/1

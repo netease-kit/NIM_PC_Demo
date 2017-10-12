@@ -414,7 +414,7 @@ void ChatroomForm::GetHistorys()
 {
 	ChatRoomGetMsgHistoryParameters history_param;
 	history_param.limit_ = 10;
-	history_param.start_timetag_ = time_start_history_;;
+	history_param.start_timetag_ = time_start_history_;
 	//history_param.reverse_ = false;
 	ChatRoom::GetMessageHistoryOnlineAsync(room_id_, history_param, nbase::Bind(&ChatroomForm::GetMsgHistoryCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
@@ -432,10 +432,15 @@ void ChatroomForm::GetMsgHistoryCallback(__int64 room_id, int error_code, const 
 
 	StdClosure cb = [=](){
 		is_loading_history_ = false;
-		for (auto it = msgs.begin(); it != msgs.end(); it++)
+		bool record_time = false;
+		for (auto it = msgs.rbegin(); it != msgs.rend(); it++)
 		{
-			AddMsgItem(*it, true);
-			time_start_history_ = it->timetag_ - 1;
+			AddMsgItem(*it, true, !record_time);
+			if (!record_time)
+			{
+				time_start_history_ = it->timetag_ - 1;
+				record_time = true;
+			}
 			if (time_start_history_ < 0)
 				time_start_history_ = 0;
 		}
@@ -479,11 +484,11 @@ void ChatroomForm::OnRequestRoomError()
 	this->Close();
 }
 
-void ChatroomForm::AddMsgItem(const ChatRoomMessage& result, bool is_history)
+void ChatroomForm::AddMsgItem(const ChatRoomMessage& result, bool is_history, bool first_msg_each_batch)
 {
 	if (result.msg_type_ == kNIMChatRoomMsgTypeText)
 	{
-		AddText(nbase::UTF8ToUTF16(result.msg_attach_), nbase::UTF8ToUTF16(result.from_nick_), is_history);
+		AddText(nbase::UTF8ToUTF16(result.msg_attach_), nbase::UTF8ToUTF16(result.from_nick_), result.from_id_, kMember, is_history, first_msg_each_batch);
 	}
 	else if (result.msg_type_ == kNIMChatRoomMsgTypeNotification)
 	{
@@ -493,7 +498,7 @@ void ChatroomForm::AddMsgItem(const ChatRoomMessage& result, bool is_history)
 		{
 			ChatRoomNotification notification;
 			notification.ParseFromJsonValue(json);
-			AddNotifyItem(notification, is_history);
+			AddNotifyItem(notification, is_history, first_msg_each_batch);
 		}
 	}
 	else if (result.msg_type_ == kNIMChatRoomMsgTypeCustom)
@@ -506,20 +511,25 @@ void ChatroomForm::AddMsgItem(const ChatRoomMessage& result, bool is_history)
 			if (sub_type == nim_comp::CustomMsgType_Jsb && json["data"].isObject())
 			{
 				int value = json["data"]["value"].asInt();
-				AddJsb(value, nbase::UTF8ToUTF16(result.from_nick_), is_history);
+				AddJsb(value, nbase::UTF8ToUTF16(result.from_nick_), is_history, first_msg_each_batch);
 			}
 		}
 	}
+	else if (result.msg_type_ == kNIMChatRoomMsgTypeRobot)
+		AddRobotMsg(result, is_history, first_msg_each_batch);
 
 	if (!result.from_nick_.empty())
 		nick_account_map_[result.from_nick_] = result.from_id_;
 }
 
-void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool is_history)
+void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool is_history, bool first_msg_each_batch/* = false*/)
 {
 	MutiLanSupport* mls = MutiLanSupport::GetInstance();
 	std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
 
+	bool first_msg = msg_list_->GetTextLength() == 0;
+	if (first_msg)
+		msg_list_->ReplaceSel(L"\r\n", false);
 	auto it_nick = notification.target_nick_.cbegin();
 	auto it_id = notification.target_ids_.cbegin();
 	for (;	it_nick != notification.target_nick_.cend(), it_id != notification.target_ids_.cend();
@@ -592,7 +602,7 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 			str = nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_NOTIFY_TEMP_UNMUTE").c_str(), nick.c_str(), notification.temp_mute_duration_);
 			SetMemberTempMute(*it_id, false, notification.temp_mute_duration_);
 		}
-		AddNotify(str, is_history);
+		AddNotify(str, is_history, first_msg_each_batch);
 	}
 
 	if (notification.id_ == kNIMChatRoomNotificationIdRoomMuted || notification.id_ == kNIMChatRoomNotificationIdRoomDeMuted)
@@ -600,7 +610,7 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 		std::wstring str;
 		str = mls->GetStringViaID(notification.id_ == kNIMChatRoomNotificationIdRoomMuted ? L"STRID_CHATROOM_NOTIFY_ROOM_MUTE" : L"STRID_CHATROOM_NOTIFY_ROOM_UNMUTE");
 		room_mute_ = notification.id_ == kNIMChatRoomNotificationIdRoomMuted;
-		AddNotify(str, is_history);
+		AddNotify(str, is_history, first_msg_each_batch);
 	}
 
 	if (!notification.ext_.empty())
@@ -608,6 +618,9 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 		std::string toast = nbase::StringPrintf("notification_id:%d, from_nick:%s(%s), notify_ext:%s", notification.id_, notification.operator_nick_.c_str(), notification.operator_id_.c_str(), notification.ext_.c_str());
 		nim_ui::ShowToast(nbase::UTF8ToUTF16(toast), 5000, this->GetHWND());
 	}
+
+	if (first_msg)
+		msg_list_->SetSel(0, 0);
 }
 
 void ChatroomForm::OnBtnSend()
@@ -642,29 +655,33 @@ void ChatroomForm::OnBtnSend()
 			}
 			else
 			{
-				wstring sText;
+				wstring sText, sTestText;
 				nim_comp::Re_GetText(input_edit_->GetTextServices(), sText);
-				StringHelper::Trim(sText);
-				if (sText.empty()) return;
+				sTestText = StringHelper::Trim(sText.c_str());
+				if (sTestText.empty()) return;
 				input_edit_->SetText(_T(""));
 				SendText(nbase::UTF16ToUTF8(sText));
 
-				std::wstring my_name = nim_ui::UserManager::GetInstance()->GetUserName(nim_ui::LoginManager::GetInstance()->GetAccount(), false);
-				AddText(sText, my_name, false);
+				std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
+				std::wstring my_name = nim_ui::UserManager::GetInstance()->GetUserName(my_id, false);
+				AddText(sText, my_name, my_id, kMember, false);
 			}
 		}
 	}
 }
 
-void ChatroomForm::AddText(const std::wstring &text, const std::wstring &sender_name, bool is_history)
+void ChatroomForm::AddText(const std::wstring &text, const std::wstring &sender_name, const std::string &sender_id, SenderType sender_type, bool is_history, bool first_msg_each_batch/* = false*/)
 {
 	if (text.empty()) return;
-	// 
-	if (msg_list_->GetTextLength() != 0)
+	long old_begin = 0, old_end = 0;
+	if (msg_list_->GetTextLength() > 0)
 	{
 		if (is_history)
 		{
-			msg_list_->SetSel(0, 0);
+			if (first_msg_each_batch)
+				msg_list_->SetSel(0, 0);
+			else
+				msg_list_->GetSel(old_begin, old_end);
 			msg_list_->ReplaceSel(ROOMMSG_R_N, false);
 		}
 		else
@@ -674,21 +691,32 @@ void ChatroomForm::AddText(const std::wstring &text, const std::wstring &sender_
 		}
 	}
 
-	//
 	long lSelBegin = 0, lSelEnd = 0;
+
 	CHARFORMAT2 cf;
 	msg_list_->GetDefaultCharFormat(cf); //获取消息字体
 	cf.dwMask = CFM_LINK | CFM_FACE | CFM_COLOR;
 	cf.dwEffects = CFE_LINK;
 
 	// 添加发言人，并设置他的颜色
-	lSelEnd = lSelBegin = is_history ? 0 : msg_list_->GetTextLength();
+	lSelEnd = lSelBegin = is_history ? old_end + 1 : msg_list_->GetTextLength();
 	msg_list_->SetSel(lSelEnd, lSelEnd);
 	msg_list_->ReplaceSel(sender_name, false);
 
-	lSelEnd = is_history ? sender_name.length() : msg_list_->GetTextLength();
+	lSelEnd = is_history ? lSelEnd + sender_name.length() : msg_list_->GetTextLength();
+	msg_list_->ReplaceSel(L" ", false);
 	msg_list_->SetSel(lSelBegin, lSelEnd);
 	msg_list_->SetSelectionCharFormat(cf);
+	lSelEnd++;
+
+	if (sender_type == kRobot)
+	{
+		Json::Value values;
+		values["type"] = kRobot;
+		values["id"] = sender_id;
+		values["name"] = nbase::UTF16ToUTF8(sender_name);
+		msg_list_sender_name_link_[sender_name] = values;
+	}
 
 	// 设置文本的缩进
 	PARAFORMAT2 pf;
@@ -703,6 +731,7 @@ void ChatroomForm::AddText(const std::wstring &text, const std::wstring &sender_
 	msg_list_->SetSel(lSelEnd, lSelEnd);
 	msg_list_->ReplaceSel(ROOMMSG_R_N, false);
 	lSelEnd++;
+
 	// 添加正文，并设置他的颜色	
 	msg_list_->SetSel(lSelEnd, lSelEnd);
 	nim_comp::InsertTextToEdit(msg_list_, text);
@@ -720,18 +749,24 @@ void ChatroomForm::AddText(const std::wstring &text, const std::wstring &sender_
 
 	if (!is_history)
 		msg_list_->EndDown();
+
+	msg_list_->SetSel(lSelEnd2, lSelEnd2);
 	input_edit_->SetFocus();
 }
 
-void ChatroomForm::AddNotify(const std::wstring &notify, bool is_history)
+void ChatroomForm::AddNotify(const std::wstring &notify, bool is_history, bool first_msg_each_batch/* = false*/)
 {
 	if (notify.empty()) return;
+	long old_begin = 0, old_end = 0;
 	// 
 	if (msg_list_->GetTextLength() != 0)
 	{
 		if (is_history)
 		{
-			msg_list_->SetSel(0, 0);
+			if (first_msg_each_batch)
+				msg_list_->SetSel(0, 0);
+			else
+				msg_list_->GetSel(old_begin, old_end);
 			msg_list_->ReplaceSel(ROOMMSG_R_N, false);
 		}
 		else
@@ -749,11 +784,11 @@ void ChatroomForm::AddNotify(const std::wstring &notify, bool is_history)
 	cf.crTextColor = RGB(255, 0, 0);
 
 	// 添加通知消息，并设置他的颜色
-	lSelEnd = lSelBegin = is_history ? 0 : msg_list_->GetTextLength();
+	lSelEnd = lSelBegin = is_history ? old_end + 1 : msg_list_->GetTextLength();
 	msg_list_->SetSel(lSelEnd, lSelEnd);
 	msg_list_->ReplaceSel(notify, false);
 
-	lSelEnd = is_history ? notify.length() : msg_list_->GetTextLength();
+	lSelEnd = is_history ? lSelBegin + notify.length() : msg_list_->GetTextLength();
 	msg_list_->SetSel(lSelBegin, lSelEnd);
 	msg_list_->SetSelectionCharFormat(cf);
 
@@ -768,12 +803,63 @@ void ChatroomForm::AddNotify(const std::wstring &notify, bool is_history)
 
 	if (!is_history)
 		msg_list_->EndDown();
+
 }
 
 void ChatroomForm::SendText(const std::string &text)
 {
-	//std::string test_string = "{\"remote\":{\"mapmap\":{\"int\":1,\"boolean\":false,\"list\":[1,2,3],\"string\":\"string, lalala\"}}}";
-	std::string send_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeText, QString::GetGUID(), text, ChatRoomMessageSetting());
+	NIMChatRoomMsgType msg_type = kNIMChatRoomMsgTypeText;
+	std::string robot_accid;
+	//判断是否包含@某人的消息
+	if (!uid_at_someone_.empty())
+	{
+		//检查文本消息中是否存在“@xxx ”的文本
+		for (auto it = uid_at_someone_.begin(); it != uid_at_someone_.end(); ++it)
+		{
+			std::string nick_name = it->first;
+			std::string at_str = "@";
+			at_str.append(nick_name);
+			at_str.append(" ");
+
+			int index = text.find(at_str);
+			if (index != std::string::npos)
+			{
+				if (it->second.is_robot_)
+				{
+					msg_type = kNIMChatRoomMsgTypeRobot;
+					if (robot_accid.empty())//只允许第一个
+						robot_accid = it->second.uid_;
+				}
+			}
+		}
+		uid_at_someone_.clear();
+	}
+
+	nim::IMBotRobot bot;
+	bot.robot_accid_ = robot_accid;
+	std::wstring robot_content = nbase::UTF8ToUTF16(text);
+	int index = robot_content.find(L"@");
+	if (index != -1)
+	{
+		int space_index = 0;
+		while (space_index != -1 && index != -1)
+		{
+			space_index = robot_content.find(L" ", index);
+			if (space_index != -1)
+			{
+				robot_content = robot_content.replace(index, space_index - index + 1, L"");
+				index = robot_content.find(L"@", index);
+			}
+		}
+	}
+	bot.sent_param_["content"] = robot_content.empty() ? " " : nbase::UTF16ToUTF8(robot_content);
+	bot.sent_param_["type"] = "01";
+
+	std::string send_msg;
+	if (msg_type == kNIMChatRoomMsgTypeText)
+		send_msg = ChatRoom::CreateRoomMessage(msg_type, QString::GetGUID(), text, "", ChatRoomMessageSetting());
+	else
+		send_msg = ChatRoom::CreateRoomMessage(msg_type, QString::GetGUID(), bot.ToJsonString(), text, ChatRoomMessageSetting());
 	ChatRoom::SendMsg(room_id_, send_msg);
 }
 
@@ -801,7 +887,7 @@ void ChatroomForm::OnBtnJsb()
 	}
 }
 
-void ChatroomForm::AddJsb(const int value, const std::wstring &sender_name, bool is_history)
+void ChatroomForm::AddJsb(const int value, const std::wstring &sender_name, bool is_history, bool first_msg_each_batch/* = false*/)
 {
 	std::wstring file_name;
 	if (value == 1)
@@ -812,12 +898,18 @@ void ChatroomForm::AddJsb(const int value, const std::wstring &sender_name, bool
 		file_name = L"jsb_b.png";
 
 	if (file_name.empty()) return;
+
+	long old_begin = 0, old_end = 0;
+
 	// 
 	if (msg_list_->GetTextLength() != 0)
 	{
 		if (is_history)
 		{
-			msg_list_->SetSel(0, 0);
+			if (first_msg_each_batch)
+				msg_list_->SetSel(0, 0);
+			else
+				msg_list_->GetSel(old_begin, old_end);
 			msg_list_->ReplaceSel(ROOMMSG_R_N, false);
 		}
 		else
@@ -830,19 +922,20 @@ void ChatroomForm::AddJsb(const int value, const std::wstring &sender_name, bool
 	//
 	long lSelBegin = 0, lSelEnd = 0;
 	CHARFORMAT2 cf;
-	ZeroMemory(&cf, sizeof(CHARFORMAT2));
-	cf.cbSize = sizeof(cf);
+	msg_list_->GetDefaultCharFormat(cf); //获取消息字体
 	cf.dwMask = CFM_LINK | CFM_FACE | CFM_COLOR;
 	cf.dwEffects = CFE_LINK;
 
 	// 添加发言人，并设置他的颜色
-	lSelEnd = lSelBegin = is_history ? 0 : msg_list_->GetTextLength();
+	lSelEnd = lSelBegin = is_history ? old_end + 1 : msg_list_->GetTextLength();
 	msg_list_->SetSel(lSelEnd, lSelEnd);
 	msg_list_->ReplaceSel(sender_name, false);
 
-	lSelEnd = is_history ? sender_name.length() : msg_list_->GetTextLength();
+	lSelEnd = is_history ? lSelBegin + sender_name.length() : msg_list_->GetTextLength();
+	msg_list_->ReplaceSel(L" ", false);
 	msg_list_->SetSel(lSelBegin, lSelEnd);
 	msg_list_->SetSelectionCharFormat(cf);
+	lSelEnd++;
 
 	// 设置文本的缩进
 	PARAFORMAT2 pf;
@@ -883,13 +976,14 @@ void ChatroomForm::AddJsb(const int value, const std::wstring &sender_name, bool
 	if (!is_history)
 		msg_list_->EndDown();
 	input_edit_->SetFocus();
+
+	msg_list_->SetSel(lSelEnd + 1, lSelEnd + 1);
 }
 
 void ChatroomForm::SendJsb(const std::string & attach)
 {
-	std::string send_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeCustom, QString::GetGUID(), attach, ChatRoomMessageSetting());
+	std::string send_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeCustom, QString::GetGUID(), attach, "", ChatRoomMessageSetting());
 	ChatRoom::SendMsg(room_id_, send_msg);
-
 }
 
 void ChatroomForm::SendImage(const std::wstring &src)
@@ -920,7 +1014,7 @@ void ChatroomForm::SendImage(const std::wstring &src)
 		{
 			nim::IMImage new_img(img);
 			new_img.url_ = url;
-			std::string send_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeImage, QString::GetGUID(), new_img.ToJsonString(), ChatRoomMessageSetting());
+			std::string send_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeImage, QString::GetGUID(), new_img.ToJsonString(), "", ChatRoomMessageSetting());
 			ChatRoom::SendMsg(room_id_, send_msg);
 		}
 	});

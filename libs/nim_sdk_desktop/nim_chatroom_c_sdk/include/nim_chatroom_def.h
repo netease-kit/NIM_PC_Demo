@@ -1,5 +1,5 @@
 ﻿/** @file nim_chatroom_def.h
-  * @brief NIM 聊天室 SDK 定义
+  * @brief 聊天室 接口相关的常量函数等定义头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg, Harrison
   * @date 2015/12/24
@@ -249,7 +249,8 @@ static const char *kNIMChatRoomMsgKeyExt			= "ext";				/**< string, 第三方扩
 static const char *kNIMChatRoomMsgKeyAntiSpamEnable	= "anti_spam_enable";	/**< int, 是否需要过易盾反垃圾, 0:不需要,1:需要, 默认0 */
 static const char *kNIMChatRoomMsgKeyAntiSpamContent= "anti_spam_content";	/**< string, (可选)开发者自定义的反垃圾字段, 长度限制2048 */
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
-static const char *kNIMChatRoomMsgKeyHistorySave	= "history_save";	/**< int,(可选)该消息是否存储云端历史,可选，0:不是,1:是, 默认1 */
+static const char *kNIMChatRoomMsgKeyHistorySave	= "history_save";		/**< int,(可选)该消息是否存储云端历史,可选，0:不是,1:是, 默认1 */
+static const char *kNIMChatRoomMsgKeyBody			= "body";				/**< string,(可选)文本消息内容（聊天室机器人文本消息） */
 #endif NIMAPI_UNDER_WIN_DESKTOP_ONLY
 //以下定义对于客户端只读
 static const char *kNIMChatRoomMsgKeyRoomID			= "room_id";			/**< long, 消息所属的聊天室id,服务器填写,发送方不需要填写 */
@@ -275,6 +276,7 @@ enum NIMChatRoomMsgType
 	kNIMChatRoomMsgTypeLocation = 4,	/**< 位置类型消息*/
 	kNIMChatRoomMsgTypeNotification = 5,/**< 活动室通知*/
 	kNIMChatRoomMsgTypeFile = 6,		/**< 文件类型消息*/
+	kNIMChatRoomMsgTypeRobot = 11,		/**< 波特机器人消息*/
 
 	kNIMChatRoomMsgTypeTips = 10,		/**< 提醒类型消息*/
 	kNIMChatRoomMsgTypeCustom = 100,	/**< 自定义消息*/

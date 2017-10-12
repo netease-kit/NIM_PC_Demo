@@ -65,5 +65,11 @@
     <ClCompile Include="gui\chatform_richedit.cpp">
       <Filter>gui</Filter>
     </ClCompile>
+    <ClCompile Include="gui\chatroom_form_at.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\chatroom_form_robot.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

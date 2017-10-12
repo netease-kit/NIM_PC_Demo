@@ -1,5 +1,5 @@
 ﻿/** @file nim_subscribe_event.h
-  * @brief NIM SDK提供的subscribe event接口
+  * @brief 事件订阅 接口头文件
   * @copyright (c) 2017, NetEase Inc. All rights reserved
   * @author Redrain
   * @date 2015/03/23

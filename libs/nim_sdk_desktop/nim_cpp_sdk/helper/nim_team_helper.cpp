@@ -43,6 +43,16 @@ void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificati
 			{
 				team_event.ids_.push_back(ids[i].asString());
 			}
+
+			if (values[kNIMNotificationKeyData].isMember(kNIMNotificationKeyDataInvalidIds))
+			{
+				ids = values[kNIMNotificationKeyData][kNIMNotificationKeyDataInvalidIds];
+				int len = ids.size();
+				for (int i = 0; i < len; i++)
+				{
+					team_event.invalid_ids_.push_back(ids[i].asString());
+				}
+			}
 		}
 		break;
 		case kNIMNotificationIdTeamLeave:

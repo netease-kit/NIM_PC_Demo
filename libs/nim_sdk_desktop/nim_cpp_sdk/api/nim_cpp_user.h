@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_user.h
-  * @brief NIM SDK提供的用户相关接口
+  * @brief 用户数据
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author towik, Oleg
   * @date 2015/8/17

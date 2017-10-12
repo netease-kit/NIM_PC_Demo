@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_tool.h
-  * @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等
+  * @brief 工具类,提供了包括获取用户/应用目录，计算MD5，计算UUID，语音转文字等功能
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author towik, Oleg, Harrison
   * @date 2015/09/21
@@ -35,6 +35,14 @@ public:
 	* @return std::string 返回的目录路径(UTF8)
 	*/
 	static std::string GetUserAppdataDir(const std::string& app_account);
+
+	/** @fn static std::string GetSpecificAppdataDir(const std::string app_account,enum NIMAppDataType appdata_type) 
+	* 获取SDK里app account对应的具体类型的app data目录（如图片消息文件存放目录，语音消息文件存放目录等），需要调用nim_free_buf(void *data)释放内存 
+	* @param[in] app_account APP account。如果传入空字符串，则返回结果为空
+	* @param[in] appdata_type 具体类型的app data。见NIMAppDataType定义
+	* @return std::string返回的目录路径（目录可能未生成，需要app自行判断是否已生成）
+	*/ 
+	static std::string GetSpecificAppdataDir(const std::string app_account,enum NIMAppDataType appdata_type);
 
 	/** @fn std::string GetLocalAppdataDir()
 	* 获取本地存储路径

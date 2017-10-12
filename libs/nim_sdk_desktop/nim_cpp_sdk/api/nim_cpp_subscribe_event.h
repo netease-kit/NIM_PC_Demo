@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_subscribe_event.h
-  * @brief NIM 事件订阅相关接口
+  * @brief 事件订阅
   * @copyright (c) 2017, NetEase Inc. All rights reserved
   * @author Redrain
   * @date 2017/03/23
@@ -22,7 +22,7 @@ namespace nim
 {
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @class SubscribeEvent
-  * @brief NIM 好友相关接口
+  * @brief NIM 订阅事件相关接口
   */
 class SubscribeEvent
 {

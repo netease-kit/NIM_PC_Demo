@@ -1,5 +1,5 @@
 ﻿/** @file nim_plugin_in.h
-  * @brief NIM SDK提供的plugin接入所需接口
+  * @brief 插件接入 接口头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/12/28

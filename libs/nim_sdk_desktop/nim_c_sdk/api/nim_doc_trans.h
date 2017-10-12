@@ -1,5 +1,5 @@
 ﻿/** @file nim_doc_trans.h
-  * @brief NIM SDK提供的文档转换相关接口，其中文档上传下载,请使用nos接口nim_nos_upload_ex/nim_nos_download/nim_nos_download_ex
+  * @brief 文档转换 接口头文件，其中文档上传下载,请使用NOS云存储服务提供的上传下载接口
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/2/1

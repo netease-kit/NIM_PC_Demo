@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_client.h
-  * @brief 全局管理功能；主要包括SDK初始化/清理、客户端登录/退出等功能
+  * @brief SDK接入,主要包括SDK初始化/清理、客户端登录/退出/重连/掉线/被踢等流程
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author towik, Oleg, Harrison
   * @date 2015/09/21

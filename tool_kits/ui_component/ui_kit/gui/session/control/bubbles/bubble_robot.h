@@ -66,7 +66,7 @@ protected:
 	* @param[in] file_path 本地资源路径
 	* @return void 无返回值
 	*/
-	virtual void OnDownloadCallback(bool success, const std::string& file_path) override;
+	//virtual void OnDownloadCallback(bool success, const std::string& file_path) override;
 
 	/**
 	* 设置是否显示消息发送者的名字（或昵称）
@@ -98,7 +98,15 @@ private:
 	* @param[in] photo_path 本地路径
 	* @return void 无返回值
 	*/
-	void DownloadImage(const std::string &url, const std::wstring &photo_path);
+	void DownloadImage(const std::string &url, const std::wstring &photo_path, bool is_complex_element);
+
+	/**
+	* 下载消息图片资源的回调函数
+	* @param[in] success 是否成功
+	* @param[in] file_path 本地资源路径
+	* @return void 无返回值
+	*/
+	void OnDownloadCallbackEx(bool success, const std::string& file_path, bool is_complex_element);
 
 private:
 	ui::Box*		msg_text_;

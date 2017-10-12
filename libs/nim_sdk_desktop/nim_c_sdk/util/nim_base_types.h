@@ -1,5 +1,5 @@
 ﻿/** @file nim_base_types.h
-  * @brief This file defines base types
+  * @brief SDK基本类型定义
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1

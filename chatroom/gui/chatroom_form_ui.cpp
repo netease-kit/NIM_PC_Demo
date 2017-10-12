@@ -77,6 +77,7 @@ LRESULT ChatroomForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHa
 
 void ChatroomForm::InitWindow()
 {
+	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&ChatroomForm::Notify, this, std::placeholders::_1));
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&ChatroomForm::OnClicked, this, std::placeholders::_1));
 	m_pRoot->AttachBubbledEvent(ui::kEventSelect, nbase::Bind(&ChatroomForm::OnSelectChanged, this, std::placeholders::_1));
 
@@ -140,6 +141,8 @@ void ChatroomForm::InitWindow()
 
 	InitHeader();
 	unregister_cb.Add(nim_ui::HttpManager::GetInstance()->RegDownloadComplete(nbase::Bind(&ChatroomForm::OnHttoDownloadReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+	
+	InitRobots();
 }
 
 LRESULT ChatroomForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -158,6 +161,11 @@ LRESULT ChatroomForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	else if (uMsg == WM_MOUSEWHEEL)
 	{
+		//处理@列表的滚动
+		if (HandleAtMouseWheel(wParam, lParam))
+		{
+			return 0;
+		}
 		POINT pt;
 		pt.x = LOWORD(lParam);
 		pt.y = HIWORD(lParam);	
@@ -175,6 +183,36 @@ LRESULT ChatroomForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 				}
 			}
 		}
+	}
+	else if (uMsg == WM_KEYDOWN)
+	{
+		if (wParam == VK_DOWN || wParam == VK_UP || wParam == VK_RETURN || wParam == VK_BACK)
+		{
+			if (HandleAtMsg(wParam, lParam))
+			{
+				return 0;
+			}
+		}
+	}
+	else if (uMsg == WM_CHAR)
+	{
+		if (wParam != VK_BACK)
+		{
+			//先让RichEdit处理完，然后再处理@消息
+			LRESULT res = __super::HandleMessage(uMsg, wParam, lParam);
+			HandleAtMsg(wParam, lParam);
+			return res;
+		}
+	}
+	else if (uMsg == WM_LBUTTONDOWN || uMsg == WM_NCLBUTTONDOWN || uMsg == WM_RBUTTONDOWN || uMsg == WM_KILLFOCUS)
+	{
+		HideAtListForm();
+	}
+	else if (uMsg == WM_MOUSEMOVE || uMsg == WM_LBUTTONUP)
+	{
+		auto res = HandleDiscuzMessage(uMsg, wParam, lParam);
+		if (res > 0)
+			return res;
 	}
 
 	return __super::HandleMessage(uMsg, wParam, lParam);
@@ -238,6 +276,61 @@ bool ChatroomForm::OnSelectChanged(ui::EventArgs* param)
 	return true;
 }
 
+bool ChatroomForm::Notify(ui::EventArgs* param)
+{
+// 	std::wstring name = param->pSender->GetName();
+// 	if (param->Type == kEventCustomLinkClick)
+// 	{
+// 		RichEdit* text_edit = dynamic_cast<RichEdit*>(param->pSender);
+// 		std::wstring link_info;
+// 		if (text_edit->HittestCustomLink(param->ptMouse, link_info))
+// 		{
+// 			Json::Value values;
+// 			Json::Reader reader;
+// 			if (reader.parse(nbase::UTF16ToUTF8((std::wstring)link_info), values) && values.isObject())
+// 			{
+// 				std::string type = values["type"].asString();
+// 				if (type == "url")
+// 				{
+// 					std::string url = values["target"].asString();
+// 					Post2GlobalMisc(nbase::Bind(&shared::tools::SafeOpenUrl, nbase::UTF8ToUTF16(url), SW_SHOW));
+// 				}
+// 				else if (type == "block")
+// 				{
+// 					std::string robot_id = values[nim::kNIMBotRobotMsgKeyRobotID].asString();
+// 					std::string content = values["link_text"].asString();
+// 					nim::IMBotRobot bot;
+// 					bot.robot_accid_ = robot_id;
+// 					bot.sent_param_["target"] = values["target"].asString();
+// 					bot.sent_param_["type"] = "03";
+// 					bot.sent_param_["params"] = values["params"].asString();
+// 					std::string json_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeRobot, QString::GetGUID(), bot.ToJsonString(), content, ChatRoomMessageSetting());
+// 					ChatRoom::SendMsg(room_id_, json_msg);
+// 					std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
+// 					std::wstring my_name = nim_ui::UserManager::GetInstance()->GetUserName(nim_ui::LoginManager::GetInstance()->GetAccount(), false);
+// 					AddText(nbase::UTF8ToUTF16(content), my_name, my_id, kMember, false);
+// 				}
+// 				else
+// 				{
+// 					assert(0);
+// 					QLOG_ERR(L"\r\nError custom click: {0}") << (std::wstring)link_info;
+// 				}
+// 			}
+// 		}
+// 	}
+	return true;
+}
+
+bool ChatroomForm::OnNameMenu(const std::string &id, const std::string &name, ui::EventArgs* arg)
+{
+	nim_comp::InsertTextToEdit(input_edit_, L"@" + nbase::UTF8ToUTF16(name) + L" ");
+	AtSomeone da;
+	da.uid_ = id;
+	da.is_robot_ = true;
+	uid_at_someone_[name] = da;
+	return true;
+}
+
 bool ChatroomForm::OnEditEnter(ui::EventArgs* param)
 {
 	OnBtnSend();
@@ -287,9 +380,44 @@ bool ChatroomForm::OnLinkClick(WPARAM wParam, LPARAM lParam)
 	if (wParam == EN_LINK)
 	{
 		std::wstring name = *(std::wstring*)lParam;
+		nbase::StringTrim(name);
 		if (!name.empty())
 		{
-			ShowMemberMenu(name);
+			if (msg_list_sender_name_link_.find(name) != msg_list_sender_name_link_.end())
+			{
+				Json::Value values = msg_list_sender_name_link_[name];
+				SenderType type = (SenderType)values["type"].asInt();
+				if (type == kRobot)
+				{
+					std::string robot_name = values["name"].asString();
+					std::string robot_id = values["id"].asString();
+					StdClosure cb = [robot_name, robot_id, this](){
+
+						POINT point;
+						::GetCursorPos(&point);
+
+						CMenuWnd* pMenu = new CMenuWnd(NULL);
+						STRINGorID xml(L"cell_head_menu.xml");
+						pMenu->Init(xml, _T("xml"), point);
+
+						CMenuElementUI* at_ta = (CMenuElementUI*)pMenu->FindControl(L"at_ta");
+						at_ta->AttachSelect(nbase::Bind(&ChatroomForm::OnNameMenu, this, robot_id, robot_name, std::placeholders::_1));
+						at_ta->SetVisible(true);
+						pMenu->Show();
+					};
+					Post2UI(cb);						
+				}
+				else if (type == kMember)
+				{
+
+				}
+				else
+				{
+					assert(0);
+				}
+			}
+			else
+				ShowMemberMenu(name);
 		}
 	}
 	return false;

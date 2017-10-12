@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_global.h
-  * @brief NIM SDK提供的一些全局接口
+  * @brief 辅助能力
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author towik, Oleg
   * @date 2015/2/1
@@ -46,6 +46,7 @@ public:
 	* @return void 无返回值
 	*/
 	static void FreeBuf(void *data);
+
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/** @fn void SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password)
     * 设置SDK统一的网络代理。不需要代理时，type设置为kNIMProxyNone，其余参数都传空字符串（端口设为0）。有些代理不需要用户名和密码，相应参数也传空字符串。   
@@ -69,8 +70,7 @@ public:
     * @return void 无返回值
     */
 	static void DetectProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password, const Global::DetectProxyCallback& callback);
-#endif
-
+#else
 	/** @fn void nim_client_reg_kickout_other_client_cb(const char *json_extension, nim_json_transport_cb_func cb, const void *user_data)
 	* 注册输出sdk log回调
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -79,6 +79,7 @@ public:
 	* @return void 无返回值
 	*/
 	static void SetSDKLogCallback(const std::string&json_extension,const SDKLogCallback& callback);
+#endif
 };
 
 } 

@@ -1,5 +1,5 @@
 ﻿/** @file nim_global.h
-  * @brief NIM SDK提供的一些全局接口
+  * @brief 辅助能力 接口头文件，包括内存管理和代理相关设置
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1

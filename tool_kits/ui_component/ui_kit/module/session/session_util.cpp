@@ -354,7 +354,7 @@ void InsertImageToEdit(ui::RichEdit* edit, const std::wstring& image_src, bool l
 	{
 		Re_GetSel(text_service, start_char, end_char);
 		Re_SetSel(text_service, end_char, end_char);
-		ret = Re_InsertImage(text_service, InsertCustomItemErrorCallback(), image_src, L"", loading);
+		ret = Re_InsertImage(text_service, InsertCustomItemErrorCallback(), true, image_src, L"", loading);
 
 		text_service->Release();
 	}

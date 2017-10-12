@@ -143,6 +143,11 @@ static void InitNim()
 			if (auto pchar = root->Attribute("kNIMPreloadImageResize")){
 				config.preload_image_resize_ = (std::string)pchar;
 			}
+			if (auto pchar = root->Attribute("kNIMTeamNotificationUnreadCount")){
+				int need = -1;
+				nbase::StringToInt((std::string)pchar, &need);
+				config.team_notification_unread_count_ = need > 0;
+			}
 			config.use_private_server_ = use_private_server;
 		}
 	}

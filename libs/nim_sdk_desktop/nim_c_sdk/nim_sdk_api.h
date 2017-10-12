@@ -1,5 +1,5 @@
 ﻿/** @file nim_sdk_api.h
-  * @brief 接口头文件集合
+  * @brief 接口头文件集合，在需要使用即时通讯 SDK 的地方包含该头文件即可
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2017/02/01

@@ -1,5 +1,5 @@
 ﻿/** @file nim_vchat.h
-* @brief NIM VChat提供的音视频相关接口
+* @brief 音视频 接口头文件
 * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
 * @author gq
 * @date 2015/4/30
@@ -186,7 +186,7 @@ extern"C"
 	NIM_SDK_DLL_API bool nim_vchat_rotate_remote_video_enabled();
 
 	/** @fn void nim_vchat_set_video_quality(int video_quality, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
-	* NIM 通话中修改发送画面分辨率
+	* NIM 通话中修改发送画面分辨率，发送的分辨率限制只对上限限制，如果数据源小于发送分辨率，不会进行放大
 	* @param[in] video_quality 分辨率模式 见NIMVChatVideoQuality定义
 	* @param[in] json_extension 无效扩展字段
 	* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效

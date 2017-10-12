@@ -1,5 +1,5 @@
 ﻿/** @file nim_cpp_friend.h
-  * @brief NIM 好友相关接口
+  * @brief 好友
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author caowei, Oleg
   * @date 2015/8/17

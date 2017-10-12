@@ -1,5 +1,5 @@
 ﻿/** @file nim_chatroom.h
-  * @brief NIM 聊天室 SDK提供的接口
+  * @brief 聊天室 接口头文件，在需要使用聊天室 SDK 的地方包含该头文件即可
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg, Harrison
   * @date 2015/12/28

@@ -1,5 +1,5 @@
 ﻿/** @file nim_tools.h
-  * @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等
+  * @brief 工具类，提供了包括获取用户/应用目录，计算MD5，计算UUID，语音转文字等功能等
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1

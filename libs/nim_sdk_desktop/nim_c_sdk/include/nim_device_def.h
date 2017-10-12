@@ -1,5 +1,5 @@
 ﻿/** @file nim_device_def.h
-  * @brief NIM VChat提供的设备相关接口定义
+  * @brief 音视频设备 接口相关的常量函数等定义头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/4/24
@@ -32,11 +32,11 @@ enum NIMDeviceType
 /** @enum NIMVideoSubType 视频格式类型 */
 enum NIMVideoSubType
 {
-	kNIMVideoSubTypeARGB = 0,	/**< 32位位图格式 存储 (B,G,R,A)... */
-	kNIMVideoSubTypeRGB = 1,	/**< 24位位图格式 存储 (B,G,R)... */
-	kNIMVideoSubTypeI420 = 2,	/**< YUV格式，存储 yyyyyyyy...uu...vv... */
+	kNIMVideoSubTypeARGB	= 0,	/**< 32位位图格式 存储 (B,G,R,A)... */
+	kNIMVideoSubTypeRGB		= 1,	/**< 24位位图格式 存储 (B,G,R)... */
+	kNIMVideoSubTypeI420	= 2,	/**< YUV格式，存储 yyyyyyyy...uu...vv... */
 #ifdef NIMAPI_UNDER_UNIVERSAL
-	kNIMVideoSubTypeH264=3		/**< h264格式 */
+	kNIMVideoSubTypeH264	= 3,	/**< h264格式 */
 #endif
 };
 
@@ -78,7 +78,7 @@ static const char *kNIMDeviceId				= "id"; 			/**< string 标识ID */
 static const char *kNIMVolumeWork			= "volume_work"; 	/**< int32 大于0标识数据将使用音量参数进行换算(暂时只针对伴音数据) */
 /** @}*/ //json extension params for vchat device key
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
 /** @typedef void (*nim_vchat_enum_device_devpath_sync_cb_func)(bool ret, NIMDeviceType type, const char *json_extension, const void *user_data)
   * NIM Device 枚举设备返回回调同步接口
   * @param[out] ret 结果代码，true表示成功
@@ -90,7 +90,7 @@ static const char *kNIMVolumeWork			= "volume_work"; 	/**< int32 大于0标识�
 typedef void (*nim_vchat_enum_device_devpath_sync_cb_func)(bool ret, enum NIMDeviceType type, const char *json_extension, const void *user_data);
 
 
-
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @typedef void (*nim_vchat_device_status_cb_func)(NIMDeviceType type, unsigned int status, const char *device_path, const char *json_extension, const void *user_data)
   * NIM Device 设备状态监听返回接口
   * @param[out] type 设备类型NIMDeviceType，其中kNIMDeviceTypeAudioIn和kNIMDeviceTypeVideo、kNIMDeviceTypeAudioHook有效

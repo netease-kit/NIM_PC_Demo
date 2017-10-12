@@ -5,6 +5,12 @@
 
 namespace nim_chatroom
 {
+enum SenderType
+{
+	kMember,
+	kRobot
+};
+
 class ChatroomForm : public nim_comp::WindowEx, public IDropTarget, public ui::VirtualListInterface
 {
 public:
@@ -52,16 +58,19 @@ private:
 	void OnRequestRoomError();
 
 private:
-	void AddMsgItem(const ChatRoomMessage& result, bool is_history);
-	void AddNotifyItem(const ChatRoomNotification& notification, bool is_history);
+	void AddMsgItem(const ChatRoomMessage& result, bool is_history, bool first_msg_each_batch = false);
+	void AddNotifyItem(const ChatRoomNotification& notification, bool is_history, bool first_msg_each_batch = false);
+	void AddText(const std::wstring &text, const std::wstring &sender_name, const std::string &sender_id, SenderType sender_type, bool is_history, bool first_msg_each_batch = false);
+	void AddNotify(const std::wstring &notify, bool is_history, bool first_msg_each_batch = false);
+	void AddRobotMsg(const ChatRoomMessage& result, bool is_history, bool first_msg_each_batch = false);
+	void AddJsb(const int value, const std::wstring &sender_name, bool is_history, bool first_msg_each_batch = false);
 	void OnBtnSend();
-	void AddText(const std::wstring &text, const std::wstring &sender_name, bool is_history);
-	void AddNotify(const std::wstring &notify, bool is_history);
 	void SendText(const std::string &text);
 	void OnBtnJsb();
-	void AddJsb(const int value, const std::wstring &sender_name, bool is_history);
 	void SendJsb(const std::string &attach);
 	void SendImage(const std::wstring &src);
+
+	LRESULT HandleDiscuzMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 private:
 	void SetMemberAdmin(const std::string &id, bool is_admin);	//设置成员列表界面中某个成员的类型
@@ -94,11 +103,62 @@ private:
 	bool TempMuteMenuItemClick(ui::EventArgs* args);
 	bool RemoveTempMuteMenuItemClick(ui::EventArgs* args);
 
+	//@功能相关的操作
+#pragma region At
+private:
+	/**
+	* 处理输入框的@相关的按键消息
+	* @param[in] wParam 附加消息
+	* @param[in] lParam 附加消息
+	* @return bool true 不继续传递消息，false 继续传递消息
+	*/
+	bool HandleAtMsg(WPARAM wParam, LPARAM lParam);
+
+	/**
+	* 处理输入框的@相关的鼠标滚轮消息
+	* @param[in] wParam 附加消息
+	* @param[in] lParam 附加消息
+	* @return bool true 不继续传递消息，false 继续传递消息
+	*/
+	bool HandleAtMouseWheel(WPARAM wParam, LPARAM lParam);
+
+	/**
+	* 隐藏@列表窗口
+	* @return void	无返回值
+	*/
+	void HideAtListForm();
+
+	/**
+	* 响应@列表被单击的回调函数
+	* @param[in] uid 被选择的用户id
+	* @return void	无返回值
+	*/
+	void OnSelectAtItemCallback(const std::string& uid, bool is_robot);
+
+	/**
+	* 初始化机器人列表
+	* @return void	无返回值
+	*/
+	void InitRobots();
+#pragma endregion At
+
+	void AddImage(const std::string &url, bool end_down, const std::wstring &file_tag = L"");
+	void DownloadImage(const std::string &url, const std::wstring &photo_path, bool is_complex_element, bool is_history);
+	void OnDownloadCallback(bool success, const std::string& file_path, bool is_complex_element, bool is_history);
+
+	/**
+	* 处理所有控件的所有消息
+	* @param[in] param 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool Notify(ui::EventArgs* param);
+
 private:
 //	ui::Control* AddMemberItem(const ChatRoomMemberInfo& info);
 	virtual ui::Control* CreateElement() override;
 	virtual void FillElement(ui::Control *control, int index) override;
 	virtual int GetElementtCount() override;
+	bool OnNameMenu(const std::string &id, const std::string &name, ui::EventArgs* arg);
 
 private:
 	void OnDropFile(HDROP hDrop);
@@ -166,6 +226,18 @@ private:
 
 	std::map<std::string, nbase::WeakCallbackFlag> temp_unmute_id_task_map_;
 	bool room_mute_;
+
+	struct AtSomeone
+	{
+		std::string uid_;
+		bool is_robot_ = false;
+	};
+	std::map<std::string, AtSomeone>	uid_at_someone_;//当前输入框被@的人的昵称和uid
+	bool has_robots_ = false;
+	Json::Value		complex_json_;
+
+	std::map<std::wstring, Json::Value> msg_list_sender_name_link_;
+	std::map<std::string, Json::Value> descripts_info_;
 };
 
 }

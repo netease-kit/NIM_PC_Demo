@@ -1,5 +1,5 @@
-/** @file nim_robot.h
-  * @brief NIM SDKÌá¹©µÄrobot½Ó¿Ú
+ï»¿/** @file nim_robot.h
+  * @brief æ™ºèƒ½æœºå™¨äºº æ¥å£å¤´æ–‡ä»¶
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2017/06/24
@@ -19,26 +19,26 @@ extern"C"
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
 /** @fn void nim_robot_reg_changed_callback(const char *json_extension, nim_robot_change_cb_func cb, const void *user_data)
-  * ×¢²á»úÆ÷ÈË±ä¸ü¹ã²¥Í¨Öª
-  * @param[in] json_extension jsonÀ©Õ¹²ÎÊı£¨±¸ÓÃ£¬Ä¿Ç°²»ĞèÒª£©
-  * @param[in] cb			nim_robot_change_cb_func»Øµ÷º¯Êı¶¨Òå¼ûnim_robot_def.h
-  * @param[in] user_data	APPµÄ×Ô¶¨ÒåÓÃ»§Êı¾İ£¬SDKÖ»¸ºÔğ´«»Ø¸ø»Øµ÷º¯Êıcb£¬²»×öÈÎºÎ´¦Àí£¡
-  * @return void ÎŞ·µ»ØÖµ
+  * æ³¨å†Œæœºå™¨äººå˜æ›´å¹¿æ’­é€šçŸ¥
+  * @param[in] json_extension jsonæ‰©å±•å‚æ•°ï¼ˆå¤‡ç”¨ï¼Œç›®å‰ä¸éœ€è¦ï¼‰
+  * @param[in] cb			nim_robot_change_cb_funcå›è°ƒå‡½æ•°å®šä¹‰è§nim_robot_def.h
+  * @param[in] user_data	APPçš„è‡ªå®šä¹‰ç”¨æˆ·æ•°æ®ï¼ŒSDKåªè´Ÿè´£ä¼ å›ç»™å›è°ƒå‡½æ•°cbï¼Œä¸åšä»»ä½•å¤„ç†ï¼
+  * @return void æ— è¿”å›å€¼
   */
 NIM_SDK_DLL_API void nim_robot_reg_changed_callback(const char *json_extension, nim_robot_change_cb_func cb, const void *user_data);
 
 /** @fn char *nim_robot_query_all_robots_block(const char *json_extension)
-  * »ñÈ¡È«²¿»úÆ÷ÈËĞÅÏ¢(Í¬²½½Ó¿Ú£¬¶ÂÈûNIMÄÚ²¿Ïß³Ì)
-  * @param[in] json_extension jsonÀ©Õ¹²ÎÊı£¨±¸ÓÃ£¬Ä¿Ç°²»ĞèÒª£©
-  * @return char »úÆ÷ÈËĞÅÏ¢ json string array
+  * è·å–å…¨éƒ¨æœºå™¨äººä¿¡æ¯(åŒæ­¥æ¥å£ï¼Œå µå¡NIMå†…éƒ¨çº¿ç¨‹)
+  * @param[in] json_extension jsonæ‰©å±•å‚æ•°ï¼ˆå¤‡ç”¨ï¼Œç›®å‰ä¸éœ€è¦ï¼‰
+  * @return char æœºå™¨äººä¿¡æ¯ json string array
   */
 NIM_SDK_DLL_API char *nim_robot_query_all_robots_block(const char *json_extension);
 
 /** @fn char *nim_robot_query_robot_by_accid_block(const char *accid, const char *json_extension)
-  * »ñÈ¡Ö¸¶¨»úÆ÷ÈËĞÅÏ¢(Í¬²½½Ó¿Ú£¬¶ÂÈûNIMÄÚ²¿Ïß³Ì)
-  * @param[in] accid »úÆ÷ÈËaccid
-  * @param[in] json_extension jsonÀ©Õ¹²ÎÊı£¨±¸ÓÃ£¬Ä¿Ç°²»ĞèÒª£©
-  * @return char »úÆ÷ÈËĞÅÏ¢ json string
+  * è·å–æŒ‡å®šæœºå™¨äººä¿¡æ¯(åŒæ­¥æ¥å£ï¼Œå µå¡NIMå†…éƒ¨çº¿ç¨‹)
+  * @param[in] accid æœºå™¨äººaccid
+  * @param[in] json_extension jsonæ‰©å±•å‚æ•°ï¼ˆå¤‡ç”¨ï¼Œç›®å‰ä¸éœ€è¦ï¼‰
+  * @return char æœºå™¨äººä¿¡æ¯ json string
   */
 NIM_SDK_DLL_API char *nim_robot_query_robot_by_accid_block(const char *accid, const char *json_extension);
 #endif

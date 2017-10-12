@@ -1,5 +1,5 @@
 ﻿/** @file nim_device.h
-  * @brief NIM VChat提供的音视频设备相关接口，使用前请先调用nim_vchat.h中nim_vchat_init
+  * @brief 音视频设备 接口头文件，使用前请先调用音视频初始化接口
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author gq
   * @date 2015/4/30
@@ -82,6 +82,16 @@ NIM_SDK_DLL_API bool nim_vchat_custom_video_data(uint64_t time, const char *data
 */
 NIM_SDK_DLL_API void nim_vchat_set_video_data_cb(bool capture, const char *json_extension, nim_vchat_video_data_cb_func cb, const void *user_data);
 
+/** @fn void nim_vchat_enum_device_devpath(NIMDeviceType type, const char *json_extension, nim_vchat_enum_device_devpath_sync_cb_func cb, const void *user_data)
+* NIM VCHAT DEVICE 遍历设备
+* @param[in] type NIMDeviceType 见nim_device_def.h
+* @param[in] json_extension 无效的扩展字段
+* @param[in] cb 结果回调见nim_device_def.h
+* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+*/
+NIM_SDK_DLL_API void nim_vchat_enum_device_devpath(enum NIMDeviceType type, const char *json_extension, nim_vchat_enum_device_devpath_sync_cb_func cb, const void *user_data);
+
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn void nim_vchat_set_audio_data_cb_ex(int type, const char *json_extension, nim_vchat_audio_data_cb_func_ex cb, const void *user_data)
 * NIM VCHAT DEVICE 监听音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut和kNIMDeviceTypeAudioOutChat由底层播放）
@@ -93,15 +103,7 @@ NIM_SDK_DLL_API void nim_vchat_set_video_data_cb(bool capture, const char *json_
 */
 NIM_SDK_DLL_API void nim_vchat_set_audio_data_cb_ex(int type, const char *json_extension, nim_vchat_audio_data_cb_func_ex cb, const void *user_data);
 
-/** @fn void nim_vchat_enum_device_devpath(NIMDeviceType type, const char *json_extension, nim_vchat_enum_device_devpath_sync_cb_func cb, const void *user_data)
-* NIM VCHAT DEVICE 遍历设备
-* @param[in] type NIMDeviceType 见nim_device_def.h
-* @param[in] json_extension 无效的扩展字段
-* @param[in] cb 结果回调见nim_device_def.h
-* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
-* @return void 无返回值
-*/
-NIM_SDK_DLL_API void nim_vchat_enum_device_devpath(enum NIMDeviceType type, const char *json_extension, nim_vchat_enum_device_devpath_sync_cb_func cb, const void *user_data);
+
 
 
 /** @fn void nim_vchat_add_device_status_cb(NIMDeviceType type, nim_vchat_device_status_cb_func cb, const void *user_data)

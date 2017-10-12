@@ -1,5 +1,5 @@
 ﻿/** @file nim_global_def.h
-  * @brief NIM SDK提供的一些全局定义
+  * @brief 辅助能力 接口相关的常量函数等定义头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Harrison
   * @date 2015/2/1
@@ -36,7 +36,7 @@ enum NIMSDKLogLevel
 	kNIMSDKLogLevelError = 2,	/**< SDK Error级别Log*/
 	kNIMSDKLogLevelWarn = 3,	/**< SDK Warn级别Log*/
 	kNIMSDKLogLevelApp = 5,	/**< SDK应用级别Log，正式发布时为了精简sdk log，可采用此级别*/
-	kNIMSDKLogLevelPro = 6,	/**< SDK过程级别Log，更加详细，更有利于开发调试*/
+	kNIMSDKLogLevelPro = 6,	/**< SDK调试过程级别Log，更加详细，更有利于开发调试*/
 };
 
 /** @typedef void (*nim_sdk_log_cb_func)(const char *log)

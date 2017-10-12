@@ -1,5 +1,5 @@
 ﻿/** @file nim_sysmsg.h
-  * @brief NIM SDK提供的系统消息历史接口 
+  * @brief 系统（自定义）消息 接口头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/2/1

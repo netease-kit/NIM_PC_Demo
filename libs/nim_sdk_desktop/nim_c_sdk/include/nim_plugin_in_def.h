@@ -1,5 +1,5 @@
 ﻿/** @file nim_plugin_in_def.h
-  * @brief plugin def
+  * @brief 插件接入 接口相关的常量函数等定义头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2015/12/24
