@@ -41,6 +41,16 @@ NIM_SDK_DLL_API char *nim_robot_query_all_robots_block(const char *json_extensio
   * @return char 机器人信息 json string
   */
 NIM_SDK_DLL_API char *nim_robot_query_robot_by_accid_block(const char *accid, const char *json_extension);
+
+/** @fn void nim_robot_get_robots_async(__int64 timetag, const char *json_extension, nim_robot_query_cb_func cb, const void *user_data))
+  * 获取全部机器人信息
+  * @param[in] timetag 时间戳
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb 回调函数 回调函数定义见nim_robot_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void
+  */
+NIM_SDK_DLL_API void nim_robot_get_robots_async(__int64 timetag, const char *json_extension, nim_robot_query_cb_func cb, const void *user_data);
 #endif
 #ifdef __cplusplus
 }

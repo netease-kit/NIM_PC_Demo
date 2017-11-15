@@ -373,6 +373,7 @@ void RtsForm::ShowStartUI(bool creater)
 		info.data_record_ = data_record;
 		info.audio_record_ = audio_record;
 		info.webrtc_ = webrtc;
+		info.session_id_ = session_id_;
 		nim::Rts::StartChannelCallback cb = nbase::Bind(&RtsForm::OnStartRtsCb, this, session_id_, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
 		nim::Rts::StartChannel(type_, uid_, info, cb);
 	}

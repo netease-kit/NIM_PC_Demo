@@ -66,23 +66,23 @@ enum NIMVideoChatMode{
 
 /** @enum NIMVChatVideoQuality 视频通话分辨率，最终长宽比不保证 */
 enum NIMVChatVideoQuality {
-	kNIMVChatVideoQualityNormal = 0,		/**< 视频默认分辨率 480x320*/
-	kNIMVChatVideoQualityLow = 1,		/**< 视频低分辨率 176x144*/
-	kNIMVChatVideoQualityMedium = 2,		/**< 视频中分辨率 352x288*/
-	kNIMVChatVideoQualityHigh = 3,		/**< 视频高分辨率 480x320*/
-	kNIMVChatVideoQualitySuper = 4,		/**< 视频超高分辨率 640x480*/
-	kNIMVChatVideoQuality720p = 5,		/**< 用于桌面分享级别的分辨率1280x720，需要使用高清摄像头并指定对应的分辨率，或者自定义通道传输 */
-	kNIMVChatVideoQuality540p = 6,		/**< 介于720P与480P之间的类型，默认 960*540 */
+	kNIMVChatVideoQualityNormal		= 0,		/**< 视频默认分辨率 480x320*/
+	kNIMVChatVideoQualityLow		= 1,		/**< 视频低分辨率 176x144*/
+	kNIMVChatVideoQualityMedium		= 2,		/**< 视频中分辨率 352x288*/
+	kNIMVChatVideoQualityHigh		= 3,		/**< 视频高分辨率 480x320*/
+	kNIMVChatVideoQualitySuper		= 4,		/**< 视频超高分辨率 640x480*/
+	kNIMVChatVideoQuality720p		= 5,		/**< 用于桌面分享级别的分辨率1280x720，需要使用高清摄像头并指定对应的分辨率，或者自定义通道传输 */
+	kNIMVChatVideoQuality540p		= 6,		/**< 介于720P与480P之间的类型，默认 960*540 */
 };
 
 /** @enum NIMVChatVideoFrameRate 视频通话帧率，实际帧率因画面采集频率和机器性能限制可能达不到期望值 */
 enum NIMVChatVideoFrameRate {
-	kNIMVChatVideoFrameRateNormal = 0,		/**< 视频通话帧率默认值,最大取每秒15帧 */
-	kNIMVChatVideoFrameRate5 = 1,		/**< 视频通话帧率 最大取每秒5帧 */
-	kNIMVChatVideoFrameRate10 = 2,		/**< 视频通话帧率 最大取每秒10帧 */
-	kNIMVChatVideoFrameRate15 = 3,		/**< 视频通话帧率 最大取每秒15帧 */
-	kNIMVChatVideoFrameRate20 = 4,		/**< 视频通话帧率 最大取每秒20帧 */
-	kNIMVChatVideoFrameRate25 = 5,		/**< 视频通话帧率 最大取每秒25帧 */
+	kNIMVChatVideoFrameRateNormal	= 0,		/**< 视频通话帧率默认值,最大取每秒15帧 */
+	kNIMVChatVideoFrameRate5		= 1,		/**< 视频通话帧率 最大取每秒5帧 */
+	kNIMVChatVideoFrameRate10		= 2,		/**< 视频通话帧率 最大取每秒10帧 */
+	kNIMVChatVideoFrameRate15		= 3,		/**< 视频通话帧率 最大取每秒15帧 */
+	kNIMVChatVideoFrameRate20		= 4,		/**< 视频通话帧率 最大取每秒20帧 */
+	kNIMVChatVideoFrameRate25		= 5,		/**< 视频通话帧率 最大取每秒25帧 */
 };
 
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
@@ -115,6 +115,7 @@ enum NIMVChatVideoSplitMode {
 	kNIMVChatSplitLatticeTile			= 2,			/**< 平铺 */
 	kNIMVChatSplitLatticeCuttingTile	= 3,			/**< 裁剪平铺 */
 	kNIMVChatSplitCustomLayout			= 4,			/**< 自定义布局 */
+	kNIMVChatSplitAudioLayout			= 5,			/**< 纯音频布局 */
 };
 
 /** @enum NIMVChatVideoFrameScaleType 视频画面长宽比，裁剪时不改变横竖屏，如4：3，代表宽高横屏4：3或者竖屏3：4  */
@@ -139,6 +140,14 @@ enum NIMVChatLiveStateCode
 	kNIMVChatLiveStatePeopleLimit		= 508,		/**< 人数超出限制 */
 };
 
+/** @enum NIMVChatVideoEncodeMode 视频编码策略  */
+enum NIMVChatVideoEncodeMode
+{
+	kNIMVChatVEModeNormal		= 0,		/**< 默认值，清晰优先 */
+	kNIMVChatVEModeFramerate	= 1,		/**< 流畅优先 */
+	kNIMVChatVEModeQuality		= 2,		/**< 清晰优先 */
+};
+
 #endif
 
 /** @enum NIMVideoChatSessionStatus 音视频通话成员变化类型 */
@@ -149,10 +158,11 @@ enum NIMVideoChatSessionStatus{
 
 /** @enum NIMVideoChatSessionNetStat 音视频通话网络变化类型 */
 enum NIMVideoChatSessionNetStat{
-    kNIMVideoChatSessionNetStatVeryGood    = 0,	/**< 网络状态很好 */
-    kNIMVideoChatSessionNetStatGood        = 1,	/**< 网络状态较好 */
-    kNIMVideoChatSessionNetStatBad         = 2,	/**< 网络状态较差 */
-    kNIMVideoChatSessionNetStatVeryBad     = 3,	/**< 网络状态很差 */
+    kNIMVideoChatSessionNetStatVeryGood		= 0,	/**< 网络状态很好 */
+    kNIMVideoChatSessionNetStatGood			= 1,	/**< 网络状态较好 */
+    kNIMVideoChatSessionNetStatPoor         = 2,	/**< 网络状态较差 */
+    kNIMVideoChatSessionNetStatBad			= 3,	/**< 网络状态很差 */
+	kNIMVideoChatSessionNetStatVeryBad		= 4,	/**< 网络状态极差，考虑是否关闭视频 */
 };
 
 /** @enum NIMVChatConnectErrorCode 音视频服务器连接状态类型 */
@@ -179,6 +189,20 @@ enum NIMVChatConnectErrorCode{
 };
 
 
+/** @enum NIMNetDetectType 探测类型  */
+enum NIMNetDetectType
+{
+	kNIMNetDetectTypeAudio		= 0,		/**< 默认值，音频探测 */
+	kNIMNetDetectTypeVideo		= 1,		/**< 视频探测 */
+};
+
+/** @name 网络探测 内容Json key for nim_vchat_net_detect
+  * @{
+  */
+static const char *kNIMNetDetectAppKey		= "app_key";		/**< string 用户的app key */
+static const char *kNIMNetDetectTimeLimit	= "time";			/**< int32 毫秒级的探测时长限制 */
+static const char *kNIMNetDetectType		= "type";			/**< int32 探测类型NIMNetDetectType */
+/** @}*/ //网络探测 内容Json key
 
 /** @name 网络探测回调 内容Json key for nim_vchat_opt_cb_func
   * @{
@@ -209,7 +233,7 @@ static const char *kNIMVChatRtmpUrl			= "rtmp_url";		/**< string 直播推流地
 static const char *kNIMVChatBypassRtmp		= "bypass_rtmp";	/**< int 是否旁路推流（如果rtmpurl为空是连麦观众，非空是主播的推流控制）， >0表示是 */
 static const char *kNIMVChatRtmpRecord		= "rtmp_record";	/**< int 是否开启服务器对直播推流录制（需要开启服务器能力）， >0表示是 */
 static const char *kNIMVChatSplitMode		= "split_mode";		/**< int 主播控制的直播推流时的分屏模式，见NIMVChatVideoSplitMode */
-static const char *kNIMVChatCustomLayout	= "custom_layout";	/**< string 自定义布局，当主播选择kNIMVChatSplitCustomLayout模式时生效 */
+static const char *kNIMVChatCustomLayout	= "custom_layout";	/**< string 自定义布局，当主播选择kNIMVChatSplitCustomLayout或kNIMVChatSplitAudioLayout模式时生效 */
 static const char *kNIMVChatPushEnable		= "push_enable";	/**< int 是否需要推送 >0表示是 默认是 */
 static const char *kNIMVChatNeedBadge		= "need_badge";		/**< int 是否需要角标计数 >0表示是 默认是 */
 static const char *kNIMVChatNeedFromNick	= "need_nick";		/**< int 是否需要推送昵称 >0表示是 默认是 */
@@ -217,6 +241,7 @@ static const char *kNIMVChatApnsPayload		= "payload";		/**< string JSON格式,�
 static const char *kNIMVChatSound			= "sound";			/**< string 推送声音 */
 static const char *kNIMVChatKeepCalling		= "keepcalling";	/**< int, 是否强制持续呼叫（对方离线也会呼叫）,1表示是，0表示否。默认是 */
 static const char *kNIMVChatWebrtc			= "webrtc";			/**< int, 是否支持webrtc互通,1表示是，0表示否。默认否，无需要不要开启 */
+static const char *kNIMVChatVEncodeMode		= "v_encode_mode";	/**< int, 使用的视频编码策略NIMVChatVideoEncodeMode， 默认kNIMVChatVEModeNormal */
 /** @}*/ //json extension params
 
 /** @name json extension params for nim_vchat_cb_func

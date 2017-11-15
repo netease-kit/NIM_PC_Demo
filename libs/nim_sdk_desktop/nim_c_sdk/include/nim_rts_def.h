@@ -52,9 +52,10 @@ enum NIMRtsConnectStatus
 
 /** @name json extension params for nim_rts_start and nim_rts_ack
   * for example: 参数可选，例子中是不填时的默认值
-  * {"mode": 1, "custom_video":0, "custom_audio":0, "data_record":0 }
+  * {"mode": 1, "custom_video":0, "custom_audio":0, "data_record":0, "session_id":"b76e2b7ae065224499e4d7138d643961" }
   * @{
   */
+static const char *kNIMRtsSessionId			= "session_id";		/**< string 发起会话的标识id，将在创建点对点和多人通话时，如果填写了此参数优先使用用户填写的session_id */
 static const char *kNIMRtsVChatMode			= "mode";			/**< int NIMRtsVideoChatMode，非视频模式时不会发送视频数据 */
 static const char *kNIMRtsVChatCustomVideo	= "custom_video";	/**< int 是否用自主的视频数据 >0表示是 */
 static const char *kNIMRtsVChatCustomAudio	= "custom_audio";	/**< int 是否用自主的音频数据 >0表示是 */

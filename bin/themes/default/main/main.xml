@@ -52,9 +52,9 @@
                 <Control name="session_option_icon" mouse="false" width="auto" height="auto" halign="center" valign="center"
                          normalimage="icon_tab_chat_unselected.png" pushedimage="icon_tab_chat_selected.png"/>
 
-                <Box name="box_unread" width="auto" minwidth="18" height="18" margin="60,8,0,0" padding="2,1,2,2" halign="center" bkimage="file='icon_number.png' corner='8,7,8,7'" mouse="false" mousechild="false" visible="false">
+                <CustomButtonBox name="box_unread" width="auto" minwidth="18" height="18" margin="60,8,0,0" padding="2,1,2,2" halign="center" normalimage="file='icon_number.png' corner='8,7,8,7'" hotimage="file='icon_number_clear.png' corner='8,7,8,7'" mousechild="false" visible="false">
                     <Label name="label_unread" halign="center" normaltextcolor="white"/>
-                </Box>
+                </CustomButtonBox>
             </OptionBox>
 
             <OptionBox group="session_friend_tab" name="btn_friend_list" tooltiptextid="STRID_MIANWINDOW_ADDRESSBOOK" cursortype="hand">

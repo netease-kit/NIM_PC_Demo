@@ -8,12 +8,15 @@
 #ifndef _NIM_SDK_CPP_NIM_SDK_DEFINES_H_
 #define _NIM_SDK_CPP_NIM_SDK_DEFINES_H_
 
+#ifndef DEF_UNDER_NO_NAMESPACE
 /**
 * @namespace nim
 * @brief namespace nim
 */
 namespace nim
 {
+#endif //DEF_UNDER_NO_NAMESPACE
+
 #include "nim_res_code_def.h"
 #include "nim_data_sync_def.h"
 #include "nim_friend_def.h"
@@ -36,6 +39,9 @@ namespace nim
 #include "nim_vchat_def.h"
 #include "nim_device_def.h"
 #include "nim_rts_def.h"
+
+#ifndef DEF_UNDER_NO_NAMESPACE
 }
+#endif //DEF_UNDER_NO_NAMESPACE
 
 #endif //_NIM_SDK_CPP_NIM_SDK_DEFINES_H_

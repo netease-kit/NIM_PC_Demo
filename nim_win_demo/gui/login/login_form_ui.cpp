@@ -5,6 +5,7 @@
 #include "gui/main/main_form.h"
 #include "gui/proxy/proxy_form.h"
 #include "module/db/public_db.h"
+#include "gui/chatroom_frontpage.h"
 
 using namespace ui;
 
@@ -88,7 +89,7 @@ void LoginForm::InitWindow()
 
 		QCommand::Erase(kCmdExitWhy);
 	}
-
+	btn_login_->SetVisible(false);
 	user_name_edit_->SetLimitText(32);
 	nick_name_edit_->SetLimitText(64);
 	password_edit_->SetLimitText(128);
@@ -136,8 +137,11 @@ LRESULT LoginForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 LRESULT LoginForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
-	nim_ui::LoginManager::GetInstance()->DoLogout(false);
-	return 1;
+	if (!login_function_)
+	{
+		nim_ui::LoginManager::GetInstance()->DoLogout(false);
+		return 1;
+	}
 
 	return __super::OnClose(uMsg, wParam, lParam, bHandled);
 }
@@ -246,5 +250,29 @@ bool LoginForm::OnClicked( ui::EventArgs* msg )
 	{
 		nim_comp::WindowsManager::SingletonShow<ProxyForm>(ProxyForm::kClassName);
 	}
+	else if (name == L"btn_im")
+	{
+		std::string app_key = GetConfigValueAppKey();
+		nim_ui::InitManager::GetInstance()->InitUiKit(IsNimDemoAppKey(app_key), nim_ui::InitManager::kIM);
+		SetLoginPanelVisible();
+	}
+	else if (name == L"btn_chatroom")
+	{
+		std::string app_key = GetConfigValueAppKey();
+		nim_ui::InitManager::GetInstance()->InitUiKit(IsNimDemoAppKey(app_key), nim_ui::InitManager::kAnonymousChatroom);
+
+		nim_comp::LoginManager::GetInstance()->SetAnonymityDemoMode();
+		ShowWindow(false, false);
+		auto form = nim_ui::WindowsManager::GetInstance()->SingletonShow<nim_chatroom::ChatroomFrontpage>(nim_chatroom::ChatroomFrontpage::kClassName);
+		form->SetAnonymity(true);
+	}
 	return true;
+}
+
+void LoginForm::SetLoginPanelVisible()
+{
+	FindControl(L"first_panel")->SetVisible(false);
+	FindControl(L"enter_panel")->SetVisible(true);
+	btn_login_->SetVisible(true);
+	FindControl(L"register_account")->SetVisible(true);
 }

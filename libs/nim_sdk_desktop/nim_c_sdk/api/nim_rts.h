@@ -61,7 +61,7 @@ NIM_SDK_DLL_API void nim_rts_create_conf(const char *name, const char *custom_in
 /** @fn void nim_rts_join_conf(const char *name, const char *json_extension, nim_rts_join_cb_func cb, const void *user_data)
   * NIM VCHAT 加入一个多人房间（进入房间后成员变化等，等同点对点nim_vchat_cb_func）
   * @param[in] name 房间名
-  * @param[in] json_extension 扩展可选参数kNIMRtsDataRecord， 如{"data_record":1}
+  * @param[in] json_extension 扩展可选参数kNIMRtsDataRecord,kNIMRtsSessionId， 如{"data_record":1, "session_id":"b76e2b7ae065224499e4d7138d643961"}
   * @param[in] cb 结果回调见nim_rts_def.h，回调的json_extension若成功返回创建的kNIMRtsCustomInfo及kNIMRtsChannelId，如{"channel_id": 1231, "custom_info":"hello world" }
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值

@@ -27,6 +27,9 @@ public:
 
 	ChatRoomInfo GetRoomInfo(const  __int64& room_id);
 
+	void SetAnonymity(bool anonymity);
+	bool IsAnonymity(){ return anonymity_; }
+
 private:
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
@@ -37,6 +40,8 @@ private:
 	void CreateRoomItem(const ChatRoomInfo& room_info);
 	void OnWndSizeMax(bool max);
 
+	virtual LRESULT OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
+
 public:
 	static const LPTSTR kClassName;
 
@@ -45,5 +50,7 @@ private:
 	
 	std::map<__int64, ChatRoomInfo> id_info_map_;
 	AutoUnregister	unregister_cb;
+
+	bool anonymity_ = false;
 };
 }

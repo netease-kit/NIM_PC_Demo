@@ -145,13 +145,13 @@ bool Client::Init(const std::string& app_key
 {
 #ifdef NIM_SDK_DLL_IMPORT
 
-// #if !defined (WIN32)
-// 	static const char *kSdkNimDll = "libnim.so";
-// #elif defined (_DEBUG) || defined (DEBUG)
-// 	static const char *kSdkNimDll = "nim_d.dll";
-// #else
+#if !defined (WIN32)
+	static const char *kSdkNimDll = "libnim.so";
+#elif defined (_DEBUG) || defined (DEBUG)
+	static const char *kSdkNimDll = "nim_d.dll";
+#else
 	static const char *kSdkNimDll = "nim.dll";
-// #endif
+#endif
 	if (NULL == g_nim_sdk_instance)
 	{
 		g_nim_sdk_instance = new SDKInstance();
@@ -172,6 +172,7 @@ bool Client::Init(const std::string& app_key
 	config_values[nim::kNIMLoginRetryMaxTimes] = config.login_max_retry_times_;
 	config_values[nim::kNIMUseHttps] = config.use_https_;
 	config_values[nim::kNIMTeamNotificationUnreadCount] = config.team_notification_unread_count_;
+	config_values[nim::kNIMAnimatedImageThumbnailEnabled] = config.animated_image_thumbnail_enabled_;
 	config_root[nim::kNIMGlobalConfig] = config_values;
 	config_root[nim::kNIMAppKey] = app_key;
 

@@ -9,7 +9,6 @@
 
 namespace nim
 {
-#include "nim_nos_def.h"
 
 bool ParseUploadResult( const std::string& url, const std::string& json, UploadMediaResult& res )
 {

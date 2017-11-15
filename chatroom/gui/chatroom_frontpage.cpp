@@ -105,6 +105,21 @@ ChatRoomInfo ChatroomFrontpage::GetRoomInfo(const __int64& room_id)
 	return ChatRoomInfo();
 }
 
+void ChatroomFrontpage::SetAnonymity(bool anonymity)
+{
+	anonymity_ = anonymity;
+	FindControl(L"header_box")->SetVisible(!anonymity);
+	FindControl(L"be_host")->SetVisible(!anonymity);
+	if (anonymity)
+	{
+		std::wstring txt = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_CHATROOMDEMO");
+		((ui::Label*)FindControl(L"name"))->SetText(txt);
+	}
+	else
+		InitHeader();
+
+}
+
 void ChatroomFrontpage::InvokeGetRoomList()
 {
 	FindControl(L"loading_tip")->SetVisible(true);
@@ -247,7 +262,10 @@ void ChatroomFrontpage::CreateRoomItem(const ChatRoomInfo& room_info)
 			if (chat_form != NULL)
 			{
 				chat_form->Create(NULL, ChatroomForm::kClassName, WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
-				chat_form->RequestEnter(id);
+				if (!anonymity_)
+					chat_form->RequestEnter(id);
+				else
+					chat_form->AnonymousLogin(id);
 			}
 
 			return true;
@@ -287,6 +305,13 @@ void ChatroomFrontpage::InitHeader()
 	std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
 	FindControl(L"header_image")->SetBkImage(nim_ui::PhotoManager::GetInstance()->GetUserPhoto(my_id));
 	((ui::Label*)FindControl(L"name"))->SetText(nim_ui::UserManager::GetInstance()->GetUserName(my_id, false));
+}
+
+LRESULT ChatroomFrontpage::OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	if (nim_comp::LoginManager::GetInstance()->IsAnonymityDemoMode())
+		nim_ui::LoginManager::GetInstance()->DoLogout(false);
+	return 0;
 }
 
 }

@@ -452,66 +452,69 @@ namespace nim_chatroom
 
 	LRESULT ChatroomForm::HandleDiscuzMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
-		POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
-		ui::Control *control = FindControl(pt);
-		if (control != nullptr && control == msg_list_)
+		if (!is_anonymity_)
 		{
-			if (uMsg == WM_MOUSEMOVE)
+			POINT pt = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+			ui::Control *control = FindControl(pt);
+			if (control != nullptr && control == msg_list_)
 			{
-				std::wstring tool_tip;
-				//判断是否点击在图片上
-				ITextServices * text_service = msg_list_->GetTextServices();
-				if (text_service)
+				if (uMsg == WM_MOUSEMOVE)
 				{
-					RE_OLE_ITEM_CONTENT item = Re_CustomImageOleHitTest(text_service, pt);
-					if (item.type_ == RE_OLE_TYPE_DESCRIPTION)
+					std::wstring tool_tip;
+					//判断是否点击在图片上
+					ITextServices * text_service = msg_list_->GetTextServices();
+					if (text_service)
 					{
-						tool_tip = L"点击";
-					}
-				}
-				msg_list_->SetToolTipText(tool_tip);
-			}
-			else if (uMsg == WM_LBUTTONUP)
-			{
-				//判断是否点击在图片上
-				ITextServices * text_service = msg_list_->GetTextServices();
-				if (text_service)
-				{
-					RE_OLE_ITEM_CONTENT item = Re_CustomImageOleHitTest(text_service, pt);
-					if (item.type_ == RE_OLE_TYPE_DESCRIPTION)
-					{
-						auto iter = descripts_info_.find(nbase::UTF16ToUTF8(item.content_));
-						if (iter != descripts_info_.end())
+						RE_OLE_ITEM_CONTENT item = Re_CustomImageOleHitTest(text_service, pt);
+						if (item.type_ == RE_OLE_TYPE_DESCRIPTION)
 						{
-							Json::Value values = iter->second;
-							std::string type = values["type"].asString();
-							if (type == "url")
-							{
-								std::string url = values["target"].asString();
-								Post2GlobalMisc(nbase::Bind(&shared::tools::SafeOpenUrl, nbase::UTF8ToUTF16(url), SW_SHOW));
-							}
-							else if (type == "block")
-							{
-								std::string robot_id = values[nim::kNIMBotRobotMsgKeyRobotID].asString();
-								std::string content = values["link_text"].asString();
-								nim::IMBotRobot bot;
-								bot.robot_accid_ = robot_id;
-								bot.sent_param_["target"] = values["target"].asString();
-								bot.sent_param_["type"] = "03";
-								bot.sent_param_["params"] = values["params"].asString();
-								std::string json_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeRobot, QString::GetGUID(), bot.ToJsonString(), content, ChatRoomMessageSetting());
-								ChatRoom::SendMsg(room_id_, json_msg);
-								std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
-								std::wstring my_name = nim_ui::UserManager::GetInstance()->GetUserName(nim_ui::LoginManager::GetInstance()->GetAccount(), false);
-								AddText(nbase::UTF8ToUTF16(content), my_name, my_id, kMember, false);
-							}
-							else
-							{
-								assert(0);
-								//QLOG_ERR(L"\r\nError custom click: {0}") << (std::wstring)link_info;
-							}
+							tool_tip = L"点击";
 						}
-						return 1;
+					}
+					msg_list_->SetToolTipText(tool_tip);
+				}
+				else if (uMsg == WM_LBUTTONUP)
+				{
+					//判断是否点击在图片上
+					ITextServices * text_service = msg_list_->GetTextServices();
+					if (text_service)
+					{
+						RE_OLE_ITEM_CONTENT item = Re_CustomImageOleHitTest(text_service, pt);
+						if (item.type_ == RE_OLE_TYPE_DESCRIPTION)
+						{
+							auto iter = descripts_info_.find(nbase::UTF16ToUTF8(item.content_));
+							if (iter != descripts_info_.end())
+							{
+								Json::Value values = iter->second;
+								std::string type = values["type"].asString();
+								if (type == "url")
+								{
+									std::string url = values["target"].asString();
+									Post2GlobalMisc(nbase::Bind(&shared::tools::SafeOpenUrl, nbase::UTF8ToUTF16(url), SW_SHOW));
+								}
+								else if (type == "block")
+								{
+									std::string robot_id = values[nim::kNIMBotRobotMsgKeyRobotID].asString();
+									std::string content = values["link_text"].asString();
+									nim::IMBotRobot bot;
+									bot.robot_accid_ = robot_id;
+									bot.sent_param_["target"] = values["target"].asString();
+									bot.sent_param_["type"] = "03";
+									bot.sent_param_["params"] = values["params"].asString();
+									std::string json_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeRobot, QString::GetGUID(), bot.ToJsonString(), content, ChatRoomMessageSetting());
+									ChatRoom::SendMsg(room_id_, json_msg);
+									std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
+									std::wstring my_name = nim_ui::UserManager::GetInstance()->GetUserName(nim_ui::LoginManager::GetInstance()->GetAccount(), false);
+									AddText(nbase::UTF8ToUTF16(content), my_name, my_id, kMember, false);
+								}
+								else
+								{
+									assert(0);
+									//QLOG_ERR(L"\r\nError custom click: {0}") << (std::wstring)link_info;
+								}
+							}
+							return 1;
+						}
 					}
 				}
 			}

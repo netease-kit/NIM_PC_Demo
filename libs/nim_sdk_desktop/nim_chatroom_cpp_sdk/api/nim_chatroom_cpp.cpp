@@ -42,6 +42,12 @@ typedef void(*nim_chatroom_queue_poll_async)(const int64_t room_id, const char *
 typedef void(*nim_chatroom_queue_list_async)(const int64_t room_id, const char *json_extension, nim_chatroom_queue_list_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_queue_header_async)(const int64_t room_id, const char *json_extension, nim_chatroom_queue_header_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_queue_drop_async)(const int64_t room_id, const char *json_extension, nim_chatroom_queue_drop_cb_func cb, const void *user_data);
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+typedef bool(*nim_chatroom_enter_with_anoymity)(const int64_t room_id, const char *anonymity_info, const char *enter_info, const char *json_extension);
+typedef char* (*nim_chatroom_query_all_robots_block)(const int64_t room_id, const char *json_extension);
+typedef char* (*nim_chatroom_query_robot_by_accid_block)(const int64_t room_id, const char *accid, const char *json_extension);
+typedef void (*nim_chatroom_get_robots_async)(const int64_t room_id, __int64 timetag, const char *json_extension, nim_chatroom_query_robots_cb_func cb, const void *user_data);
+#endif
 #else
 #include "nim_chatroom.h"
 #endif
@@ -216,13 +222,13 @@ bool ChatRoom::Init(const std::string& app_install_dir, const std::string& json_
 {
 #ifdef NIM_SDK_DLL_IMPORT
 
-// #if !defined (WIN32)
-// 	static const char *kSdkNimDll = "libnim_chatroom.so";
-// #elif defined (_DEBUG) || defined (DEBUG)
-// 	static const char *kSdkNimDll = "nim_chatroom_d.dll";
-// #else
+#if !defined (WIN32)
+	static const char *kSdkNimDll = "libnim_chatroom.so";
+#elif defined (_DEBUG) || defined (DEBUG)
+	static const char *kSdkNimDll = "nim_chatroom_d.dll";
+#else
 	static const char *kSdkNimDll = "nim_chatroom.dll";
-// #endif
+#endif
 
 	if (NULL == g_nim_sdk_instance)
 	{
@@ -241,6 +247,13 @@ bool ChatRoom::Enter(const int64_t room_id, const std::string& request_enter_dat
 {
 	return NIM_SDK_GET_FUNC(nim_chatroom_enter)(room_id, request_enter_data.c_str(), info.ToJsonString().c_str(), json_extension.c_str());
 }
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+bool ChatRoom::AnonymousEnter(const int64_t room_id, const ChatRoomAnoymityEnterInfo& anonymity_info, const ChatRoomEnterInfo& info, const std::string& json_extension/* = ""*/)
+{
+	return NIM_SDK_GET_FUNC(nim_chatroom_enter_with_anoymity)(room_id, anonymity_info.ToJsonString().c_str(), info.ToJsonString().c_str(), json_extension.c_str());
+}
+#endif
 
 void ChatRoom::Exit(const int64_t room_id, const std::string& json_extension/* = ""*/)
 {
@@ -279,7 +292,9 @@ std::string ChatRoom::CreateRoomMessage(const NIMChatRoomMsgType msg_type
 	values[kNIMChatRoomMsgKeyType] = msg_type;
 	values[kNIMChatRoomMsgKeyAttach] = attach;
 	values[kNIMChatRoomMsgKeyClientMsgid] = client_msg_id;
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	values[kNIMChatRoomMsgKeyBody] = msg_body;
+#endif
 	msg_setting.ToJsonValue(values);
 	return GetJsonStringWithNoStyled(values);
 }
@@ -780,4 +795,47 @@ void ChatRoom::UnregChatroomCb()
 		g_cb_link_condition_ = nullptr;
 	}
 }
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+RobotInfos ChatRoom::QueryAllRobotInfosBlock(const int64_t room_id, const std::string &json_extension/* = ""*/)
+{
+	char *res = NIM_SDK_GET_FUNC(nim_chatroom_query_all_robots_block)(room_id, json_extension.c_str());
+	RobotInfos infos;
+	ParseRobotInfosStringToRobotInfos(PCharToString(res), infos);
+	return infos;
+}
+
+RobotInfo ChatRoom::QueryRobotInfoByAccidBlock(const int64_t room_id, const std::string &accid, const std::string &json_extension/* = ""*/)
+{
+	char *res = NIM_SDK_GET_FUNC(nim_chatroom_query_robot_by_accid_block)(room_id, accid.c_str(), json_extension.c_str());
+	RobotInfo info;
+	ParseRobotInfoStringToRobotInfo(PCharToString(res), info);
+	return info;
+}
+
+static void CallbackRobotQuery(int rescode, const char *res, const char *json_extension, const void *callback)
+{
+	if (callback)
+	{
+		ChatRoom::RobotQueryCallback* cb_pointer = (ChatRoom::RobotQueryCallback*)callback;
+		if (*cb_pointer)
+		{
+			RobotInfos infos;
+			ParseRobotInfosStringToRobotInfos(PCharToString(res), infos);
+			(*cb_pointer)((NIMResCode)rescode, infos);
+		}
+		delete cb_pointer;
+	}
+}
+
+void ChatRoom::GetRobotInfoAsync(const int64_t room_id, const int64_t timetag, const RobotQueryCallback &callback, const std::string &json_extension/* = ""*/)
+{
+	RobotQueryCallback* cb_pointer = nullptr;
+	if (callback)
+	{
+		cb_pointer = new RobotQueryCallback(callback);
+	}
+	NIM_SDK_GET_FUNC(nim_chatroom_get_robots_async)(room_id, timetag, json_extension.c_str(), &CallbackRobotQuery, cb_pointer);
+}
+#endif
 }

@@ -148,6 +148,11 @@ static void InitNim()
 				nbase::StringToInt((std::string)pchar, &need);
 				config.team_notification_unread_count_ = need > 0;
 			}
+			if (auto pchar = root->Attribute("kNIMAnimatedImageThumbnailEnabled")){
+				int need = -1;
+				nbase::StringToInt((std::string)pchar, &need);
+				config.animated_image_thumbnail_enabled_ = need > 0;
+			}
 			config.use_private_server_ = use_private_server;
 		}
 	}
@@ -162,11 +167,16 @@ static void InitNim()
 	assert(ret);
 	ret = nim_chatroom::ChatRoom::Init("");
 	assert(ret);
+	// 初始化云信音视频
+	ret = nim::VChat::Init("");
+	assert(ret);
+	// 初始化云信http
+	nim_http::Init();
 
+	nim_chatroom::ChatroomCallback::InitChatroomCallback();
 	// InitUiKit接口参数决定是否启用事件订阅模块，默认为false，如果是云信demo app则为true
 	// 如果你的App开启了事件订阅功能，则此参数改为true
-	nim_ui::InitManager::GetInstance()->InitUiKit(IsNimDemoAppKey(app_key)); 
-	nim_chatroom::ChatroomCallback::InitChatroomCallback();
+	//nim_ui::InitManager::GetInstance()->InitUiKit(IsNimDemoAppKey(app_key)); 
 }
 
 int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)

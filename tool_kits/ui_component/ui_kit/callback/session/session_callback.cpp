@@ -2,6 +2,7 @@
 #include "module/session/session_manager.h"
 #include "export/nim_ui_session_list_manager.h"
 #include "export/nim_ui_window_manager.h"
+#include "module/session/session_util.h"
 
 namespace nim_comp
 {
@@ -69,6 +70,29 @@ void TalkCallback::OnReceiveMsgsCallback(const std::list<nim::IMMessage>& messag
 	{
 		OnReceiveMsgCallback(msg);
 	}
+}
+
+void TalkCallback::OnReceiveBroadcastMsgCallback(const nim::BroadcastMessage& message)
+{
+	std::wstring toast = nbase::StringPrintf(L"Receive broadcast:\r\n%s(%s):\r\n%s"
+		, nbase::UTF8ToUTF16(message.from_id_).c_str()
+		, nim_comp::GetMessageTime(message.time_, false).c_str()
+		, nbase::UTF8ToUTF16(message.body_).c_str());
+	nim_ui::ShowToast(toast, 30000);
+}
+
+void TalkCallback::OnReceiveBroadcastMsgsCallback(const std::list<nim::BroadcastMessage>& messages)
+{
+	std::wstring toast = nbase::StringPrintf(L"Receive %d broadcasts\r\n", messages.size());
+	for (auto &msg : messages)
+	{
+		std::wstring tt = nbase::StringPrintf(L"%s(%s):\r\n%s\r\n"
+			, nbase::UTF8ToUTF16(msg.from_id_).c_str()
+			, nim_comp::GetMessageTime(msg.time_, false).c_str()
+			, nbase::UTF8ToUTF16(msg.body_).c_str());
+		toast += tt;
+	}
+	nim_ui::ShowToast(toast, 30000);
 }
 
 void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::list<nim::RecallMsgNotify>& message)

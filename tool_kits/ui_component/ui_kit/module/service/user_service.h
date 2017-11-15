@@ -137,6 +137,13 @@ public:
 	bool GetAllRobotInfo(nim::RobotInfos &info);
 
 	/**
+	* 初始化聊天室的所有的机器人信息（匿名聊天室）
+	* @param[in] room_id 聊天室ID
+	* @return
+	*/
+	void InitChatroomRobotInfos(long long room_id);
+
+	/**
 	* 获取Id对应的用户是不是机器人
 	* @param[in] accid 机器人云信ID
 	* @return bool true 是，false 不是

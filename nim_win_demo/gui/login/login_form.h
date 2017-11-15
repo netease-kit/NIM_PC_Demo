@@ -43,6 +43,9 @@ public:
 	* @return LRESULT 处理结果
 	*/
 	virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	void SetLoginPanelVisible();
+	void SetLoginFunctionFlag(){ login_function_ = true; }
 private:
 	/**
 	* 处理所有控件的所有消息
@@ -105,6 +108,8 @@ private:
 
 public:
 	static const LPCTSTR kClassName;
+	bool login_function_ = false;
+
 private:
 	ui::Control*	usericon_;
 	ui::Control*	passwordicon_;

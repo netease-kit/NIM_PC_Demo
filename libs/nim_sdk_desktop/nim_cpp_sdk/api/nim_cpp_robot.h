@@ -26,6 +26,7 @@ class Robot
 {
 public:
 	typedef std::function<void(NIMResCode rescode, NIMRobotInfoChangeType type, const RobotInfos&)> RobotChangedCallback;		/**< 机器人信息变更事件通知回调模板 */
+	typedef std::function<void(NIMResCode rescode, const RobotInfos& infos)> RobotQueryCallback;		/**< 获取机器人信息事件通知回调模板 */
 
 /** @fn void RegChangedCallback(const RobotChangedCallback &callback, const std::string &json_extension = "")
   * 注册机器人变更广播通知
@@ -49,6 +50,15 @@ static RobotInfos QueryAllRobotInfosBlock(const std::string &json_extension = ""
   * @return char 机器人信息 json string
   */
 static RobotInfo QueryRobotInfoByAccidBlock(const std::string &accid, const std::string &json_extension = "");
+
+/** @fn void GetRobotInfoAsync(const __int64 timetag, const RobotQueryCallback &callback, const std::string &json_extension = "");
+  * 获取机器人信息
+  * @param[in] timetag 时间戳
+  * @param[in] callback		回调函数
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @return  void
+  */
+static void GetRobotInfoAsync(const __int64 timetag, const RobotQueryCallback &callback, const std::string &json_extension = "");
 
 };
 

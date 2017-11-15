@@ -280,7 +280,7 @@ void Rts::CreateConf(const std::string& name, const std::string& custom_info, co
 }
 
 //NIM 加入多人rts会话
-void Rts::JoinConf(const std::string& name, bool record, const JoinConfCallback& cb)
+void Rts::JoinConf(const std::string& name, const std::string& session_id, bool record, const JoinConfCallback& cb)
 {
 	JoinConfCallback* cb_pointer = nullptr;
 	if (cb)
@@ -290,6 +290,7 @@ void Rts::JoinConf(const std::string& name, bool record, const JoinConfCallback&
 	std::string json;
 	Json::Value values_temp;
 	values_temp[nim::kNIMRtsDataRecord] = record ? 1 : 0;
+	values_temp[nim::kNIMRtsSessionId] = session_id;
 	Json::FastWriter fs;
 	json = fs.write(values_temp);
 	return NIM_SDK_GET_FUNC(nim_rts_join_conf)(name.c_str(), json.c_str(), &JoinConfCallbackWrapper, cb_pointer);

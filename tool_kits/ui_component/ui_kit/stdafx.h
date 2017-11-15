@@ -54,6 +54,7 @@
 
 //sdk
 #include "nim_cpp_api.h"
+#include "nim_chatroom_cpp_api.h"
 
 //tool
 #include "nim_tools_http_cpp.h"

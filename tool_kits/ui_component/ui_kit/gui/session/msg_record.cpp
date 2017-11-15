@@ -77,7 +77,7 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 	else if (msg.type_ == nim::kNIMMessageTypeCustom)
 	{
 		Json::Value json;
-		if (StringToJson(msg.attach_, json))
+		if (StringToJson(msg.attach_, json) && json.isObject())
 		{
 			int sub_type = json["type"].asInt();
 			if (sub_type == CustomMsgType_Jsb) //finger

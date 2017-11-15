@@ -56,7 +56,6 @@ extern"C"
 
 
 	//回应邀请
-
 	/** @fn bool nim_vchat_callee_ack(int64_t channel_id, bool accept, const char *json_extension, const void *user_data)
 	* NIM VCHAT 回应音视频通话邀请，异步回调nim_vchat_cb_func 见nim_vchat_def.h
 	* @param[in] channel_id 音视频通话通道id
@@ -154,7 +153,7 @@ extern"C"
 	/** @fn void nim_vchat_set_custom_data(bool custom_audio, bool custom_video, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
 	* NIM 通话中修改自定义音视频数据模式
 	* @param[in] custom_audio true表示使用自定义的音频数据，false表示不使用
-	* @param[in] custom_video true表示使用自定义的视频数据，false表示不使用.windows有效
+	* @param[in] custom_video true表示使用自定义的视频数据，false表示不使用
 	* @param[in] json_extension 无效扩展字段
 	* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
 	* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
@@ -215,7 +214,7 @@ extern"C"
 
 	/** @fn void nim_vchat_net_detect(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
 	* 音视频网络探测接口，需要在sdk初始化时带上app key
-	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] json_extension json扩展参数，允许用户设置探测时间限制kNIMNetDetectTimeLimit，及探测类型kNIMNetDetectType
 	* @param[in] cb 操作结果的回调函数
 	* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
 	* @return uint64_t 探测任务id

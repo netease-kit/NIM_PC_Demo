@@ -72,7 +72,7 @@ void SessionManager::AddNewMsg(const nim::IMMessage &msg)
 	bool msg_notify = true;
 	if (msg.session_type_ == nim::kNIMSessionTypeTeam)
 	{
-		if (!IsTeamMsgNotify(id))
+		if (!IsTeamMsgNotify(id, msg.sender_accid_))
 			msg_notify = false;
 	}
 	else
@@ -222,12 +222,20 @@ void SessionManager::OnQueryMyAllTeamMemberInfos(int count, const std::list<nim:
 	}
 }
 
-bool SessionManager::IsTeamMsgNotify(const std::string& tid)
+bool SessionManager::IsTeamMsgNotify(const std::string& tid, const std::string& sender_id)
 {
 	auto it = team_list_bits_.find(tid);
 	if (it != team_list_bits_.end())
 	{
-		return (it->second & nim::kNIMTeamBitsConfigMaskMuteNotify) == 0;
+		if ((it->second & nim::kNIMTeamBitsConfigMaskMuteNotify) == nim::kNIMTeamBitsConfigMaskMuteNotify)
+		{
+			return false;
+		}
+		else if ((it->second & nim::kNIMTeamBitsConfigMaskOnlyAdmin) == nim::kNIMTeamBitsConfigMaskOnlyAdmin)
+		{
+			auto prop = nim::Team::QueryTeamMemberBlock(tid, sender_id);
+			return prop.GetUserType() > nim::kNIMTeamUserTypeNomal;
+		}
 	}
 	return true;
 }

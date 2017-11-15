@@ -177,9 +177,10 @@ private:
 	/**
 	* 查找某个群的消息是否需要通知提示
 	* @param[in] tid 群组id
+	* @param[in] sender_id 发送方id
 	* @return bool true 需要，false 不需要
 	*/
-	bool IsTeamMsgNotify(const std::string& tid);
+	bool IsTeamMsgNotify(const std::string& tid, const std::string& sender_id);
 
 private:
 	bool		enable_merge_;

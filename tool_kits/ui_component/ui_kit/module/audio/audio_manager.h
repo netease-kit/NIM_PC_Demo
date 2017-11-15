@@ -197,5 +197,7 @@ private:
 	std::map<int, std::unique_ptr<StopCaptureCallback>> stop_capture_cb_list_;
 	std::map<int, std::unique_ptr<CancelCaptureCallback>> cancel_capture_cb_list_;
 	std::map<int, std::unique_ptr<EnumCaptureDeviceCallback>> enum_device_cb_list_;
+
+	bool init_ = false;
 };
 }

@@ -35,6 +35,7 @@ struct SDKConfig
 	int				custom_timeout_;				/**< 自定义通讯超时时间，暂时不开放设置 */
 	bool			use_https_;						/**< 是否启用HTTPS协议，默认为false */
 	bool			team_notification_unread_count_;/**< 群通知是否计入未读数，默认为false */
+	bool			animated_image_thumbnail_enabled_;/**< 开启对动图缩略图的支持	，默认为false,开启后获取的缩略图为原格式，关闭后获取的缩略图为第一帧静态图 */
 
 	//private_server_setting
 	bool			use_private_server_;			/**< 是否使用私有服务器，如果使用私有服务器，则必须设置为true */
@@ -57,7 +58,8 @@ struct SDKConfig
 				, login_max_retry_times_(0)
 				, custom_timeout_(30)
 				, use_https_(false)
-				, team_notification_unread_count_(false){}
+				, team_notification_unread_count_(false)
+				, animated_image_thumbnail_enabled_(false){}
 };
 
 /** @brief 多端登陆客户端信息 */

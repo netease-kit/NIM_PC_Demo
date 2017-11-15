@@ -21,6 +21,7 @@ typedef void(*nim_session_delete_all_recent_session_async)(const char *json_exte
 typedef void(*nim_session_set_unread_count_zero_async)(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 typedef void(*nim_session_set_top)(enum NIMSessionType to_type, const char *id, bool top, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 typedef void(*nim_session_set_extend_data)(enum NIMSessionType to_type, const char *id, const char *data, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+typedef void(*nim_session_reset_all_unread_count_async)(const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 #else
 #include "nim_session.h"
 #endif
@@ -160,6 +161,17 @@ bool Session::SetSessionExtendData(enum NIMSessionType to_type, const std::strin
 		cb_pointer = new ChangeCallback(cb);
 	}
 	NIM_SDK_GET_FUNC(nim_session_set_extend_data)(to_type, id.c_str(), data.c_str(), json_extension.c_str(), &CallbackSessionChange, cb_pointer);
+	return true;
+}
+
+bool Session::SetAllUnreadCountZeroAsync(const SetUnreadCountZeroCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	SetUnreadCountZeroCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SetUnreadCountZeroCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_session_reset_all_unread_count_async)(json_extension.c_str(), &CallbackSessionChange, cb_pointer);
 	return true;
 }
 

@@ -10,8 +10,11 @@ AudioManager::AudioManager()
 
 bool AudioManager::InitAudio(const std::wstring user_data_path)
 {	
-	bool ret = nim_audio::Audio::Init(user_data_path);
-	assert(ret);
+	if (init_)
+		return true;
+
+	init_ = nim_audio::Audio::Init(user_data_path);
+	assert(init_);
 
 	nim_audio::Audio::RegStartPlayCb(&AudioCallback::OnPlayAudioCallback);
 	nim_audio::Audio::RegStopPlayCb(&AudioCallback::OnStopAudioCallback);
@@ -21,7 +24,7 @@ bool AudioManager::InitAudio(const std::wstring user_data_path)
 	nim_audio::Audio::RegCancelAudioCb(&AudioCallback::OnCancelCaptureCallback);
 	nim_audio::Audio::RegEnumCaptureDeviceCb(&AudioCallback::OnEnumCaptureDeviceCallback);
 
-	return ret;
+	return init_;
 }
 
 bool AudioManager::PlayAudio(const std::string file_path, const std::string session_id, const std::string msg_id, nim_audio::nim_audio_type audio_format)

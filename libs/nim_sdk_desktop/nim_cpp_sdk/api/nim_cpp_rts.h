@@ -37,6 +37,7 @@ struct RtsStartInfo
 	std::string sound_;			/**< 推送声音 */
 	bool keepcalling_;			/**< 是否强制持续呼叫（对方离线也会呼叫） */
 	bool webrtc_;				/**< 是否支持webrtc互通（针对点对点中的音频通话） */
+	std::string session_id_;	/**< 会话id */
 
 	RtsStartInfo()
 	{
@@ -67,6 +68,7 @@ struct RtsStartInfo
 		values_temp[nim::kNIMRtsSound] = sound_;
 		values_temp[nim::kNIMRtsKeepCalling] = keepcalling_ ? 1 : 0;
 		values_temp[nim::kNIMRtsWebrtc] = webrtc_ ? 1 : 0;
+		values_temp[nim::kNIMRtsSessionId] = session_id_;
 		Json::FastWriter fs;
 		json = fs.write(values_temp);
 		return json;
@@ -122,7 +124,7 @@ public:
 	static void SetStartNotifyCb(const StartNotifyCallback& cb);
 
 	/** @fn void CreateConf(const std::string& name, const std::string& custom_info, const CreateConfCallback& cb)
-	  * NIM VCHAT 创建一个多人数据通道房间（后续需要主动调用加入接口进入房间）
+	  * NIM RTS 创建一个多人数据通道房间（后续需要主动调用加入接口进入房间）
 	  * @param[in] name 房间名
 	  * @param[in] custom_info 自定义的房间信息（加入房间的时候会返回）
 	  * @param[in] cb 结果回调见nim_rts_def.h，返回的json_extension无效
@@ -132,15 +134,16 @@ public:
 	  */
 	static void CreateConf(const std::string& name, const std::string& custom_info, const CreateConfCallback& cb);
 
-	/** @fn void JoinConf(const std::string& name, bool record, const JoinConfCallback& cb);
-	  * NIM VCHAT 加入一个多人房间（进入房间后成员变化等，等同点对点nim_vchat_cb_func）
+	/** @fn void JoinConf(const std::string& name, const std::string& session_id, bool record, const JoinConfCallback& cb);
+	  * NIM RTS 加入一个多人房间（进入房间后成员变化等，等同点对点nim_vchat_cb_func）
 	  * @param[in] name 房间名
-	  * @param[in] record json_extension 扩展可选参数kNIMRtsDataRecord， 如{"record":1}
+	  * @param[in] session_id 会话id
+	  * @param[in] record 是否录制白板数据
 	  * @param[in] cb 结果回调见nim_rts_def.h，回调的json_extension若成功返回创建的kNIMRtsCustomInfo及kNIMRtsChannelId，如{"channel_id": 1231, "custom_info":"hello world" }
 	  * @return void 无返回值
 	  * @note 错误码	200:成功
 	  */
-	static void JoinConf(const std::string& name, bool record, const JoinConfCallback& cb);
+	static void JoinConf(const std::string& name, const std::string& session_id, bool record, const JoinConfCallback& cb);
 
 	/** @fn void Ack(const std::string& session_id, int channel_type, bool accept, bool data_record, bool audio_record, const AckCallback& cb)
 	  * NIM 回复收到的邀请  

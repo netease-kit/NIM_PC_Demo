@@ -135,7 +135,7 @@ void TeamInfoForm::InitWindow()
 	}
 	else {
 		//默认开启消息通知 oleg 20161025
-		((CheckBox*)FindControl(L"msg_mode_notify"))->Selected(true);
+		((Option*)FindControl(L"notify_mode_on"))->Selected(true);
 		AddInviteButton();
 		btn_quit_->SetVisible(false);
 		btn_dismiss_->SetVisible(false);
@@ -198,6 +198,7 @@ void TeamInfoForm::InitWindow()
 	{
 		FindControl(L"team_info_fields")->SetVisible(false);
 		FindControl(L"team_info_icon")->SetVisible(false);
+		FindControl(L"team_notify_fields")->SetVisible(false);
 	}
 	else
 		btn_header_->AttachClick(nbase::Bind(&TeamInfoForm::OnHeadImageClicked, this, std::placeholders::_1));
@@ -319,11 +320,24 @@ void TeamInfoForm::OnGetTeamMembers(const std::string& team_id, int count, const
 	{
 		if (LoginManager::GetInstance()->GetAccount() == member.GetAccountID())
 		{
+			((Option*)FindControl(L"notify_mode_off"))->SetEnabled(true);
+			((Option*)FindControl(L"notify_mode_admin"))->SetEnabled(true);
+			((Option*)FindControl(L"notify_mode_on"))->SetEnabled(true);
+
 			my_property_ = member;
 			auto bits = member.GetBits();
-			bool msg_notify = (bits & nim::kNIMTeamBitsConfigMaskMuteNotify) == 0;
-			((CheckBox*)FindControl(L"msg_mode_notify"))->Selected(msg_notify);
-			((CheckBox*)FindControl(L"msg_mode_notify"))->SetEnabled(true);
+			if ((bits & nim::kNIMTeamBitsConfigMaskMuteNotify) == nim::kNIMTeamBitsConfigMaskMuteNotify)
+			{
+				((Option*)FindControl(L"notify_mode_off"))->Selected(true);
+			}
+			else if ((bits & nim::kNIMTeamBitsConfigMaskOnlyAdmin) == nim::kNIMTeamBitsConfigMaskOnlyAdmin)
+			{
+				((Option*)FindControl(L"notify_mode_admin"))->Selected(true);
+			}
+			else
+			{
+				((Option*)FindControl(L"notify_mode_on"))->Selected(true);
+			}
 
 			break;
 		}
@@ -551,25 +565,24 @@ bool TeamInfoForm::OnBtnConfirmClick(ui::EventArgs* param)
 		nim::Team::CreateTeamAsync(tinfo, id_list, "", nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 	}
 	else {
-
-		nim::Team::UpdateTeamInfoAsync(tid_, tinfo, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
-		if (((CheckBox*)FindControl(L"msg_mode_notify"))->IsEnabled())
+		if (FindControl(L"team_owner_section")->IsEnabled()
+			|| FindControl(L"team_name_panel")->IsEnabled())
+			nim::Team::UpdateTeamInfoAsync(tid_, tinfo, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
+		if (((Option*)FindControl(L"notify_mode_on"))->IsEnabled())
 		{
 			auto my_member_info = team_member_list_.at(LoginManager::GetInstance()->GetAccount());
 			long long bits = my_member_info.GetBits();
-			bool msg_notify = (bits & nim::kNIMTeamBitsConfigMaskMuteNotify) == 0;
-			if (msg_notify != ((Option*)FindControl(L"msg_mode_notify"))->IsSelected())
+			long long new_bits = 0;
+			if (((Option*)FindControl(L"notify_mode_on"))->IsSelected())
+				new_bits &= ~nim::kNIMTeamBitsConfigMaskMuteNotify;
+			else if (((Option*)FindControl(L"notify_mode_off"))->IsSelected())
+				new_bits |= nim::kNIMTeamBitsConfigMaskMuteNotify;
+			else
+				new_bits |= nim::kNIMTeamBitsConfigMaskOnlyAdmin;
+			if (new_bits != bits)
 			{
 				nim::TeamMemberProperty values(tid_, LoginManager::GetInstance()->GetAccount(), my_member_info.GetUserType());
-				if (msg_notify)
-				{
-					bits |= nim::kNIMTeamBitsConfigMaskMuteNotify;
-				}
-				else
-				{
-					bits &= ~nim::kNIMTeamBitsConfigMaskMuteNotify;
-				}
-				values.SetBits(bits);
+				values.SetBits(new_bits);
 				nim::Team::UpdateMyPropertyAsync(values, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 			}
 		}

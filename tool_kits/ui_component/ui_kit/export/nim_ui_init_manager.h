@@ -18,12 +18,19 @@ public:
 	SINGLETON_DEFINE(InitManager);
 
 public:
+	enum InitMode
+	{
+		kIM,
+		kAnonymousChatroom,
+	};
+
+public:
 	/**
 	* 初始化UI组件（应该在程序初始化时调用）
 	* @param[in] enable_subscribe_event	是否启用事件订阅模块
 	* @return void	无返回值
 	*/
-	void InitUiKit(bool enable_subscribe_event);
+	void InitUiKit(bool enable_subscribe_event, InitMode mode);
 
 	/**
 	* 清理UI组件
@@ -34,6 +41,9 @@ public:
 private:
 	InitManager(){};
 	~InitManager(){};
+
+private:
+	bool	init_ = false;
 };
 
 }

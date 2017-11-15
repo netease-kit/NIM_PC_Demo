@@ -178,7 +178,8 @@ static const char *kNIMTeamInfoKeyMuteAll		= "mute_all";		/**< int, 群全员禁
 /** @enum NIMTeamBitsConfigMask 群组成员信息Bits属性kNIMTeamUserKeyBits的配置定义 */
 enum NIMTeamBitsConfigMask
 {
-	kNIMTeamBitsConfigMaskMuteNotify	= 1,	/**< 关闭消息提醒(bit: 1 << 0)。0：开启提醒, 1：关闭提醒 */
+	kNIMTeamBitsConfigMaskMuteNotify	= 1,	/**< 关闭消息提醒0：开启提醒, 1：关闭提醒, */
+	kNIMTeamBitsConfigMaskOnlyAdmin		= 2,	/**< 只接收管理员消息0：开启提醒, 1：关闭提醒 */
 };
 
 /** @enum NIMTeamType 群组类型 */

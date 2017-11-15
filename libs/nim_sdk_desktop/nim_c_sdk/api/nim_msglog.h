@@ -70,6 +70,34 @@ NIM_SDK_DLL_API void nim_msglog_query_msg_online_async(const char *id,
 													   nim_msglog_query_cb_func cb, 
 													   const void *user_data);
 
+/** @fn void nim_msglog_query_the_message_of_the_specified_type_async(enum NIMSessionType to_type, const char *id, int limit_count, int64_t from_time, int64_t end_time, const char *end_client_msg_id, bool reverse, const char *msg_types, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
+  * 根据指定条件在一个会话中查询指定单个或多个类型的本地消息
+  * @param[in] to_type			会话类型
+  * @param[in] id				会话id，对方的account id或者群组tid
+  * @param[in] limit_count		本次查询的消息条数上限(默认100条)
+  * @param[in] from_time		起始时间点，单位：毫秒
+  * @param[in] end_time			结束时间点，单位：毫秒
+  * @param[in] end_client_msg_id		结束查询的最后一条消息的client_msg_id(不包含在查询结果中)（暂不启用） 
+  * @param[in] reverse			true：反向查询(按时间正序起查，正序排列)，false：按时间逆序起查，逆序排列（建议默认为false）
+  * @param[in] msg_type			检索的消息类型,Json array
+  * @param[in] json_extension	json扩展参数（备用，目前不需要）
+  * @param[in] cb				本地查询消息的回调函数， nim_msglog_query_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data		APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+NIM_SDK_DLL_API void nim_msglog_query_the_message_of_the_specified_type_async(enum NIMSessionType to_type, 
+														   const char *id, 
+														   int limit_count, 
+														   int64_t from_time, 
+														   int64_t end_time,
+														   const char *end_client_msg_id,
+														   bool reverse,
+														   const char *msg_types,
+														   const char *json_extension, 
+														   nim_msglog_query_cb_func cb, 
+														   const void *user_data);
+
 /** @fn void nim_msglog_query_msg_by_options_async(enum NIMMsgLogQueryRange query_range, const char *ids, int limit_count, int64_t from_time, int64_t end_time, const char *end_client_msg_id, bool reverse, enum NIMMessageType msg_type, const char *search_content, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
   * 根据指定条件查询本地消息,使用此接口可以完成全局搜索等功能,具体请参阅开发手册 http://dev.netease.im/docs/product/IM即时通讯/SDK开发集成/Windows开发集成?#历史记录
   * @param[in] query_range		消息历史的检索范围（目前暂不支持某些范围的组合检索，详见NIMMsgLogQueryRange说明）
@@ -288,6 +316,18 @@ NIM_SDK_DLL_API void nim_msglog_reg_status_changed_cb(const char *json_extension
   *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_update_localext_async(const char *msg_id, const char *local_ext, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
+
+/** @fn void nim_msglog_read_all_async(const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data)
+  * 全部未读消息历史标记为已读
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb			操作结果的回调函数， nim_msglog_modify_res_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
+  */
+NIM_SDK_DLL_API void nim_msglog_read_all_async(const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
+
 
 #ifdef __cplusplus
 };

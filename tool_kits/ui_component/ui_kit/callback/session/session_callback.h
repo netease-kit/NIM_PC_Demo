@@ -33,6 +33,20 @@ public:
 	static void OnReceiveMsgsCallback(const std::list<nim::IMMessage>& messages);
 
 	/**
+	* 收到Broadcast消息的回调，需要在程序开始运行时就注册好。
+	* @param[in] message 接收到的消息内容及其他相关信息
+	* @return void	无返回值
+	*/
+	static void OnReceiveBroadcastMsgCallback(const nim::BroadcastMessage& message);
+
+	/**
+	* 收到批量Broadcast消息的回调，需要在程序开始运行时就注册好。
+	* @param[in] messages 接收到的消息内容及其他相关信息
+	* @return void	无返回值
+	*/
+	static void OnReceiveBroadcastMsgsCallback(const std::list<nim::BroadcastMessage>& messages);
+
+	/**
 	* 发送消息的已读结果回调，需要在程序开始运行时就注册好。
 	* @param[in] res 发送消息已读回执
 	* @return void	无返回值

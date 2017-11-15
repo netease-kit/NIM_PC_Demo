@@ -13,6 +13,7 @@
 #include <functional>
 #include "json.h"
 #include "../util/nim_build_config.h"
+#include "nim_sdk_defines.h"
 
 /**
 * @namespace nim

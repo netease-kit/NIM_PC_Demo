@@ -49,6 +49,15 @@ typedef bool (*nim_talk_team_notification_filter_func)(const char *content, cons
   */
 typedef void (*nim_talk_recall_msg_func)(int rescode, const char *content, const char *json_extension, const void *user_data);
 
+/** @typedef void (*nim_talk_receive_broadcast_cb_func)(const char *content, const char *json_extension, const void *user_data)
+  * 接收广播消息的回调函数定义
+  * @param[out] content			json string (Keys SEE MORE 『接收广播消息Json Keys』),批量接口回调时，内容为json string array
+  * @param[out] json_extension	json扩展数据（备用）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_talk_receive_broadcast_cb_func)(const char *content, const char *json_extension, const void *user_data);
+
 /** @name 消息撤回通知Json Keys
   * @{
   */
@@ -210,6 +219,15 @@ static const char *kNIMBotRobotReceivedMsgKeyRobotMsgFlag	= "flag";		/**< string
 static const char *kNIMBotRobotReceivedMsgKeyRobotMsgMessage= "message";	/**< json object，机器人回复时带的字段，表示该条回复内容，字段内容定义可见Demo源码或参考波特开发文档 */
 //static const char *kNIMBotRobotReceivedMsgKeyRobotMsgS		= "s";			/**< string，未知 */
 /** @}*/ //attach波特机器人类型多媒体资源参数键名定义
+
+/** @name 广播消息 Json Keys
+  * @{
+  */
+static const char *kNIMBroadcastMsgKeyID		= "id";				/**< int64，消息ID */
+static const char *kNIMBroadcastMsgKeyFromAccid	= "from_accid";		/**< jstring，发送者accid，可能不存在 */
+static const char *kNIMBroadcastMsgKeyTime		= "time";			/**< int64，机器人回复时带的字段，表示该条回复相关联的消息ID */
+static const char *kNIMBroadcastMsgKeyBody		= "body";			/**< string，内容 */
+/** @}*/ // 广播消息 Json Keys
 
 #ifdef __cplusplus
 };

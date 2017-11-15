@@ -125,6 +125,7 @@ static const char *kNIMSyncSessionAck			= "sync_session_ack";		/**< bool，设�
 static const char *kNIMLoginRetryMaxTimes		= "login_retry_max_times";	/**< int，登录重试最大次数，如需设置建议设置大于3次，默认填0，SDK默认设置次数 */
 static const char *kNIMUseHttps					= "use_https";				/**< bool，是否启用HTTPS协议，默认为false */
 static const char *kNIMTeamNotificationUnreadCount	= "team_notification_unread_count";	/**< bool，群通知是否计入未读数，默认为false */
+static const char *kNIMAnimatedImageThumbnailEnabled	= "animated_image_thumbnail_enabled";	/**< bool，开启对动图缩略图的支持，默认为false，开启后获取的缩略图为原格式，关闭后获取的缩略图为第一帧静态图 */
 
 static const char *kNIMPrivateServerSetting		= "private_server_setting";	/**< json object, 私有服务器配置（一旦设置了私有服务器，则全部连私有服务器，必须确保配置正确！） */
 static const char *kNIMLbsAddress				= "lbs";					/**< string, （必填，lbs地址） */

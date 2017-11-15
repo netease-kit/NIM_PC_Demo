@@ -17,6 +17,7 @@ namespace nim
 typedef void (*nim_robot_reg_changed_callback)(const char *json_extension, nim_robot_change_cb_func cb, const void *user_data);
 typedef char* (*nim_robot_query_all_robots_block)(const char *json_extension);
 typedef char* (*nim_robot_query_robot_by_accid_block)(const char *accid, const char *json_extension);
+typedef void (*nim_robot_get_robots_async)(__int64 timetag, const char *json_extension, nim_robot_query_cb_func cb, const void *user_data);
 #else
 #include "nim_robot.h"
 #endif
@@ -62,5 +63,31 @@ RobotInfo Robot::QueryRobotInfoByAccidBlock(const std::string &accid, const std:
 	RobotInfo info;
 	ParseRobotInfoStringToRobotInfo(PCharToString(res), info);
 	return info;
+}
+
+static void CallbackRobotQuery(int rescode, const char *res, const char *json_extension, const void *callback)
+{
+	if (callback)
+	{
+		Robot::RobotQueryCallback* cb_pointer = (Robot::RobotQueryCallback*)callback;
+		if (*cb_pointer)
+		{
+			RobotInfos infos;
+			ParseRobotInfosStringToRobotInfos(PCharToString(res), infos);
+			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)rescode, infos));
+			//(*cb_pointer)((NIMResCode)rescode, infos);
+		}
+		delete cb_pointer;
+	}
+}
+
+void Robot::GetRobotInfoAsync(const __int64 timetag, const RobotQueryCallback &callback, const std::string &json_extension/* = ""*/)
+{
+	RobotQueryCallback* cb_pointer = nullptr;
+	if (callback)
+	{
+		cb_pointer = new RobotQueryCallback(callback);
+	}
+	NIM_SDK_GET_FUNC(nim_robot_get_robots_async)(timetag, json_extension.c_str(), &CallbackRobotQuery, cb_pointer);
 }
 }

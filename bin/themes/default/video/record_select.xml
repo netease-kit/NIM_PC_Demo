@@ -3,10 +3,6 @@
     <VBox bkcolor="bk_wnd_lightcolor" height="auto" >
         <HBox class="caption">
             <Label class="font_title" name="title" textid="STRID_RECORD_SELECT_TITLE" width="stretch" valign="center" normaltextcolor="darkcolor"/>
-			<Box width="21" margin="4,6,0,0">
-				<Button class="btn_wnd_max" name="maxbtn"/>
-				<Button class="btn_wnd_restore" name="restorebtn" visible="false"/>
-			</Box>
             <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>
         </HBox>
 		<Label textid="STRID_RECORD_SELECT_CONTENT" font="2" normaltextcolor="darkcolor" margin="10,12,0,0"/>

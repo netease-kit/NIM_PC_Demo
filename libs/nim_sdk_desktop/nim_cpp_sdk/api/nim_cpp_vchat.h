@@ -80,6 +80,24 @@ public:
 	*/
 	static void NetDetect(NetDetectCallback cb);
 
+	/** @fn void NetDetectEx(int32_t ms_limit, nim::NIMNetDetectType type, NetDetectCallback cb)
+	* 音视频网络探测扩展
+	* @param[in] ms_limit 探测的时间限制，大于零有效
+	* @param[in] type 探测类型
+	* @param[in] cb 操作结果的回调函数
+	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				0:流程错误
+	*				400:非法请求格式
+	*				417:请求数据不对
+	*				606:ip为内网ip
+	*				607:频率超限
+	*				20001:探测类型错误
+	*				20002:ip错误
+	*				20003:sock错误
+	*/
+	static void NetDetectEx(int32_t ms_limit, nim::NIMNetDetectType type, NetDetectCallback cb);
+
 	/** @fn static void EnumDeviceDevpath(nim::NIMDeviceType type, nim_vchat_enum_device_devpath_sync_cb_func cb)
 	* NIM VCHAT DEVICE 遍历设备
 	* @param[in] type NIMDeviceType 见nim_device_def.h

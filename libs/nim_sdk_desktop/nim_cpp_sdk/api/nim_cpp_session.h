@@ -110,6 +110,16 @@ public:
 	*/
 	static bool SetSessionExtendData(enum NIMSessionType to_type, const std::string& id, const std::string& data, const ChangeCallback& cb, const std::string& json_extension = "");
 
+	/** @fn static bool SetAllUnreadCountZeroAsync(const SetUnreadCountZeroCallback& cb, const std::string& json_extension = "")
+	* 最近联系人项全部未读数清零
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb			最近会话列表项变更的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
+	*/
+	static bool SetAllUnreadCountZeroAsync(const SetUnreadCountZeroCallback& cb, const std::string& json_extension = "");
+
 	/** @fn void UnregSessionCb()
 	* 反注册Session提供的所有回调
 	* @return void 无返回值

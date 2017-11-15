@@ -7,9 +7,9 @@
                 <Control width="29" height="29" bkimage="mask_25x25.png" mouse="false"/>
             </Box>
             <Label name="name" font="1" normaltextcolor="dark2color" valign="center" margin="6"/>
-            
+            <Button class="btn_global_white_80x30" name="logout" width="40" height="20" font="2" textid="STRID_MAINWINDOW_MENU_LOGOUT"  visible="false" valign="center" margin="10,0,0,0"/>            
             <Control width="stretch"/>
-            
+
             <Control width="auto" height="auto" bkimage="btn_create_room.png" valign="center"/>
             <TabBox width="auto" height="auto" valign="center" margin="8,0,15,0">
                 <Button name="create_room" textid="STRID_CHATROOM_I_WANT_HOST" font="1" normaltextcolor="lightcolor" />
@@ -88,7 +88,7 @@
                 
                 <Control normalcolor="bk_listitem_selected" width="stretch" height="1"/>
                 
-                <RichEdit name="input_edit" width="stretch" height="54" prompttextid="STRID_CHATROOM_ENJOY_CHAT" font="1" padding="6,2,6,2" rich="true" multiline="true" wantreturnmsg="true" vscrollbar="true" autovscroll="true"/>
+                <RichEdit name="input_edit" width="stretch" height="54" prompttextid="STRID_CHATROOM_ENJOY_CHAT" promptcolor="gray" font="1" padding="6,2,6,2" rich="true" multiline="true" wantreturnmsg="true" vscrollbar="true" autovscroll="true"/>
                 
                 <HBox width="stretch" height="auto" margin="10,0,10,10">
                     <Control width="stretch"/>
@@ -112,6 +112,10 @@
 				<Label name="room_name" halign="center" font="2" normaltextcolor="exit_room_name_color" textpadding="0,12,0,0"/>
 			</VBox>
 		</Box>	
+		<VBox name="loading_tip" width="stretch" height="stretch" halign="center" valign="top" bkimage="front_page_mask.png" visible="true">
+			<Control width="auto" height="auto" halign="center" valign="center" margin="0,150,0,0" bkimage="../public/animation/ani_loading.gif"/>
+			<Label width="auto" height="auto" halign="center" valign="center" margin="0,10,0,0" textid="STRID_CHATROOM_ROOM_LOADING" normaltextcolor="white" font="3" margin="0,8"/>
+		</VBox>
 		</Box>
 	</VBox>
 </Window>

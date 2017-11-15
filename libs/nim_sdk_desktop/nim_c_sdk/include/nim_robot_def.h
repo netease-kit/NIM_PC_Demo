@@ -43,6 +43,16 @@ enum NIMRobotInfoChangeType
   */
 typedef void (*nim_robot_change_cb_func)(int rescode, NIMRobotInfoChangeType type, const char *result, const char *json_extension, const void *user_data);
 
+/** @typedef void (*nim_robot_query_cb_func)(int rescode, const char *result, const char *json_extension, const void *user_data)
+  * 获取机器人信息的函数定义
+  * @param[out] rescode			错误码,200:一切正常
+  * @param[out] result			机器人信息 Json string array
+  * @param[out] json_extension	json扩展数据（备用）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_robot_query_cb_func)(int rescode, const char *result, const char *json_extension, const void *user_data);
+
 #ifdef __cplusplus
 }
 #endif

@@ -16,6 +16,7 @@
 extern"C"
 {
 #endif
+
 /** @fn void nim_chatroom_reg_enter_cb(const char *json_extension, nim_chatroom_enter_cb_func cb, const void *user_data)
   * 注册全局进入聊天室的回调
   * @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -97,6 +98,15 @@ NIM_SDK_DLL_API void nim_chatroom_init(const char *json_extension);
   * @return void 无返回值
   */
 NIM_SDK_DLL_API void nim_chatroom_cleanup(const char *json_extension);
+
+/** @fn bool nim_chatroom_enter_with_anoymity(const int64_t room_id, const char *enter_info, const char *json_extension)
+  * 聊天室匿名进入
+  * @param[in] room_id			  聊天室ID
+  * @param[in] enter_info		  聊天室进入信息
+  * @param[in] json_extension	  json扩展参数（备用，目前不需要）
+  * @return bool 进入信息是否正确,返回失败则不会触发进入回调
+  */
+NIM_SDK_DLL_API bool nim_chatroom_enter_with_anoymity(const int64_t room_id, const char *anonymity_info, const char *enter_info, const char *json_extension);
 
 /** @fn bool nim_chatroom_enter(const int64_t room_id, const char *request_enter_data, const char *enter_info, const char *json_extension)
   * 聊天室进入
@@ -326,6 +336,36 @@ NIM_SDK_DLL_API void nim_chatroom_queue_header_async(const int64_t room_id, cons
   */
 NIM_SDK_DLL_API void nim_chatroom_queue_drop_async(const int64_t room_id, const char *json_extension, nim_chatroom_queue_drop_cb_func cb, const void *user_data);
 
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
+/** @fn void nim_chatroom_get_robots_async(const int64_t room_id, int64_t timetag, const char *json_extension, nim_chatroom_query_robots_cb_func cb, const void *user_data))
+  * 获取全部机器人信息
+  * @param[in] room_id				聊天室ID
+  * @param[in] timetag 时间戳
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb 回调函数 回调函数定义见nim_robot_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void
+  */
+NIM_SDK_DLL_API void nim_chatroom_get_robots_async(const int64_t room_id, int64_t timetag, const char *json_extension, nim_chatroom_query_robots_cb_func cb, const void *user_data);
+
+/** @fn char *nim_chatroom_query_all_robots_block(const int64_t room_id, const char *json_extension)
+  * 获取全部机器人信息(同步接口，堵塞NIM内部线程)
+  * @param[in] room_id				聊天室ID
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @return char 机器人信息 json string array
+  */
+NIM_SDK_DLL_API char *nim_chatroom_query_all_robots_block(const int64_t room_id, const char *json_extension);
+
+/** @fn char *nim_chatroom_query_robot_by_accid_block(const int64_t room_id, const char *accid, const char *json_extension)
+  * 获取指定机器人信息(同步接口，堵塞NIM内部线程)
+  * @param[in] room_id				聊天室ID
+  * @param[in] accid 机器人accid
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @return char 机器人信息 json string
+  */
+NIM_SDK_DLL_API char *nim_chatroom_query_robot_by_accid_block(const int64_t room_id, const char *accid, const char *json_extension);
+#endif
 #ifdef __cplusplus
 };
 #endif //__cplusplus

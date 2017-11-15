@@ -57,7 +57,7 @@ void ChatroomCallback::OnEnterCallback(__int64 room_id, const NIMChatRoomEnterSt
 					return;
 				}
 				else
-					chat_form->Close();
+					chat_form->Close(ChatroomForm::kForceClose);
 			}
 
 			ChatroomFrontpage* front_page = nim_ui::WindowsManager::GetInstance()->SingletonShow<ChatroomFrontpage>(ChatroomFrontpage::kClassName);

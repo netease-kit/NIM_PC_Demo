@@ -27,11 +27,13 @@ public:
 
 	virtual void InitWindow() override;
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
+	virtual void Close(UINT nRet = IDOK) override;
 
 	void OnWndSizeMax(bool max);
 
 public:
 	void RequestEnter(const __int64 room_id);
+	void AnonymousLogin(const __int64 room_id);
 	__int64 GetRoomId();
 
 	void OnReceiveMsgCallback(const ChatRoomMessage& result);
@@ -43,6 +45,9 @@ public:
 	void OnSetMemberAttributeCallback(__int64 room_id, int error_code, const ChatRoomMemberInfo& info);
 	void OnKickMemberCallback(__int64 room_id, int error_code);
 	void OnTempMuteCallback(__int64 room_id, int error_code, const ChatRoomMemberInfo& info);
+
+public:
+	void SetAnonymity(bool anonymity);
 
 private:
 	void InitHeader();
@@ -56,6 +61,7 @@ private:
 
 	void OnHttoDownloadReady(HttpResourceType type, const std::string& account, const std::wstring& photo_path);
 	void OnRequestRoomError();
+	void Logout();
 
 private:
 	void AddMsgItem(const ChatRoomMessage& result, bool is_history, bool first_msg_each_batch = false);
@@ -65,6 +71,7 @@ private:
 	void AddRobotMsg(const ChatRoomMessage& result, bool is_history, bool first_msg_each_batch = false);
 	void AddJsb(const int value, const std::wstring &sender_name, bool is_history, bool first_msg_each_batch = false);
 	void OnBtnSend();
+	void OnBtnLogin();
 	void SendText(const std::string &text);
 	void OnBtnJsb();
 	void SendJsb(const std::string &attach);
@@ -177,9 +184,11 @@ private:
 public:
 	static const LPTSTR kClassName;
 	static const int kAllowClose = 10;
+	static const int kForceClose = 11;
 
 private:
 	__int64			room_id_;
+	bool			is_anonymity_ = false;
 	std::string		room_enter_token_;
 
 	bool			has_enter_;
@@ -200,7 +209,6 @@ private:
 	ui::RichEdit*	msg_list_ = NULL;
 	ui::RichEdit*	input_edit_ = NULL;
 	ui::CheckBox*	btn_face_ = NULL;
-	ui::Button*		btn_send_ = NULL;
 
 	ui::Option*		option_online_members_ = NULL;
 //	ui::ListBox*	online_members_list_ = NULL;
@@ -238,6 +246,16 @@ private:
 
 	std::map<std::wstring, Json::Value> msg_list_sender_name_link_;
 	std::map<std::string, Json::Value> descripts_info_;
+
+	enum SWITCH_STATUS
+	{
+		kNone = 0,
+		kToLogined = 1,
+		kToAnonymous = 2,
+	};
+	SWITCH_STATUS switch_to_login_status_ = kNone;
+
+	ChatRoomMemberInfo my_info_;
 };
 
 }

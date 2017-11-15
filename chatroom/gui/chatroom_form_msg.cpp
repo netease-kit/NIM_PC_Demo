@@ -2,6 +2,7 @@
 #include "chatroom_frontpage.h"
 #include "nim_chatroom_helper.h"
 #include "module/session/session_util.h"
+#include "gui/login/login_form.h"
 
 #define ROOMMSG_R_N _T("\r\n")
 namespace nim_chatroom
@@ -20,6 +21,147 @@ void ChatroomForm::RequestEnter(const __int64 room_id)
 	room_id_ = room_id;
 	//获取聊天室登录信息
 	nim::PluginIn::ChatRoomRequestEnterAsync(room_id_, nbase::Bind(&ChatroomForm::OnChatRoomRequestEnterCallback, this, std::placeholders::_1, std::placeholders::_2));
+}
+
+void ChatroomForm::SetAnonymity(bool anonymity)
+{
+	is_anonymity_ = anonymity;
+	if (anonymity)
+	{
+		((Button *)FindControl(L"send"))->SetTextId(L"STRID_LOGIN_FORM_LOGIN");
+		((RichEdit *)FindControl(L"input_edit"))->SetPromptTextId(L"STRID_CHATROOM_LOGIN_CHAT");
+		((RichEdit *)FindControl(L"input_edit"))->SetEnabled(false);
+		btn_face_->SetVisible(false);
+		FindControl(L"btn_jsb")->SetVisible(false);
+		FindControl(L"logout")->SetVisible(false);
+		auto form = (ChatroomFrontpage*)nim_comp::WindowsManager::GetInstance()->GetWindow(ChatroomFrontpage::kClassName, ChatroomFrontpage::kClassName);
+		form->SetAnonymity(true);
+		nim_comp::UserService::GetInstance()->InitChatroomRobotInfos(room_id_);
+	}
+	else
+	{
+		((Button *)FindControl(L"send"))->SetTextId(L"STRING_SEND");
+		((RichEdit *)FindControl(L"input_edit"))->SetPromptTextId(L"STRID_CHATROOM_ENJOY_CHAT");
+		((RichEdit *)FindControl(L"input_edit"))->SetEnabled(true);
+		btn_face_->SetVisible(true);
+		FindControl(L"btn_jsb")->SetVisible(true);
+		auto form = (ChatroomFrontpage*)nim_comp::WindowsManager::GetInstance()->GetWindow(ChatroomFrontpage::kClassName, ChatroomFrontpage::kClassName);
+		form->SetAnonymity(false);
+		if (nim_comp::LoginManager::GetInstance()->IsAnonymityDemoMode())
+			FindControl(L"logout")->SetVisible(true);
+	}
+	switch_to_login_status_ = kNone;
+}
+
+void ChatroomForm::OnBtnLogin()
+{
+	auto form = nim_comp::WindowsManager::SingletonShow<LoginForm>(LoginForm::kClassName);
+	form->SetLoginFunctionFlag();
+	form->SetLoginPanelVisible();
+	form->CenterWindow();
+	form->ShowWindow();
+	nim_ui::OnShowMainWindow cb_login_ok = [this]{
+		switch_to_login_status_ = kToLogined;
+		nim_chatroom::ChatRoom::Exit(room_id_);
+	};
+
+	nim_ui::LoginManager::GetInstance()->RegLoginOKCallback(ToWeakCallback(cb_login_ok));
+}
+
+void ChatroomForm::Close(UINT nRet/* = IDOK*/)
+{
+	if (nRet == kForceClose)
+	{
+		switch_to_login_status_ = kNone;
+		__super::Close();
+		return;
+	}
+	if (switch_to_login_status_ == kToLogined)
+	{
+		RequestEnter(room_id_);
+	}
+	else if (switch_to_login_status_ == kToAnonymous)
+	{
+		AnonymousLogin(room_id_);
+	}
+	else
+		__super::Close(nRet);
+}
+
+void ChatroomForm::AnonymousLogin(const __int64 room_id)
+{
+	if (room_id == 0)
+	{
+		OnRequestRoomError();
+		return;
+	}
+
+	room_id_ = room_id;
+	switch_to_login_status_ = kToAnonymous;
+	auto http_cb = ToWeakCallback([this](bool ret, int response_code, const std::string& reply)
+	{
+		wstring fff = nbase::UTF8ToUTF16(reply);
+		StdClosure error_cb = ToWeakCallback([this]()
+		{
+
+		});
+
+		if (!ret || response_code != nim::kNIMResSuccess)
+		{
+			Post2UI(error_cb);
+
+			return;
+		}
+
+		Json::Value json_reply;
+		Json::Reader reader;
+		if (reader.parse(reply, json_reply) && json_reply.isObject())
+		{
+			ChatRoomAnoymityEnterInfo anonymity_info;
+			anonymity_info.app_key_ = GetConfigValueAppKey();
+			anonymity_info.app_data_file_ = "Netease";
+			nim::JsonArrayStringToList(json_reply["msg"]["addr"].toStyledString(), anonymity_info.address_);
+
+			std::wstring nick = nbase::StringPrintf(L"游客%d", rand());
+			ChatRoomEnterInfo enter_info;
+			enter_info.SetNick(nbase::UTF16ToUTF8(nick));
+			enter_info.SetAvatar("https://nos.netease.com/b12026/MTAxMTAxMA%3D%3D%2FbmltYV84NDc2NF8xNTA2NjUyMDM1NTE5XzUzZmY4NzkxLThjOGItNDY1My1hZDVhLTczYzkxZjEwN2RmOQ%3D%3D");
+			
+			StdClosure cb = [anonymity_info, enter_info, this](){
+				bool bRet = ChatRoom::AnonymousEnter(room_id_, anonymity_info, enter_info);
+				if (bRet)
+				{
+					this->CenterWindow();
+					this->ShowWindow();
+				}
+
+			};
+			Post2UI(cb);
+
+		}
+		else
+		{
+			Post2UI(error_cb);
+		}
+	});
+
+	std::string api_addr = "https://app.netease.im/api/chatroom/requestAddress";
+	std::string new_api_addr = GetConfigValue("kNIMChatRoomRequest");
+	if (!new_api_addr.empty())
+		api_addr = new_api_addr;
+
+	std::string param = nbase::StringPrintf("{\"roomid\" : \"%lld\" , \"uid\" : \"\", \"type\" : \"2\"}", room_id);
+	//api_addr = api_addr + param;
+
+	//nim_http::HttpRequest request(addressbook_address, body.c_str(), body.size(), reg_cb);
+	std::string app_key = GetConfigValueAppKey();
+	//nim_http::HttpRequest request(api_addr, param.c_str(), param.size(), http_cb);
+	nim_http::HttpRequest request(api_addr, param.c_str(), param.size(), http_cb);
+	request.AddHeader("Content-Type", "application/json");
+	request.AddHeader("charset", "utf-8");
+	request.AddHeader("appKey", app_key);
+	request.SetMethodAsPost();
+	nim_http::PostRequest(request);
 }
 
 __int64 ChatroomForm::GetRoomId()
@@ -45,6 +187,7 @@ void ChatroomForm::OnReceiveMsgCallback(const ChatRoomMessage& result)
 
 void ChatroomForm::OnEnterCallback(int error_code, const ChatRoomInfo& info, const ChatRoomMemberInfo& my_info)
 {
+	((ui::Box*)this->FindControl(L"loading_tip"))->SetVisible(false);
 	if (error_code == nim::kNIMResTimeoutError)
 	{
 		ui::Box* kicked_tip_box = (ui::Box*)this->FindControl(L"kicked_tip_box");
@@ -71,6 +214,7 @@ void ChatroomForm::OnEnterCallback(int error_code, const ChatRoomInfo& info, con
 	{
 		ui::Box* kicked_tip_box = (ui::Box*)this->FindControl(L"kicked_tip_box");
 		kicked_tip_box->SetVisible(false);
+		InitRobots();
 	}
 
 	if (info.id_ == 0)
@@ -82,6 +226,7 @@ void ChatroomForm::OnEnterCallback(int error_code, const ChatRoomInfo& info, con
 	has_enter_ = true;
 
 	StdClosure task = [=](){
+		my_info_ = my_info;
 		if (!my_info.avatar_.empty() && my_info.avatar_.find_first_of("http") == 0)
 			my_icon_->SetBkImage(nim_ui::HttpManager::GetInstance()->GetCustomImage(kChatroomMemberIcon, my_info.account_id_, my_info.avatar_));
 		else
@@ -95,6 +240,16 @@ void ChatroomForm::OnEnterCallback(int error_code, const ChatRoomInfo& info, con
 
 	OnGetChatRoomInfoCallback(room_id_, error_code, info);
 	GetMembers();
+
+	if (switch_to_login_status_ == kToLogined)
+		SetAnonymity(false);
+	else if (switch_to_login_status_ == kToAnonymous)
+		SetAnonymity(true);
+	else
+	{
+		if (nim_comp::LoginManager::GetInstance()->IsAnonymityDemoMode())
+			SetAnonymity(is_anonymity_);
+	}
 }
 
 void ChatroomForm::OnGetChatRoomInfoCallback(__int64 room_id, int error_code, const ChatRoomInfo& info)
@@ -156,52 +311,67 @@ void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::str
 			|| error_code == nim::kNIMLocalResAPIErrorInitUndone
 			|| error_code == nim::kNIMLocalResAPIErrorLoginUndone
 			|| error_code == nim::kNIMResAccountBlock
-			|| error_code == nim::kNIMResTimeoutError)
+			|| error_code == nim::kNIMResTimeoutError
+			|| error_code == nim::kNIMResRoomBlackBeOut)
 		{
 			StdClosure closure = ToWeakCallback([this, error_code]()
 			{
-				ChatroomFrontpage* front_page = nim_ui::WindowsManager::GetInstance()->SingletonShow<ChatroomFrontpage>(ChatroomFrontpage::kClassName);
-				if (!front_page) return;
-				ui::Box* kicked_tip_box = (ui::Box*)front_page->FindControl(L"kicked_tip_box");
-				kicked_tip_box->SetVisible(true);
-				nbase::ThreadManager::PostDelayedTask(front_page->ToWeakCallback([kicked_tip_box]() {
-					kicked_tip_box->SetVisible(false);
-				}), nbase::TimeDelta::FromSeconds(2));
-
-				MutiLanSupport* mls = MutiLanSupport::GetInstance();
-				std::wstring kick_tip_str = mls->GetStringViaID(L"STRID_CHATROOM_TIP_ENTER_FAIL");
-				if (error_code == nim::kNIMResForbidden)
-					kick_tip_str = mls->GetStringViaID(L"STRID_CHATROOM_TIP_BLACKLISTED");
+				std::wstring error_tip_string_id = L"STRID_CHATROOM_TIP_ENTER_FAIL";
+				if (error_code == nim::kNIMResForbidden || error_code == nim::kNIMResRoomBlackBeOut)
+					error_tip_string_id = L"STRID_CHATROOM_TIP_BLACKLISTED";
 				else if (error_code == nim::kNIMResAccountBlock)
-					kick_tip_str = mls->GetStringViaID(L"STRID_CHATROOM_TIP_ACCOUNT_BLOCK");
+					error_tip_string_id = L"STRID_CHATROOM_TIP_ACCOUNT_BLOCK";
 				else if (error_code == nim::kNIMResNotExist)
-					kick_tip_str = mls->GetStringViaID(L"STRID_CHATROOM_TIP_ROOM_NOT_EXIST");
-				else if (error_code == nim::kNIMLocalResAPIErrorInitUndone 
+					error_tip_string_id = L"STRID_CHATROOM_TIP_ROOM_NOT_EXIST";
+				else if (error_code == nim::kNIMLocalResAPIErrorInitUndone
 					|| error_code == nim::kNIMLocalResAPIErrorLoginUndone
 					|| error_code == nim::kNIMResTimeoutError)
-					kick_tip_str = mls->GetStringViaID(L"STRID_CHATROOM_TIP_NETWORK_ERROR");
-				ui::Label* kick_tip_label = (ui::Label*)kicked_tip_box->FindSubControl(L"kick_tip");
-				kick_tip_label->SetText(kick_tip_str);
+					error_tip_string_id = L"STRID_CHATROOM_TIP_NETWORK_ERROR";
 
-				ui::Label* room_name_label = (ui::Label*)kicked_tip_box->FindSubControl(L"room_name");
-				if (error_code == nim::kNIMResForbidden)
+				if (!nim_comp::LoginManager::GetInstance()->IsAnonymityDemoMode())
 				{
-					room_name_label->SetDataID(nbase::Int64ToString16(room_id_));
-					ChatRoomInfo info = front_page->GetRoomInfo(room_id_);
-					if (!info.name_.empty())
-						room_name_label->SetUTF8Text(info.name_);
-					else
-						room_name_label->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_ROOM_ID").c_str(), room_id_));
+					ChatroomFrontpage* front_page = nim_ui::WindowsManager::GetInstance()->SingletonShow<ChatroomFrontpage>(ChatroomFrontpage::kClassName);
+					if (!front_page) return;
+					ui::Box* kicked_tip_box = (ui::Box*)front_page->FindControl(L"kicked_tip_box");
+					kicked_tip_box->SetVisible(true);
+					nbase::ThreadManager::PostDelayedTask(front_page->ToWeakCallback([kicked_tip_box]() {
+						kicked_tip_box->SetVisible(false);
+					}), nbase::TimeDelta::FromSeconds(2));
+
+					MutiLanSupport* mls = MutiLanSupport::GetInstance();
+					std::wstring kick_tip_str = mls->GetStringViaID(error_tip_string_id);
+
+					ui::Label* kick_tip_label = (ui::Label*)kicked_tip_box->FindSubControl(L"kick_tip");
+					kick_tip_label->SetText(kick_tip_str);
+
+					ui::Label* room_name_label = (ui::Label*)kicked_tip_box->FindSubControl(L"room_name");
+					if (error_code == nim::kNIMResForbidden)
+					{
+						room_name_label->SetDataID(nbase::Int64ToString16(room_id_));
+						ChatRoomInfo info = front_page->GetRoomInfo(room_id_);
+						if (!info.name_.empty())
+							room_name_label->SetUTF8Text(info.name_);
+						else
+							room_name_label->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_CHATROOM_ROOM_ID").c_str(), room_id_));
+					}
+					else if (error_code == nim::kNIMResNotExist)
+						room_name_label->SetText(L"");					
+					OnRequestRoomError();
 				}
-				else if (error_code == nim::kNIMResNotExist)
-					room_name_label->SetText(L"");
-				OnRequestRoomError();
+				else
+				{
+					ShowMsgBox(nullptr, MsgboxCallback(), error_tip_string_id);
+					Logout();
+				}
 			});
 			Post2UI(closure);
 		}
 		else
 		{
-			Post2UI(closure_err);
+			if (!nim_comp::LoginManager::GetInstance()->IsAnonymityDemoMode())
+				Post2UI(closure_err);
+			else
+				Logout();
 			QLOG_APP(L"OnChatRoomRequestEnterCallback error: error id={0}") << error_code;
 		}
 		return;
@@ -232,14 +402,20 @@ void ChatroomForm::OnChatRoomRequestEnterCallback(int error_code, const std::str
 				if (!front_page) return;
 				ShowMsgBox(front_page->GetHWND(), MsgboxCallback(), L"STRID_CHATROOM_ENTER_ROOM_FAIL");
 
-				OnRequestRoomError();
+				if (!nim_comp::LoginManager::GetInstance()->IsAnonymityDemoMode())
+					OnRequestRoomError();
+				else
+					Logout(); 
 			}
 		};
 		Post2UI(cb);
 	}
 	else
 	{
-		Post2UI(closure_err);
+		if (!nim_comp::LoginManager::GetInstance()->IsAnonymityDemoMode())
+			Post2UI(closure_err);
+		else
+			Logout();
 	}
 
 }
@@ -453,7 +629,7 @@ void ChatroomForm::OnHttoDownloadReady(HttpResourceType type, const std::string&
 {
 	if (type == kChatroomMemberIcon)
 	{
-		if (nim_ui::LoginManager::GetInstance()->IsEqual(account))
+		if (nim_ui::LoginManager::GetInstance()->IsEqual(account) || account == my_info_.account_id_)
 			my_icon_->SetBkImage(photo_path);
 
 		if (account == creater_id_)
@@ -481,7 +657,7 @@ void ChatroomForm::OnHttoDownloadReady(HttpResourceType type, const std::string&
 
 void ChatroomForm::OnRequestRoomError()
 {
-	this->Close();
+	this->Close(kForceClose);
 }
 
 void ChatroomForm::AddMsgItem(const ChatRoomMessage& result, bool is_history, bool first_msg_each_batch)
@@ -1166,7 +1342,8 @@ void ChatroomForm::RemoveMember(const std::string &uid)
 	auto exit_member = members_map_.find(uid);
 	if (exit_member != members_map_.end())
 	{
-		if (!exit_member->second.is_blacklist_ && exit_member->second.type_ == 0)
+		if (!exit_member->second.is_blacklist_ && 
+			(exit_member->second.type_ == 0 || exit_member->second.type_ == 4))
 		{
 			members_map_.erase(exit_member);
 

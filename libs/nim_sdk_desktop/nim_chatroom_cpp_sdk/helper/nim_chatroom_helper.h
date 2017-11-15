@@ -77,6 +77,36 @@ private:
 	Json::Value		values_;
 };
 
+struct ChatRoomAnoymityEnterInfo
+{
+	std::list<std::string> address_;
+	std::string app_data_file_;
+	int sdk_log_level_;
+	std::string app_key_;
+
+	ChatRoomAnoymityEnterInfo()
+	{
+		sdk_log_level_ = 5;
+	}
+
+	/** @fn std::string ToJsonString() const
+	  * @brief 组装Json Value字符串
+	  * @return void
+      */
+	std::string	ToJsonString() const
+	{
+		Json::Value values;
+		Json::FastWriter fw;
+		std::string addr_str;
+		nim::StrListToJsonString(address_, addr_str);
+		values[kNIMChatRoomEnterKeyAddress] = addr_str;
+		values[kNIMChatRoomEnterKeyAppDataPath] = app_data_file_;
+		values[kNIMChatRoomEnterKeyLogLevel] = sdk_log_level_;
+		values[kNIMChatRoomEnterKeyAppKey] = app_key_;
+		return fw.write(values);
+	}
+};
+
 /** @brief 聊天室信息*/
 struct ChatRoomInfo
 {
@@ -295,7 +325,9 @@ public:
 		client_msg_id_ = values[kNIMChatRoomMsgKeyClientMsgid].asString();
 		local_res_path_ = values[kNIMChatRoomMsgKeyLocalFilePath].asString();
 		local_res_id_ = values[kNIMChatRoomMsgKeyLocalResId].asString();
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		msg_body_ = values[kNIMChatRoomMsgKeyBody].asString();
+#endif
 		msg_setting_.ParseMessageSetting(values);
 	}
 
@@ -311,7 +343,9 @@ public:
 		values[kNIMChatRoomMsgKeyClientMsgid] = client_msg_id_;
 		values[kNIMChatRoomMsgKeyLocalFilePath] = local_res_path_;
 		values[kNIMChatRoomMsgKeyLocalResId] = local_res_id_;
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		values[kNIMChatRoomMsgKeyBody] = msg_body_;
+#endif
 		msg_setting_.ToJsonValue(values);
 		return nim::GetJsonStringWithNoStyled(values);
 	}
@@ -399,7 +433,7 @@ struct ChatRoomMemberInfo
 {
 	int64_t			room_id_;			/**<聊天室id */
 	std::string		account_id_;		/**<成员账号 */
-	int				type_;				/**<成员类型, -1:受限用户; 0:普通;1:创建者;2:管理员*/
+	int				type_;				/**<成员类型, -1:受限用户; 0:普通;1:创建者;2:管理员;4:匿名非注册用户*/
 	int				level_;				/**<成员级别: >=0表示用户开发者可以自定义的级别*/
 	std::string		nick_;				/**<聊天室内的昵称字段,预留字段, 可从Uinfo中取*/
 	std::string		avatar_;			/**<聊天室内的头像,预留字段, 可从Uinfo中取icon*/
@@ -526,6 +560,116 @@ bool ParseChatRoomMemberInfos(const std::string& infos_json_str, std::list<ChatR
   * @return bool 解析成功 或失败
   */
 bool ParseChatRoomMsgs(const std::string& msgs_json_str, std::list<ChatRoomMessage>& msgs);
+
+/** @brief 机器人信息 */
+struct RobotInfo
+{
+public:
+	/** 设置机器人云信id */
+	void SetAccid(const std::string& accid)
+	{
+		robot_info_[kNIMRobotInfoKeyAccid] = accid;
+	}
+
+	/** 获取机器人云信id */
+	std::string GetAccid() const
+	{
+		return robot_info_[kNIMRobotInfoKeyAccid].asString();
+	}
+
+	/** 设置机器人名字 */
+	void SetName(const std::string& name)
+	{
+		robot_info_[kNIMRobotInfoKeyName] = name;
+	}
+
+	/** 获取机器人名字 */
+	std::string GetName() const
+	{
+		return robot_info_[kNIMRobotInfoKeyName].asString();
+	}
+
+	/** 设置机器人头像 */
+	void SetIcon(const std::string& icon)
+	{
+		robot_info_[kNIMRobotInfoKeyIcon] = icon;
+	}
+
+	/** 获取机器人头像 */
+	std::string GetIcon() const
+	{
+		return robot_info_[kNIMRobotInfoKeyIcon].asString();
+	}
+
+	/** 设置机器人介绍 */
+	void SetIntro(const std::string& intro)
+	{
+		robot_info_[kNIMRobotInfoKeyIntro] = intro;
+	}
+
+	/** 获取机器人介绍 */
+	std::string GetIntro() const
+	{
+		return robot_info_[kNIMRobotInfoKeyIntro].asString();
+	}
+
+	/** 设置机器人波特平台ID */
+	void SetRobotID(const std::string& id)
+	{
+		robot_info_[kNIMRobotInfoKeyRobotId] = id;
+	}
+
+	/** 获取机器人波特平台ID */
+	std::string GetRobotID() const
+	{
+		return robot_info_[kNIMRobotInfoKeyRobotId].asString();
+	}
+
+	/** 设置机器人创建时间 */
+	void SetCreateTime(const uint64_t time)
+	{
+		robot_info_[kNIMRobotInfoKeyCreateTime] = time;
+	}
+
+	/** 获取机器人创建时间 */
+	uint64_t GetCreateTime() const
+	{
+		return robot_info_[kNIMRobotInfoKeyCreateTime].asUInt64();
+	}
+
+	/** 设置机器人更新时间 */
+	void SetUpdateTime(const uint64_t time)
+	{
+		robot_info_[kNIMRobotInfoKeyUpdateTime] = time;
+	}
+
+	/** 获取机器人更新时间 */
+	uint64_t GetUpdateTime() const
+	{
+		return robot_info_[kNIMRobotInfoKeyUpdateTime].asUInt64();
+	}
+
+private:
+	Json::Value robot_info_;
+};
+
+typedef std::list<RobotInfo> RobotInfos;
+
+/** @fn bool ParseRobotInfosStringToRobotInfos(const std::string& infos_json, RobotInfos &infos)
+  * @brief 解析机器人信息
+  * @param[in] infos_json 机器人信息（Json Value数据字符串）
+  * @param[out] infos 机器人信息
+  * @return bool 解析成功或失败 
+  */
+bool ParseRobotInfosStringToRobotInfos(const std::string &infos_json, RobotInfos &infos);
+
+/** @fn bool ParseRobotInfoStringToRobotInfo(const std::string& info_json, RobotInfos &info)
+  * @brief 解析机器人信息
+  * @param[in] info_json 机器人信息
+  * @param[out] info 机器人信息
+  * @return bool 解析成功或失败 
+  */
+bool ParseRobotInfoStringToRobotInfo(const std::string &info_json, RobotInfo &info);
 
 } //namespace nim_chatroom
 

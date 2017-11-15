@@ -136,12 +136,17 @@ public:
 	*/
 	void CreateSingletonRunMutex();
 
+	void ReleaseSingletonRunMutex();
+
 	/**
 	* 检查是否重复登录帐号
 	* @param[in] username 用户id
 	* @return bool	true：没有重复，false：重复
 	*/
 	bool CheckSingletonRun(const std::wstring& username);
+
+	void SetAnonymityDemoMode(){ anonymity_demo_mode_ = true; }
+	bool IsAnonymityDemoMode(){ return anonymity_demo_mode_; }
 
 private:
 
@@ -161,5 +166,7 @@ private:
 	int limit_file_size_ = 15;
 
 	int error_code_ = 200;
+	bool anonymity_demo_mode_ = false;
+	HANDLE mutex_handle_ = nullptr;
 };
 }

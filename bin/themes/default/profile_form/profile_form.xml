@@ -98,9 +98,15 @@
 			<Control class="splitline_hor_level1" width="stretch"/>
 			<VBox width="stretch" height="auto" padding="30,30,30,30" childmargin="25">
 				<HBox width="stretch" height="auto">
-					<Label textid="STRID_PROFILE_FORM_MULTISPOT_PUSH_SET" font="2"/>
+					<Label textid="STRID_PROFILE_FORM_MULTISPOT_PUSH_SET" font="2" valign="center" />
 					<Control width="stretch"/>
 					<CheckBox class="switch" name="multi_push_switch" selected="true"/>
+				</HBox>
+				<HBox width="stretch" height="auto">
+					<Label textid="STRID_PROFILE_FORM_WEBRTC_SET" font="2" valign="center"  />
+					<Control margin="5,0,0,0" bkimage="infor.png" tooltiptextid="STRID_PROFILE_FORM_WEBRTC_TIP" valign="center" width="auto" height="auto"/>
+					<Control width="stretch"/>
+					<CheckBox class="switch" name="webrtc_setting" selected="true"/>
 				</HBox>
 			</VBox>
 		</VBox>

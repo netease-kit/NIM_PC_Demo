@@ -82,7 +82,14 @@ void LoginManager::CreateSingletonRunMutex()
 		return;
 
 	std::wstring mutex_name = kMutexName + nbase::UTF8ToUTF16(account_);
-	::CreateMutex(NULL, TRUE, mutex_name.c_str());
+	mutex_handle_ = ::CreateMutex(NULL, TRUE, mutex_name.c_str());
+}
+
+void LoginManager::ReleaseSingletonRunMutex()
+{
+	::CloseHandle(mutex_handle_);
+	::ReleaseMutex(mutex_handle_);
+	mutex_handle_ = nullptr;
 }
 
 bool LoginManager::CheckSingletonRun(const std::wstring& username)

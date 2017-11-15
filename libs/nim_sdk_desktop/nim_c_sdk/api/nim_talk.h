@@ -130,6 +130,28 @@ NIM_SDK_DLL_API void nim_talk_reg_recall_msg_cb(const char *json_extension, nim_
 */
 NIM_SDK_DLL_API char *nim_talk_get_attachment_path_from_msg(const char *json_msg);
 
+/** @fn void nim_talk_reg_receive_broadcast_cb(const char *json_extension, nim_talk_receive_broadcast_cb_func cb, const void *user_data)
+  * (全局回调)注册接收广播消息回调 （建议全局注册，统一接受回调后分发消息到具体的会话）
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		接收消息的回调函数, nim_talk_receive_broadcast_cb_func回调函数定义见nim_talk_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				10414:本地错误码，参数错误
+  *				10417:本地错误码，对象已经存在/重复操作
+  */
+NIM_SDK_DLL_API void nim_talk_reg_receive_broadcast_cb(const char *json_extension, nim_talk_receive_broadcast_cb_func cb, const void *user_data);
+
+/** @fn void nim_talk_reg_receive_broadcast_msgs_cb(const char *json_extension, nim_talk_receive_broadcast_cb_func cb, const void *user_data)
+  * 注册接收批量广播消息回调 （如果在注册了接收消息回调的同时也注册了该批量接口，当有批量消息时，会改走这个接口通知应用层，例如登录后接收到的离线消息等）
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		接收消息的回调函数, nim_talk_receive_broadcast_cb_func回调函数定义见nim_talk_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+NIM_SDK_DLL_API void nim_talk_reg_receive_broadcast_msgs_cb(const char *json_extension, nim_talk_receive_broadcast_cb_func cb, const void *user_data);
+
 #ifdef __cplusplus
 };
 #endif //__cplusplus

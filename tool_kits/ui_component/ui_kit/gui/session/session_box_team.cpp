@@ -46,7 +46,7 @@ void SessionBox::OnGetTeamInfoCallback(const std::string& tid, const nim::TeamIn
 	{
 		session_form_->AdjustFormSize();
 		Json::Value json;
-		if (StringToJson(team_info_.GetAnnouncement(), json))
+		if (StringToJson(team_info_.GetAnnouncement(), json) && json.isArray())
 		{
 			UpdateBroad(json);
 		}

@@ -39,12 +39,12 @@ typedef bool(*nim_audio_reg_enum_capture_device_cb)(nim_enum_capture_device_cb c
 
 bool Audio::Init(const std::wstring& user_data_parent_path)
 {
-// #ifdef _DEBUG
-// 	instance_audio_ = ::LoadLibraryW(kSdkAudioDll_d.c_str());
-// #else
+#ifdef _DEBUG
+	instance_audio_ = ::LoadLibraryW(kSdkAudioDll_d.c_str());
+#else
 	instance_audio_ = ::LoadLibraryW(kSdkAudioDll.c_str());
-// #endif
-// 	assert(instance_audio_);
+#endif
+	assert(instance_audio_);
 	if (instance_audio_ == NULL)
 		return false;
 

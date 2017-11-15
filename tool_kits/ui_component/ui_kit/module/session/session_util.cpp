@@ -477,7 +477,7 @@ bool IsNoticeMsg(const nim::IMMessage& msg)
 	if (msg.type_ == nim::kNIMMessageTypeCustom)
 	{
 		Json::Value json;
-		if (StringToJson(msg.attach_, json))
+		if (StringToJson(msg.attach_, json) && json.isObject())
 		{
 			int sub_type = json["type"].asInt();
 			if (sub_type == CustomMsgType_Rts)
@@ -494,7 +494,7 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 	show_text.clear();
 
 	Json::Value json;
-	if (StringToJson(msg_attach, json))
+	if (StringToJson(msg_attach, json) && json.isObject())
 	{
 		nim::NIMNotificationId id = (nim::NIMNotificationId)json[nim::kNIMNotificationKeyId].asInt();
 
@@ -769,7 +769,7 @@ std::wstring GetCustomMsg(const std::string &sender_accid, const std::string &ms
 	ui::MutiLanSupport* mls = ui::MutiLanSupport::GetInstance();
 	std::wstring show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_CUSTOM_MSG");
 	Json::Value json;
-	if (StringToJson(msg_attach, json))
+	if (StringToJson(msg_attach, json) && json.isObject())
 	{
 		int sub_type = json["type"].asInt();
 		if (sub_type == CustomMsgType_Jsb) //finger

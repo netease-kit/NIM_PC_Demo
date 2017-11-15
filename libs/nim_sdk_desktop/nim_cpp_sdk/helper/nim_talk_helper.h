@@ -441,6 +441,14 @@ struct IMBotRobot
 	}
 };
 
+struct BroadcastMessage
+{
+	std::string	body_;
+	int64_t time_;
+	int64_t id_;
+	std::string from_id_;
+};
+
 /** @fn bool ParseMessage(const std::string& msg_json, IMMessage& message)
   * @brief 解析消息
   * @param[in] msg_json 消息(Json Value数据字符串)

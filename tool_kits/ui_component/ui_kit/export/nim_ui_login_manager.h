@@ -85,6 +85,8 @@ public:
 		const OnDestroyWindow& cb_destroy,
 		const OnShowMainWindow& cb_show_main
 		);
+
+	void RegLoginOKCallback(const OnShowMainWindow& cb_show_main) { cb_show_main_window_ = cb_show_main; }
 public:
 	/**
 	* 通知显示主窗体

@@ -36,6 +36,19 @@ typedef void(*nim_msglog_send_receipt_async)(const char *json_msg, const char *j
 typedef bool(*nim_msglog_query_be_readed)(const char *json_msg, const char *json_extension);
 typedef bool(*nim_msglog_query_receipt_sent)(const char *json_msg, const char *json_extension);
 typedef void(*nim_msglog_reg_status_changed_cb)(const char *json_extension, nim_msglog_status_changed_cb_func cb, const void *user_data);
+typedef void(*nim_msglog_read_all_async)(const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
+
+typedef void(*nim_msglog_query_the_message_of_the_specified_type_async)(enum NIMSessionType to_type, 
+	const char *id,
+	int limit_count,
+	int64_t from_time,
+	int64_t end_time,
+	const char *end_client_msg_id,
+	bool reverse,
+	const char *msg_types,
+	const char *json_extension,
+	nim_msglog_query_cb_func cb,
+	const void *user_data);
 #else
 #include "nim_msglog.h"
 #endif
@@ -227,6 +240,45 @@ bool MsgLog::QueryMsgOnlineAsync(const std::string &id
 		, end_msg_id
 		, reverse
 		, need_save_to_local
+		, json_extension.c_str()
+		, &CallbackQueryMsg
+		, cb_pointer);
+
+	return true;
+}
+
+bool MsgLog::QueryMsgOfSpecifiedTypeInASessionAsync(nim::NIMSessionType to_type
+	, const std::string &id
+	, int limit_count
+	, int64_t from_time
+	, int64_t end_time
+	, const std::string &end_client_msg_id
+	, bool reverse
+	, std::list<NIMMessageType> msg_type
+	, const QueryMsgCallback& cb
+	, const std::string& json_extension/* = ""*/)
+{
+	QueryMsgCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new QueryMsgCallback(cb);
+	}
+
+	Json::Value values;
+	Json::FastWriter fw;
+	for (auto iter = msg_type.begin(); iter != msg_type.end(); ++iter)
+	{
+		values.append(*iter);
+	}
+
+	NIM_SDK_GET_FUNC(nim_msglog_query_the_message_of_the_specified_type_async)(to_type
+		, id.c_str()
+		, limit_count
+		, from_time
+		, end_time
+		, end_client_msg_id.c_str()
+		, reverse
+		, fw.write(values).c_str()
 		, json_extension.c_str()
 		, &CallbackQueryMsg
 		, cb_pointer);
@@ -555,4 +607,15 @@ bool MsgLog::UpdateLocalExtAsync(const std::string& msg_id
 
 }
 
+bool MsgLog::ReadAllAsync(const DBFunctionCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	DBFunctionCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new DBFunctionCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_msglog_read_all_async)(json_extension.c_str(), &CallbackMsglogRes, cb_pointer);
+
+	return true;
+}
 }

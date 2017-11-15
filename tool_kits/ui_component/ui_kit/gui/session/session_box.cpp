@@ -362,7 +362,7 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 	else if (msg.type_ == nim::kNIMMessageTypeCustom)
 	{
 		Json::Value json;
-		if (StringToJson(msg.attach_, json))
+		if (StringToJson(msg.attach_, json) && json.isObject())
 		{
 			int sub_type = json["type"].asInt();
 			if (sub_type == CustomMsgType_Jsb) //finger
@@ -536,7 +536,7 @@ void SessionBox::AddWritingMsg(const nim::IMMessage &msg)
 	bool at_end = msg_list_->IsAtEnd();
 
 	Json::Value json;
-	if (StringToJson(msg.attach_, json))
+	if (StringToJson(msg.attach_, json) && json.isObject())
 	{
 		std::string id = json["id"].asString();
 		if (id == "1")

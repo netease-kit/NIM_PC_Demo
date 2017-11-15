@@ -141,8 +141,6 @@ void ChatroomForm::InitWindow()
 
 	InitHeader();
 	unregister_cb.Add(nim_ui::HttpManager::GetInstance()->RegDownloadComplete(nbase::Bind(&ChatroomForm::OnHttoDownloadReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
-	
-	InitRobots();
 }
 
 LRESULT ChatroomForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -232,14 +230,33 @@ bool ChatroomForm::OnClicked(ui::EventArgs* param)
 	std::wstring name = param->pSender->GetName();
 	if (name == L"send")
 	{
-		OnBtnSend();
+		if (is_anonymity_)
+			OnBtnLogin();
+		else
+			OnBtnSend();
 	}
 	else if (name == L"btn_jsb")
 	{
 		OnBtnJsb();
 	}
+	else if (name == L"logout")
+	{
+		Logout();
+	}
 
 	return true;
+}
+
+void ChatroomForm::Logout()
+{
+	nim::Client::Logout(nim::kNIMLogoutChangeAccout, ToWeakCallback([this](nim::NIMResCode code){
+		nim_comp::LoginManager::GetInstance()->ReleaseSingletonRunMutex();
+		nim_comp::LoginManager::GetInstance()->SetLoginStatus(LoginStatus_NONE);
+		nim_comp::LoginManager::GetInstance()->SetAccount("");
+		nim_comp::LoginManager::GetInstance()->SetPassword("");
+		switch_to_login_status_ = kToAnonymous;
+		nim_chatroom::ChatRoom::Exit(room_id_);
+	}));
 }
 
 bool ChatroomForm::OnSelectChanged(ui::EventArgs* param)
@@ -379,45 +396,48 @@ bool ChatroomForm::OnLinkClick(WPARAM wParam, LPARAM lParam)
 {
 	if (wParam == EN_LINK)
 	{
-		std::wstring name = *(std::wstring*)lParam;
-		nbase::StringTrim(name);
-		if (!name.empty())
+		if (!is_anonymity_)
 		{
-			if (msg_list_sender_name_link_.find(name) != msg_list_sender_name_link_.end())
+			std::wstring name = *(std::wstring*)lParam;
+			nbase::StringTrim(name);
+			if (!name.empty())
 			{
-				Json::Value values = msg_list_sender_name_link_[name];
-				SenderType type = (SenderType)values["type"].asInt();
-				if (type == kRobot)
+				if (msg_list_sender_name_link_.find(name) != msg_list_sender_name_link_.end())
 				{
-					std::string robot_name = values["name"].asString();
-					std::string robot_id = values["id"].asString();
-					StdClosure cb = [robot_name, robot_id, this](){
+					Json::Value values = msg_list_sender_name_link_[name];
+					SenderType type = (SenderType)values["type"].asInt();
+					if (type == kRobot)
+					{
+						std::string robot_name = values["name"].asString();
+						std::string robot_id = values["id"].asString();
+						StdClosure cb = [robot_name, robot_id, this](){
 
-						POINT point;
-						::GetCursorPos(&point);
+							POINT point;
+							::GetCursorPos(&point);
 
-						CMenuWnd* pMenu = new CMenuWnd(NULL);
-						STRINGorID xml(L"cell_head_menu.xml");
-						pMenu->Init(xml, _T("xml"), point);
+							CMenuWnd* pMenu = new CMenuWnd(NULL);
+							STRINGorID xml(L"cell_head_menu.xml");
+							pMenu->Init(xml, _T("xml"), point);
 
-						CMenuElementUI* at_ta = (CMenuElementUI*)pMenu->FindControl(L"at_ta");
-						at_ta->AttachSelect(nbase::Bind(&ChatroomForm::OnNameMenu, this, robot_id, robot_name, std::placeholders::_1));
-						at_ta->SetVisible(true);
-						pMenu->Show();
-					};
-					Post2UI(cb);						
-				}
-				else if (type == kMember)
-				{
+							CMenuElementUI* at_ta = (CMenuElementUI*)pMenu->FindControl(L"at_ta");
+							at_ta->AttachSelect(nbase::Bind(&ChatroomForm::OnNameMenu, this, robot_id, robot_name, std::placeholders::_1));
+							at_ta->SetVisible(true);
+							pMenu->Show();
+						};
+						Post2UI(cb);
+					}
+					else if (type == kMember)
+					{
 
+					}
+					else
+					{
+						assert(0);
+					}
 				}
 				else
-				{
-					assert(0);
-				}
+					ShowMemberMenu(name);
 			}
-			else
-				ShowMemberMenu(name);
 		}
 	}
 	return false;
@@ -490,58 +510,61 @@ void ChatroomForm::ShowMemberMenu(std::wstring &name)
 		CMenuElementUI* kick = (CMenuElementUI*)pMenu->FindControl(L"kick");
 		kick->AttachSelect(nbase::Bind(&ChatroomForm::KickMenuItemClick, this, std::placeholders::_1));
 
-		if (member_info.is_muted_)
+		if (member_info.type_ != 4)
 		{
-			CMenuElementUI* removemute = (CMenuElementUI*)pMenu->FindControl(L"removemute");
-			removemute->AttachSelect(nbase::Bind(&ChatroomForm::RemoveMuteMenuItemClick, this, std::placeholders::_1));
-			removemute->SetVisible(true);
-		}
-		else
-		{
-			CMenuElementUI* addmute = (CMenuElementUI*)pMenu->FindControl(L"addmute");
-			addmute->AttachSelect(nbase::Bind(&ChatroomForm::AddMuteMenuItemClick, this, std::placeholders::_1));
-			addmute->SetVisible(true);
-		}
-
-		if (member_info.is_blacklist_)
-		{
-			CMenuElementUI* removeblacklist = (CMenuElementUI*)pMenu->FindControl(L"removeblacklist");
-			removeblacklist->AttachSelect(nbase::Bind(&ChatroomForm::RemoveBlacklistMenuItemClick, this, std::placeholders::_1));
-			removeblacklist->SetVisible(true);
-		}
-		else
-		{
-			CMenuElementUI* addblacklist = (CMenuElementUI*)pMenu->FindControl(L"addblacklist");
-			addblacklist->AttachSelect(nbase::Bind(&ChatroomForm::AddBlacklistMenuItemClick, this, std::placeholders::_1));
-			addblacklist->SetVisible(true);
-		}
-
-		if (show_admin)
-		{
-			if (member_info.type_ == 2)
+			if (member_info.is_muted_)
 			{
-				CMenuElementUI* removeadmin = (CMenuElementUI*)pMenu->FindControl(L"removeadmin");
-				removeadmin->AttachSelect(nbase::Bind(&ChatroomForm::RemoveAdminMenuItemClick, this, std::placeholders::_1));
-				removeadmin->SetVisible(true);
+				CMenuElementUI* removemute = (CMenuElementUI*)pMenu->FindControl(L"removemute");
+				removemute->AttachSelect(nbase::Bind(&ChatroomForm::RemoveMuteMenuItemClick, this, std::placeholders::_1));
+				removemute->SetVisible(true);
 			}
 			else
 			{
-				CMenuElementUI* addadmin = (CMenuElementUI*)pMenu->FindControl(L"addadmin");
-				addadmin->AttachSelect(nbase::Bind(&ChatroomForm::AddAdminMenuItemClick, this, std::placeholders::_1));
-				addadmin->SetVisible(true);
+				CMenuElementUI* addmute = (CMenuElementUI*)pMenu->FindControl(L"addmute");
+				addmute->AttachSelect(nbase::Bind(&ChatroomForm::AddMuteMenuItemClick, this, std::placeholders::_1));
+				addmute->SetVisible(true);
 			}
 
-			if (member_info.temp_muted_)
+			if (member_info.is_blacklist_)
 			{
-				CMenuElementUI* removetempmute = (CMenuElementUI*)pMenu->FindControl(L"tempunmute");
-				removetempmute->AttachSelect(nbase::Bind(&ChatroomForm::RemoveTempMuteMenuItemClick, this, std::placeholders::_1));
-				removetempmute->SetVisible(true);
+				CMenuElementUI* removeblacklist = (CMenuElementUI*)pMenu->FindControl(L"removeblacklist");
+				removeblacklist->AttachSelect(nbase::Bind(&ChatroomForm::RemoveBlacklistMenuItemClick, this, std::placeholders::_1));
+				removeblacklist->SetVisible(true);
 			}
 			else
 			{
-				CMenuElementUI* tempmute = (CMenuElementUI*)pMenu->FindControl(L"tempmute");
-				tempmute->AttachSelect(nbase::Bind(&ChatroomForm::TempMuteMenuItemClick, this, std::placeholders::_1));
-				tempmute->SetVisible(true);
+				CMenuElementUI* addblacklist = (CMenuElementUI*)pMenu->FindControl(L"addblacklist");
+				addblacklist->AttachSelect(nbase::Bind(&ChatroomForm::AddBlacklistMenuItemClick, this, std::placeholders::_1));
+				addblacklist->SetVisible(true);
+			}
+
+			if (show_admin)
+			{
+				if (member_info.type_ == 2)
+				{
+					CMenuElementUI* removeadmin = (CMenuElementUI*)pMenu->FindControl(L"removeadmin");
+					removeadmin->AttachSelect(nbase::Bind(&ChatroomForm::RemoveAdminMenuItemClick, this, std::placeholders::_1));
+					removeadmin->SetVisible(true);
+				}
+				else
+				{
+					CMenuElementUI* addadmin = (CMenuElementUI*)pMenu->FindControl(L"addadmin");
+					addadmin->AttachSelect(nbase::Bind(&ChatroomForm::AddAdminMenuItemClick, this, std::placeholders::_1));
+					addadmin->SetVisible(true);
+				}
+
+				if (member_info.temp_muted_)
+				{
+					CMenuElementUI* removetempmute = (CMenuElementUI*)pMenu->FindControl(L"tempunmute");
+					removetempmute->AttachSelect(nbase::Bind(&ChatroomForm::RemoveTempMuteMenuItemClick, this, std::placeholders::_1));
+					removetempmute->SetVisible(true);
+				}
+				else
+				{
+					CMenuElementUI* tempmute = (CMenuElementUI*)pMenu->FindControl(L"tempmute");
+					tempmute->AttachSelect(nbase::Bind(&ChatroomForm::TempMuteMenuItemClick, this, std::placeholders::_1));
+					tempmute->SetVisible(true);
+				}
 			}
 		}
 

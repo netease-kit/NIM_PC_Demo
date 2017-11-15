@@ -21,7 +21,7 @@ extern"C"
 /** @fn void nim_vchat_start_device(NIMDeviceType type, const char *device_path, unsigned fps, const char *json_extension, nim_vchat_start_device_cb_func cb, const void *user_data)
   * NIM VCHAT DEVICE 启动设备，同一NIMDeviceType下设备将不重复启动，不同的设备会先关闭前一个设备开启新设备
   * @param[in] type NIMDeviceType 见nim_device_def.h
-  * @param[in] device_path 设备路径对应kNIMDevicePath，如果是kNIMDeviceTypeAudioHook，对应播放器本地全路径
+  * @param[in] device_path 设备路径对应kNIMDevicePath，如果是kNIMDeviceTypeAudioHook，对应播放器本地全路径 [Linux平台暂时只支持视频采集]
   * @param[in] fps 摄像头为采样频率（一般取30）,其他NIMDeviceType无效（麦克风采样频率由底层控制，播放器采样频率也由底层控制）
   * @param[in] json_extension 打开摄像头是允许设置 kNIMDeviceWidth 和 kNIMDeviceHeight，最后取最接近设置值的画面模式
   * @param[in] cb 结果回调见nim_device_def.h
@@ -83,7 +83,7 @@ NIM_SDK_DLL_API bool nim_vchat_custom_video_data(uint64_t time, const char *data
 NIM_SDK_DLL_API void nim_vchat_set_video_data_cb(bool capture, const char *json_extension, nim_vchat_video_data_cb_func cb, const void *user_data);
 
 /** @fn void nim_vchat_enum_device_devpath(NIMDeviceType type, const char *json_extension, nim_vchat_enum_device_devpath_sync_cb_func cb, const void *user_data)
-* NIM VCHAT DEVICE 遍历设备
+* NIM VCHAT DEVICE 遍历设备 [Linux平台暂时只支持kNIMDeviceTypeVideo]
 * @param[in] type NIMDeviceType 见nim_device_def.h
 * @param[in] json_extension 无效的扩展字段
 * @param[in] cb 结果回调见nim_device_def.h

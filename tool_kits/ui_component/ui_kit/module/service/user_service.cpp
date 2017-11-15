@@ -219,6 +219,35 @@ bool UserService::GetAllRobotInfo(nim::RobotInfos &info)
 	return !info.empty();
 }
 
+void UserService::InitChatroomRobotInfos(long long room_id)
+{
+	if (!robot_list_.empty())
+		return;
+	auto task = [this](int rescode, const nim_chatroom::RobotInfos& infos)
+	{
+		auto ui_task = [this, infos]()
+		{
+			for (auto &info : infos)
+			{
+				if (!info.GetRobotID().empty())
+				{
+					nim::RobotInfo robot;
+					robot.SetAccid(info.GetAccid());
+					robot.SetCreateTime(info.GetCreateTime());
+					robot.SetIcon(info.GetIcon());
+					robot.SetIntro(info.GetIntro());
+					robot.SetName(info.GetName());
+					robot.SetRobotID(info.GetRobotID());
+					robot.SetUpdateTime(info.GetUpdateTime());
+					robot_list_[info.GetAccid()] = robot;
+				}
+			}
+		};
+		nbase::ThreadManager::PostTask(shared::kThreadUI, ui_task);
+	};
+	nim_chatroom::ChatRoom::GetRobotInfoAsync(room_id, 0, task);
+}
+
 void UserService::GetUserInfos(const std::list<std::string>& ids, std::list<nim::UserNameCard>& uinfos)
 {
 	uinfos.clear();

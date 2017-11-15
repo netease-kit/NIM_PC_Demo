@@ -528,6 +528,9 @@
     <ClInclude Include="gui\session\control\bubbles\bubble_robot.h">
       <Filter>gui\session\control\bubbles</Filter>
     </ClInclude>
+    <ClInclude Include="gui\main\control\custom_button_box.h">
+      <Filter>gui\main\control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -922,6 +925,9 @@
     </ClCompile>
     <ClCompile Include="gui\session\control\bubbles\bubble_robot.cpp">
       <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\control\custom_button_box.cpp">
+      <Filter>gui\main\control</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -66,13 +66,15 @@
 	                    <Option class="circle_option_2" group="up_custom_mode" name="up_custom_mode_manager" textid="STRID_TEAM_INFO_ADMIN" margin="0,12,10,0"/>
 	                    <Option class="circle_option_2" group="up_custom_mode" name="up_custom_mode_any" textid="STRID_TEAM_INFO_EVERYBODY" margin="0,12,0,0"/>
 	                </HBox>
-
-					<HBox height="40" margin="0,0,0,20">
-						<Label textid="STRID_TEAM_INFO_MSG_NOTIFY" font="3" margin="10,10,20,0"/>
-						<CheckBox class="checkbox_font14" name="msg_mode_notify" textid="STRID_TEAM_INFO_NOTIFY_MSG" margin="0,12,0,0" enabled="false" />
-					</HBox>
 	            </VBox>
 	        </VBox>
+			<HBox height="40" margin="0,0,0,20" name="team_notify_fields">
+				<Label textid="STRID_TEAM_INFO_MSG_NOTIFY" font="3" margin="10,10,20,0"/>
+	            <Option class="circle_option_2" group="notify_mode" name="notify_mode_on" textid="STRID_TEAM_INFO_NOTIFY_MSG" margin="0,12,10,0" enabled="false"/>
+	            <Option class="circle_option_2" group="notify_mode" name="notify_mode_admin" textid="STRID_TEAM_INFO_NOTIFY_ADMIN" margin="0,12,0,0" enabled="false"/>
+	            <Option class="circle_option_2" group="notify_mode" name="notify_mode_off" textid="STRID_TEAM_INFO_NOTIFY_MUTE" margin="0,12,10,0" enabled="false"/>
+				<!--CheckBox class="checkbox_font14" name="msg_mode_notify" textid="STRID_TEAM_INFO_NOTIFY_MSG" margin="0,12,0,0" enabled="false" /-->
+			</HBox>
 		</VListBox>
 
         <Control class="splitline_hor_level1"/>

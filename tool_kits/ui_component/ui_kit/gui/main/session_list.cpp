@@ -356,7 +356,8 @@ void SessionList::OnSessionChangeCallback(nim::NIMResCode rescode, const nim::Se
 		{
 			SubscribeEventManager::GetInstance()->SubscribeSessionEvent(data);
 			AddSessionItem(data);
-			if (SessionManager::GetInstance()->IsSessionBoxActive(data.id_))
+			if (data.unread_count_ == 0
+				|| SessionManager::GetInstance()->IsSessionBoxActive(data.id_))
 			{
 				ResetUnreadCount(data.id_);
 			}

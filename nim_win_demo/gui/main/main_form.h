@@ -4,6 +4,7 @@
 #include "shared/ui/ui_menu.h"
 #include "shared/ui/msgbox.h"
 #include "base/framework/task.h"
+#include "gui/main/control/custom_button_box.h"
 
 
 /** @class MainForm
@@ -237,6 +238,8 @@ private:
 	*/
 	void SetOnlineState();
 
+	virtual ui::Control* CreateControl(const std::wstring& pstrClass) override;
+
 public:
 	/**
 	* 实现ITrayIconDelegate接口函数
@@ -306,7 +309,7 @@ private:
 	ui::Button*		btn_online_state_;
 	bool			is_busy_;
 
-	ui::Box*		box_unread_;
+	nim_comp::CustomButtonBox*	box_unread_;
 	ui::Label*		label_unread_;
 
 	ui::RichEdit*	search_edit_;

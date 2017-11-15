@@ -15,6 +15,9 @@ extern"C"
 {
 #endif
 
+typedef void (*nim_chatroom_get_address_cb_func)(int64_t room_id, const char *result, const char *json_extension, const void *user_data);
+typedef void (*nim_chatroom_get_address_func)(int64_t room_id, nim_chatroom_get_address_cb_func func, const char *json_extension, const void *user_data);
+
 /** @typedef void (*nim_chatroom_enter_cb_func)(int64_t room_id, int enter_step, int error_code, const char *result, const void *user_data)
   * 进入的回调函数定义
   * @param[out] room_id		聊天室ID
@@ -227,14 +230,33 @@ typedef void (*nim_chatroom_queue_drop_cb_func)(int64_t room_id, int error_code,
   */
 typedef void (*nim_chatroom_queue_init_cb_func)(int64_t room_id, int error_code, const char *json_extension, const void *user_data);
 
+/** @typedef void (*nim_chatroom_query_robots_cb_func)(int rescode, const char *result, const char *json_extension, const void *user_data)
+  * 获取机器人信息的函数定义
+  * @param[out] rescode			错误码,200:一切正常
+  * @param[out] result			机器人信息 Json string array
+  * @param[out] json_extension	json扩展数据（备用）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_chatroom_query_robots_cb_func)(int rescode, const char *result, const char *json_extension, const void *user_data);
+
 /** @name 进入聊天室的可选填信息Json Keys
 * @{
 */
-static const char *kNIMChatRoomEnterKeyNick		= "nick";		/**< string, 进入聊天室后展示的昵称,选填,聊天室成员收到聊天室进入通知中可以获取该数据 */
-static const char *kNIMChatRoomEnterKeyAvatar	= "avatar";		/**< string, 进入聊天室后展示的头像,选填,设置后通过获取聊天室成员信息接口可以获取该数据 */
+static const char *kNIMChatRoomEnterKeyNick		= "nick";		/**< string, （匿名登录时必填）进入聊天室后展示的昵称,选填,聊天室成员收到聊天室进入通知中可以获取该数据 */
+static const char *kNIMChatRoomEnterKeyAvatar	= "avatar";		/**< string, （匿名登录时必填）设置后通过获取聊天室成员信息接口可以获取该数据 */
 static const char *kNIMChatRoomEnterKeyExt		= "ext";		/**< string, 聊天室可用的扩展字段,必须为可以解析为Json的非格式化的字符串,选填,设置后通过获取聊天室成员信息接口可以获取该数据 */
 static const char *kNIMChatRoomEnterKeyNotifyExt= "notify_ext";	/**< string, 进入聊天室通知开发者扩展字段,必须为可以解析为Json的非格式化的字符串,选填,聊天室成员收到聊天室进入通知中可以获取该数据 */
-/** @}*/ //登录Json Keys
+/** @}*/ //进入聊天室的可选填信息Json Keys
+
+/** @name 匿名进入聊天室的信息Json Keys
+* @{
+*/
+static const char *kNIMChatRoomEnterKeyAppKey= "app_key";	/**< string, 应用appkey，匿名登录时必填 */
+static const char *kNIMChatRoomEnterKeyAppDataPath= "app_data_path";	/**< string, 应用数据目录，匿名登录时必填,使用默认路径时只需传入单个目录名（不以反斜杠结尾)，使用自定义路径时需传入完整路径（以反斜杠结尾，并确保有正确的读写权限！） */
+static const char *kNIMChatRoomEnterKeyLogLevel= "log_level";	/**< int，匿名登录时选填,定义见NIMSDKLogLevel（选填，SDK默认的内置级别为kNIMSDKLogLevelPro） */
+static const char *kNIMChatRoomEnterKeyAddress= "address";	/**< string array，聊天室地址，地址通过应用服务器接口获取 */
+/** @}*/ //匿名进入聊天室的信息Json Keys
 
 
 /** @name 消息结构 Json Keys
@@ -336,7 +358,7 @@ enum NIMChatRoomExitReason
   */
 static const char *kNIMChatRoomMemberInfoKeyRoomID		= "room_id";	/**<long 聊天室id */
 static const char *kNIMChatRoomMemberInfoKeyAccID		= "account_id"; /**<string 成员账号 */
-static const char *kNIMChatRoomMemberInfoKeyType		= "type";		/**<int 成员类型, -1:受限用户; 0:普通;1:创建者;2:管理员*/
+static const char *kNIMChatRoomMemberInfoKeyType		= "type";		/**<int 成员类型, -1:受限用户; 0:普通;1:创建者;2:管理员;4:匿名非注册用户*/
 static const char *kNIMChatRoomMemberInfoKeyLevel		= "level";		/**<int 成员级别: >=0表示用户开发者可以自定义的级别*/
 static const char *kNIMChatRoomMemberInfoKeyNick		= "nick";		/**<string 聊天室内的昵称字段,预留字段, 可从Uinfo中取 */
 static const char *kNIMChatRoomMemberInfoKeyAvatar		= "avatar";		/**<string 聊天室内的头像,预留字段, 可从Uinfo中取icon */
@@ -505,6 +527,20 @@ enum NIMChatRoomProxyType
 	kNIMChatRoomProxySocks4a = 5,	/**< Socks4a Proxy*/
 	kNIMChatRoomProxySocks5 = 6,	/**< Socks5 Proxy*/
 };
+
+/** @name 机器人信息 Json Keys
+* 例子  { "accid" : "", "create_timetag" : 1430101821372, "icon" : "", "intro":"", "name" : "", "update_timetag" : 1430101821372, "rid":"" }
+  * @{
+  */
+//协议定义
+static const char *kNIMRobotInfoKeyAccid	= "accid";	/**< string 帐号*/
+static const char *kNIMRobotInfoKeyName		= "name";	/**< string 名字*/
+static const char *kNIMRobotInfoKeyIcon		= "icon";	/**< string 头像*/
+static const char *kNIMRobotInfoKeyIntro	= "intro";	/**< string 介绍*/
+static const char *kNIMRobotInfoKeyRobotId	= "rid";	/**< string 机器人ID*/
+static const char *kNIMRobotInfoKeyCreateTime	= "create_timetag";	/**< long 创建时间戳 毫秒*/
+static const char *kNIMRobotInfoKeyUpdateTime	= "update_timetag";	/**< long 更新时间戳 毫秒*/
+/** @}*/ //机器人信息 Json Keys
 
 #ifdef __cplusplus
 };

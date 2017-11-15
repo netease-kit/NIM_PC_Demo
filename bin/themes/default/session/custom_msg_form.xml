@@ -21,7 +21,7 @@
             <RichEdit class="prompt input" name="re_attach" height="80" multiline="true" vscrollbar="true" autovscroll="true" readonly="false" font="2" normaltextcolor="darkcolor" margin="10,0,0,0" padding="8,2,2,0" rich="true"/>
         </HBox>
 		<HBox name="hbox_send" height="30" margin="10,10,10,10">
-			<CheckBox class="checkbox_font14" name="msg_mode" textid="STRID_CUSTOM_MSG_SEND_ONLINE_ONLY" enabled="false" />
+			<CheckBox class="checkbox_font14" name="msg_mode" textid="STRID_CUSTOM_MSG_SEND_ONLINE_ONLY"/>
 			<Control />
 			<Button name="btn_send" normaltextcolor="white" font="7" textid="STRING_SEND" normalimage="send0.png" hotimage="send1.png" pushedimage="send2.png"/>
 		</HBox>

@@ -43,6 +43,7 @@ public:
 	typedef std::function<void(int64_t room_id, int error_code, const ChatRoomQueue& queue)> QueueListCallback; /**< 排序列出麦序队列所有元素回调*/
 	typedef KickMemberCallback QueueDropCallback; /**< 删除麦序队列元素回调*/
 	typedef QueuePollCallback QueueHeaderCallback; /**< 查看麦序队列头元素回调*/
+	typedef std::function<void(int rescode, const RobotInfos& infos)> RobotQueryCallback;		/**< 获取机器人信息事件通知回调模板 */
 
 public:
 /** @fn void RegEnterCb(const EnterCallback& cb, const std::string& json_extension = "")
@@ -107,6 +108,19 @@ static bool Init(const std::string& app_install_dir, const std::string& json_ext
   * @return void 无返回值
   */
 static void Cleanup(const std::string& json_extension = "");
+
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
+/** @fn bool nim_chatroom_enter_with_anoymity(const int64_t room_id, const char *enter_info, const char *json_extension)
+  * 聊天室匿名进入
+  * @param[in] room_id			  聊天室ID
+  * @param[in] enter_info		  聊天室进入信息
+  * @param[in] json_extension	  json扩展参数（备用，目前不需要）
+  * @return bool 进入信息是否正确,返回失败则不会触发进入回调
+  */
+static bool AnonymousEnter(const int64_t room_id, const ChatRoomAnoymityEnterInfo& anonymity_info, const ChatRoomEnterInfo& info, const std::string& json_extension = "");
+
+#endif
 
 /** @fn bool Enter(const int64_t room_id, const std::string& request_login_data, const ChatRoomEnterInfo& info = ChatRoomEnterInfo(), const std::string& json_extension = "")
   * 聊天室登录
@@ -371,6 +385,36 @@ static void QueueDropAsync(const int64_t room_id
 */
 static void UnregChatroomCb();
 
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
+/** @fn char *QueryAllRobotInfosBlock(const int64_t room_id, const std::string &json_extension = "")
+  * 获取全部机器人信息(同步接口，堵塞NIM内部线程)
+  * @param[in] room_id				聊天室ID
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @return char 机器人信息 json string array
+  */
+static RobotInfos QueryAllRobotInfosBlock(const int64_t room_id, const std::string &json_extension = "");
+
+/** @fn char *QueryRobotInfoByAccidBlock(const int64_t room_id, const std::string &accid, const std::string &json_extension = "")
+  * 获取指定机器人信息(同步接口，堵塞NIM内部线程)
+  * @param[in] room_id				聊天室ID
+  * @param[in] accid 机器人accid
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @return char 机器人信息 json string
+  */
+static RobotInfo QueryRobotInfoByAccidBlock(const int64_t room_id, const std::string &accid, const std::string &json_extension = "");
+
+/** @fn void GetRobotInfoAsync(const int64_t room_id, const __int64 timetag, const RobotQueryCallback &callback, const std::string &json_extension = "");
+  * 获取机器人信息
+  * @param[in] room_id				聊天室ID
+  * @param[in] timetag 时间戳
+  * @param[in] callback		回调函数
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @return  void
+  */
+static void GetRobotInfoAsync(const int64_t room_id, const int64_t timetag, const RobotQueryCallback &callback, const std::string &json_extension = "");
+
+#endif
 };
 }
 #endif //_NIM_CHATROOM_SDK_CPP_H_

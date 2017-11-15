@@ -10,6 +10,7 @@
 #include "cef/cef_module/cef_manager.h"
 #include "gui/cef/cef_form.h"
 #include "gui/cef/cef_native_form.h"
+#include "gui/main/session_list.h"
 
 using namespace ui;
 
@@ -79,6 +80,16 @@ LRESULT MainForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandle
 	return 0;
 }
 
+ui::Control* MainForm::CreateControl(const std::wstring& pstrClass)
+{
+	if (pstrClass == L"CustomButtonBox")
+	{
+		return new nim_comp::CustomButtonBox;
+	}
+
+	return NULL;
+}
+
 void MainForm::InitWindow()
 {
 	SetIcon(IDI_ICON);
@@ -91,7 +102,7 @@ void MainForm::InitWindow()
 	btn_online_state_->AttachClick(nbase::Bind(&MainForm::OnlineStateMenuButtonClick, this, std::placeholders::_1));
 	InitHeader();
 
-	box_unread_ = (Box*) this->FindControl(L"box_unread");
+	box_unread_ = (nim_comp::CustomButtonBox*) this->FindControl(L"box_unread");
 	label_unread_ = (Label*) this->FindControl(L"label_unread");
 	((OptionBox*) FindControl(L"btn_session_list"))->Selected(true, true);
 	ui::ListBox* session_list = (ListBox*)FindControl(L"session_list");
@@ -220,6 +231,22 @@ bool MainForm::OnClicked( ui::EventArgs* msg )
 		// »»·ôÊ¾Àý
 		std::wstring theme_dir = QPath::GetAppPath();
 		ui::GlobalManager::ReloadSkin(theme_dir + L"themes\\skin1");
+	}
+	else if (name == L"box_unread")
+	{
+		nim::Session::SetAllUnreadCountZeroAsync([this](nim::NIMResCode rescode, const nim::SessionData& data, int total_unread_counts){
+			if (rescode != nim::kNIMResSuccess)
+			{
+				QLOG_APP(L"SetAllUnreadCountZeroAsync::OnChangeCallback Error! {0}, uid:{1}, unread_count: {2}") << rescode << data.id_ << total_unread_counts;
+				assert(0);
+				return;
+			}
+			if (data.command_ == nim::kNIMSessionCommandUpdate)
+			{
+				nim_comp::SessionManager::GetInstance()->ResetUnread(data.id_);
+			}
+		});
+		nim::MsgLog::ReadAllAsync(nim::MsgLog::DBFunctionCallback());
 	}
 	return true;
 }
