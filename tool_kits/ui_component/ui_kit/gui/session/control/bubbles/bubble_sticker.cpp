@@ -22,7 +22,7 @@ void MsgBubbleSticker::InitInfo(const nim::IMMessage &msg)
 	__super::InitInfo(msg);
 
 	Json::Value json;
-	if( StringToJson(msg.attach_, json) )
+	if (StringToJson(msg.attach_, json) && json.isObject())
 	{
 		int sub_type = json["type"].asInt();
 		if (sub_type == CustomMsgType_Sticker && json["data"].isObject()) //finger

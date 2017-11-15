@@ -76,16 +76,16 @@ void UserService::InvokeRegisterAccount(const std::string &username, const std::
 			bool res = reader.parse(reply, json);
 			if (!res)
 			{
-				nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(cb, 0, "未知错误"));
+				nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(cb, 0, "未知错误"));
 				return;
 			}
 
 			int json_res = json["res"].asInt();
 			std::string err_msg = json["errmsg"].asString();
-			nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(cb, json_res, err_msg));
+			nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(cb, json_res, err_msg));
 		}
 		else {
-			nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(cb, 0, nbase::UTF16ToUTF8(L"网络出现问题，请确认网络连接")));
+			nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(cb, 0, nbase::UTF16ToUTF8(L"网络出现问题，请确认网络连接")));
 		}
 	};
 
@@ -243,7 +243,7 @@ void UserService::InitChatroomRobotInfos(long long room_id)
 				}
 			}
 		};
-		nbase::ThreadManager::PostTask(shared::kThreadUI, ui_task);
+		nbase::ThreadManager::PostTask(kThreadUI, ui_task);
 	};
 	nim_chatroom::ChatRoom::GetRobotInfoAsync(room_id, 0, task);
 }

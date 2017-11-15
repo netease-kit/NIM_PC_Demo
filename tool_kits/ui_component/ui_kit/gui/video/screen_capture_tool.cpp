@@ -424,7 +424,7 @@ void ScreenCaptureTool::StartCapture(CaptureType type, HWND id, int time_ms)
 
 	capture_timer_.Cancel();
 	StdClosure task = nbase::Bind(&ScreenCaptureTool::MakeFrame, this);
-	nbase::ThreadManager::PostRepeatedTask(shared::kThreadScreenCapture, capture_timer_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(time_ms));
+	nbase::ThreadManager::PostRepeatedTask(kThreadScreenCapture, capture_timer_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(time_ms));
 }
 void ScreenCaptureTool::SetCaptureType(CaptureType type)
 {

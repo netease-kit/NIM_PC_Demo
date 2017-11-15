@@ -376,7 +376,7 @@ bool SessionBox::OnClicked(ui::EventArgs* param)
 
 		//::ShowWindow( m_hWnd, SW_SHOWMINIMIZED );
 		StdClosure callback = nbase::Bind(&SessionBox::DoClip, this);
-		nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, callback, nbase::TimeDelta::FromMilliseconds(500));
+		nbase::ThreadManager::PostDelayedTask(kThreadUI, callback, nbase::TimeDelta::FromMilliseconds(500));
 	}
 	else if (name == L"btn_msg_record")
 	{

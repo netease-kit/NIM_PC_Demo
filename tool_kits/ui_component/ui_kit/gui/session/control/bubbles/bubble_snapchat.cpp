@@ -38,7 +38,7 @@ bool MsgBubbleSnapChat::OnClicked(ui::EventArgs* arg)
 	if (path_.empty() || !nbase::FilePathIsExist(path_, false))
 	{
 		Json::Value json;
-		if (StringToJson(msg_.attach_, json))
+		if (StringToJson(msg_.attach_, json) && json.isObject())
 		{
 			std::string url = json["data"]["url"].asString();
 			nim::NOS::DownloadMediaCallback download_cb = nbase::Bind(&MsgBubbleSnapChat::OnDownloadCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);

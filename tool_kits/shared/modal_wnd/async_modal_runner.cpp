@@ -100,7 +100,7 @@ void AsyncModalRunnerManager::CancelAllThreads()
 
 void AsyncModalRunnerManager::OnThreadWillExit(AsyncModalRunner *runner)
 {
-	nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(&AsyncModalRunnerManager::Deregister, this, runner));
+	nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&AsyncModalRunnerManager::Deregister, this, runner));
 }
 
 void AsyncModalRunnerManager::Deregister(AsyncModalRunner *runner)

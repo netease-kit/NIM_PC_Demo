@@ -259,7 +259,7 @@ void VideoForm::OnControlModeChange(int64_t channel_id, nim::NIMVChatControlType
 		if (is_mode_changing_ || current_video_mode_)
 		{
 			StdClosure closure = nbase::Bind(&VideoForm::OnMissionCallback, this, MB_YES);
-			nbase::ThreadManager::PostTask(shared::kThreadUI, closure);
+			nbase::ThreadManager::PostTask(kThreadUI, closure);
 		}
 		else
 		{
@@ -502,7 +502,7 @@ void VideoForm::OnLogin( bool success )
 		//}
 		paint_video_timer_.Cancel();
 		StdClosure task = nbase::Bind(&VideoForm::PaintVideo, this);
-		nbase::ThreadManager::PostRepeatedTask(shared::kThreadUI, paint_video_timer_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(70));
+		nbase::ThreadManager::PostRepeatedTask(kThreadUI, paint_video_timer_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(70));
 	}
 	else
 	{
@@ -561,7 +561,7 @@ void VideoForm::ShowVideoTip( const std::wstring stringID )
 
 	vbox_video_audio_tip_->SetVisible( true );
 	StdClosure closure = nbase::Bind(&VideoForm::OnVideoAudioTip, this);
-	nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, closure, nbase::TimeDelta::FromSeconds(2));
+	nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(2));
 }
 
 void VideoForm::OnVideoAudioTip()
@@ -636,7 +636,7 @@ void VideoForm::StartRecordCb(bool mp4, bool ret, int code, const std::string& f
 		StdClosure task = nbase::Bind(&VideoForm::CheckRecordDiskSpace, this, nbase::UTF8ToUTF16(file));
 		record_check_disk_space_timer_.Cancel();
 		auto weak_task = record_check_disk_space_timer_.ToWeakCallback(task);
-		nbase::ThreadManager::PostRepeatedTask(shared::kThreadUI, weak_task, nbase::TimeDelta::FromSeconds(15));
+		nbase::ThreadManager::PostRepeatedTask(kThreadUI, weak_task, nbase::TimeDelta::FromSeconds(15));
 	}
 	else
 	{
@@ -758,7 +758,7 @@ void VideoForm::SetCustomVideoMode(bool open)
 	if (custom_video_mode_)
 	{
 		StdClosure task = nbase::Bind(&VideoForm::SendCustomVideo, this);
-		nbase::ThreadManager::PostRepeatedTask(shared::kThreadScreenCapture, send_custom_video_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(60));
+		nbase::ThreadManager::PostRepeatedTask(kThreadScreenCapture, send_custom_video_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(60));
 	}
 	nim::VChat::SetCustomData(false, custom_video_mode_);
 	face_open_btn_->SetVisible(!custom_video_mode_ && current_video_mode_);

@@ -40,7 +40,7 @@ void _LogRobot()
 	QLogImpl::GetInstance()->HalfTo(m2, m1);
 
 	StdClosure task = nbase::Bind(&_LogRobot);
-	nbase::ThreadManager::PostDelayedTask(shared::kThreadGlobalMisc, task, nbase::TimeDelta::FromMinutes(10));
+	nbase::ThreadManager::PostDelayedTask(kThreadGlobalMisc, task, nbase::TimeDelta::FromMinutes(10));
 }
 
 //登录之后的处理：比如读取数据
@@ -57,7 +57,7 @@ void _DoAfterLogin()
 	ForcePushManager::GetInstance()->Load();
 
 	StdClosure task = nbase::Bind(&_LogRobot);
-	nbase::ThreadManager::PostDelayedTask(shared::kThreadGlobalMisc, task, nbase::TimeDelta::FromMinutes(1));
+	nbase::ThreadManager::PostDelayedTask(kThreadGlobalMisc, task, nbase::TimeDelta::FromMinutes(1));
 }
 
 //退出程序前的处理：比如保存数据

@@ -15,7 +15,7 @@ public:
 	* @param[in] thread_id 线程id
 	* @param[in] name 线程名字
 	*/
-	MiscThread(shared::ThreadId thread_id, const char *name);
+	MiscThread(ThreadId thread_id, const char *name);
 	~MiscThread(void);
 
 private:
@@ -32,5 +32,5 @@ private:
 	virtual void Cleanup() override;
 
 private:
-	shared::ThreadId thread_id_;
+	ThreadId thread_id_;
 };

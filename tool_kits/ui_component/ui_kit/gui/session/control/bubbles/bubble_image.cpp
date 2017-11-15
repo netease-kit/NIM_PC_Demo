@@ -262,7 +262,7 @@ bool MsgBubbleImage::OnMenu( ui::EventArgs* arg )
 	if (msg_.type_ == nim::kNIMMessageTypeCustom)
 	{
 		Json::Value json;
-		if (StringToJson(msg_.attach_, json))
+		if (StringToJson(msg_.attach_, json) && json.isObject())
 		{
 			int sub_type = json["type"].asInt();
 			if (sub_type == CustomMsgType_SnapChat)

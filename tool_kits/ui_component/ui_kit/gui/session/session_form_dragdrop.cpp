@@ -189,7 +189,7 @@ bool SessionForm::OnProcessSessionBoxHeaderDrag(ui::EventArgs* param)
 			StdClosure cb = [=]{
 				SessionManager::GetInstance()->DoDragSessionBox(active_session_box_, bitmap, pt);
 			};
-			nbase::ThreadManager::PostTask(shared::kThreadUI, cb);
+			nbase::ThreadManager::PostTask(ThreadId::kThreadUI, cb);
 		}
 	}
 	break;
@@ -239,7 +239,7 @@ bool SessionForm::OnProcessMergeItemDrag(ui::EventArgs* param)
 			StdClosure cb = [=]{
 				SessionManager::GetInstance()->DoDragSessionBox(active_session_box_, bitmap, pt);
 			};
-			nbase::ThreadManager::PostTask(shared::kThreadUI, cb);
+			nbase::ThreadManager::PostTask(ThreadId::kThreadUI, cb);
 		}
 	}
 	break;

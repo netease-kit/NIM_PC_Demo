@@ -246,7 +246,7 @@ void HeadModifyForm::LoadHeadImage()
 	is_misc_thread_rendering_ = true; // 渲染过程中不要退出，会崩溃
 	StdClosure render_image_closure = 
 		nbase::Bind(&HeadModifyForm::DoLoadHeadImage, this);
-	nbase::ThreadManager::PostTask(shared::kThreadUI, ToWeakCallback(render_image_closure));
+	nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback(render_image_closure));
 }
 
 // [working on misc thread]
@@ -258,7 +258,7 @@ void HeadModifyForm::DoLoadHeadImage()
 	// 投递到DUI线程将渲染好的图片显示到界面上
 	StdClosure show_image_closure = 
 		nbase::Bind(&HeadModifyForm::PostLoadHeadImage, this);
-	nbase::ThreadManager::PostTask(shared::kThreadUI, ToWeakCallback(show_image_closure));
+	nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback(show_image_closure));
 }
 
 // [working on misc thread]
@@ -883,7 +883,7 @@ void HeadModifyForm::OnButtonSaveImage()
 		// 在Core线程触发头像修改监听
 		StdClosure notify_head_modify_closure = 
 			nbase::Bind(&HeadModifyForm::NotifyHeadModify, this, temp_file_path);
-		nbase::ThreadManager::PostTask(shared::kThreadUI, ToWeakCallback(notify_head_modify_closure));
+		nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback(notify_head_modify_closure));
 	}
 	else
 	{
@@ -918,7 +918,7 @@ void HeadModifyForm::OnUploadHeadIconCallback(int res_code, const std::string& u
 		{
 			//删除缓存头像
 			StdClosure closure = nbase::Bind(&HeadModifyForm::DeleteFileCallback, new_temp_head_image_path_);
-			nbase::ThreadManager::PostTask(shared::kThreadGlobalMisc, closure);
+			nbase::ThreadManager::PostTask(kThreadGlobalMisc, closure);
 		}
 
 		OnNotifyHeadModifyCallback();
@@ -928,7 +928,7 @@ void HeadModifyForm::OnUploadHeadIconCallback(int res_code, const std::string& u
 		// 头像上传失败
 		QLOG_ERR(L"Upload head icon failed");
 		StdClosure closure = nbase::Bind(&HeadModifyForm::OnNotifyHeadModifyFailed, this);
-		nbase::ThreadManager::PostTask(shared::kThreadUI, ToWeakCallback(closure));
+		nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback(closure));
 	}
 }
 
@@ -954,7 +954,7 @@ void HeadModifyForm::OnNotifyHeadModifyFailed()
 
 	//删除缓存头像
 	StdClosure closure = nbase::Bind(&HeadModifyForm::DeleteFileCallback, new_temp_head_image_path_);
-	nbase::ThreadManager::PostTask(shared::kThreadGlobalMisc, closure);
+	nbase::ThreadManager::PostTask(kThreadGlobalMisc, closure);
 }
 
 // 逻辑父窗口关闭时询问

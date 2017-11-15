@@ -80,7 +80,7 @@ void RtsForm::InitWindow()
 	ShowHeader();
 
 	auto closure = nbase::Bind(&RtsForm::SendCurData, this);
-	nbase::ThreadManager::PostRepeatedTask(shared::kThreadUI, closure, nbase::TimeDelta::FromMilliseconds(60));
+	nbase::ThreadManager::PostRepeatedTask(kThreadUI, closure, nbase::TimeDelta::FromMilliseconds(60));
 
 	if (type_ & nim::kNIMRtsChannelTypeVchat)
 	{
@@ -378,7 +378,7 @@ void RtsForm::ShowStartUI(bool creater)
 		nim::Rts::StartChannel(type_, uid_, info, cb);
 	}
 	auto closure = nbase::Bind(&RtsForm::NoActiveTimer, this);
-	nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, closure, nbase::TimeDelta::FromSeconds(40));
+	nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(40));
 }
 void RtsForm::StartResult(nim::NIMResCode code, std::string session_id)
 {
@@ -424,7 +424,7 @@ void RtsForm::DelayClose()
 	Box* ack_box = (Box*)FindControl(L"ack_box");
 	ack_box->SetVisible(false);
 	auto closure = nbase::Bind(&RtsForm::Close, this, IDOK);
-	nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, closure, nbase::TimeDelta::FromSeconds(2));
+	nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(2));
 }
 void RtsForm::NoActiveTimer()
 {
@@ -609,7 +609,7 @@ void RtsForm::OnControlNotify(const std::string& session_id, const std::string& 
 	ctrl_notify_->SetText(name + L": " + nbase::UTF8ToUTF16(text));
 	ctrl_notify_->SetVisible(true);
 	auto closure = nbase::Bind(&RtsForm::HideCtrlNotifyTip, this);
-	nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, closure, nbase::TimeDelta::FromSeconds(3));
+	nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(3));
 }
 
 void RtsForm::HideCtrlNotifyTip()

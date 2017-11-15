@@ -347,7 +347,7 @@ static void LookLogClick(HWND m_hWnd)
 
 bool MainForm::LookLogMenuItemClick(ui::EventArgs* param)
 {
-	nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(&LookLogClick, GetHWND()));
+	nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&LookLogClick, GetHWND()));
 	return false;
 }
 

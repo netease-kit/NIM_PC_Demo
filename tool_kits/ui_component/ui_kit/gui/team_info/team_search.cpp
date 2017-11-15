@@ -257,7 +257,7 @@ void TeamSearchForm::OnApplyJoinCb(const nim::TeamEvent& team_event)
 	break;
 	case nim::kNIMResSuccess:
 	{
-		nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(TeamCallback::OnTeamEventCallback, team_event));
+		nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(TeamCallback::OnTeamEventCallback, team_event));
 		re_apply_->SetText(nbase::StringPrintf(mls->GetStringViaID(L"STRID_TEAM_SEARCH_AGREE_APPLY").c_str(), tname_.c_str()));
 	}
 	break;

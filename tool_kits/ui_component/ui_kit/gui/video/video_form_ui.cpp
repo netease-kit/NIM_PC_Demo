@@ -413,7 +413,7 @@ void VideoForm::EnterEndCallPage( EndCallEnum why )
 		}
 
 		StdClosure closure = nbase::Bind(&VideoForm::OnAutoCloseWnd, this);
-		nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, closure, nbase::TimeDelta::FromSeconds(3));
+		nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(3));
 		break;
 	}
 	case VideoForm::END_CALL_RESPONSE:
@@ -443,7 +443,7 @@ void VideoForm::EnterEndCallPage( EndCallEnum why )
 	if( need_save_close )
 	{
 		auto closure = nbase::Bind( &VideoForm::OnAutoCloseWnd, this );
-		nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, closure, nbase::TimeDelta::FromSeconds(6));
+		nbase::ThreadManager::PostDelayedTask(kThreadUI, closure, nbase::TimeDelta::FromSeconds(6));
 	}
 }
 
@@ -1126,7 +1126,7 @@ void VideoForm::ShowRecordTip(std::wstring tip, std::wstring tip2, std::wstring 
 		record_tip_timer_.Cancel();
 		StdClosure task = nbase::Bind(&VideoForm::HideRecordTipTime, this);
 		task = record_tip_timer_.ToWeakCallback(task);
-		nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, task, nbase::TimeDelta::FromSeconds(3));
+		nbase::ThreadManager::PostDelayedTask(kThreadUI, task, nbase::TimeDelta::FromSeconds(3));
 	}
 	record_tip_box_->SetVisible(show);
 }

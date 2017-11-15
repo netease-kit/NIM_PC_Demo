@@ -206,7 +206,7 @@ void CefManager::PostQuitMessage(int nExitCode)
 			CefManager::GetInstance()->PostQuitMessage(nExitCode);
 		};
 
-		nbase::ThreadManager::PostDelayedTask(shared::kThreadUI, cb, nbase::TimeDelta::FromMilliseconds(500));
+		nbase::ThreadManager::PostDelayedTask(kThreadUI, cb, nbase::TimeDelta::FromMilliseconds(500));
 	}
 }
 

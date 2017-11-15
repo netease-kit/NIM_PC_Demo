@@ -317,14 +317,14 @@ bool MsgBubbleFile::OnEvent(ui::EventArgs* arg)
 	}
 	else if (name == L"file_open")
 	{
-		nbase::ThreadManager::PostTask(shared::kThreadGlobalMisc, nbase::Bind(&shared::tools::SafeOpenUrlEx, local_path_, SW_SHOW));
+		nbase::ThreadManager::PostTask(kThreadGlobalMisc, nbase::Bind(&shared::tools::SafeOpenUrlEx, local_path_, SW_SHOW));
 		return false;
 	}
 	else if (name == L"file_opendocu")
 	{
 		std::string file_path;
 		shared::FilePathApartDirectory(local_path_, file_path);
-		nbase::ThreadManager::PostTask(shared::kThreadGlobalMisc, nbase::Bind(&shared::tools::SafeOpenUrlEx, file_path, SW_SHOW));
+		nbase::ThreadManager::PostTask(kThreadGlobalMisc, nbase::Bind(&shared::tools::SafeOpenUrlEx, file_path, SW_SHOW));
 		return false;
 	}
 	else if (name == L"file_cancel")

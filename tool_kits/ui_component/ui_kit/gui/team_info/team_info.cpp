@@ -803,7 +803,7 @@ LRESULT TeamInfoForm::OnClose(UINT u, WPARAM w, LPARAM l, BOOL& bHandled)
 	if (!temp_file_path_.empty())
 	{
 		StdClosure closure = nbase::Bind(&DeleteFileCallback, temp_file_path_);
-		nbase::ThreadManager::PostTask(shared::kThreadGlobalMisc, closure);
+		nbase::ThreadManager::PostTask(kThreadGlobalMisc, closure);
 	}
 	return __super::OnClose(u, w, l, bHandled);
 }

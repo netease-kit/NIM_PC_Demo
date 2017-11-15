@@ -101,7 +101,7 @@ void BrowserHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 	browser_ = browser;
 	browser->GetIdentifier();
 
-	nbase::ThreadManager::PostTask(shared::kThreadUI, ToWeakCallback([this](){
+	nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback([this](){
 		CefManager::GetInstance()->AddBrowserCount();
 
 		// 有窗模式下，浏览器创建完毕后，让上层更新一下自己的位置；因为在异步状态下，上层更新位置时可能Cef窗口还没有创建出来
@@ -130,7 +130,7 @@ void BrowserHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 	{
 		browser_ = NULL;
 
-		nbase::ThreadManager::PostTask(shared::kThreadUI, ToWeakCallback([this, browser](){
+		nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback([this, browser](){
 			CefManager::GetInstance()->SubBrowserCount();
 		}));
 	}
@@ -190,13 +190,13 @@ bool BrowserHandler::GetScreenPoint(CefRefPtr<CefBrowser> browser, int viewX, in
 void BrowserHandler::OnPopupShow(CefRefPtr<CefBrowser> browser, bool show)
 {
 	if (handle_delegate_)
-		nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(&HandlerDelegate::OnPopupShow, handle_delegate_, browser, show));
+		nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&HandlerDelegate::OnPopupShow, handle_delegate_, browser, show));
 }
 
 void BrowserHandler::OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect& rect)
 {
 	if (handle_delegate_)
-		nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(&HandlerDelegate::OnPopupSize, handle_delegate_, browser, rect));
+		nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&HandlerDelegate::OnPopupSize, handle_delegate_, browser, rect));
 }
 
 void BrowserHandler::OnPaint(CefRefPtr<CefBrowser> browser,
@@ -215,7 +215,7 @@ void BrowserHandler::OnPaint(CefRefPtr<CefBrowser> browser,
 			paint_buffer_.resize(buffer_length + 1);
 		memcpy(&paint_buffer_[0], (char*)buffer, width * height * 4);
 
-		nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(&HandlerDelegate::OnPaint, handle_delegate_, browser, type, dirtyRects, &paint_buffer_, width, height));
+		nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&HandlerDelegate::OnPaint, handle_delegate_, browser, type, dirtyRects, &paint_buffer_, width, height));
 	}
 }
 
@@ -280,14 +280,14 @@ void BrowserHandler::OnAddressChange(CefRefPtr<CefBrowser> browser, CefRefPtr<Ce
 {
 	// Update the URL in the address bar...
 	if (handle_delegate_)
-		nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(&HandlerDelegate::OnAddressChange, handle_delegate_, browser, frame, url));
+		nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&HandlerDelegate::OnAddressChange, handle_delegate_, browser, frame, url));
 }
 
 void BrowserHandler::OnTitleChange(CefRefPtr<CefBrowser> browser, const CefString& title)
 {
 	// Update the browser window title...
 	if (handle_delegate_)
-		nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(&HandlerDelegate::OnTitleChange, handle_delegate_, browser, title));
+		nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&HandlerDelegate::OnTitleChange, handle_delegate_, browser, title));
 }
 
 bool BrowserHandler::OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefString& message, const CefString& source, int line)
@@ -302,28 +302,28 @@ void BrowserHandler::OnLoadingStateChange(CefRefPtr<CefBrowser> browser, bool is
 {
 	// Update UI for browser state...
 	if (handle_delegate_)
-		nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(&HandlerDelegate::OnLoadingStateChange, handle_delegate_, browser, isLoading, canGoBack, canGoForward));
+		nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&HandlerDelegate::OnLoadingStateChange, handle_delegate_, browser, isLoading, canGoBack, canGoForward));
 }
 
 void BrowserHandler::OnLoadStart(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame)
 {
 	// A frame has started loading content...
 	if (handle_delegate_)
-		nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(&HandlerDelegate::OnLoadStart, handle_delegate_, browser, frame));
+		nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&HandlerDelegate::OnLoadStart, handle_delegate_, browser, frame));
 }
 
 void BrowserHandler::OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, int httpStatusCode)
 {
 	// A frame has finished loading content...
 	if (handle_delegate_)
-		nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(&HandlerDelegate::OnLoadEnd, handle_delegate_, browser, frame, httpStatusCode));
+		nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&HandlerDelegate::OnLoadEnd, handle_delegate_, browser, frame, httpStatusCode));
 }
 
 void BrowserHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl)
 {
 	// A frame has failed to load content...
 	if (handle_delegate_)
-		nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(&HandlerDelegate::OnLoadError, handle_delegate_, browser, frame, errorCode, errorText, failedUrl));
+		nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&HandlerDelegate::OnLoadError, handle_delegate_, browser, frame, errorCode, errorText, failedUrl));
 }
 
 bool BrowserHandler::OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& origin_url, const CefString& accept_lang, JSDialogType dialog_type, const CefString& message_text, const CefString& default_prompt_text, CefRefPtr<CefJSDialogCallback> callback, bool& suppress_message)
@@ -360,7 +360,7 @@ CefRequestHandler::ReturnValue BrowserHandler::OnBeforeResourceLoad(
 void BrowserHandler::OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser, TerminationStatus status)
 {
 	if (handle_delegate_)
-		nbase::ThreadManager::PostTask(shared::kThreadUI, nbase::Bind(&HandlerDelegate::OnRenderProcessTerminated, handle_delegate_, browser, status));
+		nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&HandlerDelegate::OnRenderProcessTerminated, handle_delegate_, browser, status));
 
 }
 

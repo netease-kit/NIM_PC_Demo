@@ -13,7 +13,7 @@
 
 void MainThread::Init()
 {
-	nbase::ThreadManager::RegisterThread(shared::kThreadUI);
+	nbase::ThreadManager::RegisterThread(kThreadUI);
 	PreMessageLoop();
 
 	std::wstring theme_dir = QPath::GetAppPath();
@@ -49,13 +49,13 @@ void MainThread::Cleanup()
 
 void MainThread::PreMessageLoop()
 {
-	misc_thread_.reset( new MiscThread(shared::kThreadGlobalMisc, "Global Misc Thread") );
+	misc_thread_.reset( new MiscThread(kThreadGlobalMisc, "Global Misc Thread") );
 	misc_thread_->Start();
 
-	screen_capture_thread_.reset(new MiscThread(shared::kThreadScreenCapture, "screen capture"));
+	screen_capture_thread_.reset(new MiscThread(kThreadScreenCapture, "screen capture"));
 	screen_capture_thread_->Start();
 
-	db_thread_.reset( new DBThread(shared::kThreadDatabase, "Database Thread") );
+	db_thread_.reset( new DBThread(kThreadDatabase, "Database Thread") );
 	db_thread_->Start();
 }
 

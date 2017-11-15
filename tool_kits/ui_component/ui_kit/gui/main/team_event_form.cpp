@@ -101,7 +101,7 @@ bool TeamEventForm::Notify( ui::EventArgs* msg )
 				ShowLoadingTip(true);
 				event_list_->EndDown(true, false);
 
-				nbase::ThreadManager::PostDelayedTask(shared::kThreadUI,
+				nbase::ThreadManager::PostDelayedTask(kThreadUI,
 					nbase::Bind(&TeamEventForm::InvokeLoadEvents, this),
 					nbase::TimeDelta::FromMilliseconds(1500));
 			}

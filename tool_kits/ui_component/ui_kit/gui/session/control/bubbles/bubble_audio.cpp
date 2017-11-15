@@ -132,7 +132,7 @@ void MsgBubbleAudio::OnTick()
 void MsgBubbleAudio::InitTime()
 {
 	Json::Value value;
-	if( StringToJson(msg_.attach_, value) )
+	if (StringToJson(msg_.attach_, value) && value.isObject())
 	{
 		int t = value[nim::kNIMAudioMsgKeyDuration].asInt();
 		time_ = t / 1000;

@@ -379,7 +379,7 @@ void VideoSettingForm::OnVideoDeviceStartCallback(bool result)
 	{
 		paint_video_timer_.Cancel();
 		StdClosure task = nbase::Bind(&VideoSettingForm::PaintVideo, this);
-		nbase::ThreadManager::PostRepeatedTask(shared::kThreadUI, paint_video_timer_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(70));
+		nbase::ThreadManager::PostRepeatedTask(kThreadUI, paint_video_timer_.ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(70));
 		camera_fail_ctrl_->SetVisible( false );
 		error_notice_label_->SetVisible( false );
 	}

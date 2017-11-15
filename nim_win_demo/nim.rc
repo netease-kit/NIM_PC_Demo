@@ -17,7 +17,6 @@
 
 #if !defined(AFX_RESOURCE_DLL) || defined(AFX_TARG_CHS)
 LANGUAGE LANG_CHINESE, SUBLANG_CHINESE_SIMPLIFIED
-#pragma code_page(936)
 
 #ifdef APSTUDIO_INVOKED
 /////////////////////////////////////////////////////////////////////////////
