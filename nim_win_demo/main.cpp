@@ -3,6 +3,7 @@
 #include "app_dump.h"
 #include "base/util/at_exit.h"
 #include "base/util/string_number_conversions.h"
+#include "gui/extern_ctrl/extern_ctrl_manager.h"
 #include "shared/xml_util.h"
 #include "gui/login/login_form.h"
 #include "gui/main/main_form.h"
@@ -19,8 +20,8 @@ void MainThread::Init()
 	std::wstring theme_dir = QPath::GetAppPath();
 	bool adapt_api = ConfigHelper::GetInstance()->IsAdaptDpi();
 	std::wstring language = nbase::UTF8ToUTF16(ConfigHelper::GetInstance()->GetLanguage());
-	ui::GlobalManager::Startup(theme_dir + L"themes\\default", ui::CreateControlCallback(), adapt_api, language);
-
+	//ui::GlobalManager::Startup(theme_dir + L"themes\\default", ui::CreateControlCallback(), adapt_api, language);
+	ui::GlobalManager::Startup(theme_dir + L"themes\\default", ExternCtrlManager::CreateExternCtrl, adapt_api, language);
 	nim_ui::UserConfig::GetInstance()->SetDefaultIcon(IDI_ICON);
 
 	std::wstring app_crash = QCommand::Get(kCmdAppCrash);

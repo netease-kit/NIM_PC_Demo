@@ -188,6 +188,9 @@
     <ClInclude Include="gui\about\about_form.h" />
     <ClInclude Include="gui\cef\cef_form.h" />
     <ClInclude Include="gui\cef\cef_native_form.h" />
+    <ClInclude Include="gui\extern_ctrl\extern_ctrl_manager.h" />
+    <ClInclude Include="gui\extern_ctrl\richedit_with_defmenu.h" />
+    <ClInclude Include="gui\extern_ctrl\richedit_with_defmenu_btnimp.h" />
     <ClInclude Include="gui\login\login_form.h" />
     <ClInclude Include="gui\main\main_form.h" />
     <ClInclude Include="gui\msglogmanage\msglog_manage_form.h" />
@@ -207,6 +210,9 @@
     <ClCompile Include="gui\about\about_form.cpp" />
     <ClCompile Include="gui\cef\cef_form.cpp" />
     <ClCompile Include="gui\cef\cef_native_form.cpp" />
+    <ClCompile Include="gui\extern_ctrl\extern_ctrl_manager.cpp" />
+    <ClCompile Include="gui\extern_ctrl\richedit_with_defmenu.cpp" />
+    <ClCompile Include="gui\extern_ctrl\richedit_with_defmenu_btnimp.cpp" />
     <ClCompile Include="gui\login\login_form.cpp" />
     <ClCompile Include="gui\login\login_form_ui.cpp" />
     <ClCompile Include="gui\main\main_form.cpp" />

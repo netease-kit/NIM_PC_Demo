@@ -138,6 +138,10 @@ void MsgBubbleItem::SetMsgStatus(nim::NIMMsgLogStatus status)
 	case nim::kNIMMsgLogStatusReceipt:
 		status_receipt_->SetVisible(true);
 		break;
+	case nim::kNIMMsgLogStatusRefused:
+		//haokui 2017.10.27 被对方拒绝，可能是被加入了黑名单，此时不设置消息的任何状态
+		//HideAllStatus(0);
+		break;
 	default:
 		break;
 	}

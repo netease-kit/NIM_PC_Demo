@@ -129,7 +129,8 @@ NIM_SDK_DLL_API void nim_talk_reg_recall_msg_cb(const char *json_extension, nim_
 * @return	 char *		消息如果有附件，不管是否已下载，返回附件的本地路径；消息如果没有附件，返回空字符串""。
 */
 NIM_SDK_DLL_API char *nim_talk_get_attachment_path_from_msg(const char *json_msg);
-
+    
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn void nim_talk_reg_receive_broadcast_cb(const char *json_extension, nim_talk_receive_broadcast_cb_func cb, const void *user_data)
   * (全局回调)注册接收广播消息回调 （建议全局注册，统一接受回调后分发消息到具体的会话）
   * @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -151,6 +152,7 @@ NIM_SDK_DLL_API void nim_talk_reg_receive_broadcast_cb(const char *json_extensio
   * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_talk_reg_receive_broadcast_msgs_cb(const char *json_extension, nim_talk_receive_broadcast_cb_func cb, const void *user_data);
+#endif
 
 #ifdef __cplusplus
 };

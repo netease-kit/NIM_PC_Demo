@@ -3,6 +3,7 @@
 #include "nim_chatroom_helper.h"
 #include "module/session/session_util.h"
 #include "gui/login/login_form.h"
+#include "module/service/user_service.h"
 
 #define ROOMMSG_R_N _T("\r\n")
 namespace nim_chatroom
@@ -121,7 +122,9 @@ void ChatroomForm::AnonymousLogin(const __int64 room_id)
 			anonymity_info.app_key_ = GetConfigValueAppKey();
 			anonymity_info.app_data_file_ = "Netease";
 			nim::JsonArrayStringToList(json_reply["msg"]["addr"].toStyledString(), anonymity_info.address_);
+			anonymity_info.random_id_ = atoi(GetConfigValue("kNIMChatRoomEnterKeyRandomID").c_str()) > 0;
 
+			srand((unsigned int)time(NULL));
 			std::wstring nick = nbase::StringPrintf(L"сн©м%d", rand());
 			ChatRoomEnterInfo enter_info;
 			enter_info.SetNick(nbase::UTF16ToUTF8(nick));
@@ -788,7 +791,23 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 		room_mute_ = notification.id_ == kNIMChatRoomNotificationIdRoomMuted;
 		AddNotify(str, is_history, first_msg_each_batch);
 	}
-
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+	if (notification.id_ == kNIMChatRoomNotificationIdQueueBatchChanged)
+	{
+		std::string str;
+		ChatRoomQueueBatchChangedNotification batch_chg_info;
+		batch_chg_info.ParseFromNotification(notification);		
+		if (batch_chg_info.type_.compare(kNIMChatRoomNotificationQueueChangedType_PARTCLEAR) == 0)
+		{
+			for (auto it : batch_chg_info.changed_values_)
+			{
+				str.append(it.first).append(" : ").append(it.second).append("\r\n");
+			}
+			if (str.length() > 0)
+				AddNotify(nbase::UTF8ToUTF16(str), is_history, first_msg_each_batch);
+		}
+	}
+#endif
 	if (!notification.ext_.empty())
 	{
 		std::string toast = nbase::StringPrintf("notification_id:%d, from_nick:%s(%s), notify_ext:%s", notification.id_, notification.operator_nick_.c_str(), notification.operator_id_.c_str(), notification.ext_.c_str());

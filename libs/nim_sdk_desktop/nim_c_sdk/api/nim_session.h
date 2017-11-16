@@ -72,6 +72,7 @@ NIM_SDK_DLL_API void nim_session_delete_all_recent_session_async(const char *jso
   */
 NIM_SDK_DLL_API void nim_session_set_unread_count_zero_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn void nim_session_set_top(enum NIMSessionType to_type, const char *id, bool top, const char *json_extension, nim_session_change_cb_func cb, const void *user_data)
   * 设置会话项是否置顶(置顶属性只保存在本地)
   * @param[in] to_type		会话类型
@@ -111,7 +112,7 @@ NIM_SDK_DLL_API void nim_session_set_extend_data(enum NIMSessionType to_type, co
   */
 NIM_SDK_DLL_API void nim_session_reset_all_unread_count_async(const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 
-
+#endif
 #ifdef __cplusplus
 };
 #endif //__cplusplus

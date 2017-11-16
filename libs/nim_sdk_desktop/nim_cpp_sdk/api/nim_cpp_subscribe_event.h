@@ -56,7 +56,7 @@ public:
 	*/
 	static void RegBatchPushEventCb(const BatchPushEventCallback &cb, const std::string& json_extension = "");
 
-	/** @fn static bool PublishEvent(const EventData &accid, const PublishEventCallback &cb, const std::string& json_extension = "")
+	/** @fn static bool Publish(const EventData &event_data, const PublishEventCallback &cb, const std::string& json_extension = "")
 	* 发布事件
 	* @param[in] event_data	事件
 	* @param[in] cb			发布事件回调函数
@@ -70,7 +70,7 @@ public:
 	*/
 	static bool Publish(const EventData &event_data, const PublishEventCallback &cb, const std::string& json_extension = "");
 	
-	/** @fn static bool SubscribeEvent(int event_type, int64_t ttl, NIMEventSubscribeSyncEventType sync_type, const SubscribeEventCallback &cb, const std::string& json_extension = "")
+	/** @fn static bool Subscribe(int event_type, int64_t ttl, NIMEventSubscribeSyncEventType sync_type, const SubscribeEventCallback &cb, const std::string& json_extension = "")
 	* 订阅事件
 	* @param[in] event_type		事件类型
 	* @param[in] ttl			订阅有效期，单位：秒，范围：60s到30天
@@ -85,7 +85,7 @@ public:
 	*/
 	static bool Subscribe(int event_type, int64_t ttl, NIMEventSubscribeSyncEventType sync_type, const std::list<std::string> &accid_list, const SubscribeEventCallback &cb, const std::string& json_extension = "");
 
-	/** @fn static bool UnSubscribeEvent(int event_type, const std::list<str::string> &accid_list, const UnSubscribeEventCallback &cb, const std::string& json_extension = "")
+	/** @fn static bool UnSubscribe(int event_type, const std::list<str::string> &accid_list, const UnSubscribeEventCallback &cb, const std::string& json_extension = "")
 	* 按账号取消指定事件的订阅关系
 	* @param[in] event_type		事件类型
 	* @param[in] accid_list		要取消订阅的用户列表
@@ -98,7 +98,7 @@ public:
 	*/
 	static bool UnSubscribe(int event_type, const std::list<std::string> &accid_list, const UnSubscribeEventCallback &cb, const std::string& json_extension = "");
 
-	/** @fn static bool BatchUnSubscribeEvent(int event_type, const BatchUnSubscribeEventCallback &cb, const std::string& json_extension = "")
+	/** @fn static bool BatchUnSubscribe(int event_type, const BatchUnSubscribeEventCallback &cb, const std::string& json_extension = "")
 	* 取消指定事件的全部订阅关系
 	* @param[in] event_type		事件类型
 	* @param[in] cb				取消订阅事件回调函数
@@ -110,7 +110,7 @@ public:
 	*/
 	static bool BatchUnSubscribe(int event_type, const BatchUnSubscribeEventCallback &cb, const std::string& json_extension = "");
 
-	/** @fn static bool QuerySubscribeEvent(int event_type, const std::list<str::string> &accid_list, const QuerySubscribeEventCallback &cb, const std::string& json_extension = "")
+	/** @fn static bool QuerySubscribe(int event_type, const std::list<str::string> &accid_list, const QuerySubscribeEventCallback &cb, const std::string& json_extension = "")
 	* 按账号查询指定事件订阅关系
 	* @param[in] event_type		事件类型
 	* @param[in] accid_list		要查询订阅关系的用户列表

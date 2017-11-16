@@ -329,6 +329,8 @@ void SessionItem::DeleteRecentSessionCb(nim::NIMResCode code, const nim::Session
 void SessionItem::BatchStatusDeleteCb(nim::NIMResCode res_code, const std::string& uid, nim::NIMSessionType to_type)
 {
 	QLOG_APP(L"batch delete msg, id={0} type={1} code={2}") << uid << to_type << res_code;
+	//if (res_code == nim::kNIMResSuccess)
+	//	nim::Session::SetUnreadCountZeroAsync(to_type, uid, nim::Session::SetUnreadCountZeroCallback());
 }
 
 void SessionItem::ShowAtmeTip(bool show)
@@ -397,7 +399,10 @@ bool SessionItem::DelSessionItemMenuItemClick(ui::EventArgs* param)
 	}
 	else if (name == L"del_session_msg")
 	{
-		nim::MsgLog::BatchStatusDeleteAsync(msg_.id_, msg_.type_, nbase::Bind(&SessionItem::BatchStatusDeleteCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		nim::Session::SetUnreadCountZeroAsync(msg_.type_, msg_.id_, ToWeakCallback([this](nim::NIMResCode res_code, const nim::SessionData&, int){
+			if (res_code == nim::kNIMResSuccess)
+			nim::MsgLog::BatchStatusDeleteAsync(msg_.id_, msg_.type_, nbase::Bind(&SessionItem::BatchStatusDeleteCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+		}));		
 	}
 	return true;
 }

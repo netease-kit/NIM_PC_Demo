@@ -100,6 +100,7 @@ private:
 
 private:
 	std::map<int, std::unique_ptr<OnPhotoReadyCallback>> photo_ready_cb_list_; //用户头像下载完成回调列表
+	std::map<PhotoType, std::map<std::string, std::string>> download_tasks_;
 };
 
 

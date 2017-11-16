@@ -392,6 +392,7 @@ void SessionList::OnSessionChangeCallback(nim::NIMResCode rescode, const nim::Se
 			}
 		}
 		SubscribeEventManager::GetInstance()->UnSubscribeSessionEvent(unsubscribe_list);
+		InvokeUnreadCountChange();
 	}
 	break;
 	case nim::kNIMSessionCommandRemoveAllTeam:

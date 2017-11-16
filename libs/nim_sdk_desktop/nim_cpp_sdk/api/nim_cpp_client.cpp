@@ -33,7 +33,7 @@ typedef void(*nim_client_get_multiport_push_config)(const char *json_extension, 
 #else
 #include "nim_client.h"
 #endif
-
+	SDKConfig g_nim_sdk_config_;
 static void CallbackLogin(const char* json_res, const void *callback)
 {
 	if (callback != nullptr)
@@ -159,7 +159,7 @@ bool Client::Init(const std::string& app_key
 	if (!g_nim_sdk_instance->LoadSdkDll(app_install_dir.c_str(), kSdkNimDll))
 		return false;
 #endif
-
+	g_nim_sdk_config_ = config;
 	Json::Value config_root;
 	//sdk能力参数（必填）
 	Json::Value config_values;
@@ -196,7 +196,10 @@ bool Client::Init(const std::string& app_key
 
 	return NIM_SDK_GET_FUNC(nim_client_init)(app_data_dir.c_str(), app_install_dir.c_str(), GetJsonStringWithNoStyled(config_root).c_str());
 }
-
+const SDKConfig& Client::GetSDKConfig()
+{
+	return g_nim_sdk_config_;
+}
 void Client::Cleanup(const std::string& json_extension/* = ""*/)
 {
 	NIM_SDK_GET_FUNC(nim_client_cleanup)(json_extension.c_str());

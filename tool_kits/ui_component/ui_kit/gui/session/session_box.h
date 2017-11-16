@@ -274,7 +274,12 @@ private:
 	* @return void	无返回值
 	*/
 	virtual void SetWindow(ui::Window* pManager, ui::Box* pParent, bool bInit) override;
-
+	/**
+	* 加载指定条数的消息
+	* @param[in] count 要加载的消息条数
+	* @return void 无返回值
+	*/
+	void InvokeShowSpecifiedCountMsgs(unsigned count);
 	/** 
 	* 执行截图操作		
 	* @return void 无返回值
@@ -470,8 +475,21 @@ private:
 	* @return void 无返回值
 	*/
 	void ShowCustomMsgForm();
+	/**
+	* 当发送消息被拒绝时发送该消息自己，该消息不漫游、不存云端、不多端同步、不离线
+	* @param[in] tip 提示内容
+	* @return void	无返回值
+	*/
+	void SendRefusedTip(const std::wstring &tip);
 #pragma endregion UI
 
+#pragma region TaskBar
+	/**
+	* 更新任务栏展示信息
+	* @return void	无返回值
+	*/
+	void UpdateTaskbarInfo();
+#pragma endregion TaskBar
 	//////////////////////////////////////////////////////////////////////////
 	//拖拽相关的操作
 #pragma region DragDrop
@@ -1064,7 +1082,7 @@ private:
 	* 重置新建公告入口
 	* @return void 无返回值
 	*/
-	void ResetNewBroadButtonVisible();
+	void ResetNewBroadButtonVisible();	
 #pragma endregion Team
 
 public:

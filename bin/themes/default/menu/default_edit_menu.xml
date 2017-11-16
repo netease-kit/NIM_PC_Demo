@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <VListBox class="menu" name="menu_list" >
+        <MenuElement class="MenuElement" name="MID_COPY" width="158" visible="false">
+            <Button class="menu_text" textid="STDID_RICHEDIT_DEFMENU_COPY"/>
+        </MenuElement>
+        <MenuElement class="MenuElement" name="MID_CUT" width="158" visible="false">
+            <Button class="menu_text" textid="STDID_RICHEDIT_DEFMENU_CUT"/>
+        </MenuElement>
+        <MenuElement class="MenuElement" name="MID_PASTE" width="158" visible="false">
+            <Button class="menu_text" textid="STDID_RICHEDIT_DEFMENU_PASTE"/>
+        </MenuElement>
+    </VListBox>
+</Window>

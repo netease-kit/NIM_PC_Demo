@@ -15,9 +15,6 @@ extern"C"
 {
 #endif
 
-typedef void (*nim_chatroom_get_address_cb_func)(int64_t room_id, const char *result, const char *json_extension, const void *user_data);
-typedef void (*nim_chatroom_get_address_func)(int64_t room_id, nim_chatroom_get_address_cb_func func, const char *json_extension, const void *user_data);
-
 /** @typedef void (*nim_chatroom_enter_cb_func)(int64_t room_id, int enter_step, int error_code, const char *result, const void *user_data)
   * 进入的回调函数定义
   * @param[out] room_id		聊天室ID
@@ -65,7 +62,7 @@ typedef void (*nim_chatroom_sendmsg_arc_cb_func)(int64_t room_id, int error_code
 /** @typedef void (*nim_chatroom_receive_msg_cb_func)(int64_t room_id, const char *result, const char *json_extension, const void *user_data)
   * 接收消息的回调函数定义
   * @param[out] room_id			聊天室ID
-  * @param[out] result			json string
+  * @param[out] result			json string, json key定义见 消息结构 Json Keys
   * @param[out] json_extension	json扩展数据（备用）
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
@@ -75,7 +72,7 @@ typedef void (*nim_chatroom_receive_msg_cb_func)(int64_t room_id, const char *re
 /** @typedef void (*nim_chatroom_receive_notification_cb_func)(int64_t room_id, const char *result, const char *json_extension, const void *user_data)
   * 聊天室通知的回调函数定义
   * @param[out] room_id			聊天室ID
-  * @param[out] result			json string
+  * @param[out] result			json string, json key定义见 聊天室通知Keys
   * @param[out] json_extension	json扩展数据（备用）
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
@@ -86,7 +83,7 @@ typedef void (*nim_chatroom_receive_notification_cb_func)(int64_t room_id, const
   * 获取指定/分页获取成员列表的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
-  * @param[out] result			json string
+  * @param[out] result			json string , json key定义见 聊天室个人Info Json Keys
   * @param[out] json_extension	json扩展数据（备用）
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
@@ -97,7 +94,7 @@ typedef void (*nim_chatroom_get_members_cb_func)(int64_t room_id, int error_code
   * 获取历史消息的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
-  * @param[out] result			json string
+  * @param[out] result			json string , json key定义见 消息结构 Json Keys
   * @param[out] json_extension	json扩展数据（备用）
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
@@ -119,7 +116,7 @@ typedef void (*nim_chatroom_set_member_attribute_cb_func)(int64_t room_id, int e
   * 获取当前聊天室信息的回调函数定义
   * @param[out] room_id			聊天室ID
   * @param[out] error_code		错误码
-  * @param[out] result			member info json string
+  * @param[out] result			member info json string , json key定义见 聊天室Info Json Keys
   * @param[out] json_extension	json扩展数据（备用）
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
@@ -256,6 +253,7 @@ static const char *kNIMChatRoomEnterKeyAppKey= "app_key";	/**< string, 应用app
 static const char *kNIMChatRoomEnterKeyAppDataPath= "app_data_path";	/**< string, 应用数据目录，匿名登录时必填,使用默认路径时只需传入单个目录名（不以反斜杠结尾)，使用自定义路径时需传入完整路径（以反斜杠结尾，并确保有正确的读写权限！） */
 static const char *kNIMChatRoomEnterKeyLogLevel= "log_level";	/**< int，匿名登录时选填,定义见NIMSDKLogLevel（选填，SDK默认的内置级别为kNIMSDKLogLevelPro） */
 static const char *kNIMChatRoomEnterKeyAddress= "address";	/**< string array，聊天室地址，地址通过应用服务器接口获取 */
+static const char *kNIMChatRoomEnterKeyRandomID= "random_id";	/**< int，是否开启随机ID模式，默认为关闭(0)，建议默认值 */
 /** @}*/ //匿名进入聊天室的信息Json Keys
 
 
@@ -468,6 +466,16 @@ static const char *kNIMChatRoomQueueElementKey		= "key";	/**<string 元素key */
 static const char *kNIMChatRoomQueueElementValue	= "value";	/**<string 元素value */
 /** @}*/ //聊天室麦序队列元素Keys
 
+/** @name 麦序队列变更通知扩展字段type取值
+* @{
+*/
+static const char *kNIMChatRoomNotificationQueueChangedType_OFFER = "OFFER";		//放元素到新队列
+static const char *kNIMChatRoomNotificationQueueChangedType_POLL = "POLL";			//从队列中取出新队列
+static const char *kNIMChatRoomNotificationQueueChangedType_DROP = "DROP";			//清理队列操作
+static const char *kNIMChatRoomNotificationQueueChangedType_PARTCLEAR = "PARTCLEAR";//部分清理操作(发生在提交元素的用户掉线时，清理这个用户对应的key
+/** @}*/ //麦序队列变更通知扩展字段type取值
+
+
 /** @name 聊天室通知 麦序队列变更通知扩展字段queueChange keys
   * @{
   */
@@ -475,6 +483,18 @@ static const char *kNIMChatRoomNotificationQueueChangedKeyType		= "_e";		/**<str
 static const char *kNIMChatRoomNotificationQueueChangedKeyKey		= "key";	/**<string 变更元素的key */
 static const char *kNIMChatRoomNotificationQueueChangedKeyValue		= "content";/**<string 变更元素的内容 */
 /** @}*/ //聊天室通知 麦序队列变更通知扩展字段queueChange keys
+
+/** @name 聊天室通知 麦序队列中有批量变更通知扩展字段queueBatchChange keys
+* @ 当type为"PARTCLEAR"时，一般情况下只会有_e和kvObject字段，不会有key和content字段
+* @{
+*/
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+static const char *kNIMChatRoomNotificationQueueBatchChangedKeyType = "_e";		/**<string 变更类型，目前有OFFER,POLL,DROP,PARTCLEAR四个类型*/
+static const char *kNIMChatRoomNotificationQueueBatchChangedKeyKey = "key";	/**<string 变更元素的key */
+static const char *kNIMChatRoomNotificationQueueBatchChangedKeyValue = "content";/**<string 变更元素的内容 */
+static const char *kNIMChatRoomNotificationQueueBatchChangedKeyObject = "kvObject";/**<map 变更元素的内容 */
+#endif
+/** @}*/ //聊天室通知 麦序队列中有批量变更通知扩展字段queueBatchChange keys
 
 /** @enum NIMChatRoomNotificationId 聊天室通知类型 {"data" : {"ext":"", "operator":"", "opeNick":"", "tarNick":["",...], "target":["",...], ...}, "id": 301}*/
 enum NIMChatRoomNotificationId
@@ -498,6 +518,9 @@ enum NIMChatRoomNotificationId
 	kNIMChatRoomNotificationIdQueueChanged		= 317, /**< 麦序队列中有变更 "ext" : {"_e":"OFFER", "key":"element_key", "content":"element_value"}*/
 	kNIMChatRoomNotificationIdRoomMuted			= 318, /**< 聊天室被禁言了,只有管理员可以发言,其他人都处于禁言状态*/
 	kNIMChatRoomNotificationIdRoomDeMuted		= 319, /**< 聊天室解除全体禁言状态*/
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+	kNIMChatRoomNotificationIdQueueBatchChanged = 320, /**< 麦序队列中有批量变更，发生在元素提交者离开聊天室或者从聊天室异常掉线时*/	
+#endif
 };
 
 /** @enum NIMChatRoomLinkCondition 聊天室链接情况，一般都是有本地网路情况引起 */

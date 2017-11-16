@@ -111,9 +111,10 @@ static void Cleanup(const std::string& json_extension = "");
 
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
-/** @fn bool nim_chatroom_enter_with_anoymity(const int64_t room_id, const char *enter_info, const char *json_extension)
+/** @fn bool AnonymousEnter(const int64_t room_id, const ChatRoomAnoymityEnterInfo& anonymity_info, const ChatRoomEnterInfo& info, const std::string& json_extension = "")
   * 聊天室匿名进入
   * @param[in] room_id			  聊天室ID
+  * @param[in] anonymity_info	  匿名登录相关信息
   * @param[in] enter_info		  聊天室进入信息
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
   * @return bool 进入信息是否正确,返回失败则不会触发进入回调
@@ -331,7 +332,7 @@ static void UpdateMyRoomRoleAsync(const int64_t room_id
 static void QueueOfferAsync(const int64_t room_id
 	, const ChatRoomQueueElement& element
 	, const QueueOfferCallback& callback
-	, const std::string &json_extension = "");
+	, const std::string &json_extension = "{\"transient\":true}");
 
 /** @fn static void QueuePollAsync(const int64_t room_id, const std::string& element_key, const QueuePollCallback& callback, const std::string &json_extension = "");
   * 取出麦序元素

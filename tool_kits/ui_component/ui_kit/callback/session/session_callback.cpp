@@ -3,7 +3,7 @@
 #include "export/nim_ui_session_list_manager.h"
 #include "export/nim_ui_window_manager.h"
 #include "module/session/session_util.h"
-
+#include "nim_cpp_client.h"
 namespace nim_comp
 {
 void TalkCallback::OnSendMsgCallback(const nim::SendMessageArc& arc)
@@ -30,7 +30,7 @@ void TalkCallback::OnReceiveMsgCallback(const nim::IMMessage& message)
 
 	if (message.feature_ == nim::kNIMMessageFeatureDefault)
 	{
-		if (message.type_ == nim::kNIMMessageTypeNotification)
+		if (message.type_ == nim::kNIMMessageTypeNotification && !nim::Client::GetSDKConfig().team_notification_unread_count_)
 		{
 			SessionBox* session = SessionManager::GetInstance()->FindSessionBox(id);
 			if (session)

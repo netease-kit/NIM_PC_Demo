@@ -99,9 +99,10 @@ NIM_SDK_DLL_API void nim_chatroom_init(const char *json_extension);
   */
 NIM_SDK_DLL_API void nim_chatroom_cleanup(const char *json_extension);
 
-/** @fn bool nim_chatroom_enter_with_anoymity(const int64_t room_id, const char *enter_info, const char *json_extension)
+/** @fn bool nim_chatroom_enter_with_anoymity(const int64_t room_id, const char *anonymity_info, const char *enter_info, const char *json_extension)
   * 聊天室匿名进入
   * @param[in] room_id			  聊天室ID
+  * @param[in] anonymity_info	  匿名登录所需的信息
   * @param[in] enter_info		  聊天室进入信息
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
   * @return bool 进入信息是否正确,返回失败则不会触发进入回调
@@ -338,7 +339,7 @@ NIM_SDK_DLL_API void nim_chatroom_queue_drop_async(const int64_t room_id, const 
 
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
-/** @fn void nim_chatroom_get_robots_async(const int64_t room_id, int64_t timetag, const char *json_extension, nim_chatroom_query_robots_cb_func cb, const void *user_data))
+/** @fn void nim_chatroom_get_robots_async(const int64_t room_id, int64_t timetag, const char *json_extension, nim_chatroom_query_robots_cb_func cb, const void *user_data)
   * 获取全部机器人信息
   * @param[in] room_id				聊天室ID
   * @param[in] timetag 时间戳

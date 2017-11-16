@@ -52,6 +52,12 @@
     <Filter Include="module\db">
       <UniqueIdentifier>{202a8a44-0416-40ea-be5f-960bdbf83438}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gui\extern_ctrl">
+      <UniqueIdentifier>{f1d2971e-68f7-4b74-937c-4ab66de94d43}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\extern_ctrl\richedit_with_defmenu">
+      <UniqueIdentifier>{084c007a-1c0a-4235-9b93-e0826ba1c6bd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui\login\login_form.h">
@@ -108,6 +114,15 @@
     <ClInclude Include="module\db\public_db.h">
       <Filter>module\db</Filter>
     </ClInclude>
+    <ClInclude Include="gui\extern_ctrl\extern_ctrl_manager.h">
+      <Filter>gui\extern_ctrl</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\extern_ctrl\richedit_with_defmenu.h">
+      <Filter>gui\extern_ctrl\richedit_with_defmenu</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\extern_ctrl\richedit_with_defmenu_btnimp.h">
+      <Filter>gui\extern_ctrl\richedit_with_defmenu</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -163,6 +178,15 @@
     </ClCompile>
     <ClCompile Include="module\db\public_db.cpp">
       <Filter>module\db</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\extern_ctrl\extern_ctrl_manager.cpp">
+      <Filter>gui\extern_ctrl</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\extern_ctrl\richedit_with_defmenu.cpp">
+      <Filter>gui\extern_ctrl\richedit_with_defmenu</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\extern_ctrl\richedit_with_defmenu_btnimp.cpp">
+      <Filter>gui\extern_ctrl\richedit_with_defmenu</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

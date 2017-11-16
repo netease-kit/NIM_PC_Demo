@@ -303,10 +303,10 @@ public:
 	*/
 	static bool ParseLocationMessageAttach(const IMMessage& msg, IMLocation& location);
 
-	/** @fn static bool ParseLocationMessageAttach(const IMMessage& msg, IMLocation& location)
-	* 通过得到的消息获得位置信息
+	/** @fn static bool ParseBotRobotMessageAttach(const IMMessage& msg, IMBotRobot& robot_msg)
+	* 通过得到的消息获得机器人消息
 	*  @param[in] msg 消息
-	*  @param[out] location 位置信息
+	*  @param[out] robot_msg 机器人消息
 	*  @return bool 解析是否成功
 	*/
 	static bool ParseBotRobotMessageAttach(const IMMessage& msg, IMBotRobot& robot_msg);
@@ -356,7 +356,7 @@ public:
 	*/
 	static std::string GetAttachmentPathFromMsg(const IMMessage& msg);
 
-	/** @fn static void RegReceiveCb(const ReceiveMsgCallback& cb, const std::string& json_extension = "")
+	/** @fn static void RegReceiveBroadcastMsgCb(const ReceiveBroadcastMsgCallback& cb, const std::string& json_extension = "")
 	* (全局回调)注册接收广播消息回调 （全局注册）
 	* @param[in] json_extension json扩展参数（备用,目前不需要）
 	* @param[in] cb		接收消息的回调函数
@@ -367,7 +367,7 @@ public:
 	*/
 	static void RegReceiveBroadcastMsgCb(const ReceiveBroadcastMsgCallback& cb, const std::string& json_extension = "");
 
-	/** @fn static void RegReceiveMessagesCb(const ReceiveMsgsCallback& cb, const std::string& json_extension = "")
+	/** @fn static void RegReceiveBroadcastMsgsCb(const ReceiveBroadcastMsgsCallback& cb, const std::string& json_extension = "")
 	* (全局回调)注册批量接收广播消息回调 （全局注册）
 	* @param[in] json_extension json扩展参数（备用,目前不需要）
 	* @param[in] cb		接收消息的回调函数

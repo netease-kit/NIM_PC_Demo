@@ -176,12 +176,19 @@ void MsgBubbleFile::SetMsgStatus(nim::NIMMsgLogStatus status)
 			file_reup_->SetVisible(true);
 			status_resend_->SetVisible(false);
 		}
+		else if (status == nim::kNIMMsgLogStatusRefused)
+		{
+			//http_status_->SetText(mls->GetStringViaID(L"STRID_SESSION_FILESTATUS_UPLOADERROR"));
+			//file_reup_->SetVisible(false);
+			progress_vertlayout_->SetVisible(false);
+			http_status_->SetText(mls->GetStringViaID(L"STRID_SESSION_FILESTATUS_UPLOADED"));
+		}
 		else if (status == nim::kNIMMsgLogStatusSendFailed
 			|| file_url_.empty())
 		{
 			http_status_->SetText(mls->GetStringViaID(L"STRID_SESSION_FILESTATUS_UPLOADERROR"));
 			file_reup_->SetVisible(true);
-		}
+		}		
 	} 
 	else
 	{

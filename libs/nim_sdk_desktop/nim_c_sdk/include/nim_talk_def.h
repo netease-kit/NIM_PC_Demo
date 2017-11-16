@@ -225,7 +225,7 @@ static const char *kNIMBotRobotReceivedMsgKeyRobotMsgMessage= "message";	/**< js
   */
 static const char *kNIMBroadcastMsgKeyID		= "id";				/**< int64，消息ID */
 static const char *kNIMBroadcastMsgKeyFromAccid	= "from_accid";		/**< jstring，发送者accid，可能不存在 */
-static const char *kNIMBroadcastMsgKeyTime		= "time";			/**< int64，机器人回复时带的字段，表示该条回复相关联的消息ID */
+static const char *kNIMBroadcastMsgKeyTime		= "time";			/**< int64， 时间戳*/
 static const char *kNIMBroadcastMsgKeyBody		= "body";			/**< string，内容 */
 /** @}*/ // 广播消息 Json Keys
 

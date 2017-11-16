@@ -81,6 +81,11 @@ int PhotoService::CheckForDownload(PhotoType type, const std::string& url)
 	if (CheckPhotoOK(photo_path)) // 如果头像已经存在且完好，就不下载
 		return 1;
 
+	std::string url_md5 = nim::Tool::GetMd5(url);
+	if (download_tasks_[type].find(url_md5) != download_tasks_[type].end())
+		return 2;
+
+	download_tasks_[type][url_md5] = "";
 	return 0;
 }
 
@@ -100,6 +105,7 @@ void PhotoService::DownloadUserPhoto(const nim::UserNameCard &info)
 	}
 
 	nim::NOS::DownloadMediaCallback cb = ToWeakCallback([this, info, photo_path](int res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
+		download_tasks_[kUser].erase(nim::Tool::GetMd5(info.GetIconUrl()));
 		if (res_code == nim::kNIMResSuccess)
 		{
 			std::wstring ws_file_path = nbase::UTF8ToUTF16(file_path);
@@ -132,6 +138,7 @@ void PhotoService::DownloadRobotPhoto(const nim::RobotInfo &info)
 	}
 
 	nim::NOS::DownloadMediaExCallback cb = ToWeakCallback([this, info, photo_path](nim::NIMResCode res_code, const nim::DownloadMediaResult& result) {
+		download_tasks_[kRobot].erase(nim::Tool::GetMd5(info.GetIcon()));
 		if (res_code == nim::kNIMResSuccess)
 		{
 			std::wstring ws_file_path = nbase::UTF8ToUTF16(result.file_path_);
@@ -167,6 +174,7 @@ void PhotoService::DownloadTeamIcon(const nim::TeamInfo &info)
 	}
 
 	nim::NOS::DownloadMediaCallback cb = ToWeakCallback([this, info, photo_path](int res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
+		download_tasks_[kTeam].erase(nim::Tool::GetMd5(info.GetIcon()));
 		if (res_code == nim::kNIMResSuccess)
 		{
 			std::wstring ws_file_path = nbase::UTF8ToUTF16(file_path);

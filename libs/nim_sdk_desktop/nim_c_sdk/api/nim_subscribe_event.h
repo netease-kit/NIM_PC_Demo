@@ -38,7 +38,7 @@ NIM_SDK_DLL_API void nim_subscribe_event_reg_push_event_cb(const char *json_exte
   */
 NIM_SDK_DLL_API void nim_subscribe_event_reg_batch_push_event_cb(const char *json_extension, nim_batch_push_event_cb_func cb, const void *user_data);
 
-/** @fn void nim_pushlish_event(const char *event_json, const char *json_extension, nim_publish_event_cb_func cb, const void *user_data)
+/** @fn void nim_publish_event(const char *event_json, const char *json_extension, nim_publish_event_cb_func cb, const void *user_data)
   * 发布事件
   * @param[in] event_json		事件json字符串
   * @param[in] json_extension	json扩展参数（备用，目前不需要）

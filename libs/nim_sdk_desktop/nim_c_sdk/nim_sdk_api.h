@@ -12,7 +12,7 @@
 //数据同步通知API
 #include "nim_data_sync.h"
 //音视频设备相关API
-#include "nim_devie.h"
+#include "nim_device.h"
 //音视频相关API
 #include "nim_vchat.h"
 //数据通道相关API(白板等)

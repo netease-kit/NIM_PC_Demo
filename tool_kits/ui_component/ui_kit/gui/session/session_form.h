@@ -198,9 +198,10 @@ private:
 	/**
 	* 切换某个会话盒子为显示显示状态
 	* @param[in] session_id 会话id
+	* @param[in] active 是否触发激活
 	* @return bool true 成功，false 失败
 	*/
-	bool ChangeToSessionBox(const std::wstring &session_id);
+	bool ChangeToSessionBox(const std::wstring &session_id, bool active = true);
 
 	/**
 	* 调整会话窗体的大小

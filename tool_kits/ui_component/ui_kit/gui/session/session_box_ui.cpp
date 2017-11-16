@@ -930,10 +930,13 @@ void SessionBox::OnActivate()
 			input_edit_->SetFocus();
 	}
 
+	UpdateTaskbarInfo();
+}
+void SessionBox::UpdateTaskbarInfo()
+{
 	SetTaskbarIcon(btn_header_->GetBkImage());
 	SetTaskbarTitle(label_title_->GetText());
 }
-
 void SessionBox::ShowCustomMsgForm()
 {
 	CustomMsgForm* f = WindowsManager::SingletonShow<CustomMsgForm>(CustomMsgForm::kClassName);

@@ -46,6 +46,12 @@ public:
 		, const std::string& app_install_dir
 		, const SDKConfig &config);
 
+	/** @fn const SDKConfig& GetSDKConfig()
+	* NIM SDK初始化
+	* @return SDKConfig 返回值SDKConfig的引用 const类型，不可试图修改
+	*/
+	static const SDKConfig& GetSDKConfig();
+
 	/** @fn void Cleanup(const std::string& json_extension = "")
 	* NIM SDK清理
 	* @param[in] json_extension json扩展参数（备用，目前不需要）

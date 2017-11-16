@@ -314,7 +314,7 @@ SessionBox* SessionForm::CreateSessionBox(const std::string &session_id, nim::NI
 	// 切换到新的会话盒子
 	// 如果merge_item处于隐藏状态，则无法顺利触发选择事件，所以这里直接切换到目标会话盒子
 	merge_item->Selected(true, false);
-	ChangeToSessionBox(id);
+	ChangeToSessionBox(id,false);
 	AdjustFormSize();
 
 	return session_box;
@@ -655,7 +655,7 @@ MergeItem* SessionForm::FindMergeItem(const std::wstring &session_id)
 	return NULL;
 }
 
-bool SessionForm::ChangeToSessionBox(const std::wstring &session_id)
+bool SessionForm::ChangeToSessionBox(const std::wstring &session_id, bool active/* = true*/)
 {
 	if (session_id.empty())
 		return false;
@@ -669,8 +669,16 @@ bool SessionForm::ChangeToSessionBox(const std::wstring &session_id)
 	active_session_box_ = box_item;
 
 	// 根据当前激活的会话盒子，更新任务栏的图标和标题
-	active_session_box_->OnActivate();
+	if (active)
+	{		
+		active_session_box_->OnActivate();
+	}
+	else
+	{
+		active_session_box_->UpdateTaskbarInfo();
+	}
 
+	
 	return true;
 }
 

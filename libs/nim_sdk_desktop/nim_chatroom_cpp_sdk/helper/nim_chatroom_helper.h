@@ -79,14 +79,16 @@ private:
 
 struct ChatRoomAnoymityEnterInfo
 {
-	std::list<std::string> address_;
-	std::string app_data_file_;
-	int sdk_log_level_;
-	std::string app_key_;
+	std::list<std::string> address_;	/**< 聊天室地址，地址通过应用服务器接口获取 */
+	std::string app_data_file_;			/**< 应用数据目录，匿名登录时必填,使用默认路径时只需传入单个目录名（不以反斜杠结尾)，使用自定义路径时需传入完整路径（以反斜杠结尾，并确保有正确的读写权限！） */
+	int sdk_log_level_;					/**< 匿名登录时选填,定义见NIMSDKLogLevel（选填，SDK默认的内置级别为kNIMSDKLogLevelPro） */
+	std::string app_key_;				/**< 应用appkey，匿名登录时必填 */
+	bool random_id_;					/**< 是否开启随机ID模式，默认为关闭(false)，建议默认值 */
 
 	ChatRoomAnoymityEnterInfo()
 	{
 		sdk_log_level_ = 5;
+		random_id_ = false;
 	}
 
 	/** @fn std::string ToJsonString() const
@@ -103,6 +105,7 @@ struct ChatRoomAnoymityEnterInfo
 		values[kNIMChatRoomEnterKeyAppDataPath] = app_data_file_;
 		values[kNIMChatRoomEnterKeyLogLevel] = sdk_log_level_;
 		values[kNIMChatRoomEnterKeyAppKey] = app_key_;
+		values[kNIMChatRoomEnterKeyRandomID] = random_id_ ? 1 : 0;
 		return fw.write(values);
 	}
 };
@@ -201,10 +204,16 @@ struct ChatRoomNotification
 				temp_muted_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTempMutedFlag].asUInt() == 1;
 			temp_mute_duration_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyMemberInTempMutedDuration].asInt64();
 		}
-		if (id_ == kNIMChatRoomNotificationIdQueueChanged)
+		if (id_ == kNIMChatRoomNotificationIdQueueChanged )
 		{
 			queue_change_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyQueueChange].asString();
 		}
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+		if ( id_ == kNIMChatRoomNotificationIdQueueBatchChanged)
+		{
+			queue_change_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyQueueChange].asString();
+		}
+#endif
 	}
 };
 
@@ -232,7 +241,45 @@ struct ChatRoomQueueChangedNotification
 		}
 	}
 };
+/** @brief  通知麦序队列中有批量变更，发生在元素提交者离开聊天室或者从聊天室异常掉线时*/
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+struct ChatRoomQueueBatchChangedNotification
+{
+	std::string		type_;		/**< 队列变更类型 OFFER, POLL, DROP*/
+	std::string		key_;		/**< 队列变更元素的Key*/
+	std::string		value_;		/**< 队列变更元素的Value*/
+	std::map<std::string, std::string> changed_values_;	/**< 队列变更元素的Value*/
 
+	/** @fn void ParseFromNotification(const ChatRoomNotification& notification)
+	* @brief 从聊天室通知中解析得到队列变更具体内容
+	* @param[in] notification 聊天室通知
+	* @return void
+	*/
+	void ParseFromNotification(const ChatRoomNotification& notification)
+	{
+		Json::Value values;
+		Json::Reader reader;
+		if (reader.parse(notification.queue_change_, values) && values.isObject())
+		{
+			type_ = values[kNIMChatRoomNotificationQueueBatchChangedKeyType].asString();
+			if (values.isMember(kNIMChatRoomNotificationQueueBatchChangedKeyKey))
+				key_ = values[kNIMChatRoomNotificationQueueBatchChangedKeyKey].asString();
+			if (values.isMember(kNIMChatRoomNotificationQueueBatchChangedKeyValue))
+				value_ = values[kNIMChatRoomNotificationQueueBatchChangedKeyValue].asString();
+			if (values.isMember(kNIMChatRoomNotificationQueueBatchChangedKeyObject))
+			{
+				auto members_name = values[kNIMChatRoomNotificationQueueBatchChangedKeyObject].getMemberNames();
+				auto it = members_name.begin();
+				while(it != members_name.end())
+				{
+					changed_values_.insert(std::make_pair(*it, values[kNIMChatRoomNotificationQueueBatchChangedKeyObject][*it].asString()));
+					it++;
+				}
+			}			
+		}
+	}
+};
+#endif
 /** @brief 聊天室消息属性设置 */
 struct ChatRoomMessageSetting
 {

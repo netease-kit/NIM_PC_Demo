@@ -452,16 +452,28 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 
 	return item;
 }
+void SessionBox::InvokeShowSpecifiedCountMsgs(unsigned count)
+{
+	QLOG_APP(L"query begin: id={0} type={1} farst_time={2}") << session_id_ << session_type_ << farst_msg_time_;
 
+	nim::MsgLog::QueryMsgAsync(session_id_, session_type_, count, farst_msg_time_,
+		nbase::Bind(&TalkCallback::OnQueryMsgCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
+}
 void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 {
 	int pos = msg_list_->GetScrollRange().cy - msg_list_->GetScrollPos().cy;
 
 	bool show_time = false;
+	bool show_fast_message = false;	
 	//msg倒序排列
 	size_t len = msg.size();
 	for (size_t i = 0; i < len; i++)
 	{
+		if (i == len - 1)
+		{
+			//如果最后一条是提示消息被拒收的消息，要把被拒收的消息加载出来
+			show_fast_message = (msg[i].type_ == nim::kNIMMessageTypeTips && msg[i].status_ == nim::kNIMMsgLogStatusRefused);
+		}
 		if (len == 1 || i == len - 1)
 		{
 			show_time = true;
@@ -477,10 +489,14 @@ void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 					break;
 				}
 			}
-			show_time = CheckIfShowTime(older_time, msg[i].timetag_);
+			if (msg[i].type_ == nim::kNIMMessageTypeTips && msg[i].status_ == nim::kNIMMsgLogStatusRefused)
+				show_time = false;
+			else
+				show_time = CheckIfShowTime(older_time, msg[i].timetag_);
 		}
-		ShowMsg(msg[i], true, show_time);
+		ShowMsg(msg[i], true, show_time);		
 	}
+
 	//加载更多历史消息
 	AddTip(STT_LOAD_MORE_MSG);
 	if (len < kMsgLogNumberShow)
@@ -529,6 +545,8 @@ void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 	{
 		farst_msg_time_ = msg[len - 1].timetag_;
 	}
+	if(show_fast_message)
+		InvokeShowSpecifiedCountMsgs(1);
 }
 
 void SessionBox::AddWritingMsg(const nim::IMMessage &msg)
@@ -612,6 +630,12 @@ void SessionBox::OnSendMsgCallback(const std::string &cid, int code, __int64 msg
 				item->SetMsgStatus(nim::kNIMMsgLogStatusSendFailed);
 			else if (code == nim::kNIMLocalResMsgNosUploadCancel)
 				item->SetMsgStatus(nim::kNIMMsgLogStatusSendCancel);
+			else if (code == nim::kNIMResInBlack)
+			{
+				MutiLanSupport* mls = MutiLanSupport::GetInstance();
+				SendRefusedTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MSG_SENT_BUT_REJECTED"));
+				item->SetMsgStatus(nim::kNIMMsgLogStatusRefused);
+			}
 			else
 			{
 				QLOG_WAR(L"unknown send msg callback code {0}") << code;
@@ -1053,7 +1077,24 @@ void SessionBox::SendTip(const std::wstring &tip)
 	AddSendingMsg(msg);
 	nim::Talk::SendMsg(msg.ToJsonString(true));
 }
-
+void SessionBox::SendRefusedTip(const std::wstring &tip)
+{
+	nim::IMMessage msg;
+	PackageMsg(msg);
+	msg.msg_setting_.server_history_saved_ = nim::BS_FALSE;//不存云端
+	msg.msg_setting_.roaming_ = nim::BS_FALSE;//不漫游
+	msg.msg_setting_.self_sync_ = nim::BS_FALSE;//不进行多端同步
+	msg.msg_setting_.need_push_ = nim::BS_FALSE;//不推送
+	msg.msg_setting_.push_need_badge_ = nim::BS_FALSE;//不计数
+	msg.msg_setting_.need_offline_ = nim::BS_FALSE;//不需要支持离线
+	msg.msg_setting_.routable_ = nim::BS_FALSE;//不需要抄送
+	msg.type_ = nim::kNIMMessageTypeTips;
+	msg.content_ = nbase::UTF16ToUTF8(tip);
+	msg.msg_setting_.need_push_ = nim::BS_FALSE;
+	msg.status_ = nim::kNIMMsgLogStatusSent;
+	AddSendingMsg(msg);
+	nim::Talk::SendMsg(msg.ToJsonString(true));
+}
 void SessionBox::AddSendingMsg(const nim::IMMessage &msg)
 {
 	writing_time_ = 0;

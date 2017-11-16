@@ -71,7 +71,7 @@ enum NIMEventSyncType
 	kNIMEventSyncTypeSelf			= 1, /**< 事件同步给自己其他端 */
 };
 
-/** @enum NIMEventSubscribeSyncEvent 订阅的事件的同步类型 */
+/** @enum NIMEventSubscribeSyncEventType 订阅的事件的同步类型 */
 enum NIMEventSubscribeSyncEventType
 {
 	kNIMEventSubscribeSyncTypeUnSync = 0, /**< 订阅后不同步最新事件 */

@@ -42,7 +42,7 @@ NIM_SDK_DLL_API char *nim_robot_query_all_robots_block(const char *json_extensio
   */
 NIM_SDK_DLL_API char *nim_robot_query_robot_by_accid_block(const char *accid, const char *json_extension);
 
-/** @fn void nim_robot_get_robots_async(__int64 timetag, const char *json_extension, nim_robot_query_cb_func cb, const void *user_data))
+/** @fn void nim_robot_get_robots_async(__int64 timetag, const char *json_extension, nim_robot_query_cb_func cb, const void *user_data)
   * 获取全部机器人信息
   * @param[in] timetag 时间戳
   * @param[in] json_extension json扩展参数（备用，目前不需要）

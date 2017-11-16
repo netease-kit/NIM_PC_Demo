@@ -162,6 +162,7 @@ enum NIMMsgLogStatus
 	kNIMMsgLogStatusReceipt		= 7,			/**< 对方已读发送的内容*/ 
 	kNIMMsgLogStatusDraft		= 8,			/**< 草稿*/
 	kNIMMsgLogStatusSendCancel	= 9,			/**< 发送取消*/
+	kNIMMsgLogStatusRefused = 10, /**< 被对方拒绝,比如被对方加入黑名单等等*/
 };
 
 /** @enum NIMNotificationId 通知类型 */

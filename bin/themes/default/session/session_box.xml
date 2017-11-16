@@ -78,7 +78,7 @@
 	                </HBox>
 	                <Control height="6"/>
 	                <Box height="auto">
-	                    <RichEdit class="prompt" name="input_edit" minheight="86" maxheight="300" multiline="true" vscrollbar="true" autovscroll="true" readonly="false" font="2" normaltextcolor="darkcolor" margin="2,2,2,2" padding="8,0,0,0" wantreturnmsg="true" rich="true"/>
+	                    <MenuedRichEdit class="prompt" name="input_edit" minheight="86" maxheight="300" multiline="true" vscrollbar="true" autovscroll="true" readonly="false" font="2" defmenu="MID_COPY,MID_CUT,MID_PASTE" normaltextcolor="darkcolor" margin="2,2,2,2" padding="8,0,0,0" wantreturnmsg="true" rich="true"/>
 						<Label name="input_edit_mute_tip" valign="center" halign="center" textid="STRID_SESSION_MUTE" visible="false" normaltextcolor="gray"/>
 	                </Box>
 	                <HBox name="hbox_send" height="30" margin="10,10,0,0">
