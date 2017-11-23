@@ -357,7 +357,7 @@ static void QueuePollAsync(const int64_t room_id
 static void QueueListAsync(const int64_t room_id
 	, const QueueListCallback& callback
 	, const std::string &json_extension = "");
-
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn static void QueueHeaderAsync(const int64_t room_id, const QueueHeaderCallback& callback, const std::string &json_extension = "");
   * 查看麦序头元素
   * @param[in] room_id				聊天室ID
@@ -368,7 +368,7 @@ static void QueueListAsync(const int64_t room_id
 static void QueueHeaderAsync(const int64_t room_id
 	, const QueueHeaderCallback& callback
 	, const std::string &json_extension = "");
-
+#endif
 /** @fn static void QueueDropAsync(const int64_t room_id, const QueueDropCallback& callback, const std::string &json_extension = "");
   * (管理员权限)删除麦序队列
   * @param[in] room_id				聊天室ID

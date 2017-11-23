@@ -189,14 +189,14 @@ void VChat::Cleanup()
 {
 	NIM_SDK_GET_FUNC(nim_vchat_cleanup)("");
 }
-void VChat::NetDetect(NetDetectCallback cb)
+uint64_t VChat::NetDetect(NetDetectCallback cb)
 {
 	NetDetectCallback* cb_pointer = nullptr;
 	if (cb)
 	{
 		cb_pointer = new NetDetectCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_vchat_net_detect)("", CallbackNetDetect, cb_pointer);
+	return NIM_SDK_GET_FUNC(nim_vchat_net_detect)("", CallbackNetDetect, cb_pointer);
 }
 
 //device ---------------------------

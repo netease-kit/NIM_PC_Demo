@@ -156,6 +156,12 @@ enum NIMVideoChatSessionStatus{
     kNIMVideoChatSessionStatusLeaved           = 1,	/**< 成员退出 */
 };
 
+/** @enum NIMVideoChatUserLeftType 成员退出类型 */
+enum NIMVideoChatUserLeftType{
+	kNIMVChatUserLeftTimeout	= -1,		/**< 成员超时掉线 */
+	kNIMVChatUserLeftNormal		= 0,		/**< 成员离开 */
+};
+
 /** @enum NIMVideoChatSessionNetStat 音视频通话网络变化类型 */
 enum NIMVideoChatSessionNetStat{
     kNIMVideoChatSessionNetStatVeryGood		= 0,	/**< 网络状态很好 */
@@ -196,12 +202,25 @@ enum NIMNetDetectType
 	kNIMNetDetectTypeVideo		= 1,		/**< 视频探测 */
 };
 
+/** @enum NIMNetDetectVideoQuality 视频探测类型  */
+enum NIMNetDetectVideoQuality
+{
+	kNIMNDVideoQualityDefault	= 0, 		/**< 480P */
+	kNIMNDVideoQualityLow		= 1,		/**< 176*144 */
+	kNIMNDVideoQualityMedium	= 2, 		/**< 352*288 */
+	kNIMNDVideoQualityHigh		= 3, 		/**< 480*320 */
+	kNIMNDVideoQuality480p		= 4,		/**< 640*480 */
+	kNIMNDVideoQuality720p		= 5,		/**< 1280*720 */
+	kNIMNDVideoQuality540p		= 6,		/**< 960*540 */
+};
+
 /** @name 网络探测 内容Json key for nim_vchat_net_detect
   * @{
   */
 static const char *kNIMNetDetectAppKey		= "app_key";		/**< string 用户的app key */
 static const char *kNIMNetDetectTimeLimit	= "time";			/**< int32 毫秒级的探测时长限制 */
 static const char *kNIMNetDetectType		= "type";			/**< int32 探测类型NIMNetDetectType */
+static const char *kNIMNetDetectQualityType = "quality_type";	/**< int32 kNIMNetDetectTypeVideo时有效，默认为0，视频探测类型NIMNetDetectVideoQuality */
 /** @}*/ //网络探测 内容Json key
 
 /** @name 网络探测回调 内容Json key for nim_vchat_opt_cb_func
@@ -283,11 +302,11 @@ static const char *kNIMVChatMp4AudioType	= "mp4_audio";			/**< int mp4录制时�
   * 			kNIMVideoChatSessionTypeStartRes,			//创建通话结果 code=200成功，json 返回kNIMVChatSessionId \n
   * 			kNIMVideoChatSessionTypeInviteNotify,		//通话邀请 code无效,json 返回kNIMVChatUid发起者，kNIMVChatType对应NIMVideoChatMode, kNIMVChatTime, kNIMVChatCustomInfo \n
   * 			kNIMVideoChatSessionTypeCalleeAckRes,		//确认通话，接受拒绝结果 json 无效 code: 200:成功 9103 : 已经在其他端接听 / 拒绝过这通电话 \n
-  * 			kNIMVideoChatSessionTypeCalleeAckNotify,	//确认通话，接受拒绝通知 code=无效，json 返回kNIMVChatUid发起者，kNIMVChatType对应NIMVideoChatMode, kNIMVChatAccept \n
+  * 			kNIMVideoChatSessionTypeCalleeAckNotify,	//确认通话，接受拒绝通知 code=无效，json 返回kNIMVChatUid对方，kNIMVChatType对应NIMVideoChatMode, kNIMVChatAccept \n
   * 			kNIMVideoChatSessionTypeControlRes,			//NIMVChatControlType 结果  code=200成功，json 返回kNIMVChatType对应NIMVChatControlType \n
-  * 			kNIMVideoChatSessionTypeControlNotify,		//NIMVChatControlType 通知	code=无效，json 返回kNIMVChatUid发起者，kNIMVChatType对应NIMVChatControlType \n
+  * 			kNIMVideoChatSessionTypeControlNotify,		//NIMVChatControlType 通知	code=无效，json 返回kNIMVChatUid对方，kNIMVChatType对应NIMVChatControlType \n
   * 			kNIMVideoChatSessionTypeConnect,			//通话中链接状态通知 code对应NIMVChatConnectErrorCode， 非200均失败并底层结束,如果成功json中带kNIMVChatVideoRecordFile和kNIMVChatRecordFile \n
-  * 			kNIMVideoChatSessionTypePeopleStatus,		//通话中成员状态 code对应NIMVideoChatSessionStatus, json返回kNIMVChatUid \n
+  * 			kNIMVideoChatSessionTypePeopleStatus,		//通话中成员状态 code对应NIMVideoChatSessionStatus, json返回kNIMVChatUid，如果是离开带kNIMVChatStatus对应NIMVideoChatUserLeftType \n
   * 			kNIMVideoChatSessionTypeNetStatus,			//通话中网络状态 code对应NIMVideoChatSessionNetStat, json返回kNIMVChatUid \n
   * 			kNIMVideoChatSessionTypeHangupRes,			//通话主动结果 code=200成功，json无效 \n
   * 			kNIMVideoChatSessionTypeHangupNotify,		//通话被挂断通知 code无效，json无效 \n

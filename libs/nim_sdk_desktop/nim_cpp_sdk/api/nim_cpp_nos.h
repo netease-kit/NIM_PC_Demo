@@ -164,6 +164,12 @@ public:
 	*				其他:参见HTTP协议或CURL错误码
 	*/
 	static bool StopDownloadResourceEx(const std::string& task_id, const std::string& json_extension = "");
+
+	/** @fn void UnregNosCb()
+	* 反注册Nos提供的所有回调
+	* @return void 无返回值
+	*/
+	static void UnregNosCb();
 };
 
 } 

@@ -233,6 +233,14 @@ void VideoManager::OnVChatEvent(nim::NIMVideoChatSessionType type, uint64_t chan
 			}
 			else if (code == nim::kNIMVideoChatSessionStatusLeaved)
 			{
+				Json::Value valus;
+				Json::Reader reader;
+				if (reader.parse(json, valus))
+				{
+					std::string uid = valus[nim::kNIMVChatUid].asString();
+					int32_t leave_type = valus[nim::kNIMVChatStatus].asInt();
+					QLOG_APP(L"vchat people leave uid: {0}, leave_type {1}") << uid << leave_type;
+				}
 				window->OnComeOut(0);
 			}
 		}

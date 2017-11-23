@@ -89,7 +89,7 @@ public:
 	typedef std::function<void(const std::string& session_id, int channel_type, bool accept, const std::string& uid)> AckNotifyCallback;
 	typedef std::function<void(const std::string& session_id, int channel_type, bool accept)> SyncAckNotifyCallback;
 	typedef std::function<void(const std::string& session_id, int channel_type, int code, const std::string& json)> ConnectNotifyCallback;
-	typedef std::function<void(const std::string& session_id, int channel_type, const std::string& uid, int code)> MemberNotifyCallback;
+	typedef std::function<void(const std::string& session_id, int channel_type, const std::string& uid, int code, int leave_type)> MemberNotifyCallback;
 	typedef std::function<void(nim::NIMResCode res_code, const std::string& session_id)> HangupCallback;
 	typedef std::function<void(const std::string& session_id, const std::string& uid)> HangupNotifyCallback;
 	typedef std::function<void(nim::NIMResCode res_code, const std::string& session_id, const std::string& info)> ControlCallback;

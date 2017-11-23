@@ -146,76 +146,46 @@ static void CallbackLinkCondition(int64_t room_id, int condition, const char *js
 	}
 }
 
-static ChatRoom::EnterCallback* g_cb_enter_ = nullptr;
+static ChatRoom::EnterCallback g_cb_enter_ = nullptr;
 void ChatRoom::RegEnterCb(const EnterCallback& cb, const std::string& json_extension/* = ""*/)
 {
-	if (g_cb_enter_)
-	{
-		delete g_cb_enter_;
-		g_cb_enter_ = nullptr;
-	}
-	g_cb_enter_ = new EnterCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_enter_cb)(json_extension.c_str(), &CallbackEnter, g_cb_enter_);
+	g_cb_enter_ = cb;
+	return NIM_SDK_GET_FUNC(nim_chatroom_reg_enter_cb)(json_extension.c_str(), &CallbackEnter, &g_cb_enter_);
 }
 
-static ChatRoom::ExitCallback* g_cb_exit_ = nullptr;
+static ChatRoom::ExitCallback g_cb_exit_ = nullptr;
 void ChatRoom::RegExitCb(const ExitCallback& cb, const std::string& json_extension/* = ""*/)
 {
-	if (g_cb_exit_)
-	{
-		delete g_cb_exit_;
-		g_cb_exit_ = nullptr;
-	}
-	g_cb_exit_ = new ExitCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_exit_cb)(json_extension.c_str(), &CallbackExit, g_cb_exit_);
+	g_cb_exit_ = cb;
+	return NIM_SDK_GET_FUNC(nim_chatroom_reg_exit_cb)(json_extension.c_str(), &CallbackExit, &g_cb_exit_);
 }
 
-static ChatRoom::SendMsgAckCallback* g_cb_send_msg_ack_ = nullptr;
+static ChatRoom::SendMsgAckCallback g_cb_send_msg_ack_ = nullptr;
 void ChatRoom::RegSendMsgAckCb(const SendMsgAckCallback& cb, const std::string& json_extension/* = ""*/)
 {
-	if (g_cb_send_msg_ack_)
-	{
-		delete g_cb_send_msg_ack_;
-		g_cb_send_msg_ack_ = nullptr;
-	}
-	g_cb_send_msg_ack_ = new SendMsgAckCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_send_msg_ack_cb)(json_extension.c_str(), &CallbackSendMsgAck, g_cb_send_msg_ack_);
+	g_cb_send_msg_ack_ = cb;
+	return NIM_SDK_GET_FUNC(nim_chatroom_reg_send_msg_ack_cb)(json_extension.c_str(), &CallbackSendMsgAck, &g_cb_send_msg_ack_);
 }
 
-static ChatRoom::ReceiveMsgCallback* g_cb_receive_msg_ = nullptr;
+static ChatRoom::ReceiveMsgCallback g_cb_receive_msg_ = nullptr;
 void ChatRoom::RegReceiveMsgCb(const ReceiveMsgCallback& cb, const std::string& json_extension/* = ""*/)
 {
-	if (g_cb_receive_msg_)
-	{
-		delete g_cb_receive_msg_;
-		g_cb_receive_msg_ = nullptr;
-	}
-	g_cb_receive_msg_ = new ReceiveMsgCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_receive_msg_cb)(json_extension.c_str(), &CallbackReceiveMsg, g_cb_receive_msg_);
+	g_cb_receive_msg_ = cb;
+	return NIM_SDK_GET_FUNC(nim_chatroom_reg_receive_msg_cb)(json_extension.c_str(), &CallbackReceiveMsg, &g_cb_receive_msg_);
 }
 
-static ChatRoom::NotificationCallback* g_cb_notification_ = nullptr;
+static ChatRoom::NotificationCallback g_cb_notification_ = nullptr;
 void ChatRoom::RegNotificationCb(const NotificationCallback& cb, const std::string& json_extension/* = ""*/)
 {
-	if (g_cb_notification_)
-	{
-		delete g_cb_notification_;
-		g_cb_notification_ = nullptr;
-	}
-	g_cb_notification_ = new NotificationCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_receive_notification_cb)(json_extension.c_str(), &CallbackReceiveNotification, g_cb_notification_);
+	g_cb_notification_ = cb;
+	return NIM_SDK_GET_FUNC(nim_chatroom_reg_receive_notification_cb)(json_extension.c_str(), &CallbackReceiveNotification, &g_cb_notification_);
 }
 
-static ChatRoom::LinkConditionCallback* g_cb_link_condition_ = nullptr;
+static ChatRoom::LinkConditionCallback g_cb_link_condition_ = nullptr;
 void ChatRoom::RegLinkConditionCb(const LinkConditionCallback& cb, const std::string& json_extension/* = ""*/)
 {
-	if (g_cb_link_condition_)
-	{
-		delete g_cb_link_condition_;
-		g_cb_link_condition_ = nullptr;
-	}
-	g_cb_link_condition_ = new LinkConditionCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_link_condition_cb)(json_extension.c_str(), &CallbackLinkCondition, g_cb_link_condition_);
+	g_cb_link_condition_ = cb;
+	return NIM_SDK_GET_FUNC(nim_chatroom_reg_link_condition_cb)(json_extension.c_str(), &CallbackLinkCondition, &g_cb_link_condition_);
 }
 
 bool ChatRoom::Init(const std::string& app_install_dir, const std::string& json_extension/* = ""*/)
@@ -676,7 +646,7 @@ static void CallbackQueueList(int64_t room_id, int error_code, const char *resul
 		}
 	}
 }
-
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 static void CallbackQueueHeader(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
 	if (user_data)
@@ -698,7 +668,7 @@ static void CallbackQueueHeader(int64_t room_id, int error_code, const char *res
 		}
 	}
 }
-
+#endif
 void ChatRoom::QueuePollAsync(const int64_t room_id
 	, const std::string& element_key
 	, const QueuePollCallback& callback
@@ -728,7 +698,7 @@ void ChatRoom::QueueListAsync(const int64_t room_id
 		&CallbackQueueList,
 		cb_pointer);
 }
-
+#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 void ChatRoom::QueueHeaderAsync(const int64_t room_id
 	, const QueueHeaderCallback& callback
 	, const std::string &json_extension/* = ""*/)
@@ -742,6 +712,7 @@ void ChatRoom::QueueHeaderAsync(const int64_t room_id
 		&CallbackQueueHeader,
 		cb_pointer);
 }
+#endif
 
 void ChatRoom::QueueDropAsync(const int64_t room_id
 	, const QueueDropCallback& callback
@@ -759,41 +730,12 @@ void ChatRoom::QueueDropAsync(const int64_t room_id
 
 void ChatRoom::UnregChatroomCb()
 {
-	if (g_cb_enter_)
-	{
-		delete g_cb_enter_;
-		g_cb_enter_ = nullptr;
-	}
-
-	if (g_cb_exit_)
-	{
-		delete g_cb_exit_;
-		g_cb_exit_ = nullptr;
-	}
-
-	if (g_cb_send_msg_ack_)
-	{
-		delete g_cb_send_msg_ack_;
-		g_cb_send_msg_ack_ = nullptr;
-	}
-
-	if (g_cb_receive_msg_)
-	{
-		delete g_cb_receive_msg_;
-		g_cb_receive_msg_ = nullptr;
-	}
-
-	if (g_cb_notification_)
-	{
-		delete g_cb_notification_;
-		g_cb_notification_ = nullptr;
-	}
-
-	if (g_cb_link_condition_)
-	{
-		delete g_cb_link_condition_;
-		g_cb_link_condition_ = nullptr;
-	}
+	g_cb_enter_ = nullptr;
+	g_cb_exit_ = nullptr;
+	g_cb_send_msg_ack_ = nullptr;
+	g_cb_receive_msg_ = nullptr;
+	g_cb_notification_ = nullptr;
+	g_cb_link_condition_ = nullptr;
 }
 
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY

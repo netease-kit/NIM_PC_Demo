@@ -184,6 +184,12 @@ NIM_SDK_DLL_API bool nim_vchat_get_audio_input_auto_volumn();
 */
 NIM_SDK_DLL_API void nim_vchat_set_audio_process_info(bool aec, bool ns, bool vad);
 
+/** @fn void nim_vchat_set_audio_howling_suppression(bool work)
+* NIM VCHAT DEVICE 设置底层针对麦克风采集数据处理开关接口，默认关闭啸叫检测（此接口是全局接口，在sdk初始化后设置一直有效）
+* @param[in] work true 标识打开啸叫检测功能，false 标识关闭
+* @return void 无返回值
+*/
+NIM_SDK_DLL_API void nim_vchat_set_audio_howling_suppression(bool work);
 
 #endif
 

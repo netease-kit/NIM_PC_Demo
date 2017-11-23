@@ -64,10 +64,10 @@ public:
 	*/
 	static void Cleanup();
 
-	/** @fn void NetDetect(NetDetectCallback cb)
+	/** @fn uint64_t NetDetect(NetDetectCallback cb)
 	* 音视频网络探测
 	* @param[in] cb 操作结果的回调函数
-	* @return void 无返回值
+	* @return uint64_t 探测任务id
 	* @note 错误码	200:成功
 	*				0:流程错误
 	*				400:非法请求格式
@@ -78,14 +78,15 @@ public:
 	*				20002:ip错误
 	*				20003:sock错误
 	*/
-	static void NetDetect(NetDetectCallback cb);
+	static uint64_t NetDetect(NetDetectCallback cb);
 
-	/** @fn void NetDetectEx(int32_t ms_limit, nim::NIMNetDetectType type, NetDetectCallback cb)
+	/** @fn uint64_t NetDetectEx(int32_t ms_limit, nim::NIMNetDetectType type, nim::NIMNetDetectVideoQuality quality_type, NetDetectCallback cb)
 	* 音视频网络探测扩展
 	* @param[in] ms_limit 探测的时间限制，大于零有效
 	* @param[in] type 探测类型
+	* @param[in] quality_type 视频探测类型
 	* @param[in] cb 操作结果的回调函数
-	* @return void 无返回值
+	* @return uint64_t 探测任务id
 	* @note 错误码	200:成功
 	*				0:流程错误
 	*				400:非法请求格式
@@ -96,7 +97,7 @@ public:
 	*				20002:ip错误
 	*				20003:sock错误
 	*/
-	static void NetDetectEx(int32_t ms_limit, nim::NIMNetDetectType type, NetDetectCallback cb);
+	static uint64_t NetDetectEx(int32_t ms_limit, nim::NIMNetDetectType type, nim::NIMNetDetectVideoQuality quality_type, NetDetectCallback cb);
 
 	/** @fn static void EnumDeviceDevpath(nim::NIMDeviceType type, nim_vchat_enum_device_devpath_sync_cb_func cb)
 	* NIM VCHAT DEVICE 遍历设备
@@ -192,6 +193,13 @@ public:
 	* @return void 无返回值
 	*/
 	static void SetAudioProcess(bool aec, bool ns, bool vad);
+
+	/** @fn void SetAudioHowlingSuppression(bool work)
+	* NIM VCHAT DEVICE 设置底层针对麦克风采集数据处理开关接口，默认关闭啸叫检测（此接口是全局接口，在sdk初始化后设置一直有效）
+	* @param[in] work true 标识打开啸叫检测功能，false 标识关闭
+	* @return void 无返回值
+	*/
+	static void SetAudioHowlingSuppression(bool work);
 
 	/** @fn static void SetCbFunc(nim_vchat_cb_func cb)
 	* NIM VCHAT 设置通话回调或者服务器通知

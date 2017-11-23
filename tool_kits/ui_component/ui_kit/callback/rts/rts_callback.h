@@ -55,9 +55,10 @@ public:
 	* @param[in] channel_type 通道类型
 	* @param[in] uid 对方帐号
 	* @param[in] code 成员变化类型见NIMRtsMemberStatus
+	* @param[in] leave_type 成员离开类型见NIMRtsMemberLeftType
 	* @return void 无返回值
 	*/
-	static void MemberNotifyCallback(const std::string& session_id, int channel_type, const std::string& uid, int code);
+	static void MemberNotifyCallback(const std::string& session_id, int channel_type, const std::string& uid, int code, int leave_type);
 
 	/**
 	* 挂断会话通知回调

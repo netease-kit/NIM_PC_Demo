@@ -28,6 +28,11 @@ enum NIMRtsMemberStatus
 	kNIMRtsMemberStatusJoined           = 0,	/**< 成员进入 */
 	kNIMRtsMemberStatusLeaved           = 1,	/**< 成员退出 */
 };
+/** @enum NIMRtsMemberLeftType 成员退出类型 */
+enum NIMRtsMemberLeftType{
+	kNIMRtsMemberLeftTimeout	= -1,		/**< 成员超时掉线 */
+	kNIMRtsMemberLeftNormal		= 0,		/**< 成员离开 */
+};
 
 /** @enum NIMRtsVideoChatMode 音视频通话类型 */
 enum NIMRtsVideoChatMode
@@ -114,6 +119,14 @@ static const char *kNIMRtsVideoRecordFile	= "video_record_file";	/**< string 录
   */
 static const char *kNIMRtsClientType	= "client_type";	/**< int 客户端类型NIMClientType，见nim_client_def.h */
 /** @}*/ //json extension params for nim_rts_sync_ack_notify_cb_func
+
+/** @name json extension params for nim_rts_member_change_cb_func
+  * for example: 
+  * {"client_type": 1 }
+  * @{
+  */
+static const char *kNIMRtsLeaveType		= "leave_type";		/**< int 客户端类型NIMRtsMemberLeftType，见nim_client_def.h */
+/** @}*/ //json extension params for nim_rts_member_change_cb_func
 	
 /** @typedef void (*nim_rts_start_cb_func)(int code, const char *session_id, int channel_type, const char *uid, const char *json_extension, const void *user_data)
   * NIM RTS 创建通道返回结果
@@ -210,7 +223,7 @@ typedef void (*nim_rts_connect_notify_cb_func)(const char *session_id, int chann
   * @param[out] channel_type 通道类型
   * @param[out] type 成员变化类型见NIMRtsMemberStatus
   * @param[out] uid 对方帐号
-  * @param[out] json_extension 无效的扩展字段
+  * @param[out] json_extension 如果是成员离开，返回kNIMRtsLeaveType
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */ 

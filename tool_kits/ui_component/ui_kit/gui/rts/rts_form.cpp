@@ -280,8 +280,11 @@ void RtsForm::OnConnectNotifyCallback(const std::string& session_id, int channel
 		{
 			if (code == nim::kNIMRtsConnectStatusSuccess)
 			{
-				ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_OTHER_CONNECT_OK"));
-				talking_ = true;
+				if (!talking_)
+				{
+					ShowTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_OTHER_CONNECT_OK"));
+					talking_ = true;
+				}
 			}
 			else
 			{

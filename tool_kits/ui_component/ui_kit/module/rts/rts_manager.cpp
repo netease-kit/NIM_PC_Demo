@@ -94,8 +94,9 @@ void RtsManager::OnConnectNotifyCallback(const std::string& session_id, int chan
 	}
 }
 
-void RtsManager::OnMemberNotifyCallback(const std::string& session_id, int channel_type, const std::string& uid, int code)
+void RtsManager::OnMemberNotifyCallback(const std::string& session_id, int channel_type, const std::string& uid, int code, int leave_type)
 {
+	QLOG_ERR(L"OnMemberNotifyCallback {0} channel type {1} uid {2} change type {3} leave type {4}") << session_id << channel_type << uid << code << leave_type;
 	RtsForm *rts_form = (RtsForm*)GetRtsFromBySessionId(session_id);
 	if (rts_form)
 	{

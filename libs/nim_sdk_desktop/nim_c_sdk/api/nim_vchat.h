@@ -90,7 +90,7 @@ extern"C"
 	NIM_SDK_DLL_API bool nim_vchat_get_viewer_mode();
 
 	/** @fn void nim_vchat_set_audio_mute(bool muted)
-	* NIM VCHAT 设置音频静音，全局有效（重新发起时也生效）
+	* NIM VCHAT 设置音频静音，全局有效（重新发起时也生效）；此开关打开音频只发静音包
 	* @param[in] muted true 静音，false 不静音
 	* @return void 无返回值
 	*/

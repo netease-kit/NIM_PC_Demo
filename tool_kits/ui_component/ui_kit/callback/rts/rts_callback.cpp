@@ -20,9 +20,9 @@ void RtsCallback::ConnectNotifyCallback(const std::string& session_id, int chann
 {
 	RtsManager::GetInstance()->OnConnectNotifyCallback(session_id, channel_type, code, json);
 }
-void RtsCallback::MemberNotifyCallback(const std::string& session_id, int channel_type, const std::string& uid, int code)
+void RtsCallback::MemberNotifyCallback(const std::string& session_id, int channel_type, const std::string& uid, int code, int leave_type)
 {
-	RtsManager::GetInstance()->OnMemberNotifyCallback(session_id, channel_type, uid, code);
+	RtsManager::GetInstance()->OnMemberNotifyCallback(session_id, channel_type, uid, code, leave_type);
 }
 void RtsCallback::HangupNotifyCallback(const std::string& session_id, const std::string& uid)
 {

@@ -65,7 +65,7 @@ Json::Value GetJsonValueFromJsonString(const std::string& json_string)
 {
 	Json::Value value;
 	Json::Reader reader;
-	if (!reader.parse(json_string, value) || !value.isObject())
+	if (!reader.parse(json_string, value) /*|| !value.isArray()*/)
 		assert(0);
 
 	return value;
