@@ -52,8 +52,16 @@ NIM_SDK_DLL_API	void nim_global_set_proxy(enum NIMProxyType type, const char *ho
 * @return void 无返回值
 */
 NIM_SDK_DLL_API	void nim_global_detect_proxy(enum NIMProxyType type, const char *host, int port, const char *user, const char *password, nim_global_detect_proxy_cb_func cb, const void *user_data);
-#endif
 
+/** @fn void nim_global_reg_exception_report_cb(const char *json_extension, nim_sdk_exception_cb_func cb, const void *user_data)
+* 注册输出系统环境异常的回调
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] cb nim_sdk_exception_cb_func回调函数定义见nim_global_def.h
+* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+*/
+NIM_SDK_DLL_API void nim_global_reg_exception_report_cb(const char *json_extension, nim_sdk_exception_cb_func cb, const void *user_data);
+#else
 /** @fn void nim_global_reg_sdk_log_cb(const char *json_extension, nim_sdk_log_cb_func cb, const void *user_data)
 * (PC SDK该接口无效)注册输出sdk log回调
 * @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -62,6 +70,7 @@ NIM_SDK_DLL_API	void nim_global_detect_proxy(enum NIMProxyType type, const char 
 * @return void 无返回值
 */
 NIM_SDK_DLL_API void nim_global_reg_sdk_log_cb(const char *json_extension, nim_sdk_log_cb_func cb, const void *user_data);
+#endif
 
 #ifdef __cplusplus
 };

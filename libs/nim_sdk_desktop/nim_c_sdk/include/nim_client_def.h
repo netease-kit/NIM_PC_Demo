@@ -126,6 +126,12 @@ static const char *kNIMLoginRetryMaxTimes		= "login_retry_max_times";	/**< int�
 static const char *kNIMUseHttps					= "use_https";				/**< bool，是否启用HTTPS协议，默认为false */
 static const char *kNIMTeamNotificationUnreadCount	= "team_notification_unread_count";	/**< bool，群通知是否计入未读数，默认为false */
 static const char *kNIMAnimatedImageThumbnailEnabled	= "animated_image_thumbnail_enabled";	/**< bool，开启对动图缩略图的支持，默认为false，开启后获取的缩略图为原格式，关闭后获取的缩略图为第一帧静态图 */
+static const char *kNIMDownloadAddressTemplate 	= "download_address_template";	/**< string, 下载地址拼接模板，用于拼接最终得到的下载地址 */
+static const char *kNIMAccelerateHost 			= "accelerate_host";		/**< string, 需要被加速主机名*/
+static const char *kNIMAccelerateAddressTemplate= "accelerate_address_template";	/**< string, 加速地址拼接模板，用于获得加速后的下载地址*/
+static const char *kNIMNtserverAddress 			= "ntserver_address";	/**< string,  部分 IM 错误信息统计上报地址 */
+static const char *kNIMUploadStatisticsData 	= "is_upload_statistics_data";		/**< bool, 错误信息统计是否上报,私有化如果不上传相应数据，此项配置应为false*/
+
 
 static const char *kNIMPrivateServerSetting		= "private_server_setting";	/**< json object, 私有服务器配置（一旦设置了私有服务器，则全部连私有服务器，必须确保配置正确！） */
 static const char *kNIMLbsAddress				= "lbs";					/**< string, （必填，lbs地址） */

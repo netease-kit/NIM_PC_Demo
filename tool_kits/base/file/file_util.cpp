@@ -63,10 +63,15 @@ bool FilePathExtension(const PathString &filepath_in, PathString &extension_out)
 {
 	if (filepath_in.size() == 0)
 		return false;
-	size_t pos = filepath_in.rfind(kFilePathExtensionSeparator);
+	PathString temp_path(filepath_in);
+	nbase::StringReplaceAll(PathString().append(1,kFilePathSeparators[0]), PathString().append(1,kFilePathSeparators[1]), temp_path);
+	size_t pos = temp_path.rfind(kFilePathSeparators[1]);
+	if(pos != PathString::npos)
+		temp_path = temp_path.substr(pos);
+	pos = temp_path.rfind(kFilePathExtensionSeparator);
 	if (pos == PathString::npos)
 		return false;
-	extension_out = filepath_in.substr(pos, PathString::npos);
+	extension_out = temp_path.substr(pos, PathString::npos);
 	return true;
 }
 

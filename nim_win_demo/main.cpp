@@ -154,7 +154,25 @@ static void InitNim()
 				nbase::StringToInt((std::string)pchar, &need);
 				config.animated_image_thumbnail_enabled_ = need > 0;
 			}
+			if (auto pchar = root->Attribute("kNIMDownloadAddressTemplate")) {
+				config.nos_download_address_list_.push_back(pchar);
+			}
+			if (auto pchar = root->Attribute("kNIMAccelerateHost")) {
+				config.nos_accelerate_host_list_.push_back(pchar);
+			}
+			if (auto pchar = root->Attribute("kNIMAccelerateAddressTemplate")) {
+				config.nos_accelerate_address_list_.push_back(pchar);
+			}
+			if (auto pchar = root->Attribute("kNIMNtserverAddress")) {
+				config.ntserver_address_list_.push_back(pchar);
+			}
+			if (auto pchar = root->Attribute("kNIMUploadStatisticsData")) {
+				int need = 0;
+				nbase::StringToInt((std::string)pchar, &need);
+				config.upload_statistics_data_ = (need != 0);
+			}
 			config.use_private_server_ = use_private_server;
+			
 		}
 	}
 
@@ -166,8 +184,18 @@ static void InitNim()
 	std::string app_key = GetConfigValueAppKey();
 	bool ret = nim::Client::Init(app_key, "Netease", "", config); // 载入云信sdk，初始化安装目录和用户目录
 	assert(ret);
-	ret = nim_chatroom::ChatRoom::Init("");
-	assert(ret);
+	//初始化聊天室
+	{
+		Json::Value extension;
+		nim_chatroom::ChatRoomPlatformConfig chatroom_platform_config;
+		for (auto it : config.ntserver_address_list_)
+			chatroom_platform_config.AddNTServerAddress(it);
+
+		chatroom_platform_config.EnableUploadStatisticsData(config.upload_statistics_data_);
+		chatroom_platform_config.ToJsonObject(extension[nim_chatroom::ChatRoomPlatformConfig::kPlatformConfigToken]);
+		ret = nim_chatroom::ChatRoom::Init("", nim::GetJsonStringWithNoStyled(extension));
+		assert(ret);
+	}	
 	// 初始化云信音视频
 	ret = nim::VChat::Init("");
 	assert(ret);

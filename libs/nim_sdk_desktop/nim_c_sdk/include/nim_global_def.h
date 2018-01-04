@@ -39,7 +39,13 @@ enum NIMSDKLogLevel
 	kNIMSDKLogLevelPro = 6,	/**< SDK调试过程级别Log，更加详细，更有利于开发调试*/
 };
 
-/** @typedef void (*nim_sdk_log_cb_func)(const char *log)
+/** @enum NIMSDKException 异常 */
+enum NIMSDKException
+{
+	kNIMSDKExceptionSpaceEmpty = 1,	/**< 当前数据目录所在盘符空间紧张或用完, log: {"free_space" : %lf, "message":""}, free_space单位M*/
+};
+
+/** @typedef void (*nim_sdk_log_cb_func)(int log_level, const char *log, const void *user_data)
 * 输出sdk log回调
 * @param[out] log_level log级别，见NIMSDKLogLevel
 * @param[out] log log内容
@@ -47,6 +53,15 @@ enum NIMSDKLogLevel
 * @return void 无返回值
 */
 typedef void(*nim_sdk_log_cb_func)(int log_level, const char *log, const void *user_data);
+
+/** @typedef void (*nim_sdk_exception_cb_func)(enum NIMSDKException exception, const char *log, const void *user_data)
+* 输出当前环境异常回调
+* @param[out] exception 见NIMSDKException
+* @param[out] log 描述
+* @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+* @return void 无返回值
+*/
+typedef void(*nim_sdk_exception_cb_func)(enum NIMSDKException exception, const char *log, const void *user_data);
 
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @enum NIMProxyDetectStep 代理测试步骤 */

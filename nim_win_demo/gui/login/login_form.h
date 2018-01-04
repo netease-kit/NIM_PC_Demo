@@ -44,7 +44,7 @@ public:
 	*/
 	virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
-	void SetLoginPanelVisible();
+	void SetAnonymousChatroomVisible(bool visible);
 	void SetLoginFunctionFlag(){ login_function_ = true; }
 private:
 	/**
@@ -105,6 +105,12 @@ private:
 	* @return void	无返回值
 	*/
 	void ShowLoginTip(std::wstring tip_text);
+	/**
+	* 进行uikit初始化
+	* @param[in] mode 初始化类型(IM/匿名聊天室)
+	* @return void	无返回值
+	*/
+	void DoInitUiKit(nim_ui::InitManager::InitMode mode);
 
 public:
 	static const LPCTSTR kClassName;

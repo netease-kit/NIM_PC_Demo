@@ -30,7 +30,7 @@ void TalkCallback::OnReceiveMsgCallback(const nim::IMMessage& message)
 
 	if (message.feature_ == nim::kNIMMessageFeatureDefault)
 	{
-		if (message.type_ == nim::kNIMMessageTypeNotification && !nim::Client::GetSDKConfig().team_notification_unread_count_)
+		if (message.type_ == nim::kNIMMessageTypeNotification/* && !nim::Client::GetSDKConfig().team_notification_unread_count_*/)
 		{
 			SessionBox* session = SessionManager::GetInstance()->FindSessionBox(id);
 			if (session)
@@ -122,7 +122,7 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 				return;
 			}
 
-			std::wstring notify_text = GetRecallNotifyText(talk_id, notify.session_type_, notify.from_id_, notify.from_nick_);
+			std::wstring notify_text = GetRecallNotifyTextEx(talk_id, notify.session_type_, notify.from_id_, notify.operator_id_,notify.from_nick_);
 			nim::IMMessage msg;
 			msg.timetag_ = notify.msglog_timetag_;
 			msg.client_msg_id_ = QString::GetGUID();
@@ -134,6 +134,7 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 			Json::Value values;
 			values["comment"] = "is_recall_notification";
 			values["notify_from"] = notify.from_id_;
+			values["operator_id"] = notify.operator_id_;
 			values["from_nick"] = notify.from_nick_;
 			msg.attach_ = values.toStyledString();
 			msg.content_ = nbase::UTF16ToUTF8(notify_text);

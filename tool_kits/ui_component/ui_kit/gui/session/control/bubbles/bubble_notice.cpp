@@ -70,6 +70,8 @@ bool MsgBubbleNotice::OnResize( ui::EventArgs* arg )
 
 void MsgBubbleNotice::OnResized()
 {
+	if (m_pWindow == nullptr)
+		return;
 	UiRect rc = m_pWindow->GetPos(false);
 	int sub_width = 100;
 	int width = rc.GetWidth() - DpiManager::GetInstance()->ScaleInt(sub_width);

@@ -15,6 +15,8 @@ class CTxtWinHost;
 class UILIB_API RichEdit : public ScrollableBox
 {
 public:
+	typedef std::function<bool(LONG, LONG, CSize&)> FunGetNaturalSize;
+public:
     RichEdit();
     ~RichEdit();
 
@@ -185,7 +187,7 @@ public:
 	void AttachTab(const EventCallback& callback) {	OnEvent[kEventTab] += callback;	}
 	void AttachTextChange(const EventCallback& callback) { OnEvent[kEventTextChange] += callback; }
 	void AttachCustomLinkClk(const EventCallback& callback)	{ OnEvent[kEventCustomLinkClick] += callback; }
-
+	void AttachGetNaturalSize(const FunGetNaturalSize& cb) { m_cbGetNaturalSize = cb; };
 protected:
     CTxtWinHost* m_pTwh;
     bool m_bVScrollBarFixing;
@@ -223,6 +225,7 @@ protected:
 	std::wstring m_sPromptTextId;
 	nbase::WeakCallbackFlag m_drawCaretFlag;
 	std::weak_ptr<nbase::WeakFlag> m_windowFlag; //记录所属窗体的flag
+	FunGetNaturalSize m_cbGetNaturalSize;
 
 private:
 	struct LinkInfo

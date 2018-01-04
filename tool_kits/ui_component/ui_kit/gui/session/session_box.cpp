@@ -11,7 +11,8 @@
 #include "callback/session/session_callback.h"
 #include "export/nim_ui_window_manager.h"
 #include "util/user.h"
-
+#include "nim_team_def.h"
+#include "module\session\session_util.h"
 using namespace ui;
 
 namespace
@@ -317,7 +318,10 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 			{
 				std::string from_id = values["notify_from"].asString();
 				std::string from_nick = values["from_nick"].asString();
-				notify_msg.content_ = nbase::UTF16ToUTF8(GetRecallNotifyText(from_id, from_nick));
+				std::string operator_id = values["operator_id"].asString();
+				if (operator_id.empty())
+					operator_id = from_id;
+				notify_msg.content_ = nbase::UTF16ToUTF8(GetRecallNotifyTextEx(GetSessionId(), GetSessionType(), from_id, operator_id,from_nick));
 			}
 
 			MsgBubbleNotice* cell = new MsgBubbleNotice;
@@ -427,6 +431,10 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 
 	item->InitControl(bubble_right);
 	item->InitInfo(msg);
+	if (msg.session_type_ == nim::kNIMSessionTypeTeam)
+		item->SetTeamMemberGetter([this]()->const decltype(team_member_info_list_)&{
+		return team_member_info_list_; 
+	});
 	item->SetSessionId(session_id_);
 	item->SetSessionType(session_type_);
 	item->SetShowTime(show_time);
@@ -736,7 +744,7 @@ void SessionBox::OnRecallMsgCallback(nim::NIMResCode code, const nim::RecallMsgN
 
 	if (index > -1)
 	{
-		std::wstring notify_text = GetRecallNotifyText(notify.from_id_, notify.from_nick_);
+		std::wstring notify_text = GetRecallNotifyTextEx(GetSessionId(), GetSessionType(), notify.from_id_, notify.operator_id_, "");
 
 		nim::IMMessage msg;
 		msg.timetag_ = notify.msglog_timetag_;
@@ -750,6 +758,9 @@ void SessionBox::OnRecallMsgCallback(nim::NIMResCode code, const nim::RecallMsgN
 		values["comment"] = "is_recall_notification";
 		values["notify_from"] = notify.from_id_;
 		values["from_nick"] = notify.from_nick_;
+		values["operator_id"] = notify.operator_id_;
+
+
 		msg.attach_ = values.toStyledString();
 		msg.content_ = nbase::UTF16ToUTF8(notify_text);
 		msg.msg_setting_.push_need_badge_ = nim::BS_FALSE; //设置会话列表不需要计入未读数
@@ -1324,26 +1335,22 @@ std::wstring SessionBox::GetRecallNotifyText(const std::string& msg_from_id, con
 		}
 		else
 		{
-			UTF8String name;
-			if (!msg_from_nick.empty())
-			{
-				name = msg_from_nick;
-			}
-			else
-			{
-				auto info = GetTeamMemberInfo(msg_from_id);
+			UTF8String name = msg_from_nick;
+			auto info = GetTeamMemberInfo(msg_from_id);
+			if (name.empty())
 				name = info.GetNick();
-				if (name.empty())
-				{
-					nim::UserNameCard name_card;
-					UserService::GetInstance()->GetUserInfo(msg_from_id, name_card);
-					name = name_card.GetName();
-				}
-				if (name.empty())
-					name = msg_from_id;
-			}
-
-			notify_text = nbase::UTF8ToUTF16(name) + L" " + mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_RECALL_MSG");
+			if (name.empty())
+			{
+				nim::UserNameCard name_card;
+				UserService::GetInstance()->GetUserInfo(msg_from_id, name_card);
+				name = name_card.GetName();
+			}		
+			if (info.GetUserType() == nim::kNIMTeamUserTypeCreator)
+				notify_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_RECALL_BY_CREATOR_MSG").c_str(), nbase::UTF8ToUTF16(name).c_str());
+			else if (info.GetUserType() == nim::kNIMTeamUserTypeManager)
+				notify_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_RECALL_BY_ADMIN_MSG").c_str(), nbase::UTF8ToUTF16(name).c_str());
+			else
+				notify_text = nbase::UTF8ToUTF16(name) + L" " + mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_RECALL_MSG");
 		}
 	}
 

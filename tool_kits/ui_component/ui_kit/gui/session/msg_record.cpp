@@ -151,30 +151,8 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 	item->SetSessionType(session_type_);
 	item->SetActionMenu(false);
 	item->SetShowTime(show_time);
-	if (bubble_right || msg.session_type_ == nim::kNIMSessionTypeP2P)
-		item->SetShowName(false, "");
-	else
-	{
-		if (msg.type_ != nim::kNIMMessageTypeRobot)
-		{
-			auto iter = team_member_info_list_.find(msg.sender_accid_);
-			if (iter != team_member_info_list_.cend() && !iter->second.GetNick().empty())
-				item->SetShowName(true, iter->second.GetNick()); //显示群名片
-			else
-			{
-				std::string show_name = nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(msg.sender_accid_));
-				item->SetShowName(true, show_name); //显示备注名或昵称
-			}
-		}
-		else
-		{
-			nim::IMBotRobot robot_attach;
-			nim::Talk::ParseBotRobotMessageAttach(msg, robot_attach);
-			nim::RobotInfo robot_info;
-			UserService::GetInstance()->GetRobotInfo(robot_attach.robot_accid_, robot_info);
-			item->SetShowName(!robot_info.GetName().empty(), robot_info.GetName());
-		}
-	}
+	std::string show_name("");
+	item->SetShowName(GetUserShowName(msg, show_name), show_name);
 
 	if (msg.type_ == nim::kNIMMessageTypeAudio)
 		item->SetPlayed(true);
@@ -184,7 +162,37 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 	//	nim::NOS::FetchMedia(msg, nbase::Bind(&MsgRecordForm::OnDownloadCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4), nim::NOS::ProgressCallback());
 	//}
 }
-
+bool MsgRecordForm::GetUserShowName(const nim::IMMessage &msg, std::string& show_name)
+{
+	if (IsBubbleRight(msg) || msg.session_type_ == nim::kNIMSessionTypeP2P)
+		return false;
+	else
+	{
+		auto get_name_task = [&](void)->std::string{
+			auto iter = team_member_info_list_.find(msg.sender_accid_);
+			if (iter != team_member_info_list_.cend() && !iter->second.GetNick().empty())//显示群名片
+				return iter->second.GetNick();
+			else//显示备注名或昵称				
+				return nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(msg.sender_accid_));
+		};
+		if (msg.type_ != nim::kNIMMessageTypeRobot)
+		{
+			show_name = std::move(get_name_task());
+		}
+		else
+		{
+			nim::IMBotRobot robot_attach;
+			nim::RobotInfo robot_info;
+			nim::Talk::ParseBotRobotMessageAttach(msg, robot_attach);
+			UserService::GetInstance()->GetRobotInfo(robot_attach.robot_accid_, robot_info);
+			if (!robot_attach.out_msg_)
+				show_name = std::move(get_name_task());
+			else
+				show_name = std::move(robot_info.GetName());
+		}
+		return true;
+	}
+}
 void MsgRecordForm::RefreshRecord(std::string id, nim::NIMSessionType type)
 {
 	if(id == session_id_)

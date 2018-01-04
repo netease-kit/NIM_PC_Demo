@@ -27,9 +27,11 @@ namespace nim
 class Global
 {
 public:
-	typedef std::function<void(int log_level,const std::string& log)> SDKLogCallback; 
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	typedef std::function<void(bool conncet, NIMProxyDetectStep step, const std::string& json_extention)> DetectProxyCallback; 
+	typedef std::function<void(NIMSDKException exception,const std::string& log)> ExceptionCallback; 
+#else
+	typedef std::function<void(int log_level,const std::string& log)> SDKLogCallback; 
 #endif
 
 public:
@@ -70,6 +72,14 @@ public:
     * @return void 无返回值
     */
 	static void DetectProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password, const Global::DetectProxyCallback& callback);
+
+	/** @fn void SetExceptionReportCallback(const std::string&json_extension, const ExceptionCallback& cb)
+	* 注册输出系统环境异常的回调
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb 
+	* @return void 无返回值
+	*/
+	static void SetExceptionReportCallback(const std::string&json_extension, const ExceptionCallback& cb);
 #else
 	/** @fn void nim_client_reg_kickout_other_client_cb(const char *json_extension, nim_json_transport_cb_func cb, const void *user_data)
 	* 注册输出sdk log回调

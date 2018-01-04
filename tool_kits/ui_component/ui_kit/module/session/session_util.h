@@ -130,17 +130,17 @@ void GenerateUploadImage(const std::wstring &src, const std::wstring &dest);
 * @param[in] edit RichEdit控件指针
 * @param[in] file_name 表情文件名
 * @param[in] tag 表情名称
-* @return void 无返回值
+* @return bool 是否成功
 */
-void InsertFaceToEdit(ui::RichEdit* edit, const std::wstring &file_name, const std::wstring &tag);
+bool InsertFaceToEdit(ui::RichEdit* edit, const std::wstring &file_name, const std::wstring &tag);
 
 /**
 * 将一段文字（其中可能包含表情）插入到RichEdit中
 * @param[in] edit RichEdit控件指针
 * @param[in] str 文字
-* @return void 无返回值
+* @return int 插入的表情个数
 */
-void InsertTextToEdit(ui::RichEdit* edit, const std::wstring &str);
+int InsertTextToEdit(ui::RichEdit* edit, const std::wstring &str);
 
 /**
 * 插入图片到RichEdit
@@ -234,5 +234,14 @@ std::wstring GetCustomMsg(const std::string &sender_accid, const std::string &ms
 * @return std::wstring 提示文本
 */
 std::wstring GetRecallNotifyText(const std::string& session_id, nim::NIMSessionType session_type, const std::string& msg_from_id, const std::string& msg_from_nick);
-
+/**
+* 获取回撤消息的提示文本
+* @param[in] session_id 会话id
+* @param[in] session_type 会话类型
+* @param[in] msg_from_id 消息发送者的id
+* @param[in] msg_from_id 操作者的ID，撤回操作的发起者
+* @param[in] msg_from_nick 消息发送者的昵称
+* @return std::wstring 提示文本
+*/
+std::wstring GetRecallNotifyTextEx(const std::string& session_id, nim::NIMSessionType session_type, const std::string& msg_from_id, const std::string& msg_oprator_id,const std::string& msg_from_nick);
 }

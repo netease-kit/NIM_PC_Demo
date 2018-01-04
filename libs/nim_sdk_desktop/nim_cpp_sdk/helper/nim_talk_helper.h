@@ -44,7 +44,7 @@ struct MessageSetting
 	std::string force_push_content_;	/**< 群组消息强推文本 */
 	BoolStatus anti_spam_enable_;		/**< 是否需要过易盾反垃圾 */
 	std::string anti_spam_content_;		/**< (可选)开发者自定义的反垃圾字段,长度限制5000 */
-
+	std::string anti_apam_biz_id_;		/**< (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
 	/** 构造函数 */
 	MessageSetting() : resend_flag_(BS_NOT_INIT)
 		, server_history_saved_(BS_NOT_INIT)
@@ -56,7 +56,8 @@ struct MessageSetting
 		, routable_(BS_NOT_INIT)
 		, need_offline_(BS_NOT_INIT)
 		, is_force_push_(BS_NOT_INIT)
-		, anti_spam_enable_(BS_NOT_INIT){}
+		, anti_spam_enable_(BS_NOT_INIT)
+		,anti_apam_biz_id_(""){}
 
 	/** @fn void ToJsonValue(Json::Value& message) const
 	  * @brief 组装Json Value字符串
@@ -105,6 +106,8 @@ struct MessageSetting
 			message[kNIMMsgKeyAntiSpamEnable] = anti_spam_enable_ == BS_TRUE ? 1 : 0;
 		if (!anti_spam_content_.empty())
 			message[kNIMMsgKeyAntiSpamContent] = anti_spam_content_;
+		if(!anti_apam_biz_id_.empty())
+			message[kNIMMsgKeyAntiSpamBizId] = anti_apam_biz_id_;
 	}
 
 	/** @fn void ParseMessageSetting(const Json::Value& message)

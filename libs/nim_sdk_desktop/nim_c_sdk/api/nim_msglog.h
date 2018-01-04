@@ -100,7 +100,7 @@ NIM_SDK_DLL_API void nim_msglog_query_the_message_of_the_specified_type_async(en
 #endif
 
 /** @fn void nim_msglog_query_msg_by_options_async(enum NIMMsgLogQueryRange query_range, const char *ids, int limit_count, int64_t from_time, int64_t end_time, const char *end_client_msg_id, bool reverse, enum NIMMessageType msg_type, const char *search_content, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
-  * 根据指定条件查询本地消息,使用此接口可以完成全局搜索等功能,具体请参阅开发手册 http://dev.netease.im/docs/product/IM即时通讯/SDK开发集成/Windows开发集成?#历史记录
+  * 根据指定条件查询本地消息,使用此接口可以完成全局搜索等功能,具体请参阅开发手册 http://dev.netease.im/docs/product/IM%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/SDK%E5%BC%80%E5%8F%91%E9%9B%86%E6%88%90/Windows%E5%BC%80%E5%8F%91%E9%9B%86%E6%88%90/%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95
   * @param[in] query_range		消息历史的检索范围（目前暂不支持某些范围的组合检索，详见NIMMsgLogQueryRange说明）
   * @param[in] ids				会话id（对方的account id或者群组tid）的集合，格式为string array json（目前暂不支持多个的组合检索，详见NIMMsgLogQueryRange说明）
   * @param[in] limit_count		本次查询的消息条数上限(默认100条)

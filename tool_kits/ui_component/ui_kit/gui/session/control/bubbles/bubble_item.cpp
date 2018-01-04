@@ -3,12 +3,13 @@
 #include "gui/main/control/session_item.h"
 #include "gui/profile_form/profile_form.h"
 #include "callback/session/session_callback.h"
-
+#include "nim_cpp_team.h"
 using namespace ui;
 
 namespace nim_comp
 {
-MsgBubbleItem::MsgBubbleItem()
+MsgBubbleItem::MsgBubbleItem():
+team_member_getter_(nullptr)
 {
 	action_menu_ = true;
 }
@@ -139,7 +140,7 @@ void MsgBubbleItem::SetMsgStatus(nim::NIMMsgLogStatus status)
 		status_receipt_->SetVisible(true);
 		break;
 	case nim::kNIMMsgLogStatusRefused:
-		//haokui 2017.10.27 被对方拒绝，可能是被加入了黑名单，此时不设置消息的任何状态
+		//被对方拒绝，可能是被加入了黑名单，此时不设置消息的任何状态
 		//HideAllStatus(0);
 		break;
 	default:
@@ -258,7 +259,7 @@ void MsgBubbleItem::PopupMenu(bool copy, bool recall, bool retweet/* = true*/)
 
 	CMenuElementUI* rec = (CMenuElementUI*)pMenu->FindControl(L"recall");
 	rec->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
-	rec->SetVisible(my_msg_ && recall && msg_.receiver_accid_ != LoginManager::GetInstance()->GetAccount());
+	rec->SetVisible(recall && IsShowRecallButton());
 
 	CMenuElementUI* ret = (CMenuElementUI*)pMenu->FindControl(L"retweet");
 	ret->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
@@ -293,5 +294,36 @@ void MsgBubbleItem::OnMenuDelete()
 void MsgBubbleItem::OnMenuTransform()
 {
 	m_pWindow->SendNotify(this, ui::kEventNotify, BET_TRANSFORM, 0);
+}
+bool MsgBubbleItem::IsShowRecallButton()
+{
+	bool ret = false;
+	if (msg_.session_type_ == nim::kNIMSessionTypeP2P)
+	{
+		ret = my_msg_ && msg_.receiver_accid_ != LoginManager::GetInstance()->GetAccount();
+	}
+	else if (msg_.session_type_ == nim::kNIMSessionTypeTeam)
+	{		
+		if (my_msg_ && msg_.receiver_accid_ != LoginManager::GetInstance()->GetAccount())
+			ret = true;
+		else
+		{
+			if (team_member_getter_ != nullptr)
+			{
+				auto members = team_member_getter_();
+				auto it = members.find(LoginManager::GetInstance()->GetAccount());
+				if (it != members.end())
+				{
+					auto user_type = it->second.GetUserType();
+					ret = (user_type == nim::kNIMTeamUserTypeCreator || user_type == nim::kNIMTeamUserTypeManager);
+				}
+			}
+		}		
+	}
+	else
+	{
+		ret = false;
+	}
+	return ret;
 }
 }

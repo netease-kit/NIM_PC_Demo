@@ -17,14 +17,15 @@ namespace nim
 typedef	void (*nim_global_free_str_buf)(char *str);
 typedef	void (*nim_global_free_buf)(void *data);
 typedef void (*nim_global_set_proxy)(NIMProxyType, const char*, int, const char*, const char*);
-typedef void (*nim_global_reg_sdk_log_cb)(const char *json_extension, nim_sdk_log_cb_func cb, const void *user_data);
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 typedef void (*nim_global_detect_proxy)(enum NIMProxyType type, const char *host, int port, const char *user, const char *password, nim_global_detect_proxy_cb_func cb, const void *user_data);
+typedef void(*nim_global_reg_exception_report_cb)(const char *json_extension, nim_sdk_exception_cb_func cb, const void *user_data);
+#else
+typedef void (*nim_global_reg_sdk_log_cb)(const char *json_extension, nim_sdk_log_cb_func cb, const void *user_data);
 #endif
 #else
 #include "nim_global.h"
 #endif
-
 
 void Global::FreeStrBuf(char *str)
 {
@@ -64,6 +65,28 @@ void Global::DetectProxy(NIMProxyType type, const std::string& host, int port, c
 		cb_pointer = new Global::DetectProxyCallback(callback);
 	}
 	NIM_SDK_GET_FUNC(nim_global_detect_proxy)(type, host.c_str(), port, user.c_str(), password.c_str(), &CallbackDetectProxy, cb_pointer);
+}
+
+static void CallbackException(NIMSDKException exception, const char *log, const void *user_data)
+{
+	Global::ExceptionCallback* cb = (Global::ExceptionCallback*)user_data;
+	if (cb != nullptr)
+	{
+		std::string a;
+		a.append(log);
+		(*cb)(exception, a);
+	}
+	//delete cb;
+}
+
+void Global::SetExceptionReportCallback(const std::string&json_extension, const ExceptionCallback& cb)
+{
+	ExceptionCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new ExceptionCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_global_reg_exception_report_cb)(json_extension.c_str(), &CallbackException, cb_pointer);
 }
 #else
 static void CallbackSDKLog(int log_level, const char *log, const void *user_data)

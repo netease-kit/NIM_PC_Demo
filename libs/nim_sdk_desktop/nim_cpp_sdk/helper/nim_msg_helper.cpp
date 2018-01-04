@@ -26,6 +26,7 @@ bool ParseRecallMsgNotify(const std::string& notify_json, std::list<RecallMsgNot
 			notify.from_id_ = value[kNIMRecallMsgKeyFromAccID].asString();
 			notify.to_id_ = value[kNIMRecallMsgKeyToAccID].asString();
 			notify.msg_id_ = value[kNIMRecallMsgKeyMsgId].asString();
+			notify.operator_id_ = value[kNIMRecallMsgKeyOpeAccID].asString();
 			//if (value.isMember(kNIMRecallMsgKeyNotify))
 			notify.notify_ = value[kNIMRecallMsgKeyNotify].asString();
 			notify.session_type_ = (NIMSessionType)value[kNIMRecallMsgKeyToType].asInt();

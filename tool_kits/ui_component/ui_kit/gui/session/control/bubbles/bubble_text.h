@@ -12,6 +12,8 @@ namespace nim_comp
 class MsgBubbleText : public MsgBubbleItem
 {
 public:
+	MsgBubbleText();
+	virtual ~MsgBubbleText();
 	/**
 	* 初始化控件内部指针
 	* @param[in] bubble_right 是否显示到右侧
@@ -56,6 +58,7 @@ protected:
 private:
 	ui::Box*		msg_text_;
 	ui::RichEdit*	text_;
+	bool text_has_emoji_;
 };
 
 }

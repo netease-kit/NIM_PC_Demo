@@ -17,16 +17,11 @@
                     </HBox>
                     <HBox height="auto">
                         <Control />
-						<!--Button name="anonymity" margin="0,5,15,10" halign="right" textid="STRID_LOGIN_FORM_LOGIN_ANONYMITY" cursortype="hand" font="24" normaltextcolor="link_green"/-->
-                        <Button name="register_account" margin="0,5,15,10" halign="right" textid="STRID_LOGIN_FORM_REGISTER" cursortype="hand" font="24" normaltextcolor="link_green" visible="false"/>
+                        <Button name="register_account" margin="0,5,15,10" halign="right" textid="STRID_LOGIN_FORM_REGISTER" cursortype="hand" font="24" normaltextcolor="link_green"/>
                         <Button name="enter_login" margin="0,5,15,10" halign="right" textid="STRID_LOGIN_FORM_LOGIN_DIRECTLY" cursortype="hand" font="24" normaltextcolor="link_green" visible="false"/>
                     </HBox>
-					<VBox name="first_panel" width="240" height="auto" margin="20,0,20,0">
-						<Button name="btn_im" width="240" height="40" font="8" normaltextcolor="white" textid="STRID_LOGIN_FORM_IMDEMO" normalimage="login0.png" hotimage="login1.png" pushedimage="login2.png" disabledimage="login3.png" margin="0,20,0,0"/>
-						<Button name="btn_chatroom" width="240" height="40" font="8" normaltextcolor="white" textid="STRID_LOGIN_FORM_CHATROOMDEMO" normalimage="login0.png" hotimage="login1.png" pushedimage="login2.png" disabledimage="login3.png" margin="0,20,0,0"/>
-					</VBox>
                     <!--帐号和密码-->
-                    <VBox name="enter_panel" width="240" height="auto" margin="20,0,20,0" bkimage="user_password.png" visible="false">
+                    <VBox name="enter_panel" width="240" height="auto" margin="20,0,20,0" bkimage="user_password.png">
                         <HBox height="41" padding="14,1,10,0">
                             <Control name="usericon" width="16" height="16" valign="center" normalimage="user_1.png" disabledimage="user_2.png"/>
                             <RichEdit class="simple prompt" name="username" width="stretch" height="auto" margin="10,0,10,0" valign="center" font="2" prompttextid="STRID_LOGIN_FORM_ACCOUNT"/>
@@ -39,7 +34,7 @@
                             <Control name="passwordicon" width="16" height="16" valign="center" normalimage="password_1.png" disabledimage="password_2.png"/>
                             <RichEdit class="simple prompt" name="password" width="stretch" height="auto" margin="10,0,10,0" valign="center" font="2" password="true" prompttextid="STRID_LOGIN_FORM_PASSWORD"/>
                         </HBox>
-					</VBox>
+                    </VBox>
                 </VBox>
                 
 				<!--登录提示-->
@@ -47,15 +42,17 @@
                 <Label name="login_error_tip" margin="20,20,20,0" font="1" normaltextcolor="obvious_tip" visible="false"/>
                 
                 <!--登录和取消按钮-->
-                <Box width="240" height="40" margin="20,20,20,20">
+                <Box width="240" height="40" margin="20,20,20,10">
                     <Button name="btn_login" width="240" height="40" font="8" normaltextcolor="white" textid="STRID_LOGIN_FORM_LOGIN" 
-                            normalimage="login0.png" hotimage="login1.png" pushedimage="login2.png" disabledimage="login3.png" visible="false"/>
+                            normalimage="login0.png" hotimage="login1.png" pushedimage="login2.png" disabledimage="login3.png"/>
                     <Button name="btn_register" width="240" height="40" font="8" normaltextcolor="white" textid="STRID_LOGIN_FORM_REGISTER"
                             normalimage="login0.png" hotimage="login1.png" pushedimage="login2.png" disabledimage="login3.png" visible="false"/>
                     <Button name="btn_cancel" width="240" height="40" font="8" normaltextcolor="darkcolor" textid="STRID_LOGIN_FORM_CANCEL_LOGIN" visible="false"
                             normalimage="file='cancel0.png' corner='10,10,10,10'" hotimage="file='cancel1.png' corner='10,10,10,10'" 
                             pushedimage="file='cancel2.png' corner='10,10,10,10'" disabledimage="file='cancel0.png' corner='10,10,10,10' fade='128'"/>
                 </Box>
+				
+				<Button name="anonymous_chatroom" margin="0,0,0,20" halign="center" textid="STRID_LOGIN_FORM_ANONYMOUSCHATROOM" cursortype="hand" font="24" normaltextcolor="link_green"/>
             
                 <!-- 注册成功toast提示 -->
                 <Label name="register_ok_toast" normalimage="register_ok.png" halign="center" valign="center" float="true" visible="false" fadealpha="true"/>

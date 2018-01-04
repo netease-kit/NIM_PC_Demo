@@ -71,6 +71,7 @@ static const char *kNIMRecallMsgKeyNotifyFeature	= "feature";			/**< int,撤回�
 static const char *kNIMRecallMsgKeyMsgExist			= "msg_exist";			/**< bool,撤回的消息本地是否存在,比如对方离线时发一条消息又撤回,对方上线收到离线撤回通知该tag为false */
 static const char *kNIMRecallMsgKeyMsgTime			= "msg_time";			/**< long,要撤回消息的创建时间戳(毫秒) */
 static const char *kNIMRecallMsgKeyMsgFromNick		= "from_nick";			/**< string,要撤回消息的发送者昵称 */
+static const char *kNIMRecallMsgKeyOpeAccID 		= "operator_id";			/**< string,操作者ID */
 /** @}*/ //消息撤回通知Json Keys
 
 /** @name 接收消息Json Keys
@@ -124,6 +125,7 @@ static const char *kNIMMsgKeyForcePushContent= "force_push_content";		/**< strin
 static const char *kNIMMsgKeyIsForcePush	= "is_force_push";		/**< int,(可选)群组消息是否强推,0:不强推, 1:强推，属性只针对群组消息强推列表 */
 static const char *kNIMMsgKeyAntiSpamEnable	= "anti_spam_enable";	/**< int, 是否需要过易盾反垃圾, 0:不需要,1:需要, 默认0 */
 static const char *kNIMMsgKeyAntiSpamContent= "anti_spam_content";	/**< string, (可选)开发者自定义的反垃圾字段,长度限制：5000字符, 格式为json string,{"type" : 1:文本，2：图片，3视频, "data" : "文本内容or图片地址or视频地址"}*/
+static const char *kNIMMsgKeyAntiSpamBizId = "anti_spam_business_id";	/**< string,  (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
 //本地定义
 static const char *kNIMMsgKeyLocalFilePath			= "local_res_path";		/**< string,多媒体消息资源本地绝对路径,SDK本地维护,发送多媒体消息时必填 */
 static const char *kNIMMsgKeyLocalTalkId			= "talk_id";			/**< string,会话id,发送方选填,接收方收到的是消息发送方id */

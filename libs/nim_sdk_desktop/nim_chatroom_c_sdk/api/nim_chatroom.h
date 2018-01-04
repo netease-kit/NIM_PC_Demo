@@ -253,7 +253,7 @@ NIM_SDK_DLL_API void nim_chatroom_set_proxy(enum NIMChatRoomProxyType type, cons
 NIM_SDK_DLL_API void nim_chatroom_temp_mute_member_async(const int64_t room_id, const char *accid, const int64_t duration, bool need_notify, const char *notify_ext, const char *json_extension, nim_chatroom_temp_mute_member_cb_func cb, const void *user_data);
 
 /** @fn void nim_chatroom_update_room_info_async(const int64_t room_id, const char *room_info_json_str, bool need_notify, const char *notify_ext, const char *json_extension, nim_chatroom_update_room_info_cb_func cb, const void *user_data)
-  * 更新聊天室信息，目前只支持更新kNIMChatRoomInfoKeyName,kNIMChatRoomInfoKeyAnnouncement,kNIMChatRoomInfoKeyBroadcastUrl,kNIMChatRoomInfoKeyExt四个字段
+  * 更新聊天室信息，目前只支持更新kNIMChatRoomInfoKeyName,kNIMChatRoomInfoKeyAnnouncement,kNIMChatRoomInfoKeyBroadcastUrl,kNIMChatRoomInfoKeyExt,kNIMChatRoomInfoKeyQueuelevel五个字段
   * @param[in] room_id				聊天室ID
   * @param[in] room_info_json_str	聊天室信息
   * @param[in] need_notify			是否聊天室内广播通知

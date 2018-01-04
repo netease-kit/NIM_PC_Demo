@@ -58,7 +58,7 @@ void ChatroomForm::OnBtnLogin()
 {
 	auto form = nim_comp::WindowsManager::SingletonShow<LoginForm>(LoginForm::kClassName);
 	form->SetLoginFunctionFlag();
-	form->SetLoginPanelVisible();
+	form->SetAnonymousChatroomVisible(false);
 	form->CenterWindow();
 	form->ShowWindow();
 	nim_ui::OnShowMainWindow cb_login_ok = [this]{
@@ -593,8 +593,11 @@ void ChatroomForm::GetHistorys()
 {
 	ChatRoomGetMsgHistoryParameters history_param;
 	history_param.limit_ = 10;
-	history_param.start_timetag_ = time_start_history_;
+	history_param.start_timetag_ = time_start_history_;	
 	//history_param.reverse_ = false;
+	//history_param.RemoveMessageType(kNIMChatRoomMsgTypeAudio);//不获取音频类消息
+	//history_param.RemoveMessageType(kNIMChatRoomMsgTypeVideo);//不获取视频类消息
+	//history_param.RemoveMessageType(kNIMChatRoomMsgTypeCustom);//不获取自定义消息
 	ChatRoom::GetMessageHistoryOnlineAsync(room_id_, history_param, nbase::Bind(&ChatroomForm::GetMsgHistoryCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 

@@ -158,7 +158,7 @@ nim_comp::SessionBox* SessionManager::CreateSessionBox(const std::string &sessio
 		else
 		{
 			session_form = new SessionForm;
-			//haokui 2017.11.6 去掉了窗口创建时的WS_VISIBLE属性，不想在创建窗口时触发WM_ACTIVE事件
+			//去掉了窗口创建时的WS_VISIBLE属性，不想在创建窗口时触发WM_ACTIVE事件
 			//展示窗口时主动调用ShowWindow/ActiveWindow接口来展示窗口
 			HWND hwnd = session_form->Create(NULL, L"Session", WS_OVERLAPPEDWINDOW/*UI_WNDSTYLE_FRAME*/, 0);
 			if (hwnd == NULL)

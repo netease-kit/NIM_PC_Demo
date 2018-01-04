@@ -48,6 +48,11 @@ struct SDKConfig
 	std::string		rsa_public_key_module_;			/**< RSA public key，如果选择使用私有服务器，则必填 */
 	int				rsa_version_;					/**< RSA version，如果选择使用私有服务器，则必填 */
 
+	std::vector<std::string> nos_download_address_list_;/*nos 下载地址拼接模板，用于拼接最终得到的下载地址*/
+	std::vector<std::string> nos_accelerate_host_list_;/*需要被加速主机名*/
+	std::vector<std::string> nos_accelerate_address_list_;/*nos 加速地址拼接模板，用于获得加速后的下载地址*/
+	std::vector<std::string> ntserver_address_list_;/*部分 IM 错误信息统计上报地址*/
+	bool upload_statistics_data_;/*错误信息统计是否上报,私有化如不上报此项应配置为false*/
 	/** 构造函数 */
 	SDKConfig() : preload_attach_(true)
 				, preload_image_quality_(-1)

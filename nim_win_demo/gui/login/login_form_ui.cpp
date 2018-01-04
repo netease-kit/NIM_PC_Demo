@@ -89,7 +89,7 @@ void LoginForm::InitWindow()
 
 		QCommand::Erase(kCmdExitWhy);
 	}
-	btn_login_->SetVisible(false);
+
 	user_name_edit_->SetLimitText(32);
 	nick_name_edit_->SetLimitText(64);
 	password_edit_->SetLimitText(128);
@@ -221,6 +221,7 @@ bool LoginForm::Notify( ui::EventArgs* msg )
 			if (!nick_name_edit_->IsVisible())
 			{
 				btn_login_->SetFocus();
+				DoInitUiKit(nim_ui::InitManager::kIM);
 				DoBeforeLogin();
 			}
 			else
@@ -235,6 +236,8 @@ bool LoginForm::OnClicked( ui::EventArgs* msg )
 	std::wstring name = msg->pSender->GetName();
 	if(name == L"btn_login")
 	{
+		DoInitUiKit(nim_ui::InitManager::kIM);		
+		SetAnonymousChatroomVisible(false);
 		DoBeforeLogin();
 	}
 	else if (name == L"btn_register")
@@ -250,17 +253,9 @@ bool LoginForm::OnClicked( ui::EventArgs* msg )
 	{
 		nim_comp::WindowsManager::SingletonShow<ProxyForm>(ProxyForm::kClassName);
 	}
-	else if (name == L"btn_im")
+	else if (name == L"anonymous_chatroom")
 	{
-		std::string app_key = GetConfigValueAppKey();
-		nim_ui::InitManager::GetInstance()->InitUiKit(IsNimDemoAppKey(app_key), nim_ui::InitManager::kIM);
-		SetLoginPanelVisible();
-	}
-	else if (name == L"btn_chatroom")
-	{
-		std::string app_key = GetConfigValueAppKey();
-		nim_ui::InitManager::GetInstance()->InitUiKit(IsNimDemoAppKey(app_key), nim_ui::InitManager::kAnonymousChatroom);
-
+		DoInitUiKit(nim_ui::InitManager::kAnonymousChatroom);
 		nim_comp::LoginManager::GetInstance()->SetAnonymityDemoMode();
 		ShowWindow(false, false);
 		auto form = nim_ui::WindowsManager::GetInstance()->SingletonShow<nim_chatroom::ChatroomFrontpage>(nim_chatroom::ChatroomFrontpage::kClassName);
@@ -269,10 +264,7 @@ bool LoginForm::OnClicked( ui::EventArgs* msg )
 	return true;
 }
 
-void LoginForm::SetLoginPanelVisible()
+void LoginForm::SetAnonymousChatroomVisible(bool visible)
 {
-	FindControl(L"first_panel")->SetVisible(false);
-	FindControl(L"enter_panel")->SetVisible(true);
-	btn_login_->SetVisible(true);
-	FindControl(L"register_account")->SetVisible(true);
+	FindControl(L"anonymous_chatroom")->SetVisible(visible);
 }

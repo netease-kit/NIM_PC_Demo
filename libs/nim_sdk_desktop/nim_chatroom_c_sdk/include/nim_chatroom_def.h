@@ -268,6 +268,7 @@ static const char *kNIMChatRoomMsgKeyResendFlag		= "resend_flag";		/**< int,消�
 static const char *kNIMChatRoomMsgKeyExt			= "ext";				/**< string, 第三方扩展字段, 长度限制4096, 必须为可以解析为Json的非格式化的字符串*/
 static const char *kNIMChatRoomMsgKeyAntiSpamEnable	= "anti_spam_enable";	/**< int, 是否需要过易盾反垃圾, 0:不需要,1:需要, 默认0 */
 static const char *kNIMChatRoomMsgKeyAntiSpamContent= "anti_spam_content";	/**< string, (可选)开发者自定义的反垃圾字段, 长度限制2048 */
+static const char *kNIMChatRoomMsgKeyAntiSpamBizId = "anti_spam_business_id";	/**< string,  (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 static const char *kNIMChatRoomMsgKeyHistorySave	= "history_save";		/**< int,(可选)该消息是否存储云端历史,可选，0:不是,1:是, 默认1 */
 static const char *kNIMChatRoomMsgKeyBody			= "body";				/**< string,(可选)文本消息内容（聊天室机器人文本消息） */
@@ -337,7 +338,7 @@ static const char *kNIMChatRoomInfoKeyValidFlag		= "valid_flag";		/**< int, 聊�
 static const char *kNIMChatRoomInfoKeyExt			= "ext";			/**< string, 第三方扩展字段, 必须为可以解析为Json的非格式化的字符串, 长度4k */
 static const char *kNIMChatRoomInfoKeyOnlineCount	= "online_count";	/**< int, 当前在线用户数量 */
 static const char *kNIMChatRoomInfoKeyMuteAll		= "mute_all";		 /**<int, 聊天室禁言标志 1:禁言,0:解除禁言*/
-
+static const char *kNIMChatRoomInfoKeyQueuelevel		= "queuelevel";		 /**<int, 队列管理权限：0:所有人都有权限变更队列，1:只有主播管理员才能操作变更*/
 /** @}*/ //聊天室Info Json Keys
 
 /** @enum NIMChatRoomExitReason 聊天室离开原因 */
@@ -431,6 +432,7 @@ static const char *kNIMChatRoomGetMembersKeyLimit	= "limit";	/**<int 数量*/
 static const char *kNIMChatRoomGetMsgHistoryKeyStartTime = "start";		/**<long 开始时间,单位毫秒 */
 static const char *kNIMChatRoomGetMsgHistoryKeyLimit	 = "limit";		/**<int 本次返回的消息数量*/
 static const char *kNIMChatRoomGetMsgHistoryKeyReverse	 = "reverse";	/**<boolean: true:按时间正序起查，正序排列,false:按时间逆序起查，逆序排列*/
+static const char *kNIMChatRoomGetMsgHistoryKeyMsgtypes = "msgtypes";	/**<array:数组 要查询的消息类型，取值NIMChatRoomMsgType中所枚举类型*/
 /** @}*/ //分获取历史消息条件Keys
 
 /** @name 设定聊天室成员标记身份条件Keys

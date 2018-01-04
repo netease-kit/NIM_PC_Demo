@@ -45,11 +45,30 @@ public:
 	* @return bool 返回值true: 需要， false: 不需要
 	*/
 	virtual bool NeedDownloadResource();
+private:
+	/**
+	* 此消息接收的视频资源缩略图，是否成功下载到本地的回调函数
+	* @param[in] success	是否下载成功
+	* @param[in] file_path  文件下载路径
+	* @return void 无返回值
+	*/
+	void OnDownloadCallback(bool success, const std::string& file_path);
+	/**
+	* 设置资源的路径
+	* @return void 无返回值
+	*/
+	void InitResPath();
+	/**
+	* 检查用于在消息气泡中展示的缩略图是否已存在，如果存在就展示
+	* @return bool 返回值true: 缩略图存在且完好， false: 缩略图不存在或图片有错误
+	*/
+	bool CheckThumbImageBubble();
 protected:
 	ui::ButtonBox*	msg_video_;
 	ui::Control*	image_;
 
 	std::wstring	thumb_;
 	std::wstring	path_;
+	bool			thumb_checked_;
 };
 }

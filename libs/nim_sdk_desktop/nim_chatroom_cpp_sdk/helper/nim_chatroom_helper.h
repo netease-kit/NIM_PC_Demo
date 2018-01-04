@@ -11,6 +11,7 @@
 #include <string>
 #include <list>
 #include <functional>
+#include <algorithm>
 #include "json.h"
 #include "nim_json_util.h"
 #include "nim_chatroom_sdk_defines.h"
@@ -21,6 +22,49 @@
 */
 namespace nim_chatroom
 {
+	struct ChatRoomPlatformConfig
+	{
+		static const char * kPlatformConfigToken;//平台配置标签
+		static const char * kNtserverAddress;//部分 IM 错误信息统计上报地址,
+		static const char * kUploadStatisticsData;//错误信息统计是否上报,私有化如果不上传相应数据，此项配置应为false
+		bool ToJsonObject(Json::Value& values) const
+		{
+			for (auto it = ntserver_address_list_.begin();it != ntserver_address_list_.end();it++)
+			{
+				values[kNtserverAddress].append(*it);
+			}
+			values[kUploadStatisticsData] = upload_statistics_data_;
+			return true;
+		}
+		std::string	ToJsonString() const
+		{
+			Json::Value values;
+			if(ToJsonObject(values))
+				return nim::GetJsonStringWithNoStyled(values);
+			return std::string("");			
+		}
+		void AddNTServerAddress(const std::string& add)
+		{
+			if(std::find_if(ntserver_address_list_.begin(),ntserver_address_list_.end(),[&](const std::string& item){
+				return item.compare(add) == 0;
+			}) == ntserver_address_list_.end())
+				ntserver_address_list_.emplace_back(add);
+		}
+		void AddNTServerAddress(std::string&& add)
+		{
+			if(std::find_if(ntserver_address_list_.begin(),ntserver_address_list_.end(),[&](const std::string& item){
+				return item.compare(add) == 0;
+			}) == ntserver_address_list_.end())
+				ntserver_address_list_.emplace_back(add);
+		}
+		void EnableUploadStatisticsData(bool enable)
+		{
+			upload_statistics_data_ = enable;
+		}
+	private:
+		std::vector<std::string> ntserver_address_list_;/*部分 IM 错误信息统计上报地址*/
+		bool upload_statistics_data_;/*错误信息统计是否上报,私有化如不上报此项应配置为false*/
+	};
 /** @brief 聊天室登录信息*/
 struct ChatRoomEnterInfo
 {
@@ -122,9 +166,9 @@ struct ChatRoomInfo
 	std::string		ext_;				/**< 第三方扩展字段, 必须为可以解析为json的非格式化的字符串, 长度4k */
 	int				online_count_;		/**< 在线人数 */
 	int				mute_all_;			/**< 聊天室禁言标志 1:禁言,0:非禁言*/
-
+	int				queuelevel;		 /**<int, 队列管理权限：0:所有人都有权限变更队列，1:只有主播管理员才能操作变更*/
 	/** 构造函数 */
-	ChatRoomInfo() : id_(0), valid_flag_(0), mute_all_(0) {}
+	ChatRoomInfo() : id_(0), valid_flag_(0), mute_all_(0) ,queuelevel(1){}
 
 	/** @fn void ParseFromJsonValue(const Json::Value &values)
 	  * @brief 从JsonValue中解析得到聊天室信息
@@ -142,6 +186,7 @@ struct ChatRoomInfo
 		ext_ = values[kNIMChatRoomInfoKeyExt].asString();
 		online_count_ = values[kNIMChatRoomInfoKeyOnlineCount].asUInt();
 		mute_all_ = values[kNIMChatRoomInfoKeyMuteAll].asUInt();
+		queuelevel = values[kNIMChatRoomInfoKeyQueuelevel].asInt();
 	}
 
 	/** @fn std::string ToJsonString() const
@@ -160,6 +205,7 @@ struct ChatRoomInfo
 		values[kNIMChatRoomInfoKeyExt] = ext_;
 		values[kNIMChatRoomInfoKeyOnlineCount] = online_count_;
 		values[kNIMChatRoomInfoKeyMuteAll] = mute_all_;
+		 values[kNIMChatRoomInfoKeyQueuelevel] = queuelevel;
 		return nim::GetJsonStringWithNoStyled(values);
 	}
 };
@@ -288,11 +334,13 @@ struct ChatRoomMessageSetting
 	bool			anti_spam_enable_;			/**< 是否需要过易盾反垃圾 */
 	std::string		anti_spam_content_;			/**< (可选)开发者自定义的反垃圾字段,长度限制2048 */
 	bool			history_save_;				/**< (可选)是否存云端消息历史，默认存 */
+	std::string anti_spam_bizid_;		/**< (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
 
 	/** 构造函数 */
 	ChatRoomMessageSetting() : resend_flag_(false)
 		, anti_spam_enable_(false)
-		, history_save_(true){}
+		, history_save_(true)
+		,anti_spam_bizid_(""){}
 
 	/** @fn void ToJsonValue(Json::Value& message) const
 	  * @brief 组装Json Value字符串
@@ -305,6 +353,8 @@ struct ChatRoomMessageSetting
 		message[kNIMChatRoomMsgKeyExt] = ext_;
 		message[kNIMChatRoomMsgKeyAntiSpamEnable] = anti_spam_enable_ ? 1 : 0;
 		message[kNIMChatRoomMsgKeyAntiSpamContent] = anti_spam_content_;
+		if(!anti_spam_bizid_.empty())
+			message[kNIMChatRoomMsgKeyAntiSpamBizId] = anti_spam_bizid_;
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		message[kNIMChatRoomMsgKeyHistorySave] = history_save_ ? 1 : 0;
 #endif
@@ -428,9 +478,37 @@ struct ChatRoomGetMsgHistoryParameters
 	int64_t start_timetag_;			/**<开始时间,单位毫秒 */
 	int limit_;						/**<本次返回的消息数量*/
 	bool reverse_;					/**<是否反向查询*/
+	std::vector<NIMChatRoomMsgType> msg_types_;
 	/** 构造函数 */
-	ChatRoomGetMsgHistoryParameters() : start_timetag_(0), limit_(0), reverse_(false) {}
-
+	ChatRoomGetMsgHistoryParameters() : start_timetag_(0), limit_(0), reverse_(false) 
+	{
+		if(kMsg_Types_List.empty())
+		{
+			kMsg_Types_List.emplace_back(kNIMChatRoomMsgTypeText);
+			kMsg_Types_List.emplace_back(kNIMChatRoomMsgTypeImage);
+			kMsg_Types_List.emplace_back(kNIMChatRoomMsgTypeAudio);
+			kMsg_Types_List.emplace_back(kNIMChatRoomMsgTypeVideo);
+			kMsg_Types_List.emplace_back(kNIMChatRoomMsgTypeLocation);
+			kMsg_Types_List.emplace_back(kNIMChatRoomMsgTypeNotification);
+			kMsg_Types_List.emplace_back(kNIMChatRoomMsgTypeFile);
+			kMsg_Types_List.emplace_back(kNIMChatRoomMsgTypeRobot);
+			kMsg_Types_List.emplace_back(kNIMChatRoomMsgTypeTips);
+			kMsg_Types_List.emplace_back(kNIMChatRoomMsgTypeCustom);
+		}
+		msg_types_.assign(kMsg_Types_List.begin(),kMsg_Types_List.end());
+	}	
+	//考虑到兼容以前版本，只提供删除类型接口，如果所有类型都被删除，会添加Unknown类型以区别之前的版本
+	void RemoveMessageType(NIMChatRoomMsgType type)
+	{
+		auto it = std::find_if(msg_types_.begin(),msg_types_.end(),
+			[&](const NIMChatRoomMsgType& item){
+				return item == type;
+		});
+		if( it != msg_types_.end())
+			msg_types_.erase(it);
+		if(msg_types_.empty())
+			msg_types_.emplace_back(kNIMChatRoomMsgTypeUnknown);
+	}	
 	/** @fn std::string ToJsonString() const
 	  * @brief 组装Json Value字符串
 	  * @return string Json Value字符串 
@@ -441,8 +519,25 @@ struct ChatRoomGetMsgHistoryParameters
 		values[kNIMChatRoomGetMsgHistoryKeyStartTime] = start_timetag_;
 		values[kNIMChatRoomGetMsgHistoryKeyLimit] = limit_;
 		values[kNIMChatRoomGetMsgHistoryKeyReverse] = reverse_;
+		auto it = msg_types_.begin();
+		while(it != msg_types_.end())
+		{
+			values[kNIMChatRoomGetMsgHistoryKeyMsgtypes].append(Json::Value(*it));
+			it++;
+		}		
 		return nim::GetJsonStringWithNoStyled(values);
 	}
+private:	
+	static std::vector<NIMChatRoomMsgType> kMsg_Types_List; /*= {kNIMChatRoomMsgTypeText,	
+																  kNIMChatRoomMsgTypeImage,
+																  kNIMChatRoomMsgTypeAudio,	
+																  kNIMChatRoomMsgTypeVideo,
+																  kNIMChatRoomMsgTypeLocation,
+																  kNIMChatRoomMsgTypeNotification,
+																  kNIMChatRoomMsgTypeFile,
+																  kNIMChatRoomMsgTypeRobot,
+																  kNIMChatRoomMsgTypeTips,
+																  kNIMChatRoomMsgTypeCustom };*/
 };
 
 /** @brief 设置聊天室成员身份标识参数*/

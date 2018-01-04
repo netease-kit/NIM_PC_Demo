@@ -83,7 +83,7 @@
                         margin="60,0,0,0" halign="center" valign="center" visible="false"/>
             </OptionBox>
 
-            <OptionBox group="session_friend_tab" name="btn_group_list" tooltiptextid="STRID_MIANWINDOW_ADDRESSBOOK" cursortype="hand">
+            <OptionBox group="session_friend_tab" name="btn_group_list" tooltiptextid="STRID_MAINWINDOW_TEAMS" cursortype="hand">
                 <Event type="select" receiver=".\select_tab" applyattribute="selectedid=&quot;1&quot;"/>
                 <Event type="unselect" receiver=".\select_tab" applyattribute="selectedid=&quot;0&quot;"/>
                 <Event type="unselect" receiver=".\friend_option_icon" applyattribute="state=&quot;normal&quot;"/>

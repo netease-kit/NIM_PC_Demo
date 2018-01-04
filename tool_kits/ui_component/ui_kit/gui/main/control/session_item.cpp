@@ -230,7 +230,10 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 					need_prefix = false;
 					std::string from_id = values["notify_from"].asString();
 					std::string from_nick = values["from_nick"].asString();
-					show_text = GetRecallNotifyText(msg_.id_, msg_.type_, from_id, from_nick);
+					std::string operator_id = values["operator_id"].asString();
+					if (operator_id.empty())
+						operator_id = from_id;
+					show_text = GetRecallNotifyTextEx(msg_.id_, msg_.type_, from_id, operator_id,from_nick);
 				}
 			}
 		}

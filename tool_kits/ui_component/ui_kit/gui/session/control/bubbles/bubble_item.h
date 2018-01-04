@@ -29,7 +29,7 @@ class MsgBubbleItem : public ui::ListContainerElement
 public:
 	MsgBubbleItem();
 	virtual ~MsgBubbleItem();
-
+	typedef std::function<const std::map<std::string,nim::TeamMemberProperty>&()> TeamMemberGetter;
 	/**
 	* 初始化控件内部指针
 	* @param[in] bubble_right 是否显示到右侧
@@ -173,6 +173,10 @@ public:
 	*/
 	bool IsMyMsg() { return my_msg_; }
 
+	/**
+	* 设置获取群成员接口，当是群消息时可用 
+	*/
+	void SetTeamMemberGetter(const TeamMemberGetter& getter) { team_member_getter_ = getter; }
 protected:
 	/** 
 	* 弹出右键菜单
@@ -207,6 +211,11 @@ protected:
 	* @return void 无返回值
 	*/
 	virtual void OnMenuTransform();
+	/**
+	* 此条消息是否展示右键菜单的撤回按钮，点对点：自己发送的消息。群：身为群主或管理员，可以撤回其他人发送的消息
+	* @return bool
+	*/
+	virtual bool IsShowRecallButton();
 private:
 
 	/** 
@@ -229,7 +238,6 @@ private:
 	* @return void 无返回值
 	*/
 	void HideAllStatus(int type); 
-
 protected:
 	ui::Box*		bubble_box_;
 	ui::Button*		status_resend_;
@@ -254,5 +262,6 @@ protected:
 	
 	bool			action_menu_;
 	bool			my_msg_;
+	TeamMemberGetter team_member_getter_;
 };
 }

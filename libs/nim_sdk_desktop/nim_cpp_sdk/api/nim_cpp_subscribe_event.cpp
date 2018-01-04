@@ -209,7 +209,7 @@ bool SubscribeEvent::Publish( const EventData &event_data, const PublishEventCal
 
 bool SubscribeEvent::Subscribe( int event_type, int64_t ttl, NIMEventSubscribeSyncEventType sync_type, const std::list<std::string> &accid_list, const SubscribeEventCallback &cb, const std::string& json_extension /*= ""*/ )
 {
-	if (event_type == 0 || ttl == 0)
+	if (event_type == 0 || ttl == 0 || accid_list.size() > 100)
 		return false;
 
 	SubscribeEventCallback* opt_cb = nullptr;
@@ -227,7 +227,7 @@ bool SubscribeEvent::Subscribe( int event_type, int64_t ttl, NIMEventSubscribeSy
 
 bool SubscribeEvent::UnSubscribe( int event_type, const std::list<std::string> &accid_list, const UnSubscribeEventCallback &cb, const std::string& json_extension /*= ""*/ )
 {
-	if (event_type == 0 )
+	if (event_type == 0  || accid_list.size() > 100)
 		return false;
 
 	UnSubscribeEventCallback* opt_cb = nullptr;
@@ -260,7 +260,7 @@ bool SubscribeEvent::BatchUnSubscribe( int event_type, const BatchUnSubscribeEve
 
 bool SubscribeEvent::QuerySubscribe( int event_type, const std::list<std::string> &accid_list, const QuerySubscribeEventCallback &cb, const std::string& json_extension /*= ""*/ )
 {
-	if (event_type == 0 )
+	if (event_type == 0 || accid_list.size() > 100)
 		return false;
 
 	QuerySubscribeEventCallback* opt_cb = nullptr;

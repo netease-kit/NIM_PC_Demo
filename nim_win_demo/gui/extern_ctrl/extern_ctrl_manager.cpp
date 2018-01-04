@@ -1,6 +1,5 @@
 // Copyright (c) 2015-2016, NetEase Inc. All rights reserved.
 //
-// Author: haokui <haokui01@corp.netease.com>
 // Date: 2017/10/16
 //
 // extern ctrl manager impl file

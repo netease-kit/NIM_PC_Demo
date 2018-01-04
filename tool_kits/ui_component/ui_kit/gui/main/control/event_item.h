@@ -144,7 +144,7 @@ private:
 	std::string	tid_;
 	__int64		msg_id_;
 	int			msg_status_;
-
+	std::string team_name_;
 	AutoUnregister unregister_cb;
 };
 }

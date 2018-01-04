@@ -130,6 +130,7 @@ public:
 	* @return void 无返回值
 	*/
 	void OnStopAudioCallback(const std::string &cid, int code);
+	
 private:
 	/**
 	* 响应窗体最大化消息
@@ -144,6 +145,14 @@ private:
 	* @return void	无返回值
 	*/
 	void LoadingTip(bool show);
+
+	/**
+	* 获取消息记录展示的发送者名字
+	* @param[in] msg	消息数据
+	* @param[out] show_name	展示的名字
+	* @return bool 是否存在可展示的名字
+	*/
+	bool GetUserShowName(const nim::IMMessage &msg, std::string& show_name);
 public:
 	static const LPCTSTR kClassName;
 private:

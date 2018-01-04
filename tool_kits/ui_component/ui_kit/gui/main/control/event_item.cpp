@@ -47,9 +47,12 @@ bool TeamEventItem::InitInfo(const nim::SysMessage &json)
 	tid_ = json.receiver_accid_;
 	msg_id_ = json.id_;
 	msg_status_ = json.status_;
-
+	Json::Value attach_value;
+	Json::Reader attach_reader;
+	if (attach_reader.parse(json.attach_, attach_value) && attach_value.isObject() && attach_value.isMember("name"))
+		team_name_ = attach_value["name"].asString();
 	btn_head_->SetBkImage(PhotoService::GetInstance()->GetTeamPhoto(tid_, false));
-	evt_team_->SetText(TeamService::GetInstance()->GetTeamName(tid_));
+	evt_team_->SetText(team_name_.empty() ? TeamService::GetInstance()->GetTeamName(tid_) : nbase::UTF8ToUTF16(team_name_));
 	evt_time_->SetText(GetMessageTime(msg_time_, false));
 
 	MutiLanSupport* mls = MutiLanSupport::GetInstance();

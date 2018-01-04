@@ -38,6 +38,7 @@ struct RecallMsgNotify
 	std::string msg_id_;	/**< 客户端消息ID */
 	std::string notify_;	/**< 自定义通知文案 */
 	std::string from_nick_; /**< 消息发送方昵称 */
+	std::string operator_id_; /**< 消息的操作者，比哪谁撤消了消息 */
 	NIMSessionType session_type_;	/**< 会话类型 */
 	int64_t		notify_timetag_;	/**< 通知时间戳 */
 	NIMMessageFeature notify_feature_;	/**< 通知的种类 */

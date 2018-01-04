@@ -9,7 +9,10 @@
 
 namespace nim_chatroom
 {
-
+	std::vector<NIMChatRoomMsgType> ChatRoomGetMsgHistoryParameters::kMsg_Types_List;
+	const char * ChatRoomPlatformConfig::kPlatformConfigToken = "platform_config_token";//平台配置标签
+	const char * ChatRoomPlatformConfig::kNtserverAddress = "ntserver_address";//部分 IM 错误信息统计上报地址,
+	const char * ChatRoomPlatformConfig::kUploadStatisticsData = "is_upload_statistics_data";//错误信息统计是否上报,私有化如果不上传相应数据，此项配置应为false
 bool ParseChatRoomEnterCallbackResultInfo(const std::string& result, ChatRoomInfo& room_info, ChatRoomMemberInfo& my_info)
 {
 	Json::Value values;

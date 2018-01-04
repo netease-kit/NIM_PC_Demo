@@ -269,8 +269,10 @@ void SessionBox::OnTeamAdminSet(const std::string& tid, const std::string& uid, 
 {
 	if(tid == session_id_)
 	{
-		std::wstring wid = nbase::UTF8ToUTF16(uid);
-
+		//更新数据
+		if (team_member_info_list_.find(uid) != team_member_info_list_.end())
+			team_member_info_list_[uid].SetUserType(admin ? nim::kNIMTeamUserTypeManager : nim::kNIMTeamUserTypeNomal);
+		std::wstring wid = nbase::UTF8ToUTF16(uid);		
 		TeamItem* item = dynamic_cast<TeamItem*>(member_list_->FindSubControl(wid));
 		if(item)
 		{
@@ -301,8 +303,18 @@ void SessionBox::OnTeamOwnerChange(const std::string& tid, const std::string& ui
 {
 	if (tid == session_id_)
 	{
-		std::wstring wid = nbase::UTF8ToUTF16(uid);
+		for (auto& it_member : team_member_info_list_)
+		{
+			if (it_member.second.GetUserType() == nim::kNIMTeamUserTypeCreator && it_member.second.GetAccountID() != uid)
+				it_member.second.SetUserType(nim::kNIMTeamUserTypeNomal);
+		}
+		auto team_member = team_member_info_list_.find(uid);
+		if (team_member != team_member_info_list_.end())
+		{
+			team_member->second.SetUserType(nim::kNIMTeamUserTypeCreator);
+		}
 
+		std::wstring wid = nbase::UTF8ToUTF16(uid);
 		for (int i = 0; i < member_list_->GetCount(); i++)
 		{
 			TeamItem* item = dynamic_cast<TeamItem*>(member_list_->GetItemAt(i));
