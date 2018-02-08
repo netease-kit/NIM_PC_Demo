@@ -27,11 +27,11 @@ bool AudioManager::InitAudio(const std::wstring user_data_path)
 	return init_;
 }
 
-bool AudioManager::PlayAudio(const std::string file_path, const std::string session_id, const std::string msg_id, nim_audio::nim_audio_type audio_format)
+bool AudioManager::PlayAudio(const std::string file_path, const std::string session_id, const std::string msg_id, nim_audio::nim_audio_type audio_format, int seek/* = 0*/)
 {
 	play_sid_ = session_id;
 	play_cid_ = msg_id;
-	return nim_audio::Audio::PlayAudio(nbase::UTF8ToUTF16(file_path).c_str(), session_id.c_str(), msg_id.c_str(), audio_format);
+	return nim_audio::Audio::PlayAudio(nbase::UTF8ToUTF16(file_path).c_str(), session_id.c_str(), msg_id.c_str(), audio_format, seek);
 }
 
 bool AudioManager::StopPlayAudio(const std::string session_id)

@@ -270,6 +270,7 @@ static const char *kNIMChatRoomMsgKeyAntiSpamEnable	= "anti_spam_enable";	/**< i
 static const char *kNIMChatRoomMsgKeyAntiSpamContent= "anti_spam_content";	/**< string, (可选)开发者自定义的反垃圾字段, 长度限制2048 */
 static const char *kNIMChatRoomMsgKeyAntiSpamBizId = "anti_spam_business_id";	/**< string,  (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+static const char *kNIMChatRoomMsgKeyAntiSpamUsingYiDun = "anti_spam_using_yidun";	/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
 static const char *kNIMChatRoomMsgKeyHistorySave	= "history_save";		/**< int,(可选)该消息是否存储云端历史,可选，0:不是,1:是, 默认1 */
 static const char *kNIMChatRoomMsgKeyBody			= "body";				/**< string,(可选)文本消息内容（聊天室机器人文本消息） */
 #endif NIMAPI_UNDER_WIN_DESKTOP_ONLY

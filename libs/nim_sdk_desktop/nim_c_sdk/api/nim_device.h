@@ -93,6 +93,19 @@ NIM_SDK_DLL_API void nim_vchat_set_video_data_cb(bool capture, const char *json_
 NIM_SDK_DLL_API void nim_vchat_enum_device_devpath(enum NIMDeviceType type, const char *json_extension, nim_vchat_enum_device_devpath_sync_cb_func cb, const void *user_data);
 
 #if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+/** @fn bool nim_vchat_accompanying_sound(unsigned char id, unsigned __int64 time, const char *data, unsigned int size, unsigned int rate, unsigned int channels, const char *json_extension);
+* NIM VCHAT 自定义音频伴音数据接口，不需要打开自定义数据开关, 采样时间必须为10ms的整数倍, 采样位深只支持16
+* @param[in] id 伴音数据id
+* @param[in] time 时间毫秒级
+* @param[in] data 音频数据pcm格式
+* @param[in] size data的数据长度
+* @param[in] rate 音频采样频
+* @param[in] channels 声道数
+* @param[in] json_extension 扩展
+* @return bool true 调用成功，false 调用失败
+*/
+NIM_SDK_DLL_API bool nim_vchat_accompanying_sound(unsigned char id, unsigned __int64 time, const char *data, unsigned int size, unsigned int rate, unsigned int channels, const char *json_extension);
+
 /** @fn void nim_vchat_set_audio_data_cb_ex(int type, const char *json_extension, nim_vchat_audio_data_cb_func_ex cb, const void *user_data)
 * NIM VCHAT DEVICE 监听音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut和kNIMDeviceTypeAudioOutChat由底层播放）
 * @param[in] type 指定NIMAudioDataCbType，监听伴音数据时，一旦监听，底层将不再混音
@@ -102,9 +115,6 @@ NIM_SDK_DLL_API void nim_vchat_enum_device_devpath(enum NIMDeviceType type, cons
 * @return void 无返回值
 */
 NIM_SDK_DLL_API void nim_vchat_set_audio_data_cb_ex(int type, const char *json_extension, nim_vchat_audio_data_cb_func_ex cb, const void *user_data);
-
-
-
 
 /** @fn void nim_vchat_add_device_status_cb(NIMDeviceType type, nim_vchat_device_status_cb_func cb, const void *user_data)
 * NIM VCHAT DEVICE 添加设备监听（摄像头和麦克风，伴音hook） 注意监听设备后底层会定时检查设备情况，在不需要监听后请移除

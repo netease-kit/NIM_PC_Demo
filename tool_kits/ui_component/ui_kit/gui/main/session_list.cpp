@@ -41,6 +41,28 @@ SessionList::SessionList(ui::ListBox* session_list)
 	auto robot_list_change_cb = nbase::Bind(&SessionList::OnRobotChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	unregister_cb.Add(UserService::GetInstance()->RegRobotListChange(robot_list_change_cb));
 
+	unregister_cb.Add(MuteBlackService::GetInstance()->RegSyncSetMuteCallback(nbase::Bind(&SessionList::OnNotifyChangeCallback, this, std::placeholders::_1, std::placeholders::_2)));
+	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamNotification(nbase::Bind(&SessionList::OnTeamNotificationModeChangeCallback, this, std::placeholders::_1, std::placeholders::_2)));
+
+	auto friend_list_change_cb = nbase::Bind(&SessionList::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2);
+	unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(friend_list_change_cb));
+
+	session_list_->AttachBubbledEvent(kEventReturn, nbase::Bind(&SessionList::OnReturnEventsClick, this, std::placeholders::_1));
+}
+
+bool SessionList::OnReturnEventsClick(ui::EventArgs* param)
+{
+	if (param->Type == kEventReturn)
+	{
+		SessionItem* item = dynamic_cast<SessionItem*>(param->pSender);
+		assert(item);
+		if (item)
+		{
+			SessionManager::GetInstance()->OpenSessionBox(item->GetUTF8DataID(), item->GetIsTeam() ? nim::kNIMSessionTypeTeam : nim::kNIMSessionTypeP2P);
+		}
+	}
+
+	return true;
 }
 
 int SessionList::AdjustMsg(const nim::SessionData &msg)
@@ -54,9 +76,24 @@ int SessionList::AdjustMsg(const nim::SessionData &msg)
 			if (msg.msg_timetag_ == 0 || msg.msg_timetag_ > item->GetMsgTime())
 				return i;
 		}
-
 	}
 	return -1;
+}
+
+void SessionList::OnTeamNotificationModeChangeCallback(const std::string &tid, const int64_t bits)
+{
+	std::wstring wid = nbase::UTF8ToUTF16(tid);
+	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(wid));
+	if (item && item->GetIsTeam())
+		item->SetMute(SessionManager::GetInstance()->IsTeamMsgMuteShown(tid, bits));
+}
+
+void SessionList::OnNotifyChangeCallback(std::string id, bool mute)
+{
+	std::wstring wid = nbase::UTF8ToUTF16(id);
+	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(wid));
+	if (item && !item->GetIsTeam())
+		item->SetMute(mute);
 }
 
 SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data)
@@ -446,6 +483,16 @@ void SessionList::OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos)
 {
 	for (auto iter = uinfos.cbegin(); iter != uinfos.cend(); iter++)
 		UpdateSessionInfo(*iter);
+}
+
+void SessionList::OnFriendListChange(FriendChangeType change_type, const std::string& accid)
+{
+	if (change_type == kChangeTypeUpdate)
+	{
+		SessionItem* session_item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
+		if (session_item != NULL)
+			session_item->InitUserProfile();
+	}
 }
 
 void SessionList::OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path)

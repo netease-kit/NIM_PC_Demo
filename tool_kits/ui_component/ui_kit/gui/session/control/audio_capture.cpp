@@ -72,9 +72,12 @@ bool AudioCaptureView::OnClicked(ui::EventArgs* param)
 			tip_text->SetText(mls->GetStringViaID(L"STRID_AUDIO_CAPTURE_PLAYING"));
 			return true;
 		}
-
+		bool aac = true;
+		auto aac_option = dynamic_cast<ui::Option*>(FindSubControl(L"aac"));
+		if (aac_option != nullptr)
+			aac = aac_option->IsSelected();
 		msg_uuid_ = QString::GetGUID();
-		if (!AudioManager::GetInstance()->StartCapture(session_id_, msg_uuid_))
+		if (!AudioManager::GetInstance()->StartCapture(session_id_, msg_uuid_, aac ? nim_audio::AAC : nim_audio::AMR))
 		{
 			button_start_->SetEnabled(false);
 			button_stop_->SetEnabled(false);

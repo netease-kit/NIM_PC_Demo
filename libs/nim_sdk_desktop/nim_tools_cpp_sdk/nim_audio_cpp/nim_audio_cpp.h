@@ -52,6 +52,16 @@ public:
 	* @return bool true 调用成功，false 调用失败
 	*/
 	static bool PlayAudio(const wchar_t* file_path, const char* call_id, const char* res_id, nim_audio_type audio_format);
+	/** bool PlayAudio(const wchar_t* file_path, const char* call_id, const char* res_id, nim_audio_type audio_format, int seek)
+	* NIM SDK 播放,通过回调获取开始播放状态
+	* @param[in] file_path 播放文件绝对路径
+	* @param[in] call_id 用以定位资源的一级ID，可选
+	* @param[in] res_id 用以定位资源的二级ID，可选
+	* @param[in] audio_format 播放音频格式，AAC : 0， AMR : 1
+	* @param[in] seek 播放的起始位置(时间)，单位ms
+	* @return bool true 调用成功，false 调用失败
+	*/
+	static bool PlayAudio(const wchar_t* file_path, const char* call_id, const char* res_id, nim_audio_type audio_format, int seek);
 
 	/** bool StopPlayAudio()
 	* NIM SDK 停止播放,通过回调获取停止播放状态

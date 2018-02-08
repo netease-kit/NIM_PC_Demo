@@ -49,7 +49,12 @@ void ChatroomForm::SetAnonymity(bool anonymity)
 		auto form = (ChatroomFrontpage*)nim_comp::WindowsManager::GetInstance()->GetWindow(ChatroomFrontpage::kClassName, ChatroomFrontpage::kClassName);
 		form->SetAnonymity(false);
 		if (nim_comp::LoginManager::GetInstance()->IsAnonymityDemoMode())
-			FindControl(L"logout")->SetVisible(true);
+		{
+			auto logout_btn = FindControl(L"logout");
+			logout_btn->SetEnabled(true);
+			logout_btn->SetVisible(true);
+		}
+			
 	}
 	switch_to_login_status_ = kNone;
 }

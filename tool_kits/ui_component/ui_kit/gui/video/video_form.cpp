@@ -234,7 +234,7 @@ void VideoForm::OnControlModeChange(int64_t channel_id, nim::NIMVChatControlType
 
 		ClearBitmapControl(false);
 
-		if (!is_mode_changing_ && !camera_is_open_)
+		if (!is_mode_changing_ && !camera_is_open_ && current_video_mode_)
 		{
 			ChangeToAudio();
 

@@ -200,6 +200,19 @@ private:
 	* @return bool true 继续传递控件消息，false 停止传递控件消息
 	*/
 	bool OnMultispotClick(ui::EventArgs* param);
+
+	/**
+	* 响应用户列表改变的回调函数
+	* @param[in] change_type 好友变化类型
+	* @param[in] accid 用户id
+	* @return void 无返回值
+	*/
+	void OnFriendListChange(FriendChangeType change_type, const std::string& accid);
+
+	void OnNotifyChangeCallback(std::string id, bool mute);
+	void OnTeamNotificationModeChangeCallback(const std::string &tid, const int64_t bits);
+
+	bool OnReturnEventsClick(ui::EventArgs* param);
 	
 private:
 	ui::ListBox*	session_list_;

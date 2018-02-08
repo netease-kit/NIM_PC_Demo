@@ -59,18 +59,18 @@ static void CallbackLogout(const char *json_res, const void *callback)
 {
 	if (callback != nullptr)
 	{
-		Client::LogoutCallback *cb = (Client::LogoutCallback *)callback;
-		NIMResCode error_code = kNIMResSuccess;
-		Json::Reader reader;
-		Json::Value values;
-		if (reader.parse(PCharToString(json_res), values) && values.isObject())
-		{
-			error_code = (NIMResCode)values[kNIMLogoutErrorCode].asInt();
-		}
-		PostTaskToUIThread(std::bind((*cb), error_code));
-		//(*cb)(error_code);
-		delete cb;
-		cb = nullptr;
+		Client::LogoutCallback cb = *(Client::LogoutCallback *)callback;
+		if (cb != nullptr)
+		{		
+			NIMResCode error_code = kNIMResSuccess;
+			Json::Reader reader;
+			Json::Value values;
+			if (reader.parse(PCharToString(json_res), values) && values.isObject())
+			{
+				error_code = (NIMResCode)values[kNIMLogoutErrorCode].asInt();
+			}
+			PostTaskToUIThread(std::bind(cb, error_code));
+		}		
 	}
 }
 
@@ -190,6 +190,8 @@ bool Client::Init(const std::string& app_key
 	config_root[nim::kNIMGlobalConfig] = config_values;
 	config_root[nim::kNIMAppKey] = app_key;
 
+	
+
 	if (config.use_private_server_)
 	{
 		Json::Value srv_config;
@@ -258,17 +260,18 @@ void Client::Relogin(const std::string& json_extension/* = ""*/)
 {
 	return NIM_SDK_GET_FUNC(nim_client_relogin)(json_extension.c_str());
 }
-
+Client::LogoutCallback g_logou_cb = nullptr;
 void Client::Logout(nim::NIMLogoutType logout_type
 	, const LogoutCallback& cb
 	, const std::string& json_extension/* = ""*/)
 {
-	LogoutCallback* cb_pointer = nullptr;
-	if (cb)
-	{
-		cb_pointer = new LogoutCallback(cb);
-	}
-	return NIM_SDK_GET_FUNC(nim_client_logout)(logout_type, json_extension.c_str(), &CallbackLogout, cb_pointer);
+	g_logou_cb = cb;
+	//LogoutCallback* cb_pointer = nullptr;
+	//if (cb)
+	//{
+	//	cb_pointer = new LogoutCallback(cb);
+	//}
+	return NIM_SDK_GET_FUNC(nim_client_logout)(logout_type, json_extension.c_str(), &CallbackLogout, &g_logou_cb);
 }
 
 bool Client::KickOtherClient(const std::list<std::string>& client_ids)

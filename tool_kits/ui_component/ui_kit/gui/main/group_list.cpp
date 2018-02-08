@@ -4,6 +4,9 @@
 #include "gui/main/control/session_item.h"
 #include "module/service/team_service.h"
 #include "module/session/session_manager.h"
+#include "gui/profile_form/profile_form.h"
+
+using namespace ui;
 
 namespace nim_comp
 {
@@ -45,6 +48,22 @@ GroupList::GroupList(ui::TreeView* group_list) :
 	tree_node->SetVisible(false);
 	tree_node->SetEnabled(false);
 
+	group_list_->AttachBubbledEvent(kEventReturn, nbase::Bind(&GroupList::OnReturnEventsClick, this, std::placeholders::_1));
+}
+
+bool GroupList::OnReturnEventsClick(ui::EventArgs* param)
+{
+	if (param->Type == kEventReturn)
+	{
+		FriendItem* item = dynamic_cast<FriendItem*>(param->pSender);
+		assert(item);
+		if (item)
+		{
+			SessionManager::GetInstance()->OpenSessionBox(item->GetUTF8DataID(), nim::kNIMSessionTypeTeam);
+		}
+	}
+
+	return true;
 }
 
 void GroupList::OnQueryAllMyTeams(int team_count, const std::list<nim::TeamInfo>& team_info_list)
@@ -79,6 +98,13 @@ void GroupList::AddListItem(const nim::TeamInfo& team_info)
 	AddListItemInGroup(team_info, tree_node);
 }
 
+bool GroupList::OnHeadImageClick(const std::string& uid, ui::EventArgs*)
+{
+	auto team_info = nim::Team::QueryTeamInfoBlock(uid);
+	TeamInfoForm::ShowTeamInfoForm(false, team_info.GetType(), uid, team_info);
+	return true;
+}
+
 void GroupList::AddListItemInGroup(const nim::TeamInfo& team_info, ui::TreeNode* tree_node)
 {
 	if (tree_node->GetChildNodeCount() == 0)
@@ -89,6 +115,9 @@ void GroupList::AddListItemInGroup(const nim::TeamInfo& team_info, ui::TreeNode*
 	FriendItem* item = new FriendItem;
 	ui::GlobalManager::FillBoxWithCache( item, L"main/friend_item.xml" );
 	item->Init(kFriendItemTypeTeam, team_info.GetTeamID());
+	ui::ButtonBox* head_image = (ui::ButtonBox*)(item->FindSubControl(L"head_image"));
+	head_image->AttachClick(nbase::Bind(&GroupList::OnHeadImageClick, this, team_info.GetTeamID(), std::placeholders::_1));
+	//tree_node->AddChildNode(item);
 	FriendItem* container_element = item;
 	std::size_t index = 0;
 	for (index = 0; index < tree_node->GetChildNodeCount(); index++)

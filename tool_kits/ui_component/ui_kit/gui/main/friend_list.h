@@ -167,6 +167,8 @@ private:
 	*/
 	void OnReceiveEvent(int event_type, const std::string &accid, const EventDataEx &data);
 
+	bool OnReturnEventsClick(ui::EventArgs* param);
+
 private:
 	ui::Label* tip_letter_;
 	ui::TreeNode* pos_tip_;

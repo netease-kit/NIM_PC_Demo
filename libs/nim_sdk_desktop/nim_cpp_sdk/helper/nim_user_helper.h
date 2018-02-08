@@ -277,26 +277,16 @@ private:
 	unsigned int	value_available_flag_;
 };
 
-/** @brief 黑名单信息 */
-struct BlackListInfo
+/** @brief 黑名单 静音名单信息 */
+struct BlackMuteListInfo
 {
 	std::string		accid_;				/**< 用户ID */
 	bool			set_black_;			/**< 是否黑名单 */
-	int64_t			create_timetag_;	/**< 档案创建时间（毫秒） */
-	int64_t			update_timetag_;	/**< 档案更新时间（毫秒） */
-
-	BlackListInfo() : set_black_(true), create_timetag_(0), update_timetag_(0){}
-};
-
-/** @brief 静音名单信息 */
-struct MuteListInfo
-{
-	std::string		accid_;				/**< 用户ID */
 	bool			set_mute_;			/**< 是否被静音 */
 	int64_t			create_timetag_;	/**< 档案创建时间（毫秒） */
 	int64_t			update_timetag_;	/**< 档案更新时间（毫秒） */
 
-	MuteListInfo() : set_mute_(true), create_timetag_(0), update_timetag_(0) {}
+	BlackMuteListInfo() : set_black_(false), set_mute_(false), create_timetag_(0), update_timetag_(0){}
 };
 
 /** @brief 黑名单和静音名单变更通知 */
@@ -338,14 +328,13 @@ bool ParseNameCard(const std::string& namecard_json, UserNameCard& namecard);
   */
 void ParseNameCard(const Json::Value& namecard_json, UserNameCard& namecard);
 
-/** @fn bool ParseSpecialListInfo(const std::string& list_json, std::list<BlackListInfo>& black_list, std::list<MuteListInfo>& mute_list)
+/** @fn bool ParseSpecialListInfo(const std::string& list_json, std::list<BlackMuteListInfo>& black_mute_list)
   * @brief 解析黑名单/静音列表
   * @param[in] list_json 黑名单/静音列表（Json Value数据字符串）
-  * @param[out] black_list 黑名单
-  * @param[out] mute_list 静音列表
+  * @param[out] black_mute_list 黑名单/静音列表
   * @return bool 解析成功或失败 
   */
-bool ParseSpecialListInfo(const std::string& list_json, std::list<BlackListInfo>& black_list, std::list<MuteListInfo>& mute_list);
+bool ParseSpecialListInfo(const std::string& list_json, std::list<BlackMuteListInfo>& black_mute_list);
 }
 
 #endif //_NIM_SDK_CPP_USER_HELPER_H_

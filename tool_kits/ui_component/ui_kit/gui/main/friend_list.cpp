@@ -4,7 +4,10 @@
 #include "gui/main/control/friend_item.h"
 #include "gui/profile_form/profile_form.h"
 #include "module/login/login_manager.h"
+#include "module/session/session_manager.h"
 #include "shared/tool.h"
+
+using namespace ui;
 
 namespace nim_comp
 {
@@ -83,6 +86,23 @@ FriendList::FriendList(ui::TreeView* friend_list) :
 		tree_node->SetVisible(false);
 		tree_node->SetEnabled(false);
 	}
+
+	friend_list_->AttachBubbledEvent(kEventReturn, nbase::Bind(&FriendList::OnReturnEventsClick, this, std::placeholders::_1));
+}
+
+bool FriendList::OnReturnEventsClick(ui::EventArgs* param)
+{
+	if (param->Type == kEventReturn)
+	{
+		FriendItem* item = dynamic_cast<FriendItem*>(param->pSender);
+		assert(item);
+		if (item)
+		{
+			SessionManager::GetInstance()->OpenSessionBox(item->GetUTF8DataID(), nim::kNIMSessionTypeP2P);
+		}
+	}
+
+	return true;
 }
 
 FriendList::~FriendList()

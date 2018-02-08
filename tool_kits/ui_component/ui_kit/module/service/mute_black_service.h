@@ -80,7 +80,7 @@ private:
 	* @param[in] lists 静音列表
 	* @return void	无返回值
 	*/
-	void OnGetMuteListCallback(nim::NIMResCode res_code, const std::list<nim::MuteListInfo>& lists);
+	void OnGetMuteListCallback(nim::NIMResCode res_code, const std::list<nim::BlackMuteListInfo>& lists);
 
 	/**
 	* 获取到黑名单的回调函数
@@ -88,7 +88,7 @@ private:
 	* @param[in] lists 黑名单
 	* @return void	无返回值
 	*/
-	void OnGetBlackListCallback(nim::NIMResCode res_code, const std::list<nim::BlackListInfo>& lists);
+	void OnGetBlackListCallback(nim::NIMResCode res_code, const std::list<nim::BlackMuteListInfo>& lists);
 
 	/**
 	* 收到静音或黑名单事件时的回调函数

@@ -19,6 +19,10 @@ typedef std::function<void(const nim::TeamInfo& team_info)> OnGetTeamInfo;
 
 typedef OnTeamAdminSet OnMuteMember;
 
+//tid, bits
+typedef std::function<void(const std::string&, const int64_t)> OnTeamNotificationModeChange;
+
+
 namespace nim_comp
 {
 /** @class TeamService
@@ -100,6 +104,13 @@ public:
 	UnregisterCallback RegMuteMember(OnMuteMember mute);
 
 	/**
+	* 注册群消息通知模式改变的回调
+	* @param[in] mute 回调函数
+	* @return UnregisterCallback 反注册对象
+	*/
+	UnregisterCallback RegChangeTeamNotification(OnTeamNotificationModeChange mute);
+
+	/**
 	* 触发增加群的的回调
 	* @param[in] tid 群组
 	* @param[in] tinfo 群信息
@@ -171,6 +182,14 @@ public:
 	* @return void	无返回值
 	*/
 	void InvokeMuteMember(const std::string& tid, const std::string& uid, bool set_mute);
+
+	/**
+	* 触发群消息通知模式的的回调
+	* @param[in] tid 群组id
+	* @param[in] set_mute 是否设置为静音
+	* @return void	无返回值
+	*/
+	void InvokeChangeNotificationMode(const std::string& tid, const int64_t bits);
 
 	/**
 	* 所有群信息同步完成后的回调函数
@@ -268,7 +287,7 @@ public:
 	* @return void	无返回值
 	*/
 	void UIGetLocalTeamInfoCb(const std::string& tid, const nim::TeamInfo& result);
-	
+
 
 private:
 	std::map<int, std::unique_ptr<OnTeamAdd>>			add_team_cb_;
@@ -280,6 +299,7 @@ private:
 	std::map<int, std::unique_ptr<OnTeamAdminSet>>		change_team_admin_cb_;
 	std::map<int, std::unique_ptr<OnTeamOwnerChange>>	set_team_owner_cb_;
 	std::map<int, std::unique_ptr<OnMuteMember>>		mute_member_cb_;
+	std::map<int, std::unique_ptr<OnTeamNotificationModeChange>>		notification_change_cb_;
 
 	std::map<std::string, nim::TeamInfo> cached_tinfo_;
 	std::set<std::string> on_query_tids_; //正在查询其群信息，但还没返回的群id

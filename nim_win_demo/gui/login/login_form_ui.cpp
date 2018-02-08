@@ -68,6 +68,8 @@ void LoginForm::InitWindow()
 	btn_login_ = (Button*) FindControl( L"btn_login" );
 	btn_register_ = (Button*)FindControl(L"btn_register");
 	btn_cancel_ = (Button*) FindControl( L"btn_cancel" );
+	remember_pwd_ckb_ = (CheckBox *)FindControl(L"chkbox_remember_pwd");
+	remember_user_ckb_ = (CheckBox *)FindControl(L"chkbox_remember_username");
 
 	//RichEdit的SetText操作放在最后，会触发TextChange事件
 	std::wstring account = QCommand::Get(kCmdAccount);
@@ -128,6 +130,9 @@ void LoginForm::InitWindow()
 		return true; });
 
 	this->RegLoginManagerCallback();
+
+	InitLoginData();
+	CheckAutoLogin();
 }
 
 LRESULT LoginForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
@@ -221,8 +226,7 @@ bool LoginForm::Notify( ui::EventArgs* msg )
 			if (!nick_name_edit_->IsVisible())
 			{
 				btn_login_->SetFocus();
-				DoInitUiKit(nim_ui::InitManager::kIM);
-				DoBeforeLogin();
+				OnLogin();
 			}
 			else
 				DoRegisterAccount();
@@ -236,9 +240,7 @@ bool LoginForm::OnClicked( ui::EventArgs* msg )
 	std::wstring name = msg->pSender->GetName();
 	if(name == L"btn_login")
 	{
-		DoInitUiKit(nim_ui::InitManager::kIM);		
-		SetAnonymousChatroomVisible(false);
-		DoBeforeLogin();
+		OnLogin();
 	}
 	else if (name == L"btn_register")
 	{

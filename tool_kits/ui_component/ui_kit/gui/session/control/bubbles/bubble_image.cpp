@@ -35,7 +35,10 @@ void MsgBubbleImage::InitInfo(const nim::IMMessage &msg)
 	{
 		if (CheckImageBubble())
 		{
-			SetLoadStatus(RS_LOAD_OK);
+			if (!my_msg_ || !msg_.status_ == nim::kNIMMsgLogStatusSendFailed)
+				SetLoadStatus(RS_LOAD_OK);
+			if (my_msg_ && msg_.status_ == nim::kNIMMsgLogStatusSending)
+				SetMsgStatus(nim::kNIMMsgLogStatusSending);
 			SetCanView(true);
 		}
 		else //图片有错误

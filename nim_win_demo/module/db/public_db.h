@@ -16,24 +16,26 @@ struct LoginData
 {
 	LoginData()
 	{
-		user_id_		= "";     
-		user_name_		= "";          
-		user_password_	= ""; 	 
-		type_			= 0;  
-		status_			= kLoginDataStatusNone;
-		remember_		= 0;
-		auto_login_		= 0;
+		user_id_ = "";
+		user_name_ = "";
+		user_password_ = "";
+		type_ = 0;
+		status_ = kLoginDataStatusNone;
+		remember_user_ = 0;
+		remember_psw_ = 0;
+		auto_login_ = 0;
 	}
 
 	void InitLoginData()
 	{
-		user_id_		= "";     
-		user_name_		= "";          
-		user_password_	= ""; 	
-		type_			= 0; 
-		status_			= kLoginDataStatusNone;
-		remember_		= 0;
-		auto_login_		= 0;
+		user_id_ = "";
+		user_name_ = "";
+		user_password_ = "";
+		type_ = 0;
+		status_ = kLoginDataStatusNone;
+		remember_user_ = 0;
+		remember_psw_ = 0;
+		auto_login_ = 0;
 	}
 
 	UTF8String user_id_;            //用户ID
@@ -41,10 +43,10 @@ struct LoginData
 	UTF8String user_password_;      //用户密码(未加密的)
 	uint8_t	   type_;               //用户类型
 	uint8_t	   status_;             //状态
-	uint8_t	   remember_;			//是否记住密码：1=记住，0=不记住
+	uint8_t	   remember_user_;		//是否记住用户名：1=记住，0=不记住
+	uint8_t	   remember_psw_;		//是否记住密码：1=记住，0=不记住
 	uint8_t	   auto_login_;			//是否自动登录：1=自动登录，0=不自动登录
 };
-
 
 /** @class PublicDB
   * @brief 公共数据库，存储所有用户的共有数据
@@ -135,7 +137,7 @@ public:
 	* @param[in] remember 是否记住密码：1=记住，0=不记住
 	* @return bool true 成功，false 失败
 	*/
-	bool SetRemember(UTF8String &uid, const uint8_t remember);
+	bool SetRemember(UTF8String &uid, const uint8_t remember_user, const uint8_t remember_psw);
 
 	/**
 	* 设置是否自动登录

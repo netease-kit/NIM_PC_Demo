@@ -36,8 +36,8 @@ public:
 	typedef SetRelationCallback SetBlackCallback;																/**< 设置黑名单回调模板 */
 	typedef SetRelationCallback SetMuteCallback;																/**< 设置静音列表回调模板 */
 
-	typedef std::function<void(NIMResCode res_code, const std::list<MuteListInfo>&)> GetMuteListCallback;		/**< 获取静音列表回调模板 */
-	typedef std::function<void(NIMResCode res_code, const std::list<BlackListInfo>&)> GetBlackListCallback;		/**< 设置黑名单列表回调模板 */
+	typedef std::function<void(NIMResCode res_code, const std::list<BlackMuteListInfo>&)> GetMuteListCallback;		/**< 获取静音列表回调模板 */
+	typedef std::function<void(NIMResCode res_code, const std::list<BlackMuteListInfo>&)> GetBlackListCallback;		/**< 设置黑名单列表回调模板 */
 
 	typedef std::function<void(const std::list<UserNameCard>&)> UserNameCardChangedCallback;					/**< 用户名片变更通知回调模板 */
 	typedef std::function<void(const std::list<UserNameCard>&)> GetUserNameCardCallback;						/**< 获取用户名片回调模板 */
@@ -138,30 +138,29 @@ public:
 	*/
 	static bool UpdateMyUserNameCard(const UserNameCard& namecard, const UpdateMyUserNameCardCallback& cb, const std::string& json_extension = "");
 
-	/** @fn static bool ParseBlackListInfoChange(const SpecialRelationshipChangeEvent& change_event, BlackListUserNameCard& info)
+	/** @fn static bool ParseBlackListInfoChange(const SpecialRelationshipChangeEvent& change_event, BlackMuteListInfo& info)
 	* 解析黑名单变更通知
 	* @param[in] change_event 特殊关系变更通知
 	* @param[out] info   解析结果
 	* @return bool 解析是否成功
 	*/
-	static bool ParseBlackListInfoChange(const SpecialRelationshipChangeEvent& change_event, BlackListInfo& info);
+	static bool ParseBlackListInfoChange(const SpecialRelationshipChangeEvent& change_event, BlackMuteListInfo& info);
 
-	/** @fn static bool ParseMuteListInfoChange(const SpecialRelationshipChangeEvent& change_event, MuteListInfo& info)
+	/** @fn static bool ParseMuteListInfoChange(const SpecialRelationshipChangeEvent& change_event, BlackMuteListInfo& info)
 	* 解析静音名单变更通知
 	* @param[in] change_event 特殊关系变更通知
 	* @param[out] info   解析结果
 	* @return bool 解析是否成功
 	*/
-	static bool ParseMuteListInfoChange(const SpecialRelationshipChangeEvent& change_event, MuteListInfo& info);
+	static bool ParseMuteListInfoChange(const SpecialRelationshipChangeEvent& change_event, BlackMuteListInfo& info);
 
-	/** @fn static bool ParseSyncSpecialRelationshipChange(const SpecialRelationshipChangeEvent& change_event, std::list<BlackListInfo>& black_list, std::list<MuteListInfo>& mute_list)
+	/** @fn static bool ParseSyncSpecialRelationshipChange(const SpecialRelationshipChangeEvent& change_event, std::list<BlackMuteListInfo>& black_mute_list)
 	* 解析多端同步特殊关系通知
 	* @param[in] change_event 特殊关系变更通知
-	* @param[out] black_list  黑名单列表
-	* @param[out] mute_list   静音列表
+	* @param[out] black_mute_list  黑名单/静音列表
 	* @return bool 解析是否成功
 	*/
-	static bool ParseSyncSpecialRelationshipChange(const SpecialRelationshipChangeEvent& change_event, std::list<BlackListInfo>& black_list, std::list<MuteListInfo>& mute_list);
+	static bool ParseSyncSpecialRelationshipChange(const SpecialRelationshipChangeEvent& change_event, std::list<BlackMuteListInfo>& black_mute_list);
 
 	/** @fn void UnregUserCb()
 	* 反注册User提供的所有回调

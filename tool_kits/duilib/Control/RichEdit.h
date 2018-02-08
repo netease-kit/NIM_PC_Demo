@@ -227,7 +227,7 @@ protected:
 	std::weak_ptr<nbase::WeakFlag> m_windowFlag; //记录所属窗体的flag
 	FunGetNaturalSize m_cbGetNaturalSize;
 
-private:
+protected:
 	struct LinkInfo
 	{
 		CHARRANGE cr;

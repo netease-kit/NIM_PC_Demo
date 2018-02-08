@@ -113,35 +113,36 @@ enum NIMMultiSpotNotifyType
   * }
   * @{
   */ 
-static const char *kNIMAppKey					= "app_key";				/**< string, （必填，APP KEY） */
-static const char *kNIMGlobalConfig				= "global_config";			/**< json object, Global Config */
-static const char *kNIMDataBaseEncryptKey		= "db_encrypt_key";			/**< string, 必填，目前只支持最多32个字符的加密密钥！建议使用32个字符 */
-static const char *kNIMPreloadAttach			= "preload_attach";			/**< bool, 是否需要预下载附件(图片和语音),选填,默认为true,如果有对带宽流量有较高要求的请关闭该选项，改为上层开发者按需下载附件文件 */
-static const char *kNIMPreloadImageQuality		= "preload_image_quality";	/**< int, 预下载图片质量,选填,范围0-100 */
-static const char *kNIMPreloadImageResize		= "preload_image_resize";	/**< string, 预下载图片基于长宽做内缩略,选填,比如宽100高50,则赋值为100x50,中间为字母小写x */
-static const char *kNIMSDKLogLevel				= "sdk_log_level";			/**< int，定义见NIMSDKLogLevel（选填，SDK默认的内置级别为kNIMSDKLogLevelPro） */
-static const char *kNIMPushCerName				= "push_cer_name";			/**< string，推送证书名（选填，iOS端需要,PC SDK该设置无效） */
-static const char *kNIMSyncSessionAck			= "sync_session_ack";		/**< bool，设置是否已读未读状态多端同步，默认true */
-static const char *kNIMLoginRetryMaxTimes		= "login_retry_max_times";	/**< int，登录重试最大次数，如需设置建议设置大于3次，默认填0，SDK默认设置次数 */
-static const char *kNIMUseHttps					= "use_https";				/**< bool，是否启用HTTPS协议，默认为false */
-static const char *kNIMTeamNotificationUnreadCount	= "team_notification_unread_count";	/**< bool，群通知是否计入未读数，默认为false */
+static const char *kNIMAppKey							= "app_key";				/**< string, （必填，APP KEY） */
+static const char *kNIMGlobalConfig						= "global_config";			/**< json object, Global Config */
+static const char *kNIMDataBaseEncryptKey				= "db_encrypt_key";			/**< string, 必填，目前只支持最多32个字符的加密密钥！建议使用32个字符 */
+static const char *kNIMPreloadAttach					= "preload_attach";			/**< bool, 是否需要预下载附件(图片和语音),选填,默认为true,如果有对带宽流量有较高要求的请关闭该选项，改为上层开发者按需下载附件文件 */
+static const char *kNIMPreloadImageQuality				= "preload_image_quality";	/**< int, 预下载图片质量,选填,范围0-100 */
+static const char *kNIMPreloadImageResize				= "preload_image_resize";	/**< string, 预下载图片基于长宽做内缩略,选填,比如宽100高50,则赋值为100x50,中间为字母小写x */
+static const char *kNIMSDKLogLevel						= "sdk_log_level";			/**< int，定义见NIMSDKLogLevel（选填，SDK默认的内置级别为kNIMSDKLogLevelPro） */
+static const char *kNIMPushCerName						= "push_cer_name";			/**< string，推送证书名（选填，iOS端需要,PC SDK该设置无效） */
+static const char *kNIMSyncSessionAck					= "sync_session_ack";		/**< bool，设置是否已读未读状态多端同步，默认true */
+static const char *kNIMLoginRetryMaxTimes				= "login_retry_max_times";	/**< int，登录重试最大次数，如需设置建议设置大于3次，默认填0，SDK默认设置次数 */
+static const char *kNIMUseHttps							= "use_https";				/**< bool，是否启用HTTPS协议，默认为false */
+static const char *kNIMNotNeedSaveCustomMsg				= "not_need_save_custom_msg";/**< bool，是否不保存自定义(kNIMMessageTypeCustom)消息（对PC版本SDK不支持，仅对跨平台通用版SDK有效），默认为false */
+static const char *kNIMTeamNotificationUnreadCount		= "team_notification_unread_count";	/**< bool，群通知是否计入未读数，默认为false */
 static const char *kNIMAnimatedImageThumbnailEnabled	= "animated_image_thumbnail_enabled";	/**< bool，开启对动图缩略图的支持，默认为false，开启后获取的缩略图为原格式，关闭后获取的缩略图为第一帧静态图 */
-static const char *kNIMDownloadAddressTemplate 	= "download_address_template";	/**< string, 下载地址拼接模板，用于拼接最终得到的下载地址 */
-static const char *kNIMAccelerateHost 			= "accelerate_host";		/**< string, 需要被加速主机名*/
-static const char *kNIMAccelerateAddressTemplate= "accelerate_address_template";	/**< string, 加速地址拼接模板，用于获得加速后的下载地址*/
-static const char *kNIMNtserverAddress 			= "ntserver_address";	/**< string,  部分 IM 错误信息统计上报地址 */
-static const char *kNIMUploadStatisticsData 	= "is_upload_statistics_data";		/**< bool, 错误信息统计是否上报,私有化如果不上传相应数据，此项配置应为false*/
+static const char *kNIMDownloadAddressTemplate			= "download_address_template";	/**< string, 下载地址拼接模板，用于拼接最终得到的下载地址 */
+static const char *kNIMAccelerateHost 					= "accelerate_host";		/**< string, 需要被加速主机名*/
+static const char *kNIMAccelerateAddressTemplate		= "accelerate_address_template";	/**< string, 加速地址拼接模板，用于获得加速后的下载地址*/
+static const char *kNIMNtserverAddress 					= "ntserver_address";	/**< string,  部分 IM 错误信息统计上报地址 */
+static const char *kNIMUploadStatisticsData 			= "is_upload_statistics_data";		/**< bool, 错误信息统计是否上报,私有化如果不上传相应数据，此项配置应为false*/
 
 
-static const char *kNIMPrivateServerSetting		= "private_server_setting";	/**< json object, 私有服务器配置（一旦设置了私有服务器，则全部连私有服务器，必须确保配置正确！） */
-static const char *kNIMLbsAddress				= "lbs";					/**< string, （必填，lbs地址） */
-static const char *kNIMNosLbsAddress			= "nos_lbs";				/**< string, （必填，nos lbs地址） */
-static const char *kNIMDefaultLinkAddress		= "default_link";			/**< string array, （必填，默认link服务器地址） */
-static const char *kNIMDefaultNosUploadAddress	= "default_nos_upload";		/**< string array, （必填，默认nos 上传服务器地址） */
-static const char *kNIMDefaultNosDownloadAddress= "default_nos_download";	/**< string array, （必填，默认nos 下载服务器地址） */
-static const char *kNIMDefaultNosAccessAddress	= "default_nos_access";		/**< string array, （必填，默认nos access服务器地址） */
-static const char *kNIMRsaPublicKeyModule		= "rsa_public_key_module";	/**< string, （必填，RSA public key） */
-static const char *kNIMRsaVersion				= "rsa_version";			/**< int, （必填，RSA version） */
+static const char *kNIMPrivateServerSetting				= "private_server_setting";	/**< json object, 私有服务器配置（一旦设置了私有服务器，则全部连私有服务器，必须确保配置正确！） */
+static const char *kNIMLbsAddress						= "lbs";					/**< string, （必填，lbs地址） */
+static const char *kNIMNosLbsAddress					= "nos_lbs";				/**< string, （必填，nos lbs地址） */
+static const char *kNIMDefaultLinkAddress				= "default_link";			/**< string array, （必填，默认link服务器地址） */
+static const char *kNIMDefaultNosUploadAddress			= "default_nos_upload";		/**< string array, （必填，默认nos 上传服务器地址） */
+static const char *kNIMDefaultNosDownloadAddress		= "default_nos_download";	/**< string array, （必填，默认nos 下载服务器地址） */
+static const char *kNIMDefaultNosAccessAddress			= "default_nos_access";		/**< string array, （必填，默认nos access服务器地址） */
+static const char *kNIMRsaPublicKeyModule				= "rsa_public_key_module";	/**< string, （必填，RSA public key） */
+static const char *kNIMRsaVersion						= "rsa_version";			/**< int, （必填，RSA version） */
 /** @}*/ //json extension params for nim_client_init API
 
 /** @name json extension params for nim_client_kick_other_client API

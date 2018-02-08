@@ -1,6 +1,8 @@
 ﻿#include "session_form.h"
 #include "gui/session/atlist/at_list_form.h"
 #include "module/session/session_manager.h"
+#include "gui/profile_form/profile_form.h"
+#include "gui/contact_select_form/contact_select_form.h"
 
 using namespace ui;
 
@@ -121,6 +123,9 @@ void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, cons
 				SetTeamMemberMute(tid, uid, tm_info.second.IsMute(), mute_all_);
 			else
 				SetTeamMemberMute(tid, uid, tm_info.second.IsMute(), false);
+
+			ui::ButtonBox* head_image = (ui::ButtonBox*)(item->FindSubControl(L"member_icon"));
+			head_image->AttachClick(nbase::Bind(&SessionBox::OnHeadImageClick, this, tm_info.second.GetAccountID(), std::placeholders::_1));
 		}
 		else
 		{
@@ -135,7 +140,10 @@ void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, cons
 			if (LoginManager::GetInstance()->IsEqual(tm_info.second.GetAccountID()))
 			{
 				if (tm_info.second.GetUserType() == nim::kNIMTeamUserTypeCreator || tm_info.second.GetUserType() == nim::kNIMTeamUserTypeManager)
+				{
 					btn_new_broad_->SetVisible(true);
+					btn_new_broad_->SetEnabled(true);
+				}
 				set_new_broad_visible = true;
 			}
 		}
@@ -147,8 +155,28 @@ void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, cons
 				SetTeamMuteUI(true);
 			else
 				SetTeamMuteUI(tm_info.second.IsMute());
+
+			auto bits = tm_info.second.GetBits();
+			InvokeSetTeamNotificationMode(bits);
 		}
 	}
+}
+
+bool SessionBox::OnHeadImageClick(const std::string& uid, ui::EventArgs*)
+{
+	ProfileForm::ShowProfileForm(uid);
+	return true;
+}
+
+void SessionBox::InvokeSetTeamNotificationMode(const int64_t bits)
+{
+	FindSubControl(L"not_disturb")->SetVisible(SessionManager::GetInstance()->IsTeamMsgMuteShown(session_id_, bits));
+}
+
+void SessionBox::OnTeamNotificationModeChangeCallback(const std::string& id, int64_t bits)
+{
+	if (session_id_ == id)
+		InvokeSetTeamNotificationMode(bits);
 }
 
 void SessionBox::ResetNewBroadButtonVisible()
@@ -160,15 +188,23 @@ void SessionBox::ResetNewBroadButtonVisible()
 			if (LoginManager::GetInstance()->IsEqual(tm_info.second.GetAccountID()))
 			{
 				if (tm_info.second.GetUserType() == nim::kNIMTeamUserTypeCreator || tm_info.second.GetUserType() == nim::kNIMTeamUserTypeManager)
+				{
 					btn_new_broad_->SetVisible(true);
+					btn_new_broad_->SetEnabled(true);
+				}					
 				else
+				{
 					btn_new_broad_->SetVisible(false);
+				}					
 				break;
 			}
 		}
 	}
 	else
+	{
 		btn_new_broad_->SetVisible(true);
+		btn_new_broad_->SetEnabled(true);
+	}		
 }
 
 nim::TeamMemberProperty SessionBox::GetTeamMemberInfo(const std::string& uid)
@@ -282,6 +318,7 @@ void SessionBox::OnTeamAdminSet(const std::string& tid, const std::string& uid, 
 		if (team_info_.GetUpdateInfoMode() != nim::kNIMTeamUpdateCustomModeEveryone && LoginManager::GetInstance()->IsEqual(uid))
 		{
 			btn_new_broad_->SetVisible(admin);
+			btn_new_broad_->SetEnabled(admin);
 		}
 	}
 }
@@ -336,7 +373,11 @@ void SessionBox::OnTeamOwnerChange(const std::string& tid, const std::string& ui
 		if (item)
 			item->SetOwner(true);
 		if (LoginManager::GetInstance()->IsEqual(nbase::UTF16ToUTF8(wid)))
+		{
 			btn_new_broad_->SetVisible(true);
+			btn_new_broad_->SetEnabled(true);
+		}
+			
 	}
 }
 
@@ -501,6 +542,8 @@ void SessionBox::HandleEnterTeamEvent()
 	btn_send_->SetEnabled(true);
 	FindSubControl(L"btn_custom_msg")->SetEnabled(true);
 	FindSubControl(L"btn_msg_record")->SetEnabled(true);
+	ResetNewBroadButtonVisible();
+	
 }
 
 void SessionBox::HandleLeaveTeamEvent()
@@ -514,6 +557,13 @@ void SessionBox::HandleLeaveTeamEvent()
 	FindSubControl(L"bottom_panel")->SetEnabled(false);
 	btn_new_broad_->SetEnabled(false);
 	btn_refresh_member_->SetEnabled(false);
+
+/*
+	ContactSelectForm *contact_select_form = (ContactSelectForm *)WindowsManager::GetInstance()->GetWindow\
+		(ContactSelectForm::kClassName, nbase::UTF8ToUTF16(session_id_));
+	if (contact_select_form)
+		contact_select_form->Close();
+*/
 }
 
 void SessionBox::HandleDismissTeamEvent()
@@ -527,6 +577,13 @@ void SessionBox::HandleDismissTeamEvent()
 	FindSubControl(L"bottom_panel")->SetEnabled(false);
 	btn_new_broad_->SetEnabled(false);
 	btn_refresh_member_->SetEnabled(false);
+
+/*
+	ContactSelectForm *contact_select_form = (ContactSelectForm *)WindowsManager::GetInstance()->GetWindow\
+		(ContactSelectForm::kClassName, nbase::UTF8ToUTF16(session_id_));
+	if (contact_select_form)
+		contact_select_form->Close();
+*/
 }
 
 }

@@ -135,7 +135,7 @@ private:
 	int				time_;
 	int				tick_;
 	std::string		path_;
-
+	int audio_time_;
 	nbase::WeakCallbackFlag timer_;
 };
 

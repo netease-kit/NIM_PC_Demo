@@ -165,20 +165,21 @@ static void InitNim()
 			}
 			if (auto pchar = root->Attribute("kNIMNtserverAddress")) {
 				config.ntserver_address_list_.push_back(pchar);
-			}
+			}		
 			if (auto pchar = root->Attribute("kNIMUploadStatisticsData")) {
 				int need = 0;
 				nbase::StringToInt((std::string)pchar, &need);
 				config.upload_statistics_data_ = (need != 0);
 			}
+			if (auto pchar = root->Attribute("kNIMNosUseHttps")) {
+				int need = 0;
+				nbase::StringToInt((std::string)pchar, &need);
+				config.use_https_ = (need != 0);
+			}
 			config.use_private_server_ = use_private_server;
 			
 		}
 	}
-
-	if (nbase::FilePathIsExist(QPath::GetAppPath() + L"use_https", false))
-		config.use_https_ = true;
-
 	config.database_encrypt_key_ = "Netease"; //string（db key必填，目前只支持最多32个字符的加密密钥！建议使用32个字符）
 
 	std::string app_key = GetConfigValueAppKey();
@@ -243,6 +244,8 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, in
 
 	// 初始化云信和UI组件
 	InitNim();
+
+	g_need_restart_after_dump = true;
 
 	{
 		MainThread thread; // 创建主线程

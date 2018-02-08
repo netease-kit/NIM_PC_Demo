@@ -74,20 +74,6 @@ ProfileForm *ProfileForm::ShowProfileForm(UTF8String tid, UTF8String uid, nim::N
 
 ProfileForm::ProfileForm()
 {
-	auto user_info_change_cb = nbase::Bind(&ProfileForm::OnUserInfoChange, this, std::placeholders::_1);
-	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(user_info_change_cb));
-
-	auto user_photo_ready_cb = nbase::Bind(&ProfileForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(user_photo_ready_cb));
-
-	auto misc_uinfo_change_cb = nbase::Bind(&ProfileForm::OnMiscUInfoChange, this, std::placeholders::_1);
-	unregister_cb.Add(UserService::GetInstance()->RegMiscUInfoChange(misc_uinfo_change_cb));
-
-	auto friend_list_change_cb = nbase::Bind(&ProfileForm::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2);
-	unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(friend_list_change_cb));
-
-	auto robot_list_change_cb = nbase::Bind(&ProfileForm::OnRobotChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	unregister_cb.Add(UserService::GetInstance()->RegRobotListChange(robot_list_change_cb));
 }
 
 ProfileForm::~ProfileForm()
@@ -182,6 +168,21 @@ void ProfileForm::InitWindow()
 		else
 			have_mute_right_ = true;
 	}
+
+	auto user_info_change_cb = nbase::Bind(&ProfileForm::OnUserInfoChange, this, std::placeholders::_1);
+	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(user_info_change_cb));
+
+	auto user_photo_ready_cb = nbase::Bind(&ProfileForm::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(user_photo_ready_cb));
+
+	auto misc_uinfo_change_cb = nbase::Bind(&ProfileForm::OnMiscUInfoChange, this, std::placeholders::_1);
+	unregister_cb.Add(UserService::GetInstance()->RegMiscUInfoChange(misc_uinfo_change_cb));
+
+	auto friend_list_change_cb = nbase::Bind(&ProfileForm::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2);
+	unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(friend_list_change_cb));
+
+	auto robot_list_change_cb = nbase::Bind(&ProfileForm::OnRobotChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	unregister_cb.Add(UserService::GetInstance()->RegRobotListChange(robot_list_change_cb));
 }
 
 void ProfileForm::InitRobotInfo(const nim::RobotInfo & info)
@@ -286,6 +287,10 @@ void ProfileForm::InitUserInfo(const nim::UserNameCard &info)
 				mute_switch->Selected(team_member_info.IsMute());
 			}));
 		}
+
+		std::list<std::string> list;
+		list.push_back(m_uinfo.GetAccId());
+		nim::User::GetUserNameCardOnline(list, nim::User::GetUserNameCardCallback());
 	}
 
 	InitLabels();
@@ -468,10 +473,11 @@ void ProfileForm::UpdateUInfoHeaderCallback(int res)
 
 bool ProfileForm::OnHeadImageClicked(ui::EventArgs * args)
 {
-	HeadModifyForm* form = (HeadModifyForm*)WindowsManager::GetInstance()->GetWindow(HeadModifyForm::kClassName, HeadModifyForm::kClassName);
+	std::string uid = m_uinfo.GetAccId();
+	HeadModifyForm* form = (HeadModifyForm*)WindowsManager::GetInstance()->GetWindow(HeadModifyForm::kClassName, nbase::UTF8ToUTF16(uid));
 	if (form == NULL)
 	{
-		form = new HeadModifyForm(m_uinfo.GetAccId(), L"");
+		form = new HeadModifyForm(uid, L"");
 		form->Create(NULL, NULL, WS_OVERLAPPED, 0L);
 		form->ShowWindow(true);
 		form->CenterWindow();

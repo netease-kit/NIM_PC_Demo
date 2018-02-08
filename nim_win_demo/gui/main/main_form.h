@@ -64,6 +64,13 @@ public:
 
 private:
 	/**
+	* 处理所有控件的所有消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool Notify(ui::EventArgs* msg);
+
+	/**
 	* 处理所有控件单击消息
 	* @param[in] msg 消息的相关信息
 	* @return bool true 继续传递控件消息，false 停止传递控件消息
@@ -300,6 +307,8 @@ private:
 	* @return void	无返回值
 	*/
 	void InitHeader();
+	bool OnReturnEventsClick(ui::EventArgs* param);
+
 public:
 	static const LPCTSTR kClassName;
 
@@ -307,6 +316,7 @@ private:
 	ui::Button*		btn_header_;
 	ui::Label*		label_name_;
 	ui::Button*		btn_online_state_;
+	ui::HBox* option_panel_ = nullptr;
 	bool			is_busy_;
 
 	nim_comp::CustomButtonBox*	box_unread_;

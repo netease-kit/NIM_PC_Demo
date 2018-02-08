@@ -49,7 +49,7 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 			}
 			if (info.notification_id_ == nim::kNIMNotificationIdLocalUpdateMemberProperty || info.notification_id_ == nim::kNIMNotificationIdTeamSyncUpdateMemberProperty)
 			{
-				SessionManager::GetInstance()->QueryMyTeamInfo(tid);
+				SessionManager::GetInstance()->QueryMyTeamMemberInfo(tid);
 				std::wstring session_id = nbase::UTF8ToUTF16(tid);
 				TeamInfoForm* team_info_form = (TeamInfoForm*)WindowsManager::GetInstance()->GetWindow\
 					(TeamInfoForm::kClassName, session_id);
@@ -116,7 +116,7 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 				}
 			};
 			nim::Team::QueryTeamMembersAsync(tid, cb);
-			SessionManager::GetInstance()->QueryMyTeamInfo(tid);
+			SessionManager::GetInstance()->QueryMyTeamMemberInfo(tid);
 		}
 	}
 	else if (info.notification_id_ == nim::kNIMNotificationIdLocalMuteMember || info.notification_id_ == nim::kNIMNotificationIdTeamMuteMember)
@@ -167,7 +167,7 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 		{
 			if (info.notification_id_ == nim::kNIMNotificationIdTeamKick)
 			{
-				QLOG_APP(L"UITeamEventCallback Kick : {0}") << info.attach_;
+				QLOG_APP(L"UITeamEventCallback Kick attach: {0}") << info.attach_;
 
 				for (auto& id : info.ids_)
 				{
@@ -368,7 +368,7 @@ void UIReceiveSysmsgCallback(nim::SysMessage& msg)
 
 void TeamCallback::OnReceiveSysmsgCallback( const nim::SysMessage& msg )
 {
-	QLOG_PRO(L"OnReceiveSysmsgCallback: content: {0} - attach : {1}") << msg.content_ << msg.attach_;
+	QLOG_PRO(L"OnReceiveSysmsgCallback: type:{0} - content: {1} - attach : {2}") << msg.type_ << msg.content_ << msg.attach_;
 	StdClosure task = nbase::Bind(&UIReceiveSysmsgCallback, msg);
 	Post2UI(task);
 }

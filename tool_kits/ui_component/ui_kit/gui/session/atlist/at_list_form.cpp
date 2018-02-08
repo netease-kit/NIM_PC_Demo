@@ -393,7 +393,7 @@ void AtlistForm::SetShowPos(POINT pt)
 	if (count == 0)
 	{
 		has_robot = false;
-		team_members_container_->GetCount();
+		count = team_members_container_->GetCount();
 		if (count == 0)
 		{
 			this->ShowWindow(false, false);

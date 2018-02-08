@@ -67,7 +67,7 @@ struct RtsStartInfo
 		values_temp[nim::kNIMRtsApnsPayload] = payload_;
 		values_temp[nim::kNIMRtsSound] = sound_;
 		values_temp[nim::kNIMRtsKeepCalling] = keepcalling_ ? 1 : 0;
-		values_temp[nim::kNIMRtsWebrtc] = webrtc_ ? 1 : 0;
+		//values_temp[nim::kNIMRtsWebrtc] = webrtc_ ? 1 : 0;
 		values_temp[nim::kNIMRtsSessionId] = session_id_;
 		Json::FastWriter fs;
 		json = fs.write(values_temp);

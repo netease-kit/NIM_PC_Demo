@@ -29,7 +29,7 @@ bool MuteBlackService::IsInBlackList(const std::string& accid)
 	return (black_list_.find(accid) != black_list_.end());
 }
 
-void MuteBlackService::OnGetMuteListCallback(nim::NIMResCode res_code, const std::list<nim::MuteListInfo>& lists)
+void MuteBlackService::OnGetMuteListCallback(nim::NIMResCode res_code, const std::list<nim::BlackMuteListInfo>& lists)
 {
 	mute_list_.clear();
 	if (res_code == nim::kNIMResSuccess)
@@ -41,7 +41,7 @@ void MuteBlackService::OnGetMuteListCallback(nim::NIMResCode res_code, const std
 	}
 }
 
-void MuteBlackService::OnGetBlackListCallback(nim::NIMResCode res_code, const std::list<nim::BlackListInfo>& lists)
+void MuteBlackService::OnGetBlackListCallback(nim::NIMResCode res_code, const std::list<nim::BlackMuteListInfo>& lists)
 {
 	black_list_.clear();
 	if (res_code == nim::kNIMResSuccess)
@@ -59,7 +59,7 @@ void MuteBlackService::OnMuteBlackEventCallback(const nim::SpecialRelationshipCh
 	{
 	case nim::NIMUserSpecialRelationshipChangeType::kNIMUserSpecialRelationshipChangeTypeMarkBlack:
 	{
-		nim::BlackListInfo info;
+		nim::BlackMuteListInfo info;
 		nim::User::ParseBlackListInfoChange(change_event, info);
 		ModifyBlackList(info.accid_, info.set_black_);
 		for (auto &cb : sync_set_black_cb_list_)
@@ -68,7 +68,7 @@ void MuteBlackService::OnMuteBlackEventCallback(const nim::SpecialRelationshipCh
 	}
 	case nim::NIMUserSpecialRelationshipChangeType::kNIMUserSpecialRelationshipChangeTypeMarkMute:
 	{
-		nim::MuteListInfo info;
+		nim::BlackMuteListInfo info;
 		nim::User::ParseMuteListInfoChange(change_event, info);
 		ModifyMuteList(info.accid_, info.set_mute_);
 		for (auto &cb : sync_set_mute_cb_list_)
@@ -77,16 +77,11 @@ void MuteBlackService::OnMuteBlackEventCallback(const nim::SpecialRelationshipCh
 	}
 	case nim::NIMUserSpecialRelationshipChangeType::kNIMUserSpecialRelationshipChangeTypeSyncMuteAndBlackList:
 	{
-		std::list<nim::BlackListInfo> black_list;
-		std::list<nim::MuteListInfo> mute_list;
-		nim::User::ParseSyncSpecialRelationshipChange(change_event, black_list, mute_list);
-		for (auto& info : black_list)
+		std::list<nim::BlackMuteListInfo> black_mute_list;
+		nim::User::ParseSyncSpecialRelationshipChange(change_event, black_mute_list);
+		for (auto& info : black_mute_list)
 		{
 			ModifyBlackList(info.accid_, info.set_black_);
-		}
-
-		for (auto& info : mute_list)
-		{
 			ModifyMuteList(info.accid_, info.set_mute_);
 		}
 		break;

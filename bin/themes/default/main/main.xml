@@ -28,13 +28,14 @@
         </HBox>
 
         <Control class="splitline_hor_level1" name="split_line"/>
-        <HBox height="36">
+        <HBox height="36" name="option_panel">
             <OptionBox group="session_friend_tab" name="btn_session_list" tooltiptextid="STRID_MIANWINDOW_SESSION" cursortype="hand">
                 <Event type="select" receiver=".\select_tab" applyattribute="selectedid=&quot;1&quot;"/>
                 <Event type="unselect" receiver=".\select_tab" applyattribute="selectedid=&quot;0&quot;"/>
                 <Event type="select" receiver=".\session_option_icon" applyattribute="state=&quot;pushed&quot;"/>
                 <Event type="unselect" receiver=".\session_option_icon" applyattribute="state=&quot;normal&quot;"/>
                 <Event type="select" receiver="session_or_friend_list_tabbox" applyattribute="selectedid=&quot;0&quot;"/>
+				<Event type="select" receiver="search_edit" applyattribute="text=&quot;&quot;"/>
                 
                 <TabBox name="select_tab" mouse="false" mousechild="false">
                     <HBox>
@@ -63,7 +64,8 @@
                 <Event type="unselect" receiver=".\friend_option_icon" applyattribute="state=&quot;normal&quot;"/>
                 <Event type="select" receiver=".\friend_option_icon" applyattribute="state=&quot;pushed&quot;"/>
                 <Event type="select" receiver="session_or_friend_list_tabbox" applyattribute="selectedid=&quot;1&quot;"/>
-                
+                <Event type="select" receiver="search_edit" applyattribute="text=&quot;&quot;"/>
+				
                 <TabBox name="select_tab" mouse="false" mousechild="false">
                     <HBox>
                         <Control normalimage="file='bk_tab_unselected.png' source='0,0,15,36' corner='5,5,5,5'"/>
@@ -89,6 +91,7 @@
                 <Event type="unselect" receiver=".\friend_option_icon" applyattribute="state=&quot;normal&quot;"/>
                 <Event type="select" receiver=".\friend_option_icon" applyattribute="state=&quot;pushed&quot;"/>
                 <Event type="select" receiver="session_or_friend_list_tabbox" applyattribute="selectedid=&quot;2&quot;"/>
+                <Event type="select" receiver="search_edit" applyattribute="text=&quot;&quot;"/>
 
                 <TabBox name="select_tab" mouse="false" mousechild="false">
                     <HBox>
@@ -127,7 +130,7 @@
             <Button name="chatroom" width="stretch" height="stretch" textid="STRID_MAINWINDOW_CHATROOM_ENTRANCE" font="7" normaltextcolor="white" cursortype="hand" normalcolor="bk_main_wnd_search" hotcolor="bk_main_wnd_title" pushedcolor="bk_main_wnd_search"/>
             <Control class="splitline_ver_level1" height="stretch"/>
             <Button name="cef_test" width="stretch" height="stretch" textid="STRID_MAINWINDOW_BROWSER_TEST" font="7" normaltextcolor="white" cursortype="hand" normalcolor="bk_main_wnd_search" hotcolor="bk_main_wnd_title" pushedcolor="bk_main_wnd_search"/>
-        </HBox>
+		</HBox>
         
     </VBox>
 </Window>

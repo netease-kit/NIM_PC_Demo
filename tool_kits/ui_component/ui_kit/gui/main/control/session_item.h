@@ -132,6 +132,8 @@ public:
 	* @return void	无返回值
 	*/
 	static void BatchStatusDeleteCb(nim::NIMResCode res_code, const std::string& uid, nim::NIMSessionType to_type);
+
+	void SetMute(bool mute);
 private:
 	/**
 	* 显示或隐藏@我消息提示

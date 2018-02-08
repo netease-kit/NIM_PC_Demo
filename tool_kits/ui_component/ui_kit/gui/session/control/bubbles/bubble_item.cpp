@@ -300,7 +300,7 @@ bool MsgBubbleItem::IsShowRecallButton()
 	bool ret = false;
 	if (msg_.session_type_ == nim::kNIMSessionTypeP2P)
 	{
-		ret = my_msg_ && msg_.receiver_accid_ != LoginManager::GetInstance()->GetAccount();
+		ret = my_msg_ && msg_.receiver_accid_ != LoginManager::GetInstance()->GetAccount() && msg_.status_ != nim::kNIMMsgLogStatusRefused;
 	}
 	else if (msg_.session_type_ == nim::kNIMSessionTypeTeam)
 	{		

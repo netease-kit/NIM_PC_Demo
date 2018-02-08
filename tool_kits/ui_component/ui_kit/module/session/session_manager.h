@@ -70,7 +70,7 @@ public:
 	* @param[in] tid 群组id
 	* @return void 无返回值
 	*/
-	void QueryMyTeamInfo(const std::string& tid);
+	void QueryMyTeamMemberInfo(const std::string& tid);
 
 	/**
 	* 查询当前登录用户在所有群中的信息
@@ -128,6 +128,23 @@ public:
 	*/
 	bool DoDragSessionBox(SessionBox *session_box, HBITMAP bitmap, POINT pt_offset);
 
+	/**
+	* 查找某个群的消息是否需要通知提示
+	* @param[in] tid 群组id
+	* @param[in] sender_id 发送方id
+	* @return bool true 需要，false 不需要
+	*/
+	bool IsTeamMsgNotify(const std::string& tid, const std::string& sender_id);
+
+	/**
+	* 群的消息免打扰是否需要提示
+	* @param[in] tid 群组id
+	* @param[in] bits 
+	* @return bool true 需要，false 不需要
+	*/
+	bool IsTeamMsgMuteShown(const std::string& tid, int64_t bits);
+
+
 private:
 	/**
 	* 创建一个会话盒子
@@ -164,7 +181,7 @@ private:
 	* @param[in] team_member_info 群成员信息
 	* @return void 无返回值
 	*/
-	void OnQueryMyTeamInfo(const std::string& tid, const nim::TeamMemberProperty& team_member_info);
+	void OnQueryMyTeamMemberInfo(const std::string& tid, const nim::TeamMemberProperty& team_member_info);
 
 	/**
 	* 查询当前登录用户在所有群中自己的成员信息的回调函数
@@ -173,14 +190,6 @@ private:
 	* @return void 无返回值
 	*/
 	void OnQueryMyAllTeamMemberInfos(int count, const std::list<nim::TeamMemberProperty>& all_my_member_info_list);
-
-	/**
-	* 查找某个群的消息是否需要通知提示
-	* @param[in] tid 群组id
-	* @param[in] sender_id 发送方id
-	* @return bool true 需要，false 不需要
-	*/
-	bool IsTeamMsgNotify(const std::string& tid, const std::string& sender_id);
 
 private:
 	bool		enable_merge_;

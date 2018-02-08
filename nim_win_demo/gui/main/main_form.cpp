@@ -8,11 +8,14 @@ bool MainForm::SearchEditChange(ui::EventArgs* param)
 	bool has_serch_key = !search_key.empty();
 	btn_clear_input_->SetVisible(has_serch_key);
 	search_result_list_->SetVisible(has_serch_key);
+	option_panel_->SetVisible(!has_serch_key);
 	FindControl(L"no_search_result_tip")->SetVisible(has_serch_key);
 	if (has_serch_key)
 	{
 		nim_ui::ContactsListManager::GetInstance()->FillSearchResultList(search_result_list_, search_key);
 		FindControl(L"no_search_result_tip")->SetVisible(search_result_list_->GetCount() == 0);
+		if (search_result_list_->GetCount() > 0)
+			search_result_list_->SelectItem(0);
 	}
 	return true;
 }

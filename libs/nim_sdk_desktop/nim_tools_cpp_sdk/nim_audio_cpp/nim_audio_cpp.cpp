@@ -21,6 +21,7 @@ typedef bool(*nim_audio_uninit_module)();
 
 //play and stop
 typedef bool(*nim_audio_play_audio)(const wchar_t* file_path, const char* call_id, const char* res_id, int audio_format);
+typedef bool(*nim_audio_play_audio_ex)(const wchar_t* file_path, const char* call_id, const char* res_id, int audio_format,int seek);
 typedef bool(*nim_audio_stop_play_audio)();
 
 //capture
@@ -73,7 +74,11 @@ bool Audio::PlayAudio(const wchar_t* file_path, const char* call_id, const char*
 	nim_audio_play_audio f_uninit = Function<nim_audio_play_audio>("nim_audio_play_audio");
 	return f_uninit(file_path, call_id, res_id, audio_format);
 }
-
+bool Audio::PlayAudio(const wchar_t* file_path, const char* call_id, const char* res_id, nim_audio_type audio_format,int seek)
+{
+	nim_audio_play_audio_ex f_uninit = Function<nim_audio_play_audio_ex>("nim_audio_play_audio_ex");
+	return f_uninit(file_path, call_id, res_id, audio_format, seek);
+}
 bool Audio::StopPlayAudio()
 {
 	nim_audio_stop_play_audio f_uninit = Function<nim_audio_stop_play_audio>("nim_audio_stop_play_audio");

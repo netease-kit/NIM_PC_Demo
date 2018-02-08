@@ -48,11 +48,16 @@ static void CallbackGetBlackList(int res_code, const char *mute_black_list_json,
 		User::GetBlackListCallback* cb_pointer = (User::GetBlackListCallback*)callback;
 		if (*cb_pointer)
 		{
-			std::list<BlackListInfo> black_list;
-			std::list<MuteListInfo> mute_list;
-			ParseSpecialListInfo(PCharToString(mute_black_list_json), black_list, mute_list);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, black_list));
-			//(*cb_pointer)((NIMResCode)res_code, black_list);
+			std::list<BlackMuteListInfo> black_list;
+			std::list<BlackMuteListInfo> out_black_list;
+			ParseSpecialListInfo(PCharToString(mute_black_list_json), black_list);
+			for (auto black = black_list.begin(); black != black_list.end(); black++)
+			{
+				if (black->set_black_)
+					out_black_list.push_back(*black);
+			}
+			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, out_black_list));
+			//(*cb_pointer)((NIMResCode)res_code, out_black_list);
 		}
 		delete cb_pointer;
 	}
@@ -65,11 +70,16 @@ static void CallbackGetMuteList(int res_code, const char *mute_black_list_json, 
 		User::GetMuteListCallback* cb_pointer = (User::GetMuteListCallback*)callback;
 		if (*cb_pointer)
 		{
-			std::list<BlackListInfo> black_list;
-			std::list<MuteListInfo> mute_list;
-			ParseSpecialListInfo(PCharToString(mute_black_list_json), black_list, mute_list);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, mute_list));
-			//(*cb_pointer)((NIMResCode)res_code, mute_list);
+			std::list<BlackMuteListInfo> mute_list;
+			std::list<BlackMuteListInfo> out_mute_list;
+			ParseSpecialListInfo(PCharToString(mute_black_list_json), mute_list);
+			for (auto mute = mute_list.begin(); mute != mute_list.end(); mute++)
+			{
+				if (mute->set_mute_)
+					out_mute_list.push_back(*mute);
+			}
+			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, out_mute_list));
+			//(*cb_pointer)((NIMResCode)res_code, out_mute_list);
 		}
 		delete cb_pointer;
 	}
@@ -265,7 +275,7 @@ bool User::UpdateMyUserNameCard(const UserNameCard& namecard, const UpdateMyUser
 	return true;
 }
 
-bool User::ParseBlackListInfoChange(const SpecialRelationshipChangeEvent& change_event, BlackListInfo& info)
+bool User::ParseBlackListInfoChange(const SpecialRelationshipChangeEvent& change_event, BlackMuteListInfo& info)
 {
 	if (change_event.type_ != kNIMUserSpecialRelationshipChangeTypeMarkBlack)
 		return false;
@@ -282,7 +292,7 @@ bool User::ParseBlackListInfoChange(const SpecialRelationshipChangeEvent& change
 	return false;
 }
 
-bool User::ParseMuteListInfoChange(const SpecialRelationshipChangeEvent& change_event, MuteListInfo& info)
+bool User::ParseMuteListInfoChange(const SpecialRelationshipChangeEvent& change_event, BlackMuteListInfo& info)
 {
 	if (change_event.type_ != kNIMUserSpecialRelationshipChangeTypeMarkMute)
 		return false;
@@ -299,12 +309,12 @@ bool User::ParseMuteListInfoChange(const SpecialRelationshipChangeEvent& change_
 	return false;
 }
 
-bool User::ParseSyncSpecialRelationshipChange(const SpecialRelationshipChangeEvent& change_event, std::list<BlackListInfo>& black_list, std::list<MuteListInfo>& mute_list)
+bool User::ParseSyncSpecialRelationshipChange(const SpecialRelationshipChangeEvent& change_event, std::list<BlackMuteListInfo>& black_mute_list)
 {
 	if (change_event.type_ != kNIMUserSpecialRelationshipChangeTypeSyncMuteAndBlackList)
 		return false;
 
-	return ParseSpecialListInfo(change_event.content_, black_list, mute_list);
+	return ParseSpecialListInfo(change_event.content_, black_mute_list);
 }
 
 void User::UnregUserCb()

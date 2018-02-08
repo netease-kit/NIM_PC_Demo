@@ -67,7 +67,7 @@ void SessionItem::InitMsg(const nim::SessionData &msg)
 
 	if (msg_.type_ == nim::kNIMSessionTypeTeam) // 需要先获得群里最近一条消息中所有人的昵称，再UpdateMsg
 	{
-		head_image_->SetMouseEnabled(false); //群头像不响应点击
+		//head_image_->SetMouseEnabled(false); //群头像不响应点击
 
 		relate_ids.clear();
 		relate_ids.insert(msg_.msg_sender_accid_);
@@ -105,6 +105,15 @@ void SessionItem::InitMsg(const nim::SessionData &msg)
 			data.online_client_.online_client_type_.insert(nim::kNIMClientTypeDefault);
 		SetOnlineState(data);
 	}
+
+	if (msg_.type_ == nim::kNIMSessionTypeP2P)
+	{
+		SetMute(nim_comp::MuteBlackService::GetInstance()->IsInMuteList(msg_.id_));
+	}
+	else
+	{
+		SetMute(nim_comp::SessionManager::GetInstance()->IsTeamMsgMuteShown(msg_.id_, -1));
+	}
 }
 
 void SessionItem::InitRobotProfile()
@@ -113,6 +122,11 @@ void SessionItem::InitRobotProfile()
 	UserService::GetInstance()->GetRobotInfo(msg_.id_, info);
 	label_name_->SetText(nbase::UTF8ToUTF16(info.GetName()));
 	head_image_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(msg_.id_, true));
+}
+
+void SessionItem::SetMute(bool mute)
+{
+	FindSubControl(L"not_disturb")->SetVisible(mute);
 }
 
 void SessionItem::InitUserProfile()
@@ -426,7 +440,15 @@ bool SessionItem::OnSessionItemMenu(ui::EventArgs* arg)
 
 bool SessionItem::OnHeadImageClicked(bool is_robot, ui::EventArgs * arg)
 {
-	ProfileForm::ShowProfileForm(msg_.id_, is_robot);
+	if (msg_.type_ == nim::kNIMSessionTypeTeam)
+	{
+		auto team_info = nim::Team::QueryTeamInfoBlock(msg_.id_);
+		TeamInfoForm::ShowTeamInfoForm(false, team_info.GetType(), msg_.id_, team_info);
+	}
+	else if (msg_.type_ == nim::kNIMSessionTypeP2P)
+	{
+		ProfileForm::ShowProfileForm(msg_.id_, is_robot);
+	}
 	return true;
 }
 

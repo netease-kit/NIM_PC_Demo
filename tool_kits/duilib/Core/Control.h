@@ -19,6 +19,7 @@ public:
 
 class UILIB_API Control : public PlaceHolder
 {
+	typedef std::map<int, CEventSource> GifEventMap;
 public:
     Control();
     virtual ~Control();
@@ -158,10 +159,9 @@ public:
 	void SetRenderOffsetY(int renderOffsetY);
 
 	// GifÕº∆¨
-	void GifPlay();
-	void StopGifPlay(GifStopType type = kGifStopCurrent);
-	void StartGifPlayForUI(GifStopType type = kGifStopFirst);
-	void StopGifPlayForUI(GifStopType type = kGifStopCurrent);
+	void StartGifPlayForUI(int frame = kGifStopFirst,int playcount = -1);
+	void StopGifPlayForUI(bool transfer = false,int frame = kGifStopCurrent);
+	void AttachGifPlayStop(const EventCallback& callback){ OnGifEvent[m_nVirtualEventGifStop] += callback; };
 
 	// ∂Øª≠π‹¿Ì
 	AnimationManager& GetAnimationManager()	{ return m_animationManager; }
@@ -186,10 +186,16 @@ public:
 protected:
 	friend WindowBuilder;
 	void AttachXmlEvent(EventType eventType, const EventCallback& callback) { OnXmlEvent[eventType] += callback; }
-
+	// GifÕº∆¨
+	void GifPlay();
+	void StopGifPlay(int frame = kGifStopCurrent);	
+private:
+	void BroadcastGifEvent(int nVirtualEvent);
+	int GetGifFrameIndex(int frame);
 protected:
 	EventMap OnXmlEvent;
 	EventMap OnEvent;
+	GifEventMap OnGifEvent;
 	std::unique_ptr<UserDataBase> m_pUserDataBase;
 	bool m_bMenuUsed;
 	bool m_bEnabled;
@@ -224,6 +230,7 @@ protected:
 	nbase::WeakCallbackFlag m_gifWeakFlag;
 	AnimationManager m_animationManager;
 	nbase::WeakCallbackFlag m_loadBkImageWeakFlag;
+	static const int m_nVirtualEventGifStop;
 };
 
 } // namespace ui

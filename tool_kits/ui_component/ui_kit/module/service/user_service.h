@@ -8,7 +8,8 @@ const std::string kAppServerAddress = "http://app.netease.im";
 enum FriendChangeType
 {
 	kChangeTypeAdd,
-	kChangeTypeDelete
+	kChangeTypeDelete,
+	kChangeTypeUpdate
 };
 
 //用户性别
@@ -77,6 +78,13 @@ public:
 	* @return void	无返回值
 	*/
 	void InvokeGetAllUserInfo(const OnGetUserInfoCallback& cb);
+
+	/**
+	* 向数据库和服务器获取指定用户以及近期获取过的用户信息
+	* @param[in] cb 回调函数
+	* @return void	无返回值
+	*/
+	void InvokeGetAllUserInfo(const std::list<std::string>& accids, const OnGetUserInfoCallback& cb);
 
 	/**
 	* 向数据库获取全部机器人以及近期获取过的机器人信息
@@ -186,6 +194,13 @@ public:
 	* @return wstring 用户昵称或备注名
 	*/
 	std::wstring GetUserName(const std::string &id, bool alias_prior = true);
+
+	/**
+	* 获取好友扩展字段
+	* @param[in] id 用户id
+	* @return Json::Value 用户扩展字段
+	*/
+	Json::Value GetUserCustom(const std::string &id);
 
 	/**
 	* 获取好友备注名

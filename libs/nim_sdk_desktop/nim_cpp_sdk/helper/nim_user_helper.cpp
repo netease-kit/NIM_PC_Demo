@@ -67,14 +67,14 @@ void ParseNameCard(const Json::Value& namecard_json, UserNameCard& namecard)
 	if (namecard_json.isMember(kNIMNameCardKeyMobile))
 		namecard.SetMobile(namecard_json[kNIMNameCardKeyMobile].asString());
 	if (namecard_json.isMember(kNIMNameCardKeyEx))
-		namecard.SetExpand(namecard_json[kNIMNameCardKeyEx].asString());
+		namecard.SetExpand(namecard_json[kNIMNameCardKeyEx]);
 	if (namecard_json.isMember(kNIMNameCardKeyCreateTime))
 		namecard.SetCreateTimetag(namecard_json[kNIMNameCardKeyCreateTime].asUInt64());
 	if (namecard_json.isMember(kNIMNameCardKeyUpdateTime))
 		namecard.SetUpdateTimetag(namecard_json[kNIMNameCardKeyUpdateTime].asUInt64());
 }
 
-bool ParseSpecialListInfo(const std::string& list_json, std::list<BlackListInfo>& black_list, std::list<MuteListInfo>& mute_list)
+bool ParseSpecialListInfo(const std::string& list_json, std::list<BlackMuteListInfo>& mute_black_list)
 {
 	Json::Value values;
 	Json::Reader reader;
@@ -83,24 +83,14 @@ bool ParseSpecialListInfo(const std::string& list_json, std::list<BlackListInfo>
 		int len = values.size();
 		for (int i = 0; i < len; i++)
 		{
-			Json::Value value = values[i];
-			bool is_black_user_info = value[kNIMSpecialRelationKeyIsBlackList].asBool();
-			if (is_black_user_info)
-			{
-				BlackListInfo info;
-				info.accid_ = value[kNIMSpecialRelationKeyAccid].asString();
-				info.create_timetag_ = value[kNIMSpecialRelationKeyCreateTime].asUInt64();
-				info.update_timetag_ = value[kNIMSpecialRelationKeyUpdateTime].asUInt64();
-				black_list.push_back(info);
-			}
-			else
-			{
-				MuteListInfo info;
-				info.accid_ = value[kNIMSpecialRelationKeyAccid].asString();
-				info.create_timetag_ = value[kNIMSpecialRelationKeyCreateTime].asUInt64();
-				info.update_timetag_ = value[kNIMSpecialRelationKeyUpdateTime].asUInt64();
-				mute_list.push_back(info);
-			}
+			Json::Value &value = values[i];
+			BlackMuteListInfo info;
+			info.accid_ = value[kNIMSpecialRelationKeyAccid].asString();
+			info.set_black_ = value[kNIMSpecialRelationKeyIsBlackList].asBool();
+			info.set_mute_ = value[kNIMSpecialRelationKeyIsMute].asBool();
+			info.create_timetag_ = value[kNIMSpecialRelationKeyCreateTime].asUInt64();
+			info.update_timetag_ = value[kNIMSpecialRelationKeyUpdateTime].asUInt64();
+			mute_black_list.push_back(info);
 		}
 
 		return true;

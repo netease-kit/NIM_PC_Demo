@@ -241,6 +241,7 @@ bool ChatroomForm::OnClicked(ui::EventArgs* param)
 	}
 	else if (name == L"logout")
 	{
+		param->pSender->SetEnabled(false);
 		Logout();
 	}
 
@@ -256,6 +257,7 @@ void ChatroomForm::Logout()
 		nim_comp::LoginManager::GetInstance()->SetPassword("");
 		switch_to_login_status_ = kToAnonymous;
 		nim_chatroom::ChatRoom::Exit(room_id_);
+
 	}));
 }
 

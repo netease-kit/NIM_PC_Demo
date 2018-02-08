@@ -90,6 +90,13 @@ private:
 	*/
 	bool TeamItemMenuItemClick(ui::EventArgs* msg);
 
+	/**
+	* 处理控件双击消息
+	* @param[in] msg 消息的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnDbClicked(ui::EventArgs* arg);
+
 private:
 	ui::Button*		member_icon_;
 	ui::Label*		member_name_;

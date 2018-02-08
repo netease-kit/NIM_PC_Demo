@@ -134,6 +134,24 @@ void UserService::InvokeGetAllUserInfo(const OnGetUserInfoCallback& cb)
 	}));
 }
 
+void UserService::InvokeGetAllUserInfo(const std::list<std::string>& accids, const OnGetUserInfoCallback& cb)
+{
+	nim::User::GetUserNameCardOnline(accids, [this, cb](const std::list<nim::UserNameCard>& uinfos)
+	{
+		std::list<std::string> accids;
+		for (auto& it : uinfos)
+		{
+			nim::FriendProfile pro;
+			pro.SetAccId(it.GetAccId());
+			pro.SetRelationship(nim::kNIMFriendFlagNormal);
+			friend_list_[it.GetAccId()].Update(pro);
+			accids.push_back(it.GetAccId());
+		}
+		if (cb)
+			cb(uinfos);
+	});
+}
+
 void UserService::InvokeUpdateMyInfo(const nim::UserNameCard &new_info, const OnUpdateUserInfoCallback& cb)
 {
 	nim::UserNameCard info = new_info;
@@ -333,6 +351,13 @@ std::wstring UserService::GetUserName(const std::string &id, bool alias_prior/* 
 	nim::UserNameCard info;
 	GetUserInfo(id, info);
 	return nbase::UTF8ToUTF16(info.GetName());
+}
+
+Json::Value UserService::GetUserCustom(const std::string &id)
+{
+	nim::UserNameCard info;
+	GetUserInfo(id, info);
+	return info.GetExpand();
 }
 
 std::wstring UserService::GetFriendAlias(const std::string & id)

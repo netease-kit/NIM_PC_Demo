@@ -111,6 +111,15 @@ NIM_SDK_DLL_API	void nim_user_get_user_name_card_online(const char *accids, cons
 NIM_SDK_DLL_API	void nim_user_update_my_user_name_card(const char *info_json, const char *json_extension, nim_user_update_my_name_card_cb_func cb, const void *user_data);
 
 
+/** @fn void nim_user_update_my_user_name_card(const char *info_json, const char *json_extension, nim_user_update_my_name_card_cb_func cb, const void *user_data)
+* 更新推送证书和Token (Andorid/iOS)
+* @param[in] cer_name 在云信管理后台配置的推送证书名
+* @param[in] token 推送Token
+* @param[in] type 1表示pushkit,0表示apns
+* @return void 无返回值
+*/
+NIM_SDK_DLL_API void nim_user_update_push_token(const char* cer_name, const char* token, int type);
+
 #ifdef __cplusplus
 };
 #endif //__cplusplus

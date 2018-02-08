@@ -146,6 +146,7 @@ enum NIMVChatVideoEncodeMode
 	kNIMVChatVEModeNormal		= 0,		/**< 默认值，清晰优先 */
 	kNIMVChatVEModeFramerate	= 1,		/**< 流畅优先 */
 	kNIMVChatVEModeQuality		= 2,		/**< 清晰优先 */
+	kNIMVChatVEModeScreen		= 3,		/**< 屏幕共享场景调控策略，sdk不会根据网络调整分辨率 */
 };
 
 #endif
@@ -192,6 +193,7 @@ enum NIMVChatConnectErrorCode{
 	kNIMVChatChannelDisconnected		= 11001,	/**< 断开连接 */
 	kNIMVChatVersionSelfLow				= 11002,	/**< 本人SDK版本太低不兼容 */
 	kNIMVChatVersionRemoteLow			= 11003,	/**< 对方SDK版本太低不兼容 */
+	kNIMVChatLocalChannelClosed			= 11004,	/**< 通道被关闭 */
 };
 
 
@@ -259,7 +261,7 @@ static const char *kNIMVChatNeedFromNick	= "need_nick";		/**< int 是否需要�
 static const char *kNIMVChatApnsPayload		= "payload";		/**< string JSON格式,推送payload */
 static const char *kNIMVChatSound			= "sound";			/**< string 推送声音 */
 static const char *kNIMVChatKeepCalling		= "keepcalling";	/**< int, 是否强制持续呼叫（对方离线也会呼叫）,1表示是，0表示否。默认是 */
-static const char *kNIMVChatWebrtc			= "webrtc";			/**< int, 是否支持webrtc互通,1表示是，0表示否。默认否，无需要不要开启 */
+//无效已经默认支持 static const char *kNIMVChatWebrtc			= "webrtc";			/**< int, 是否支持webrtc互通,1表示是，0表示否。默认否，无需要不要开启 */
 static const char *kNIMVChatVEncodeMode		= "v_encode_mode";	/**< int, 使用的视频编码策略NIMVChatVideoEncodeMode， 默认kNIMVChatVEModeNormal */
 /** @}*/ //json extension params
 

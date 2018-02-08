@@ -17,6 +17,8 @@ namespace nim_comp
 class TeamInfoForm : public WindowEx
 {
 public:
+	static TeamInfoForm *ShowTeamInfoForm(bool create_or_display, nim::NIMTeamType type, const std::string& team_id, const nim::TeamInfo& team_info);
+public:
 	/**
 	* 构造函数
 	* @param[in] create_or_display 发起群聊还是显示群信息
@@ -102,14 +104,14 @@ private:
 	* @param[in] team_list 无需关心的参数
 	* @return void	无返回值
 	*/
-	void SelectedCompleted(const std::list<UTF8String>& friend_list, const std::list<UTF8String>& team_list);
+	void SelectedCompleted(const std::list<UTF8String>& friend_list, const std::list<UTF8String>& team_list, bool delete_enable);
 
 	/**
 	* 创建一个群成员项控件
 	* @param[in] member_info 群成员信息
 	* @return void	无返回值
 	*/
-	ui::HBox* CreateTeamMemberListItem(const nim::TeamMemberProperty& member_info);
+	ui::HBox* CreateTeamMemberListItem(const nim::TeamMemberProperty& member_info, bool delelte_enable = false);
 
 	/**
 	* 根据自己的身份更新界面显示的效果

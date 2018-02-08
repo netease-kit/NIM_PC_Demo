@@ -13,16 +13,17 @@ PublicDB::PublicDB()
     static bool sqls_created = false;
     if (!sqls_created)
     {
-        kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS logindata(uid TEXT PRIMARY KEY, \
-                                  name TEXT, password TEXT, type INTEGER, status INTEGER, remember INTEGER, autologin INTEGER)");
-        kCreateDBSQLs.push_back("CREATE INDEX IF NOT EXISTS logindatauidindex ON logindata(uid)");
+		kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS logindata(uid TEXT PRIMARY KEY, \
+								 								                                   name TEXT, password TEXT, type INTEGER, status INTEGER, remember_user INTEGER, remember_psw INTEGER, autologin INTEGER)");
+		kCreateDBSQLs.push_back("CREATE INDEX IF NOT EXISTS logindatauidindex ON logindata(uid)");
 
 		kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS proxysettingdata(proxytype INTEGER PRIMARY KEY, \
 								 address TEXT, port TEXT,name TEXT, password TEXT, domain TEXT,valid INTEGER)");
 		kCreateDBSQLs.push_back("CREATE INDEX IF NOT EXISTS proxydataindex ON proxysettingdata(proxytype)");
 
 		kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS config_info(key TEXT PRIMARY KEY, value TEXT)");
-        sqls_created = true;
+
+		sqls_created = true;
     }
 	aes_key_ = "12345500072bf3390c79f01004dabcde";//32位
 	db_encrypt_key_ = "1234560247a0619f07548fb1b8abcedf";//注意：只支持最多32个字符的加密密钥！
@@ -53,8 +54,8 @@ bool PublicDB::WriteLoginData(LoginData &data)
 {
     nbase::NAutoLock auto_lock(&lock_);
     ndb::SQLiteStatement stmt;
-    db_.Query(stmt, 
-		"INSERT INTO logindata(uid, name, password, type, status, remember, autologin) VALUES (?, ?, ?, ?, ?, ?, ?);");
+	db_.Query(stmt,
+		"INSERT INTO logindata(uid, name, password, type, status, remember_user, remember_psw, autologin) VALUES (?, ?, ?, ?, ?, ?, ?, ?);");
 
     stmt.BindText(1, data.user_id_.c_str(), (int)data.user_id_.size());
 	stmt.BindText(2, data.user_name_.c_str(), (int)data.user_name_.size());
@@ -63,17 +64,16 @@ bool PublicDB::WriteLoginData(LoginData &data)
 	stmt.BindText(3, password_aes.c_str(), (int)password_aes.size());
     stmt.BindInt(4, data.type_);
 	stmt.BindInt(5, data.status_);
-	stmt.BindInt(6, data.remember_);
-	stmt.BindInt(7, data.auto_login_);
+	stmt.BindInt(6, data.remember_user_);
+	stmt.BindInt(7, data.remember_psw_);
+	stmt.BindInt(8, data.auto_login_);
 
     int32_t result = stmt.NextRow();
     bool no_error = result == SQLITE_OK || result == SQLITE_ROW || result == SQLITE_DONE;
     if (false == no_error)
     {
-        //DEFLOG(nbase::LogInterface::LV_ERR, __FILE__, __LINE__, "error: insert login data for uid : %s, \
-        //       reason : %d", data.user_id_.c_str(), result);
-
-    }
+		QLOG_APP(L"error: insert login data for uid : {0}, reason : {1}") << data.user_id_ << result;
+	}
     return no_error;
 }
 
@@ -135,9 +135,8 @@ bool PublicDB::UpdateLoginData(UTF8String &uid,
     bool no_error = result == SQLITE_OK || result == SQLITE_ROW || result == SQLITE_DONE;
     if (!no_error)
     {
-        //DEFLOG(nbase::LogInterface::LV_ERR, __FILE__, __LINE__, "Error: Set LoginData password For uid: %s,  \
-        //       Reason : %d", uid.c_str(), result);
-    }
+		QLOG_APP(L"Error: Set LoginData password For uid: {0}, Reason : {1}") << uid << result;
+	}
     
     return no_error;
 }
@@ -153,26 +152,24 @@ bool PublicDB::SetStatus(UTF8String &uid, const uint8_t status)
 	bool no_error = result == SQLITE_OK || result == SQLITE_ROW || result == SQLITE_DONE;
 	if (!no_error)
 	{
-		//DEFLOG(nbase::LogInterface::LV_ERR, __FILE__, __LINE__, "Error: Set LoginData status For uid: %s,  \
-		//														Reason : %d", uid.c_str(), result);
+		QLOG_APP(L"Error: Set LoginData status For uid: {0},  Reason : {1}") << uid << result;
 	}
 
 	return no_error;
 }
 
-bool PublicDB::SetRemember(UTF8String &uid, const uint8_t remember)
+bool PublicDB::SetRemember(UTF8String &uid, const uint8_t remember_user, const uint8_t remember_psw)
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	UTF8String query_sql;
-	nbase::StringPrintf(query_sql, "UPDATE OR ROLLBACK logindata SET remember = %d \
-								   WHERE uid = '%s'", remember, shared::tools::FormatSQLText(uid).c_str());
+	nbase::StringPrintf(query_sql, "UPDATE OR ROLLBACK logindata SET remember_user = %d, remember_psw = %d \
+								   WHERE uid = '%s'", remember_user, remember_psw, uid.c_str());
 
 	int32_t result = db_.Query(query_sql.c_str());
 	bool no_error = result == SQLITE_OK || result == SQLITE_ROW || result == SQLITE_DONE;
 	if (!no_error)
 	{
-		//DEFLOG(nbase::LogInterface::LV_ERR, __FILE__, __LINE__, "Error: Set LoginData remember For uid: %s,  \
-		//														Reason : %d", uid.c_str(), result);
+		QLOG_APP(L"Error: Set LoginData remember For uid: {0}, Reason : {1}") << uid << result;
 	}
 
 	return no_error;
@@ -189,8 +186,7 @@ bool PublicDB::SetAutoLogin(UTF8String &uid, const uint8_t auto_login)
 	bool no_error = result == SQLITE_OK || result == SQLITE_ROW || result == SQLITE_DONE;
 	if (!no_error)
 	{
-		//DEFLOG(nbase::LogInterface::LV_ERR, __FILE__, __LINE__, "Error: Set LoginData autologin For uid: %s,  \
-		//														Reason : %d", uid.c_str(), result);
+		QLOG_APP(L"Error: Set LoginData autologin For uid: {0}, Reason : {1}") << uid << result;
 	}
 
 	return no_error;
@@ -260,16 +256,17 @@ bool PublicDB::CreateDBFile()
 
 void PublicDB::GetLoginDataFromStatement(ndb::SQLiteStatement &stmt, LoginData &data)
 {
-    data.user_id_       = stmt.GetTextField(0);
-    data.user_name_     = stmt.GetTextField(1);
+	data.user_id_ = stmt.GetTextField(0);
+	data.user_name_ = stmt.GetTextField(1);
 	UTF8String password_org;
 	UTF8String password_aes = stmt.GetTextField(2);
 	GetOrgPassword(password_aes, password_org);
-    data.user_password_	= password_org;
-    data.type_          = stmt.GetIntField(3); 
-	data.status_        = stmt.GetIntField(4); 
-	data.remember_      = stmt.GetIntField(5); 
-	data.auto_login_    = stmt.GetIntField(6); 
+	data.user_password_ = password_org;
+	data.type_ = stmt.GetIntField(3);
+	data.status_ = stmt.GetIntField(4);
+	data.remember_user_ = stmt.GetIntField(5);
+	data.remember_psw_ = stmt.GetIntField(6);
+	data.auto_login_ = stmt.GetIntField(7);
 }
 
 void PublicDB::GetAESPassword(const UTF8String &password_org, UTF8String &password_aes)
@@ -300,7 +297,7 @@ bool PublicDB::SetAllLoginDataDeleted()
 	bool no_error = result == SQLITE_OK || result == SQLITE_ROW || result == SQLITE_DONE;
 	if (!no_error)
 	{
-		//DEFLOG(nbase::LogInterface::LV_ERR, __FILE__, __LINE__, "Error: Set All Login Data Deleted");
+		QLOG_APP(L"Error: Set All Login Data Deleted");
 	}
 	return no_error;
 }
@@ -357,9 +354,7 @@ void PublicDB::SaveLoginData()
 			this->SetStatus(current_login_data_.user_id_, kLoginDataStatusValid);
 		}
 		//是否记住帐号密码
-		this->SetRemember(current_login_data_.user_id_, current_login_data_.remember_);
-		//是否自动登录
-		this->SetAutoLogin(current_login_data_.user_id_, current_login_data_.auto_login_);
+		this->SetRemember(current_login_data_.user_id_, current_login_data_.remember_user_, current_login_data_.remember_psw_);
 	}
 }
 

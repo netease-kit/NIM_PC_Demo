@@ -1083,6 +1083,26 @@ private:
 	* @return void 无返回值
 	*/
 	void ResetNewBroadButtonVisible();	
+
+	/**
+	* 处理好友控件头像单击消息
+	* @param[in] msg 消息的相关信息
+	* @param[in] type 类型
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnHeadImageClick(const std::string& uid, ui::EventArgs*);
+
+	/**
+	* 响应用户列表改变的回调函数
+	* @param[in] change_type 好友变化类型
+	* @param[in] accid 用户id
+	* @return void 无返回值
+	*/
+	void OnFriendListChange(FriendChangeType change_type, const std::string& accid);
+	void InvokeSetTeamNotificationMode(const int64_t bits);
+	void OnTeamNotificationModeChangeCallback(const std::string& id, int64_t bits);
+
+	void OnNotifyChangeCallback(std::string id, bool mute);
 #pragma endregion Team
 
 public:

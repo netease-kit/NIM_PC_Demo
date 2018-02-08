@@ -6,7 +6,13 @@
             <Label name="time_text" width="auto" valign="center" normaltextcolor="darkcolor" font="1" />  
 			<Label name="tip_text" width="stretch" valign="center" margin="2,0,0,0" normaltextcolor="darkcolor" font="1" endellipsis="true"/>           
 		</HBox>
-
+		<HBox width="120" halign="right" margin="0,0,120,0">
+			<Option class="circle_option" name="aac" valign="center" group="aduio_type" selected="true" text="AAC"
+			height="14" textpadding="17,0,0,0" font="1" normaltextcolor="darkcolor" normalimage="file='../public/option/option1_unselected.png' dest='0,0,14,14'" selectednormalimage="file='../public/option/option1_selected.png' dest='0,0,14,14'"/>
+			
+			<Option class="circle_option" name="amr" valign="center" group="aduio_type" margin="12,0,0,0" text="AMR"
+			height="14" textpadding="17,0,0,0" font="1" normaltextcolor="darkcolor" normalimage="file='../public/option/option1_unselected.png' dest='0,0,14,14'" selectednormalimage="file='../public/option/option1_selected.png' dest='0,0,14,14'"/>
+		</HBox>
 		<Button class="btn_global_green_80x30" name="btn_start_capture" textid="STRID_AUDIO_CAPTURE_RECORD" width="50" height="25" halign="right" valign="center" margin="0,0,55,0" cursortype="hand"/>
 		<Button class="btn_global_green_80x30" name="btn_send_audio" textid="STRING_SEND" width="50" height="25" halign="right" valign="center" margin="0,0,55,0" cursortype="hand" visible="false" />
         <Button class="btn_global_green_80x30" name="btn_calcel_capture" textid="STRING_NO" width="50" height="25" halign="right" valign="center" cursortype="hand"/>

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Window caption="0,0,0,160" shadowattached="false" custom_shadow="20,70,20,20" textid="STRID_LOGIN_FORM_LOGIN">
     <Box width="304" height="auto">
-        <Box width="130" height="130" margin="0,10,0,0" halign="center">
+        <Box width="130" height="150" margin="0,10,0,0" halign="center">
             <Control width="auto" height="auto" halign="center" valign="center" bkimage="head_shadow.png" mouse="false"/>
         </Box>
         
@@ -36,6 +36,20 @@
                         </HBox>
                     </VBox>
                 </VBox>
+				
+			<!--记住密码-->
+			<HBox height="auto" margin="29,20,29,0">			
+				<CheckBox class="checkbox_font12" name="chkbox_remember_username" textid="STRID_LOGIN_REMEMBER_ME" normaltextcolor="dark2color">
+					<Event type="unselect" receiver="chkbox_remember_pwd" applyattribute="selected=&quot;false&quot;"/>
+				</CheckBox>
+				<!--Control /-->
+				<CheckBox class="checkbox_font12" name="chkbox_remember_pwd" textid="STRID_LOGIN_REMEMBER_PWD" normaltextcolor="dark2color" margin="11,0,0,0">
+					<Event type="select" receiver="chkbox_remember_username" applyattribute="selected=&quot;true&quot;"/>
+					<Event type="unselect" receiver="chkbox_remember_username" applyattribute="selected=&quot;false&quot;"/>
+				</CheckBox>
+				<Control />
+				<!--Button name="forget_password" cursortype="hand" font="1" normaltextcolor="link_gray" textid="STRID_LOGIN_FORGET_PASSWORD" /-->
+			</HBox>
                 
 				<!--登录提示-->
                 <Label name="login_ing_tip" margin="20,20,20,0" font="1" textid="STRID_LOGIN_FORM_LOGINING" visible="false"/>
@@ -60,7 +74,7 @@
         </Box>
 
         <!--头像-->
-        <Box margin="0,10,0,0" mouse="false" width="130" height="130" halign="center">
+        <Box margin="0,10,0,0" mouse="false" width="130" height="150" halign="center">
             <Control width="auto" height="auto" halign="center" valign="center" bkimage="logo.png"/>
             <Button name="headicon" width="106" height="106" borderround="106,106,106,106" halign="center" valign="center" mouse="false" fadealpha="true"/>
             <Control width="auto" height="auto" bkimage="mask.png" halign="center" valign="center" mouse="false"/>

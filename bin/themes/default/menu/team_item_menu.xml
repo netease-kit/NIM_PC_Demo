@@ -4,5 +4,11 @@
         <MenuElement class="MenuElement" name="mute" width="158">
             <Label class="menu_text" name="mute_text" textid="STRID_SESSION_TEAM_ITEM_MENU_MUTE"/>
         </MenuElement>
-    </VListBox>
+        <MenuElement class="MenuElement" name="info" width="158">
+            <Label class="menu_text" name="mute_info" textid="STRID_SESSION_TEAM_ITEM_MENU_INFO"/>
+        </MenuElement>
+        <MenuElement class="MenuElement" name="talk" width="158">
+            <Label class="menu_text" name="mute_talk" textid="STRID_SESSION_TEAM_ITEM_MENU_TALK"/>
+        </MenuElement>
+	</VListBox>
 </Window>

@@ -2,7 +2,7 @@
 #include "callback/audio/audio_callback.h"
 #include "module/audio/audio_manager.h"
 #include "util/user.h"
-
+#include "Vfw.h"
 using namespace ui;
 
 namespace nim_comp
@@ -112,8 +112,8 @@ bool MsgBubbleAudio::OnClicked(ui::EventArgs* arg)
 				if (n == 6 && !memcmp(header, "#!AMR\n", 6)) //AMR文件
 					audio_format = nim_audio::AMR;
 				fclose(audio_file);
-			}
-
+			}		
+			tick_ = 0;
 			AudioManager::GetInstance()->PlayAudio(path_, sid_, msg_.client_msg_id_, audio_format);
 			nim::MsgLog::SetSubStatusAsync(msg_.client_msg_id_, nim::kNIMMsgLogSubStatusPlayed, nim::MsgLog::SetSubStatusCallback());
 			msg_.sub_status_ = nim::kNIMMsgLogSubStatusPlayed;
@@ -126,7 +126,9 @@ bool MsgBubbleAudio::OnClicked(ui::EventArgs* arg)
 void MsgBubbleAudio::OnTick()
 {
 	tick_++;
-	SetTime(tick_);
+	if (tick_ >= time_)
+		tick_ = time_;
+	SetTime(tick_);	
 }
 
 void MsgBubbleAudio::InitTime()
@@ -134,10 +136,10 @@ void MsgBubbleAudio::InitTime()
 	Json::Value value;
 	if (StringToJson(msg_.attach_, value) && value.isObject())
 	{
-		int t = value[nim::kNIMAudioMsgKeyDuration].asInt();
-		time_ = t / 1000;
-		if(t % 1000 >= 500)
-			time_++;
+		audio_time_ = value[nim::kNIMAudioMsgKeyDuration].asInt();
+		time_ = audio_time_ / 1000;
+		if (audio_time_ % 1000 >= 500)
+			time_++;	
 		SetTime(time_);
 
 		Box* audio_play_box = (Box*)msg_audio_->FindSubControl(L"audio_play_box");
@@ -171,12 +173,10 @@ void MsgBubbleAudio::DoPlay()
 
 	audio_icon_->SetVisible( false );
 	play_icon_->SetVisible( true );
-
-	tick_ = 0;
 	SetTime(tick_);
 	StdClosure cb = nbase::Bind(&MsgBubbleAudio::OnTick, this);
 	auto weak_cb = timer_.ToWeakCallback(cb);
-	nbase::ThreadManager::PostRepeatedTask(weak_cb, nbase::TimeDelta::FromSeconds(1));
+	nbase::ThreadManager::PostRepeatedTask(weak_cb, nbase::TimeDelta::FromSeconds(1));	
 }
 
 void MsgBubbleAudio::DoStop()

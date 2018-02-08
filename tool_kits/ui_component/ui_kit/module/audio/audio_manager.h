@@ -33,9 +33,10 @@ public:
 	* @param[in] session_id 会话id
 	* @param[in] msd_id 消息id
 	* @param[in] audio_format 音频格式，AAC : 0， AMR : 1
+	* @param[in] seek 音频播放的起始位置(时间) 单位 ms
 	* @return bool true 调用成功，false 调用失败
 	*/
-	bool PlayAudio(const std::string file_path, const std::string session_id, const std::string msg_id, nim_audio::nim_audio_type audio_format);
+	bool PlayAudio(const std::string file_path, const std::string session_id, const std::string msg_id, nim_audio::nim_audio_type audio_format,int seek = 0);
 
 	/**
 	* 停止播放语音

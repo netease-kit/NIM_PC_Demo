@@ -11,8 +11,8 @@
 #include "callback/session/session_callback.h"
 #include "export/nim_ui_window_manager.h"
 #include "util/user.h"
-#include "nim_team_def.h"
-#include "module\session\session_util.h"
+#include "gui/contact_select_form/contact_select_form.h"
+
 using namespace ui;
 
 namespace
@@ -52,7 +52,12 @@ SessionBox::SessionBox(std::string id, nim::NIMSessionType type)
 
 SessionBox::~SessionBox()
 {
-
+/*
+	ContactSelectForm *contact_select_form = (ContactSelectForm *)WindowsManager::GetInstance()->GetWindow\
+		(ContactSelectForm::kClassName, nbase::UTF8ToUTF16(session_id_));
+	if (contact_select_form)
+		contact_select_form->Close();
+*/
 }
 
 SessionForm* SessionBox::GetSessionForm() const
@@ -201,15 +206,23 @@ void SessionBox::InitSessionBox()
 		unregister_cb.Add(TeamService::GetInstance()->RegRemoveTeam(nbase::Bind(&SessionBox::OnTeamRemove, this, std::placeholders::_1)));
 		unregister_cb.Add(TeamService::GetInstance()->RegAddTeam(nbase::Bind(&SessionBox::OnTeamAdd, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 		unregister_cb.Add(TeamService::GetInstance()->RegMuteMember(nbase::Bind(&SessionBox::OnTeamMuteMember, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
+		unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamNotification(nbase::Bind(&SessionBox::OnTeamNotificationModeChangeCallback, this, std::placeholders::_1, std::placeholders::_2)));
 	}
 	else
 	{
 		auto receive_event_cb = nbase::Bind(&SessionBox::OnReceiveEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		unregister_cb.Add(SubscribeEventManager::GetInstance()->RegReceiveEventCallback(receive_event_cb));
+
+		FindSubControl(L"not_disturb")->SetVisible(nim_comp::MuteBlackService::GetInstance()->IsInMuteList(session_id_));
+		unregister_cb.Add(MuteBlackService::GetInstance()->RegSyncSetMuteCallback(nbase::Bind(&SessionBox::OnNotifyChangeCallback, this, std::placeholders::_1, std::placeholders::_2)));
+
+		auto friend_list_change_cb = nbase::Bind(&SessionBox::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2);
+		unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(friend_list_change_cb));
 	}
 
 	auto robot_list_change_cb = nbase::Bind(&SessionBox::OnRobotChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	unregister_cb.Add(UserService::GetInstance()->RegRobotListChange(robot_list_change_cb));
+
 }
 
 void SessionBox::UninitSessionBox()
@@ -231,6 +244,12 @@ void SessionBox::UninitSessionBox()
 		input_edit_droptarget_->Release();
 		input_edit_droptarget_ = NULL;
 	}
+}
+
+void SessionBox::OnNotifyChangeCallback(std::string id, bool mute)
+{
+	if (session_type_ == nim::kNIMSessionTypeP2P && id == session_id_)
+		FindSubControl(L"not_disturb")->SetVisible(mute);
 }
 
 void SessionBox::InvokeShowMsgs(bool first_show_msg)
@@ -477,10 +496,11 @@ void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 	size_t len = msg.size();
 	for (size_t i = 0; i < len; i++)
 	{
+		const nim::IMMessage &message = msg[i];
 		if (i == len - 1)
 		{
 			//如果最后一条是提示消息被拒收的消息，要把被拒收的消息加载出来
-			show_fast_message = (msg[i].type_ == nim::kNIMMessageTypeTips && msg[i].status_ == nim::kNIMMsgLogStatusRefused);
+			show_fast_message = (message.type_ == nim::kNIMMessageTypeTips && message.status_ == nim::kNIMMsgLogStatusRefused);
 		}
 		if (len == 1 || i == len - 1)
 		{
@@ -497,12 +517,12 @@ void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 					break;
 				}
 			}
-			if (msg[i].type_ == nim::kNIMMessageTypeTips && msg[i].status_ == nim::kNIMMsgLogStatusRefused)
+			if (message.type_ == nim::kNIMMessageTypeTips && message.status_ == nim::kNIMMsgLogStatusRefused)
 				show_time = false;
 			else
-				show_time = CheckIfShowTime(older_time, msg[i].timetag_);
+				show_time = CheckIfShowTime(older_time, message.timetag_);
 		}
-		ShowMsg(msg[i], true, show_time);		
+		ShowMsg(message, true, show_time);
 	}
 
 	//加载更多历史消息
@@ -548,6 +568,7 @@ void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 
 	if (session_type_ == nim::kNIMSessionTypeP2P && !mark_receipt_when_load_msgs_)
 		ResetLastMsgNeedMarkReceipt();
+
 	//修正最远时间
 	if (len > 0)
 	{
@@ -719,7 +740,7 @@ void SessionBox::OnRecallMsgCallback(nim::NIMResCode code, const nim::RecallMsgN
 {
 	if (code != nim::kNIMResSuccess)
 	{
-		std::wstring toast = nbase::StringPrintf(L"recall msg error, code:%d, id:%s", code, nbase::UTF8ToUTF16(notify.msg_id_).c_str());
+		std::wstring toast = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_RECALL_MSG_OVERTIME");
 		nim_ui::ShowToast(toast, 5000, this->GetWindow()->GetHWND());
 		return;
 	}
@@ -1026,6 +1047,8 @@ void SessionBox::SendFile(const std::wstring &src)
 	nbase::FilePathApartFileName(src, file_name);
 	std::wstring file_exten;
 	nbase::FilePathExtension(file_name, file_exten);
+	if (!file_exten.empty())
+		file_exten = file_exten.substr(1);
 	file.display_name_ = nbase::UTF16ToUTF8(file_name);
 	file.file_extension_ = nbase::UTF16ToUTF8(file_exten);
 	msg.attach_ = file.ToJsonString();
@@ -1679,6 +1702,14 @@ void SessionBox::OnReceiveEvent(int event_type, const std::string &accid, const 
 		{
 			SetOnlineState(data);
 		}
+	}
+}
+
+void SessionBox::OnFriendListChange(FriendChangeType change_type, const std::string& accid)
+{
+	if (change_type == kChangeTypeUpdate)
+	{
+		CheckHeader();
 	}
 }
 

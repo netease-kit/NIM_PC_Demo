@@ -71,7 +71,9 @@
     <TextColor name="gray" value="#ff8e99a6"/>
     <TextColor name="green" value="#ff00bb96"/>
     <TextColor name="link_green" value="#ff21c7a6"/>
+    <TextColor name="link_gray" value="#ff7F8FA4"/>
     <TextColor name="link_blue" value="#ff006DD9"/>
+    <TextColor name="link_blue2" value="#ff55a0f5"/>
     <TextColor name="link_red" value="#ffC63535"/>
     <TextColor name="group_name" value="#ff737980"/>
     <TextColor name="message_tip" value="#ff999999"/>

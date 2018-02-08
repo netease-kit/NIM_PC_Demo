@@ -93,6 +93,8 @@ ui::Control* MainForm::CreateControl(const std::wstring& pstrClass)
 void MainForm::InitWindow()
 {
 	SetIcon(IDI_ICON);
+	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&MainForm::Notify, this, std::placeholders::_1));
+
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&MainForm::OnClicked, this, std::placeholders::_1));
 
 	btn_header_ = (Button*) FindControl(L"btn_header");
@@ -125,6 +127,9 @@ void MainForm::InitWindow()
 	btn_clear_input_->SetNoFocus();
 
 	search_result_list_ = static_cast<ui::ListBox*>(FindControl(_T("search_result_list")));
+	search_result_list_->AttachBubbledEvent(kEventReturn, nbase::Bind(&MainForm::OnReturnEventsClick, this, std::placeholders::_1));
+
+	option_panel_ = static_cast<ui::HBox*>(FindControl(_T("option_panel")));
 
 	TrayIcon::GetInstance()->Init(this);
 	TrayIcon::GetInstance()->SetTrayIcon(::LoadIconW(nbase::win32::GetCurrentModuleHandle(), MAKEINTRESOURCE(IDI_ICON)), MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MIANWINDOW_TITLE"));
@@ -135,6 +140,44 @@ void MainForm::InitWindow()
 	nim_ui::SessionListManager::GetInstance()->InvokeLoadSessionList();
 	nim_ui::SessionListManager::GetInstance()->QueryUnreadSysMsgCount();
 	nim_ui::SubscribeEventManager::GetInstance()->StartAutoSubscribe();
+
+}
+
+bool MainForm::OnReturnEventsClick(ui::EventArgs* param)
+{
+	if (param->Type == kEventReturn)
+	{
+		nim_comp::FriendItem* item = dynamic_cast<nim_comp::FriendItem*>(param->pSender);
+		assert(item);
+		if (item)
+		{
+			nim_comp::SessionManager::GetInstance()->OpenSessionBox(item->GetUTF8DataID(), item->GetFriendItemType() == kFriendItemTypeP2P ? nim::kNIMSessionTypeP2P : nim::kNIMSessionTypeTeam);
+		}
+	}
+
+	return true;
+}
+
+bool MainForm::Notify(ui::EventArgs* msg)
+{
+	std::wstring name = msg->pSender->GetName();
+	if (msg->Type == kEventReturn)
+	{
+		if (search_edit_->IsFocused() && !search_edit_->GetText().empty())
+		{
+			if (search_result_list_->GetCount() != 0)
+			{
+				nim_comp::FriendItem* item = dynamic_cast<nim_comp::FriendItem*>(search_result_list_->GetItemAt(search_result_list_->GetCurSel()));
+				assert(item);
+				if (item)
+				{
+					nim_comp::SessionManager::GetInstance()->OpenSessionBox(item->GetUTF8DataID(), item->GetFriendItemType() == kFriendItemTypeP2P ? nim::kNIMSessionTypeP2P : nim::kNIMSessionTypeTeam);
+				}
+			}
+			return true;
+		}
+	}
+	return false;
 }
 
 bool MainForm::OnClicked( ui::EventArgs* msg )
@@ -513,13 +556,19 @@ bool MainForm::LogoffMenuItemClick(ui::EventArgs* param)
 	QCommand::Set(kCmdRestart, L"true");
 	std::wstring wacc = nbase::UTF8ToUTF16(nim_ui::LoginManager::GetInstance()->GetAccount());
 	QCommand::Set(kCmdAccount, wacc);
-	nim_ui::LoginManager::GetInstance()->DoLogout(false, nim::kNIMLogoutChangeAccout);
+	auto task = [](){
+		nim_ui::LoginManager::GetInstance()->DoLogout(false, nim::kNIMLogoutChangeAccout);
+	};
+	nbase::ThreadManager::PostTask(task);
 	return true;
 }
 
 bool MainForm::QuitMenuItemClick(ui::EventArgs* param)
 {
-	nim_ui::LoginManager::GetInstance()->DoLogout(false);
+ 	auto task = [](){
+ 		nim_ui::LoginManager::GetInstance()->DoLogout(false);
+ 	};
+ 	nbase::ThreadManager::PostTask(task);
 	return true;
 }
 

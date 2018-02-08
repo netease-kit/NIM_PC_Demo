@@ -349,6 +349,19 @@ public:
 	*/
 	static bool CustomVideoData(uint64_t time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension);
 
+	/** @fn bool AccompanyingSound(unsigned char id, unsigned __int64 time, const char *data, unsigned int size, unsigned int rate, unsigned int channels, const char *json_extension)
+	* NIM VCHAT 自定义音频伴音数据接口，不需要打开自定义数据开关, 采样时间必须为10ms的整数倍, 采样位深只支持16
+	* @param[in] id 伴音数据id
+	* @param[in] time 时间毫秒级
+	* @param[in] data 音频数据pcm格式
+	* @param[in] size data的数据长度
+	* @param[in] rate 音频采样频
+	* @param[in] channels 声道数
+	* @param[in] json_extension 扩展
+	* @return bool true 调用成功，false 调用失败
+	*/
+	static bool AccompanyingSound(unsigned char id, unsigned __int64 time, const char *data, unsigned int size, unsigned int rate, unsigned int channels, const char *json_extension);
+
 	/** @fn static void SetViewerMode(bool viewer)
 	* NIM VCHAT 设置观众模式（多人模式下），全局有效（重新发起时也生效），观众模式能减少运行开销
 	* @param[in] viewer 是否观众模式
@@ -418,7 +431,7 @@ public:
 	* NIM VCHAT 创建一个多人房间（后续需要主动调用加入接口进入房间）
 	* @param[in] room_name 房间名
 	* @param[in] custom_info 自定义的房间信息（加入房间的时候会返回）
-	* @param[in] json_extension 可选kNIMVChatWebrtc
+	* @param[in] json_extension 无效
 	* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
 	* @return void 无返回值
 	* @note 错误码	200:成功
@@ -446,6 +459,16 @@ public:
 	*				11403:无效的操作
 	*/
 	static void UpdateRtmpUrl(const std::string& rtmp_url, OptCallback cb);
+
+	/** @fn static void SelectVideoAdaptiveStrategy(NIMVChatVideoEncodeMode mode, const std::string& json_extension, Opt2Callback cb)
+	* NIM VCHAT 通话中修改视频编码模式
+	* @param[in] mode 选用的策略模式
+	* @param[in] json_extension 无效扩展字段
+	* @param[in] cb 结果回调见nrtc_chat_def.h，返回的json_extension无效
+	* @return void 无返回值
+	* @note 错误码	200:成功
+	*/
+	static void SelectVideoAdaptiveStrategy(NIMVChatVideoEncodeMode mode, const std::string& json_extension, Opt2Callback cb);
 
 	//接口废弃
 	///** @fn void SetStreamingMode(bool streaming, OptCallback cb)

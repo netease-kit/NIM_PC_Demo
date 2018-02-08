@@ -135,14 +135,14 @@ bool MemberManagerForm::OnBtnConfirmClick(ui::EventArgs* param)
 	}
 	
 	std::string new_team_card = nbase::StringTrim(re_team_card_->GetUTF8Text());
-	if (!team_card.empty() && new_team_card.empty())
-	{
-		MsgboxCallback cb = ToWeakCallback([this](MsgBoxRet ret) {
-			this->ActiveWindow();
-		});
-		ShowMsgBox(m_hWnd, ToWeakCallback(cb), L"STRID_MEMBER_MANAGE_NICKNAME_NOT_EMPTY");
-		return true;
-	}
+// 	if (!team_card.empty() && new_team_card.empty())
+// 	{
+// 		MsgboxCallback cb = ToWeakCallback([this](MsgBoxRet ret) {
+// 			this->ActiveWindow();
+// 		});
+// 		ShowMsgBox(m_hWnd, ToWeakCallback(cb), L"STRID_MEMBER_MANAGE_NICKNAME_NOT_EMPTY");
+// 		return true;
+// 	}
 
 	if (new_team_card != team_card)
 	{

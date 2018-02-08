@@ -58,9 +58,9 @@ enum AnimationType
 
 enum GifStopType
 {
-	kGifStopFirst = 0,//gif 停止时定位到第一帧
-	kGifStopCurrent,//当前帧
-	kGifStopLast,//最后一帧
+	kGifStopCurrent = -1,//当前帧
+	kGifStopFirst = 0,//gif 停止时定位到第一帧	
+	kGifStopLast = 0xFFFF,//最后一帧
 };
 
 enum CursorType

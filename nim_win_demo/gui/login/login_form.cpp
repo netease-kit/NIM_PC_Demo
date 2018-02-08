@@ -1,8 +1,17 @@
 #include "login_form.h"
 #include "gui/main/main_form.h"
 #include "module/db/public_db.h"
+#include "module/login/login_manager.h"
 
 using namespace ui;
+
+void LoginForm::OnLogin()
+{
+	DoInitUiKit(nim_ui::InitManager::kIM);
+	SetAnonymousChatroomVisible(false);
+	DoBeforeLogin();
+}
+
 void LoginForm::DoInitUiKit(nim_ui::InitManager::InitMode mode)
 {
 	// InitUiKit接口第一个参数决定是否启用事件订阅模块，默认为false，如果是云信demo app则为true
@@ -154,27 +163,34 @@ void LoginForm::RegLoginManagerCallback()
 
 void LoginForm::OnLoginError( int error )
 {
-	OnCancelLogin();
-
-	MutiLanSupport* mls = MutiLanSupport::GetInstance();
-	if (error == nim::kNIMResUidPassError)
+	if (error == nim::kNIMResSuccess)
 	{
-		usericon_->SetEnabled(false);
-		passwordicon_->SetEnabled(false);
-		ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_PASSWORD_ERROR"));
-	}
-	else if (error == nim::kNIMResConnectionError)
-	{
-		ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_NETWORK_ERROR"));
-	}
-	else if (error == nim::kNIMResExist)
-	{
-		ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_LOCATION_CHANGED"));
+		OnLoginOK();
 	}
 	else
 	{
-		std::wstring tip = nbase::StringPrintf(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ERROR_CODE").c_str(), error);
-		ShowLoginTip(tip);
+		OnCancelLogin();
+
+		MutiLanSupport* mls = MutiLanSupport::GetInstance();
+		if (error == nim::kNIMResUidPassError)
+		{
+ 			usericon_->SetEnabled(false);
+ 			passwordicon_->SetEnabled(false);
+			ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_PASSWORD_ERROR"));
+		}
+		else if (error == nim::kNIMResConnectionError)
+		{
+			ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_NETWORK_ERROR"));
+		}
+		else if (error == nim::kNIMResExist)
+		{
+			ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_LOCATION_CHANGED"));
+		}
+		else
+		{
+			std::wstring tip = nbase::StringPrintf(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ERROR_CODE").c_str(), error);
+			ShowLoginTip(tip);
+		}
 	}
 }
 
@@ -200,4 +216,59 @@ void LoginForm::ShowLoginTip(std::wstring tip_text)
 
 	login_error_tip_->SetText(tip_text);
 	login_error_tip_->SetVisible(true);
+}
+
+void LoginForm::InitLoginData()
+{
+	PublicDB* manager = PublicDB::GetInstance();
+	UTF8String user_name = manager->GetLoginData()->user_name_;
+	UTF8String user_password = manager->GetLoginData()->user_password_;
+	bool remember_user = manager->GetLoginData()->remember_user_ == 1;
+	bool remember_psw = manager->GetLoginData()->remember_psw_ == 1;
+
+	if (!user_name.empty() && !user_password.empty())
+	{
+		if (remember_user)
+		{
+			user_name_edit_->SetUTF8Text(user_name);
+		}
+
+		if (remember_psw)
+		{
+			password_edit_->SetUTF8Text(user_password);
+		}
+
+		remember_pwd_ckb_->Selected(remember_psw);
+		remember_user_ckb_->Selected(remember_user);
+	}
+	else
+	{
+		remember_pwd_ckb_->Selected(false);
+		remember_user_ckb_->Selected(false);
+	}
+}
+
+void LoginForm::OnLoginOK()
+{
+	UTF8String user_name = user_name_edit_->GetUTF8Text();
+	UTF8String pass = password_edit_->GetUTF8Text();
+
+	PublicDB::GetInstance()->GetLoginData()->status_ = kLoginDataStatusValid;
+	PublicDB::GetInstance()->GetLoginData()->user_name_ = user_name;
+	PublicDB::GetInstance()->GetLoginData()->user_password_ = pass;
+	PublicDB::GetInstance()->GetLoginData()->remember_psw_ = remember_pwd_ckb_->IsSelected() ? 1 : 0;
+	PublicDB::GetInstance()->GetLoginData()->remember_user_ = remember_user_ckb_->IsSelected() ? 1 : 0;
+	PublicDB::GetInstance()->SaveLoginData();
+}
+
+void LoginForm::CheckAutoLogin()
+{
+	bool pwd_save = remember_pwd_ckb_->IsSelected();
+	bool autorun_flag = QCommand::Get(L"autorun") == L"1";
+	QLOG_APP(L"CheckAutoLogin: pwd:{0} autorun:{1}") << pwd_save << autorun_flag;
+	if (pwd_save && autorun_flag)
+	{
+		OnLogin();
+	}
+
 }

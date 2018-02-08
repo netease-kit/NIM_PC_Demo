@@ -111,6 +111,14 @@ private:
 	* @return void	Œﬁ∑µªÿ÷µ
 	*/
 	void DoInitUiKit(nim_ui::InitManager::InitMode mode);
+	
+public:
+	void OnLoginOK();
+
+private:
+	void InitLoginData();
+	void OnLogin();
+	void CheckAutoLogin();
 
 public:
 	static const LPCTSTR kClassName;
@@ -128,4 +136,7 @@ private:
 	ui::Button*		btn_login_;
 	ui::Button*		btn_register_;
 	ui::Button*		btn_cancel_;
+	ui::CheckBox*	remember_pwd_ckb_ = nullptr;
+	ui::CheckBox*	remember_user_ckb_ = nullptr;
+
 };

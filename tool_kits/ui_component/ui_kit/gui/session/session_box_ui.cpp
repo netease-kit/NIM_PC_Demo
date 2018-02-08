@@ -888,26 +888,13 @@ bool SessionBox::OnBtnHeaderClick(ui::EventArgs* param)
 	if (!is_header_enable_)
 		return true;
 
-	if (session_type_ == nim::kNIMSessionTypeTeam) {
-		std::wstring session_id = nbase::UTF8ToUTF16(session_id_);
-		TeamInfoForm* team_info_form = (TeamInfoForm*)WindowsManager::GetInstance()->GetWindow\
-			(TeamInfoForm::kClassName, session_id);
-		if (team_info_form == NULL)
-		{
-			team_info_form = new TeamInfoForm(false, team_info_.GetType(), session_id_, team_info_);
-			team_info_form->Create(NULL, L"", WS_OVERLAPPEDWINDOW& ~WS_MAXIMIZEBOX, 0L);
-			team_info_form->CenterWindow();
-			team_info_form->ShowWindow(true);
-		}
-		else
-		{
-			team_info_form->ActiveWindow();
-		}
+	if (session_type_ == nim::kNIMSessionTypeTeam)
+	{
+		TeamInfoForm::ShowTeamInfoForm(false, team_info_.GetType(), session_id_, team_info_);
 	}
 	else if (session_type_ == nim::kNIMSessionTypeP2P)
 	{
-		std::wstring session_id = nbase::UTF8ToUTF16(session_id_);
-		ProfileForm::ShowProfileForm(nbase::UTF16ToUTF8(session_id), is_robot_session_);
+		ProfileForm::ShowProfileForm(session_id_, is_robot_session_);
 	}
 	return true;
 }

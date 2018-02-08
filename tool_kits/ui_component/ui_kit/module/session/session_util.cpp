@@ -626,6 +626,10 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 				else
 					show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_UNMUTE_ALL").c_str(), from_name.c_str());
 			}
+			else if (tinfo_json.isMember(nim::kNIMTeamInfoKeyIcon))
+			{
+				show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_UPDATE_TEAM_ICON").c_str(), from_name.c_str());
+			}
 			else
 			{
 				show_text = nbase::StringPrintf(mls->GetStringViaID(L"STRID_SESSION_ITEM_UPDATE_TEAM_INFO").c_str(), from_name.c_str(), team_type.c_str());

@@ -8,9 +8,9 @@
             </Box>
             
             <HBox margin="10,0,0,0" mouse="false" mousechild="false">
-                <VBox>
+                <VBox width="stretch">
                     <Control />
-                    <Label name="label_name" width="stretch" font="2"/>
+					<Label name="label_name" width="stretch" font="2"/>                
                     <HBox height="auto" margin="0,4,0,0" mouse="false" mousechild="false">
                         <Label name="online_state" width="auto" font="1" normaltextcolor="lightcolor"/>
 						<Label name="at_me_label" textid="STRID_SESSION_SOMEONE_AT_ME" visible="false" width="auto" valign="center" margin="0,0,4,0" normaltextcolor="link_red" font="1"/> 
@@ -18,12 +18,17 @@
 					</HBox>
                     <Control />
                 </VBox>
-                <VBox width="auto" minwidth="50">
+                <VBox width="50" minwidth="50" margin="0,0,5,0">
                     <Control />
                     <Label name="label_time" halign="center" normaltextcolor="lightcolor"/>
-                    <Box name="box_unread" width="26" height="auto" margin="0,4,0,0" padding="0,2,0,4" halign="center" bkimage="file='icon_number.png' corner='8,7,8,7'">
-                        <Label name="label_unread" halign="center" normaltextcolor="white"/>
-                    </Box>
+					<HBox width="45" height="26" margin="0,4,0,0" halign="center">
+						<Control />
+						<Control name="not_disturb" height="15" width="13" margin="0,0,0,0" valign="center" bkimage="../public/icon/not_disturb.png" visible="false"/>
+						<Box name="box_unread" width="26" height="auto" margin="4,0,0,0" padding="0,2,0,4" halign="center" bkimage="file='icon_number.png' corner='8,7,8,7'">
+							<Label name="label_unread" halign="center" normaltextcolor="white"/>
+						</Box>
+						<Control />
+					</HBox>
                     <Control />
                 </VBox>
             </HBox>

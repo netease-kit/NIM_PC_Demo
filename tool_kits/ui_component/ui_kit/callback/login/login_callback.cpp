@@ -179,6 +179,7 @@ void LoginCallback::UILoginCallback(const nim::LoginRes& login_res)
 			{
 				nim_ui::LoginManager::GetInstance()->InvokeHideWindow();
 				_DoAfterLogin();
+				nim_ui::LoginManager::GetInstance()->InvokeLoginError(login_res.res_code_);
 				// 登录成功，显示主界面
 				nim_ui::LoginManager::GetInstance()->InvokeShowMainForm();
 				nim_ui::LoginManager::GetInstance()->InvokeDestroyWindow();
