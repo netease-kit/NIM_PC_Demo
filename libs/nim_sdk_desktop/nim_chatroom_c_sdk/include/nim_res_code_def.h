@@ -16,6 +16,7 @@ extern"C"
 enum NIMResCode
 {
 	//通用错误码
+	kNIMResError				= 0,		/**< 错误 */
 	kNIMResSuccess				= 200,		/**< 没有错误，一切正常 */
 	kNIMResVersionError			= 201,		/**< 客户端版本不正确 */
 	kNIMResUidPassError			= 302,		/**< 用户名或密码错误 */

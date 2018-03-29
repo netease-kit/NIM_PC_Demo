@@ -209,7 +209,7 @@ extern"C"
 	NIM_SDK_DLL_API void nim_vchat_set_video_bitrate(int video_bitrate, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
 
 	/** @fn void nim_vchat_net_detect(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
@@ -258,7 +258,7 @@ extern"C"
 	/** @fn void nim_vchat_start_record(const char *path, const char *json_extension, nim_vchat_mp4_record_opt_cb_func cb, const void *user_data)
 	* NIM VCHAT 开始录制MP4文件，同一个成员一次只允许一个MP4录制文件，在通话开始的时候才有实际数据
 	* @param[in] path 文件录制路径
-	* @param[in] json_extension  kNIMVChatUid录制的成员，如果是自己填空(录制时允许同时混音对端声音，需要填kNIMVChatMp4AudioType)
+	* @param[in] json_extension  kNIMVChatUid录制的成员，如果是自己填空(录制时允许同时混音对端声音，需要填kNIMVChatMp4AudioType)；kNIMVChatMp4Recode标识是否重编码（默认打开，打开后kNIMVChatMp4Width和kNIMVChatMp4Height有效）
 	* @param[in] cb 结果回调见nim_vchat_def.h
 	* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
 	* @return void 无返回值
@@ -322,6 +322,26 @@ extern"C"
 	* @return void 无返回值
 	*/
 	NIM_SDK_DLL_API void nim_vchat_select_video_adaptive_strategy(NIMVChatVideoEncodeMode mode, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+
+	/** @fn void nim_vchat_set_uid_picture_as_main(int uid, const char* json_info, nim_vchat_opt_cb_func cb, const void* user_data)
+	* NIM 互动直播设置uid为房间主画面
+	* @param[in] uid 
+	* @param[in] json_extension
+	* @param[in] cb 结果会叫见nim_vchat_def.h,返回的json_extension无效，返回的code参考NIMMainPictureOptCode
+	* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				400:非法请求格式
+	*				401: 认证错误
+	*				404:房间不存在
+	*				405:房间下的uid不存在
+	*				417:请求数据不对
+	*				500: 内部错误
+	*				600:服务器内部错误 
+	*				11403:无效的操作
+	*				
+	*/
+	NIM_SDK_DLL_API void nim_vchat_set_uid_picture_as_main(const char *uid, const char* json_extension, nim_vchat_opt_cb_func cb, const void* user_data);
 #endif
 #ifdef __cplusplus
 };

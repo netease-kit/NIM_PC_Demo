@@ -90,7 +90,7 @@ void MainThread::OnMsgBoxCallback( MsgBoxRet ret )
 static void InitNim()
 {
 	std::wstring server_conf_path = QPath::GetAppPath();
-	server_conf_path.append(L"server_conf.txt");
+	server_conf_path.append(L"global_conf.txt");
 	nim::SDKConfig config;
 	TiXmlDocument document;
 	if (shared::LoadXmlFromFile(document, server_conf_path))
@@ -98,39 +98,6 @@ static void InitNim()
 		TiXmlElement* root = document.RootElement();
 		if (root)
 		{
-			bool use_private_server = false;
-			Json::Value srv_config;
-			if (auto pchar = root->Attribute("kNIMLbsAddress")) {
-				config.lbs_address_ = pchar;
-				use_private_server = true;
-			}
-			if (auto pchar = root->Attribute("kNIMNosLbsAddress")) {
-				config.nos_lbs_address_ = pchar;
-				use_private_server = true;
-			}
-			if (auto pchar = root->Attribute("kNIMDefaultLinkAddress")) {
-				config.default_link_address_.push_back(pchar);
-				use_private_server = true;
-			}
-			if (auto pchar = root->Attribute("kNIMDefaultNosUploadAddress")) {
-				config.default_nos_upload_address_.push_back(pchar);
-				use_private_server = true;
-			}
-			if (auto pchar = root->Attribute("kNIMDefaultNosDownloadAddress")) {
-				config.default_nos_download_address_.push_back(pchar);
-			}
-			if (auto pchar = root->Attribute("kNIMDefaultNosAccessAddress")) {
-				config.default_nos_access_address_.push_back(pchar);
-				use_private_server = true;
-			}
-			if (auto pchar = root->Attribute("kNIMRsaPublicKeyModule")) {
-				config.rsa_public_key_module_ = pchar;
-				use_private_server = true;
-			}
-			if (auto pchar = root->Attribute("kNIMRsaVersion")) {
-				nbase::StringToInt((std::string)pchar, &config.rsa_version_);
-				use_private_server = true;
-			}
 			if (auto pchar = root->Attribute("kNIMSDKLogLevel")){
 				int log_level = 5;
 				nbase::StringToInt((std::string)pchar, &log_level);
@@ -154,30 +121,19 @@ static void InitNim()
 				nbase::StringToInt((std::string)pchar, &need);
 				config.animated_image_thumbnail_enabled_ = need > 0;
 			}
-			if (auto pchar = root->Attribute("kNIMDownloadAddressTemplate")) {
-				config.nos_download_address_list_.push_back(pchar);
-			}
-			if (auto pchar = root->Attribute("kNIMAccelerateHost")) {
-				config.nos_accelerate_host_list_.push_back(pchar);
-			}
-			if (auto pchar = root->Attribute("kNIMAccelerateAddressTemplate")) {
-				config.nos_accelerate_address_list_.push_back(pchar);
-			}
-			if (auto pchar = root->Attribute("kNIMNtserverAddress")) {
-				config.ntserver_address_list_.push_back(pchar);
-			}		
-			if (auto pchar = root->Attribute("kNIMUploadStatisticsData")) {
-				int need = 0;
-				nbase::StringToInt((std::string)pchar, &need);
-				config.upload_statistics_data_ = (need != 0);
-			}
 			if (auto pchar = root->Attribute("kNIMNosUseHttps")) {
 				int need = 0;
 				nbase::StringToInt((std::string)pchar, &need);
 				config.use_https_ = (need != 0);
 			}
-			config.use_private_server_ = use_private_server;
-			
+			if (auto pchar = root->Attribute("kNIMServerConfFilePath")) {
+				config.server_conf_file_path_ = (std::string)pchar;
+			}
+			if (auto pchar = root->Attribute("kNIMTeamMessageAckEnabled")) {
+				int need = 0;
+				nbase::StringToInt((std::string)pchar, &need);
+				config.team_msg_ack_ = (need != 0);
+			}
 		}
 	}
 	config.database_encrypt_key_ = "Netease"; //string（db key必填，目前只支持最多32个字符的加密密钥！建议使用32个字符）
@@ -189,9 +145,7 @@ static void InitNim()
 	{
 		Json::Value extension;
 		nim_chatroom::ChatRoomPlatformConfig chatroom_platform_config;
-		for (auto it : config.ntserver_address_list_)
-			chatroom_platform_config.AddNTServerAddress(it);
-
+		chatroom_platform_config.AddNTServerAddress(config.ntserver_address_);
 		chatroom_platform_config.EnableUploadStatisticsData(config.upload_statistics_data_);
 		chatroom_platform_config.ToJsonObject(extension[nim_chatroom::ChatRoomPlatformConfig::kPlatformConfigToken]);
 		ret = nim_chatroom::ChatRoom::Init("", nim::GetJsonStringWithNoStyled(extension));

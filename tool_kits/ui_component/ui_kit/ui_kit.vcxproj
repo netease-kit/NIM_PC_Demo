@@ -253,6 +253,7 @@
     <ClInclude Include="gui\session\control\merge_item.h" />
     <ClInclude Include="gui\session\control\custom_layout.h" />
     <ClInclude Include="gui\session\control\team_item.h" />
+    <ClInclude Include="gui\session\control\unread_item.h" />
     <ClInclude Include="gui\session\custom_msg_form.h" />
     <ClInclude Include="gui\session\dragdrop\bitmap_control.h" />
     <ClInclude Include="gui\session\dragdrop\drag_form.h" />
@@ -261,6 +262,7 @@
     <ClInclude Include="gui\session\session_form.h" />
     <ClInclude Include="gui\session\taskbar\dwm_util.h" />
     <ClInclude Include="gui\session\taskbar\taskbar_manager.h" />
+    <ClInclude Include="gui\session\unread_form.h" />
     <ClInclude Include="gui\team_info\member_manager.h" />
     <ClInclude Include="gui\team_info\team_info.h" />
     <ClInclude Include="gui\team_info\team_notify.h" />
@@ -272,6 +274,8 @@
     <ClInclude Include="gui\video\helper\ui_barrage_control.h" />
     <ClInclude Include="gui\video\helper\ui_bitmap_control.h" />
     <ClInclude Include="gui\video\helper\yuv_image.h" />
+    <ClInclude Include="gui\video\multi_video_form.h" />
+    <ClInclude Include="gui\video\multi_video_invite.h" />
     <ClInclude Include="gui\video\record_select.h" />
     <ClInclude Include="gui\video\screen_capture_tool.h" />
     <ClInclude Include="gui\video\video_form.h" />
@@ -380,6 +384,7 @@
     <ClCompile Include="gui\session\control\merge_item.cpp" />
     <ClCompile Include="gui\session\control\custom_layout.cpp" />
     <ClCompile Include="gui\session\control\team_item.cpp" />
+    <ClCompile Include="gui\session\control\unread_item.cpp" />
     <ClCompile Include="gui\session\custom_msg_form.cpp" />
     <ClCompile Include="gui\session\dragdrop\bitmap_control.cpp" />
     <ClCompile Include="gui\session\dragdrop\drag_form.cpp" />
@@ -396,6 +401,7 @@
     <ClCompile Include="gui\session\session_form_dragdrop.cpp" />
     <ClCompile Include="gui\session\taskbar\dwm_util.cpp" />
     <ClCompile Include="gui\session\taskbar\taskbar_manager.cpp" />
+    <ClCompile Include="gui\session\unread_form.cpp" />
     <ClCompile Include="gui\team_info\member_manager.cpp" />
     <ClCompile Include="gui\team_info\team_info.cpp" />
     <ClCompile Include="gui\team_info\team_notify.cpp" />
@@ -407,6 +413,8 @@
     <ClCompile Include="gui\video\helper\ui_barrage_control.cpp" />
     <ClCompile Include="gui\video\helper\ui_bitmap_control.cpp" />
     <ClCompile Include="gui\video\helper\yuv_image.cpp" />
+    <ClCompile Include="gui\video\multi_video_form.cpp" />
+    <ClCompile Include="gui\video\multi_video_invite.cpp" />
     <ClCompile Include="gui\video\record_select.cpp" />
     <ClCompile Include="gui\video\screen_capture_tool.cpp" />
     <ClCompile Include="gui\video\video_form.cpp" />

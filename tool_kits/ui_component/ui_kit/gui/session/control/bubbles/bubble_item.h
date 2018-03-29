@@ -11,6 +11,7 @@ enum BubbleEventType
 	BET_RETWEET,	//转发
 	BET_RECALL,		//撤回
 	BET_MENUATTA,	//右键菜单at
+	BET_UNREAD_COUNT,	//未读列表
 };
 
 namespace nim_comp
@@ -173,6 +174,8 @@ public:
 	*/
 	bool IsMyMsg() { return my_msg_; }
 
+public:
+	void SetUnreadCount(int count);
 	/**
 	* 设置获取群成员接口，当是群消息时可用 
 	*/
@@ -250,6 +253,7 @@ private:
 	ui::Control*	status_sending_;
 	ui::Control*	status_loading_;
 	ui::Button*		status_reload_;
+	ui::Button*		status_read_count_ = nullptr;
 	ui::Control*	status_send_failed_;
 	ui::Control*	status_load_failed_;
 	ui::Label*		status_receipt_;

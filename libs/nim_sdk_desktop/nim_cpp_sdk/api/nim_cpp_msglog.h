@@ -103,7 +103,7 @@ public:
 		, bool need_save_to_local
 		, const QueryMsgCallback& cb
 		, const std::string& json_extension = "");
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/** @fn static bool QueryMsgOfSpecifiedTypeInASessionAsync(nim::NIMSessionType to_type, const std::string &id, int limit_count, int64_t from_time, int64_t end_time, const std::string &end_client_msg_id, bool reverse, std::list<NIMMessageType> msg_type, const QueryMsgCallback& cb, const std::string& json_extension = "")
 	* 根据指定条件在一个会话中查询指定单个或多个类型的本地消息
 	* @param[in] to_type			会话类型，双人0，群组1 (nim_msglog_def.h)
@@ -326,7 +326,7 @@ public:
 	* @return bool 是否被已读
 	*/
 	static bool QuerySentMessageBeReaded(const IMMessage& msg);
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/** @fn bool QueryReceivedMsgReceiptSent(const IMMessage& msg)
 	* 查询收到的消息是否已经发送过已读回执
 	* @param[in] msg			消息。
@@ -362,7 +362,7 @@ public:
 	* @return void 无返回值
 	*/
 	static void UnregMsgologCb();
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY	
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY	
     /** @fn static bool ReadAllAsync(const DBFunctionCallback& cb, const std::string& json_extension = "")
 	* 全部未读消息历史标记为已读
 	* @param[in] json_extension json扩展参数（备用，目前不需要）

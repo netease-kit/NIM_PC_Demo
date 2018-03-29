@@ -713,14 +713,16 @@ void TeamInfoForm::OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos)
 	for (auto iter = uinfos.cbegin(); iter != uinfos.cend(); iter++)
 	{
 		HBox* item = (HBox*)tile_box_->FindSubControl(nbase::UTF8ToUTF16(iter->GetAccId()));
-		if(item == NULL) continue;
-		if(iter->ExistValue(nim::kUserNameCardKeyIconUrl))
-			item->FindSubControl(L"head_image")->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(iter->GetAccId()));
-		
-		// 如果没有设置群昵称，则显示用户的备注名或昵称。如果设置了群昵称，就不变。
-		Label* show_name_label = (Label*)item->FindSubControl(L"show_name");
-		if (iter->ExistValue(nim::kUserNameCardKeyName) && team_member_list_.at(iter->GetAccId()).GetNick().empty())
-			show_name_label->SetText(UserService::GetInstance()->GetUserName(iter->GetAccId()));
+		if(item)
+		{
+			if (iter->ExistValue(nim::kUserNameCardKeyIconUrl))
+				item->FindSubControl(L"head_image")->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(iter->GetAccId()));
+
+			// 如果没有设置群昵称，则显示用户的备注名或昵称。如果设置了群昵称，就不变。
+			Label* show_name_label = (Label*)item->FindSubControl(L"show_name");
+			if (iter->ExistValue(nim::kUserNameCardKeyName) && team_member_list_.at(iter->GetAccId()).GetNick().empty())
+				show_name_label->SetText(UserService::GetInstance()->GetUserName(iter->GetAccId()));
+		}
 	}
 }
 

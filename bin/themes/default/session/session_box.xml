@@ -75,6 +75,8 @@
 	                    <Option name="btn_capture_audio" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_RECORD_AUDIO" hotimage="icon_hover.png" pushedimage="icon_pushed.png" selectednormalimage="icon_pushed.png" textid="STRID_SESSION_RECORD_AUDIO_ICON" font="8" normaltextcolor="icongray" disabledtextcolor="iconfadegray"/>
 	                    <Control />
 	                    <!--Button name="add_msglog" dataid="10" valign="center" cursortype="hand" margin="5,0,10,0" normaltextcolor="link_blue" textid="STRID_SESSION_ADD_MSGLOG"/-->
+						<Button name="btn_team_ack_msg" valign="center" cursortype="hand" normaltextcolor="link_blue" disabledtextcolor="gray" textid="STRID_SESSION_TEAM_ACK_MSG" visible="false" tooltiptextid="STRID_SESSION_TEAM_ACK_MSG_TIP"/>
+						<Control width="10" />
 	                    <Button name="btn_custom_msg" valign="center" cursortype="hand" normaltextcolor="link_blue" disabledtextcolor="gray" textid="STRID_SESSION_CUSTOM_NOTIFICATION"/>
 	                    <Control width="10" />
 	                    <Button name="btn_msg_record" valign="center" cursortype="hand" normaltextcolor="link_blue" textid="STRID_SESSION_MSG_RECORD"/>

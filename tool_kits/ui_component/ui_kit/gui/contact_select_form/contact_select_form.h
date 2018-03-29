@@ -174,7 +174,7 @@ public:
 	* @param[in] completedCallback 选择完成后的回调函数
 	* @param[in] need_select_group 是否需要选择群组
 	*/
-	ContactSelectForm(const UTF8String& uid_or_tid, const std::list<UTF8String>& exclude_ids, const SelectedCompletedCallback& completedCallback, bool need_select_group = false);
+	ContactSelectForm(const UTF8String& uid_or_tid, const std::list<UTF8String>& exclude_ids, const SelectedCompletedCallback& completedCallback, bool need_select_group = false, bool is_multi_vchat = false);
 	virtual ~ContactSelectForm();
 	
 	//覆盖虚函数
@@ -384,11 +384,14 @@ private:
 	*/
 	void OnTeamNameChanged(const nim::TeamInfo& team_info);
 
+	void OnGetTeamMembers(const std::string& team_id, int count, const std::list<nim::TeamMemberProperty>& team_member_list);
+
 public:
 	static const LPCTSTR kClassName;
 private:
 	UTF8String	uid_or_tid_;
 	bool		need_select_group_;
+	bool		is_multi_vchat_;
 	std::list<UTF8String>		exclude_ids_;
 	SelectedCompletedCallback	completedCallback_;
 	

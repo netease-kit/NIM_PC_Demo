@@ -15,7 +15,7 @@ extern"C"
 {
 #endif
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @name 事件信息 Json Keys
   * @{
   */

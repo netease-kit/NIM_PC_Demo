@@ -1,6 +1,7 @@
 ﻿#include "contact_select_form.h"
 #include "module/login/login_manager.h"
 
+#include "gui/video/multi_video_form.h"
 using namespace ui;
 using namespace std;
 
@@ -15,11 +16,12 @@ const LPCTSTR ContactSelectForm::kClassName = _T("ContactSelectForm");
 ContactSelectForm::ContactSelectForm(const UTF8String& uid_or_tid,
 	const std::list<UTF8String>& exclude_ids,
 	const SelectedCompletedCallback& completedCallback,
-	bool need_select_group/* = false*/) 
+	bool need_select_group/* = false*/, bool is_multi_vchat/*=false*/)
 	: uid_or_tid_(uid_or_tid)
 	, exclude_ids_(exclude_ids)
 	, completedCallback_(completedCallback)
 	, need_select_group_(need_select_group)
+	, is_multi_vchat_(is_multi_vchat)
 {
 	auto friend_list_change_cb = nbase::Bind(&ContactSelectForm::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2);
 	unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(friend_list_change_cb));
@@ -108,46 +110,96 @@ void ContactSelectForm::InitWindow()
 		AddGroup(tree_node);
 	}
 
-	// 添加好友
-	UTF8String current_user_id = LoginManager::GetInstance()->GetAccount();
-	UserService* user_service = UserService::GetInstance();
-	const std::map<std::string, nim::UserNameCard>& users = user_service->GetAllUserInfos();
-	MuteBlackService* mb_service = MuteBlackService::GetInstance();
-	for(auto &it : users)
-	{
-		if (it.first != current_user_id &&
-			user_service->GetUserType(it.second.GetAccId()) == nim::kNIMFriendFlagNormal && 
-			!mb_service->IsInBlackList(it.first)) 
-		{
-			AddFriendListItem(it.second.GetAccId(), true);
-		}
-	}
-
-	// 添加讨论组和高级群
-	if (need_select_group_)
-	{
-		std::list<nim::TeamInfo> teams = TeamService::GetInstance()->GetCachedTeamsInfo();
-		for (auto &it : teams)
-		{
-			 AddTeamListItem(it.GetTeamID(), true);
-		}
-	}
-	
-	search_edit_ = (RichEdit*) FindControl( L"search" );
+	tool_tip_content_ = static_cast<ui::Label*>(FindControl(L"tool_tip"));
+	search_edit_ = (RichEdit*)FindControl(L"search");
 	search_edit_->AttachTextChange(nbase::Bind(&ContactSelectForm::OnSearchEditChange, this, std::placeholders::_1));
-	search_edit_->SetLimitText( 30 );
-	btn_clear_input_ = (Button*) FindControl(L"clear_input");
+	search_edit_->SetLimitText(30);
+	btn_clear_input_ = (Button*)FindControl(L"clear_input");
 	btn_clear_input_->SetNoFocus();
 	btn_clear_input_->AttachClick(nbase::Bind(&ContactSelectForm::OnClearBtnClick, this, std::placeholders::_1));
-
-	tool_tip_content_ = static_cast<ui::Label*>(FindControl(L"tool_tip"));
-	tool_tip_content_->SetText(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_INVOKECHATFORM_SEARCH_TOOLTIP").c_str());
 
 	ui::Button* btn_confirm = (ui::Button*)FindControl(L"confirm");
 	btn_confirm->AttachClick(nbase::Bind(&ContactSelectForm::OnBtnConfirmClick, this, std::placeholders::_1));
 	ui::Button* btn_cancel = (ui::Button*)FindControl(L"cancel");
 	btn_cancel->AttachClick(nbase::Bind(&ContactSelectForm::OnBtnCancelClick, this, std::placeholders::_1));
+
+	if (is_multi_vchat_)
+	{
+		tool_tip_content_->SetText(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_MULTIVIDEOCHATFORM_SEARCH_ORG_EMPTY").c_str());
+
+		std::wstring title_id;
+		title_id = L"STRING_INVITEUSERFORM_MULTI_VCHAT";
+		std::wstring title = ui::MutiLanSupport::GetInstance()->GetStringViaID(title_id);
+		SetTaskbarTitle(title);
+		((Label*)FindControl(L"title"))->SetText(title);
+		title_id = L"STRING_INVITEUSERFORM_TEAM_MEMBERS";
+		title = ui::MutiLanSupport::GetInstance()->GetStringViaID(title_id);
+// 		((Label*)FindControl(L"label_contact"))->SetText(title);
+		title_id = L"STRING_INVITEUSERFORM_START_VCHAT";
+		title = ui::MutiLanSupport::GetInstance()->GetStringViaID(title_id);
+		btn_confirm->SetText(title);
+		TeamService* team_service = TeamService::GetInstance();
+		nim::Team::QueryTeamMembersAsync(uid_or_tid_, nbase::Bind(&ContactSelectForm::OnGetTeamMembers, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	}
+	else
+	{
+		tool_tip_content_->SetText(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_INVOKECHATFORM_SEARCH_TOOLTIP").c_str());
+		// 添加好友
+		UTF8String current_user_id = LoginManager::GetInstance()->GetAccount();
+		UserService* user_service = UserService::GetInstance();
+		const std::map<std::string, nim::UserNameCard>& users = user_service->GetAllUserInfos();
+		MuteBlackService* mb_service = MuteBlackService::GetInstance();
+		for (auto &it : users)
+		{
+			if (it.first != current_user_id &&
+				user_service->GetUserType(it.second.GetAccId()) == nim::kNIMFriendFlagNormal &&
+				!mb_service->IsInBlackList(it.first))
+			{
+				AddFriendListItem(it.second.GetAccId(), true);
+			}
+		}
+
+		// 添加讨论组和高级群
+		if (need_select_group_)
+		{
+			std::list<nim::TeamInfo> teams = TeamService::GetInstance()->GetCachedTeamsInfo();
+			for (auto &it : teams)
+			{
+				AddTeamListItem(it.GetTeamID(), true);
+			}
+		}
+	}
 }
+
+void ContactSelectForm::OnGetTeamMembers(const std::string& team_id, int count, const std::list<nim::TeamMemberProperty>& team_member_list)
+{
+	auto cb = [=]()
+	{
+		UTF8String current_user_id = LoginManager::GetInstance()->GetAccount();
+		for (const auto& member : team_member_list)
+		{
+			std::string member_id = member.GetAccountID();
+			if (current_user_id != member_id)
+			{
+				MultiVideoChatForm *multi_window = (MultiVideoChatForm*)(WindowsManager::GetInstance()->GetWindow(MultiVideoChatForm::kClassName, MultiVideoChatForm::kClassName));
+				if (multi_window)
+				{
+					std::set<std::string> talking_members = multi_window->GetTalkingMember();
+					bool is_enable = true;
+					std::set<std::string>::iterator it = talking_members.find(member.GetAccountID());
+					if (it == talking_members.end())
+					{
+						AddFriendListItem(member.GetAccountID(), is_enable);
+					}
+				}
+				else
+					AddFriendListItem(member.GetAccountID(), true);;
+			}
+		}
+	};
+	Post2UI(cb);
+}
+
 
 bool ContactSelectForm::OnBtnDeleteClick(const UTF8String& user_id, ui::EventArgs* param)
 {

@@ -52,7 +52,7 @@ typedef void (*nim_team_query_all_my_teams_cb_func)(int team_count, const char *
   */
 typedef void (*nim_team_query_all_my_teams_info_cb_func)(int team_count, const char *result, const char *json_extension, const void *user_data);
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @typedef void (*nim_team_query_my_all_member_infos_cb_func)(int team_count, const char *result, const char *json_extension, const void *user_data)
   * 查询我的所有群里我的成员信息的回调函数定义
   * @param[out] team_count		有效群组数量
@@ -172,8 +172,17 @@ static const char *kNIMTeamInfoKeyBeInviteMode	= "be_invite_mode"; /**< int, 被
 static const char *kNIMTeamInfoKeyInviteMode	= "invite_mode";	/**< int, 谁可以邀请他人入群，属性本身只有群主管理员可以修改,默认kNIMTeamInviteModeManager(0)/kNIMTeamInviteModeEveryone(1) */
 static const char *kNIMTeamInfoKeyUpdateInfoMode= "update_info_mode";/**< int, 谁可以修改群资料，属性本身只有群主管理员可以修改,默认kNIMTeamUpdateInfoModeManager(0)/kNIMTeamUpdateInfoModeEveryone(1) */
 static const char *kNIMTeamInfoKeyUpdateCustomMode	= "update_custom_mode";/**< int, 谁可以更新群自定义属性，属性本身只有群主管理员可以修改,默认kNIMTeamUpdateCustomModeManager(0)/kNIMTeamUpdateCustomModeEveryone(1) */
-static const char *kNIMTeamInfoKeyMuteAll		= "mute_all";		/**< int, 群全员禁言标记 0:未禁言，1:禁言,通常情况下由SDK维护,开发者作为只读无需设置 */
+static const char *kNIMTeamInfoKeyMuteAll		= "mute_all";		/**< int, 群全员禁言标记 0:未禁言，1:禁言, 开发者只读 无法设置 */
+static const char *kNIMTeamInfoKeyMuteType		= "mute_type";		/**<NIMTeamMuteType, 群禁言0不禁言 1普通成员禁言 3全部禁言 包括群主 开发者可以通过设置该属性调整群禁言状态*/
 /** @}*/ //群组信息Json Keys
+
+/** @enum NIMTeamMuteType 群信息kNIMTeamInfoKeyMuteType的配置定义 */
+enum NIMTeamMuteType
+{
+	kNIMTeamMuteTypeNone			= 0,	/**< 不禁言 */
+	kNIMTeamMuteTypeNomalMute		= 1,	/**< 普通成员禁言 */
+	kNIMTeamMuteTypeAllMute			= 3,	/**< 全部禁言 */
+};
 
 /** @enum NIMTeamBitsConfigMask 群组成员信息Bits属性kNIMTeamUserKeyBits的配置定义 */
 enum NIMTeamBitsConfigMask

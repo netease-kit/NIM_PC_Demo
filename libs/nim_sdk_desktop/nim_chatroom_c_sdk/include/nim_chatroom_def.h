@@ -269,7 +269,7 @@ static const char *kNIMChatRoomMsgKeyExt			= "ext";				/**< string, 第三方扩
 static const char *kNIMChatRoomMsgKeyAntiSpamEnable	= "anti_spam_enable";	/**< int, 是否需要过易盾反垃圾, 0:不需要,1:需要, 默认0 */
 static const char *kNIMChatRoomMsgKeyAntiSpamContent= "anti_spam_content";	/**< string, (可选)开发者自定义的反垃圾字段, 长度限制2048 */
 static const char *kNIMChatRoomMsgKeyAntiSpamBizId = "anti_spam_business_id";	/**< string,  (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 static const char *kNIMChatRoomMsgKeyAntiSpamUsingYiDun = "anti_spam_using_yidun";	/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
 static const char *kNIMChatRoomMsgKeyHistorySave	= "history_save";		/**< int,(可选)该消息是否存储云端历史,可选，0:不是,1:是, 默认1 */
 static const char *kNIMChatRoomMsgKeyBody			= "body";				/**< string,(可选)文本消息内容（聊天室机器人文本消息） */
@@ -282,6 +282,7 @@ static const char *kNIMChatRoomMsgKeyFromClientType = "from_client_type";	/**< i
 static const char *kNIMChatRoomMsgKeyFromNick		= "from_nick";			/**< string, 消息发送方昵称,服务器填写,发送方不需要填写*/
 static const char *kNIMChatRoomMsgKeyFromAvatar		= "from_avator";		/**< string, 消息发送方头像,服务器填写,发送方不需要填写*/
 static const char *kNIMChatRoomMsgKeyFromExt		= "from_ext";			/**< string, 消息发送方身份扩展字段,服务器填写,发送方不需要填写*/
+static const char *kNIMChatRoomMsgKeyHighPriorityFlag = "high_priority_flag"; /**< int, 高优先级消息标记,1:是; 非高优先级消息不带该字段,服务器填写,发送方不需要填写*/
 
 //本地定义
 static const char *kNIMChatRoomMsgKeyLocalFilePath	= "local_res_path";		/**< string, 暂时不用,多媒体消息资源本地绝对路径,SDK本地维护,发送多媒体消息时必填 */
@@ -358,7 +359,7 @@ enum NIMChatRoomExitReason
   */
 static const char *kNIMChatRoomMemberInfoKeyRoomID		= "room_id";	/**<long 聊天室id */
 static const char *kNIMChatRoomMemberInfoKeyAccID		= "account_id"; /**<string 成员账号 */
-static const char *kNIMChatRoomMemberInfoKeyType		= "type";		/**<int 成员类型, -1:受限用户; 0:普通;1:创建者;2:管理员;4:匿名非注册用户*/
+static const char *kNIMChatRoomMemberInfoKeyType		= "type";		/**<int 成员类型, -1:受限用户; 0:普通;1:创建者;2:管理员;3:临时用户,非固定成员;4:匿名非注册用户,非云信注册用户*/
 static const char *kNIMChatRoomMemberInfoKeyLevel		= "level";		/**<int 成员级别: >=0表示用户开发者可以自定义的级别*/
 static const char *kNIMChatRoomMemberInfoKeyNick		= "nick";		/**<string 聊天室内的昵称字段,预留字段, 可从Uinfo中取 */
 static const char *kNIMChatRoomMemberInfoKeyAvatar		= "avatar";		/**<string 聊天室内的头像,预留字段, 可从Uinfo中取icon */
@@ -491,7 +492,7 @@ static const char *kNIMChatRoomNotificationQueueChangedKeyValue		= "content";/**
 * @ 当type为"PARTCLEAR"时，一般情况下只会有_e和kvObject字段，不会有key和content字段
 * @{
 */
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 static const char *kNIMChatRoomNotificationQueueBatchChangedKeyType = "_e";		/**<string 变更类型，目前有OFFER,POLL,DROP,PARTCLEAR四个类型*/
 static const char *kNIMChatRoomNotificationQueueBatchChangedKeyKey = "key";	/**<string 变更元素的key */
 static const char *kNIMChatRoomNotificationQueueBatchChangedKeyValue = "content";/**<string 变更元素的内容 */
@@ -521,7 +522,7 @@ enum NIMChatRoomNotificationId
 	kNIMChatRoomNotificationIdQueueChanged		= 317, /**< 麦序队列中有变更 "ext" : {"_e":"OFFER", "key":"element_key", "content":"element_value"}*/
 	kNIMChatRoomNotificationIdRoomMuted			= 318, /**< 聊天室被禁言了,只有管理员可以发言,其他人都处于禁言状态*/
 	kNIMChatRoomNotificationIdRoomDeMuted		= 319, /**< 聊天室解除全体禁言状态*/
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	kNIMChatRoomNotificationIdQueueBatchChanged = 320, /**< 麦序队列中有批量变更，发生在元素提交者离开聊天室或者从聊天室异常掉线时*/	
 #endif
 };

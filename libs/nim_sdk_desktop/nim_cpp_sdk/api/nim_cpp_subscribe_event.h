@@ -20,7 +20,7 @@
 */
 namespace nim
 {
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @class SubscribeEvent
   * @brief NIM 订阅事件相关接口
   */

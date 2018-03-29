@@ -82,7 +82,7 @@ NIM_SDK_DLL_API void nim_nos_upload(const char *local_file, nim_nos_upload_cb_fu
   */
 NIM_SDK_DLL_API void nim_nos_download(const char *nos_url, nim_nos_download_cb_func res_cb, const void *res_user_data, nim_nos_download_prg_cb_func prg_cb, const void *prg_user_data);
 
-//#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+//#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
 /** @fn void nim_nos_download_media_ex(const char *json_msg, const char *json_extension, nim_nos_download_cb_func res_cb, const void *res_user_data, nim_nos_download_prg_cb_func prg_cb, const void *prg_user_data, nim_nos_download_speed_cb_func speed_cb, const void *speed_user_data, nim_nos_download_info_cb_func info_cb, const void *info_user_data)
 * 获取资源(扩展)

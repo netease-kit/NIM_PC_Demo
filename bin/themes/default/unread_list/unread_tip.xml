@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <Box height="25">
+        <Control width="14" height="14" halign="center" valign="center" bkimage="loading.gif"/>
+    </Box>
+</Window>

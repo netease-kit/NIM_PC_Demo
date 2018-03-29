@@ -33,6 +33,7 @@ void MsgBubbleItem::InitControl(bool bubble_right)
 	status_sending_ = this->FindSubControl(L"status_sending");
 	status_resend_ = (Button*) this->FindSubControl(L"status_resend");
 	status_send_failed_ = this->FindSubControl(L"status_send_failed");
+	status_read_count_ = (Button*) this->FindSubControl(L"status_read_count");
 
 	status_loading_ = this->FindSubControl(L"status_loading");
 	status_reload_ = (Button*) this->FindSubControl(L"status_reload");
@@ -60,6 +61,27 @@ void MsgBubbleItem::InitInfo(const nim::IMMessage &msg)
 		msg_header_button_->SetContextMenuUsed(true);
 		msg_header_button_->AttachMenu(nbase::Bind(&MsgBubbleItem::OnRightClick, this, std::placeholders::_1));
 	}
+}
+
+void MsgBubbleItem::SetUnreadCount(int count)
+{
+	if (msg_.session_type_ == nim::kNIMSessionTypeP2P || !my_msg_)
+		return;
+
+	std::wstring txt;
+	if (count == 0)
+	{
+		txt = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_UNREAD_ZERO");
+		//status_read_count_->SetEnabled(false);
+	}
+	else
+	{
+		txt = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_UNREAD_COUNT");
+		txt = nbase::StringPrintf(txt.c_str(), count);
+		//status_read_count_->SetEnabled(true);
+	}
+	status_read_count_->SetText(txt);
+	status_read_count_->SetVisible(true);
 }
 
 void MsgBubbleItem::SetSessionId( const std::string &sid )
@@ -212,6 +234,10 @@ bool MsgBubbleItem::OnClicked(ui::EventArgs* arg)
 	else if (name == L"msg_header_button")
 	{
 		m_pWindow->SendNotify(this, ui::kEventNotify, BET_SHOWPROFILE, 0);
+	}
+	else if (name == L"status_read_count")
+	{
+		m_pWindow->SendNotify(this, ui::kEventNotify, BET_UNREAD_COUNT, 0);
 	}
 	return true;
 }

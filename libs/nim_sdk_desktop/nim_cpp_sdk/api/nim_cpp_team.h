@@ -12,6 +12,7 @@
 #include <list>
 #include <functional>
 #include "nim_team_helper.h"
+#include "nim_talk_helper.h"
 
 /**
 * @namespace nim
@@ -30,7 +31,7 @@ public:
 	typedef std::function<void(const TeamEvent& team_event)> TeamEventCallback;		/**< 群组事件通知回调模板 */
 	typedef std::function<void(int team_count, const std::list<std::string>& team_id_list)> QueryAllMyTeamsCallback;		/**< 查询本人所有群ID回调模板 */
 	typedef std::function<void(int team_count, const std::list<nim::TeamInfo>& team_info_list)>	QueryAllMyTeamsInfoCallback;	/**< 查询本人所有群信息回调模板 */
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	typedef std::function<void(int count, const std::list<nim::TeamMemberProperty>& all_my_member_info_list)>	QueryMyAllMemberInfosCallback;	/**< 查询本人所有群里我的成员信息回调模板 */
 #endif
 	typedef std::function<void(const std::string& tid, int member_count, const std::list<TeamMemberProperty>& props)>	QueryTeamMembersCallback;	/**< 查询指定群组全部成员信息回调模板 */
@@ -336,7 +337,7 @@ public:
 	*/
 	static void QueryAllMyTeamsInfoAsync(const QueryAllMyTeamsInfoCallback& cb, const std::string& json_extension = "");
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/** @fn static void QueryMyAllMemberInfosAsync(const QueryMyAllMemberInfosCallback& cb, const std::string& json_extension = "")
 	* 查询所有群里我的成员信息（使用场景：获取了所有群列表后，需要查询自己在每个群里自己的成员信息，使用成员信息里的bits字段，可以判断当某个群发来消息后，是否做消息通知）
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -429,7 +430,8 @@ public:
 	* @param[in] cb		踢人的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败
 	* @note 错误码	200:成功
-	*				404:参数错误
+	*				404:禁言对象不存在 
+	*				414:参数错误
 	*				803:群不存在
 	*				802:没有权限	
 	*/
@@ -447,6 +449,42 @@ public:
 	*/
 	static bool QueryMuteListOnlineAsync(const std::string& tid, const QueryTeamMembersOnlineCallback& cb, const std::string& json_extension = "");
 
+	/** @fn static bool MuteAsync(const std::string& tid, bool set_mute, const TeamEventCallback& cb, const std::string& json_extension = "")
+	* 群禁言/解除群禁言
+	* @param[in] tid		群组id
+	* @param[in] set_mute	禁言/解除禁言
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		踢人的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				414:参数错误
+	*/
+	static bool MuteAsync(const std::string& tid, bool set_mute, const TeamEventCallback& cb, const std::string& json_extension = "");
+
+	/** @fn void TeamMsgAckRead(const std::string& tid, const std::list<IMMessage>& msgs, const TeamEventCallback& cb, const std::string& json_extension = "");
+	* 群消息回执
+	* @param[in] tid		群组id
+	* @param[in] msgs		需要发送消息回执的群消息
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		回调函数
+	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				414:参数错误
+	*/
+	static void TeamMsgAckRead(const std::string& tid, const std::list<IMMessage>& msgs, const TeamEventCallback& cb, const std::string& json_extension = "");
+
+
+	/** @fn void TeamMsgQueryUnreadList(const std::string& tid, const IMMessage& msg, const TeamEventCallback& cb, const std::string& json_extension = "");
+	* 获取群消息未读成员列表
+	* @param[in] tid		群组id
+	* @param[in] msg		群消息
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		回调函数
+	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				414:参数错误
+	*/
+	static void TeamMsgQueryUnreadList(const std::string& tid, const IMMessage& msg, const TeamEventCallback& cb, const std::string& json_extension = "");
 };
 
 } 

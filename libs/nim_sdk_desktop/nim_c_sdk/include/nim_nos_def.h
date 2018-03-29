@@ -119,7 +119,7 @@ static const char *kNIMNosDocTransExt			= "doc_trans_ext";	/**< string (HTTP上�
 
 /** @name NOS扩展上传回调参数json_extension, Json key for upload cb */
 static const char *kNIMNosResId		= "res_id";		/**< string 上传文件的id，如果是文档转换则为服务器的文档id */
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 static const char *kNIMNosCallId	= "call_id";	/**< string 上传文件的会话id */
 #endif
 /** @}*/ //NOS扩展上传回调参数json_extension, Json key for upload cb

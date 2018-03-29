@@ -92,6 +92,18 @@ public:
 	*				6104:audioUrl不合法
 	*/
 	static bool GetAudioTextAsync(const AudioInfo& audio_info, const GetAudioTextCallback& cb, const std::string& json_extension = "");
+
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+	/** @fn int FilterClientAntispam(const std::string& text, const std::string& replace_str, const std::string& lib_name, std::string& output);
+	* 客户端本地反垃圾
+	* @param[in] text 文本内容，UTF-8
+	* @param[in] replace_str 进行替换的字符串，UTF-8
+	* @param[in] lib_name 词库名称，UTF-8
+	* @param[out] output 过滤后的输出，UTF-8
+	* @return 1：敏感词已被替换；2：含有敏感词不允许发送；3：需要将内容设置在消息结构的反垃圾字段里，由服务器过滤
+	*/
+	static int FilterClientAntispam(const std::string& text, const std::string& replace_str, const std::string& lib_name, std::string& output);
+#endif
 };
 
 } 

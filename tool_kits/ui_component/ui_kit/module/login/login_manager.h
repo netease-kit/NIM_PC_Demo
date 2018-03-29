@@ -117,6 +117,9 @@ public:
 	*/
 	int GetFileSizeLimit() { return limit_file_size_; }
 
+	void SetTeamMsgAckUIEnabled(){ team_msg_ack_ = true; }
+	bool IsTeamMsgAckUIEnabled(){ return team_msg_ack_; }
+
 	/**
 	* 缓存登录错误码
 	* @param[in] error_code 登录错误码
@@ -164,6 +167,7 @@ private:
 
 	LOG_LEVEL demo_log_level_ = LV_APP;
 	int limit_file_size_ = 15;
+	bool team_msg_ack_;
 
 	int error_code_ = 200;
 	bool anonymity_demo_mode_ = false;

@@ -16,7 +16,7 @@
 extern"C"
 {
 #endif
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
 /** @fn void nim_robot_reg_changed_callback(const char *json_extension, nim_robot_change_cb_func cb, const void *user_data)
   * 注册机器人变更广播通知

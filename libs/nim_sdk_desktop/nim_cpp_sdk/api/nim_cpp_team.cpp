@@ -36,7 +36,7 @@ typedef void(*nim_team_reject_invitation_async)(const char *tid, const char *inv
 
 typedef void(*nim_team_query_all_my_teams_async)(const char *json_extension, nim_team_query_all_my_teams_cb_func cb, const void* user_data);
 typedef void(*nim_team_query_all_my_teams_info_async)(const char *json_extension, nim_team_query_all_my_teams_info_cb_func cb, const void* user_data);
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 typedef void(*nim_team_query_my_all_member_infos_async)(const char *json_extension,	nim_team_query_my_all_member_infos_cb_func cb, const void *user_data);
 #endif
 typedef void(*nim_team_query_team_members_async)(const char *tid, bool include_user_info, const char *json_extension, nim_team_query_team_members_cb_func cb, const void* user_data);
@@ -47,6 +47,9 @@ typedef char*(*nim_team_query_team_info_block)(const char *tid);
 
 typedef void(*nim_team_mute_member_async)(const char *tid, const char *member_id, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 typedef void(*nim_team_query_mute_list_online_async)(const char *tid, 	const char *json_extension, nim_team_query_mute_list_cb_func cb, const void *user_data);
+typedef void(*nim_team_mute_async)(const char *tid, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
+typedef void(*nim_team_msg_ack_read)(const char *tid, const char *json_msgs, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
+typedef void(*nim_team_msg_query_unread_list)(const char *tid, const char *json_msg, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 #else
 #include "nim_team.h"
 #endif
@@ -146,7 +149,7 @@ static void CallbackQueryAllMyTeamsInfo(int team_count, const char *result, cons
 	}
 }
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 static void CallbackQueryMyAllMemberInfos(int count, const char *result, const char *json_extension, const void *user_data)
 {
 	if (user_data)
@@ -568,7 +571,7 @@ void Team::QueryAllMyTeamsInfoAsync(const QueryAllMyTeamsInfoCallback& cb, const
 	return NIM_SDK_GET_FUNC(nim_team_query_all_my_teams_info_async)(json_extension.c_str(), &CallbackQueryAllMyTeamsInfo, cb_pointer);
 }
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 void Team::QueryMyAllMemberInfosAsync( const QueryMyAllMemberInfosCallback& cb, const std::string& json_extension /*= ""*/ )
 {
 	QueryMyAllMemberInfosCallback* cb_pointer = nullptr;
@@ -705,6 +708,25 @@ bool Team::MuteMemberAsync(const std::string& tid, const std::string& member_id,
 	return true;
 }
 
+bool Team::MuteAsync(const std::string& tid, bool set_mute, const TeamEventCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty())
+		return false;
+
+	TeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new TeamEventCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_team_mute_async)(tid.c_str()
+		, set_mute
+		, json_extension.c_str()
+		, &CallbackTeamChange
+		, cb_pointer);
+
+	return true;
+}
+
 static void CallbackQueryMembersOnline(int res_code, int count, const char *tid, const char *result, const char *json_extension, const void *user_data)
 {
 	if (user_data)
@@ -750,5 +772,38 @@ bool Team::QueryMuteListOnlineAsync(const std::string& tid, const QueryTeamMembe
 	return true;
 }
 
+void Team::TeamMsgAckRead(const std::string& tid, const std::list<IMMessage>& msgs, const TeamEventCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	TeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new TeamEventCallback(cb);
+	}
+	std::string json_msgs;
+	Json::Value values;
+	for (auto iter = msgs.begin(); iter != msgs.end(); ++iter)
+	{
+		values.append(iter->ToJsonObject(false));
+	}
+	NIM_SDK_GET_FUNC(nim_team_msg_ack_read)(tid.c_str()
+		, values.toStyledString().c_str()
+		, json_extension.c_str()
+		, &CallbackTeamChange
+		, cb_pointer);
+}
 
+void Team::TeamMsgQueryUnreadList(const std::string& tid, const IMMessage& msg, const TeamEventCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	TeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new TeamEventCallback(cb);
+	}
+
+	NIM_SDK_GET_FUNC(nim_team_msg_query_unread_list)(tid.c_str()
+		, msg.ToJsonString(false).c_str()
+		, json_extension.c_str()
+		, &CallbackTeamChange
+		, cb_pointer);
+}
 }

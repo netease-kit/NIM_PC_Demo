@@ -18,7 +18,7 @@ bool ParseUploadResult( const std::string& url, const std::string& json, UploadM
 	Json::Reader reader;
 	if (reader.parse(json, values) && values.isObject())
 	{
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		if (values.isMember(kNIMNosCallId))
 			res.call_id_ = values[kNIMNosCallId].asString();
 #endif

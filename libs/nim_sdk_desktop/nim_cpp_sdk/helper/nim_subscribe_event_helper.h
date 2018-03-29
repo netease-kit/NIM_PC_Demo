@@ -22,7 +22,7 @@
 */
 namespace nim
 {
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
 /** @brief 事件数据 */
 struct EventData

@@ -17,7 +17,7 @@ namespace nim
 typedef	void (*nim_global_free_str_buf)(char *str);
 typedef	void (*nim_global_free_buf)(void *data);
 typedef void (*nim_global_set_proxy)(NIMProxyType, const char*, int, const char*, const char*);
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 typedef void (*nim_global_detect_proxy)(enum NIMProxyType type, const char *host, int port, const char *user, const char *password, nim_global_detect_proxy_cb_func cb, const void *user_data);
 typedef void(*nim_global_reg_exception_report_cb)(const char *json_extension, nim_sdk_exception_cb_func cb, const void *user_data);
 #else
@@ -37,7 +37,7 @@ void Global::FreeBuf(void *data)
 	return NIM_SDK_GET_FUNC(nim_global_free_buf)(data);
 }
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 void Global::SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password)
 {
 	return NIM_SDK_GET_FUNC(nim_global_set_proxy)(type, host.c_str(), port, user.c_str(), password.c_str());

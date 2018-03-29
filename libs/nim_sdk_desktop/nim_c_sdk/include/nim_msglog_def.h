@@ -198,6 +198,10 @@ enum NIMNotificationId
 	kNIMNotificationIdLocalGetTeamInfo		= 2006,			/**< 本地操作获取群信息 {"team_info":team_info} //群组信息(Keys SEE MORE `nim_team_def.h` 『群组信息 Json Keys』)*/
 	kNIMNotificationIdLocalGetTeamList		= 2007,			/**< 本地操作获取群成员信息结束*/
 	kNIMNotificationIdLocalMuteMember		= 2008,			/**< 本地操作对群成员禁言 {"id":"a1", "mute":1-禁言,0-解禁} */
+	kNIMNotificationIdLocalMute				= 2009,			/**< 本地操作对群禁言 {} */
+	kNIMNotificationIdLocalGetTeamMsgUnreadCount = 2010,	/**< 获取群消息未读数 {[{"client_msg_id":"", "count":int, "read_accid":"当前已读成员的accid"},...]}*/
+	kNIMNotificationIdLocalGetTeamMsgUnreadList = 2011,		/**< 获取群消息未读列表 {"client_msg_id":"", "read":["id1",...], "unread":["id2",...]}*/
+
 	//Netcall本地操作通知
 	kNIMNotificationIdLocalNetcallReject	= 3103,			/**< 拒绝电话,{"calltype":1,"channel":6146078138783760761,"from":"id1","ids":["id1","id2"],"time":1430995380471}*/
 	kNIMNotificationIdLocalNetcallNoResponse= 3104,			/**< 无应答，未接通电话,{"calltype":1,"channel":6146078138783760761,"from":"id1","ids":["id1","id2"],"time":1430995380471}*/
@@ -221,7 +225,7 @@ static const char *kNIMMsglogQueryJsonExtensionKeyReverse		= "reverse"; /**< boo
 static const char *kNIMMsglogQueryJsonExtensionKeyEndTime		= "endtime"; /**< int64_t，查询消息的截止时间，如果direction为kForward，则截止时间应小于anchor_msg_time，否则大于anchor_msg_time,默认为0代表不限制截止时间 */
 /** @}*/ //接口nim_msglog_query_msg_async扩展参数json key定义
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @name 接口nim_msglog_query_msg_online_async扩展参数json_extension key定义
 * @{
 */

@@ -660,7 +660,7 @@ private:
 	* @param[in] text 文本内容
 	* @return void	无返回值
 	*/
-	void SendText(const std::string &text);
+	void SendText(const std::string &text, bool team_msg_need_ack = false);
 
 	/**
 	* 发送一条图片消息
@@ -928,6 +928,8 @@ public:
 	* @return bool true 有效，false 无效
 	*/
 	bool IsTeamValid() { return is_team_valid_; };
+	
+	void UpdateUnreadCount(const std::string &msg_id, const int unread);
 private:
 	/** 
 	* 有群成员增加的回调函数
@@ -1017,6 +1019,13 @@ private:
 	void SendReceiptIfNeeded(bool auto_detect = false);
 
 	/**
+	* 发送群组消息已读回执
+	* @param[in] auto_detect 是否检测当前需要不需要发送回执，如果设置为true则只有会话盒子在激活状态并且消息列表处于末端才发送绘制，如果设置为false则直接发送回执
+	* @return void	无返回值
+	*/
+	void SendTeamReceiptIfNeeded(bool auto_detect = false);
+
+	/**
 	* 刷新消息列表中的名字
 	* @param[in] uid 用户id
 	* @return void	无返回值
@@ -1085,20 +1094,14 @@ private:
 	void ResetNewBroadButtonVisible();	
 
 	/**
-	* 处理好友控件头像单击消息
-	* @param[in] msg 消息的相关信息
-	* @param[in] type 类型
-	* @return bool true 继续传递控件消息，false 停止传递控件消息
-	*/
-	bool OnHeadImageClick(const std::string& uid, ui::EventArgs*);
-
-	/**
 	* 响应用户列表改变的回调函数
 	* @param[in] change_type 好友变化类型
 	* @param[in] accid 用户id
 	* @return void 无返回值
 	*/
 	void OnFriendListChange(FriendChangeType change_type, const std::string& accid);
+
+	void InvokeSetRead(const std::list<nim::IMMessage> &msgs);
 	void InvokeSetTeamNotificationMode(const int64_t bits);
 	void OnTeamNotificationModeChangeCallback(const std::string& id, int64_t bits);
 
@@ -1182,5 +1185,7 @@ private:
 	std::list<MsgBubbleItem*> cached_msgs_bubbles_; //记录消息前后顺序
 
 	AutoUnregister	unregister_cb;
+
+	std::list<nim::IMMessage> new_msgs_need_to_send_mq_;
 };
 }

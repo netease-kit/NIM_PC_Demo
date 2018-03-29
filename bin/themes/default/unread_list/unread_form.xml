@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="276,422" caption="0,0,0,34" textid="STRID_UNREADMSG_CENTER_TITLE">
+    <VBox bkcolor="bk_wnd_lightcolor">
+        <HBox class="caption">
+            <Label class="font_title" name="title" normaltextcolor="textdefaultcolor2" margin="10,0,0,0" width="stretch" valign="center" endellipsis="true" normaltextcolor="darkcolor"/>
+            <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>
+        </HBox>
+        <HBox height="36">
+            <OptionBox group="list_tab" name="btn_unread_list" cursortype="hand">
+                <Event type="select" receiver=".\select_tab" applyattribute="selectedid=&quot;1&quot;"/>
+                <Event type="unselect" receiver=".\select_tab" applyattribute="selectedid=&quot;0&quot;"/>
+                <Event type="select" receiver=".\label_unread" applyattribute="state=&quot;pushed&quot;"/>
+                <Event type="unselect" receiver=".\label_unread" applyattribute="state=&quot;normal&quot;"/>
+                <Event type="select" receiver="list_tabbox" applyattribute="selectedid=&quot;0&quot;"/>
+                
+                <TabBox name="select_tab" mouse="false" mousechild="false">
+                    <HBox>
+                        <Control normalimage="file='bk_tab_unselected.png' source='0,0,15,36' corner='5,5,5,5'"/>
+                        <Control width="20" normalimage="file='bk_tab_unselected.png' source='60,0,80,36' corner='5,5,5,5'"/>
+                        <Control normalimage="file='bk_tab_unselected.png' source='125,0,140,36' corner='5,5,5,5'"/>
+                    </HBox>
+                    <HBox>
+                        <Control normalimage="file='bk_tab_selected.png' source='0,0,15,36' corner='5,5,5,5'"/>
+                        <Control width="20" normalimage="file='bk_tab_selected.png' source='60,0,80,36' corner='5,5,5,5'"/>
+                        <Control normalimage="file='bk_tab_selected.png' source='125,0,140,36' corner='5,5,5,5'"/>
+                    </HBox>
+                </TabBox>
+
+                <Label name="label_unread" mouse="false" width="auto" height="auto" halign="center" valign="center" normaltextcolor="dark2color" pushedtextcolor="link_blue" font="7" textid="STRID_UNREADMSG_CENTER_UNREAD"/>
+            </OptionBox>
+
+            <OptionBox group="list_tab" name="btn_read_list" cursortype="hand">
+                <Event type="select" receiver=".\select_tab" applyattribute="selectedid=&quot;1&quot;"/>
+                <Event type="unselect" receiver=".\select_tab" applyattribute="selectedid=&quot;0&quot;"/>
+                <Event type="select" receiver=".\label_read" applyattribute="state=&quot;pushed&quot;"/>
+                <Event type="unselect" receiver=".\label_read" applyattribute="state=&quot;normal&quot;"/>
+                <Event type="select" receiver="list_tabbox" applyattribute="selectedid=&quot;1&quot;"/>
+                
+                <TabBox name="select_tab" mouse="false" mousechild="false">
+                    <HBox>
+                        <Control normalimage="file='bk_tab_unselected.png' source='0,0,15,36' corner='5,5,5,5'"/>
+                        <Control width="20" normalimage="file='bk_tab_unselected.png' source='60,0,80,36' corner='5,5,5,5'"/>
+                        <Control normalimage="file='bk_tab_unselected.png' source='125,0,140,36' corner='5,5,5,5'"/>
+                    </HBox>
+                    <HBox>
+                        <Control normalimage="file='bk_tab_selected.png' source='0,0,15,36' corner='5,5,5,5'"/>
+                        <Control width="20" normalimage="file='bk_tab_selected.png' source='60,0,80,36' corner='5,5,5,5'"/>
+                        <Control normalimage="file='bk_tab_selected.png' source='125,0,140,36' corner='5,5,5,5'"/>
+                    </HBox>
+                </TabBox>
+
+                <Label name="label_read" mouse="false" width="auto" height="auto" halign="center" valign="center" normaltextcolor="dark2color" pushedtextcolor="link_blue" font="7" textid="STRID_UNREADMSG_CENTER_READ"/>
+            </OptionBox>
+        </HBox>
+
+        <Box>           
+            <TabBox name="list_tabbox" fadeswitch="true">
+				<VListBox class="list" name="unread_list" vscrollbar="true" hscrollbar="false" vscrollunit="120"/>
+				<VListBox class="list" name="read_list" vscrollbar="true" hscrollbar="false" vscrollunit="120" padding="0,0,0,10"/>
+            </TabBox>
+        </Box>
+    </VBox>
+</Window>

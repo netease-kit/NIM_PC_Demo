@@ -4,6 +4,7 @@
 #include "gui/team_info/team_notify.h"
 #include "gui/main/team_event_form.h"
 #include "export/nim_ui_window_manager.h"
+#include "gui/session/unread_form.h"
 
 namespace nim_comp
 {
@@ -161,6 +162,23 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 			nim_ui::ShowToast(toast, 5000);
 		}
 	}
+	else if (info.notification_id_ == nim::kNIMNotificationIdLocalGetTeamMsgUnreadCount)
+	{
+		int sz = (int)info.src_data_.size();
+		for (auto i = 0; i < sz; i++)
+		{
+			Json::Value unread_info = info.src_data_[i];
+			SessionBox* session = SessionManager::GetInstance()->FindSessionBox(tid);
+			if (session)
+				session->UpdateUnreadCount(unread_info["client_msg_id"].asString(), unread_info["count"].asInt());
+			if (unread_info.isMember("read_accid"))
+			{
+				UnreadForm *form = (UnreadForm *)WindowsManager::GetInstance()->GetWindow(UnreadForm::kClassName, UnreadForm::kClassName);
+				if (form)
+					form->UpdateUnreadCount(unread_info["client_msg_id"].asString(), unread_info["count"].asInt(), unread_info["read_accid"].asString());
+			}
+		}
+	}
 	else
 	{
 		if (info.res_code_ == nim::kNIMResSuccess)
@@ -274,6 +292,27 @@ void UIReceiveSysmsgCallback(nim::SysMessage& msg)
 							{
 								session->AddWritingMsg(immsg);
 							}
+							return;
+						}
+						else if (id == "100")
+						{
+							VideoManager::GetInstance()->InvokeReceiveCustomP2PMessage(json["content"], msg.sender_accid_);
+							return;
+						}
+					}
+				}
+			}
+			else if (msg.type_ == nim::kNIMSysMsgTypeCustomTeamMsg)
+			{
+				Json::Value json;
+				if (StringToJson(msg.attach_, json) && json.isObject())
+				{
+					if (json.isMember("id"))
+					{
+						std::string id = json["id"].asString();
+						if (id == "100")
+						{
+							VideoManager::GetInstance()->InvokeReceiveCustomTeamMessage(json["content"], msg.sender_accid_);
 							return;
 						}
 					}

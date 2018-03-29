@@ -38,7 +38,7 @@ void ParseSession(const Json::Value& session_json, SessionData& session)
 	session.last_updated_msg_ = session_json[kNIMSessionLastUpdatedMsg].asBool();
 	session.placed_on_top_ = session_json[kNIMSessionOnTop].asBool();
 	session.extend_data_ = session_json[kNIMSessionExtendedData].asString();
-	#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+	#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	session.is_robot_session_ = session_json[kNIMSessionRobotFlag].asBool();
 	#endif
 }

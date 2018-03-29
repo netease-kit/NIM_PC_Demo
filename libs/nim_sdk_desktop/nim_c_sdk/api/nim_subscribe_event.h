@@ -17,7 +17,7 @@ extern"C"
 {
 #endif
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn void nim_subscribe_event_reg_push_event_cb(const char *json_extension, nim_push_event_cb_func cb, const void *user_data)
   * (全局回调)统一注册接收订阅的事件的回调函数
   * @param[in] json_extension	json扩展参数（备用，目前不需要）

@@ -531,6 +531,18 @@
     <ClInclude Include="gui\main\control\custom_button_box.h">
       <Filter>gui\main\control</Filter>
     </ClInclude>
+    <ClInclude Include="gui\session\control\unread_item.h">
+      <Filter>gui\session\control</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\unread_form.h">
+      <Filter>gui\session</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\video\multi_video_invite.h">
+      <Filter>gui\video</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\video\multi_video_form.h">
+      <Filter>gui\video</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -928,6 +940,18 @@
     </ClCompile>
     <ClCompile Include="gui\main\control\custom_button_box.cpp">
       <Filter>gui\main\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\unread_item.cpp">
+      <Filter>gui\session\control</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\multi_video_invite.cpp">
+      <Filter>gui\video</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\video\multi_video_form.cpp">
+      <Filter>gui\video</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\unread_form.cpp">
+      <Filter>gui\session</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

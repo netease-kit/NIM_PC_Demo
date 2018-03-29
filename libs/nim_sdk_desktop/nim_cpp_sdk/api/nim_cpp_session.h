@@ -83,7 +83,7 @@ public:
 	*				0:失败
 	*/
 	static bool SetUnreadCountZeroAsync(nim::NIMSessionType to_type, const std::string& id, const SetUnreadCountZeroCallback& cb, const std::string& json_extension = "");
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/** @fn static bool SetSessionTop(enum NIMSessionType to_type, const std::string& id, bool top, const ChangeCallback& cb, const std::string& json_extension = "");
 	* 设置会话项是否置顶(置顶属性只保存在本地)
 	* @param[in] to_type		会话类型

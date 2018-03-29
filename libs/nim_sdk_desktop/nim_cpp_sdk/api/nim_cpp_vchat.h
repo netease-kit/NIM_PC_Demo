@@ -464,11 +464,29 @@ public:
 	* NIM VCHAT 通话中修改视频编码模式
 	* @param[in] mode 选用的策略模式
 	* @param[in] json_extension 无效扩展字段
-	* @param[in] cb 结果回调见nrtc_chat_def.h，返回的json_extension无效
+	* @param[in] cb 结果回调见nim_chat_def.h，返回的json_extension无效
 	* @return void 无返回值
 	* @note 错误码	200:成功
 	*/
 	static void SelectVideoAdaptiveStrategy(NIMVChatVideoEncodeMode mode, const std::string& json_extension, Opt2Callback cb);
+
+	/** @fn static void SetUidAsMainPicture(int uid, const std::string& json_extension, Opt2Callback cb)
+	* NIM VCHAT 互动直播模式设置uid为房间内的主画面
+	* @param[in] uid 用户uid
+	* @param[in] json_extension 无效扩展字段
+	* @param[in] cb 结果回调见nim_chat_def.h,返回的json_extension无效
+	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				400:非法请求格式
+	*				401: 认证错误
+	*				404:房间不存在
+	*				405:房间下的uid不存在
+	*				417:请求数据不对
+	*				500: 内部错误
+	*				600:服务器内部错误
+	*				11403:无效的操作
+	*/
+	static void SetUidAsMainPicture(const std::string& uid, const std::string& json_extension, Opt2Callback cb);
 
 	//接口废弃
 	///** @fn void SetStreamingMode(bool streaming, OptCallback cb)

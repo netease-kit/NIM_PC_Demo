@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ListContainerElement class="listitem" height="60">
+        <HBox padding="9,0,10,0" mouse="false">
+            <Box width="auto" height="auto" valign="center" >
+				<ButtonBox name="btn_head" cursortype="hand" width="38" height="38" margin="1,1" borderround="38,38" bkimage="../public/header/head_team.png"/>
+				<Button class="icon_headimage_mask_40x40" name="head_image_mask" mouse="false"/>
+            </Box>
+
+            <VBox margin="10,0,10,0" mouse="false">
+                <Control mouse="false"/>
+				<Label name="member_name" font="2"/>
+				<Label name="member_org" margin="0,4,0,0" width="stretch" endellipsis="true" normaltextcolor="gray" font="1"/>
+                <Control mouse="false"/>
+            </VBox>
+        </HBox>
+        <!--Control class="splitline_hor_level1" name="split_line" valign="bottom"/-->
+    </ListContainerElement>
+</Window>

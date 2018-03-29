@@ -254,7 +254,7 @@ struct ChatRoomNotification
 		{
 			queue_change_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyQueueChange].asString();
 		}
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		if ( id_ == kNIMChatRoomNotificationIdQueueBatchChanged)
 		{
 			queue_change_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyQueueChange].asString();
@@ -288,7 +288,7 @@ struct ChatRoomQueueChangedNotification
 	}
 };
 /** @brief  通知麦序队列中有批量变更，发生在元素提交者离开聊天室或者从聊天室异常掉线时*/
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 struct ChatRoomQueueBatchChangedNotification
 {
 	std::string		type_;		/**< 队列变更类型 OFFER, POLL, DROP*/
@@ -336,12 +336,15 @@ struct ChatRoomMessageSetting
 	bool			history_save_;				/**< (可选)是否存云端消息历史，默认存 */
 	std::string anti_spam_bizid_;		/**< (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
 	int anti_spam_using_yidun_;	/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
+	int				high_priority_;				/**< 高优先级消息标记,1:是; 非高优先级消息不带该字段,服务器填写,发送方不需要填写*/
+
 	/** 构造函数 */
 	ChatRoomMessageSetting() : resend_flag_(false)
 		, anti_spam_enable_(false)
 		, history_save_(true)
 		,anti_spam_bizid_("")
-		,anti_spam_using_yidun_(1){}
+		,anti_spam_using_yidun_(1)
+		, high_priority_(0){}
 
 	/** @fn void ToJsonValue(Json::Value& message) const
 	  * @brief 组装Json Value字符串
@@ -356,7 +359,7 @@ struct ChatRoomMessageSetting
 		message[kNIMChatRoomMsgKeyAntiSpamContent] = anti_spam_content_;
 		if(!anti_spam_bizid_.empty())
 			message[kNIMChatRoomMsgKeyAntiSpamBizId] = anti_spam_bizid_;
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		message[kNIMChatRoomMsgKeyHistorySave] = history_save_ ? 1 : 0;
 		message[kNIMChatRoomMsgKeyAntiSpamUsingYiDun] = anti_spam_using_yidun_;
 #endif
@@ -374,6 +377,7 @@ struct ChatRoomMessageSetting
 		if (message.isMember(kNIMChatRoomMsgKeyAntiSpamEnable))
 			anti_spam_enable_ = message[kNIMChatRoomMsgKeyAntiSpamEnable].asInt() == 1;
 		anti_spam_content_ = message[kNIMChatRoomMsgKeyAntiSpamContent].asString();
+		high_priority_ = message[kNIMChatRoomMsgKeyHighPriorityFlag].asInt();
 	}
 };
 
@@ -403,7 +407,7 @@ public:
 	/** 构造函数 */
 	ChatRoomMessage() :room_id_(-1)
 		, from_client_type_(kNIMChatRoomClientTypeDefault)
-		, timetag_(0) {}
+		, timetag_(0){}
 
 	/** @fn void ParseFromJsonValue(const Json::Value &values)
 	  * @brief 从JsonValue中解析得到聊天室消息
@@ -424,7 +428,7 @@ public:
 		client_msg_id_ = values[kNIMChatRoomMsgKeyClientMsgid].asString();
 		local_res_path_ = values[kNIMChatRoomMsgKeyLocalFilePath].asString();
 		local_res_id_ = values[kNIMChatRoomMsgKeyLocalResId].asString();
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		msg_body_ = values[kNIMChatRoomMsgKeyBody].asString();
 #endif
 		msg_setting_.ParseMessageSetting(values);
@@ -442,7 +446,7 @@ public:
 		values[kNIMChatRoomMsgKeyClientMsgid] = client_msg_id_;
 		values[kNIMChatRoomMsgKeyLocalFilePath] = local_res_path_;
 		values[kNIMChatRoomMsgKeyLocalResId] = local_res_id_;
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		values[kNIMChatRoomMsgKeyBody] = msg_body_;
 #endif
 		msg_setting_.ToJsonValue(values);
@@ -577,7 +581,7 @@ struct ChatRoomMemberInfo
 {
 	int64_t			room_id_;			/**<聊天室id */
 	std::string		account_id_;		/**<成员账号 */
-	int				type_;				/**<成员类型, -1:受限用户; 0:普通;1:创建者;2:管理员;4:匿名非注册用户*/
+	int				type_;				/**<成员类型, -2:未设置;-1:受限用户; 0:普通;1:创建者;2:管理员;3:临时用户,非固定成员;4:匿名非注册用户,非云信注册用户*/
 	int				level_;				/**<成员级别: >=0表示用户开发者可以自定义的级别*/
 	std::string		nick_;				/**<聊天室内的昵称字段,预留字段, 可从Uinfo中取*/
 	std::string		avatar_;			/**<聊天室内的头像,预留字段, 可从Uinfo中取icon*/
@@ -593,7 +597,7 @@ struct ChatRoomMemberInfo
 	int64_t			temp_muted_duration_;/**<临时禁言的解除时长,单位秒*/
 	/** 构造函数 */
 	ChatRoomMemberInfo() : room_id_(0),
-		type_(0),
+		type_(-2),
 		level_(0),
 		state_(kNIMChatRoomOnlineStateOffline),
 		guest_flag_(kNIMChatRoomGuestFlagGuest),

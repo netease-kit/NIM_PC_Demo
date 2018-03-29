@@ -97,10 +97,10 @@ void SessionBox::InitSessionBox()
 	if (session_type_ == nim::kNIMSessionTypeP2P && !IsFileTransPhone())
 	{
 		btn_audio->SetVisible(true);
-		btn_video->SetVisible(true);
+		//btn_video->SetVisible(true);
 		btn_rts->SetVisible(true);
 	}
-
+	btn_video->SetVisible(true);
 	btn_max_restore_ = (Button*)FindSubControl(L"btn_max_restore");
 
 	msg_content_ = (Box*)FindSubControl(L"msg_content");
@@ -174,7 +174,8 @@ void SessionBox::InitSessionBox()
 		at_list_form->Create(this->GetWindow()->GetHWND(), L"", WS_POPUPWINDOW, 0L);
 		nim::RobotInfos infos;
 		UserService::GetInstance()->GetAllRobotInfo(infos);
-		at_list_form->InitRobotInfos(infos);
+		if (infos.size() > 0)
+			at_list_form->InitRobotInfos(infos);
 	}
 
 	CheckHeader();
@@ -292,7 +293,9 @@ void SessionBox::AddNewMsg(const nim::IMMessage &msg, bool create)
 
 	bool flash = true;
 	if (msg.feature_ == nim::kNIMMessageFeatureSyncMsg || msg.type_ == nim::kNIMMessageTypeNotification)
+	{
 		flash = false;
+	}
 	session_form_->OnNewMsg(*this, create, flash);
 	
 	if(at_end)
@@ -300,6 +303,16 @@ void SessionBox::AddNewMsg(const nim::IMMessage &msg, bool create)
 		msg_list_->EndDown(true, false);
 	}
 
+	if (session_type_ == nim::kNIMSessionTypeTeam &&
+		!IsBubbleRight(msg) &&
+		msg.type_ != nim::kNIMMessageTypeNotification &&
+		msg.type_ != nim::kNIMMessageTypeTips &&
+		msg.msg_setting_.team_msg_need_ack_ == nim::BS_TRUE &&
+		msg.msg_setting_.team_msg_ack_sent_ != nim::BS_TRUE)
+	{
+		new_msgs_need_to_send_mq_.push_back(msg);
+	}
+	SendTeamReceiptIfNeeded(true);
 	SendReceiptIfNeeded(true);
 	AddAtMessage(msg);
 }
@@ -523,6 +536,22 @@ void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 				show_time = CheckIfShowTime(older_time, message.timetag_);
 		}
 		ShowMsg(message, true, show_time);
+
+		if (session_type_ == nim::kNIMSessionTypeTeam &&
+			message.type_ != nim::kNIMMessageTypeNotification &&
+			message.type_ != nim::kNIMMessageTypeTips)
+		{
+			if (!IsBubbleRight(message))
+			{
+				if (message.msg_setting_.team_msg_need_ack_ == nim::BS_TRUE && message.msg_setting_.team_msg_ack_sent_ != nim::BS_TRUE)
+					new_msgs_need_to_send_mq_.push_back(message);
+			}
+		}
+	}
+
+	if (session_type_ == nim::kNIMSessionTypeTeam)
+	{
+		SendTeamReceiptIfNeeded();
 	}
 
 	//加载更多历史消息
@@ -802,11 +831,10 @@ void SessionBox::OnRetweetResDownloadCallback(nim::NIMResCode code, const std::s
 	}
 }
 
-void SessionBox::SendText( const std::string &text )
+void SessionBox::SendText(const std::string &text, bool team_msg_need_ack/* = false*/)
 {
 	nim::IMMessage msg;
 	PackageMsg(msg);
-	nim::MessageSetting setting;
 	std::string robot_accid;
 	//判断是否包含@某人的消息
 	if (!uid_at_someone_.empty())
@@ -824,7 +852,7 @@ void SessionBox::SendText( const std::string &text )
 			{
 				if (!it->second.is_robot_)
 				{
-					setting.force_push_ids_list_.push_back(it->second.uid_);
+					msg.msg_setting_.force_push_ids_list_.push_back(it->second.uid_);
 				}
 				else
 				{
@@ -835,10 +863,10 @@ void SessionBox::SendText( const std::string &text )
 			}
 		}
 
-		if (!setting.force_push_ids_list_.empty())
+		if (!msg.msg_setting_.force_push_ids_list_.empty())
 		{
-			setting.is_force_push_ = nim::BS_TRUE;
-			setting.force_push_content_ = text;
+			msg.msg_setting_.is_force_push_ = nim::BS_TRUE;
+			msg.msg_setting_.force_push_content_ = text;
 		}
 
 		uid_at_someone_.clear();
@@ -846,12 +874,15 @@ void SessionBox::SendText( const std::string &text )
 	if (is_robot_session_)
 		msg.type_ = nim::kNIMMessageTypeRobot;
 
+	if (team_msg_need_ack)
+		msg.msg_setting_.team_msg_need_ack_ = nim::BS_TRUE;
+
 	std::string json_msg;
 	msg.content_ = text;
 	if (msg.type_ != nim::kNIMMessageTypeRobot)
 	{
 		msg.type_ = nim::kNIMMessageTypeText;
-		json_msg = nim::Talk::CreateTextMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, msg.content_, setting, msg.timetag_);
+		json_msg = nim::Talk::CreateTextMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, msg.content_, msg.msg_setting_, msg.timetag_);
 	}
 	else
 	{
@@ -875,7 +906,7 @@ void SessionBox::SendText( const std::string &text )
 		bot.sent_param_["content"] = robot_content.empty() ? " " : nbase::UTF16ToUTF8(robot_content);
 		bot.sent_param_["type"] = "01";
 		msg.attach_ = bot.ToJsonString();
-		json_msg = nim::Talk::CreateBotRobotMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, text, bot, setting, msg.timetag_);
+		json_msg = nim::Talk::CreateBotRobotMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, text, bot, msg.msg_setting_, msg.timetag_);
 	}
 
 	AddSendingMsg(msg);

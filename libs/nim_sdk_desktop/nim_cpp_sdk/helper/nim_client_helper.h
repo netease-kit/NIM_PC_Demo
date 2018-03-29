@@ -36,23 +36,25 @@ struct SDKConfig
 	bool			use_https_;						/**< 是否启用HTTPS协议，默认为false */
 	bool			team_notification_unread_count_;/**< 群通知是否计入未读数，默认为false */
 	bool			animated_image_thumbnail_enabled_;/**< 开启对动图缩略图的支持	，默认为false,开启后获取的缩略图为原格式，关闭后获取的缩略图为第一帧静态图 */
-
-	//private_server_setting
+	bool			client_antispam_;				/**< 客户端反垃圾，默认为false，如需开启请提前咨询技术支持或销售 */
+	bool			team_msg_ack_;					/**< 群消息已读功能开关， 默认为false，如需开启请提前咨询技术支持或销售  */
+	std::string		server_conf_file_path_;			/**< 私有云服务器相关地址配置文件本地绝对路径，如果不填默认执行文件目录下的server_conf.txt */
+	
+	//private_server_setting 私有服务器配置（设置方法有两种，一个是配置以下信息，一个是通过配置server_conf_file_path_地址，信息从文件中读取）
 	bool			use_private_server_;			/**< 是否使用私有服务器，如果使用私有服务器，则必须设置为true */
 	std::string		lbs_address_;					/**< lbs地址，如果选择使用私有服务器，则必填 */
 	std::string  	nos_lbs_address_;				/**< nos lbs地址，如果选择使用私有服务器，则必填 */
-	std::list<std::string>	default_link_address_;			/**< 默认link服务器地址，如果选择使用私有服务器，则必填 */
-	std::list<std::string>	default_nos_upload_address_;	/**< 默认nos 上传服务器地址，如果选择使用私有服务器，则必填 */
-	std::list<std::string>	default_nos_download_address_;	/**< 默认nos 下载服务器地址，如果选择使用私有服务器，则必填 */
-	std::list<std::string>	default_nos_access_address_;	/**< 默认nos access服务器地址，如果选择使用私有服务器，则必填 */
+	std::string		default_link_address_;			/**< 默认link服务器地址，如果选择使用私有服务器，则必填 */
+	std::string		default_nos_upload_address_;	/**< 默认nos 上传服务器地址，如果选择使用私有服务器，则必填 */
+	std::string		default_nos_upload_host_;		/**< 默认nos 上传服务器主机地址，仅 kNIMUseHttps设置为true 时有效，用作 https 上传时的域名校验及 http header host 字段填充 */
 	std::string		rsa_public_key_module_;			/**< RSA public key，如果选择使用私有服务器，则必填 */
 	int				rsa_version_;					/**< RSA version，如果选择使用私有服务器，则必填 */
+	std::string		nos_download_address_;			/**< nos 下载地址拼接模板，用于拼接最终得到的下载地址*/
+	std::string		nos_accelerate_host_;			/**< 需要被加速主机名*/
+	std::string		nos_accelerate_address_;		/**< nos 加速地址拼接模板，用于获得加速后的下载地址*/
+	std::string		ntserver_address_;				/**< 部分 IM 错误信息统计上报地址*/
+	bool upload_statistics_data_;					/**< 错误信息统计是否上报*/
 
-	std::vector<std::string> nos_download_address_list_;/*nos 下载地址拼接模板，用于拼接最终得到的下载地址*/
-	std::vector<std::string> nos_accelerate_host_list_;/*需要被加速主机名*/
-	std::vector<std::string> nos_accelerate_address_list_;/*nos 加速地址拼接模板，用于获得加速后的下载地址*/
-	std::vector<std::string> ntserver_address_list_;/*部分 IM 错误信息统计上报地址*/
-	bool upload_statistics_data_;/*错误信息统计是否上报,私有化如不上报此项应配置为false*/
 	/** 构造函数 */
 	SDKConfig() : preload_attach_(true)
 				, preload_image_quality_(-1)
@@ -64,7 +66,10 @@ struct SDKConfig
 				, custom_timeout_(30)
 				, use_https_(false)
 				, team_notification_unread_count_(false)
-				, animated_image_thumbnail_enabled_(false){}
+				, animated_image_thumbnail_enabled_(false)
+				, upload_statistics_data_(true)
+				, client_antispam_(false)
+				, team_msg_ack_(false){}
 };
 
 /** @brief 多端登陆客户端信息 */

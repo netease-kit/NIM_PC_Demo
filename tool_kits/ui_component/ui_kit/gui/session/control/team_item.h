@@ -97,6 +97,14 @@ private:
 	*/
 	bool OnDbClicked(ui::EventArgs* arg);
 
+	/**
+	* 处理好友控件头像单击消息
+	* @param[in] msg 消息的相关信息
+	* @param[in] type 类型
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnHeadImageClick(const std::string& uid, ui::EventArgs*);
+
 private:
 	ui::Button*		member_icon_;
 	ui::Label*		member_name_;

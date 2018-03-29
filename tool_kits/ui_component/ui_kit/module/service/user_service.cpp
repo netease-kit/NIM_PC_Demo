@@ -8,7 +8,7 @@ std::string GetConfigValue(const std::string& key)
 {
 	std::string value;
 	std::wstring server_conf_path = QPath::GetAppPath();
-	server_conf_path.append(L"server_conf.txt");
+	server_conf_path.append(L"global_conf.txt");
 	TiXmlDocument document;
 	if (shared::LoadXmlFromFile(document, server_conf_path))
 	{

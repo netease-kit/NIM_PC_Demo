@@ -799,7 +799,7 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 		room_mute_ = notification.id_ == kNIMChatRoomNotificationIdRoomMuted;
 		AddNotify(str, is_history, first_msg_each_batch);
 	}
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	if (notification.id_ == kNIMChatRoomNotificationIdQueueBatchChanged)
 	{
 		std::string str;

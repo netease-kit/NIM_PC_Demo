@@ -109,7 +109,7 @@ static bool Init(const std::string& app_install_dir, const std::string& json_ext
   */
 static void Cleanup(const std::string& json_extension = "");
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
 /** @fn bool AnonymousEnter(const int64_t room_id, const ChatRoomAnoymityEnterInfo& anonymity_info, const ChatRoomEnterInfo& info, const std::string& json_extension = "")
   * 聊天室匿名进入
@@ -357,7 +357,7 @@ static void QueuePollAsync(const int64_t room_id
 static void QueueListAsync(const int64_t room_id
 	, const QueueListCallback& callback
 	, const std::string &json_extension = "");
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn static void QueueHeaderAsync(const int64_t room_id, const QueueHeaderCallback& callback, const std::string &json_extension = "");
   * 查看麦序头元素
   * @param[in] room_id				聊天室ID
@@ -386,7 +386,7 @@ static void QueueDropAsync(const int64_t room_id
 */
 static void UnregChatroomCb();
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
 /** @fn char *QueryAllRobotInfosBlock(const int64_t room_id, const std::string &json_extension = "")
   * 获取全部机器人信息(同步接口，堵塞NIM内部线程)

@@ -20,6 +20,8 @@
 #include "module/service/user_service.h"
 
 #include "shared/modal_wnd/file_dialog_ex.h"
+#include "gui/session/unread_form.h"
+#include "gui/video/multi_video_form.h"
 
 using namespace ui;
 
@@ -165,6 +167,7 @@ bool SessionBox::Notify(ui::EventArgs* param)
 			{
 				SendReceiptIfNeeded(true);
 			}
+			SendTeamReceiptIfNeeded(true);
 		}
 	}
 	else if (param->Type == ui::kEventNotify)
@@ -177,6 +180,23 @@ bool SessionBox::Notify(ui::EventArgs* param)
 		{
 			RemoveMsgItem(md.client_msg_id_);
 			ReSendMsg(md);
+		}
+		else if (param->wParam == BET_UNREAD_COUNT)
+		{
+			UnreadForm *window = (UnreadForm*)(WindowsManager::GetInstance()->GetWindow(UnreadForm::kClassName, UnreadForm::kClassName));
+			if (!window)
+			{
+				window = new UnreadForm;
+				window->Create(session_form_->GetHWND(), UnreadForm::kClassName, WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
+				window->CenterWindow();
+				window->ShowWindow();
+			}
+			else
+			{
+				window->ActiveWindow();
+			}
+			if (window)
+				window->LoadList(md, team_member_info_list_);
 		}
 		else if (param->wParam == BET_RELOAD)
 		{
@@ -416,6 +436,10 @@ bool SessionBox::OnClicked(ui::EventArgs* param)
 			//msg.from_nick = user_info.name;
 			nim::MsgLog::WriteMsglogToLocalAsync(session_id_, msg, false, nim::MsgLog::WriteMsglogCallback());
 		}
+	}
+	else if (name == L"btn_team_ack_msg")
+	{
+		SendText(nim::Tool::GetUuid(), true);
 	}
 	return true;
 }
@@ -696,9 +720,19 @@ void SessionBox::OnBtnAudio()
 
 void SessionBox::OnBtnVideo()
 {
-	if (session_type_ == nim::kNIMSessionTypeP2P)
+	switch (session_type_)
 	{
+	case nim::kNIMSessionTypeP2P:
 		VideoManager::GetInstance()->ShowVideoChatForm(session_id_, true);
+		break;
+	case nim::kNIMSessionTypeTeam:
+	{
+		VideoManager::GetInstance()->ShowVideoChatForm(session_id_, true,0,true);
+	}
+
+	break;
+	default:
+		break;
 	}
 }
 
@@ -730,13 +764,14 @@ void SessionBox::OnSelectedRetweetList(nim::IMMessage msg, const std::list<std::
 	if (friend_list.empty() && team_list.empty())
 		return;
 
-	auto retweet_cb = [this](const std::string &msg, const std::string &receiver_accid)
+	auto retweet_cb = [this](const std::string &msg, const std::string &receiver_accid, nim::NIMSessionType receiver_type)
 	{
 		nim::IMMessage sending_msg;
 		nim::Talk::ParseIMMessage(msg, sending_msg);
 		sending_msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
+		sending_msg.msg_setting_.team_msg_ack_sent_ = nim::BS_FALSE;
 
-		SessionBox *form = SessionManager::GetInstance()->FindSessionBox(receiver_accid);
+		SessionBox *form = SessionManager::GetInstance()->OpenSessionBox(receiver_accid, receiver_type);
 		if (form)
 		{
 			form->AddRetweetMsg(sending_msg);
@@ -747,13 +782,13 @@ void SessionBox::OnSelectedRetweetList(nim::IMMessage msg, const std::list<std::
 	for (auto &it : friend_list)
 	{
 		std::string send_msg = nim::Talk::CreateRetweetMessage(msg.ToJsonString(false), QString::GetGUID(), nim::kNIMSessionTypeP2P, it, msg.msg_setting_, 1000 * nbase::Time::Now().ToTimeT());
-		retweet_cb(send_msg, it);
+		retweet_cb(send_msg, it, nim::kNIMSessionTypeP2P);
 	}
 
 	for (auto &it : team_list)
 	{
 		std::string send_msg = nim::Talk::CreateRetweetMessage(msg.ToJsonString(false), QString::GetGUID(), nim::kNIMSessionTypeTeam, it, msg.msg_setting_, 1000 * nbase::Time::Now().ToTimeT());
-		retweet_cb(send_msg, it);
+		retweet_cb(send_msg, it, nim::kNIMSessionTypeTeam);
 	}
 }
 
@@ -915,6 +950,8 @@ void SessionBox::OnActivate()
 
 		if (input_edit_)
 			input_edit_->SetFocus();
+
+		SendTeamReceiptIfNeeded();
 	}
 
 	UpdateTaskbarInfo();

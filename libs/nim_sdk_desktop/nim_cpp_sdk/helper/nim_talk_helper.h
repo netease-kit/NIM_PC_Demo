@@ -46,6 +46,10 @@ struct MessageSetting
 	std::string anti_spam_content_;		/**< (可选)开发者自定义的反垃圾字段,长度限制5000 */
 	std::string anti_apam_biz_id_;		/**< (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
 	int anti_apam_using_yidun_;	/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
+	BoolStatus client_anti_spam_hitting_;	/**< (可选) 是否命中客户端反垃圾*/
+	BoolStatus team_msg_need_ack_;		/** 群消息是否需要已读业务，0：不需要，1：需要*/
+	BoolStatus team_msg_ack_sent_;		/**< 是否已经发送群消息已读回执 */
+	int team_msg_unread_count_;			/**< 群消息未读数 */
 	/** 构造函数 */
 	MessageSetting() : resend_flag_(BS_NOT_INIT)
 		, server_history_saved_(BS_NOT_INIT)
@@ -59,7 +63,11 @@ struct MessageSetting
 		, is_force_push_(BS_NOT_INIT)
 		, anti_spam_enable_(BS_NOT_INIT)
 		,anti_apam_biz_id_("")
-		,anti_apam_using_yidun_(1){}
+		,anti_apam_using_yidun_(1)
+		, client_anti_spam_hitting_(BS_NOT_INIT)
+		, team_msg_need_ack_(BS_NOT_INIT)
+		, team_msg_ack_sent_(BS_NOT_INIT)
+		, team_msg_unread_count_(-1){}
 
 	/** @fn void ToJsonValue(Json::Value& message) const
 	  * @brief 组装Json Value字符串
@@ -111,6 +119,14 @@ struct MessageSetting
 		if(!anti_apam_biz_id_.empty())
 			message[kNIMMsgKeyAntiSpamBizId] = anti_apam_biz_id_;
 		message[kNIMMsgKeyAntiSpamUsingYiDun] = anti_apam_using_yidun_;
+		if (client_anti_spam_hitting_ != BS_NOT_INIT)
+			message[kNIMMsgKeyClientAntiSpam] = client_anti_spam_hitting_;
+		if (team_msg_need_ack_ != BS_NOT_INIT)
+			message[kNIMMsgKeyTeamMsgAck] = team_msg_need_ack_;
+		if (team_msg_ack_sent_ != BS_NOT_INIT)
+			message[kNIMMsgKeyLocalKeyTeamMsgAckSent] = team_msg_ack_sent_;
+		if (team_msg_unread_count_ > -1)
+			message[kNIMMsgKeyLocalKeyTeamMsgUnreadCount] = team_msg_unread_count_;
 	}
 
 	/** @fn void ParseMessageSetting(const Json::Value& message)
@@ -161,6 +177,14 @@ struct MessageSetting
 		if (message.isMember(kNIMMsgKeyAntiSpamEnable))
 			anti_spam_enable_ = message[kNIMMsgKeyAntiSpamEnable].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		anti_spam_content_ = message[kNIMMsgKeyAntiSpamContent].asString();
+		if (message.isMember(kNIMMsgKeyClientAntiSpam))
+			client_anti_spam_hitting_ = message[kNIMMsgKeyClientAntiSpam].asInt() == 1 ? BS_TRUE : BS_FALSE;
+		if (message.isMember(kNIMMsgKeyTeamMsgAck))
+			team_msg_need_ack_ = message[kNIMMsgKeyTeamMsgAck].asInt() == 1 ? BS_TRUE : BS_FALSE;
+		if (message.isMember(kNIMMsgKeyLocalKeyTeamMsgAckSent))
+			team_msg_ack_sent_ = message[kNIMMsgKeyTeamMsgAck].asInt() == 1 ? BS_TRUE : BS_FALSE;
+		if (message.isMember(kNIMMsgKeyLocalKeyTeamMsgUnreadCount))
+			team_msg_unread_count_ = message[kNIMMsgKeyLocalKeyTeamMsgUnreadCount].asUInt();
 	}
 };
 
@@ -245,11 +269,11 @@ public:
 		}
 	}
 
-	/** @fn std::string ToJsonString() const
-	  * @brief 组装Json Value字符串
-	  * @return string Json Value字符串 
+	/** @fn std::string ToJsonObject() const
+	  * @brief 组装Json Object
+	  * @return Json Object
       */
-	std::string		ToJsonString(bool use_to_send) const
+	Json::Value	ToJsonObject(bool use_to_send) const
 	{
 		Json::Value values;
 		values[kNIMMsgKeyToType] = session_type_;
@@ -275,6 +299,16 @@ public:
 			values[kNIMMsgKeyFromNick] = readonly_sender_nickname_;
 			values[kNIMMsgKeyServerMsgid] = readonly_server_id_;
 		}
+		return values;
+	}
+
+	/** @fn std::string ToJsonString() const
+	  * @brief 组装Json Value字符串
+	  * @return string Json Value字符串 
+      */
+	std::string		ToJsonString(bool use_to_send) const
+	{
+		Json::Value values = ToJsonObject(use_to_send);
 		return GetJsonStringWithNoStyled(values);
 	}
 };

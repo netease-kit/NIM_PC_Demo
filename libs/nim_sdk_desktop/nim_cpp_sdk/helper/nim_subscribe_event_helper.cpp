@@ -11,7 +11,7 @@
 namespace nim
 {
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 bool ParseEventData( const std::string& event_json, EventData& event_data )
 {
 	Json::Value values;

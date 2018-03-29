@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Window size="290,140" mininfo="290,140" caption="0,0,0,34" shadowattached="true">
+    <VBox>
+        <!--群视频邀请信息 -->
+        <HBox height="85" padding="20,0,5,0" bkcolor="bk_wnd_lightcolor">
+           <Box width="45" height="45" margin="0,0,0,0" halign="center" valign="center" mousechild="false" >
+             <Button name="headicon" width="45" height="45" borderround="45,45,45,45"/>
+             <Control width="45" height="45" bkimage="mask_108x108.png"/>
+            </Box>
+          <Box height="45" margin="12,0,0,0" valign="center">
+            <VBox width="stretch" >
+              <HBox>
+                <Label name="lb_multi_vchat_member_info" width="auto" maxwidth="154" valign="center" font="30" normaltextcolor="bk_multivchat_text_title" textid="STRING_REFUSE" margin="0,0,0,0"/>
+                <Label name="lb_multi_vchat_member_count" width="auto" valign="center" font="30" normaltextcolor="bk_multivchat_text_title" textid="STRING_REFUSE" margin="0,0,0,0"/>
+              </HBox>
+              <Label name="lb_multi_vchat_inviter" width="stretch" valign="center" font="29" normaltextcolor="bk_multivchat_text_content" textid="STRING_REFUSE" visible="true" margin="0,4,0,0"/>
+            </VBox>
+          </Box>
+           
+        </HBox>
+      <Box width="stretch" height="1" bkcolor="bk_split_line"/>
+
+      <HBox name="confirm_page" bkcolor="bk_wnd_lightcolor"  margin="0,0,0,15" valign="bottom" height="54">
+        <Button name="jump_session" width="27" height="23" margin="13,0,0,0" valign="center" tooltiptextid="STRID_VIDEO_MICROPHONE" enabled="true" normalimage="ico_im_normal.png" hotimage="ico_im_hover.png" pushedimage="ico_im_push.png"/>
+       
+        <ButtonBox name="refuse" width="80"  height="30" margin="72,0,0,0" valign="center" normaltextcolor="white" font="3"  textid="STRING_REFUSE" textpadding="35,0,0,0"   normalimage="refuse_normal.png" hotimage="refuse_hover.png" pushedimage="refuse_push.png" >
+        </ButtonBox>
+      
+        <Control width="10"/>
+        <ButtonBox name="accept" width="80"  height="30"  valign="center" font="3" normaltextcolor="white"  textid="STRID_VIDEO_INVITE_ACCEPT_LISTEN"  textpadding="35,0,0,0"  normalimage="accept_normal.png" hotimage="accept_hover.png" pushedimage="accept_push.png">
+        </ButtonBox>
+        <Control />
+      </HBox>
+
+    </VBox>
+</Window>

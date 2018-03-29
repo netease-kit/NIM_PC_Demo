@@ -27,7 +27,7 @@ typedef void(*nim_batch_query_subscribe_event)(int event_type, const char *json_
 #include "nim_subscribe_event.h"
 #endif
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 // 不销毁该回调函数
 static void CallbackPushEvent(int res_code, const char *event_info_json, const char *json_extension, const void *user_data)
 {
@@ -209,7 +209,7 @@ bool SubscribeEvent::Publish( const EventData &event_data, const PublishEventCal
 
 bool SubscribeEvent::Subscribe( int event_type, int64_t ttl, NIMEventSubscribeSyncEventType sync_type, const std::list<std::string> &accid_list, const SubscribeEventCallback &cb, const std::string& json_extension /*= ""*/ )
 {
-	if (event_type == 0 || ttl == 0 || accid_list.size() > 100)
+	if (event_type == 0 || ttl == 0)
 		return false;
 
 	SubscribeEventCallback* opt_cb = nullptr;
@@ -227,7 +227,7 @@ bool SubscribeEvent::Subscribe( int event_type, int64_t ttl, NIMEventSubscribeSy
 
 bool SubscribeEvent::UnSubscribe( int event_type, const std::list<std::string> &accid_list, const UnSubscribeEventCallback &cb, const std::string& json_extension /*= ""*/ )
 {
-	if (event_type == 0  || accid_list.size() > 100)
+	if (event_type == 0 )
 		return false;
 
 	UnSubscribeEventCallback* opt_cb = nullptr;
@@ -260,7 +260,7 @@ bool SubscribeEvent::BatchUnSubscribe( int event_type, const BatchUnSubscribeEve
 
 bool SubscribeEvent::QuerySubscribe( int event_type, const std::list<std::string> &accid_list, const QuerySubscribeEventCallback &cb, const std::string& json_extension /*= ""*/ )
 {
-	if (event_type == 0 || accid_list.size() > 100)
+	if (event_type == 0 )
 		return false;
 
 	QuerySubscribeEventCallback* opt_cb = nullptr;

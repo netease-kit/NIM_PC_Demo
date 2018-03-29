@@ -51,6 +51,7 @@ void ParseMessage(const Json::Value& msg_json, IMMessage& message)
 	message.readonly_sender_client_type_ = (NIMClientType)msg_json[kNIMMsgKeyFromClientType].asUInt();
 	message.readonly_sender_device_id_ = msg_json[kNIMMsgKeyFromDeviceId].asString();
 	message.readonly_sender_nickname_ = msg_json[kNIMMsgKeyFromNick].asString();
+	message.readonly_server_id_ = msg_json[kNIMMsgKeyServerMsgid].asUInt64();
 	message.timetag_ = msg_json[kNIMMsgKeyTime].asUInt64();
 
 	message.type_ = (NIMMessageType)msg_json[kNIMMsgKeyType].asUInt();

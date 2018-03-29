@@ -64,7 +64,7 @@ NIM_SDK_DLL_API	void nim_client_login(const char *app_key, const char *account, 
 /** @fn int nim_client_get_login_state(const char *json_extension)
   * 获取NIM客户端登录状态
   * @param[in] json_extension json扩展参数（备用，目前不需要）
-  * @return int 登录状态
+  * @return int 登录状态见export_headers\nim_client_def.h 中 NIMLoginState
   */
 NIM_SDK_DLL_API int nim_client_get_login_state(const char *json_extension);
 
@@ -178,7 +178,7 @@ NIM_SDK_DLL_API void nim_client_set_multiport_push_config(const char *switch_con
   */
 NIM_SDK_DLL_API void nim_client_get_multiport_push_config(const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
 
-#if !NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifndef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn nim_client_set_dnd_config(const char* cfg_json, const char *json_extension, nim_client_dnd_cb_func cb, const void *user_data);
 * (PC SDK该接口无效)ios 免打扰设置
 * @param[in] cfg_json 免打扰设置

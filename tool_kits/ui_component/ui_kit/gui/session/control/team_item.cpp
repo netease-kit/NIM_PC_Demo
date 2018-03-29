@@ -42,6 +42,14 @@ namespace nim_comp
 			icon_mute_->SetBkImage(L"..\\public\\icon\\mute.png");
 			icon_mute_->SetVisible(true);
 		}
+
+		member_icon_->AttachClick(nbase::Bind(&TeamItem::OnHeadImageClick, this, member_info_.GetAccountID(), std::placeholders::_1));
+	}
+
+	bool TeamItem::OnHeadImageClick(const std::string& uid, ui::EventArgs*)
+	{
+		ProfileForm::ShowProfileForm(uid);
+		return true;
 	}
 
 	void TeamItem::SetAdmin(bool admin)

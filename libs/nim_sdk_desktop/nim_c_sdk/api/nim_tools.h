@@ -81,6 +81,33 @@ NIM_SDK_DLL_API	const char * nim_tool_get_uuid();
   */
 NIM_SDK_DLL_API void nim_tool_get_audio_text_async(const char *json_audio_info, const char *json_extension, nim_tool_get_audio_text_cb_func cb, const void *user_data);
 
+/** @fn char* nim_tool_replace_text_matched_keywords(char* text, char* replace_str, char* lib_name)
+* 如果文本匹配词库中的关键词则进行替换，调用free释放返回的字符串
+* @param[in] text 文本内容，UTF-8
+* @param[in] replace_str 进行替换的字符串，UTF-8
+* @param[in] lib_name 词库名称，UTF-8
+* @return const char * 返回的替换后的字符串(WIN32平台 返回字符串为"2"时表明含有敏感词不允许发送；"3"表明需要将内容设置在消息结构的反垃圾字段里，由服务器过滤；其他内容可以作为消息正常发送)
+*/
+NIM_SDK_DLL_API char* nim_tool_replace_text_matched_keywords(char* text, char* replace_str, char* lib_name);
+
+#ifndef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+/** @fn int nim_tool_regex_is_match(char* text, char* pattern)
+* 检查text是否匹配模式pattern
+* @param[in] text 文本内容，UTF-8
+* @param[in] pattern 正则表达式，UTF-8
+* @return int 匹配返回 1,不匹配返回 0
+*/
+NIM_SDK_DLL_API int nim_tool_regex_is_match(char* text, char* pattern);
+
+/** @fn int nim_tool_regex_is_match(char* text, char* pattern)
+* 检查text是否匹配词库中的关键词
+* @param[in] text 文本内容，UTF-8
+* @param[in] lib_name 词库名称，UTF-8
+* @return int 匹配返回 1,不匹配返回 0
+*/
+NIM_SDK_DLL_API int nim_tool_is_text_matched_keywords(char* text, char* lib_name);
+#endif
+
 #ifdef __cplusplus
 };
 #endif //__cplusplus

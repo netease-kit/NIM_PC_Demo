@@ -316,7 +316,8 @@ NIM_SDK_DLL_API void nim_chatroom_queue_poll_async(const int64_t room_id, const 
   * @return void 无返回值
   */
 NIM_SDK_DLL_API void nim_chatroom_queue_list_async(const int64_t room_id, const char *json_extension, nim_chatroom_queue_list_cb_func cb, const void *user_data);
-
+    
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn void nim_chatroom_queue_header_async(const int64_t room_id, const char *json_extension, nim_chatroom_queue_header_cb_func cb, const void *user_data)
   * 查看麦序头元素 
   * @param[in] room_id				聊天室ID
@@ -336,8 +337,6 @@ NIM_SDK_DLL_API void nim_chatroom_queue_header_async(const int64_t room_id, cons
   * @return void 无返回值
   */
 NIM_SDK_DLL_API void nim_chatroom_queue_drop_async(const int64_t room_id, const char *json_extension, nim_chatroom_queue_drop_cb_func cb, const void *user_data);
-
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
 /** @fn void nim_chatroom_get_robots_async(const int64_t room_id, int64_t timetag, const char *json_extension, nim_chatroom_query_robots_cb_func cb, const void *user_data)
   * 获取全部机器人信息

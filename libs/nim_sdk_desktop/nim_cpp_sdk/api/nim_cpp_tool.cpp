@@ -22,6 +22,7 @@ typedef	const char * (*nim_tool_get_md5)(const char *input);
 typedef	const char * (*nim_tool_get_file_md5)(const char *file_path);
 typedef	const char * (*nim_tool_get_uuid)();
 typedef void(*nim_tool_get_audio_text_async)(const char *json_audio_info, const char *json_extension, nim_tool_get_audio_text_cb_func cb, const void *user_data);
+typedef const char*  (*nim_tool_replace_text_matched_keywords)(char* text, char* replace_str, char* lib_name);
 #else
 #include "nim_tools.h"
 #endif
@@ -109,4 +110,19 @@ bool Tool::GetAudioTextAsync(const AudioInfo& audio_info, const GetAudioTextCall
 	return true;
 }
 
+int Tool::FilterClientAntispam(const std::string& text, const std::string& replace_str, const std::string& lib_name, std::string& output)
+{
+	const char *out = NIM_SDK_GET_FUNC(nim_tool_replace_text_matched_keywords)((char *)text.c_str(), (char *)replace_str.c_str(), (char *)lib_name.c_str());
+	int ret = 1;
+	if (strcmp(out, "2") == 0)
+		ret = 2;
+	else if (strcmp(out, "3") == 0)
+		ret = 3;
+	if (ret == 2 || ret == 3)
+		output = text;
+	else
+		output = (std::string)out;
+	Global::FreeBuf((void *)out);
+	return ret;
+}
 }

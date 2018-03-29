@@ -179,6 +179,19 @@ LRESULT SessionForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 		return TRUE;
 	}
+	else if (uMsg == WM_DROPFILES)
+	{
+		//Run desktop helper from 360 or tencent
+		QLOG_APP(L"##Receive dropfiles msg.");
+		POINT pt;
+		GetCursorPos(&pt);
+		POINTL ppt;
+		ppt.x = pt.x;
+		ppt.y = pt.y;
+		if (NULL != active_session_box_ && active_session_box_->CheckDropEnable(ppt))
+			active_session_box_->OnDropFile((HDROP)wParam);
+		return 0;
+	}
 
 	if (NULL != active_session_box_)
 	{

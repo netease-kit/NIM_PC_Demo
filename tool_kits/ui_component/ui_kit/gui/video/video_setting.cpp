@@ -197,6 +197,7 @@ bool VideoSettingForm::OnSelect( ui::EventArgs* arg )
 			VideoManager::GetInstance()->EndDevice(nim::kNIMDeviceTypeAudioOut, kDeviceSessionTypeSetting, true);
 			VideoManager::GetInstance()->EndDevice(nim::kNIMDeviceTypeAudioOutChat, kDeviceSessionTypeSetting, true);
 		}
+		VideoManager::GetInstance()->SetSettingAudioOutStatus(select);
 	}
 	else if(name == L"output_silent")
 	{
@@ -219,6 +220,7 @@ bool VideoSettingForm::OnSelect( ui::EventArgs* arg )
 		{
 			VideoManager::GetInstance()->EndDevice(nim::kNIMDeviceTypeAudioIn, kDeviceSessionTypeSetting, true);
 		}
+		VideoManager::GetInstance()->SetSettingAudioInStatus(select);
 	}
 	else if(name == L"input_silent")
 	{	
@@ -246,6 +248,7 @@ bool VideoSettingForm::OnSelect( ui::EventArgs* arg )
 		{
 			VideoManager::GetInstance()->EndDevice(nim::kNIMDeviceTypeVideo, kDeviceSessionTypeSetting, true);
 		}
+		VideoManager::GetInstance()->SetSettingVideoInStatus(select);
 	}
 	return true;
 }
@@ -324,7 +327,7 @@ void VideoSettingForm::ShowPage( bool video )
 	if(video)
 	{
 		VideoManager::GetInstance()->EndDevice(nim::kNIMDeviceTypeAudioIn, kDeviceSessionTypeSetting);
-
+		VideoManager::GetInstance()->EndDevice(nim::kNIMDeviceTypeAudioOut, kDeviceSessionTypeSetting);
 		option_video_->Selected(true, false);
 
 		InitDeviceList(true, true);
@@ -333,7 +336,7 @@ void VideoSettingForm::ShowPage( bool video )
 
 		error_notice_label_->SetVisible(false);
 		camera_fail_ctrl_->SetVisible( true );
-		PrepareVideoInput(true);
+		PrepareVideoInput(VideoManager::GetInstance()->GetSettingVideoInStatus());
 	}
 	else
 	{
@@ -348,8 +351,8 @@ void VideoSettingForm::ShowPage( bool video )
 
 		tabbox_->SelectItem(0);
 
-		PrepareAudioOutput(true);
-		PrepareAudioInput(true);
+		PrepareAudioOutput(VideoManager::GetInstance()->GetSettingAudioOutStatus());
+		PrepareAudioInput(VideoManager::GetInstance()->GetSettingAudioInStatus());
 	}
 }
 

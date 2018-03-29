@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Window size="672,472" mininfo="672,472" caption="0,0,0,34" shadowattached="true">
+    <Class name="Microphone1" value="forenormalimage=&quot;file='microphone10.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='microphone13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Microphone2" value="forenormalimage=&quot;file='microphone20.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='microphone23.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Speaker1" value="forenormalimage=&quot;file='speaker10.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='speaker13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Speaker2" value="forenormalimage=&quot;file='speaker20.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='speaker13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Camera1" value="selectedforenormalimage=&quot;file='camera10.png' dest='3,3,25,25'&quot; selectedforedisabledimage=&quot;file='camera13.png' dest='3,3,25,25'&quot; selectedhotimage=&quot;btn_icon_hover.png&quot; selectedpushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Camera2" value="forenormalimage=&quot;file='camera20.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='camera23.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Camera3" value="forenormalimage=&quot;file='camera30.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='camera33.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Face1" value="forenormalimage=&quot;file='face10.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='face13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Face2" value="forenormalimage=&quot;file='face20.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='face23.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="CompleteVideo" value="normalimage=&quot;confirm_video_ok0.png&quot; hotimage=&quot;confirm_video_ok1.png&quot; pushedimage=&quot;confirm_video_ok2.png&quot;"/>
+    <Class name="CompleteAudio" value="normalimage=&quot;confirm_audio_ok0.png&quot; hotimage=&quot;confirm_audio_ok1.png&quot; pushedimage=&quot;confirm_audio_ok2.png&quot;"/>
+    <Class name="RefuseVideo" value="normalimage=&quot;confirm_video_no0.png&quot; hotimage=&quot;confirm_video_no1.png&quot; pushedimage=&quot;confirm_video_no2.png&quot;"/>
+    <Class name="RefuseAudio" value="normalimage=&quot;confirm_audio_no0.png&quot; hotimage=&quot;confirm_audio_no1.png&quot; pushedimage=&quot;confirm_audio_no2.png&quot;"/>
+    <Class name="Record1" value="forenormalimage=&quot;file='record10.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='record13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="Record2" value="forenormalimage=&quot;file='record20.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='record23.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="WinTop1" value="forenormalimage=&quot;file='top_normal.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='top_normal.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <Class name="WinTop2" value="forenormalimage=&quot;file='un_top_normal.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='un_top_normal.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
+    <VBox>
+        <HBox height="33" padding="20,0,5,0" bkcolor="bk_multi_video_content">
+            <Label name="caption" width="stretch" valign="center" font="3" normaltextcolor="white" textid="STRID_VIDEO_TITLE_VIDEO"/>
+            <Button name="minbtn" margin="10,6,0,0" normalimage="min0.png" hotimage="min1.png" pushedimage="min1.png" disabledimage="min3.png"/>
+            <!--<Box name="sys_menu_box" width="22" height="22" margin="0,6,0,0">
+                <Button name="maxbtn" normalimage="max0.png" hotimage="max1.png" pushedimage="max1.png" disabledimage="max3.png" enabled="false" />
+                <Button name="restorebtn" visible="false" normalimage="restore0.png" hotimage="restore0.png" pushedimage="restore0.png" disabledimage="restore3.png"/>
+            </Box>-->
+            <Button name="close_btn" margin="0,6,0,0" normalimage="close0.png" hotimage="close1.png" pushedimage="close1.png" disabledimage="close3.png"/>
+        </HBox>
+
+        <Box bkcolor="bk_multi_video_content">
+            <VBox name="status_page">
+                <Box width="auto" height="auto" margin="0,70,0,0" halign="center" mousechild="false">
+                    <Button name="headicon" width="108" height="108" borderround="108,108,108,108"/>
+                    <Control width="108" height="108" bkimage="mask_108x108.png"/>
+                </Box>
+                <Label name="friend_name" margin="0,10,0,0" halign="center" align="vcenter" font="22" normaltextcolor="white" width="stretch"/>
+                <Label name="chat_status" margin="0,5,0,0" halign="center" font="2" normaltextcolor="message_tip"/>
+            </VBox>
+
+          <Box name="video_page">
+            <HBox width="auto" height="auto">
+              <BitmapControl name="photo_screen" bkcolor="bk_no_video" margin="11,10,0,0" width="521" height="390">
+                <Control name="camera_page_tip" width="140" height="104" halign="center" valign="center" bkimage="video_close_big.png" visible="false"/>
+                <HBox valign="bottom" height="22" margin="4,0,0,1">
+                      <Label name="talk_name"  font="31" normaltextcolor="white" width="120" height="22" valign="center"/>
+                      <Control name="member_volume" width="16" height="16" bkimage="exchange.png" valign="center"/>     
+                 </HBox>
+              </BitmapControl>
+              <HBox width="auto" height="auto" margin="10,10,10,0" halign="right">
+                <VBox width="auto" height="auto" margin="0,0,10,0" halign="right">
+                  <Box name="box_video_preview_1_1" height="auto" width="auto" margin="0,0,0,0" >
+                    <BitmapControl name="photo_preview_1_1" maxwidth="120" maxheight="90" minwidth="120" minheight="90" bkcolor="bk_no_video" visible="false">
+                      <Control name="camera_page_tip_1_1" width="70" height="52" halign="center" valign="center" bkimage="video_close_small.png" visible="false"/>
+                      <Label name="member_prompt_1_1" font="29"  normaltextcolor="white" valign="center" halign="center" visible="false"/>
+                      <Box valign="bottom" height="17">
+                        <Label name="talk_name_1_1" font="29" normaltextcolor="white" width="85" height="17" valign="center" halign="left" margin="3,0,0,0"/>
+                        <Control name="member_volume_1_1" width="16" height="16" halign="right"  margin="0,0,3,0"/>
+                      </Box>
+                    </BitmapControl>
+                    <Control name="video_border_1_1" bordersize="0" bordercolor="border_alpha_white"/>
+                    <Button name="swap_photo_1_1" halign="center" valign="center" bkimage="exchange_2.png" visible="false"/>
+                  </Box>
+                  <Box name="box_video_preview_1_2" height="auto" width="auto" margin="0,10,0,0">
+                    <BitmapControl name="photo_preview_1_2" maxwidth="120" maxheight="90" minwidth="120" minheight="90" bkcolor="bk_no_video" visible="false">
+                      <Control name="camera_page_tip_1_2" width="70" height="52" halign="center" valign="center" bkimage="video_close_small.png" visible="false"/>
+                     <Label name="member_prompt_1_2" font="29"  normaltextcolor="white" valign="center" halign="center" visible="false"/>
+                      <Box valign="bottom" height="17">
+                        <Label name="talk_name_1_2" font="29" normaltextcolor="white" width="85" height="17" valign="center" halign="left" margin="3,0,0,0" />
+                        <Control name="member_volume_1_2" width="16" height="16" halign="right"  margin="0,0,3,0"/>
+                      </Box>
+                    </BitmapControl>
+                    <Control name="video_border_1_2" bordersize="0" bordercolor="border_alpha_white"/>
+                    <Button name="swap_photo_1_2" halign="center" valign="center" bkimage="exchange_2.png" visible="false"/>
+                  </Box>
+                  <Box name="box_video_preview_1_3" height="auto" width="auto" margin="0,10,0,0">
+                    <BitmapControl name="photo_preview_1_3" maxwidth="120" maxheight="90" minwidth="120" minheight="90" bkcolor="bk_no_video" visible="false">
+                      <Control name="camera_page_tip_1_3" width="70" height="52" halign="center" valign="center" bkimage="video_close_small.png" visible="false"/>
+                      <Label name="member_prompt_1_3" font="29"  normaltextcolor="white" valign="center" halign="center" visible="false"/>
+                      <Box valign="bottom" height="17">
+                        <Label name="talk_name_1_3" font="29" normaltextcolor="white" width="85" height="17" valign="center" halign="left" margin="3,0,0,0" />
+                        <Control name="member_volume_1_3" width="16" height="16"  halign="right"  margin="0,0,3,0"/>
+                      </Box>
+                    </BitmapControl>
+                    <Control name="video_border_1_3" bordersize="0" bordercolor="border_alpha_white"/>
+                    <Button name="swap_photo_1_3" halign="center" valign="center" bkimage="exchange_2.png" visible="false"/>
+                   
+                  </Box>
+                  <Box name="box_video_preview_1_4" height="auto" width="auto" margin="0,10,0,0">
+                    <BitmapControl name="photo_preview_1_4" maxwidth="120" maxheight="90" minwidth="120" minheight="90" bkcolor="bk_no_video" visible="false">
+                      <Control name="camera_page_tip_1_4" width="70" height="52" halign="center" valign="center" bkimage="video_close_small.png" visible="false"/>
+                      <Label name="member_prompt_1_4" font="29"  normaltextcolor="white" valign="center" halign="center" visible="false"/>
+                      <Box valign="bottom" height="17">
+                        <Label name="talk_name_1_4" font="29" normaltextcolor="white" width="85" height="17" valign="center" halign="left" margin="3,0,0,0" />
+                        <Control name="member_volume_1_4" width="16" height="16" halign="right"  margin="0,0,3,0" />
+                      </Box>
+                    </BitmapControl>
+                    <Control name="video_border_1_4" bordersize="0" bordercolor="border_alpha_white"/>
+                    <Button name="swap_photo_1_4" halign="center" valign="center" bkimage="exchange_2.png" visible="false"/>
+                  
+                  </Box>
+                </VBox>
+                <VBox width="auto" height="auto" margin="0,0,10,0" halign="right">
+                  <Box name="box_video_preview_2_1" height="auto" width="auto" margin="0,0,0,0">
+                    <BitmapControl name="photo_preview_2_1" maxwidth="120" maxheight="90" minwidth="120" minheight="90" bkcolor="bk_no_video" visible="false">
+                      <Control name="camera_page_tip_2_1" width="70" height="52" halign="center" valign="center" bkimage="video_close_small.png" visible="false"/>
+                       <Label name="member_prompt_2_1" font="29"  normaltextcolor="white" valign="center" halign="center" visible="false"/>
+                        <Box valign="bottom" height="17">
+                        <Label name="talk_name_2_1" font="29" normaltextcolor="white" width="85" height="17" valign="center" halign="left" margin="3,0,0,0" />
+                        <Control name="member_volume_2_1" width="16" height="16" halign="right"  margin="0,0,3,0" />
+                      </Box>
+                    </BitmapControl>
+                    <Control name="video_border_2_1" bordersize="0" bordercolor="border_alpha_white"/>
+                    <Button name="swap_photo_2_1" halign="center" valign="center" bkimage="exchange_2.png" visible="false"/>
+                  </Box>
+                  <Box name="box_video_preview_2_2" height="auto" width="auto" margin="0,10,0,0">
+                    <BitmapControl name="photo_preview_2_2" maxwidth="120" maxheight="90" minwidth="120" minheight="90" bkcolor="bk_no_video" visible="false">
+                      <Control name="camera_page_tip_2_2" width="70" height="52" halign="center" valign="center" bkimage="video_close_small.png" visible="false"/>
+                       <Label name="member_prompt_2_2" font="29"  normaltextcolor="white" valign="center" halign="center" visible="false"/>
+                      <Box valign="bottom" height="17">
+                        <Label name="talk_name_2_2" font="29" normaltextcolor="white" width="85" height="17" valign="center" halign="left" margin="3,0,0,0"/>
+                        <Control name="member_volume_2_2" width="16" height="16" halign="right"  margin="0,0,3,0" />
+                      </Box>
+                    </BitmapControl>
+                    <Control name="video_border_2_2" bordersize="0" bordercolor="border_alpha_white"/>
+                    <Button name="swap_photo_2_2" halign="center" valign="center" bkimage="exchange_2.png" visible="false"/>
+                  </Box>
+                  <Box name="box_video_preview_2_3" height="auto" width="auto" margin="0,10,0,0">
+                    <BitmapControl name="photo_preview_2_3" maxwidth="120" maxheight="90" minwidth="120" minheight="90" bkcolor="bk_no_video" visible="false">
+                      <Control name="camera_page_tip_2_3" width="70" height="52" halign="center" valign="center" bkimage="video_close_small.png" visible="false"/>
+                     <Label name="member_prompt_2_3" font="29"  normaltextcolor="white" valign="center" halign="center" visible="false"/>
+                       <Box valign="bottom" height="17">
+                        <Label name="talk_name_2_3" font="29" normaltextcolor="white" width="85" height="17" valign="center" halign="left" margin="3,0,0,0"/>
+                        <Control name="member_volume_2_3" width="16" height="16"  halign="right"  margin="0,0,3,0"/>
+                      </Box>
+                    </BitmapControl>
+                    <Control name="video_border_2_3" bordersize="0" bordercolor="border_alpha_white"/>
+                    <Button name="swap_photo_2_3" halign="center" valign="center" bkimage="exchange_2.png" visible="false"/>
+                   
+                  </Box>
+                  <Box name="box_video_preview_2_4" height="auto" width="auto" margin="0,10,0,0">
+                    <BitmapControl name="photo_preview_2_4" maxwidth="120" maxheight="90" minwidth="120" minheight="90" bkcolor="bk_no_video" visible="false">
+                      <Control name="camera_page_tip_2_4" width="70" height="52" halign="center" valign="center" bkimage="video_close_small.png" visible="false"/>
+                      <Label name="member_prompt_2_4" font="29"  normaltextcolor="white" valign="center" halign="center" visible="false"/>
+                      <Box valign="bottom" height="17">
+                        <Label name="talk_name_2_4" font="29" normaltextcolor="white" width="85" height="17" valign="center" halign="left" margin="3,0,0,0"/>
+                        <Control name="member_volume_2_4" width="16" height="16"  halign="right"  margin="0,0,3,0"/>
+                      </Box>
+                    </BitmapControl>
+                    <Control name="video_border_2_4" bordersize="0" bordercolor="border_alpha_white"/>
+                    <Button name="swap_photo_2_4" halign="center" valign="center" bkimage="exchange_2.png" visible="false"/>
+                  </Box>
+                </VBox>
+              </HBox>
+              <Label name="camera_opening" halign="center" valign="center" visible="false" textid="STRID_VIDEO_CAMERA_OPENING" normaltextcolor="white"/>
+              <Label name="camera_closed" halign="center" valign="center" visible="false" textid="STRID_VIDEO_TIP_CLOSE_VIDEO" normaltextcolor="white"/>
+            </HBox>
+          </Box>
+            
+            <HBox name="volumn_page" height="40" valign="bottom" bkcolor="bk_multi_video_content">
+                    <Button name="microphone" width="28" height="28" margin="5,0,0,0" valign="center" tooltiptextid="STRID_VIDEO_MICROPHONE" enabled="true" />
+                    <Button name="speaker" width="28" height="28" margin="5,0,0,0" valign="center" tooltiptextid="STRID_VIDEO_VOLUME" enabled="true" visible="true"/>
+                    <CheckBox name="camera" width="28" height="28" margin="5,0,0,0" valign="center" enabled="true" visible="true"/>
+                    <Button name="win_top" width="28" height="28" margin="5,0,0,0" valign="center" tooltiptextid="STRING_MULTIVIDEOCHATFORM_FRONT_PROMPT" enabled="true" visible="true"/>
+                    <Button name="into_video" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_VIDEO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
+                    <Button name="into_audio" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_AUDIO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
+					
+                    <Button name="rotate" margin="10,0,0,0" valign="center" visible="false" tooltiptextid="STRID_VIDEO_ROTATE_SWITCH" textid="STRID_VIDEO_ROTATE_SWITCH" normaltextcolor="white" font="1" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
+
+                    <Control />
+                    <Button name="add_member" margin="8,0,10,0" valign="center" font="2" normaltextcolor="white" textid="STRING_MULTIVIDEOCHATFORM_ADD_MEMBER" normalimage="add_member_normal.png" hotimage="add_member_hover.png" pushedimage="add_member_push.png"/>
+                    <Button name="end_chat" margin="8,0,10,0" valign="center" font="2" normaltextcolor="white" textid="STRING_MULTIVIDEOCHATFORM_END" normalimage="hang_up_normal.png" hotimage="hang_up_hover.png" pushedimage="hang_up_push.png"/>
+            </HBox>
+
+            <VBox name="vbox_of_input_volumn" width="30" height="120" margin="4,0,0,5" valign="bottom" nofocus="true" bkimage="slider_bkgnd.png" visible="false">
+                <Slider name="input_volumn" width="14" height="74" margin="0,10,0,10" halign="center" hor="false" thumbsize="14,14" min="0" max="255" bkimage="file='slider_ver_bk.png' dest='6,0,8,74'" progressbarpadding="6,0,6,0" progresscolor="bk_progress_progress" thumbnormalimage="slider_thumb.png"/>
+                <Control name="place_ctrl_1" width="22" height="22" halign="center" bkimage="microphone10.png" mouse="false"/>
+            </VBox>
+            
+            <VBox name="vbox_of_output_volumn" width="30" height="120" margin="37,0,0,5" valign="bottom" nofocus="true" bkimage="slider_bkgnd.png" visible="false">
+                <Slider name="output_volumn" width="14" height="74" margin="0,10,0,10" halign="center" hor="false" thumbsize="14,14" min="0" max="255" bkimage="file='slider_ver_bk.png' dest='6,0,8,74'" progressbarpadding="6,0,6,0" progresscolor="bk_progress_progress" thumbnormalimage="slider_thumb.png"/>
+                <Control name="place_ctrl_2" width="22" height="22" halign="center" bkimage="speaker10.png" mouse="false"/>
+            </VBox>
+
+            <Label name="netstat" width="200" height="32" margin="130,0,0,36" valign="bottom" bkimage="file='netstat.png' corner='30,10,10,10'" textpadding="10,4,0,0" font="2" normaltextcolor="obvious_tip" textid="STRID_VIDEO_TIP_NETSTAT_BAD" visible="false"/>
+            <HBox name="hbox_camera_fail" width="158" height="32" margin="70,0,0,36" valign="bottom" bkimage="file='netstat.png' corner='30,10,10,10'" visible="false">
+                <Label margin="10,4,0,0" font="2" normaltextcolor="obvious_tip" textid="STRID_VIDEO_TIP_START_VIDEO_FAIL"/>
+                <Button name="go_setting" margin="3,4,0,0" normaltextcolor="link_green" cursortype="hand" font="26" textid="STRID_VIDEO_SETTING"/>
+            </HBox>
+            <Box name="vbox_video_audio_tip" width="auto" height="38" margin="0,0,0,60" halign="center" valign="bottom" visible="false" bkimage="status_tip.png">
+                <Label name="label_of_tip" margin="5,0,5,0" valign="center" font="2" normaltextcolor="white"/>
+            </Box>
+
+            <Box name="end_call_page" visible="false">
+                <Control bkcolor="bk_multi_video_content" alpha="200"/>
+                <VBox width="auto" height="auto" halign="center" valign="center" bkcolor="bk_video_tip" padding="20,10,20,10">
+                    <Label name="end_call_tip" halign="center" font="3" normaltextcolor="white"/>
+                    <Label name="end_call_why" margin="0,5,0,0" halign="center" normaltextcolor="obvious_tip" visible="false"/>                     
+                </VBox>
+            </Box>
+        </Box>
+    </VBox>
+</Window>

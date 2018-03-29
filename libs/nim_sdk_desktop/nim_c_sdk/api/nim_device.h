@@ -92,7 +92,7 @@ NIM_SDK_DLL_API void nim_vchat_set_video_data_cb(bool capture, const char *json_
 */
 NIM_SDK_DLL_API void nim_vchat_enum_device_devpath(enum NIMDeviceType type, const char *json_extension, nim_vchat_enum_device_devpath_sync_cb_func cb, const void *user_data);
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn bool nim_vchat_accompanying_sound(unsigned char id, unsigned __int64 time, const char *data, unsigned int size, unsigned int rate, unsigned int channels, const char *json_extension);
 * NIM VCHAT 自定义音频伴音数据接口，不需要打开自定义数据开关, 采样时间必须为10ms的整数倍, 采样位深只支持16
 * @param[in] id 伴音数据id

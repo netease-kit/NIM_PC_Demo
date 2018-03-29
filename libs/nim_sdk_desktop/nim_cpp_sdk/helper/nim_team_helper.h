@@ -94,9 +94,9 @@ public:
 			SetUpdateTimetag(new_info.GetUpdateTimetag());
 		if (new_info.ExistValue(kNIMTeamInfoKeyServerCustom))
 			SetServerCustom(new_info.GetServerCustom());
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
-		if (new_info.ExistValue(kNIMTeamInfoKeyMuteAll))
-			SetAllMemberMute(new_info.IsAllMemberMute());
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+		if (new_info.ExistValue(kNIMTeamInfoKeyMuteAll) || new_info.ExistValue(kNIMTeamInfoKeyMuteType))
+			SetMute(new_info.GetMuteType());
 #endif
 	}
 
@@ -376,17 +376,19 @@ public:
 	{
 		return (NIMTeamUpdateCustomMode)team_info_json_value_[nim::kNIMTeamInfoKeyUpdateCustomMode].asUInt();
 	}
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/** 设置全员禁言（除管理员） */
-	void SetAllMemberMute(bool mute)
+	void SetMute(NIMTeamMuteType mute_type)
 	{
-		team_info_json_value_[nim::kNIMTeamInfoKeyMuteAll] = mute ? 1: 0;
+		team_info_json_value_[nim::kNIMTeamInfoKeyMuteType] = mute_type;
 	}
 
-	/** 是否全员禁言（除管理员） */
-	bool IsAllMemberMute() const
+	/** 获取群禁言状态 */
+	NIMTeamMuteType GetMuteType() const
 	{
-		return team_info_json_value_[nim::kNIMTeamInfoKeyMuteAll].asUInt() == 1;
+		if (team_info_json_value_.isMember(nim::kNIMTeamInfoKeyMuteAll) && team_info_json_value_[nim::kNIMTeamInfoKeyMuteAll].asUInt() == 1)
+			return kNIMTeamMuteTypeNomalMute;
+		return (NIMTeamMuteType)team_info_json_value_[nim::kNIMTeamInfoKeyMuteType].asUInt(); 
 	}
 #endif
 
@@ -606,6 +608,7 @@ struct TeamEvent
 	TeamMemberProperty member_property_;	/**< 群成员属性 */
 	bool	opt_;							/**< 操作*/
 	std::string attach_;					/**< 扩展字段,目前仅kick和invite事件可选*/
+	Json::Value src_data_;					/**< 未解析过的原信息，目前仅支持群消息未读数相关事件*/
 };
 
 /** @fn void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificationId notification_id, const std::string& team_event_json, TeamEvent& team_event)

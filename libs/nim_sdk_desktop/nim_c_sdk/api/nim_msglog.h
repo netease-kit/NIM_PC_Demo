@@ -69,7 +69,7 @@ NIM_SDK_DLL_API void nim_msglog_query_msg_online_async(const char *id,
 													   const char *json_extension, 
 													   nim_msglog_query_cb_func cb, 
 													   const void *user_data);
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn void nim_msglog_query_the_message_of_the_specified_type_async(enum NIMSessionType to_type, const char *id, int limit_count, int64_t from_time, int64_t end_time, const char *end_client_msg_id, bool reverse, const char *msg_types, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
   * 根据指定条件在一个会话中查询指定单个或多个类型的本地消息
   * @param[in] to_type			会话类型
@@ -287,7 +287,7 @@ NIM_SDK_DLL_API void nim_msglog_send_receipt_async(const char *json_msg, const c
   */
 NIM_SDK_DLL_API bool nim_msglog_query_be_readed(const char *json_msg, const char *json_extension);
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn bool nim_msglog_query_receipt_sent(const char *json_msg, const char *json_extension)
   * 查询收到的消息是否已经发送过已读回执
   * @param[in] json_msg			消息json string。
@@ -320,7 +320,7 @@ NIM_SDK_DLL_API void nim_msglog_reg_status_changed_cb(const char *json_extension
   */
 NIM_SDK_DLL_API void nim_msglog_update_localext_async(const char *msg_id, const char *local_ext, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
     
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn void nim_msglog_read_all_async(const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data)
   * 全部未读消息历史标记为已读
   * @param[in] json_extension json扩展参数（备用，目前不需要）

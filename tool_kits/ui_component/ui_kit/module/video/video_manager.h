@@ -3,6 +3,16 @@
 #include "video_frame_mng.h"
 #include "audio_frame_mng.h"
 
+enum MultiVchatMsgType
+{
+	kMsgMultiVchatAudio = 2001,//语音
+	kMsgMultiVchatVideo = 2002,//视频 发送群视频邀请
+	kMsgMultiVchatAck = 2100,//消息2 收到被邀请方的同意，拒绝群视频邀请
+	kMsgMultiVchatJoin = 2101,//消息3 给被邀请方发准许进入或失败的通知
+	kMsgMultiVchatTeamChangeMode = 2102,//消息4 群消息，本人音视频模式切换通知
+	kMsgMultiVchatP2PChangeMode = 2103,//消息5 单点通知音视频模式切换
+};
+
 namespace nim_comp
 {
 struct MEDIA_DEVICE_DRIVE_INFO
@@ -18,6 +28,15 @@ enum DeviceSessionType
 	kDeviceSessionTypeRts = 0x4,
 	kDeviceSessionTypeChatRoom = 0x8,
 };
+
+enum MultiVChatStatusType
+{
+	kMultiVChatInvite, //当前处于邀请状态
+	kMultiVChatJoin,   //当前处于Join状态
+	kMultiVChating,    //正在聊天
+	kMultiVChatEnd     //聊天结束
+};
+
 typedef std::function<void(int code)>  ConnectCallback;
 typedef std::function<void(std::string uid, bool join_type)>  PeopleChangeCallback;
 
@@ -34,6 +53,11 @@ public:
 	VideoManager();
 	~VideoManager();
 
+	/** 
+	* 显示群视频人员选择窗口
+	*/
+	bool ShowMultiVideoSelectForm();
+
 	/**
 	* 显示一个音视频窗口
 	* @param[in] id 对方用户id
@@ -41,7 +65,7 @@ public:
 	* @param[in] channel_id 通道id
 	* @return bool true 成功，false 失败
 	*/
-	bool ShowVideoChatForm(std::string id, bool video, uint64_t channel_id = 0);
+	bool ShowVideoChatForm(std::string id, bool video, uint64_t channel_id = 0,bool multi_vchat=false);
 
 	/**
 	* 显示音视频设置窗口
@@ -56,6 +80,13 @@ public:
 	* @return bool true 存在，false 不存在
 	*/
 	bool IsVideoChatFormExist(bool show);
+
+	/**
+	* 是否存在群聊窗口
+	* @param[in] show 如果存在并且不处于显示状态，是否让窗口自动显示
+	* @return bool true 存在，false 不存在
+	*/
+	bool IsMultiVideoChatFormExist(bool show);
 
 	//监听
 	//void OnVideoDataCb(bool capture, const std::string& data, unsigned int width, unsigned int height, const std::string& json);
@@ -270,6 +301,67 @@ public:
 	* @return bool	是否打开webrtc开关
 	*/
 	bool GetWebrtc(){ return webrtc_setting_; }
+
+	void SetMultiVChatCreator(std::string  creator_id) { multi_vchat_creator_id_ = creator_id; }
+
+	std::string GetMultiVChatCreator() { return multi_vchat_creator_id_; }
+
+	/** 
+	* 获取音视频设置页面中音频输入设备的状态
+	* @return bool true:设备已开启，false:设备已关闭
+	*/
+	bool GetSettingAudioInStatus(){ return setting_audio_in_; }
+
+	/** 
+	* 获取音视频设置页面中音频输出设备的状态
+	* @return bool true:设备已开启，false：设备已关闭
+	*/
+	bool GetSettingAudioOutStatus() { return setting_audio_out_; }
+
+	/** 
+	* 获取摄像头设备的状态
+	* @return bool true:设备已开启，false：设备已关闭
+	*/
+	bool GetSettingVideoInStatus() { return setting_video_in_; }
+
+	/** 
+	* 音视频设置页面中音频输入设备的状态
+	* @param[in] setting_audio_in  true:音频输入设备开启 false:音频输入设备关闭
+	*/
+	void SetSettingAudioInStatus(bool setting_audio_in) { setting_audio_in_ = setting_audio_in; }
+
+	/**
+	* 音视频设置页面中音频输出设备的状态
+	* @param[in] setting_audio_out  true:音频输出设备开启 false:音频输出设备关闭
+	*/
+	void SetSettingAudioOutStatus(bool setting_audio_out) { setting_audio_out_=setting_audio_out; }
+
+	/**
+	* 音视频设置页面中视频输入设备的状态
+	* @param[in] setting_video_in  true:音频输出设备开启 false:音频输出设备关闭
+	*/
+	void SetSettingVideoInStatus(bool setting_video_in) { setting_video_in_ = setting_video_in; }
+
+	/**
+	* 设置当前多人群聊的状态
+	* @param[in] vchat_status 群聊状态  
+	*/
+	void SetMultiVChatStatus(MultiVChatStatusType vchat_status);
+	
+	/**
+	* 获取当前多人群聊的状态
+	* @return  MultiVChatStatusType 群聊状态
+	*/
+	MultiVChatStatusType GetMultiVChatStatus();
+
+	void EndJoinTimer();
+	void StartJoinTimer();
+	void JoinTimeOut();
+
+	void InvokeReceiveCustomP2PMessage(const Json::Value &json, const std::string &sender);
+	void InvokeReceiveCustomTeamMessage(const Json::Value &json, const std::string &sender);
+private:
+	void SelectedCompleted(const std::list<UTF8String>& friend_list, const std::list<UTF8String>& team_list, bool delete_enable);
 public:
 	VideoFrameMng video_frame_mng_;
 	AudioFrameMng audio_frame_mng_;
@@ -280,6 +372,13 @@ private:
 	ConnectCallback			chatroom_connect_cb_ = nullptr;
 	PeopleChangeCallback	chatroom_people_cb_ = nullptr;
 	bool webrtc_setting_;
-
+	std::string multi_vchat_session_id_;
+	std::string multi_vchat_creator_id_;
+	bool setting_audio_in_;
+	bool setting_audio_out_;
+	bool setting_video_in_;
+	MultiVChatStatusType vchat_status_;
+	nbase::NLock vchat_status_lock_;
+	nbase::WeakCallbackFlag join_vchat_timer_;
 };
 }

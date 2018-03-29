@@ -362,7 +362,7 @@ NIM_SDK_DLL_API void nim_team_query_all_my_teams_info_async(const char *json_ext
 	nim_team_query_all_my_teams_info_cb_func cb, 
 	const void *user_data);
 
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn void nim_team_query_my_all_member_infos_async(const char *json_extension, nim_team_query_my_all_member_infos_cb_func cb, const void *user_data)
   * 查询本地所有群里我的成员信息（使用场景：获取了所有群列表后，需要查询自己在每个群里自己的成员信息，使用成员信息里的bits字段，可以判断当某个群发来消息后，是否做消息通知）
   * @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -462,7 +462,8 @@ NIM_SDK_DLL_API void nim_team_query_team_info_online_async(const char *tid,
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   * @note 错误码	200:成功
-  *				404:参数错误
+  *				404:禁言对象不存在 
+  *				414:参数错误
   *				803:群不存在
   *				802:没有权限	
   */
@@ -488,6 +489,52 @@ NIM_SDK_DLL_API void nim_team_query_mute_list_online_async(const char *tid,
 	const char *json_extension, 
 	nim_team_query_mute_list_cb_func cb, 
 	const void *user_data);
+
+
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+/** @fn void nim_team_mute_async(const char *tid, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data)
+* 对群禁言/解除禁言
+* @param[in] tid		群组id
+* @param[in] set_mute	禁言(true)、解除禁言(false)
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] cb		拒绝邀请的回调函数, nim_team_opt_cb_func回调函数定义见nim_team_def.h
+* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+* @note 错误码	200:成功
+*				414:参数错误
+*/
+NIM_SDK_DLL_API void nim_team_mute_async(const char *tid,
+	bool set_mute,
+	const char *json_extension,
+	nim_team_opt_cb_func cb,
+	const void *user_data);
+
+/** @fn void nim_team_msg_ack_read(const char *tid, const char *json_msgs, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
+* 群消息回执
+* @param[in] tid		群组id
+* @param[in] json_msgs	需要发送消息回执的群消息json array
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] cb		回调函数, 定义见nim_team_def.h
+* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+* @note 错误码	200:成功
+*				414:参数错误
+*/
+NIM_SDK_DLL_API void nim_team_msg_ack_read(const char *tid, const char *json_msgs, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
+
+/** @fn void nim_team_msg_query_unread_list(const char *tid, const char *json_msg, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
+* 获取群消息未读成员列表
+* @param[in] tid		群组id
+* @param[in] json_msg	群消息json
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] cb		回调函数, 定义见nim_team_def.h
+* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+* @note 错误码	200:成功
+*				414:参数错误
+*/
+NIM_SDK_DLL_API void nim_team_msg_query_unread_list(const char *tid, const char *json_msg, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
+#endif
 
 #ifdef __cplusplus
 };
