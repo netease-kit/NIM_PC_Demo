@@ -1,7 +1,7 @@
 ﻿// Copyright (c) 2011, NetEase Inc. All rights reserved.
 // All rights reserved.
 //
-// Author: Wang Rongtao <rtwang@corp.netease.com>
+//
 // Date: 2011/6/24
 //
 // string utilities unit test

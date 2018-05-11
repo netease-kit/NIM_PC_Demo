@@ -1,8 +1,6 @@
 // Copyright (c) 2012 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
-
-// Ported & Modified by Wang Rongtao <rtwang@corp.netease.com>
 // 2013/8/30
 
 #ifndef BASE_COMPILER_SPECIFIC_H_

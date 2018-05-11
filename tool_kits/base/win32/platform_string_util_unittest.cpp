@@ -1,7 +1,7 @@
 // Copyright (c) 2011, NetEase Inc. All rights reserved.
 // All rights reserved.
 //
-// Author: Wang Rongtao <rtwang@corp.netease.com>
+//
 // Date: 2011/7/1
 //
 // Unittest of Windows string conversion
@@ -12,8 +12,8 @@
 #if defined(OS_WIN)
 #include "gtest/gtest.h"
 
-#define TEST_STRING "asfjÎÒÊÇÖÐ¹úÄþ"
-#define TEST_WSTRING L"asfjÎÒÊÇÖÐ¹úÄþ"
+#define TEST_STRING "asfjï¿½ï¿½ï¿½ï¿½ï¿½Ð¹ï¿½ï¿½ï¿½"
+#define TEST_WSTRING L"asfjï¿½ï¿½ï¿½ï¿½ï¿½Ð¹ï¿½ï¿½ï¿½"
 
 TEST(Win32, MBCSUnicodeConversion)
 {

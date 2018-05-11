@@ -1,8 +1,5 @@
 ﻿// Copyright (c) 2012, NetEase Inc. All rights reserved.
-//
-// Wang Rongtao <rtwang@corp.netease.com>
 // 2012/5/4
-//
 // base config
 
 #ifndef BASE_BASE_CONFIG_H_
