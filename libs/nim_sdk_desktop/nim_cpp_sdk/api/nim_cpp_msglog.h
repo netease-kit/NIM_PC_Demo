@@ -47,6 +47,44 @@ public:
 
 	typedef std::function<void(const MessageStatusChangedResult&)>	MessageStatusChangedCallback;	/**< 发送消息已读回执通知回调模板 */
 
+
+	class AllMessageTypeList
+	{
+	public:
+		AllMessageTypeList();
+		std::vector<nim::NIMMessageType> ExclusionType(const std::vector<nim::NIMMessageType>& exclusion_type_list) const;
+	private://judge
+		std::vector<nim::NIMMessageType> list_;
+	};
+  /** @class MsgLog
+  * 在线查询消息参数（不包括系统消息）
+  */	
+	class QueryMsgOnlineAsyncParam
+	{
+		friend class MsgLog;
+	public:
+		QueryMsgOnlineAsyncParam();
+		std::string id_;/**< 查询id，对方的account id或者群组tid */
+		nim::NIMSessionType to_type_;/**< enum 会话类型，双人0，群组1 (nim_msglog_def.h) */
+		int limit_count_;/**< int 本次查询的消息条数上限(最多100条) */
+		int64_t from_time_;/**< int64_t 起始时间点，单位：毫秒 */
+		int64_t end_time_;/**<  int64_t 结束时间点，单位：毫秒 */
+		int64_t end_msg_id_;/**< int64_t 结束查询的最后一条消息的server_msg_id(不包含在查询结果中) */
+		bool reverse_;/**< bool true：反向查询(按时间正序起查，正序排列)，false：按时间逆序起查，逆序排列（建议默认为false） */
+		bool need_save_to_local_;/**< bool 将在线查询结果保存到本地，false: 不保存 */
+		bool auto_download_attachment_;/**< bool 查询结果回来后，是否需要sdk自动下载消息附件。true：需要，false：不需要 */		
+		std::vector<nim::NIMMessageType> msg_type_list_;/**< vector 要获取或排除掉的消息类型 由 is_exclusion_type_ 参数决定*/
+		bool is_exclusion_type_;/**< bool true : 获取除msg_type_list_中指定的所有类型消息 ,false :只获取 msg_type_list_ 中指定的类型的消息*/
+	private:
+		bool FormatParam();
+	private:
+		const static AllMessageTypeList AllMsgTypeList;
+		std::string json_extension_;
+	};
+
+
+
+
 	/** @fn static bool QueryMsgByIDAysnc(const std::string &client_msg_id, const QuerySingleMsgCallback &cb, const std::string &json_extension = "")
 	 * 根据消息ID查询本地（单条）消息
 	 * @param[in] client_msg_id		客户端消息ID
@@ -76,6 +114,16 @@ public:
 		, const QueryMsgCallback& cb
 		, const std::string& json_extension = "");
 
+	/** @fn static bool QueryMsgOnlineAsync(const QueryMsgOnlineAsyncParam& param, const QueryMsgCallback& cb)
+	* 在线查询消息（不包括系统消息）
+	* @param[in] param			查询参数	
+	* @param[in] cb				在线查询消息的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				403:禁止访问(不在该群,只针对群组会话)
+	*				414:参数错误
+	*/
+	static bool QueryMsgOnlineAsync(const QueryMsgOnlineAsyncParam& param, const QueryMsgCallback& cb);
 	/** @fn static bool QueryMsgOnlineAsync(const std::string &id, nim::NIMSessionType to_type, int limit_count, int64_t from_time, int64_t end_time, int64_t end_msg_id, bool reverse, bool need_save_to_local, const QueryMsgCallback& cb, const std::string& json_extension = "")
 	* 在线查询消息（不包括系统消息）
 	* @param[in] id				查询id，对方的account id或者群组tid。

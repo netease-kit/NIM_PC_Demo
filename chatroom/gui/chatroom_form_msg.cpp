@@ -101,75 +101,32 @@ void ChatroomForm::AnonymousLogin(const __int64 room_id)
 		OnRequestRoomError();
 		return;
 	}
-
 	room_id_ = room_id;
 	switch_to_login_status_ = kToAnonymous;
-	auto http_cb = ToWeakCallback([this](bool ret, int response_code, const std::string& reply)
-	{
-		wstring fff = nbase::UTF8ToUTF16(reply);
-		StdClosure error_cb = ToWeakCallback([this]()
-		{
 
-		});
-
-		if (!ret || response_code != nim::kNIMResSuccess)
-		{
-			Post2UI(error_cb);
-
-			return;
-		}
-
-		Json::Value json_reply;
-		Json::Reader reader;
-		if (reader.parse(reply, json_reply) && json_reply.isObject())
+	app_sdk::AppSDKInterface::GetInstance()->InvokeGetChatroomAddress(room_id_, "", switch_to_login_status_, ToWeakCallback([this](int code, const std::list< std::string>& address_list){
+		if (code == nim::kNIMResSuccess)
 		{
 			ChatRoomAnoymityEnterInfo anonymity_info;
-			anonymity_info.app_key_ = GetConfigValueAppKey();
+			anonymity_info.app_key_ = app_sdk::AppSDKInterface::GetAppKey();
 			anonymity_info.app_data_file_ = "Netease";
-			nim::JsonArrayStringToList(json_reply["msg"]["addr"].toStyledString(), anonymity_info.address_);
+			anonymity_info.address_.assign(address_list.begin(), address_list.end());
 			anonymity_info.random_id_ = atoi(GetConfigValue("kNIMChatRoomEnterKeyRandomID").c_str()) > 0;
-
 			srand((unsigned int)time(NULL));
 			std::wstring nick = nbase::StringPrintf(L"游客%d", rand());
 			ChatRoomEnterInfo enter_info;
 			enter_info.SetNick(nbase::UTF16ToUTF8(nick));
 			enter_info.SetAvatar("https://nos.netease.com/b12026/MTAxMTAxMA%3D%3D%2FbmltYV84NDc2NF8xNTA2NjUyMDM1NTE5XzUzZmY4NzkxLThjOGItNDY1My1hZDVhLTczYzkxZjEwN2RmOQ%3D%3D");
-			
 			StdClosure cb = [anonymity_info, enter_info, this](){
-				bool bRet = ChatRoom::AnonymousEnter(room_id_, anonymity_info, enter_info);
-				if (bRet)
+				if (ChatRoom::AnonymousEnter(room_id_, anonymity_info, enter_info))
 				{
-					this->CenterWindow();
-					this->ShowWindow();
+					CenterWindow();
+					ShowWindow();
 				}
-
 			};
 			Post2UI(cb);
-
 		}
-		else
-		{
-			Post2UI(error_cb);
-		}
-	});
-
-	std::string api_addr = "https://app.netease.im/api/chatroom/requestAddress";
-	std::string new_api_addr = GetConfigValue("kNIMChatRoomRequest");
-	if (!new_api_addr.empty())
-		api_addr = new_api_addr;
-
-	std::string param = nbase::StringPrintf("{\"roomid\" : \"%lld\" , \"uid\" : \"\", \"type\" : \"2\"}", room_id);
-	//api_addr = api_addr + param;
-
-	//nim_http::HttpRequest request(addressbook_address, body.c_str(), body.size(), reg_cb);
-	std::string app_key = GetConfigValueAppKey();
-	//nim_http::HttpRequest request(api_addr, param.c_str(), param.size(), http_cb);
-	nim_http::HttpRequest request(api_addr, param.c_str(), param.size(), http_cb);
-	request.AddHeader("Content-Type", "application/json");
-	request.AddHeader("charset", "utf-8");
-	request.AddHeader("appKey", app_key);
-	request.SetMethodAsPost();
-	nim_http::PostRequest(request);
+	}));
 }
 
 __int64 ChatroomForm::GetRoomId()
@@ -191,6 +148,25 @@ void ChatroomForm::OnReceiveMsgCallback(const ChatRoomMessage& result)
 	}
 		
 	AddMsgItem(result, false);
+}
+
+void ChatroomForm::OnReceiveMsgsCallback(const std::list<ChatRoomMessage>& result)
+{
+	for (auto &res : result)
+	{
+		if (res.msg_type_ == kNIMChatRoomMsgTypeNotification)
+		{
+			// 登录成功后，会收到一个“欢迎进入直播间”的通知消息，这个消息的时间戳作为获取历史消息的标准
+			// 通知消息由OnNotificationCallback回调处理，这里不做处理
+			if (time_start_history_ == 0)
+				time_start_history_ = res.timetag_ - 1;
+			if (time_start_history_ < 0)
+				time_start_history_ = 0;
+			continue;
+		}
+
+		AddMsgItem(res, false);
+	}
 }
 
 void ChatroomForm::OnEnterCallback(int error_code, const ChatRoomInfo& info, const ChatRoomMemberInfo& my_info)

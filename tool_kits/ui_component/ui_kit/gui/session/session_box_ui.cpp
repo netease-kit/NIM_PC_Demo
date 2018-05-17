@@ -15,13 +15,14 @@
 #include "capture_image/src/capture_manager.h"
 
 #include "module/session/session_manager.h"
-#include "module/video/video_manager.h"
+#include "av_kit/module/video/video_manager.h"
 #include "module/rts/rts_manager.h"
 #include "module/service/user_service.h"
 
 #include "shared/modal_wnd/file_dialog_ex.h"
 #include "gui/session/unread_form.h"
-#include "gui/video/multi_video_form.h"
+#include "av_kit/gui/video/multi_video_form.h"
+#include "shared/ui/toast/toast.h"
 
 using namespace ui;
 
@@ -714,12 +715,16 @@ void SessionBox::OnBtnAudio()
 {
 	if (session_type_ == nim::kNIMSessionTypeP2P)
 	{
-		VideoManager::GetInstance()->ShowVideoChatForm(session_id_, false);
+		if (!RtsManager::GetInstance()->IsRtsFormExist(nim::kNIMRtsChannelTypeVchat, true))
+			VideoManager::GetInstance()->ShowVideoChatForm(session_id_, false);
 	}
 }
 
 void SessionBox::OnBtnVideo()
 {
+	if (RtsManager::GetInstance()->IsRtsFormExist(nim::kNIMRtsChannelTypeVchat, true))
+		return;
+
 	switch (session_type_)
 	{
 	case nim::kNIMSessionTypeP2P:
@@ -727,13 +732,72 @@ void SessionBox::OnBtnVideo()
 		break;
 	case nim::kNIMSessionTypeTeam:
 	{
-		VideoManager::GetInstance()->ShowVideoChatForm(session_id_, true,0,true);
+		//群视频人员选择界面
+		ContactSelectForm *contact_select_form = (ContactSelectForm *)WindowsManager::GetInstance()->GetWindow\
+			(ContactSelectForm::kClassName, nbase::UTF8ToUTF16(session_id_));
+
+		if (!contact_select_form)
+		{
+			std::list<UTF8String> exnclude_ids;
+			contact_select_form = new ContactSelectForm(session_id_, exnclude_ids, nbase::Bind(&SessionBox::OnVChatSelectedCallback, this, std::placeholders::_1, std::placeholders::_2), false, true);
+			contact_select_form->Create(NULL, L"", UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L);
+			contact_select_form->CenterWindow();
+		}
+
+		contact_select_form->ActiveWindow();
 	}
 
 	break;
 	default:
 		break;
 	}
+}
+
+void SessionBox::OnVChatSelectedCallback(const std::list<UTF8String>& selected_friends, const std::list<UTF8String>& selected_teams)
+{
+	auto cb = [=](int res)
+	{
+		if (res == 200)
+		{
+			//发送消息
+			{
+				nim::UserNameCard user_info;
+				UserService::GetInstance()->GetUserInfo(LoginManager::GetInstance()->GetAccount(), user_info);
+				std::wstring tip = nbase::StringPrintf(L"%s发起了群视频", nbase::UTF8ToUTF16(user_info.GetName()).c_str());
+				int64_t timetag_ = 1000 * nbase::Time::Now().ToTimeT();
+				nim::IMMessage msg;
+				msg.session_type_ = nim::kNIMSessionTypeTeam;
+				msg.receiver_accid_ = session_id_;
+				msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
+				msg.client_msg_id_ = QString::GetGUID();
+				msg.msg_setting_.resend_flag_ = nim::BS_FALSE;
+				msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
+
+				msg.status_ = nim::kNIMMsgLogStatusSending;
+				msg.type_ = nim::kNIMMessageTypeTips;
+				msg.content_ = nbase::UTF16ToUTF8(tip);
+				msg.msg_setting_.need_push_ = nim::BS_FALSE;
+				msg.status_ = nim::kNIMMsgLogStatusSent;
+				std::string msg_info = msg.ToJsonString(true);
+				QLOG_APP(L"send msg:{0}") << msg_info;
+				nim::Talk::SendMsg(msg.ToJsonString(true));
+				StdClosure closure = [=]()
+				{
+					nim_comp::SessionBox* session_box = SessionManager::GetInstance()->FindSessionBox(session_id_);
+					if (session_box)
+						session_box->AddNewMsg(msg, false);
+				};
+				Post2UI(closure);
+			}
+		}
+	};
+	if (selected_friends.size() <= 0)
+	{
+		std::wstring toast = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_MULTIVIDEOCHATFORM_START_MEMBER_CHECK_LOW");
+		shared::Toast::ShowToast(toast, 2000);
+		return;
+	}
+	VideoManager::GetInstance()->ShowVideoChatForm(session_id_, true, 0, selected_friends, ToWeakCallback(cb));
 }
 
 void SessionBox::OnBtnRts()

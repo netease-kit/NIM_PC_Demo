@@ -58,10 +58,16 @@ void MainThread::PreMessageLoop()
 
 	db_thread_.reset( new DBThread(kThreadDatabase, "Database Thread") );
 	db_thread_->Start();
+
+	app_sdk_thread_.reset(new MiscThread(kThreadApp, "App SDK Thread"));
+	app_sdk_thread_->Start();
 }
 
 void MainThread::PostMessageLoop()
 {
+	app_sdk_thread_->Stop();
+	app_sdk_thread_.reset(NULL);
+
 	misc_thread_->Stop();
 	misc_thread_.reset(NULL);
 
@@ -70,6 +76,8 @@ void MainThread::PostMessageLoop()
 
 	db_thread_->Stop();
 	db_thread_.reset(NULL);
+
+	
 }
 
 void MainThread::OnMsgBoxCallback( MsgBoxRet ret )
@@ -134,12 +142,33 @@ static void InitNim()
 				nbase::StringToInt((std::string)pchar, &need);
 				config.team_msg_ack_ = (need != 0);
 			}
+			if (auto pchar = root->Attribute("kNIMCachingMarkreadEnabled")) {
+				int enable = 0;
+				nbase::StringToInt((std::string)pchar, &enable);
+				config.caching_markread_ = (enable != 0);
+			}
+			if (auto pchar = root->Attribute("kNIMCachingMarkreadTime")){
+				int time = 1000;
+				nbase::StringToInt((std::string)pchar, &time);
+				config.caching_markread_time_ = time;
+			}
+			if (auto pchar = root->Attribute("kNIMCachingMarkreadCount")){
+				int count = 10;
+				nbase::StringToInt((std::string)pchar, &count);
+				config.caching_markread_count_ = count;
+			}
+			if (auto pchar = root->Attribute("kNIMClientAntispam")){
+				int enable = 10;
+				nbase::StringToInt((std::string)pchar, &enable);
+				config.client_antispam_ = (enable != 0);
+			}
 		}
 	}
 	config.database_encrypt_key_ = "Netease"; //string（db key必填，目前只支持最多32个字符的加密密钥！建议使用32个字符）
 
-	std::string app_key = GetConfigValueAppKey();
-	bool ret = nim::Client::Init(app_key, "Netease", "", config); // 载入云信sdk，初始化安装目录和用户目录
+	std::string app_key = app_sdk::AppSDKInterface::GetAppKey();
+	std::wstring app_install;// = QPath::GetAppPath() + L"\\x64_dlls\\";
+	bool ret = nim::Client::Init(app_key, "Netease", nbase::UTF16ToUTF8(app_install), config); // 载入云信sdk，初始化安装目录和用户目录
 	assert(ret);
 	//初始化聊天室
 	{
@@ -148,7 +177,8 @@ static void InitNim()
 		chatroom_platform_config.AddNTServerAddress(config.ntserver_address_);
 		chatroom_platform_config.EnableUploadStatisticsData(config.upload_statistics_data_);
 		chatroom_platform_config.ToJsonObject(extension[nim_chatroom::ChatRoomPlatformConfig::kPlatformConfigToken]);
-		ret = nim_chatroom::ChatRoom::Init("", nim::GetJsonStringWithNoStyled(extension));
+		ret = nim_chatroom::ChatRoom::Init(nbase::UTF16ToUTF8(app_install), nim::GetJsonStringWithNoStyled(extension));
+		nim_chatroom::ChatRoom::SetMsgsBatchReport(true);
 		assert(ret);
 	}	
 	// 初始化云信音视频
@@ -160,7 +190,7 @@ static void InitNim()
 	nim_chatroom::ChatroomCallback::InitChatroomCallback();
 	// InitUiKit接口参数决定是否启用事件订阅模块，默认为false，如果是云信demo app则为true
 	// 如果你的App开启了事件订阅功能，则此参数改为true
-	//nim_ui::InitManager::GetInstance()->InitUiKit(IsNimDemoAppKey(app_key)); 
+	//nim_ui::InitManager::GetInstance()->InitUiKit(app_sdk::AppSDKInterface::IsNimDemoAppKey(app_sdk::AppSDKInterface::GetAppKey())); 
 }
 
 int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)

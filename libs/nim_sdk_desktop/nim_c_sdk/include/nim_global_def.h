@@ -80,6 +80,13 @@ typedef void(*nim_sdk_get_cache_file_info_cb_func)(const char *info, const void 
 */
 typedef void(*nim_sdk_del_cache_file_cb_func)(enum NIMResCode rescode, const void *user_data);
 
+/** @typedef void (*nim_sdk_feedback_cb_func)(enum NIMResCode rescode, const void *user_data);
+* SDK反馈回调
+* @param[out] rescode 错误码
+* @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+* @return void 无返回值
+*/
+typedef void(*nim_sdk_feedback_cb_func)(enum NIMResCode rescode, const void *user_data);
 
 #ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @enum NIMProxyDetectStep 代理测试步骤 */

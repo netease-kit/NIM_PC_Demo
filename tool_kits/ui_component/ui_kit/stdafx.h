@@ -64,15 +64,19 @@
 #include "module/session/session_util.h"
 
 //notify
-#include "module/service/notify_center.h"
-#include "module/service/user_service.h"
-#include "module/service/team_service.h"
-#include "module/service/mute_black_service.h"
-#include "module/service/http_service.h"
-#include "module/service/photo_service.h"
+#include "nim_service/module/service/notify_center.h"
+#include "nim_service/module/service/user_service.h"
+#include "nim_service/module/service/team_service.h"
+#include "nim_service/module/service/mute_black_service.h"
+#include "nim_service/module/service/http_service.h"
+#include "nim_service/module/service/photo_service.h"
+#include "nim_service/module/login/login_manager.h"
 
 //helper
 #include "shared/closure.h"
 
 #include "util/window_ex.h"
 #include "util/windows_manager.h"
+
+//custom_app_sdk
+#include "app_sdk.h"

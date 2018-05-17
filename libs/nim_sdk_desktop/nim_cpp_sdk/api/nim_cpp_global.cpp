@@ -20,6 +20,7 @@ typedef void (*nim_global_set_proxy)(NIMProxyType, const char*, int, const char*
 #ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 typedef void (*nim_global_detect_proxy)(enum NIMProxyType type, const char *host, int port, const char *user, const char *password, nim_global_detect_proxy_cb_func cb, const void *user_data);
 typedef void(*nim_global_reg_exception_report_cb)(const char *json_extension, nim_sdk_exception_cb_func cb, const void *user_data);
+typedef void (*nim_global_sdk_feedback_async)(const char *url, const char *json_extension, nim_sdk_feedback_cb_func cb, const void *user_data);
 #else
 typedef void (*nim_global_reg_sdk_log_cb)(const char *json_extension, nim_sdk_log_cb_func cb, const void *user_data);
 #endif
@@ -87,6 +88,25 @@ void Global::SetExceptionReportCallback(const std::string&json_extension, const 
 		cb_pointer = new ExceptionCallback(cb);
 	}
 	NIM_SDK_GET_FUNC(nim_global_reg_exception_report_cb)(json_extension.c_str(), &CallbackException, cb_pointer);
+}
+
+static void CallbackSDKFeedback(enum NIMResCode code, const void *user_data)
+{
+	Global::SDKFeedbackCallback *cb = (Global::SDKFeedbackCallback*)user_data;
+	if (cb)
+	{
+		(*cb)(code);
+	}
+}
+
+void Global::SDKFeedbackAsync(const std::string &url, const std::string &json_extension, const SDKFeedbackCallback &cb)
+{
+	SDKFeedbackCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SDKFeedbackCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_global_sdk_feedback_async)(url.c_str(), json_extension.c_str(), &CallbackSDKFeedback, cb_pointer);
 }
 #else
 static void CallbackSDKLog(int log_level, const char *log, const void *user_data)

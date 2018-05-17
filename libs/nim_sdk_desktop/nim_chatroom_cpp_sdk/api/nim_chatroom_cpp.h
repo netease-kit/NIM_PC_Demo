@@ -26,8 +26,10 @@ class ChatRoom
 public:
 	typedef std::function<void(int64_t room_id, const NIMChatRoomEnterStep step, int error_code, const ChatRoomInfo& info, const ChatRoomMemberInfo& my_info)>	EnterCallback;	/**< 登录回调, 如果错误码为kResRoomLocalNeedRequestAgain，聊天室重连机制结束，则需要向IM服务器重新请求进入该聊天室权限 */
 	typedef std::function<void(int64_t room_id, int error_code, NIMChatRoomExitReason exit_reason)>	ExitCallback;	/**< 登出、被踢回调 */
+	typedef std::function<void(int64_t room_id, int error_code, const NIMChatRoomExitReasonInfo& exit_info)>	ExitCallback_2;	/**< 登出、被踢回调 */
 	typedef std::function<void(int64_t room_id, int error_code, const ChatRoomMessage& result)>	SendMsgAckCallback;	/**< 发送消息回执 */
 	typedef std::function<void(int64_t room_id, const ChatRoomMessage& result)>	ReceiveMsgCallback;	/**< 接收消息回调 */
+	typedef std::function<void(int64_t room_id, const std::list<ChatRoomMessage>& result)>	ReceiveMsgsCallback;	/**< 接收批量消息回调 */
 	typedef std::function<void(int64_t room_id, const ChatRoomNotification& notification)> NotificationCallback; /**< 通知回调 */
 	typedef std::function<void(int64_t room_id, int error_code, const std::list<ChatRoomMemberInfo>& infos)> GetMembersCallback; /**< 在线查询成员列表回调 */
 	typedef std::function<void(int64_t room_id, int error_code, const std::list<ChatRoomMessage>& msgs)> GetMsgHistoryCallback; /**< 在线查询消息历史回调 */
@@ -62,6 +64,14 @@ static void RegEnterCb(const EnterCallback& cb, const std::string& json_extensio
   */
 static void RegExitCb(const ExitCallback& cb, const std::string& json_extension = "");
 
+/** @fn void RegExitCb(const ExitCallback_2& cb, const std::string& json_extension = "")
+  * 注册全局登出、被踢回调
+  * @param[in] cb			  回调函数
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @return void 无返回值
+  */
+static void RegExitCb_2(const ExitCallback_2& cb, const std::string& json_extension = "");
+
 /** @fn void RegSendMsgAckCb(const SendMsgAckCallback& cb, const std::string& json_extension = "")
   * 注册全局发送消息回执回调
   * @param[in] cb			  回调函数
@@ -77,6 +87,14 @@ static void RegSendMsgAckCb(const SendMsgAckCallback& cb, const std::string& jso
   * @return void 无返回值
   */
 static void RegReceiveMsgCb(const ReceiveMsgCallback& cb, const std::string& json_extension = "");
+
+/** @fn void RegReceiveMsgsCb(const ReceiveMsgsCallback& cb, const std::string& json_extension = "")
+  * 注册全局接收批量消息回调
+  * @param[in] cb			  回调函数
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @return void 无返回值
+  */
+static void RegReceiveMsgsCb(const ReceiveMsgsCallback& cb, const std::string& json_extension = "");
 
 /** @fn void RegNotificationCb(const NotificationCallback& cb, const std::string& json_extension = "")
   * 注册全局接收通知回调
@@ -148,6 +166,14 @@ static void Exit(const int64_t room_id, const std::string& json_extension = "");
   * @return void 无返回值
   */
 static NIMChatRoomLoginState GetLoginState(const int64_t room_id, const std::string& json_extension = "");
+
+/** @fn void SetMsgsBatchReport(bool set_batch, const std::string& json_extension = "")
+  * 设置消息接收批量上报开关
+  * @param[in] set_batch 批量开关
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @return void 无返回值
+  */
+static void SetMsgsBatchReport(bool set_batch, const std::string& json_extension = "");
 
 /** @fn void SendMsg(const int64_t room_id, const std::string& json_msg, const std::string& json_extension = "")
   * 发送消息

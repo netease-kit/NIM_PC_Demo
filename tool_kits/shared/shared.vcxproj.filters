@@ -11,6 +11,9 @@
     <Filter Include="modal_window">
       <UniqueIdentifier>{3933bcda-ea39-4898-95d5-cddc10aedd0e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="ui\toast">
+      <UniqueIdentifier>{b17a3355-003a-4496-a770-f4626d93264d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cmd_line.cpp" />
@@ -40,6 +43,10 @@
     </ClCompile>
     <ClCompile Include="modal_wnd\async_do_modal.cpp">
       <Filter>modal_window</Filter>
+    </ClCompile>
+    <ClCompile Include="ring.cpp" />
+    <ClCompile Include="ui\toast\toast.cpp">
+      <Filter>ui\toast</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -75,6 +82,10 @@
     </ClInclude>
     <ClInclude Include="modal_wnd\modal_wnd_base.h">
       <Filter>modal_window</Filter>
+    </ClInclude>
+    <ClInclude Include="ring.h" />
+    <ClInclude Include="ui\toast\toast.h">
+      <Filter>ui\toast</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

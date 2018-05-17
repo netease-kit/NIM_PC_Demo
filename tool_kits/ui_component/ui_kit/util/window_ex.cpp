@@ -80,28 +80,6 @@ LRESULT WindowEx::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	return __super::HandleMessage(uMsg,wParam,lParam);
 }
 
-void WindowEx::ActiveWindow()
-{
-	if(::IsWindow(m_hWnd))
-	{
-		if (::IsIconic(m_hWnd))
-		{
-			::ShowWindow(m_hWnd, SW_RESTORE);
-		}
-		else
-		{
-			if (!::IsWindowVisible(m_hWnd))
-				::ShowWindow(m_hWnd, SW_SHOW);
-			::SetForegroundWindow(m_hWnd);
-		}
-	}
-}
-
-void WindowEx::SetTaskbarTitle( const std::wstring &title )
-{
-	::SetWindowTextW(m_hWnd, title.c_str());
-}
-
 POINT GetPopupWindowPos( WindowEx* window )
 {
 	ASSERT( window && IsWindow( window->GetHWND() ) );
@@ -120,13 +98,4 @@ POINT GetPopupWindowPos( WindowEx* window )
 	return pt;
 }
 
-void ToTopMost(HWND hwnd, bool forever)
-{
-	ASSERT(::IsWindow(hwnd));
-	::SetWindowPos(hwnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-	if( !forever )
-	{
-		::SetWindowPos(hwnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE);
-	}
-}
 }

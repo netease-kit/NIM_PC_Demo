@@ -81,3 +81,8 @@
 // chatroom
 #include "nim_cpp_plugin_in.h"
 #include "nim_chatroom_cpp.h"
+
+//custom_app_sdk
+#include "app_sdk.h"
+
+#include "nim_service/module/login/login_manager.h"

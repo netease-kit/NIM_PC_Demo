@@ -2,11 +2,6 @@
 
 namespace nim_ui
 {
-void UserManager::InvokeRegisterAccount(const std::string &username, const std::string &password, const std::string &nickname, const OnRegisterAccountCallback& cb)
-{
-	nim_comp::UserService::GetInstance()->InvokeRegisterAccount(username, password, nickname, cb);
-}
-
 nim::NIMFriendFlag UserManager::GetUserType(const std::string &id)
 {
 	return nim_comp::UserService::GetInstance()->GetUserType(id);

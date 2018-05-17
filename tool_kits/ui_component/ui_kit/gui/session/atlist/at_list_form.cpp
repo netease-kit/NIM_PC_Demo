@@ -211,6 +211,7 @@ AtListItem *AtlistForm::CreateAtListItem(const std::string& uid, bool is_last_fi
 		UserService::GetInstance()->GetRobotInfo(uid, robot);
 		show_name = nbase::UTF8ToUTF16(robot.GetName());
 		item->SetNickName(show_name);
+		robots_info_.emplace_back(robot);
 	}
 	
 	item->SetShowName(show_name);
@@ -503,14 +504,10 @@ void AtlistForm::OnUserPhotoChange(PhotoType type, const std::string& accid, con
 		CheckListItemHeadIcon(accid, photo_path);
 		return;
 	}
-	for (auto &robot : robots_info_)
-	{
-		if (robot.GetAccid() == accid)
-		{
-			CheckListItemHeadIcon(accid, photo_path);
-			return;
-		}
-	}
+	if (std::find_if(robots_info_.begin(), robots_info_.end(), [&](const nim::RobotInfo& info){
+		return info.GetAccid().compare(accid) == 0;
+	}) != robots_info_.end())
+		CheckListItemHeadIcon(accid, photo_path);
 }
 
 void AtlistForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)

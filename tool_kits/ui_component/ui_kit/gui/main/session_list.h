@@ -2,6 +2,7 @@
 #include "control/session_item.h"
 #include "gui/main/multispot_form.h"
 #include "module/service/photo_service.h"
+#include "module/service/user_service.h"
 
 namespace nim_comp
 {

@@ -22,6 +22,17 @@ void ChatroomCallback::OnReceiveMsgCallback(__int64 room_id, const ChatRoomMessa
 	Post2UI(cb);
 }
 
+void ChatroomCallback::OnReceiveMsgsCallback(__int64 room_id, const std::list<ChatRoomMessage>& result)
+{
+	StdClosure cb = [=](){
+		ChatroomForm* chat_form = static_cast<ChatroomForm*>(nim_ui::WindowsManager::GetInstance()->GetWindow(ChatroomForm::kClassName, nbase::Int64ToString16(room_id)));
+		if (chat_form != NULL)
+		{
+			chat_form->OnReceiveMsgsCallback(result);
+		}
+	};
+	Post2UI(cb);
+}
 
 void ChatroomCallback::OnSendMsgCallback(__int64 room_id, int error_code, const ChatRoomMessage& result)
 {
@@ -36,7 +47,6 @@ void ChatroomCallback::OnSendMsgCallback(__int64 room_id, int error_code, const 
 		Post2UI(cb);
 	}
 }
-
 
 void ChatroomCallback::OnEnterCallback(__int64 room_id, const NIMChatRoomEnterStep step, int error_code, const ChatRoomInfo& info, const ChatRoomMemberInfo& my_info)
 {
@@ -119,17 +129,17 @@ void ChatroomCallback::OnEnterCallback(__int64 room_id, const NIMChatRoomEnterSt
 	Post2UI(cb);
 }
 
-void ChatroomCallback::OnExitCallback(__int64 room_id, int error_code, NIMChatRoomExitReason exit_reason)
+void ChatroomCallback::OnExitCallback(__int64 room_id, int error_code, nim_chatroom::NIMChatRoomExitReasonInfo exit_info)
 {
 	QLOG_APP(L"Chatroom:OnExitCallback: id={0} code={1}") << room_id << error_code;
 
-	StdClosure cb = [room_id, exit_reason]()
+	StdClosure cb = [room_id, exit_info]()
 	{
 		ChatroomForm* chat_form = static_cast<ChatroomForm*>(nim_ui::WindowsManager::GetInstance()->GetWindow(ChatroomForm::kClassName, nbase::Int64ToString16(room_id)));
 		if (chat_form)
 			chat_form->Close(ChatroomForm::kAllowClose);
 
-		if (exit_reason == kNIMChatRoomExitReasonExit)
+		if (exit_info == kNIMChatRoomExitReasonExit)
 			return;
 
 		ChatroomFrontpage* front_page = nim_ui::WindowsManager::GetInstance()->SingletonShow<ChatroomFrontpage>(ChatroomFrontpage::kClassName);
@@ -137,10 +147,20 @@ void ChatroomCallback::OnExitCallback(__int64 room_id, int error_code, NIMChatRo
 
 		std::wstring kick_tip_str;
 		ui::MutiLanSupport *multilan = ui::MutiLanSupport::GetInstance();
-		switch (exit_reason)
+		switch (exit_info)
 		{
 		case kNIMChatRoomExitReasonKickByManager:
+		{
 			kick_tip_str = multilan->GetStringViaID(L"STRID_CHATROOM_TIP_KICKED");
+			if (!exit_info.notify_ext_.empty())
+			{
+				Json::Value vinfo;
+				if (Json::Reader().parse(exit_info.notify_ext_, vinfo) && vinfo.isMember("operator_nick"))
+				{
+					kick_tip_str = nbase::StringPrintf(multilan->GetStringViaID(L"STRID_CHATROOM_TIP_KICKED_BY_WHO").c_str(), nbase::UTF8ToUTF16(vinfo["operator_nick"].asString()).c_str());
+				}
+			}
+		}			
 			break;
 		case kNIMChatRoomExitReasonBeBlacklisted:
 			kick_tip_str = multilan->GetStringViaID(L"STRID_CHATROOM_TIP_BLACKLISTED");
@@ -149,7 +169,7 @@ void ChatroomCallback::OnExitCallback(__int64 room_id, int error_code, NIMChatRo
 			kick_tip_str = multilan->GetStringViaID(L"STRID_CHATROOM_TIP_MULTIPOT_LOGIN");
 			break;
 		default:
-			QLOG_APP(L"Exit reason: {0}, {1}") << room_id << exit_reason;
+			QLOG_APP(L"Exit reason: {0}, {1}") << room_id << exit_info;
 			return;
 		}
 
@@ -206,9 +226,10 @@ void ChatroomCallback::OnRegLinkConditionCallback(__int64 room_id, const NIMChat
 void ChatroomCallback::InitChatroomCallback()
 {
 	ChatRoom::RegReceiveMsgCb(nbase::Bind(&ChatroomCallback::OnReceiveMsgCallback, std::placeholders::_1, std::placeholders::_2));
+	ChatRoom::RegReceiveMsgsCb(nbase::Bind(&ChatroomCallback::OnReceiveMsgsCallback, std::placeholders::_1, std::placeholders::_2));
 	ChatRoom::RegSendMsgAckCb(nbase::Bind(&ChatroomCallback::OnSendMsgCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	ChatRoom::RegEnterCb(nbase::Bind(&ChatroomCallback::OnEnterCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4, std::placeholders::_5));
-	ChatRoom::RegExitCb(nbase::Bind(&ChatroomCallback::OnExitCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	ChatRoom::RegExitCb_2(nbase::Bind(&ChatroomCallback::OnExitCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	ChatRoom::RegNotificationCb(nbase::Bind(&ChatroomCallback::OnNotificationCallback, std::placeholders::_1, std::placeholders::_2));
 	ChatRoom::RegLinkConditionCb(nbase::Bind(&ChatroomCallback::OnRegLinkConditionCallback, std::placeholders::_1, std::placeholders::_2));
 }

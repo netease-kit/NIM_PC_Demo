@@ -123,85 +123,23 @@ void ChatroomFrontpage::SetAnonymity(bool anonymity)
 void ChatroomFrontpage::InvokeGetRoomList()
 {
 	FindControl(L"loading_tip")->SetVisible(true);
-
-	auto http_cb = ToWeakCallback([this](bool ret, int response_code, const std::string& reply)
-	{
-		StdClosure error_cb = ToWeakCallback([this]()
+	app_sdk::AppSDKInterface::GetInstance()->InvokeGetChatroomList(ToWeakCallback([this](int code, const std::vector< nim_chatroom::ChatRoomInfo>& chatroom_list){		
+		if (code != nim::kNIMResSuccess)
 		{
+			QLOG_ERR(L"Invoke get room list error. Error code: {0}.") << code;
 			FindControl(L"loading_tip")->SetVisible(false);
 			FindControl(L"load_error_tip")->SetVisible(true);
-		});
-
-		if (!ret || response_code != nim::kNIMResSuccess)
-		{
-			QLOG_ERR(L"Invoke get room list error. Error code: {0}.") << response_code;
-			Post2UI(error_cb);
-
 			return;
-		}
-
-		Json::Value json_reply;
-		Json::Reader reader;
-		if (reader.parse(reply, json_reply) && json_reply.isObject())
-		{
-			int res = json_reply["res"].asInt();
-			if (res != 200)
-			{
-				QLOG_ERR(L"Invoke get room list error. Json rescode: {0}.") << res;
-				Post2UI(error_cb);
-
-				return;
-			}
-
-			int count = json_reply["msg"]["total"].asInt();
-			Json::Value json_list = json_reply["msg"]["list"];
-			if (!json_list.isArray())
-			{
-				QLOG_ERR(L"Invoke get room list error. Reason: Not an array.");
-				Post2UI(error_cb);
-
-				return;
-			}
-
-			StdClosure closure = ToWeakCallback([this, json_list, count]() 
-			{
-				FindControl(L"loading_tip")->SetVisible(false);
-
-				for (int i = 0; i < count; i++)
-				{
-					ChatRoomInfo info;
-					info.id_ = json_list[i]["roomid"].asInt64();
-					info.name_ = json_list[i]["name"].asString();
-					info.creator_id_ = json_list[i]["creator"].asString();
-					nbase::StringToInt(json_list[i]["onlineusercount"].asString(), &info.online_count_);
-					info.valid_flag_ = json_list[i]["status"].asInt();
-					info.ext_ = json_list[i]["ext"].asString();
-					info.announcement_ = json_list[i]["announcement"].asString();
-					info.broadcast_url_ = json_list[i]["broadcasturl"].asString();
-					id_info_map_[info.id_] = info;
-
-					CreateRoomItem(info);
-				}
-			});
-			Post2UI(closure);
 		}
 		else
 		{
-			QLOG_ERR(L"invoke get room list json parse error {0}.") << reply;
-			Post2UI(error_cb);
-		}
-	});
-
-	std::string api_addr = "https://app.netease.im/api/chatroom/homeList";
-	std::string new_api_addr = GetConfigValue("kNIMChatRoomAddress");
-	if (!new_api_addr.empty())
-		api_addr = new_api_addr;
-
-	std::string app_key = GetConfigValueAppKey();
-	nim_http::HttpRequest request(api_addr, "", 0, http_cb);
-	request.AddHeader("Content-Type", "application/json; charset=utf-8");
-	request.AddHeader("appKey", app_key);
-	nim_http::PostRequest(request);
+			FindControl(L"loading_tip")->SetVisible(false);
+			for (auto it : chatroom_list)
+			{
+				CreateRoomItem(it);
+			}
+		}		
+	}));
 }
 
 void ChatroomFrontpage::CreateRoomItem(const ChatRoomInfo& room_info)

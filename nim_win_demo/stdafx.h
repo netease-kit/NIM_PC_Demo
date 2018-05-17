@@ -66,3 +66,8 @@
 
 // chatroom
 #include "nim_chatroom_cpp_api.h"
+
+//custom_app_sdk
+#include "app_sdk.h"
+
+#include "nim_service/module/login/login_manager.h"

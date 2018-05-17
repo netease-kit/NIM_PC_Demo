@@ -38,6 +38,11 @@ struct SDKConfig
 	bool			animated_image_thumbnail_enabled_;/**< 开启对动图缩略图的支持	，默认为false,开启后获取的缩略图为原格式，关闭后获取的缩略图为第一帧静态图 */
 	bool			client_antispam_;				/**< 客户端反垃圾，默认为false，如需开启请提前咨询技术支持或销售 */
 	bool			team_msg_ack_;					/**< 群消息已读功能开关， 默认为false，如需开启请提前咨询技术支持或销售  */
+	/***********消息“已接收回执”发送配置 begin************/
+	bool		caching_markread_; /**< 是否开启缓存式“已接收回执”发送，程序可能收到大量消息以至触发频控时可以考虑开启此开关 缺省 false 关闭*/
+	uint32_t		caching_markread_time_; /**< caching_markread_ == true 时有效 缓存时间 单位ms 缺省 1000 */
+	uint32_t		caching_markread_count_; /**< caching_markread_ == true 时有效 缓存的最大消息条数  缺省 10 */
+	/***********消息“已接收回执”发送配置 end************/
 	std::string		server_conf_file_path_;			/**< 私有云服务器相关地址配置文件本地绝对路径，如果不填默认执行文件目录下的server_conf.txt */
 	
 	//private_server_setting 私有服务器配置（设置方法有两种，一个是配置以下信息，一个是通过配置server_conf_file_path_地址，信息从文件中读取）
@@ -69,7 +74,10 @@ struct SDKConfig
 				, animated_image_thumbnail_enabled_(false)
 				, upload_statistics_data_(true)
 				, client_antispam_(false)
-				, team_msg_ack_(false){}
+				, team_msg_ack_(false)
+				,caching_markread_(false)
+				,caching_markread_time_(1000)
+				,caching_markread_count_(10){}
 };
 
 /** @brief 多端登陆客户端信息 */

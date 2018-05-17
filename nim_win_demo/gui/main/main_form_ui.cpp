@@ -12,6 +12,7 @@
 #include "gui/cef/cef_native_form.h"
 #include "gui/main/session_list.h"
 
+#include "nim_service/module/service/session_service.h"
 using namespace ui;
 
 const LPCTSTR MainForm::kClassName	= L"MainForm";
@@ -137,8 +138,8 @@ void MainForm::InitWindow()
 	nim_ui::NotifyCenter::GetInstance()->RegNotify(NT_LINK, nbase::Bind(&MainForm::CheckOnlineState, this, std::placeholders::_1));
 
 	nim_ui::ContactsListManager::GetInstance()->InvokeGetAllUserInfo();
-	nim_ui::SessionListManager::GetInstance()->InvokeLoadSessionList();
 	nim_ui::SessionListManager::GetInstance()->QueryUnreadSysMsgCount();
+	nim_comp::SessionService::GetInstance()->InvokeLoadSessionList();
 	nim_ui::SubscribeEventManager::GetInstance()->StartAutoSubscribe();
 
 }

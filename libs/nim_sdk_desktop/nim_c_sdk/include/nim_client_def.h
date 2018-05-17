@@ -162,6 +162,9 @@ static const char *kNIMAccelerateHost = "nos_accelerate_host";	/**< string, 需�
 static const char *kNIMAccelerateAddressTemplate = "nos_accelerate";			/**< string, 加速地址拼接模板，用于获得加速后的下载地址*/
 static const char *kNIMNtserverAddress = "nt_server";				/**< string,  部分 IM 错误信息统计上报地址 */
 static const char *kNIMUploadStatisticsData = "is_upload_statistics_data";	/**< bool, 错误信息统计是否上报,私有化如果不上传相应数据，此项配置应为false*/
+static const char *kNIMCachingMarkreadEnabled	= "caching_markread_enabled";	/**< 是否开启缓存式“已接收回执”发送，程序可能收到大量消息以至触发频控时可以考虑开启此开关 缺省 false 关闭*/
+static const char *kNIMCachingMarkreadTime	= "caching_markread_time";	/**< caching_markread_ == true 时有效 缓存时间 单位ms 缺省 1000 */
+static const char *kNIMCachingMarkreadCount	= "caching_markread_count";	/**< caching_markread_ == true 时有效 缓存的最大消息条数  缺省 10 */
 #endif
 
 

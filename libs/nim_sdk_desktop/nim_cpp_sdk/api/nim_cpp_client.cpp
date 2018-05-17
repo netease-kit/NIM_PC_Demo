@@ -180,12 +180,11 @@ bool Client::Init(const std::string& app_key
 	config_values[nim::kNIMAnimatedImageThumbnailEnabled] = config.animated_image_thumbnail_enabled_;
 	config_values[nim::kNIMClientAntispam] = config.client_antispam_;
 	config_values[nim::kNIMTeamMessageAckEnabled] = config.team_msg_ack_;
-#endif
-	config_root[nim::kNIMGlobalConfig] = config_values;
-	config_root[nim::kNIMAppKey] = app_key;
+	config_values[nim::kNIMCachingMarkreadEnabled] = config.caching_markread_;
+	config_values[nim::kNIMCachingMarkreadTime] = config.caching_markread_time_;
+	config_values[nim::kNIMCachingMarkreadCount] = config.caching_markread_count_;
 	if (!config.server_conf_file_path_.empty())
 		config_root[nim::kNIMServerConfFilePath] = config.server_conf_file_path_;
-
 	if (config.use_private_server_)
 	{
 		Json::Value srv_config;
@@ -203,6 +202,9 @@ bool Client::Init(const std::string& app_key
 		config_values[kNIMUploadStatisticsData] = config.upload_statistics_data_;
 		config_root[nim::kNIMPrivateServerSetting] = srv_config;
 	}
+#endif
+	config_root[nim::kNIMGlobalConfig] = config_values;
+	config_root[nim::kNIMAppKey] = app_key;
 	return NIM_SDK_GET_FUNC(nim_client_init)(app_data_dir.c_str(), app_install_dir.c_str(), GetJsonStringWithNoStyled(config_root).c_str());
 }
 const SDKConfig& Client::GetSDKConfig()

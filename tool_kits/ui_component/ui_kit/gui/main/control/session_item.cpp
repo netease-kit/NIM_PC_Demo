@@ -10,6 +10,9 @@
 #include "shared/ui/ui_menu.h"
 #include "shared/pin_yin_helper.h"
 
+#include "module/online_state_event/online_state_event_util.h"
+
+
 using namespace ui;
 
 namespace nim_comp
@@ -153,7 +156,7 @@ void SessionItem::InitUserProfile()
 
 void SessionItem::SetOnlineState(const EventDataEx& data)
 {
-	label_online_state_->SetText(OnlineStateEventHelper::GetOnlineState(data.online_client_, data.multi_config_, true));
+	label_online_state_->SetText(OnlineStateEventUtil::GetOnlineState(data.online_client_, data.multi_config_, true));
 }
 
 void GetMsgContent(const nim::SessionData &msg, std::wstring &show_text)

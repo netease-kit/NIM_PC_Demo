@@ -64,7 +64,7 @@ NIM_SDK_DLL_API	void nim_client_login(const char *app_key, const char *account, 
 /** @fn int nim_client_get_login_state(const char *json_extension)
   * 获取NIM客户端登录状态
   * @param[in] json_extension json扩展参数（备用，目前不需要）
-  * @return int 登录状态见export_headers\nim_client_def.h 中 NIMLoginState
+  * @return int 登录状态见nim_client_def.h 中 NIMLoginState
   */
 NIM_SDK_DLL_API int nim_client_get_login_state(const char *json_extension);
 

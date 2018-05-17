@@ -16,7 +16,7 @@ void LoginForm::DoInitUiKit(nim_ui::InitManager::InitMode mode)
 {
 	// InitUiKit接口第一个参数决定是否启用事件订阅模块，默认为false，如果是云信demo app则为true
 	// 如果你的App开启了事件订阅功能，则此参数改为true
-	nim_ui::InitManager::GetInstance()->InitUiKit(IsNimDemoAppKey(GetConfigValueAppKey()), mode);
+	nim_ui::InitManager::GetInstance()->InitUiKit(app_sdk::AppSDKInterface::IsNimDemoAppKey(app_sdk::AppSDKInterface::GetAppKey()), mode);
 }
 void LoginForm::DoBeforeLogin()
 {
@@ -70,8 +70,8 @@ void LoginForm::DoRegisterAccount()
 		btn_login_->SetVisible(false);
 
 		password = QString::GetMd5(password);
-		nim_ui::UserManager::GetInstance()->InvokeRegisterAccount(username, password, nickname, ToWeakCallback([this](int res, const std::string& err_msg) {
-			if (res == 200) 
+		auto task = ToWeakCallback([this](int res, const std::string& err_msg) {
+			if (res == 200)
 			{
 				register_ok_toast_->SetVisible(true);
 				nbase::ThreadManager::PostDelayedTask(ToWeakCallback([this]() {
@@ -106,9 +106,9 @@ void LoginForm::DoRegisterAccount()
 				}
 				btn_register_->SetEnabled(true);
 			}
-		}));
+		});
+		app_sdk::AppSDKInterface::GetInstance()->InvokeRegisterAccount(username, password, nickname, task);
 	}
-
 }
 
 void LoginForm::StartLogin( std::string username, std::string password )

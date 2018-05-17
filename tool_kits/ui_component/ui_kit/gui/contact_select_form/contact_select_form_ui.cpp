@@ -1,7 +1,7 @@
 ﻿#include "contact_select_form.h"
 #include "module/login/login_manager.h"
+#include "av_kit/module/video/video_manager.h"
 
-#include "gui/video/multi_video_form.h"
 using namespace ui;
 using namespace std;
 
@@ -181,10 +181,9 @@ void ContactSelectForm::OnGetTeamMembers(const std::string& team_id, int count, 
 			std::string member_id = member.GetAccountID();
 			if (current_user_id != member_id)
 			{
-				MultiVideoChatForm *multi_window = (MultiVideoChatForm*)(WindowsManager::GetInstance()->GetWindow(MultiVideoChatForm::kClassName, MultiVideoChatForm::kClassName));
-				if (multi_window)
+				std::set<std::string> talking_members = nim_comp::VideoManager::GetInstance()->GetMeetingMember();
+				if (talking_members.size() > 0)
 				{
-					std::set<std::string> talking_members = multi_window->GetTalkingMember();
 					bool is_enable = true;
 					std::set<std::string>::iterator it = talking_members.find(member.GetAccountID());
 					if (it == talking_members.end())

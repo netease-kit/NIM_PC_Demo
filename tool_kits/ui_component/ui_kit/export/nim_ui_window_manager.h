@@ -12,7 +12,7 @@
 #include "gui/team_info/team_info.h"
 #include "gui/rts/rts_replay.h"
 #include "gui/team_info/team_search.h"
-#include "module/video/video_manager.h"
+#include "av_kit/module/video/video_manager.h"
 
 namespace nim_ui
 {

@@ -168,7 +168,7 @@
                     <Button name="rotate" margin="10,0,0,0" valign="center" visible="false" tooltiptextid="STRID_VIDEO_ROTATE_SWITCH" textid="STRID_VIDEO_ROTATE_SWITCH" normaltextcolor="white" font="1" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
 
                     <Control />
-                    <Button name="add_member" margin="8,0,10,0" valign="center" font="2" normaltextcolor="white" textid="STRING_MULTIVIDEOCHATFORM_ADD_MEMBER" normalimage="add_member_normal.png" hotimage="add_member_hover.png" pushedimage="add_member_push.png"/>
+                    <Button name="add_member" margin="8,0,10,0" valign="center" font="2" normaltextcolor="white" textid="STRING_MULTIVIDEOCHATFORM_ADD_MEMBER" normalimage="add_member_normal.png" hotimage="add_member_hover.png" pushedimage="add_member_push.png" visible="false"/>
                     <Button name="end_chat" margin="8,0,10,0" valign="center" font="2" normaltextcolor="white" textid="STRING_MULTIVIDEOCHATFORM_END" normalimage="hang_up_normal.png" hotimage="hang_up_hover.png" pushedimage="hang_up_push.png"/>
             </HBox>
 

@@ -230,6 +230,7 @@ static const char *kNIMMsglogQueryJsonExtensionKeyEndTime		= "endtime"; /**< int
 * @{
 */
 static const char *kNIMMsglogJsonExtKeyNeedAutoDownloadAttachment = "need_auto_download_attachment";		/**< bool 查询结果回来后，是否需要sdk自动下载消息附件。true：需要，false：不需要*/
+static const char *kNIMMsglogJsonExtKeyQueryMsgTypeList = "query_msg_type_list";		/**< array 要查询的消息类型*/
 /** @}*/ //接口nim_msglog_query_msg_online_async扩展参数json_extension key定义
 #endif
 

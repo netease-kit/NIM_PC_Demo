@@ -13,7 +13,8 @@ bool AudioManager::InitAudio(const std::wstring user_data_path)
 	if (init_)
 		return true;
 
-	init_ = nim_audio::Audio::Init(user_data_path);
+	std::wstring dll_path;// = nbase::win32::GetCurrentModuleDirectory() + L"x64_dlls\\";
+	init_ = nim_audio::Audio::Init(user_data_path,dll_path);
 	assert(init_);
 
 	nim_audio::Audio::RegStartPlayCb(&AudioCallback::OnPlayAudioCallback);

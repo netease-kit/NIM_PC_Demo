@@ -38,13 +38,18 @@ typedef bool(*nim_audio_reg_stop_capture_cb)(nim_stop_capture_cb cb);
 typedef bool(*nim_audio_reg_cancel_audio_cb)(nim_rescode_cb cb);
 typedef bool(*nim_audio_reg_enum_capture_device_cb)(nim_enum_capture_device_cb cb);
 
-bool Audio::Init(const std::wstring& user_data_parent_path)
+bool Audio::Init(const std::wstring& user_data_parent_path,const std::wstring& dll_path /*=L""*/)
 {
-// #ifdef _DEBUG
-// 	instance_audio_ = ::LoadLibraryW(kSdkAudioDll_d.c_str());
-// #else
-	instance_audio_ = ::LoadLibraryW(kSdkAudioDll.c_str());
-// #endif
+	std::wstring dll_file(dll_path);
+	if (!dll_file.empty() && (*dll_file.rbegin() != L'/' && *dll_file.rbegin() != L'\\'))
+		dll_file.append(1, L'/');
+	
+//#ifdef _DEBUG
+//	dll_file.append(kSdkAudioDll_d);
+//#else
+	dll_file.append(kSdkAudioDll);
+//#endif
+	instance_audio_ = ::LoadLibraryW(dll_file.c_str());
 	assert(instance_audio_);
 	if (instance_audio_ == NULL)
 		return false;

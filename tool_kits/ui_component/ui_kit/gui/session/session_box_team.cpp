@@ -251,24 +251,27 @@ void SessionBox::OnTeamMemberAdd(const std::string& tid, const nim::TeamMemberPr
 	}
 }
 
-void SessionBox::OnTeamMemberRemove(const std::string& tid, const std::string& uid)
+void SessionBox::OnTeamMemberRemove(const std::string& tid, const std::list<std::string>& uid_list)
 {
 	if(tid == session_id_)
 	{
-		std::wstring wid = nbase::UTF8ToUTF16(uid);
-
-		Control* ctrl = member_list_->FindSubControl(wid);
-		if(ctrl)
+		for (auto uid : uid_list)
 		{
-			member_list_->Remove(ctrl);
-		}
+			std::wstring wid = nbase::UTF8ToUTF16(uid);
 
-		std::wstring str = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MEMBER_NUM_EX").c_str(), member_list_->GetCount());
-		label_member_->SetText(str);
+			Control* ctrl = member_list_->FindSubControl(wid);
+			if (ctrl)
+			{
+				member_list_->Remove(ctrl);
+			}
 
-		team_member_info_list_.erase(uid);
+			std::wstring str = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MEMBER_NUM_EX").c_str(), member_list_->GetCount());
+			label_member_->SetText(str);
 
-		RefreshMsglistShowname(uid);
+			team_member_info_list_.erase(uid);
+
+			RefreshMsglistShowname(uid);
+		}		
 	}
 }
 

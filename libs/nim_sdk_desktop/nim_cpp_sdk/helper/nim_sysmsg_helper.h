@@ -98,7 +98,7 @@ struct SysMessage
 	NIMSysMsgType	type_;			/**< 通知类型 */
 	std::string	receiver_accid_;	/**< 接收者ID */
 	std::string sender_accid_;		/**< 发送者ID */
-	std::string content_;			/**< 通知内容 */
+	std::string content_;			/**< 只读，SDK不转发该字段 */
 	std::string	attach_;			/**< 通知附件 */
 	int64_t		id_;				/**< 通知ID */
 	NIMSysMsgStatus	status_;		/**< 通知状态 */

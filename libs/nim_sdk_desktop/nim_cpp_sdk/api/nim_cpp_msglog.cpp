@@ -64,7 +64,66 @@ struct ImportDbCallbackUserData
 	MsgLog::DBFunctionCallback response_cb;		/**< 导入消息历史回调 */
 	MsgLog::ImportDbPrgCallback* progress_cb_pointer;	/**< 导入消息历史过程回调 */
 };	
+MsgLog::AllMessageTypeList::AllMessageTypeList()
+{
+	list_.emplace_back(nim::kNIMMessageTypeText);
+	list_.emplace_back(nim::kNIMMessageTypeImage);
+	list_.emplace_back(nim::kNIMMessageTypeAudio);
+	list_.emplace_back(nim::kNIMMessageTypeVideo);
+	list_.emplace_back(nim::kNIMMessageTypeLocation);
+	list_.emplace_back(nim::kNIMMessageTypeNotification);
+	list_.emplace_back(nim::kNIMMessageTypeFile);
+	list_.emplace_back(nim::kNIMMessageTypeTips);
+	list_.emplace_back(nim::kNIMMessageTypeRobot);
+	list_.emplace_back(nim::kNIMMessageTypeCustom);
+}
+std::vector<nim::NIMMessageType> MsgLog::AllMessageTypeList::ExclusionType(const std::vector<nim::NIMMessageType>& exclusion_type_list) const
+{
+	std::vector<nim::NIMMessageType> ret;
+	auto it = list_.begin();
+	while (it != list_.end())
+	{
+		if (std::find_if(exclusion_type_list.begin(), exclusion_type_list.end(), [&](nim::NIMMessageType type){
+			return type == *it;
+		}) == exclusion_type_list.end())
+			ret.emplace_back(*it);
+		it++;
+	}
+	return ret;
+}
+const MsgLog::AllMessageTypeList MsgLog::QueryMsgOnlineAsyncParam::AllMsgTypeList;
+MsgLog::QueryMsgOnlineAsyncParam::QueryMsgOnlineAsyncParam() :
+limit_count_(100),
+reverse_(true),
+need_save_to_local_(true),
+auto_download_attachment_(true),
+is_exclusion_type_(false)
+{
 
+}
+bool MsgLog::QueryMsgOnlineAsyncParam::FormatParam()
+{
+	if (id_.empty() || limit_count_ <= 0)
+		return false;
+	if (msg_type_list_.size() > 0)
+		need_save_to_local_ = false;
+	Json::Value extension;
+	Json::FastWriter fw;
+	extension[kNIMMsglogJsonExtKeyNeedAutoDownloadAttachment] = auto_download_attachment_;
+	std::vector<nim::NIMMessageType> msg_type_list;
+	if (!is_exclusion_type_)//获取指定消息类型
+		msg_type_list.assign(msg_type_list_.begin(), msg_type_list_.end());
+	else//排除指定的消息类型
+		msg_type_list = std::move(AllMsgTypeList.ExclusionType(msg_type_list_));
+	auto it = msg_type_list.begin();
+	while (it != msg_type_list.end())
+	{
+		extension[kNIMMsglogJsonExtKeyQueryMsgTypeList].append(*it);
+		it++;
+	}
+	json_extension_ = fw.write(extension);
+	return true;
+}
 static void CallbackQueryMsg(int res_code
 	, const char *id
 	, nim::NIMSessionType to_type
@@ -246,7 +305,22 @@ bool MsgLog::QueryMsgOnlineAsync(const std::string &id
 
 	return true;
 }
-
+bool MsgLog::QueryMsgOnlineAsync(const MsgLog::QueryMsgOnlineAsyncParam& param, const QueryMsgCallback& cb)
+{
+	if (!(const_cast<MsgLog::QueryMsgOnlineAsyncParam&>(param)).FormatParam())
+		return false;
+	return QueryMsgOnlineAsync(
+		param.id_,
+		param.to_type_,
+		param.limit_count_,
+		param.from_time_,
+		param.end_time_,
+		param.end_msg_id_,
+		param.reverse_,
+		param.need_save_to_local_,
+		cb,
+		param.json_extension_);
+}
 bool MsgLog::QueryMsgOfSpecifiedTypeInASessionAsync(nim::NIMSessionType to_type
 	, const std::string &id
 	, int limit_count

@@ -20,16 +20,6 @@ public:
 
 public:
 	/**
-	* 注册一个新账号
-	* @param[in] username 要注册的用户名
-	* @param[in] password 用户密码
-	* @param[in] nickname 用户昵称
-	* @param[in] cb 注册完毕的回调通知函数
-	* @return void	无返回值
-	*/
-	void InvokeRegisterAccount(const std::string &username, const std::string &password, const std::string &nickname, const OnRegisterAccountCallback& cb);
-
-	/**
 	* 获取本地保存的所有用户信息
 	* @return std::map<std::string, nim::UserNameCard>& 用户信息列表
 	*/

@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="module">
+      <UniqueIdentifier>{c749c96b-39c1-450e-9547-9872bac23369}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\service">
+      <UniqueIdentifier>{4b856121-d41e-4a52-8c35-720b2fb45a91}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\subscribe_event">
+      <UniqueIdentifier>{51b518ca-b131-48ec-a5a9-15f17278e3a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\login">
+      <UniqueIdentifier>{357e02b5-558c-45e8-8392-a777982c8028}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\local">
+      <UniqueIdentifier>{b4e3c14b-bf75-40a7-a517-0fc47024738a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="module\service\http_service.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+    <ClCompile Include="module\service\mute_black_service.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+    <ClCompile Include="module\service\notify_center.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+    <ClCompile Include="module\service\photo_service.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+    <ClCompile Include="module\service\team_service.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+    <ClCompile Include="module\service\user_service.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp" />
+    <ClCompile Include="module\subscribe_event\online_state_event_helper.cpp">
+      <Filter>module\subscribe_event</Filter>
+    </ClCompile>
+    <ClCompile Include="module\subscribe_event\subscribe_event_manager.cpp">
+      <Filter>module\subscribe_event</Filter>
+    </ClCompile>
+    <ClCompile Include="module\login\login_manager.cpp">
+      <Filter>module\login</Filter>
+    </ClCompile>
+    <ClCompile Include="module\local\local_helper.cpp">
+      <Filter>module\local</Filter>
+    </ClCompile>
+    <ClCompile Include="module\service\session_service.cpp">
+      <Filter>module\service</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="module\service\http_service.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+    <ClInclude Include="module\service\mute_black_service.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+    <ClInclude Include="module\service\notify_center.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+    <ClInclude Include="module\service\photo_service.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+    <ClInclude Include="module\service\team_service.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+    <ClInclude Include="module\service\user_service.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+    <ClInclude Include="nim_ui_dll.h" />
+    <ClInclude Include="resource.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+    <ClInclude Include="module\subscribe_event\online_state_event_helper.h">
+      <Filter>module\subscribe_event</Filter>
+    </ClInclude>
+    <ClInclude Include="module\subscribe_event\subscribe_event_manager.h">
+      <Filter>module\subscribe_event</Filter>
+    </ClInclude>
+    <ClInclude Include="module\login\login_manager.h">
+      <Filter>module\login</Filter>
+    </ClInclude>
+    <ClInclude Include="module\local\local_helper.h">
+      <Filter>module\local</Filter>
+    </ClInclude>
+    <ClInclude Include="module\service\session_service.h">
+      <Filter>module\service</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="nim_service.rc" />
+  </ItemGroup>
+</Project>

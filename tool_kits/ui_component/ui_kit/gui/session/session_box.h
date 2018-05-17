@@ -1,8 +1,8 @@
 ﻿#pragma once
 #include "callback/audio/audio_callback.h"
-#include "module/service/photo_service.h"
 #include "module/session/force_push_manager.h"
-#include "module/subscribe_event/subscribe_event_manager.h"
+#include "module/online_state_event/online_state_event_util.h"
+#include "nim_service/module/subscribe_event/subscribe_event_manager.h"
 #include "gui/session/control/bubbles/bubble_text.h"
 #include "gui/session/control/bubbles/bubble_image.h"
 #include "gui/session/control/bubbles/bubble_snapchat.h"
@@ -942,10 +942,10 @@ private:
 	/**
 	* 有群成员退出的回调函数
 	* @param[in] tid 群ID
-	* @param[in] uid 退出的群成员的帐号
+	* @param[in] uid_list 退出的群成员的帐号列表
 	* @return void 无返回值
 	*/
-	void OnTeamMemberRemove(const std::string& tid, const std::string& uid);
+	void OnTeamMemberRemove(const std::string& tid, const std::list<std::string>& uid_list);
 	
 	/**
 	* 有群成员信息改变的回调函数
@@ -1106,6 +1106,7 @@ private:
 	void OnTeamNotificationModeChangeCallback(const std::string& id, int64_t bits);
 
 	void OnNotifyChangeCallback(std::string id, bool mute);
+	void OnVChatSelectedCallback(const std::list<UTF8String>& selected_friends, const std::list<UTF8String>& selected_teams);
 #pragma endregion Team
 
 public:

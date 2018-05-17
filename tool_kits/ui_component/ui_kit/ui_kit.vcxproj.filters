@@ -189,12 +189,6 @@
     <ClInclude Include="gui\team_info\team_search.h">
       <Filter>gui\team_info</Filter>
     </ClInclude>
-    <ClInclude Include="module\service\team_service.h">
-      <Filter>module\service</Filter>
-    </ClInclude>
-    <ClInclude Include="module\session\ring.h">
-      <Filter>module\session</Filter>
-    </ClInclude>
     <ClInclude Include="module\session\session_manager.h">
       <Filter>module\session</Filter>
     </ClInclude>
@@ -219,18 +213,6 @@
     <ClInclude Include="module\rts\rts_manager.h">
       <Filter>module\rts</Filter>
     </ClInclude>
-    <ClInclude Include="callback\vchat\vchat_callback.h">
-      <Filter>callback\vchat</Filter>
-    </ClInclude>
-    <ClInclude Include="module\video\video_manager.h">
-      <Filter>module\video</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\video\video_form.h">
-      <Filter>gui\video</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\video\video_setting.h">
-      <Filter>gui\video</Filter>
-    </ClInclude>
     <ClInclude Include="gui\main\session_list.h">
       <Filter>gui\main</Filter>
     </ClInclude>
@@ -243,18 +225,6 @@
     <ClInclude Include="util\user.h">
       <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="module\service\mute_black_service.h">
-      <Filter>module\service</Filter>
-    </ClInclude>
-    <ClInclude Include="module\service\user_service.h">
-      <Filter>module\service</Filter>
-    </ClInclude>
-    <ClInclude Include="module\login\login_manager.h">
-      <Filter>module\login</Filter>
-    </ClInclude>
-    <ClInclude Include="module\service\notify_center.h">
-      <Filter>module\service</Filter>
-    </ClInclude>
     <ClInclude Include="resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
@@ -266,9 +236,6 @@
     </ClInclude>
     <ClInclude Include="gui\link\link_form.h">
       <Filter>gui\link</Filter>
-    </ClInclude>
-    <ClInclude Include="module\local\local_helper.h">
-      <Filter>module\local</Filter>
     </ClInclude>
     <ClInclude Include="callback\login\login_callback.h">
       <Filter>callback\login</Filter>
@@ -348,50 +315,11 @@
     <ClInclude Include="util\window_ex.h">
       <Filter>util</Filter>
     </ClInclude>
-    <ClInclude Include="module\video\video_frame_mng.h">
-      <Filter>module\video</Filter>
-    </ClInclude>
-    <ClInclude Include="module\service\http_service.h">
-      <Filter>module\service</Filter>
-    </ClInclude>
     <ClInclude Include="export\nim_ui_http_manager.h">
       <Filter>export</Filter>
     </ClInclude>
-    <ClInclude Include="module\video\audio_frame_mng.h">
-      <Filter>module\video</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\video\helper\screen_capture.h">
-      <Filter>gui\video\helper</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\video\helper\ui_barrage_control.h">
-      <Filter>gui\video\helper</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\video\helper\ui_bitmap_control.h">
-      <Filter>gui\video\helper</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\video\helper\yuv_image.h">
-      <Filter>gui\video\helper</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\video\screen_capture_tool.h">
-      <Filter>gui\video</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\video\window_select.h">
-      <Filter>gui\video</Filter>
-    </ClInclude>
-    <ClInclude Include="module\service\photo_service.h">
-      <Filter>module\service</Filter>
-    </ClInclude>
     <ClInclude Include="callback\login\data_sync_callback.h">
       <Filter>callback\login</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\toast\toast.h">
-      <Filter>gui\toast</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\video\helper\smooth.h">
-      <Filter>gui\video\helper</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\video\helper\colorbalance.h">
-      <Filter>gui\video\helper</Filter>
     </ClInclude>
     <ClInclude Include="gui\session\control\atme_view.h">
       <Filter>gui\session\control</Filter>
@@ -504,20 +432,11 @@
     <ClInclude Include="module\session\force_push_manager.h">
       <Filter>module\session</Filter>
     </ClInclude>
-    <ClInclude Include="gui\video\record_select.h">
-      <Filter>gui\video</Filter>
-    </ClInclude>
     <ClInclude Include="callback\subscribe_event\subscribe_event_callback.h">
       <Filter>callback\subscribe_event</Filter>
     </ClInclude>
     <ClInclude Include="module\db\user_db.h">
       <Filter>module\db</Filter>
-    </ClInclude>
-    <ClInclude Include="module\subscribe_event\subscribe_event_manager.h">
-      <Filter>module\subscribe_event</Filter>
-    </ClInclude>
-    <ClInclude Include="module\subscribe_event\online_state_event_helper.h">
-      <Filter>module\subscribe_event</Filter>
     </ClInclude>
     <ClInclude Include="export\nim_ui_subscribe_event_manager.h">
       <Filter>export</Filter>
@@ -537,11 +456,8 @@
     <ClInclude Include="gui\session\unread_form.h">
       <Filter>gui\session</Filter>
     </ClInclude>
-    <ClInclude Include="gui\video\multi_video_invite.h">
-      <Filter>gui\video</Filter>
-    </ClInclude>
-    <ClInclude Include="gui\video\multi_video_form.h">
-      <Filter>gui\video</Filter>
+    <ClInclude Include="module\online_state_event\online_state_event_util.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -572,12 +488,6 @@
     <ClCompile Include="gui\team_info\team_search.cpp">
       <Filter>gui\team_info</Filter>
     </ClCompile>
-    <ClCompile Include="module\service\team_service.cpp">
-      <Filter>module\service</Filter>
-    </ClCompile>
-    <ClCompile Include="module\session\ring.cpp">
-      <Filter>module\session</Filter>
-    </ClCompile>
     <ClCompile Include="module\session\session_manager.cpp">
       <Filter>module\session</Filter>
     </ClCompile>
@@ -602,21 +512,6 @@
     <ClCompile Include="module\rts\rts_manager.cpp">
       <Filter>module\rts</Filter>
     </ClCompile>
-    <ClCompile Include="callback\vchat\vchat_callback.cpp">
-      <Filter>callback\vchat</Filter>
-    </ClCompile>
-    <ClCompile Include="module\video\video_manager.cpp">
-      <Filter>module\video</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\video\video_form.cpp">
-      <Filter>gui\video</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\video\video_form_ui.cpp">
-      <Filter>gui\video</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\video\video_setting.cpp">
-      <Filter>gui\video</Filter>
-    </ClCompile>
     <ClCompile Include="gui\main\session_list.cpp">
       <Filter>gui\main</Filter>
     </ClCompile>
@@ -629,18 +524,6 @@
     <ClCompile Include="util\user.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="module\service\user_service.cpp">
-      <Filter>module\service</Filter>
-    </ClCompile>
-    <ClCompile Include="module\service\mute_black_service.cpp">
-      <Filter>module\service</Filter>
-    </ClCompile>
-    <ClCompile Include="module\login\login_manager.cpp">
-      <Filter>module\login</Filter>
-    </ClCompile>
-    <ClCompile Include="module\service\notify_center.cpp">
-      <Filter>module\service</Filter>
-    </ClCompile>
     <ClCompile Include="callback\audio\audio_callback.cpp">
       <Filter>callback\audio</Filter>
     </ClCompile>
@@ -649,9 +532,6 @@
     </ClCompile>
     <ClCompile Include="gui\link\link_form.cpp">
       <Filter>gui\link</Filter>
-    </ClCompile>
-    <ClCompile Include="module\local\local_helper.cpp">
-      <Filter>module\local</Filter>
     </ClCompile>
     <ClCompile Include="callback\login\login_callback.cpp">
       <Filter>callback\login</Filter>
@@ -725,50 +605,11 @@
     <ClCompile Include="util\window_ex.cpp">
       <Filter>util</Filter>
     </ClCompile>
-    <ClCompile Include="module\video\video_frame_mng.cpp">
-      <Filter>module\video</Filter>
-    </ClCompile>
-    <ClCompile Include="module\service\http_service.cpp">
-      <Filter>module\service</Filter>
-    </ClCompile>
     <ClCompile Include="export\nim_ui_http_manager.cpp">
       <Filter>export</Filter>
     </ClCompile>
-    <ClCompile Include="module\video\audio_frame_mng.cpp">
-      <Filter>module\video</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\video\helper\screen_capture.cpp">
-      <Filter>gui\video\helper</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\video\helper\ui_barrage_control.cpp">
-      <Filter>gui\video\helper</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\video\helper\ui_bitmap_control.cpp">
-      <Filter>gui\video\helper</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\video\helper\yuv_image.cpp">
-      <Filter>gui\video\helper</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\video\screen_capture_tool.cpp">
-      <Filter>gui\video</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\video\window_select.cpp">
-      <Filter>gui\video</Filter>
-    </ClCompile>
-    <ClCompile Include="module\service\photo_service.cpp">
-      <Filter>module\service</Filter>
-    </ClCompile>
     <ClCompile Include="callback\login\data_sync_callback.cpp">
       <Filter>callback\login</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\toast\toast.cpp">
-      <Filter>gui\toast</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\video\helper\smooth.cpp">
-      <Filter>gui\video\helper</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\video\helper\colorbalance.cpp">
-      <Filter>gui\video\helper</Filter>
     </ClCompile>
     <ClCompile Include="gui\session\control\atme_view.cpp">
       <Filter>gui\session\control</Filter>
@@ -914,20 +755,11 @@
     <ClCompile Include="module\session\force_push_manager.cpp">
       <Filter>module\session</Filter>
     </ClCompile>
-    <ClCompile Include="gui\video\record_select.cpp">
-      <Filter>gui\video</Filter>
-    </ClCompile>
     <ClCompile Include="callback\subscribe_event\subscribe_event_callback.cpp">
       <Filter>callback\subscribe_event</Filter>
     </ClCompile>
     <ClCompile Include="module\db\user_db.cpp">
       <Filter>module\db</Filter>
-    </ClCompile>
-    <ClCompile Include="module\subscribe_event\subscribe_event_manager.cpp">
-      <Filter>module\subscribe_event</Filter>
-    </ClCompile>
-    <ClCompile Include="module\subscribe_event\online_state_event_helper.cpp">
-      <Filter>module\subscribe_event</Filter>
     </ClCompile>
     <ClCompile Include="export\nim_ui_subscribe_event_manager.cpp">
       <Filter>export</Filter>
@@ -944,14 +776,11 @@
     <ClCompile Include="gui\session\control\unread_item.cpp">
       <Filter>gui\session\control</Filter>
     </ClCompile>
-    <ClCompile Include="gui\video\multi_video_invite.cpp">
-      <Filter>gui\video</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\video\multi_video_form.cpp">
-      <Filter>gui\video</Filter>
-    </ClCompile>
     <ClCompile Include="gui\session\unread_form.cpp">
       <Filter>gui\session</Filter>
+    </ClCompile>
+    <ClCompile Include="module\online_state_event\online_state_event_util.cpp">
+      <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,7 +1,5 @@
 ﻿#pragma once
 #include "module/session/session_util.h"
-#include "module/login/login_manager.h"
-#include "module/service/user_service.h"
 #include "shared/ui/msgbox.h"
 
 namespace nim_comp

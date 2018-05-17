@@ -2,9 +2,14 @@
 #include "gui/main/session_list.h"
 #include "callback/session/session_callback.h"
 #include "gui/main/team_event_form.h"
+#include "nim_service/module/service/session_service.h"
 
 namespace nim_ui
 {
+SessionListManager::SessionListManager()
+{
+	nim_comp::SessionService::GetInstance()->RegSessionDataChangedCallback(nbase::Bind(&SessionListManager::OnQuerySessionListCallback, this, std::placeholders::_1));
+}
 
 bool SessionListManager::AttachListBox(ui::ListBox *list_box)
 {
@@ -17,19 +22,6 @@ bool SessionListManager::AttachListBox(ui::ListBox *list_box)
 		session_list_.reset(new nim_comp::SessionList(list_box));
 	}
 	return true;
-}
-
-void SessionListManager::InvokeLoadSessionList()
-{
-	nim::Session::QueryAllRecentSessionAsync(nbase::Bind(&nim_comp::TalkCallback::OnQuerySessionListCallback, std::placeholders::_1, std::placeholders::_2));
-}
-
-nim_comp::SessionItem* SessionListManager::GetSessionItem(const std::string &session_id)
-{
-	if (NULL == session_list_)
-		return NULL;
-	
-	return session_list_->GetSessionItem(session_id);
 }
 
 void SessionListManager::QueryUnreadSysMsgCount()
@@ -95,23 +87,6 @@ void SessionListManager::OnQuerySessionListCallback(const std::list<nim::Session
 {
 	if (sessions.empty())
 		return;
-
-	// 最近会话列表会在登录后较早的收到，这时批量的拉取涉及到的用户信息把这些用户添加到查询队列里
-	// 避免创建会话列表项时，列表项控件查询用户信息而导致频繁调用用户信息获取接口
-	std::list<std::string> user_ids;
-	for each (auto& session in sessions)
-	{
-		if (session.type_ == nim::kNIMSessionTypeP2P)
-		{
-			user_ids.push_back(session.id_);
-		}
-		else
-		{
-			user_ids.push_back(session.msg_sender_accid_);
-		}
-	}
-	nim_comp::UserService::GetInstance()->DoQueryUserInfos(user_ids);
-	nim_comp::SubscribeEventManager::GetInstance()->SubscribeAllSessionEvent(sessions);
 
 	for each (auto& session in sessions)
 	{

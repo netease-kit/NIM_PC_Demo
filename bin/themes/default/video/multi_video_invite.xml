@@ -21,7 +21,7 @@
       <Box width="stretch" height="1" bkcolor="bk_split_line"/>
 
       <HBox name="confirm_page" bkcolor="bk_wnd_lightcolor"  margin="0,0,0,15" valign="bottom" height="54">
-        <Button name="jump_session" width="27" height="23" margin="13,0,0,0" valign="center" tooltiptextid="STRID_VIDEO_MICROPHONE" enabled="true" normalimage="ico_im_normal.png" hotimage="ico_im_hover.png" pushedimage="ico_im_push.png"/>
+        <Button name="jump_session" width="27" height="23" margin="13,0,0,0" valign="center" tooltiptextid="STRID_VIDEO_MICROPHONE" enabled="true" normalimage="ico_im_normal.png" hotimage="ico_im_hover.png" pushedimage="ico_im_push.png" visible="false" />
        
         <ButtonBox name="refuse" width="80"  height="30" margin="72,0,0,0" valign="center" normaltextcolor="white" font="3"  textid="STRING_REFUSE" textpadding="35,0,0,0"   normalimage="refuse_normal.png" hotimage="refuse_hover.png" pushedimage="refuse_push.png" >
         </ButtonBox>

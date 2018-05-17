@@ -241,12 +241,20 @@ void MsgRecordForm::ShowMore(bool more)
 {
 	is_loading_ = true;
 	QLOG_APP(L"query online msg begin: id={0} type={1} last_time={2} last_server_id={3}") <<session_id_ <<session_type_ <<farst_msg_time_ <<last_server_id_;
-	Json::Value extension;
-	Json::FastWriter writer;
-	extension[nim::kNIMMsglogJsonExtKeyNeedAutoDownloadAttachment] = true;
-	std::string json_extension = writer.write(extension);
+	
+	nim::MsgLog::QueryMsgOnlineAsyncParam param;
+	param.id_ = session_id_;
+	param.to_type_ = session_type_;
+	param.limit_count_ = kMsgLogNumberShow;
+	param.from_time_ = 0;
+	param.end_time_ = farst_msg_time_;
+	param.end_msg_id_ = last_server_id_;
+	param.reverse_ = false;
+	param.need_save_to_local_ = true;
+	param.auto_download_attachment_ = true;
 	nim::MsgLog::QueryMsgCallback cb = nbase::Bind(&MsgRecordForm::QueryMsgOnlineCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4);
-	nim::MsgLog::QueryMsgOnlineAsync(session_id_, session_type_, kMsgLogNumberShow, 0, farst_msg_time_, last_server_id_, false, true, cb, json_extension);
+	
+	nim::MsgLog::QueryMsgOnlineAsync(param,cb);
 }
 
 void MsgRecordForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)

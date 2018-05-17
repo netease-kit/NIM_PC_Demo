@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "gui/session/session_box.h"
-#include "ring.h"
+#include "shared/ring.h"
 
 namespace nim_comp
 {
@@ -200,6 +200,6 @@ private:
 	std::map<std::string, SessionBox*>	session_box_map_;
 
 	std::map<std::string, uint64_t>		team_list_bits_;
-	Ring ring_;
+	shared::Ring ring_;
 };
 }

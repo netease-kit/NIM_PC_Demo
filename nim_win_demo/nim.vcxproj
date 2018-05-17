@@ -98,16 +98,17 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;NIM_SDK_DLL_IMPORT;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\tool_kits\ui_component\nim_service\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;..\app_sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
-      <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;4819;%(DisableSpecificWarnings)</DisableSpecificWarnings>
+      <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+      <AdditionalOptions>/Zm200 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libeay32.lib;ssleay32.lib;custom_app_sdk_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
@@ -118,16 +119,17 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__x86_64__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;NIM_SDK_DLL_IMPORT;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\tool_kits\ui_component\nim_service\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;..\app_sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <TreatWarningAsError>true</TreatWarningAsError>
       <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
+      <AdditionalOptions>/Zm110 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libeay32_d.lib;ssleay32_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libeay32_d.lib;ssleay32_d.lib;custom_app_sdk_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
       <IgnoreSpecificDefaultLibraries>LIBCMTD.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
@@ -142,7 +144,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWarningAsError>false</TreatWarningAsError>
       <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\tool_kits\ui_component\nim_service\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;..\app_sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -151,7 +153,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>dbghelp.lib;libyuv.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;libyuv.lib;libeay32.lib;ssleay32.lib;custom_app_sdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
     </Link>
@@ -166,7 +168,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__x86_64__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWarningAsError>false</TreatWarningAsError>
       <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
-      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\tool_kits\ui_component\nim_service\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\json\;..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\chatroom\;..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;..\app_sdk\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -175,7 +177,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>dbghelp.lib;libyuv.lib;libeay32.lib;ssleay32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;libyuv.lib;libeay32.lib;ssleay32.lib;custom_app_sdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
@@ -250,6 +252,12 @@
     </ProjectReference>
     <ProjectReference Include="..\tool_kits\shared\shared.vcxproj">
       <Project>{9951345f-620b-4bed-bb51-4f928cafd454}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\tool_kits\ui_component\av_kit\av_kit.vcxproj">
+      <Project>{d4e26a0d-098b-46c5-bc9c-38679b902e23}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\tool_kits\ui_component\nim_service\nim_service.vcxproj">
+      <Project>{5932c2b5-bce9-4c61-9396-59484ac662e8}</Project>
     </ProjectReference>
     <ProjectReference Include="..\tool_kits\ui_component\ui_kit\ui_kit.vcxproj">
       <Project>{60840bd6-d601-4173-8944-e90809606fcf}</Project>

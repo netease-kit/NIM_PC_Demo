@@ -28,6 +28,14 @@ public:
 	static void OnReceiveMsgCallback(__int64 room_id, const ChatRoomMessage& result);
 
 	/**
+	* 收到普通消息的回调，需要在程序开始运行时就注册好。
+	* @param[in] room_id 消息所属房间号
+	* @param[in] result 消息内容及其他相关信息
+	* @return void	无返回值
+	*/
+	static void OnReceiveMsgsCallback(__int64 room_id, const std::list<ChatRoomMessage>& result);
+
+	/**
 	* 发送消息的结果回调，需要在程序开始运行时就注册好。
 	* @param[in] room_id 消息所属房间号
 	* @param[in] result 消息内容及其他相关信息
@@ -48,10 +56,10 @@ public:
 	* 退出某聊天室的结果回调，需要在程序开始运行时就注册好。
 	* @param[in] room_id 消息所属房间号
 	* @param[in] error_code 错误码
-	* @param[in] exit_reason 退出原因
+	* @param[in] exit_info 退出时的信息
 	* @return void	无返回值
 	*/
-	static void OnExitCallback(__int64 room_id, int error_code, NIMChatRoomExitReason exit_reason);
+	static void OnExitCallback(__int64 room_id, int error_code, nim_chatroom::NIMChatRoomExitReasonInfo exit_info);
 
 	/**
 	* 收到聊天室通知的结果回调，需要在程序开始运行时就注册好。

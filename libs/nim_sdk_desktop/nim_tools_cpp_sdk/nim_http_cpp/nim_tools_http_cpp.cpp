@@ -81,16 +81,20 @@ struct ResponseCallbackUserData
 	TransferCallback* transfer_cb_pointer;
 };
 
-void Init()
+void Init(const std::wstring &dll_path/* = L""*/)
 {
 	HMODULE hmod;
-// #ifdef _DEBUG
-// 	hmod = ::LoadLibrary(L"nim_tools_http_d.dll");
-// #else
-	hmod = ::LoadLibrary(L"nim_tools_http.dll");
-// #endif
+	std::wstring dll_file(dll_path);
+	if (!dll_file.empty() && (*dll_file.rbegin() != L'/' && *dll_file.rbegin() != L'\\'))
+		dll_file.append(1, L'/');
+//#ifdef _DEBUG
+//	dll_file.append(L"nim_tools_http_d.dll");
+//#else
+	dll_file.append(L"nim_tools_http.dll");
+//#endif
+	hmod = ::LoadLibrary(dll_file.c_str());
 
-	g_nim_http_init = (typeof_nim_http_init)GetProcAddress(hmod,"nim_http_init");
+	g_nim_http_init = (typeof_nim_http_init)GetProcAddress(hmod, "nim_http_init");
 	g_nim_http_uninit = (typeof_nim_http_uninit)GetProcAddress(hmod,"nim_http_uninit");
 	g_nim_http_init_log = (typeof_nim_http_init_log)GetProcAddress(hmod, "nim_http_init_log");
 	g_nim_http_is_init_log = (typeof_nim_http_is_init_log)GetProcAddress(hmod, "nim_http_is_init_log");

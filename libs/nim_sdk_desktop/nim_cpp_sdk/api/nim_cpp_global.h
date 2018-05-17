@@ -39,6 +39,7 @@ public:
 	typedef std::function<void(NIMSDKException exception,const std::string& log)> ExceptionCallback; 
 	typedef std::function<void(NIMResCode rescode, const CachedFileInfo &info)> GetCachedFileInfoCallback;
 	typedef std::function<void(NIMResCode rescode)> DeleteCachedFileCallback;
+	typedef DeleteCachedFileCallback SDKFeedbackCallback;
 #else
 	typedef std::function<void(int log_level,const std::string& log)> SDKLogCallback; 
 #endif
@@ -111,6 +112,15 @@ public:
 	* @return void 无返回值
 	*/
 	static void DeleteSDKCachedFileAsync(const std::string &login_id, const std::string &file_type, int64_t end_timestamp, const std::string &json_extension, const DeleteCachedFileCallback &cb);
+
+	/** @fn void SDKFeedbackAsync(const std::string &url, const std::string &json_extension, const SDKFeedbackCallback &cb);
+	* SDK 反馈
+	* @param[in] url 开发者需将所需要反馈的文件（dump，应用日志等）上传至nos。
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb
+	* @return void 无返回值
+	*/
+	static void SDKFeedbackAsync(const std::string &url, const std::string &json_extension, const SDKFeedbackCallback &cb);
 
 #else
 	/** @fn void nim_client_reg_kickout_other_client_cb(const char *json_extension, nim_json_transport_cb_func cb, const void *user_data)

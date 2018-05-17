@@ -1,4 +1,4 @@
-#ifndef UI_UTILS_WINIMPLBASE_H_
+ï»¿#ifndef UI_UTILS_WINIMPLBASE_H_
 #define UI_UTILS_WINIMPLBASE_H_
 
 #pragma once
@@ -14,10 +14,10 @@ namespace ui
 
 enum UILIB_RESOURCETYPE
 {
-	UILIB_FILE=1,		// À´×Ô´ÅÅÌÎÄ¼ş
-	UILIB_ZIP,			// À´×Ô´ÅÅÌzipÑ¹Ëõ°ü
-	UILIB_RESOURCE,		// À´×Ô×ÊÔ´
-	UILIB_ZIPRESOURCE,	// À´×Ô×ÊÔ´µÄzipÑ¹Ëõ°ü
+	UILIB_FILE = 1,		// æ¥è‡ªç£ç›˜æ–‡ä»¶
+	UILIB_ZIP,			// æ¥è‡ªç£ç›˜zipå‹ç¼©åŒ…
+	UILIB_RESOURCE,		// æ¥è‡ªèµ„æº
+	UILIB_ZIPRESOURCE,	// æ¥è‡ªèµ„æºçš„zipå‹ç¼©åŒ…
 };
 
 class UILIB_API WindowImplBase : public Window, public IUIMessageFilter
@@ -55,6 +55,27 @@ public:
 	virtual LRESULT OnLButtonUp(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
 	virtual LRESULT OnMouseMove(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
+
+public:
+	/**
+	* æ¿€æ´»çª—å£
+	* @return void æ— è¿”å›å€¼
+	*/
+	virtual void ActiveWindow();
+
+	/**
+	* è®¾ç½®çª—å£æ ‡é¢˜
+	* @param[in] title çª—å£æ ‡é¢˜
+	* @return void æ— è¿”å›å€¼
+	*/
+	virtual void SetTaskbarTitle(const std::wstring &title);
+
+	/**
+	* ç½®é¡¶çª—å£
+	* @param[in] forever æ˜¯å¦ä¸€ç›´ç½®é¡¶
+	* @return void æ— è¿”å›å€¼
+	*/
+	void ToTopMost(bool forever);
 		
 protected:
 	virtual std::wstring GetSkinFolder() = 0;
@@ -64,7 +85,7 @@ protected:
 	static LPBYTE m_lpResourceZIPBuffer;
 
 private:
-	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);	//¹ÊÒâ²»Åª³ÉĞéº¯Êı£¬ĞèÒª¶¨ÖÆ´¦ÀíÊ¹ÓÃInitWindowº¯Êı
+	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);	//æ•…æ„ä¸å¼„æˆè™šå‡½æ•°ï¼Œéœ€è¦å®šåˆ¶å¤„ç†ä½¿ç”¨InitWindowå‡½æ•°
 	bool OnButtonClick(EventArgs* param);
 };
 

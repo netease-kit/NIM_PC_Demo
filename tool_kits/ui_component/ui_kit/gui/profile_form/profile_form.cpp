@@ -2,7 +2,7 @@
 #include "callback/multiport/multiport_push_callback.h"
 #include "module/session/session_manager.h"
 #include "module/service/mute_black_service.h"
-#include "module/video/video_manager.h"
+#include "av_kit/module/video/video_manager.h"
 #include "head_modify_form.h"
 #include "api/nim_cpp_friend.h"
 #include "callback/team/team_callback.h"

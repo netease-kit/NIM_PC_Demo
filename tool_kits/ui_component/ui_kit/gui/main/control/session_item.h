@@ -1,7 +1,5 @@
 ﻿#pragma once
 #include "module/session/session_util.h"
-#include "module/login/login_manager.h"
-#include "module/service/user_service.h"
 #include "module/subscribe_event/subscribe_event_manager.h"
 
 enum SessionEventType

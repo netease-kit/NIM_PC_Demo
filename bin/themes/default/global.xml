@@ -57,7 +57,17 @@
     <Font name="system" size="14" underline="true"/>
     <!--27-->
     <Font name="system" size="16" underline="true"/>
-    
+	<!--28-->
+    <Font name="system" size="32" />
+  
+  <!--微软雅黑-->
+  <!--29-->
+  <Font name="system" size="12"/>
+  <!--30-->
+  <Font name="system" size="14"/>
+  <!--31-->
+  <Font name="system" size="16"/>    
+  
     <!--文字色值，不带透明层-->
     <TextColor name="textdefaultcolor" value="#ff333333"/>
     <TextColor name="textdefaultdisablecolor" value="#ffa1aebc"/>
@@ -294,5 +304,16 @@
     <Class name="prompt" value="promptmode=&quot;true&quot; promptcolor=&quot;edit_tip&quot;"/>
     <Class name="edit" value="hotimage=&quot;file='../public/edit/edit1.png' corner='10,10,10,10'&quot; focusedimage=&quot;file='../public/edit/edit2.png' corner='10,10,10,10'&quot;"/>
     <Class name="input" value="normalimage=&quot;file='../public/edit/edit0.png' corner='10,10,10,10'&quot; hotimage=&quot;file='../public/edit/edit0.png' corner='10,10,10,10'&quot; focusedimage=&quot;file='../public/edit/edit0.png' corner='10,10,10,10'&quot; disabledimage=&quot;file='../public/edit/edit0.png' corner='10,10,10,10' fade='80'&quot;"/>
+	
+	    <!--音视频专用-->
+    <TextColor name="bk_multi_video_content" value="#ff1D242E"/>
+    <TextColor name="bk_video" value="#ff222222"/>
+    <TextColor name="bk_video_title" value="#ff2b2f33"/>
+    <TextColor name="bk_video_content" value="#ff3c4147"/>
+   <TextColor name="bk_video_tip" value="#ff1b1d1f"/>
+   <TextColor name="bk_multivchat_text_title" value="#ff000000"/>
+   <TextColor name="bk_multivchat_text_content" value="#ff999999"/>
+  <TextColor name="bk_split_line" value="#ff55A0F5"/>
+  <TextColor name="bk_no_video" value="#ff3c4046"/>
 
 </Global>

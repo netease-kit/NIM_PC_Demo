@@ -684,6 +684,18 @@ struct ChatRoomQueueElement
 /** @brief 聊天室麦序队列*/
 typedef std::list<ChatRoomQueueElement> ChatRoomQueue;
 
+/** @brief 聊天室退出时的信息*/
+struct NIMChatRoomExitReasonInfo
+{
+	std::string notify_ext_;/**<string 附加信息长度限制2048字节 */
+	NIMChatRoomExitReason code_;/**< enum 退出原因的代码 */
+	operator NIMChatRoomExitReason() const {return code_;}
+};
+bool operator == (const NIMChatRoomExitReasonInfo& info,NIMChatRoomExitReason code);
+
+
+
+
 /** @fn bool ParseChatRoomEnterCallbackResultInfo(const std::string& result, ChatRoomInfo& room_info, ChatRoomMemberInfo& my_info)
   * @brief 解析聊天室登录结果
   * @param[in] result 

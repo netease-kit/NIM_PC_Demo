@@ -12,6 +12,8 @@
 #include "export/nim_ui_window_manager.h"
 #include "util/user.h"
 #include "gui/contact_select_form/contact_select_form.h"
+#include "module/online_state_event/online_state_event_util.h"
+
 
 using namespace ui;
 
@@ -199,7 +201,7 @@ void SessionBox::InitSessionBox()
 	if (session_type_ == nim::kNIMSessionTypeTeam)
 	{
 		unregister_cb.Add(TeamService::GetInstance()->RegAddTeamMember(nbase::Bind(&SessionBox::OnTeamMemberAdd, this, std::placeholders::_1, std::placeholders::_2)));
-		unregister_cb.Add(TeamService::GetInstance()->RegRemoveTeamMember(nbase::Bind(&SessionBox::OnTeamMemberRemove, this, std::placeholders::_1, std::placeholders::_2)));
+		unregister_cb.Add(TeamService::GetInstance()->RegRemoveTeamMemberList(nbase::Bind(&SessionBox::OnTeamMemberRemove, this, std::placeholders::_1, std::placeholders::_2)));
 		unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamMember(nbase::Bind(&SessionBox::OnTeamMemberChange, this, std::placeholders::_1, std::placeholders::_2)));
 		unregister_cb.Add(TeamService::GetInstance()->RegSetTeamAdmin(nbase::Bind(&SessionBox::OnTeamAdminSet, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3)));
 		unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamOwner(nbase::Bind(&SessionBox::OnTeamOwnerChange, this, std::placeholders::_1, std::placeholders::_2)));
@@ -882,6 +884,40 @@ void SessionBox::SendText(const std::string &text, bool team_msg_need_ack/* = fa
 	if (msg.type_ != nim::kNIMMessageTypeRobot)
 	{
 		msg.type_ = nim::kNIMMessageTypeText;
+		if (GetConfigValue("client_antispam") == "1")
+		{
+			nim::Tool::FilterClientAntispam(msg.content_, "*", "", ToWeakCallback([this, msg](bool succeed, int ret, const std::string &content)
+			{
+				nim::IMMessage msgex = msg;
+				if (ret == 1)
+				{
+					msgex.content_ = content;
+				}
+				else if (ret == 2)
+				{
+					std::wstring content = L"消息含有违禁词，禁止发送";
+					nim::IMMessage notice_msg;
+					notice_msg.client_msg_id_ = nim::Tool::GetUuid();
+					notice_msg.content_ = nbase::UTF16ToUTF8(content);
+					MsgBubbleNotice* cell = new MsgBubbleNotice;
+					GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
+					msg_list_->Add(cell);
+					cell->InitControl();
+					cell->InitInfo(notice_msg, session_id_, true);
+					return;
+				}
+				else if (ret == 3)
+				{
+					msgex.msg_setting_.anti_spam_enable_ = nim::BS_TRUE;
+					msgex.msg_setting_.anti_spam_content_ = msg.content_;
+					msgex.msg_setting_.client_anti_spam_hitting_ = nim::BS_TRUE;
+				}
+				std::string json_msg = nim::Talk::CreateTextMessage(msgex.receiver_accid_, msgex.session_type_, msgex.client_msg_id_, msgex.content_, msgex.msg_setting_, msgex.timetag_);
+				AddSendingMsg(msgex);
+				nim::Talk::SendMsg(json_msg);
+			}));
+			return;
+		}
 		json_msg = nim::Talk::CreateTextMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, msg.content_, msg.msg_setting_, msg.timetag_);
 	}
 	else
@@ -1479,7 +1515,7 @@ void SessionBox::SetOnlineState(const EventDataEx &data)
 {
 	if (session_type_ != nim::kNIMSessionTypeTeam)
 	{
-		label_online_state_->SetText(OnlineStateEventHelper::GetOnlineState(data.online_client_, data.multi_config_, false));
+		label_online_state_->SetText(OnlineStateEventUtil::GetOnlineState(data.online_client_, data.multi_config_, false));
 	}
 }
 

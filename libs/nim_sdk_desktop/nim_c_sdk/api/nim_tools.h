@@ -81,16 +81,29 @@ NIM_SDK_DLL_API	const char * nim_tool_get_uuid();
   */
 NIM_SDK_DLL_API void nim_tool_get_audio_text_async(const char *json_audio_info, const char *json_extension, nim_tool_get_audio_text_cb_func cb, const void *user_data);
 
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+/** @fn void nim_tool_filter_client_antispam_async(const char* text, const char* replace_str, const char* lib_name, const char *json_extension, nim_tool_filter_client_antispam_cb_func cb, const void *user_data)
+  * 客户端反垃圾
+  * @param[in] text 文本内容，UTF-8
+  * @param[in] replace_str 进行替换的字符串，UTF-8
+  * @param[in] lib_name 词库名称，UTF-8
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb 回调
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_tool_filter_client_antispam_async(const char* text, const char* replace_str, const char* lib_name, const char *json_extension, nim_tool_filter_client_antispam_cb_func cb, const void *user_data);
+
+#else
 /** @fn char* nim_tool_replace_text_matched_keywords(char* text, char* replace_str, char* lib_name)
 * 如果文本匹配词库中的关键词则进行替换，调用free释放返回的字符串
 * @param[in] text 文本内容，UTF-8
 * @param[in] replace_str 进行替换的字符串，UTF-8
 * @param[in] lib_name 词库名称，UTF-8
-* @return const char * 返回的替换后的字符串(WIN32平台 返回字符串为"2"时表明含有敏感词不允许发送；"3"表明需要将内容设置在消息结构的反垃圾字段里，由服务器过滤；其他内容可以作为消息正常发送)
+* @return const char * 返回的替换后的字符串
 */
 NIM_SDK_DLL_API char* nim_tool_replace_text_matched_keywords(char* text, char* replace_str, char* lib_name);
 
-#ifndef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn int nim_tool_regex_is_match(char* text, char* pattern)
 * 检查text是否匹配模式pattern
 * @param[in] text 文本内容，UTF-8

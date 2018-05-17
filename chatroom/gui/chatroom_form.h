@@ -37,6 +37,7 @@ public:
 	__int64 GetRoomId();
 
 	void OnReceiveMsgCallback(const ChatRoomMessage& result);
+	void OnReceiveMsgsCallback(const std::list<ChatRoomMessage>& result);
 	void OnEnterCallback(int error_code, const ChatRoomInfo& info, const ChatRoomMemberInfo& my_info);
 	void OnGetChatRoomInfoCallback(__int64 room_id, int error_code, const ChatRoomInfo& info);
 	void OnNotificationCallback(const ChatRoomNotification& notification);

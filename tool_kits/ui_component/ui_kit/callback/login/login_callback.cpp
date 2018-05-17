@@ -76,31 +76,39 @@ void NimLogout(nim::NIMLogoutType type = nim::kNIMLogoutAppExit)
 
 void LoginCallback::DoLogin(std::string user, std::string pass)
 {
-	assert(LoginManager::GetInstance()->GetLoginStatus() == LoginStatus_NONE);
-	LoginManager::GetInstance()->SetLoginStatus(LoginStatus_LOGIN);
-
-	LoginManager::GetInstance()->SetAccount(user);
-	std::string pass_md5 = QString::GetMd5(pass); //密码MD5加密（用户自己的应用请去掉加密）
-	LoginManager::GetInstance()->SetPassword(pass_md5);
-
-	_InitUserFolder();
-	_InitLog();
-	{
-		int ver = 0;
-		std::wstring vf;
-		LocalHelper::GetAppLocalVersion(ver, vf);
-		QLOG_APP(L"App Version {0}") << ver;
-		QLOG_APP(L"Account {0}") << LoginManager::GetInstance()->GetAccount();
-		QLOG_APP(L"UI ThreadId {0}") << GetCurrentThreadId();
-		QLOG_APP(L"-----login begin-----");
-	}
-
-	//注意：
-	//1. app key是应用的标识，不同应用之间的数据（用户、消息、群组等）是完全隔离的。开发自己的应用时，请替换为自己的app key。
-	//2. 用户登录自己的应用是不需要对密码md5加密的，替换app key之后，请记得去掉加密。
-	std::string app_key = GetConfigValueAppKey();
-	auto cb = std::bind(OnLoginCallback, std::placeholders::_1, nullptr);
-	nim::Client::Login(app_key, LoginManager::GetInstance()->GetAccount(), LoginManager::GetInstance()->GetPassword(), cb);
+	static auto dologin_task = [](bool do_login,const std::string& formated_user, const std::string& formated_pass){
+		if (!do_login)
+			return;
+		assert(LoginManager::GetInstance()->GetLoginStatus() == LoginStatus_NONE);
+		LoginManager::GetInstance()->SetLoginStatus(LoginStatus_LOGIN);
+		LoginManager::GetInstance()->SetAccount(formated_user);	
+		LoginManager::GetInstance()->SetPassword(formated_pass);
+		_InitUserFolder();
+		_InitLog();
+		{
+			int ver = 0;
+			std::wstring vf;
+			LocalHelper::GetAppLocalVersion(ver, vf);
+			QLOG_APP(L"App Version {0}") << ver;
+			QLOG_APP(L"Account {0}") << LoginManager::GetInstance()->GetAccount();
+			QLOG_APP(L"UI ThreadId {0}") << GetCurrentThreadId();
+			QLOG_APP(L"-----login begin-----");
+		}
+		//注意：
+		//1. app key是应用的标识，不同应用之间的数据（用户、消息、群组等）是完全隔离的。开发自己的应用时，请替换为自己的app key。
+		//2. 用户登录自己的应用是不需要对密码md5加密的，替换app key之后，请记得去掉加密。
+		std::string app_key = app_sdk::AppSDKInterface::GetAppKey();
+		auto cb = std::bind(OnLoginCallback, std::placeholders::_1, nullptr);
+		nim::Client::Login(app_key, LoginManager::GetInstance()->GetAccount(), LoginManager::GetInstance()->GetPassword(), cb);
+	};
+	app_sdk::AppSDKInterface::GetInstance()->InvokeFormatAccountAndPassword(user, pass, [](bool do_login, const std::string& formated_user, const std::string& formated_pass){
+		if (nbase::FrameworkThread::GetManagedThreadId() != ThreadId::kThreadUI)
+			Post2UI([=](){
+			dologin_task(do_login, formated_user, formated_pass); 
+		});
+		else
+			dologin_task(do_login, formated_user, formated_pass);
+	});
 }
 
 void LoginCallback::OnLoginCallback(const nim::LoginRes& login_res, const void* user_data)

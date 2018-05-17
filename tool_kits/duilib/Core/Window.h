@@ -81,7 +81,10 @@ public:
 	virtual void Close(UINT nRet = IDOK);
 
     void ShowWindow(bool bShow = true, bool bTakeFocus = true);
+	//不推荐
     UINT ShowModal();
+	//推荐
+	void ShowModalFake(HWND parent_hwnd);
     void CenterWindow();	// 居中，支持扩展屏幕
     void SetIcon(UINT nRes);
 
@@ -293,6 +296,8 @@ protected:
 	nbase::WeakCallbackFlag m_closeFlag;
 	
 	Shadow m_shadow;
+
+	bool m_bFakeModal = false;
 };
 
 } // namespace ui

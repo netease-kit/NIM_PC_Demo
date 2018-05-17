@@ -579,8 +579,10 @@ bool ChatroomForm::KickMenuItemClick(ui::EventArgs* args)
 {
 	if (clicked_user_account_.empty())
 		return true;
-
-	ChatRoom::KickMemberAsync(room_id_, clicked_user_account_, "", nbase::Bind(&ChatroomForm::OnKickMemberCallback, this, std::placeholders::_1, std::placeholders::_2));
+	Json::Value notify_ext;
+	notify_ext["operator_id"] = my_info_.account_id_;
+	notify_ext["operator_nick"] = my_info_.nick_;
+	ChatRoom::KickMemberAsync(room_id_, clicked_user_account_, Json::FastWriter().write(notify_ext), nbase::Bind(&ChatroomForm::OnKickMemberCallback, this, std::placeholders::_1, std::placeholders::_2));
 	kicked_user_account_ = clicked_user_account_;
 
 	clicked_user_account_.clear();

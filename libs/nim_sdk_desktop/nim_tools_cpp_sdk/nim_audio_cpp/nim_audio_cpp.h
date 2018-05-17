@@ -31,11 +31,12 @@ class Audio
 
 public:
 	/** bool Init(const std::wstring& user_data_parent_path)
-	* NIM SDK 初始化语音模块
+	* NIM SDK 初始化语音模块	
 	* @param[in] user_data_parent_path 缓存目录
+	* @param[in] dll_path 语音模块所在目录
 	* @return bool true 调用成功，false 调用失败
 	*/
-	static bool Init(const std::wstring& user_data_parent_path);
+	static bool Init(const std::wstring& user_data_parent_path,const std::wstring& dll_path = L"");
 
 	/** void Cleanup()
 	* NIM SDK 卸载语音模块（只有在主程序关闭时才有必要调用此接口）

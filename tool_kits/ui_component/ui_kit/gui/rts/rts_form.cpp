@@ -1,6 +1,6 @@
 ﻿#include "rts_form.h"
 
-#include "module/video/video_manager.h"
+#include "av_kit/module/video/video_manager.h"
 #include "module/login/login_manager.h"
 #include "module/session/session_manager.h"
 

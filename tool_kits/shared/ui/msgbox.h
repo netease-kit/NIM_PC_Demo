@@ -1,5 +1,4 @@
 #pragma once
-//#include "window_ex.h"
 
 enum MsgBoxRet
 {
@@ -9,7 +8,7 @@ enum MsgBoxRet
 
 typedef std::function<void(MsgBoxRet)> MsgboxCallback; 
 
-class MsgBox : public ui::WindowImplBase//WindowEx
+class MsgBox : public ui::WindowImplBase
 {
 public:
 	friend void ShowMsgBox(HWND hwnd, MsgboxCallback cb,

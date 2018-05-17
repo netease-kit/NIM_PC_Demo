@@ -26,19 +26,6 @@ public:
 	bool AttachListBox(ui::ListBox *list_box);
 
 	/**
-	* 主动向sdk查询之前保存的会话列表，然后逐个添加到界面的会话列表中
-	* @return void 无返回值
-	*/
-	void InvokeLoadSessionList();
-
-	/**
-	* 从会话列表查找会话控件
-	* @param[in] session_id 会话id
-	* @return SessionItem* 会话控件的指针
-	*/
-	nim_comp::SessionItem* GetSessionItem(const std::string &session_id);
-
-	/**
 	* 主动向sdk查询未读的系统消息数
 	* @return void 无返回值
 	*/
@@ -110,7 +97,7 @@ public:
 	void OnQuerySessionListCallback(const std::list<nim::SessionData>& sessions);
 
 private:
-	SessionListManager(){};
+	SessionListManager();
 	~SessionListManager(){};
 	std::unique_ptr<nim_comp::SessionList> session_list_;
 };

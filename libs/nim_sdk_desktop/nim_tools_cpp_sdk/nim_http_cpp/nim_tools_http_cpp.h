@@ -62,7 +62,7 @@ class HttpRequest;
 * NIM HTTP 初始化
 * @return void 无返回值
 */
-void Init();
+void Init(const std::wstring &dll_path = L"");
 
 /** @fn void Uninit()
 * NIM HTTP 反初始化

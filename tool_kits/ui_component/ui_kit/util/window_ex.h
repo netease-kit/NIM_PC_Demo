@@ -65,20 +65,6 @@ public:
 	*/
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
-	/**
-	* 激活窗口
-	* @return void 无返回值
-	*/
-	virtual void ActiveWindow();
-
-	/**
-	* 设置窗口标题
-	* @param[in] title 窗口标题
-	* @return void 无返回值
-	*/
-	virtual void SetTaskbarTitle(const std::wstring &title);
-
-
 private:
 	/**
 	* 从WindowManager中注册自己
@@ -99,11 +85,4 @@ private:
 */
 POINT GetPopupWindowPos(WindowEx* window);
 
-/**
-* 置顶某个窗口
-* @param[in] hwnd 窗口句柄
-* @param[in] forever 是否一直置顶
-* @return void 无返回值
-*/
-void ToTopMost(HWND hwnd, bool forever);
 }

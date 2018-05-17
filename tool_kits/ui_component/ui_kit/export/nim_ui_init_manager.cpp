@@ -7,7 +7,7 @@
 #include "callback/http/http_callback.h"
 #include "callback/audio/audio_callback.h"
 #include "callback/team/team_callback.h"
-#include "callback/vchat/vchat_callback.h"
+#include "av_kit/callback/vchat/vchat_callback.h"
 #include "callback/rts/rts_callback.h"
 #include "callback/login/data_sync_callback.h"
 #include "callback/multiport/multiport_push_callback.h"

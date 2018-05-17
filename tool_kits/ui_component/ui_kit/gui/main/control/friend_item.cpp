@@ -1,5 +1,6 @@
 #include "friend_item.h"
 #include "module/session/session_manager.h"
+#include "module/online_state_event/online_state_event_util.h"
 
 using namespace ui;
 
@@ -85,7 +86,7 @@ bool FriendItem::Match(const UTF8String& search_key)
 
 void FriendItem::SetOnlineState(const EventDataEx& data)
 {
-	label_online_state_->SetText(OnlineStateEventHelper::GetOnlineState(data.online_client_, data.multi_config_, true));
+	label_online_state_->SetText(OnlineStateEventUtil::GetOnlineState(data.online_client_, data.multi_config_, true));
 }
 
 bool FriendItem::OnDbClicked(ui::EventArgs* arg)

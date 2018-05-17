@@ -1,6 +1,4 @@
 #pragma once
-
-
 typedef std::function<void()> UnregisterCallback;
 
 class AutoUnregister 

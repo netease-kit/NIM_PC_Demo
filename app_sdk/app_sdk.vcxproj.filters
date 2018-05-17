@@ -1,0 +1,78 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="源文件">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="头文件">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="资源文件">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="appbase">
+      <UniqueIdentifier>{ede85809-d650-4926-9af2-41f47fca51c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module">
+      <UniqueIdentifier>{efde33ad-56b6-4351-bc26-e0ea7245cb68}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="appbase\http">
+      <UniqueIdentifier>{fc352e6d-1f44-43a4-891e-4cf1b6c9746d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{7e4349ed-3ba0-475b-bbe9-40b79673442c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="protocol">
+      <UniqueIdentifier>{e91087bf-065d-4581-a369-ea1e5b542c4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sdk_interface">
+      <UniqueIdentifier>{038b6cd3-3e6f-4145-a006-58862452a03a}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="base\http\http_protocol_interface_define.h">
+      <Filter>appbase\http</Filter>
+    </ClInclude>
+    <ClInclude Include="base\http\sdk_http_manager.h">
+      <Filter>appbase\http</Filter>
+    </ClInclude>
+    <ClInclude Include="protocol\sdk_pro.h">
+      <Filter>protocol</Filter>
+    </ClInclude>
+    <ClInclude Include="app_sdk_interface.h">
+      <Filter>sdk_interface</Filter>
+    </ClInclude>
+    <ClInclude Include="include\app_sdk.h">
+      <Filter>include</Filter>
+    </ClInclude>
+    <ClInclude Include="app_sdk_define.h">
+      <Filter>sdk_interface</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="base\http\http_protocol_interface_define.cpp">
+      <Filter>appbase\http</Filter>
+    </ClCompile>
+    <ClCompile Include="protocol\sdk_pro.cpp">
+      <Filter>protocol</Filter>
+    </ClCompile>
+    <ClCompile Include="app_sdk_interface.cpp">
+      <Filter>sdk_interface</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

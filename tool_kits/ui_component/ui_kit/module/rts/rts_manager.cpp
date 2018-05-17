@@ -1,5 +1,5 @@
 ﻿#include "rts_manager.h"
-#include "../video/video_manager.h"
+#include "av_kit/module/video/video_manager.h"
 
 namespace nim_comp
 {

@@ -2,6 +2,7 @@
 #include "msglog_manage_form.h"
 #include "gui/main/main_form.h"
 #include "shared/modal_wnd/file_dialog_ex.h"
+#include "nim_service/module/service/session_service.h"
 
 using namespace ui;
 
@@ -250,7 +251,7 @@ void MsglogManageForm::OnImportCompeleteCallback(nim::NIMResCode res_code)
 	{
 		OnImportProgressCallback(1, 1);
 		result_text_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOG_MANAGE_IMPORT_COMPLETE"));
-		nim_ui::SessionListManager::GetInstance()->InvokeLoadSessionList();
+		nim_comp::SessionService::GetInstance()->InvokeLoadSessionList();
 
 		DelayClose();
 	}

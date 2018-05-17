@@ -86,6 +86,16 @@ NIM_SDK_DLL_API void nim_global_get_sdk_cache_file_info_async(const char *login_
 */
 NIM_SDK_DLL_API void nim_global_del_sdk_cache_file_async(const char *login_id, const char *file_type, int64_t end_timestamp, const char *json_extension, nim_sdk_del_cache_file_cb_func cb, const void *user_data);
 
+/** @fn void nim_global_del_sdk_cache_file_async(const char *url, const char *json_extension, nim_sdk_feedback_cb_func cb, const void *user_data);
+* SDK 反馈
+* @param[in] url 开发者需将所需要反馈的文件（dump，应用日志等）上传至nos。
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] cb nim_sdk_feedback_cb_func回调函数定义见nim_global_def.h
+* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+*/
+NIM_SDK_DLL_API void nim_global_sdk_feedback_async(const char *url, const char *json_extension, nim_sdk_feedback_cb_func cb, const void *user_data);
+
 #else
 /** @fn void nim_global_reg_sdk_log_cb(const char *json_extension, nim_sdk_log_cb_func cb, const void *user_data)
 * (PC SDK该接口无效)注册输出sdk log回调
