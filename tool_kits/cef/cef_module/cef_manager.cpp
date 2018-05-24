@@ -213,9 +213,7 @@ void CefManager::PostQuitMessage(int nExitCode)
 void CefManager::GetCefSetting(const std::wstring& app_data_dir, CefSettings &settings)
 {
 	if (false == nbase::FilePathIsExist(app_data_dir, true))
-	{
 		nbase::CreateDirectory(app_data_dir);
-	}
 
 #if !defined(SUPPORT_CEF_FLASH)
 	settings.no_sandbox = true;

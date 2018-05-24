@@ -284,6 +284,17 @@ typedef void (*nim_rts_hangup_notify_cb_func)(const char *session_id, const char
   */ 
 typedef void (*nim_rts_rec_data_cb_func)(const char *session_id, int channel_type, const char *uid, const char *data, unsigned int size, const char *json_extension, const void *user_data);
 
+/** @typedef void (*nim_rts_opt_cb_func)(int code, const char *session_id, int channel_type, const char *json_extension, const void *user_data)
+  * NIM RTS 操作结果回调
+  * @param[out] code 调用结果
+  * @param[out] session_id 会话id
+  * @param[out] channel_type 通道类型，暂时只支持白板类型
+  * @param[out] json_extension 无效的扩展字段
+  * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */ 
+typedef void (*nim_rts_opt_cb_func)(int code, const char *session_id, int channel_type, const char *json_extension, const void *user_data);
+
 #ifdef __cplusplus
 };
 #endif //__cplusplus

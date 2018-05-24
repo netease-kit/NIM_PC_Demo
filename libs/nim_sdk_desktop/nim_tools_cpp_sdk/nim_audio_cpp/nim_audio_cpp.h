@@ -30,7 +30,7 @@ class Audio
 {
 
 public:
-	/** bool Init(const std::wstring& user_data_parent_path)
+	/** bool Init(const std::wstring& user_data_parent_path,const std::wstring& dll_path = L"")
 	* NIM SDK 初始化语音模块	
 	* @param[in] user_data_parent_path 缓存目录
 	* @param[in] dll_path 语音模块所在目录
@@ -53,6 +53,7 @@ public:
 	* @return bool true 调用成功，false 调用失败
 	*/
 	static bool PlayAudio(const wchar_t* file_path, const char* call_id, const char* res_id, nim_audio_type audio_format);
+
 	/** bool PlayAudio(const wchar_t* file_path, const char* call_id, const char* res_id, nim_audio_type audio_format, int seek)
 	* NIM SDK 播放,通过回调获取开始播放状态
 	* @param[in] file_path 播放文件绝对路径

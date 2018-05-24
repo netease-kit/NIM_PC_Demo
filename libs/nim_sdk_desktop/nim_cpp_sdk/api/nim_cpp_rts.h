@@ -95,6 +95,7 @@ public:
 	typedef std::function<void(nim::NIMResCode res_code, const std::string& session_id, const std::string& info)> ControlCallback;
 	typedef std::function<void(const std::string& session_id, const std::string& info, const std::string& uid)> ControlNotifyCallback;
 	typedef std::function<void(const std::string& session_id, int channel_type, const std::string& uid, const std::string& data)> RecDataCallback;
+	typedef std::function<void(nim::NIMResCode res_code, const std::string& session_id, int channel_type, const std::string& json)> OptCallback;
 
 	//发起相关
 	/** @fn void StartChannel(int channel_type, const std::string& uid, const std::string& apns, const std::string& custom_info, bool data_record, bool audio_record, const StartChannelCallback& cb)
@@ -229,6 +230,15 @@ public:
 	  * @return void 无返回值
 	  */ 
 	static void SetHangupNotifyCb(const HangupNotifyCallback& cb);
+
+	/** @fn void Relogin(const std::string& session_id, int channel_type, OptCallback cb)
+	* NIM 白板重连
+	* @param[in] session_id 会话id
+	* @param[in] channel_type 通道类型, 暂时只支持白板类型
+	* @param[in] cb 操作回调
+	* @return void 无返回值
+	*/
+	static void Relogin(const std::string& session_id, int channel_type, OptCallback cb);
 
 	//数据相关
 	/** @fn void SendData(const std::string& session_id, int channel_type, const std::string& data, const std::string& uid="")

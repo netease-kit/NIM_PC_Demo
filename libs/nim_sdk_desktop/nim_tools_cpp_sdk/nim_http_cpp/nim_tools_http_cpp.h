@@ -58,8 +58,9 @@ typedef std::function<void(double, double, double, double)> TransferCallback;
 
 class HttpRequest;
 
-/** @fn void Init()
+/** @fn void Init(const std::wstring &dll_path = L"")
 * NIM HTTP 初始化
+* @param[in] dll_path 语音模块所在目录
 * @return void 无返回值
 */
 void Init(const std::wstring &dll_path = L"");
@@ -96,7 +97,7 @@ void SetGlobalProxy(NIMProxyType type, const std::string& host, short port, cons
 
 /** @fn int PostRequest(const HttpRequest& http_request)
 * NIM HTTP 发起任务
-* @param[in] request_handle	http任务句柄
+* @param[in] http_request	http任务句柄
 * @return int				任务id
 */
 int PostRequest(const HttpRequest& http_request);
@@ -160,7 +161,6 @@ public:
 
 	/** 
 	* NIM HTTP 创建任务
-	* @param[in] request_handle	http任务句柄
 	* @param[in] key			头的key
 	* @param[in] value			头的value
 	* @return void				无返回值
@@ -169,23 +169,19 @@ public:
 
 	/** 
 	* NIM HTTP 创建任务
-	* @param[in] request_handle	http任务句柄
-	* @param[in] key			头的key
-	* @param[in] value			头的value
+	* @param[in] headers_map	头的key,头的value
 	* @return void				无返回值
 	*/
 	void AddHeader(const std::map<std::string, std::string>& headers_map);
 
 	/** 
 	* NIM HTTP 强制设置http请求方法为post
-	* @param[in] request_handle	http任务句柄
 	* @return void				无返回值
 	*/
 	void SetMethodAsPost();
 
 	/** 
 	* NIM HTTP 设置超时
-	* @param[in] request_handle	http任务句柄
 	* @param[in] timeout_ms		超时时间，单位是毫秒
 	* @return void				无返回值
 	*/
@@ -193,8 +189,7 @@ public:
 
 	/**
 	* NIM HTTP 设置最低传输速度
-	* @param[in] request_handle	http任务句柄
-	* @param[in] low_speed_limit最低传输的字节数(大于0)
+	* @param[in] low_speed_limit 最低传输的字节数(大于0)
 	* @param[in] low_speed_time	多少秒传输速度不得低于low_speed_limit，不满足条件则会终止传输(大于0)
 	* @return void				无返回值
 	*/
@@ -202,7 +197,6 @@ public:
 
 	/** 
 	* NIM HTTP 设置代理
-	* @param[in] request_handle	http任务句柄
 	* @param[in] type			代理类型NIMProxyType
 	* @param[in] host			代理地址
 	* @param[in] port			代理端口

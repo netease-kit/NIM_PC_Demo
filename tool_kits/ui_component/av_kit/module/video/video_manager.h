@@ -399,5 +399,10 @@ namespace nim_comp
 		std::unique_ptr<MultiVideoChatForm> multi_video_form_;
 		std::unique_ptr<VideoSettingForm> setting_form_;
 		std::unique_ptr<MultiVideoInviteForm> multi_vchat_invite_form_;
+
+		std::weak_ptr<nbase::WeakFlag> video_form_flag_;
+		std::weak_ptr<nbase::WeakFlag> multi_video_form_flag_;
+		std::weak_ptr<nbase::WeakFlag> setting_form_flag_;
+		std::weak_ptr<nbase::WeakFlag> multi_vchat_invite_form_flag_;
 	};
 }

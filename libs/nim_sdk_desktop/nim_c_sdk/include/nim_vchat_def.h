@@ -30,10 +30,10 @@ enum NIMVideoChatSessionType{
 	kNIMVideoChatSessionTypeHangupRes		= 10,		/**< 通话挂断结果 */
 	kNIMVideoChatSessionTypeHangupNotify	= 11,		/**< 通话被挂断通知 */
 	kNIMVideoChatSessionTypeSyncAckNotify	= 12,		/**< 通话接听挂断同步通知 */
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+	kNIMVideoChatSessionTypeMp4Notify		= 13,		/**< 通知MP4录制状态，包括开始录制和结束录制 */
 	kNIMVideoChatSessionTypeInfoNotify		= 14,		/**< 通知实时音视频数据状态 */
 	kNIMVideoChatSessionTypeVolumeNotify	= 15,		/**< 通知实时音频发送和混音的音量状态 */
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
-	kNIMVideoChatSessionTypeMp4Notify		= 13,		/**< 通知MP4录制状态，包括开始录制和结束录制 */
 	kNIMVideoChatSessionTypeAuRecordNotify  = 16,		/**< 通知音频录制状态，包括开始录制和结束录制 */
 	kNIMVideoChatSessionTypeLiveState		= 17,		/**< 通知直播推流的服务器状态 */
 #endif
@@ -85,24 +85,7 @@ enum NIMVChatVideoFrameRate {
 	kNIMVChatVideoFrameRate25		= 5,		/**< 视频通话帧率 最大取每秒25帧 */
 };
 
-/** @enum NIMVChatVideoEncodeMode 视频编码策略  */
-enum NIMVChatVideoEncodeMode
-{
-	kNIMVChatVEModeNormal		= 0,		/**< 默认值，清晰优先 */
-	kNIMVChatVEModeFramerate	= 1,		/**< 流畅优先 */
-	kNIMVChatVEModeQuality		= 2,		/**< 清晰优先 */
-	kNIMVChatVEModeScreen		= 3,		/**< 屏幕共享场景调控策略，sdk不会根据网络调整分辨率 */
-};
-
-/** @enum NIMVChatVideoFrameScaleType 视频画面长宽比，裁剪时不改变横竖屏，如4：3，代表宽高横屏4：3或者竖屏3：4  */
-enum NIMVChatVideoFrameScaleType {
-	kNIMVChatVideoFrameScaleNone	= 0,			/**< 默认，不裁剪 */
-	kNIMVChatVideoFrameScale1x1		= 1,			/**< 裁剪成1：1的形状 */
-	kNIMVChatVideoFrameScale4x3		= 2,			/**< 裁剪成4：3的形状，如果是 */
-	kNIMVChatVideoFrameScale16x9	= 3,			/**< 裁剪成16：9的形状 */
-};
-
-#if NIMAPI_UNDER_WIN_DESKTOP_ONLY
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
 /** @enum NIMVChatMp4RecordCode mp4录制状态 */
 enum NIMVChatMp4RecordCode {
@@ -135,7 +118,13 @@ enum NIMVChatVideoSplitMode {
 	kNIMVChatSplitAudioLayout			= 5,			/**< 纯音频布局 */
 };
 
-
+/** @enum NIMVChatVideoFrameScaleType 视频画面长宽比，裁剪时不改变横竖屏，如4：3，代表宽高横屏4：3或者竖屏3：4  */
+enum NIMVChatVideoFrameScaleType {
+	kNIMVChatVideoFrameScaleNone	= 0,			/**< 默认，不裁剪 */
+	kNIMVChatVideoFrameScale1x1		= 1,			/**< 裁剪成1：1的形状 */
+	kNIMVChatVideoFrameScale4x3		= 2,			/**< 裁剪成4：3的形状，如果是 */
+	kNIMVChatVideoFrameScale16x9	= 3,			/**< 裁剪成16：9的形状 */
+};
 
 /** @enum NIMVChatLiveStateCode 直播时的状态码。服务器定时更新，一些存在时间短的状态会获取不到  */
 enum NIMVChatLiveStateCode
@@ -151,6 +140,14 @@ enum NIMVChatLiveStateCode
 	kNIMVChatLiveStatePeopleLimit		= 508,		/**< 人数超出限制 */
 };
 
+/** @enum NIMVChatVideoEncodeMode 视频编码策略  */
+enum NIMVChatVideoEncodeMode
+{
+	kNIMVChatVEModeNormal		= 0,		/**< 默认值，清晰优先 */
+	kNIMVChatVEModeFramerate	= 1,		/**< 流畅优先 */
+	kNIMVChatVEModeQuality		= 2,		/**< 清晰优先 */
+	kNIMVChatVEModeScreen		= 3,		/**< 屏幕共享场景调控策略，sdk不会根据网络调整分辨率 */
+};
 
 /** @enum NIMVChatAudioMode 音频模式  */
 enum NIMVChatAudioMode
@@ -353,8 +350,8 @@ static const char *kNIMVChatTrafficStatTX	= "trafficstat_tx";		/**< uint64 上�
   *				kNIMVideoChatSessionTypeAuRecordNotify		//windows(pc)有效.通知音频录制状态，包括开始录制和结束录制 code无效，json 返回如下 \n
   *															//	录制开始 	{"audio_record_start":{ "file": "d:\\test.aac", "time": 14496477000000 }} \n
   *															//	录制结束 	{"audio_record_close":{ "file": "d:\\test.aac", "time": 120000, "status": 0 }} \n
-  *				kNIMVideoChatSessionTypeInfoNotify			//实时状态		{"static_info":{"rtt":20, "video": {"fps":20, "KBps":200, "lost_rate":5, "width":1280,"height":720}, "audio": {"fps":17, "KBps":3", lost_rate":3 }}} \n
-  *				kNIMVideoChatSessionTypeVolumeNotify		//音量状态 		{"audio_volume":{ "self": {"status":600}, "receiver": [{"uid":"id123","status":1000},{"uid":"id456","status":222}] }} \n
+  *				kNIMVideoChatSessionTypeInfoNotify			//windows(pc)有效.实时状态		{"static_info":{"rtt":20, "video": {"fps":20, "KBps":200, "lost_rate":5, "width":1280,"height":720}, "audio": {"fps":17, "KBps":3", lost_rate":3 }}} \n
+  *				kNIMVideoChatSessionTypeVolumeNotify		//windows(pc)有效.音量状态 		{"audio_volume":{ "self": {"status":600}, "receiver": [{"uid":"id123","status":1000},{"uid":"id456","status":222}] }} \n
   *				kNIMVideoChatSessionTypeLiveState			//windows(pc)有效.直播状态		{"live_state":{"status":505 }} \n
   * @param[out] type NIMVideoChatSessionType
   * @param[out] channel_id 通话的通道id

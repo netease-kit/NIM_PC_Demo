@@ -208,6 +208,29 @@ extern"C"
 	*/
 	NIM_SDK_DLL_API void nim_vchat_set_video_bitrate(int video_bitrate, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
+
+#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
+
+	/** @fn void nim_vchat_net_detect(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
+	* 音视频网络探测接口，需要在sdk初始化时带上app key
+	* @param[in] json_extension json扩展参数，允许用户设置探测时间限制kNIMNetDetectTimeLimit，及探测类型kNIMNetDetectType
+	* @param[in] cb 操作结果的回调函数
+	* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+	* @return uint64_t 探测任务id
+	* @note 错误码	200:成功
+	*				0:流程错误
+	*				400:非法请求格式
+	*				417:请求数据不对
+	*				606:ip为内网ip
+	*				607:频率超限
+	*				20001:探测类型错误
+	*				20002:ip错误
+	*				20003:sock错误
+	*/
+	NIM_SDK_DLL_API uint64_t nim_vchat_net_detect(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+
+
 	/** @fn void nim_vchat_set_frame_rate(NIMVChatVideoFrameRate frame_rate, const char* json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
 	* NIM 实时设置视频发送帧率上限
 	* @param[in] frame_rate  帧率类型 见NIMVChatVideoFrameRate定义
@@ -231,39 +254,6 @@ extern"C"
 	* @return int 当前的裁剪模式NIMVChatVideoFrameScaleType
 	*/
 	NIM_SDK_DLL_API int nim_vchat_get_video_frame_scale_type();
-
-	/** @fn void nim_vchat_select_video_adaptive_strategy(enum NIMVChatVideoEncodeMode mode, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
-	* NIM 通话中修改视频编码模式
-	* @param[in] mode 选用的策略模式
-	* @param[in] json_extension 无效扩展字段
-	* @param[in] cb 结果回调见nrtc_chat_def.h，返回的json_extension无效
-	* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
-	* @return void 无返回值
-	*/
-	NIM_SDK_DLL_API void nim_vchat_select_video_adaptive_strategy(enum NIMVChatVideoEncodeMode mode, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
-
-
-	/** @fn void nim_vchat_net_detect(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
-	* 音视频网络探测接口，需要在sdk初始化时带上app key
-	* @param[in] json_extension json扩展参数，允许用户设置探测时间限制kNIMNetDetectTimeLimit，及探测类型kNIMNetDetectType
-	* @param[in] cb 操作结果的回调函数
-	* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
-	* @return uint64_t 探测任务id
-	* @note 错误码	200:成功
-	*				0:流程错误
-	*				400:非法请求格式
-	*				417:请求数据不对
-	*				606:ip为内网ip
-	*				607:频率超限
-	*				20001:探测类型错误
-	*				20002:ip错误
-	*				20003:sock错误
-	*/
-	NIM_SDK_DLL_API uint64_t nim_vchat_net_detect(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
-
-
-
 
 	/** @fn void nim_vchat_start_record(const char *path, const char *json_extension, nim_vchat_mp4_record_opt_cb_func cb, const void *user_data)
 	* NIM VCHAT 开始录制MP4文件，同一个成员一次只允许一个MP4录制文件，在通话开始的时候才有实际数据
@@ -323,7 +313,15 @@ extern"C"
 	*/
 	NIM_SDK_DLL_API void nim_vchat_update_rtmp_url(const char *rtmp_url, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
-
+	/** @fn void nim_vchat_select_video_adaptive_strategy(NIMVChatVideoEncodeMode mode, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
+	* NIM 通话中修改视频编码模式
+	* @param[in] mode 选用的策略模式
+	* @param[in] json_extension 无效扩展字段
+	* @param[in] cb 结果回调见nrtc_chat_def.h，返回的json_extension无效
+	* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+	* @return void 无返回值
+	*/
+	NIM_SDK_DLL_API void nim_vchat_select_video_adaptive_strategy(NIMVChatVideoEncodeMode mode, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
 	/** @fn void nim_vchat_set_uid_picture_as_main(const char *uid, const char* json_extension, nim_vchat_opt_cb_func cb, const void* user_data)
 	* NIM 互动直播设置uid为房间主画面

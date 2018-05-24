@@ -45,8 +45,7 @@ namespace nim_comp
 
 	VideoForm::~VideoForm()
 	{
-		nbase::NAutoLock auto_lock(&capture_lock_);
-		custom_video_mode_ = false;
+		record_select_form_.release();
 	}
 
 	std::wstring VideoForm::GetSkinFolder()
@@ -202,6 +201,18 @@ namespace nim_comp
 
 	void VideoForm::OnFinalMessage(HWND hWnd)
 	{
+		if (record_select_form_ && !record_select_form_flag_.expired() && IsWindow(record_select_form_->GetHWND()))
+		{
+			::DestroyWindow(record_select_form_->GetHWND());
+		}
+
+		custom_video_mode_ = false;
+		send_custom_video_.Cancel();
+		{
+			capture_lock_.Lock();
+			capture_lock_.Unlock();
+		}
+
 		PrepareQuit();
 
 		FreeVideo();
@@ -573,8 +584,13 @@ namespace nim_comp
 		else if (name == L"record_start")
 		{
 			// 要保存的文件名
-			record_select_form_.reset(new RecordSelectForm);
-			record_select_form_->Create(NULL, RecordSelectForm::kClassName, WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
+			if (record_select_form_ == NULL || record_select_form_flag_.expired())
+			{
+				record_select_form_.release();
+				record_select_form_.reset(new RecordSelectForm);
+				record_select_form_->Create(NULL, RecordSelectForm::kClassName, WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
+				record_select_form_flag_ = record_select_form_->GetWeakFlag();
+			}
 			record_select_form_->CenterWindow();
 			record_select_form_->ShowWindow();
 			record_select_form_->SetSelFileCb(current_video_mode_, nbase::Bind(&VideoForm::OnRecordSelFileCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));

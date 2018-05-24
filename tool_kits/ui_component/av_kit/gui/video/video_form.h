@@ -585,6 +585,7 @@ namespace nim_comp
 		* @return void	无返回值
 		*/
 		void SendCustomVideo();
+
 	public:
 		static const LPCTSTR kClassName; // 类名
 	private:
@@ -689,6 +690,7 @@ namespace nim_comp
 		bool	is_start_;
 
 		std::unique_ptr<RecordSelectForm> record_select_form_;
+		std::weak_ptr<nbase::WeakFlag> record_select_form_flag_;
 	};
 }
 #endif  // NIM_WIN_GUI_VIDEO_FORM_H_

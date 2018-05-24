@@ -292,7 +292,7 @@ bool NOS::FetchMediaEx(const IMMessage& msg, const std::string& json_extension, 
 
 bool NOS::StopFetchMedia(const IMMessage& msg)
 {
-	if (msg.client_msg_id_.empty() || msg.local_res_id_.empty())
+	if (msg.client_msg_id_.empty())
 		return false;
 
 	NIM_SDK_GET_FUNC(nim_nos_stop_download_media)(msg.ToJsonString(false).c_str());

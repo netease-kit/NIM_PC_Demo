@@ -165,6 +165,17 @@ NIM_SDK_DLL_API	void nim_rts_hangup(const char *session_id, const char *json_ext
   */ 
 NIM_SDK_DLL_API	void nim_rts_set_hangup_notify_cb_func(nim_rts_hangup_notify_cb_func cb, const void *user_data);
 
+/** @fn void nim_rts_relogin(const char *session_id, int channel_type, const char *json_extension, nim_rts_opt_cb_func cb, const void *user_data)
+  * NIM RTS 重连接口
+  * @param[in] session_id 会话id
+  * @param[in] channel_type 通道类型，暂时只支持白板类型
+  * @param[in] json_extension 无效的扩展字段
+  * @param[in] cb 见nim_rts_def.h，返回重连操作结果
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */ 
+NIM_SDK_DLL_API	void nim_rts_relogin(const char *session_id, int channel_type, const char *json_extension, nim_rts_opt_cb_func cb, const void *user_data);
+
 //数据相关
 /** @fn void nim_rts_send_data(const char *session_id, int channel_type, const char *data, unsigned int size, const char *json_extension)
   * NIM 发送数据，暂时支持tcp通道，建议发送频率在20Hz以下

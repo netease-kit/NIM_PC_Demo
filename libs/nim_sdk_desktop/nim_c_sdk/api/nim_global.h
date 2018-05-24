@@ -86,7 +86,7 @@ NIM_SDK_DLL_API void nim_global_get_sdk_cache_file_info_async(const char *login_
 */
 NIM_SDK_DLL_API void nim_global_del_sdk_cache_file_async(const char *login_id, const char *file_type, int64_t end_timestamp, const char *json_extension, nim_sdk_del_cache_file_cb_func cb, const void *user_data);
 
-/** @fn void nim_global_del_sdk_cache_file_async(const char *url, const char *json_extension, nim_sdk_feedback_cb_func cb, const void *user_data);
+/** @fn void nim_global_sdk_feedback_async(const char *url, const char *json_extension, nim_sdk_feedback_cb_func cb, const void *user_data);
 * SDK 反馈
 * @param[in] url 开发者需将所需要反馈的文件（dump，应用日志等）上传至nos。
 * @param[in] json_extension json扩展参数（备用，目前不需要）

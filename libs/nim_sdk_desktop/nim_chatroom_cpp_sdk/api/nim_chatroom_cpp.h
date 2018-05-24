@@ -133,7 +133,7 @@ static void Cleanup(const std::string& json_extension = "");
   * 聊天室匿名进入
   * @param[in] room_id			  聊天室ID
   * @param[in] anonymity_info	  匿名登录相关信息
-  * @param[in] enter_info		  聊天室进入信息
+  * @param[in] info		  聊天室进入信息
   * @param[in] json_extension	  json扩展参数（备用，目前不需要）
   * @return bool 进入信息是否正确,返回失败则不会触发进入回调
   */

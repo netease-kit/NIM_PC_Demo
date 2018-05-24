@@ -297,6 +297,14 @@ public:
 	*/
 	static void End(const std::string& json_extension);
 
+	/** @fn static void Relogin(const std::string& session_id, OptCallback cb)
+	* NIM VCHAT 重连
+	* @param[in] session_id 会话的本地session id
+	* @param[in] cb 操作结果
+	* @return void 无返回值
+	*/
+	static void Relogin(const std::string& session_id, OptCallback cb);
+
 	/** @fn static void SetVideoQuality(int video_quality)
 	* NIM 通话中修改分辨率，只在多人中支持
 	* @param[in] video_quality 分辨率模式

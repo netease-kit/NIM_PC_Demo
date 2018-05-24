@@ -317,7 +317,7 @@ public:
 	*/
 	static void UnregTalkCb();
 
-	/** @fn static void RegTeamNotificationFilter(const TeamNotificationFilter& cb, const std::string& json_extension = "")
+	/** @fn static void RegTeamNotificationFilter(const TeamNotificationFilter& filter, const std::string& json_extension = "")
 	* (全局回调)注册群通知过滤接口 （堵塞线程，谨慎使用，避免耗时行为）
 	* @param[in] json_extension json扩展参数（备用,目前不需要）
 	* @param[in] filter	过滤接口

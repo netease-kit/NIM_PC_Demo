@@ -48,7 +48,7 @@ namespace nim_comp
 			nim::VChat::RemoveDeviceStatusCb(type);
 		}
 		
-		if (video_form_ != NULL && IsWindow(video_form_->GetHWND()))
+		if (video_form_ != NULL && !video_form_flag_.expired())
 		{
 			if (type == nim::kNIMDeviceTypeAudioIn)
 			{
@@ -60,7 +60,7 @@ namespace nim_comp
 			}
 		}
 
-		if (multi_video_form_ != NULL && IsWindow(multi_video_form_->GetHWND()))
+		if (multi_video_form_ != NULL && !multi_video_form_flag_.expired())
 		{
 			if (type == nim::kNIMDeviceTypeAudioIn)
 			{
@@ -72,7 +72,7 @@ namespace nim_comp
 			}
 		}
 
-		if (setting_form_ != NULL && IsWindow(setting_form_->GetHWND()))
+		if (setting_form_ != NULL && !setting_form_flag_.expired())
 		{
 			if (type == nim::kNIMDeviceTypeAudioIn)
 			{
@@ -89,25 +89,25 @@ namespace nim_comp
 		switch (type)
 		{
 		case nim::kNIMDeviceTypeVideo:
-			if (video_form_ != NULL && IsWindow(video_form_->GetHWND()))
+			if (video_form_ != NULL && !video_form_flag_.expired())
 			{
 				video_form_->OnVideoDeviceStartCallback(ret);
 			}
-			if (setting_form_ != NULL && IsWindow(setting_form_->GetHWND()))
+			if (setting_form_ != NULL && !setting_form_flag_.expired())
 			{
 				setting_form_->OnVideoDeviceStartCallback(ret);
 			}
-			if (multi_video_form_ != NULL && IsWindow(multi_video_form_->GetHWND()))
+			if (multi_video_form_ != NULL && !multi_video_form_flag_.expired())
 			{
 				multi_video_form_->OnVideoDeviceStartCallback(ret);
 			}
 			break;
 		case nim::kNIMDeviceTypeAudioIn:
-			if (video_form_ != NULL && IsWindow(video_form_->GetHWND()))
+			if (video_form_ != NULL && !video_form_flag_.expired())
 			{
 				video_form_->OnAudioDeviceStartCallback(ret);
 			}
-			if (multi_video_form_ != NULL && IsWindow(multi_video_form_->GetHWND()))
+			if (multi_video_form_ != NULL && !multi_video_form_flag_.expired())
 			{
 				multi_video_form_->OnAudioDeviceStartCallback(ret);
 			}
@@ -125,7 +125,7 @@ namespace nim_comp
 		switch (type)
 		{
 		case nim::kNIMVideoChatSessionTypeStartRes:{
-			if (video_form_ != NULL && IsWindow(video_form_->GetHWND()) && video_form_->IsStart())
+			if (video_form_ != NULL && !video_form_flag_.expired() && video_form_->IsStart())
 			{
 				video_form_->ChatStartCallback(code == 200, channel_id);
 			}
@@ -162,7 +162,7 @@ namespace nim_comp
 				bool accept = valus[nim::kNIMVChatAccept].asInt() > 0;
 				if (accept && code != 200)
 				{
-					if (video_form_ != NULL && IsWindow(video_form_->GetHWND()))
+					if (video_form_ != NULL && !video_form_flag_.expired())
 					{
 						video_form_->OnLogin(0);
 					}
@@ -176,7 +176,7 @@ namespace nim_comp
 			{
 				//std::string uid = valus[nim::kNIMVChatUid].asString();
 				bool accept = valus[nim::kNIMVChatAccept].asInt() > 0;
-				if (video_form_ != NULL && IsWindow(video_form_->GetHWND()) && video_form_->IsStart())
+				if (video_form_ != NULL && !video_form_flag_.expired() && video_form_->IsStart())
 				{
 					if (!accept)
 					{
@@ -195,14 +195,14 @@ namespace nim_comp
 			{
 				//std::string uid = valus[nim::kNIMVChatUid].asString();
 				int type = valus[nim::kNIMVChatType].asInt();
-				if (video_form_ != NULL && IsWindow(video_form_->GetHWND()) && video_form_->IsStart())
+				if (video_form_ != NULL && !video_form_flag_.expired() && video_form_->IsStart())
 				{
 					video_form_->OnControlModeChange(channel_id, (nim::NIMVChatControlType)type);
 				}
 			}
 		}break;
 		case nim::kNIMVideoChatSessionTypeConnect:{
-			if (video_form_ != NULL && IsWindow(video_form_->GetHWND()) && video_form_->IsStart())
+			if (video_form_ != NULL && !video_form_flag_.expired() && video_form_->IsStart())
 			{
 				video_form_->OnLogin(code == 200);
 				int bitrate = atoi(GetConfigValue("video_bitrate").c_str());
@@ -226,7 +226,7 @@ namespace nim_comp
 				int32_t leave_type = valus[nim::kNIMVChatStatus].asInt();
 				QLOG_APP(L"vchat people leave uid: {0}, leave_type {1}") << uid << leave_type;
 			}
-			if (multi_video_form_ != NULL && IsWindow(multi_video_form_->GetHWND()))
+			if (multi_video_form_ != NULL && !multi_video_form_flag_.expired())
 			{
 				if (code == nim::kNIMVideoChatSessionStatusJoined)
 					multi_video_form_->OnPeopleJoin(uid);
@@ -234,7 +234,7 @@ namespace nim_comp
 					multi_video_form_->OnPeopleLeave(uid);
 			}
 
-			if (video_form_ != NULL && IsWindow(video_form_->GetHWND()) && video_form_->IsStart())
+			if (video_form_ != NULL && !video_form_flag_.expired() && video_form_->IsStart())
 			{
 				if (code == nim::kNIMVideoChatSessionStatusJoined)
 				{
@@ -268,7 +268,7 @@ namespace nim_comp
 			}
 		}break;
 		case nim::kNIMVideoChatSessionTypeNetStatus:{
-			if (video_form_ != NULL && IsWindow(video_form_->GetHWND()) && video_form_->IsStart())
+			if (video_form_ != NULL && !video_form_flag_.expired() && video_form_->IsStart())
 			{
 				video_form_->OnNetstatChange(code);
 			}
@@ -277,7 +277,7 @@ namespace nim_comp
 			//
 		}break;
 		case nim::kNIMVideoChatSessionTypeHangupNotify:{
-			if (video_form_ != NULL && IsWindow(video_form_->GetHWND()))
+			if (video_form_ != NULL && !video_form_flag_.expired())
 			{
 				video_form_->OnHangup(channel_id);
 			}
@@ -288,7 +288,7 @@ namespace nim_comp
 			if (reader.parse(json, valus))
 			{
 				bool accept = valus[nim::kNIMVChatAccept].asInt() > 0;
-				if (video_form_ != NULL && IsWindow(video_form_->GetHWND()))
+				if (video_form_ != NULL && !video_form_flag_.expired())
 				{
 					video_form_->OnVideochatSyncNotify(accept, channel_id);
 				}
@@ -299,7 +299,7 @@ namespace nim_comp
 			Json::Reader reader;
 			if (reader.parse(json, valus))
 			{
-				if (video_form_ != NULL && IsWindow(video_form_->GetHWND()) && video_form_->IsStart())
+				if (video_form_ != NULL && !video_form_flag_.expired() && video_form_->IsStart())
 				{
 					if (valus[nim::kNIMVChatMp4Start].isObject())
 					{
@@ -322,7 +322,7 @@ namespace nim_comp
 			Json::Reader reader;
 			if (reader.parse(json, valus))
 			{
-				if (video_form_ != NULL && IsWindow(video_form_->GetHWND()) && video_form_->IsStart())
+				if (video_form_ != NULL && !video_form_flag_.expired() && video_form_->IsStart())
 				{
 					if (valus[nim::kNIMVChatAuRecordStart].isObject())
 					{
@@ -364,7 +364,7 @@ namespace nim_comp
 							volume_infos[uid] = status;
 						}
 					}
-					if (multi_video_form_ != NULL && IsWindow(multi_video_form_->GetHWND()))
+					if (multi_video_form_ != NULL && !multi_video_form_flag_.expired())
 					{
 						multi_video_form_->OnVChatVolumeCallback(volume_infos);
 					}
@@ -392,8 +392,9 @@ namespace nim_comp
 		}
 		else
 		{
-			video_form_.release();
+ 			video_form_.release();
 			video_form_.reset(new VideoForm(id));
+			video_form_flag_ = video_form_->GetWeakFlag();
 			video_form_->Create(NULL, L"", WS_OVERLAPPEDWINDOW, 0, false);
 			video_form_->CenterWindow();
 			video_form_->ShowWindow();
@@ -478,6 +479,7 @@ namespace nim_comp
 					{
 						multi_video_form_.release();
 						multi_video_form_.reset(new MultiVideoChatForm(room_name, multi_vchat_session_id_, channel_id, true, true, current_user_id));
+						multi_video_form_flag_ = multi_video_form_->GetWeakFlag();
 						multi_video_form_->Create(NULL, L"", UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L);
 						multi_video_form_->CenterWindow();
 
@@ -528,7 +530,7 @@ namespace nim_comp
 
 	bool VideoManager::IsVideoChatFormExist(bool show)
 	{
-		if (video_form_ != NULL && IsWindow(video_form_->GetHWND()))
+		if (video_form_ != NULL && !video_form_flag_.expired())
 		{
 			if (show)
 			{
@@ -541,7 +543,7 @@ namespace nim_comp
 
 	bool VideoManager::IsMultiVideoChatFormExist(bool show)
 	{
-		if (multi_video_form_ != NULL && IsWindow(multi_video_form_->GetHWND()))
+		if (multi_video_form_ != NULL && !multi_video_form_flag_.expired())
 		{
 			if (show)
 			{
@@ -555,7 +557,7 @@ namespace nim_comp
 
 	bool VideoManager::ShowVideoSetting(bool video)
 	{
-		if (setting_form_ != NULL && IsWindow(setting_form_->GetHWND()))
+		if (setting_form_ != NULL && !setting_form_flag_.expired())
 		{
 			setting_form_->ShowWindow(true, true);
 			setting_form_->ShowPage(video);
@@ -566,6 +568,7 @@ namespace nim_comp
 		{
 			setting_form_.release();
 			setting_form_.reset(new VideoSettingForm());
+			setting_form_flag_ = setting_form_->GetWeakFlag();
 			setting_form_->Create(NULL, L"", WS_OVERLAPPEDWINDOW, 0);
 			setting_form_->CenterWindow();
 			setting_form_->ShowWindow();
@@ -648,15 +651,15 @@ namespace nim_comp
 	void VideoManager::SetAudioVolumn(unsigned char volumn, bool capture)
 	{
 		nim::VChat::SetAudioVolumn(volumn, capture);
-		if (setting_form_ != NULL && IsWindow(setting_form_->GetHWND()))
+		if (setting_form_ != NULL && !setting_form_flag_.expired())
 		{
 			setting_form_->AudioVolumnChange();
 		}
-		if (video_form_ != NULL && IsWindow(video_form_->GetHWND()))
+		if (video_form_ != NULL && !video_form_flag_.expired())
 		{
 			video_form_->InitVolumnSetting();
 		}
-		if (multi_video_form_ != NULL && IsWindow(multi_video_form_->GetHWND()))
+		if (multi_video_form_ != NULL && !multi_video_form_flag_.expired())
 		{
 			multi_video_form_->InitVolumnSetting();
 		}
@@ -665,7 +668,7 @@ namespace nim_comp
 	void VideoManager::SetAudioInputAutoVolumn(bool auto_volumn)
 	{
 		nim::VChat::SetAudioInputAutoVolumn(auto_volumn);
-		if (setting_form_ != NULL && IsWindow(setting_form_->GetHWND()))
+		if (setting_form_ != NULL && !setting_form_flag_.expired())
 		{
 			setting_form_->AudioVolumnChange();
 		}
@@ -946,6 +949,7 @@ namespace nim_comp
 
 				multi_vchat_invite_form_.release();
 				multi_vchat_invite_form_.reset(new MultiVideoInviteForm(vchat_info));
+				multi_vchat_invite_form_flag_ = multi_vchat_invite_form_->GetWeakFlag();
 				multi_vchat_invite_form_->Create(NULL, L"", UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L);
 				multi_vchat_invite_form_->CenterWindow();
 				multi_vchat_invite_form_->AddInviteMembers(invite_members);
@@ -963,7 +967,7 @@ namespace nim_comp
 					//检测是否有其他端进入音视频房间
 					int need_opt = 0;
 					bool video = false;
-					if (multi_video_form_ != NULL && IsWindow(multi_video_form_->GetHWND()))
+					if (multi_video_form_ != NULL && !multi_video_form_flag_.expired())
 					{
 						QLOG_APP(L"roomName:{0},vchat room name:{1}") << room_name << multi_video_form_->GetRoomName();
 						if (room_name == multi_video_form_->GetRoomName())
@@ -1026,7 +1030,7 @@ namespace nim_comp
 				}
 				else if (opt == 2) //被邀请方拒绝群视频聊天
 				{
-					if (multi_video_form_ != NULL && IsWindow(multi_video_form_->GetHWND()))
+					if (multi_video_form_ != NULL && !multi_video_form_flag_.expired())
 					{
 						multi_video_form_->OnSetShowBitmap(sender, false, true);
 					}
@@ -1055,6 +1059,7 @@ namespace nim_comp
 									std::string creator_id = VideoManager::GetInstance()->GetMultiVChatCreator();
 									multi_video_form_.release();
 									multi_video_form_.reset(new MultiVideoChatForm(room_name, team_id, channel_id, video, false, creator_id));
+									multi_video_form_flag_ = multi_video_form_->GetWeakFlag();
 									multi_video_form_->Create(NULL, L"", UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L);
 									multi_video_form_->CenterWindow();
 								}
@@ -1101,7 +1106,7 @@ namespace nim_comp
 			case kMsgMultiVchatP2PChangeMode:
 			{
 				//单点通知音视频模式切换
-				if (multi_video_form_ != NULL && IsWindow(multi_video_form_->GetHWND()) && room_name == multi_video_form_->GetRoomName())
+				if (multi_video_form_ != NULL && !multi_video_form_flag_.expired() && room_name == multi_video_form_->GetRoomName())
 				{
 					bool video = json["video"].asBool();
 					multi_video_form_->OnSetShowBitmap(sender, video);
@@ -1131,7 +1136,7 @@ namespace nim_comp
 			case kMsgMultiVchatTeamChangeMode:
 			{
 				//收到群视频成员的音视频模式切换通知
-				if (multi_video_form_ != NULL && IsWindow(multi_video_form_->GetHWND()) && room_name == multi_video_form_->GetRoomName())
+				if (multi_video_form_ != NULL && !multi_video_form_flag_.expired() && room_name == multi_video_form_->GetRoomName())
 				{
 					multi_video_form_->OnSetShowBitmap(sender, video);
 				}
@@ -1145,7 +1150,7 @@ namespace nim_comp
 
 	std::set<std::string> VideoManager::GetMeetingMember()
 	{
-		if (multi_video_form_ != NULL && IsWindow(multi_video_form_->GetHWND()))
+		if (multi_video_form_ != NULL && !multi_video_form_flag_.expired())
 			return multi_video_form_->GetTalkingMember();
 		return std::set<std::string>();
 	}
