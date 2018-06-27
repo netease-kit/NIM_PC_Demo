@@ -5,7 +5,10 @@
 #include "module/service/team_service.h"
 #include "module/session/session_manager.h"
 #include "gui/profile_form/profile_form.h"
-
+#include "module/runtime_data/runtime_data_manager.h"
+#include "gui\contact_select_form\contact_select_form.h"
+#include "gui\team_info\team_search.h"
+#include "callback\team\team_callback.h"
 using namespace ui;
 
 namespace nim_comp
@@ -49,6 +52,13 @@ GroupList::GroupList(ui::TreeView* group_list) :
 	tree_node->SetEnabled(false);
 
 	group_list_->AttachBubbledEvent(kEventReturn, nbase::Bind(&GroupList::OnReturnEventsClick, this, std::placeholders::_1));
+
+	if (RunTimeDataManager::GetInstance()->GetUIStyle() == UIStyle::join)
+	{
+		create_group_item->AttachSelect(nbase::Bind(&GroupList::OnCreateGroupItemSelected, this, std::placeholders::_1));
+		create_advanced_group_item->AttachSelect(nbase::Bind(&GroupList::OnCreateTeamItemSelected, this, std::placeholders::_1));
+		search_group_item->AttachSelect(nbase::Bind(&GroupList::OnSearchItemSelected, this, std::placeholders::_1));
+	}
 }
 
 bool GroupList::OnReturnEventsClick(ui::EventArgs* param)
@@ -116,7 +126,21 @@ void GroupList::AddListItemInGroup(const nim::TeamInfo& team_info, ui::TreeNode*
 	ui::GlobalManager::FillBoxWithCache( item, L"main/friend_item.xml" );
 	item->Init(kFriendItemTypeTeam, team_info.GetTeamID());
 	ui::ButtonBox* head_image = (ui::ButtonBox*)(item->FindSubControl(L"head_image"));
-	head_image->AttachClick(nbase::Bind(&GroupList::OnHeadImageClick, this, team_info.GetTeamID(), std::placeholders::_1));
+	if (RunTimeDataManager::GetInstance()->GetUIStyle() == UIStyle::join)
+	{
+		auto tid = team_info.GetTeamID();
+		head_image->SetMouseEnabled(false);
+		item->AttachSelect([tid](ui::EventArgs* param){
+			auto team_info = nim::Team::QueryTeamInfoBlock(tid);
+			TeamInfoForm::ShowTeamInfoForm(false, team_info.GetType(), team_info.GetTeamID(), team_info,true);
+			return true;
+		});
+	}		
+	else
+	{
+		head_image->AttachClick(nbase::Bind(&GroupList::OnHeadImageClick, this, team_info.GetTeamID(), std::placeholders::_1));
+	}
+	
 	//tree_node->AddChildNode(item);
 	FriendItem* container_element = item;
 	std::size_t index = 0;
@@ -196,5 +220,63 @@ void GroupList::OnUserPhotoReady(PhotoType type, const std::string& accid, const
 		}
 	}
 }
+bool GroupList::OnCreateTeamItemSelected(ui::EventArgs* param)
+{
+	std::wstring caption = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_INVITEUSERFORM_INVITE_JOINCHAT");
+	nim_comp::TeamInfoForm* team_info_form = (nim_comp::TeamInfoForm*)nim_comp::WindowsManager::GetInstance()->GetWindow\
+		(nim_comp::TeamInfoForm::kClassName, nim_comp::TeamInfoForm::kTeamInfoWindowId);
+	if (team_info_form == NULL)
+	{
+		team_info_form = new nim_comp::TeamInfoForm(true, nim::kNIMTeamTypeAdvanced, "", nim::TeamInfo());
+		team_info_form->Create(NULL, caption.c_str(), WS_OVERLAPPEDWINDOW& ~WS_MAXIMIZEBOX, 0L);
+		team_info_form->CenterWindow();
+		team_info_form->ShowWindow(true);
+	}
+	else
+	{
+		team_info_form->ActiveWindow();
+	}
+	return true;
+}
+bool GroupList::OnCreateGroupItemSelected(ui::EventArgs* param)
+{
+	nim_comp::ContactSelectForm *contact_select_form = (nim_comp::ContactSelectForm *)nim_comp::WindowsManager::GetInstance()->GetWindow\
+		(nim_comp::ContactSelectForm::kClassName, nbase::UTF8ToUTF16(nim_comp::ContactSelectForm::kCreateGroup));
 
+	if (!contact_select_form)
+	{
+		auto cb = ToWeakCallback([this](const std::list<std::string> &friend_list, const std::list<std::string> &team_list)
+		{
+			if (friend_list.empty())
+			{
+				ShowMsgBox(group_list_->GetWindow()->GetHWND(), MsgboxCallback(), L"STRID_MAINWINDOW_PLEASE_INVITE_FRIEND");
+				return;
+			}
+
+			UTF16String user_names;
+			auto it = friend_list.cbegin();
+			for (int i = 0; it != friend_list.cend() && i < 2; it++, i++)
+				user_names += nim_comp::UserService::GetInstance()->GetUserName(*it, false) + L";";
+			user_names += nim_comp::UserService::GetInstance()->GetUserName(it == friend_list.end() ? nim_comp::LoginManager::GetInstance()->GetAccount() : *it, false);
+
+			nim::TeamInfo tinfo;
+			tinfo.SetType(nim::kNIMTeamTypeNormal);
+			tinfo.SetName(nbase::UTF16ToUTF8(user_names));
+			nim::Team::CreateTeamAsync(tinfo, friend_list, "", nbase::Bind(&nim_comp::TeamCallback::OnTeamEventCallback, std::placeholders::_1));
+		});
+		contact_select_form = new nim_comp::ContactSelectForm(nim_comp::ContactSelectForm::kCreateGroup, std::list<UTF8String>(), cb);
+		contact_select_form->Create(NULL, L"", UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L);
+		contact_select_form->CenterWindow();
+	}
+	else
+	{
+		contact_select_form->ActiveWindow();
+	}
+	return true;
+}
+bool GroupList::OnSearchItemSelected(ui::EventArgs* param)
+{
+	nim_comp::WindowsManager::GetInstance()->SingletonShow<nim_comp::TeamSearchForm>(nim_comp::TeamSearchForm::kClassName);
+	return true;
+}
 }

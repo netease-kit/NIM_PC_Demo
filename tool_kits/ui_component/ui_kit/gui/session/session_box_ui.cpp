@@ -57,7 +57,7 @@ LRESULT SessionBox::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, bool 
 		if (wParam != VK_BACK)
 		{
 			//先让RichEdit处理完，然后再处理@消息
-			LRESULT res = session_form_->WindowEx::HandleMessage(uMsg, wParam, lParam);
+			LRESULT res = session_form_->HostWindowHandleMessage(uMsg, wParam, lParam);
 			HandleAtMsg(wParam, lParam);
 			bHandle = true;
 			return res;
@@ -469,9 +469,19 @@ bool SessionBox::OnInputEditEnter(ui::EventArgs* param)
 
 void SessionBox::SetWindow(Window* pManager, Box* pParent, bool bInit)
 {	
-	session_form_ = dynamic_cast<SessionForm*>(pManager);
-	ASSERT(NULL != session_form_);
-
+	session_form_ = dynamic_cast<ISessionDock*>(pManager);
+	if (session_form_ == nullptr)
+	{
+		ui::Control* temp = pParent;
+		if (temp != nullptr)
+		do 
+		{
+			session_form_ = dynamic_cast<ISessionDock*>(temp);
+			if (session_form_ != nullptr)
+				break;
+			temp = temp->GetParent();
+		} while (temp != pManager->GetRoot());
+	}
 	__super::SetWindow(pManager, pParent, bInit);
 }
 

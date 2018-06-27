@@ -15,7 +15,7 @@
                         <Button class="btn_wnd_min" name="minbtn" margin="4,0,4,0"/>
                         <Button class="btn_wnd_close" name="closebtn"/>
                     </HBox>
-                    <HBox height="auto">
+                    <HBox height="auto">						
                         <Control />
                         <Button name="register_account" margin="0,5,15,10" halign="right" textid="STRID_LOGIN_FORM_REGISTER" cursortype="hand" font="24" normaltextcolor="link_green"/>
                         <Button name="enter_login" margin="0,5,15,10" halign="right" textid="STRID_LOGIN_FORM_LOGIN_DIRECTLY" cursortype="hand" font="24" normaltextcolor="link_green" visible="false"/>
@@ -48,6 +48,7 @@
 					<Event type="unselect" receiver="chkbox_remember_username" applyattribute="selected=&quot;false&quot;"/>
 				</CheckBox>
 				<Control />
+				<CheckBox class="checkbox_font12" name="chkbox_use_new_uistyle" textid="STRID_LOGIN_NEW_UISTYLE" normaltextcolor="dark2color" />
 				<!--Button name="forget_password" cursortype="hand" font="1" normaltextcolor="link_gray" textid="STRID_LOGIN_FORGET_PASSWORD" /-->
 			</HBox>
                 

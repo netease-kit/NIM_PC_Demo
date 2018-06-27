@@ -513,13 +513,19 @@ void SessionBox::UpdateBroad(const Json::Value &broad)
 
 void SessionBox::CheckTeamType(nim::NIMTeamType type)
 {
+
 	bool show = (type == nim::kNIMTeamTypeAdvanced);
 
-	Control* split = FindSubControl(L"frame_mid_split");
-	split->SetVisible(show);
+	//Control* split = FindSubControl(L"frame_mid_split");
+	//split->SetVisible(show);
+	//Control* frame_right = FindSubControl(L"frame_right");
+	//frame_right->SetVisible(show);
+	//FindSubControl(L"btn_team_ack_msg")->SetVisible(LoginManager::GetInstance()->IsTeamMsgAckUIEnabled() && show);
 	Control* frame_right = FindSubControl(L"frame_right");
-	frame_right->SetVisible(show);
-	FindSubControl(L"btn_team_ack_msg")->SetVisible(LoginManager::GetInstance()->IsTeamMsgAckUIEnabled() && show);
+	auto hied_right = dynamic_cast<ui::Button*>(FindSubControl(L"hide_right"));
+	auto show_right = dynamic_cast<ui::Button*>(FindSubControl(L"show_right"));
+	hied_right->SetVisible(frame_right->IsVisible());
+	show_right->SetVisible(!frame_right->IsVisible());
 }
 
 bool SessionBox::IsAdvancedTeam()

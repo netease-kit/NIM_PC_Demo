@@ -64,7 +64,7 @@ static void RegEnterCb(const EnterCallback& cb, const std::string& json_extensio
   */
 static void RegExitCb(const ExitCallback& cb, const std::string& json_extension = "");
 
-/** @fn void RegExitCb(const ExitCallback_2& cb, const std::string& json_extension = "")
+/** @fn void RegExitCb_2(const ExitCallback_2& cb, const std::string& json_extension = "")
   * 注册全局登出、被踢回调
   * @param[in] cb			  回调函数
   * @param[in] json_extension json扩展参数（备用，目前不需要）

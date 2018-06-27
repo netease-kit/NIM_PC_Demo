@@ -120,7 +120,10 @@ LRESULT SessionForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHan
 
 	return __super::OnClose(uMsg, wParam, lParam, bHandled);
 }
-
+LRESULT SessionForm::HostWindowHandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	return WindowEx::HandleMessage(uMsg, wParam, lParam);
+}
 LRESULT SessionForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {	
 	if (uMsg == WM_KEYDOWN)
@@ -201,7 +204,7 @@ LRESULT SessionForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 			return ret;
 	}
 
-	return __super::HandleMessage(uMsg, wParam, lParam);
+	return WindowEx::HandleMessage(uMsg, wParam, lParam);
 }
 
 void SessionForm::OnFinalMessage(HWND hWnd)
@@ -287,7 +290,40 @@ bool SessionForm::OnClicked(ui::EventArgs* param)
 
 	return true;
 }
-
+HWND SessionForm::Create()
+{
+	//去掉了窗口创建时的WS_VISIBLE属性，不想在创建窗口时触发WM_ACTIVE事件
+	//展示窗口时主动调用ShowWindow/ActiveWindow接口来展示窗口
+	return WindowEx::Create(NULL, L"Session", WS_OVERLAPPEDWINDOW/*UI_WNDSTYLE_FRAME*/, 0);
+}
+void SessionForm::CenterWindow()
+{
+	WindowEx::CenterWindow();
+}
+HWND SessionForm::GetHWND()
+{
+	return WindowEx::GetHWND();
+}
+ui::UiRect SessionForm::GetPos(bool bContainShadow) const
+{ 
+	return WindowEx::GetPos(bContainShadow); 
+}
+void SessionForm::SetPos(const ui::UiRect& rc, bool bNeedDpiScale, UINT uFlags, HWND hWndInsertAfter, bool bContainShadow)
+{ 
+	WindowEx::SetPos(rc, bNeedDpiScale, uFlags, hWndInsertAfter, bContainShadow); 
+}
+void SessionForm::ActiveWindow()
+{ 
+	WindowEx::ActiveWindow(); 
+}
+LRESULT SessionForm::PostMessage(UINT uMsg, WPARAM wParam , LPARAM lParam)
+{ 
+	return WindowEx::PostMessage(uMsg, wParam, lParam);
+}
+void SessionForm::SetTaskbarTitle(const std::wstring &title)
+{
+	WindowEx::SetTaskbarTitle(title);
+}
 SessionBox* SessionForm::CreateSessionBox(const std::string &session_id, nim::NIMSessionType session_type)
 {
 	std::wstring id = nbase::UTF8ToUTF16(session_id);

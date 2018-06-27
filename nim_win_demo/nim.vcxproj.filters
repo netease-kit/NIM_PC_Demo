@@ -58,6 +58,18 @@
     <Filter Include="gui\extern_ctrl\richedit_with_defmenu">
       <UniqueIdentifier>{084c007a-1c0a-4235-9b93-e0826ba1c6bd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gui\testgif">
+      <UniqueIdentifier>{02af4b0d-bdce-460c-9f59-52cb9b43f967}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\plugins">
+      <UniqueIdentifier>{faf7f74b-2d48-440b-9561-b5e6d5d64bda}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\extern_ctrl\treectrl">
+      <UniqueIdentifier>{ed0a60ff-0940-407b-a034-ef57a4dc45ea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\plugins\addresbook_plugin">
+      <UniqueIdentifier>{35387c85-4e45-4612-967c-5a0db0b3147a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui\login\login_form.h">
@@ -123,6 +135,51 @@
     <ClInclude Include="gui\extern_ctrl\richedit_with_defmenu_btnimp.h">
       <Filter>gui\extern_ctrl\richedit_with_defmenu</Filter>
     </ClInclude>
+    <ClInclude Include="gui\test_gif\test_gif_form.h">
+      <Filter>gui\testgif</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\main_form_menu.h">
+      <Filter>gui\main</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\chatroom_plugin.h">
+      <Filter>gui\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\cef_test_plugin.h">
+      <Filter>gui\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\cef\cef_tip.h">
+      <Filter>gui\cef</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\gif_test_plugin.h">
+      <Filter>gui\plugins</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\extern_ctrl\treectrl\treectrl_interface.h">
+      <Filter>gui\extern_ctrl\treectrl</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\extern_ctrl\treectrl\treedoc.h">
+      <Filter>gui\extern_ctrl\treectrl</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\extern_ctrl\treectrl\treeitem.h">
+      <Filter>gui\extern_ctrl\treectrl</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\extern_ctrl\treectrl\treeitem_uistyle.h">
+      <Filter>gui\extern_ctrl\treectrl</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\extern_ctrl\treectrl\treeview.h">
+      <Filter>gui\extern_ctrl\treectrl</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\addresbook_plugin\addresbook_plugin.h">
+      <Filter>gui\plugins\addresbook_plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\addresbook_plugin\addresbook_plugin_page.h">
+      <Filter>gui\plugins\addresbook_plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\addresbook_plugin\mytree.h">
+      <Filter>gui\plugins\addresbook_plugin</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\addresbook_plugin\contact_profile_tip.h">
+      <Filter>gui\plugins\addresbook_plugin</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -187,6 +244,36 @@
     </ClCompile>
     <ClCompile Include="gui\extern_ctrl\richedit_with_defmenu_btnimp.cpp">
       <Filter>gui\extern_ctrl\richedit_with_defmenu</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\test_gif\test_gif_form.cpp">
+      <Filter>gui\testgif</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\main_form_menu.cpp">
+      <Filter>gui\main</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\cef\cef_tip.cpp">
+      <Filter>gui\cef</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\extern_ctrl\treectrl\treedoc.cpp">
+      <Filter>gui\extern_ctrl\treectrl</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\extern_ctrl\treectrl\treeitem.cpp">
+      <Filter>gui\extern_ctrl\treectrl</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\extern_ctrl\treectrl\treeitem_uistyle.cpp">
+      <Filter>gui\extern_ctrl\treectrl</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\extern_ctrl\treectrl\treeview.cpp">
+      <Filter>gui\extern_ctrl\treectrl</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\plugins\addresbook_plugin\addresbook_plugin.cpp">
+      <Filter>gui\plugins\addresbook_plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\plugins\addresbook_plugin\addresbook_plugin_page.cpp">
+      <Filter>gui\plugins\addresbook_plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\plugins\addresbook_plugin\mytree.cpp">
+      <Filter>gui\plugins\addresbook_plugin</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

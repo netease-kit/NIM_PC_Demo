@@ -11,7 +11,7 @@
 #include "gui/cef/cef_form.h"
 #include "gui/cef/cef_native_form.h"
 #include "gui/main/session_list.h"
-
+#include "gui/test_gif/test_gif_form.h"
 #include "nim_service/module/service/session_service.h"
 using namespace ui;
 
@@ -250,6 +250,8 @@ bool MainForm::OnClicked( ui::EventArgs* msg )
 		nim_ui::WindowsManager::GetInstance()->ShowProfileForm(nim_ui::LoginManager::GetInstance()->GetAccount());
 	else if (name == L"chatroom")
 		nim_ui::WindowsManager::GetInstance()->SingletonShow<nim_chatroom::ChatroomFrontpage>(nim_chatroom::ChatroomFrontpage::kClassName);
+	else if (name == L"gif_test")
+		nim_ui::WindowsManager::GetInstance()->SingletonShow<TestGifForm>(TestGifForm::kClassName);
 	else if (name == L"cef_test")
 	{
 		// Cefä¯ÀÀÆ÷Ä£¿é
@@ -291,6 +293,10 @@ bool MainForm::OnClicked( ui::EventArgs* msg )
 			}
 		});
 		nim::MsgLog::ReadAllAsync(nim::MsgLog::DBFunctionCallback());
+	}
+	else if (name == L"gif_test")
+	{
+		nim_ui::WindowsManager::SingletonShow<TestGifForm>(TestGifForm::kClassName);
 	}
 	return true;
 }
@@ -633,7 +639,7 @@ void MainForm::SetOnlineState()
 	if (!nim_comp::SubscribeEventManager::GetInstance()->IsEnabled())
 		return;
 
-	nim::EventData event_data = nim_ui::SubscribeEventManager::GetInstance()->CreateBusyEvent(is_busy_);
+	nim::EventData event_data = nim_comp::OnlineStateEventHelper::CreateBusyEvent(is_busy_);
 	nim::SubscribeEvent::Publish(event_data,
 		this->ToWeakCallback([this](nim::NIMResCode res_code, int event_type, const nim::EventData& event_data){
 		if (res_code == nim::kNIMResSuccess)

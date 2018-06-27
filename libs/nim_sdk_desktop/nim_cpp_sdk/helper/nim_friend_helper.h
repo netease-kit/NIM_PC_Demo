@@ -32,7 +32,8 @@ enum FriendProfileKey
 	kFriendProfileKeyAlias = 1 << 3,				/**< 别称  */
 	kFriendProfileKeyBits = 1 << 4,					/**< 扩展项,int64  */
 	kFriendProfileKeyEx = 1 << 5,					/**< 扩展项,json value  */
-	kFriendProfileKeyAll = (1 << 6) - 1				/**< 有数据  */
+	kFriendProfileKeyServerEx = 1 << 6,					/**< 服务端扩展项,string 只读 */
+	kFriendProfileKeyAll = (1 << 7) - 1				/**< 有数据  */
 };
 
 /** @brief 云信好友 */
@@ -149,6 +150,19 @@ struct FriendProfile
 		return expand_;
 	}
 
+	/** 设置扩展信息(string) */
+	void SetServerEx(const std::string& srv_ex)
+	{
+		server_expand_ = srv_ex;
+		value_available_flag_ |= kFriendProfileKeyServerEx;
+	}
+
+	/** 获取扩展信息(string) */
+	std::string GetServerEx() const
+	{
+		return server_expand_;
+	}
+
 	/** 设置档案创建时间(毫秒) */
 	void SetCreateTimetag(int64_t timetag)
 	{
@@ -248,7 +262,7 @@ private:
 	int64_t			bits_;						/**< 扩展数据 */
 	Json::Value		expand_;					/**< 扩展数据 */
 	unsigned int	value_available_flag_;		/**< 好友数据有效性，结合好友Key使用 */
-
+	std::string	 	server_expand_;	/**< 扩展数据 */
 private:
 	int64_t			create_timetag_;			/**< 好友创建时间戳（毫秒） */
 	int64_t			update_timetag_;			/**< 好友更新时间戳（毫秒） */

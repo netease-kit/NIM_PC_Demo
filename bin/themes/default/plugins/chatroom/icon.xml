@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+    <OptionBox margin="0,10,0,10" width="auto" height="auto" halign="center"   >
+		<ButtonBox name="goto_chatroom"  width="44" height="44" mousechild="false" cursortype="hand"
+			forenormalimage="file='../chatroom/btn_create_room.png' dest='14,4,30,20'" >
+			<Label name="name" textid="STDID_PLUGIN_NAME_CHATROOM" font="1" halign="center" margin="0,0,0,4" valign="bottom" normaltextcolor="lightcolor"/>
+		</ButtonBox>
+    </OptionBox>
+</Window>

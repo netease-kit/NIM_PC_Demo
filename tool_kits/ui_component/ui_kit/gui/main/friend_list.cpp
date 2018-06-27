@@ -6,7 +6,9 @@
 #include "module/login/login_manager.h"
 #include "module/session/session_manager.h"
 #include "shared/tool.h"
-
+#include "module/runtime_data/runtime_data_manager.h"
+#include "module/plugins/main_plugins_manager.h"
+#include "gui/plugins/contact/contact_plugin.h"
 using namespace ui;
 
 namespace nim_comp
@@ -15,6 +17,7 @@ FriendList::FriendList(ui::TreeView* friend_list) :
 	friend_list_(friend_list),
 	pos_tip_(nullptr)
 {
+	friend_list->SelectNextWhenActiveRemoved(false);
 	auto robot_list_change_cb = nbase::Bind(&FriendList::OnRobotChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	unregister_cb.Add(UserService::GetInstance()->RegRobotListChange(robot_list_change_cb));
 
@@ -171,8 +174,20 @@ void FriendList::AddListItemInGroup(const std::string& accid, FriendItemType typ
 	ui::GlobalManager::FillBoxWithCache(item, L"main/friend_item.xml");
 	item->SetUTF8Name(accid);
 	item->Init(type, accid);
-	ui::ButtonBox* head_image = (ui::ButtonBox*)(item->FindSubControl(L"head_image"));
-	head_image->AttachClick(nbase::Bind(&FriendList::OnHeadImageClick, this, accid, type, std::placeholders::_1));
+	if (RunTimeDataManager::GetInstance()->GetUIStyle() == UIStyle::join)
+	{
+		ui::ButtonBox* head_image = (ui::ButtonBox*)(item->FindSubControl(L"head_image"));
+		head_image->SetMouseEnabled(false);
+		item->AttachSelect(ToWeakCallback([accid, type](ui::EventArgs* param){
+			ProfileForm::ShowProfileForm(accid, type == kFriendItemTypeRobot, true);
+			return true;
+		}));
+	}		
+	else
+	{
+		ui::ButtonBox* head_image = (ui::ButtonBox*)(item->FindSubControl(L"head_image"));
+		head_image->AttachClick(nbase::Bind(&FriendList::OnHeadImageClick, this, accid, type, std::placeholders::_1));
+	}
 	FriendItem* container_element = item;
 	std::size_t index = 0;
 	for (index = 0; index < tree_node->GetChildNodeCount(); index++)
@@ -412,6 +427,10 @@ void FriendList::OnFriendListChange(FriendChangeType change_type, const std::str
 
 void FriendList::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 {
+	std::string active_profile_id("");
+	if (RunTimeDataManager::GetInstance()->GetUIStyle() == UIStyle::join)
+		active_profile_id = MainPluginsManager::GetInstance()->GetPlugin<ContactPlugin>(ContactPlugin::kPLUGIN_NAME)->GetActiveProfile();
+	bool resel = false;
 	for (auto info : uinfos)
 	{
 		std::string accid = info.GetAccId();
@@ -420,8 +439,10 @@ void FriendList::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 			FriendItem* item = dynamic_cast<FriendItem*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
 			if (item != NULL)
 			{
-				if (info.ExistValue(nim::kUserNameCardKeyName))
+				std::wstring nick_name = UserService::GetInstance()->GetUserName(accid, true);
+				if (info.ExistValue(nim::kUserNameCardKeyName) && nick_name.compare(item->GetNickName()) != 0)
 				{
+					resel = active_profile_id.compare(info.GetAccId()) == 0;
 					DeleteListItem(accid, kFriendItemTypeP2P);
 					AddListItem(accid, kFriendItemTypeP2P);
 				}
@@ -432,6 +453,17 @@ void FriendList::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 				&& !MuteBlackService::GetInstance()->IsInBlackList(accid))
 				AddListItem(accid, kFriendItemTypeP2P);
 		}
+	}
+	if (resel)
+	{
+		Post2UI(friend_list_->ToWeakCallback([this, active_profile_id](){
+			auto item = FindFriendItem(active_profile_id);
+			if (item != nullptr && !item->IsSelected())
+			{
+				item->Selected(true, true);
+				friend_list_->ScrollItemToTop(item->GetName());
+			}
+		}));		
 	}
 }
 

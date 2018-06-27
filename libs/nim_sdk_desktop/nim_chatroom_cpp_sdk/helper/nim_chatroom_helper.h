@@ -484,7 +484,7 @@ struct ChatRoomGetMsgHistoryParameters
 	int64_t start_timetag_;			/**<开始时间,单位毫秒 */
 	int limit_;						/**<本次返回的消息数量*/
 	bool reverse_;					/**<是否反向查询*/
-	std::vector<NIMChatRoomMsgType> msg_types_;
+	std::vector<NIMChatRoomMsgType> msg_types_;	/**< 类型 */
 	/** 构造函数 */
 	ChatRoomGetMsgHistoryParameters() : start_timetag_(0), limit_(0), reverse_(false) 
 	{
@@ -691,10 +691,9 @@ struct NIMChatRoomExitReasonInfo
 	NIMChatRoomExitReason code_;/**< enum 退出原因的代码 */
 	operator NIMChatRoomExitReason() const {return code_;}
 };
+
+/** 重载符号= */
 bool operator == (const NIMChatRoomExitReasonInfo& info,NIMChatRoomExitReason code);
-
-
-
 
 /** @fn bool ParseChatRoomEnterCallbackResultInfo(const std::string& result, ChatRoomInfo& room_info, ChatRoomMemberInfo& my_info)
   * @brief 解析聊天室登录结果
@@ -813,6 +812,7 @@ private:
 	Json::Value robot_info_;
 };
 
+/**< 机器人信息 */
 typedef std::list<RobotInfo> RobotInfos;
 
 /** @fn bool ParseRobotInfosStringToRobotInfos(const std::string& infos_json, RobotInfos &infos)

@@ -40,7 +40,17 @@ public:
 	* @return std::string 当前语言名称
 	*/
 	std::string GetLanguage();
-
+	/**
+	* 获取UI风格ID
+	* @return int 风格ID  0 类似QQ样式的UI，1类似微信样式的UI
+	*/
+	int GetUIStyle();
+	/**
+	* 更换UI风格
+	* @param[in] style_id 风格ID  0 类似QQ样式的UI，1类似微信样式的UI
+	* @return void 无返回值
+	*/
+	void SetUIStyle(int style_id);
 private:
 	/**
 	* 读取配置信息
@@ -51,4 +61,5 @@ private:
 private:
 	bool adapt_dpi_;
 	std::string language_;
+	int uistyle_id_;
 };

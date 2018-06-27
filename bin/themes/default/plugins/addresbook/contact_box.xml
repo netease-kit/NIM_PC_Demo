@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window caption="0,0,0,160">
+	<VBox width="414" height="auto" valign="center" halign="center" margin="0,0,0,130">
+		<Box width="stretch" height="auto" bkcolor="bk_wnd_darkcolor">
+			<HBox width="auto" height="auto" margin="23,36,0,36">
+				<Box width="auto" height="auto" valign="center" >
+					<Button name="head_image" width="64" height="64" margin="1,1,1,1" borderround="64,64" mouse="false" bkimage="../plugins/addresbook/contact_image.png" />
+					<Control bkimage="../public/headmask/icon_headimage_mask_64x64.png" mouse="false"/>
+				</Box>
+				<VBox width="auto" height="auto" margin="19,0,0,0" valign="center" mousechild="false">
+					<Label name="name" font="20" maxwidth="225" normaltextcolor="profile_nickname" text="aaaaa" margin="0,0,0,5" />
+					<Label name="employeesa" font="2" normaltextcolor="profile_account" text="aaa" />							
+				</VBox>
+			</HBox>
+		</Box>
+		<Control class="splitline_hor_level1" width="stretch"/>
+		<VBox name="common_info" width="stretch" height="auto" padding="30,30,30,30">
+			<HBox class="item_box_attrib">
+				<Label class="label_attrib" textid="STRID_PROFILE_FORM_MOBILEPHONE"/>
+				<Control class="space"/>
+				<Label class="label_attrib" name="phone" width="300" normaltextcolor="profile_account" text="aaaaaaaaaaaa"/>											
+			</HBox>
+			<HBox class="item_box_attrib">
+				<Label class="label_attrib" textid="STRID_PROFILE_FORM_EMAIL"/>
+				<Control class="space"/>
+				<Label class="label_attrib" name="email" width="300" normaltextcolor="profile_account" text="aaaaaaaaaaaa"/>
+			</HBox>			
+		</VBox>		
+	</VBox>
+</Window>

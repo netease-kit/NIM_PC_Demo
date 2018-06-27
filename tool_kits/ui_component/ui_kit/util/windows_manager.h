@@ -83,13 +83,13 @@ public:
 	* @param[in] window_id ´°¿Úid
 	* @return WindowType* ´°¿ÚÖ¸Õë
 	*/
-	template<typename WindowType>
-	static WindowType* SingletonShow(const std::wstring& window_id)
+	template<typename WindowType, typename... TInstanceParams>
+	static WindowType* SingletonShow(const std::wstring& window_id, const TInstanceParams&... params)
 	{
 		WindowType *window = (WindowType*)(WindowsManager::GetInstance()->GetWindow(WindowType::kClassName, window_id));
 		if (!window)
 		{
-			window = new WindowType;
+			window = new WindowType(params...);
 			window->Create(NULL, WindowType::kClassName, WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
 			window->CenterWindow();
 			window->ShowWindow();

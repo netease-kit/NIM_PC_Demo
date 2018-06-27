@@ -52,12 +52,7 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 			{
 				SessionManager::GetInstance()->QueryMyTeamMemberInfo(tid);
 				std::wstring session_id = nbase::UTF8ToUTF16(tid);
-				TeamInfoForm* team_info_form = (TeamInfoForm*)WindowsManager::GetInstance()->GetWindow\
-					(TeamInfoForm::kClassName, session_id);
-				if (team_info_form)
-				{
-					team_info_form->UpdateTeamMember();
-				}
+				TeamInfoForm::UpdateTeamMember(session_id);				
 			}
 			SessionBox* session = SessionManager::GetInstance()->FindSessionBox(tid);
 			if (session)

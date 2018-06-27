@@ -8,7 +8,9 @@ namespace nim_comp
 {
 
 typedef std::function<void(int unread_count)> OnUnreadCountChangeCallback;
-
+typedef std::function<void(const std::string&)> OnAddItemCallback;
+typedef std::function<void(const std::string&)> OnRemoveItemCallback;
+typedef std::function<void(nim::NIMResCode, const std::string&)> InsertLocalMessageCallback;
 /** @class SessionList
   * @brief 用于操作和维护最近会话列表
   * @copyright (c) 2015, NetEase Inc. All rights reserved
@@ -39,7 +41,13 @@ public:
 	* @return SessionItem* 被添加的会话控件的指针
 	*/
 	SessionItem* AddSessionItem(const nim::SessionData &msg);
-
+	/**
+	* 添加一个会话控件到会话列表
+	* @param[in] msg 会话数据
+	* @param[in] notify_event 是否通知增加项
+	* @return SessionItem* 被添加的会话控件的指针
+	*/
+	SessionItem* AddSessionItem(const nim::SessionData &msg, bool notify_event);
 	/**
 	* 从会话列表查找会话控件
 	* @param[in] session_id 会话id
@@ -129,6 +137,18 @@ public:
 	*/
 	void UpdateMultispotUI();
 
+	/**
+	* 注册UI新插入项的回调
+	* @param[in] callback 回调函数
+	* @return UnregisterCallback 反注册对象
+	*/
+	UnregisterCallback RegAddItem(const OnAddItemCallback& callback);
+	/**
+	* 注册UI删除项的回调
+	* @param[in] callback 回调函数
+	* @return UnregisterCallback 反注册对象
+	*/
+	UnregisterCallback RegRemoveItem(const OnRemoveItemCallback& callback);
 private:
 	/**
 	* 注册给sdk的回调函数，会话消息变化（如有新消息、删除会话记录）时执行
@@ -179,7 +199,7 @@ private:
 	* @return void 无返回值
 	*/
 	void OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots);
-
+	
 private:
 	/**
 	* 响应会话控件的通知事件
@@ -214,7 +234,6 @@ private:
 	void OnTeamNotificationModeChangeCallback(const std::string &tid, const int64_t bits);
 
 	bool OnReturnEventsClick(ui::EventArgs* param);
-	
 private:
 	ui::ListBox*	session_list_;
 
@@ -227,5 +246,7 @@ private:
 	AutoUnregister unregister_cb;
 	std::map<nim::NIMClientType, nim::OtherClientPres> map_multispot_infos_;
 	std::map<int, std::unique_ptr<OnUnreadCountChangeCallback>> unread_count_change_cb_list_;
+	std::map<int, std::shared_ptr<OnRemoveItemCallback>> remove_item_cb_list_;
+	std::map<int, std::shared_ptr<OnAddItemCallback>> add_item_cb_list_;
 };
 }

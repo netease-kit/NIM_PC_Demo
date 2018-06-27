@@ -24,6 +24,7 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "chatroom", "..\chatroom\chatroom.vcxproj", "{31E319BA-3B1C-4888-AAFB-502D7D351AA1}"
 	ProjectSection(ProjectDependencies) = postProject
 		{04CBF96D-5FFA-4C18-A934-15FDE57A650D} = {04CBF96D-5FFA-4C18-A934-15FDE57A650D}
+		{9787A7D7-D476-43EF-AB59-F68EF84AD42C} = {9787A7D7-D476-43EF-AB59-F68EF84AD42C}
 	EndProjectSection
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "cef_module", "..\tool_kits\cef\cef_module\cef_module.vcxproj", "{5650F9C4-7DD0-4C23-BFC7-022D253ACBFA}"
@@ -49,6 +50,9 @@ EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "av_kit", "..\tool_kits\ui_component\av_kit\av_kit.vcxproj", "{D4E26A0D-098B-46C5-BC9C-38679B902E23}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nim_service", "..\tool_kits\ui_component\nim_service\nim_service.vcxproj", "{5932C2B5-BCE9-4C61-9396-59484AC662E8}"
+	ProjectSection(ProjectDependencies) = postProject
+		{9787A7D7-D476-43EF-AB59-F68EF84AD42C} = {9787A7D7-D476-43EF-AB59-F68EF84AD42C}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

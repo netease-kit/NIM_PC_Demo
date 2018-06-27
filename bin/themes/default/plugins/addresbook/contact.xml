@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ListContainerElement class="listitem" normalcolor="bk_wnd_lightcolor" height="48" bordersize="0,0,0,0" bordercolor="splitline_level1" >
+        <HBox padding="0,0,10,0" mouse="false" >
+			<Box width="auto" height="auto" valign="center" mouse="false">
+				<ButtonBox name="contact_image" width="39" height="39" borderround="39,39" valign="center" halign="center" />
+				<Button class="icon_headimage_mask_40x40" name="head_image_mask" mouse="false"/>
+            </Box>
+			<VBox mouse="false"height="auto" valign="center" mouse="false" margin="5,0,0,0" >
+				<Label name="contact" font="2" mouse="false" margin="0,0,0,5"/>
+				<Label name="mail" font="1" mouse="false" normaltextcolor="lightcolor"/>
+			</VBox>            
+        </HBox>
+    </ListContainerElement>
+</Window>

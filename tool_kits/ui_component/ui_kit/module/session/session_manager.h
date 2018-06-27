@@ -117,7 +117,7 @@ public:
 	* @param[in] session_form 会话窗体
 	* @return void	无返回值
 	*/
-	void SetDropSessionForm(SessionForm *session_form);
+	void SetDropSessionForm(ISessionDock *session_form);
 
 	/**
 	* 执行拖拽会话盒子的操作
@@ -143,7 +143,6 @@ public:
 	* @return bool true 需要，false 不需要
 	*/
 	bool IsTeamMsgMuteShown(const std::string& tid, int64_t bits);
-
 
 private:
 	/**
@@ -195,7 +194,7 @@ private:
 	bool		enable_merge_;
 	bool		use_custom_drag_image_;
 	SessionBox	*draging_session_box_;	// 当下正在被拖拽的会话盒子
-	SessionForm	*drop_session_form_;	// 拖入会话盒子的会话窗口，用于附加拖拽来的会话盒子
+	ISessionDock	*drop_session_form_;	// 拖入会话盒子的会话窗口，用于附加拖拽来的会话盒子
 
 	std::map<std::string, SessionBox*>	session_box_map_;
 

@@ -51,7 +51,11 @@ class ITranslateAccelerator
 public:
 	virtual LRESULT TranslateAccelerator(MSG *pMsg) = 0;
 };
-
+class IControlFromPointFinder
+{
+public:
+	virtual Control* FindControlFromPoint(const CPoint& pt) = 0;
+};
 /////////////////////////////////////////////////////////////////////////////////////
 //
 #ifndef ASSERT
@@ -165,6 +169,9 @@ public:
 
 	bool AddMessageFilter(IUIMessageFilter* pFilter);
 	bool RemoveMessageFilter(IUIMessageFilter* pFilter);
+
+	bool AddControlFromPointFinder(IControlFromPointFinder* pFinder);
+	bool RemoveControlFromPointFinder(IControlFromPointFinder* pFinder);
 
 	bool AddTranslateAccelerator(ITranslateAccelerator *pTranslateAccelerator);
 	bool RemoveTranslateAccelerator(ITranslateAccelerator *pTranslateAccelerator);
@@ -288,6 +295,7 @@ protected:
 	std::vector<IUIMessageFilter*> m_aPreMessageFilters;
 	std::vector<IUIMessageFilter*> m_aMessageFilters;
 	std::vector<ITranslateAccelerator*> m_aTranslateAccelerator;
+	std::vector<IControlFromPointFinder*> m_aIControlFromPointFinder;
 
 	std::vector<Control*> m_aDelayedCleanup;
 	std::vector<Control*> m_aFoundControls;

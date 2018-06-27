@@ -40,11 +40,13 @@ public:
 	}
 
 public:
+	/** 重载= */
 	void operator = (const TeamInfo& new_info)
 	{
 		Update(new_info);
 	}
 
+	/** 更新 */
 	void Update(const TeamInfo& new_info)
 	{
 		if (new_info.ExistValue(kNIMTeamInfoKeyName))

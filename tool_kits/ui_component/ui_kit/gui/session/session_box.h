@@ -27,7 +27,7 @@ const int kCellCancelWriting = 7;
 
 class AtMeView;
 class AudioCaptureView;
-class SessionForm;
+class ISessionDock;
 class TaskbarTabItem;
 /** @class SessionBox
   * @brief 会话盒子，作为会话窗口的子控件；用来创建个人会话、讨论组会话、高级群会话
@@ -64,7 +64,7 @@ public:
 	* 获取本会话盒子所属的会话窗口指针
 	* @return SessionForm* 会话窗口
 	*/
-	SessionForm* GetSessionForm() const;
+	ISessionDock* GetSessionForm() const;
 
 	/**
 	* 初始化会话盒子
@@ -1161,7 +1161,7 @@ private:
 	// 任务栏缩略图管理
 	TaskbarTabItem				*taskbar_item_;
 private:
-	SessionForm*	session_form_;
+	ISessionDock*	session_form_;
 	std::string		session_id_;
 	bool			is_robot_session_ = false;
 	nim::RobotInfo	robot_info_;

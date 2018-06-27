@@ -459,6 +459,75 @@
     <ClInclude Include="module\online_state_event\online_state_event_util.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="guiex\main\main_form_ex.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="module\plugins\main_plugins_base.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_kit_base\auto_create_object_manager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\session\session_plugin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\contact\contact_plugin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\team\team_plugin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\session\session_plugin_page.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\session_dock_def.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="module\runtime_data\runtime_data_manager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="module\plugins\main_plugins_manager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="module\tray_icon\tray_icon_manager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="module\tray_icon\ui_kit_tray_icon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\profile_form\profile_box.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\profile_form\iprofile_ui.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\contact\contact_plugin_page.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="ui_kit_base\invoke_safe_callback.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\team_info\team_info_box.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\team_info\iteam_info_ui.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\team\team_plugin_page.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="export\nim_ui_runtime_manager.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="module\runtime_data\runtime_data_defin.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="guiex\main\main_form_menu.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\plugins\session\session_plugin_icon.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -780,6 +849,57 @@
       <Filter>gui\session</Filter>
     </ClCompile>
     <ClCompile Include="module\online_state_event\online_state_event_util.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="guiex\main\main_form_ex.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="module\plugins\main_plugins_base.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\plugins\session\session_plugin.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\plugins\contact\contact_plugin.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\plugins\team\team_plugin.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\plugins\session\session_plugin_page.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\session_dock_def.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\plugins\session\session_dock_imp.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="module\plugins\main_plugins_manager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="module\tray_icon\tray_icon_manager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="module\tray_icon\ui_kit_tray_icon.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\profile_form\profile_box.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\plugins\contact\contact_plugin_page.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\team_info\team_info_box.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\plugins\team\team_plugin_page.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="export\nim_ui_runtime_manager.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\plugins\session\session_plugin_icon.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

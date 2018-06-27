@@ -201,6 +201,7 @@
     <ClInclude Include="export\nim_ui_muteblack_manager.h" />
     <ClInclude Include="export\nim_ui_notify_center.h" />
     <ClInclude Include="export\nim_ui_photo_manager.h" />
+    <ClInclude Include="export\nim_ui_runtime_manager.h" />
     <ClInclude Include="export\nim_ui_session_list_manager.h" />
     <ClInclude Include="export\nim_ui_session_manager.h" />
     <ClInclude Include="export\nim_ui_subscribe_event_manager.h" />
@@ -208,6 +209,8 @@
     <ClInclude Include="export\nim_ui_user_config.h" />
     <ClInclude Include="export\nim_ui_user_manager.h" />
     <ClInclude Include="export\nim_ui_window_manager.h" />
+    <ClInclude Include="guiex\main\main_form_ex.h" />
+    <ClInclude Include="guiex\main\main_form_menu.h" />
     <ClInclude Include="gui\add_friend\add_friend_wnd.h" />
     <ClInclude Include="gui\black_list\black_list_wnd.h" />
     <ClInclude Include="gui\broad\broad_form.h" />
@@ -224,7 +227,16 @@
     <ClInclude Include="gui\main\multispot_form.h" />
     <ClInclude Include="gui\main\session_list.h" />
     <ClInclude Include="gui\main\team_event_form.h" />
+    <ClInclude Include="gui\plugins\contact\contact_plugin.h" />
+    <ClInclude Include="gui\plugins\contact\contact_plugin_page.h" />
+    <ClInclude Include="gui\plugins\session\session_plugin.h" />
+    <ClInclude Include="gui\plugins\session\session_plugin_icon.h" />
+    <ClInclude Include="gui\plugins\session\session_plugin_page.h" />
+    <ClInclude Include="gui\plugins\team\team_plugin.h" />
+    <ClInclude Include="gui\plugins\team\team_plugin_page.h" />
     <ClInclude Include="gui\profile_form\head_modify_form.h" />
+    <ClInclude Include="gui\profile_form\iprofile_ui.h" />
+    <ClInclude Include="gui\profile_form\profile_box.h" />
     <ClInclude Include="gui\profile_form\profile_form.h" />
     <ClInclude Include="gui\profile_form\ui_head_select_ctrl.h" />
     <ClInclude Include="gui\profile_form\ui_head_view_ctrl.h" />
@@ -258,12 +270,15 @@
     <ClInclude Include="gui\session\dragdrop\drag_form.h" />
     <ClInclude Include="gui\session\msg_record.h" />
     <ClInclude Include="gui\session\session_box.h" />
+    <ClInclude Include="gui\session\session_dock_def.h" />
     <ClInclude Include="gui\session\session_form.h" />
     <ClInclude Include="gui\session\taskbar\dwm_util.h" />
     <ClInclude Include="gui\session\taskbar\taskbar_manager.h" />
     <ClInclude Include="gui\session\unread_form.h" />
+    <ClInclude Include="gui\team_info\iteam_info_ui.h" />
     <ClInclude Include="gui\team_info\member_manager.h" />
     <ClInclude Include="gui\team_info\team_info.h" />
+    <ClInclude Include="gui\team_info\team_info_box.h" />
     <ClInclude Include="gui\team_info\team_notify.h" />
     <ClInclude Include="gui\team_info\team_search.h" />
     <ClInclude Include="module\audio\audio_manager.h" />
@@ -273,14 +288,22 @@
     <ClInclude Include="module\emoji\richedit_olecallback.h" />
     <ClInclude Include="module\emoji\richedit_util.h" />
     <ClInclude Include="module\online_state_event\online_state_event_util.h" />
+    <ClInclude Include="module\plugins\main_plugins_base.h" />
+    <ClInclude Include="module\plugins\main_plugins_manager.h" />
     <ClInclude Include="module\rts\rts_manager.h" />
+    <ClInclude Include="module\runtime_data\runtime_data_defin.h" />
+    <ClInclude Include="module\runtime_data\runtime_data_manager.h" />
     <ClInclude Include="module\session\force_push_manager.h" />
     <ClInclude Include="module\session\session_manager.h" />
     <ClInclude Include="module\session\session_util.h" />
+    <ClInclude Include="module\tray_icon\tray_icon_manager.h" />
+    <ClInclude Include="module\tray_icon\ui_kit_tray_icon.h" />
     <ClInclude Include="nim_ui_dll.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
+    <ClInclude Include="ui_kit_base\auto_create_object_manager.h" />
+    <ClInclude Include="ui_kit_base\invoke_safe_callback.h" />
     <ClInclude Include="util\user.h" />
     <ClInclude Include="util\windows_manager.h" />
     <ClInclude Include="util\window_ex.h" />
@@ -302,6 +325,7 @@
     <ClCompile Include="export\nim_ui_muteblack_manager.cpp" />
     <ClCompile Include="export\nim_ui_notify_center.cpp" />
     <ClCompile Include="export\nim_ui_photo_manager.cpp" />
+    <ClCompile Include="export\nim_ui_runtime_manager.cpp" />
     <ClCompile Include="export\nim_ui_session_list_manager.cpp" />
     <ClCompile Include="export\nim_ui_session_manager.cpp" />
     <ClCompile Include="export\nim_ui_subscribe_event_manager.cpp" />
@@ -309,6 +333,7 @@
     <ClCompile Include="export\nim_ui_user_config.cpp" />
     <ClCompile Include="export\nim_ui_user_manager.cpp" />
     <ClCompile Include="export\nim_ui_window_manager.cpp" />
+    <ClCompile Include="guiex\main\main_form_ex.cpp" />
     <ClCompile Include="gui\add_friend\add_friend_wnd.cpp" />
     <ClCompile Include="gui\black_list\black_list_wnd.cpp" />
     <ClCompile Include="gui\broad\broad_form.cpp" />
@@ -327,7 +352,16 @@
     <ClCompile Include="gui\main\multispot_form.cpp" />
     <ClCompile Include="gui\main\session_list.cpp" />
     <ClCompile Include="gui\main\team_event_form.cpp" />
+    <ClCompile Include="gui\plugins\contact\contact_plugin.cpp" />
+    <ClCompile Include="gui\plugins\contact\contact_plugin_page.cpp" />
+    <ClCompile Include="gui\plugins\session\session_dock_imp.cpp" />
+    <ClCompile Include="gui\plugins\session\session_plugin.cpp" />
+    <ClCompile Include="gui\plugins\session\session_plugin_icon.cpp" />
+    <ClCompile Include="gui\plugins\session\session_plugin_page.cpp" />
+    <ClCompile Include="gui\plugins\team\team_plugin.cpp" />
+    <ClCompile Include="gui\plugins\team\team_plugin_page.cpp" />
     <ClCompile Include="gui\profile_form\head_modify_form.cpp" />
+    <ClCompile Include="gui\profile_form\profile_box.cpp" />
     <ClCompile Include="gui\profile_form\profile_form.cpp" />
     <ClCompile Include="gui\profile_form\ui_head_select_ctrl.cpp" />
     <ClCompile Include="gui\profile_form\ui_head_view_ctrl.cpp" />
@@ -368,6 +402,7 @@
     <ClCompile Include="gui\session\session_box_merge.cpp" />
     <ClCompile Include="gui\session\session_box_team.cpp" />
     <ClCompile Include="gui\session\session_box_ui.cpp" />
+    <ClCompile Include="gui\session\session_dock_def.cpp" />
     <ClCompile Include="gui\session\session_form.cpp" />
     <ClCompile Include="gui\session\session_form_dragdrop.cpp" />
     <ClCompile Include="gui\session\taskbar\dwm_util.cpp" />
@@ -375,6 +410,7 @@
     <ClCompile Include="gui\session\unread_form.cpp" />
     <ClCompile Include="gui\team_info\member_manager.cpp" />
     <ClCompile Include="gui\team_info\team_info.cpp" />
+    <ClCompile Include="gui\team_info\team_info_box.cpp" />
     <ClCompile Include="gui\team_info\team_notify.cpp" />
     <ClCompile Include="gui\team_info\team_search.cpp" />
     <ClCompile Include="module\audio\audio_manager.cpp" />
@@ -384,11 +420,15 @@
     <ClCompile Include="module\emoji\richedit_olecallback.cpp" />
     <ClCompile Include="module\emoji\richedit_util.cpp" />
     <ClCompile Include="module\online_state_event\online_state_event_util.cpp" />
+    <ClCompile Include="module\plugins\main_plugins_base.cpp" />
+    <ClCompile Include="module\plugins\main_plugins_manager.cpp" />
     <ClCompile Include="module\rts\rts_manager.cpp" />
     <ClCompile Include="module\session\force_push_manager.cpp" />
     <ClCompile Include="module\session\session_manager.cpp" />
     <ClCompile Include="module\session\session_manager_dragdrop.cpp" />
     <ClCompile Include="module\session\session_util.cpp" />
+    <ClCompile Include="module\tray_icon\tray_icon_manager.cpp" />
+    <ClCompile Include="module\tray_icon\ui_kit_tray_icon.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

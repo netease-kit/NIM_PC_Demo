@@ -116,7 +116,7 @@ public:
 	virtual CSize EstimateSize(CSize szAvailable);
 	virtual CSize EstimateText(CSize szAvailable, bool& bReEstimateSize);
 
-	bool IsPointInWithScrollOffset(const CPoint& point) const;
+	virtual bool IsPointInWithScrollOffset(const CPoint& point) const;
 
 	// 消息处理
 	void HandleMessageTemplate(EventType eventType, WPARAM wParam = 0, LPARAM lParam = 0, TCHAR tChar = 0, CPoint mousePos = CPoint());

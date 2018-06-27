@@ -1070,11 +1070,11 @@ void ChatroomForm::AddJsb(const int value, const std::wstring &sender_name, bool
 {
 	std::wstring file_name;
 	if (value == 1)
-		file_name = L"jsb_s.png";
+		file_name = L"../session/jsb_s.png";
 	else if (value == 2)
-		file_name = L"jsb_j.png";
+		file_name = L"../session/jsb_j.png";
 	else if (value == 3)
-		file_name = L"jsb_b.png";
+		file_name = L"../session/jsb_b.png";
 
 	if (file_name.empty()) return;
 

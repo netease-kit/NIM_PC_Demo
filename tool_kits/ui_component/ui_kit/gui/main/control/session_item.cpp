@@ -2,6 +2,7 @@
 
 #include "module/session/session_manager.h"
 #include "module/session/force_push_manager.h"
+#include "module/runtime_data/runtime_data_manager.h"
 #include "callback/session/session_callback.h"
 #include "gui/profile_form/profile_form.h"
 #include "gui/session/session_box.h"
@@ -28,8 +29,11 @@ SessionItem::~SessionItem()
 }
 
 void SessionItem::InitCtrl()
-{
-	this->AttachDoubleClick(nbase::Bind(&SessionItem::OnDbClicked, this, std::placeholders::_1));
+{	
+	if (RunTimeDataManager::GetInstance()->GetUIStyle() == UIStyle::join)
+		AttachSelect(nbase::Bind(&SessionItem::OnDbClicked, this, std::placeholders::_1));
+	else
+		AttachDoubleClick(nbase::Bind(&SessionItem::OnDbClicked, this, std::placeholders::_1));
 	this->AttachMenu(nbase::Bind(&SessionItem::OnSessionItemMenu, this, std::placeholders::_1));
 
 	label_name_ = (Label*) this->FindSubControl(L"label_name");
@@ -216,9 +220,16 @@ void GetMsgContent(const nim::SessionData &msg, std::wstring &show_text)
 	}
 	else
 	{
-		show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_UNKNOWN");
-		std::string id = msg.id_;
-		QLOG_WAR(L"unknown msg: id_type={0}_{1} msg_type={2}") << id << msg.type_ << msg.msg_type_;
+		Json::Value extern_info;
+		if (Json::Reader().parse(msg.msg_attach_, extern_info) && extern_info.isMember("virtual_local_message") && extern_info["virtual_local_message"].asBool())
+		{
+			show_text = L"";
+		}			
+		else
+		{
+			show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_UNKNOWN");
+			QLOG_WAR(L"unknown msg: id_type={0}_{1} msg_type={2}") << msg.id_ << msg.type_ << msg.msg_type_;
+		}		
 	}
 }
 
@@ -261,7 +272,18 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 				; // do nothing
 			else
 			{
-				if (msg_.msg_type_ != nim::kNIMMessageTypeRobot)
+				switch (msg_.msg_type_)
+				{
+				case nim::kNIMMessageTypeText:
+				case nim::kNIMMessageTypeImage:
+				case nim::kNIMMessageTypeAudio:
+				case nim::kNIMMessageTypeVideo:
+				case nim::kNIMMessageTypeLocation:
+				case nim::kNIMMessageTypeNotification:
+				case nim::kNIMMessageTypeFile:
+				case nim::kNIMMessageTypeTips:
+				case nim::kNIMMessageTypeCustom:
+				case nim::kNIMMessageTypeUnknown:
 				{
 					std::wstring nick_name = UserService::GetInstance()->GetUserName(msg_.msg_sender_accid_);
 					if (!nick_name.empty())
@@ -269,7 +291,8 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 						show_text = nick_name + L": " + show_text;
 					}
 				}
-				else
+					break;
+				case nim::kNIMMessageTypeRobot:
 				{
 					bool out_msg = false;
 					Json::Value values;
@@ -287,6 +310,10 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 						}
 					}
 				}
+					break;
+				default:
+					break;
+				}						
 			}
 		}
 

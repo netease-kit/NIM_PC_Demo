@@ -6,7 +6,7 @@
 #include "gui/proxy/proxy_form.h"
 #include "module/db/public_db.h"
 #include "gui/chatroom_frontpage.h"
-
+#include "module\config\config_helper.h"
 using namespace ui;
 
 const LPCTSTR LoginForm::kClassName	= L"LoginForm";
@@ -71,6 +71,16 @@ void LoginForm::InitWindow()
 	remember_pwd_ckb_ = (CheckBox *)FindControl(L"chkbox_remember_pwd");
 	remember_user_ckb_ = (CheckBox *)FindControl(L"chkbox_remember_username");
 
+	use_new_uistyle_ = (CheckBox *)FindControl(L"chkbox_use_new_uistyle");
+	use_new_uistyle_->Selected(ConfigHelper::GetInstance()->GetUIStyle() == 1);
+	use_new_uistyle_->AttachSelect([](ui::EventArgs* param){
+		ConfigHelper::GetInstance()->SetUIStyle(1);
+		return true;
+	});
+	use_new_uistyle_->AttachUnSelect([](ui::EventArgs* param){
+		ConfigHelper::GetInstance()->SetUIStyle(0);
+		return true;
+	});
 	//RichEdit的SetText操作放在最后，会触发TextChange事件
 	std::wstring account = QCommand::Get(kCmdAccount);
 	user_name_edit_->SetText(account);

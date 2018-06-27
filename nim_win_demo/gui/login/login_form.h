@@ -138,5 +138,6 @@ private:
 	ui::Button*		btn_cancel_;
 	ui::CheckBox*	remember_pwd_ckb_ = nullptr;
 	ui::CheckBox*	remember_user_ckb_ = nullptr;
+	ui::CheckBox* use_new_uistyle_;
 
 };

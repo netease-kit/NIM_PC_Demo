@@ -55,6 +55,7 @@ void ParseFriendProfile(const Json::Value& friend_profile_json, FriendProfile& p
 		profile.SetEx(ext);
 	profile.SetCreateTimetag(friend_profile_json[kNIMFriendKeyCreateTime].asUInt64());
 	profile.SetUpdateTimetag(friend_profile_json[kNIMFriendKeyUpdateTime].asUInt64());
+	profile.SetServerEx(friend_profile_json[kNIMFriendServerEx].asString());
 }
 
 }

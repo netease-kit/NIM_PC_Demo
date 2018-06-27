@@ -18,8 +18,8 @@ public:
 	virtual void Selected(bool bSelected, bool bTriggerEvent = false) override;
 	virtual void Activate() override;
 
-	std::wstring GetGroup() const;
-	void SetGroup(const std::wstring& strGroupName);
+	virtual  std::wstring GetGroup() const;
+	virtual void SetGroup(const std::wstring& strGroupName);
 
 protected:
 	std::wstring	m_sGroupName;

@@ -34,11 +34,11 @@ public:
 
 	bool IsHorizontal();
 	void SetHorizontal(bool bHorizontal = true);
-	int GetScrollRange() const;
-	void SetScrollRange(int nRange);
+	int64_t GetScrollRange() const;
+	void SetScrollRange(int64_t nRange);
 	bool IsValid() { return GetScrollRange() != 0; }
-	int GetScrollPos() const;
-	void SetScrollPos(int nPos);
+	int64_t GetScrollPos() const;
+	void SetScrollPos(int64_t nPos);
 	int GetLineSize() const;
 	void SetLineSize(int nSize);
 	int GetThumbMinLength() const;
@@ -80,8 +80,8 @@ protected:
 	bool m_bShowButton1;
 	bool m_bShowButton2;
 	bool m_bAutoHide;
-	int m_nRange;
-	int m_nScrollPos;
+	int64_t m_nRange;
+	int64_t m_nScrollPos;
 	int m_nLineSize;
 	int m_nThumbMinLength;
 	int m_nLastScrollPos;

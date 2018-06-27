@@ -1,6 +1,6 @@
 ﻿#pragma once
 #include "taskbar/taskbar_manager.h"
-
+#include "session_dock_def.h"
 interface IDropTargetHelper;
 namespace nim_comp
 {
@@ -12,7 +12,7 @@ namespace nim_comp
   */
 class SessionBox;
 class MergeItem;
-class SessionForm : public WindowEx, public IDropTarget
+class SessionForm : public WindowEx, public IDropTarget, public ISessionDock
 {
 public:
 	friend class SessionBox;
@@ -34,8 +34,9 @@ public:
 	* @param[in out] bHandled 是否处理了消息，如果处理了不继续传递消息
 	* @return LRESULT 处理结果
 	*/
-	LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
+	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
+	virtual LRESULT HostWindowHandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 	/**
 	* 拦截并处理WM_CLOSE消息
 	* @param[in] wParam 附加参数
@@ -80,81 +81,89 @@ public:
 	bool OnClicked(ui::EventArgs* param);
 	
 public:
+	virtual HWND Create() override;
+	virtual void CenterWindow() override;
+	virtual HWND GetHWND() override;
+	virtual ui::UiRect GetPos(bool bContainShadow = false) const override;
+	virtual void SetPos(const ui::UiRect& rc, bool bNeedDpiScale, UINT uFlags, HWND hWndInsertAfter = NULL, bool bContainShadow = false) override;
+	virtual void ActiveWindow() override ;
+	virtual LRESULT PostMessage(UINT uMsg, WPARAM wParam = 0, LPARAM lParam = 0L) override;
+	virtual void SetTaskbarTitle(const std::wstring &title) override;
 	/**
 	* 在本窗口内创建一个新会话盒子
 	* @param[in] session_id 会话id
 	* @param[in] session_type 会话类型
 	* @return SessionBox* 会话盒子
 	*/
-	SessionBox* CreateSessionBox(const std::string &session_id, nim::NIMSessionType session_type);
+	virtual SessionBox* CreateSessionBox(const std::string &session_id, nim::NIMSessionType session_type) override;
 
 	/**
 	* 关闭本窗口内的一个会话盒子
 	* @param[in] session_id 会话id
 	* @return void	无返回值
 	*/
-	void CloseSessionBox(const std::string &session_id);
+	virtual void CloseSessionBox(const std::string &session_id) override;
 
 	/**
 	* 把一个其他窗口内的会话盒子附加到本窗口内
 	* @param[in] session_box 会话盒子
 	* @return bool true 成功，false 失败
 	*/
-	bool AttachSessionBox(SessionBox *session_box);
+	virtual bool AttachSessionBox(SessionBox *session_box) override;
 
 	/**
 	* 把本窗口内的一个会话盒子脱离窗口
 	* @param[in] session_box 会话盒子
 	* @return bool true 成功，false 失败
 	*/
-	bool DetachSessionBox(SessionBox *session_box);
+	virtual bool DetachSessionBox(SessionBox *session_box) override;
 
 	/**
 	* 获取当前显示的会话盒子
 	* @return SessionBox* 会话盒子
 	*/
-	SessionBox* GetSelectedSessionBox();
+	virtual SessionBox* GetSelectedSessionBox() override;
 
 	/**
 	* 激活并切换到某个会话盒子(同时让会话窗体激活)
 	* @param[in] session_id 会话id
 	* @return void 无返回值
 	*/
-	void SetActiveSessionBox(const std::string &session_id);
+	virtual void SetActiveSessionBox(const std::string &session_id) override;
 
 	/**
 	* 判断会话盒子是否处于激活状态(同时判断会话窗体是否被激活)
 	* @param[in] session_box 会话盒子
 	* @return bool true 是，false 否
 	*/
-	bool IsActiveSessionBox(const SessionBox *session_box);
+	virtual bool IsActiveSessionBox(const SessionBox *session_box) override;
 
 	/**
 	* 判断会话盒子是否处于激活状态(同时判断会话窗体是否被激活)
 	* @param[in] session_id 会话id
 	* @return bool true 是，false 否
 	*/
-	bool IsActiveSessionBox(const std::wstring &session_id);
+	virtual bool IsActiveSessionBox(const std::wstring &session_id) override;
 
 	/**
 	* 获取本窗口内会话盒子的总量
 	* @return int	总量
 	*/
-	int GetSessionBoxCount() const;
+	virtual int GetSessionBoxCount() const override;
 
 	/**
 	* 在执行拖拽操作前，如果被拖拽的会话盒子属于本窗口，则通知本窗口
 	* @param[in] session_id 会话id
 	* @return void	无返回值
 	*/
-	void OnBeforeDragSessionBoxCallback(const std::wstring &session_id);
+	virtual void OnBeforeDragSessionBoxCallback(const std::wstring &session_id) override;
 
 	/**
 	* 在执行拖拽操作后，如果被拖拽的会话盒子属于本窗口，则通知本窗口操作结果
 	* @param[in] drop_succeed 会话盒子是否被拖拽到了外部
 	* @return void	无返回值
 	*/
-	void OnAfterDragSessionBoxCallback(bool drop_succeed);
+	virtual void OnAfterDragSessionBoxCallback(bool drop_succeed) override;
 
 	/**
 	* 设置会话合并列表中某个合并项未读消息数
@@ -162,7 +171,7 @@ public:
 	* @param[in] unread 未读消息数
 	* @return void 无返回值
 	*/
-	void InvokeSetSessionUnread(const std::string &id, int unread);
+	virtual void InvokeSetSessionUnread(const std::string &id, int unread) override;
 
 private:
 
@@ -207,7 +216,7 @@ private:
 	* 调整会话窗体的大小
 	* @return void 无返回值
 	*/
-	void AdjustFormSize();
+	virtual void AdjustFormSize() override;
 
 private:
 	/**
@@ -216,7 +225,7 @@ private:
 	* @param[in] name 标题
 	* @return void	无返回值
 	*/
-	void SetMergeItemName(const std::wstring &session_id, const std::wstring &name);
+	 virtual void SetMergeItemName(const std::wstring &session_id, const std::wstring &name) override;
 
 	/**
 	* 设置某个会话对应的左侧合并列表项的图标
@@ -224,7 +233,7 @@ private:
 	* @param[in] photo 图标路径
 	* @return void	无返回值
 	*/
-	void SetMergeItemHeaderPhoto(const std::wstring &session_id, const std::wstring &photo);
+	 virtual void SetMergeItemHeaderPhoto(const std::wstring &session_id, const std::wstring &photo) override;
 
 	/**
 	* 收到新消息时,改变窗体状态来通知用户
@@ -233,7 +242,7 @@ private:
 	* @param[in] flash	是否需要让任务栏图标闪烁
 	* @return void 无返回值
 	*/
-	void OnNewMsg(SessionBox &session_box, bool create, bool flash);
+	 virtual void OnNewMsg(SessionBox &session_box, bool create, bool flash) override;
 
 	/**
 	* 在任务栏闪动
@@ -247,7 +256,7 @@ private:
 	* @param[in] icon 图标路径
 	* @return void	无返回值
 	*/
-	void SetTaskbarIcon(const std::wstring &icon);
+	virtual void SetTaskbarIcon(const std::wstring &icon) override;
 
 	/**
 	* 判断是否为RichEdit中超链接的单击事件

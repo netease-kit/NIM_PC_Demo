@@ -4,7 +4,7 @@
 #include "module/service/mute_black_service.h"
 #include "gui/session/session_form.h"
 #include "gui/session/session_box.h"
-
+#include "gui/session/session_dock_def.h"
 namespace nim_comp
 {
 SessionManager::SessionManager()
@@ -30,7 +30,7 @@ SessionBox* SessionManager::OpenSessionBox(std::string session_id, nim::NIMSessi
 	auto it_box = session_box_map_.find(session_id);
 	if (it_box != session_box_map_.end())
 	{
-		SessionForm *parent_form = it_box->second->GetSessionForm();
+		ISessionDock *parent_form = it_box->second->GetSessionForm();
 		if (!reopen)
 		{
 			parent_form->SetActiveSessionBox(session_id);
@@ -42,7 +42,6 @@ SessionBox* SessionManager::OpenSessionBox(std::string session_id, nim::NIMSessi
 			RemoveSessionBox(session_id);
 		}
 	}
-
 	std::vector<ForcePushManager::ForcePushInfo> infos;
 	ForcePushManager::GetInstance()->GetAtMeMsgs(session_id, infos);
 
@@ -52,7 +51,8 @@ SessionBox* SessionManager::OpenSessionBox(std::string session_id, nim::NIMSessi
 
 	session_box->InvokeShowMsgs(true);
 	session_box->InitAtMeView(infos);
-	session_box->GetSessionForm()->ActiveWindow();
+	if (session_box->GetSessionForm() != nullptr)
+		session_box->GetSessionForm()->ActiveWindow();
 	return session_box;
 }
 
@@ -63,7 +63,7 @@ void SessionManager::AddNewMsg(const nim::IMMessage &msg)
 
 	if (session_box && !session_box->IsTeamValid())
 	{
-		SessionForm *parent_form = session_box->GetSessionForm();
+		ISessionDock *parent_form = session_box->GetSessionForm();
 		parent_form->CloseSessionBox(id);
 		session_box = NULL;
 	}
@@ -107,7 +107,7 @@ bool SessionManager::IsSessionBoxActive(const std::string& id)
 	SessionBox *session_box = FindSessionBox(id);
 	if (NULL != session_box)
 	{
-		SessionForm *parent_form = session_box->GetSessionForm();
+		ISessionDock *parent_form = session_box->GetSessionForm();
 		return parent_form->IsActiveSessionBox(session_box);
 	}
 
@@ -145,8 +145,9 @@ void SessionManager::RemoveSessionBox( std::string id, const SessionBox* box /*=
 
 nim_comp::SessionBox* SessionManager::CreateSessionBox(const std::string &session_id, nim::NIMSessionType type)
 {
-	SessionForm *session_form = NULL;
 	SessionBox *session_box = NULL;
+	ISessionDock *session_form = NULL;
+
 	// 如果启用了窗口合并功能，就把新会话盒子都集中创建到某一个会话窗体里
 	// 否则每个会话盒子都创建一个会话窗体
 	if (enable_merge_)
@@ -157,16 +158,13 @@ nim_comp::SessionBox* SessionManager::CreateSessionBox(const std::string &sessio
 		}
 		else
 		{
-			session_form = new SessionForm;
-			//去掉了窗口创建时的WS_VISIBLE属性，不想在创建窗口时触发WM_ACTIVE事件
-			//展示窗口时主动调用ShowWindow/ActiveWindow接口来展示窗口
-			HWND hwnd = session_form->Create(NULL, L"Session", WS_OVERLAPPEDWINDOW/*UI_WNDSTYLE_FRAME*/, 0);
+			session_form = ISessionDock::InstantDock();
+			HWND hwnd = session_form->Create();
 			if (hwnd == NULL)
 			{
 				session_form = NULL;
 				return NULL;
 			}
-
 			session_form->CenterWindow();
 		}
 
@@ -176,8 +174,8 @@ nim_comp::SessionBox* SessionManager::CreateSessionBox(const std::string &sessio
 	}
 	else
 	{
-		session_form = new SessionForm;
-		HWND hwnd = session_form->Create(NULL, L"Session", UI_WNDSTYLE_FRAME, 0);
+		session_form = ISessionDock::InstantDock();
+		HWND hwnd = session_form->Create();
 		if (hwnd == NULL)
 			return NULL;
 
@@ -187,7 +185,6 @@ nim_comp::SessionBox* SessionManager::CreateSessionBox(const std::string &sessio
 
 		session_form->CenterWindow();
 	}
-
 	session_box_map_[session_id] = session_box;
 	return session_box;
 }
@@ -270,5 +267,4 @@ bool SessionManager::IsTeamMsgMuteShown(const std::string& tid, int64_t bits)
 	}
 	return false;
 }
-
 }

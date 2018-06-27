@@ -162,6 +162,13 @@ NET_EXPORT void nim_http_set_low_speed(HttpRequestHandle request_handle, int low
   */
 NET_EXPORT void nim_http_set_proxy(HttpRequestHandle request_handle, int type, const char* host, short port, const char* user, const char* pass);
 
+/** @fn const char* const nim_http_get_response_head(HttpRequestHandle)
+* NIM HTTP 读取应答的http头信息
+* @param[in] http_request_id	任务id
+* @return char*					头信息
+*/
+NET_EXPORT const char* const nim_http_get_response_head(int http_request_id);
+
 #ifdef __cplusplus
 };
 #endif //__cplusplus

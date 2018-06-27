@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Window>
-    <Box width="64" height="36" bkimage="writing.gif">
+    <Box width="64" height="36" bkimage="../session/writing.gif">
     </Box>
 </Window>

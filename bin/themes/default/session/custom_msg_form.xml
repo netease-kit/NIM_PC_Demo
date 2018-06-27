@@ -23,7 +23,7 @@
 		<HBox name="hbox_send" height="30" margin="10,10,10,10">
 			<CheckBox class="checkbox_font14" name="msg_mode" textid="STRID_CUSTOM_MSG_SEND_ONLINE_ONLY"/>
 			<Control />
-			<Button name="btn_send" normaltextcolor="white" font="7" textid="STRING_SEND" normalimage="send0.png" hotimage="send1.png" pushedimage="send2.png"/>
+			<Button name="btn_send" normaltextcolor="white" font="7" textid="STRING_SEND" normalimage="../session/send0.png" hotimage="../session/send1.png" pushedimage="../session/send2.png"/>
 		</HBox>
     </VBox>
 </Window>

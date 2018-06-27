@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+	<OptionBox width="44" height="44" halign="center" mouse="false" margin="0,0,0,10">
+		<OptionBox name="op_ctrl" valign="center" halign="center" selected="true" mousechild="false" cursortype="hand" >
+			<Control name="icon" bkimage="../main/icon_tab_chat_selected.png" valign="top" halign="center" width="16" height="16" margin="0,4,0,0" />
+			<Label name="name" textid="STDID_PLUGIN_NAME_SESSION" font="1" halign="center" margin="0,0,0,4" valign="bottom" normaltextcolor="lightcolor"/>
+			<Event type="select" receiver=".\icon" applyattribute="bkimage=&quot;../main/icon_tab_chat_selected.png&quot;"/>
+			<Event type="unselect" receiver=".\icon" applyattribute="bkimage=&quot;../main/icon_tab_chat_unselected.png&quot;"/>
+			<Event type="select" receiver=".\name" applyattribute="normaltextcolor=&quot;bk_main_wnd_title&quot;"/>
+			<Event type="unselect" receiver=".\name" applyattribute="normaltextcolor=&quot;lightcolor&quot;"/>		
+		</OptionBox>
+		<CustomButtonBox name="box_unread" width="auto" minwidth="18" height="18" margin="0,0,0,0" padding="0,0,0,0" halign="right" valign="top" 
+			normalimage="file='../main/icon_number.png' corner='8,7,8,7'" hotimage="file='../main/icon_number_clear.png' corner='8,7,8,7'" mousechild="false" visible="false">
+			<Label name="label_unread" halign="center" normaltextcolor="white"/>
+		</CustomButtonBox>	
+	</OptionBox>
+</Window>

@@ -2,6 +2,7 @@
 #include "gui/session/session_form.h"
 #include "gui/session/session_box.h"
 #include "gui/session/dragdrop/drag_form.h"
+#include "gui/session/session_dock_def.h"
 #include "module/dragdrop/drag_drop.h"
 
 namespace
@@ -29,13 +30,13 @@ void SessionManager::SetEnableMerge(bool enable)
 			return;
 
 		// 选择第一个会话盒子所属的窗口作为合并窗口
-		SessionForm *merge_form = session_box_map_.begin()->second->GetSessionForm();
+		ISessionDock *merge_form = session_box_map_.begin()->second->GetSessionForm();
 
 		// 遍历所有会话盒子，脱离原会话窗口，再附加到合并窗口里
 		for (auto it_box : session_box_map_)
 		{
 			ASSERT(NULL != it_box.second);
-			SessionForm *parent_form = it_box.second->GetSessionForm();
+			ISessionDock *parent_form = it_box.second->GetSessionForm();
 			if (merge_form != parent_form)
 			{
 				if (parent_form->DetachSessionBox(it_box.second))
@@ -54,21 +55,21 @@ void SessionManager::SetEnableMerge(bool enable)
 		// 给新拆分的窗口设置坐标
 		bool first_sort = true;
 		ui::UiRect rect_old_form;
-		SessionForm *sort_form = NULL;
+		ISessionDock *sort_form = NULL;
 
 		// 遍历所有会话盒子，脱离原会话窗口，创建新的会话窗口并附加会话盒子
 		for (auto it_box : session_box_map_)
 		{
 			ASSERT(NULL != it_box.second);
-			SessionForm *parent_form = it_box.second->GetSessionForm();
+			ISessionDock *parent_form = it_box.second->GetSessionForm();
 			if (1 == parent_form->GetSessionBoxCount())
 			{
 				sort_form = parent_form;
 			}
 			else if (parent_form->DetachSessionBox(it_box.second))
 			{
-				SessionForm *session_form = new SessionForm;
-				HWND hwnd = session_form->Create(NULL, L"Session", UI_WNDSTYLE_FRAME, 0);
+				ISessionDock *session_form = ISessionDock::InstantDock();
+				HWND hwnd = session_form->Create();
 				if (hwnd == NULL)
 				{
 					ASSERT(0);
@@ -123,7 +124,7 @@ bool SessionManager::IsDragingSessionBox() const
 	return enable_merge_ && NULL != draging_session_box_;
 }
 
-void SessionManager::SetDropSessionForm(SessionForm *session_form)
+void SessionManager::SetDropSessionForm(ISessionDock *session_form)
 {
 	if (NULL == session_form)
 		return;
@@ -208,7 +209,7 @@ void SessionManager::OnBeforeDragSessionBox(SessionBox *session_box, HBITMAP bit
 {
 	// 获取当前被拖拽的会话盒子所属的会话窗口
 	draging_session_box_ = session_box;
-	SessionForm *drag_session_form = draging_session_box_->GetSessionForm();
+	ISessionDock *drag_session_form = draging_session_box_->GetSessionForm();
 	ASSERT(NULL != drag_session_form);
 
 	// 获取被拖拽会话窗口中会话盒子的数量
@@ -231,7 +232,7 @@ void SessionManager::OnAfterDragSessionBox()
 		return;
 
 	// 获取当前被拖拽的会话盒子所属的会话窗口
-	SessionForm *drag_session_form = draging_session_box_->GetSessionForm();
+	ISessionDock *drag_session_form = draging_session_box_->GetSessionForm();
 	ASSERT(NULL != drag_session_form);
 
 	// 获取被拖拽会话窗口中会话盒子的数量
@@ -275,8 +276,8 @@ void SessionManager::OnAfterDragSessionBox()
 
 			if (drag_session_form->DetachSessionBox(draging_session_box_))
 			{
-				SessionForm *session_form = new SessionForm;
-				HWND hwnd = session_form->Create(NULL, L"Session", UI_WNDSTYLE_FRAME, 0);
+				ISessionDock *session_form = ISessionDock::InstantDock();
+				HWND hwnd = session_form->Create();
 				if (hwnd != NULL)
 				{
 					if (session_form->AttachSessionBox(draging_session_box_))

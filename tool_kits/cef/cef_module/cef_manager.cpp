@@ -101,9 +101,8 @@ void CefManager::AddCefDllToPath()
 		MessageBox(NULL, L"请解压Cef.rar压缩包", L"提示", MB_OK);
 		exit(0);
 	}
-	std::wstring new_envirom = path_envirom;
-	new_envirom.append(L";");
-	new_envirom.append(cef_path);
+	std::wstring new_envirom(cef_path);
+	new_envirom.append(L";").append(path_envirom);
 	SetEnvironmentVariable(L"path", new_envirom.c_str());
 }
 

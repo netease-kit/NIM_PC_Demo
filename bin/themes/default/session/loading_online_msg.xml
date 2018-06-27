@@ -3,7 +3,7 @@
     <ListContainerElement height="40">
         <HBox>
             <Control />
-            <Control width="auto" height="auto" valign="center" bkimage="loading.gif"/>
+            <Control width="auto" height="auto" valign="center" bkimage="../session/loading.gif"/>
             <Label margin="5,0,0,2" valign="center" font="2" textid="STRID_SESSION_LOADING_ONLINE_MSG"/>
             <Control />
         </HBox>

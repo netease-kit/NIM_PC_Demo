@@ -2,7 +2,7 @@
 #include "module/session/session_manager.h"
 #include "gui/main/team_event_form.h"
 #include "duilib/Utils/MultiLangSupport.h"
-
+#include "ui_kit_base/invoke_safe_callback.h"
 namespace nim_comp
 {
 
@@ -98,6 +98,11 @@ void SessionList::OnNotifyChangeCallback(std::string id, bool mute)
 
 SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data)
 {
+	return AddSessionItem(item_data, true);
+}
+SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data, bool notify_event)
+{
+	bool invoke_additem = false;
 	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(nbase::UTF8ToUTF16(item_data.id_)));
 	nim::SessionData item_data_new = item_data;
 	if (item)
@@ -126,16 +131,18 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data)
 			session_list_->AddAt(item, index);
 		else
 			session_list_->Add(item);
-
+		invoke_additem = notify_event;
 		item->InitCtrl();
 		item->InitMsg(item_data_new);
 		item->AttachAllEvents(nbase::Bind(&SessionList::OnItemNotify, this, std::placeholders::_1));
 	}
-	
+
 	InvokeUnreadCountChange();
+	if (invoke_additem)
+		for (auto it : add_item_cb_list_)
+			(*it.second)(item_data.id_);
 	return item;
 }
-
 SessionItem* SessionList::GetSessionItem(const std::string &session_id)
 {
 	std::wstring wid = nbase::UTF8ToUTF16(session_id);
@@ -146,8 +153,11 @@ SessionItem* SessionList::GetSessionItem(const std::string &session_id)
 void SessionList::DeleteSessionItem(SessionItem* item)
 {
 	assert(item);
+	auto id = item->GetUTF8Name();
 	session_list_->Remove(item);
-	InvokeUnreadCountChange();
+	InvokeUnreadCountChange();	
+	for (auto it : remove_item_cb_list_)
+		(*it.second)(id);
 }
 
 
@@ -173,7 +183,29 @@ UnregisterCallback SessionList::RegUnreadCountChange(const OnUnreadCountChangeCa
 	});
 	return cb;	
 }
+UnregisterCallback SessionList::RegAddItem(const OnAddItemCallback& callback)
+{
+	OnAddItemCallback* new_callback = new OnAddItemCallback(callback);
+	int cb_id = (int)new_callback;
+	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
+	add_item_cb_list_[cb_id].reset(new_callback);
+	auto cb = ToWeakCallback([this, cb_id]() {
+		add_item_cb_list_.erase(cb_id);
+	});
+	return cb;
+}
 
+UnregisterCallback SessionList::RegRemoveItem(const OnRemoveItemCallback& callback)
+{
+	OnRemoveItemCallback* new_callback = new OnRemoveItemCallback(callback);
+	int cb_id = (int)new_callback;
+	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
+	remove_item_cb_list_[cb_id].reset(new_callback);
+	auto cb = ToWeakCallback([this, cb_id]() {
+		remove_item_cb_list_.erase(cb_id);
+	});
+	return cb;
+}
 void SessionList::InvokeUnreadCountChange()
 {
 	if (unread_count_change_cb_list_.empty())
@@ -557,5 +589,4 @@ bool SessionList::OnItemNotify(ui::EventArgs* msg)
 	}
 	return true;
 }
-
 }

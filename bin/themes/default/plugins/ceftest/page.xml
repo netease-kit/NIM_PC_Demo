@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+<Box bkcolor="bk_wnd_lightcolor"> 
+	<Box class="caption" height="34" />
+	<Box name="cef_box" />
+</Box> 
+</Window>

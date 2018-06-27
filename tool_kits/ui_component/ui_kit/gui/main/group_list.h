@@ -91,6 +91,9 @@ private:
 	*/
 	bool OnHeadImageClick(const std::string& uid, ui::EventArgs*);
 
+	bool OnCreateTeamItemSelected(ui::EventArgs* param);
+	bool OnCreateGroupItemSelected(ui::EventArgs* param);
+	bool OnSearchItemSelected(ui::EventArgs* param);
 private:
 	ui::TreeView* group_list_;
 	vector<ui::TreeNode*> tree_node_ver_;

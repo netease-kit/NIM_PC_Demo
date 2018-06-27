@@ -2,10 +2,8 @@
 
 #include "nim_ui_dll.h"
 #include "gui/main/session_list.h"
-
 namespace nim_ui
 {
-
 /** @class SessionListManager
   * @brief 提供最近会话列表控制接口
   * @copyright (c) 2015, NetEase Inc. All rights reserved
@@ -37,7 +35,49 @@ public:
 	* @return UnregisterCallback 反注册对象
 	*/
 	UnregisterCallback RegUnreadCountChange(const nim_comp::OnUnreadCountChangeCallback& callback);
+	/**
+	* 注册UI新插入项的回调
+	* @param[in] callback 回调函数
+	* @return UnregisterCallback 反注册对象
+	*/
+	UnregisterCallback RegAddItem(const nim_comp::OnAddItemCallback& callback);
+	/**
+	* 注册UI删除项的回调
+	* @param[in] callback 回调函数
+	* @return UnregisterCallback 反注册对象
+	*/
+	UnregisterCallback RegRemoveItem(const nim_comp::OnRemoveItemCallback& callback);
+	/**
+	* 选中会话列表某个会话
+	* @param[in] id 会话id
+	* @param[in] session_type 会话类型
+	* @param[in] create 如果不存在该会话是否时行创建
+	* @param[in] sel 是否进行选中
+	* @param[in] trigger 是否触发通知事件 kEventSelect / kEventUnSelect
+	* @return void 无返回值
+	*/
+	void InvokeSelectSessionItem(const std::string &id, nim::NIMSessionType session_type,bool create = true,bool sel = true, bool trigger = true);
+	/**
+	* 选中会话列表某个会话
+	* @param[in] id 会话id
+	* @param[in] sel 是否进行选中
+	* @param[in] trigger 是否触发通知事件 kEventSelect / kEventUnSelect
+	* @return void 无返回值
+	*/
+	void InvokeSelectSessionItem(const std::string &id, bool sel = true, bool trigger = true);
+	/**
+	* 添加一个会话控件到会话列表
+	* @param[in] msg 会话数据
+	* @return bool 是否添加成功
+	*/
+	bool AddSessionItem(const nim::SessionData &msg);
 
+	/**
+	* 判断会话列表是否存在指定会话
+	* @param[in] session_id 会话id
+	* @return bool 是否存在
+	*/
+	bool CheckSessionItem(const std::string &session_id);
 	/**
 	* 通知会话列表某个会话增加一条未读消息
 	* @param[in] id 会话id
@@ -95,7 +135,16 @@ public:
 	* @return void 无返回值
 	*/
 	void OnQuerySessionListCallback(const std::list<nim::SessionData>& sessions);
-
+	/**
+	* 插入一条本地消息,为了在SDK会话列表产生一条数据
+	* @param[in] cb 结果回调
+	* @param[in] session_type 类型
+	* @param[in] session_id 会话ID
+	* @param[in] time 消息的时间戳
+	* @param[in] status_delete如果删除该消息，如果没有历史记录该列表项会被删除掉
+	* @return void 无返回值
+	*/
+	void InsertLocalMsg(const nim_comp::InsertLocalMessageCallback& cb, nim::NIMSessionType session_type, const std::string& session_id, __int64 time, bool status_delete = true);
 private:
 	SessionListManager();
 	~SessionListManager(){};

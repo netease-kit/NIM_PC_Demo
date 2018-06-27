@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window size="950,700" mininfo="950,700" caption="0,0,0,68" sizebox="4,4,4,4" textid="STRID_MIANWINDOW_TITLE">	
+	<Box bkcolor="bk_wnd_darkcolor"> 
+		<VBox name="main_bar" width="64"  halign="left" >
+			<Box width="auto" height="auto" halign="center" margin="0,20,0,0">
+				<Box width="auto" height="auto"  >
+					<Button name="btn_header" width="48" height="48" borderround="48,48" cursortype="hand" bkimage="header.png"/>
+					<Control  class="icon_headimage_mask_48x48" mouse="false"/>
+					<Button name="btn_online_state" bkimage="..\menu\icon_online.png" margin="0,0,0,0" valign="bottom" halign="right" tooltiptextid="STRID_MAINWINDOW_ONLINE_STATE" />
+				</Box>                
+			</Box>
+			<VBox name="main_plugin_bar" padding="0,50,0,10" />
+			<VBox name="simple_plugin_bar" padding="0,10,0,10" height="auto"/>			
+			<ButtonBox name="main_menu_button" margin="0,0,0,15" height="24"  width="24" halign="center" mousechild="false" tooltiptext="主菜单"
+				normalcolor="btn_global_white" hotcolor="icongray" pushedcolor="dark2color" alpha="192" borderround="2,2" >
+				<VBox padding="4,3,4,3" mousechild="false">					
+					<Control />
+					<Control height="1" bkcolor="bk_gray1" />
+					<Control />
+					<Control height="1" bkcolor="bk_gray1" />
+					<Control />
+					<Control height="1" bkcolor="bk_gray1" />
+					<Control />
+				</VBox>				
+			</ButtonBox>
+		</VBox>
+		<Control class="splitline_ver_level1" margin="64,0,0,0"/>
+		<TabBox name="main_plugins_showpage" fadeswitch="false" margin="65,0,0,0" />		
+		<HBox height="auto" width="auto" margin="0,0,5,0" halign="right" valign="top" >			
+			<Button class="btn_wnd_min" name="minbtn" margin="10,6,0,0"/>
+	        <Button class="btn_wnd_max" name="btn_max_restore" margin="10,6,0,0"/>
+	        <Button class="btn_wnd_close" name="btn_wnd_close" margin="10,6,0,0"/>
+        </HBox>	
+		<ButtonBox name="search_bar" width="280" height="68" margin="65,0,0,0" bkcolor="white">
+			<HBox height="auto" valign="center" margin="10,0,10,0" padding="7,7,7,7" hotimage="file='../session/icon_hover.png' corner='3,3,3,3'" >
+				<Control name="search_icon" width="auto" height="auto" valign="center" bkimage="file='../public/icon/icon_search_gray.png'"/>
+				<RichEdit class="simple prompt" name="search_edit" height="auto" margin="8,0,10,0" valign="center" font="1" prompttextid="STRID_MIANWINDOW_SEARCH_EDIT_PROMPT" />
+				<Button name="clear_input" visible="false" valign="center" 
+						normalimage="..\public\button\btn_del_search_normal_gray.png" 
+						hotimage="..\public\button\btn_del_search_hover_gray.png" 
+						pushedimage="..\public\button\btn_del_search_normal_gray.png"/>
+			</HBox>
+			<Control class="splitline_hor_level1" valign="bottom" />
+		</ButtonBox>
+		<VListBox class="list" name="search_result_list" width="280" visible="false" vscrollunit="120" margin="65,68,0,0" />
+		<Box name="no_search_result_tip" width="280" visible="false" margin="65,68,0,0" >
+			<Label halign="center" valign="center" margin="0,0,0,280" textid="STRID_MAINWINDOW_NO_SEARCH_RESULT" font="2"/>
+		</Box>
+	</Box>
+</Window>

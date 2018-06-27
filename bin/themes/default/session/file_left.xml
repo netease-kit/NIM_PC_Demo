@@ -2,7 +2,7 @@
 <!-- "口吕" -->
 <!-- "一  " -->
 <Window>
-	<Box name="bubble_file" width="250" height="auto" minheight="85" bkimage="file='bubble_left.png' corner='25,15,15,15'" menu="true" >
+	<Box name="bubble_file" width="250" height="auto" minheight="85" bkimage="file='../session/bubble_left.png' corner='25,15,15,15'" menu="true" >
 		<VBox width="stretch" height="auto" margin="9,3,3,3" mouse="false">
 			<HBox width="stretch" height="70" mouse="false">
 				<Button name="file_image" width="44" height="54" margin="12,12,0,10" mouse="false" />

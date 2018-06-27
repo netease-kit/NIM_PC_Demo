@@ -4,7 +4,7 @@
         <HBox mouse="false" mousechild="false">
 			<Box valign="center" width="auto" height="auto" margin="8,0,0,0" mouse="false">
 				<CheckBox name="black_list" width="36" height="36" valign="center" margin="2,2,0,0"
-					normalimage="black_list.png"/>
+					normalimage="../main/black_list.png"/>
 			</Box>
             <Button textid="STRID_MAINWINDOW_BLACK_LIST" normaltextcolor="darkcolor" font="2" valign="center" margin="10,0,0,0"/>
         </HBox>

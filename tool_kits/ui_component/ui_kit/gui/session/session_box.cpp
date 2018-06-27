@@ -1,5 +1,6 @@
 ﻿#include "session_box.h"
 #include "session_form.h"
+#include "session_dock_def.h"
 #include "gui/session/control/audio_capture.h"
 #include "gui/session/control/atme_view.h"
 #include "gui/session/atlist/at_list_form.h"
@@ -13,7 +14,7 @@
 #include "util/user.h"
 #include "gui/contact_select_form/contact_select_form.h"
 #include "module/online_state_event/online_state_event_util.h"
-
+#include "module/runtime_data/runtime_data_manager.h"
 
 using namespace ui;
 
@@ -62,7 +63,7 @@ SessionBox::~SessionBox()
 */
 }
 
-SessionForm* SessionBox::GetSessionForm() const
+ISessionDock* SessionBox::GetSessionForm() const
 {
 	ASSERT(NULL != session_form_);
 	ASSERT(::IsWindow(session_form_->GetHWND()));
@@ -76,10 +77,10 @@ void SessionBox::InitSessionBox()
 	UserService::GetInstance()->GetRobotInfo(session_id_, robot_info_);
 	is_robot_session_ = !robot_info_.GetAccid().empty();
 
-	this->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&SessionBox::Notify, this, std::placeholders::_1));
-	this->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&SessionBox::OnClicked, this, std::placeholders::_1));
-	this->AttachBubbledEvent(ui::kEventSelect, nbase::Bind(&SessionBox::OnSelChanged, this, std::placeholders::_1));
-	this->AttachBubbledEvent(ui::kEventUnSelect, nbase::Bind(&SessionBox::OnSelChanged, this, std::placeholders::_1));
+	AttachBubbledEvent(ui::kEventAll, nbase::Bind(&SessionBox::Notify, this, std::placeholders::_1));
+	AttachBubbledEvent(ui::kEventClick, nbase::Bind(&SessionBox::OnClicked, this, std::placeholders::_1));
+	AttachBubbledEvent(ui::kEventSelect, nbase::Bind(&SessionBox::OnSelChanged, this, std::placeholders::_1));
+	AttachBubbledEvent(ui::kEventUnSelect, nbase::Bind(&SessionBox::OnSelChanged, this, std::placeholders::_1));
 
 	label_title_ = (Label*)FindSubControl(L"label_title");
 	label_tid_ = (Label*)FindSubControl(L"label_tid");
@@ -181,7 +182,7 @@ void SessionBox::InitSessionBox()
 	}
 
 	CheckHeader();
-	CheckTeamType(nim::kNIMTeamTypeNormal);
+	//CheckTeamType(nim::kNIMTeamTypeNormal);
 	OnWndSizeMax(TRUE == IsZoomed(this->GetWindow()->GetHWND()));
 
 	if (session_type_ == nim::kNIMSessionTypeTeam)
@@ -194,6 +195,10 @@ void SessionBox::InitSessionBox()
 	{
 		is_header_enable_ = true;
 	}
+
+	if (RunTimeDataManager::GetInstance()->GetUIStyle() == UIStyle::join)
+		FindSubControl(L"sysbar")->SetFixedWidth(0);
+
 
 	unregister_cb.Add(NotifyCenter::GetInstance()->RegNotify(NT_LINK, nbase::Bind(&SessionBox::OnRelink, this, std::placeholders::_1)));
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(nbase::Bind(&SessionBox::OnUserInfoChange, this, std::placeholders::_1)));
@@ -226,6 +231,26 @@ void SessionBox::InitSessionBox()
 	auto robot_list_change_cb = nbase::Bind(&SessionBox::OnRobotChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 	unregister_cb.Add(UserService::GetInstance()->RegRobotListChange(robot_list_change_cb));
 
+	auto hied_right = dynamic_cast<ui::Button*>(FindSubControl(L"hide_right"));
+	auto show_right = dynamic_cast<ui::Button*>(FindSubControl(L"show_right"));
+	hied_right->AttachClick([this, show_right,hied_right](ui::EventArgs* param){
+		hied_right->SetVisible(false);
+		show_right->SetVisible(true);
+		auto frame_right = FindSubControl(L"frame_right");
+		frame_right->SetVisible(false);
+		auto spliter = FindSubControl(L"frame_mid_split");
+		spliter->SetVisible(false);	
+		return true;
+	});	
+	show_right->AttachClick([this, show_right, hied_right](ui::EventArgs* param){
+		hied_right->SetVisible(true);
+		show_right->SetVisible(false);
+		auto frame_right = FindSubControl(L"frame_right");
+		frame_right->SetVisible(true);
+		auto spliter = FindSubControl(L"frame_mid_split");
+		spliter->SetVisible(true);		
+		return true;
+	});
 }
 
 void SessionBox::UninitSessionBox()

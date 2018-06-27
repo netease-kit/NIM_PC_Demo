@@ -62,10 +62,10 @@ public:
 	* @param[in] window_id 窗口id
 	* @return WindowType* 窗口指针
 	*/
- 	template<typename WindowType> 
-	static WindowType* SingletonShow(const std::wstring& window_id)
+	template<typename WindowType, typename... TInstanceParams>
+	static WindowType* SingletonShow(const std::wstring& window_id, const TInstanceParams&... params)
  	{
-		return nim_comp::WindowsManager::SingletonShow<WindowType>(window_id);
+		return nim_comp::WindowsManager::SingletonShow<WindowType>(window_id, params...);
 
  	}
 

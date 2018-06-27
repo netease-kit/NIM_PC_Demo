@@ -26,9 +26,9 @@ namespace nim
 struct UploadMediaResult
 {
 	std::string url_;				/**< 上传地址 */
-	std::string res_id_;			
+	std::string res_id_;			/**< 资源id */
 #ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
-	std::string call_id_;
+	std::string call_id_;			/**< 请求者id */
 #endif
 
 	/** 构造函数 */
@@ -38,9 +38,9 @@ struct UploadMediaResult
 /** @brief 下载完成的结果 */
 struct DownloadMediaResult
 {
-	std::string file_path_;
-	std::string call_id_;
-	std::string res_id_;
+	std::string file_path_;			/**< 本地绝对路径 */
+	std::string call_id_;			/**< 请求者id */
+	std::string res_id_;			/**< 资源id */
 
 	/** 构造函数 */
 	DownloadMediaResult() {}
@@ -49,7 +49,7 @@ struct DownloadMediaResult
 /** @brief 传输过程中的数据 */
 struct ProgressData
 {
-	std::string res_id_;			
+	std::string res_id_;			/**< 资源id */
 
 	/** 构造函数 */
 	ProgressData() {}

@@ -24,7 +24,7 @@
 					<HBox width="45" height="26" margin="0,4,0,0" halign="center">
 						<Control />
 						<Control name="not_disturb" height="15" width="13" margin="0,0,0,0" valign="center" bkimage="../public/icon/not_disturb.png" visible="false"/>
-						<Box name="box_unread" width="26" height="auto" margin="4,0,0,0" padding="0,2,0,4" halign="center" bkimage="file='icon_number.png' corner='8,7,8,7'">
+						<Box name="box_unread" width="26" height="auto" margin="4,0,0,0" padding="0,2,0,4" halign="center" bkimage="file='../main/icon_number.png' corner='8,7,8,7'">
 							<Label name="label_unread" halign="center" normaltextcolor="white"/>
 						</Box>
 						<Control />

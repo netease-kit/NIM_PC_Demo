@@ -65,6 +65,8 @@ public:
 class BASE_EXPORT SupportWeakCallback
 {
 public:
+	typedef std::weak_ptr<WeakFlag> _TyWeakFlag;
+public:
 	virtual ~SupportWeakCallback(){};
 
 	template<typename CallbackType>

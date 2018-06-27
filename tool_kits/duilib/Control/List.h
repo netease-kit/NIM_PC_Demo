@@ -70,10 +70,11 @@ public:
 	void SetScrollSelect(bool bScrollSelect);
 
 	void AttachSelect(const EventCallback& callback) { OnEvent[kEventSelect] += callback; }
-
+	void SelectNextWhenActiveRemoved(bool value);
 private:
 	bool m_bScrollSelect;
     int m_iCurSel;
+	bool m_bSelNextWhenRemoveActive;
 	PULVCompareFunc m_pCompareFunc;
 	UINT_PTR m_compareData;
 };

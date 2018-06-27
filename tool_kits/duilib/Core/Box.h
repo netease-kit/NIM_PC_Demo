@@ -161,9 +161,10 @@ public:
 	virtual void ClearImageCache() override;
 
 	void AttachScrollChange(const EventCallback& callback) { OnEvent[kEventScrollChange] += callback; }
-
-private:
+protected:
+	virtual CSize CalcRequiredSize(const UiRect& rc);
 	void LoadImageCache(bool bFromTopLeft);
+private:	
 	void SetPosInternally(UiRect rc);
 
 protected:

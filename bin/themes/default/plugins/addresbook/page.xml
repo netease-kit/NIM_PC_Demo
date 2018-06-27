@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+<Box bkcolor="bk_wnd_lightcolor"> 
+	<HBox >
+		<Box name="addresbook_componet" width="280" margin="0,68,0,0" >
+			<Control name="wait" bkimage="../public/animation/ani_loading_ex.gif" valign="center" halign="center" width="auto" height="auto" margin="0,0,0,130" />
+		</Box>
+		<Control class="splitline_ver_level1"/>
+		<TabBox name="addres_profile_container" fadeswitch="false"  bkcolor="bk_wnd_darkcolor">			
+			<Box>
+				<Control bkimage="../plugins/logo.png" valign="center" halign="center" width="auto" height="auto" alpha="128"/>
+			</Box>
+		</TabBox>
+	</HBox>	
+</Box> 
+</Window>

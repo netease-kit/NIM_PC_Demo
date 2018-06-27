@@ -10,6 +10,9 @@
 #include <set>
 #include <map>
 #include <memory>
+#include <unordered_map>
+#include <unordered_set>
+#include <tuple>
 
 //base header
 #include "base/callback/callback.h"

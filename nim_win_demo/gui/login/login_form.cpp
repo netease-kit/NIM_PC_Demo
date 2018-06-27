@@ -2,7 +2,14 @@
 #include "gui/main/main_form.h"
 #include "module/db/public_db.h"
 #include "module/login/login_manager.h"
-
+#include "guiex/main/main_form_ex.h"
+#include "gui/main/main_form_menu.h"
+#include "gui/plugins/chatroom_plugin.h"
+#include "module/plugins/main_plugins_manager.h"
+#include "gui/plugins/cef_test_plugin.h"
+#include "gui/plugins/gif_test_plugin.h"
+#include "module/config/config_helper.h"
+#include "gui/plugins/addresbook_plugin/addresbook_plugin.h"
 using namespace ui;
 
 void LoginForm::OnLogin()
@@ -151,7 +158,35 @@ void LoginForm::RegLoginManagerCallback()
 	};
 
 	nim_ui::OnShowMainWindow cb_show_main = [this]{
-		nim_ui::WindowsManager::SingletonShow<MainForm>(MainForm::kClassName);
+		nim_ui::UIStyle uistyle = nim_ui::UIStyle::join;
+		switch (ConfigHelper::GetInstance()->GetUIStyle())
+		{
+		case  0:
+			uistyle = nim_ui::UIStyle::conventional;
+			break;
+		case 1:
+			uistyle = nim_ui::UIStyle::join;
+			break;
+		default:
+			break;
+		}
+
+		nim_ui::RunTimeDataManager::GetInstance()->SetUIStyle(uistyle);
+		switch (nim_ui::RunTimeDataManager::GetInstance()->GetUIStyle())
+		{
+		case nim_ui::UIStyle::join:
+			nim_comp::MainPluginsManager::GetInstance()->RegPlugin<CefTestPlugin>("CefTestPlugin");
+			nim_comp::MainPluginsManager::GetInstance()->RegPlugin<ChatroomPlugin>("ChatroomPlugin");
+			nim_comp::MainPluginsManager::GetInstance()->RegPlugin<GifTestPlugin>("GifTestPlugin");
+			nim_comp::MainPluginsManager::GetInstance()->RegPlugin<AddresBookPlugin>("AddresBookPlugin");
+			nim_ui::WindowsManager::SingletonShow<nim_comp::MainFormEx>(nim_comp::MainFormEx::kClassName,new MainFormMenu());
+			break;
+		case nim_ui::UIStyle::conventional:
+			nim_ui::WindowsManager::SingletonShow<MainForm>(MainForm::kClassName);
+			break;
+		default:
+			break;
+		}	
 	};
 
 	nim_ui::LoginManager::GetInstance()->RegLoginManagerCallback(ToWeakCallback(cb_result),

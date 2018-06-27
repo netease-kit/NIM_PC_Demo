@@ -3,7 +3,7 @@
 
 
 ConfigHelper::ConfigHelper() :
-	adapt_dpi_(true)
+adapt_dpi_(true), uistyle_id_(1)
 {
 	ReadConfig();
 }
@@ -52,7 +52,25 @@ std::string ConfigHelper::GetLanguage()
 		return language_;
 	return "zh_CN"; //缺省为中文
 }
-
+int ConfigHelper::GetUIStyle()
+{
+	return uistyle_id_;
+}
+void ConfigHelper::SetUIStyle(int style_id)
+{
+	Json::FastWriter writer;
+	Json::Value value;
+	value["uistyle"] = style_id;
+	std::string uistyle_config = writer.write(value);
+	bool ret = PublicDB::GetInstance()->InsertConfigData("uistyle", uistyle_config);
+	if (ret)
+		uistyle_id_ = style_id;
+	else
+	{
+		ASSERT(false);
+		QLOG_ERR(L"Set uistyle failed!");
+	}
+}
 void ConfigHelper::ReadConfig()
 {
 	Json::Reader reader;
@@ -74,5 +92,14 @@ void ConfigHelper::ReadConfig()
 	{
 		if (value.isMember("language"))
 			language_ = value["language"].asString();
+	}
+
+	//uistyle
+	std::string uistyle_config;
+	PublicDB::GetInstance()->QueryConfigData("uistyle", uistyle_config);
+	if (reader.parse(uistyle_config, value))
+	{
+		if (value.isMember("uistyle"))
+			uistyle_id_ = value["uistyle"].asInt();
 	}
 }

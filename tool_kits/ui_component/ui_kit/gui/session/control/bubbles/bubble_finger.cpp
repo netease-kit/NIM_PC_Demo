@@ -33,11 +33,11 @@ void MsgBubbleFinger::InitInfo(const nim::IMMessage &msg)
 		{
 			int v = json["data"]["value"].asInt();
 			if(v == 1)
-				finger_->SetBkImage(L"jsb_s.png");
+				finger_->SetBkImage(L"../session/jsb_s.png");
 			else if(v == 2)
-				finger_->SetBkImage(L"jsb_j.png");
+				finger_->SetBkImage(L"../session/jsb_j.png");
 			else if(v == 3)
-				finger_->SetBkImage(L"jsb_b.png");
+				finger_->SetBkImage(L"../session/jsb_b.png");
 			return;
 		}
 	}

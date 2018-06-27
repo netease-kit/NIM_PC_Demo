@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <!--@我消息预览-->
 <Window>
-    <AudioCaptureView height="48" valign="bottom" visible="false" bkimage="bk_tip_dwon.png" padding="10,0,10,0" fadeinoutyfrombottom="true" fadehot="false">      
+    <AudioCaptureView height="48" valign="bottom" visible="false" bkimage="../session/bk_tip_dwon.png" padding="10,0,10,0" fadeinoutyfrombottom="true" fadehot="false">      
 		<HBox width="stretch" height="stretch" mouse="false" mousechild="false">
             <Label name="time_text" width="auto" valign="center" normaltextcolor="darkcolor" font="1" />  
 			<Label name="tip_text" width="stretch" valign="center" margin="2,0,0,0" normaltextcolor="darkcolor" font="1" endellipsis="true"/>           

@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ListContainerElement class="listitem" normalcolor="bk_wnd_lightcolor" height="30" bordersize="0,0,0,0" bordercolor="splitline_level1">
+        <Label margin="0,0,0,0" name="contact" valign="center" font="2" mouse="false" width="auto" />	
+    </ListContainerElement>
+</Window>

@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+	<Box>
+		<HBox >
+			<VListBox class="list" width="280" name="session_list" vscrollunit="100" margin="0,68,0,0"/>
+			<Control class="splitline_ver_level1" margin="0,0,0,0"/>
+			<TabBox name="session_container" fadeswitch="false" >
+				<Box>
+					<Control bkimage="../plugins/logo.png" valign="center" halign="center" width="auto" height="auto" alpha="128"/>
+				</Box>
+			</TabBox>
+		</HBox>		
+	</Box>    
+</Window>
