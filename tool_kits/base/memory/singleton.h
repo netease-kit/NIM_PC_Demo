@@ -1,12 +1,11 @@
-﻿// "TypeName type" will be lazily created on the first time it's accessed
-
-#ifndef BASE_MEMORY_SINGLETON_H_
+﻿#ifndef BASE_MEMORY_SINGLETON_H_
 #define BASE_MEMORY_SINGLETON_H_
 
-
+#include <memory>
+#include <mutex>
 namespace nbase
 {
-
+//饿汉模式
 #define SINGLETON_DEFINE(TypeName)				\
 static TypeName* GetInstance()					\
 {												\
@@ -16,6 +15,46 @@ static TypeName* GetInstance()					\
 												\
 TypeName(const TypeName&) = delete;				\
 TypeName& operator=(const TypeName&) = delete
+
+// 懒汉模式
+template <typename TSingleton>
+class Singleton
+{
+	//如果TSingleton的构造函数是private/protected需要在类定义时引入此宏,如下所示
+	//class Test : public Singleton<Test>
+	//{
+	//		SingletonHideConstructor(Test)
+	//	private:
+	//		Test() = default;
+	//		~Test() = default;
+	//}
+#define SingletonHideConstructor(TSingleton) \
+	friend Singleton<typename TSingleton>::TSingletonDefaultDelete;\
+	template<class _Ty,\
+	class... _Types> inline\
+	friend	typename std::enable_if<!std::is_array<_Ty>::value,\
+		std::unique_ptr<_Ty> >::type std::make_unique(_Types&&... _Args);
+private:
+	friend TSingleton;
+	using TSingletonDefaultDelete = std::default_delete<TSingleton>;
+	using TSingletonPtr = std::unique_ptr<TSingleton, TSingletonDefaultDelete>;
+private:
+	Singleton(void) = default;
+	virtual ~Singleton() = default;
+	Singleton(const Singleton&) = delete;
+	Singleton(Singleton&&) = delete;
+	Singleton& operator = (const Singleton&) = delete;
+public:
+	static const TSingletonPtr& GetInstance()
+	{
+		static TSingletonPtr instance = nullptr;
+		static std::once_flag oc;
+		std::call_once(oc, [&] {
+			instance = std::make_unique<TSingleton>();
+		});
+		return instance;
+	}
+};
 
 }
 

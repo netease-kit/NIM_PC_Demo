@@ -3,7 +3,7 @@
 namespace app_sdk
 {
 	class AppSDKInterface : public nbase::SupportWeakCallback
-	{
+	{		
 	public:
 		AppSDKInterface() = default;
 		~AppSDKInterface() = default;
@@ -15,10 +15,23 @@ namespace app_sdk
 		*/
 		static std::string GetConfigValue(const std::string& key);
 		/**
+		* 获取连接服务器的某一个配置信息
+		* @param[in] element_name 节点关键字
+		* @param[in] key 需要获取的信息关键字
+		* @return string 配置信息
+		*/
+		static std::string GetConfigValue(const std::string& element_name,const std::string& key);
+		/**
+		* 获取配置文件的版本信息
+		* @return string 版本
+		*/
+		static int GetConfigFileVersion();
+		/**
 		* 获取应用的app key
 		* @return string 配置信息app key
 		*/
 		static std::string GetAppKey();
+		
 		/**
 		* 应用的app key是否为网易云信Demo本身的app key
 		* @return bool true:是,false:否

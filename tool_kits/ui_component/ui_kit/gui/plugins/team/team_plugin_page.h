@@ -21,5 +21,6 @@ namespace nim_comp
 	private:
 		ui::TabBox* contact_teaminfo_container_;
 		AutoUnregister unregister_cb;
+		std::function<void()> detach_list_function_;
 	};
 }

@@ -6,13 +6,15 @@
 namespace nim_comp
 {
 	const IMainPlugin::PluginFlagType SessionPlugin::kPLUGIN_NAME = "SessionPlugin";
-	SessionPlugin::SessionPlugin()
+	SessionPlugin::SessionPlugin() :
+		detach_list_function_(nullptr)
 	{
 
 	}
 	SessionPlugin::~SessionPlugin()
 	{
-		nim_ui::SessionListManager::GetInstance()->AttachListBox(nullptr);
+		if (detach_list_function_ != nullptr)
+			detach_list_function_();
 	}
 	IMainPlugin::PluginFlagType SessionPlugin::GetPluginFlag() const
 	{
@@ -34,8 +36,10 @@ namespace nim_comp
 	{
 		ui::ListBox* session_list = dynamic_cast<ui::ListBox*>(page_->FindSubControl(L"session_list"));
 		session_list->SelectNextWhenActiveRemoved(false);
-		nim_ui::SessionListManager::GetInstance()->AttachListBox(session_list);
-	
+		detach_list_function_ = session_list->ToWeakCallback([](){
+			nim_ui::SessionListManager::GetInstance()->AttachListBox(nullptr);
+		});
+		nim_ui::SessionListManager::GetInstance()->AttachListBox(session_list);		
 		page_->OnSessionListAttached();
 		icon_->OnSessionListAttached();
 	}

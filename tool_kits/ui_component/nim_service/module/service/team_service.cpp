@@ -3,8 +3,7 @@
 
 namespace nim_comp
 {
-	TeamService::TeamService() :
-		remove_team_memberlist_cb_(*this)
+	TeamService::TeamService() 
 	{
 
 	}
@@ -120,12 +119,16 @@ namespace nim_comp
 		return unregister;
 	}
 
-	UnregisterCallback TeamService::RegRemoveTeamMemberList(OnTeamMemberListRemove remove)
+	UnregisterCallback TeamService::RegRemoveTeamMemberList(const OnTeamMemberListRemove& remove)
 	{
 		assert(nbase::MessageLoop::current()->ToUIMessageLoop());
 		return remove_team_memberlist_cb_.AddCallback(remove);
 	}
-
+	UnregisterCallback TeamService::RegRemoveTeamMemberList(OnTeamMemberListRemove&& remove)
+	{
+		assert(nbase::MessageLoop::current()->ToUIMessageLoop());
+		return remove_team_memberlist_cb_.AddCallback(std::forward<OnTeamMemberListRemove>(remove));
+	}
 	void TeamService::InvokeRemoveTeamMember(const std::string& tid, const std::string& uid)
 	{
 		assert(nbase::MessageLoop::current()->ToUIMessageLoop());
@@ -153,7 +156,7 @@ namespace nim_comp
 		{
 			cached_tinfo_.erase(tid);
 		}
-		remove_team_memberlist_cb_(tid, uid_lsit);
+		remove_team_memberlist_cb_(std::forward<decltype(tid)>(tid), std::forward<decltype(uid_lsit)>(uid_lsit));
 	}
 
 	UnregisterCallback TeamService::RegChangeTeamMember(OnTeamMemberChange change)

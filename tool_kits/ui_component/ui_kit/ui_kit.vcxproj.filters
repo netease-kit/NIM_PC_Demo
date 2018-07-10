@@ -465,9 +465,6 @@
     <ClInclude Include="module\plugins\main_plugins_base.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ui_kit_base\auto_create_object_manager.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="gui\plugins\session\session_plugin.h">
       <Filter>头文件</Filter>
     </ClInclude>

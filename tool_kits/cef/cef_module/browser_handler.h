@@ -7,7 +7,7 @@
 #pragma once
 #include "include/cef_client.h"
 #include "include/cef_browser.h"
-
+#include "shared/auto_unregister.h"
 namespace nim_cef
 {
 // BrowserHandler implements CefClient and a number of other interfaces.
@@ -50,6 +50,8 @@ public:
 		virtual void OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect& rect) = 0;
 
 		virtual void UpdateWindowPos() = 0;
+
+		virtual void UpdateUI() = 0;
 
 		// 在非UI线程中被调用
 		virtual void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model) = 0;
@@ -125,9 +127,10 @@ public:
 
 	CefRefPtr<CefBrowserHost> GetBrowserHost();
 
+	CefRefPtr<CefClient> GetBrowserClient(){ return browser_client_; }
 	// 添加一个任务到队列中，当Browser对象创建成功后，会依次触发任务
 	// 比如创建Browser后调用LoadUrl加载网页，但是这时Browser很可能还没有创建成功，就把LoadUrl任务添加到队列
-	void AddAfterCreateTask(const StdClosure& cb);
+	 UnregisterCallback AddAfterCreateTask(const StdClosure& cb);
 
 public:
 	// CefClient methods. Important to return |this| for the handler callbacks.
@@ -246,14 +249,15 @@ public:
 		TerminationStatus status) OVERRIDE;
 
 protected:
+	CefRefPtr<CefClient> browser_client_;
 	CefRefPtr<CefBrowser>	browser_;
+	std::vector<CefRefPtr<CefBrowser>> browser_list_;
 	HWND					hwnd_;
 	HandlerDelegate			*handle_delegate_;
 	RECT					rect_cef_control_;
 	std::string				paint_buffer_;
 	bool					is_focus_oneditable_field_;
-
-	std::vector<StdClosure> task_list_after_created_;
+	UnregistedCallbackList<StdClosure> task_list_after_created_;
 	IMPLEMENT_REFCOUNTING(BrowserHandler);
 };
 }

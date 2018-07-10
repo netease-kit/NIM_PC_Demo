@@ -25,6 +25,7 @@ void CefTip::DoInit()
 	edit_js_ = static_cast<RichEdit*>(FindSubControl(L"edit_js"));
 	lbl_title_ = static_cast<Label*>(FindSubControl(L"title"));
 	cef_control_ = static_cast<CefControl*>(FindSubControl(L"cef_control"));
+	cef_control_dev_ = dynamic_cast<CefControl*>(FindSubControl(L"cef_control_dev"));
 	edit_url_->AttachReturn(nbase::Bind(&CefTip::OnReturn, this, std::placeholders::_1));
 
 	cef_control_->AttachBeforeContextMenu(nbase::Bind(&CefTip::OnBeforeMenu, this, std::placeholders::_1, std::placeholders::_2));
@@ -38,7 +39,7 @@ void CefTip::DoInit()
 	cef_control_->AttachLoadEnd(nbase::Bind(&CefTip::OnLoadEnd, this, std::placeholders::_1));
 	cef_control_->AttachLoadError(nbase::Bind(&CefTip::OnLoadError, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	cef_control_->AttachJsCallback(nbase::Bind(&CefTip::OnJsCallback, this, std::placeholders::_1, std::placeholders::_2));
-
+	cef_control_->AttachDevToolAttachedStateChange(nbase::Bind(&CefTip::OnDevToolVisibleChange, this, std::placeholders::_1));
 	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"cef/html/cef_test.html";
 	cef_control_->LoadURL(html_path);
 }
@@ -66,6 +67,10 @@ bool CefTip::OnClicked(ui::EventArgs* arg)
 		std::wstring text = edit_js_->GetText();
 		CefString js_string = L"receiveMessage('" + text + L"');";
 		cef_control_->ExecJavaScript(js_string);
+	}
+	else if (name == L"btn_dev")
+	{
+		ShowDevView();
 	}
 	return false;
 }
@@ -140,4 +145,15 @@ void CefTip::OnJsCallback(const CefString& fun_name, const CefString& param)
 		std::wstring content = nbase::StringPrintf(multilan->GetStringViaID(L"STRID_CEF_BROWSER_RECEIVE_JS_MSG").c_str(), param.c_str());
 		ShowMsgBox(GetWindow()->GetHWND(), MsgboxCallback(), content, false);
 	}
+}
+void CefTip::ShowDevView()
+{
+	if (cef_control_->IsAttachedDevTools())
+		cef_control_->DettachDevTools();
+	else
+		cef_control_->AttachDevTools(cef_control_dev_);
+}
+void CefTip::OnDevToolVisibleChange(bool visible)
+{
+	cef_control_dev_->SetVisible(visible);
 }

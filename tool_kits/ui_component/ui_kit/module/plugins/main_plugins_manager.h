@@ -23,7 +23,7 @@ namespace nim_comp
 		template<typename TPlugin>
 		void RegPlugin(const IMainPlugin::PluginFlagType& flag)
 		{
-			TemplatedObjectFactoryWrapper::RegisteredOjbect<IMainPlugin, TPlugin>(flag);
+			shared::TemplatedObjectFactoryWrapper::RegisteredOjbect<IMainPlugin, TPlugin>(flag);
 		}
 		void LoadPlugins();
 	private:		

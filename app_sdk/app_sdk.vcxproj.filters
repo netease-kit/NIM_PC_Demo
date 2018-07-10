@@ -60,6 +60,9 @@
     <ClInclude Include="app_sdk_define.h">
       <Filter>sdk_interface</Filter>
     </ClInclude>
+    <ClInclude Include="app_sdk_config_helper.h">
+      <Filter>sdk_interface</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

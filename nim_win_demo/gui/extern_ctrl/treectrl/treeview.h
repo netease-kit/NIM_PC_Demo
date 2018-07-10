@@ -14,14 +14,8 @@ class TreeComponent : public ui::ListBox, public ui::IControlFromPointFinder, pu
 public:
 	TreeComponent();
 	virtual ~TreeComponent();
-	virtual void SetWindow(ui::Window* pManager, ui::Box* pParent, bool bInit = true) override;
-	void BindDoc(TreeDoc* pdoc)
-	{
-		doc_ = pdoc;
-		doc_->AttachRemoveItem(std::bind(&TreeComponent::OnRemoveItemCallback, this, std::placeholders::_1));
-		//Update(true);
-	}
-	TreeDoc* GetBindDoc() const
+	virtual void SetWindow(ui::Window* pManager, ui::Box* pParent, bool bInit = true) override;	
+	const std::shared_ptr<TreeDoc> GetDoc() const
 	{
 		return doc_;
 	}
@@ -60,7 +54,7 @@ protected:
 	ui::CSize GetScrollPos_i() const;
 	void OnRemoveItemCallback(const TreeDocItemList& list);
 protected:
-	TreeDoc* doc_;
+	std::shared_ptr<TreeDoc> doc_;
 	std::map<std::string, std::function<std::shared_ptr<ITreeItemUIStyle>()>> style_factory_;
 	std::map<std::string, ui::CSize> style_size_list_;
 	std::unordered_map<TreeItemIDType,std::tuple<bool,ui::UiRect, std::shared_ptr<NulTreeItem>, std::shared_ptr<ITreeItemUIStyle>>> visible_item_list_;

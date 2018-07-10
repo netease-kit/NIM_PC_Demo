@@ -3,20 +3,24 @@
 #include "gui/profile_form/profile_box.h"
 using namespace nim_comp;
 ContactPluginPage::ContactPluginPage() : 
-contact_profile_container_(nullptr)
+contact_profile_container_(nullptr), detach_list_function_(nullptr)
 {
 
 }
 ContactPluginPage::~ContactPluginPage()
 {
-	nim_ui::ContactsListManager::GetInstance()->AttachFriendListBox(nullptr);
+	if (detach_list_function_ != nullptr)
+		detach_list_function_();	
 }
 void ContactPluginPage::DoInit()
 {
 	contact_profile_container_ = dynamic_cast<ui::TabBox*>(FindSubControl(L"contact_profile_container"));
 	unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(nbase::Bind(&ContactPluginPage::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2)));
 	ui::TreeView* friend_list = dynamic_cast<ui::TreeView*>(FindSubControl(L"friend_list"));
-	nim_ui::ContactsListManager::GetInstance()->AttachFriendListBox(friend_list);
+	detach_list_function_ = friend_list->ToWeakCallback([](){
+		nim_ui::ContactsListManager::GetInstance()->AttachFriendListBox(nullptr);
+	});
+	nim_ui::ContactsListManager::GetInstance()->AttachFriendListBox(friend_list);	
 }
 void ContactPluginPage::ShowProfile(UTF8String uid, bool is_robot)
 {

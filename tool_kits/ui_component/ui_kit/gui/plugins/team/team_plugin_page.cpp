@@ -4,19 +4,23 @@
 #include "gui/team_info/team_info_box.h"
 using namespace nim_comp;
 TeamPluginPage::TeamPluginPage() :
-contact_teaminfo_container_(nullptr)
+contact_teaminfo_container_(nullptr), detach_list_function_(nullptr)
 {
 
 }
 TeamPluginPage::~TeamPluginPage()
 {
-	nim_ui::ContactsListManager::GetInstance()->AttachGroupListBox(nullptr);
+	if (detach_list_function_ != nullptr)
+		detach_list_function_();	
 }
 void TeamPluginPage::DoInit()
 {
 	contact_teaminfo_container_ = dynamic_cast<ui::TabBox*>(FindSubControl(L"team_profile_container"));
 	ui::TreeView* group_list = dynamic_cast<ui::TreeView*>(FindSubControl(L"group_list"));
 	group_list->SelectNextWhenActiveRemoved(false);
+	detach_list_function_ = group_list->ToWeakCallback([](){
+		nim_ui::ContactsListManager::GetInstance()->AttachGroupListBox(nullptr);
+	});
 	nim_ui::ContactsListManager::GetInstance()->AttachGroupListBox(group_list);
 }
 void TeamPluginPage::ShowTeamInfoBox(bool create_or_display, nim::NIMTeamType type, const std::string& team_id, const nim::TeamInfo& team_info)

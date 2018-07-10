@@ -1,7 +1,7 @@
 #include "at_list_form.h"
 #include "util/windows_manager.h"
 #include "module/login/login_manager.h"
-
+#include "module/runtime_data/runtime_data_manager.h"
 using namespace ui;
 
 namespace nim_comp
@@ -385,7 +385,11 @@ void AtlistForm::ShowMemberItems(std::list<std::string> &last_five)
 		}
 	}
 }
-
+void AtlistForm::ShowWindow(bool bShow, bool bTakeFocus)
+{
+	WindowEx::ShowWindow(bShow, bTakeFocus);
+	RunTimeDataManager::GetInstance()->SetAttingSomeOne(bShow);
+}
 void AtlistForm::SetShowPos(POINT pt)
 {
 	//第一个默认选中
@@ -418,6 +422,7 @@ void AtlistForm::SetShowPos(POINT pt)
 
 	//强制刷新一下，否则列表项的选中状态会有问题
 	::InvalidateRect(m_hWnd,NULL, FALSE);
+	RunTimeDataManager::GetInstance()->SetAttingSomeOne(true);
 }
 
 bool AtlistForm::HandleMouseWheel(bool is_up)

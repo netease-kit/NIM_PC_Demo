@@ -84,7 +84,7 @@ public:
 	virtual HWND Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle, bool isLayeredWindow = true, const UiRect& rc = UiRect(0, 0, 0, 0));
 	virtual void Close(UINT nRet = IDOK);
 
-    void ShowWindow(bool bShow = true, bool bTakeFocus = true);
+	virtual void ShowWindow(bool bShow = true, bool bTakeFocus = true);
 	//²»ÍÆ¼ö
     UINT ShowModal();
 	//ÍÆ¼ö

@@ -246,7 +246,6 @@ public:
 	  * @param[in] session_id 会话id
 	  * @param[in] channel_type 通道类型, kNIMRtsChannelTypeVchat通道如果要自定义数据调用nim_device.h中nim_vchat_custom_audio_data和nim_vchat_custom_video_data
 	  * @param[in] data 发送数据
-	  * @param[in] size data的数据长度，现在只支持50k的长度
 	  * @param[in] uid json_extension 可扩展kNIMRtsUid（指定发送某人，不填则群发）
 	  * @return void 无返回值
 	  */ 

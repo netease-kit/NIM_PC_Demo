@@ -52,14 +52,13 @@ public:
 
 	/** @fn static bool Init(const std::string& json_info)
 	* NIM VCHAT初始化，需要在SDK的nim_client_init成功之后
-	* @param[in] json_extension 无效的扩展字段
+	* @param[in] server_setting_path 服务器配置文件路径
 	* @return bool 初始化结果，如果是false则以下所有接口调用无效
 	*/
-	static bool Init(const std::string& json_info);
+	static bool Init(const std::string& server_setting_path);
 
 	/** @fn static void Cleanup()
 	* NIM VCHAT清理，需要在SDK的nim_client_cleanup之前
-	* @param[in] json_extension 无效的扩展字段
 	* @return void 无返回值
 	*/
 	static void Cleanup();
@@ -149,6 +148,16 @@ public:
 	*/
 	static void SetAudioDataCb(bool capture, nim_vchat_audio_data_cb_func cb);
 
+
+	/** @fn static void SetAudioDataCbEx(int type, std::string json, nim_vchat_audio_data_cb_func_ex cb)
+	* NIM VCHAT DEVICE 监听音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut和kNIMDeviceTypeAudioOutChat由底层播放）
+	* @param[in] type 指定NIMAudioDataCbType，监听伴音数据时，一旦监听，底层将不再混音
+	* @param[in] json_extension 参考NIMAudioDataCbType的说明
+	* @param[in] cb 结果回调见nim_device_def.h
+	* @return void 无返回值
+	*/
+	static void SetAudioDataCbEx(int type, std::string json_extension, nim_vchat_audio_data_cb_func_ex cb);
+
 	/** @fn static void SetVideoDataCb(bool capture, nim_vchat_video_data_cb_func cb)
 	* NIM VCHAT DEVICE 监听视频数据
 	* @param[in] capture true 标识监听采集数据，false 标识监听通话中对方视频数据
@@ -216,7 +225,7 @@ public:
 	* @param[in] mode NIMVideoChatMode 启动音视频通话类型 见nim_vchat_def.h
 	* @param[in] apns_text 推送文本
 	* @param[in] custom_info 自定义信息
-	* @param[in] json_extension Json string 扩展，kNIMVChatUids成员id列表,kNIMVChatCustomVideo自主视频数据和kNIMVChatCustomAudio自主音频 如{"uids":["uid_temp"],"custom_video":1, "custom_audio":1}
+	* @param[in] json_info Json string 扩展，kNIMVChatUids成员id列表,kNIMVChatCustomVideo自主视频数据和kNIMVChatCustomAudio自主音频 如{"uids":["uid_temp"],"custom_video":1, "custom_audio":1}
 	* @return bool true 调用成功，false 调用失败可能有正在进行的通话
 	*/
 	static bool Start(NIMVideoChatMode mode, const std::string& apns_text, const std::string& custom_info, const std::string& json_info);
@@ -326,9 +335,6 @@ public:
 	/** @fn void SetFrameRate(NIMVChatVideoFrameRate frame_rate)
 	* NIM 实时设置视频发送帧率上限
 	* @param[in] frame_rate  帧率类型 见NIMVChatVideoFrameRate定义
-	* @param[in] json_extension  无效备用
-	* @param[in] cb 结果回调见nim_vchat_def.h
-	* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
 	* @return void 无返回值
 	* @note 错误码	0:成功
 	*				11403:无效的操作
@@ -384,17 +390,30 @@ public:
 	static bool GetViewerMode();
 
 	/** @fn static void SetAudioMuted(bool muted)
-	* NIM VCHAT 设置音频静音，全局有效（重新发起时也生效）
+	* NIM VCHAT 设置音频发送静音，全局有效（重新发起时也生效）
 	* @param[in] muted true 静音，false 不静音
 	* @return void 无返回值
 	*/
 	static void SetAudioMuted(bool muted);
 
 	/** @fn static bool GetAudioMuteEnabled()
-	* NIM VCHAT 获取音频静音状态
+	* NIM VCHAT 获取音频发送静音状态
 	* @return bool true 静音，false 不静音
 	*/
 	static bool GetAudioMuteEnabled();
+
+	/** @fn static void SetAudioPlayMuted(bool muted)
+	* NIM VCHAT 设置音频播放静音，全局有效（重新发起时也生效）；不影响底层解码录制等
+	* @param[in] muted true 静音，false 不静音
+	* @return void 无返回值
+	*/
+	static void SetAudioPlayMuted(bool muted);
+
+	/** @fn static bool GetAudioMutePlayEnabled()
+	* NIM VCHAT 获取音频播放静音状态
+	* @return bool true 静音，false 不静音
+	*/
+	static bool GetAudioMutePlayEnabled();
 
 	/** @fn void SetRotateRemoteVideo(bool rotate)
 	* NIM VCHAT 设置不自动旋转对方画面，默认打开，全局有效（重新发起时也生效）

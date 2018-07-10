@@ -142,7 +142,7 @@ void LoginForm::InitWindow()
 	this->RegLoginManagerCallback();
 
 	InitLoginData();
-	CheckAutoLogin();
+	CheckAutoLogin();	
 }
 
 LRESULT LoginForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)

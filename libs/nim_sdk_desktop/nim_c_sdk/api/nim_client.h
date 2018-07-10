@@ -58,6 +58,7 @@ NIM_SDK_DLL_API	void nim_client_update_apns_token(const char *device_token);
   *				415:网络连接出现错误
   *				416:频率超限
   *				422:账号被禁用
+  *				20002:账号已经处于登录状态
   */
 NIM_SDK_DLL_API	void nim_client_login(const char *app_key, const char *account, const char *token, const char *json_extension, nim_json_transport_cb_func cb, const void *user_data);
 

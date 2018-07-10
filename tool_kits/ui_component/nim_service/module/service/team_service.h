@@ -1,39 +1,5 @@
 ﻿#pragma once
 
-/** @class CallbackPtrMap
-* @brief 回调列表，因为碰到了 warning C4503
-* @copyright (c) 2016, NetEase Inc. All rights reserved
-
-* @date 2016/09/14
-*/
-template<typename TCallback>
-class CallbackPtrMap
-{
-public:
-	CallbackPtrMap(nbase::SupportWeakCallback& weak_flag) :weak_flag_(weak_flag){}
-	~CallbackPtrMap(){ element_list_.clear(); };
-	UnregisterCallback AddCallback(const TCallback& cb)
-	{
-		auto new_cb = std::make_shared<TCallback>(cb);
-		int cb_id = (int)(new_cb.get());
-		element_list_.insert(std::make_pair(cb_id, new_cb));
-		return weak_flag_.ToWeakCallback([this, cb_id]() {
-			element_list_.erase(cb_id);
-		});
-	}
-	template<typename... TParams>
-	void operator ()(const TParams&... params)
-	{
-		for (auto& it : element_list_)
-		{
-			(*it.second)(params...);
-		}
-	}
-private:
-	std::map<int, std::shared_ptr<TCallback>> element_list_;
-	nbase::SupportWeakCallback& weak_flag_;
-};
-
 //tid, tname
 typedef std::function<void(const std::string&, const std::string&, nim::NIMTeamType)> OnTeamAdd;
 typedef std::function<void(const std::string&)> OnTeamRemove;
@@ -107,7 +73,13 @@ public:
 	* @param[in] remove 回调函数
 	* @return UnregisterCallback 反注册对象
 	*/
-	UnregisterCallback RegRemoveTeamMemberList(OnTeamMemberListRemove remove);
+	UnregisterCallback RegRemoveTeamMemberList(const OnTeamMemberListRemove& remove);
+	/**
+	* 注册批量移除群成员的回调
+	* @param[in] remove 回调函数
+	* @return UnregisterCallback 反注册对象
+	*/
+	UnregisterCallback RegRemoveTeamMemberList(OnTeamMemberListRemove&& remove);
 
 	/**
 	* 注册移除群成员的回调
@@ -343,7 +315,7 @@ private:
 	std::map<int, std::unique_ptr<OnTeamRemove>>		remove_team_cb_;
 	std::map<int, std::unique_ptr<OnTeamMemberAdd>>		add_team_member_cb_;
 	std::map<int, std::unique_ptr<OnTeamMemberRemove>>	remove_team_member_cb_;
-	CallbackPtrMap<OnTeamMemberListRemove> remove_team_memberlist_cb_;
+	UnregistedCallbackList<OnTeamMemberListRemove> remove_team_memberlist_cb_;
 	std::map<int, std::unique_ptr<OnTeamMemberChange>>	change_team_member_cb_;
 	std::map<int, std::unique_ptr<OnTeamNameChange>>	change_team_name_cb_;
 	std::map<int, std::unique_ptr<OnTeamAdminSet>>		change_team_admin_cb_;

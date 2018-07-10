@@ -9,6 +9,11 @@
 #include <set>
 #include <map>
 #include <memory>
+#include <unordered_map>
+#include <unordered_set>
+#include <tuple>
+#include <mutex>
+#include <atomic>
 
 //base header
 #include "base/callback/callback.h"
@@ -26,7 +31,6 @@
 #include "base/file/file_util.h"
 #include "base/time/time.h"
 #include "base/framework/task.h"
-
 //third_party
 #include "duilib/UIlib.h"
 

@@ -178,6 +178,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="app_sdk_config_helper.h" />
     <ClInclude Include="app_sdk_define.h" />
     <ClInclude Include="app_sdk_interface.h" />
     <ClInclude Include="base\http\http_protocol_interface_define.h" />

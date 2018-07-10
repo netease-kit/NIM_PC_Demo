@@ -57,9 +57,14 @@ void SessionPluginPage::CloseSessionBox(const std::string &session_id)
 		if (box != nullptr)
 		{
 			if (IsActiveSessionBox(box))
+			{
+				active_session_box_ = nullptr;
 				session_box_tab_->SelectItem(0);
+			}				
 			box->UninitSessionBox();			
 			session_box_tab_->Remove(box);
+		
+				
 		}
 	};
 	Post2UI(ToWeakCallback(task));	
@@ -74,7 +79,7 @@ bool SessionPluginPage::DetachSessionBox(SessionBox *session_box)
 }
 SessionBox* SessionPluginPage::GetSelectedSessionBox()
 {
-	return dynamic_cast<SessionBox*>(session_box_tab_->GetItemAt(session_box_tab_->GetCurSel()));;
+	return active_session_box_;
 }
 SessionBox* SessionPluginPage::GetSessionBoxByID(const std::string& session_id) const
 {
@@ -96,6 +101,7 @@ void SessionPluginPage::SetActiveSessionBox(const std::string &session_id)
 	auto box = dynamic_cast<SessionBox*>(GetSessionBoxByID(session_id));
 	if (box != nullptr)
 	{
+		active_session_box_ = box;
 		GetPlugin()->Selected(true, true);
 		session_box_tab_->SelectItem(box); bool handle = false;
 		box->HandleMessage(WM_ACTIVATE, WA_ACTIVE, 0, handle);
@@ -144,17 +150,10 @@ void SessionPluginPage::AdjustFormSize()
 }
 LRESULT SessionPluginPage::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	auto selected_session = dynamic_cast<SessionBox*>(session_box_tab_->GetItemAt(session_box_tab_->GetCurSel()));
-	if (selected_session != nullptr)
-	{
-		bool bHandle = false;
-		LRESULT ret = selected_session->HandleMessage(uMsg, wParam, lParam, bHandle);
-		if (bHandle)
-			return ret;
-	}
 	return ui::Box::GetWindow()->HandleMessage(uMsg, wParam, lParam);
 }
 LRESULT SessionPluginPage::HostWindowHandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	return ui::Box::GetWindow()->HandleMessage(uMsg, wParam, lParam);
+	auto ret = ui::Box::GetWindow()->HandleMessage(uMsg, wParam, lParam);
+	return ret;
 }

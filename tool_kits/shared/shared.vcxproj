@@ -212,6 +212,7 @@
     <ClInclude Include="pin_yin_helper.h" />
     <ClInclude Include="ring.h" />
     <ClInclude Include="stdafx.h" />
+    <ClInclude Include="templated_object_factory.h" />
     <ClInclude Include="threads.h" />
     <ClInclude Include="tool.h" />
     <ClInclude Include="ui\msgbox.h" />

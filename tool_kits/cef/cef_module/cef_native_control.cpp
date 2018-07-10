@@ -30,7 +30,10 @@ void CefNativeControl::UpdateWindowPos()
 {
 	this->SetPos(this->GetPos());
 }
-
+void CefNativeControl::UpdateUI()
+{
+	nbase::ThreadManager::PostTask(ThreadId::kThreadUI, ToWeakCallback([this](){Invalidate(); }));
+}
 void CefNativeControl::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model)
 {
 	if (cb_before_menu_)

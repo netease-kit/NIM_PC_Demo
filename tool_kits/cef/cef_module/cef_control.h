@@ -27,8 +27,7 @@ public:
 	virtual void Paint(IRenderContext* pRender, const UiRect& rcPaint) override;
 
 	// 处理窗体消息，转发到Cef浏览器对象
-	virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled) override;
-
+	virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled) override;	
 protected:
 	// 转换窗体消息并转发到Cef浏览器对象
 	LRESULT SendButtonDownEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
@@ -43,7 +42,8 @@ protected:
 	static bool IsKeyDown(WPARAM wparam);
 	static int GetCefKeyboardModifiers(WPARAM wparam, LPARAM lparam);
 	static int GetCefMouseModifiers(WPARAM wparam);
-
+private:
+	void ReCreateBrowser();
 public:
 	// 控件对外的控制接口
 	void LoadURL(const CefString& url);
@@ -60,7 +60,10 @@ public:
 	CefString GetURL();
 	std::string GetUTF8URL();
 	CefString GetMainURL(const CefString& url);
-
+	virtual bool AttachDevTools(CefControl* view);
+	virtual void DettachDevTools();
+	virtual bool IsAttachedDevTools() const { return devtool_attached_; };
+	virtual void RepairBrowser();
 public:
 	// 事件处理接口回调函数，当浏览器发生这些事件后会调用回调函数来通知
 	void AttachBeforeContextMenu(const OnBeforeMenuEvent& callback){ cb_before_menu_ = callback; }
@@ -75,6 +78,7 @@ public:
 	void AttachLoadEnd(const OnLoadEndEvent& callback){ cb_load_end_ = callback; }
 	void AttachLoadError(const OnLoadErrorEvent& callback){ cb_load_error_ = callback; }
 	void AttachJsCallback(const OnJsCallbackEvent& callback);
+	void AttachDevToolAttachedStateChange(const OnDevToolAttachedStateChangeEvent& callback){ cb_devtool_visible_change_ = callback; };
 
 private:
 	// 处理BrowserHandler的HandlerDelegate委托接口
@@ -94,6 +98,8 @@ private:
 	virtual void OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect& rect) OVERRIDE;
 
 	virtual void UpdateWindowPos() OVERRIDE;
+
+	virtual void UpdateUI() OVERRIDE;
 
 	virtual void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model) OVERRIDE;
 
@@ -166,6 +172,8 @@ private:
 	OnLoadEndEvent		cb_load_end_ = nullptr;
 	OnLoadErrorEvent	cb_load_error_ = nullptr;
 	OnJsCallbackEvent	cb_js_callback_ = nullptr;
+	OnDevToolAttachedStateChangeEvent cb_devtool_visible_change_ = nullptr;
+	bool devtool_attached_;
 	int					js_callback_thread_id_ = -1; // 保存调用AttachJsCallback函数的代码所属线程，以后触发Js回调时把回调转到那个线程
 };
 }

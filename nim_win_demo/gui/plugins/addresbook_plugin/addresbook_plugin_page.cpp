@@ -18,6 +18,7 @@ void AddresBookPluginPage::DoInit()
 	profile_tip_ = new ContactProfileTip;
 	ui::GlobalManager::FillBoxWithCache(profile_tip_, L"plugins/addresbook/contact_box.xml");
 	contact_profile_container_->Add(profile_tip_);
+	InitTreeData();
 }
 void AddresBookPluginPage::ShowContact(const  std::shared_ptr<MyAddressbookContact>& contact_info)
 {
@@ -28,7 +29,8 @@ void AddresBookPluginPage::ShowContact(const  std::shared_ptr<MyAddressbookConta
 }
 void AddresBookPluginPage::InitTreeData()
 {
-	auto task = [this](){
+	auto weke_flag = contact_profile_container_->GetWeakFlag();
+	auto task = [this, weke_flag](){
 		addres_componet_ = new TreeComponent;
 		addres_componet_->SetWindow(this->GetWindow(), nullptr, false);		
 		addres_componet_->RegisterStyleUI("MyAddresbookDepartmentUI", [this]() {
@@ -46,9 +48,7 @@ void AddresBookPluginPage::InitTreeData()
 			item->SetWindow(addres_componet_->GetWindow(), nullptr);
 			item->SetOwner(addres_componet_);
 			return std::shared_ptr<MyAddressbookContactUI>(item);
-		});
-		TreeDoc* doc = new TreeDoc;
-		addres_componet_->BindDoc(doc);
+		});	
 
 		std::string value;
 		std::wstring addresbook_path = QPath::GetAppPath();
@@ -74,18 +74,25 @@ void AddresBookPluginPage::InitTreeData()
 				}
 				return true;
 			});
-			nbase::ThreadManager::PostDelayedTask(ThreadId::kThreadUI, ToWeakCallback([this](){
+			nbase::ThreadManager::PostTask(ThreadId::kThreadUI, contact_profile_container_->ToWeakCallback([this](){
 				addres_componet_->Update(true);
-			}),nbase::TimeDelta::FromMilliseconds(250));			
+			}));			
 			FindSubControl(L"wait")->SetVisible(false);
 		};
-		nbase::ThreadManager::PostTask(ThreadId::kThreadUI, ToWeakCallback(task_add));
+		if (!weke_flag.expired())
+			nbase::ThreadManager::PostTask(ThreadId::kThreadUI, contact_profile_container_->ToWeakCallback(task_add));
 	};
-	nbase::ThreadManager::PostTask(ThreadId::kThreadGlobalMisc, ToWeakCallback(task));//初始化数据放在辅助线程去做
+	nbase::ThreadManager::PostTask(ThreadId::kThreadGlobalMisc, contact_profile_container_->ToWeakCallback(task));//初始化数据放在辅助线程去做
 }
 void AddresBookPluginPage::LoadDataToTree(TreeComponent* tree, TiXmlElement* config_item, const TreeDocItemPtr& parent)
 {
-	TreeDoc* doc = tree->GetBindDoc();
+	auto doc = tree->GetDoc();
+	auto AddItemTask = doc->ToWeakCallback([doc](const TreeDocItemPtr& sub_item){
+		doc->AddItem(sub_item);
+	});
+	auto AddItemTask2 = doc->ToWeakCallback([doc](const TreeDocItemPtr& sub_item, const TreeDocItemPtr& parent){
+		doc->AddItem(sub_item, parent);
+	});
 	std::string string_type(config_item->Attribute("type"));
 	int type;
 	nbase::StringToInt(string_type, &type);
@@ -103,9 +110,9 @@ void AddresBookPluginPage::LoadDataToTree(TreeComponent* tree, TiXmlElement* con
 		item->SetTreeComponent(tree);
 		subitem = item;	
 		if (parent == nullptr)
-			doc->AddItem(subitem);
+			AddItemTask(subitem);
 		else
-			doc->AddItem(subitem, parent);
+			AddItemTask2(subitem, parent);
 		auto child_element = config_item->FirstChildElement();
 		while (child_element != nullptr)
 		{
@@ -133,9 +140,9 @@ void AddresBookPluginPage::LoadDataToTree(TreeComponent* tree, TiXmlElement* con
 		item->SetTreeComponent(tree);
 		subitem = item;
 		if (parent == nullptr)
-			doc->AddItem(subitem);
+			AddItemTask(subitem);
 		else
-			doc->AddItem(subitem, parent);
+			AddItemTask2(subitem, parent);
 		if (head_image_index > 10)
 			head_image_index = 1;
 	}

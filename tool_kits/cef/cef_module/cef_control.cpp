@@ -62,7 +62,12 @@ namespace ui
 	{
 		this->SetPos(this->GetPos());
 	}
-
+	void CefControl::UpdateUI()
+	{
+		nbase::ThreadManager::PostTask(ThreadId::kThreadUI, ToWeakCallback([this](){
+			::PostMessage(GetWindow()->GetHWND(), WM_PAINT, 0, 0);
+		}));
+	}
 	void CefControl::OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model)
 	{
 		if (cb_before_menu_)
@@ -175,5 +180,49 @@ namespace ui
 				cb_js_callback_(fun_name, param);
 		}
 	}
-
+	bool CefControl::AttachDevTools(CefControl* view)
+	{
+		if (devtool_attached_)
+			return true;
+		auto browser = browser_handler_->GetBrowser();
+		if (browser == nullptr)
+			return false;
+		auto client = view->browser_handler_->GetBrowserClient();
+		if (client == nullptr)
+		{
+			auto weak = view->GetWeakFlag();
+			auto task = [this,weak,view](){
+				nbase::ThreadManager::PostTask(ThreadId::kThreadUI, ToWeakCallback([this, weak, view](){
+					if (weak.expired())
+						return;
+					AttachDevTools(view);
+				}));
+			};		
+			view->browser_handler_->AddAfterCreateTask(task);
+		}			
+		else
+		{			
+			CefWindowInfo windowInfo;
+			windowInfo.SetAsWindowless(GetWindow()->GetHWND(), false);
+			CefBrowserSettings settings;
+			browser->GetHost()->ShowDevTools(windowInfo, client, settings, CefPoint());			
+			devtool_attached_ = true;
+			if (cb_devtool_visible_change_ != nullptr)
+				cb_devtool_visible_change_(devtool_attached_);
+		}		
+		return true;
+	}
+	void CefControl::DettachDevTools()
+	{
+		if (!devtool_attached_)
+			return;
+		auto browser = browser_handler_->GetBrowser();
+		if (browser != nullptr)
+		{
+			browser->GetHost()->CloseDevTools();
+			devtool_attached_ = false;
+			if (cb_devtool_visible_change_ != nullptr)
+				cb_devtool_visible_change_(devtool_attached_);
+		}			
+	}
 }

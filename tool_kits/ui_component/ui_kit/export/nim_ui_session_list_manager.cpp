@@ -15,7 +15,8 @@ bool SessionListManager::AttachListBox(ui::ListBox *list_box)
 {
 	if (NULL == list_box)
 	{
-		session_list_ = nullptr;
+		if (session_list_ != nullptr)
+			session_list_ = nullptr;
 	}
 	else
 	{

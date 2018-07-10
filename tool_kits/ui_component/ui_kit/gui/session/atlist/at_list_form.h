@@ -31,7 +31,7 @@ public:
     virtual std::wstring GetSkinFile() override;
     virtual std::wstring GetWindowClassName() const override;
     virtual std::wstring GetWindowId() const override;
-
+	virtual void ShowWindow(bool bShow = true, bool bTakeFocus = true) override;
 	/**
 	* 窗口初始化函数
 	* @return void	无返回值

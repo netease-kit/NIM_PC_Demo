@@ -12,7 +12,8 @@
 				<RichEdit class="simple prompt" name="edit_url" width="stretch" padding="5,2,5,0"  valign="center" 
 				bordercolor="gray" bordersize="1" font="2" prompttextid="STRID_CEF_BROWSER_INPUT_ADDRESS" vscrollbar="false" autovscroll="false" hscrollbar="false" autohscroll="true" wantreturnmsg="true" />
 				<Button class="btn_global_green_80x30" name="btn_navigate" textid="STRID_CEF_BROWSER_BROWSE_TO" width="50" height="30" valign="center" font="1" margin="3,0,0,0" />  
-				<Button class="btn_global_green_80x30" name="btn_refresh" width="50" height="30" textid="STRID_CEF_BROWSER_REFRESH" valign="center" font="1" margin="3,0,0,0" />    
+				<Button class="btn_global_green_80x30" name="btn_refresh" width="50" height="30" textid="STRID_CEF_BROWSER_REFRESH" valign="center" font="1" margin="3,0,0,0" />  
+				<Button class="btn_global_green_80x30" name="btn_dev" width="50" height="30" text="dev" valign="center" font="1" margin="3,0,0,0" /> 				
 			</HBox>
 			<HBox height="30" margin="10,0,10,2" >
 				<RichEdit class="simple prompt" name="edit_js" textid="STRID_CEF_BROWSER_HELLO_JS" width="stretch" padding="5,2,5,0" valign="center" 
@@ -21,7 +22,11 @@
 			</HBox>
 		</VBox>
 		<Control class="splitline_hor_level1" margin="0,0,0,0" />
-		<CefControl name="cef_control" bkcolor="bk_wnd_lightcolor"/>
+		<HBox>
+			<CefControl name="cef_control" bkcolor="bk_wnd_lightcolor"/>
+			<CefControl name="cef_control_dev" bkcolor="bk_wnd_lightcolor" visible="false" />
+		</HBox>
+		
 	</VBox>
 </Box>
 

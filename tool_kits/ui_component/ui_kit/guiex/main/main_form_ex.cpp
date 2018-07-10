@@ -456,6 +456,7 @@ namespace nim_comp
 	{
 		UTF8String search_key = search_edit_->GetUTF8Text();
 		bool has_serch_key = !search_key.empty();
+		RunTimeDataManager::GetInstance()->SetSearchingFriendState(has_serch_key);
 		btn_clear_input_->SetVisible(has_serch_key);
 		search_result_list_->SetVisible(has_serch_key);
 		//option_panel_->SetVisible(!has_serch_key);

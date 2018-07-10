@@ -7,6 +7,7 @@
 namespace nim_cef
 {
 BrowserHandler::BrowserHandler()
+	: browser_client_(nullptr)
 {
 	handle_delegate_ = NULL;
 	is_focus_oneditable_field_ = false;
@@ -36,9 +37,9 @@ CefRefPtr<CefBrowserHost> BrowserHandler::GetBrowserHost()
 	return NULL;
 }
 
-void BrowserHandler::AddAfterCreateTask(const StdClosure& cb)
+UnregisterCallback BrowserHandler::AddAfterCreateTask(const StdClosure& cb)
 {
-	task_list_after_created_.push_back(cb);
+	return task_list_after_created_.AddCallback(cb);
 }
 
 bool BrowserHandler::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
@@ -97,10 +98,12 @@ bool BrowserHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 void BrowserHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 {
 	REQUIRE_UI_THREAD();
-
+	if (browser_client_ == nullptr)
+		browser_client_ = browser->GetHost()->GetClient();
+	browser_list_.emplace_back(browser);
+	if (browser_ != nullptr)
+		browser_->GetHost()->WasHidden(true);
 	browser_ = browser;
-	browser->GetIdentifier();
-
 	nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback([this](){
 		CefManager::GetInstance()->AddBrowserCount();
 
@@ -109,12 +112,12 @@ void BrowserHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 		{
 			handle_delegate_->UpdateWindowPos();
 		}
-
-		for (auto it : task_list_after_created_)
+		task_list_after_created_();
+		/*for (auto it : task_list_after_created_)
 		{
-			it();
-		}
-		task_list_after_created_.clear();
+		it();
+		}*/
+		task_list_after_created_.Clear();
 	}));
 
 }
@@ -126,14 +129,27 @@ bool BrowserHandler::DoClose(CefRefPtr<CefBrowser> browser)
 
 void BrowserHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 {
-	if (browser->GetIdentifier() == browser_->GetIdentifier())
+	REQUIRE_UI_THREAD();
+	auto it = std::find_if(browser_list_.begin(), browser_list_.end(), [&](const CefRefPtr<CefBrowser>& item){
+		return item->IsSame(browser);
+	});
+	if (it != browser_list_.end())
 	{
-		browser_ = NULL;
-
 		nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback([this, browser](){
 			CefManager::GetInstance()->SubBrowserCount();
 		}));
-	}
+		auto closed_browser = *it;
+		browser_list_.erase(it);
+		if (closed_browser->IsSame(browser_))
+		{
+			browser_ = browser_list_.size() > 0 ? *browser_list_.rbegin() : nullptr;
+			if (browser_ != nullptr)
+			{
+				browser_->GetHost()->WasHidden(false);
+				browser_->Reload();				
+			}				
+		}
+	}	
 }
 #pragma endregion
 

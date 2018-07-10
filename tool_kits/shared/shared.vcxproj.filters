@@ -87,5 +87,6 @@
     <ClInclude Include="ui\toast\toast.h">
       <Filter>ui\toast</Filter>
     </ClInclude>
+    <ClInclude Include="templated_object_factory.h" />
   </ItemGroup>
 </Project>

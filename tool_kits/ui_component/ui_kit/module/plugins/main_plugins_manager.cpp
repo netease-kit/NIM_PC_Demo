@@ -19,7 +19,7 @@ void MainPluginsManager::RegPlugin()
 }
 void MainPluginsManager::LoadPlugins()
 {
-	plugin_list_ = std::move(TemplatedObjectFactoryWrapper::InstantiateAllRegisteredSharedOjbect<IMainPlugin, IMainPlugin::PluginFlagType>());
+	plugin_list_ = std::move(shared::TemplatedObjectFactoryWrapper::InstantiateAllRegisteredSharedOjbect<IMainPlugin, IMainPlugin::PluginFlagType>());
 }
 MainPluginList MainPluginsManager::GetPluginList() const
 {

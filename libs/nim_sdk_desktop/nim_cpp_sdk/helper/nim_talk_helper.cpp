@@ -37,10 +37,18 @@ bool ParseReceiveMessage(const std::string& msg_json, IMMessage& message)
 
 void ParseReceiveMessage(const Json::Value& msg_json_value, IMMessage& message)
 {
-	message.rescode_ = (NIMResCode)msg_json_value[kNIMMsgKeyLocalRescode].asUInt();
-	message.feature_ = (NIMMessageFeature)msg_json_value[kNIMMsgKeyLocalMsgFeature].asUInt();
-
-	ParseMessage(msg_json_value[kNIMMsgKeyLocalReceiveMsgContent], message);
+	if (!msg_json_value.isMember(kNIMMsgKeyLocalReceiveMsgContent))
+	{
+		message.rescode_ =kNIMResSuccess;
+		message.feature_ = kNIMMessageFeatureDefault;
+		ParseMessage(msg_json_value, message);
+	}
+	else
+	{
+		message.rescode_ = (NIMResCode)msg_json_value[kNIMMsgKeyLocalRescode].asUInt();
+		message.feature_ = (NIMMessageFeature)msg_json_value[kNIMMsgKeyLocalMsgFeature].asUInt();
+		ParseMessage(msg_json_value[kNIMMsgKeyLocalReceiveMsgContent], message);
+	}	
 }
 
 void ParseMessage(const Json::Value& msg_json, IMMessage& message)

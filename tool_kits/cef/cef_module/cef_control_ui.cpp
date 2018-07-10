@@ -13,7 +13,8 @@ namespace ui
 #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
 	}
 
-CefControl::CefControl(void)
+CefControl::CefControl(void) :
+devtool_attached_(false)
 {
 #if !defined(SUPPORT_CEF)
 	ASSERT(FALSE && L"要使用Cef功能请开启SUPPORT_CEF宏");
@@ -42,7 +43,16 @@ void CefControl::Init()
 		browser_handler_ = new nim_cef::BrowserHandler;
 		browser_handler_->SetHostWindow(m_pWindow->GetHWND());
 		browser_handler_->SetHandlerDelegate(this);
+		ReCreateBrowser();
+		
+	}
 
+	__super::Init();
+}
+void CefControl::ReCreateBrowser()
+{
+	if (browser_handler_->GetBrowser() == nullptr)
+	{
 		// 使用无窗模式，离屏渲染
 		CefWindowInfo window_info;
 		window_info.SetAsWindowless(m_pWindow->GetHWND(), false);
@@ -50,11 +60,12 @@ void CefControl::Init()
 		//browser_settings.file_access_from_file_urls = STATE_ENABLED;
 		//browser_settings.universal_access_from_file_urls = STATE_ENABLED;
 		CefBrowserHost::CreateBrowser(window_info, browser_handler_, L"", browser_settings, NULL);
-	}
-
-	__super::Init();
+	}	
 }
-
+void CefControl::RepairBrowser()
+{
+	ReCreateBrowser();
+}
 void CefControl::SetPos(UiRect rc)
 {
 	__super::SetPos(rc);

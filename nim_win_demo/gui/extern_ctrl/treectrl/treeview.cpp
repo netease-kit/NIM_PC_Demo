@@ -74,7 +74,7 @@ std::shared_ptr<ITreeItemUIStyle> TreeComponent::GetUIStyle(const std::shared_pt
 }
 TreeComponent::TreeComponent() : 
 	ui::ListBox(new ui::VLayout), 
-	doc_(nullptr) , 
+	doc_(new TreeDoc),
 	show_tree_line_(true), 
 	show_check_box_(true),
 	show_expand_button_(true),
@@ -83,6 +83,7 @@ TreeComponent::TreeComponent() :
 	level_space_widht_(14),
 	selected_item_(nullptr)
 {  
+	doc_->AttachRemoveItem(std::bind(&TreeComponent::OnRemoveItemCallback, this, std::placeholders::_1));
 };
 TreeComponent::~TreeComponent() 
 {

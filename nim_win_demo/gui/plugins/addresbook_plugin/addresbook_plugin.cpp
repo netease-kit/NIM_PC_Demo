@@ -6,7 +6,7 @@ bool AddresBookPlugin::ShowSearchBar() const
 }
 void AddresBookPlugin::DoInit() 
 {
-	page_->InitTreeData();
+	
 }
 ui::OptionBox* AddresBookPlugin::CreatePluginIcon()
 {

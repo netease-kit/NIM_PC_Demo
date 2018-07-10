@@ -25,6 +25,7 @@ namespace ui
 	typedef std::function<void()> OnLoadStartEvent;
 	typedef std::function<void(int httpStatusCode)> OnLoadEndEvent;
 	typedef std::function<void(CefLoadHandler::ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl)> OnLoadErrorEvent;
+	typedef std::function<void(bool visible)> OnDevToolAttachedStateChangeEvent;
 
 	typedef std::function<void(const CefString& fun_name, const CefString& param)> OnJsCallbackEvent;
 }

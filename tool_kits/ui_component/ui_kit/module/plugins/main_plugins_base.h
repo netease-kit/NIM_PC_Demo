@@ -1,5 +1,5 @@
 #pragma once
-#include "ui_kit_base/auto_create_object_manager.h"
+#include "shared/templated_object_factory.h"
 namespace nim_comp
 {
 	class IMainPlugin : public virtual nbase::SupportWeakCallback

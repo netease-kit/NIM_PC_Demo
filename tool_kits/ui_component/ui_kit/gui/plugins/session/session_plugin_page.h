@@ -45,6 +45,7 @@ namespace nim_comp
 		SessionBox* GetSessionBoxByID(const std::string& session_id) const;
 	private:
 		ui::TabBox* session_box_tab_;
+		SessionBox* active_session_box_;
 		AutoUnregister	unregister_cb;
 	};
 }

@@ -20,5 +20,7 @@ namespace nim_comp
 	
 	public:
 		static const PluginFlagType kPLUGIN_NAME;
+	private:
+		std::function<void()> detach_list_function_;
 	};
 }

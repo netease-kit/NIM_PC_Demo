@@ -92,6 +92,7 @@ enum NIMVChatMp4RecordCode {
 	kNIMVChatMp4RecordClose				= 0,		/**< MP4结束 */
 	kNIMVChatMp4RecordVideoSizeError	= 1,		/**< MP4结束，视频画面大小变化 */
 	kNIMVChatMp4RecordOutDiskSpace		= 2,		/**< MP4结束，磁盘空间不足 */
+	kNIMVChatMp4RecordThreadBusy		= 3,		/**< MP4结束，录制线程繁忙 */
 	kNIMVChatMp4RecordCreate			= 200,		/**< MP4文件创建 */
 	kNIMVChatMp4RecordExsit				= 400,		/**< MP4文件已经存在 */
 	kNIMVChatMp4RecordCreateError		= 403,		/**< MP4文件创建失败 */
@@ -188,7 +189,7 @@ enum NIMVChatConnectErrorCode{
 	kNIMVChatConnectStartFail			= 1,		/**< 启动失败 */
     kNIMVChatConnectTimeout				= 101,		/**< 超时 */
 	kNIMVChatConnectMeetingModeError	= 102,		/**< 会议模式错误 */
-	kNIMVChatConnectRtmpModeError		= 103,		/**< 非rtmp用户加入rtmp频道 */
+	kNIMVChatConnectRtmpModeError		= 103,		/**< rtmp用户加入非rtmp频道 */
 	kNIMVChatConnectRtmpNodesError		= 104,		/**< 超过频道最多rtmp人数限制 */
 	kNIMVChatConnectRtmpHostError		= 105,		/**< 已经存在一个主播 */
 	kNIMVChatConnectRtmpCreateError		= 106,		/**< 需要旁路直播, 但频道创建者非主播 */
@@ -238,6 +239,12 @@ enum NIMMainPictureOptCode
 	kNIMMainPictureOptServerError	= 600,		/**< 服务器内部错误 */
 	kNIMMainPictureOptInvilid		= 11403,	/**< 无效的操作 */
 };
+
+/** @name 初始化 内容Json key for nrtc_init
+* @{
+*/
+static const char *kNIMVChatServerSettingPath	= "server_setting_path";		/**< string 服务器配置文件路径 */
+/** @}*/ //初始化 内容Json key
 
 /** @name 网络探测 内容Json key for nim_vchat_net_detect
   * @{

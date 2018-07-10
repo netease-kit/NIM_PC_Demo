@@ -4,7 +4,8 @@
 #include "gui\session\session_box.h"
 #include "export\nim_ui_session_list_manager.h"
 using namespace nim_comp;
-SessionPluginPage::SessionPluginPage()
+SessionPluginPage::SessionPluginPage() :
+active_session_box_(nullptr)
 {
 	
 }
@@ -32,6 +33,19 @@ void SessionPluginPage::OnSessionListAttached()
 LRESULT SessionPluginPage::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
 {
 	LRESULT ret = S_FALSE;
+	auto active_session_box = GetSelectedSessionBox();
+	if (uMsg == WM_KEYDOWN)
+	{
+		if (wParam == 'V')
+		{
+			if (::GetKeyState(VK_CONTROL) < 0)
+			{
+				active_session_box->HandleMessage(uMsg, wParam, lParam, bHandled);
+				if(bHandled)
+					return S_OK;
+			}
+		}
+	}
 	if (uMsg == WM_NOTIFY)
 	{
 		if (wParam == EN_LINK)
@@ -50,6 +64,53 @@ LRESULT SessionPluginPage::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lPara
 			bHandled = true;
 			ret = S_OK;
 		}
+	}
+	else if (uMsg == WM_DROPFILES)
+	{
+		//Run desktop helper from 360 or tencent
+		QLOG_APP(L"##Receive dropfiles msg.");
+		POINT pt;
+		GetCursorPos(&pt);
+		POINTL ppt;
+		ppt.x = pt.x;
+		ppt.y = pt.y;
+		
+		if (NULL != active_session_box && active_session_box->CheckDropEnable(ppt))
+			active_session_box->OnDropFile((HDROP)wParam);
+		return 0;
+	}
+	else if (uMsg == WM_KEYDOWN && wParam == VK_RETURN)
+	{
+		if (::GetKeyState(VK_CONTROL) >= 0)
+		{
+			if (RunTimeDataManager::GetInstance()->IsAttingSomeOne())
+			{
+				bHandled = true;
+				return S_OK;
+			}
+		}
+	}
+	if (NULL != active_session_box)
+	{	
+		if (uMsg == WM_CHAR)
+		{
+			if (wParam != VK_BACK)
+			{
+				if (lParam == 0xFFFF)
+				{
+					bHandled = true;
+					return S_OK;
+				}					
+				else
+				{
+					lParam = 0xFFFF;
+				}					
+			}
+		}
+		bool handle = false;
+		ret = active_session_box->HandleMessage(uMsg, wParam, lParam, handle);
+		if (handle)
+			return ret;
 	}
 	return ret;
 }
