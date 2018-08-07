@@ -109,7 +109,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libeay32.lib;ssleay32.lib;custom_app_sdk_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -130,7 +130,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libeay32_d.lib;ssleay32_d.lib;custom_app_sdk_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <DelayLoadDLLs>libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
       <IgnoreSpecificDefaultLibraries>LIBCMTD.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>
@@ -155,7 +155,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>dbghelp.lib;libyuv.lib;libeay32.lib;ssleay32.lib;custom_app_sdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <DelayLoadDLLs>libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -179,7 +179,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>dbghelp.lib;libyuv.lib;libeay32.lib;ssleay32.lib;custom_app_sdk.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <DelayLoadDLLs>libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
+      <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
     </Link>
   </ItemDefinitionGroup>

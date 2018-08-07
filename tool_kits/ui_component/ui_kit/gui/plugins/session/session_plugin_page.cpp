@@ -34,6 +34,8 @@ LRESULT SessionPluginPage::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lPara
 {
 	LRESULT ret = S_FALSE;
 	auto active_session_box = GetSelectedSessionBox();
+	if (active_session_box == nullptr)
+		return S_FALSE;
 	if (uMsg == WM_KEYDOWN)
 	{
 		if (wParam == 'V')

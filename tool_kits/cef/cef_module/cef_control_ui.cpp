@@ -26,7 +26,7 @@ CefControl::~CefControl(void)
 	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
 	{
 		// Request that the main browser close.
-		browser_handler_->GetBrowserHost()->CloseBrowser(true);
+		browser_handler_->CloseAllBrowser();
 		browser_handler_->SetHostWindow(NULL);
 		browser_handler_->SetHandlerDelegate(NULL);	
 

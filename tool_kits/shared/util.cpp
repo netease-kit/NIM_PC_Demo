@@ -46,7 +46,8 @@ std::wstring QPath::GetNimAppDataDir(const std::wstring& app_data_dir)
 	{
 		dir.append(app_data_dir);
 	}
-
+	if (dir[dir.length() - 1] == L'/' || dir[dir.length() - 1] == L'\\')
+		dir.resize(dir.length() - 1);
 #ifdef _DEBUG
 	dir.append(L"\\NIM_Debug\\");
 #else

@@ -95,19 +95,26 @@ bool IsInitLog();
 */
 void SetGlobalProxy(NIMProxyType type, const std::string& host, short port, const std::string& user, const std::string& pass);
 
-/** @fn int PostRequest(const HttpRequest& http_request)
+/** @fn HttpRequestID PostRequest(const HttpRequest& http_request)
 * NIM HTTP 发起任务
 * @param[in] http_request	http任务句柄
-* @return int				任务id
+* @return HttpRequestID				任务id
 */
-int PostRequest(const HttpRequest& http_request);
+HttpRequestID PostRequest(const HttpRequest& http_request);
 
-/** @fn void RemoveRequest(int http_request_id)
+/** @fn void RemoveRequest(HttpRequestID http_request_id)
 * NIM HTTP 取消任务
 * @param[in] http_request_id	任务id
 * @return void					无返回值
 */
-void RemoveRequest(int http_request_id);
+void RemoveRequest(HttpRequestID http_request_id);
+
+/** @fn std::string GetResponseHead(HttpRequestID http_request_id)
+* NIM HTTP 读取应答的http头信息,在任务完成的回调中调用，当回调完成后应答可能被释放,此时无法读取信息
+* @param[in] http_request_id	任务id
+* @return std::string			HTTP应答头信息
+*/
+std::string GetResponseHead(HttpRequestID http_request_id);
 
 /** @class HttpRequest
 * @brief NIM HTTP提供的http传输相关接口

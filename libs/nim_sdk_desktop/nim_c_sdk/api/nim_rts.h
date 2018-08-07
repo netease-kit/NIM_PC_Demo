@@ -178,7 +178,7 @@ NIM_SDK_DLL_API	void nim_rts_relogin(const char *session_id, int channel_type, c
 
 //数据相关
 /** @fn void nim_rts_send_data(const char *session_id, int channel_type, const char *data, unsigned int size, const char *json_extension)
-  * NIM 发送数据，暂时支持tcp通道，建议发送频率在20Hz以下
+  * NIM 发送数据，暂时支持tcp通道，建议发送频率在20Hz以下，现在只支持50k的长度
   * @param[in] session_id 会话id
   * @param[in] channel_type 通道类型, kNIMRtsChannelTypeVchat通道如果要自定义数据调用nim_device.h中nim_vchat_custom_audio_data和nim_vchat_custom_video_data
   * @param[in] data 发送数据

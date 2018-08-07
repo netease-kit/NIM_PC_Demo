@@ -49,7 +49,7 @@ struct MessageSetting
 	BoolStatus client_anti_spam_hitting_;	/**< (可选) 是否命中客户端反垃圾*/
 	BoolStatus team_msg_need_ack_;		/** 群消息是否需要已读业务，0：不需要，1：需要*/
 	BoolStatus team_msg_ack_sent_;		/**< 是否已经发送群消息已读回执 */
-	int team_msg_unread_count_;			/**< 群消息未读数 */
+	int team_msg_unread_count_;			/**< 群消息未读数 */		
 	/** 构造函数 */
 	MessageSetting() : resend_flag_(BS_NOT_INIT)
 		, server_history_saved_(BS_NOT_INIT)
@@ -126,7 +126,7 @@ struct MessageSetting
 		if (team_msg_ack_sent_ != BS_NOT_INIT)
 			message[kNIMMsgKeyLocalKeyTeamMsgAckSent] = team_msg_ack_sent_;
 		if (team_msg_unread_count_ > -1)
-			message[kNIMMsgKeyLocalKeyTeamMsgUnreadCount] = team_msg_unread_count_;
+			message[kNIMMsgKeyLocalKeyTeamMsgUnreadCount] = team_msg_unread_count_;		
 	}
 
 	/** @fn void ParseMessageSetting(const Json::Value& message)
@@ -184,7 +184,7 @@ struct MessageSetting
 		if (message.isMember(kNIMMsgKeyLocalKeyTeamMsgAckSent))
 			team_msg_ack_sent_ = message[kNIMMsgKeyTeamMsgAck].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeyLocalKeyTeamMsgUnreadCount))
-			team_msg_unread_count_ = message[kNIMMsgKeyLocalKeyTeamMsgUnreadCount].asUInt();
+			team_msg_unread_count_ = message[kNIMMsgKeyLocalKeyTeamMsgUnreadCount].asUInt();		
 	}
 };
 
@@ -321,9 +321,9 @@ struct IMFile
 	std::string url_;				/**< 上传云端后得到的文件下载地址 */
 	std::string display_name_;		/**< 用于显示的文件名称 */
 	std::string file_extension_;	/**< 文件扩展名 */
-
+	std::string msg_attachment_tag_;	/**< string, (可选)发送含有附件的消息时使用的场景标签(可参见nos删除策略) ,Audio Image Video File 或者可以被SDK解析到本地文件路径的自定义消息*/
 	/** 构造函数 */
-	IMFile() : size_(0) {}
+	IMFile() : size_(0), msg_attachment_tag_(kNIMNosDefaultTagIM){}
 
 	/** @fn std::string ToJsonString(Json::Value &attach) const
 	  * @brief 组装Json Value字符串
@@ -343,7 +343,8 @@ struct IMFile
 			attach[kNIMFileMsgKeySize] = size_;
 		if (!url_.empty())
 			attach[kNIMMsgAttachKeyUrl] = url_;
-
+		if(!msg_attachment_tag_.empty())
+			attach[kNIMMsgAttachKeyTag] = msg_attachment_tag_;
 		return GetJsonStringWithNoStyled(attach);
 	}
 
@@ -354,8 +355,7 @@ struct IMFile
 	std::string ToJsonString() const
 	{
 		Json::Value attach;
-		attach[kNIMFileMsgKeyDisplayName] = display_name_;
-
+		attach[kNIMFileMsgKeyDisplayName] = display_name_;		
 		return ToJsonString(attach);
 	}
 };

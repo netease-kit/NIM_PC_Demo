@@ -63,16 +63,18 @@ bool FilePathExtension(const PathString &filepath_in, PathString &extension_out)
 {
 	if (filepath_in.size() == 0)
 		return false;
-	PathString temp_path(filepath_in);
-	nbase::StringReplaceAll(PathString().append(1,kFilePathSeparators[0]), PathString().append(1,kFilePathSeparators[1]), temp_path);
-	size_t pos = temp_path.rfind(kFilePathSeparators[1]);
-	if(pos != PathString::npos)
-		temp_path = temp_path.substr(pos);
-	pos = temp_path.rfind(kFilePathExtensionSeparator);
-	if (pos == PathString::npos)
-		return false;
-	extension_out = temp_path.substr(pos, PathString::npos);
-	return true;
+	bool ret = false;
+	PathString file_name;
+	if (FilePathApartFileName(filepath_in, file_name))
+	{
+		size_t pos = file_name.rfind(kFilePathExtensionSeparator);
+		if (pos != PathString::npos)
+		{
+			extension_out = file_name.substr(pos, PathString::npos);
+			ret = true;
+		}
+	}
+	return ret;
 }
 
 bool FilePathApartDirectory(const PathString &filepath_in,
@@ -98,20 +100,24 @@ bool FilePathApartDirectory(const PathString &filepath_in,
 bool FilePathApartFileName(const PathString &filepath_in,
 						   PathString &filename_out)
 {
-	size_t index = filepath_in.size() - 1;
-	if (index <= 0 || filepath_in.size() == 0)
+	if (filepath_in.size() == 0)
 		return false;
-	for (; index != 0; index--)
+	bool ret = true;
+	size_t separator_pos = PathString::npos;
+	size_t separators_count = sizeof(kFilePathSeparators) / sizeof(PathChar);
+	for (size_t index = 0; index < separators_count; index++)
 	{
-		if (IsFilePathSeparator(filepath_in[index]))
-		{
-			if (index == filepath_in.size() - 1)
-				return false;
-			filename_out = filepath_in.substr(index + 1, PathString::npos);
-			return true;
-		}
+		separator_pos = filepath_in.rfind(kFilePathSeparators[index]);
+		if (separator_pos != PathString::npos)
+			break;
 	}
-	return false;
+	if (separator_pos++ != PathString::npos && separator_pos < filepath_in.size())
+		filename_out = filepath_in.substr(separator_pos);
+	else if (separator_pos >= filepath_in.size())
+		ret = false;
+	else
+		filename_out = filepath_in;
+	return ret;
 }
 
 template<typename CharType>

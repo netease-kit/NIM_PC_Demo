@@ -48,6 +48,7 @@
     <ClCompile Include="ui\toast\toast.cpp">
       <Filter>ui\toast</Filter>
     </ClCompile>
+    <ClCompile Include="db_helper.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmd_line.h" />
@@ -88,5 +89,6 @@
       <Filter>ui\toast</Filter>
     </ClInclude>
     <ClInclude Include="templated_object_factory.h" />
+    <ClInclude Include="db_helper.h" />
   </ItemGroup>
 </Project>

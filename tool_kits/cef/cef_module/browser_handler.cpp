@@ -97,26 +97,21 @@ bool BrowserHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 
 void BrowserHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 {
-	REQUIRE_UI_THREAD();
-	if (browser_client_ == nullptr)
-		browser_client_ = browser->GetHost()->GetClient();
-	browser_list_.emplace_back(browser);
-	if (browser_ != nullptr)
-		browser_->GetHost()->WasHidden(true);
-	browser_ = browser;
-	nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback([this](){
+	REQUIRE_UI_THREAD();	
+	nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback([this, browser](){
+		if (browser_client_ == nullptr)
+			browser_client_ = browser->GetHost()->GetClient();
+		browser_list_.emplace_back(browser);
+		if (browser_ != nullptr)
+			browser_->GetHost()->WasHidden(true);
+		browser_ = browser;
 		CefManager::GetInstance()->AddBrowserCount();
-
 		// 有窗模式下，浏览器创建完毕后，让上层更新一下自己的位置；因为在异步状态下，上层更新位置时可能Cef窗口还没有创建出来
 		if (!CefManager::GetInstance()->IsEnableOffsetRender())
 		{
 			handle_delegate_->UpdateWindowPos();
 		}
 		task_list_after_created_();
-		/*for (auto it : task_list_after_created_)
-		{
-		it();
-		}*/
 		task_list_after_created_.Clear();
 	}));
 
@@ -130,26 +125,26 @@ bool BrowserHandler::DoClose(CefRefPtr<CefBrowser> browser)
 void BrowserHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 {
 	REQUIRE_UI_THREAD();
-	auto it = std::find_if(browser_list_.begin(), browser_list_.end(), [&](const CefRefPtr<CefBrowser>& item){
-		return item->IsSame(browser);
-	});
-	if (it != browser_list_.end())
-	{
-		nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback([this, browser](){
-			CefManager::GetInstance()->SubBrowserCount();
-		}));
-		auto closed_browser = *it;
-		browser_list_.erase(it);
-		if (closed_browser->IsSame(browser_))
+	nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback([this, browser](){
+		CefManager::GetInstance()->SubBrowserCount();
+		auto it = std::find_if(browser_list_.begin(), browser_list_.end(), [&](const CefRefPtr<CefBrowser>& item){
+			return item->IsSame(browser);
+		});
+		if (it != browser_list_.end())
 		{
-			browser_ = browser_list_.size() > 0 ? *browser_list_.rbegin() : nullptr;
-			if (browser_ != nullptr)
+			auto closed_browser = *it;
+			browser_list_.erase(it);
+			if (closed_browser->IsSame(browser_))
 			{
-				browser_->GetHost()->WasHidden(false);
-				browser_->Reload();				
-			}				
+				browser_ = browser_list_.size() > 0 ? *browser_list_.rbegin() : nullptr;
+				if (browser_ != nullptr)
+				{
+					browser_->GetHost()->WasHidden(false);
+					browser_->Reload();
+				}
+			}
 		}
-	}	
+	}));	
 }
 #pragma endregion
 
@@ -391,5 +386,28 @@ bool BrowserHandler::OnQuotaRequest(CefRefPtr<CefBrowser> browser,
 	callback->Continue(new_size <= max_size);
 	return true;
 }
-
+void BrowserHandler::CloseAllBrowser()
+{
+	class CloseAllBrowserTask : public CefTask
+	{
+		IMPLEMENT_REFCOUNTING(CloseAllBrowserTask);
+	public:
+		CloseAllBrowserTask(const std::vector<CefRefPtr<CefBrowser>>& browser_list)
+		{
+			browser_list_.assign(browser_list.begin(), browser_list.end());
+		}
+	public:
+		void Execute()
+		{
+			for (auto it : browser_list_)
+			{
+				if (it != nullptr)
+					it->GetHost()->CloseBrowser(true);
+			}
+		}
+	private:
+		std::vector<CefRefPtr<CefBrowser>> browser_list_;
+	};
+	CefPostTask(TID_UI, new CloseAllBrowserTask(browser_list_));
+}
 }

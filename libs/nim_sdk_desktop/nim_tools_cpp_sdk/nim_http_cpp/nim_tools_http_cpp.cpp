@@ -28,8 +28,9 @@ typedef void (*typeof_nim_http_set_request_method_as_post)(HttpRequestHandle req
 typedef void (*typeof_nim_http_set_timeout)(HttpRequestHandle request_handle, int timeout_ms);
 typedef void(*typeof_nim_http_set_low_speed)(HttpRequestHandle request_handle, int low_speed_limit, int low_speed_time);
 typedef void (*typeof_nim_http_set_proxy)(HttpRequestHandle request_handle, int type, const char* host, short port, const char* user, const char* pass);
-typedef int (*typeof_nim_http_post_request)(HttpRequestHandle);
-typedef void (*typeof_nim_http_remove_request)(int http_request_id);
+typedef HttpRequestID (*typeof_nim_http_post_request)(HttpRequestHandle);
+typedef void (*typeof_nim_http_remove_request)(HttpRequestID http_request_id);
+typedef const char* const(*typeof_nim_http_get_response_head)(HttpRequestID http_request_id);
 
 typeof_nim_http_init	g_nim_http_init;
 typeof_nim_http_uninit	g_nim_http_uninit;
@@ -48,7 +49,7 @@ typeof_nim_http_set_low_speed g_nim_http_set_low_speed;
 typeof_nim_http_set_proxy g_nim_http_set_proxy;
 typeof_nim_http_post_request	g_nim_http_post_request;
 typeof_nim_http_remove_request	g_nim_http_remove_request;
-
+typeof_nim_http_get_response_head g_nim_http_get_response_head;
 struct CompletedCallbackUserData
 {
 	CompletedCallbackUserData() :
@@ -111,7 +112,8 @@ void Init(const std::wstring &dll_path/* = L""*/)
 	g_nim_http_set_proxy = (typeof_nim_http_set_proxy)GetProcAddress(hmod, "nim_http_set_proxy");
 	g_nim_http_post_request = (typeof_nim_http_post_request)GetProcAddress(hmod,"nim_http_post_request");
 	g_nim_http_remove_request = (typeof_nim_http_remove_request)GetProcAddress(hmod,"nim_http_remove_request");
-
+	g_nim_http_get_response_head = (typeof_nim_http_get_response_head)GetProcAddress(hmod, "nim_http_get_response_head");
+	
 	g_nim_http_init();
 }
 
@@ -146,16 +148,22 @@ void SetGlobalProxy(NIMProxyType type, const std::string& host, short port, cons
 	proxy_pass_ = pass;
 }
 
-int PostRequest(const HttpRequest& http_request)
+HttpRequestID PostRequest(const HttpRequest& http_request)
 {
 	return g_nim_http_post_request(http_request.http_reuqest_handle_);
 }
 
-void RemoveRequest(int http_request_id)
+void RemoveRequest(HttpRequestID http_request_id)
 {
 	g_nim_http_remove_request(http_request_id);
 }
-
+std::string GetResponseHead(HttpRequestID http_request_id)
+{
+	auto head_info = g_nim_http_get_response_head(http_request_id);
+	if (head_info != nullptr)
+		return head_info;
+	return "";
+}
 HttpRequest::HttpRequest(const std::string& url, const std::string& download_file_path,
 	const CompletedCallback& complete_cb, const ProgressCallback& progress_cb,
 	const SpeedCallback& speed_cb, const TransferCallback& transfer_cb)

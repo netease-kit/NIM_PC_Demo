@@ -62,8 +62,9 @@ void ChatroomForm::SetAnonymity(bool anonymity)
 void ChatroomForm::OnBtnLogin()
 {
 	auto form = nim_comp::WindowsManager::SingletonShow<LoginForm>(LoginForm::kClassName);
-	form->SetLoginFunctionFlag();
+	form->SetLoginFunctionFlag();	
 	form->SetAnonymousChatroomVisible(false);
+	form->SwitchToLoginPage();
 	form->CenterWindow();
 	form->ShowWindow();
 	nim_ui::OnShowMainWindow cb_login_ok = [this]{

@@ -1,6 +1,6 @@
 ﻿#include "base/synchronization/lock.h"
 #include "db/db_sqlite3.h"
-
+#include "shared/db_helper.h"
 
 namespace nim_comp
 {
@@ -9,10 +9,11 @@ namespace nim_comp
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @date 2016/09/18
   */
-class UserDB
+class UserDB : public shared::NimDatabase, public nbase::Singleton<UserDB>
 {
 public:
-	SINGLETON_DEFINE(UserDB);
+	SingletonHideConstructor(UserDB);	
+private:
 	UserDB();
 	virtual ~UserDB();
 
@@ -106,17 +107,9 @@ public:
 	* @return bool true 成功，false 失败
 	*/
 	bool QueryTimetag(TimeTagType type, uint64_t &timetag);
-
-private:
-	/**
-	* 创建数据库
-	* @return bool true 成功，false 失败
-	*/
-    bool CreateDBFile();
-
-private:
-    UTF8String		db_filepath_;
-    ndb::SQLiteDB   db_;
-    nbase::NLock    lock_;
+protected:
+	virtual bool OnBeforCreateDatabase(PretreatmentConfig& config) override;
+	virtual std::string GetEncryptKey() const override;
+	virtual std::string GetDBPath() const override;
 };
 }

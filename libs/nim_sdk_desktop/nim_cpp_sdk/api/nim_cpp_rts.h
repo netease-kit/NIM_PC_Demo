@@ -242,7 +242,7 @@ public:
 
 	//数据相关
 	/** @fn void SendData(const std::string& session_id, int channel_type, const std::string& data, const std::string& uid="")
-	  * NIM 发送数据，暂时支持tcp通道，建议发送频率在20Hz以下
+	  * NIM 发送数据，暂时支持tcp通道，建议发送频率在20Hz以下，现在只支持50k的长度
 	  * @param[in] session_id 会话id
 	  * @param[in] channel_type 通道类型, kNIMRtsChannelTypeVchat通道如果要自定义数据调用nim_device.h中nim_vchat_custom_audio_data和nim_vchat_custom_video_data
 	  * @param[in] data 发送数据

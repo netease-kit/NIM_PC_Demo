@@ -107,7 +107,7 @@ void SessionPluginPage::SetActiveSessionBox(const std::string &session_id)
 		box->HandleMessage(WM_ACTIVATE, WA_ACTIVE, 0, handle);
 		Post2UI(box->ToWeakCallback([session_id, box](){
 			if (nim_ui::SessionListManager::GetInstance()->CheckSessionItem(session_id))
-				nim_ui::SessionListManager::GetInstance()->InvokeSelectSessionItem(session_id);
+				nim_ui::SessionListManager::GetInstance()->InvokeSelectSessionItem(session_id,true,false);
 			else
 				nim_ui::SessionListManager::GetInstance()->InvokeSelectSessionItem(session_id, box->GetSessionType());
 		}));		

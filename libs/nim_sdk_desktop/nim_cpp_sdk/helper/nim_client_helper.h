@@ -43,6 +43,14 @@ struct SDKConfig
 	uint32_t		caching_markread_time_; /**< caching_markread_ == true 时有效 缓存时间 单位ms 缺省 1000 */
 	uint32_t		caching_markread_count_; /**< caching_markread_ == true 时有效 缓存的最大消息条数  缺省 10 */
 	/***********消息“已接收回执”发送配置 end************/
+
+	/***********用户数据本地备份与恢复 begin************/
+	bool		enable_user_datafile_backup_; /**< bool 是否开启用户数据备份(本地)功能  缺省true*/
+	bool		enable_user_datafile_restore_;  /**< bool 是否开启用户数据恢复(本地)功能  缺省false*/
+	bool		enable_user_datafile_defrestoreproc_;  /**< bool 是否使用缺省的用户数据恢复(本地)方案  缺省false enable_user_datafile_restore_ == true 生效*/
+	std::string		user_datafile_localbackup_folder_; /**< string 用户数据文件备份（本地）目录，缺省在数据文件所在目录创建一个db_file.back目录 */
+	/***********用户数据本地备份与恢复 end************/
+
 	std::string		server_conf_file_path_;			/**< 私有云服务器相关地址配置文件本地绝对路径，如果不填默认执行文件目录下的server_conf.txt */
 	
 	//private_server_setting 私有服务器配置（设置方法有两种，一个是配置以下信息，一个是通过配置server_conf_file_path_地址，信息从文件中读取）
@@ -75,9 +83,13 @@ struct SDKConfig
 				, upload_statistics_data_(true)
 				, client_antispam_(false)
 				, team_msg_ack_(false)
-				,caching_markread_(false)
-				,caching_markread_time_(1000)
-				,caching_markread_count_(10){}
+				, caching_markread_(false)
+				, caching_markread_time_(1000)
+				, caching_markread_count_(10)
+				, enable_user_datafile_backup_(true)
+				, enable_user_datafile_restore_(false)
+				, enable_user_datafile_defrestoreproc_(false)
+				, user_datafile_localbackup_folder_(""){}
 };
 
 /** @brief 多端登陆客户端信息 */

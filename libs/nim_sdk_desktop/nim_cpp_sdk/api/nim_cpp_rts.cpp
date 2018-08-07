@@ -28,6 +28,7 @@ typedef void (*nim_rts_control)(const char *session_id, const char* info, const 
 typedef void (*nim_rts_set_control_notify_cb_func)(nim_rts_control_notify_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_set_vchat_mode)(const char *session_id, int mode, const char *json_extension);
 typedef	void (*nim_rts_hangup)(const char *session_id, const char *json_extension, nim_rts_hangup_res_cb_func cb, const void *user_data);
+typedef void (*nim_rts_relogin)(const char *session_id, int channel_type, const char *json_extension, nim_rts_opt_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_set_hangup_notify_cb_func)(nim_rts_hangup_notify_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_send_data)(const char *session_id, int channel_type, const char* data, unsigned int size, const char *json_extension);
 typedef	void (*nim_rts_set_rec_data_cb_func)(nim_rts_rec_data_cb_func cb, const void *user_data);
@@ -202,8 +203,18 @@ void HangupNotifyCallbackWrapper(const char *session_id, const char* uid, const 
 		if (*cb_pointer)
 		{
 			PostTaskToUIThread(std::bind((*cb_pointer), PCharToString(session_id), PCharToString(uid)));
-
-			//(*cb_pointer)(PCharToString(session_id), PCharToString(uid));
+		}
+	}
+}
+void OptCallbackWrapper(int res_code, const char *session_id, int channel_type, const char *json_extension, const void *user_data)
+{
+	if (user_data)
+	{
+		Rts::OptCallback* cb_pointer = (Rts::OptCallback*)user_data;
+		if (*cb_pointer)
+		{
+			PostTaskToUIThread(std::bind((*cb_pointer), (nim::NIMResCode)res_code, PCharToString(session_id), channel_type, PCharToString(json_extension)));
+			//(*cb_pointer)((nim::NIMResCode)res_code, PCharToString(session_id), channel_type, PCharToString(json_extension));
 		}
 	}
 }
@@ -423,6 +434,15 @@ void Rts::SetHangupNotifyCb(const HangupNotifyCallback& cb)
 	return NIM_SDK_GET_FUNC(nim_rts_set_hangup_notify_cb_func)(&HangupNotifyCallbackWrapper, g_hangup_notify_cb_pointer);
 }
 
+void Rts::Relogin(const std::string& session_id, int channel_type, OptCallback cb)
+{
+	OptCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new OptCallback(cb);
+	}
+	return NIM_SDK_GET_FUNC(nim_rts_relogin)(session_id.c_str(), channel_type, "", &OptCallbackWrapper, cb_pointer);
+}
 //数据相关
 //NIM 发送数据
 void Rts::SendData(const std::string& session_id, int channel_type, const std::string& data, const std::string& uid)

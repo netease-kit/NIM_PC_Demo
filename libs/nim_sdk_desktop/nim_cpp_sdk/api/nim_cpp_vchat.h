@@ -150,8 +150,8 @@ public:
 
 
 	/** @fn static void SetAudioDataCbEx(int type, std::string json, nim_vchat_audio_data_cb_func_ex cb)
-	* NIM VCHAT DEVICE 监听音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut和kNIMDeviceTypeAudioOutChat由底层播放）
-	* @param[in] type 指定NIMAudioDataCbType，监听伴音数据时，一旦监听，底层将不再混音
+	* NIM VCHAT DEVICE 监听音频数据扩展接口
+	* @param[in] type 指定NIMAudioDataCbType，监听伴音数据
 	* @param[in] json_extension 参考NIMAudioDataCbType的说明
 	* @param[in] cb 结果回调见nim_device_def.h
 	* @return void 无返回值
@@ -202,13 +202,6 @@ public:
 	* @return void 无返回值
 	*/
 	static void SetAudioProcess(bool aec, bool ns, bool vad);
-
-	/** @fn void SetAudioHowlingSuppression(bool work)
-	* NIM VCHAT DEVICE 设置底层针对麦克风采集数据处理开关接口，默认关闭啸叫检测（此接口是全局接口，在sdk初始化后设置一直有效）
-	* @param[in] work true 标识打开啸叫检测功能，false 标识关闭
-	* @return void 无返回值
-	*/
-	static void SetAudioHowlingSuppression(bool work);
 
 	/** @fn static void SetCbFunc(nim_vchat_cb_func cb)
 	* NIM VCHAT 设置通话回调或者服务器通知
@@ -351,9 +344,19 @@ public:
 	*/
 	static void SetCustomData(bool custom_audio, bool custom_video);
 
+	/** @fn static bool CustomAudioData(uint64_t time, const char *data, unsigned int size, const char *json_extension)
+	* NIM VCHAT 自定义音频数据接口, 采样位深只支持16或32,[Linux sdk只支持16] kNIMDeviceSampleRate支持8000，16000，32000，44100
+	* @param[in] time 时间毫秒级，暂时无效
+	* @param[in] data 音频数据pcm格式
+	* @param[in] size data的数据长度
+	* @param[in] json_extension 扩展Json string kNIMDeviceSampleRate采样频和kNIMDeviceSampleBit采样位深 默认如{"sample_rate":16000, "sample_bit":16}
+	* @return bool true 调用成功，false 调用失败
+	*/
+	static bool CustomAudioData(uint64_t time, const char *data, unsigned int size, const char *json_extension);
+
 	/** @fn static bool CustomVideoData(uint64_t time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension)
 	* NIM VCHAT 自定义视频数据接口
-	* @param[in] time 时间毫秒级
+	* @param[in] time 时间毫秒级，暂时无效
 	* @param[in] data 视频数据， 默认为yuv420格式
 	* @param[in] size data的数据长度
 	* @param[in] width  画面宽度，必须是偶数
@@ -487,7 +490,7 @@ public:
 	*/
 	static void UpdateRtmpUrl(const std::string& rtmp_url, OptCallback cb);
 
-	/** @fn static void SelectVideoAdaptiveStrategy(NIMVChatVideoEncodeMode mode, const std::string& json_extension, Opt2Callback cb)
+	/** @fn static void SelectVideoAdaptiveStrategy(NIMVChatVideoEncodeMode mode, const std::string& json_extension, OptCallback cb)
 	* NIM VCHAT 通话中修改视频编码模式
 	* @param[in] mode 选用的策略模式
 	* @param[in] json_extension 无效扩展字段
@@ -495,9 +498,9 @@ public:
 	* @return void 无返回值
 	* @note 错误码	200:成功
 	*/
-	static void SelectVideoAdaptiveStrategy(NIMVChatVideoEncodeMode mode, const std::string& json_extension, Opt2Callback cb);
+	static void SelectVideoAdaptiveStrategy(NIMVChatVideoEncodeMode mode, const std::string& json_extension, OptCallback cb);
 
-	/** @fn static void SetUidAsMainPicture(int uid, const std::string& json_extension, Opt2Callback cb)
+	/** @fn static void SetUidAsMainPicture(int uid, const std::string& json_extension, OptCallback cb)
 	* NIM VCHAT 互动直播模式设置uid为房间内的主画面
 	* @param[in] uid 用户uid
 	* @param[in] json_extension 无效扩展字段
@@ -513,7 +516,7 @@ public:
 	*				600:服务器内部错误
 	*				11403:无效的操作
 	*/
-	static void SetUidAsMainPicture(const std::string& uid, const std::string& json_extension, Opt2Callback cb);
+	static void SetUidAsMainPicture(const std::string& uid, const std::string& json_extension, OptCallback cb);
 
 	//接口废弃
 	///** @fn void SetStreamingMode(bool streaming, OptCallback cb)

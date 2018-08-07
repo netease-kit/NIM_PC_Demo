@@ -9,7 +9,42 @@
 
 namespace nim
 {
-
+	const int32_t InitNosConfigParam::kMINSURVIVALTIME = 60 * 60 * 24;
+	void InitNosResult::FromJsonString(const std::string& json_data)
+	{
+		Json::Value json_value;
+		if (Json::Reader().parse(json_data, json_value))
+		{
+			if (json_value.isMember(kNIMNosInitConfigSucceed) && json_value[kNIMNosInitConfigSucceed].isArray())
+			{
+				auto it = json_value[kNIMNosInitConfigSucceed].begin();
+				while (it != json_value[kNIMNosInitConfigSucceed].end())
+				{
+					this->success_req_tags_.emplace_back(it->asString());
+					it++;
+				}
+			}
+			if (json_value.isMember(kNIMNosInitConfigIgnore) && json_value[kNIMNosInitConfigIgnore].isArray())
+			{
+				auto it = json_value[kNIMNosInitConfigIgnore].begin();
+				while (it != json_value[kNIMNosInitConfigIgnore].end())
+				{
+					this->ignore_req_tags_.emplace_back(it->asString());
+					it++;
+				}
+			}
+			if (json_value.isMember(kNIMNosInitConfigFailure) && json_value[kNIMNosInitConfigFailure].isArray())
+			{
+				auto it = json_value[kNIMNosInitConfigFailure].begin();
+				while (it != json_value[kNIMNosInitConfigFailure].end())
+				{
+					if(it->isMember(kNIMNosUploadTagName) && it->isMember(kNIMNosInitConfigErrcode))
+						failure_req_tags_.insert(std::make_pair((*it)[kNIMNosUploadTagName].asString(), (*it)[kNIMNosInitConfigErrcode].asInt()));
+					it++;
+				}
+			}
+		}
+	}
 bool ParseUploadResult( const std::string& url, const std::string& json, UploadMediaResult& res )
 {
 	res.url_ = url;

@@ -28,7 +28,7 @@ static const char *kNIMFriendKeyBits		= "bits";	/**< long, 扩展字段,位运�
 static const char *kNIMFriendKeyEx			= "ex";		/**< string, 扩展字段,必须为可以解析为json的非格式化的字符串 */
 static const char *kNIMFriendKeyCreateTime	= "create_timetag"; /**< long, 创建时间戳(ms)*/
 static const char *kNIMFriendKeyUpdateTime	= "update_timetag"; /**< long, 更新时间戳(ms)*/
-static const char *kNIMFriendServerEx	= "server_ex"; /**< string, 服务端扩展字段，此字段客户端sdk只读，服务端api读写*/
+static const char *kNIMFriendServerEx		= "server_ex"; /**< string, 服务端扩展字段，此字段客户端sdk只读，服务端api读写*/
 /** @}*/ //好友简况 Json Keys
 
 /** @enum NIMFriendFlag 好友类型  */

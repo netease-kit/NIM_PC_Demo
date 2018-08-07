@@ -15,6 +15,7 @@
 namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
+typedef void(*nim_nos_init_config)(const char* json_tags, nim_nos_init_config_cb_func cb, const char *json_extension, const void *user_data);
 typedef void(*nim_nos_reg_download_cb)(nim_nos_download_cb_func cb, const void *user_data);
 typedef void(*nim_nos_reg_upload_cb)(nim_nos_upload_cb_func cb, const void *user_data);
 typedef void(*nim_nos_download_media)(const char *json_msg, nim_nos_download_cb_func callback_result, const void *download_user_data, nim_nos_download_prg_cb_func prg_cb, const void *prg_user_data);
@@ -22,6 +23,8 @@ typedef void(*nim_nos_download_media_ex)(const char *json_msg, const char *json_
 typedef void(*nim_nos_stop_download_media)(const char *json_msg);
 typedef void(*nim_nos_upload)(const char *local_file, nim_nos_upload_cb_func callback_result, const void *res_user_data, nim_nos_upload_prg_cb_func prg_cb, const void *prg_user_data);
 typedef void(*nim_nos_upload_ex)(const char *local_file, const char *json_extension, nim_nos_upload_cb_func callback_result, const void *res_user_data, nim_nos_upload_prg_cb_func prg_cb, const void *prg_user_data, nim_nos_upload_speed_cb_func speed_cb, const void *speed_user_data, nim_nos_upload_info_cb_func info_cb, const void *info_user_data);
+typedef void(*nim_nos_upload2)(const char *local_file, const char *tag, nim_nos_upload_cb_func callback_result, const void *res_user_data, nim_nos_upload_prg_cb_func prg_cb, const void *prg_user_data);
+typedef void(*nim_nos_upload_ex2)(const char *local_file, const char *tag, const char *json_extension, nim_nos_upload_cb_func callback_result, const void *res_user_data, nim_nos_upload_prg_cb_func prg_cb, const void *prg_user_data, nim_nos_upload_speed_cb_func speed_cb, const void *speed_user_data, nim_nos_upload_info_cb_func info_cb, const void *info_user_data);
 typedef void(*nim_nos_stop_upload_ex)(const char *task_id, const char *json_extension);
 typedef void(*nim_nos_download)(const char *nos_url, nim_nos_download_cb_func callback_result, const void *res_user_data, nim_nos_download_prg_cb_func prg_cb, const void *prg_user_data);
 typedef void(*nim_nos_download_ex)(const char *nos_url, const char *json_extension, nim_nos_download_cb_func callback_result, const void *res_user_data, nim_nos_download_prg_cb_func prg_cb, const void *prg_user_data, nim_nos_download_speed_cb_func speed_cb, const void *speed_user_data, nim_nos_download_info_cb_func info_cb, const void *info_user_data);
@@ -65,7 +68,20 @@ struct DownloadCallbackExUserData
 	NOS::SpeedCallback* callback_speed_pointer; /**< 速度回调 */
 	NOS::TransferInfoCallback* callback_transfer_pointer; /**< 最终下载信息回调 */
 };
-
+static void CallbackInitConfig(enum NIMNosInitConfigResultType rescode, const char* json_result, const char *json_extension, const void *user_data)
+{
+	NOS::InitNosResultCallback* cb = (NOS::InitNosResultCallback*)(user_data);
+	if (cb != nullptr && *cb != nullptr)
+	{
+		InitNosResult result;
+		result.result_ = rescode;
+		result.FromJsonString(json_result);
+		PostTaskToUIThread([cb, result](){
+			(*cb)(result);
+			delete cb;
+		}); 
+	}
+}
 static void CallbackUpload(int res_code, const char *url, const char *json_extension, const void *user_data)
 {
 	if (user_data)
@@ -219,27 +235,64 @@ static void CallbackMediaUploadResult(int res_code, const char *url, const char 
 		}
 	}
 }
-
-static NOS::DownloadMediaCallback* g_cb_pointer = nullptr;
+class UploadCallbackUserDataMaker
+{
+public:
+	static UploadCallbackUserData* MakeUserData(const NOS::UploadMediaCallback& callback_result, const NOS::ProgressCallback& callback_progress)
+	{
+		UploadCallbackUserData* callback_result_userdata = nullptr;
+		if (callback_result)
+		{
+			callback_result_userdata = new UploadCallbackUserData();
+			callback_result_userdata->callback_result = callback_result;
+			callback_result_userdata->callback_progress_pointer = (callback_progress == nullptr ? nullptr : (new NOS::ProgressCallback(callback_progress)));
+		}
+		return callback_result_userdata;
+	}
+	static UploadCallbackExUserData* MakeUserData(const NOS::UploadMediaExCallback& callback_result, const NOS::ProgressExCallback& callback_progress, \
+		const NOS::SpeedCallback& callback_speed, const NOS::TransferInfoCallback& callback_transfer)
+	{
+		UploadCallbackExUserData* callback_result_userdata = nullptr;
+		if (callback_result)
+		{
+			callback_result_userdata = new UploadCallbackExUserData();
+			callback_result_userdata->callback_result = callback_result;
+			callback_result_userdata->callback_progress_pointer = (callback_progress == nullptr ? nullptr : (new NOS::ProgressExCallback(callback_progress)));
+			callback_result_userdata->callback_speed_pointer = (callback_speed == nullptr ? nullptr : (new NOS::SpeedCallback(callback_speed)));
+			callback_result_userdata->callback_transfer_pointer = (callback_transfer == nullptr ? nullptr : (new NOS::TransferInfoCallback(callback_transfer)));
+		}
+		return callback_result_userdata;
+	}
+};
+void NOS::InitConfig(const InitNosConfigParam& param, const InitNosResultCallback& cb)
+{
+	Json::Value json_tags;
+	auto&& tag_list = param.GetTagList();
+	if (tag_list.empty())
+		return;
+	auto it = tag_list.begin();
+	while (it != tag_list.end())
+	{
+		Json::Value json_tag;
+		json_tag[kNIMNosUploadTagName] = it->first;
+		json_tag[kNIMNosUploadTagSurvivalTime] = it->second;
+		json_tags.append(json_tag);
+		it++;
+	}
+	NIM_SDK_GET_FUNC(nim_nos_init_config)(Json::FastWriter().write(json_tags).c_str(), CallbackInitConfig, param.GetExtension().c_str(), (new InitNosResultCallback(cb)));
+}
+static NOS::DownloadMediaCallback g_cb_pointer = nullptr;
 void NOS::RegDownloadCb(const DownloadMediaCallback& cb)
 {
-	delete g_cb_pointer;
-	if (cb)
-	{
-		g_cb_pointer = new DownloadMediaCallback(cb);
-	}
-	return NIM_SDK_GET_FUNC(nim_nos_reg_download_cb)(&CallbackMediaDownloadResult, g_cb_pointer);
+	g_cb_pointer = cb;
+	return NIM_SDK_GET_FUNC(nim_nos_reg_download_cb)(&CallbackMediaDownloadResult, &g_cb_pointer);
 }
 
-static NOS::UploadMediaExCallback* g_cb_upload_pointer = nullptr;
+static NOS::UploadMediaExCallback g_cb_upload_pointer = nullptr;
 void NOS::RegUploadCb(const UploadMediaExCallback& cb)
 {
-	delete g_cb_upload_pointer;
-	if (cb)
-	{
-		g_cb_upload_pointer = new UploadMediaExCallback(cb);
-	}
-	return NIM_SDK_GET_FUNC(nim_nos_reg_upload_cb)(&CallbackMediaUploadResult, g_cb_upload_pointer);
+	g_cb_upload_pointer = cb;
+	return NIM_SDK_GET_FUNC(nim_nos_reg_upload_cb)(&CallbackMediaUploadResult, &g_cb_upload_pointer);
 }
 
 bool NOS::FetchMedia(const IMMessage& msg, const DownloadMediaCallback& callback_result, const ProgressCallback& callback_progress)
@@ -299,63 +352,52 @@ bool NOS::StopFetchMedia(const IMMessage& msg)
 
 	return true;
 }
-
 bool NOS::UploadResource(const std::string& local_file, const UploadMediaCallback& callback_result, const ProgressCallback& callback_progress /*= ProgressCallback()*/)
 {
 	if (local_file.empty())
 		return false;
-
-	ProgressCallback* callback_progress_pointer = nullptr;
-	if (callback_progress)
-	{
-		callback_progress_pointer = new ProgressCallback(callback_progress);
-	}
-
-	UploadCallbackUserData* callback_result_userdata = nullptr;
-	if (callback_result)
-	{
-		callback_result_userdata = new UploadCallbackUserData();
-		callback_result_userdata->callback_result = callback_result;
-		callback_result_userdata->callback_progress_pointer = callback_progress_pointer;
-	}
-	NIM_SDK_GET_FUNC(nim_nos_upload)(local_file.c_str(), &CallbackUpload, callback_result_userdata, &CallbackProgress, callback_progress_pointer);
+	auto callback_result_userdata = UploadCallbackUserDataMaker::MakeUserData(callback_result, callback_progress);
+	NIM_SDK_GET_FUNC(nim_nos_upload)(local_file.c_str(), 
+		&CallbackUpload, callback_result_userdata, 
+		&CallbackProgress, (callback_result_userdata == nullptr ? nullptr : callback_result_userdata->callback_progress_pointer));
 
 	return true;
 }
+bool NOS::UploadResource2(const std::string& local_file, const std::string& tag, const UploadMediaCallback& callback_result, const ProgressCallback& callback_progress)
+{
+	if (local_file.empty())
+		return false;
+	auto callback_result_userdata = UploadCallbackUserDataMaker::MakeUserData(callback_result, callback_progress);
+	NIM_SDK_GET_FUNC(nim_nos_upload2)(local_file.c_str(), tag.c_str(), 
+		&CallbackUpload, callback_result_userdata, 
+		&CallbackProgress, (callback_result_userdata == nullptr ? nullptr : callback_result_userdata->callback_progress_pointer));
 
+	return true;
+}
 bool NOS::UploadResourceEx( const std::string& local_file, const std::string& json_extension, const UploadMediaExCallback& callback_result, const ProgressExCallback& callback_progress /*= ProgressExCallback()*/, const SpeedCallback& callback_speed /*= SpeedCallback()*/, const TransferInfoCallback& callback_transfer /*= TransferInfoCallback()*/ )
 {
 	if (local_file.empty())
 		return false;
-
-	ProgressExCallback* callback_progress_pointer = nullptr;
-	if (callback_progress)
-	{
-		callback_progress_pointer = new ProgressExCallback(callback_progress);
-	}
-
-	SpeedCallback* callback_speed_pointer = nullptr;
-	if (callback_speed)
-		callback_speed_pointer = new SpeedCallback(callback_speed);
-
-	TransferInfoCallback* callback_transfer_pointer = nullptr;
-	if (callback_transfer)
-		callback_transfer_pointer = new TransferInfoCallback(callback_transfer);
-
-	UploadCallbackExUserData* callback_result_userdata = nullptr;
-	if (callback_result)
-	{
-		callback_result_userdata = new UploadCallbackExUserData();
-		callback_result_userdata->callback_result = callback_result;
-		callback_result_userdata->callback_progress_pointer = callback_progress_pointer;
-		callback_result_userdata->callback_speed_pointer = callback_speed_pointer;
-		callback_result_userdata->callback_transfer_pointer = callback_transfer_pointer;
-	}
-	NIM_SDK_GET_FUNC(nim_nos_upload_ex)(local_file.c_str(), json_extension.c_str(), &CallbackUploadEx, callback_result_userdata, &CallbackProgressEx, callback_progress_pointer, &CallbackSpeed, callback_speed_pointer, &CallbackTransferInfo, callback_transfer_pointer);
-
+	auto callback_result_userdata = UploadCallbackUserDataMaker::MakeUserData(callback_result, callback_progress, callback_speed, callback_transfer);	
+	NIM_SDK_GET_FUNC(nim_nos_upload_ex)(local_file.c_str(), json_extension.c_str(), 
+		&CallbackUploadEx, callback_result_userdata, 
+		&CallbackProgressEx,( callback_result_userdata == nullptr ? nullptr : callback_result_userdata->callback_progress_pointer),
+		&CallbackSpeed, (callback_result_userdata == nullptr ? nullptr : callback_result_userdata->callback_speed_pointer),
+		&CallbackTransferInfo, (callback_result_userdata == nullptr ? nullptr : callback_result_userdata->callback_transfer_pointer));
 	return true;
 }
-
+bool NOS::UploadResourceEx2(const std::string& local_file, const std::string& tag, const std::string& json_extension, const UploadMediaExCallback& callback_result, const ProgressExCallback& callback_progress, const SpeedCallback& callback_speed, const TransferInfoCallback& callback_transfer)
+{
+	if (local_file.empty())
+		return false;
+	auto callback_result_userdata = UploadCallbackUserDataMaker::MakeUserData(callback_result, callback_progress, callback_speed, callback_transfer);
+	NIM_SDK_GET_FUNC(nim_nos_upload_ex2)(local_file.c_str(), json_extension.c_str(), tag.c_str(),
+		&CallbackUploadEx, callback_result_userdata,
+		&CallbackProgressEx, (callback_result_userdata == nullptr ? nullptr : callback_result_userdata->callback_progress_pointer),
+		&CallbackSpeed, (callback_result_userdata == nullptr ? nullptr : callback_result_userdata->callback_speed_pointer),
+		&CallbackTransferInfo, (callback_result_userdata == nullptr ? nullptr : callback_result_userdata->callback_transfer_pointer));
+	return true;
+}
 bool NOS::StopUploadResourceEx(const std::string& task_id, const std::string& json_extension/* = ""*/)
 {
 	NIM_SDK_GET_FUNC(nim_nos_stop_upload_ex)(task_id.c_str(), json_extension.c_str());
@@ -421,5 +463,9 @@ bool NOS::StopDownloadResourceEx(const std::string& task_id, const std::string& 
 	NIM_SDK_GET_FUNC(nim_nos_stop_download_ex)(task_id.c_str(), json_extension.c_str());
 	return true;
 }
-
+void NOS::UnregNosCb()
+{
+	g_cb_pointer = nullptr;
+	g_cb_upload_pointer = nullptr;
+}
 }

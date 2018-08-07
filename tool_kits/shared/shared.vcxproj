@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClCompile Include="closure.cpp" />
     <ClCompile Include="cmd_line.cpp" />
+    <ClCompile Include="db_helper.cpp" />
     <ClCompile Include="image_ole_i.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
@@ -196,6 +197,7 @@
     <ClInclude Include="auto_unregister.h" />
     <ClInclude Include="closure.h" />
     <ClInclude Include="cmd_line.h" />
+    <ClInclude Include="db_helper.h" />
     <ClInclude Include="image_ole_i.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>

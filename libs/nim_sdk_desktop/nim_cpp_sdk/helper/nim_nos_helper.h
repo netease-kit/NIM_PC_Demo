@@ -10,6 +10,7 @@
 
 #include <string>
 #include <list>
+#include <map>
 #include <functional>
 #include "json.h"
 #include "../util/nim_build_config.h"
@@ -21,6 +22,65 @@
 */
 namespace nim
 {
+
+	/** @brief 初始化nos参数 */
+	struct InitNosConfigParam
+	{
+		/** 构造函数 */
+		InitNosConfigParam() {}
+		/** @fn void AddTag(const std::string& tag, uint64_t survival_time)
+		* @param[in] tag 场景标签名称
+		* @param[in] survival_time 该场景下资源生命周期 最小取值 InitNosConfigParam::kMINSURVIVALTIME
+		* @return void
+		*/
+		void AddTag(const std::string& tag, int32_t survival_time)
+		{
+			tag_list_[tag] = ((survival_time == 0) ? (0) : (survival_time > kMINSURVIVALTIME ? survival_time : kMINSURVIVALTIME));
+		}
+		/** @fn void RemoveTag(const std::string& tag)
+		* @param[in] tag 场景标签名称
+		* @return void
+		*/
+		void RemoveTag(const std::string& tag)
+		{
+			tag_list_.erase(tag);
+		}
+		/** @fn std::map<std::string, uint64_t> GetTagList() const
+		* @return std::map<std::string, uint64_t> 场景标签信息列表 
+		*/
+		std::map<std::string, int32_t> GetTagList() const
+		{
+			return tag_list_;
+		}
+		/** @fn void SetGetExtension(const std::string& json_extension)
+		* @param[in] json_extension 扩展数据
+		* @return void
+		*/
+		void SetGetExtension(const std::string& json_extension)
+		{
+			json_extension_ = json_extension;
+		}
+		/** @fn std::string GetExtension() const
+		* @return string  扩展数据 
+		*/
+		std::string GetExtension() const
+		{
+			return json_extension_;
+		}
+	private:
+		std::map<std::string, int32_t> tag_list_;/**< std::map<std::string, uint64_t> 场景标签信息列表 */
+		std::string json_extension_; /**< Json Value 扩展数据 */
+		static const int32_t kMINSURVIVALTIME;/**< int32_t 资源生命周期 最小取值 */
+	};
+	/** @brief 初始化结果 */
+	struct InitNosResult
+	{
+		NIMNosInitConfigResultType result_; /**< enum 初始化结果 */
+		std::list<std::string> success_req_tags_; /**< list 初始化成功的tag列表 */
+		std::map<std::string, int> failure_req_tags_; /**< map 初始化失败的tag列表 */
+		std::list<std::string> ignore_req_tags_; /**< list 不需要重新初始化tag列表 */
+		void FromJsonString(const std::string& json_data);
+	};
 
 /** @brief 上传完成的结果 */
 struct UploadMediaResult

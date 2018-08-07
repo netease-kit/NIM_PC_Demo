@@ -46,11 +46,18 @@ bool FilePathExtension(const UTF8String &filepath_in,
 {
 	if (filepath_in.size() == 0)
 		return false;
-	size_t pos = filepath_in.rfind(kFilePathExtensionSeparator);
-	if (pos == UTF8String::npos)
-		return false;
-	extension_out = filepath_in.substr(pos, UTF8String::npos);
-	return true;
+	bool ret = false;
+	UTF8String file_name;
+	if (FilePathApartFileName(filepath_in, file_name))
+	{
+		size_t pos = file_name.rfind(kFilePathExtensionSeparator);
+		if (pos != UTF8String::npos)
+		{
+			extension_out = file_name.substr(pos, UTF8String::npos);
+			ret = true;
+		}			
+	}	
+	return ret;
 }
 
 bool FilePathApartDirectory(const UTF8String &filepath_in,
@@ -77,20 +84,24 @@ bool FilePathApartDirectory(const UTF8String &filepath_in,
 bool FilePathApartFileName(const UTF8String &filepath_in,
 						   UTF8String &filename_out)
 {
-	size_t index = filepath_in.size() - 1;
-	if (index <= 0 || filepath_in.size() == 0)
+	if (filepath_in.size() == 0)
 		return false;
-	for (; index != 0; index--)
+	bool ret = true;
+	size_t separator_pos = UTF8String::npos;
+	size_t separators_count = sizeof(kFilePathSeparators) / sizeof(UTF8Char);
+	for (size_t index = 0; index < separators_count; index++)
 	{
-		if (IsFilePathSeparator(filepath_in[index]))
-		{
-			if (index == filepath_in.size() - 1)
-				return false;
-			filename_out = filepath_in.substr(index + 1, UTF8String::npos);
-			return true;
-		}
+		separator_pos = filepath_in.rfind(kFilePathSeparators[index]);
+		if (separator_pos != UTF8String::npos)
+			break;
 	}
-	return false;
+	if (separator_pos++ != UTF8String::npos && separator_pos < filepath_in.size())
+		filename_out = filepath_in.substr(separator_pos);
+	else if (separator_pos >= filepath_in.size())
+		ret = false;
+	else
+		filename_out = filepath_in;
+	return ret;
 }
 
 template<typename CharType>

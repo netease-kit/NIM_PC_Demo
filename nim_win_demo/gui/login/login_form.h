@@ -46,6 +46,7 @@ public:
 
 	void SetAnonymousChatroomVisible(bool visible);
 	void SetLoginFunctionFlag(){ login_function_ = true; }
+	void SwitchToLoginPage();
 private:
 	/**
 	* 处理所有控件的所有消息
@@ -119,10 +120,10 @@ private:
 	void InitLoginData();
 	void OnLogin();
 	void CheckAutoLogin();
-
+	bool OnSwitchToLoginPage();
 public:
 	static const LPCTSTR kClassName;
-	bool login_function_ = false;
+	bool login_function_;
 
 private:
 	ui::Control*	usericon_;

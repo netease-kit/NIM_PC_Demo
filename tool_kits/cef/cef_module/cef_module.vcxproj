@@ -103,7 +103,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)..\libs\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcef_d.lib;libcef_dll_wrapper_d.lib;duilib_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nim_libcef_d.lib;libcef_dll_wrapper_d.lib;duilib_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -123,7 +123,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcef_d.lib;libcef_dll_wrapper_d.lib;duilib_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nim_libcef_d.lib;libcef_dll_wrapper_d.lib;duilib_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -147,7 +147,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)..\libs\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcef.lib;libcef_dll_wrapper.lib;duilib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nim_libcef.lib;libcef_dll_wrapper.lib;duilib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -171,7 +171,7 @@
     </Link>
     <Lib>
       <AdditionalLibraryDirectories>$(SolutionDir)..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>libcef.lib;libcef_dll_wrapper.lib;duilib.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>nim_libcef.lib;libcef_dll_wrapper.lib;duilib.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>

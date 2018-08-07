@@ -1091,10 +1091,10 @@ void SessionBox::SendSnapChat(const std::wstring &src)
 
 	msg.local_res_path_ = nbase::UTF16ToUTF8(dest);
 
-	nim::NOS::UploadResource(msg.local_res_path_, [this, msg, image_md5, weak_flag](int res_code, const std::string& url) {
+	nim::NOS::UploadResource2(msg.local_res_path_, nim::kNIMNosDefaultTagIM, [this, msg, image_md5, weak_flag](int res_code, const std::string& url) {
 		if (!weak_flag.expired() && res_code == nim::kNIMResSuccess)
 		{
-			nim::IMMessage new_msg = msg;
+			nim::IMMessage new_msg = msg;			
 			int file_size = (int)nbase::GetFileSize(nbase::UTF8ToUTF16(new_msg.local_res_path_));
 			new_msg.type_ = nim::kNIMMessageTypeCustom;
 			Json::Value json;
@@ -1106,7 +1106,9 @@ void SessionBox::SendSnapChat(const std::wstring &src)
 			json["type"] = CustomMsgType_SnapChat;
 			json["data"] = json_data;
 			new_msg.content_ = nbase::UTF16ToUTF8(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_SNAPCHAT"));
-			new_msg.attach_ = writer.write(json);
+			new_msg.attach_ = writer.write(json);			
+			nbase::DeleteFile(nbase::UTF8ToUTF16(new_msg.local_res_path_));
+			new_msg.local_res_path_ = "";
 			AddSendingMsg(new_msg);
 
 			nim::Talk::SendMsg(new_msg.ToJsonString(true));

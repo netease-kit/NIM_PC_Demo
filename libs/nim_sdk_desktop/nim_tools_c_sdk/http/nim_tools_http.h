@@ -44,16 +44,16 @@ NET_EXPORT bool nim_http_is_init_log();
 /** @fn int nim_http_post_request(HttpRequestHandle)
 * NIM HTTP 发起任务
 * @param[in] request_handle	http任务句柄
-* @return int					任务id
+* @return HttpRequestID					任务id
 */
-NET_EXPORT int nim_http_post_request(HttpRequestHandle request_handle);
+NET_EXPORT HttpRequestID nim_http_post_request(HttpRequestHandle request_handle);
 
 /** @fn void nim_http_remove_request(int http_request_id)
 * NIM HTTP 取消任务
 * @param[in] http_request_id	任务id
 * @return void				无返回值
 */
-NET_EXPORT void nim_http_remove_request(int http_request_id);
+NET_EXPORT void nim_http_remove_request(HttpRequestID http_request_id);
 
 /** @fn HttpRequestHandle nim_http_create_download_file_request(const char* url, const char *download_file_path, nim_http_request_completed_cb complete_cb, const void* user_data)
   * NIM HTTP 创建下载文件任务
@@ -161,6 +161,13 @@ NET_EXPORT void nim_http_set_low_speed(HttpRequestHandle request_handle, int low
   * @return void				无返回值
   */
 NET_EXPORT void nim_http_set_proxy(HttpRequestHandle request_handle, int type, const char* host, short port, const char* user, const char* pass);
+
+/** @fn const char* const nim_http_get_response_head(HttpRequestID http_request_id)
+* NIM HTTP 读取应答的http头信息
+* @param[in] http_request_id	任务id
+* @return char*					头信息
+*/
+NET_EXPORT const char* const nim_http_get_response_head(HttpRequestID http_request_id);
 
 #ifdef __cplusplus
 };

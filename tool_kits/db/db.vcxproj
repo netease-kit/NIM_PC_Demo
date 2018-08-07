@@ -25,6 +25,7 @@
     <ClInclude Include="..\build\build_config.h" />
     <ClInclude Include="..\build\winsdk_config.h" />
     <ClInclude Include="..\build\xp_style_manifest_win.h" />
+    <ClInclude Include="db_pretreatment.h" />
     <ClInclude Include="db_sqlite3.h" />
   </ItemGroup>
   <ItemGroup>

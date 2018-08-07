@@ -62,13 +62,25 @@ void MsgBubbleSnapChat::OnDownloadCallback(int res_code, const std::string& file
 
 void MsgBubbleSnapChat::ViewSnapchatImage()
 {
+	struct DeleteFileTask
+	{
+		DeleteFileTask(const std::wstring& path) : path_(path){};
+		virtual void operator()() const{
+			if (!nbase::DeleteFile(path_) && 32 == GetLastError())
+				nbase::ThreadManager::PostDelayedTask(ThreadId::kThreadGlobalMisc, DeleteFileTask(path_), nbase::TimeDelta::FromSeconds(2));
+		}
+	private:
+		std::wstring path_;
+	};
 	if (nbase::FilePathIsExist(path_, false))
 	{
 		ImageViewManager::GetInstance()->StartViewPic(path_, L"", true, true);
-		nim::MsgLog::DeleteAsync(sid_, type_, msg_.client_msg_id_, nim::MsgLog::DeleteCallback());
-		SessionBox* session_form = dynamic_cast<SessionBox*>(SessionManager::GetInstance()->FindSessionBox(sid_));
-		if (session_form)
-			session_form->OnSnapchatReadCallback(msg_.client_msg_id_);
+		nim::MsgLog::DeleteAsync(sid_, type_, msg_.client_msg_id_, ToWeakCallback([this](nim::NIMResCode res_code, const std::string& msg_id){
+			nbase::ThreadManager::PostTask(ThreadId::kThreadGlobalMisc, DeleteFileTask(path_));
+			SessionBox* session_form = dynamic_cast<SessionBox*>(SessionManager::GetInstance()->FindSessionBox(sid_));
+			if (session_form)
+				session_form->OnSnapchatReadCallback(msg_.client_msg_id_);
+		}));
 	}
 }
 

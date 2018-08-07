@@ -133,6 +133,9 @@ public:
 	 UnregisterCallback AddAfterCreateTask(const StdClosure& cb);
 
 public:
+
+	void CloseAllBrowser();
+
 	// CefClient methods. Important to return |this| for the handler callbacks.
 	virtual CefRefPtr<CefContextMenuHandler> GetContextMenuHandler() OVERRIDE {	return this; }
 	virtual CefRefPtr<CefRenderHandler>  GetRenderHandler() OVERRIDE { return this; }

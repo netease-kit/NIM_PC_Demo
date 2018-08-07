@@ -91,6 +91,8 @@ void LoginForm::DoRegisterAccount()
 					FindControl(L"nick_name_panel")->SetVisible(false);
 					FindControl(L"enter_login")->SetVisible(false);
 					FindControl(L"register_account")->SetVisible(true);
+					FindControl(L"login_cache_conf")->SetVisible(true);
+					SetAnonymousChatroomVisible(!login_function_);
 					btn_register_->SetEnabled(true);
 					btn_register_->SetVisible(false);
 					btn_login_->SetVisible(true);
@@ -247,10 +249,13 @@ void LoginForm::OnCancelLogin()
 
 void LoginForm::ShowLoginTip(std::wstring tip_text)
 {
-	login_ing_tip_->SetVisible(false);
+	auto task = ToWeakCallback([this, tip_text](){
+		login_ing_tip_->SetVisible(false);
 
-	login_error_tip_->SetText(tip_text);
-	login_error_tip_->SetVisible(true);
+		login_error_tip_->SetText(tip_text);
+		login_error_tip_->SetVisible(true);
+	});
+	Post2UI(task);
 }
 
 void LoginForm::InitLoginData()
@@ -306,4 +311,22 @@ void LoginForm::CheckAutoLogin()
 		OnLogin();
 	}
 
+}
+bool LoginForm::OnSwitchToLoginPage()
+{
+	MutiLanSupport* multilan = MutiLanSupport::GetInstance();
+	SetTaskbarTitle(multilan->GetStringViaID(L"STRID_LOGIN_FORM_LOGIN"));
+	FindControl(L"nick_name_panel")->SetVisible(false);
+	FindControl(L"enter_login")->SetVisible(false);
+	FindControl(L"enter_panel")->SetBkImage(L"user_password.png");
+	FindControl(L"login_cache_conf")->SetVisible(true);
+	SetAnonymousChatroomVisible(!login_function_);
+	btn_register_->SetVisible(false);
+	btn_login_->SetVisible();
+	user_name_edit_->SetText(L"");
+	user_name_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_ACCOUNT"));
+	password_edit_->SetText(L"");
+	password_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_PASSWORD"));
+	FindControl(L"register_account")->SetVisible(true);
+	return true;
 }

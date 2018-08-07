@@ -123,7 +123,7 @@ static const char *kNIMSDKLogLevel						= "sdk_log_level";			/**< int，定义�
 static const char *kNIMPushCerName						= "push_cer_name";			/**< string，推送证书名（选填，iOS端需要,PC SDK该设置无效） */
 static const char *kNIMSyncSessionAck					= "sync_session_ack";		/**< bool，设置是否已读未读状态多端同步，默认true */
 static const char *kNIMLoginRetryMaxTimes				= "login_retry_max_times";	/**< int，登录重试最大次数，如需设置建议设置大于3次，默认填0，SDK默认设置次数 */
-static const char *kNIMUseHttps							= "https_enabled";				/**< bool，是否启用HTTPS协议，默认为false */
+static const char *kNIMUseHttps							= "use_https";				/**< bool，是否启用HTTPS协议，默认为false */
 static const char *kNIMTeamNotificationUnreadCount		= "team_notification_unread_count";	/**< bool，群通知是否计入未读数，默认为false */
 static const char *kNIMAnimatedImageThumbnailEnabled	= "animated_image_thumbnail_enabled";	/**< bool，开启对动图缩略图的支持，默认为false，开启后获取的缩略图为原格式，关闭后获取的缩略图为第一帧静态图 */
 #ifndef NIMAPI_UNDER_WIN_DESKTOP_ONLY
@@ -165,6 +165,10 @@ static const char *kNIMUploadStatisticsData = "is_upload_statistics_data";	/**< 
 static const char *kNIMCachingMarkreadEnabled	= "caching_markread_enabled";	/**< 是否开启缓存式“已接收回执”发送，程序可能收到大量消息以至触发频控时可以考虑开启此开关 缺省 false 关闭*/
 static const char *kNIMCachingMarkreadTime	= "caching_markread_time";	/**< caching_markread_ == true 时有效 缓存时间 单位ms 缺省 1000 */
 static const char *kNIMCachingMarkreadCount	= "caching_markread_count";	/**< caching_markread_ == true 时有效 缓存的最大消息条数  缺省 10 */
+static const char *kNIMUserDataFileLocalBackupFolder = "user_datafile_localbackup_folder"; /**< string 用户数据文件备份（本地）目录，缺省在数据文件所在目录创建一个db_file.back目录 */
+static const char *kNIMEnableUserDataFileLocalBackup = "enable_user_datafile_backup"; /**< bool 是否开启用户数据备份(本地)功能  缺省true*/
+static const char *kNIMEnableUserDataFileLocalRestore = "enable_user_datafile_restore"; /**< bool 是否开启用户数据恢复(本地)功能  缺省false*/
+static const char *kNIMEnableUserDataFileDefRestoreProc = "enable_user_datafile_defrestoreproc"; /**< bool 是否使用缺省的用户数据恢复(本地)方案  缺省false enable_user_datafile_restore_ == true 生效*/
 #endif
 
 

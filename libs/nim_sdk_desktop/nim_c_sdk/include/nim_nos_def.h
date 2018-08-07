@@ -15,6 +15,23 @@
 extern"C"
 {
 #endif
+	enum NIMNosInitConfigResultType
+	{
+		kNIMNosInitConfResTypeTagCountOF = 0,	/**< 自定义tag数量超过最大数量 */
+		kNIMNosInitConfResTypeSuccess,			/**< 所有tag初始成功 */
+		kNIMNosInitConfResTypePartSuccessful,	/**< 部分tag初始化成功，失败的tag及错误码可以解析json_result来取得 */
+		kNIMNosInitConfResTypeFailure,					/**< 所有tag初始化失败 */
+	};
+	/** @typedef void(*nim_nos_init_config_cb_func)(enum NIMNosInitConfigResultType rescode,const char* json_result, const char *json_extension, const void *user_data)
+	* nim callback function for nos init config
+	* @param[out] rescode 			结果，参考NIMNosInitConfigResultType定义
+	* @param[out] json_result 		初始化详细结果，包含了成功的tag,失败的tag及错误码，被忽略的(因为指定的生命周期与上次指定的生命周期相同，没有必要重新初始化)tag
+	* @param[out] json_extension		json扩展数据（备用）
+	* @param[out] user_data			APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+	* @return void 无返回值
+	*/
+	typedef void(*nim_nos_init_config_cb_func)(enum NIMNosInitConfigResultType rescode,const char* json_result, const char *json_extension, const void *user_data);
+
 /** @typedef void (*nim_nos_download_cb_func)(int rescode, const char *file_path, const char *call_id, const char *res_id, const char *json_extension, const void *user_data)
   * nim callback function for nos http download
   * @param[out] rescode 			下载结果，一切正常200
@@ -115,6 +132,7 @@ static const char *kNIMNosDocTransName			= "name"; 			/**< string (HTTP上传转
 static const char *kNIMNosDocTransSourceType	= "source_type"; 	/**< NIMDocTranscodingFileType (HTTP上传转码文档使用)转码源文档的文件类型, nim_doc_trans_def.h */
 static const char *kNIMNosDocTransPicType		= "pic_type"; 		/**< NIMDocTranscodingImageType (HTTP上传转码文档使用)转码目标图片的文件类型, nim_doc_trans_def.h */
 static const char *kNIMNosDocTransExt			= "doc_trans_ext";	/**< string (HTTP上传转码文档使用)文档转换时的扩展参数，在成功后能查询到 */
+static const char *kNIMNosUploadTag 			= "upload_tag";	/**< string, 上传文件时使用的场景标签(可参见nos删除策略)*/
 /** @}*/ //NOS扩展上传\下载接口参数json_extension Json key for nim_nos_upload_ex && nim_nos_download_ex
 
 /** @name NOS扩展上传回调参数json_extension, Json key for upload cb */
@@ -124,6 +142,21 @@ static const char *kNIMNosCallId	= "call_id";	/**< string 上传文件的会话i
 #endif
 /** @}*/ //NOS扩展上传回调参数json_extension, Json key for upload cb
 
+/** @name NOS 上传文件到Nos缺省tag定义 */
+static const char *kNIMNosDefaultTagResource = "nim_default_profile_icon";		/**< string 资源类文件上传tag 如头像、群头像等， 可以通过 nim_nos_init_tags修改资源的过期时间*/
+static const char *kNIMNosDefaultTagIM = "nim_default_im";	/**< string im消息类文件上传tag 如图片、文件、音视频消息等， 可以通过 nim_nos_init_tags修改资源的过期时间*/
+/** @}*/ //NOS 上传文件到Nos缺省tag定义
+
+/** @name NOS 初始化参数定义 Json key for  nim_nos_init_config_cb_func & nim_nos_init_config*/
+static const char *kNIMNosUploadTagName = "nim_nos_tag_name";		/**< string tag的名称*/
+static const char *kNIMNosUploadTagSurvivalTime = "nim_nos_tag_survival_time";	/**< int32_t 资源所对应的tag生命周期 s*/
+static const char *kNIMNosInitConfigSucceed = "nim_nos_init_config_succeed";	/**< string array 初始化成功了的tag*/
+static const char *kNIMNosInitConfigFailure = "nim_nos_init_config_failure";	/**< object array 初始化失败了的tag*/
+static const char *kNIMNosInitConfigIgnore = "nim_nos_init_config_ignore";		/**< string array 因为指定的survival_time 相同而被忽略了的tag*/
+static const char *kNIMNosInitConfigErrcode = "nim_nos_init_config_errcode";	/**< int 初始化tag失败时的错误码 */
+static const char *kNIMNosInitConfigRetcode = "nim_nos_init_config_retcode";	/**< NIMNosInitConfigResultType nos config初始化结果 */
+
+/** @}*/ //NOS 初始化参数定义
 
 #ifdef __cplusplus
 };

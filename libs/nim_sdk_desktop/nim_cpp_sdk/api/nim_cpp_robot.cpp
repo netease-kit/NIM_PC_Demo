@@ -37,16 +37,11 @@ static void CallbackRobotInfoChange(int rescode, NIMRobotInfoChangeType type, co
 	}
 }
 
-static Robot::RobotChangedCallback* g_cb_changed_ = nullptr;
+static Robot::RobotChangedCallback g_cb_changed_ = nullptr;
 void Robot::RegChangedCallback(const RobotChangedCallback &callback, const std::string &json_extension)
 {
-	if (g_cb_changed_)
-	{
-		delete g_cb_changed_;
-		g_cb_changed_ = nullptr;
-	}
-	g_cb_changed_ = new RobotChangedCallback(callback);
-	return NIM_SDK_GET_FUNC(nim_robot_reg_changed_callback)(json_extension.c_str(), &CallbackRobotInfoChange, g_cb_changed_);
+	g_cb_changed_ = callback;
+	return NIM_SDK_GET_FUNC(nim_robot_reg_changed_callback)(json_extension.c_str(), &CallbackRobotInfoChange, &g_cb_changed_);
 }
 
 RobotInfos Robot::QueryAllRobotInfosBlock(const std::string &json_extension)

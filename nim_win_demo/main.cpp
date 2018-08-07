@@ -192,8 +192,7 @@ static void InitNim()
 	// 如果你的App开启了事件订阅功能，则此参数改为true
 	//nim_ui::InitManager::GetInstance()->InitUiKit(app_sdk::AppSDKInterface::IsNimDemoAppKey(app_sdk::AppSDKInterface::GetAppKey())); 
 }
-
-int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)
+int WINAPI NimMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)
 {
 	// 把cef dll文件的位置添加到程序的"path"环境变量中,这样可以把dll文件放到bin以外的目录，并且不需要手动频繁切换dll文件，这行代码必须写到main的开头
 	nim_cef::CefManager::GetInstance()->AddCefDllToPath();
@@ -211,7 +210,7 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, in
 	wprintf_s(L"Command:\n%s\n\n", lpszCmdLine);
 #endif
 
-	srand( (unsigned int) time(NULL) );
+	srand((unsigned int)time(NULL));
 
 	::SetUnhandledExceptionFilter(MyUnhandledExceptionFilter);
 
@@ -223,7 +222,7 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, in
 	QCommand::ParseCommand(lpszCmdLine);
 
 	HRESULT hr = ::OleInitialize(NULL);
-	if( FAILED(hr) )
+	if (FAILED(hr))
 		return 0;
 
 	// 初始化云信和UI组件
@@ -247,21 +246,26 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, in
 
 	// 是否重新运行程序
 	std::wstring restart = QCommand::Get(kCmdRestart);
-	if( !restart.empty() )
+	if (!restart.empty())
 	{
 		std::wstring cmd;
 		std::wstring acc = QCommand::Get(kCmdAccount);
-		if( !acc.empty() )
-			cmd.append( nbase::StringPrintf(L" /%s %s ", kCmdAccount.c_str(), acc.c_str()) );
+		if (!acc.empty())
+			cmd.append(nbase::StringPrintf(L" /%s %s ", kCmdAccount.c_str(), acc.c_str()));
 		std::wstring exit_why = QCommand::Get(kCmdExitWhy);
-		if( !exit_why.empty() )
-			cmd.append( nbase::StringPrintf(L" /%s %s ", kCmdExitWhy.c_str(), exit_why.c_str()) );
+		if (!exit_why.empty())
+			cmd.append(nbase::StringPrintf(L" /%s %s ", kCmdExitWhy.c_str(), exit_why.c_str()));
 		QCommand::RestartApp(cmd);
 	}
 
 	_Module.Term();
 	::OleUninitialize();
-
 	return 0;
+}
+int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)
+{
+	int ret = NimMain(hInst, hPrevInst, lpszCmdLine, nCmdShow);	
+	exit(ret);
+	return ret;
 }
 

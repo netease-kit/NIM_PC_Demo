@@ -128,7 +128,8 @@ static const char *kNIMMsgKeyAntiSpamContent= "anti_spam_content";	/**< string, 
 static const char *kNIMMsgKeyClientAntiSpam = "client_anti_spam_hitting";	/**< int, (可选) 是否命中客户端反垃圾,命中:1 未命中：0 或者不填写*/
 static const char *kNIMMsgKeyAntiSpamBizId = "anti_spam_business_id";	/**< string,  (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
 static const char *kNIMMsgKeyAntiSpamUsingYiDun = "anti_spam_using_yidun";	/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
-static const char *kNIMMsgKeyTeamMsgAck		= "team_msg_ack";		/** (可选)int, 群消息是否需要已读业务，0：不需要，1：需要*/
+static const char *kNIMMsgKeyTeamMsgAck		= "team_msg_ack";		/**< (可选)int, 群消息是否需要已读业务，0：不需要，1：需要*/
+
 
 //本地定义
 static const char *kNIMMsgKeyLocalKeyTeamMsgAckSent	= "team_msg_ack_sent";	/**< bool 是否已经发送群消息已读回执 */
@@ -161,6 +162,7 @@ static const char *kNIMMsgAttachKeySize		= "size";			/**< long,资源大小(KB),
 static const char *kNIMMsgAttachKeyUrl		= "url";			/**< long,资源URL, 发送方不需要填写 */
 static const char *kNIMMsgAttachKeyExt		= "ext";			/**< string,资源扩展名,不包括符号'.',发送方若选填需要保证资源本地路径包含扩展名 */
 static const char *kNIMMsgAttachKeyDisplayName	= "name";		/**< string,用于显示的文件名,发送方选填,默认文件名 */
+static const char *kNIMMsgAttachKeyTag = "upload_tag";			/**< string, (可选)发送含有附件的消息时使用的场景标签(可参见nos删除策略) ,Audio Image Video File 或者可以被SDK解析到本地文件路径的自定义消息*/
 /** @}*/ //attach多媒体资源参数通用键名定义，可替代不同类型多媒体所使用的相同的参数的键名.
 
 /** @name attach图片类型多媒体资源参数键名定义

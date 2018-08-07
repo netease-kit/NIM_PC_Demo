@@ -107,8 +107,8 @@ NIM_SDK_DLL_API void nim_vchat_enum_device_devpath(enum NIMDeviceType type, cons
 NIM_SDK_DLL_API bool nim_vchat_accompanying_sound(unsigned char id, unsigned __int64 time, const char *data, unsigned int size, unsigned int rate, unsigned int channels, const char *json_extension);
 
 /** @fn void nim_vchat_set_audio_data_cb_ex(int type, const char *json_extension, nim_vchat_audio_data_cb_func_ex cb, const void *user_data)
-* NIM VCHAT DEVICE 监听音频数据（可以不监听，通过启动设备kNIMDeviceTypeAudioOut和kNIMDeviceTypeAudioOutChat由底层播放）
-* @param[in] type 指定NIMAudioDataCbType，监听伴音数据时，一旦监听，底层将不再混音
+* NIM VCHAT DEVICE 监听音频数据扩展接口
+* @param[in] type 指定NIMAudioDataCbType，监听伴音数据
 * @param[in] json_extension 参考NIMAudioDataCbType的说明
 * @param[in] cb 结果回调见nim_device_def.h
 * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
@@ -193,13 +193,6 @@ NIM_SDK_DLL_API bool nim_vchat_get_audio_input_auto_volumn();
 * @return void 无返回值
 */
 NIM_SDK_DLL_API void nim_vchat_set_audio_process_info(bool aec, bool ns, bool vad);
-
-/** @fn void nim_vchat_set_audio_howling_suppression(bool work)
-* NIM VCHAT DEVICE 设置底层针对麦克风采集数据处理开关接口，默认关闭啸叫检测（此接口是全局接口，在sdk初始化后设置一直有效）
-* @param[in] work true 标识打开啸叫检测功能，false 标识关闭
-* @return void 无返回值
-*/
-NIM_SDK_DLL_API void nim_vchat_set_audio_howling_suppression(bool work);
 
 #endif
 

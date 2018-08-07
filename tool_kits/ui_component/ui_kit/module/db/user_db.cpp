@@ -4,72 +4,32 @@
 namespace nim_comp
 {
 #define MSG_EX_FILE		"msg_extend.db"
-static std::vector<UTF8String> kCreateDBSQLs;
-
-UserDB::UserDB()
+#define MSG_EXTEND_VERSION_1 1
+UserDB::UserDB() :
+shared::NimDatabase(MSG_EXTEND_VERSION_1, MSG_EXTEND_VERSION_1)
 {
-	static bool sqls_created = false;
-	if (!sqls_created)
-	{
-		kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS msg_local_file(msg_id TEXT PRIMARY KEY, path TEXT, extend TEXT)");
-
-		kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS custom_msglog(serial INTEGER PRIMARY KEY, "
-							  "to_account TEXT, from_account TEXT, msg_type INTEGER, msg_time INTEGER, msg_id INTEGER, save_flag INTEGER, "
-							  "msg_body TEXT, msg_attach TEXT, apns_text TEXT, msg_status INTEGER, msg_param TEXT)");
-
-		kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS force_push_data(session_id TEXT PRIMARY KEY, data TEXT)");
-
-		kCreateDBSQLs.push_back("CREATE TABLE IF NOT EXISTS user_timetag(type TEXT PRIMARY KEY, timetag INTEGER, longex INTERGER, textex TEXT)");
-
-		sqls_created = true;
-	}
-
 	this->Load();
 }
 
 UserDB::~UserDB()
 {
-	this->Close();
+	CloseDB();
 }
 
 bool UserDB::Load()
 {
-	return CreateDBFile();
+	return CreateDB();
+	//return CreateDBFile();
 }
 
 void UserDB::Close()
 {
-	db_.Close();
-}
-
-bool UserDB::CreateDBFile()
-{
-	bool result = false;
-	std::string acc = LoginManager::GetInstance()->GetAccount();
-	std::wstring dirctory = QPath::GetUserAppDataDir(acc);
-	UTF8String dbfile = nbase::UTF16ToUTF8(dirctory) + MSG_EX_FILE;
-	db_filepath_ = dbfile;
-	std::string key = nim::Tool::GetMd5(LoginManager::GetInstance()->GetAccount());
-	result = db_.Open(dbfile.c_str(),
-		key,
-		ndb::SQLiteDB::modeReadWrite|ndb::SQLiteDB::modeCreate|ndb::SQLiteDB::modeSerialized
-		);
-	if (result)
-	{
-		int dbresult = SQLITE_OK;
-		for (size_t i = 0; i < kCreateDBSQLs.size(); i++)
-		{
-			dbresult |= db_.Query(kCreateDBSQLs[i].c_str());
-		}
-		result = dbresult == SQLITE_OK;
-	}
-
-	return result;
+	CloseDB();
 }
 
 bool UserDB::InsertData(const std::string& msg_id, const std::string& path, const std::string& extend)
 {
-	nbase::NAutoLock auto_lock(&lock_);
+	nbase::NAutoLock auto_lock(&db_lock_);
 	ndb::SQLiteStatement stmt;
 	db_.Query(stmt, "INSERT OR REPLACE into msg_local_file (msg_id, path, extend) values (?, ?, ?);");
 
@@ -91,7 +51,7 @@ bool UserDB::InsertData(const std::string& msg_id, const std::string& path, cons
 
 bool UserDB::QueryDataWithMsgId(const std::string& msg_id, std::string& path, std::string& extend)
 {
-	nbase::NAutoLock auto_lock(&lock_);
+	nbase::NAutoLock auto_lock(&db_lock_);
 	ndb::SQLiteStatement stmt;
 	db_.Query(stmt, "SELECT * FROM msg_local_file WHERE msg_id=?");
 	stmt.BindText(1, msg_id.c_str(), msg_id.size());
@@ -114,7 +74,7 @@ bool UserDB::QueryDataWithMsgId(const std::string& msg_id, std::string& path, st
 //用于保存一些自定义通知消息
 bool UserDB::InsertMsgData(const nim::SysMessage& msg)
 {
-	nbase::NAutoLock auto_lock(&lock_);
+	nbase::NAutoLock auto_lock(&db_lock_);
 	ndb::SQLiteStatement stmt;
 
 	db_.Query(stmt, "insert into custom_msglog(serial, to_account, from_account, \
@@ -144,7 +104,7 @@ bool UserDB::InsertMsgData(const nim::SysMessage& msg)
 
 std::vector<nim::SysMessage> UserDB::QueryMsgData(int64_t time, int limit)
 {
-	nbase::NAutoLock auto_lock(&lock_);
+	nbase::NAutoLock auto_lock(&db_lock_);
 	std::vector<nim::SysMessage> ret_msgs;
 	ndb::SQLiteStatement stmt;
 	if (time <= 0)
@@ -180,7 +140,7 @@ std::vector<nim::SysMessage> UserDB::QueryMsgData(int64_t time, int limit)
 
 bool UserDB::InsertForcePushData(std::map<std::string, std::string> &data)
 {
-	nbase::NAutoLock auto_lock(&lock_);
+	nbase::NAutoLock auto_lock(&db_lock_);
 	ndb::SQLiteAutoTransaction transaction(&db_);
 	transaction.Begin();
 
@@ -211,7 +171,7 @@ bool UserDB::InsertForcePushData(std::map<std::string, std::string> &data)
 
 void UserDB::QueryAllForcePushData(std::map<std::string, std::string> &data)
 {
-	nbase::NAutoLock auto_lock(&lock_);
+	nbase::NAutoLock auto_lock(&db_lock_);
 	ndb::SQLiteStatement stmt;
 
 	db_.Query(stmt, "SELECT * FROM force_push_data");
@@ -231,7 +191,7 @@ void UserDB::QueryAllForcePushData(std::map<std::string, std::string> &data)
 
 void UserDB::ClearForcePushData()
 {
-	nbase::NAutoLock auto_lock(&lock_);
+	nbase::NAutoLock auto_lock(&db_lock_);
 
 	ndb::SQLiteStatement stmt;
 	db_.Query(stmt, "delete from force_push_data;");
@@ -240,7 +200,7 @@ void UserDB::ClearForcePushData()
 
 bool UserDB::InsertTimetag(TimeTagType type, uint64_t timetag)
 {
-	nbase::NAutoLock auto_lock(&lock_);
+	nbase::NAutoLock auto_lock(&db_lock_);
 
 	ndb::SQLiteStatement stmt;
 	db_.Query(stmt, "INSERT OR REPLACE into timetag (type, timetag, longex, textex) values (?, ?, ?, ?);");
@@ -262,7 +222,7 @@ bool UserDB::InsertTimetag(TimeTagType type, uint64_t timetag)
 
 bool UserDB::QueryTimetag(TimeTagType type, uint64_t &timetag)
 {
-	nbase::NAutoLock auto_lock(&lock_);
+	nbase::NAutoLock auto_lock(&db_lock_);
 
 	timetag = 0;
 	ndb::SQLiteStatement stmt;
@@ -277,5 +237,28 @@ bool UserDB::QueryTimetag(TimeTagType type, uint64_t &timetag)
 
 	return no_error;
 }
+bool UserDB::OnBeforCreateDatabase(PretreatmentConfig& config)
+{
+	AddCreateDBSql("CREATE TABLE IF NOT EXISTS msg_local_file(msg_id TEXT PRIMARY KEY, path TEXT, extend TEXT)");
 
+	AddCreateDBSql("CREATE TABLE IF NOT EXISTS custom_msglog(serial INTEGER PRIMARY KEY, "
+		"to_account TEXT, from_account TEXT, msg_type INTEGER, msg_time INTEGER, msg_id INTEGER, save_flag INTEGER, "
+		"msg_body TEXT, msg_attach TEXT, apns_text TEXT, msg_status INTEGER, msg_param TEXT)");
+
+	AddCreateDBSql("CREATE TABLE IF NOT EXISTS force_push_data(session_id TEXT PRIMARY KEY, data TEXT)");
+
+	AddCreateDBSql("CREATE TABLE IF NOT EXISTS user_timetag(type TEXT PRIMARY KEY, timetag INTEGER, longex INTERGER, textex TEXT)");
+
+	return true;
+}
+std::string UserDB::GetEncryptKey() const
+{
+	return nim::Tool::GetMd5(LoginManager::GetInstance()->GetAccount());;
+}
+std::string UserDB::GetDBPath() const
+{
+	std::string acc = LoginManager::GetInstance()->GetAccount();
+	std::string dirctory = nbase::UTF16ToUTF8(QPath::GetUserAppDataDir(acc));
+	return dirctory + MSG_EX_FILE;
+}
 }

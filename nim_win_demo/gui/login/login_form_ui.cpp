@@ -11,7 +11,8 @@ using namespace ui;
 
 const LPCTSTR LoginForm::kClassName	= L"LoginForm";
 
-LoginForm::LoginForm()
+LoginForm::LoginForm():
+login_function_(false)
 {
 	PublicDB::GetInstance()->ReadLoginData();
 }
@@ -109,6 +110,8 @@ void LoginForm::InitWindow()
 		MutiLanSupport* multilan = MutiLanSupport::GetInstance();
 		SetTaskbarTitle(multilan->GetStringViaID(L"STRID_LOGIN_FORM_REGISTER"));
 		FindControl(L"enter_panel")->SetBkImage(L"user_password_nickname.png");
+		FindControl(L"login_cache_conf")->SetVisible(false);
+		SetAnonymousChatroomVisible(false);
 		msg->pSender->GetWindow()->FindControl(L"nick_name_panel")->SetVisible();
 		msg->pSender->GetWindow()->FindControl(L"enter_login")->SetVisible();
 		btn_register_->SetVisible();
@@ -125,18 +128,21 @@ void LoginForm::InitWindow()
 		return true; });
 
 	((ui::Button*)FindControl(L"enter_login"))->AttachClick([this](ui::EventArgs* msg) {
-		MutiLanSupport* multilan = MutiLanSupport::GetInstance();
-		SetTaskbarTitle(multilan->GetStringViaID(L"STRID_LOGIN_FORM_LOGIN"));
-		FindControl(L"enter_panel")->SetBkImage(L"user_password.png");
-		msg->pSender->GetWindow()->FindControl(L"nick_name_panel")->SetVisible(false);
-		msg->pSender->GetWindow()->FindControl(L"enter_login")->SetVisible(false);
-		btn_register_->SetVisible(false);
-		btn_login_->SetVisible();
-		user_name_edit_->SetText(L"");
-		user_name_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_ACCOUNT"));
-		password_edit_->SetText(L"");
-		password_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_PASSWORD"));
-		msg->pSender->GetWindow()->FindControl(L"register_account")->SetVisible(true);
+		return OnSwitchToLoginPage();
+		//MutiLanSupport* multilan = MutiLanSupport::GetInstance();
+		//SetTaskbarTitle(multilan->GetStringViaID(L"STRID_LOGIN_FORM_LOGIN"));
+		//FindControl(L"enter_panel")->SetBkImage(L"user_password.png");		
+		//msg->pSender->GetWindow()->FindControl(L"nick_name_panel")->SetVisible(false);
+		//msg->pSender->GetWindow()->FindControl(L"enter_login")->SetVisible(false);
+		//FindControl(L"login_cache_conf")->SetVisible(true);
+		//SetAnonymousChatroomVisible(true);
+		//btn_register_->SetVisible(false);
+		//btn_login_->SetVisible();
+		//user_name_edit_->SetText(L"");
+		//user_name_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_ACCOUNT"));
+		//password_edit_->SetText(L"");
+		//password_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_PASSWORD"));
+		//msg->pSender->GetWindow()->FindControl(L"register_account")->SetVisible(true);
 		return true; });
 
 	this->RegLoginManagerCallback();
@@ -279,4 +285,8 @@ bool LoginForm::OnClicked( ui::EventArgs* msg )
 void LoginForm::SetAnonymousChatroomVisible(bool visible)
 {
 	FindControl(L"anonymous_chatroom")->SetVisible(visible);
+}
+void LoginForm::SwitchToLoginPage()
+{
+	OnSwitchToLoginPage();
 }

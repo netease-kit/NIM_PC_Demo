@@ -4,7 +4,8 @@
 * @author towik, Oleg
 * @date 2015/4/30
 */
-
+#ifndef NIM_TOOLS_HTTP_DEF_H
+#define NIM_TOOLS_HTTP_DEF_H
 #ifdef __cplusplus
 extern"C"
 {
@@ -24,7 +25,12 @@ enum NIMProxyType
   * http任务句柄
   */
 typedef void* HttpRequestHandle;
-
+#define INVALID_HTTPREQUESTHANDLE (0)
+/** @typedef int HttpRequestID
+* http任务ID，当请求发送后会生成此ID，取消任务或读取应答头都使用该ID
+*/
+typedef int HttpRequestID;
+#define INVALID_HTTPREQUESTID (0xFFFFFFFF)
 /** @typedef void (*nim_http_request_completed_cb)(const void* user_data, bool, int)
   * nim callback function that has been registered in nim_http_create_*** API
   * @param[out] user_data		回传的自定义数据
@@ -78,3 +84,4 @@ typedef void(*nim_http_request_speed_cb)(const void* user_data, double upload_sp
 #ifdef __cplusplus
 };
 #endif //__cplusplus
+#endif//NIM_TOOLS_HTTP_DEF_H
