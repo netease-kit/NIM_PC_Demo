@@ -16,6 +16,17 @@ extern"C"
 {
 #endif
 
+	/** @fn void nim_rts_set_proxy(enum NIMProxyType type, const char *host, int port, const char *user, const char *password)
+	* 设置SDK白板的网络代理，暂时只支持socks5代理，全局代理接口也能设置音视频的代理，两接口没有优先级区别。不需要代理时，type设置为kNIMProxyNone，其余参数都传空字符串（端口设为0）。有些代理不需要用户名和密码，相应参数也传空字符串。
+	* @param[in] type 代理类型，见NIMProxyType定义,其中音视频和白板暂时只支持kNIMProxySocks5代理
+	* @param[in] host 代理地址
+	* @param[in] port 代理端口
+	* @param[in] user 代理用户名
+	* @param[in] password 代理密码
+	* @return void 无返回值
+	*/
+	NIM_SDK_DLL_API	void nim_rts_set_proxy(enum NIMProxyType type, const char *host, int port, const char *user, const char *password);
+
 //发起相关
 /** @fn void nim_rts_start(int channel_type, const char *uid, const char *json_extension, nim_rts_start_cb_func cb, const void *user_data)
   * NIM 创建rts会话，传入的JSON参数定义见nim_rts_def.h    

@@ -16,6 +16,7 @@ namespace nim
 
 #ifdef NIM_SDK_DLL_IMPORT
 typedef	bool(*nim_vchat_init)(const char *json_extension);
+typedef	void(*nim_vchat_set_proxy)(enum NIMProxyType type, const char *host, int port, const char *user, const char *password);
 typedef	void(*nim_vchat_cleanup)(const char *json_extension);
 typedef uint64_t(*nim_vchat_net_detect)(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
@@ -594,5 +595,8 @@ void VChat::SetUidAsMainPicture(const std::string& uid, const std::string& json_
 	OptCallback* cb_pointer = new OptCallback(cb);
 	return NIM_SDK_GET_FUNC(nim_vchat_set_uid_picture_as_main)(uid.c_str(), json_extension.c_str(), OnOptCallback, cb_pointer);
 }
-
+void VChat::SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password)
+{
+	NIM_SDK_GET_FUNC(nim_vchat_set_proxy)(type, host.c_str(), port, user.c_str(), password.c_str());
+}
 }  // namespace nim

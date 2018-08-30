@@ -721,10 +721,14 @@ namespace nim_comp
 			std::string video_quality = GetConfigValue("video_quality");
 			std::string audio_record = GetConfigValue("audio_record");
 			std::string video_record = GetConfigValue("video_record");
+			std::string record_type = GetConfigValue("record_type");
+			std::string record_host_speaker = GetConfigValue("record_host_speaker");
 			std::string keep_calling = GetConfigValue("keep_calling");
 			value[nim::kNIMVChatVideoQuality] = atoi(video_quality.c_str());
 			value[nim::kNIMVChatRecord] = atoi(audio_record.c_str());
 			value[nim::kNIMVChatVideoRecord] = atoi(video_record.c_str());
+			value[nim::kNIMVChatRecordType] = atoi(record_type.c_str());
+			value[nim::kNIMVChatRHostSpeaker] = atoi(record_host_speaker.c_str());
 			//value[nim::kNIMVChatWebrtc] = GetWebrtc() ? 1 : 0;
 			if (!keep_calling.empty())
 			{
@@ -751,11 +755,16 @@ namespace nim_comp
 			std::string video_quality = GetConfigValue("video_quality");
 			std::string audio_record = GetConfigValue("audio_record");
 			std::string video_record = GetConfigValue("video_record");
+			std::string record_type = GetConfigValue("record_type");
+			std::string record_host_speaker = GetConfigValue("record_host_speaker");
+
 			Json::FastWriter fs;
 			Json::Value value;
 			value[nim::kNIMVChatVideoQuality] = atoi(video_quality.c_str());
 			value[nim::kNIMVChatRecord] = atoi(audio_record.c_str());
 			value[nim::kNIMVChatVideoRecord] = atoi(video_record.c_str());
+			value[nim::kNIMVChatRecordType] = atoi(record_type.c_str());
+			value[nim::kNIMVChatRHostSpeaker] = atoi(record_host_speaker.c_str());
 			value[nim::kNIMVChatSessionId] = session_id;
 			json_value = fs.write(value);
 		}
@@ -812,6 +821,18 @@ namespace nim_comp
 		Json::FastWriter fs;
 		Json::Value value;
 		value[nim::kNIMVChatSessionId] = session_id;
+
+		std::string video_quality = GetConfigValue("video_quality");
+		std::string audio_record = GetConfigValue("audio_record");
+		std::string video_record = GetConfigValue("video_record");
+		std::string record_type = GetConfigValue("record_type");
+		std::string record_host_speaker = GetConfigValue("record_host_speaker");
+		value[nim::kNIMVChatVideoQuality] = atoi(video_quality.c_str());
+		value[nim::kNIMVChatRecord] = atoi(audio_record.c_str());
+		value[nim::kNIMVChatVideoRecord] = atoi(video_record.c_str());
+		value[nim::kNIMVChatRecordType] = atoi(record_type.c_str());
+		value[nim::kNIMVChatRHostSpeaker] = atoi(record_host_speaker.c_str());
+
 		std::string json_value = fs.write(value);
 		return nim::VChat::JoinRoom(mode, room_name, json_value, cb);
 	}
