@@ -70,32 +70,7 @@ enum ProxyType
     kProxyTypeHttp11,
     kProxyTypeSocks5UDP
 };
-struct ProxySetting : protected ProxySet
-{
-	ProxySetting(){
-		Clear();
-	}
-	virtual ~ProxySetting(){}
-	void SetType(ProxyType type){ type_ = type; }
-	ProxyType GetType() const{ return (ProxyType)(type_);	 }
-	void SetHost(const std::string& host) { host_ = host; }
-	std::string GetHost() const { return host_; }
-	void SetPort(uint16_t port) { port_ = port; }
-	uint16_t GetPort() const { return port_; }
-	void SetUserName(const std::string& username) { username_ = username; }
-	std::string GetUserName() const { return username_; }
-	void SetPassowrd(const std::string& password) { password_ = password; }
-	std::string GetPassowrd() const { return password_; }
-	bool IsEmpty() const { return type_ == ProxyType::kProxyTypeNone; }
-	void Clear()
-	{
-		type_ = ProxyType::kProxyTypeNone;
-		host_.clear();
-		port_ = 0;
-		username_.clear();
-		password_.clear();
-	}
-};
+    
 /*
  *  Purpose     Network IO binary input interface
  */

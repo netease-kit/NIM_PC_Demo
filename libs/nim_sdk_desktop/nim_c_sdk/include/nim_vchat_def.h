@@ -205,7 +205,6 @@ enum NIMVChatConnectErrorCode{
 	kNIMVChatVersionSelfLow				= 11002,	/**< 本人SDK版本太低不兼容 */
 	kNIMVChatVersionRemoteLow			= 11003,	/**< 对方SDK版本太低不兼容 */
 	kNIMVChatLocalChannelClosed			= 11004,	/**< 通道被关闭 */
-	kNIMVChatLocalChannelKicked			= 11005,	/**< 账号被踢 */
 };
 
 
@@ -239,14 +238,6 @@ enum NIMMainPictureOptCode
 	kNIMMainPictureOptError			= 500,		/**<内部错误*/
 	kNIMMainPictureOptServerError	= 600,		/**< 服务器内部错误 */
 	kNIMMainPictureOptInvilid		= 11403,	/**< 无效的操作 */
-};
-
-/** @enum NIMVChatServRecordType 服务器录制模式，用于指定本人数据录制选择 */
-typedef enum NIMVChatServRecordType
-{
-	kNIMVChatServRecordMixedSingle	= 0,	/**< 服务器录制混录并带单人文件 */
-	kNIMVChatServRecordMixed		= 1,	/**< 服务器录制只混录 */
-	kNIMVChatServRecordSingle		= 2,	/**< 服务器录制只录本人单人文件 */
 };
 
 /** @name 初始化 内容Json key for nrtc_init
@@ -285,8 +276,7 @@ static const char *kNIMVChatCustomVideo		= "custom_video";	/**< int 是否用自
 static const char *kNIMVChatCustomAudio		= "custom_audio";	/**< int 是否用自主的音频数据 >0表示是 */
 static const char *kNIMVChatRecord			= "record";			/**< int 是否需要录制音频数据 >0表示是 （需要服务器配置支持，本地录制直接调用接口函数） */
 static const char *kNIMVChatVideoRecord		= "video_record";	/**< int 是否需要录制视频数据 >0表示是 （需要服务器配置支持，本地录制直接调用接口函数）*/
-static const char *kNIMVChatRecordType		= "record_type";	/**< int 服务器录制模式NIMVChatServRecordType，默认为0 （需要服务器配置支持，并且开kNIMVChatRecord，kNIMVChatVideoRecord其中一个）*/
-static const char *kNIMVChatRHostSpeaker	= "r_host_speaker";	/**< int 服务器混录时指定本人主画面，默认为0, 非0表示打开（需要服务器配置支持，及录制模式打开混录，并且为多人中的第一个主画面配置）*/
+static const char *kNIMVChatSingleRecord	= "single_record";	/**< int 是否需要录制多人模式下的本人数据 >0表示是 （需要服务器配置支持，并且开kNIMVChatRecord，kNIMVChatVideoRecord其中一个）*/
 static const char *kNIMVChatMaxVideoRate	= "max_video_rate";	/**< int 视频发送编码码率 >=100000 <=5000000有效 */
 static const char *kNIMVChatVideoQuality	= "video_quality";	/**< int 视频聊天分辨率选择 NIMVChatVideoQuality */
 static const char *kNIMVChatVideoFrameRate	= "frame_rate";		/**< int 视频画面帧率 NIMVChatVideoFrameRate */

@@ -57,17 +57,6 @@ public:
 	*/
 	static bool Init(const std::string& server_setting_path);
 
-	/** @fn void SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password)
-	* 设置SDK音视频的网络代理，暂时只支持socks5代理，全局代理接口也能设置音视频的代理，两接口没有优先级区别。不需要代理时，type设置为kNIMProxyNone，其余参数都传空字符串（端口设为0）。有些代理不需要用户名和密码，相应参数也传空字符串。
-	* @param[in] type 代理类型，见NIMProxyType定义,其中音视频和白板暂时只支持kNIMProxySocks5代理
-	* @param[in] host 代理地址
-	* @param[in] port 代理端口
-	* @param[in] user 代理用户名
-	* @param[in] password 代理密码
-	* @return void 无返回值
-	*/
-	static void SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password);
-
 	/** @fn static void Cleanup()
 	* NIM VCHAT清理，需要在SDK的nim_client_cleanup之前
 	* @return void 无返回值

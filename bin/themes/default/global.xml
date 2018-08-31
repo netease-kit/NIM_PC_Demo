@@ -306,9 +306,7 @@
     <Class name="input" value="normalimage=&quot;file='../public/edit/edit0.png' corner='10,10,10,10'&quot; hotimage=&quot;file='../public/edit/edit0.png' corner='10,10,10,10'&quot; focusedimage=&quot;file='../public/edit/edit0.png' corner='10,10,10,10'&quot; disabledimage=&quot;file='../public/edit/edit0.png' corner='10,10,10,10' fade='80'&quot;"/>
 	<!--plugins-->
 	<Class name="plugins_icon" value="margin=&quot;0,10,0,10&quot; halign=&quot;center&quot; width=&quot;32&quot; height=&quot;32&quot; normalimage=&quot;file='../public/plugins/plugin_icon_hover.png' corner='3,3,3,3' &quot; hotimage=&quot;file='../public/plugins/plugin_icon_pushed.png' corner='3,3,3,3' &quot; selectednormalimage=&quot;file='../public/plugins/plugin_icon_pushed.png' corner='3,3,3,3' &quot;" />
-	<!--代理窗口使用-->
-	<Class name="ProxyEdit" value="width=&quot;stretch&quot; height=&quot;24&quot; align=&quot;vcenter&quot; margin=&quot;20,0,0,0&quot; padding=&quot;5,0,5,0&quot; font=&quot;1&quot;"/>
-	<!--音视频专用-->
+	    <!--音视频专用-->
     <TextColor name="bk_multi_video_content" value="#ff1D242E"/>
     <TextColor name="bk_video" value="#ff222222"/>
     <TextColor name="bk_video_title" value="#ff2b2f33"/>

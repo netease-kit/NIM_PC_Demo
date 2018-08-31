@@ -16,20 +16,19 @@ namespace nim
 //发起相关
 #ifdef NIM_SDK_DLL_IMPORT
 typedef	void (*nim_rts_start)(int channel_type, const char* uid, const char *json_extension, nim_rts_start_cb_func cb, const void *user_data);
-typedef	void(*nim_rts_set_proxy)(enum NIMProxyType type, const char *host, int port, const char *user, const char *password);
 typedef	void (*nim_rts_set_start_notify_cb_func)(nim_rts_start_notify_cb_func cb, const void *user_data);
-typedef	void (*nim_rts_create_conf)(const char *name, const char *custom_info, const char *json_extension, nim_rts_create_cb_func cb, const void *user_data);
-typedef	void (*nim_rts_join_conf)(const char *name, const char *json_extension, nim_rts_join_cb_func cb, const void *user_data);
+typedef void (*nim_rts_create_conf)(const char *name, const char *custom_info, const char *json_extension, nim_rts_create_cb_func cb, const void *user_data);
+typedef void (*nim_rts_join_conf)(const char *name, const char *json_extension, nim_rts_join_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_ack)(const char *session_id, int channel_type, bool accept, const char *json_extension, nim_rts_ack_res_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_set_ack_notify_cb_func)(nim_rts_ack_notify_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_set_sync_ack_notify_cb_func)(nim_rts_sync_ack_notify_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_set_connect_notify_cb_func)(nim_rts_connect_notify_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_set_member_change_cb_func)(nim_rts_member_change_cb_func cb, const void *user_data);
-typedef	void (*nim_rts_control)(const char *session_id, const char* info, const char* json_extension, nim_rts_control_res_cb_func cb, const void *user_data);
-typedef	void (*nim_rts_set_control_notify_cb_func)(nim_rts_control_notify_cb_func cb, const void *user_data);
+typedef void (*nim_rts_control)(const char *session_id, const char* info, const char* json_extension, nim_rts_control_res_cb_func cb, const void *user_data);
+typedef void (*nim_rts_set_control_notify_cb_func)(nim_rts_control_notify_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_set_vchat_mode)(const char *session_id, int mode, const char *json_extension);
 typedef	void (*nim_rts_hangup)(const char *session_id, const char *json_extension, nim_rts_hangup_res_cb_func cb, const void *user_data);
-typedef	void (*nim_rts_relogin)(const char *session_id, int channel_type, const char *json_extension, nim_rts_opt_cb_func cb, const void *user_data);
+typedef void (*nim_rts_relogin)(const char *session_id, int channel_type, const char *json_extension, nim_rts_opt_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_set_hangup_notify_cb_func)(nim_rts_hangup_notify_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_send_data)(const char *session_id, int channel_type, const char* data, unsigned int size, const char *json_extension);
 typedef	void (*nim_rts_set_rec_data_cb_func)(nim_rts_rec_data_cb_func cb, const void *user_data);
@@ -470,8 +469,5 @@ void Rts::SetRecDataCb(const RecDataCallback& cb)
 	}
 	return NIM_SDK_GET_FUNC(nim_rts_set_rec_data_cb_func)(&RecDataCallbackWrapper, g_rec_data_cb_pointer);
 }
-void Rts::SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password)
-{
-	NIM_SDK_GET_FUNC(nim_rts_set_proxy)(type, host.c_str(), port, user.c_str(), password.c_str());
-}
+
 }  // namespace nim
