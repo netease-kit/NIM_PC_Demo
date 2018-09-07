@@ -1,0 +1,52 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="280,0" caption="0,0,0,34" textid="STRID_PROXY_SETTING_TITLE">
+	<Box height="auto" margin="0,15,0,0">		
+		<VBox height="auto" margin="10,15,10,10" bordersize="1" borderround="3,3" bordercolor="splitline_level1" padding="10,20,10,10">		
+			<HBox height="auto" margin="0,0,0,10" >
+				<HBox height="24" valign="center" width="auto">
+					<Label textid="STRID_PROXY_TYPE" name="type" valign="center" font="2" width="60" />				
+					<Combo class="list" name="proxytypecomb" width="125" valign="center" margin="5,0,0,0" 
+						   bkimage="file='../public/combo/normal.png' corner='5,5,24,5'" >
+						<ListContainerElement class="listitem" textpadding="10,1,1,1" name="noproxy" height="27" textid="STRID_PROXY_NONE" visible="false"/>
+					<ListContainerElement class="listitem" textpadding="10,1,1,1" name="httpproxy" height="27" textid="STRID_PROXY_HTTP" visible="false" />
+					<ListContainerElement class="listitem" textpadding="10,1,1,1" name="socks4proxy" height="27" textid="STRID_PROXY_SOCKS4" visible="false"/>
+					<ListContainerElement class="listitem" textpadding="10,1,1,1" name="socks4aproxy" height="27" textid="STRID_PROXY_SOCKS4A" visible="false"/>
+					<ListContainerElement class="listitem" textpadding="10,1,1,1" name="socks5proxy" height="27" textid="STRID_PROXY_SOCKS5" visible="false"/>	
+					</Combo>
+				</HBox>
+				<HBox height="24" margin="10,0,0,0" valign="center" width="auto" >
+					<Label textid="STRID_PROXY_ADDRESS" valign="center" font="2" width="60" />				
+					<RichEdit class="simple input ProxyEdit" name="proxyaddr" width="110" margin="5,0,0,0" />
+				</HBox>
+
+				<HBox height="24" margin="10,0,0,0" valign="center" width="auto">
+					<Label textid="STRID_PROXY_PORT" valign="center" font="2"/>				
+					<RichEdit class="simple input ProxyEdit" name="proxyport" number="true" width="60" margin="5,0,0,0"/>
+				</HBox>					
+			</HBox>
+			<HBox height="auto" margin="0,0,0,10">			
+				<HBox height="24" margin="0,0,0,0" valign="center" width="auto">
+					<Label textid="STRID_PROXY_USERNAME" valign="center" font="2" width="60"/>				
+					<RichEdit class="simple input ProxyEdit" name="account" width="125" margin="5,0,0,0" />
+				</HBox>
+				<HBox height="24" margin="10,0,0,0" valign="center" width="auto">
+					<Label textid="STRID_PROXY_PASSWORD" valign="center" font="2" width="60" />				
+					<RichEdit class="simple input ProxyEdit" name="password" password="true" width="110" margin="5,0,0,0" />
+				</HBox>
+				<Control />								
+			</HBox>
+			<HBox height="auto" margin="0,0,0,0">			
+				<Label textid="STRID_PROXY_TIP" font="2" normaltextcolor="link_red" width="240" singleline="true" valign="center" />		
+				<Control />
+				<HBox height="30" margin="0,0,0,0" visible="true" valign="center" width="auto">
+					<Control name="gifanim" width="auto" height="auto" bkimage="..\public\animation\ani_loading.gif" valign="center"/>
+					<Button class="btn_global_white_80x30" name="testconnect" margin="5,0,0,0" width="60" height="24" valign="center"
+							font="2" normaltextcolor="darkcolor" textid="STRID_PROXY_TEST_CONNECT"/>
+				</HBox>							
+			</HBox>
+		</VBox>
+		<Box width="auto" height="auto" valign="top" margin="15,5,0,0" padding="5,0,5,0" bkcolor="bk_wnd_lightcolor">
+			<Label name="proxy_name" valign="center" halign="center" font="2" normaltextcolor="gray" />
+		</Box>
+	</Box>
+</Window>

@@ -7,16 +7,12 @@
 
 using namespace ui;
 const LPCTSTR ProxyForm::kClassName = L"ProxyForm";
+ProxySettingList ProxyForm::proxy_setting_list_;
 
-nim::NIMProxyType ProxyForm::cur_type = nim::kNIMProxyNone;
-std::string ProxyForm::cur_host = "";
-short ProxyForm::cur_port = 0;
-std::string ProxyForm::cur_user = "";
-std::string ProxyForm::cur_pass = "";
 
 ProxyForm::ProxyForm()
 {
-	being_test_connect_ = false;
+	
 }
 
 ProxyForm::~ProxyForm()
@@ -36,92 +32,121 @@ std::wstring ProxyForm::GetSkinFile()
 
 void ProxyForm::InitWindow()
 {
-	m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&ProxyForm::Notify, this, std::placeholders::_1));
-	proxy_type_comb_ = (Combo*)FindControl(L"proxytypecomb");
-	proxy_type_comb_->AttachSelect(nbase::Bind(&ProxyForm::OnProxyTypeSelected, this, std::placeholders::_1));
-
-	addr_ctrl_ = (RichEdit*)FindControl(L"proxyaddr");
-	port_ctrl_ = (RichEdit*)FindControl(L"proxyport");
-	user_ctrl_ = (RichEdit*)FindControl(L"account");
-	pass_ctrl_ = (RichEdit*)FindControl(L"password");
-
-	port_ctrl_->SetLimitText(5);
-
-	addr_ctrl_->SetSelAllOnFocus(true);
-	port_ctrl_->SetSelAllOnFocus(true);
-	user_ctrl_->SetSelAllOnFocus(true);
-	pass_ctrl_->SetSelAllOnFocus(true);
-
-	test_connect_btn_ = (ui::Button*)FindControl(L"testconnect");
+	std::wstring proxy_name;
+	auto global_proxy = dynamic_cast<ui::Box*>(FindControl(L"global_proxy"));
+	if (global_proxy != nullptr)
+	{
+		proxy_name = L"Global 代理设置";
+		global_proxy_ = new ProxyTipGlobal;
+		ui::GlobalManager::FillBoxWithCache(global_proxy_, L"proxy/proxy_tip_global.xml");
+		global_proxy_->SetProxyName(proxy_name);
+		if (proxy_setting_list_.find(proxy_name) == proxy_setting_list_.end())
+			proxy_setting_list_[proxy_name] = ProxyTipGlobal::CreateSetting();
+		global_proxy_->SetProxySetting(proxy_setting_list_[proxy_name]);
+		global_proxy->Add(global_proxy_);
+	}
+	auto proxys = dynamic_cast<ui::ListBox*>(FindControl(L"proxys"));
+	if (proxys != nullptr)
+	{
+		proxy_chatroom_ = CreateSubModuleProxyTip([](){return (new ProxyTipSub_Chatroom()); }, L"Chatroom 代理设置");
+		proxy_vchat_ = CreateSubModuleProxyTip([](){return (new ProxyTipSub_VChat()); }, L"VChat 代理设置");
+		proxy_rts_ = CreateSubModuleProxyTip([](){return (new ProxyTipSub_Rts()); }, L"Rts(白板) 代理设置");
+		proxy_httptool_ = CreateSubModuleProxyTip([](){return (new ProxyTipSub_Httptool); }, L"Httptool 代理设置");
+		proxys->Add(proxy_chatroom_);
+		proxys->Add(proxy_vchat_);
+		proxys->Add(proxy_rts_);
+		proxys->Add(proxy_httptool_);
+	}
 	confirm_btn_ = (ui::Button*)FindControl(L"confirm");
-	apply_btn_ = (ui::Button*)FindControl(L"apply");
-
-	gifanim_ctrl_ = (ui::Control*)FindControl(L"gifanim");
-	gifanim_ctrl_->SetVisible(false);
-
-	proxy_type_comb_->SelectItem(ConvertProxyTypeToIndex(cur_type));
-	OnProxyTypeSelected(NULL);
-	addr_ctrl_->SetUTF8Text(cur_host);
-	port_ctrl_->SetUTF8Text(cur_port == 0 ? "" : nbase::IntToString(cur_port));
-	user_ctrl_->SetUTF8Text(cur_user);
-	pass_ctrl_->SetUTF8Text(cur_pass);
+	close_btn_ = dynamic_cast<ui::Button*>(FindControl(L"close"));
+	confirm_btn_->AttachClick([this](ui::EventArgs*){
+		ApplyProxySetting();
+		ConfirmSetting();
+		Close(0);
+		return true;
+	});
+	close_btn_->AttachClick([this](ui::EventArgs*){
+		Close(0);
+		return true;
+	});
 }
-
-bool ProxyForm::Notify(ui::EventArgs* msg)
+void ProxyForm::ApplyProxySetting()
 {
-	std::wstring name = msg->pSender->GetName();
-	if(msg->Type == kEventClick)
-	{
-		if(name == L"confirm")
-		{
-			ApplyProxySetting();
-			Close();
-		}
-		else if (name == L"close")
-		{
-			Close();
-		}
-		else if (name == L"testconnect")
-		{
-			if (!CheckProxyLegality())
-			{
-				return true;
-			}
-			being_test_connect_ = true;
-			test_connect_btn_->SetEnabled(false);
-			gifanim_ctrl_->SetVisible(true);
-			DetectProxyLegality();
-		}
-	}
-	else if(msg->Type == kEventTextChange)
-	{
-		if(name == L"proxyaddr" || name == L"proxyport")
-		{
-			bool enable = CheckProxyLegality();
-			test_connect_btn_->SetEnabled(enable);
-			confirm_btn_->SetEnabled(enable);
-		}
-	}
-	else if(msg->Type == kEventTab)
-	{
-		if (name == L"proxyaddr")
-			port_ctrl_->SetFocus();
-		else if (name == L"proxyport")
-			user_ctrl_->SetFocus();
-		else if (name == L"account")
-			pass_ctrl_->SetFocus();
-		else if (name == L"password")
-			addr_ctrl_->SetFocus();
-	}
-
-	return true;
+	global_proxy_->ApplyProxySetting();
+	proxy_chatroom_->ApplyProxySetting();
+	proxy_vchat_->ApplyProxySetting();
+	proxy_rts_->ApplyProxySetting();
+	proxy_httptool_->ApplyProxySetting();
 }
+void ProxyForm::Close(UINT nRet/* = IDOK*/)
+{
+	ApplyProxySetting();
+	nim_comp::WindowEx::Close(nRet);
+}
+void ProxyForm::ConfirmSetting()
+{
+	auto global_proxy_setting = global_proxy_->GetProxySetting();
+	nim::Global::SetProxy(ProxyTip::ConvertBaseProxytypeToNimProxyType(global_proxy_setting->GetType()), \
+		global_proxy_setting->GetHost(), global_proxy_setting->GetPort(), global_proxy_setting->GetUserName(), global_proxy_setting->GetPassowrd());
+	//聊天室
+	auto chatroom_proxy_setting = proxy_chatroom_->GetProxySetting();
+	if (chatroom_proxy_setting->IsUseGlobalSetting())
+		nim_chatroom::ChatRoom::SetProxy((nim_chatroom::NIMChatRoomProxyType)(ProxyTip::ConvertBaseProxytypeToNimProxyType(global_proxy_setting->GetType())),\
+		global_proxy_setting->GetHost(), global_proxy_setting->GetPort(), global_proxy_setting->GetUserName(), global_proxy_setting->GetPassowrd());
+	else
+		nim_chatroom::ChatRoom::SetProxy((nim_chatroom::NIMChatRoomProxyType)(ProxyTip::ConvertBaseProxytypeToNimProxyType(chatroom_proxy_setting->GetType())), \
+		chatroom_proxy_setting->GetHost(), chatroom_proxy_setting->GetPort(), chatroom_proxy_setting->GetUserName(), chatroom_proxy_setting->GetPassowrd());
+	//httptool
+	auto httptool_proxy_setting = proxy_httptool_->GetProxySetting();
+	if (httptool_proxy_setting->IsUseGlobalSetting())
+		nim_http::SetGlobalProxy((NIMProxyType)(ProxyTip::ConvertBaseProxytypeToNimProxyType(global_proxy_setting->GetType())), \
+		global_proxy_setting->GetHost(), global_proxy_setting->GetPort(), global_proxy_setting->GetUserName(), global_proxy_setting->GetPassowrd());
+	else
+		nim_http::SetGlobalProxy((NIMProxyType)(ProxyTip::ConvertBaseProxytypeToNimProxyType(httptool_proxy_setting->GetType())), \
+		httptool_proxy_setting->GetHost(), httptool_proxy_setting->GetPort(), httptool_proxy_setting->GetUserName(), httptool_proxy_setting->GetPassowrd());	
 
-bool ProxyForm::OnProxyTypeSelected(ui::EventArgs * msg)
+	//VChat
+	auto vchat_proxy_setting = proxy_vchat_->GetProxySetting();
+	if (vchat_proxy_setting->IsUseGlobalSetting())
+		nim::VChat::SetProxy(ProxyTip::ConvertBaseProxytypeToNimProxyType(global_proxy_setting->GetType()), \
+		global_proxy_setting->GetHost(), global_proxy_setting->GetPort(), global_proxy_setting->GetUserName(), global_proxy_setting->GetPassowrd());
+	else
+		nim::VChat::SetProxy(ProxyTip::ConvertBaseProxytypeToNimProxyType(vchat_proxy_setting->GetType()), \
+		vchat_proxy_setting->GetHost(), vchat_proxy_setting->GetPort(), vchat_proxy_setting->GetUserName(), vchat_proxy_setting->GetPassowrd());
+
+	//rts
+	auto rts_proxy_setting = proxy_rts_->GetProxySetting();
+	if (rts_proxy_setting->IsUseGlobalSetting())
+		nim::Rts::SetProxy(ProxyTip::ConvertBaseProxytypeToNimProxyType(global_proxy_setting->GetType()), \
+		global_proxy_setting->GetHost(), global_proxy_setting->GetPort(), global_proxy_setting->GetUserName(), global_proxy_setting->GetPassowrd());
+	else
+		nim::Rts::SetProxy(ProxyTip::ConvertBaseProxytypeToNimProxyType(rts_proxy_setting->GetType()), \
+		rts_proxy_setting->GetHost(), rts_proxy_setting->GetPort(), rts_proxy_setting->GetUserName(), rts_proxy_setting->GetPassowrd());
+}
+ProxyTipSub* ProxyForm::CreateSubModuleProxyTip(const std::function<ProxyTipSub*()>& sub_creator, const std::wstring& name)
+{
+	auto proxy = sub_creator();
+	ui::GlobalManager::FillBoxWithCache(proxy, L"proxy/proxy_tip.xml");
+	proxy->SetProxyName(name);
+	if (proxy_setting_list_.find(name) == proxy_setting_list_.end())
+		proxy_setting_list_[name] = ProxyTipSub::CreateSetting();
+	proxy->SetProxySetting(std::dynamic_pointer_cast<SubModuleProxySetting>(proxy_setting_list_[name]));
+	return proxy;
+}
+void ProxyTip::SetProxyName(const std::wstring& name)
+{
+	proxy_name_ = name;
+	auto name_tip = dynamic_cast<ui::Label*>(FindSubControl(L"proxy_name"));
+	if (name_tip != nullptr)
+		name_tip->SetText(proxy_name_);
+}
+std::wstring ProxyTip::GetProxyName() const
+{
+	return proxy_name_;
+}
+bool ProxyTip::OnProxyTypeSelected(ui::EventArgs * msg)
 {
 	int sel = proxy_type_comb_->GetCurSel();
-	if (sel == 0 || sel == 1)
-		confirm_btn_->SetEnabled(sel == 0);
 
 	switch (sel)
 	{
@@ -142,8 +167,7 @@ bool ProxyForm::OnProxyTypeSelected(ui::EventArgs * msg)
 		port_ctrl_->SetText(L"1080");
 		port_ctrl_->SetEnabled(true);
 		user_ctrl_->SetEnabled(false);
-		pass_ctrl_->SetEnabled(false);
-		confirm_btn_->SetEnabled(CheckProxyLegality());
+		pass_ctrl_->SetEnabled(false);		
 		break;
 	case 4:
 		addr_ctrl_->SetEnabled(true);
@@ -151,7 +175,7 @@ bool ProxyForm::OnProxyTypeSelected(ui::EventArgs * msg)
 		port_ctrl_->SetEnabled(true);
 		user_ctrl_->SetEnabled(true);
 		pass_ctrl_->SetEnabled(true);
-		confirm_btn_->SetEnabled(CheckProxyLegality());
+		
 		break;
 	default:
 		break;
@@ -159,49 +183,7 @@ bool ProxyForm::OnProxyTypeSelected(ui::EventArgs * msg)
 
 	return true;
 }
-
-void ProxyForm::DetectProxyLegality()
-{
- 	SetPanelEnabled(false);
-
-	nim::NIMProxyType type = ConvertIndexToProxyType(proxy_type_comb_->GetCurSel());
-	std::string host;
-	int port = 0;
-	std::string user;
-	std::string pass;
-
-	if (type != nim::kNIMProxyNone)
-	{
-		PTR_VOID(!addr_ctrl_->GetUTF8Text().empty() && !port_ctrl_->GetText().empty())
-			host = addr_ctrl_->GetUTF8Text();
-		nbase::StringToInt(port_ctrl_->GetUTF8Text(), &port);
-		user = user_ctrl_->GetUTF8Text();
-		pass = pass_ctrl_->GetUTF8Text();
-	}
-
-	nim::Global::DetectProxy(type, host, port, user, pass, nbase::Bind(&ProxyForm::CallbackDetectProxy, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-}
-
-void ProxyForm::CallbackDetectProxy(bool connect, nim::NIMProxyDetectStep step, const std::string& json_extention)
-{
-	if (step == nim::kNIMProxyDetectStepAllComplete)
-	{
-		being_test_connect_ = false;
-		test_connect_btn_->SetEnabled(true);
-		gifanim_ctrl_->SetVisible(false);
-		SetPanelEnabled(true);
-		if (connect)
-		{
-			ShowMsgBox(m_hWnd, MsgboxCallback(), L"STRID_LOGIN_FORM_DETECT_PROXY_OK");
-		}
-		else
-		{
-			ShowMsgBox(m_hWnd, MsgboxCallback(), L"STRID_LOGIN_FORM_DETECT_PROXY_ERROR");
-		}
-	}
-}
-
-void ProxyForm::SetPanelEnabled(bool enable)
+void ProxyTip::SetPanelEnabled(bool enable)
 {
 	addr_ctrl_->SetEnabled(enable);
 	port_ctrl_->SetEnabled(enable);
@@ -210,7 +192,7 @@ void ProxyForm::SetPanelEnabled(bool enable)
 	proxy_type_comb_->SetEnabled(enable);
 }
 
-bool ProxyForm::CheckProxyLegality()
+bool ProxyTip::CheckProxyLegality()
 {
 	int index = proxy_type_comb_->GetCurSel();
 	if (index == 0)
@@ -227,7 +209,7 @@ bool ProxyForm::CheckProxyLegality()
 	return !addr.empty() && !port.empty();
 }
 
-nim::NIMProxyType ProxyForm::ConvertIndexToProxyType(int index)
+nim::NIMProxyType ProxyTip::ConvertIndexToProxyType(int index)
 {
 	switch (index)
 	{
@@ -244,8 +226,55 @@ nim::NIMProxyType ProxyForm::ConvertIndexToProxyType(int index)
 	}
 	return nim::kNIMProxyNone;
 }
-
-int ProxyForm::ConvertProxyTypeToIndex(nim::NIMProxyType type)
+nbase::ProxyType  ProxyTip::ConvertNimProxytypeToBaseProxyType(nim::NIMProxyType type)
+{
+	switch (type)
+	{
+	case nim::kNIMProxyNone:
+		return nbase::ProxyType::kProxyTypeNone;
+		break;
+	case nim::kNIMProxyHttp11:
+		return nbase::ProxyType::kProxyTypeHttp11;
+		break;
+	case nim::kNIMProxySocks4:
+		return nbase::ProxyType::kProxyTypeSocks4;
+		break;
+	case nim::kNIMProxySocks4a:
+		return nbase::ProxyType::kProxyTypeSocks4A;
+		break;
+	case nim::kNIMProxySocks5:
+		return nbase::ProxyType::kProxyTypeSocks5;
+		break;
+	default:
+		return nbase::ProxyType::kProxyTypeNone;
+		break;
+	}
+}
+nim::NIMProxyType ProxyTip::ConvertBaseProxytypeToNimProxyType(nbase::ProxyType type)
+{
+	switch (type)
+	{
+	case nbase::ProxyType::kProxyTypeNone:
+		return nim::kNIMProxyNone;
+		break;
+	case nbase::ProxyType::kProxyTypeHttp11:
+		return nim::kNIMProxyHttp11;
+		break;
+	case nbase::ProxyType::kProxyTypeSocks4:
+		return nim::kNIMProxySocks4;
+		break;
+	case nbase::ProxyType::kProxyTypeSocks4A:
+		return nim::kNIMProxySocks4a;
+		break;
+	case nbase::ProxyType::kProxyTypeSocks5:
+		return nim::kNIMProxySocks5;
+		break;
+	default:
+		return nim::kNIMProxyNone;
+		break;
+	}
+}
+int ProxyTip::ConvertProxyTypeToIndex(nim::NIMProxyType type)
 {
 	switch (type)
 	{
@@ -262,9 +291,81 @@ int ProxyForm::ConvertProxyTypeToIndex(nim::NIMProxyType type)
 	}
 	return 0;
 }
-
-void ProxyForm::ApplyProxySetting()
+void ProxyTip::DoInit()
 {
+	proxy_type_comb_ = (Combo*)FindSubControl(L"proxytypecomb");
+	proxy_type_comb_->AttachSelect(nbase::Bind(&ProxyTip::OnProxyTypeSelected, this, std::placeholders::_1));
+
+	addr_ctrl_ = (RichEdit*)FindSubControl(L"proxyaddr");
+	port_ctrl_ = (RichEdit*)FindSubControl(L"proxyport");
+	user_ctrl_ = (RichEdit*)FindSubControl(L"account");
+	pass_ctrl_ = (RichEdit*)FindSubControl(L"password");
+
+	port_ctrl_->SetLimitText(5);
+
+	addr_ctrl_->SetSelAllOnFocus(true);
+	port_ctrl_->SetSelAllOnFocus(true);
+	user_ctrl_->SetSelAllOnFocus(true);
+	pass_ctrl_->SetSelAllOnFocus(true);	
+	auto&& supported_proxy_type = GetSupportedProxyTypeName();	
+	for (auto it : supported_proxy_type)
+	{
+		auto item = FindSubControl(it);
+		item = proxy_type_comb_->GetListBox()->FindSubControl(it);
+		if (item != nullptr)
+			item->SetVisible(true);
+	}
+}
+void ProxyTipGlobal::DoInit()
+{
+	being_test_connect_ = false;
+	__super::DoInit();
+	test_connect_btn_ = (ui::Button*)FindSubControl(L"testconnect");
+	test_connect_btn_->AttachClick([this](ui::EventArgs* param){
+		if (!CheckProxyLegality())
+		{
+			return true;
+		}
+		being_test_connect_ = true;
+		test_connect_btn_->SetEnabled(false);
+		gifanim_ctrl_->SetVisible(true);
+		DetectProxyLegality();
+		return true;
+	});
+	gifanim_ctrl_ = (ui::Control*)FindSubControl(L"gifanim");
+	gifanim_ctrl_->SetVisible(false);
+	proxy_type_comb_->SelectItem(ConvertProxyTypeToIndex(ConvertBaseProxytypeToNimProxyType(proxy_setting_->GetType())));
+	OnProxyTypeSelected(NULL);
+	addr_ctrl_->SetUTF8Text(proxy_setting_->GetHost());
+	port_ctrl_->SetUTF8Text(proxy_setting_->GetPort() == 0 ? "" : nbase::IntToString(proxy_setting_->GetPort()));
+	user_ctrl_->SetUTF8Text(proxy_setting_->GetUserName());
+	pass_ctrl_->SetUTF8Text(proxy_setting_->GetPassowrd());
+}
+void ProxyTipGlobal::ApplyProxySetting()
+{
+	nim::NIMProxyType type = ConvertIndexToProxyType(proxy_type_comb_->GetCurSel());
+	std::string host;
+	int port = 0;
+	std::string user;
+	std::string pass;
+	if (type != nim::kNIMProxyNone)
+	{
+		PTR_VOID(!addr_ctrl_->GetUTF8Text().empty() && !port_ctrl_->GetText().empty())
+			host = addr_ctrl_->GetUTF8Text();
+		nbase::StringToInt(port_ctrl_->GetUTF8Text(), &port);
+		user = user_ctrl_->IsEnabled() ?  user_ctrl_->GetUTF8Text() : "";
+		pass = pass_ctrl_->IsEnabled() ?  pass_ctrl_->GetUTF8Text() : "";
+	}	
+	proxy_setting_->SetType(ConvertNimProxytypeToBaseProxyType(type));
+	proxy_setting_->SetHost(host);
+	proxy_setting_->SetPort(port);
+	proxy_setting_->SetUserName(user);
+	proxy_setting_->SetPassowrd(pass);
+}
+void ProxyTipGlobal::DetectProxyLegality()
+{
+	SetPanelEnabled(false);
+
 	nim::NIMProxyType type = ConvertIndexToProxyType(proxy_type_comb_->GetCurSel());
 	std::string host;
 	int port = 0;
@@ -274,19 +375,106 @@ void ProxyForm::ApplyProxySetting()
 	if (type != nim::kNIMProxyNone)
 	{
 		PTR_VOID(!addr_ctrl_->GetUTF8Text().empty() && !port_ctrl_->GetText().empty())
-		host = addr_ctrl_->GetUTF8Text();
+			host = addr_ctrl_->GetUTF8Text();
 		nbase::StringToInt(port_ctrl_->GetUTF8Text(), &port);
 		user = user_ctrl_->GetUTF8Text();
 		pass = pass_ctrl_->GetUTF8Text();
 	}
 
-	nim_http::SetGlobalProxy((NIMProxyType)type, host, (short)port, user, pass);
-	nim::Global::SetProxy(type, host, port, user, pass);
-	nim_chatroom::ChatRoom::SetProxy((nim_chatroom::NIMChatRoomProxyType)type, host, (short)port, user, pass);
-
-	cur_type = type;
-	cur_host = host;
-	cur_port = (short)port;
-	cur_user = user;
-	cur_pass = pass;
+	nim::Global::DetectProxy(type, host, port, user, pass, nbase::Bind(&ProxyTipGlobal::CallbackDetectProxy, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+}
+void ProxyTipGlobal::CallbackDetectProxy(bool connect, nim::NIMProxyDetectStep step, const std::string& json_extention)
+{
+	if (step == nim::kNIMProxyDetectStepAllComplete)
+	{
+		being_test_connect_ = false;
+		test_connect_btn_->SetEnabled(true);
+		gifanim_ctrl_->SetVisible(false);
+		SetPanelEnabled(true);
+		if (connect)
+		{
+			ShowMsgBox(GetWindow()->GetHWND(), MsgboxCallback(), L"STRID_LOGIN_FORM_DETECT_PROXY_OK");
+		}
+		else
+		{
+			ShowMsgBox(GetWindow()->GetHWND(), MsgboxCallback(), L"STRID_LOGIN_FORM_DETECT_PROXY_ERROR");
+		}
+		OnProxyTypeSelected(NULL);
+	}
+}
+void ProxyTipSub::DoInit()
+{
+	__super::DoInit();
+	use_global_ = dynamic_cast<ui::CheckBox*>(FindSubControl(L"use_global"));
+	if (use_global_ != nullptr)
+	{
+		use_global_->AttachUnSelect([this](ui::EventArgs* param){
+			FindSubControl(L"settingpanel")->SetEnabled(true);
+			OnProxyTypeSelected(nullptr);
+			proxy_setting_->SetUseGlobalSetting(false);
+			return true;
+		});
+		use_global_->AttachSelect([this](ui::EventArgs* param){
+			FindSubControl(L"settingpanel")->SetEnabled(false);
+			proxy_setting_->SetUseGlobalSetting(true);
+			return true;
+		});
+	}
+	proxy_type_comb_->SelectItem(ConvertProxyTypeToIndex(ConvertBaseProxytypeToNimProxyType(proxy_setting_->GetType())));
+	OnProxyTypeSelected(NULL);
+	addr_ctrl_->SetUTF8Text(proxy_setting_->GetHost());
+	port_ctrl_->SetUTF8Text(proxy_setting_->GetPort() == 0 ? "" : nbase::IntToString(proxy_setting_->GetPort()));
+	user_ctrl_->SetUTF8Text(proxy_setting_->GetUserName());
+	pass_ctrl_->SetUTF8Text(proxy_setting_->GetPassowrd());
+	Post2UI(ToWeakCallback([this](){		
+		use_global_->Selected(proxy_setting_->IsUseGlobalSetting(),false);
+		FindSubControl(L"settingpanel")->SetEnabled(!proxy_setting_->IsUseGlobalSetting());
+	}));	
+}
+void ProxyTipSub::ApplyProxySetting()
+{
+	nim::NIMProxyType type = ConvertIndexToProxyType(proxy_type_comb_->GetCurSel());
+	std::string host;
+	int port = 0;
+	std::string user;
+	std::string pass;
+	if (type != nim::kNIMProxyNone)
+	{
+		PTR_VOID(!addr_ctrl_->GetUTF8Text().empty() && !port_ctrl_->GetText().empty())
+			host = addr_ctrl_->GetUTF8Text();
+		nbase::StringToInt(port_ctrl_->GetUTF8Text(), &port);
+		user = user_ctrl_->IsEnabled() ? user_ctrl_->GetUTF8Text() : "";
+		pass = pass_ctrl_->IsEnabled() ? pass_ctrl_->GetUTF8Text() : "";
+	}
+	proxy_setting_->SetUseGlobalSetting(use_global_->IsSelected());
+	proxy_setting_->SetType(ConvertNimProxytypeToBaseProxyType(type));
+	proxy_setting_->SetHost(host);
+	proxy_setting_->SetPort(port);
+	proxy_setting_->SetUserName(user);
+	proxy_setting_->SetPassowrd(pass);
+}
+std::vector<std::wstring> ProxyTipGlobal::GetSupportedProxyTypeName()
+{
+	std::vector<std::wstring> ret = { L"noproxy", L"socks4proxy", L"socks4aproxy", L"socks5proxy" };
+	return ret;
+}
+std::vector<std::wstring> ProxyTipSub_VChat::GetSupportedProxyTypeName()
+{
+	std::vector<std::wstring> ret = { L"noproxy", L"socks5proxy" };
+	return ret;
+}
+std::vector<std::wstring> ProxyTipSub_Rts::GetSupportedProxyTypeName()
+{
+	std::vector<std::wstring> ret = { L"noproxy", L"socks5proxy" };
+	return ret;
+}
+std::vector<std::wstring> ProxyTipSub_Chatroom::GetSupportedProxyTypeName()
+{
+	std::vector<std::wstring> ret = { L"noproxy", L"socks4proxy", L"socks4aproxy", L"socks5proxy" };
+	return ret;
+}
+std::vector<std::wstring> ProxyTipSub_Httptool::GetSupportedProxyTypeName()
+{
+	std::vector<std::wstring> ret = { L"noproxy", L"socks4proxy", L"socks4aproxy", L"socks5proxy" };
+	return ret;
 }

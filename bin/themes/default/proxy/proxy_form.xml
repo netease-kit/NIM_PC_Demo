@@ -1,74 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window size="280,0" caption="0,0,0,34" textid="STRID_PROXY_SETTING_TITLE">
-    <Class name="MyEdit" value="width=&quot;stretch&quot; height=&quot;stretch&quot; align=&quot;vcenter&quot; margin=&quot;20,0,0,0&quot; padding=&quot;5,0,5,0&quot; font=&quot;1&quot;"/>
-    
-    <VBox bkcolor="bk_wnd_lightcolor" width="280" height="auto">
+<Window size="280,0" caption="0,0,0,34" textid="STRID_PROXY_SETTING_TITLE">    
+    <VBox bkcolor="bk_wnd_lightcolor" width="auto" minwidth="280" height="auto">
         <HBox class="caption">
             <Label class="font_title" width="stretch" name="title" valign="center" normaltextcolor="darkcolor" textid="STRID_PROXY_SETTING_TITLE"/>
             <Button class="btn_wnd_min" name="minbtn" margin="4,6,0,0"/>
             <Button class="btn_wnd_close" name="closebtn" margin="4,6,0,0"/>
-        </HBox>
-		
-		<Label textid="STRID_PROXY_TIP" font="2" normaltextcolor="link_red" width="240" margin="20,15,20,10" singleline="false"/>
-
-        <VBox name="settingpanel" width="stretch" height="auto" margin="20,10,20,20">
-            <HBox height="30">
-                <Label textid="STRID_PROXY_TYPE" name="type" valign="center" font="2"/>
-				<Control width="stretch"/>
-                <Combo class="list" name="proxytypecomb" width="160" halign="right" 
-                       bkimage="file='../public/combo/normal.png' corner='5,5,30,5'" >
-                    <ListContainerElement class="listitem" textpadding="10,1,1,1" name="noproxy" height="27" textid="STRID_PROXY_NONE"/>
-                    <ListContainerElement class="listitem" textpadding="10,1,1,1" name="httpproxy" height="27" textid="STRID_PROXY_HTTP"/>
-					<ListContainerElement class="listitem" textpadding="10,1,1,1" name="socks4proxy" height="27" textid="STRID_PROXY_SOCKS4"/>
-					<ListContainerElement class="listitem" textpadding="10,1,1,1" name="socks4aproxy" height="27" textid="STRID_PROXY_SOCKS4A"/>
-                    <ListContainerElement class="listitem" textpadding="10,1,1,1" name="socks5proxy" height="27" textid="STRID_PROXY_SOCKS5"/>	
-                </Combo>
-            </HBox>
-
-            <HBox height="30" margin="0,10,0,0">
-                <Label textid="STRID_PROXY_ADDRESS" valign="center" font="2"/>
-				<Control width="stretch"/>
-                <RichEdit class="simple input MyEdit" name="proxyaddr" width="160" halign="right"/>
-            </HBox>
-
-            <HBox height="30" margin="0,10,0,0">
-                <Label textid="STRID_PROXY_PORT" valign="center" font="2"/>
-				<Control width="stretch"/>
-                <RichEdit class="simple input MyEdit" name="proxyport" number="true" width="160" halign="right"/>
-            </HBox>
-
-            <HBox height="30" margin="0,10,0,0">
-                <Label textid="STRID_PROXY_USERNAME" valign="center" font="2"/>
-				<Control width="stretch"/>
-                <RichEdit class="simple input MyEdit" name="account" width="160" halign="right"/>
-            </HBox>
-
-            <HBox height="30" margin="0,10,0,0">
-                <Label textid="STRID_PROXY_PASSWORD" valign="center" font="2"/>
-				<Control width="stretch"/>
-                <RichEdit class="simple input MyEdit" name="password" password="true" width="160" halign="right"/>
-            </HBox>
-
-            <HBox height="30" margin="0,10,0,0" visible="false">
-                <Label textid="STRID_PROXY_DOMAIN" valign="center" font="2"/>
-				<Control width="stretch"/>
-                <RichEdit class="simple input MyEdit" name="domain" margin="6,0,0,0" width="160" halign="right"/>
-            </HBox>
-            
-            <HBox height="40" margin="0,10,0,0">
-                <Control />
-                <Control name="gifanim" width="auto" height="auto" bkimage="..\public\animation\ani_loading.gif" valign="center"/>
-                <Button class="btn_global_white_80x30" name="testconnect" margin="5,0,0,0" halign="right" valign="center"
-                        font="2" normaltextcolor="darkcolor" textid="STRID_PROXY_TEST_CONNECT"/>
-            </HBox>
-            
-            <HBox margin="0,10,0,0" height="auto">
-                <Control />
-                <Button class="btn_global_green_80x30" name="apply" textid="STRID_PROXY_APPLY" visible="false"/>
-                <Button class="btn_global_white_80x30" name="close" textid="STRING_NO_"/>
-                <Control width="10"/>
-                <Button class="btn_global_green_80x30" name="confirm" textid="STRING_OK_"/>
-            </HBox>
-        </VBox>
+        </HBox>	
+		<Box name="global_proxy" height="auto" />
+        <TileListBox name="proxys" vscrollbar="false" columns="2" itemsize="220,300" height="470" width="630" />
+		<HBox margin="0,15,10,10" halign="right" height="auto" width="auto">
+			<Button class="btn_global_white_80x30" name="close" textid="STRING_NO_"/>
+			<Button class="btn_global_green_80x30" name="confirm" textid="STRING_OK_" margin="10,0,0,0" />
+		</HBox>		
     </VBox>
 </Window>
