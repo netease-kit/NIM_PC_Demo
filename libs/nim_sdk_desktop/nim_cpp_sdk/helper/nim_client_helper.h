@@ -101,7 +101,7 @@ struct OtherClientPres
 	std::string	mac_address_;			/**< 登录设备的mac地址 */
 	std::string	device_id_;				/**< 设备id，uuid */
 	int64_t		login_time_;			/**< 本次登陆时间, 精度到ms */
-
+	std::string custom_data_;			/**< 自定义字段/
 	/** 构造函数 */
 	OtherClientPres() : login_time_(0) {}
 };

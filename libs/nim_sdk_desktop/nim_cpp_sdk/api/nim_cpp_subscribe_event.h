@@ -20,7 +20,6 @@
 */
 namespace nim
 {
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @class SubscribeEvent
   * @brief NIM 订阅事件相关接口
   */
@@ -123,7 +122,6 @@ public:
 	*/
 	static bool QuerySubscribe(int event_type, const std::list<std::string> &accid_list, const QuerySubscribeEventCallback &cb, const std::string& json_extension = "");
 };
-#endif
 
 }
 

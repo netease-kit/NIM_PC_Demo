@@ -15,6 +15,8 @@
 #include "gui/contact_select_form/contact_select_form.h"
 #include "module/online_state_event/online_state_event_util.h"
 #include "module/runtime_data/runtime_data_manager.h"
+#include "module/session/transfer_file_manager.h"
+#include "nim_p2p_develop_kit.h"
 
 using namespace ui;
 
@@ -165,6 +167,7 @@ void SessionBox::InitSessionBox()
 		FindSubControl(L"btn_image")->SetVisible(false);
 		FindSubControl(L"btn_snapchat")->SetVisible(false);
 		FindSubControl(L"btn_file")->SetVisible(false);
+		FindSubControl(L"btn_transfer_file")->SetVisible(false);
 		FindSubControl(L"btn_jsb")->SetVisible(false);
 		FindSubControl(L"btn_tip")->SetVisible(false);
 		FindSubControl(L"btn_clip")->SetVisible(false);
@@ -188,6 +191,7 @@ void SessionBox::InitSessionBox()
 	if (session_type_ == nim::kNIMSessionTypeTeam)
 	{
 		FindSubControl(L"btn_snapchat")->SetVisible(false);
+		FindSubControl(L"btn_transfer_file")->SetVisible(false);
 		InvokeGetTeamMember(); 
 		InvokeGetTeamInfo();
 	}
@@ -274,6 +278,11 @@ void SessionBox::UninitSessionBox()
 	}
 }
 
+ bool SessionBox::IsRobotSession() const
+{
+	return is_robot_session_;
+}
+
 void SessionBox::OnNotifyChangeCallback(std::string id, bool mute)
 {
 	if (session_type_ == nim::kNIMSessionTypeP2P && id == session_id_)
@@ -304,6 +313,20 @@ void SessionBox::AddNewMsg(const nim::IMMessage &msg, bool create)
 	{
 		show_time = CheckIfShowTime(last_msg_time_, msg.timetag_);
 	}
+
+	// 如果收到的消息是 P2P 传送文件消息，那么抛到注入的命令通道来执行
+	Json::Value values;
+	Json::Reader reader;
+	bool parse_success = reader.parse(msg.attach_, values);
+	bool is_transfer_file = values.isMember("type") && values["type"].asInt() == nim_comp::CustomMsgType_TransferFile;
+
+	if (msg.type_ == nim::kNIMMessageTypeCustom && parse_success && is_transfer_file)
+	{
+		QLOG_APP(L"Receive transfer file notification, command type = {0}") << values[kJsonKeyCommand].asString();
+		// 协商成功后才能收到这个自定义的传送文件请求
+		nim_p2p::NimP2PDvelopKit::GetInstance()->OnReceiveChannelCommand((RemoteFlagType)msg.sender_accid_.c_str(), msg.attach_);
+	}
+
 	ShowMsg(msg, false, show_time);
 
 	if(!IsNoticeMsg(msg))
@@ -465,6 +488,24 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 					}
 				}
 			}
+			else if (sub_type == CustomMsgType_TransferFile)
+			{
+				// 跳过一些前期协商不带 session id 和 params 属性的消息
+				if (json.isMember("session_id") && json["params"].isObject())
+				{
+					std::string transfer_file_session_id = json["session_id"].asString();
+					item = new MsgBubbleTransferFile;
+					if (!first)
+					{
+						transfer_file_bubble_list_[transfer_file_session_id] = item;
+						TransferFileManager::GetInstance()->AddItem(session_id_, transfer_file_session_id, item);
+					}
+				}
+				else
+				{
+					return nullptr;
+				}
+			}
 		}
 	}
 	else if (msg.type_ == nim::kNIMMessageTypeRobot)
@@ -526,6 +567,7 @@ void SessionBox::InvokeShowSpecifiedCountMsgs(unsigned count)
 	nim::MsgLog::QueryMsgAsync(session_id_, session_type_, count, farst_msg_time_,
 		nbase::Bind(&TalkCallback::OnQueryMsgCallback, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 }
+
 void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 {
 	int pos = msg_list_->GetScrollRange().cy - msg_list_->GetScrollPos().cy;
@@ -652,6 +694,112 @@ void SessionBox::AddWritingMsg(const nim::IMMessage &msg)
 	{
 		msg_list_->EndDown(true, false);
 	}
+}
+
+void SessionBox::TryToTransferFile(const std::wstring& src)
+{
+	received_p2p_reply_ = false;
+	transfer_file_ = src;
+
+	Json::Value json;
+	Json::FastWriter writer;
+	json[kJsonKeyCommand] = kJsonKeyTryTransferFileRequest;
+
+	nim::SysMessageSetting setting;
+	setting.need_offline_ = nim::BS_FALSE;
+
+	auto str = nim::SystemMsg::CreateCustomNotificationMsg(session_id_, nim::kNIMSysMsgTypeCustomP2PMsg, QString::GetGUID(), writer.write(json), setting);
+	nim::SystemMsg::SendCustomNotificationMsg(str);
+
+	auto closure = [this]() {
+		if (!received_p2p_reply_)
+		{
+			AddTextTip(L"对方不在线或不支持 P2P 文件传输！");
+		}
+	};
+
+	nbase::ThreadManager::PostDelayedTask(kThreadUI, ToWeakCallback(closure), nbase::TimeDelta::FromSeconds(2));
+}
+
+void SessionBox::ReplyTransferFileRequest(const std::string& sender_accid_)
+{
+	Json::Value json;
+	Json::FastWriter writer;
+	json[kJsonKeyCommand] = kJsonKeySupportedTransferFile;
+
+	nim::SysMessageSetting setting;
+	setting.need_offline_ = nim::BS_FALSE;
+
+	auto str = nim::SystemMsg::CreateCustomNotificationMsg(sender_accid_, nim::kNIMSysMsgTypeCustomP2PMsg, QString::GetGUID(), writer.write(json), setting);
+	nim::SystemMsg::SendCustomNotificationMsg(str);
+}
+
+void SessionBox::TransferFile()
+{
+	received_p2p_reply_ = true;
+
+	if (transfer_file_.empty())
+		return;
+
+	nim::IMMessage msg;
+	PackageMsg(msg);
+
+	msg.status_ = nim::kNIMMsgLogStatusSent;
+	msg.type_ = nim::kNIMMessageTypeCustom;
+	msg.local_res_path_ = nbase::UTF16ToUTF8(transfer_file_);
+
+	nim_p2p::FILE_INFO file;
+
+	nbase::PathString file_name;
+	nbase::FilePathApartFileName(transfer_file_, file_name);
+	std::wstring file_exten;
+	nbase::FilePathExtension(file_name, file_exten);
+	if (!file_exten.empty())
+		file_exten = file_exten.substr(1);
+
+
+	// 传入 SDK 使用
+	file.kFilePath = nbase::UTF16ToUTF8(transfer_file_);
+	nbase::StringReplaceAll("\\", "/", file.kFilePath);
+	// file.kFileMD5 = GetFileMD5(transfer_file_);
+	file.kFileName = nbase::UTF16ToUTF8(file_name);
+	file.kFileUserExt = nbase::UTF16ToUTF8(file_exten);
+	file.kFileSize = nbase::GetFileSize(transfer_file_);
+
+	TransferFileSessionID transfer_file_session_id = nullptr;
+	if (!msg.local_res_path_.empty() && nbase::FilePathIsExist(nbase::UTF8ToUTF16(msg.local_res_path_), false))
+	{
+		transfer_file_session_id = nim_p2p::NimP2PDvelopKit::GetInstance()->TransferFile((RemoteFlagType)session_id_.c_str(), file);
+
+		if (!transfer_file_session_id)
+		{
+			QLOG_ERR(L"Failed to transfer file to {0}") << session_id_.c_str();
+			AddTextTip(L"传送文件失败，不支持 P2P 文件传送或加载模块失败！");
+			return;
+		}
+	}
+
+	// 添加自定义类型的 sub type
+	Json::Value root;
+	Json::Value json_file_info;
+
+	json_file_info["file_name"] = file.kFileName;
+	json_file_info["file_ext"] = file.kFileUserExt;
+	json_file_info["file_size"] = file.kFileSize;
+	json_file_info["file_path"] = file.kFilePath;
+	json_file_info["file_md5"] = file.kFileMD5;
+
+	root["type"] = CustomMsgType_TransferFile;
+	root["params"]["file_info"] = json_file_info;
+	root["session_id"] = transfer_file_session_id;
+
+	// 让 msg id 与传输文件的 msg 对应
+	msg.client_msg_id_ = transfer_file_session_id;
+	msg.attach_ = root.toStyledString();
+
+	AddSendingMsg(msg);
+
+	transfer_file_.clear();
 }
 
 void SessionBox::ShowMsgWriting(const nim::IMMessage &msg)
@@ -858,6 +1006,41 @@ void SessionBox::OnRetweetResDownloadCallback(nim::NIMResCode code, const std::s
 	}
 }
 
+MsgBubbleItem* SessionBox::FindBubbleByTransferFileSID(TransferFileSessionID transfer_file_session_id)
+{
+	MsgBubbleItem* bubble = nullptr;
+
+#if 0
+	for (auto i = 0; i < msg_list_->GetCount(); i++)
+	{
+		MsgBubbleTransferFile* bubble_item = dynamic_cast<MsgBubbleTransferFile*>(msg_list_->GetItemAt(i));
+
+		if (!bubble_item)
+			continue;
+		
+		std::string session_id = bubble_item->GetTransferFileSessionId();
+		if (session_id == transfer_file_session_id)
+		{
+			bubble = bubble_item;
+			break;
+		}
+	}
+#else
+	auto bubble_iter = transfer_file_bubble_list_.find(transfer_file_session_id);
+	if (bubble_iter != transfer_file_bubble_list_.end())
+	{
+		bubble = bubble_iter->second;
+	}
+#endif
+
+	if (!bubble)
+	{
+		QLOG_ERR(L"[SessionBox::FindBubbleByTransferFileSessionId] Can not fount bubble by session id {0}") << transfer_file_session_id;
+	}
+
+	return bubble;
+}
+
 void SessionBox::SendText(const std::string &text, bool team_msg_need_ack/* = false*/)
 {
 	nim::IMMessage msg;
@@ -920,15 +1103,7 @@ void SessionBox::SendText(const std::string &text, bool team_msg_need_ack/* = fa
 				}
 				else if (ret == 2)
 				{
-					std::wstring content = L"消息含有违禁词，禁止发送";
-					nim::IMMessage notice_msg;
-					notice_msg.client_msg_id_ = nim::Tool::GetUuid();
-					notice_msg.content_ = nbase::UTF16ToUTF8(content);
-					MsgBubbleNotice* cell = new MsgBubbleNotice;
-					GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
-					msg_list_->Add(cell);
-					cell->InitControl();
-					cell->InitInfo(notice_msg, session_id_, true);
+					AddTextTip(L"消息含有违禁词，禁止发送");
 					return;
 				}
 				else if (ret == 3)
@@ -1119,10 +1294,15 @@ void SessionBox::SendSnapChat(const std::wstring &src)
 bool SessionBox::CheckFileSize(const std::wstring &src)
 {
 	int64_t sz = nbase::GetFileSize(src);
-	if (sz > LoginManager::GetInstance()->GetFileSizeLimit()*1024*1024 || sz <= 0)
+
+	int64_t p2p_file_limit = 2.0 * 1024 * 1024 * 1024;
+	int64_t nos_file_limit = LoginManager::GetInstance()->GetFileSizeLimit() * 1024 * 1024;
+
+	if (sz > (use_p2p_transfer_file_ ? p2p_file_limit : nos_file_limit) || sz <= 0)
 	{
 		return false;
 	}
+
 	return true;
 }
 
@@ -1200,11 +1380,24 @@ void SessionBox::SendTip(const std::wstring &tip)
 	msg.type_ = nim::kNIMMessageTypeTips;
 	msg.content_ = nbase::UTF16ToUTF8(tip);
 	msg.msg_setting_.need_push_ = nim::BS_FALSE;
-	msg.status_ = nim::kNIMMsgLogStatusSent;
+	msg.status_ = nim::kNIMMsgLogStatusSending;
 
 	AddSendingMsg(msg);
 	nim::Talk::SendMsg(msg.ToJsonString(true));
 }
+
+void SessionBox::AddTextTip(const std::wstring text)
+{
+	nim::IMMessage notice_msg;
+	notice_msg.client_msg_id_ = nim::Tool::GetUuid();
+	notice_msg.content_ = nbase::UTF16ToUTF8(text);
+	MsgBubbleNotice* cell = new MsgBubbleNotice;
+	GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
+	msg_list_->Add(cell);
+	cell->InitControl();
+	cell->InitInfo(notice_msg, session_id_, true);
+}
+
 void SessionBox::SendRefusedTip(const std::wstring &tip)
 {
 	nim::IMMessage msg;
@@ -1259,10 +1452,10 @@ void SessionBox::ReSendMsg(nim::IMMessage &msg)
 
 void SessionBox::PackageMsg(nim::IMMessage &msg)
 {
-	msg.session_type_			= session_type_;
-	msg.receiver_accid_		= session_id_;
-	msg.sender_accid_	= LoginManager::GetInstance()->GetAccount();
-	msg.client_msg_id_   = QString::GetGUID();
+	msg.session_type_		= session_type_;
+	msg.receiver_accid_		= session_id_; 
+	msg.sender_accid_		= LoginManager::GetInstance()->GetAccount();
+	msg.client_msg_id_		= QString::GetGUID();
 	msg.msg_setting_.resend_flag_ = nim::BS_FALSE;
 
 	//base获取的时间单位是s，服务器的时间单位是ms
@@ -1548,8 +1741,10 @@ void SessionBox::SetOnlineState(const EventDataEx &data)
 
 void SessionBox::SetTitleName(const std::wstring &name)
 {
-	label_title_->SetText(name);
-	session_form_->SetMergeItemName(nbase::UTF8ToUTF16(session_id_), name);
+	if (label_title_)
+		label_title_->SetText(name);
+	if (session_form_)
+		session_form_->SetMergeItemName(nbase::UTF8ToUTF16(session_id_), name);
 
 	if (taskbar_item_)
 		taskbar_item_->SetTaskbarTitle(name);
@@ -1566,6 +1761,11 @@ void SessionBox::SetHeaderPhoto(const std::wstring &photo)
 
 void SessionBox::SetTaskbarTitle(const std::wstring &title)
 {
+	if (session_form_ == nullptr)
+	{
+		return;
+	}
+		
 	if (session_form_->GetSelectedSessionBox() == this)
 	{
 		session_form_->SetTaskbarTitle(title);
@@ -1629,6 +1829,7 @@ void SessionBox::OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeT
 				FindSubControl(L"btn_image")->SetVisible(false);
 				FindSubControl(L"btn_snapchat")->SetVisible(false);
 				FindSubControl(L"btn_file")->SetVisible(false);
+				FindSubControl(L"btn_transfer_file")->SetVisible(false);
 				FindSubControl(L"btn_jsb")->SetVisible(false);
 				FindSubControl(L"btn_tip")->SetVisible(false);
 				FindSubControl(L"btn_clip")->SetVisible(false);

@@ -46,7 +46,11 @@ void SessionBox::OnGetTeamInfoCallback(const std::string& tid, const nim::TeamIn
 
 	if (team_info_.GetType() == nim::kNIMTeamTypeAdvanced)
 	{
-		session_form_->AdjustFormSize();
+		if (session_form_)
+		{
+			session_form_->AdjustFormSize();
+		}
+		
 		Json::Value json;
 		if (StringToJson(team_info_.GetAnnouncement(), json) && json.isArray())
 		{
@@ -489,6 +493,7 @@ void SessionBox::SetTeamMuteUI(bool mute)
 	FindSubControl(L"btn_face")->SetEnabled(!mute);
 	FindSubControl(L"btn_image")->SetEnabled(!mute);
 	FindSubControl(L"btn_file")->SetEnabled(!mute);
+	FindSubControl(L"btn_transfer_file")->SetEnabled(!mute);
 	FindSubControl(L"btn_jsb")->SetEnabled(!mute);
 	FindSubControl(L"btn_tip")->SetEnabled(!mute);
 	FindSubControl(L"btn_clip")->SetEnabled(!mute);
@@ -607,7 +612,11 @@ void SessionBox::UpdateUnreadCount(const std::string &msg_id, const int unread)
 
 void SessionBox::InvokeSetRead(const std::list<nim::IMMessage> &msgs)
 {
-	nim::Team::TeamMsgAckRead(session_id_, msgs, nim::Team::TeamEventCallback());
+	//nim::Team::TeamMsgAckRead(session_id_, msgs, nim::Team::TeamEventCallback());
+	nim::Team::TeamMsgAckRead(session_id_, msgs, [](const nim::TeamEvent& team_event) {
+		auto tt = team_event.attach_;
+		tt.empty();
+	});
 	new_msgs_need_to_send_mq_.clear();
 }
 

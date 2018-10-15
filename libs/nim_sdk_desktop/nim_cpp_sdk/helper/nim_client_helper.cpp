@@ -24,6 +24,7 @@ bool ParseOtherClientsPres(const Json::Value array_objs, std::list<OtherClientPr
 			pres.mac_address_ = array_objs[index][kNIMPresMac].asString();
 			pres.device_id_ = array_objs[index][kNIMPresDeviceID].asString();
 			pres.login_time_ = array_objs[index][kNIMPresLoginTime].asInt64();
+			pres.custom_data_ = array_objs[index][kNIMPresCustomTag].asString();
 			outs.push_back(pres);
 		}
 		return true;

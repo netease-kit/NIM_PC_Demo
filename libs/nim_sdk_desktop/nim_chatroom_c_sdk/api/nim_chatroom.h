@@ -334,7 +334,6 @@ NIM_SDK_DLL_API void nim_chatroom_queue_poll_async(const int64_t room_id, const 
   */
 NIM_SDK_DLL_API void nim_chatroom_queue_list_async(const int64_t room_id, const char *json_extension, nim_chatroom_queue_list_cb_func cb, const void *user_data);
     
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn void nim_chatroom_queue_header_async(const int64_t room_id, const char *json_extension, nim_chatroom_queue_header_cb_func cb, const void *user_data)
   * 查看麦序头元素 
   * @param[in] room_id				聊天室ID
@@ -344,7 +343,7 @@ NIM_SDK_DLL_API void nim_chatroom_queue_list_async(const int64_t room_id, const 
   * @return void 无返回值
   */
 NIM_SDK_DLL_API void nim_chatroom_queue_header_async(const int64_t room_id, const char *json_extension, nim_chatroom_queue_header_cb_func cb, const void *user_data);
-
+   
 /** @fn void nim_chatroom_queue_drop_async(const int64_t room_id, const char *json_extension, nim_chatroom_queue_drop_cb_func cb, const void *user_data)
   * (聊天室管理员权限)删除麦序队列
   * @param[in] room_id				聊天室ID
@@ -382,7 +381,21 @@ NIM_SDK_DLL_API char *nim_chatroom_query_all_robots_block(const int64_t room_id,
   * @return char 机器人信息 json string
   */
 NIM_SDK_DLL_API char *nim_chatroom_query_robot_by_accid_block(const int64_t room_id, const char *accid, const char *json_extension);
-#endif
+
+/** @fn void nim_chatroom_batch_upate_async(const int64_t room_id, const char *element_info_json_str, bool need_notify, const char *notify_ext, const char *json_extension, nim_chatroom_batch_update_cb cb, const void *user_data)
+* 批量更新队列信息
+* @param[in] room_id				聊天室ID
+* @param[in] element_info_json_str	批量更新元素
+* @param[in] need_notify			是否聊天室内广播通知
+* @param[in] notify_ext			通知中的自定义字段，长度限制2048
+* @param[in] json_extension		json扩展参数（备用，目前不需要）
+* @param[in] cb					回调函数, 定义见nim_chatroom_def.h
+* @param[in] user_data			APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+*/
+
+NIM_SDK_DLL_API void nim_chatroom_batch_upate_async(const int64_t room_id, const char *element_info_json_str, bool need_notify, const char *notify_ext, const char *json_extension, nim_chatroom_batch_update_cb cb, const void *user_data);
+
 #ifdef __cplusplus
 };
 #endif //__cplusplus

@@ -57,6 +57,15 @@ std::wstring QPath::GetNimAppDataDir(const std::wstring& app_data_dir)
 	return dir;
 }
 
+void QPath::AddNewEnvironment(const std::wstring& directory)
+{
+	TCHAR path_environment[4096];
+	GetEnvironmentVariable(L"PATH", path_environment, 4096);
+	std::wstring new_path = directory + L";";
+	std::wstring new_environment = new_path + path_environment;
+	SetEnvironmentVariable(L"PATH", new_environment.c_str());
+}
+
 //
 std::map<std::wstring,std::wstring> QCommand::key_value_;
 

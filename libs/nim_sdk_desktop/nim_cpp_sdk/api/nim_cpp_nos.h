@@ -210,6 +210,8 @@ public:
 	* @return void 无返回值
 	*/
 	static void UnregNosCb();
+
+	static void SetSupportQuickTrans(bool bquick);
 };
 
 } 

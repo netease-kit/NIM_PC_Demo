@@ -237,6 +237,17 @@ typedef void (*nim_chatroom_queue_init_cb_func)(int64_t room_id, int error_code,
   */
 typedef void (*nim_chatroom_query_robots_cb_func)(int rescode, const char *result, const char *json_extension, const void *user_data);
 
+/** @typedef void (*nim_chatroom_batch_update_cb)(int room_id, const char *result, const char *json_extension, const void *user_data)
+* 批量更新成员列表信息函数
+* @param[out] room_id			聊天室ID
+* @param[out] error_code		错误码
+* @param[out] result			不存在的元素列表 Json string array
+* @param[out] json_extension	json扩展数据（备用）
+* @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+* @return void 无返回值
+*/
+typedef void(*nim_chatroom_batch_update_cb)(int64_t room_id,int error_code,const char *result, const char *json_extension, const void *user_data);
+
 /** @name 进入聊天室的可选填信息Json Keys
 * @{
 */
@@ -268,12 +279,10 @@ static const char *kNIMChatRoomMsgKeyResendFlag		= "resend_flag";		/**< int,消�
 static const char *kNIMChatRoomMsgKeyExt			= "ext";				/**< string, 第三方扩展字段, 长度限制4096, 必须为可以解析为Json的非格式化的字符串*/
 static const char *kNIMChatRoomMsgKeyAntiSpamEnable	= "anti_spam_enable";	/**< int, 是否需要过易盾反垃圾, 0:不需要,1:需要, 默认0 */
 static const char *kNIMChatRoomMsgKeyAntiSpamContent= "anti_spam_content";	/**< string, (可选)开发者自定义的反垃圾字段, 长度限制2048 */
-static const char *kNIMChatRoomMsgKeyAntiSpamBizId = "anti_spam_business_id";	/**< string,  (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+static const char *kNIMChatRoomMsgKeyAntiSpamBizId  = "anti_spam_business_id";	/**< string,  (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
+static const char *kNIMChatRoomMsgKeyHistorySave    = "history_save";		/**< int,(可选)该消息是否存储云端历史,可选，0:不是,1:是, 默认1 */
 static const char *kNIMChatRoomMsgKeyAntiSpamUsingYiDun = "anti_spam_using_yidun";	/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
-static const char *kNIMChatRoomMsgKeyHistorySave	= "history_save";		/**< int,(可选)该消息是否存储云端历史,可选，0:不是,1:是, 默认1 */
 static const char *kNIMChatRoomMsgKeyBody			= "body";				/**< string,(可选)文本消息内容（聊天室机器人文本消息） */
-#endif NIMAPI_UNDER_WIN_DESKTOP_ONLY
 //以下定义对于客户端只读
 static const char *kNIMChatRoomMsgKeyRoomID			= "room_id";			/**< long, 消息所属的聊天室id,服务器填写,发送方不需要填写 */
 static const char *kNIMChatRoomMsgKeyFromAccount	= "from_id";			/**< string, 消息发送者的账号,服务器填写,发送方不需要填写 */
@@ -287,6 +296,7 @@ static const char *kNIMChatRoomMsgKeyHighPriorityFlag = "high_priority_flag"; /*
 //本地定义
 static const char *kNIMChatRoomMsgKeyLocalFilePath	= "local_res_path";		/**< string, 暂时不用,多媒体消息资源本地绝对路径,SDK本地维护,发送多媒体消息时必填 */
 static const char *kNIMChatRoomMsgKeyLocalResId		= "res_id";				/**< string, 暂时不用,多媒体资源id,发送方选填,接收方收到的是客户端消息id */
+static const int iNIMMaxBatchQueue = 100;								/*< 聊天室更新的批量最大数*/
 /** @}*/ //消息结构 Json Keys
 
 /** @enum NIMChatRoomMsgType 聊天室消息类型*/
@@ -434,7 +444,7 @@ static const char *kNIMChatRoomGetMembersKeyLimit	= "limit";	/**<int 数量*/
 static const char *kNIMChatRoomGetMsgHistoryKeyStartTime = "start";		/**<long 开始时间,单位毫秒 */
 static const char *kNIMChatRoomGetMsgHistoryKeyLimit	 = "limit";		/**<int 本次返回的消息数量*/
 static const char *kNIMChatRoomGetMsgHistoryKeyReverse	 = "reverse";	/**<boolean: true:按时间正序起查，正序排列,false:按时间逆序起查，逆序排列*/
-static const char *kNIMChatRoomGetMsgHistoryKeyMsgtypes = "msgtypes";	/**<array:数组 要查询的消息类型，取值NIMChatRoomMsgType中所枚举类型*/
+static const char *kNIMChatRoomGetMsgHistoryKeyMsgtypes  = "msgtypes";	/**<array:数组 要查询的消息类型，取值NIMChatRoomMsgType中所枚举类型*/
 /** @}*/ //分获取历史消息条件Keys
 
 /** @name 设定聊天室成员标记身份条件Keys
@@ -483,7 +493,7 @@ static const char *kNIMChatRoomNotificationQueueChangedType_PARTCLEAR = "PARTCLE
 /** @name 聊天室通知 麦序队列变更通知扩展字段queueChange keys
   * @{
   */
-static const char *kNIMChatRoomNotificationQueueChangedKeyType		= "_e";		/**<string 变更类型，目前有OFFER,POLL,DROP三个类型*/
+static const char *kNIMChatRoomNotificationQueueChangedKeyType		= "_e";		/**<string 变更类型，目前有OFFER,POLL,DROP,BATCH_UPDATE 类型*/
 static const char *kNIMChatRoomNotificationQueueChangedKeyKey		= "key";	/**<string 变更元素的key */
 static const char *kNIMChatRoomNotificationQueueChangedKeyValue		= "content";/**<string 变更元素的内容 */
 /** @}*/ //聊天室通知 麦序队列变更通知扩展字段queueChange keys
@@ -492,12 +502,10 @@ static const char *kNIMChatRoomNotificationQueueChangedKeyValue		= "content";/**
 * @ 当type为"PARTCLEAR"时，一般情况下只会有_e和kvObject字段，不会有key和content字段
 * @{
 */
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 static const char *kNIMChatRoomNotificationQueueBatchChangedKeyType = "_e";		/**<string 变更类型，目前有OFFER,POLL,DROP,PARTCLEAR四个类型*/
 static const char *kNIMChatRoomNotificationQueueBatchChangedKeyKey = "key";	/**<string 变更元素的key */
 static const char *kNIMChatRoomNotificationQueueBatchChangedKeyValue = "content";/**<string 变更元素的内容 */
 static const char *kNIMChatRoomNotificationQueueBatchChangedKeyObject = "kvObject";/**<map 变更元素的内容 */
-#endif
 /** @}*/ //聊天室通知 麦序队列中有批量变更通知扩展字段queueBatchChange keys
 
 /** @enum NIMChatRoomNotificationId 聊天室通知类型 {"data" : {"ext":"", "operator":"", "opeNick":"", "tarNick":["",...], "target":["",...], ...}, "id": 301}*/
@@ -522,9 +530,7 @@ enum NIMChatRoomNotificationId
 	kNIMChatRoomNotificationIdQueueChanged		= 317, /**< 麦序队列中有变更 "ext" : {"_e":"OFFER", "key":"element_key", "content":"element_value"}*/
 	kNIMChatRoomNotificationIdRoomMuted			= 318, /**< 聊天室被禁言了,只有管理员可以发言,其他人都处于禁言状态*/
 	kNIMChatRoomNotificationIdRoomDeMuted		= 319, /**< 聊天室解除全体禁言状态*/
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	kNIMChatRoomNotificationIdQueueBatchChanged = 320, /**< 麦序队列中有批量变更，发生在元素提交者离开聊天室或者从聊天室异常掉线时*/	
-#endif
 };
 
 /** @enum NIMChatRoomLinkCondition 聊天室链接情况，一般都是有本地网路情况引起 */

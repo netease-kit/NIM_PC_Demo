@@ -94,7 +94,6 @@ public:
 	*/
 	static bool GetAudioTextAsync(const AudioInfo& audio_info, const GetAudioTextCallback& cb, const std::string& json_extension = "");
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/** @fn void FilterClientAntispam(const std::string& text, const std::string& replace_str, const std::string& lib_name, const FilterClientAntispamCallback& callback);
 	* 客户端本地反垃圾
 	* @param[in] text 文本内容，UTF-8
@@ -105,7 +104,7 @@ public:
 	* @note 回调函数ret 1：敏感词已被替换；2：含有敏感词不允许发送；3：需要将内容设置在消息结构的反垃圾字段里，由服务器过滤
 	*/
 	static void FilterClientAntispam(const std::string& text, const std::string& replace_str, const std::string& lib_name, const FilterClientAntispamCallback& callback);
-#endif
+
 };
 
 } 

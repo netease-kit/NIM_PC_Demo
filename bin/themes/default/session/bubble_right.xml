@@ -3,7 +3,6 @@
     <ListContainerElement height="auto">
         <VBox height="auto">
             <Label name="msg_time" margin="0,0,0,10" halign="center" normaltextcolor="lightcolor" textid="STRID_SESSION_MSG_TIME"/>
-
             <HBox height="auto">
                 <VBox height="auto">
                     <Label name="sender_name" margin="0,0,0,5" halign="right" font="2" normaltextcolor="lightcolor"/>
@@ -18,13 +17,11 @@
                             <Button name="status_reload" valign="center" cursortype="hand" font="24" normaltextcolor="link_green" textid="STRID_SESSION_REDOWNLOAD" visible="false"/>
                             <Button name="status_read_count" valign="center" cursortype="hand" font="24" normaltextcolor="link_green" visible="false"/>                           
                             <Label name="status_load_failed" valign="center" font="24" normaltextcolor="link_red" textid="STRID_SESSION_DOWNLOAD_FAIL" visible="false"/>
-							
-                            <Label name="status_receipt" valign="center" font="1" textid="STRID_SESSION_READ" visible="false"/>						
+                            <Label name="status_receipt" valign="center" font="1" textid="STRID_SESSION_READ" visible="false"/>	
                         </Box>
                         <Box name="BubbleBox" width="auto" height="auto"/>
                     </HBox>
                 </VBox>
-                
                 <Box name="header_panel" width="auto" height="auto" >
                     <Button name="msg_header_button" width="38" height="38" borderround="38,38,38,38" margin="1,1,0,0" cursortype="hand" forenormalimage="../session/header.png"/>
                     <Button class="icon_headimage_mask_40x40" name="head_image_mask" mouse="false"/>

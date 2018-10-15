@@ -776,7 +776,6 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 		room_mute_ = notification.id_ == kNIMChatRoomNotificationIdRoomMuted;
 		AddNotify(str, is_history, first_msg_each_batch);
 	}
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	if (notification.id_ == kNIMChatRoomNotificationIdQueueBatchChanged)
 	{
 		std::string str;
@@ -792,7 +791,6 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 				AddNotify(nbase::UTF8ToUTF16(str), is_history, first_msg_each_batch);
 		}
 	}
-#endif
 	if (!notification.ext_.empty())
 	{
 		std::string toast = nbase::StringPrintf("notification_id:%d, from_nick:%s(%s), notify_ext:%s", notification.id_, notification.operator_nick_.c_str(), notification.operator_id_.c_str(), notification.ext_.c_str());

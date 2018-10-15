@@ -63,10 +63,30 @@ private:
 	* @return bool 返回值true: 缩略图存在且完好， false: 缩略图不存在或图片有错误
 	*/
 	bool CheckThumbImageBubble();
+	/**
+	* 使用系统缺省设置的播放器播放视频文件
+	* @return void 无返回值
+	*/
+	void PlayVideo();
+	/**
+	* 使下载视频文件回调
+	* @param[in] res_code 返回码
+	* @param[in] file_path 文件下载保存的路径
+	* @param[in] call_id 会话id（好友id或群id）
+	* @param[in] cid 消息id
+	* @return void	无返回值
+	*/
+	void OnVideoDownLoadResult(nim::NIMResCode res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id);
+	/**
+	* 使下载视频文件进度回调
+	* @return void 无返回值
+	*/
+	void OnVideoDownLoadProgress(int64_t completed_size, int64_t file_size);
 protected:
 	ui::ButtonBox*	msg_video_;
 	ui::Control*	image_;
-
+	ui::Label * prog_download_;
+	ui::Box * prog_download_panel_;
 	std::wstring	thumb_;
 	std::wstring	path_;
 	bool			thumb_checked_;

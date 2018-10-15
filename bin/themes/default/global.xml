@@ -186,6 +186,12 @@
     <TextColor name="exit_tip_bk" value="#ffdce9f3"/>
     <TextColor name="exit_room_name_color" value="#ff909ead"/>
 
+	<!---->
+	<TextColor name="bk_local_video_player" value="#ff222436"/>
+	<TextColor name="bk_slider_duration" value="#8cffffff"/>
+	<TextColor name="bk_slider_duration_up" value="#ffef5848"/>
+	<TextColor name="bk_video_download" value="#ff1b1d2d"/>
+	
     <!--字体大小-->
     <Class name="font_title" value="font=&quot;2&quot;" />
 

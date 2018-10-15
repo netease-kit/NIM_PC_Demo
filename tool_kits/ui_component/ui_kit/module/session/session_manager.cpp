@@ -93,6 +93,18 @@ void SessionManager::AddNewMsg(const nim::IMMessage &msg)
 		}
 	}
 
+	// 不播放 P2P 传送文件时自定义协商消息
+	if (msg.type_ == nim::kNIMMessageTypeCustom)
+	{
+		Json::Reader reader;
+		Json::Value values;
+
+		if (reader.parse(msg.attach_, values) && values.isMember(kJsonKeyCommand))
+		{
+			msg_notify = values[kJsonKeyCommand].asString() == kJsonKeyTransferFileRequest;
+		}
+	}
+
 	if (session_box)
 	{
 		session_box->AddNewMsg(msg, create);

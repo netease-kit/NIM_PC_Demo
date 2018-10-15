@@ -162,7 +162,7 @@ private:
 	//ui::Button*		file_save_;
 	ui::Button*		file_open_;
 	ui::Button*		file_openducu_;
-	ui::Button*		file_cancel_;
+	ui::Button*		file_pause_;
 	ui::Button*		file_redl_;
 	ui::Button*		file_reup_;
 	bool			loading_;

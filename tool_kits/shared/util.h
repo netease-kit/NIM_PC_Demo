@@ -19,7 +19,8 @@ public:
 	static std::wstring GetAppPath(); //获取exe所在目录，最后有"\\"
 	static std::wstring GetUserAppDataDir(const std::string& app_account);
 	static std::wstring GetLocalAppDataDir();
-	static std::wstring GetNimAppDataDir(const std::wstring& app_data_dir); // "...Local\\Netease\\Nim\\"
+	static std::wstring GetNimAppDataDir(const std::wstring& app_data_dir);  // "...Local\\Netease\\Nim\\"
+	static void			AddNewEnvironment(const std::wstring& directory); // 添加一个路径到 exe 的环境变量
 };
 
 class QCommand

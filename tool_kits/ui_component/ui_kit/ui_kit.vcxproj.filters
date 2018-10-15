@@ -157,6 +157,9 @@
     <Filter Include="module\subscribe_event">
       <UniqueIdentifier>{9d182767-6a6c-4456-a818-a099ba4c461a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="callback\p2p">
+      <UniqueIdentifier>{b151b74c-2f52-420c-b092-13852d31b38c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -524,6 +527,15 @@
     </ClInclude>
     <ClInclude Include="gui\plugins\session\session_plugin_icon.h">
       <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="callback\p2p\p2p_callback.h">
+      <Filter>callback\p2p</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_transferfile.h">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClInclude>
+    <ClInclude Include="module\session\transfer_file_manager.h">
+      <Filter>module\session</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -898,6 +910,15 @@
     </ClCompile>
     <ClCompile Include="gui\plugins\session\session_plugin_icon.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="callback\p2p\p2p_callback.cpp">
+      <Filter>callback\p2p</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_transferfile.cpp">
+      <Filter>gui\session\control\bubbles</Filter>
+    </ClCompile>
+    <ClCompile Include="module\session\transfer_file_manager.cpp">
+      <Filter>module\session</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

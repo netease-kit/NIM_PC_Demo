@@ -179,32 +179,11 @@ NIM_SDK_DLL_API void nim_client_set_multiport_push_config(const char *switch_con
   */
 NIM_SDK_DLL_API void nim_client_get_multiport_push_config(const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
 
-#ifndef NIMAPI_UNDER_WIN_DESKTOP_ONLY
-/** @fn nim_client_set_dnd_config(const char* cfg_json, const char *json_extension, nim_client_dnd_cb_func cb, const void *user_data);
-* (PC SDK该接口无效)ios 免打扰设置
-* @param[in] cfg_json 免打扰设置
-* @param[in] json_extension json扩展参数（备用，目前不需要）
-* @param[in] cb 操作结果的回调函数
-* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
-* @return void 无返回值 通过注册nim_client_reg_kickout_other_client_cb回调得到结果
+/** @fn char* nim_client_version()
+* 获取NIM SDK 版本号
+* @return const char* const 版本号
 */
-NIM_SDK_DLL_API void nim_client_set_dnd_config(const char* cfg_json, const char *json_extension, nim_client_dnd_cb_func cb, const void *user_data);
-
-/** @fn nim_client_get_dnd_config(nim_client_dnd_cb_func cb, const void *user_data);
-* (PC SDK该接口无效)获取ios 免打扰设置
-* @param[in] cb 操作结果的回调函数
-* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
-* @return void 无返回值 通过注册nim_client_reg_kickout_other_client_cb回调得到结果
-*/
-NIM_SDK_DLL_API void nim_client_get_dnd_config(nim_client_dnd_cb_func cb, const void *user_data);
-
-/** @fn const char * nim_tool_get_version()
-* (PC SDK该接口无效)获取SDK 版本号
-* @return const char * SDK 版本号
-*/
-NIM_SDK_DLL_API const char* nim_client_get_version();
-
-#endif
+NIM_SDK_DLL_API const char* const nim_client_version();
 
 #ifdef __cplusplus
 };

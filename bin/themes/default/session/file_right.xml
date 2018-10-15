@@ -22,7 +22,7 @@
 				<Button name="file_saveas" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>
 				<Button name="file_open" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>
 				<Button name="file_opendocu" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>
-				<Button name="file_cancel" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>
+				<Button name="file_pause" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>
 				<Button name="file_reup" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>
 				<Button name="file_redl" halign="right" valign="center" margin="0,0,12,0" cursortype="hand" font="1" normaltextcolor="btn_green" visible="false"/>					
 			</HBox>

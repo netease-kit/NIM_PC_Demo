@@ -674,6 +674,11 @@ namespace nim_comp
 		}
 	}
 
+	void VideoManager::SetVideoQuality(int video_quality)
+	{
+		video_quality_ = video_quality;
+		nim::VChat::SetVideoQuality(video_quality_);
+	}
 
 	void VideoManager::StartDevice(nim::NIMDeviceType type, std::string device_path, DeviceSessionType session_type)
 	{

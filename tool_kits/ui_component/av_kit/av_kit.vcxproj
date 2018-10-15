@@ -94,7 +94,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
@@ -103,8 +103,8 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\libs\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>jsoncpp_d.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\libs\nls_play\libs\x86\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>jsoncpp_d.lib;nls_play_libyuv_d.lib;nls_play_NELivePlayer.lib</AdditionalDependencies>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -115,7 +115,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
@@ -140,7 +140,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
@@ -151,10 +151,10 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>jsoncpp.lib</AdditionalDependencies>
+      <AdditionalDependencies>jsoncpp.lib;nls_play_libyuv.lib;nls_play_NELivePlayer.lib</AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\libs\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\libs\nls_play\libs\x86\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -167,7 +167,7 @@
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
@@ -189,6 +189,8 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="callback\vchat\vchat_callback.h" />
+    <ClInclude Include="gui\local_video_player\controls\ui_video_player_bitmap_control.h" />
+    <ClInclude Include="gui\local_video_player\local_video_player_form.h" />
     <ClInclude Include="gui\video\helper\colorbalance.h" />
     <ClInclude Include="gui\video\helper\screen_capture.h" />
     <ClInclude Include="gui\video\helper\smooth.h" />
@@ -210,6 +212,9 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="callback\vchat\vchat_callback.cpp" />
+    <ClCompile Include="gui\local_video_player\controls\ui_video_player_bitmap_control.cpp" />
+    <ClCompile Include="gui\local_video_player\local_video_player_form.cpp" />
+    <ClCompile Include="gui\local_video_player\local_video_player_form_ui.cpp" />
     <ClCompile Include="gui\video\helper\colorbalance.cpp" />
     <ClCompile Include="gui\video\helper\screen_capture.cpp" />
     <ClCompile Include="gui\video\helper\smooth.cpp" />

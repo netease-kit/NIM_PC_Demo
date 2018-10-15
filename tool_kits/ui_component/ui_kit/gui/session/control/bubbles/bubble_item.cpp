@@ -2,8 +2,10 @@
 #include "shared/ui/ui_menu.h"
 #include "gui/main/control/session_item.h"
 #include "gui/profile_form/profile_form.h"
+#include "gui/session/session_box.h"
 #include "callback/session/session_callback.h"
 #include "nim_cpp_team.h"
+#include "bubble_audio.h"
 using namespace ui;
 
 namespace nim_comp
@@ -281,7 +283,7 @@ void MsgBubbleItem::PopupMenu(bool copy, bool recall, bool retweet/* = true*/)
 	
 	CMenuElementUI* transform = (CMenuElementUI*)pMenu->FindControl(L"transform");
 	transform->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
-	transform->SetVisible(typeid(*this) == typeid(MsgBubbleAudio));
+	transform->SetVisible(dynamic_cast<MsgBubbleAudio*>(this) != nullptr);
 
 	CMenuElementUI* rec = (CMenuElementUI*)pMenu->FindControl(L"recall");
 	rec->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
@@ -289,7 +291,7 @@ void MsgBubbleItem::PopupMenu(bool copy, bool recall, bool retweet/* = true*/)
 
 	CMenuElementUI* ret = (CMenuElementUI*)pMenu->FindControl(L"retweet");
 	ret->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
-	ret->SetVisible(retweet);
+	ret->SetVisible(retweet && IsShowRetweetButton());
 
 	pMenu->Show();
 }
@@ -352,4 +354,20 @@ bool MsgBubbleItem::IsShowRecallButton()
 	}
 	return ret;
 }
+
+bool MsgBubbleItem::IsShowRetweetButton()
+{	
+	ui::Box* parent = this;
+	do 
+	{
+		if (dynamic_cast<SessionBox*>(parent) == nullptr)
+			parent = parent->GetParent();
+		else
+			break;
+	} while (parent != nullptr);
+	if (parent != nullptr)
+		return !dynamic_cast<SessionBox*>(parent)->IsRobotSession();
+	return true;
+}
+
 }

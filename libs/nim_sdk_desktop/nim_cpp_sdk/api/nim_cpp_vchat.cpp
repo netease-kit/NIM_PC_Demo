@@ -36,6 +36,7 @@ typedef unsigned char(*nim_vchat_get_audio_volumn)(bool capture);
 typedef void(*nim_vchat_set_audio_input_auto_volumn)(bool auto_volumn);
 typedef bool(*nim_vchat_get_audio_input_auto_volumn)();
 typedef void(*nim_vchat_set_audio_process_info)(bool aec, bool ns, bool vad);
+//typedef void(*nim_vchat_set_audio_howling_suppression)(bool work);
 
 //设置回掉
 typedef void(*nim_vchat_set_cb_func)(nim_vchat_cb_func cb, const void *user_data);

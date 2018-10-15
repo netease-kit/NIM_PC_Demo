@@ -154,12 +154,10 @@ void ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info)
 	team_info.SetInviteMode(team_info_json[nim::kNIMTeamInfoKeyInviteMode].asInt() == 0 ? kNIMTeamInviteModeManager : kNIMTeamInviteModeEveryone);
 	team_info.SetUpdateInfoMode(team_info_json[nim::kNIMTeamInfoKeyUpdateInfoMode].asInt() == 0 ? kNIMTeamUpdateInfoModeManager : kNIMTeamUpdateInfoModeEveryone);
 	team_info.SetUpdateCustomMode(team_info_json[nim::kNIMTeamInfoKeyUpdateCustomMode].asInt() == 0 ? kNIMTeamUpdateCustomModeManager : kNIMTeamUpdateCustomModeEveryone);
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	if (team_info_json.isMember(nim::kNIMTeamInfoKeyMuteAll) && team_info_json[nim::kNIMTeamInfoKeyMuteAll].asInt() == 1)
 		team_info.SetMute(kNIMTeamMuteTypeNomalMute);
 	else
 		team_info.SetMute((NIMTeamMuteType)team_info_json[nim::kNIMTeamInfoKeyMuteType].asUInt());
-#endif
 }
 
 bool ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info)

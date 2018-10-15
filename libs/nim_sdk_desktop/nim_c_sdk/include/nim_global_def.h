@@ -40,12 +40,6 @@ enum NIMSDKLogLevel
 	kNIMSDKLogLevelPro = 6,	/**< SDK调试过程级别Log，更加详细，更有利于开发调试*/
 };
 
-/** @enum NIMSDKException 异常 */
-enum NIMSDKException
-{
-	kNIMSDKExceptionSpaceEmpty = 1,	/**< 当前数据目录所在盘符空间紧张或用完, log: {"free_space" : %lf, "message":""}, free_space单位M*/
-};
-
 /** @typedef void (*nim_sdk_log_cb_func)(int log_level, const char *log, const void *user_data)
 * 输出sdk log回调
 * @param[out] log_level log级别，见NIMSDKLogLevel
@@ -55,6 +49,11 @@ enum NIMSDKException
 */
 typedef void(*nim_sdk_log_cb_func)(int log_level, const char *log, const void *user_data);
 
+/** @enum NIMSDKException 异常 */
+enum NIMSDKException
+{
+	kNIMSDKExceptionSpaceEmpty = 1,	/**< 当前数据目录所在盘符空间紧张或用完, log: {"free_space" : %lf, "message":""}, free_space单位M*/
+};
 /** @typedef void (*nim_sdk_exception_cb_func)(enum NIMSDKException exception, const char *log, const void *user_data)
 * 输出当前环境异常回调
 * @param[out] exception 见NIMSDKException
@@ -63,6 +62,24 @@ typedef void(*nim_sdk_log_cb_func)(int log_level, const char *log, const void *u
 * @return void 无返回值
 */
 typedef void(*nim_sdk_exception_cb_func)(enum NIMSDKException exception, const char *log, const void *user_data);
+
+/** @name 查询SDK文件缓存信息回调info结构定义
+  * @{
+  */
+static const char *kNIMCacheFileType			= "file_type";			/**< string,文件类型 */
+static const char *kNIMCacheFileCount			= "file_count";			/**< int,文件数量 */
+static const char *kNIMCacheFilePath			= "file_path";			/**< string,文件所在文件夹路径 */
+static const char *kNIMCacheFileTotalSize		= "total_size";			/**< int64,文件总大小KB */
+/** @}*/ //查询SDK文件缓存信息回调info结构定义
+
+/** @name 查询SDK文件缓存信息文件类型file_type
+  * @{
+  */
+static const char *kNIMCacheFileOther			= "res";			/**< 杂项文件缓存 */
+static const char *kNIMCacheFileImage			= "image";			/**< 图片消息缓存 */
+static const char *kNIMCacheFileAudio			= "audio";			/**< 语音消息缓存 */
+static const char *kNIMCacheFileVideo			= "video";			/**< 视频消息缓存 */
+/** @}*/ //查询SDK文件缓存信息文件类型file_type
 
 /** @typedef void (*nim_sdk_get_cache_file_info_cb_func)(const char *info, const void *user_data);
 * 获取sdk缓存文件信息回调
@@ -88,24 +105,12 @@ typedef void(*nim_sdk_del_cache_file_cb_func)(enum NIMResCode rescode, const voi
 */
 typedef void(*nim_sdk_feedback_cb_func)(enum NIMResCode rescode, const void *user_data);
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
 /** @enum NIMProxyDetectStep 代理测试步骤 */
 enum NIMProxyDetectStep
 {
 	kNIMProxyDetectStepAllComplete			= 5,	/**< 探测代理有效性结束*/
 };
-
-/** @typedef void (*nim_global_detect_proxy_cb_func)(bool network_connect, NIMProxyDetectStep step, const char *network_log, const void *user_data)
-* 探测代理回调
-* @param[out] network_connect 探测结果
-* @param[out] step 探测步骤
-* @param[out] json_params 输出的json字符串内容
-* @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
-* @return void 无返回值
-*/
-typedef void(*nim_global_detect_proxy_cb_func)(bool network_connect, enum NIMProxyDetectStep step, const char *json_params, const void *user_data);
-#endif
-
 /** @enum NIMProxyType 代理类型 */
 enum NIMProxyType
 {
@@ -115,24 +120,15 @@ enum NIMProxyType
 	kNIMProxySocks4a	= 5,	/**< Socks4a Proxy*/
 	kNIMProxySocks5		= 6,	/**< Socks5 Proxy*/
 };
-
-/** @name 查询SDK文件缓存信息回调info结构定义
-  * @{
-  */
-static const char *kNIMCacheFileType			= "file_type";			/**< string,文件类型 */
-static const char *kNIMCacheFileCount			= "file_count";			/**< int,文件数量 */
-static const char *kNIMCacheFilePath			= "file_path";			/**< string,文件所在文件夹路径 */
-static const char *kNIMCacheFileTotalSize		= "total_size";			/**< int64,文件总大小KB */
-/** @}*/ //查询SDK文件缓存信息回调info结构定义
-
-/** @name 查询SDK文件缓存信息文件类型file_type
-  * @{
-  */
-static const char *kNIMCacheFileOther			= "res";			/**< 杂项文件缓存 */
-static const char *kNIMCacheFileImage			= "image";			/**< 图片消息缓存 */
-static const char *kNIMCacheFileAudio			= "audio";			/**< 语音消息缓存 */
-static const char *kNIMCacheFileVideo			= "video";			/**< 视频消息缓存 */
-/** @}*/ //查询SDK文件缓存信息文件类型file_type
+/** @typedef void (*nim_global_detect_proxy_cb_func)(bool network_connect, NIMProxyDetectStep step, const char *network_log, const void *user_data)
+* 探测代理回调
+* @param[out] network_connect 探测结果
+* @param[out] step 探测步骤
+* @param[out] json_params 输出的json字符串内容
+* @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+* @return void 无返回值
+*/
+typedef void(*nim_global_detect_proxy_cb_func)(bool network_connect, enum NIMProxyDetectStep step, const char *json_params, const void *user_data);
 
 #ifdef __cplusplus
 };

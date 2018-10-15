@@ -149,9 +149,6 @@ static const char *kNIMSendAckKeyMsgId		= "msg_id";			/**< string,客户端消�
 static const char *kNIMSendAckKeyTalkId		= "talk_id";		/**< string,会话id */
 static const char *kNIMSendAckKeyRescode	= "rescode";		/**< int,消息错误码(NIMResCode) */
 static const char *kNIMSendAckKeyTimetag	= "msg_timetag";	/**< long,消息时间戳(毫秒),收到ack包时更新上层缓存的消息时间戳 */
-#ifndef NIMAPI_UNDER_WIN_DESKTOP_ONLY
-static const char *kNIMSendAckKeyClientAntiSpam = "client_anti_spam";	/**< int, 是否命中客户端反垃圾,命中:1 未命中：0*/
-#endif
 /** @}*/ //发送消息回执Json Keys
 
 /** @name attach多媒体资源参数通用键名定义，可替代不同类型多媒体所使用的相同的参数的键名.

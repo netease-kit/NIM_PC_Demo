@@ -51,7 +51,7 @@ NIM_SDK_DLL_API void nim_vchat_set_audio_data_cb(bool capture, const char *json_
 
 
 /** @fn void nim_vchat_custom_audio_data(uint64_t time, const char *data, uint32_t size, const char *json_extension);
-  * NIM VCHAT 自定义音频数据接口, 采样位深只支持16或32， kNIMDeviceSampleRate支持8000，16000，32000，44100
+  * NIM VCHAT 自定义音频数据接口, 采样位深只支持16或32,[Linux sdk只支持16] kNIMDeviceSampleRate支持8000，16000，32000，44100
   * @param[in] time 时间毫秒级
   * @param[in] data 音频数据pcm格式
   * @param[in] size data的数据长度
@@ -92,7 +92,31 @@ NIM_SDK_DLL_API void nim_vchat_set_video_data_cb(bool capture, const char *json_
 */
 NIM_SDK_DLL_API void nim_vchat_enum_device_devpath(enum NIMDeviceType type, const char *json_extension, nim_vchat_enum_device_devpath_sync_cb_func cb, const void *user_data);
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+/** @fn void nim_vchat_set_audio_process_info(bool aec, bool ns, bool vad)
+* NIM VCHAT DEVICE 设置底层针对麦克风采集数据处理开关接口，默认全开（此接口是全局接口，在sdk初始化后设置一直有效）
+* @param[in] aec true 标识打开回音消除功能，false 标识关闭
+* @param[in] ns true 标识打开降噪功能，false 标识关闭
+* @param[in] vad true 标识打开人言检测功能，false 标识关闭
+* @return void 无返回值
+*/
+NIM_SDK_DLL_API void nim_vchat_set_audio_process_info(bool aec, bool ns, bool vad);
+
+
+/** @fn void nim_vchat_set_audio_volumn(unsigned char volumn, bool capture)
+* NIM VCHAT DEVICE 设置音量 默认255,且音量均由软件换算得出,设置麦克风音量自动调节后麦克风音量参数无效
+* @param[in] volumn 结果回调见nim_device_def.h
+* @param[in] capture true 标识设置麦克风音量，false 标识设置播放音量
+* @return void 无返回值
+*/
+NIM_SDK_DLL_API void nim_vchat_set_audio_volumn(unsigned char volumn, bool capture);
+
+/** @fn unsigned char nim_vchat_get_audio_volumn(bool capture)
+* NIM VCHAT DEVICE 获取nim_vchat_set_audio_volumn中设置的音量
+* @param[in] capture true 标识获取麦克风音量，false 标识获取播放音量
+* @return unsigned char 音量值
+*/
+NIM_SDK_DLL_API unsigned char nim_vchat_get_audio_volumn(bool capture);
+
 /** @fn bool nim_vchat_accompanying_sound(unsigned char id, unsigned __int64 time, const char *data, unsigned int size, unsigned int rate, unsigned int channels, const char *json_extension);
 * NIM VCHAT 自定义音频伴音数据接口，不需要打开自定义数据开关, 采样时间必须为10ms的整数倍, 采样位深只支持16
 * @param[in] id 伴音数据id
@@ -153,25 +177,6 @@ NIM_SDK_DLL_API void nim_vchat_start_extend_camera(const char *id, const char *d
 NIM_SDK_DLL_API void nim_vchat_stop_extend_camera(const char *id, const char *json_extension);
 
 
-
-
-
-/** @fn void nim_vchat_set_audio_volumn(unsigned char volumn, bool capture)
-* NIM VCHAT DEVICE 设置音量 默认255,且音量均由软件换算得出,设置麦克风音量自动调节后麦克风音量参数无效
-* @param[in] volumn 结果回调见nim_device_def.h
-* @param[in] capture true 标识设置麦克风音量，false 标识设置播放音量
-* @return void 无返回值
-*/
-NIM_SDK_DLL_API void nim_vchat_set_audio_volumn(unsigned char volumn, bool capture);
-
-/** @fn unsigned char nim_vchat_get_audio_volumn(bool capture)
-* NIM VCHAT DEVICE 获取nim_vchat_set_audio_volumn中设置的音量
-* @param[in] capture true 标识获取麦克风音量，false 标识获取播放音量
-* @return unsigned char 音量值
-*/
-NIM_SDK_DLL_API unsigned char nim_vchat_get_audio_volumn(bool capture);
-
-
 /** @fn void nim_vchat_set_audio_input_auto_volumn(bool auto_volumn)
 * NIM VCHAT DEVICE 设置麦克风音量自动调节
 * @param[in] auto_volumn true 标识麦克风音量自动调节，false 标识麦克风音量不调节，这时nim_vchat_set_audio_volumn中麦克风音量参数起效
@@ -184,17 +189,6 @@ NIM_SDK_DLL_API void nim_vchat_set_audio_input_auto_volumn(bool auto_volumn);
 * @return bool true 标识麦克风音量自动调节，false 标识麦克风音量不调节，这时nim_vchat_set_audio_volumn中麦克风音量参数起效
 */
 NIM_SDK_DLL_API bool nim_vchat_get_audio_input_auto_volumn();
-
-/** @fn void nim_vchat_set_audio_process_info(bool aec, bool ns, bool vad)
-* NIM VCHAT DEVICE 设置底层针对麦克风采集数据处理开关接口，默认全开（此接口是全局接口，在sdk初始化后设置一直有效）
-* @param[in] aec true 标识打开回音消除功能，false 标识关闭
-* @param[in] ns true 标识打开降噪功能，false 标识关闭
-* @param[in] vad true 标识打开人言检测功能，false 标识关闭
-* @return void 无返回值
-*/
-NIM_SDK_DLL_API void nim_vchat_set_audio_process_info(bool aec, bool ns, bool vad);
-
-#endif
 
 
 #ifdef __cplusplus

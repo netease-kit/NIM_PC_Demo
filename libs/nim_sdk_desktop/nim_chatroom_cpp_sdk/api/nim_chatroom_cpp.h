@@ -47,6 +47,8 @@ public:
 	typedef QueuePollCallback QueueHeaderCallback; /**< 查看麦序队列头元素回调*/
 	typedef std::function<void(int rescode, const RobotInfos& infos)> RobotQueryCallback;		/**< 获取机器人信息事件通知回调模板 */
 
+	typedef std::function<void(int64_t room_id, int error_code, const std::list<std::string>& not_in_queue)> QueueBatchUpdateCallback; /**< 队列批量更新回调*/
+
 public:
 /** @fn void RegEnterCb(const EnterCallback& cb, const std::string& json_extension = "")
   * 注册全局登录回调
@@ -127,8 +129,6 @@ static bool Init(const std::string& app_install_dir, const std::string& json_ext
   */
 static void Cleanup(const std::string& json_extension = "");
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
-
 /** @fn bool AnonymousEnter(const int64_t room_id, const ChatRoomAnoymityEnterInfo& anonymity_info, const ChatRoomEnterInfo& info, const std::string& json_extension = "")
   * 聊天室匿名进入
   * @param[in] room_id			  聊天室ID
@@ -138,8 +138,6 @@ static void Cleanup(const std::string& json_extension = "");
   * @return bool 进入信息是否正确,返回失败则不会触发进入回调
   */
 static bool AnonymousEnter(const int64_t room_id, const ChatRoomAnoymityEnterInfo& anonymity_info, const ChatRoomEnterInfo& info, const std::string& json_extension = "");
-
-#endif
 
 /** @fn bool Enter(const int64_t room_id, const std::string& request_login_data, const ChatRoomEnterInfo& info = ChatRoomEnterInfo(), const std::string& json_extension = "")
   * 聊天室登录
@@ -383,7 +381,7 @@ static void QueuePollAsync(const int64_t room_id
 static void QueueListAsync(const int64_t room_id
 	, const QueueListCallback& callback
 	, const std::string &json_extension = "");
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
 /** @fn static void QueueHeaderAsync(const int64_t room_id, const QueueHeaderCallback& callback, const std::string &json_extension = "");
   * 查看麦序头元素
   * @param[in] room_id				聊天室ID
@@ -394,7 +392,7 @@ static void QueueListAsync(const int64_t room_id
 static void QueueHeaderAsync(const int64_t room_id
 	, const QueueHeaderCallback& callback
 	, const std::string &json_extension = "");
-#endif
+
 /** @fn static void QueueDropAsync(const int64_t room_id, const QueueDropCallback& callback, const std::string &json_extension = "");
   * (管理员权限)删除麦序队列
   * @param[in] room_id				聊天室ID
@@ -411,8 +409,6 @@ static void QueueDropAsync(const int64_t room_id
 * @return void 无返回值
 */
 static void UnregChatroomCb();
-
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
 /** @fn char *QueryAllRobotInfosBlock(const int64_t room_id, const std::string &json_extension = "")
   * 获取全部机器人信息(同步接口，堵塞NIM内部线程)
@@ -441,7 +437,21 @@ static RobotInfo QueryRobotInfoByAccidBlock(const int64_t room_id, const std::st
   */
 static void GetRobotInfoAsync(const int64_t room_id, const int64_t timetag, const RobotQueryCallback &callback, const std::string &json_extension = "");
 
-#endif
+/** @fn static void QueueBatchUpdateAsync(const int64_t room_id, const std::string& elements, const QueueListCallback& callback, const std::string &json_extension = "");
+* 取出麦序元素
+* @param[in] room_id					聊天室ID
+* @param[in] batch_elements				所有需要更新的列表
+* @param[in] callback					回调函数
+* @param[in] json_extension				json扩展参数（备用，目前不需要）
+* @return void 无返回值
+*/
+static void QueueBatchUpdateAsync(const int64_t room_id
+	, const ChatRoomBatchMembers& batch_elements
+	, bool need_notify
+	, const std::string& notify_ext
+	, const QueueBatchUpdateCallback& callback
+	, const std::string &json_extension = "");
+
 };
 }
 #endif //_NIM_CHATROOM_SDK_CPP_H_

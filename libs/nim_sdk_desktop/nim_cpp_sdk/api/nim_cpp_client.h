@@ -59,13 +59,15 @@ public:
 	*/
 	static void Cleanup(const std::string& json_extension = "");
 
+	static void LoginCustomDataToJson(const std::string& custom_data, std::string& strValue);
+	
 	/** @fn bool Login(const std::string& app_key, const std::string& account, const std::string& password, const LoginCallback& cb, const std::string& json_extension = "")
 	* NIM客户端登录
 	* @param[in] app_key
 	* @param[in] account 帐号
 	* @param[in] password 密码
 	* @param[in] cb 登录流程的回调函数
-	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] json_extension json扩展参数（v5.7.0 项目增加自定义参数字段）
 	* @return bool 检查参数如果不符合要求则返回失败
 	* @note 错误码	200:成功
 	*				302:账号或密码错误
@@ -190,6 +192,12 @@ public:
 	* @return void
 	*/
 	static void GetMultiportPushConfigAsync(const MultiportPushConfigCallback& cb, const std::string& json_extension = "");
+	
+	/** @fn std::string GetSDKVersion()
+	* 获取SDK版本号
+	* @return std::string版本号
+	*/
+	static std::string GetSDKVersion();
 
 	/** @fn void UnregClientCb()
 	* 反注册Client提供的所有回调

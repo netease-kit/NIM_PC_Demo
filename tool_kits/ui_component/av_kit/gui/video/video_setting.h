@@ -77,6 +77,12 @@ namespace nim_comp
 		void InitDeviceList(bool video, bool input);
 
 		/**
+		* 初始化视频可用分辨率列表
+		* @return void	无返回值
+		*/
+		void InitVideoQualityList();
+
+		/**
 		* 切换到音频输入设备
 		* @param[in] device_path 设备路径
 		* @return void	无返回值
@@ -117,6 +123,13 @@ namespace nim_comp
 		* @return void	无返回值
 		*/
 		void PrepareVideoInput(bool start);
+
+		/**
+		* 显示视频输入界面
+		* @param[in] start 设备是否启动
+		* @return void	无返回值
+		*/
+		void PrepareVideoQuality(int current_video_quality);
 	private:
 		/**
 		* 处理所有控件的所有消息
@@ -187,6 +200,9 @@ namespace nim_comp
 
 		ui::CheckBox*	open_video_checkbox_;
 		ui::Combo*		input_video_device_;
+		ui::Combo*		video_quality_list_;
+
+		ui::VBox*		video_page_;
 
 		bool	camera_is_open_;
 

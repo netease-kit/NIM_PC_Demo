@@ -12,6 +12,7 @@
 #include "shared/pin_yin_helper.h"
 
 #include "module/online_state_event/online_state_event_util.h"
+#include "module/session/transfer_file_manager.h"
 
 
 using namespace ui;
@@ -439,10 +440,30 @@ bool SessionItem::DelSessionItemMenuItemClick(ui::EventArgs* param)
 	std::wstring name = param->pSender->GetName();
 	if (name == L"del_session_item")
 	{
-		nim::Session::DeleteRecentSession(msg_.type_, msg_.id_, nbase::Bind(&SessionItem::DeleteRecentSessionCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-		SubscribeEventManager::GetInstance()->UnSubscribeSessionEvent(msg_);
+		bool has_transfer_task = TransferFileManager::GetInstance()->HasTransferTask(msg_.id_);
 
-		m_pWindow->SendNotify(this, ui::kEventNotify, SET_DELETE, 0);
+		auto closure = [this, has_transfer_task](MsgBoxRet ret) {
+			if (ret == MB_YES)
+			{
+				nim::Session::DeleteRecentSession(msg_.type_, msg_.id_, nbase::Bind(&SessionItem::DeleteRecentSessionCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+				SubscribeEventManager::GetInstance()->UnSubscribeSessionEvent(msg_);
+				m_pWindow->SendNotify(this, ui::kEventNotify, SET_DELETE, 0);
+
+				if (has_transfer_task)
+				{
+					TransferFileManager::GetInstance()->RemoveAllTaskBySessionBoxId(msg_.id_);
+				}
+			}
+		};
+
+		if (has_transfer_task)
+		{
+			ShowMsgBox(nullptr, closure, L"STRID_SESSION_HAS_TRANSFER_FILE_TASK", true, L"STRING_MULTIVIDEOCHATFORM_TITLE_PROMPT", true, L"STRING_OK", true, L"STRING_NO", true);
+		}
+		else
+		{
+			closure(MB_YES);
+		}
 	}
 	else if (name == L"del_session_msg")
 	{

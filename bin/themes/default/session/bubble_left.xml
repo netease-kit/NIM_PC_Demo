@@ -3,7 +3,6 @@
     <ListContainerElement height="auto">
         <VBox height="auto">
             <Label name="msg_time" margin="0,0,0,10" halign="center" normaltextcolor="lightcolor" textid="STRID_SESSION_MSG_TIME"/>
-
             <HBox height="auto">
                 <Box name="header_panel" width="auto" height="auto" >
                     <Button name="msg_header_button" width="38" height="38" borderround="38,38,38,38" margin="1,1,0,0" cursortype="hand" forenormalimage="../session/header.png"/>
@@ -15,7 +14,7 @@
                     <HBox height="auto" margin="0,3,0,0">
                         <Box name="BubbleBox" width="auto" height="auto"/>
                         <Box name="status" width="auto" padding="5,0,0,0">
-							<Control name="play_status" visible="false" width="7" height="7" margin="0,15,0,0" bkimage="../session/image_audio_unread.png"/>
+                            <Control name="play_status" visible="false" width="7" height="7" margin="0,15,0,0" bkimage="../session/image_audio_unread.png"/>
                             <Control name="status_sending" width="auto" height="auto" valign="bottom" bkimage="../session/sending.gif" visible="true"/>
                             <Button name="status_resend" valign="bottom" cursortype="hand" font="24" normaltextcolor="link_green" textid="STRID_SESSION_RESEND" visible="false"/>
                             <Label name="status_send_failed" valign="bottom" font="24" normaltextcolor="link_red" textid="STRID_SESSION_SEND_FAIL" visible="false"/>
@@ -24,7 +23,6 @@
                             <Button name="status_reload" valign="center" cursortype="hand" font="24" normaltextcolor="link_green" textid="STRID_SESSION_REDOWNLOAD" visible="false"/>
                             <Button name="status_read_count" valign="center" cursortype="hand" font="24" normaltextcolor="link_green" visible="false"/>
                             <Label name="status_load_failed" valign="center" font="24" normaltextcolor="link_red" textid="STRID_SESSION_DOWNLOAD_FAIL" visible="false"/>
-							
                             <Label name="status_receipt" valign="center" font="24" textid="STRID_SESSION_READ" visible="false"/>
                         </Box>
                     </HBox>

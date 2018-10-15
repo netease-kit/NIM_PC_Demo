@@ -52,7 +52,6 @@ typedef void (*nim_team_query_all_my_teams_cb_func)(int team_count, const char *
   */
 typedef void (*nim_team_query_all_my_teams_info_cb_func)(int team_count, const char *result, const char *json_extension, const void *user_data);
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @typedef void (*nim_team_query_my_all_member_infos_cb_func)(int team_count, const char *result, const char *json_extension, const void *user_data)
   * 查询我的所有群里我的成员信息的回调函数定义
   * @param[out] team_count		有效群组数量
@@ -62,7 +61,6 @@ typedef void (*nim_team_query_all_my_teams_info_cb_func)(int team_count, const c
   * @return void 无返回值
   */
 typedef void(*nim_team_query_my_all_member_infos_cb_func)(int team_count, const char *result, const char *json_extension, const void *user_data);
-#endif
 
 /** @typedef void (*nim_team_query_team_members_cb_func)(const char *tid, int member_count, bool include_user_info, const char *result, const char *json_extension, const void *user_data)
   * 查询群成员的回调函数定义

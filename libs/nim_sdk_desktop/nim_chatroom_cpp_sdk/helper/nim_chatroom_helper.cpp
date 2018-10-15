@@ -101,4 +101,25 @@ bool ParseRobotInfoStringToRobotInfo(const std::string &info_json, RobotInfo &in
 	}
 	return false;
 }
+
+
+bool ParseBatchInfosStringToNotMembers(const std::string &infos_json, std::list<std::string> &lst_members)
+{
+	Json::Reader reader;
+	Json::Value values;
+	if (reader.parse(infos_json, values) && values.isArray())
+	{
+		int len = values.size();
+		for (int i = 0; i < len; i++)
+		{
+			lst_members.push_back(values[i].asString());
+		}
+		return true;
+	}
+	return false;
+}
+
+
+
+
 }

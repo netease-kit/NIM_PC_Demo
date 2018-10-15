@@ -13,6 +13,7 @@
 #include "gui/session/control/bubbles/bubble_unknown.h"
 #include "gui/session/control/bubbles/bubble_writing.h"
 #include "gui/session/control/bubbles/bubble_file.h"
+#include "gui/session/control/bubbles/bubble_transferfile.h"
 #include "gui/session/control/bubbles/bubble_sticker.h"
 #include "gui/session/control/bubbles/bubble_video.h"
 #include "gui/session/control/bubbles/bubble_robot.h"
@@ -77,6 +78,11 @@ public:
 	* @return void	无返回值
 	*/
 	virtual void UninitSessionBox();
+	/**
+	* 判断会话是否为robot会话
+	* @return bool	
+	*/
+	virtual bool IsRobotSession() const;
 #pragma endregion Init
 
 	//////////////////////////////////////////////////////////////////////////
@@ -191,6 +197,13 @@ public:
 	* @return void	无返回值
 	*/
 	void OnRetweetResDownloadCallback(nim::NIMResCode code, const std::string& file_path, const std::string& sid, const std::string& cid);
+
+	/**
+	* 根据传输文件消息 id 查找对应的 bubble
+	* @param[in] 传输文件的 sessionId
+	* @return nim::IMMessage im 消息结构体
+	*/
+	MsgBubbleItem* FindBubbleByTransferFileSID(TransferFileSessionID transfer_file_session_id);
 #pragma endregion Message
 
 	//////////////////////////////////////////////////////////////////////////
@@ -437,7 +450,14 @@ private:
 	void OnCloseInputMsgBoxCallback(MsgBoxRet ret);
 
 	/**
-	* 移除聊天窗中的某个提示内容（比如对方正在输入、对方非好友）
+	* 添加一个通用的文本提示，不记录历史消息
+	* @param[in] 要显示的文本内容
+	* @return void 无返回值
+	*/
+	void AddTextTip(const std::wstring text);
+
+	/**
+	* 添加某个提示内容到聊天窗中（比如对方正在输入、对方非好友）
 	* @param[in] type
 	* @return void 无返回值
 	*/
@@ -641,6 +661,27 @@ private:
 	//////////////////////////////////////////////////////////////////////////
 	//逻辑相关的操作
 #pragma region Logic
+public:
+	/**
+	* 尝试 P2P 传送文件
+	* @param[in] src 文件路径
+	* @return void	无返回值
+	*/
+	void TryToTransferFile(const std::wstring& src);
+
+	/**
+	* 回复 P2P 传送文件请求的消息，告知对方本地支持 P2P 文件传输
+	* @param[in] sender_accid_ 发起传输文件请求的发起者 accid，消息将回复给该用户
+	* @return void	无返回值
+	*/
+	void ReplyTransferFileRequest(const std::string& sender_accid_);
+
+	/**
+	* 使用 P2P 组件传输一个文件
+	* @return void	无返回值
+	*/
+	void TransferFile();
+
 private:
 	/**
 	* 显示一条"对方正在输入"的提示消息
@@ -1180,6 +1221,13 @@ private:
 	
 	std::string		last_receipt_msg_id_;			//最近一条发送消息的id
 	bool			receipt_need_send_ = false;		//当下会话是否有已读回执需要发送
+
+	// P2P 传送文件相关
+	bool			received_p2p_reply_ = false;	//在发送 P2P 询问消息后是否收到了对方回复
+	bool			use_p2p_transfer_file_ = false; //是否使用点对点方式发送文件
+	std::map<std::string, MsgBubbleItem*>	transfer_file_bubble_list_; //界面上添加的 P2P 传送文件的 bubble 句柄列表，方便与状态回调快速找到对应 bubble
+
+	std::wstring	transfer_file_;
 
 	typedef std::map<std::string,MsgBubbleItem*> IdBubblePair;
 	IdBubblePair	id_bubble_pair_;				//记录消息id与对应消息控件

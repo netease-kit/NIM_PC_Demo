@@ -27,7 +27,6 @@ typedef void(*nim_batch_query_subscribe_event)(int event_type, const char *json_
 #include "nim_subscribe_event.h"
 #endif
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 // 不销毁该回调函数
 static void CallbackPushEvent(int res_code, const char *event_info_json, const char *json_extension, const void *user_data)
 {
@@ -275,7 +274,4 @@ bool SubscribeEvent::QuerySubscribe( int event_type, const std::list<std::string
 
 	return true;
 }
-
-#endif
-
 }

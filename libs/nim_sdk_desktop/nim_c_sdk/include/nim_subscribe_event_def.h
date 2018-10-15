@@ -15,7 +15,6 @@ extern"C"
 {
 #endif
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @name 事件信息 Json Keys
   * @{
   */
@@ -180,7 +179,6 @@ typedef void (*nim_query_subscribe_event_cb_func)(int res_code, int event_type, 
   * @return void 无返回值
   */
 typedef void (*nim_batch_query_subscribe_event_cb_func)(int res_code, int event_type, const char *subscribe_list_json, const char *json_extension, const void *user_data);
-#endif
 
 #ifdef __cplusplus
 }

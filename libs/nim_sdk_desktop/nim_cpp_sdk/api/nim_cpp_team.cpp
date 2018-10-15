@@ -36,9 +36,7 @@ typedef void(*nim_team_reject_invitation_async)(const char *tid, const char *inv
 
 typedef void(*nim_team_query_all_my_teams_async)(const char *json_extension, nim_team_query_all_my_teams_cb_func cb, const void* user_data);
 typedef void(*nim_team_query_all_my_teams_info_async)(const char *json_extension, nim_team_query_all_my_teams_info_cb_func cb, const void* user_data);
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 typedef void(*nim_team_query_my_all_member_infos_async)(const char *json_extension,	nim_team_query_my_all_member_infos_cb_func cb, const void *user_data);
-#endif
 typedef void(*nim_team_query_team_members_async)(const char *tid, bool include_user_info, const char *json_extension, nim_team_query_team_members_cb_func cb, const void* user_data);
 typedef void(*nim_team_query_team_member_async)(const char *tid, const char *user_id, const char *json_extension, nim_team_query_team_member_cb_func cb, const void *user_data);
 typedef void(*nim_team_query_team_info_async)(const char *tid, const char *json_extension, nim_team_query_team_info_cb_func cb, const void* user_data);
@@ -149,7 +147,6 @@ static void CallbackQueryAllMyTeamsInfo(int team_count, const char *result, cons
 	}
 }
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 static void CallbackQueryMyAllMemberInfos(int count, const char *result, const char *json_extension, const void *user_data)
 {
 	if (user_data)
@@ -165,7 +162,6 @@ static void CallbackQueryMyAllMemberInfos(int count, const char *result, const c
 		delete cb_pointer;
 	}
 }
-#endif
 
 static void CallbackQueryTeamInfo(const char *tid, const char *result, const char *json_extension, const void *callback)
 {
@@ -571,7 +567,6 @@ void Team::QueryAllMyTeamsInfoAsync(const QueryAllMyTeamsInfoCallback& cb, const
 	return NIM_SDK_GET_FUNC(nim_team_query_all_my_teams_info_async)(json_extension.c_str(), &CallbackQueryAllMyTeamsInfo, cb_pointer);
 }
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 void Team::QueryMyAllMemberInfosAsync( const QueryMyAllMemberInfosCallback& cb, const std::string& json_extension /*= ""*/ )
 {
 	QueryMyAllMemberInfosCallback* cb_pointer = nullptr;
@@ -581,7 +576,6 @@ void Team::QueryMyAllMemberInfosAsync( const QueryMyAllMemberInfosCallback& cb, 
 	}
 	return NIM_SDK_GET_FUNC(nim_team_query_my_all_member_infos_async)(json_extension.c_str(), &CallbackQueryMyAllMemberInfos, cb_pointer);
 }
-#endif
 
 bool Team::QueryTeamMembersAsync(const std::string& tid, const QueryTeamMembersCallback& cb, const std::string& json_extension/* = ""*/)
 {

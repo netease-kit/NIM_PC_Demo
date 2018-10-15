@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include "resource.h"
 
+
 //c++ header
 #include <ctime>
 #include <string>

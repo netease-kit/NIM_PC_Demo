@@ -362,7 +362,6 @@ NIM_SDK_DLL_API void nim_team_query_all_my_teams_info_async(const char *json_ext
 	nim_team_query_all_my_teams_info_cb_func cb, 
 	const void *user_data);
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn void nim_team_query_my_all_member_infos_async(const char *json_extension, nim_team_query_my_all_member_infos_cb_func cb, const void *user_data)
   * 查询本地所有群里我的成员信息（使用场景：获取了所有群列表后，需要查询自己在每个群里自己的成员信息，使用成员信息里的bits字段，可以判断当某个群发来消息后，是否做消息通知）
   * @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -373,7 +372,6 @@ NIM_SDK_DLL_API void nim_team_query_all_my_teams_info_async(const char *json_ext
 NIM_SDK_DLL_API void nim_team_query_my_all_member_infos_async(const char *json_extension,
 	nim_team_query_my_all_member_infos_cb_func cb,
 	const void *user_data);
-#endif
 
 /** @fn void nim_team_query_team_members_async(const char *tid, bool include_user_info, const char *json_extension, nim_team_query_team_members_cb_func cb, const void *user_data)
   * 查询群成员（默认查询有效群成员-在群里-）
@@ -490,8 +488,6 @@ NIM_SDK_DLL_API void nim_team_query_mute_list_online_async(const char *tid,
 	nim_team_query_mute_list_cb_func cb, 
 	const void *user_data);
 
-
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn void nim_team_mute_async(const char *tid, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data)
 * 对群禁言/解除禁言
 * @param[in] tid		群组id
@@ -534,7 +530,6 @@ NIM_SDK_DLL_API void nim_team_msg_ack_read(const char *tid, const char *json_msg
 *				414:参数错误
 */
 NIM_SDK_DLL_API void nim_team_msg_query_unread_list(const char *tid, const char *json_msg, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
-#endif
 
 #ifdef __cplusplus
 };

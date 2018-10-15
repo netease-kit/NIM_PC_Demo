@@ -177,6 +177,13 @@ namespace nim_comp
 		void SetAudioInputAutoVolumn(bool auto_volumn);
 
 		/**
+		* 设置视频分辨率
+		* @param[in] 视频分辨率，参见 NIMVChatVideoQuality
+		* @return void 无返回值
+		*/
+		void SetVideoQuality(int video_quality);
+
+		/**
 		* 启动设备
 		* @param[in] type 设备类型
 		* @param[in] device_path 设备路径
@@ -335,6 +342,12 @@ namespace nim_comp
 		bool GetSettingVideoInStatus() { return setting_video_in_; }
 
 		/**
+		* 获取当前设置的视频分辨率
+		* @return int 视频分辨率枚举值
+		*/
+		int GetVideoQuality() { return video_quality_; }
+
+		/**
 		* 音视频设置页面中音频输入设备的状态
 		* @param[in] setting_audio_in  true:音频输入设备开启 false:音频输入设备关闭
 		*/
@@ -393,6 +406,7 @@ namespace nim_comp
 		MultiVChatStatusType vchat_status_;
 		nbase::NLock vchat_status_lock_;
 		nbase::WeakCallbackFlag join_vchat_timer_;
+		int video_quality_ = 0;
 
 	private:
 		std::unique_ptr<VideoForm> video_form_;

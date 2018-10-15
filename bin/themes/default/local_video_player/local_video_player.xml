@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<!-- 实际窗口的size是(996+28,670+28) -->
+<Window size="640,520" caption="0,0,0,34" sizebox="4,4,4,4" textid="STDID_LOCAL_VIDEO_PLAYER_CAPTION" >
+	<VBox width="auto" height="auto" bkcolor="bk_local_video_player">	
+		<HBox height="33" padding="20,0,5,0" bkcolor="bk_video_title">
+            <Label name="title" width="stretch" valign="center" font="3" normaltextcolor="white" textid="STDID_LOCAL_VIDEO_PLAYER_CAPTION" />
+            <Button name="minbtn" margin="10,6,0,0" normalimage="../video/min0.png" hotimage="../video/min1.png" pushedimage="../video/min1.png" disabledimage="../video/min3.png"/>
+            <Box name="sys_menu_box" width="22" height="22" margin="0,6,0,0" enabled="false">
+                <Button name="maxbtn" normalimage="../video/max0.png" hotimage="../video/max1.png" pushedimage="../video/max1.png" disabledimage="../video/max3.png" enabled="false" />
+                <Button name="restorebtn" visible="false" normalimage="../video/restore0.png" hotimage="../video/restore0.png" pushedimage="../video/restore0.png" disabledimage="../video/restore3.png" enabled="false" />
+            </Box>
+            <Button name="closebtn" margin="0,6,0,0" normalimage="../video/close0.png" hotimage="../video/close1.png" pushedimage="../video/close1.png" disabledimage="../video/close3.png"/>
+        </HBox>		
+		<Box width="auto" height="auto" bkcolor="bk_local_video_player" >
+			<BitmapControl name="video_display" width="640" height="480" margin="0,0,0,0" />						
+		</Box>			
+		<!-- 底部设置栏 -->
+		<HBox width="stretch" height="40" bkimage="file='../video/hbox_bottom.png' corner='15,15,15,15'">					
+			<Box width="auto" height="auto" margin="6,0,10,0" valign="center">
+				<Button name="volume_btn" menu="true" tooltiptextid="STRID_LOCAL_VIDEO_PLAYER_MUTE"
+					normalimage="icon_voice_n.png" hotimage="icon_voice_h.png" pushedimage="icon_voice_p.png" disabledimage="icon_voice_n.png"/>
+				<Button name="volume_mute_btn" menu="true" visible="false" tooltiptextid="STRID_LOCAL_VIDEO_PLAYER_CANCEL_MUTE"
+					normalimage="icon_voice_f_n.png" hotimage="icon_voice_f_h.png" pushedimage="icon_voice_f_p.png" disabledimage="icon_voice_f_n.png"/>
+			</Box>					
+			<!-- 播放进度条 -->
+			<Slider name="playing_progress" width="stretch" height="8" bkcolor="bk_slider_duration" valign="center" margin="0,0,0,0"
+					progresscolor="bk_slider_duration_up" visible="false" max="10000" min="0" value="0"/>					
+			<Label name="duration" width="auto" margin="10,0,10,0"  valign="center" align="vcenter" visible="true" font="1" normaltextcolor="white" />
+			<TabBox name="start_or_pause_box" width="auto" height="auto" margin="0,0,6,0" valign="center" >
+				<Button name="start" height="24" width="44" normaltextcolor="white" font="1" textid="STRID_LOCAL_VIDEO_PLAYER_START" enabled="false" normalimage="btn_start_n.png" hotimage="btn_start_h.png" pushedimage="btn_start_p.png" disabledimage="btn_start_n.png"/>
+				<Button name="pause" height="24" width="44" normaltextcolor="white" font="1" textid="STRID_LOCAL_VIDEO_PLAYER_PAUSE" normalimage="btn_stop_n.png" hotimage="btn_stop_h.png" pushedimage="btn_stop_p.png" disabledimage="btn_stop_n.png"/>
+				<Button name="resume" height="24" width="44" normaltextcolor="white" font="1" textid="STRID_LOCAL_VIDEO_PLAYER_CONTINUE" normalimage="btn_start_n.png" hotimage="btn_start_h.png" pushedimage="btn_start_p.png" disabledimage="btn_start_n.png"/>
+			</TabBox>					
+		</HBox>
+	</VBox>		
+</Window>

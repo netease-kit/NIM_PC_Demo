@@ -31,9 +31,7 @@ public:
 	typedef std::function<void(const TeamEvent& team_event)> TeamEventCallback;		/**< 群组事件通知回调模板 */
 	typedef std::function<void(int team_count, const std::list<std::string>& team_id_list)> QueryAllMyTeamsCallback;		/**< 查询本人所有群ID回调模板 */
 	typedef std::function<void(int team_count, const std::list<nim::TeamInfo>& team_info_list)>	QueryAllMyTeamsInfoCallback;	/**< 查询本人所有群信息回调模板 */
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	typedef std::function<void(int count, const std::list<nim::TeamMemberProperty>& all_my_member_info_list)>	QueryMyAllMemberInfosCallback;	/**< 查询本人所有群里我的成员信息回调模板 */
-#endif
 	typedef std::function<void(const std::string& tid, int member_count, const std::list<TeamMemberProperty>& props)>	QueryTeamMembersCallback;	/**< 查询指定群组全部成员信息回调模板 */
 	typedef std::function<void(const TeamMemberProperty& team_member_property)>	QueryTeamMemberCallback;	/**< 查询指定群成员信息回调模板 */
 	typedef std::function<void(const std::string& tid, const TeamInfo& result)>	QueryTeamInfoCallback;		/**< 查询指定群信息回调模板 */
@@ -337,7 +335,6 @@ public:
 	*/
 	static void QueryAllMyTeamsInfoAsync(const QueryAllMyTeamsInfoCallback& cb, const std::string& json_extension = "");
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/** @fn static void QueryMyAllMemberInfosAsync(const QueryMyAllMemberInfosCallback& cb, const std::string& json_extension = "")
 	* 查询所有群里我的成员信息（使用场景：获取了所有群列表后，需要查询自己在每个群里自己的成员信息，使用成员信息里的bits字段，可以判断当某个群发来消息后，是否做消息通知）
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -345,7 +342,6 @@ public:
 	* @return void 无返回值
 	*/
 	static void QueryMyAllMemberInfosAsync(const QueryMyAllMemberInfosCallback& cb, const std::string& json_extension = "");
-#endif
 
 	/** @fn static void QueryTeamMembersAsync(const std::string& tid, const QueryTeamMembersCallback& cb, const std::string& json_extension = "")
 	* 查询群成员

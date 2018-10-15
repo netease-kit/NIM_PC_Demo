@@ -105,8 +105,6 @@ NIM_SDK_DLL_API void nim_nos_upload2(const char *local_file, const char *tag, ni
   */
 NIM_SDK_DLL_API void nim_nos_download(const char *nos_url, nim_nos_download_cb_func res_cb, const void *res_user_data, nim_nos_download_prg_cb_func prg_cb, const void *prg_user_data);
 
-//#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
-
 /** @fn void nim_nos_download_media_ex(const char *json_msg, const char *json_extension, nim_nos_download_cb_func res_cb, const void *res_user_data, nim_nos_download_prg_cb_func prg_cb, const void *prg_user_data, nim_nos_download_speed_cb_func speed_cb, const void *speed_user_data, nim_nos_download_info_cb_func info_cb, const void *info_user_data)
 * 获取资源(扩展)
 * @param[in] json_msg 消息体json string (Keys SEE MORE `nim_talk_def.h` 『消息结构 Json Keys』)
@@ -208,7 +206,14 @@ NIM_SDK_DLL_API void nim_nos_upload_ex2(const char *local_file, const char *tag,
 */
 NIM_SDK_DLL_API void nim_nos_stop_upload_ex(const char *task_id, const char *json_extension);
 
-//#endif
+/** @fn void nim_nos_set_quick_trans(int quick_trans);
+* 设置是否支持快速上传
+* @param[in] quick_trans 0：不支持，1：支持
+* @return void 无返回值
+* @note 默认支持快速上传
+*/
+NIM_SDK_DLL_API void nim_nos_set_quick_trans(int quick_trans);
+
 
 #ifdef __cplusplus
 };

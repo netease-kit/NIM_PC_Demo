@@ -42,14 +42,14 @@ typedef void(*nim_chatroom_queue_poll_async)(const int64_t room_id, const char *
 typedef void(*nim_chatroom_queue_list_async)(const int64_t room_id, const char *json_extension, nim_chatroom_queue_list_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_queue_header_async)(const int64_t room_id, const char *json_extension, nim_chatroom_queue_header_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_queue_drop_async)(const int64_t room_id, const char *json_extension, nim_chatroom_queue_drop_cb_func cb, const void *user_data);
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 typedef bool(*nim_chatroom_enter_with_anoymity)(const int64_t room_id, const char *anonymity_info, const char *enter_info, const char *json_extension);
 typedef char* (*nim_chatroom_query_all_robots_block)(const int64_t room_id, const char *json_extension);
 typedef char* (*nim_chatroom_query_robot_by_accid_block)(const int64_t room_id, const char *accid, const char *json_extension);
 typedef void (*nim_chatroom_get_robots_async)(const int64_t room_id, __int64 timetag, const char *json_extension, nim_chatroom_query_robots_cb_func cb, const void *user_data);
 typedef void (*nim_chatroom_set_msgs_batch_report)(bool set_batch, const char *json_extension);
 typedef void (*nim_chatroom_reg_receive_msgs_cb)(const char *json_extension, nim_chatroom_receive_msg_cb_func cb, const void *user_data);
-#endif
+typedef void(*nim_chatroom_batch_upate_async)(const int64_t room_id, const char *element_info_json_str, bool need_notify, const char *notify_ext, const char *json_extension, nim_chatroom_batch_update_cb cb, const void *user_data);
+
 #else
 #include "nim_chatroom.h"
 #endif
@@ -270,12 +270,10 @@ bool ChatRoom::Enter(const int64_t room_id, const std::string& request_enter_dat
 	return NIM_SDK_GET_FUNC(nim_chatroom_enter)(room_id, request_enter_data.c_str(), info.ToJsonString().c_str(), json_extension.c_str());
 }
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 bool ChatRoom::AnonymousEnter(const int64_t room_id, const ChatRoomAnoymityEnterInfo& anonymity_info, const ChatRoomEnterInfo& info, const std::string& json_extension/* = ""*/)
 {
 	return NIM_SDK_GET_FUNC(nim_chatroom_enter_with_anoymity)(room_id, anonymity_info.ToJsonString().c_str(), info.ToJsonString().c_str(), json_extension.c_str());
 }
-#endif
 
 void ChatRoom::Exit(const int64_t room_id, const std::string& json_extension/* = ""*/)
 {
@@ -319,9 +317,7 @@ std::string ChatRoom::CreateRoomMessage(const NIMChatRoomMsgType msg_type
 	values[kNIMChatRoomMsgKeyType] = msg_type;
 	values[kNIMChatRoomMsgKeyAttach] = attach;
 	values[kNIMChatRoomMsgKeyClientMsgid] = client_msg_id;
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	values[kNIMChatRoomMsgKeyBody] = msg_body;
-#endif
 	msg_setting.ToJsonValue(values);
 	return GetJsonStringWithNoStyled(values);
 }
@@ -703,7 +699,7 @@ static void CallbackQueueList(int64_t room_id, int error_code, const char *resul
 		}
 	}
 }
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
 static void CallbackQueueHeader(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
 	if (user_data)
@@ -725,7 +721,7 @@ static void CallbackQueueHeader(int64_t room_id, int error_code, const char *res
 		}
 	}
 }
-#endif
+
 void ChatRoom::QueuePollAsync(const int64_t room_id
 	, const std::string& element_key
 	, const QueuePollCallback& callback
@@ -755,7 +751,7 @@ void ChatRoom::QueueListAsync(const int64_t room_id
 		&CallbackQueueList,
 		cb_pointer);
 }
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
 void ChatRoom::QueueHeaderAsync(const int64_t room_id
 	, const QueueHeaderCallback& callback
 	, const std::string &json_extension/* = ""*/)
@@ -769,7 +765,6 @@ void ChatRoom::QueueHeaderAsync(const int64_t room_id
 		&CallbackQueueHeader,
 		cb_pointer);
 }
-#endif
 
 void ChatRoom::QueueDropAsync(const int64_t room_id
 	, const QueueDropCallback& callback
@@ -796,7 +791,6 @@ void ChatRoom::UnregChatroomCb()
 	g_cb_link_condition_ = nullptr;
 }
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 RobotInfos ChatRoom::QueryAllRobotInfosBlock(const int64_t room_id, const std::string &json_extension/* = ""*/)
 {
 	char *res = NIM_SDK_GET_FUNC(nim_chatroom_query_all_robots_block)(room_id, json_extension.c_str());
@@ -828,6 +822,8 @@ static void CallbackRobotQuery(int rescode, const char *res, const char *json_ex
 	}
 }
 
+
+
 void ChatRoom::GetRobotInfoAsync(const int64_t room_id, const int64_t timetag, const RobotQueryCallback &callback, const std::string &json_extension/* = ""*/)
 {
 	RobotQueryCallback* cb_pointer = nullptr;
@@ -837,5 +833,38 @@ void ChatRoom::GetRobotInfoAsync(const int64_t room_id, const int64_t timetag, c
 	}
 	NIM_SDK_GET_FUNC(nim_chatroom_get_robots_async)(room_id, timetag, json_extension.c_str(), &CallbackRobotQuery, cb_pointer);
 }
-#endif
+
+
+static void CallbackBatchUpdate(int64_t room_id, int error_code ,const char *res, const char *json_extension, const void *callback)
+{
+	if (callback)
+	{
+		ChatRoom::QueueBatchUpdateCallback* cb_pointer = (ChatRoom::QueueBatchUpdateCallback*)callback;
+		if (*cb_pointer)
+		{
+			std::list<std::string> lststring;
+			ParseBatchInfosStringToNotMembers(PCharToString(res), lststring);
+			(*cb_pointer)(room_id, error_code,lststring);
+		}
+		delete cb_pointer;
+	}
+}
+
+
+void ChatRoom::QueueBatchUpdateAsync(const int64_t room_id
+	, const ChatRoomBatchMembers& batch_members
+	, bool need_notify
+	, const std::string& notify_ext
+	, const QueueBatchUpdateCallback& callback
+	, const std::string &json_extension)
+{
+	QueueBatchUpdateCallback* cb_pointer = nullptr;
+	if (callback)
+	{
+		cb_pointer = new QueueBatchUpdateCallback(callback);
+	}
+	std::string elements = batch_members.ToJsonString();
+	NIM_SDK_GET_FUNC(nim_chatroom_batch_upate_async)(room_id, elements.c_str(), need_notify, notify_ext.c_str() ,json_extension.c_str(), &CallbackBatchUpdate, cb_pointer);
+}
+
 }

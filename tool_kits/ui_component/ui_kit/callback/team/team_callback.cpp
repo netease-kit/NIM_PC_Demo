@@ -283,9 +283,8 @@ void UIReceiveSysmsgCallback(nim::SysMessage& msg)
 						std::string id = json["id"].asString();
 						if (id == "1")
 						{
-							std::string id = msg.sender_accid_;
-
-							SessionBox* session = SessionManager::GetInstance()->FindSessionBox(id);
+							std::string sender_accid_ = msg.sender_accid_;
+							SessionBox* session = SessionManager::GetInstance()->FindSessionBox(sender_accid_);
 							if (session)
 							{
 								session->AddWritingMsg(immsg);
@@ -297,6 +296,23 @@ void UIReceiveSysmsgCallback(nim::SysMessage& msg)
 							VideoManager::GetInstance()->InvokeReceiveCustomP2PMessage(json["content"], msg.sender_accid_);
 							return;
 						}
+					}
+					if (json.isMember(kJsonKeyCommand))
+					{
+						std::string command = json[kJsonKeyCommand].asString();
+						std::string sender_accid_ = msg.sender_accid_;
+						SessionBox* session = SessionManager::GetInstance()->FindSessionBox(sender_accid_);
+
+						if (command == kJsonKeyTryTransferFileRequest)
+						{
+							session->ReplyTransferFileRequest(sender_accid_);
+						}
+						else if (command == kJsonKeySupportedTransferFile)
+						{
+							session->TransferFile();
+						}
+
+						return;
 					}
 				}
 			}

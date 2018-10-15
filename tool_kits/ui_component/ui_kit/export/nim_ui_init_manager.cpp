@@ -1,4 +1,5 @@
 ﻿#include "nim_ui_init_manager.h"
+#include <thread>
 #include "module/emoji/emoji_info.h"
 #include "module/service/user_service.h"
 #include "module/subscribe_event/subscribe_event_manager.h"
@@ -7,12 +8,14 @@
 #include "callback/http/http_callback.h"
 #include "callback/audio/audio_callback.h"
 #include "callback/team/team_callback.h"
+#include "callback/p2p/p2p_callback.h"
 #include "av_kit/callback/vchat/vchat_callback.h"
 #include "callback/rts/rts_callback.h"
 #include "callback/login/data_sync_callback.h"
 #include "callback/multiport/multiport_push_callback.h"
 #include "callback/subscribe_event/subscribe_event_callback.h"
 #include "shared/modal_wnd/async_do_modal.h"
+#include "nim_p2p_develop_kit.h"
 
 namespace nim_ui
 {
@@ -79,6 +82,17 @@ void InitManager::InitUiKit(bool enable_subscribe_event, InitMode mode)
 
 		//启用事件订阅模块
 		nim_comp::SubscribeEventManager::GetInstance()->SetEnabled(enable_subscribe_event);
+
+		//注册P2P组件回调
+		QPath::AddNewEnvironment(QPath::GetAppPath() + L"p2p");
+		if (!nim_p2p::NimP2PDvelopKit::GetInstance()->Init(QPath::GetAppPath() + L"p2p",
+			nim_comp::P2PCallback::OnTransferFileRequest,
+			nim_comp::P2PCallback::OnTransferFileSessionStateChangeCallback,
+			nim_comp::P2PCallback::OnTransferFileProgressCallback,
+			nim_comp::P2PCallback::SendCommandChannel))
+		{
+			QLOG_ERR(L"Failed to init nim p2p develop kit.");
+		}
 	}
 
 	//加载聊天表情
@@ -92,6 +106,7 @@ void InitManager::CleanupUiKit()
 	if (!init_)
 		return;
 
+	nim_p2p::NimP2PDvelopKit::GetInstance()->UnInit();
 	nim_audio::Audio::Cleanup();
 	nim::VChat::Cleanup();
 	nim::Client::Cleanup();

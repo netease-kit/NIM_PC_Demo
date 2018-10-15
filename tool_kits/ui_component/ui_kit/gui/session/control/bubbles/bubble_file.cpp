@@ -45,7 +45,7 @@ void MsgBubbleFile::InitControl(bool bubble_right)
 	//file_save_ = static_cast<Button *>(this->FindSubControl(L"file_save"));
 	file_open_ = static_cast<Button *>(this->FindSubControl(L"file_open"));
 	file_openducu_ = static_cast<Button *>(this->FindSubControl(L"file_opendocu"));
-	file_cancel_ = static_cast<Button *>(this->FindSubControl(L"file_cancel"));
+	file_pause_ = static_cast<Button *>(this->FindSubControl(L"file_pause"));
 	file_reup_ = static_cast<Button *>(this->FindSubControl(L"file_reup"));
 	file_redl_ = static_cast<Button *>(this->FindSubControl(L"file_redl"));
 	progress_vertlayout_ = static_cast<VBox *>(this->FindSubControl(L"progress_vertlayout"));
@@ -55,7 +55,7 @@ void MsgBubbleFile::InitControl(bool bubble_right)
 	//file_save_->SetText(multi->GetStringViaID(L"STRID_SESSION_FILEBUBBLE_SAVE").c_str());
 	file_open_->SetText(multi->GetStringViaID(L"STRID_SESSION_FILEBUBBLE_OPEN").c_str());
 	file_openducu_->SetText(multi->GetStringViaID(L"STRID_SESSION_FILEBUBBLE_OPENDOCU").c_str());
-	file_cancel_->SetText(multi->GetStringViaID(L"STRID_SESSION_FILEBUBBLE_CANCEL").c_str());
+	file_pause_->SetText(multi->GetStringViaID(L"STRID_SESSION_FILEBUBBLE_PAUSE").c_str());
 	file_redl_->SetText(multi->GetStringViaID(L"STRID_SESSION_FILEBUBBLE_REDL").c_str());
 	file_reup_->SetText(multi->GetStringViaID(L"STRID_SESSION_FILEBUBBLE_REUP").c_str());
 
@@ -65,7 +65,7 @@ void MsgBubbleFile::InitControl(bool bubble_right)
 	file_saveas_->AttachClick(nbase::Bind(&MsgBubbleFile::OnEvent, this, std::placeholders::_1));
 	file_open_->AttachClick(nbase::Bind(&MsgBubbleFile::OnEvent, this, std::placeholders::_1));
 	file_openducu_->AttachClick(nbase::Bind(&MsgBubbleFile::OnEvent, this, std::placeholders::_1));
-	file_cancel_->AttachClick(nbase::Bind(&MsgBubbleFile::OnEvent, this, std::placeholders::_1));
+	file_pause_->AttachClick(nbase::Bind(&MsgBubbleFile::OnEvent, this, std::placeholders::_1));
 	file_redl_->AttachClick(nbase::Bind(&MsgBubbleFile::OnEvent, this, std::placeholders::_1));
 	file_reup_->AttachClick(nbase::Bind(&MsgBubbleFile::OnEvent, this, std::placeholders::_1));
 
@@ -146,7 +146,7 @@ void MsgBubbleFile::SetMsgStatus(nim::NIMMsgLogStatus status)
 	//file_save_->SetVisible(false);
 	file_open_->SetVisible(false);
 	file_openducu_->SetVisible(false);
-	file_cancel_->SetVisible(false);
+	file_pause_->SetVisible(false);
 	file_reup_->SetVisible(false);
 	file_redl_->SetVisible(false);
 
@@ -168,7 +168,7 @@ void MsgBubbleFile::SetMsgStatus(nim::NIMMsgLogStatus status)
 		else if (status == nim::kNIMMsgLogStatusSending)
 		{
 			progress_vertlayout_->SetVisible();
-			file_cancel_->SetVisible(true);
+			file_pause_->SetVisible(true);
 		}
 		else if (status == nim::kNIMMsgLogStatusSendCancel)
 		{
@@ -196,7 +196,7 @@ void MsgBubbleFile::SetMsgStatus(nim::NIMMsgLogStatus status)
 		{
 			progress_vertlayout_->SetVisible();
 			http_status_->SetText(mls->GetStringViaID(L"STRID_SESSION_FILESTATUS_DOWNLOADING"));
-			file_cancel_->SetVisible(true);
+			file_pause_->SetVisible(true);
 		} 
 		else if (download_fail_)
 		{

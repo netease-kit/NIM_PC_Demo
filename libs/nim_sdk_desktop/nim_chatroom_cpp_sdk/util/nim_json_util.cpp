@@ -70,4 +70,20 @@ Json::Value GetJsonValueFromJsonString(const std::string& json_string)
 
 	return value;
 }
+
+
+bool StrMapToJsonString(const std::map<std::string,std::string>& map, std::string& out)
+{
+	Json::Value json_ids;
+	Json::Value value_;
+	for (auto it = map.begin(); it != map.end(); it++)
+	{
+		value_["key"] = it->first;
+		value_["value"] = it->second;
+		json_ids.append(value_);
+	}
+	out = GetJsonStringWithNoStyled(json_ids);
+	return true;
+}
+
 }

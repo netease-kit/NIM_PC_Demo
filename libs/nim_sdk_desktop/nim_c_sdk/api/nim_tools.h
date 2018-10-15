@@ -81,7 +81,6 @@ NIM_SDK_DLL_API	const char * nim_tool_get_uuid();
   */
 NIM_SDK_DLL_API void nim_tool_get_audio_text_async(const char *json_audio_info, const char *json_extension, nim_tool_get_audio_text_cb_func cb, const void *user_data);
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn void nim_tool_filter_client_antispam_async(const char* text, const char* replace_str, const char* lib_name, const char *json_extension, nim_tool_filter_client_antispam_cb_func cb, const void *user_data)
   * 客户端反垃圾
   * @param[in] text 文本内容，UTF-8
@@ -93,33 +92,6 @@ NIM_SDK_DLL_API void nim_tool_get_audio_text_async(const char *json_audio_info, 
   * @return void 无返回值
   */
 NIM_SDK_DLL_API void nim_tool_filter_client_antispam_async(const char* text, const char* replace_str, const char* lib_name, const char *json_extension, nim_tool_filter_client_antispam_cb_func cb, const void *user_data);
-
-#else
-/** @fn char* nim_tool_replace_text_matched_keywords(char* text, char* replace_str, char* lib_name)
-* 如果文本匹配词库中的关键词则进行替换，调用free释放返回的字符串
-* @param[in] text 文本内容，UTF-8
-* @param[in] replace_str 进行替换的字符串，UTF-8
-* @param[in] lib_name 词库名称，UTF-8
-* @return const char * 返回的替换后的字符串
-*/
-NIM_SDK_DLL_API char* nim_tool_replace_text_matched_keywords(char* text, char* replace_str, char* lib_name);
-
-/** @fn int nim_tool_regex_is_match(char* text, char* pattern)
-* 检查text是否匹配模式pattern
-* @param[in] text 文本内容，UTF-8
-* @param[in] pattern 正则表达式，UTF-8
-* @return int 匹配返回 1,不匹配返回 0
-*/
-NIM_SDK_DLL_API int nim_tool_regex_is_match(char* text, char* pattern);
-
-/** @fn int nim_tool_regex_is_match(char* text, char* pattern)
-* 检查text是否匹配词库中的关键词
-* @param[in] text 文本内容，UTF-8
-* @param[in] lib_name 词库名称，UTF-8
-* @return int 匹配返回 1,不匹配返回 0
-*/
-NIM_SDK_DLL_API int nim_tool_is_text_matched_keywords(char* text, char* lib_name);
-#endif
 
 #ifdef __cplusplus
 };

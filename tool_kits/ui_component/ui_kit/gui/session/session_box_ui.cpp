@@ -358,6 +358,12 @@ bool SessionBox::OnClicked(ui::EventArgs* param)
 	}
 	else if (name == L"btn_file")
 	{
+		use_p2p_transfer_file_ = false;
+		OnBtnFile();
+	}
+	else if (name == L"btn_transfer_file")
+	{
+		use_p2p_transfer_file_ = true;
 		OnBtnFile();
 	}
 	else if (name == L"btn_jsb")
@@ -562,7 +568,10 @@ void SessionBox::OnBtnSend()
 			std::wstring file_path = info.content_;
 			if (CheckFileSize(file_path))
 			{
-				SendFile(file_path);
+				if (use_p2p_transfer_file_)
+					TryToTransferFile(file_path);
+				else
+					SendFile(file_path);
 			}
 			else
 			{
@@ -643,16 +652,18 @@ void SessionBox::OnBtnFile()
 
 void SessionBox::OnFileSelected(BOOL ret, std::wstring file_path)
 {
-	if (ret)
+	if (!ret)
 	{
-		if (CheckFileSize(file_path))
-		{
-			InsertFileToEdit(input_edit_, file_path);
-		}
-		else
-		{
-			ShowMsgBox(this->GetWindow()->GetHWND(), MsgboxCallback(), L"STRID_SESSION_SUPPORT_15MB");
-		}
+		return;
+	}
+
+	if (CheckFileSize(file_path))
+	{
+		InsertFileToEdit(input_edit_, file_path);
+	}
+	else
+	{
+		ShowMsgBox(this->GetWindow()->GetHWND(), MsgboxCallback(), use_p2p_transfer_file_ ? L"STRID_SESSION_SUPPORT_2GB" : L"STRID_SESSION_SUPPORT_15MB");
 	}
 }
 

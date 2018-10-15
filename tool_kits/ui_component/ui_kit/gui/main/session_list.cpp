@@ -104,6 +104,25 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data, bool
 {
 	bool invoke_additem = false;
 	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(nbase::UTF8ToUTF16(item_data.id_)));
+
+	// 此处有一个隐含问题，当从列表中删除一个正在传送文件的 session item 时
+	// SDK 会回调到上层 SendCommand 来发送一条消息给对端告诉对端取消了文件传输
+	// 当界面已经删除了这个 item 后又收到了消息回执会重新将 item 添加到列表中
+	// 所以此处不响应取消传送文件请求的消息
+	Json::Value values;
+	Json::Reader reader;
+	if (reader.parse(item_data.msg_attach_, values))
+	{
+		if (values.isMember(kJsonKeyCommand))
+		{
+			if ((values[kJsonKeyCommand].asString() == kJsonKeyCancelTransferFile || 
+				values[kJsonKeyCommand].asString() == kJsonKeyCancelReceiveFile))
+			{
+				return nullptr;
+			}
+		}
+	}
+
 	nim::SessionData item_data_new = item_data;
 	if (item)
 	{

@@ -9,6 +9,10 @@
 
 #define WIN32_LEAN_AND_MEAN             //  从 Windows 头文件中排除极少使用的信息
 
+#ifndef _WIN64
+#define SUPPORTLOCALPLAYER
+#endif
+
 //c++ header
 #include <ctime>
 #include <string>
@@ -54,3 +58,5 @@
 #include "nim_service/module/service/http_service.h"
 #include "nim_service/module/service/photo_service.h"
 #include "nim_service/module/login/login_manager.h"
+
+

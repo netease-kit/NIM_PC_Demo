@@ -96,10 +96,8 @@ public:
 			SetUpdateTimetag(new_info.GetUpdateTimetag());
 		if (new_info.ExistValue(kNIMTeamInfoKeyServerCustom))
 			SetServerCustom(new_info.GetServerCustom());
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		if (new_info.ExistValue(kNIMTeamInfoKeyMuteAll) || new_info.ExistValue(kNIMTeamInfoKeyMuteType))
 			SetMute(new_info.GetMuteType());
-#endif
 	}
 
 public:
@@ -378,7 +376,6 @@ public:
 	{
 		return (NIMTeamUpdateCustomMode)team_info_json_value_[nim::kNIMTeamInfoKeyUpdateCustomMode].asUInt();
 	}
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	/** 设置全员禁言（除管理员） */
 	void SetMute(NIMTeamMuteType mute_type)
 	{
@@ -392,7 +389,6 @@ public:
 			return kNIMTeamMuteTypeNomalMute;
 		return (NIMTeamMuteType)team_info_json_value_[nim::kNIMTeamInfoKeyMuteType].asUInt(); 
 	}
-#endif
 
 	/** @fn bool ExistValue(const std::string& nim_team_info_key) const
 	  * @brief 群组信息数据标记Key对应的数据是否有效（存在，非初始值状态）

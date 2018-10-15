@@ -87,9 +87,7 @@ struct UploadMediaResult
 {
 	std::string url_;				/**< 上传地址 */
 	std::string res_id_;			/**< 资源id */
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 	std::string call_id_;			/**< 请求者id */
-#endif
 
 	/** 构造函数 */
 	UploadMediaResult() {}

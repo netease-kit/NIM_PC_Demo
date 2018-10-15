@@ -69,7 +69,7 @@ NIM_SDK_DLL_API void nim_msglog_query_msg_online_async(const char *id,
 													   const char *json_extension, 
 													   nim_msglog_query_cb_func cb, 
 													   const void *user_data);
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
 /** @fn void nim_msglog_query_the_message_of_the_specified_type_async(enum NIMSessionType to_type, const char *id, int limit_count, int64_t from_time, int64_t end_time, const char *end_client_msg_id, bool reverse, const char *msg_types, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
   * 根据指定条件在一个会话中查询指定单个或多个类型的本地消息
   * @param[in] to_type			会话类型
@@ -97,7 +97,6 @@ NIM_SDK_DLL_API void nim_msglog_query_the_message_of_the_specified_type_async(en
 														   const char *json_extension, 
 														   nim_msglog_query_cb_func cb, 
 														   const void *user_data);
-#endif
 
 /** @fn void nim_msglog_query_msg_by_options_async(enum NIMMsgLogQueryRange query_range, const char *ids, int limit_count, int64_t from_time, int64_t end_time, const char *end_client_msg_id, bool reverse, enum NIMMessageType msg_type, const char *search_content, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data)
   * 根据指定条件查询本地消息,使用此接口可以完成全局搜索等功能,具体请参阅开发手册 http://dev.netease.im/docs/product/IM%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/SDK%E5%BC%80%E5%8F%91%E9%9B%86%E6%88%90/Windows%E5%BC%80%E5%8F%91%E9%9B%86%E6%88%90/%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95
@@ -287,7 +286,6 @@ NIM_SDK_DLL_API void nim_msglog_send_receipt_async(const char *json_msg, const c
   */
 NIM_SDK_DLL_API bool nim_msglog_query_be_readed(const char *json_msg, const char *json_extension);
 
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn bool nim_msglog_query_receipt_sent(const char *json_msg, const char *json_extension)
   * 查询收到的消息是否已经发送过已读回执
   * @param[in] json_msg			消息json string。
@@ -295,7 +293,6 @@ NIM_SDK_DLL_API bool nim_msglog_query_be_readed(const char *json_msg, const char
   * @return bool 是否已发送过
   */
 NIM_SDK_DLL_API bool nim_msglog_query_receipt_sent(const char *json_msg, const char *json_extension);
-#endif
 
 /** @fn void nim_msglog_reg_status_changed_cb(const char *json_extension, nim_msglog_status_changed_cb_func cb, const void *user_data)
   * (全局回调)注册全局的消息状态变更通知（目前只支持已读状态的通知）
@@ -320,7 +317,6 @@ NIM_SDK_DLL_API void nim_msglog_reg_status_changed_cb(const char *json_extension
   */
 NIM_SDK_DLL_API void nim_msglog_update_localext_async(const char *msg_id, const char *local_ext, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
     
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 /** @fn void nim_msglog_read_all_async(const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data)
   * 全部未读消息历史标记为已读
   * @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -332,7 +328,6 @@ NIM_SDK_DLL_API void nim_msglog_update_localext_async(const char *msg_id, const 
   */
 NIM_SDK_DLL_API void nim_msglog_read_all_async(const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
 
-#endif
 #ifdef __cplusplus
 };
 #endif //__cplusplus

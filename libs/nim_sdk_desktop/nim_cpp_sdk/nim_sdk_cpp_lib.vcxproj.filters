@@ -125,9 +125,7 @@
     <ClCompile Include="api\nim_cpp_robot.cpp">
       <Filter>api</Filter>
     </ClCompile>
-    <ClCompile Include="api\nim_cpp_doc_trans.cpp">
-      <Filter>api</Filter>
-    </ClCompile>
+    <ClCompile Include="api\nim_cpp_doc_trans.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\nim_client_helper.h">
@@ -233,12 +231,8 @@
     <ClInclude Include="api\nim_cpp_robot.h">
       <Filter>api</Filter>
     </ClInclude>
-    <ClInclude Include="util\nim_sdk_defines.h">
-      <Filter>util</Filter>
-    </ClInclude>
+    <ClInclude Include="util\nim_sdk_defines.h" />
     <ClInclude Include="nim_cpp_win32_demo_helper.h" />
-    <ClInclude Include="api\nim_cpp_doc_trans.h">
-      <Filter>api</Filter>
-    </ClInclude>
+    <ClInclude Include="api\nim_cpp_doc_trans.h" />
   </ItemGroup>
 </Project>

@@ -79,6 +79,9 @@ void VideoSettingForm::InitWindow()
 
 	open_video_checkbox_ = (CheckBox*) FindControl(L"open_video");
 	input_video_device_  = (Combo*) FindControl(L"input_video");
+	video_quality_list_ = (Combo*)FindControl(L"video_quality");
+
+	video_page_ = (ui::VBox*) FindControl(L"video_page");
 }
 
 void VideoSettingForm::OnFinalMessage(HWND hWnd)
@@ -119,6 +122,17 @@ bool VideoSettingForm::Notify(ui::EventArgs* msg)
 
 			ListContainerElement* label = (ListContainerElement*)input_video_device_->GetItemAt(k);
 			SwitchInputVideoDevice(label->GetUTF8DataID());
+		}
+		else if (name == L"video_quality")
+		{
+			int k = video_quality_list_->GetCurSel();
+			ASSERT(k >= 0 && k < video_quality_list_->GetCount());
+
+			ListContainerElement* label = (ListContainerElement*)video_quality_list_->GetItemAt(k);
+
+			int video_quality = 0;
+			nbase::StringToInt(label->GetDataID(), &video_quality);
+			VideoManager::GetInstance()->SetVideoQuality(video_quality);
 		}
 	}
 	else if(msg->Type == ui::kEventValueChange)
@@ -319,6 +333,34 @@ void VideoSettingForm::InitDeviceList( bool video, bool input )
 	}
 }
 
+void VideoSettingForm::InitVideoQualityList()
+{
+	video_quality_list_->RemoveAll();
+
+	// 不使用 map 的原因是 map 会打乱次序
+	std::list<std::pair<std::wstring, int>> quality_list;
+	quality_list.push_back(std::make_pair(L"默认（480x320）", nim::kNIMVChatVideoQualityNormal));
+	quality_list.push_back(std::make_pair(L"低（176x144）", nim::kNIMVChatVideoQualityLow));
+	quality_list.push_back(std::make_pair(L"中（352x288）", nim::kNIMVChatVideoQualityMedium));
+	quality_list.push_back(std::make_pair(L"高（480x320）", nim::kNIMVChatVideoQualityHigh));
+	quality_list.push_back(std::make_pair(L"480P（640x480）", nim::kNIMVChatVideoQualitySuper));
+	quality_list.push_back(std::make_pair(L"540P（960x540）", nim::kNIMVChatVideoQuality540p));
+	quality_list.push_back(std::make_pair(L"720P（1280x720）", nim::kNIMVChatVideoQuality720p));
+	
+	for (auto quality : quality_list)
+	{
+		ListContainerElement* label = new ListContainerElement;
+		label->SetClass(L"listitem");
+		label->SetFixedHeight(30);
+		label->SetTextPadding(UiRect(10, 1, 30, 1));
+		label->SetText(quality.first);
+		label->SetDataID(nbase::Int64ToString16(quality.second));
+		video_quality_list_->Add(label);
+	}
+
+	video_quality_list_->SelectItem(0);
+}
+
 void VideoSettingForm::ShowPage( bool video )
 {
 	camera_is_open_ = false;
@@ -326,20 +368,27 @@ void VideoSettingForm::ShowPage( bool video )
 
 	if(video)
 	{
+		video_page_->SetVisible(true);
+
 		VideoManager::GetInstance()->EndDevice(nim::kNIMDeviceTypeAudioIn, kDeviceSessionTypeSetting);
 		VideoManager::GetInstance()->EndDevice(nim::kNIMDeviceTypeAudioOut, kDeviceSessionTypeSetting);
 		option_video_->Selected(true, false);
 
 		InitDeviceList(true, true);
 
+		InitVideoQualityList();
+
 		tabbox_->SelectItem(1);
 
 		error_notice_label_->SetVisible(false);
 		camera_fail_ctrl_->SetVisible( true );
 		PrepareVideoInput(VideoManager::GetInstance()->GetSettingVideoInStatus());
+		PrepareVideoQuality(VideoManager::GetInstance()->GetVideoQuality());
 	}
 	else
 	{
+		video_page_->SetVisible(false);
+
 		paint_video_timer_.Cancel();
 		VideoManager::GetInstance()->EndDevice(nim::kNIMDeviceTypeVideo, kDeviceSessionTypeSetting);
 
@@ -543,6 +592,25 @@ void VideoSettingForm::PrepareVideoInput( bool start )
 	error_notice_label_->SetVisible(true);
 	camera_fail_ctrl_->SetVisible( true );
 }
+
+void VideoSettingForm::PrepareVideoQuality(int current_video_quality)
+{
+	if (video_quality_list_)
+	{
+		for (int i = 0; i < video_quality_list_->GetCount(); i++)
+		{
+			auto label = video_quality_list_->GetItemAt(i);
+			int video_quality = 0;
+			nbase::StringToInt(label->GetDataID(), &video_quality);
+			if (current_video_quality == video_quality)
+			{
+				video_quality_list_->SelectItem(i);
+				return;
+			}
+		}
+	}
+}
+
 void VideoSettingForm::PaintVideo()
 {
 	int cur = tabbox_->GetCurSel();

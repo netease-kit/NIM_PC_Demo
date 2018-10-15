@@ -254,12 +254,10 @@ struct ChatRoomNotification
 		{
 			queue_change_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyQueueChange].asString();
 		}
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		if ( id_ == kNIMChatRoomNotificationIdQueueBatchChanged)
 		{
 			queue_change_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyQueueChange].asString();
 		}
-#endif
 	}
 };
 
@@ -288,7 +286,7 @@ struct ChatRoomQueueChangedNotification
 	}
 };
 /** @brief  通知麦序队列中有批量变更，发生在元素提交者离开聊天室或者从聊天室异常掉线时*/
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
+
 struct ChatRoomQueueBatchChangedNotification
 {
 	std::string		type_;		/**< 队列变更类型 OFFER, POLL, DROP*/
@@ -325,7 +323,7 @@ struct ChatRoomQueueBatchChangedNotification
 		}
 	}
 };
-#endif
+
 /** @brief 聊天室消息属性设置 */
 struct ChatRoomMessageSetting
 {
@@ -359,10 +357,8 @@ struct ChatRoomMessageSetting
 		message[kNIMChatRoomMsgKeyAntiSpamContent] = anti_spam_content_;
 		if(!anti_spam_bizid_.empty())
 			message[kNIMChatRoomMsgKeyAntiSpamBizId] = anti_spam_bizid_;
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		message[kNIMChatRoomMsgKeyHistorySave] = history_save_ ? 1 : 0;
 		message[kNIMChatRoomMsgKeyAntiSpamUsingYiDun] = anti_spam_using_yidun_;
-#endif
 	}
 
 	/** @fn void ParseMessageSetting(const Json::Value& message)
@@ -428,9 +424,7 @@ public:
 		client_msg_id_ = values[kNIMChatRoomMsgKeyClientMsgid].asString();
 		local_res_path_ = values[kNIMChatRoomMsgKeyLocalFilePath].asString();
 		local_res_id_ = values[kNIMChatRoomMsgKeyLocalResId].asString();
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		msg_body_ = values[kNIMChatRoomMsgKeyBody].asString();
-#endif
 		msg_setting_.ParseMessageSetting(values);
 	}
 
@@ -446,9 +440,8 @@ public:
 		values[kNIMChatRoomMsgKeyClientMsgid] = client_msg_id_;
 		values[kNIMChatRoomMsgKeyLocalFilePath] = local_res_path_;
 		values[kNIMChatRoomMsgKeyLocalResId] = local_res_id_;
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 		values[kNIMChatRoomMsgKeyBody] = msg_body_;
-#endif
+
 		msg_setting_.ToJsonValue(values);
 		return nim::GetJsonStringWithNoStyled(values);
 	}
@@ -830,6 +823,47 @@ bool ParseRobotInfosStringToRobotInfos(const std::string &infos_json, RobotInfos
   * @return bool 解析成功或失败 
   */
 bool ParseRobotInfoStringToRobotInfo(const std::string &info_json, RobotInfo &info);
+
+typedef ChatRoomQueueElement ChatRoomMember;
+/** @brief 聊天室批量更新成员*/
+struct ChatRoomBatchMembers
+{
+
+	std::map < std::string,std::string>members_values_;
+	/** 构造函数 */
+	ChatRoomBatchMembers(){ members_values_.clear(); }
+	ChatRoomBatchMembers(const std::map < std::string, std::string>& members) :members_values_(members)
+	{
+		
+	}
+	
+	void ParseFromJsonValue(const Json::Value &json_str)
+	{
+		assert(false);
+	}
+
+	/** @fn std::string ToJsonString() const
+	* @brief 组装Json Value字符串
+	* @return void
+	*/
+	std::string	ToJsonString() const
+	{
+		Json::Value values;
+		int i = 0;
+		for (auto it = members_values_.begin(); it != members_values_.end(); ++it)
+		{
+			values[i][kNIMChatRoomQueueElementKey] = it->first.c_str();
+			values[i][kNIMChatRoomQueueElementValue] = it->second.c_str();
+			i++;
+		}
+		return nim::GetJsonStringWithNoStyled(values);
+	}
+
+
+};
+
+bool ParseBatchInfosStringToNotMembers(const std::string &infos_json, std::list<std::string> &lst_members);
+
 
 } //namespace nim_chatroom
 

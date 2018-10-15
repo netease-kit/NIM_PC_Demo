@@ -40,6 +40,11 @@ void SessionPluginPage::SetTaskbarIcon(const std::wstring &icon)
 }
 SessionBox* SessionPluginPage::CreateSessionBox(const std::string &session_id, nim::NIMSessionType session_type)
 {
+	auto box = GetSessionBoxByID(session_id);
+	if (box != nullptr)
+	{
+		return box;
+	}
 	SessionBox* session_box = new SessionBox(session_id, session_type);
 	ui::GlobalManager::FillBoxWithCache(session_box, L"session/session_box.xml");
 	std::wstring id = nbase::UTF8ToUTF16(session_id);

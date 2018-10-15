@@ -219,6 +219,11 @@ protected:
 	* @return bool
 	*/
 	virtual bool IsShowRecallButton();
+	/**
+* 此条消息是否展示右键菜单的转发按钮,机器会话消息不转发
+* @return bool
+*/
+	virtual bool IsShowRetweetButton();
 private:
 
 	/** 

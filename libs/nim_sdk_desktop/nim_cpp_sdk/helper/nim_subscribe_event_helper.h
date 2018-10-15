@@ -22,7 +22,6 @@
 */
 namespace nim
 {
-#ifdef NIMAPI_UNDER_WIN_DESKTOP_ONLY
 
 /** @brief 事件数据 */
 struct EventData
@@ -171,7 +170,6 @@ bool ParseEventSubscribeData(const Json::Value& values, EventSubscribeData& even
   */
 bool ParseEventSubscribeDataList(const std::string& subscribe_list_json, std::list<EventSubscribeData>& event_subscribe_list);
 
-#endif
 } //namespace nim
 
 #endif //_NIM_SDK_CPP_SUBSCRIBE_EVENT_HELPER_H_

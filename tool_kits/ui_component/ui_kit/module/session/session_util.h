@@ -50,10 +50,11 @@ enum MsgResLoadStatus
 //自定义消息的类型
 enum CustomMsgType
 {
-	CustomMsgType_Jsb = 1,	//石头剪子布
-	CustomMsgType_SnapChat,	//阅后即焚
-	CustomMsgType_Sticker,	//贴图
-	CustomMsgType_Rts,		//白板的发起结束消息
+	CustomMsgType_Jsb = 1,			//石头剪子布
+	CustomMsgType_SnapChat,			//阅后即焚
+	CustomMsgType_Sticker,			//贴图
+	CustomMsgType_Rts,				//白板的发起结束消息
+	CustomMsgType_TransferFile,		//P2P传输文件
 	CustomMsgType_Meeting = 10,		//多人会议控制协议
 };
 

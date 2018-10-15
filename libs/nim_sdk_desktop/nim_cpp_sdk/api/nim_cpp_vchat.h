@@ -539,6 +539,7 @@ public:
 	//*				11403:无效的操作
 	//*/
 	//static void SetStreamingMode(bool streaming, OptCallback cb);
+
 };
 }
 

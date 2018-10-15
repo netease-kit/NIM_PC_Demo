@@ -56,6 +56,15 @@
     <ClCompile Include="callback\vchat\vchat_callback.cpp">
       <Filter>callback\vchat</Filter>
     </ClCompile>
+    <ClCompile Include="gui\local_video_player\local_video_player_form.cpp">
+      <Filter>gui\local_video_player</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\local_video_player\local_video_player_form_ui.cpp">
+      <Filter>gui\local_video_player</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\local_video_player\controls\ui_video_player_bitmap_control.cpp">
+      <Filter>gui\local_video_player\controls</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h" />
@@ -111,6 +120,12 @@
     <ClInclude Include="callback\vchat\vchat_callback.h">
       <Filter>callback\vchat</Filter>
     </ClInclude>
+    <ClInclude Include="gui\local_video_player\local_video_player_form.h">
+      <Filter>gui\local_video_player</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\local_video_player\controls\ui_video_player_bitmap_control.h">
+      <Filter>gui\local_video_player\controls</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -136,6 +151,12 @@
     </Filter>
     <Filter Include="callback\vchat">
       <UniqueIdentifier>{0b3d428f-49bc-4a0f-aafe-b5ced5a97144}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\local_video_player">
+      <UniqueIdentifier>{e0a3d3c6-d72d-4361-b8ba-ebf45e16665a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="gui\local_video_player\controls">
+      <UniqueIdentifier>{d61a44ec-7cf9-4cac-8f5e-33ad73978752}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
 </Project>

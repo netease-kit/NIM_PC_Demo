@@ -196,6 +196,15 @@ int WINAPI NimMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int
 {
 	// 把cef dll文件的位置添加到程序的"path"环境变量中,这样可以把dll文件放到bin以外的目录，并且不需要手动频繁切换dll文件，这行代码必须写到main的开头
 	nim_cef::CefManager::GetInstance()->AddCefDllToPath();
+#ifdef SUPPORTLOCALPLAYER
+	TCHAR path_envirom[4096] = { 0 };
+	GetEnvironmentVariable(L"path", path_envirom, 4096);
+	std::wstring local_video_player_path = QPath::GetAppPath().append(L"live_player").append(L";");
+	std::wstring new_envirom(local_video_player_path);
+	new_envirom.append(path_envirom);
+	SetEnvironmentVariable(L"path", new_envirom.c_str());
+#endif
+
 	nbase::AtExitManager at_manager;
 
 	CComModule _Module;
