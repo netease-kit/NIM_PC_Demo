@@ -319,7 +319,7 @@ public:
 	static void Relogin(const std::string& session_id, OptCallback cb);
 
 	/** @fn static void SetVideoQuality(int video_quality)
-	* NIM 通话中修改分辨率，只在多人中支持
+	* NIM 通话中修改分辨率
 	* @param[in] video_quality 分辨率模式
 	* @return void 无返回值
 	* @note 错误码	0:成功
@@ -328,7 +328,7 @@ public:
 	static void SetVideoQuality(int video_quality);
 
 	/** @fn void SetVideoBitrate(int video_bitrate)
-	* NIM 通话中修改视频码率，有效区间[100kb,2000kb]，如果设置video_bitrate为0则取默认码率
+	* NIM 通话中修改视频码率，有效区间[100kb,5000kb]，如果设置video_bitrate为0则取默认码率
 	* @param[in] video_bitrate 视频码率值
 	* @return void 无返回值
 	* @note 错误码	0:成功

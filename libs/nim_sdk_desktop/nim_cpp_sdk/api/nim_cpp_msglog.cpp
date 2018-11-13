@@ -39,15 +39,15 @@ typedef void(*nim_msglog_reg_status_changed_cb)(const char *json_extension, nim_
 typedef void(*nim_msglog_read_all_async)(const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
 
 typedef void(*nim_msglog_query_the_message_of_the_specified_type_async)(enum NIMSessionType to_type, 
-	const char *id,
-	int limit_count,
-	int64_t from_time,
+	const char *id, 
+	int limit_count, 
+	int64_t from_time, 
 	int64_t end_time,
 	const char *end_client_msg_id,
 	bool reverse,
 	const char *msg_types,
-	const char *json_extension,
-	nim_msglog_query_cb_func cb,
+	const char *json_extension, 
+	nim_msglog_query_cb_func cb, 
 	const void *user_data);
 #else
 #include "nim_msglog.h"
@@ -68,7 +68,7 @@ MsgLog::AllMessageTypeList::AllMessageTypeList()
 {
 	list_.emplace_back(nim::kNIMMessageTypeText);
 	list_.emplace_back(nim::kNIMMessageTypeImage);
-	list_.emplace_back(nim::kNIMMessageTypeAudio);
+	list_.emplace_back(nim::kNIMMessageTypeAudio);	
 	list_.emplace_back(nim::kNIMMessageTypeVideo);
 	list_.emplace_back(nim::kNIMMessageTypeLocation);
 	list_.emplace_back(nim::kNIMMessageTypeNotification);
@@ -81,23 +81,23 @@ std::vector<nim::NIMMessageType> MsgLog::AllMessageTypeList::ExclusionType(const
 {
 	std::vector<nim::NIMMessageType> ret;
 	auto it = list_.begin();
-	while (it != list_.end())
+	while(it != list_.end())
 	{
-		if (std::find_if(exclusion_type_list.begin(), exclusion_type_list.end(), [&](nim::NIMMessageType type){
+		if(std::find_if(exclusion_type_list.begin(),exclusion_type_list.end(),[&](nim::NIMMessageType type ){
 			return type == *it;
 		}) == exclusion_type_list.end())
-			ret.emplace_back(*it);
+			ret.emplace_back(*it);			
 		it++;
 	}
 	return ret;
 }
 const MsgLog::AllMessageTypeList MsgLog::QueryMsgOnlineAsyncParam::AllMsgTypeList;
 MsgLog::QueryMsgOnlineAsyncParam::QueryMsgOnlineAsyncParam() :
-limit_count_(100),
-reverse_(true),
-need_save_to_local_(true),
-auto_download_attachment_(true),
-is_exclusion_type_(false)
+		limit_count_(20),
+		reverse_(true),
+		need_save_to_local_(true),
+		auto_download_attachment_(true),
+		is_exclusion_type_(false)
 {
 
 }
@@ -105,18 +105,18 @@ bool MsgLog::QueryMsgOnlineAsyncParam::FormatParam()
 {
 	if (id_.empty() || limit_count_ <= 0)
 		return false;
-	if (msg_type_list_.size() > 0)
+	if(msg_type_list_.size() >0)
 		need_save_to_local_ = false;
 	Json::Value extension;
 	Json::FastWriter fw;
 	extension[kNIMMsglogJsonExtKeyNeedAutoDownloadAttachment] = auto_download_attachment_;
 	std::vector<nim::NIMMessageType> msg_type_list;
-	if (!is_exclusion_type_)//获取指定消息类型
-		msg_type_list.assign(msg_type_list_.begin(), msg_type_list_.end());
+	if(!is_exclusion_type_)//获取指定消息类型
+		msg_type_list.assign(msg_type_list_.begin(),msg_type_list_.end());		
 	else//排除指定的消息类型
 		msg_type_list = std::move(AllMsgTypeList.ExclusionType(msg_type_list_));
 	auto it = msg_type_list.begin();
-	while (it != msg_type_list.end())
+	while(it != msg_type_list.end())
 	{
 		extension[kNIMMsglogJsonExtKeyQueryMsgTypeList].append(*it);
 		it++;
@@ -307,7 +307,7 @@ bool MsgLog::QueryMsgOnlineAsync(const std::string &id
 }
 bool MsgLog::QueryMsgOnlineAsync(const MsgLog::QueryMsgOnlineAsyncParam& param, const QueryMsgCallback& cb)
 {
-	if (!(const_cast<MsgLog::QueryMsgOnlineAsyncParam&>(param)).FormatParam())
+	if(!(const_cast<MsgLog::QueryMsgOnlineAsyncParam&>(param)).FormatParam())
 		return false;
 	return QueryMsgOnlineAsync(
 		param.id_,
@@ -644,17 +644,11 @@ bool MsgLog::QueryReceivedMsgReceiptSent(const IMMessage& msg)
 	return NIM_SDK_GET_FUNC(nim_msglog_query_receipt_sent)(msg.ToJsonString(false).c_str(), nullptr);
 }
 
-static MsgLog::MessageStatusChangedCallback* g_cb_msg_status_changed_cb_ = nullptr;
+static MsgLog::MessageStatusChangedCallback g_cb_msg_status_changed_cb_ = nullptr;
 void MsgLog::RegMessageStatusChangedCb(const MessageStatusChangedCallback& cb, const std::string &json_extension/* = ""*/)
-{
-	if (g_cb_msg_status_changed_cb_)
-	{
-		delete g_cb_msg_status_changed_cb_;
-		g_cb_msg_status_changed_cb_ = nullptr;
-	}
-	g_cb_msg_status_changed_cb_ = new MessageStatusChangedCallback(cb);
-
-	NIM_SDK_GET_FUNC(nim_msglog_reg_status_changed_cb)(json_extension.c_str(), &CallbackMsgStatusChanged, g_cb_msg_status_changed_cb_);
+{	
+	g_cb_msg_status_changed_cb_ = cb;
+	NIM_SDK_GET_FUNC(nim_msglog_reg_status_changed_cb)(json_extension.c_str(), &CallbackMsgStatusChanged, &g_cb_msg_status_changed_cb_);
 }
 
 bool MsgLog::UpdateLocalExtAsync(const std::string& msg_id
@@ -680,7 +674,10 @@ bool MsgLog::UpdateLocalExtAsync(const std::string& msg_id
 	return true;
 
 }
-
+void MsgLog::UnregMsgologCb()
+{
+	g_cb_msg_status_changed_cb_ = nullptr;
+}
 bool MsgLog::ReadAllAsync(const DBFunctionCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	DBFunctionCallback* cb_pointer = nullptr;
@@ -692,4 +689,5 @@ bool MsgLog::ReadAllAsync(const DBFunctionCallback& cb, const std::string& json_
 
 	return true;
 }
+
 }

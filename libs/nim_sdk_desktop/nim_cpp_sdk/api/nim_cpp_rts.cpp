@@ -15,8 +15,8 @@ namespace nim
 
 //发起相关
 #ifdef NIM_SDK_DLL_IMPORT
-typedef	void (*nim_rts_start)(int channel_type, const char* uid, const char *json_extension, nim_rts_start_cb_func cb, const void *user_data);
 typedef	void(*nim_rts_set_proxy)(enum NIMProxyType type, const char *host, int port, const char *user, const char *password);
+typedef	void (*nim_rts_start)(int channel_type, const char* uid, const char *json_extension, nim_rts_start_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_set_start_notify_cb_func)(nim_rts_start_notify_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_create_conf)(const char *name, const char *custom_info, const char *json_extension, nim_rts_create_cb_func cb, const void *user_data);
 typedef	void (*nim_rts_join_conf)(const char *name, const char *json_extension, nim_rts_join_cb_func cb, const void *user_data);
@@ -262,6 +262,10 @@ void RecDataCallbackWrapper(const char *session_id, int channel_type, const char
 	}
 }
 
+void Rts::SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password)
+{
+	NIM_SDK_GET_FUNC(nim_rts_set_proxy)(type, host.c_str(), port, user.c_str(), password.c_str());
+}
 //发起相关
 //NIM 创建rts会话，传入的JSON参数定义见nim_rts_def.h
 void Rts::StartChannel(int channel_type, const std::string& uid, RtsStartInfo info, const StartChannelCallback& cb)
@@ -470,8 +474,5 @@ void Rts::SetRecDataCb(const RecDataCallback& cb)
 	}
 	return NIM_SDK_GET_FUNC(nim_rts_set_rec_data_cb_func)(&RecDataCallbackWrapper, g_rec_data_cb_pointer);
 }
-void Rts::SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password)
-{
-	NIM_SDK_GET_FUNC(nim_rts_set_proxy)(type, host.c_str(), port, user.c_str(), password.c_str());
-}
+
 }  // namespace nim

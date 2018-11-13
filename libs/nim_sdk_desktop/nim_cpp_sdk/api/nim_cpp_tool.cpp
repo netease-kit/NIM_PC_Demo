@@ -16,6 +16,7 @@ namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
 typedef	const char * (*nim_tool_get_user_appdata_dir)(const char * app_account);
+typedef	const char * (*nim_tool_get_user_specific_appdata_dir)(const char *app_account,enum NIMAppDataType appdata_type);
 typedef	const char * (*nim_tool_get_local_appdata_dir)();
 typedef	const char * (*nim_tool_get_cur_module_dir)();
 typedef	const char * (*nim_tool_get_md5)(const char *input);
@@ -44,6 +45,14 @@ static void CallbackGetAudioText(int res_code, const char *text, const char *jso
 std::string Tool::GetUserAppdataDir(const std::string& app_account)
 {
 	const char *dir = NIM_SDK_GET_FUNC(nim_tool_get_user_appdata_dir)(app_account.c_str());
+	std::string dir_str = (std::string)dir;
+	Global::FreeBuf((void *)dir);
+	return dir_str; 
+}
+
+std::string Tool::GetSpecificAppdataDir(const std::string app_account,enum NIMAppDataType appdata_type)
+{
+	const char *dir = NIM_SDK_GET_FUNC(nim_tool_get_user_specific_appdata_dir)(app_account.c_str(), appdata_type);
 	std::string dir_str = (std::string)dir;
 	Global::FreeBuf((void *)dir);
 	return dir_str; 

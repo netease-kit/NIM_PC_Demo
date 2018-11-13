@@ -11,6 +11,7 @@
 #include "nim_cpp_win32_demo_helper.h"
 #include "nim_string_util.h"
 
+
 namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
@@ -32,25 +33,16 @@ static void CallbackSyncComplete(nim::NIMDataSyncType sync_type, nim::NIMDataSyn
 	}
 }
 
-static DataSync::DataSyncCallback* g_cb_data_sync_ = nullptr;
+static DataSync::DataSyncCallback g_cb_data_sync_ = nullptr;
 void DataSync::RegCompleteCb(const DataSyncCallback& cb)
 {
-	if (g_cb_data_sync_)
-	{
-		delete g_cb_data_sync_;
-		g_cb_data_sync_ = nullptr;
-	}
-	g_cb_data_sync_ = new DataSyncCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_data_sync_reg_complete_cb)(&CallbackSyncComplete, g_cb_data_sync_);
+	g_cb_data_sync_ = cb;
+	return NIM_SDK_GET_FUNC(nim_data_sync_reg_complete_cb)(&CallbackSyncComplete, &g_cb_data_sync_);
 }
 
 void DataSync::UnregDataSyncCb()
 {
-	if (g_cb_data_sync_)
-	{
-		delete g_cb_data_sync_;
-		g_cb_data_sync_ = nullptr;
-	}
+	g_cb_data_sync_ = nullptr;
 }
 
 

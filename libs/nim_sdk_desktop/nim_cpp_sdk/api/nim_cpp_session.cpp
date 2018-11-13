@@ -76,7 +76,7 @@ static void CallbackSessionChange(int rescode, const char *result, int total_unr
 
 static Session::ChangeCallback g_cb_session_changed_ = nullptr;
 void Session::RegChangeCb(const ChangeCallback& cb, const std::string& json_extension)
-{	
+{
 	g_cb_session_changed_ = cb;
 	return NIM_SDK_GET_FUNC(nim_session_reg_change_cb)(json_extension.c_str(), &CallbackSessionChange, &g_cb_session_changed_);
 }
@@ -167,6 +167,7 @@ bool Session::SetAllUnreadCountZeroAsync(const SetUnreadCountZeroCallback& cb, c
 		cb_pointer = new SetUnreadCountZeroCallback(cb);
 	}
 	NIM_SDK_GET_FUNC(nim_session_reset_all_unread_count_async)(json_extension.c_str(), &CallbackSessionChange, cb_pointer);
+
 	return true;
 }
 

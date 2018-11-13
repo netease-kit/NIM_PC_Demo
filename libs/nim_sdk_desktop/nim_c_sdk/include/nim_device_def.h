@@ -50,8 +50,8 @@ extern"C"
 	/** @enum NIMAudioDataCbType 音频数据监听类型 */
 	enum NIMAudioDataCbType
 	{
-		kNIMAudioDataCbTypeHook			= 1,	/**< 实时返回伴音数据，伴音数据保留原始的格式，并伴音同时混音到通话数据中 */
-		kNIMAudioDataCbTypeHookAndMic	= 2,	/**< 定时返回伴音和麦克风、声卡的混音数据，允许重采样（json中带kNIMDeviceSampleRate和kNIMVolumeWork），返回单声道数据，并伴音同时混音到通话数据中 */
+		kNIMAudioDataCbTypeHook			= 1,	/**< 实时返回伴音数据，伴音数据保留原始的格式，伴音不再混音到通话数据中，如果还需要可以通过伴音数据通道再回传 */
+		kNIMAudioDataCbTypeHookAndMic	= 2,	/**< 定时返回伴音和麦克风、声卡的混音数据，允许重采样（json中带kNIMDeviceSampleRate和kNIMVolumeWork），返回单声道数据 */
 	};
 
 	/** @name json extension params for vchat device key

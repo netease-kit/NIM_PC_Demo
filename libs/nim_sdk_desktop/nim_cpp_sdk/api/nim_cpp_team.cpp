@@ -179,16 +179,11 @@ static void CallbackQueryTeamInfo(const char *tid, const char *result, const cha
 	}
 }
 
-static Team::TeamEventCallback* g_cb_team_event_ = nullptr;
+static Team::TeamEventCallback g_cb_team_event_ = nullptr;
 void Team::RegTeamEventCb(const TeamEventCallback& cb, const std::string& json_extension)
 {
-	if (g_cb_team_event_)
-	{
-		delete g_cb_team_event_;
-		g_cb_team_event_ = nullptr;
-	}
-	g_cb_team_event_ = new TeamEventCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_team_reg_team_event_cb)(json_extension.c_str(), &CallbackTeamEvent, g_cb_team_event_);
+	g_cb_team_event_ = cb;
+	return NIM_SDK_GET_FUNC(nim_team_reg_team_event_cb)(json_extension.c_str(), &CallbackTeamEvent, &g_cb_team_event_);
 }
 
 bool Team::CreateTeamAsync(const TeamInfo& team_info
@@ -675,11 +670,7 @@ bool Team::ParseTeamInfo(const std::string& json_team_info, TeamInfo& team_info)
 
 void Team::UnregTeamCb()
 {
-	if (g_cb_team_event_)
-	{
-		delete g_cb_team_event_;
-		g_cb_team_event_ = nullptr;
-	}
+	g_cb_team_event_ = nullptr;
 }
 
 bool Team::MuteMemberAsync(const std::string& tid, const std::string& member_id, bool set_mute, const TeamEventCallback& cb, const std::string& json_extension/* = ""*/)
@@ -800,4 +791,5 @@ void Team::TeamMsgQueryUnreadList(const std::string& tid, const IMMessage& msg, 
 		, &CallbackTeamChange
 		, cb_pointer);
 }
+
 }

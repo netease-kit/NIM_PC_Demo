@@ -207,7 +207,7 @@ NIM_SDK_DLL_API bool nim_vchat_rotate_remote_video_enabled();
 NIM_SDK_DLL_API void nim_vchat_set_video_quality(int video_quality, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
 /** @fn void nim_vchat_set_video_bitrate(int video_bitrate, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
-* NIM 通话中修改视频码率，有效区间[100kb,2000kb]，如果设置video_bitrate为0则取默认码率
+* NIM 通话中修改视频码率，有效区间[100kb,5000kb]，如果设置video_bitrate为0则取默认码率
 * @param[in] video_bitrate 视频码率值
 * @param[in] json_extension 无效扩展字段
 * @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效

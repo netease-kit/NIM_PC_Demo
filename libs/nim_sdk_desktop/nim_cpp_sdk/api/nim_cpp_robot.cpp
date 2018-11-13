@@ -44,7 +44,7 @@ void Robot::RegChangedCallback(const RobotChangedCallback &callback, const std::
 	return NIM_SDK_GET_FUNC(nim_robot_reg_changed_callback)(json_extension.c_str(), &CallbackRobotInfoChange, &g_cb_changed_);
 }
 
-RobotInfos Robot::QueryAllRobotInfosBlock(const std::string &json_extension)
+RobotInfos Robot::QueryAllRobotInfosBlock(const std::string &json_extension/* = ""*/)
 {
 	char *res = NIM_SDK_GET_FUNC(nim_robot_query_all_robots_block)(json_extension.c_str());
 	RobotInfos infos;
@@ -52,7 +52,7 @@ RobotInfos Robot::QueryAllRobotInfosBlock(const std::string &json_extension)
 	return infos;
 }
 
-RobotInfo Robot::QueryRobotInfoByAccidBlock(const std::string &accid, const std::string &json_extension)
+RobotInfo Robot::QueryRobotInfoByAccidBlock(const std::string &accid, const std::string &json_extension/* = ""*/)
 {
 	char *res = NIM_SDK_GET_FUNC(nim_robot_query_robot_by_accid_block)(accid.c_str(), json_extension.c_str());
 	RobotInfo info;

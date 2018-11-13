@@ -62,6 +62,7 @@ typedef void(*nim_vchat_end)(const char* json_extension);
 typedef void(*nim_vchat_relogin)(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 //自定义视频数据
 typedef bool(*nim_vchat_custom_video_data)(uint64_t time, const char *data, unsigned int size, unsigned int width, unsigned int height, const char *json_extension);
+typedef bool(*nim_vchat_custom_audio_data)(uint64_t time, const char *data, uint32_t size, const char *json_extension);
 typedef bool(*nim_vchat_accompanying_sound)(unsigned char id, unsigned __int64 time, const char *data, unsigned int size, unsigned int rate, unsigned int channels, const char *json_extension);
 
 //NIM 通话中修改分辨率
@@ -215,6 +216,10 @@ bool VChat::Init(const std::string& server_setting_path)
 		json_value = fs.write(value);
 	}
 	return NIM_SDK_GET_FUNC(nim_vchat_init)(json_value.c_str());
+}
+void VChat::SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password)
+{
+	NIM_SDK_GET_FUNC(nim_vchat_set_proxy)(type, host.c_str(), port, user.c_str(), password.c_str());
 }
 //NIM vchat清理
 void VChat::Cleanup()
@@ -501,6 +506,10 @@ bool VChat::CustomVideoData(uint64_t time, const char *data, unsigned int size, 
 {
 	return NIM_SDK_GET_FUNC(nim_vchat_custom_video_data)(time, data, size, width, height, json_extension);
 }
+bool VChat::CustomAudioData(uint64_t time, const char *data, unsigned int size, const char *json_extension)
+{
+	return NIM_SDK_GET_FUNC(nim_vchat_custom_audio_data)(time, data, size, json_extension);
+}
 bool VChat::AccompanyingSound(unsigned char id, unsigned __int64 time, const char *data, unsigned int size, unsigned int rate, unsigned int channels, const char *json_extension)
 {
 	return NIM_SDK_GET_FUNC(nim_vchat_accompanying_sound)(id, time, data, size, rate, channels, json_extension);
@@ -596,8 +605,5 @@ void VChat::SetUidAsMainPicture(const std::string& uid, const std::string& json_
 	OptCallback* cb_pointer = new OptCallback(cb);
 	return NIM_SDK_GET_FUNC(nim_vchat_set_uid_picture_as_main)(uid.c_str(), json_extension.c_str(), OnOptCallback, cb_pointer);
 }
-void VChat::SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password)
-{
-	NIM_SDK_GET_FUNC(nim_vchat_set_proxy)(type, host.c_str(), port, user.c_str(), password.c_str());
-}
+
 }  // namespace nim

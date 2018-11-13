@@ -91,16 +91,11 @@ static void CallbackGetFriendProfile(const char *accid, const char *result_json,
 	}
 }
 
-static Friend::FriendChangeCallback* g_cb_friend_changed_ = nullptr;
+static Friend::FriendChangeCallback g_cb_friend_changed_ = nullptr;
 void Friend::RegChangeCb(const FriendChangeCallback &cb, const std::string& json_extension /* = "" */)
 {
-	if (g_cb_friend_changed_)
-	{
-		delete g_cb_friend_changed_;
-		g_cb_friend_changed_ = nullptr;
-	}
-	g_cb_friend_changed_ = new FriendChangeCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_friend_reg_changed_cb)(json_extension.c_str(), &CallbackFriendChange, g_cb_friend_changed_);
+	g_cb_friend_changed_ = cb;
+	return NIM_SDK_GET_FUNC(nim_friend_reg_changed_cb)(json_extension.c_str(), &CallbackFriendChange, &g_cb_friend_changed_);
 }
 
 bool Friend::Request(const std::string &accid, NIMVerifyType verify_type, const std::string &msg, const FriendOptCallback &cb, const std::string& json_extension /*= ""*/)
@@ -228,11 +223,7 @@ bool Friend::ParseFriendProfileSyncEvent(const FriendChangeEvent& change_event, 
 
 void Friend::UnregFriendCb()
 {
-	if (g_cb_friend_changed_)
-	{
-		delete g_cb_friend_changed_;
-		g_cb_friend_changed_ = nullptr;
-	}
+	g_cb_friend_changed_ = nullptr;
 }
 
 bool Friend::QueryFriendshipBlock(const std::string& accid, const std::string& json_extension/* = ""*/)

@@ -60,7 +60,7 @@ static void CallbackDocInfos(int32_t code, const char *json_extension, const voi
 		std::string json;
 		json.append(json_extension);
 		std::list<DocTransInfo> infos;
-		int count = ParseDocTransInfos(json, infos);
+		int32_t count = ParseDocTransInfos(json, infos);
 		PostTaskToUIThread(std::bind((*cb), code, count, infos));
 		//(*cb)(code, count, infos);
 	}

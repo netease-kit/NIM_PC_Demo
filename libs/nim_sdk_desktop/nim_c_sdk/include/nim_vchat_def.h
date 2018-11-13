@@ -37,33 +37,6 @@ enum NIMVideoChatSessionType{
 	kNIMVideoChatSessionTypeLiveState		= 17,		/**< 通知直播推流的服务器状态 */
 };
 
-enum NIMVChatAudioMixingEvent
-{
-	kNIMAudioMixingStarted	= 1,	/**<伴音开始*/
-	kNIMAudioMixingError	= 2,	/**<伴音出错*/
-	kNIMAudioMixingFinished = 3		/**<伴音结束*/
-};
-
-enum NIMVChatAudioDeviceType
-{
-	kNIMAudioSpeakerPhone		= 0,	/**<扬声器*/
-	kNIMAudioWireDHeadSet		= 1,	/**<有线耳机*/
-	kNIMAudioEarPiece			= 2,	/**<听筒*/
-	kNIMAudioBlueToothHeadSet	= 3		/**<蓝牙耳机*/
-};
-
-enum NIMVChatNetConnectionType
-{
-	kNIMSessionConnectionUnknown	= 0,	/**<Unknown data connection*/
-	kNIMSessionConnectionEthernet	= 10,	/**<The Ethernet data connection.*/
-	kNIMSessionConnectionWifi		= 20,	/**<The WIFI data connection.*/
-	kNIMSessionConnection4G			= 30,	/**<The Mobile(4G) data connection*/
-	kNIMSessionConnection3G			= 40,	/**<The Mobile(3G) data connection.*/
-	kNIMSessionConnection2G			= 50,	/**<The Mobile(2G) data connection.*/
-	kNIMSessionConnectionBlueTooth	= 60,	/**<The Bluetooth data connection.*/
-	kNIMSessionConnectionNone		= 70	/**<The absence of a connection type.*/
-};
-
 /** @enum NIMVChatControlType 音视频通话控制类型 */
 enum NIMVChatControlType
 {

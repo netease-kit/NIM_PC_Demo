@@ -195,7 +195,7 @@ public:
 	
 	/** @fn std::string GetSDKVersion()
 	* 获取SDK版本号
-	* @return std::string版本号
+	* @return std::string 版本号
 	*/
 	static std::string GetSDKVersion();
 

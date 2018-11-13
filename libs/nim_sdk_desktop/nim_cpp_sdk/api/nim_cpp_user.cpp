@@ -146,16 +146,11 @@ static void CallbackUserNameCardChange(const char *result_json, const char *json
 	}
 }
 
-static User::SpecialRelationshipChangedCallback* g_cb_relation_changed_ = nullptr;
+static User::SpecialRelationshipChangedCallback g_cb_relation_changed_ = nullptr;
 void User::RegSpecialRelationshipChangedCb(const SpecialRelationshipChangedCallback& cb, const std::string& json_extension)
 {
-	if (g_cb_relation_changed_)
-	{
-		delete g_cb_relation_changed_;
-		g_cb_relation_changed_ = nullptr;
-	}
-	g_cb_relation_changed_ = new SpecialRelationshipChangedCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_user_reg_special_relationship_changed_cb)(json_extension.c_str(), &CallbackSpecialRelationChange, g_cb_relation_changed_);
+	g_cb_relation_changed_ = cb;
+	return NIM_SDK_GET_FUNC(nim_user_reg_special_relationship_changed_cb)(json_extension.c_str(), &CallbackSpecialRelationChange, &g_cb_relation_changed_);
 }
 
 bool User::SetBlack(const std::string& accid, bool set_black, const SetBlackCallback& cb, const std::string& json_extension)
@@ -208,16 +203,11 @@ void User::GetBlacklist(const GetBlackListCallback& cb, const std::string& json_
 	return NIM_SDK_GET_FUNC(nim_user_get_mute_blacklist)(json_extension.c_str(), &CallbackGetBlackList, cb_pointer);
 }
 
-static User::UserNameCardChangedCallback* g_cb_uinfo_changed_ = nullptr;
+static User::UserNameCardChangedCallback g_cb_uinfo_changed_ = nullptr;
 void User::RegUserNameCardChangedCb(const UserNameCardChangedCallback & cb, const std::string & json_extension)
 {
-	if (g_cb_uinfo_changed_)
-	{
-		delete g_cb_uinfo_changed_;
-		g_cb_uinfo_changed_ = nullptr;
-	}
-	g_cb_uinfo_changed_ = new UserNameCardChangedCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_user_reg_user_name_card_changed_cb)(json_extension.c_str(), &CallbackUserNameCardChange, g_cb_uinfo_changed_);
+	g_cb_uinfo_changed_ = cb;
+	return NIM_SDK_GET_FUNC(nim_user_reg_user_name_card_changed_cb)(json_extension.c_str(), &CallbackUserNameCardChange, &g_cb_uinfo_changed_);
 }
 
 bool User::GetUserNameCard(const std::list<std::string>& accids, const GetUserNameCardCallback& cb, const std::string& json_extension /*= ""*/)
@@ -319,16 +309,7 @@ bool User::ParseSyncSpecialRelationshipChange(const SpecialRelationshipChangeEve
 
 void User::UnregUserCb()
 {
-	if (g_cb_relation_changed_)
-	{
-		delete g_cb_relation_changed_;
-		g_cb_relation_changed_ = nullptr;
-	}
-
-	if (g_cb_uinfo_changed_)
-	{
-		delete g_cb_uinfo_changed_;
-		g_cb_uinfo_changed_ = nullptr;
-	}
+	g_cb_relation_changed_ = nullptr;
+	g_cb_uinfo_changed_ = nullptr;
 }
 }

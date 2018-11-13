@@ -110,28 +110,18 @@ static void CallbackNotifySysmsgRes(int res_code, int unread_count, const char *
 	}
 }
 
-SystemMsg::ReceiveSysmsgCallback* g_cb_receive_sysmsg_ = nullptr;
+SystemMsg::ReceiveSysmsgCallback g_cb_receive_sysmsg_ = nullptr;
  void SystemMsg::RegSysmsgCb(const ReceiveSysmsgCallback& cb, const std::string& json_extension)
  {
-	 if (g_cb_receive_sysmsg_)
-	 {
-		 delete g_cb_receive_sysmsg_;
-		 g_cb_receive_sysmsg_ = nullptr;
-	 }
-	 g_cb_receive_sysmsg_ = new ReceiveSysmsgCallback(cb);
-	 return NIM_SDK_GET_FUNC(nim_sysmsg_reg_sysmsg_cb)(json_extension.c_str(), &CallbackSysmsgChange, g_cb_receive_sysmsg_);
+	 g_cb_receive_sysmsg_ = cb;
+	 return NIM_SDK_GET_FUNC(nim_sysmsg_reg_sysmsg_cb)(json_extension.c_str(), &CallbackSysmsgChange, &g_cb_receive_sysmsg_);
  }
 
- static SystemMsg::SendCustomSysmsgCallback* g_cb_send_custom_sysmsg_ = nullptr;
+ static SystemMsg::SendCustomSysmsgCallback g_cb_send_custom_sysmsg_ = nullptr;
  void SystemMsg::RegSendCustomSysmsgCb(const SendCustomSysmsgCallback& cb, const std::string& json_extension)
  {
-	 if (g_cb_send_custom_sysmsg_)
-	 {
-		 delete g_cb_send_custom_sysmsg_;
-		 g_cb_send_custom_sysmsg_ = nullptr;
-	 }
-	 g_cb_send_custom_sysmsg_ = new SendCustomSysmsgCallback(cb);
-	 return NIM_SDK_GET_FUNC(nim_sysmsg_reg_custom_notification_ack_cb)(json_extension.c_str(), &CallbackSendCustomSysmsg, g_cb_send_custom_sysmsg_);
+	 g_cb_send_custom_sysmsg_ = cb;
+	 return NIM_SDK_GET_FUNC(nim_sysmsg_reg_custom_notification_ack_cb)(json_extension.c_str(), &CallbackSendCustomSysmsg, &g_cb_send_custom_sysmsg_);
  }
 
  void SystemMsg::SendCustomNotificationMsg(const std::string& json_msg)
@@ -247,17 +237,8 @@ void SystemMsg::DeleteByTypeAsync(NIMSysMsgType type, const BatchSetCallback& cb
 
 void SystemMsg::UnregSysmsgCb()
 {
-	if (g_cb_receive_sysmsg_)
-	{
-		delete g_cb_receive_sysmsg_;
-		g_cb_receive_sysmsg_ = nullptr;
-	}
-
-	if (g_cb_send_custom_sysmsg_)
-	{
-		delete g_cb_send_custom_sysmsg_;
-		g_cb_send_custom_sysmsg_ = nullptr;
-	}
+	g_cb_receive_sysmsg_ = nullptr;
+	g_cb_send_custom_sysmsg_ = nullptr;
 
 }
 
