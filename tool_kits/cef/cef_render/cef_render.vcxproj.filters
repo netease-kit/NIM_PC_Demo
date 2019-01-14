@@ -19,6 +19,9 @@
     <Filter Include="app\js_handler">
       <UniqueIdentifier>{d3970e6e-5491-416d-bb5d-3c33f52708cb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="js_bridge">
+      <UniqueIdentifier>{9af12ac9-230f-4bc0-bbd9-73867d1e51a5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -33,11 +36,14 @@
     <ClInclude Include="util.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="ipc_string_define.h">
-      <Filter>app</Filter>
-    </ClInclude>
     <ClInclude Include="js_handler.h">
       <Filter>app\js_handler</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cef_module\js_bridge\cef_js_bridge.h">
+      <Filter>js_bridge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\cef_module\js_bridge\ipc_string_define.h">
+      <Filter>js_bridge</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -55,6 +61,9 @@
     </ClCompile>
     <ClCompile Include="js_handler.cpp">
       <Filter>app\js_handler</Filter>
+    </ClCompile>
+    <ClCompile Include="..\cef_module\js_bridge\cef_js_bridge.cpp">
+      <Filter>js_bridge</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

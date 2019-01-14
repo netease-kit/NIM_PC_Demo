@@ -3,8 +3,8 @@
 #include "include/wrapper/cef_closure_task.h"
 #include "include/base/cef_bind.h"
 
-#include "client_app.h"
-#include "browser_handler.h"
+#include "app/client_app.h"
+#include "handler/browser_handler.h"
 
 #if defined(SUPPORT_CEF)
 #if defined(SUPPORT_CEF_FLASH)
@@ -236,6 +236,8 @@ void CefManager::GetCefSetting(const std::wstring& app_data_dir, CefSettings &se
 	// 加入disable-extensions参数可以修复这个问题，但是会导致一些页面打开时报错
 	// 开启Cef多线程消息循环，兼容nbase库消息循环
 	settings.multi_threaded_message_loop = true;
+
+	// settings.browser_subprocess_path
 
 	// 开启离屏渲染
 	settings.windowless_rendering_enabled = is_enable_offset_render_;

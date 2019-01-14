@@ -2,8 +2,8 @@
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
 #include "include/cef_runnable.h"
-#include "browser_handler.h"
-#include "cef_manager.h"
+#include "handler/browser_handler.h"
+#include "manager/cef_manager.h"
 
 namespace ui
 {
@@ -23,6 +23,11 @@ CefNativeControl::~CefNativeControl(void)
 		browser_handler_->GetBrowserHost()->CloseBrowser(true);
 		browser_handler_->SetHostWindow(NULL);
 		browser_handler_->SetHandlerDelegate(NULL);
+	}
+
+	if (!js_bridge_.get())
+	{
+		js_bridge_.reset(new nim_cef::CefJSBridge);
 	}
 }
 
@@ -227,16 +232,6 @@ bool CefNativeControl::IsLoading()
 	return false;
 }
 
-void CefNativeControl::ExecJavaScript(const CefString& js)
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
-	{
-		CefRefPtr<CefFrame> frame = browser_handler_->GetBrowser()->GetMainFrame();
-		if (frame)
-			frame->ExecuteJavaScript(js, L"", 0);
-	}
-}
-
 CefString CefNativeControl::GetURL()
 {
 	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
@@ -263,6 +258,43 @@ CefString CefNativeControl::GetMainURL(const CefString& url)
 	int end_pos = temp.find("#") == std::string::npos ? temp.length() : temp.find("#");
 	temp = temp.substr(0, end_pos);
 	return CefString(temp.c_str());
+}
+
+bool CefNativeControl::RegisterCppFunc(const std::wstring& function_name, nim_cef::CppFunction function)
+{
+	if (browser_handler_.get() && browser_handler_->GetBrowser().get() && js_bridge_.get())
+	{
+		return js_bridge_->RegisterCppFunc(nbase::UTF16ToUTF8(function_name).c_str(), function, browser_handler_->GetBrowser());
+	}
+
+	return false;
+}
+
+void CefNativeControl::UnRegisterCppFunc(const std::wstring& function_name)
+{
+	if (browser_handler_.get() && browser_handler_->GetBrowser().get() && js_bridge_.get())
+	{
+		js_bridge_->UnRegisterCppFunc(nbase::UTF16ToUTF8(function_name).c_str(), browser_handler_->GetBrowser());
+	}
+}
+
+bool CefNativeControl::CallJSFunction(const std::wstring& js_function_name, const std::wstring& params, nim_cef::CallJsFunctionCallback callback, const std::wstring& frame_name /*= L""*/)
+{
+	if (browser_handler_.get() && browser_handler_->GetBrowser().get() && js_bridge_.get())
+	{
+		CefRefPtr<CefFrame> frame = frame_name == L"" ? browser_handler_->GetBrowser()->GetMainFrame() : browser_handler_->GetBrowser()->GetFrame(frame_name);
+
+		if (!js_bridge_->CallJSFunction(nbase::UTF16ToUTF8(js_function_name).c_str(),
+			nbase::UTF16ToUTF8(params).c_str(), frame, callback))
+		{
+			QLOG_ERR(L"Failed to call JavaScript function {0}") << js_function_name;
+			return false;
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 }

@@ -9,5 +9,5 @@
 namespace nim_cef
 {
 	static const char kFocusedNodeChangedMessage[] = "FocusedNodeChanged";	// web页面中获取焦点的元素改变
-	static const char kJsCallbackMessage[] = "JsCallback";					// web调用C++接口接口的通知
+	static const char kCallCppFunctionMessage[] = "JsCallback";					// web调用C++接口接口的通知
 }

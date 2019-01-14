@@ -93,7 +93,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;SUPPORT_CEF;SUPPORT_CEF_FLASH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;..\..\;..\cef_wrapper;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\;..\..\;..\cef_wrapper;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
@@ -113,7 +113,7 @@
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;SUPPORT_CEF;SUPPORT_CEF_FLASH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;..\..\;..\cef_wrapper;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\;..\..\;..\cef_wrapper;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
@@ -135,7 +135,7 @@
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;SUPPORT_CEF;SUPPORT_CEF_FLASH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;..\..\;..\cef_wrapper;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\;..\..\;..\cef_wrapper;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -157,9 +157,9 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;SUPPORT_CEF;SUPPORT_CEF_FLASH;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;SUPPORT_CEF;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>true</SDLCheck>
-      <AdditionalIncludeDirectories>..\;..\..\;..\cef_wrapper;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>$(ProjectDir);..\;..\..\;..\cef_wrapper;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -178,41 +178,51 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="browser_handler.h" />
-    <ClInclude Include="cef_control.h" />
-    <ClInclude Include="cef_control_event.h" />
-    <ClInclude Include="cef_manager.h" />
-    <ClInclude Include="cef_native_control.h" />
-    <ClInclude Include="client_app.h" />
-    <ClInclude Include="ipc_string_define.h" />
-    <ClInclude Include="js_handler.h" />
-    <ClInclude Include="memory_dc.h" />
+    <ClInclude Include="app\client_app.h" />
+    <ClInclude Include="app\js_handler\js_handler.h" />
+    <ClInclude Include="cef_control\cef_control.h" />
+    <ClInclude Include="cef_control\cef_control_event.h" />
+    <ClInclude Include="cef_control\cef_native_control.h" />
+    <ClInclude Include="handler\browser_handler.h" />
+    <ClInclude Include="js_bridge\cef_js_bridge.h" />
+    <ClInclude Include="js_bridge\ipc_string_define.h" />
+    <ClInclude Include="manager\cef_manager.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
-    <ClInclude Include="util.h" />
+    <ClInclude Include="util\memory_dc.h" />
+    <ClInclude Include="util\util.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="browser_handler.cpp" />
-    <ClCompile Include="cef_control.cpp" />
-    <ClCompile Include="cef_control_ui.cpp" />
-    <ClCompile Include="cef_manager.cpp" />
-    <ClCompile Include="cef_native_control.cpp" />
-    <ClCompile Include="cef_native_control_ui.cpp" />
-    <ClCompile Include="client_app.cpp" />
-    <ClCompile Include="client_app_browser.cpp" />
-    <ClCompile Include="client_app_render.cpp" />
-    <ClCompile Include="js_handler.cpp" />
-    <ClCompile Include="memory_dc.cpp" />
+    <ClCompile Include="app\client_app.cpp" />
+    <ClCompile Include="app\client_app_browser.cpp" />
+    <ClCompile Include="app\client_app_render.cpp" />
+    <ClCompile Include="app\js_handler\js_handler.cpp" />
+    <ClCompile Include="cef_control\cef_control.cpp" />
+    <ClCompile Include="cef_control\cef_control_ui.cpp" />
+    <ClCompile Include="cef_control\cef_native_control.cpp" />
+    <ClCompile Include="cef_control\cef_native_control_ui.cpp" />
+    <ClCompile Include="handler\browser_handler.cpp" />
+    <ClCompile Include="js_bridge\cef_js_bridge.cpp" />
+    <ClCompile Include="manager\cef_manager.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="util\memory_dc.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\base\base.vcxproj">
       <Project>{8d9a6595-717a-41c8-b468-0011a72be3d1}</Project>
+      <Private>false</Private>
+      <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
+      <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
+      <LinkLibraryDependencies>false</LinkLibraryDependencies>
+      <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
+    </ProjectReference>
+    <ProjectReference Include="..\..\duilib\duilib.vcxproj">
+      <Project>{e106acd7-4e53-4aee-942b-d0dd426db34e}</Project>
       <Private>false</Private>
       <ReferenceOutputAssembly>true</ReferenceOutputAssembly>
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
@@ -226,9 +236,6 @@
       <CopyLocalSatelliteAssemblies>false</CopyLocalSatelliteAssemblies>
       <LinkLibraryDependencies>false</LinkLibraryDependencies>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
-    </ProjectReference>
-    <ProjectReference Include="..\cef_render\cef_render.vcxproj">
-      <Project>{3c652d12-69e7-42f5-88fd-108d56daa7f1}</Project>
     </ProjectReference>
     <ProjectReference Include="..\cef_wrapper\libcef_dll_wrapper.vcxproj">
       <Project>{a9d6dc71-c0dc-4549-aea0-3b15b44e86a9}</Project>

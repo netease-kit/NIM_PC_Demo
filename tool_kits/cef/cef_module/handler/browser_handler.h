@@ -8,6 +8,8 @@
 #include "include/cef_client.h"
 #include "include/cef_browser.h"
 #include "shared/auto_unregister.h"
+#include "js_bridge/cef_js_bridge.h"
+
 namespace nim_cef
 {
 // BrowserHandler implements CefClient and a number of other interfaces.
@@ -92,8 +94,13 @@ public:
 			CefBrowserSettings& settings,
 			bool* no_javascript_access) = 0;
 
+		virtual bool OnAfterCreated(CefRefPtr<CefBrowser> browser) = 0;
+
+		virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser) = 0;
+
 		// 在非UI线程中被调用
 		virtual bool OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, bool is_redirect) = 0;
+		virtual void OnProtocolExecution(CefRefPtr<CefBrowser> browser, const CefString& url, bool& allow_os_execution) = 0;
 
 		// 在非UI线程中被调用
 		virtual ReturnValue OnBeforeResourceLoad(
@@ -104,8 +111,12 @@ public:
 
 		virtual void OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser, TerminationStatus status) = 0;
 
-		// 在非UI线程中被调用
-		virtual void OnJsCallback(const CefString& fun_name, const CefString& param) = 0;
+		/**
+		 * 封装一些 JS 与 C++ 交互的功能
+		 */
+		virtual bool OnExecuteCppFunc(const CefString& function_name, const CefString& params, int js_callback_id, CefRefPtr<CefBrowser> browser) = 0;
+
+		virtual bool OnExecuteCppCallbackFunc(int cpp_callback_id, const CefString& json_string) = 0;
 	};
 
 public:
@@ -237,6 +248,10 @@ public:
 		CefRefPtr<CefRequest> request,
 		bool is_redirect) OVERRIDE;
 
+	virtual void OnProtocolExecution(CefRefPtr<CefBrowser> browser,
+		const CefString& url,
+		bool& allow_os_execution);
+
 	cef_return_value_t OnBeforeResourceLoad(
 		CefRefPtr<CefBrowser> browser,
 		CefRefPtr<CefFrame> frame,
@@ -252,15 +267,15 @@ public:
 		TerminationStatus status) OVERRIDE;
 
 protected:
-	CefRefPtr<CefClient> browser_client_;
+	CefRefPtr<CefClient>	browser_client_;
 	CefRefPtr<CefBrowser>	browser_;
 	std::vector<CefRefPtr<CefBrowser>> browser_list_;
 	HWND					hwnd_;
-	HandlerDelegate			*handle_delegate_;
+	HandlerDelegate*		handle_delegate_;
 	RECT					rect_cef_control_;
 	std::string				paint_buffer_;
 	bool					is_focus_oneditable_field_;
-	UnregistedCallbackList<StdClosure> task_list_after_created_;
+	UnregistedCallbackList<StdClosure>	task_list_after_created_;
 	IMPLEMENT_REFCOUNTING(BrowserHandler);
 };
 }

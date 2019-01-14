@@ -1,8 +1,9 @@
 #include "browser_handler.h"
 #include "include/cef_frame.h"
-#include "cef_manager.h"
-#include "ipc_string_define.h"
-#include "util.h"
+#include "manager/cef_manager.h"
+#include "util/util.h"
+#include "js_bridge/ipc_string_define.h"
+#include "js_bridge/cef_js_bridge.h"
 
 namespace nim_cef
 {
@@ -51,15 +52,26 @@ bool BrowserHandler::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, Cef
 		is_focus_oneditable_field_ = message->GetArgumentList()->GetBool(0);
 		return true;
 	}
-	else if (message_name == kJsCallbackMessage)
+	else if (message_name == kCallCppFunctionMessage)
 	{
-		CefString fun_name = message->GetArgumentList()->GetString(0);
-		CefString param = message->GetArgumentList()->GetString(1);
+		CefString fun_name	= message->GetArgumentList()->GetString(0);
+		CefString param		= message->GetArgumentList()->GetString(1);
+		int js_callback_id	= message->GetArgumentList()->GetInt(2);
+
 		if (handle_delegate_)
-			handle_delegate_->OnJsCallback(fun_name, param);
+			handle_delegate_->OnExecuteCppFunc(fun_name, param, js_callback_id, browser);
 
 		return true;
 	}
+	else if (message_name == kExecuteCppCallbackMessage)
+	{
+		CefString param = message->GetArgumentList()->GetString(0);
+		int callback_id = message->GetArgumentList()->GetInt(1);
+
+		if (handle_delegate_)
+			handle_delegate_->OnExecuteCppCallbackFunc(callback_id, param);
+	}
+
 	return false;
 }
 
@@ -106,11 +118,18 @@ void BrowserHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 			browser_->GetHost()->WasHidden(true);
 		browser_ = browser;
 		CefManager::GetInstance()->AddBrowserCount();
+
+		if (handle_delegate_)
+		{
+			handle_delegate_->OnAfterCreated(browser);
+		}
+
 		// 有窗模式下，浏览器创建完毕后，让上层更新一下自己的位置；因为在异步状态下，上层更新位置时可能Cef窗口还没有创建出来
 		if (!CefManager::GetInstance()->IsEnableOffsetRender())
 		{
 			handle_delegate_->UpdateWindowPos();
 		}
+
 		task_list_after_created_();
 		task_list_after_created_.Clear();
 	}));
@@ -143,6 +162,11 @@ void BrowserHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 					browser_->Reload();
 				}
 			}
+		}
+
+		if (handle_delegate_)
+		{
+			handle_delegate_->OnBeforeClose(browser);
 		}
 	}));	
 }
@@ -356,6 +380,12 @@ bool BrowserHandler::OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<Cef
 	return false;
 }
 
+void BrowserHandler::OnProtocolExecution(CefRefPtr<CefBrowser> browser, const CefString& url, bool& allow_os_execution)
+{
+	if (handle_delegate_)
+		handle_delegate_->OnProtocolExecution(browser, url, allow_os_execution);
+}
+
 CefRequestHandler::ReturnValue BrowserHandler::OnBeforeResourceLoad(
 	CefRefPtr<CefBrowser> browser,
 	CefRefPtr<CefFrame> frame,
@@ -410,4 +440,5 @@ void BrowserHandler::CloseAllBrowser()
 	};
 	CefPostTask(TID_UI, new CloseAllBrowserTask(browser_list_));
 }
+
 }

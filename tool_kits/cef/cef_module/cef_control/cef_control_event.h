@@ -18,7 +18,7 @@ namespace ui
 	typedef std::function<void(const std::wstring& url)> OnUrlChangeEvent;
 
 	typedef std::function<bool(const std::wstring& url)> OnLinkClickEvent;
-	typedef std::function<CefRequestHandler::ReturnValue(CefRefPtr<CefRequest> request, bool is_redirect)> OnBeforeBrowseEvent;
+	typedef std::function<CefRequestHandler::ReturnValue(CefRefPtr<CefRequest> request, bool is_redirect)> OnBeforeResourceLoadEvent;
 	typedef std::function<void(const CefString& old_url, const CefString& new_url)> OnMainURLChengeEvent;
 
 	typedef std::function<void(bool isLoading, bool canGoBack, bool canGoForward)> OnLoadingStateChangeEvent;
@@ -27,5 +27,9 @@ namespace ui
 	typedef std::function<void(CefLoadHandler::ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl)> OnLoadErrorEvent;
 	typedef std::function<void(bool visible)> OnDevToolAttachedStateChangeEvent;
 
-	typedef std::function<void(const CefString& fun_name, const CefString& param)> OnJsCallbackEvent;
+	typedef std::function<void(CefRefPtr<CefBrowser> browser)> OnAfterCreatedEvent;
+	typedef std::function<void(CefRefPtr<CefBrowser> browser)> OnBeforeCloseEvent;
+
+	typedef std::function<bool(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, bool is_redirect)> OnBeforeBrowserEvent;
+	typedef std::function<void(CefRefPtr<CefBrowser> browser, const CefString& url, bool& allow_os_execution)> OnProtocolExecutionEvent;
 }

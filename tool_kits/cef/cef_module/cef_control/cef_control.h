@@ -7,8 +7,9 @@
 #pragma once
 #include "include/cef_base.h"
 #include "cef_control_event.h"
-#include "browser_handler.h"
-#include "memory_dc.h"
+#include "js_bridge/cef_js_bridge.h"
+#include "handler/browser_handler.h"
+#include "util/memory_dc.h"
 
 namespace ui 
 {
@@ -55,11 +56,16 @@ public:
 	void Refresh();
 	void StopLoad();
 	bool IsLoading();
-	void ExecJavaScript(const CefString& js);
 
 	CefString GetURL();
 	std::string GetUTF8URL();
 	CefString GetMainURL(const CefString& url);
+
+	bool RegisterCppFunc(const std::wstring& function_name, nim_cef::CppFunction function, bool global_function = false);
+	void UnRegisterCppFunc(const std::wstring& function_name);
+	bool CallJSFunction(const std::wstring& js_function_name, const std::wstring& params, nim_cef::CallJsFunctionCallback callback, const std::wstring& frame_name = L"");
+	bool CallJSFunction(const std::wstring& js_function_name, const std::wstring& params, nim_cef::CallJsFunctionCallback callback, int frame_id);
+
 	virtual bool AttachDevTools(CefControl* view);
 	virtual void DettachDevTools();
 	virtual bool IsAttachedDevTools() const { return devtool_attached_; };
@@ -71,14 +77,17 @@ public:
 	void AttachTitleChange(const OnTitleChangeEvent& callback){ cb_title_change_ = callback; }
 	void AttachUrlChange(const OnUrlChangeEvent& callback){ cb_url_change_ = callback; }
 	void AttachMainURLChange(OnMainURLChengeEvent cb){ cb_main_url_change_ = cb; }
-	void AttachBeforeNavigate(const OnBeforeBrowseEvent& callback){ cb_before_navigate_ = callback; }
+	void AttachBeforeNavigate(const OnBeforeResourceLoadEvent& callback){ cb_before_resource_load_ = callback; }
 	void AttachLinkClick(const OnLinkClickEvent& callback){ cb_link_click_ = callback; }
 	void AttachLoadingStateChange(const OnLoadingStateChangeEvent& callback){ cb_loadstate_change_ = callback; }
 	void AttachLoadStart(const OnLoadStartEvent& callback){ cb_load_start_ = callback; }
 	void AttachLoadEnd(const OnLoadEndEvent& callback){ cb_load_end_ = callback; }
 	void AttachLoadError(const OnLoadErrorEvent& callback){ cb_load_error_ = callback; }
-	void AttachJsCallback(const OnJsCallbackEvent& callback);
 	void AttachDevToolAttachedStateChange(const OnDevToolAttachedStateChangeEvent& callback){ cb_devtool_visible_change_ = callback; };
+	void AttachAfterCreated(const OnAfterCreatedEvent& callback){ cb_after_created_ = callback; }
+	void AttachBeforeCLose(const OnBeforeCloseEvent& callback) { cb_before_close_ = callback; }
+	void AttachBeforeBrowser(const OnBeforeBrowserEvent& callback) { cb_before_browser_ = callback; }
+	void AttachProtocolExecution(const OnProtocolExecutionEvent& callback) { cb_protocol_execution_ = callback; }
 
 private:
 	// 处理BrowserHandler的HandlerDelegate委托接口
@@ -138,8 +147,14 @@ private:
 		CefBrowserSettings& settings,
 		bool* no_javascript_access) OVERRIDE;
 
+	virtual bool OnAfterCreated(CefRefPtr<CefBrowser> browser) OVERRIDE;
+
+	virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser) OVERRIDE;
+
 	// 在非UI线程中被调用
 	virtual bool OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, bool is_redirect) OVERRIDE;
+
+	virtual void OnProtocolExecution(CefRefPtr<CefBrowser> browser, const CefString& url, bool& allow_os_execution) OVERRIDE;
 
 	// 在非UI线程中被调用
 	virtual CefRequestHandler::ReturnValue OnBeforeResourceLoad(
@@ -150,11 +165,14 @@ private:
 
 	virtual void OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser, CefRequestHandler::TerminationStatus status) OVERRIDE;
 
-	virtual void OnJsCallback(const CefString& fun_name, const CefString& param) OVERRIDE;
+	virtual bool OnExecuteCppFunc(const CefString& function_name, const CefString& params, int js_callback_id, CefRefPtr<CefBrowser> browser) OVERRIDE;
+
+	virtual bool OnExecuteCppCallbackFunc(int cpp_callback_id, const CefString& json_string) OVERRIDE;
 
 private:
 
-	CefRefPtr<nim_cef::BrowserHandler> browser_handler_ = nullptr;
+	CefRefPtr<nim_cef::BrowserHandler>		browser_handler_ = nullptr;
+	std::shared_ptr<nim_cef::CefJSBridge>	js_bridge_;
 	MemoryDC			dc_cef_;		// 内存dc,把cef离屏渲染的数据保存到dc中
 	MemoryDC			dc_cef_popup_;	// 内存dc,把cef的popup窗口的离屏渲染数据保存到dc中
 	CefRect				rect_popup_;	// 当网页的组合框一类的控件弹出时，记录弹出的位置
@@ -163,7 +181,7 @@ private:
 	OnBeforeMenuEvent	cb_before_menu_ = nullptr;
 	OnMenuCommandEvent	cb_menu_command_ = nullptr;
 	OnTitleChangeEvent	cb_title_change_ = nullptr;
-	OnBeforeBrowseEvent	cb_before_navigate_ = nullptr;
+	OnBeforeResourceLoadEvent	cb_before_resource_load_ = nullptr;
 	OnUrlChangeEvent	cb_url_change_ = nullptr;
 	OnMainURLChengeEvent cb_main_url_change_ = nullptr;
 	OnLinkClickEvent	cb_link_click_ = nullptr;
@@ -171,9 +189,13 @@ private:
 	OnLoadStartEvent	cb_load_start_ = nullptr;
 	OnLoadEndEvent		cb_load_end_ = nullptr;
 	OnLoadErrorEvent	cb_load_error_ = nullptr;
-	OnJsCallbackEvent	cb_js_callback_ = nullptr;
+	OnAfterCreatedEvent	cb_after_created_ = nullptr;
+	OnBeforeCloseEvent	cb_before_close_ = nullptr;
+	OnBeforeBrowserEvent cb_before_browser_ = nullptr;
+	OnProtocolExecutionEvent cb_protocol_execution_ = nullptr;
 	OnDevToolAttachedStateChangeEvent cb_devtool_visible_change_ = nullptr;
 	bool devtool_attached_;
-	int					js_callback_thread_id_ = -1; // 保存调用AttachJsCallback函数的代码所属线程，以后触发Js回调时把回调转到那个线程
+	int					js_callback_thread_id_ = -1; // 保存接收到 JS 调用 CPP 函数的代码所属线程，以后触发 JS 回调时把回调转到那个线程
 };
+
 }

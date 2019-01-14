@@ -5,8 +5,8 @@
 #include "include/cef_process_message.h"
 #include "include/cef_task.h"
 #include "include/cef_v8.h"
-#include "cef_manager.h"
-#include "util.h"
+#include "manager/cef_manager.h"
+#include "util/util.h"
 
 namespace nim_cef
 {

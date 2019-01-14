@@ -12,6 +12,7 @@
 #include <utility>
 #include <vector>
 #include "include/cef_app.h"
+#include "js_bridge/cef_js_bridge.h"
 
 namespace nim_cef
 {
@@ -64,13 +65,11 @@ private:
 		CefProcessId source_process,
 		CefRefPtr<CefProcessMessage> message) OVERRIDE;
 private:
-
-	bool last_node_is_editable_;
-
+	std::shared_ptr<CefJSBridge>	render_js_bridge_;
+	std::vector<CefString>			cookieable_schemes_;
 	// Schemes that will be registered with the global cookie manager. Used in
+	bool							last_node_is_editable_;
 	// both the browser and renderer process.
-	std::vector<CefString> cookieable_schemes_;
-
 	IMPLEMENT_REFCOUNTING(ClientApp);
 };
 }

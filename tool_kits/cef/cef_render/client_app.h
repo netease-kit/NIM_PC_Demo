@@ -1,5 +1,5 @@
 /** @file client_app.h
-  * @brief 定义Render进程的CefApp类，管理Cef模块的生命周期
+  * @brief 定义Browser进程的CefApp类，管理Cef模块的生命周期
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @author Redrain
   * @date 2016/7/19
@@ -12,10 +12,12 @@
 #include <utility>
 #include <vector>
 #include "include/cef_app.h"
+#include "cef/cef_module/js_bridge/cef_js_bridge.h"
 
 namespace nim_cef
 {
 class ClientApp : public CefApp,
+                  public CefBrowserProcessHandler,
                   public CefRenderProcessHandler
 {
 public:
@@ -25,6 +27,7 @@ private:
 	// CefApp methods.
 	virtual void OnBeforeCommandLineProcessing(const CefString& process_type, CefRefPtr<CefCommandLine> command_line) OVERRIDE;
 	virtual void OnRegisterCustomSchemes( CefRefPtr<CefSchemeRegistrar> registrar) OVERRIDE;
+	virtual CefRefPtr<CefBrowserProcessHandler> GetBrowserProcessHandler() OVERRIDE{ return this; }
 	virtual CefRefPtr<CefRenderProcessHandler> GetRenderProcessHandler() OVERRIDE{ return this; }
 
 	// CefRenderProcessHandler methods.
@@ -56,13 +59,11 @@ private:
 		CefProcessId source_process,
 		CefRefPtr<CefProcessMessage> message) OVERRIDE;
 private:
-
-	bool last_node_is_editable_;
-
+	std::shared_ptr<CefJSBridge>	render_js_bridge_;
+	std::vector<CefString>			cookieable_schemes_;
 	// Schemes that will be registered with the global cookie manager. Used in
+	bool							last_node_is_editable_;
 	// both the browser and renderer process.
-	std::vector<CefString> cookieable_schemes_;
-
 	IMPLEMENT_REFCOUNTING(ClientApp);
 };
 }

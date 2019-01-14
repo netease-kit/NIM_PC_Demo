@@ -2,8 +2,9 @@
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
 #include "include/cef_runnable.h"
-#include "browser_handler.h"
-#include "cef_manager.h"
+#include "handler/browser_handler.h"
+#include "manager/cef_manager.h"
+#include "js_bridge/cef_js_bridge.h"
 
 namespace ui
 {
@@ -44,7 +45,11 @@ void CefControl::Init()
 		browser_handler_->SetHostWindow(m_pWindow->GetHWND());
 		browser_handler_->SetHandlerDelegate(this);
 		ReCreateBrowser();
-		
+	}
+
+	if (!js_bridge_.get())
+	{
+		js_bridge_.reset(new nim_cef::CefJSBridge);
 	}
 
 	__super::Init();
@@ -287,9 +292,7 @@ LRESULT CefControl::SendButtonDoubleDownEvent(UINT uMsg, WPARAM wParam, LPARAM l
 	mouse_event.y = pt.y - m_rcItem.top;
 	mouse_event.modifiers = GetCefMouseModifiers(wParam);
 
-	CefBrowserHost::MouseButtonType btnType =
-		(uMsg == WM_LBUTTONDOWN ? MBT_LEFT : (
-		uMsg == WM_RBUTTONDOWN ? MBT_RIGHT : MBT_MIDDLE));
+	CefBrowserHost::MouseButtonType btnType = MBT_LEFT;
 
 	host->SendMouseClickEvent(mouse_event, btnType, false, 2);
 
@@ -309,8 +312,8 @@ LRESULT CefControl::SendButtonUpEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, b
 	CefMouseEvent mouse_event;
 	if (uMsg == WM_RBUTTONUP)
 	{
-		mouse_event.x = pt.x/* - m_rcItem.left*/;	// 这里不进行坐标转换，否则右键菜单位置不正确
-		mouse_event.y = pt.y/* - m_rcItem.top*/;
+		mouse_event.x = pt.x - m_rcItem.left;
+		mouse_event.y = pt.y - m_rcItem.top;
 	}
 	else
 	{
@@ -640,16 +643,6 @@ bool CefControl::IsLoading()
 	return false;
 }
 
-void CefControl::ExecJavaScript(const CefString& js)
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
-	{
-		CefRefPtr<CefFrame> frame = browser_handler_->GetBrowser()->GetMainFrame();
-		if (frame)
-			frame->ExecuteJavaScript(js, L"", 0);
-	}
-}
-
 CefString CefControl::GetURL()
 {
 	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
@@ -676,6 +669,62 @@ CefString CefControl::GetMainURL(const CefString& url)
 	int end_pos = temp.find("#") == std::string::npos ? temp.length() : temp.find("#");
 	temp = temp.substr(0, end_pos);
 	return CefString(temp.c_str());
+}
+
+bool CefControl::RegisterCppFunc(const std::wstring& function_name, nim_cef::CppFunction function, bool global_function/* = false*/)
+{
+	if (browser_handler_.get() && browser_handler_->GetBrowser().get() && js_bridge_.get())
+	{
+		return js_bridge_->RegisterCppFunc(nbase::UTF16ToUTF8(function_name).c_str(), function, global_function ? nullptr : browser_handler_->GetBrowser());
+	}
+
+	return false;
+}
+
+void CefControl::UnRegisterCppFunc(const std::wstring& function_name)
+{
+	if (browser_handler_.get() && browser_handler_->GetBrowser().get() && js_bridge_.get())
+	{
+		js_bridge_->UnRegisterCppFunc(nbase::UTF16ToUTF8(function_name).c_str(), browser_handler_->GetBrowser());
+	}
+}
+
+bool CefControl::CallJSFunction(const std::wstring& js_function_name, const std::wstring& params, nim_cef::CallJsFunctionCallback callback, const std::wstring& frame_name /*= L""*/)
+{
+	if (browser_handler_.get() && browser_handler_->GetBrowser().get() && js_bridge_.get())
+	{
+		CefRefPtr<CefFrame> frame = frame_name == L"" ? browser_handler_->GetBrowser()->GetMainFrame() : browser_handler_->GetBrowser()->GetFrame(frame_name);
+
+		if (!js_bridge_->CallJSFunction(nbase::UTF16ToUTF8(js_function_name).c_str(),
+			nbase::UTF16ToUTF8(params).c_str(), frame, callback))
+		{
+			QLOG_ERR(L"Failed to call JavaScript function {0}") << js_function_name;
+			return false;
+		}
+
+		return true;
+	}
+
+	return false;
+}
+
+bool CefControl::CallJSFunction(const std::wstring& js_function_name, const std::wstring& params, nim_cef::CallJsFunctionCallback callback, int frame_id)
+{
+	if (browser_handler_.get() && browser_handler_->GetBrowser().get() && js_bridge_.get())
+	{
+		CefRefPtr<CefFrame> frame = browser_handler_->GetBrowser()->GetFrame(frame_id);
+
+		if (!js_bridge_->CallJSFunction(nbase::UTF16ToUTF8(js_function_name).c_str(),
+			nbase::UTF16ToUTF8(params).c_str(), frame, callback))
+		{
+			QLOG_ERR(L"Failed to call JavaScript function {0}") << js_function_name;
+			return false;
+		}
+
+		return true;
+	}
+
+	return false;
 }
 
 }

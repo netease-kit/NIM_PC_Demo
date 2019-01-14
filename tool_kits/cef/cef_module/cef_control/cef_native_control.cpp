@@ -1,15 +1,8 @@
 #include "cef_native_control.h"
-#include "util.h"
+#include "util/util.h"
 
 namespace ui 
 {
-
-void CefNativeControl::AttachJsCallback(const OnJsCallbackEvent& callback)
-{
-	// 保存处理这个事件的对象所在的线程
-	js_callback_thread_id_ = nbase::FrameworkThread::GetManagedThreadId();
-	cb_js_callback_ = callback;
-}
 
 void CefNativeControl::OnPaint(CefRefPtr<CefBrowser> browser, CefRenderHandler::PaintElementType type, const CefRenderHandler::RectList& dirtyRects, const std::string* buffer, int width, int height)
 {
@@ -112,9 +105,29 @@ bool CefNativeControl::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 	return true;
 }
 
+bool CefNativeControl::OnAfterCreated(CefRefPtr<CefBrowser> browser)
+{
+	if (cb_after_created_)
+		cb_after_created_(browser);
+
+	return false;
+}
+
+void CefNativeControl::OnBeforeClose(CefRefPtr<CefBrowser> browser)
+{
+
+}
+
 bool CefNativeControl::OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, bool is_redirect)
 {
-	return false;
+	if (cb_before_browser_)
+		return cb_before_browser_(browser, frame, request, is_redirect);
+}
+
+void CefNativeControl::OnProtocolExecution(CefRefPtr<CefBrowser> browser, const CefString& url, bool& allow_os_execution)
+{
+	if (cb_protocol_execution_)
+		cb_protocol_execution_(browser, url, allow_os_execution);
 }
 
 CefRequestHandler::ReturnValue CefNativeControl::OnBeforeResourceLoad(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, CefRefPtr<CefRequestCallback> callback)
@@ -130,21 +143,36 @@ void CefNativeControl::OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser, 
 	return;
 }
 
-void CefNativeControl::OnJsCallback(const CefString& fun_name, const CefString& param)
+bool CefNativeControl::OnExecuteCppFunc(const CefString& function_name, const CefString& params, int js_callback_id, CefRefPtr<CefBrowser> browser)
 {
-	// 投递到注册JsCallbak的线程去处理
-	if (cb_js_callback_)
+	if (js_bridge_.get())
+	{
+		js_callback_thread_id_ = nbase::FrameworkThread::GetManagedThreadId();
+		return js_bridge_->ExecuteCppFunc(function_name, params, js_callback_id, browser);
+	}
+
+	return false;
+}
+
+bool CefNativeControl::OnExecuteCppCallbackFunc(int cpp_callback_id, const CefString& json_string)
+{
+	if (js_bridge_.get())
 	{
 		if (js_callback_thread_id_ != -1)
 		{
-			nbase::ThreadManager::PostTask(js_callback_thread_id_, [this, fun_name, param]
+			nbase::ThreadManager::PostTask(js_callback_thread_id_, [this, cpp_callback_id, json_string]
 			{
-				cb_js_callback_(fun_name, param); 
+				js_bridge_->ExecuteCppCallbackFunc(cpp_callback_id, json_string);
 			});
 		}
 		else
-			cb_js_callback_(fun_name, param);
-	}	
+		{
+			return js_bridge_->ExecuteCppCallbackFunc(cpp_callback_id, json_string);
+		}
+
+	}
+
+	return false;
 }
 
 }
