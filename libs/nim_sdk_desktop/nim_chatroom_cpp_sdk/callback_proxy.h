@@ -60,10 +60,7 @@ namespace nim_chatroom
 		static void Run(const CallbackProxyClosure< void>& task)
 		{
 #ifdef CPPWRAPPER_DLL//动态库方式引用
-			if (docallback_async_ != nullptr)
-				docallback_async_(task);
-			else
-				task();
+			task();
 #else//静态库
 			nbase::ThreadManager::PostTask(0, task);
 #endif//CPPWRAPPER_DLL

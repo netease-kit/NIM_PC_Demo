@@ -239,14 +239,14 @@ enum NIMMainPictureOptCode
 };
 
 /** @enum NIMVChatServRecordType 服务器录制模式，用于指定本人数据录制选择 */
-typedef enum NIMVChatServRecordType
+enum NIMVChatServRecordType
 {
 	kNIMVChatServRecordMixedSingle	= 0,	/**< 服务器录制混录并带单人文件 */
 	kNIMVChatServRecordMixed		= 1,	/**< 服务器录制只混录 */
 	kNIMVChatServRecordSingle		= 2,	/**< 服务器录制只录本人单人文件 */
 };
 
-/** @name 初始化 内容Json key for nrtc_init
+/** @name 初始化 内容Json key for nim_vchat_init
 * @{
 */
 static const char *kNIMVChatServerSettingPath	= "server_setting_path";		/**< string 服务器配置文件路径 */

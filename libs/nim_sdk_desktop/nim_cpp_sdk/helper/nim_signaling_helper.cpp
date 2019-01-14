@@ -11,7 +11,7 @@ namespace nim
 {
 	std::shared_ptr<SignalingNotityInfo> SignalingNotityInfo::GetSharedPtr(const NIMSignalingNotityInfo* c_info)
 	{
-		SignalingNotityInfo* ret_notify = nullptr;
+		std::shared_ptr<SignalingNotityInfo> ret_notify = nullptr;
 		if (c_info)
 		{
 			switch (c_info->event_type_)
@@ -21,7 +21,7 @@ namespace nim
 			case kNIMSignalingEventTypeCtrl:
 			{
 				SignalingNotityInfo* notify = new SignalingNotityInfo;
-				ret_notify = (SignalingNotityInfo*)notify;
+				ret_notify.reset(notify);
 				break;
 			}
 			case kNIMSignalingEventTypeJoin:
@@ -29,7 +29,7 @@ namespace nim
 				auto cur_info = (NIMSignalingNotityInfoJoin*)c_info;
 				SignalingNotityInfoJoin* notify = new SignalingNotityInfoJoin;
 				notify->member_ = SignalingMemberInfo(&cur_info->member_);
-				ret_notify = (SignalingNotityInfo*)notify;
+				ret_notify.reset(notify);
 				break;
 			}
 			case kNIMSignalingEventTypeInvite:
@@ -39,7 +39,7 @@ namespace nim
 				notify->push_info_ = SignalingPushInfo(&cur_info->push_info_);
 				notify->request_id_ = cur_info->request_id_;
 				notify->to_account_id_ = cur_info->to_account_id_;
-				ret_notify = (SignalingNotityInfo*)notify;
+				ret_notify.reset(notify);
 				break;
 			}
 			case kNIMSignalingEventTypeCancelInvite:
@@ -48,7 +48,7 @@ namespace nim
 				SignalingNotityInfoCancelInvite* notify = new SignalingNotityInfoCancelInvite;
 				notify->request_id_ = cur_info->request_id_;
 				notify->to_account_id_ = cur_info->to_account_id_;
-				ret_notify = (SignalingNotityInfo*)notify;
+				ret_notify.reset(notify);
 				break;
 			}
 			case kNIMSignalingEventTypeReject:
@@ -57,7 +57,7 @@ namespace nim
 				SignalingNotityInfoReject* notify = new SignalingNotityInfoReject;
 				notify->request_id_ = cur_info->request_id_;
 				notify->to_account_id_ = cur_info->to_account_id_;
-				ret_notify = (SignalingNotityInfo*)notify;
+				ret_notify.reset(notify);
 				break;
 			}
 			case kNIMSignalingEventTypeAccept:
@@ -66,7 +66,7 @@ namespace nim
 				SignalingNotityInfoAccept* notify = new SignalingNotityInfoAccept;
 				notify->request_id_ = cur_info->request_id_;
 				notify->to_account_id_ = cur_info->to_account_id_;
-				ret_notify = (SignalingNotityInfo*)notify;
+				ret_notify.reset(notify);
 				break;
 			}
 			default:
@@ -81,15 +81,7 @@ namespace nim
 			ret_notify->custom_info_ = c_info->custom_info_;
 			ret_notify->timestamp_ = c_info->timestamp_;
 		}
-		if (ret_notify)
-		{
-			std::shared_ptr<SignalingNotityInfo> ret(ret_notify);
-			return ret;
-		}
-		else
-		{
-			return nullptr;
-		}
+		return ret_notify;
 	}
 
 }

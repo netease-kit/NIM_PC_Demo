@@ -8,6 +8,9 @@
 #ifndef NIM_SDK_UTIL_NIM_BASE_TYPES_H_
 #define NIM_SDK_UTIL_NIM_BASE_TYPES_H_
 
+// below vs2015 only
+#if _MSC_VER < 1900
+
 #include <sys/types.h>
 
 #ifndef _MSC_VER
@@ -82,5 +85,7 @@ typedef _W64 unsigned int uintptr_t;
 //const int32_t  kInt32Max  = (( int32_t) 0x7FFFFFFF);
 //const int64_t  kInt64Min  = (( int64_t) GG_LONGLONG(0x8000000000000000));
 //const int64_t  kInt64Max  = (( int64_t) GG_LONGLONG(0x7FFFFFFFFFFFFFFF));
+
+#endif
 
 #endif  // NIM_SDK_UTIL_NIM_BASE_TYPES_H_
