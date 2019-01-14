@@ -94,7 +94,7 @@
       <PreprocessorDefinitions>WIN32;_DEBUG;_LIB;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include;E:\california\demos\nim_demo\tool_kits</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
@@ -164,7 +164,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;CPPWRAPPER_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <SDLCheck>
       </SDLCheck>
       <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include</AdditionalIncludeDirectories>

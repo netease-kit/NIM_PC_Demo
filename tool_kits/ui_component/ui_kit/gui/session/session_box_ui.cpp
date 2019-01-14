@@ -791,13 +791,13 @@ void SessionBox::OnVChatSelectedCallback(const std::list<UTF8String>& selected_f
 				msg.receiver_accid_ = session_id_;
 				msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
 				msg.client_msg_id_ = QString::GetGUID();
-				msg.msg_setting_.resend_flag_ = nim::BS_FALSE;
+				msg.msg_setting_.resend_flag_ = BS_FALSE;
 				msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
 
 				msg.status_ = nim::kNIMMsgLogStatusSending;
 				msg.type_ = nim::kNIMMessageTypeTips;
 				msg.content_ = nbase::UTF16ToUTF8(tip);
-				msg.msg_setting_.need_push_ = nim::BS_FALSE;
+				msg.msg_setting_.need_push_ = BS_FALSE;
 				msg.status_ = nim::kNIMMsgLogStatusSent;
 				std::string msg_info = msg.ToJsonString(true);
 				QLOG_APP(L"send msg:{0}") << msg_info;
@@ -854,7 +854,7 @@ void SessionBox::OnSelectedRetweetList(nim::IMMessage msg, const std::list<std::
 		nim::IMMessage sending_msg;
 		nim::Talk::ParseIMMessage(msg, sending_msg);
 		sending_msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
-		sending_msg.msg_setting_.team_msg_ack_sent_ = nim::BS_FALSE;
+		sending_msg.msg_setting_.team_msg_ack_sent_ = BS_FALSE;
 
 		SessionBox *form = SessionManager::GetInstance()->OpenSessionBox(receiver_accid, receiver_type);
 		if (form)

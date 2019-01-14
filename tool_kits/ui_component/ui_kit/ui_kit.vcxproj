@@ -93,7 +93,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;NIM_WIN_DESKTOP_ONLY_SDK;SUPPORTLOCALPLAYER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\cef\cef_wrapper\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_p2p_sdk\;..\..\..\libs\nim_p2p_sdk\src\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include;..\av_kit\src;..\nim_service\;..\av_kit\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\cef\cef_module\;..\..\cef\cef_wrapper\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_p2p_sdk\;..\..\..\libs\nim_p2p_sdk\src\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include;..\av_kit\src;..\nim_service\;..\av_kit\</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -114,7 +114,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\cef\cef_wrapper\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_p2p_sdk\;..\..\..\libs\nim_p2p_sdk\src\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include;..\av_kit\src;..\nim_service\;..\av_kit\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\cef\cef_module\;..\..\cef\cef_wrapper\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_p2p_sdk\;..\..\..\libs\nim_p2p_sdk\src\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include;..\av_kit\src;..\nim_service\;..\av_kit\</AdditionalIncludeDirectories>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -137,7 +137,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;NIM_WIN_DESKTOP_ONLY_SDK;SUPPORTLOCALPLAYER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\cef\cef_wrapper\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_p2p_sdk\;..\..\..\libs\nim_p2p_sdk\src\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include;..\av_kit\src;..\nim_service\;..\av_kit\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\cef\cef_module\;..\..\cef\cef_wrapper\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_p2p_sdk\;..\..\..\libs\nim_p2p_sdk\src\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include;..\av_kit\src;..\nim_service\;..\av_kit\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
@@ -163,8 +163,8 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\cef\cef_wrapper\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_p2p_sdk\;..\..\..\libs\nim_p2p_sdk\src\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include;..\av_kit\src;..\nim_service\;..\av_kit\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;CPPWRAPPER_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\cef\cef_module\;..\..\cef\cef_wrapper\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\;..\..\..\libs\nim_p2p_sdk\;..\..\..\libs\nim_p2p_sdk\src\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include;..\av_kit\src;..\nim_service\;..\av_kit\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
     </ClCompile>
@@ -241,6 +241,7 @@
     <ClInclude Include="gui\profile_form\profile_form.h" />
     <ClInclude Include="gui\profile_form\ui_head_select_ctrl.h" />
     <ClInclude Include="gui\profile_form\ui_head_view_ctrl.h" />
+    <ClInclude Include="gui\profile_mine\profile_mine.h" />
     <ClInclude Include="gui\rts\rts_form.h" />
     <ClInclude Include="gui\rts\rts_replay.h" />
     <ClInclude Include="gui\rts\ui_board_control.h" />
@@ -284,6 +285,7 @@
     <ClInclude Include="gui\team_info\team_notify.h" />
     <ClInclude Include="gui\team_info\team_search.h" />
     <ClInclude Include="module\audio\audio_manager.h" />
+    <ClInclude Include="module\cef\cef_global_methods.h" />
     <ClInclude Include="module\db\user_db.h" />
     <ClInclude Include="module\dragdrop\drag_drop.h" />
     <ClInclude Include="module\emoji\emoji_info.h" />
@@ -368,6 +370,7 @@
     <ClCompile Include="gui\profile_form\profile_form.cpp" />
     <ClCompile Include="gui\profile_form\ui_head_select_ctrl.cpp" />
     <ClCompile Include="gui\profile_form\ui_head_view_ctrl.cpp" />
+    <ClCompile Include="gui\profile_mine\profile_mine.cpp" />
     <ClCompile Include="gui\rts\rts_form.cpp" />
     <ClCompile Include="gui\rts\rts_replay.cpp" />
     <ClCompile Include="gui\rts\ui_board_control.cpp" />
@@ -418,6 +421,7 @@
     <ClCompile Include="gui\team_info\team_notify.cpp" />
     <ClCompile Include="gui\team_info\team_search.cpp" />
     <ClCompile Include="module\audio\audio_manager.cpp" />
+    <ClCompile Include="module\cef\cef_global_methods.cpp" />
     <ClCompile Include="module\db\user_db.cpp" />
     <ClCompile Include="module\dragdrop\drag_drop.cpp" />
     <ClCompile Include="module\emoji\emoji_info.cpp" />

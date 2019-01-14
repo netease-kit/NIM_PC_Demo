@@ -45,7 +45,8 @@ void TalkCallback::OnReceiveMsgCallback(const nim::IMMessage& message)
 	}
 	else if (message.feature_ == nim::kNIMMessageFeatureSyncMsg ||
 		message.feature_ == nim::kNIMMessageFeatureRoamMsg ||
-		message.feature_ == nim::kNIMMessageFeatureCustomizedMsg)
+		message.feature_ == nim::kNIMMessageFeatureCustomizedMsg ||
+		message.feature_ == nim::kNIMMessageFeatureLeaveMsg)
 	{
 		SessionBox* session = SessionManager::GetInstance()->FindSessionBox(id);
 		if (session)
@@ -138,7 +139,7 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 			values["from_nick"] = notify.from_nick_;
 			msg.attach_ = values.toStyledString();
 			msg.content_ = nbase::UTF16ToUTF8(notify_text);
-			msg.msg_setting_.push_need_badge_ = nim::BS_FALSE; //设置会话列表不需要计入未读数
+			msg.msg_setting_.push_need_badge_ = BS_FALSE; //设置会话列表不需要计入未读数
 			nim::MsgLog::WriteMsglogToLocalAsync(talk_id, msg, true, nim::MsgLog::WriteMsglogCallback());
 		}
 	}

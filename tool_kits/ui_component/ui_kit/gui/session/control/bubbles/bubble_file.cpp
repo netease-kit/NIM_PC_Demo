@@ -334,7 +334,7 @@ bool MsgBubbleFile::OnEvent(ui::EventArgs* arg)
 		nbase::ThreadManager::PostTask(kThreadGlobalMisc, nbase::Bind(&shared::tools::SafeOpenUrlEx, file_path, SW_SHOW));
 		return false;
 	}
-	else if (name == L"file_cancel")
+	else if (name == L"file_cancel" || name == L"file_pause")
 	{
 		if (my_msg_)
 		{

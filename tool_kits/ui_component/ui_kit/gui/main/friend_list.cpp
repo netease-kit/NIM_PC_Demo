@@ -491,7 +491,7 @@ void FriendList::OnReceiveEvent(int event_type, const std::string &accid, const 
 {
 	if (event_type == nim::kNIMEventTypeOnlineState)
 	{
-		FriendItem* item = (FriendItem*)friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
+		FriendItem* item = dynamic_cast<FriendItem*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
 		if (item == NULL)
 			return;
 		item->SetOnlineState(data);

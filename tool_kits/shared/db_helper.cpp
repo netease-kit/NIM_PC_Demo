@@ -50,4 +50,12 @@ namespace shared
 	{
 		return (unsigned int)GetLastError();
 	}
+	void NimDBPretreatment::LockDBFile()
+	{
+		db_lock_.Lock();
+	}
+	void NimDBPretreatment::UnLockDBFile()
+	{
+		db_lock_.Unlock();
+	}
 }

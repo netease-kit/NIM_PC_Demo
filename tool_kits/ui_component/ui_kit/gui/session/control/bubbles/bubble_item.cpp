@@ -6,6 +6,7 @@
 #include "callback/session/session_callback.h"
 #include "nim_cpp_team.h"
 #include "bubble_audio.h"
+#include "nim_service\module\local\local_helper.h"
 using namespace ui;
 
 namespace nim_comp
@@ -368,6 +369,87 @@ bool MsgBubbleItem::IsShowRetweetButton()
 	if (parent != nullptr)
 		return !dynamic_cast<SessionBox*>(parent)->IsRobotSession();
 	return true;
+}
+
+ThumbDecorate::ThumbDecorate() 
+{
+	image_checked_ = false;
+}
+
+ThumbDecorate::~ThumbDecorate()
+{
+
+}
+
+void ThumbDecorate::InitResPath(const nim::IMMessage& msg)
+{
+	std::wstring wpath = nbase::UTF8ToUTF16(msg.local_res_path_);
+	std::string path = nim::Talk::GetAttachmentPathFromMsg(msg);
+	ASSERT(!path.empty());
+
+	if (wpath.empty() || !nbase::FilePathIsExist(wpath, false))
+	{
+		path_ = nbase::UTF8ToUTF16(path);
+		std::wstring directory, filename;
+		nbase::FilePathApartDirectory(path_, directory);
+		nbase::FilePathApartFileName(path_, filename);
+		thumb_ = directory + GetThumbImageName(filename);
+	}
+	else
+	{
+		std::wstring directory, filename;
+		nbase::FilePathApartDirectory(nbase::UTF8ToUTF16(path), directory);
+		nbase::FilePathApartFileName(wpath, filename);
+		thumb_ = directory + GetThumbImageName(filename);
+		path_ = wpath;
+	}
+}
+
+bool ThumbDecorate::CheckThumbImage()
+{
+	if (image_checked_)
+		return true;
+	if (thumb_.empty() || !nbase::FilePathIsExist(thumb_, false))
+		return false;
+	//gif图片经过压缩下载后，虽然格式仍是gif，但变成只有一帧，没有动画，尺寸也可能变小了。
+	Gdiplus::Image thumb_image(thumb_.c_str());
+	Gdiplus::Status status = thumb_image.GetLastStatus();
+	if (status != Gdiplus::Ok) //图片有错误
+	{
+		QLOG_ERR(L"Image {0} error {1}") << thumb_ << status;
+		return false;
+	}
+	thumb_image_width_ = thumb_image.GetWidth();
+	thumb_image_height_ = thumb_image.GetHeight();
+	if (thumb_image_width_ == 0 || thumb_image_height_ == 0)
+	{
+		QLOG_ERR(L"Get image size error: {0}, {1}.") << thumb_image_width_ << thumb_image_height_;
+		return false;
+	}
+	image_checked_ = true;
+	return true;
+}
+
+std::wstring ThumbDecorate::GetThumbImageName(const std::wstring& res_name)
+{
+	auto ret = nbase::UTF8ToUTF16(nim::Client::GetSDKConfig().preload_image_name_template_);
+	if (!ret.empty())
+	{
+		static std::wstring thumb_name_token = L"{filename}";
+		if (ret.find(thumb_name_token) != std::wstring::npos)
+		{			
+			nbase::StringReplaceAll(thumb_name_token, res_name, ret);
+		}
+		else
+		{
+			ret.append(res_name);
+		}
+	}
+	else
+	{
+		ret.append(L"thumb_").append(res_name);
+	}
+	return ret;
 }
 
 }

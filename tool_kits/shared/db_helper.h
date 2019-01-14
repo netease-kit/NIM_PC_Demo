@@ -20,6 +20,10 @@ public:
 	virtual bool MoveFile(const std::string &from_path, const std::string &to_path) override;
 	virtual void ClearTLSLastError() override;
 	virtual unsigned int GetTLSLastError() override;
+	virtual void LockDBFile() override;
+	virtual void UnLockDBFile() override;
+protected:
+	nbase::NLock    db_lock_;
 };
 class NimDatabase : public NimDBPretreatment, virtual public nbase::SupportWeakCallback
 {
@@ -94,8 +98,6 @@ private:
 		config.enable_def_restore_ = false;
 		return config;
 	}
-protected:
-	nbase::NLock    db_lock_;
 private:
 	std::list<std::string> create_db_sqls_;
 	DBUpdateFuncList update_function_list_;

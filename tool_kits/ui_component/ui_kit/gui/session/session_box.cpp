@@ -357,8 +357,8 @@ void SessionBox::AddNewMsg(const nim::IMMessage &msg, bool create)
 		!IsBubbleRight(msg) &&
 		msg.type_ != nim::kNIMMessageTypeNotification &&
 		msg.type_ != nim::kNIMMessageTypeTips &&
-		msg.msg_setting_.team_msg_need_ack_ == nim::BS_TRUE &&
-		msg.msg_setting_.team_msg_ack_sent_ != nim::BS_TRUE)
+		msg.msg_setting_.team_msg_need_ack_ == BS_TRUE &&
+		msg.msg_setting_.team_msg_ack_sent_ != BS_TRUE)
 	{
 		new_msgs_need_to_send_mq_.push_back(msg);
 	}
@@ -612,7 +612,7 @@ void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 		{
 			if (!IsBubbleRight(message))
 			{
-				if (message.msg_setting_.team_msg_need_ack_ == nim::BS_TRUE && message.msg_setting_.team_msg_ack_sent_ != nim::BS_TRUE)
+				if (message.msg_setting_.team_msg_need_ack_ == BS_TRUE && message.msg_setting_.team_msg_ack_sent_ != BS_TRUE)
 					new_msgs_need_to_send_mq_.push_back(message);
 			}
 		}
@@ -706,7 +706,7 @@ void SessionBox::TryToTransferFile(const std::wstring& src)
 	json[kJsonKeyCommand] = kJsonKeyTryTransferFileRequest;
 
 	nim::SysMessageSetting setting;
-	setting.need_offline_ = nim::BS_FALSE;
+	setting.need_offline_ = BS_FALSE;
 
 	auto str = nim::SystemMsg::CreateCustomNotificationMsg(session_id_, nim::kNIMSysMsgTypeCustomP2PMsg, QString::GetGUID(), writer.write(json), setting);
 	nim::SystemMsg::SendCustomNotificationMsg(str);
@@ -728,7 +728,7 @@ void SessionBox::ReplyTransferFileRequest(const std::string& sender_accid_)
 	json[kJsonKeyCommand] = kJsonKeySupportedTransferFile;
 
 	nim::SysMessageSetting setting;
-	setting.need_offline_ = nim::BS_FALSE;
+	setting.need_offline_ = BS_FALSE;
 
 	auto str = nim::SystemMsg::CreateCustomNotificationMsg(sender_accid_, nim::kNIMSysMsgTypeCustomP2PMsg, QString::GetGUID(), writer.write(json), setting);
 	nim::SystemMsg::SendCustomNotificationMsg(str);
@@ -988,7 +988,7 @@ void SessionBox::OnRecallMsgCallback(nim::NIMResCode code, const nim::RecallMsgN
 
 		msg.attach_ = values.toStyledString();
 		msg.content_ = nbase::UTF16ToUTF8(notify_text);
-		msg.msg_setting_.push_need_badge_ = nim::BS_FALSE; //设置会话列表不需要计入未读数
+		msg.msg_setting_.push_need_badge_ = BS_FALSE; //设置会话列表不需要计入未读数
 		nim::MsgLog::WriteMsglogToLocalAsync(session_id_, msg, true, nbase::Bind(&SessionBox::WriteMsglogCallback, this, std::placeholders::_1, std::placeholders::_2, msg, index, is_at_end));
 	}
 }
@@ -1075,7 +1075,7 @@ void SessionBox::SendText(const std::string &text, bool team_msg_need_ack/* = fa
 
 		if (!msg.msg_setting_.force_push_ids_list_.empty())
 		{
-			msg.msg_setting_.is_force_push_ = nim::BS_TRUE;
+			msg.msg_setting_.is_force_push_ = BS_TRUE;
 			msg.msg_setting_.force_push_content_ = text;
 		}
 
@@ -1085,7 +1085,7 @@ void SessionBox::SendText(const std::string &text, bool team_msg_need_ack/* = fa
 		msg.type_ = nim::kNIMMessageTypeRobot;
 
 	if (team_msg_need_ack)
-		msg.msg_setting_.team_msg_need_ack_ = nim::BS_TRUE;
+		msg.msg_setting_.team_msg_need_ack_ = BS_TRUE;
 
 	std::string json_msg;
 	msg.content_ = text;
@@ -1108,9 +1108,9 @@ void SessionBox::SendText(const std::string &text, bool team_msg_need_ack/* = fa
 				}
 				else if (ret == 3)
 				{
-					msgex.msg_setting_.anti_spam_enable_ = nim::BS_TRUE;
+					msgex.msg_setting_.anti_spam_enable_ = BS_TRUE;
 					msgex.msg_setting_.anti_spam_content_ = msg.content_;
-					msgex.msg_setting_.client_anti_spam_hitting_ = nim::BS_TRUE;
+					msgex.msg_setting_.client_anti_spam_hitting_ = BS_TRUE;
 				}
 				std::string json_msg = nim::Talk::CreateTextMessage(msgex.receiver_accid_, msgex.session_type_, msgex.client_msg_id_, msgex.content_, msgex.msg_setting_, msgex.timetag_);
 				AddSendingMsg(msgex);
@@ -1221,8 +1221,8 @@ void SessionBox::SendAudio(const std::string& file_path, const std::string& file
 
 	nim::IMAudio audio;
 	audio.duration_ = audio_duration;
-	auto token_list = nbase::StringTokenize(wfile_path.c_str(), L"\\");
-	audio.md5_ = GetFileMD5(token_list.back());
+	//auto token_list = nbase::StringTokenize(wfile_path.c_str(), L"\\");
+	audio.md5_ = GetFileMD5(wfile_path/*token_list.back()*/);
 	audio.size_ = file_size;
 	audio.file_extension_ = file_ext;
 	msg.attach_ = audio.ToJsonString();
@@ -1237,9 +1237,9 @@ void SessionBox::SendSnapChat(const std::wstring &src)
 	auto weak_flag = this->GetWeakFlag();
 	nim::IMMessage msg;
 	PackageMsg(msg);
-	msg.msg_setting_.server_history_saved_ = nim::BS_FALSE;
-	msg.msg_setting_.roaming_ = nim::BS_FALSE;
-	msg.msg_setting_.self_sync_ = nim::BS_FALSE;
+	msg.msg_setting_.server_history_saved_ = BS_FALSE;
+	msg.msg_setting_.roaming_ = BS_FALSE;
+	msg.msg_setting_.self_sync_ = BS_FALSE;
 	//TODO(litianyi)
 	std::wstring zoom_path = GetUserOtherResPath() + nbase::UTF8ToUTF16(msg.client_msg_id_);
 	if (!nbase::FilePathIsExist(zoom_path, false))
@@ -1379,7 +1379,7 @@ void SessionBox::SendTip(const std::wstring &tip)
 	PackageMsg(msg);
 	msg.type_ = nim::kNIMMessageTypeTips;
 	msg.content_ = nbase::UTF16ToUTF8(tip);
-	msg.msg_setting_.need_push_ = nim::BS_FALSE;
+	msg.msg_setting_.need_push_ = BS_FALSE;
 	msg.status_ = nim::kNIMMsgLogStatusSending;
 
 	AddSendingMsg(msg);
@@ -1402,16 +1402,16 @@ void SessionBox::SendRefusedTip(const std::wstring &tip)
 {
 	nim::IMMessage msg;
 	PackageMsg(msg);
-	msg.msg_setting_.server_history_saved_ = nim::BS_FALSE;//不存云端
-	msg.msg_setting_.roaming_ = nim::BS_FALSE;//不漫游
-	msg.msg_setting_.self_sync_ = nim::BS_FALSE;//不进行多端同步
-	msg.msg_setting_.need_push_ = nim::BS_FALSE;//不推送
-	msg.msg_setting_.push_need_badge_ = nim::BS_FALSE;//不计数
-	msg.msg_setting_.need_offline_ = nim::BS_FALSE;//不需要支持离线
-	msg.msg_setting_.routable_ = nim::BS_FALSE;//不需要抄送
+	msg.msg_setting_.server_history_saved_ = BS_FALSE;//不存云端
+	msg.msg_setting_.roaming_ = BS_FALSE;//不漫游
+	msg.msg_setting_.self_sync_ = BS_FALSE;//不进行多端同步
+	msg.msg_setting_.need_push_ = BS_FALSE;//不推送
+	msg.msg_setting_.push_need_badge_ = BS_FALSE;//不计数
+	msg.msg_setting_.need_offline_ = BS_FALSE;//不需要支持离线
+	msg.msg_setting_.routable_ = BS_FALSE;//不需要抄送
 	msg.type_ = nim::kNIMMessageTypeTips;
 	msg.content_ = nbase::UTF16ToUTF8(tip);
-	msg.msg_setting_.need_push_ = nim::BS_FALSE;
+	msg.msg_setting_.need_push_ = BS_FALSE;
 	msg.status_ = nim::kNIMMsgLogStatusSent;
 	AddSendingMsg(msg);
 	nim::Talk::SendMsg(msg.ToJsonString(true));
@@ -1441,7 +1441,7 @@ void SessionBox::AddSendingMsg(const nim::IMMessage &msg)
 
 void SessionBox::ReSendMsg(nim::IMMessage &msg)
 {
-	msg.msg_setting_.resend_flag_ = nim::BS_TRUE;
+	msg.msg_setting_.resend_flag_ = BS_TRUE;
 	msg.status_ = nim::kNIMMsgLogStatusSending;
 	msg.timetag_= 1000 * nbase::Time::Now().ToTimeT();
 
@@ -1456,7 +1456,7 @@ void SessionBox::PackageMsg(nim::IMMessage &msg)
 	msg.receiver_accid_		= session_id_; 
 	msg.sender_accid_		= LoginManager::GetInstance()->GetAccount();
 	msg.client_msg_id_		= QString::GetGUID();
-	msg.msg_setting_.resend_flag_ = nim::BS_FALSE;
+	msg.msg_setting_.resend_flag_ = BS_FALSE;
 
 	//base获取的时间单位是s，服务器的时间单位是ms
 	msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();

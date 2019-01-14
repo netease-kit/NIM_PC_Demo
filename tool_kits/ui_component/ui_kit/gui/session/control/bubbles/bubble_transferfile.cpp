@@ -195,6 +195,10 @@ void MsgBubbleTransferFile::SetBubbleStatus(TransferFileSessionState status, boo
 		progress_vertlayout_->SetVisible(false);
 		http_status_->SetText(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_TRANSFERFILEBUBBLE_FAILED").c_str());
 		break;
+	case TransferFileSessionState_CMDTimeout:
+		progress_vertlayout_->SetVisible(false);
+		http_status_->SetText(L"对方无应答");
+		break;
 	case TransferFileSessionState_ReceiverRejected:
 	case TransferFileSessionState_Rejected:
 		http_status_->SetText(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_TRANSFERFILEBUBBLE_RECEIVERREJECTED").c_str());
@@ -218,6 +222,16 @@ void MsgBubbleTransferFile::SetBubbleStatus(TransferFileSessionState status, boo
 		// 确保下次加载历史消息可以获取到正确的状态
 		UserDB::GetInstance()->InsertData(msg_.client_msg_id_, local_path_, nbase::IntToString(transfer_file_session_state_));
 	}
+}
+
+void MsgBubbleTransferFile::SetMsgStatus(nim::NIMMsgLogStatus status)
+{
+	if (status == nim::kNIMMsgLogStatusSendFailed)
+	{
+		return;
+	}
+
+	__super::SetMsgStatus(status);
 }
 
 std::wstring MsgBubbleTransferFile::GetFileSizeStr(int64_t size)
@@ -405,6 +419,7 @@ bool MsgBubbleTransferFile::IsTransferFileSessionFinalState(TransferFileSessionS
 	{	
 	case TransferFileSessionState_Succeeded:
 	case TransferFileSessionState_Failed:
+	case TransferFileSessionState_CMDTimeout:
 	case TransferFileSessionState_ReceiverRejected:
 	case TransferFileSessionState_Rejected:
 	case TransferFileSessionState_ReceiverCancel:

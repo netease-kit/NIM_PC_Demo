@@ -1,4 +1,5 @@
 ﻿#pragma once
+#include <atomic>
 #include "module/session/session_util.h"
 
 enum BubbleEventType
@@ -272,5 +273,40 @@ protected:
 	bool			action_menu_;
 	bool			my_msg_;
 	TeamMemberGetter team_member_getter_;
+};
+class AttachMentDecorate
+{
+protected:
+	virtual void InitResPath(const nim::IMMessage& msg) = 0;
+protected:
+	std::wstring	path_;
+};
+class ThumbDecorate : public AttachMentDecorate
+{
+public:
+	ThumbDecorate();
+	virtual ~ThumbDecorate();
+protected:
+	/**
+	* 设置图片资源的路径
+	* @return void 无返回值
+	*/
+	virtual void InitResPath(const nim::IMMessage& msg) override;
+	/**
+* 检查用于在消息气泡中展示的缩略图是否已存在，如果存在就展示
+* @return bool 返回值true: 缩略图存在且完好， false: 缩略图不存在或图片有错误
+*/
+	virtual bool CheckThumbImage();
+private:
+	/**
+* 获取缩略图的名字
+* @return std::string 缩略图的名字
+*/
+	std::wstring GetThumbImageName(const std::wstring& res_name);
+protected:
+	std::wstring	thumb_;
+	int thumb_image_width_;
+	int thumb_image_height_;
+	std::atomic_bool	 image_checked_;
 };
 }

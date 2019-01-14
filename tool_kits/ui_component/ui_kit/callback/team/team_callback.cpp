@@ -271,7 +271,7 @@ void UIReceiveSysmsgCallback(nim::SysMessage& msg)
 	{
 		nim::IMMessage immsg;
 		CustomSysMessageToIMMessage(msg, immsg);
-		if (msg.msg_setting_.need_offline_ != nim::BS_TRUE)//只在线
+		if (msg.msg_setting_.need_offline_ != BS_TRUE)//只在线
 		{
 			if (msg.type_ == nim::kNIMSysMsgTypeCustomP2PMsg)
 			{

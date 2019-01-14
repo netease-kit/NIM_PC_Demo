@@ -74,7 +74,7 @@ bool CustomMsgForm::OnClicked(ui::EventArgs* param)
 		json["content"] = attach_text;
 
 		nim::SysMessageSetting setting;
-		setting.need_offline_ = msg_mode_->IsSelected() ? nim::BS_FALSE : nim::BS_TRUE;
+		setting.need_offline_ = msg_mode_->IsSelected() ? BS_FALSE : BS_TRUE;
 
 		auto str = nim::SystemMsg::CreateCustomNotificationMsg(session_id_, session_type_ == nim::kNIMSessionTypeTeam ? nim::kNIMSysMsgTypeCustomTeamMsg : nim::kNIMSysMsgTypeCustomP2PMsg, QString::GetGUID(), writer.write(json), setting);
 		nim::SystemMsg::SendCustomNotificationMsg(str);

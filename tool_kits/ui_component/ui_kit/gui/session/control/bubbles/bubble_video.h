@@ -9,7 +9,7 @@ namespace nim_comp
   * @author Redrain
   * @date 2015/9/11
   */
-class MsgBubbleVideo : public MsgBubbleItem
+class MsgBubbleVideo : public MsgBubbleItem,public ThumbDecorate
 {
 public:
 	/**
@@ -54,16 +54,6 @@ private:
 	*/
 	void OnDownloadCallback(bool success, const std::string& file_path);
 	/**
-	* 设置资源的路径
-	* @return void 无返回值
-	*/
-	void InitResPath();
-	/**
-	* 检查用于在消息气泡中展示的缩略图是否已存在，如果存在就展示
-	* @return bool 返回值true: 缩略图存在且完好， false: 缩略图不存在或图片有错误
-	*/
-	bool CheckThumbImageBubble();
-	/**
 	* 使用系统缺省设置的播放器播放视频文件
 	* @return void 无返回值
 	*/
@@ -86,9 +76,6 @@ protected:
 	ui::ButtonBox*	msg_video_;
 	ui::Control*	image_;
 	ui::Label * prog_download_;
-	ui::Box * prog_download_panel_;
-	std::wstring	thumb_;
-	std::wstring	path_;
-	bool			thumb_checked_;
+	ui::Box * prog_download_panel_;	
 };
 }

@@ -29,17 +29,17 @@ void P2PCallback::OnTransferFileRequest(const RemoteFlagType remote_flag, Transf
 		msg.receiver_accid_ = LoginManager::GetInstance()->GetAccount();
 		msg.sender_accid_ = remote_flag;
 		msg.client_msg_id_ = session_id;
-		msg.msg_setting_.resend_flag_ = nim::BS_FALSE;
+		msg.msg_setting_.resend_flag_ = BS_FALSE;
 		msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
 		msg.status_ = nim::kNIMMsgLogStatusSent;
 
-		msg.msg_setting_.server_history_saved_ = nim::BS_FALSE;//不存云端
-		msg.msg_setting_.roaming_ = nim::BS_FALSE;//不漫游
-		msg.msg_setting_.self_sync_ = nim::BS_FALSE;//不进行多端同步
-		msg.msg_setting_.need_push_ = nim::BS_FALSE;//不推送
-		msg.msg_setting_.push_need_badge_ = nim::BS_FALSE;//不计数
-		msg.msg_setting_.need_offline_ = nim::BS_FALSE;//不需要支持离线
-		msg.msg_setting_.routable_ = nim::BS_FALSE;//不需要抄送
+		msg.msg_setting_.server_history_saved_ = BS_FALSE;//不存云端
+		msg.msg_setting_.roaming_ = BS_FALSE;//不漫游
+		msg.msg_setting_.self_sync_ = BS_FALSE;//不进行多端同步
+		msg.msg_setting_.need_push_ = BS_FALSE;//不推送
+		msg.msg_setting_.push_need_badge_ = BS_FALSE;//不计数
+		msg.msg_setting_.need_offline_ = BS_FALSE;//不需要支持离线
+		msg.msg_setting_.routable_ = BS_FALSE;//不需要抄送
 		msg.attach_ = root.toStyledString();
 
 		session_box->ShowMsg(msg, false, false);
@@ -66,17 +66,17 @@ bool P2PCallback::SendCommandChannel(const RemoteFlagType remote_flag, const cha
 		// 确保发送出去的消息 id 和构建 bubble 使用的消息 id 都是相同的
 		// 在加载历史消息时才能根据消息 id 匹配到对应的数据
 		msg.client_msg_id_ = session_id;
-		msg.msg_setting_.resend_flag_ = nim::BS_FALSE;
+		msg.msg_setting_.resend_flag_ = BS_FALSE;
 		msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
 		msg.status_ = nim::kNIMMsgLogStatusSending;
 
-		msg.msg_setting_.server_history_saved_ = nim::BS_FALSE;//不存云端
-		msg.msg_setting_.roaming_ = nim::BS_FALSE;//不漫游
-		msg.msg_setting_.self_sync_ = nim::BS_FALSE;//不进行多端同步
-		msg.msg_setting_.need_push_ = nim::BS_FALSE;//不推送
-		msg.msg_setting_.push_need_badge_ = nim::BS_FALSE;//不计数
-		msg.msg_setting_.need_offline_ = nim::BS_FALSE;//不需要支持离线
-		msg.msg_setting_.routable_ = nim::BS_FALSE;//不需要抄送
+		msg.msg_setting_.server_history_saved_ = BS_FALSE;//不存云端
+		msg.msg_setting_.roaming_ = BS_FALSE;//不漫游
+		msg.msg_setting_.self_sync_ = BS_FALSE;//不进行多端同步
+		msg.msg_setting_.need_push_ = BS_FALSE;//不推送
+		msg.msg_setting_.push_need_badge_ = BS_FALSE;//不计数
+		msg.msg_setting_.need_offline_ = BS_FALSE;//不需要支持离线
+		msg.msg_setting_.routable_ = BS_FALSE;//不需要抄送
 		msg.attach_ = values.toStyledString();
 
 		nim::Talk::SendMsg(msg.ToJsonString(true));

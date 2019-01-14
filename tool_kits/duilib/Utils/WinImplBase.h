@@ -14,7 +14,7 @@ namespace ui
 
 enum UILIB_RESOURCETYPE
 {
-	UILIB_FILE = 1,		// 来自磁盘文件
+	UILIB_FILE=1,		// 来自磁盘文件
 	UILIB_ZIP,			// 来自磁盘zip压缩包
 	UILIB_RESOURCE,		// 来自资源
 	UILIB_ZIPRESOURCE,	// 来自资源的zip压缩包

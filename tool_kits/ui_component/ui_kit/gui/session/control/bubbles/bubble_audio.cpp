@@ -41,9 +41,9 @@ void MsgBubbleAudio::InitInfo(const nim::IMMessage &msg)
 
 	SetCanPlay(false);
 	InitTime();
-	InitResPath();
+	InitResPath(msg_);
 
-	if( shared::FilePathIsExist(path_, false) )
+	if( shared::FilePathIsExist(res_path_, false) )
 	{
 		SetCanPlay(true);
 	}
@@ -68,16 +68,17 @@ void MsgBubbleAudio::InitInfo(const nim::IMMessage &msg)
 	SetPlayed(msg_.sub_status_ == nim::kNIMMsgLogSubStatusPlayed);
 }
 
-void MsgBubbleAudio::InitResPath()
+void MsgBubbleAudio::InitResPath(const nim::IMMessage& msg)
 {
-	path_ = msg_.local_res_path_;
-	if (path_.empty() || !shared::FilePathIsExist(path_, false))
+	res_path_ = msg_.local_res_path_;
+	if (res_path_.empty() || !shared::FilePathIsExist(res_path_, false))
 	{
 		nim::IMAudio audio_data;
 		nim::Talk::ParseAudioMessageAttach(msg_, audio_data);
 		std::string dir = nbase::UTF16ToUTF8(GetUserAudioPath());
-		path_ = dir + audio_data.md5_;
+		res_path_ = dir + audio_data.md5_;
 	}
+	path_ = nbase::UTF8ToUTF16(res_path_);
 }
 
 bool MsgBubbleAudio::OnClicked(ui::EventArgs* arg)
@@ -91,12 +92,12 @@ bool MsgBubbleAudio::OnClicked(ui::EventArgs* arg)
 		}
 		else
 		{
-			if( !shared::FilePathIsExist(path_, false) )
+			if( !shared::FilePathIsExist(res_path_, false) )
 			{
-				InitResPath();
-				if (!shared::FilePathIsExist(path_, false))
+				InitResPath(msg_);
+				if (!shared::FilePathIsExist(res_path_, false))
 				{
-					QLOG_ERR(L"Audio not exist: {0}") << path_;
+					QLOG_ERR(L"Audio not exist: {0}") << res_path_;
 					return false;
 				}
 			}
@@ -104,7 +105,7 @@ bool MsgBubbleAudio::OnClicked(ui::EventArgs* arg)
 			nim_audio::nim_audio_type audio_format = nim_audio::AAC;
 			{
 				FILE* audio_file;
-				if (_wfopen_s(&audio_file, nbase::UTF8ToUTF16(path_).c_str(), L"rb"))
+				if (_wfopen_s(&audio_file, nbase::UTF8ToUTF16(res_path_).c_str(), L"rb"))
 					return false;
 
 				char header[6];
@@ -114,7 +115,7 @@ bool MsgBubbleAudio::OnClicked(ui::EventArgs* arg)
 				fclose(audio_file);
 			}		
 			tick_ = 0;
-			AudioManager::GetInstance()->PlayAudio(path_, sid_, msg_.client_msg_id_, audio_format);
+			AudioManager::GetInstance()->PlayAudio(res_path_, sid_, msg_.client_msg_id_, audio_format);
 			nim::MsgLog::SetSubStatusAsync(msg_.client_msg_id_, nim::kNIMMsgLogSubStatusPlayed, nim::MsgLog::SetSubStatusCallback());
 			msg_.sub_status_ = nim::kNIMMsgLogSubStatusPlayed;
 			SetPlayed(true);
@@ -235,7 +236,7 @@ bool MsgBubbleAudio::OnMenu( ui::EventArgs* arg )
 
 bool MsgBubbleAudio::NeedDownloadResource()
 {
-	if( shared::FilePathIsExist(path_, false) )
+	if( shared::FilePathIsExist(res_path_, false) )
 		return false;
 	else
 		return true;

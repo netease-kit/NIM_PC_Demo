@@ -63,7 +63,7 @@ bool ForcePushManager::IsAtMeMsg(const nim::IMMessage &msg)
 	// 是否包含atme消息，如果当前msg包含atme消息，就不显示提示条，否则显示
 	if (msg.session_type_ == nim::kNIMSessionTypeTeam && msg.type_ == nim::kNIMMessageTypeText && !LoginManager::GetInstance()->IsEqual(msg.sender_accid_))
 	{
-		if (msg.msg_setting_.is_force_push_ == nim::BS_TRUE)
+		if (msg.msg_setting_.is_force_push_ == BS_TRUE)
 		{
 			//@所有人
 			if (msg.msg_setting_.force_push_ids_list_.empty())

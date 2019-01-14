@@ -114,7 +114,6 @@ void LoginManager::ReadDemoLogLevel()
 {
 	std::wstring server_conf_path = QPath::GetAppPath();
 	server_conf_path.append(L"global_conf.txt");
-	nim::SDKConfig config;
 	TiXmlDocument document;
 	if (shared::LoadXmlFromFile(document, server_conf_path))
 	{

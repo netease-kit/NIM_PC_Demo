@@ -5,13 +5,14 @@
 #include "iprofile_ui.h"
 namespace nim_comp
 {
-	class ProfileBox;
+class ProfileBox;
 class ProfileForm : public WindowEx,public IProfileUI
 {
 public:
 	static ProfileForm *ShowProfileForm(UTF8String uid, bool is_robot = false);
 	static void ShowProfileForm(UTF8String uid, bool is_robot,bool inplugin_box);
 	static ProfileForm *ShowProfileForm(UTF8String tid, UTF8String uid, nim::NIMTeamUserType my_type);
+
 private:
 	ProfileForm();
 	ProfileForm(UTF8String tid, UTF8String uid, nim::NIMTeamUserType my_type);

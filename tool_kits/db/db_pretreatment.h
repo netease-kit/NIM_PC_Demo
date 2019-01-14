@@ -86,6 +86,8 @@ namespace ndb
 			virtual bool MoveFile(const std::string &from_path, const std::string &to_path) = 0;
 			virtual void ClearTLSLastError() = 0;
 			virtual unsigned int GetTLSLastError() = 0;
+			virtual void LockDBFile() = 0;
+			virtual void UnLockDBFile() = 0;
 		};
 		class DefaultDBRestore
 		{
@@ -128,21 +130,26 @@ namespace ndb
 					auto back_db_file_bk = back_db_path_ + ("_bk");
 					bool has_back_file = file_system_->FilePathIsExist(back_db_path_, false);
 					if (has_back_file)
-						file_system_->MoveFile(back_db_path_, back_db_file_bk);						
-					auto backup_ret = file_system_->CopyFile(db_path_, back_db_path_);
-					if (backup_ret)
+						file_system_->MoveFile(back_db_path_, back_db_file_bk);		
+					auto backup_ret = false;
 					{
-						if (has_back_file)
-							file_system_->DeleteFile(back_db_file_bk);
-					}
-					else
-					{
-						if (file_system_->FilePathIsExist(back_db_file_bk, false))
+						file_system_->LockDBFile();
+						backup_ret = file_system_->CopyFile(db_path_, back_db_path_);
+						if (backup_ret)
 						{
-							file_system_->DeleteFile(back_db_path_);
-							file_system_->MoveFile(back_db_file_bk, back_db_path_);
-						}						
-					}
+							if (has_back_file)
+								file_system_->DeleteFile(back_db_file_bk);
+						}
+						else
+						{
+							if (file_system_->FilePathIsExist(back_db_file_bk, false))
+							{
+								file_system_->DeleteFile(back_db_path_);
+								file_system_->MoveFile(back_db_file_bk, back_db_path_);
+							}
+						}
+						file_system_->UnLockDBFile();
+					}					
 					return backup_ret;
 				}
 				return false;
@@ -156,24 +163,30 @@ namespace ndb
 				{
 					if (!file_system_->FilePathIsExist(db_dir_, true) && !file_system_->CreateDir(db_dir_))
 						return false;
-					auto db_file_bk = db_path_ + ("_bk");
-					bool has_db_file = file_system_->FilePathIsExist(db_path_, false);
-					if (has_db_file)
-						file_system_->MoveFile(db_path_, db_file_bk);
-					auto copy_ret = file_system_->CopyFile(back_db_path_, db_path_);
-					if (copy_ret)
+					auto db_file_bk = db_path_ + ("_bk");		
+					auto copy_ret = false;
 					{
+						file_system_->LockDBFile();						
+						bool has_db_file = file_system_->FilePathIsExist(db_path_, false);
 						if (has_db_file)
-							file_system_->DeleteFile(db_file_bk);
-					}
-					else
-					{
-						if (file_system_->FilePathIsExist(db_file_bk, false))
+							file_system_->MoveFile(db_path_, db_file_bk);
+						copy_ret = file_system_->CopyFile(back_db_path_, db_path_);
+						if (copy_ret)
 						{
-							file_system_->DeleteFile(db_path_);
-							file_system_->MoveFile(db_file_bk, db_path_);
-						}						
+							if (has_db_file)
+								file_system_->DeleteFile(db_file_bk);
+						}
+						else
+						{
+							if (file_system_->FilePathIsExist(db_file_bk, false))
+							{
+								file_system_->DeleteFile(db_path_);
+								file_system_->MoveFile(db_file_bk, db_path_);
+							}
+						}
+						file_system_->UnLockDBFile();
 					}
+					
 					return copy_ret;
 				}
 				return false;
@@ -449,7 +462,7 @@ namespace ndb
 		}
 
 	protected:
-		ndb::SQLiteDB db_;
+		ndb::SQLiteDB db_;		
 	private:
 		PretreatmentConfig config_;
 		typename FileSystem* file_system_;

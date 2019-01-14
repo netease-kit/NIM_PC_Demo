@@ -212,7 +212,7 @@ void TeamInfoBox::SelectedCompleted(const std::list<UTF8String>& friend_list, co
 		}
 	}
 	else {
-		nim::Team::InviteAsync(tid_, friend_list, "", nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
+		nim::Team::InviteAsync(tid_, friend_list, "", std::bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 	}
 }
 
@@ -342,7 +342,7 @@ void TeamInfoBox::OnMsgbox(const UTF8String& user_id, MsgBoxRet ret)
 	{
 		std::list<std::string> uids_list;
 		uids_list.push_back(user_id);
-		nim::Team::KickAsync(tid_, uids_list, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
+		nim::Team::KickAsync(tid_, uids_list, std::bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 		MemberManagerForm* member_manager_form = (MemberManagerForm*)WindowsManager::GetInstance()->GetWindow\
 			(MemberManagerForm::kClassName, nbase::UTF8ToUTF16(user_id));
 		if (member_manager_form)
@@ -483,13 +483,12 @@ bool TeamInfoBox::OnBtnConfirmClick(ui::EventArgs* param)
 
 		if (!tinfo.GetIcon().empty())
 			PhotoService::GetInstance()->DownloadTeamIcon(tinfo);
-
-		nim::Team::CreateTeamAsync(tinfo, id_list, "", nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
+		nim::Team::CreateTeamAsync(tinfo, id_list, "", std::bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 	}
 	else {
 		if (FindSubControl(L"team_owner_section")->IsEnabled()
 			|| FindSubControl(L"team_name_panel")->IsEnabled())
-			nim::Team::UpdateTeamInfoAsync(tid_, tinfo, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
+			nim::Team::UpdateTeamInfoAsync(tid_, tinfo, std::bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 		if (((ui::Option*)FindSubControl(L"notify_mode_on"))->IsEnabled())
 		{
 			auto my_member_info = team_member_list_.at(LoginManager::GetInstance()->GetAccount());
@@ -505,7 +504,7 @@ bool TeamInfoBox::OnBtnConfirmClick(ui::EventArgs* param)
 			{
 				nim::TeamMemberProperty values(tid_, LoginManager::GetInstance()->GetAccount(), my_member_info.GetUserType());
 				values.SetBits(new_bits);
-				nim::Team::UpdateMyPropertyAsync(values, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
+				nim::Team::UpdateMyPropertyAsync(values, std::bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 			}
 		}
 	}
@@ -522,14 +521,14 @@ bool TeamInfoBox::OnBtnCancelClick(ui::EventArgs* param)
 
 bool TeamInfoBox::OnBtnDissmissClick(ui::EventArgs* param)
 {
-	nim::Team::DismissAsync(tid_, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
+	nim::Team::DismissAsync(tid_, std::bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 	Close();
 	return true;
 }
 
 bool TeamInfoBox::OnBtnQuitClick(ui::EventArgs* param)
 {
-	nim::Team::LeaveAsync(tid_, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
+	nim::Team::LeaveAsync(tid_, std::bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 	Close();
 	return true;
 }

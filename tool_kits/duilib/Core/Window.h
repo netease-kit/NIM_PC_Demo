@@ -74,7 +74,7 @@ public:
     HWND GetHWND() const;
 
     bool RegisterWindowClass();
-    bool RegisterSuperclass();
+    bool RegisterSuperClass();
 	virtual std::wstring GetWindowClassName() const;
 	virtual std::wstring GetSuperClassName() const;
 	virtual UINT GetClassStyle() const;

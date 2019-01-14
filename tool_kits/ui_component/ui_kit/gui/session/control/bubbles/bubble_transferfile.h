@@ -46,6 +46,13 @@ public:
 	void SetBubbleStatus(TransferFileSessionState status, bool write_db = true);
 
 	/**
+	 * 父类继承下来的 bubble 状态管理方法，用来屏蔽或修改某些特定状态
+	 * @param[in] status 消息状态
+	 * @return void 无返回值
+	 */
+	virtual void SetMsgStatus(nim::NIMMsgLogStatus status) override;
+
+	/**
 	* 处理控件的菜单消息
 	* @param[in] msg 消息的相关信息
 	* @return bool true 继续传递控件消息，false 停止传递控件消息

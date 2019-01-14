@@ -160,6 +160,12 @@
     <Filter Include="callback\p2p">
       <UniqueIdentifier>{b151b74c-2f52-420c-b092-13852d31b38c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="gui\profile_mine">
+      <UniqueIdentifier>{0ddac71b-8cec-4a53-929e-3c74ef75e440}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\cef">
+      <UniqueIdentifier>{14deafa2-7326-485a-a24b-55ffeec402bf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -536,6 +542,12 @@
     </ClInclude>
     <ClInclude Include="module\session\transfer_file_manager.h">
       <Filter>module\session</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\profile_mine\profile_mine.h">
+      <Filter>gui\profile_mine</Filter>
+    </ClInclude>
+    <ClInclude Include="module\cef\cef_global_methods.h">
+      <Filter>module\cef</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -919,6 +931,12 @@
     </ClCompile>
     <ClCompile Include="module\session\transfer_file_manager.cpp">
       <Filter>module\session</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\profile_mine\profile_mine.cpp">
+      <Filter>gui\profile_mine</Filter>
+    </ClCompile>
+    <ClCompile Include="module\cef\cef_global_methods.cpp">
+      <Filter>module\cef</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

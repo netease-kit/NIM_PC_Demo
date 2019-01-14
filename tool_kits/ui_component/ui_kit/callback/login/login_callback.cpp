@@ -8,7 +8,7 @@
 #include "module/subscribe_event/subscribe_event_manager.h"
 #include "module/service/user_service.h"
 #include "module/audio/audio_manager.h"
-#include "cef/cef_module/cef_manager.h"
+#include "cef/cef_module/manager/cef_manager.h"
 #include "util/user.h"
 #include "shared/xml_util.h"
 #include "nim_cpp_client.h"

@@ -9,7 +9,7 @@ namespace nim_comp
   * @author Redrain
   * @date 2015/9/11
   */
-class MsgBubbleAudio : public MsgBubbleItem
+class MsgBubbleAudio : public MsgBubbleItem,public AttachMentDecorate
 {
 public:
 	MsgBubbleAudio();
@@ -71,7 +71,7 @@ private:
 	* 设置语音资源的路径
 	* @return void 无返回值
 	*/
-	void InitResPath();
+	virtual void InitResPath(const nim::IMMessage& msg) override;
 
 	/**
 	* 响应此消息项的单击消息，播放语音
@@ -134,9 +134,9 @@ private:
 
 	int				time_;
 	int				tick_;
-	std::string		path_;
 	int audio_time_;
 	nbase::WeakCallbackFlag timer_;
+	std::string res_path_;
 };
 
 }

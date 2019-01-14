@@ -9,7 +9,7 @@ namespace nim_comp
   * @author Redrain
   * @date 2015/9/11
   */
-class MsgBubbleImage : public MsgBubbleItem
+class MsgBubbleImage : public MsgBubbleItem,public ThumbDecorate
 {
 public:
 	/**
@@ -46,17 +46,6 @@ public:
 	*/
 	virtual bool NeedDownloadResource();
 private:
-	/**
-	* 设置图片资源的路径
-	* @return void 无返回值
-	*/
-	void InitResPath();
-
-	/**
-	* 检查用于在消息气泡中展示的缩略图是否已存在，如果存在就展示
-	* @return bool 返回值true: 缩略图存在且完好， false: 缩略图不存在或图片有错误
-	*/
-	bool CheckImageBubble();
 
 	/** 
 	* 设置图片消息项的图片是否可以预览
@@ -80,11 +69,6 @@ private:
 	void DoZoom();
 protected:
 	ui::ButtonBox*	msg_image_;
-	ui::Control*	image_;
-
-	std::wstring	thumb_;
-	std::wstring	path_;
-
-	bool			image_checked_ = false;
+	ui::Control*	image_;	
 };
 }

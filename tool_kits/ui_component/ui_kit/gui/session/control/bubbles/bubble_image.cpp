@@ -29,12 +29,15 @@ void MsgBubbleImage::InitInfo(const nim::IMMessage &msg)
 	__super::InitInfo(msg);
 
 	SetCanView(false);
-	InitResPath();
+	InitResPath(msg_);
 
 	if (nbase::FilePathIsExist(thumb_, false)) //thumb_图片存在
 	{
-		if (CheckImageBubble())
+		if (CheckThumbImage())
 		{
+			image_->SetFixedWidth(thumb_image_width_, false); 
+			image_->SetFixedHeight(thumb_image_height_);
+			image_->SetBkImage(thumb_);
 			if (!my_msg_ || !msg_.status_ == nim::kNIMMsgLogStatusSendFailed)
 				SetLoadStatus(RS_LOAD_OK);
 			if (my_msg_ && msg_.status_ == nim::kNIMMsgLogStatusSending)
@@ -93,63 +96,6 @@ bool MsgBubbleImage::OnClicked( ui::EventArgs* arg )
 	return true;
 }
 
-void MsgBubbleImage::InitResPath()
-{
-	std::wstring wpath = nbase::UTF8ToUTF16(msg_.local_res_path_);
-	std::string path = nim::Talk::GetAttachmentPathFromMsg(msg_);
-	ASSERT(!path.empty());
-
-	if (wpath.empty() || !nbase::FilePathIsExist(wpath, false))
-	{
-		path_ = nbase::UTF8ToUTF16(path);
-		std::wstring directory, filename;
-		nbase::FilePathApartDirectory(path_, directory);
-		nbase::FilePathApartFileName(path_, filename);
-		thumb_ = directory + L"thumb_" + filename;
-	}
-	else
-	{
-		std::wstring directory, filename;
-		nbase::FilePathApartDirectory(nbase::UTF8ToUTF16(path), directory);
-		nbase::FilePathApartFileName(wpath, filename);
-		thumb_ = directory + L"thumb_" + filename;
-		path_ = wpath;
-	}
-}
-
-bool MsgBubbleImage::CheckImageBubble()
-{
-	if (image_checked_)
-		return true;
-
-	if (thumb_.empty() || !nbase::FilePathIsExist(thumb_, false))
-		return false;
-
-	//gif图片经过压缩下载后，虽然格式仍是gif，但变成只有一帧，没有动画，尺寸也可能变小了。
-	Gdiplus::Image thumb_image(thumb_.c_str());
-	Gdiplus::Status status = thumb_image.GetLastStatus();
-	if (status != Gdiplus::Ok) //图片有错误
-	{
-		QLOG_ERR(L"Image {0} error {1}") << thumb_ << status;
-		return false;
-	}
-
-	int width = thumb_image.GetWidth();
-	int height = thumb_image.GetHeight();
-	if (width == 0 || height == 0)
-	{
-		QLOG_ERR(L"Get image size error: {0}, {1}.") << width << height;
-		return false;
-	}
-	
-	image_->SetFixedWidth(width, false); //压缩下载的图片直接做消息气泡的图片
-	image_->SetFixedHeight(height);
-	image_->SetBkImage(thumb_);
-	image_checked_ = true;
-
-	return true;
-}
-
 void MsgBubbleImage::SetCanView(bool can)
 {
 	msg_image_->SetEnabled(can);
@@ -171,7 +117,12 @@ void MsgBubbleImage::OnDownloadCallback( bool success, const std::string& file_p
 			bool at_end = lbx->IsAtEnd();
 
 			SetLoadStatus(RS_LOAD_OK);
-			CheckImageBubble();
+			if (CheckThumbImage())
+			{
+				image_->SetFixedWidth(thumb_image_width_, false); 
+				image_->SetFixedHeight(thumb_image_height_);
+				image_->SetBkImage(thumb_);
+			}
 			SetCanView(true);
 			
 			if (at_end)
@@ -211,7 +162,7 @@ void MsgBubbleImage::DoZoom()
 
 	if( !nbase::FilePathIsExist(path_, false) )
 	{
-		InitResPath();
+		InitResPath(msg_);
 		if (!nbase::FilePathIsExist(path_, false))
 		{
 			QLOG_ERR(L"Image not exist: {0}") << path_;

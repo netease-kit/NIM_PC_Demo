@@ -116,6 +116,7 @@ bool TransferFileManager::IsTransferFileSessionFinalState(TransferFileSessionSta
 	{
 	case TransferFileSessionState_Succeeded:
 	case TransferFileSessionState_Failed:
+	case TransferFileSessionState_CMDTimeout:
 	case TransferFileSessionState_ReceiverRejected:
 	case TransferFileSessionState_Rejected:
 	case TransferFileSessionState_ReceiverCancel:

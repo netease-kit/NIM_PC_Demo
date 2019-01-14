@@ -8,10 +8,12 @@
 #include "nim_service\module\service\session_service.h"
 #include "module\plugins\main_plugins_manager.h"
 #include "module\session\session_manager.h"
-#include "gui\profile_form\profile_form.h"
+#include "gui/profile_form/profile_form.h"
+#include "gui/profile_mine/profile_mine.h"
 #include "gui/plugins/session/session_plugin.h"
 #include "nim_service\module\subscribe_event\subscribe_event_manager.h"
 #include "main_form_menu.h"
+
 namespace nim_comp
 {
 	const LPCTSTR MainFormEx::kClassName = L"MainFormEx";
@@ -65,7 +67,8 @@ namespace nim_comp
 		btn_online_state_ = dynamic_cast<ui::Button*>(FindControl(L"btn_online_state"));
 		btn_online_state_->SetVisible(nim_comp::SubscribeEventManager::GetInstance()->IsEnabled());		
 		btn_header_->AttachClick([this](ui::EventArgs* param){
-			nim_comp::ProfileForm::ShowProfileForm(nim_comp::LoginManager::GetInstance()->GetAccount());
+			nim_comp::WindowsManager::GetInstance()->SingletonShow<nim_comp::ProfileMine>(nim_comp::ProfileMine::kClassName);
+			//nim_comp::ProfileForm::ShowProfileForm(nim_comp::LoginManager::GetInstance()->GetAccount());
 			return true;
 		});
 		btn_online_state_->AttachClick(nbase::Bind(&MainFormEx::OnlineStateMenuButtonClick, this, std::placeholders::_1));
@@ -291,7 +294,8 @@ namespace nim_comp
 	void MainFormEx::InitHeader()
 	{
 		std::string my_id = nim_comp::LoginManager::GetInstance()->GetAccount();
-		btn_header_->SetBkImage(nim_comp::PhotoService::GetInstance()->GetUserPhoto(my_id));
+		std::wstring head_image = nim_comp::PhotoService::GetInstance()->GetUserPhoto(my_id);
+		btn_header_->SetBkImage(head_image);
 	}
 	bool MainFormEx::OnLeftClick()
 	{

@@ -16,6 +16,6 @@ public:
 	* @param[out] version_flag 版本标识
 	* @return bool true 成功，false 失败
 	*/
-	static bool GetAppLocalVersion(int &version, std::wstring &version_flag);
+	static bool GetAppLocalVersion(int &version, std::wstring &version_flag);	
 };
 }

@@ -163,7 +163,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;CPPWRAPPER_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\..\;..\..\..\third_party\;..\..\..\third_party\jsoncpp\include\json\;..\..\..\third_party\libyuv\include\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\;..\..\..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_chatroom_c_sdk\util\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\..\app_sdk\include</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
