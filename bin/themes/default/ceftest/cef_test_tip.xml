@@ -2,10 +2,10 @@
 <Window size="650,520" caption="0,0,0,34" sizebox="4,4,4,4" textid="STRID_CEF_BROWSER_OFF_SCREEN_MODE">
 <Box >
 	<VBox >
-		<HBox height="34" margin="10,0,130,0">
+		<HBox height="34" margin="10,0,130,0" visible="false">
 			<Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" textid="STRID_CEF_BROWSER_OFF_SCREEN_MODE"/>			
 		</HBox>
-		<VBox height="64" margin="0,2,0,0" >
+		<VBox height="64" margin="0,8,0,0">
 			<HBox height="30" margin="10,0,10,2" >
 				<Button class="btn_global_green_80x30" name="btn_back" width="50" height="30" textid="STRID_CEF_BROWSER_BACKWARD" valign="center" font="1" />
 				<Button class="btn_global_green_80x30" name="btn_forward" textid="STRID_CEF_BROWSER_FORWARD" width="50" height="30" valign="center" font="1" margin="3,0,3,0" />        

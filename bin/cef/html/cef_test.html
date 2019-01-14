@@ -1,43 +1,68 @@
 <html>
 <head>
     <meta charset="utf-8" />
-    <title>Cef Tests</title>
-    <script language="JavaScript">
-        // 通过调用NimCefWebFunction函数给渲染进程发送消息
-        function sendMessage() {
-          NimCefWebFunction(document.getElementById("message").value);
+    <title>JS Bridge Test</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/semantic-ui/2.3.3/semantic.min.css" rel="stylesheet" type="text/css" />
+    <script>
+        const sendMessage = () => {
+            const message = document.getElementById('send_message_input').value
+            /*
+             * 调用 C++ 已经注册过的函数
+             * param[in] sendMessage 函数名，根据实际项目情况来定义
+             * param[in] { message } 调用 C++ 方法所需的参数，由两端协商决定
+             * param[in] callback 执行方法的结果回调函数执行体
+             */
+            NimCefWebInstance.call('showCppMessage', { message }, (error, result) => {
+                console.log('error = ', error, ', result = ', result)
+            })
         }
-
-        // 写一个JS函数，让C++可以通过调用这个函数控制网页
-        function receiveMessage(param) {
-         document.getElementById("result").value = "收到来自C++的消息:" + param;
-        }
+        
+        (() => {
+            /*
+             * 注册一个回调函数，用于在 C++ 应用中调用
+             * param[in] showJsMessage 回调函数的名称，C++ 会使用该名称来调用此回调函数
+             * param[in] callback 回调函数执行体
+             */
+            NimCefWebInstance.register('showJsMessage', (arguments) => {
+                const receiveMessageInput = document.getElementById('receive_message_input')
+                receiveMessageInput.value = arguments.message
+                return {
+                    message: 'showJsMessage function was executed, this message return by JavaScript.'
+                }
+            })
+        })()
     </script>
 </head>
 
-<body bgcolor="white">
-<h3>Cef3.2623 C++与JS交互功能测试页面</h3>
-
-<fieldset style="margin-top:20px;border-color:#E2DED6;border-width:1px;border-style:Solid;">
-    <legend style="color:#333333;font-size:0.8em;font-weight:bold;">
-        JS调用C++测试
-    </legend>
-
-    <div style="margin-left:10px">
-        发送给C++的文本: <input type="text" id="message" value="你好C++！">
-        <br/><input type="button" onclick="sendMessage();" value="发送给C++">
+<body style="padding: 15px;">
+    <div class="ui huge header">Cef3.2623 C++与JS交互功能测试页面</div>
+    <div class="ui cards">
+        <div class="card" style="width: 100%;">
+            <div class="content">
+                <div class="header">JavaScript 给 C++ 发送消息</div>
+                <div class="meta">调用 NimCefWebHelper.call 来执行注册好的 C++ 方法</div>
+                <div class="description">
+                    <div class="ui fluid input">
+                        <input id="send_message_input" type="text" value="Hello C++" placeholder="输入要发送的内容">
+                        <button class="ui primary button" onClick='sendMessage()'>发送</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="card" style="width: 100%;">
+            <div class="content">
+                <div class="header">JavaScript 接收 C++ 发送消息</div>
+                <div class="meta">调用 NimCefWebHelper.register 注册一个方法提供 C++ 调用</div>
+                <div class="description">
+                    <div class="ui fluid input">
+                        <input id="receive_message_input" type="text" readonly placeholder="C++ 发送的内容将显示在此处">
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-</fieldset>
 
-<fieldset style="margin-top:20px;border-color:#E2DED6;border-width:1px;border-style:Solid;">
-    <legend style="color:#333333;font-size:0.8em;font-weight:bold;">
-        C++调用JS测试
-    </legend>
+</body>    
 
-    <div style="margin-left:10px">
-        收到C++发来的的文本：
-        <br/><textarea rows="2" cols="40" id="result"></textarea>
-    </div>
-</fieldset>
-</body>
 </html>

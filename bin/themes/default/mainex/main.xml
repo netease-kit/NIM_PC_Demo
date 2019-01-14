@@ -28,9 +28,9 @@
 		<TabBox name="main_plugins_showpage" fadeswitch="false" margin="65,0,0,0" />		
 		<HBox height="auto" width="auto" margin="0,0,5,0" halign="right" valign="top" >			
 			<Button class="btn_wnd_min" name="minbtn" margin="10,6,0,0"/>
-	        <Button class="btn_wnd_max" name="btn_max_restore" margin="10,6,0,0"/>
-	        <Button class="btn_wnd_close" name="btn_wnd_close" margin="10,6,0,0"/>
-        </HBox>	
+			<Button class="btn_wnd_max" name="btn_max_restore" margin="10,6,0,0"/>
+			<Button class="btn_wnd_close" name="btn_wnd_close" margin="10,6,0,0"/>
+		</HBox>	
 		<ButtonBox name="search_bar" width="280" height="68" margin="65,0,0,0" bkcolor="white">
 			<HBox height="auto" valign="center" margin="10,0,10,0" padding="7,7,7,7" hotimage="file='../session/icon_hover.png' corner='3,3,3,3'" >
 				<Control name="search_icon" width="auto" height="auto" valign="center" bkimage="file='../public/icon/icon_search_gray.png'"/>

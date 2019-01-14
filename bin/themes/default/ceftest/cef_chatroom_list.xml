@@ -1,0 +1,9 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Window size="650,520" caption="0,0,0,34" sizebox="4,4,4,4" textid="STRID_CEF_BROWSER_OFF_SCREEN_MODE">
+
+<Box bkcolor="bk_wnd_lightcolor"> 
+	<VBox>
+		<CefControl name="cef_control"/>
+	</VBox>
+</Box>
+</Window>
