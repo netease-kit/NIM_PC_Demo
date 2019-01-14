@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_vchat.h
   * @brief 音视频与设备
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author gq
   * @date 2015/4/30
   */
 
@@ -12,7 +11,7 @@
 #include <functional>
 #include "nim_base_types.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -20,7 +19,7 @@
 namespace nim
 {
 /** @brief 网络探测回调信息 */
-struct NetDetectCbInfo
+struct NIM_SDK_CPPWRAPPER_DLL_API NetDetectCbInfo
 {
 	int32_t res_code_;					/**< 返回的错误码 */
 	int32_t loss_;
@@ -40,7 +39,7 @@ struct NetDetectCbInfo
 		rtt_mdev_ = 0;
 	}
 };
-class VChat
+class NIM_SDK_CPPWRAPPER_DLL_API VChat
 {
 
 public:

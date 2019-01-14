@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_doc_trans.h
   * @brief 文档转换,其中文档上传下载,请使用NOS云存储服务提供的上传下载接口
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author redrain
   * @date 2016/12/15
   */
 
@@ -11,7 +10,7 @@
 #include <string>
 #include <functional>
 #include "nim_doc_trans_helper.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -21,7 +20,7 @@ namespace nim
 /** @class DocTrans
   * @brief NIM SDK提供的文档转换相关接口
   */
-class DocTrans
+class NIM_SDK_CPPWRAPPER_DLL_API DocTrans
 {
 public:
 	typedef std::function<void(int32_t code, const DocTransInfo& doc_info)> DocInfoCallback;

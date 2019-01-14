@@ -1,7 +1,6 @@
 /** @file nim_sdk_defines.h
   * @brief 
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2017/08/03
   */
 
@@ -39,6 +38,7 @@ namespace nim
 #include "nim_vchat_def.h"
 #include "nim_device_def.h"
 #include "nim_rts_def.h"
+#include "nim_signaling_def.h"
 
 #ifndef DEF_UNDER_NO_NAMESPACE
 }

@@ -1,7 +1,6 @@
 ﻿/** @file nim_msg_helper.h
   * @brief Message 通用辅助方法和数据结构定义
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2015/10/20
   */
 
@@ -13,7 +12,7 @@
 #include <functional>
 #include "json.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -22,7 +21,7 @@ namespace nim
 {
 
 /** @brief 发送消息回执 */
-struct SendMessageArc
+struct NIM_SDK_CPPWRAPPER_DLL_API SendMessageArc
 {
 	std::string talk_id_;	/**< 会话ID */
 	std::string msg_id_;	/**< 消息ID */
@@ -31,7 +30,7 @@ struct SendMessageArc
 };
 
 /** @brief 消息撤回通知 */
-struct RecallMsgNotify
+struct NIM_SDK_CPPWRAPPER_DLL_API RecallMsgNotify
 {
 	std::string from_id_;	/**< 消息发送方ID */
 	std::string to_id_;		/**< 消息接收方ID */
@@ -54,7 +53,7 @@ struct RecallMsgNotify
   * @param[out] notifys 消息撤回通知
   * @return bool 解析成功 或失败
   */
-bool ParseRecallMsgNotify(const std::string& notify_json, std::list<RecallMsgNotify>& notifys);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseRecallMsgNotify(const std::string& notify_json, std::list<RecallMsgNotify>& notifys);
 
 /** @fn bool ParseSendMessageAck(const std::string& arc_json, SendMessageArc& arc)
   * @brief 解析发送消息回执
@@ -62,7 +61,7 @@ bool ParseRecallMsgNotify(const std::string& notify_json, std::list<RecallMsgNot
   * @param[out] arc 发送消息回执
   * @return bool 解析成功 或失败
   */
-bool ParseSendMessageAck(const std::string& arc_json, SendMessageArc& arc);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseSendMessageAck(const std::string& arc_json, SendMessageArc& arc);
 
 } //namespace nim
 

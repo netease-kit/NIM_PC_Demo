@@ -1,15 +1,16 @@
 ﻿/** @file nim_sdk_util.cpp
   * @brief SDK库辅助方法
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg, Harrison
   * @date 2015/09/08
   */
 
-#include "nim_sdk_util.h"
-#include "nim_string_util.h"
+#include "nim_chatroom_sdk_util.h"
+#include "nim_chatroom_string_util.h"
+#include "callback_proxy.h"
 
-namespace nim
-{
+namespace nim_chatroom
+{	
+std::function<void(const std::function< void()>&)> CallbackProxy::docallback_async_ = nullptr;
 #ifdef NIM_SDK_DLL_IMPORT
 
 SDKInstance::SDKInstance()
@@ -29,7 +30,7 @@ bool SDKInstance::LoadSdkDll(const char *cur_module_dir, const char *sdk_dll_fil
 
 #if defined (WIN32)
 	std::wstring utf16_dir;
-	nim::UTF8ToUTF16(dir, utf16_dir);
+	nim_chatroom::UTF8ToUTF16(dir, utf16_dir);
 	instance_nim_ = ::LoadLibraryW(utf16_dir.c_str());
 #else
 	//int flag = RTLD_GLOBAL | RTLD_LAZY;  //如果是RTLD_GLOBAL，则静态库中定义的全局变量在共享库中名同地址也同
@@ -41,14 +42,24 @@ bool SDKInstance::LoadSdkDll(const char *cur_module_dir, const char *sdk_dll_fil
 	{
 		//QLOG_ERR(L"sdk nim load fail {0} {1}") << dir << GetLastError();
 		return false;
-	}
-
+	}	
 	return true;
 }
-
+void SDKInstance::OnSDKInited()
+{
+	if (nim_chatroom::CallbackProxy::docallback_async_ == nullptr)
+	{
+		typedef void(*sdk_docallback_async)(const std::function<void()>&);
+		static sdk_docallback_async nim_sdk_docallback_async = nullptr;
+		nim_sdk_docallback_async = (sdk_docallback_async)GetFunction("nim_sdk_docallback_async");
+		if (nim_sdk_docallback_async != nullptr)
+			nim_chatroom::CallbackProxy::docallback_async_ = std::move(std::bind(nim_sdk_docallback_async, std::placeholders::_1));
+	}
+}
 void SDKInstance::UnLoadSdkDll()
 {
 	assert(instance_nim_);
+	nim_chatroom::CallbackProxy::docallback_async_ = nullptr;
 	if (instance_nim_)
 	{
 		//QLOG_APP(L"client cleanup");

@@ -21,6 +21,7 @@ enum TransferFileSessionState
     TransferFileSessionState_Transferring,//传输中
     TransferFileSessionState_Succeeded,//已成功
     TransferFileSessionState_Failed,//已失败
+	TransferFileSessionState_CMDTimeout,//信令超时，对方可能已离线
 
     TransferFileSessionState_ReceiverRejected,//接收方拒绝,
     TransferFileSessionState_Rejected,//已拒绝

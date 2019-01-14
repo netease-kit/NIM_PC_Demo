@@ -1,14 +1,13 @@
 ﻿/** @file nim_string_util.cpp
   * @brief string操作辅助方法
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Harrison
   * @date 2016/09/08
   */
 
-#include "nim_string_util.h"
+#include "nim_chatroom_string_util.h"
 #include "third_party/convert_utf/convert_utf.h"
 
-namespace nim
+namespace nim_chatroom
 {
 
 std::string PCharToString(const char* str)

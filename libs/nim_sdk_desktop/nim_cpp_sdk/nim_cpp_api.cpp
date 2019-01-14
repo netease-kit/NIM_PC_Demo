@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_api.cpp
   * @brief NIM集合实现文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2015/10/20
   */
 
@@ -23,6 +22,7 @@ void UnregNIMCallback()
 	Client::UnregClientCb();
 	DataSync::UnregDataSyncCb();
 	Friend::UnregFriendCb();
+	Robot::UnregRobotCb();
 	Session::UnregSessionCb();
 	SystemMsg::UnregSysmsgCb();
 	Talk::UnregTalkCb();

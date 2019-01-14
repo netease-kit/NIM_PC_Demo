@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_session.h
   * @brief 最近会话列表
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg
   * @date 2015/2/1
   */
 
@@ -11,7 +10,7 @@
 #include <string>
 #include <functional>
 #include "nim_session_helper.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -23,7 +22,7 @@ namespace nim
   * @brief 会话列表管理功能；主要包括查询会话列表、删除会话列表等功能
   */
 
-class Session
+class NIM_SDK_CPPWRAPPER_DLL_API Session
 {
 
 public:
@@ -32,6 +31,7 @@ public:
 	typedef ChangeCallback DeleteRecentSessionCallabck;										/**< 删除会话回调模板 */
 	typedef ChangeCallback DeleteAllRecentSessionCallabck;									/**< 删除全部会话回调模板 */
 	typedef ChangeCallback SetUnreadCountZeroCallback;										/**< 会话未读消息数清零回调模板 */
+	typedef std::function<void(nim::NIMResCode, const SessionData&)> QuerySessionDataCallback; /**< 会话信息查询结果回调模板 */
 
 	/** @fn static void RegChangeCb(const ChangeCallback& cb, const std::string& json_extension = "")
 	* (全局回调)注册最近会话列表项变更通知
@@ -120,6 +120,17 @@ public:
 	*/
 	static bool SetAllUnreadCountZeroAsync(const SetUnreadCountZeroCallback& cb, const std::string& json_extension = "");
 
+/** @fn void QuerySessionDataById(NIMSessionType to_type, const std::string& id,const QuerySessionDataCallback& cb, const std::string& json_extension = "");
+  	* 根据给定的id查询相应会话的信息
+	* @param[in] to_type		会话类型
+  	* @param[in] id			对方的account id或者群组tid。
+  	* @param[in] cb			会话信息查询结果的回调函数
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+  	* @return void 无返回值
+  	* @note 错误码	200:成功
+  	*				0:失败
+  	*/
+	static void QuerySessionDataById(NIMSessionType to_type, const std::string& id,const QuerySessionDataCallback& cb, const std::string& json_extension = "");
 	/** @fn void UnregSessionCb()
 	* 反注册Session提供的所有回调
 	* @return void 无返回值

@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_rts.h
   * @brief 实时会话（数据通道）
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author gq
   * @date 2015/7/3
   */
 
@@ -13,6 +12,7 @@
 #include "nim_base_types.h"
 #include "nim_json_util.h"
 #include "nim_sdk_defines.h"
+#include "nim_sdk_cpp_wrapper_dll.h"
 
 /**
 * @namespace nim
@@ -22,7 +22,7 @@ namespace nim
 {
 
 /** @brief 点对点白板发起的参数信息 */
-struct RtsStartInfo
+NIM_SDK_CPPWRAPPER_DLL_API struct  RtsStartInfo
 {
 	bool custom_video_;			/**< 是否用自主的视频数据 */
 	bool custom_audio_;			/**< 是否用自主的音频数据 */
@@ -78,7 +78,7 @@ struct RtsStartInfo
 /** @class Rts
   * @brief NIM Rts提供的相关接口
   */
-class Rts
+class NIM_SDK_CPPWRAPPER_DLL_API Rts
 {
 public:
 	typedef std::function<void(nim::NIMResCode res_code, const std::string& session_id, int channel_type, const std::string& uid)> StartChannelCallback;

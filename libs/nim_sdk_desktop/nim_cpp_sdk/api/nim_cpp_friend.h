@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_friend.h
   * @brief 好友
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author caowei, Oleg
   * @date 2015/8/17
   */
 
@@ -12,7 +11,7 @@
 #include <list>
 #include <functional>
 #include "nim_friend_helper.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -22,7 +21,7 @@ namespace nim
 /** @class Friend
   * @brief NIM 好友相关接口
   */
-class Friend
+class NIM_SDK_CPPWRAPPER_DLL_API Friend
 {
 public:
 	typedef std::function<void(const FriendChangeEvent& )> FriendChangeCallback;	/**< 好友信息变更通知回调模板 */

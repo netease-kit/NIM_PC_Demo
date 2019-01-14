@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_client.h
   * @brief SDK接入,主要包括SDK初始化/清理、客户端登录/退出/重连/掉线/被踢等流程
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg, Harrison
   * @date 2015/09/21
   */
 
@@ -9,7 +8,7 @@
 #define _NIM_SDK_CPP_CLIENT_H_
 
 #include "nim_client_helper.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -20,10 +19,11 @@ namespace nim
 /** @class Client
   * @brief 全局管理功能；主要包括SDK初始化/清理、客户端登录/退出等功能
   */
-class Client
+class NIM_SDK_CPPWRAPPER_DLL_API Client
 {
 
 public:
+	typedef std::function<void(const std::function< void()>&)> SDKClosure;
 	typedef std::function<void(const LoginRes&)> LoginCallback; /**< 登录回调模板 */
 	typedef std::function<void(NIMResCode)> LogoutCallback;		/**< 登出回调模板 */
 	typedef std::function<void(const KickoutRes&)> KickoutCallback;	/**< 被踢通知回调模板 */
@@ -45,6 +45,14 @@ public:
 		, const std::string& app_data_dir
 		, const std::string& app_install_dir
 		, const SDKConfig &config);
+#ifdef CPPWRAPPER_DLL
+	/** @fn void SetCallbackFunction(const ChatRoom::SDKClosure& callback)
+  	* 当以动态库使用SDK时 设置SDK回调方法，为了不阻塞SDK线程，在回调中应该把任务抛到应用层的线程中
+  	* @param[in] callback	  回调方法
+  	* @return void 无返回值
+  	*/
+	static void SetCallbackFunction(const SDKClosure& callback);
+#endif//CPPWRAPPER_DLL
 
 	/** @fn const SDKConfig& GetSDKConfig()
 	* NIM SDK初始化

@@ -1,15 +1,13 @@
 ﻿/** @file nim_chatroom_cpp.cpp
   * @brief 聊天功能；主要包括发送消息、接收消息等功能
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg, Harrison
   * @date 2015/12/29
   */
 
 #include "nim_chatroom_cpp.h"
-#include "nim_sdk_util.h"
-#include "nim_string_util.h"
-
-using namespace nim;
+#include "nim_chatroom_sdk_util.h"
+#include "nim_chatroom_string_util.h"
+#include "callback_proxy.h"
 
 namespace nim_chatroom
 {
@@ -56,188 +54,163 @@ typedef void(*nim_chatroom_batch_upate_async)(const int64_t room_id, const char 
 
 static void CallbackEnter(int64_t room_id, int step, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::EnterCallback* cb_pointer = (ChatRoom::EnterCallback* )user_data;
-		if (*cb_pointer)
-		{
-			ChatRoomInfo info;
-			ChatRoomMemberInfo my_info;
-			ParseChatRoomEnterCallbackResultInfo(PCharToString(result), info, my_info);
-			//如果错误码error_code为kResRoomLocalNeedRequestAgain，聊天室重连机制结束，则需要向IM服务器重新请求进入该聊天室权限
-			(*cb_pointer)(room_id, (NIMChatRoomEnterStep)step, error_code, info, my_info);
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<ChatRoom::EnterCallback>(user_data, [=](const ChatRoom::EnterCallback& cb){
+
+		ChatRoomInfo info;
+		ChatRoomMemberInfo my_info;
+		ParseChatRoomEnterCallbackResultInfo(PCharToString(result), info, my_info);
+		//如果错误码error_code为kResRoomLocalNeedRequestAgain，聊天室重连机制结束，则需要向IM服务器重新请求进入该聊天室权限
+		CallbackProxy::Invoke(cb, room_id, (NIMChatRoomEnterStep)step, error_code, info, my_info);
+	});
 }
 
 static void CallbackExit(int64_t room_id, int error_code, int exit_reason, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{		
-		ChatRoom::ExitCallback* cb_pointer = (ChatRoom::ExitCallback* )user_data;
-		if (*cb_pointer)
-		{
-			(*cb_pointer)(room_id, error_code,  (NIMChatRoomExitReason)exit_reason);
-		}
-	}
+	CallbackProxy::DoSafeCallback<ChatRoom::ExitCallback>(user_data, [=](const ChatRoom::ExitCallback& cb){
+
+		CallbackProxy::Invoke(cb, room_id, error_code, (NIMChatRoomExitReason)exit_reason);
+	});
+
 }
 static void CallbackExit_2(int64_t room_id, int error_code, int exit_reason, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{		
-		ChatRoom::ExitCallback_2* cb_pointer = (ChatRoom::ExitCallback_2* )user_data;
-		if (*cb_pointer)
-		{
-			NIMChatRoomExitReasonInfo exit_info;			
-			exit_info.code_ = (NIMChatRoomExitReason)exit_reason;
-			if(json_extension != nullptr)
-				exit_info.notify_ext_ = json_extension;
-			(*cb_pointer)(room_id, error_code, exit_info);
-		}
-	}
+	CallbackProxy::DoSafeCallback<ChatRoom::ExitCallback_2>(user_data, [=](const ChatRoom::ExitCallback_2& cb){
+
+		NIMChatRoomExitReasonInfo exit_info;
+		exit_info.code_ = (NIMChatRoomExitReason)exit_reason;
+		if (json_extension != nullptr)
+			exit_info.notify_ext_ = json_extension;
+		CallbackProxy::Invoke(cb, room_id, error_code, exit_info);
+	});
 }
 static void CallbackSendMsgAck(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::SendMsgAckCallback* cb_pointer = (ChatRoom::SendMsgAckCallback* )user_data;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<ChatRoom::SendMsgAckCallback>(user_data, [=](const ChatRoom::SendMsgAckCallback& cb){
+
+		Json::Value value;
+		ChatRoomMessage msg;
+		if (ParseJsonValue(PCharToString(result), value))
 		{
-			Json::Value value;
-			ChatRoomMessage msg;
-			if (ParseJsonValue(PCharToString(result), value))
-			{
-				msg.ParseFromJsonValue(value);
-			}
-			(*cb_pointer)(room_id, error_code, msg);
+			msg.ParseFromJsonValue(value);
 		}
-	}
+		CallbackProxy::Invoke(cb, room_id, error_code, msg);
+	});
 }
 
 static void CallbackReceiveMsg(int64_t room_id, const char *content, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::ReceiveMsgCallback* cb_pointer = (ChatRoom::ReceiveMsgCallback* )user_data;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<ChatRoom::ReceiveMsgCallback>(user_data, [=](const ChatRoom::ReceiveMsgCallback& cb){
+
+		Json::Value value;
+		if (ParseJsonValue(PCharToString(content), value))
 		{
-			Json::Value value;
-			if (ParseJsonValue(PCharToString(content), value))
-			{
-				ChatRoomMessage msg;
-				msg.ParseFromJsonValue(value);
-				(*cb_pointer)(room_id, msg);
-			}
+			ChatRoomMessage msg;
+			msg.ParseFromJsonValue(value);
+			CallbackProxy::Invoke(cb, room_id, msg);
 		}
-	}
+	});
+
 }
 
 static void CallbackReceiveMsgs(int64_t room_id, const char *content, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::ReceiveMsgsCallback* cb_pointer = (ChatRoom::ReceiveMsgsCallback* )user_data;
-		if (*cb_pointer)
+	CallbackProxy::DoSafeCallback<ChatRoom::ReceiveMsgsCallback>(user_data, [=](const ChatRoom::ReceiveMsgsCallback& cb){
+
+		Json::Value value;
+		if (ParseJsonValue(PCharToString(content), value) && value.isArray())
 		{
-			Json::Value value;
-			if (ParseJsonValue(PCharToString(content), value) && value.isArray())
+			int cnt = (int)value.size();
+			std::list<ChatRoomMessage> msgs;
+			for (auto i = 0; i < cnt; i++)
 			{
-				int cnt = (int)value.size();
-				std::list<ChatRoomMessage> msgs;
-				for (auto i = 0; i < cnt; i++)
-				{
-					ChatRoomMessage msg;
-					msg.ParseFromJsonValue(value[i]);
-					msgs.push_back(msg);
-				}
-				(*cb_pointer)(room_id, msgs);
+				ChatRoomMessage msg;
+				msg.ParseFromJsonValue(value[i]);
+				msgs.push_back(msg);
 			}
+			CallbackProxy::Invoke(cb, room_id, msgs);
 		}
-	}
+	});
 }
 
 static void CallbackReceiveNotification(int64_t room_id, const char *content, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::NotificationCallback* cb_pointer = (ChatRoom::NotificationCallback* )user_data;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<ChatRoom::NotificationCallback>(user_data, [=](const ChatRoom::NotificationCallback& cb){
+
+		Json::Value value;
+		if (ParseJsonValue(PCharToString(content), value))
 		{
-			Json::Value value;
-			if (ParseJsonValue(PCharToString(content), value))
-			{
-				ChatRoomNotification msg;
-				msg.ParseFromJsonValue(value);
-				(*cb_pointer)(room_id, msg);
-			}
+			ChatRoomNotification msg;
+			msg.ParseFromJsonValue(value);
+			CallbackProxy::Invoke(cb, room_id, msg);
 		}
-	}
+	});
 }
 
 static void CallbackLinkCondition(int64_t room_id, int condition, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::LinkConditionCallback* cb_pointer = (ChatRoom::LinkConditionCallback* )user_data;
-		if (*cb_pointer)
-		{
-			(*cb_pointer)(room_id, (NIMChatRoomLinkCondition)condition);
-		}
-	}
+	CallbackProxy::DoSafeCallback<ChatRoom::LinkConditionCallback>(user_data, [=](const ChatRoom::LinkConditionCallback& cb){
+
+		CallbackProxy::Invoke(cb, room_id, (NIMChatRoomLinkCondition)condition);
+	});
+
 }
 
 static ChatRoom::EnterCallback g_cb_enter_ = nullptr;
 void ChatRoom::RegEnterCb(const EnterCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	g_cb_enter_ = cb;
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_enter_cb)(json_extension.c_str(), &CallbackEnter, &g_cb_enter_);
+	NIM_SDK_GET_FUNC(nim_chatroom_reg_enter_cb)(json_extension.c_str(), &CallbackEnter, &g_cb_enter_);
 }
 
 static ChatRoom::ExitCallback g_cb_exit_ = nullptr;
 void ChatRoom::RegExitCb(const ExitCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	g_cb_exit_ = cb;
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_exit_cb)(json_extension.c_str(), &CallbackExit, &g_cb_exit_);
+	NIM_SDK_GET_FUNC(nim_chatroom_reg_exit_cb)(json_extension.c_str(), &CallbackExit, &g_cb_exit_);
 }
 static ChatRoom::ExitCallback_2 g_cb_exit_2_ = nullptr;
 void ChatRoom::RegExitCb_2(const ChatRoom::ExitCallback_2& cb, const std::string& json_extension/* = ""*/)
 {
 	g_cb_exit_2_ = cb;
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_exit_cb)(json_extension.c_str(), &CallbackExit_2, &g_cb_exit_2_);
+	NIM_SDK_GET_FUNC(nim_chatroom_reg_exit_cb)(json_extension.c_str(), &CallbackExit_2, &g_cb_exit_2_);
 }
 static ChatRoom::SendMsgAckCallback g_cb_send_msg_ack_ = nullptr;
 void ChatRoom::RegSendMsgAckCb(const SendMsgAckCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	g_cb_send_msg_ack_ = cb;
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_send_msg_ack_cb)(json_extension.c_str(), &CallbackSendMsgAck, &g_cb_send_msg_ack_);
+	NIM_SDK_GET_FUNC(nim_chatroom_reg_send_msg_ack_cb)(json_extension.c_str(), &CallbackSendMsgAck, &g_cb_send_msg_ack_);
 }
 
 static ChatRoom::ReceiveMsgCallback g_cb_receive_msg_ = nullptr;
 void ChatRoom::RegReceiveMsgCb(const ReceiveMsgCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	g_cb_receive_msg_ = cb;
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_receive_msg_cb)(json_extension.c_str(), &CallbackReceiveMsg, &g_cb_receive_msg_);
+	NIM_SDK_GET_FUNC(nim_chatroom_reg_receive_msg_cb)(json_extension.c_str(), &CallbackReceiveMsg, &g_cb_receive_msg_);
 }
 
 static ChatRoom::ReceiveMsgsCallback g_cb_receive_msgs_ = nullptr;
 void ChatRoom::RegReceiveMsgsCb(const ReceiveMsgsCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	g_cb_receive_msgs_ = cb;
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_receive_msgs_cb)(json_extension.c_str(), &CallbackReceiveMsgs, &g_cb_receive_msgs_);
+	NIM_SDK_GET_FUNC(nim_chatroom_reg_receive_msgs_cb)(json_extension.c_str(), &CallbackReceiveMsgs, &g_cb_receive_msgs_);
 }
 
 static ChatRoom::NotificationCallback g_cb_notification_ = nullptr;
 void ChatRoom::RegNotificationCb(const NotificationCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	g_cb_notification_ = cb;
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_receive_notification_cb)(json_extension.c_str(), &CallbackReceiveNotification, &g_cb_notification_);
+	NIM_SDK_GET_FUNC(nim_chatroom_reg_receive_notification_cb)(json_extension.c_str(), &CallbackReceiveNotification, &g_cb_notification_);
 }
 
 static ChatRoom::LinkConditionCallback g_cb_link_condition_ = nullptr;
 void ChatRoom::RegLinkConditionCb(const LinkConditionCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	g_cb_link_condition_ = cb;
-	return NIM_SDK_GET_FUNC(nim_chatroom_reg_link_condition_cb)(json_extension.c_str(), &CallbackLinkCondition, &g_cb_link_condition_);
+	NIM_SDK_GET_FUNC(nim_chatroom_reg_link_condition_cb)(json_extension.c_str(), &CallbackLinkCondition, &g_cb_link_condition_);
 }
 
 bool ChatRoom::Init(const std::string& app_install_dir, const std::string& json_extension/* = ""*/)
@@ -262,9 +235,15 @@ bool ChatRoom::Init(const std::string& app_install_dir, const std::string& json_
 #endif
 
 	NIM_SDK_GET_FUNC(nim_chatroom_init)(json_extension.c_str());
+	g_nim_sdk_instance->OnSDKInited();
 	return true;
 }
-
+#ifdef CPPWRAPPER_DLL
+void ChatRoom::SetCallbackFunction(const ChatRoom::SDKClosure& callback)
+{
+	nim_chatroom::CallbackProxy::docallback_async_ = callback;
+}
+#endif//CPPWRAPPER_DLL
 bool ChatRoom::Enter(const int64_t room_id, const std::string& request_enter_data, const ChatRoomEnterInfo& info/* = ChatRoomEnterInfo()*/, const std::string& json_extension/* = ""*/)
 {
 	return NIM_SDK_GET_FUNC(nim_chatroom_enter)(room_id, request_enter_data.c_str(), info.ToJsonString().c_str(), json_extension.c_str());
@@ -277,7 +256,7 @@ bool ChatRoom::AnonymousEnter(const int64_t room_id, const ChatRoomAnoymityEnter
 
 void ChatRoom::Exit(const int64_t room_id, const std::string& json_extension/* = ""*/)
 {
-	return NIM_SDK_GET_FUNC(nim_chatroom_exit)(room_id, json_extension.c_str());
+	NIM_SDK_GET_FUNC(nim_chatroom_exit)(room_id, json_extension.c_str());
 }
 
 NIMChatRoomLoginState ChatRoom::GetLoginState( const int64_t room_id, const std::string& json_extension /*= ""*/ )
@@ -303,7 +282,7 @@ void ChatRoom::SetMsgsBatchReport(bool set_batch, const std::string& json_extens
 
 void ChatRoom::SendMsg(const int64_t room_id, const std::string& json_msg, const std::string& json_extension/* = ""*/)
 {
-	return NIM_SDK_GET_FUNC(nim_chatroom_send_msg)(room_id, json_msg.c_str(), json_extension.c_str());
+	NIM_SDK_GET_FUNC(nim_chatroom_send_msg)(room_id, json_msg.c_str(), json_extension.c_str());
 }
 
 std::string ChatRoom::CreateRoomMessage(const NIMChatRoomMsgType msg_type
@@ -324,51 +303,41 @@ std::string ChatRoom::CreateRoomMessage(const NIMChatRoomMsgType msg_type
 
 static void CallbackGetMembersOnline(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::GetMembersCallback *cb = (ChatRoom::GetMembersCallback*)user_data;
-		if (*cb)
-		{
-			std::list<ChatRoomMemberInfo> infos;
-			ParseChatRoomMemberInfos(PCharToString(result), infos);
-			(*cb)(room_id, error_code, infos);
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<ChatRoom::GetMembersCallback>(user_data, [=](const ChatRoom::GetMembersCallback& cb){
+
+		std::list<ChatRoomMemberInfo> infos;
+		ParseChatRoomMemberInfos(PCharToString(result), infos);
+		CallbackProxy::Invoke(cb, room_id, error_code, infos);
+	});
 }
 
 static void CallbackGetMsgHistoryOnline(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::GetMsgHistoryCallback *cb = (ChatRoom::GetMsgHistoryCallback*)user_data;
-		if (*cb)
-		{
-			std::list<ChatRoomMessage> msgs;
-			ParseChatRoomMsgs(PCharToString(result), msgs);
-			(*cb)(room_id, error_code, msgs);
-		}
-	}
+	CallbackProxy::DoSafeCallback<ChatRoom::GetMsgHistoryCallback>(user_data, [=](const ChatRoom::GetMsgHistoryCallback& cb){
+
+		std::list<ChatRoomMessage> msgs;
+		ParseChatRoomMsgs(PCharToString(result), msgs);
+		CallbackProxy::Invoke(cb, room_id, error_code, msgs);
+	});
+
 }
 
 static void CallbackSetMemberAtribute(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::SetMemberAttributeCallback *cb = (ChatRoom::SetMemberAttributeCallback*)user_data;
-		if (*cb)
+	CallbackProxy::DoSafeCallback<ChatRoom::SetMemberAttributeCallback>(user_data, [=](const ChatRoom::SetMemberAttributeCallback& cb){
+
+		Json::Value value;
+		Json::Reader reader;
+		ChatRoomMemberInfo info;
+		if (reader.parse(PCharToString(result), value) && value.isObject())
 		{
-			Json::Value value;
-			Json::Reader reader;
-			if (reader.parse(PCharToString(result), value) && value.isObject())
-			{
-				ChatRoomMemberInfo info;
-				info.ParseFromJsonValue(value);
-				(*cb)(room_id, error_code, info);
-				return;
-			}
-			(*cb)(room_id, error_code, ChatRoomMemberInfo());
+
+			info.ParseFromJsonValue(value);
 		}
-	}
+		CallbackProxy::Invoke(cb, room_id, error_code, info);
+	});
+
 }
 
 void ChatRoom::GetMembersOnlineAsync(const int64_t room_id, 
@@ -377,10 +346,10 @@ void ChatRoom::GetMembersOnlineAsync(const int64_t room_id,
 	const std::string& json_extension/* = ""*/)
 {
 	GetMembersCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new GetMembersCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_get_members_online_async)(room_id, 
+		NIM_SDK_GET_FUNC(nim_chatroom_get_members_online_async)(room_id, 
 		parameters.ToJsonString().c_str(), 
 		json_extension.c_str(),
 		&CallbackGetMembersOnline,
@@ -393,10 +362,10 @@ void ChatRoom::GetMessageHistoryOnlineAsync(const int64_t room_id,
 	const std::string& json_extension/* = ""*/)
 {
 	GetMsgHistoryCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new GetMsgHistoryCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_get_msg_history_online_async)(room_id, 
+		NIM_SDK_GET_FUNC(nim_chatroom_get_msg_history_online_async)(room_id, 
 		parameters.ToJsonString().c_str(), 
 		json_extension.c_str(),
 		&CallbackGetMsgHistoryOnline,
@@ -409,10 +378,10 @@ void ChatRoom::SetMemberAttributeOnlineAsync(const int64_t room_id,
 	const std::string& json_extension/* = ""*/)
 {
 	SetMemberAttributeCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new SetMemberAttributeCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_set_member_attribute_async)(room_id, 
+		NIM_SDK_GET_FUNC(nim_chatroom_set_member_attribute_async)(room_id, 
 		parameters.ToJsonString().c_str(), 
 		json_extension.c_str(),
 		&CallbackSetMemberAtribute,
@@ -421,33 +390,27 @@ void ChatRoom::SetMemberAttributeOnlineAsync(const int64_t room_id,
 
 static void CallbackGetChatRoomInfo(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::GetChatRoomInfoCallback *cb = (ChatRoom::GetChatRoomInfoCallback*)user_data;
-		if (*cb)
+
+	CallbackProxy::DoSafeCallback<ChatRoom::GetChatRoomInfoCallback>(user_data, [=](const ChatRoom::GetChatRoomInfoCallback& cb){
+
+		Json::Value value;
+		Json::Reader reader;
+		ChatRoomInfo info;
+		if (reader.parse(PCharToString(result), value) && value.isObject())
 		{
-			Json::Value value;
-			Json::Reader reader;
-			if (reader.parse(PCharToString(result), value) && value.isObject())
-			{
-				ChatRoomInfo info;
-				info.ParseFromJsonValue(value);
-				(*cb)(room_id, error_code, info);
-				return;
-			}
-			(*cb)(room_id, error_code, ChatRoomInfo());
+			info.ParseFromJsonValue(value);
 		}
-	}
+		CallbackProxy::Invoke(cb, room_id, error_code, info);
+	});
+
 }
 
 static void CallbackKickMember(int64_t room_id, int error_code, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::KickMemberCallback *cb = (ChatRoom::KickMemberCallback*)user_data;
-		if (*cb)
-			(*cb)(room_id, error_code);
-	}
+	CallbackProxy::DoSafeCallback<ChatRoom::KickMemberCallback>(user_data, [=](const ChatRoom::KickMemberCallback& cb){
+
+		CallbackProxy::Invoke(cb, room_id, error_code);
+	});
 }
 
 void ChatRoom::GetInfoAsync(const int64_t room_id, 
@@ -455,10 +418,10 @@ void ChatRoom::GetInfoAsync(const int64_t room_id,
 	const std::string &json_extension/* = ""*/)
 {
 	GetChatRoomInfoCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new GetChatRoomInfoCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_get_info_async)(room_id, 
+		NIM_SDK_GET_FUNC(nim_chatroom_get_info_async)(room_id, 
 		json_extension.c_str(),
 		&CallbackGetChatRoomInfo,
 		cb_pointer);
@@ -470,13 +433,13 @@ void ChatRoom::GetMemberInfoByIDsAsync(const int64_t room_id,
 	const std::string &json_extension/* = ""*/)
 {
 	GetMembersCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new GetMembersCallback(callback);
 
 	std::string ids_json;
 	StrListToJsonString(ids, ids_json);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_get_members_by_ids_online_async)(room_id, 
+		NIM_SDK_GET_FUNC(nim_chatroom_get_members_by_ids_online_async)(room_id, 
 		ids_json.c_str(),
 		json_extension.c_str(),
 		&CallbackGetMembersOnline,
@@ -490,10 +453,10 @@ void ChatRoom::KickMemberAsync(const int64_t room_id,
 	const std::string &json_extension/* = ""*/)
 {
 	KickMemberCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new KickMemberCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_kick_member_async)(room_id, 
+		NIM_SDK_GET_FUNC(nim_chatroom_kick_member_async)(room_id, 
 		id.c_str(), 
 		notify_ext.c_str(), 
 		json_extension.c_str(),
@@ -507,28 +470,24 @@ void ChatRoom::SetProxy(NIMChatRoomProxyType type,
 	const std::string& user,
 	const std::string& password)
 {
-	return NIM_SDK_GET_FUNC(nim_chatroom_set_proxy)(type, host.c_str(), port, user.c_str(), password.c_str());
+		NIM_SDK_GET_FUNC(nim_chatroom_set_proxy)(type, host.c_str(), port, user.c_str(), password.c_str());
 }
 
 static void CallbackTempMuteMember(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::TempMuteMemberCallback *cb = (ChatRoom::TempMuteMemberCallback*)user_data;
-		if (*cb)
+
+	CallbackProxy::DoSafeCallback<ChatRoom::TempMuteMemberCallback>(user_data, [=](const ChatRoom::TempMuteMemberCallback& cb){
+
+		Json::Value value;
+		Json::Reader reader;
+		ChatRoomMemberInfo info;
+		if (reader.parse(PCharToString(result), value) && value.isObject())
 		{
-			Json::Value value;
-			Json::Reader reader;
-			if (reader.parse(PCharToString(result), value) && value.isObject())
-			{
-				ChatRoomMemberInfo info;
-				info.ParseFromJsonValue(value);
-				(*cb)(room_id, error_code, info);
-				return;
-			}
-			(*cb)(room_id, error_code, ChatRoomMemberInfo());
+			info.ParseFromJsonValue(value);
 		}
-	}
+		CallbackProxy::Invoke(cb, room_id, error_code, info);
+	});
+
 }
 
 void ChatRoom::TempMuteMemberAsync(const int64_t room_id
@@ -540,10 +499,10 @@ void ChatRoom::TempMuteMemberAsync(const int64_t room_id
 	, const std::string &json_extension/* = ""*/)
 {
 	TempMuteMemberCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new TempMuteMemberCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_temp_mute_member_async)(room_id
+		NIM_SDK_GET_FUNC(nim_chatroom_temp_mute_member_async)(room_id
 		, accid.c_str()
 		, duration
 		, need_notify
@@ -555,42 +514,39 @@ void ChatRoom::TempMuteMemberAsync(const int64_t room_id
 
 static void CallbackUpdateRoomInfo(int64_t room_id, int error_code, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::UpdateRoomInfoCallback *cb = (ChatRoom::UpdateRoomInfoCallback*)user_data;
-		if (*cb)
-			(*cb)(room_id, error_code);
-	}
+
+	CallbackProxy::DoSafeCallback<ChatRoom::UpdateRoomInfoCallback>(user_data, [=](const ChatRoom::UpdateRoomInfoCallback& cb){
+
+		CallbackProxy::Invoke(cb, room_id, error_code);
+	});
+
 }
 
 static void CallbackUpdateMyRoomRole(int64_t room_id, int error_code, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::UpdateMyRoomRoleCallback *cb = (ChatRoom::UpdateMyRoomRoleCallback*)user_data;
-		if (*cb)
-			(*cb)(room_id, error_code);
-	}
+
+	CallbackProxy::DoSafeCallback<ChatRoom::UpdateMyRoomRoleCallback>(user_data, [=](const ChatRoom::UpdateMyRoomRoleCallback& cb){
+
+		CallbackProxy::Invoke(cb, room_id, error_code);
+	});
+
 }
 
 static void CallbackQueueOffer(int64_t room_id, int error_code, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::QueueOfferCallback *cb = (ChatRoom::QueueOfferCallback*)user_data;
-		if (*cb)
-			(*cb)(room_id, error_code);
-	}
+	CallbackProxy::DoSafeCallback<ChatRoom::QueueOfferCallback>(user_data, [=](const ChatRoom::QueueOfferCallback& cb){
+
+		CallbackProxy::Invoke(cb, room_id, error_code);
+	});
 }
 
 static void CallbackQueueDrop(int64_t room_id, int error_code, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::QueueDropCallback *cb = (ChatRoom::QueueDropCallback*)user_data;
-		if (*cb)
-			(*cb)(room_id, error_code);
-	}
+
+	CallbackProxy::DoSafeCallback<ChatRoom::QueueDropCallback>(user_data, [=](const ChatRoom::QueueDropCallback& cb){
+
+		CallbackProxy::Invoke(cb, room_id, error_code);
+	});
 }
 
 void ChatRoom::UpdateRoomInfoAsync(const int64_t room_id
@@ -601,10 +557,10 @@ void ChatRoom::UpdateRoomInfoAsync(const int64_t room_id
 	, const std::string &json_extension/* = ""*/)
 {
 	UpdateRoomInfoCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new UpdateRoomInfoCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_update_room_info_async)(room_id, 
+		NIM_SDK_GET_FUNC(nim_chatroom_update_room_info_async)(room_id, 
 		info.ToJsonString().c_str(), 
 		need_notify,
 		notify_ext.c_str(), 
@@ -621,10 +577,10 @@ void ChatRoom::UpdateMyRoomRoleAsync(const int64_t room_id
 	, const std::string &json_extension/* = ""*/)
 {
 	UpdateMyRoomRoleCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new UpdateMyRoomRoleCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_update_my_role_async)(room_id, 
+		NIM_SDK_GET_FUNC(nim_chatroom_update_my_role_async)(room_id, 
 		info.ToJsonString().c_str(), 
 		need_notify,
 		notify_ext.c_str(), 
@@ -639,10 +595,10 @@ void ChatRoom::QueueOfferAsync(const int64_t room_id
 	, const std::string &json_extension/* = ""*/)
 {
 	QueueOfferCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new QueueOfferCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_queue_offer_async)(room_id, 
+		NIM_SDK_GET_FUNC(nim_chatroom_queue_offer_async)(room_id, 
 		element.key_.c_str(), 
 		element.value_.c_str(), 
 		json_extension.c_str(),
@@ -652,74 +608,62 @@ void ChatRoom::QueueOfferAsync(const int64_t room_id
 
 static void CallbackQueuePoll(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::QueuePollCallback *cb = (ChatRoom::QueuePollCallback*)user_data;
-		if (*cb)
+
+	CallbackProxy::DoSafeCallback<ChatRoom::QueuePollCallback>(user_data, [=](const ChatRoom::QueuePollCallback& cb){
+
+		Json::Value value;
+		Json::Reader reader;
+		ChatRoomQueueElement element;
+		if (reader.parse(PCharToString(result), value) && value.isObject())
 		{
-			Json::Value value;
-			Json::Reader reader;
-			if (reader.parse(PCharToString(result), value) && value.isObject())
-			{
-				ChatRoomQueueElement element;
-				element.key_ = value[kNIMChatRoomQueueElementKey].asString();
-				element.value_ = value[kNIMChatRoomQueueElementValue].asString();
-				(*cb)(room_id, error_code, element);
-				return;
-			}
-			(*cb)(room_id, error_code, ChatRoomQueueElement());
+
+			element.key_ = value[kNIMChatRoomQueueElementKey].asString();
+			element.value_ = value[kNIMChatRoomQueueElementValue].asString();
 		}
-	}
+		CallbackProxy::Invoke(cb, room_id, error_code, element);
+	});
+
 }
 
 static void CallbackQueueList(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::QueueListCallback *cb = (ChatRoom::QueueListCallback*)user_data;
-		if (*cb)
+
+	CallbackProxy::DoSafeCallback<ChatRoom::QueueListCallback>(user_data, [=](const ChatRoom::QueueListCallback& cb){
+
+		Json::Value value;
+		Json::Reader reader;
+		ChatRoomQueue queue;
+		if (reader.parse(PCharToString(result), value) && value.isArray())
 		{
-			Json::Value value;
-			Json::Reader reader;
-			if (reader.parse(PCharToString(result), value) && value.isArray())
+
+			auto size = value.size();
+			for (int i = 0; i < (int)size; i++)
 			{
-				ChatRoomQueue queue;
-				auto size = value.size();
-				for (int i = 0; i < (int)size; i++)
-				{
-					ChatRoomQueueElement element;
-					element.key_ = value[i][kNIMChatRoomQueueElementKey].asString();
-					element.value_ = value[i][kNIMChatRoomQueueElementValue].asString();
-					queue.push_back(element);
-				}
-				(*cb)(room_id, error_code, queue);
-				return;
+				ChatRoomQueueElement element;
+				element.key_ = value[i][kNIMChatRoomQueueElementKey].asString();
+				element.value_ = value[i][kNIMChatRoomQueueElementValue].asString();
+				queue.push_back(element);
 			}
-			(*cb)(room_id, error_code, ChatRoomQueue());
 		}
-	}
+		CallbackProxy::Invoke(cb, room_id, error_code, queue);
+	});
 }
 
 static void CallbackQueueHeader(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		ChatRoom::QueueHeaderCallback *cb = (ChatRoom::QueueHeaderCallback*)user_data;
-		if (*cb)
+
+	CallbackProxy::DoSafeCallback<ChatRoom::QueueHeaderCallback>(user_data, [=](const ChatRoom::QueueHeaderCallback& cb){
+
+		Json::Value value;
+		Json::Reader reader;
+		ChatRoomQueueElement element;
+		if (reader.parse(PCharToString(result), value) && value.isObject())
 		{
-			Json::Value value;
-			Json::Reader reader;
-			if (reader.parse(PCharToString(result), value) && value.isObject())
-			{
-				ChatRoomQueueElement element;
-				element.key_ = value[kNIMChatRoomQueueElementKey].asString();
-				element.value_ = value[kNIMChatRoomQueueElementValue].asString();
-				(*cb)(room_id, error_code, element);
-				return;
-			}
-			(*cb)(room_id, error_code, ChatRoomQueueElement());
+			element.key_ = value[kNIMChatRoomQueueElementKey].asString();
+			element.value_ = value[kNIMChatRoomQueueElementValue].asString();
 		}
-	}
+		CallbackProxy::Invoke(cb, room_id, error_code, element);
+	});
 }
 
 void ChatRoom::QueuePollAsync(const int64_t room_id
@@ -728,10 +672,10 @@ void ChatRoom::QueuePollAsync(const int64_t room_id
 	, const std::string &json_extension/* = ""*/)
 {
 	QueuePollCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new QueuePollCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_queue_poll_async)(room_id, 
+		NIM_SDK_GET_FUNC(nim_chatroom_queue_poll_async)(room_id, 
 		element_key.c_str(), 
 		json_extension.c_str(),
 		&CallbackQueuePoll,
@@ -743,10 +687,10 @@ void ChatRoom::QueueListAsync(const int64_t room_id
 	, const std::string &json_extension/* = ""*/)
 {
 	QueueListCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new QueueListCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_queue_list_async)(room_id, 
+		NIM_SDK_GET_FUNC(nim_chatroom_queue_list_async)(room_id, 
 		json_extension.c_str(),
 		&CallbackQueueList,
 		cb_pointer);
@@ -757,10 +701,10 @@ void ChatRoom::QueueHeaderAsync(const int64_t room_id
 	, const std::string &json_extension/* = ""*/)
 {
 	QueueHeaderCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new QueueHeaderCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_queue_header_async)(room_id, 
+		NIM_SDK_GET_FUNC(nim_chatroom_queue_header_async)(room_id, 
 		json_extension.c_str(),
 		&CallbackQueueHeader,
 		cb_pointer);
@@ -771,10 +715,10 @@ void ChatRoom::QueueDropAsync(const int64_t room_id
 	, const std::string &json_extension/* = ""*/)
 {
 	QueueDropCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 		cb_pointer = new QueueDropCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_chatroom_queue_drop_async)(room_id, 
+		NIM_SDK_GET_FUNC(nim_chatroom_queue_drop_async)(room_id, 
 		json_extension.c_str(),
 		&CallbackQueueDrop,
 		cb_pointer);
@@ -809,17 +753,14 @@ RobotInfo ChatRoom::QueryRobotInfoByAccidBlock(const int64_t room_id, const std:
 
 static void CallbackRobotQuery(int rescode, const char *res, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		ChatRoom::RobotQueryCallback* cb_pointer = (ChatRoom::RobotQueryCallback*)callback;
-		if (*cb_pointer)
-		{
-			RobotInfos infos;
-			ParseRobotInfosStringToRobotInfos(PCharToString(res), infos);
-			(*cb_pointer)((NIMResCode)rescode, infos);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<ChatRoom::RobotQueryCallback>(callback, [=](const ChatRoom::RobotQueryCallback& cb){
+
+		RobotInfos infos;
+		ParseRobotInfosStringToRobotInfos(PCharToString(res), infos);
+		CallbackProxy::Invoke(cb, (NIMResCode)rescode, infos);
+	},true);
+
 }
 
 
@@ -827,27 +768,26 @@ static void CallbackRobotQuery(int rescode, const char *res, const char *json_ex
 void ChatRoom::GetRobotInfoAsync(const int64_t room_id, const int64_t timetag, const RobotQueryCallback &callback, const std::string &json_extension/* = ""*/)
 {
 	RobotQueryCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 	{
 		cb_pointer = new RobotQueryCallback(callback);
 	}
 	NIM_SDK_GET_FUNC(nim_chatroom_get_robots_async)(room_id, timetag, json_extension.c_str(), &CallbackRobotQuery, cb_pointer);
+	((nim_chatroom_get_robots_async)g_nim_sdk_instance->GetFunction("nim_chatroom_get_robots_async") != NULL ?
+		((nim_chatroom_get_robots_async)g_nim_sdk_instance->GetFunction("nim_chatroom_get_robots_async")) :
+		(nim_print_unfound_func_name("nim_chatroom_get_robots_async"), (nim_chatroom_get_robots_async)unfound_function_holder));
 }
 
 
 static void CallbackBatchUpdate(int64_t room_id, int error_code ,const char *res, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		ChatRoom::QueueBatchUpdateCallback* cb_pointer = (ChatRoom::QueueBatchUpdateCallback*)callback;
-		if (*cb_pointer)
-		{
-			std::list<std::string> lststring;
-			ParseBatchInfosStringToNotMembers(PCharToString(res), lststring);
-			(*cb_pointer)(room_id, error_code,lststring);
-		}
-		delete cb_pointer;
-	}
+	CallbackProxy::DoSafeCallback<ChatRoom::QueueBatchUpdateCallback>(callback, [=](const ChatRoom::QueueBatchUpdateCallback& cb){
+
+		std::list<std::string> lststring;
+		ParseBatchInfosStringToNotMembers(PCharToString(res), lststring);
+		CallbackProxy::Invoke(cb, room_id, error_code, lststring);
+	}, true);
+
 }
 
 
@@ -859,7 +799,7 @@ void ChatRoom::QueueBatchUpdateAsync(const int64_t room_id
 	, const std::string &json_extension)
 {
 	QueueBatchUpdateCallback* cb_pointer = nullptr;
-	if (callback)
+	if (callback != nullptr)
 	{
 		cb_pointer = new QueueBatchUpdateCallback(callback);
 	}

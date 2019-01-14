@@ -1,16 +1,14 @@
-/** @file nim_cpp_friend.cpp
-  * @brief NIM ºÃÓÑÏà¹Ø½Ó¿Ú
+ï»¿/** @file nim_cpp_friend.cpp
+  * @brief NIM å¥½å‹ç›¸å…³æ¥å£
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author caowei, Oleg, Harrison
   * @date 2015/8/17
   */
 
 #include "nim_cpp_friend.h"
 #include "nim_sdk_util.h"
 #include "nim_json_util.h"
-#include "nim_cpp_win32_demo_helper.h"
 #include "nim_string_util.h"
-
+#include "callback_proxy.h"
 namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
@@ -25,77 +23,56 @@ typedef bool(*nim_friend_query_friendship_block)(const char *accid, const char *
 #include "nim_friend.h"
 #endif
 
-// ºÃÓÑĞÅÏ¢±ä»¯Ö´ĞĞ»Øµ÷º¯Êı£¬²»Ïú»Ù¸Ã»Øµ÷º¯Êı
+// å¥½å‹ä¿¡æ¯å˜åŒ–æ‰§è¡Œå›è°ƒå‡½æ•°ï¼Œä¸é”€æ¯è¯¥å›è°ƒå‡½æ•°
 static void CallbackFriendChange(NIMFriendChangeType type, const char *result_json, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Friend::FriendChangeCallback* cb_pointer = (Friend::FriendChangeCallback*)user_data;
-		if (*cb_pointer)
-		{
-			FriendChangeEvent change_event;
-			change_event.type_ = type;
-			change_event.content_ = PCharToString(result_json);
-			PostTaskToUIThread(std::bind((*cb_pointer), change_event));
-			//(*cb_pointer)(change_event);
-		}
-	}
+	CallbackProxy::DoSafeCallback<Friend::FriendChangeCallback>(user_data, [=](const Friend::FriendChangeCallback& cb){
+	
+		FriendChangeEvent change_event;
+		change_event.type_ = type;
+		change_event.content_ = PCharToString(result_json);
+		CallbackProxy::Invoke(cb, change_event);
+	});
+
 }
 
-// Ö´ĞĞÍêºÃÓÑ²Ù×÷»Øµ÷º¯ÊıºóÏú»ÙÖ®
+// æ‰§è¡Œå®Œå¥½å‹æ“ä½œå›è°ƒå‡½æ•°åé”€æ¯ä¹‹
 static void CallbackFriendOpt(int res_code, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Friend::FriendOptCallback* cb_pointer = (Friend::FriendOptCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code));
-			//(*cb_pointer)((NIMResCode)res_code);
-		}
-		delete cb_pointer;
-	}
+	CallbackProxy::DoSafeCallback<Friend::FriendOptCallback>(user_data, [=](const Friend::FriendOptCallback& cb){
+	
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code);
+	},true);
 }
 
-// »ñÈ¡ºÃÓÑÁĞ±íºóÖ´ĞĞ»Øµ÷º¯Êı£¬È»ºóÏú»Ù¸Ã»Øµ÷º¯Êı
+// è·å–å¥½å‹åˆ—è¡¨åæ‰§è¡Œå›è°ƒå‡½æ•°ï¼Œç„¶åé”€æ¯è¯¥å›è°ƒå‡½æ•°
 static void CallbackGetFriendsList(int res_code, const char *result_json, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Friend::GetFriendsListCallback* cb_pointer = (Friend::GetFriendsListCallback*)user_data;
-		if (*cb_pointer)
-		{
-			std::list<FriendProfile> friends_profile;
-			ParseFriendsProfile(PCharToString(result_json), friends_profile);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, friends_profile));
-			//(*cb_pointer)((NIMResCode)res_code, friends_profile);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<Friend::GetFriendsListCallback>(user_data, [=](const Friend::GetFriendsListCallback& cb){
+
+		std::list<FriendProfile> friends_profile;
+		ParseFriendsProfile(PCharToString(result_json), friends_profile);
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, friends_profile);
+	}, true);
 }
 
-// »ñÈ¡ºÃÓÑĞÅÏ¢ºóÖ´ĞĞ»Øµ÷º¯Êı£¬È»ºóÏú»Ù¸Ã»Øµ÷º¯Êı
+// è·å–å¥½å‹ä¿¡æ¯åæ‰§è¡Œå›è°ƒå‡½æ•°ï¼Œç„¶åé”€æ¯è¯¥å›è°ƒå‡½æ•°
 static void CallbackGetFriendProfile(const char *accid, const char *result_json, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Friend::GetFriendProfileCallback* cb_pointer = (Friend::GetFriendProfileCallback*)user_data;
-		if (*cb_pointer)
-		{
-			FriendProfile friend_profile;
-			ParseFriendProfile(PCharToString(result_json), friend_profile);
-			PostTaskToUIThread(std::bind((*cb_pointer), PCharToString(accid), friend_profile));
-			//(*cb_pointer)(accid, friend_profile);
-		}
-		delete cb_pointer;
-	}
+	CallbackProxy::DoSafeCallback<Friend::GetFriendProfileCallback>(user_data, [=](const Friend::GetFriendProfileCallback& cb){
+
+		FriendProfile friend_profile;
+		ParseFriendProfile(PCharToString(result_json), friend_profile);
+		CallbackProxy::Invoke(cb, PCharToString(accid), friend_profile);
+	}, true);
 }
 
 static Friend::FriendChangeCallback g_cb_friend_changed_ = nullptr;
 void Friend::RegChangeCb(const FriendChangeCallback &cb, const std::string& json_extension /* = "" */)
 {
 	g_cb_friend_changed_ = cb;
-	return NIM_SDK_GET_FUNC(nim_friend_reg_changed_cb)(json_extension.c_str(), &CallbackFriendChange, &g_cb_friend_changed_);
+	NIM_SDK_GET_FUNC(nim_friend_reg_changed_cb)(json_extension.c_str(), &CallbackFriendChange, &g_cb_friend_changed_);
 }
 
 bool Friend::Request(const std::string &accid, NIMVerifyType verify_type, const std::string &msg, const FriendOptCallback &cb, const std::string& json_extension /*= ""*/)
@@ -104,7 +81,7 @@ bool Friend::Request(const std::string &accid, NIMVerifyType verify_type, const 
 		return false;
 
 	FriendOptCallback* friend_opt_cb = nullptr;
-	if (cb)
+	if (cb != nullptr)
 	{
 		friend_opt_cb = new FriendOptCallback(cb);
 	}
@@ -150,7 +127,7 @@ void Friend::GetList(const GetFriendsListCallback& cb, const std::string& json_e
 	{
 		get_friends_list_cb = new GetFriendsListCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_friend_get_list)(json_extension.c_str(), &CallbackGetFriendsList, get_friends_list_cb);
+	NIM_SDK_GET_FUNC(nim_friend_get_list)(json_extension.c_str(), &CallbackGetFriendsList, get_friends_list_cb);
 }
 
 void Friend::GetFriendProfile(const std::string &accid, const GetFriendProfileCallback& cb, const std::string& json_extension/* = ""*/)
@@ -160,7 +137,7 @@ void Friend::GetFriendProfile(const std::string &accid, const GetFriendProfileCa
 	{
 		get_profile_cb = new GetFriendProfileCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_friend_get_profile)(accid.c_str(), json_extension.c_str(), &CallbackGetFriendProfile, get_profile_cb);
+	NIM_SDK_GET_FUNC(nim_friend_get_profile)(accid.c_str(), json_extension.c_str(), &CallbackGetFriendProfile, get_profile_cb);
 }
 
 bool Friend::ParseFriendAddEvent(const FriendChangeEvent& change_event, FriendAddEvent& out_event)

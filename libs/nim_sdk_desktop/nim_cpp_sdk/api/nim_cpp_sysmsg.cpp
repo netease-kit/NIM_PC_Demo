@@ -1,15 +1,14 @@
-/** @file nim_cpp_sysmsg.cpp
+﻿/** @file nim_cpp_sysmsg.cpp
   * @brief 系统消息接口；主要包括查询系统消息、删除系统消息等功能
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg, Harrison
   * @date 2015/2/1
   */
 
 #include "nim_cpp_sysmsg.h"
 #include "nim_sdk_util.h"
 #include "nim_json_util.h"
-#include "nim_cpp_win32_demo_helper.h"
 #include "nim_string_util.h"
+#include "callback_proxy.h"
 
 namespace nim
 {
@@ -31,102 +30,80 @@ typedef void(*nim_sysmsg_delete_logs_by_type_async)(NIMSysMsgType type, const ch
 
 static void CallbackSysmsgChange(const char *result, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		SystemMsg::ReceiveSysmsgCallback* cb_pointer = (SystemMsg::ReceiveSysmsgCallback*)callback;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<SystemMsg::ReceiveSysmsgCallback>(callback, [=](const SystemMsg::ReceiveSysmsgCallback& cb){
+
+		SysMessage msg;
+		if (ParseSysMessage(PCharToString(result), msg))
 		{
-			SysMessage msg;
-			if (ParseSysMessage(PCharToString(result), msg))
-			{
-				PostTaskToUIThread(std::bind((*cb_pointer), msg));
-				//(*cb_pointer)(msg);
-			}
+			CallbackProxy::Invoke(cb, msg);
 		}
-	}
+	});
 }
 
 static void CallbackSendCustomSysmsg(const char *result, const void *callback)
 {
-	if (callback)
-	{
-		SystemMsg::SendCustomSysmsgCallback* cb_pointer = (SystemMsg::SendCustomSysmsgCallback*)callback;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<SystemMsg::SendCustomSysmsgCallback>(callback, [=](const SystemMsg::SendCustomSysmsgCallback& cb){
+
+		SendMessageArc arc;
+		if (ParseSendMessageAck(PCharToString(result), arc))
 		{
-			SendMessageArc arc;
-			if (ParseSendMessageAck(PCharToString(result), arc))
-			{
-				PostTaskToUIThread(std::bind((*cb_pointer), arc));
-				//(*cb_pointer)(arc);
-			}
+			CallbackProxy::Invoke(cb, arc);
 		}
-	}
+	});
+
 }
 
 static void CallbackQuerySysmsg(int count, const char *result, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		SystemMsg::QueryMsgCallback* cb_pointer = (SystemMsg::QueryMsgCallback*)callback;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<SystemMsg::QueryMsgCallback>(callback, [=](const SystemMsg::QueryMsgCallback& cb){
+
+		std::list<SysMessage> msgs;
+		int unread = 0;
+		if (ParseSysMessages(PCharToString(result), msgs, &unread))
 		{
-			std::list<SysMessage> msgs;
-			int unread = 0;
-			if (ParseSysMessages(PCharToString(result), msgs, &unread))
-			{
-				PostTaskToUIThread(std::bind((*cb_pointer), count, unread, msgs));
-				//(*cb_pointer)(count, unread, msgs);
-			}
+			CallbackProxy::Invoke(cb, count, unread, msgs);
 		}
-		delete cb_pointer;
-	}
+	},true);
 }
 
 static void CallbackNotifySingleSysmsg(int res_code, int64_t msg_id, int unread_count, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		SystemMsg::SetStatusCallback* cb_pointer = (SystemMsg::SetStatusCallback*)callback;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (nim::NIMResCode)res_code, msg_id, unread_count));
-			//(*cb_pointer)((nim::NIMResCode)res_code, msg_id, unread_count);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<SystemMsg::SetStatusCallback>(callback, [=](const SystemMsg::SetStatusCallback& cb){
+
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)res_code, msg_id, unread_count);
+	}, true);
 }
 
 static void CallbackNotifySysmsgRes(int res_code, int unread_count, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		SystemMsg::NotifySysmsgResCallback* cb_pointer = (SystemMsg::NotifySysmsgResCallback*)callback;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (nim::NIMResCode)res_code, unread_count));
-			//(*cb_pointer)((nim::NIMResCode)res_code, unread_count);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<SystemMsg::NotifySysmsgResCallback>(callback, [=](const SystemMsg::NotifySysmsgResCallback& cb){
+
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)res_code,unread_count);
+	}, true);
 }
 
 SystemMsg::ReceiveSysmsgCallback g_cb_receive_sysmsg_ = nullptr;
  void SystemMsg::RegSysmsgCb(const ReceiveSysmsgCallback& cb, const std::string& json_extension)
  {
 	 g_cb_receive_sysmsg_ = cb;
-	 return NIM_SDK_GET_FUNC(nim_sysmsg_reg_sysmsg_cb)(json_extension.c_str(), &CallbackSysmsgChange, &g_cb_receive_sysmsg_);
+	 NIM_SDK_GET_FUNC(nim_sysmsg_reg_sysmsg_cb)(json_extension.c_str(), &CallbackSysmsgChange, &g_cb_receive_sysmsg_);
  }
 
  static SystemMsg::SendCustomSysmsgCallback g_cb_send_custom_sysmsg_ = nullptr;
  void SystemMsg::RegSendCustomSysmsgCb(const SendCustomSysmsgCallback& cb, const std::string& json_extension)
  {
 	 g_cb_send_custom_sysmsg_ = cb;
-	 return NIM_SDK_GET_FUNC(nim_sysmsg_reg_custom_notification_ack_cb)(json_extension.c_str(), &CallbackSendCustomSysmsg, &g_cb_send_custom_sysmsg_);
+	 NIM_SDK_GET_FUNC(nim_sysmsg_reg_custom_notification_ack_cb)(json_extension.c_str(), &CallbackSendCustomSysmsg, &g_cb_send_custom_sysmsg_);
  }
 
  void SystemMsg::SendCustomNotificationMsg(const std::string& json_msg)
  {
-	 return NIM_SDK_GET_FUNC(nim_sysmsg_send_custom_notification)(json_msg.c_str(), nullptr);
+	 NIM_SDK_GET_FUNC(nim_sysmsg_send_custom_notification)(json_msg.c_str(), nullptr);
  }
 
  std::string SystemMsg::CreateCustomNotificationMsg(const std::string& receiver_id
@@ -168,7 +145,7 @@ SystemMsg::ReceiveSysmsgCallback g_cb_receive_sysmsg_ = nullptr;
 	 {
 		 cb_pointer = new QuerySysmsgUnreadCallback(cb);
 	 }
-	 return NIM_SDK_GET_FUNC(nim_sysmsg_query_unread_count)(json_extension.c_str(), &CallbackNotifySysmsgRes, cb_pointer);
+	 NIM_SDK_GET_FUNC(nim_sysmsg_query_unread_count)(json_extension.c_str(), &CallbackNotifySysmsgRes, cb_pointer);
  }
 
  bool SystemMsg::SetStatusAsync(int64_t msg_id, nim::NIMSysMsgStatus status, const SetStatusCallback& cb, const std::string& json_extension)
@@ -190,7 +167,7 @@ SystemMsg::ReceiveSysmsgCallback g_cb_receive_sysmsg_ = nullptr;
 	 {
 		 cb_pointer = new ReadAllCallback(cb);
 	 }
-	 return NIM_SDK_GET_FUNC(nim_sysmsg_read_all_async)(json_extension.c_str(), &CallbackNotifySysmsgRes, cb_pointer);
+	 NIM_SDK_GET_FUNC(nim_sysmsg_read_all_async)(json_extension.c_str(), &CallbackNotifySysmsgRes, cb_pointer);
  }
 
  bool SystemMsg::DeleteAsync(int64_t msg_id, const DeleteCallback& cb, const std::string& json_extension /*= ""*/)
@@ -212,7 +189,7 @@ SystemMsg::ReceiveSysmsgCallback g_cb_receive_sysmsg_ = nullptr;
 	 {
 		 cb_pointer = new DeleteAllCallback(cb);
 	 }
-	 return NIM_SDK_GET_FUNC(nim_sysmsg_delete_all_async)(json_extension.c_str(), &CallbackNotifySysmsgRes, cb_pointer);
+	 NIM_SDK_GET_FUNC(nim_sysmsg_delete_all_async)(json_extension.c_str(), &CallbackNotifySysmsgRes, cb_pointer);
  }
 
 void SystemMsg::SetStatusByTypeAsync(NIMSysMsgType type, NIMSysMsgStatus status, const BatchSetCallback& cb, const std::string& json_extension/* = ""*/)
@@ -222,7 +199,7 @@ void SystemMsg::SetStatusByTypeAsync(NIMSysMsgType type, NIMSysMsgStatus status,
 	{
 		cb_pointer = new BatchSetCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_sysmsg_set_logs_status_by_type_async)(type, status, json_extension.c_str(), &CallbackNotifySysmsgRes, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_sysmsg_set_logs_status_by_type_async)(type, status, json_extension.c_str(), &CallbackNotifySysmsgRes, cb_pointer);
 }
 
 void SystemMsg::DeleteByTypeAsync(NIMSysMsgType type, const BatchSetCallback& cb, const std::string& json_extension/* = ""*/)
@@ -232,7 +209,7 @@ void SystemMsg::DeleteByTypeAsync(NIMSysMsgType type, const BatchSetCallback& cb
 	{
 		cb_pointer = new BatchSetCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_sysmsg_delete_logs_by_type_async)(type, json_extension.c_str(), &CallbackNotifySysmsgRes, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_sysmsg_delete_logs_by_type_async)(type, json_extension.c_str(), &CallbackNotifySysmsgRes, cb_pointer);
 }
 
 void SystemMsg::UnregSysmsgCb()

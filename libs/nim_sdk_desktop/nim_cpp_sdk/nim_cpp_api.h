@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_api.h
   * @brief NIM集合头文件
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg, Harrison
   * @date 2015/10/20
   */
 
@@ -34,7 +33,8 @@
 #include "nim_cpp_plugin_in.h"
 //工具辅助类API
 #include "nim_cpp_tool.h"
-
+//以dll方式使用时的导出定义
+#include "nim_sdk_cpp_wrapper_dll.h"
 #if defined (WIN32)
 //数据通道相关API(白板等)
 #include "nim_cpp_rts.h"
@@ -46,6 +46,8 @@
 #include "nim_cpp_subscribe_event.h"
 //机器人
 #include "nim_cpp_robot.h"
+//独立信令
+#include "nim_cpp_signaling.h"
 #endif
 
 /**
@@ -59,7 +61,7 @@ namespace nim
 * 反注册NIM提供的所有回调
 * @return void 无返回值
 */
-void UnregNIMCallback();
+	NIM_SDK_CPPWRAPPER_DLL_API void UnregNIMCallback();
 
 }
 

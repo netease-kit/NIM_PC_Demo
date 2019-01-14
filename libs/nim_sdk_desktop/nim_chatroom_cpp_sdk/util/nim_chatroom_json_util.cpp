@@ -1,13 +1,12 @@
 ﻿/** @file nim_json_util.cpp
   * @brief JSON辅助方法
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2015/09/08
   */
 
-#include "nim_json_util.h"
+#include "nim_chatroom_json_util.h"
 
-namespace nim
+namespace nim_chatroom
 {
 
 bool StrListToJsonString(const std::list<std::string>& list, std::string& out)

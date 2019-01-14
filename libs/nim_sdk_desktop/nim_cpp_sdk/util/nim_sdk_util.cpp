@@ -1,15 +1,16 @@
 ﻿/** @file nim_sdk_util.cpp
   * @brief SDK库辅助方法
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg, Harrison
   * @date 2015/09/08
   */
 
 #include "nim_sdk_util.h"
 #include "nim_string_util.h"
+#include "callback_proxy.h"
 
 namespace nim
 {
+	 std::function<void(const std::function< void()>&)> CallbackProxy::docallback_async_ = nullptr;
 #ifdef NIM_SDK_DLL_IMPORT
 
 SDKInstance::SDKInstance()
@@ -41,14 +42,14 @@ bool SDKInstance::LoadSdkDll(const char *cur_module_dir, const char *sdk_dll_fil
 	{
 		//QLOG_ERR(L"sdk nim load fail {0} {1}") << dir << GetLastError();
 		return false;
-	}
-
+	}	
 	return true;
 }
 
 void SDKInstance::UnLoadSdkDll()
 {
 	assert(instance_nim_);
+	CallbackProxy::docallback_async_ = nullptr;
 	if (instance_nim_)
 	{
 		//QLOG_APP(L"client cleanup");
@@ -62,6 +63,16 @@ void SDKInstance::UnLoadSdkDll()
 		//QLOG_APP(L"free nim library");
 	}
 }
-
+void SDKInstance::OnSDKInited()
+{
+	if (CallbackProxy::docallback_async_ == nullptr)
+	{
+		typedef void(*sdk_docallback_async)(const std::function<void()>&);
+		static sdk_docallback_async nim_sdk_docallback_async = nullptr;
+		nim_sdk_docallback_async = (sdk_docallback_async)GetFunction("nim_sdk_docallback_async");
+		if (nim_sdk_docallback_async != nullptr)
+			CallbackProxy::docallback_async_ = std::move(std::bind(nim_sdk_docallback_async, std::placeholders::_1));
+	}	
+}
 #endif
 }

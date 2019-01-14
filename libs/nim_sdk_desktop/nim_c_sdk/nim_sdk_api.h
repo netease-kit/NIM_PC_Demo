@@ -17,6 +17,8 @@
 #include "nim_vchat.h"
 //数据通道相关API(白板等)
 #include "nim_rts.h"
+//独立信令相关API
+#include "nim_avsignal.h"
 //文档共享相关API
 #include "nim_doc_trans.h"
 //好友关系相关API

@@ -1,7 +1,6 @@
 ﻿/** @file nim_nos_helper.h
   * @brief NOS数据结构定义
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Redrain
   * @date 2016/12/16
   */
 
@@ -9,7 +8,7 @@
 
 namespace nim
 {
-	const int32_t InitNosConfigParam::kMINSURVIVALTIME = 60 * 60 * 24;
+	const int32_t NIM_SDK_CPPWRAPPER_DLL_API InitNosConfigParam::kMINSURVIVALTIME = 60 * 60 * 24;
 	void InitNosResult::FromJsonString(const std::string& json_data)
 	{
 		Json::Value json_value;

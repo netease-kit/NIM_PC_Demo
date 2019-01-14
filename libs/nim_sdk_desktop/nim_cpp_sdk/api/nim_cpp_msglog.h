@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_msglog.h
   * @brief 消息历史
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg
   * @date 2015/2/1
   */
 
@@ -12,7 +11,7 @@
 #include <functional>
 #include "nim_msglog_helper.h"
 #include "nim_talk_helper.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -23,7 +22,7 @@ namespace nim
 /** @class MsgLog
   * @brief NIM SDK提供的消息历史接口
   */
-class MsgLog
+class NIM_SDK_CPPWRAPPER_DLL_API MsgLog
 {
 
 public:
@@ -48,7 +47,7 @@ public:
 	typedef std::function<void(const MessageStatusChangedResult&)>	MessageStatusChangedCallback;	/**< 发送消息已读回执通知回调模板 */
 
 
-	class AllMessageTypeList
+	class NIM_SDK_CPPWRAPPER_DLL_API AllMessageTypeList
 	{
 	public:
 		AllMessageTypeList();
@@ -59,7 +58,7 @@ public:
   /** @class MsgLog
   * 在线查询消息参数（不包括系统消息）
   */	
-	class QueryMsgOnlineAsyncParam
+	class NIM_SDK_CPPWRAPPER_DLL_API QueryMsgOnlineAsyncParam
 	{
 		friend class MsgLog;
 	public:

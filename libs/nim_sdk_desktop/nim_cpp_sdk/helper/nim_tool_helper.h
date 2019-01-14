@@ -1,7 +1,6 @@
 ﻿/** @file nim_tool_helper.h
   * @brief SDK工具类辅助方法以及定义
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2015/09/24
   */
 
@@ -13,7 +12,7 @@
 #include "assert.h"
 #include "nim_base_types.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -21,7 +20,7 @@
 namespace nim
 {
 /** @brief 语音信息，用于语音转文字 */
-struct AudioInfo
+struct NIM_SDK_CPPWRAPPER_DLL_API AudioInfo
 {
 	std::string mime_type_;				/**< 语音类型 */
 	std::string samplerate_;			/**< 采样率 */

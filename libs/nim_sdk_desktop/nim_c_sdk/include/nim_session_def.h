@@ -33,6 +33,16 @@ typedef void (*nim_session_change_cb_func)(int rescode, const char *result, int 
   */
 typedef void (*nim_session_query_recent_session_cb_func)(int total_unread_count, const char *result, const char *json_extension, const void *user_data);
 
+/** @typedef void(*nim_session_query_sessiondata_by_id_cb_func)(const char* id, const char *result, const char *json_extension, const void *user_data)
+  * 查询所有最近会话项的回调函数定义
+  * @param[out] id 会话id
+  * @param[out] result			会话信息 (『会话信息的Json Keys』 as follows)
+  * @param[out] json_extension	json扩展数据（备用）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void(*nim_session_query_sessiondata_by_id_cb_func)(int rescode,const char *result, const void *user_data);
+
 /** @name 会话列表的Json Keys
   * @{
   */

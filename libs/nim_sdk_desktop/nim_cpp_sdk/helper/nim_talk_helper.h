@@ -1,7 +1,6 @@
 ﻿/** @file nim_talk_helper.h
   * @brief Talk 辅助方法和数据结构定义
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg, Harrison
   * @date 2015/10/16
   */
 
@@ -15,7 +14,7 @@
 #include "nim_json_util.h"
 #include "nim_sdk_util.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -24,7 +23,7 @@ namespace nim
 {
 
 /** @brief 消息属性设置 */
-struct MessageSetting
+struct NIM_SDK_CPPWRAPPER_DLL_API MessageSetting
 {
 	BoolStatus resend_flag_;			/**< 该消息是否为重发状态 */
 	BoolStatus server_history_saved_;	/**< 该消息是否存储云端历史 */
@@ -189,7 +188,7 @@ struct MessageSetting
 };
 
 /** @brief P2P和群组消息 */
-struct IMMessage
+struct NIM_SDK_CPPWRAPPER_DLL_API IMMessage
 {
 public:
 	NIMResCode	rescode_;						/**< 错误码 */
@@ -314,7 +313,7 @@ public:
 };
 
 /** @brief 文件消息附件 */
-struct IMFile
+struct NIM_SDK_CPPWRAPPER_DLL_API IMFile
 {
 	std::string	md5_;				/**< 文件内容MD5 */
 	int64_t		size_;				/**< 文件大小 */
@@ -361,7 +360,7 @@ struct IMFile
 };
 
 /** @brief 图片消息附件 */
-struct IMImage : IMFile
+struct NIM_SDK_CPPWRAPPER_DLL_API IMImage : IMFile
 {
 	int			width_;			/**< 图片宽度 */
 	int			height_;		/**< 图片高度 */
@@ -384,7 +383,7 @@ struct IMImage : IMFile
 };
 
 /** @brief 位置消息附件 */
-struct IMLocation
+struct NIM_SDK_CPPWRAPPER_DLL_API IMLocation
 {
 	std::string	description_;		/**< 位置描述内容 */
 	double		latitude_;			/**< 位置纬度 */
@@ -409,7 +408,7 @@ struct IMLocation
 };
 
 /** @brief 语音消息附件 */
-struct IMAudio : IMFile
+struct NIM_SDK_CPPWRAPPER_DLL_API IMAudio : IMFile
 {
 	int			duration_;			/**< 语音时长 */
 
@@ -430,7 +429,7 @@ struct IMAudio : IMFile
 };
 
 /** @brief 小视频消息附件 */
-struct IMVideo : IMFile
+struct NIM_SDK_CPPWRAPPER_DLL_API IMVideo : IMFile
 {
 	int			duration_;			/**< 视频时长 */
 	int			width_;				/**< 视频画面宽度 */
@@ -455,7 +454,7 @@ struct IMVideo : IMFile
 };
 
 /** @brief 波特机器人消息附件 */
-struct IMBotRobot
+struct NIM_SDK_CPPWRAPPER_DLL_API IMBotRobot
 {
 	bool	out_msg_;				/**< 是否为机器人回复，是:true，不是:false，默认false */
 	std::string robot_accid_;		/**< 机器人云信ID */
@@ -481,7 +480,7 @@ struct IMBotRobot
 	}
 };
 
-struct BroadcastMessage
+struct NIM_SDK_CPPWRAPPER_DLL_API BroadcastMessage
 {
 	std::string	body_;
 	int64_t time_;
@@ -495,7 +494,7 @@ struct BroadcastMessage
   * @param[out] message 消息
   * @return bool 解析成功或失败 
   */
-bool ParseMessage(const std::string& msg_json, IMMessage& message);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseMessage(const std::string& msg_json, IMMessage& message);
 
 /** @fn bool ParseReceiveMessage(const std::string& msg_json, IMMessage& message)
   * @brief 解析消息
@@ -503,7 +502,7 @@ bool ParseMessage(const std::string& msg_json, IMMessage& message);
   * @param[out] message 消息
   * @return bool 解析成功或失败 
   */
-bool ParseReceiveMessage(const std::string& msg_json, IMMessage& message);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseReceiveMessage(const std::string& msg_json, IMMessage& message);
 
 /** @fn void ParseReceiveMessage(const Json::Value& msg_json_value, IMMessage& message)
   * @brief 解析消息
@@ -511,7 +510,7 @@ bool ParseReceiveMessage(const std::string& msg_json, IMMessage& message);
   * @param[out] message 消息
   * @return bool 解析成功或失败 
   */
-void ParseReceiveMessage(const Json::Value& msg_json_value, IMMessage& message);
+NIM_SDK_CPPWRAPPER_DLL_API void ParseReceiveMessage(const Json::Value& msg_json_value, IMMessage& message);
 
 /** @fn void ParseReceiveMessage(const Json::Value& msg_json, IMMessage& message)
   * @brief 解析消息
@@ -519,7 +518,7 @@ void ParseReceiveMessage(const Json::Value& msg_json_value, IMMessage& message);
   * @param[out] message 消息
   * @return void 
   */
-void ParseMessage(const Json::Value& msg_json, IMMessage& message);
+NIM_SDK_CPPWRAPPER_DLL_API void ParseMessage(const Json::Value& msg_json, IMMessage& message);
 
 } //namespace nim
 

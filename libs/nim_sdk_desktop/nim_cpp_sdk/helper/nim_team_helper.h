@@ -1,7 +1,6 @@
 ﻿/** @file nim_team_helper.h
   * @brief Team 辅助方法和数据结构定义
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2015/10/14
   */
 
@@ -15,7 +14,7 @@
 #include "nim_sdk_util.h"
 #include "nim_user_helper.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -23,7 +22,7 @@
 namespace nim
 {
 /** @brief 群组信息 */
-struct TeamInfo
+struct NIM_SDK_CPPWRAPPER_DLL_API TeamInfo
 {
 public:
 	/** 构造函数 */
@@ -148,19 +147,18 @@ public:
 	{
 		return team_info_json_value_[nim::kNIMTeamInfoKeyCreator].asString();
 	}
-
-	/** 设置群组等级,通常情况下由SDK维护,开发者作为只读无需设置 */
-	void SetLevel(int level)
+	/** 在创建群时，设置群的最大成员数，不可超过应用设定的最大成员数，否则返回414 */
+	void SetMemberMaxCount(int count)
 	{
-		team_info_json_value_[nim::kNIMTeamInfoKeyLevel] = level;
+		team_info_json_value_[nim::kNIMTeamInfoKeyMemberMaxCount] = count;
+		team_info_json_value_[nim::kNIMTeamInfoKeyLevel] = count;
 	}
 
-	/** 获取群组等级 */
-	int GetLevel() const
+	/** 获取群的最大成员数 */
+	int GetMemberMaxCount() const
 	{
-		return team_info_json_value_[nim::kNIMTeamInfoKeyLevel].asUInt();
+		return team_info_json_value_[nim::kNIMTeamInfoKeyMemberMaxCount].asUInt();
 	}
-
 	/** 设置群组属性 */
 	void SetProperty(const std::string& prop)
 	{
@@ -417,13 +415,24 @@ public:
 	{
 		return team_info_json_value_;
 	}
+private:
+	/** 设置群组等级,通常情况下由SDK维护,开发者作为只读无需设置 */
+	void SetLevel(int level)
+	{
+		team_info_json_value_[nim::kNIMTeamInfoKeyLevel] = level;
+	}
 
+	/** 获取群组等级 */
+	int GetLevel() const
+	{
+		return team_info_json_value_[nim::kNIMTeamInfoKeyLevel].asUInt();
+	}
 private:
 	Json::Value		team_info_json_value_;
 };
 
 /** @brief 群组成员信息 */
-struct TeamMemberProperty
+struct NIM_SDK_CPPWRAPPER_DLL_API TeamMemberProperty
 {
 public:
 	/** 构造函数 */
@@ -594,7 +603,7 @@ private:
 };
 
 /** @brief 群组事件通知 */
-struct TeamEvent
+struct NIM_SDK_CPPWRAPPER_DLL_API TeamEvent
 {
 	NIMResCode res_code_;					/**< 错误码 */
 	NIMNotificationId notification_id_;		/**< 通知类型ID */
@@ -618,7 +627,7 @@ struct TeamEvent
   * @param[out] team_event 群组事件通知
   * @return void 
   */
-void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificationId notification_id, const std::string& team_event_json, TeamEvent& team_event);
+NIM_SDK_CPPWRAPPER_DLL_API void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificationId notification_id, const std::string& team_event_json, TeamEvent& team_event);
 
 /** @fn bool ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info)
   * @brief 解析群组信息
@@ -626,7 +635,7 @@ void ParseTeamEvent(int rescode, const std::string& team_id, const NIMNotificati
   * @param[out] team_info 群组信息
   * @return void 
   */
-void ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info);
+NIM_SDK_CPPWRAPPER_DLL_API void ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info);
 
 /** @fn bool ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info)
   * @brief 解析群组信息
@@ -634,7 +643,7 @@ void ParseTeamInfoJson(const Json::Value& team_info_json, TeamInfo& team_info);
   * @param[out] team_info 群组信息
   * @return bool 解析成功或失败 
   */
-bool ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info);
 
 /** @fn bool ParseTeamInfosJson(const std::string& team_infos_json, std::list<TeamInfo>& team_infos)
   * @brief 解析群组信息
@@ -642,7 +651,7 @@ bool ParseTeamInfoJson(const std::string& team_info_json, TeamInfo& team_info);
   * @param[out] team_infos 群组信息
   * @return bool 解析成功或失败 
   */
-bool ParseTeamInfosJson(const std::string& team_infos_json, std::list<TeamInfo>& team_infos);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseTeamInfosJson(const std::string& team_infos_json, std::list<TeamInfo>& team_infos);
 
 /** @fn void ParseTeamMemberPropertyJson(const Json::Value& team_member_prop_json, TeamMemberProperty& team_member_property)
   * @brief 解析群成员信息
@@ -650,7 +659,7 @@ bool ParseTeamInfosJson(const std::string& team_infos_json, std::list<TeamInfo>&
   * @param[out] team_member_property 群成员信息
   * @return void 
   */
-void ParseTeamMemberPropertyJson(const Json::Value& team_member_prop_json, TeamMemberProperty& team_member_property);
+NIM_SDK_CPPWRAPPER_DLL_API void ParseTeamMemberPropertyJson(const Json::Value& team_member_prop_json, TeamMemberProperty& team_member_property);
 
 /** @fn bool ParseTeamMemberPropertyJson(const std::string& team_member_prop_json, TeamMemberProperty& team_member_property)
   * @brief 解析群成员信息
@@ -658,7 +667,7 @@ void ParseTeamMemberPropertyJson(const Json::Value& team_member_prop_json, TeamM
   * @param[out] team_member_property 群成员信息
   * @return bool 解析成功或失败 
   */
-bool ParseTeamMemberPropertyJson(const std::string& team_member_prop_json, TeamMemberProperty& team_member_property);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseTeamMemberPropertyJson(const std::string& team_member_prop_json, TeamMemberProperty& team_member_property);
 
 /** @fn bool ParseTeamMemberPropertysJson(const std::string& team_member_props_json, std::list<TeamMemberProperty>& team_member_propertys)
   * @brief 解析群成员信息
@@ -666,7 +675,7 @@ bool ParseTeamMemberPropertyJson(const std::string& team_member_prop_json, TeamM
   * @param[out] team_member_propertys 群成员信息
   * @return bool 解析成功或失败 
   */
-bool ParseTeamMemberPropertysJson(const std::string& team_member_props_json, std::list<TeamMemberProperty>& team_member_propertys);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseTeamMemberPropertysJson(const std::string& team_member_props_json, std::list<TeamMemberProperty>& team_member_propertys);
 }//namespace nim
 
 #endif //_NIM_SDK_CPP_TEAM_HELPER_H_

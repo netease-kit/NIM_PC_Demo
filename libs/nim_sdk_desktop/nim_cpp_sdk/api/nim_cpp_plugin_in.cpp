@@ -1,15 +1,14 @@
-/** @file nim_cpp_plugin_in.cpp
+﻿/** @file nim_cpp_plugin_in.cpp
   * @brief NIM SDK 提供的plugin接入接口
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2015/12/29
   */
 
 #include "nim_cpp_plugin_in.h"
 #include "nim_sdk_util.h"
 #include "nim_json_util.h"
-#include "nim_cpp_win32_demo_helper.h"
 #include "nim_string_util.h"
+#include "callback_proxy.h"
 
 namespace nim
 {
@@ -21,23 +20,21 @@ typedef void(*nim_plugin_chatroom_request_enter_async)(const int64_t room_id, co
 
 static void CallbackRequestChatRoomEnter(int error_code, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		PluginIn::ChatRoomRequestEnterCallback* cb_pointer = (PluginIn::ChatRoomRequestEnterCallback*)user_data;
-		if (*cb_pointer)
-		{
-			(*cb_pointer)(error_code, nim::PCharToString(result));
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<PluginIn::ChatRoomRequestEnterCallback>(user_data, [=](const PluginIn::ChatRoomRequestEnterCallback& cb){
+
+		CallbackProxy::Invoke(cb, error_code, nim::PCharToString(result));
+	});
+
 }
 
-void PluginIn::ChatRoomRequestEnterAsync(const int64_t room_id, const ChatRoomRequestEnterCallback &callback, const std::string& json_extension/* = ""*/)
+ void PluginIn::ChatRoomRequestEnterAsync(const int64_t room_id, const ChatRoomRequestEnterCallback &callback, const std::string& json_extension/* = ""*/)
 {
 	ChatRoomRequestEnterCallback* cb_pointer = nullptr;
 	if (callback)
 		cb_pointer = new ChatRoomRequestEnterCallback(callback);
 
-	return NIM_SDK_GET_FUNC(nim_plugin_chatroom_request_enter_async)(room_id, json_extension.c_str(), &CallbackRequestChatRoomEnter, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_plugin_chatroom_request_enter_async)(room_id, json_extension.c_str(), &CallbackRequestChatRoomEnter, cb_pointer);
 }
 
 }

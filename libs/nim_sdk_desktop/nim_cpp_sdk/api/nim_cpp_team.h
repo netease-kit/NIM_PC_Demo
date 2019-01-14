@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_team.h
   * @brief 群组
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg
   * @date 2015/2/1
   */
 
@@ -13,7 +12,7 @@
 #include <functional>
 #include "nim_team_helper.h"
 #include "nim_talk_helper.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -24,7 +23,7 @@ namespace nim
 /** @class Team
   * @brief 群组功能；主要包括查询群信息、查询群成员信息、加人、踢人等功能
   */
-class Team
+class NIM_SDK_CPPWRAPPER_DLL_API Team
 {
 
 public:

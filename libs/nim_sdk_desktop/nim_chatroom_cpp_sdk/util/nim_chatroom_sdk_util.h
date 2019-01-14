@@ -1,12 +1,11 @@
 ﻿/** @file nim_sdk_util.h
   * @brief SDK库辅助方法
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg, Harrison
   * @date 2015/09/08
   */
 
-#ifndef _NIM_SDK_CPP_NIM_SDK_UTIL_H_
-#define _NIM_SDK_CPP_NIM_SDK_UTIL_H_
+#ifndef _NIM_CHATROOM_SDK_CPP_NIM_SDK_UTIL_H_
+#define _NIM_CHATROOM_SDK_CPP_NIM_SDK_UTIL_H_
 
 #include <string>
 #include <list>
@@ -14,7 +13,7 @@
 #include <functional>
 #include "assert.h"
 #include "json.h"
-
+#include "nim_chatroom_sdk_cpp_wrapper_dll.h"
 #ifdef NIM_SDK_DLL_IMPORT
 #ifdef WIN32
 #include "wtypes.h"
@@ -22,26 +21,24 @@
 #	include <dlfcn.h>
 #endif
 #endif
-
+  /** @enum BoolStatus 自定义的布尔值类型数据的替代数据类型 */
+enum BoolStatus
+{
+	BS_NOT_INIT = -1,	/**< 未初始化 */
+	BS_FALSE = 0,	/**< false */
+	BS_TRUE = 1		/**< true */
+};
 /**
 * @namespace nim
 * @brief namespace nim
 */
-namespace nim
+namespace nim_chatroom
 {
-/** @enum BoolStatus 自定义的布尔值类型数据的替代数据类型 */
-enum BoolStatus
-{
-	BS_NOT_INIT = -1,	/**< 未初始化 */
-	BS_FALSE	= 0,	/**< false */
-	BS_TRUE		= 1		/**< true */
-};
-
 #ifdef NIM_SDK_DLL_IMPORT
 /** @class SDKInstance
   * @brief SDK库辅助类，提供加载/卸载SDK库以及获取接口的方法
   */
-class SDKInstance
+class NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API  SDKInstance
 {
 public:
 	SDKInstance();
@@ -49,7 +46,8 @@ public:
 
 	/** 加载SDK库 */
 	bool LoadSdkDll(const char *cur_module_dir, const char *sdk_dll_file_name);
-
+	/** SDK库初始化完成 */
+	void OnSDKInited();
 	/** 卸载SDK库 */
 	void UnLoadSdkDll();
 
@@ -101,4 +99,4 @@ extern SDKInstance *g_nim_sdk_instance;
 #endif
 }
 
-#endif //_NIM_SDK_CPP_NIM_SDK_UTIL_H_
+#endif //_NIM_CHATROOM_SDK_CPP_NIM_SDK_UTIL_H_

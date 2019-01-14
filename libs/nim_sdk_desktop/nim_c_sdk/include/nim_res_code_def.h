@@ -54,6 +54,21 @@ enum NIMResCode
 	kNIMResEPacket				= 999,		/**< 打包错误 */
 	//
 	kNIMResInBlack				= 7101,		/**< 被接收方加入黑名单 SDK版本大于2.5.0支持*/
+
+	//独立信令错误代码
+	kNIMResRoomNotExists		= 10404,	/**< 房间不存在 */
+	kNIMResRoomHasExists		= 10405,	/**< 房间已存在 */
+	kNIMResRoomMemberNotExists	= 10406,	/**< 不在房间内 */
+	kNIMResRoomMemberHasExists	= 10407,	/**< 已经在房间内 */
+	kNIMResRoomInviteNotExists	= 10408,	/**< 邀请不存在或已过期 */
+	kNIMResRoomInviteHasReject 	= 10409,	/**< 邀请已经拒绝 */
+	kNIMResRoomInviteHasAccept	= 10410,	/**< 邀请已经接受了 */
+	kNIMResPeerNimOffline		= 10201,	/**< 对方云信不在线 */
+	kNIMResPeerPushOffline		= 10202,	/**< 对方推送亦不可达 */
+	kNIMResRoomUidConflict		= 10417,	/**< uid冲突 */
+	kNIMResRoomMemberExceed		= 10419,	/**< 房间人数超限 */
+	kNIMResRoomMemberHasExistsOtherClient= 10420,	/**< 已经在房间内（自己的其他端） */
+
 	//客户端自定义的错误号
 	kNIMLocalRes					= 10000,		/**< 值大于该错误号的都是客户端自定义的错误号。不能随意更改其值！ */
 	kNIMResRoomLocalNeedRequestAgain = 10001,	/**< 客户端本地错误号，需要重新向IM服务器获取进入聊天室权限 */

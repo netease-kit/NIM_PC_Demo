@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_tool.h
   * @brief 工具类,提供了包括获取用户/应用目录，计算MD5，计算UUID，语音转文字等功能
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg, Harrison
   * @date 2015/09/21
   */
 
@@ -10,6 +9,7 @@
 
 #include <string>
 #include "nim_tool_helper.h"
+#include "nim_sdk_cpp_wrapper_dll.h"
 
 /**
 * @namespace nim
@@ -22,7 +22,7 @@ namespace nim
 /** @class Tool
   * @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等
   */
-class Tool
+class NIM_SDK_CPPWRAPPER_DLL_API Tool
 {
 
 public:

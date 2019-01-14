@@ -1,7 +1,6 @@
 ﻿/** @file nim_msglog_helper.h
   * @brief msglog 辅助方法和数据结构定义
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2015/10/22
   */
 
@@ -13,7 +12,7 @@
 #include <functional>
 #include "json.h"
 #include "nim_talk_helper.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -22,7 +21,7 @@ namespace nim
 {
 
 /** @brief 查询到消息历史结果 */
-struct QueryMsglogResult
+struct NIM_SDK_CPPWRAPPER_DLL_API QueryMsglogResult
 {
 	int count_;						/**< 消息历史数 */
 	NIMMsglogQuerySource source_;	/**< 消息历史查询来源 */
@@ -33,7 +32,7 @@ struct QueryMsglogResult
 };
 
 /** @brief 发送消息已读回执 */
-struct MessageStatusChanged
+struct NIM_SDK_CPPWRAPPER_DLL_API MessageStatusChanged
 {
 	NIMMsgLogStatus status_;	/**< 变更后的状态 */
 	std::string		talk_id_;	/**< 会话ID */
@@ -43,7 +42,7 @@ struct MessageStatusChanged
 };
 
 /** @brief 发送消息已读回执 */
-struct MessageStatusChangedResult
+struct NIM_SDK_CPPWRAPPER_DLL_API MessageStatusChangedResult
 {
 	NIMResCode rescode_;	/**< 错误码 */
 	std::list<MessageStatusChanged> results_;	/**< 结果 */
@@ -74,7 +73,7 @@ struct MessageStatusChangedResult
   * @param[out] res 消息历史结果
   * @return bool 解析成功 或失败
   */
-bool ParseMsglogs(const std::string& msgs_json, QueryMsglogResult& res);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseMsglogs(const std::string& msgs_json, QueryMsglogResult& res);
 
 } //namespace nim
 

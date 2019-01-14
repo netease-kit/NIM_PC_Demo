@@ -1,7 +1,6 @@
 ﻿/** @file nim_subscribe_event_helper.cpp
   * @brief 事件订阅辅助方法和数据结构定义
   * @copyright (c) 2017, NetEase Inc. All rights reserved
-  * @author Redrain
   * @date 2017/03/23
   */
 

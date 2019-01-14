@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_user.cpp
   * @brief NIM SDK提供的用户相关接口
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg, Harrison
   * @date 2015/8/17
   */
 
@@ -9,8 +8,7 @@
 #include "nim_sdk_util.h"
 #include "nim_json_util.h"
 #include "nim_string_util.h"
-#include "nim_cpp_win32_demo_helper.h"
-
+#include "callback_proxy.h"
 namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
@@ -29,128 +27,105 @@ typedef void (*nim_user_update_my_user_name_card)(const char *info_json, const c
 
 static void CallbackSetRelation(int res_code, const char *accid, bool opt, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		User::SetRelationCallback* cb_pointer = (User::SetRelationCallback*)callback;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, PCharToString(accid), opt));
-			//(*cb_pointer)((NIMResCode)res_code, PCharToString(accid), opt);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<User::SetRelationCallback>(callback, [=](const User::SetRelationCallback& cb){
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, PCharToString(accid), opt);
+	}, true);
+
 }
 
 static void CallbackGetBlackList(int res_code, const char *mute_black_list_json, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		User::GetBlackListCallback* cb_pointer = (User::GetBlackListCallback*)callback;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<User::GetBlackListCallback>(callback, [=](const User::GetBlackListCallback& cb){
+
+		std::list<BlackMuteListInfo> black_list;
+		std::list<BlackMuteListInfo> out_black_list;
+		ParseSpecialListInfo(PCharToString(mute_black_list_json), black_list);
+		for (auto black = black_list.begin(); black != black_list.end(); black++)
 		{
-			std::list<BlackMuteListInfo> black_list;
-			std::list<BlackMuteListInfo> out_black_list;
-			ParseSpecialListInfo(PCharToString(mute_black_list_json), black_list);
-			for (auto black = black_list.begin(); black != black_list.end(); black++)
-			{
-				if (black->set_black_)
-					out_black_list.push_back(*black);
-			}
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, out_black_list));
-			//(*cb_pointer)((NIMResCode)res_code, out_black_list);
+			if (black->set_black_)
+				out_black_list.push_back(*black);
 		}
-		delete cb_pointer;
-	}
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, black_list);
+
+	}, true);
+
 }
 
 static void CallbackGetMuteList(int res_code, const char *mute_black_list_json, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		User::GetMuteListCallback* cb_pointer = (User::GetMuteListCallback*)callback;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<User::GetMuteListCallback>(callback, [=](const User::GetMuteListCallback& cb){
+
+		std::list<BlackMuteListInfo> mute_list;
+		std::list<BlackMuteListInfo> out_mute_list;
+		ParseSpecialListInfo(PCharToString(mute_black_list_json), mute_list);
+		for (auto mute = mute_list.begin(); mute != mute_list.end(); mute++)
 		{
-			std::list<BlackMuteListInfo> mute_list;
-			std::list<BlackMuteListInfo> out_mute_list;
-			ParseSpecialListInfo(PCharToString(mute_black_list_json), mute_list);
-			for (auto mute = mute_list.begin(); mute != mute_list.end(); mute++)
-			{
-				if (mute->set_mute_)
-					out_mute_list.push_back(*mute);
-			}
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, out_mute_list));
-			//(*cb_pointer)((NIMResCode)res_code, out_mute_list);
+			if (mute->set_mute_)
+				out_mute_list.push_back(*mute);
 		}
-		delete cb_pointer;
-	}
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, out_mute_list);
+
+	}, true);
+
+
 }
 
 static void CallbackGetUserNameCard(const char *result_json, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		User::GetUserNameCardCallback* cb_pointer = (User::GetUserNameCardCallback*)callback;
-		if (*cb_pointer)
-		{
-			std::list<UserNameCard> users_info;
-			ParseNameCards(PCharToString(result_json), users_info);
-			PostTaskToUIThread(std::bind((*cb_pointer), users_info));
-			//(*cb_pointer)(users_info);
-		}
-		delete cb_pointer;
-	}
+	CallbackProxy::DoSafeCallback<User::GetUserNameCardCallback>(callback, [=](const User::GetUserNameCardCallback& cb){
+
+		std::list<UserNameCard> users_info;
+		ParseNameCards(PCharToString(result_json), users_info);
+		CallbackProxy::Invoke(cb, users_info);
+
+	}, true);
+
 }
 
 static void CallbackUpdateMyUserNameCard(int res_code, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		User::UpdateMyUserNameCardCallback* cb_pointer = (User::UpdateMyUserNameCardCallback*)callback;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code));
-			//(*cb_pointer)((NIMResCode)res_code);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<User::UpdateMyUserNameCardCallback>(callback, [=](const User::UpdateMyUserNameCardCallback& cb){
+
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code);
+
+	}, true);
 }
 
 static void CallbackSpecialRelationChange(NIMUserSpecialRelationshipChangeType type, const char *result_json, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		User::SpecialRelationshipChangedCallback* cb_pointer = (User::SpecialRelationshipChangedCallback*)callback;
-		if (*cb_pointer)
-		{
-			SpecialRelationshipChangeEvent change_event;
-			change_event.type_ = type;
-			change_event.content_ = PCharToString(result_json);
-			PostTaskToUIThread(std::bind((*cb_pointer), change_event));
-			//(*cb_pointer)(change_event);
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<User::SpecialRelationshipChangedCallback>(callback, [=](const User::SpecialRelationshipChangedCallback& cb){
+
+		SpecialRelationshipChangeEvent change_event;
+		change_event.type_ = type;
+		change_event.content_ = PCharToString(result_json);
+		CallbackProxy::Invoke(cb, change_event);
+
+	});
 }
 
 static void CallbackUserNameCardChange(const char *result_json, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		User::UserNameCardChangedCallback* cb_pointer = (User::UserNameCardChangedCallback*)callback;
-		if (*cb_pointer)
-		{
-			std::list<UserNameCard> users_info;
-			ParseNameCards(PCharToString(result_json), users_info);
-			PostTaskToUIThread(std::bind((*cb_pointer), users_info));
-			//(*cb_pointer)(users_info);
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<User::UserNameCardChangedCallback>(callback, [=](const User::UserNameCardChangedCallback& cb){
+
+		std::list<UserNameCard> users_info;
+		ParseNameCards(PCharToString(result_json), users_info);
+		CallbackProxy::Invoke(cb, users_info);
+
+	});
+
 }
 
 static User::SpecialRelationshipChangedCallback g_cb_relation_changed_ = nullptr;
 void User::RegSpecialRelationshipChangedCb(const SpecialRelationshipChangedCallback& cb, const std::string& json_extension)
 {
 	g_cb_relation_changed_ = cb;
-	return NIM_SDK_GET_FUNC(nim_user_reg_special_relationship_changed_cb)(json_extension.c_str(), &CallbackSpecialRelationChange, &g_cb_relation_changed_);
+	NIM_SDK_GET_FUNC(nim_user_reg_special_relationship_changed_cb)(json_extension.c_str(), &CallbackSpecialRelationChange, &g_cb_relation_changed_);
 }
 
 bool User::SetBlack(const std::string& accid, bool set_black, const SetBlackCallback& cb, const std::string& json_extension)
@@ -190,7 +165,7 @@ void User::GetMutelist(const GetMuteListCallback& cb, const std::string& json_ex
 	{
 		cb_pointer = new GetMuteListCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_user_get_mute_blacklist)(json_extension.c_str(), &CallbackGetMuteList, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_user_get_mute_blacklist)(json_extension.c_str(), &CallbackGetMuteList, cb_pointer);
 }
 
 void User::GetBlacklist(const GetBlackListCallback& cb, const std::string& json_extension)
@@ -200,14 +175,14 @@ void User::GetBlacklist(const GetBlackListCallback& cb, const std::string& json_
 	{
 		cb_pointer = new GetBlackListCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_user_get_mute_blacklist)(json_extension.c_str(), &CallbackGetBlackList, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_user_get_mute_blacklist)(json_extension.c_str(), &CallbackGetBlackList, cb_pointer);
 }
 
 static User::UserNameCardChangedCallback g_cb_uinfo_changed_ = nullptr;
 void User::RegUserNameCardChangedCb(const UserNameCardChangedCallback & cb, const std::string & json_extension)
 {
 	g_cb_uinfo_changed_ = cb;
-	return NIM_SDK_GET_FUNC(nim_user_reg_user_name_card_changed_cb)(json_extension.c_str(), &CallbackUserNameCardChange, &g_cb_uinfo_changed_);
+	NIM_SDK_GET_FUNC(nim_user_reg_user_name_card_changed_cb)(json_extension.c_str(), &CallbackUserNameCardChange, &g_cb_uinfo_changed_);
 }
 
 bool User::GetUserNameCard(const std::list<std::string>& accids, const GetUserNameCardCallback& cb, const std::string& json_extension /*= ""*/)

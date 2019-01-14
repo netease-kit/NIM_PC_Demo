@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_sysmsg.h
   * @brief 系统（自定义）消息
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg
   * @date 2015/2/1
   */
 
@@ -11,7 +10,7 @@
 #include <functional>
 #include "nim_sysmsg_helper.h"
 #include "nim_msg_helper.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -22,7 +21,7 @@ namespace nim
 /** @class SystemMsg
   * @brief 系统消息接口；主要包括查询系统消息、删除系统消息等功能
   */
-class SystemMsg
+class NIM_SDK_CPPWRAPPER_DLL_API SystemMsg
 {
 
 public:

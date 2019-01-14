@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_nos.h
   * @brief NOS云存储服务
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg
   * @date 2015/2/1
   */
 
@@ -12,7 +11,7 @@
 #include <functional>
 #include "nim_cpp_talk.h"
 #include "nim_nos_helper.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -23,7 +22,7 @@ namespace nim
 /** @class NOS
   * @brief NIM SDK提供的NOS云存储服务接口
   */
-class NOS
+class NIM_SDK_CPPWRAPPER_DLL_API NOS
 {
 
 public:

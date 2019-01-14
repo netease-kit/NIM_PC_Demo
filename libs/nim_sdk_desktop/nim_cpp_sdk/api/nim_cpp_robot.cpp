@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_robot.cpp
   * @brief NIM SDK提供的Robot接口
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2017.06.26
   */
 
@@ -9,8 +8,7 @@
 #include "nim_sdk_util.h"
 #include "nim_json_util.h"
 #include "nim_string_util.h"
-#include "nim_cpp_win32_demo_helper.h"
-
+#include "callback_proxy.h"
 namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
@@ -24,24 +22,19 @@ typedef void (*nim_robot_get_robots_async)(__int64 timetag, const char *json_ext
 
 static void CallbackRobotInfoChange(int rescode, NIMRobotInfoChangeType type, const char *res, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		Robot::RobotChangedCallback* cb_pointer = (Robot::RobotChangedCallback*)callback;
-		if (*cb_pointer)
-		{
-			RobotInfos infos;
-			ParseRobotInfosStringToRobotInfos(PCharToString(res), infos);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)rescode, type, infos));
-			//(*cb_pointer)((NIMResCode)rescode, type, infos);
-		}
-	}
+	CallbackProxy::DoSafeCallback<Robot::RobotChangedCallback>(callback, [=](const Robot::RobotChangedCallback& cb){
+
+		RobotInfos infos;
+		ParseRobotInfosStringToRobotInfos(PCharToString(res), infos);
+		CallbackProxy::Invoke(cb, (NIMResCode)rescode,type, infos);
+	});
 }
 
 static Robot::RobotChangedCallback g_cb_changed_ = nullptr;
 void Robot::RegChangedCallback(const RobotChangedCallback &callback, const std::string &json_extension)
 {
 	g_cb_changed_ = callback;
-	return NIM_SDK_GET_FUNC(nim_robot_reg_changed_callback)(json_extension.c_str(), &CallbackRobotInfoChange, &g_cb_changed_);
+	NIM_SDK_GET_FUNC(nim_robot_reg_changed_callback)(json_extension.c_str(), &CallbackRobotInfoChange, &g_cb_changed_);
 }
 
 RobotInfos Robot::QueryAllRobotInfosBlock(const std::string &json_extension/* = ""*/)
@@ -62,18 +55,14 @@ RobotInfo Robot::QueryRobotInfoByAccidBlock(const std::string &accid, const std:
 
 static void CallbackRobotQuery(int rescode, const char *res, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		Robot::RobotQueryCallback* cb_pointer = (Robot::RobotQueryCallback*)callback;
-		if (*cb_pointer)
-		{
-			RobotInfos infos;
-			ParseRobotInfosStringToRobotInfos(PCharToString(res), infos);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)rescode, infos));
-			//(*cb_pointer)((NIMResCode)rescode, infos);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<Robot::RobotQueryCallback>(callback, [=](const Robot::RobotQueryCallback& cb){
+
+		RobotInfos infos;
+		ParseRobotInfosStringToRobotInfos(PCharToString(res), infos);
+		CallbackProxy::Invoke(cb, (NIMResCode)rescode, infos);
+	},true);
+
 }
 
 void Robot::GetRobotInfoAsync(const __int64 timetag, const RobotQueryCallback &callback, const std::string &json_extension/* = ""*/)
@@ -84,5 +73,9 @@ void Robot::GetRobotInfoAsync(const __int64 timetag, const RobotQueryCallback &c
 		cb_pointer = new RobotQueryCallback(callback);
 	}
 	NIM_SDK_GET_FUNC(nim_robot_get_robots_async)(timetag, json_extension.c_str(), &CallbackRobotQuery, cb_pointer);
+}
+void Robot::UnregRobotCb()
+{
+	g_cb_changed_ = nullptr;
 }
 }

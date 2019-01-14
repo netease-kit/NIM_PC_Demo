@@ -1,7 +1,6 @@
 ﻿/** @file nim_subscribe_event_helper.h
   * @brief 事件订阅辅助方法和数据结构定义
   * @copyright (c) 2017, NetEase Inc. All rights reserved
-  * @author Redrain
   * @date 2017/03/23
   */
 
@@ -15,7 +14,7 @@
 #include "json.h"
 #include "nim_json_util.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -24,7 +23,7 @@ namespace nim
 {
 
 /** @brief 事件数据 */
-struct EventData
+struct NIM_SDK_CPPWRAPPER_DLL_API EventData
 {
 	int						event_type_;		/**< 事件类型，服务器保留1～99999的事件类型，客户端自定义事件类型需大于99999 */
 	int						event_value_;		/**< 事件状态，在线状态事件服务器保留1～9999的事件值，客户端自定义事件值需大于9999 */
@@ -78,7 +77,7 @@ public:
 };
 
 /** @brief 在线客户端类型，此结构体只用于在线状态事件的kNIMEventNimConfig字段 */
-struct EventOnlineClientType
+struct NIM_SDK_CPPWRAPPER_DLL_API EventOnlineClientType
 {
 	std::set<NIMClientType>	online_client_type_;		/**< 在线客户端类型集合 */
 
@@ -114,7 +113,7 @@ struct EventOnlineClientType
 };
 
 /** @brief 事件订阅数据 */
-struct EventSubscribeData
+struct NIM_SDK_CPPWRAPPER_DLL_API EventSubscribeData
 {
 	int							event_type_;		/**< 事件类型 */
 	int64_t						ttl_;				/**< 订阅有效期，单位：秒，范围：60s到30天 */
@@ -136,7 +135,7 @@ struct EventSubscribeData
   * @param[out] event_data	事件数据
   * @return bool 解析成功 或失败
   */
-bool ParseEventData(const std::string& event_json, EventData& event_data);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseEventData(const std::string& event_json, EventData& event_data);
 
 /** @fn bool ParseEventData(const Json::Value& values, EventData& event_data)
   * @brief 解析事件数据
@@ -144,7 +143,7 @@ bool ParseEventData(const std::string& event_json, EventData& event_data);
   * @param[out] event_data	事件数据
   * @return bool 解析成功 或失败
   */
-bool ParseEventData(const Json::Value& values, EventData& event_data);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseEventData(const Json::Value& values, EventData& event_data);
 
 /** @fn bool ParseEventDataList(const std::string& event_list_json, std::list<EventData>& event_data_list)
   * @brief 解析批量事件数据
@@ -152,7 +151,7 @@ bool ParseEventData(const Json::Value& values, EventData& event_data);
   * @param[out] event_data_list	事件数据
   * @return bool 解析成功 或失败
   */
-bool ParseEventDataList(const std::string& event_list_json, std::list<EventData>& event_data_list);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseEventDataList(const std::string& event_list_json, std::list<EventData>& event_data_list);
 
 /** @fn bool ParseEventSubscribeData(const Json::Value& values, EventSubscribeData& event_subscribe)
   * @brief 解析事件订阅数据
@@ -160,7 +159,7 @@ bool ParseEventDataList(const std::string& event_list_json, std::list<EventData>
   * @param[out] event_subscribe	事件订阅数据
   * @return bool 解析成功 或失败
   */
-bool ParseEventSubscribeData(const Json::Value& values, EventSubscribeData& event_subscribe);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseEventSubscribeData(const Json::Value& values, EventSubscribeData& event_subscribe);
 
 /** @fn bool ParseEventSubscribeDataList(const std::string& subscribe_list_json, std::list<EventSubscribeData>& event_subscribe_list)
   * @brief 解析事件订阅数据列表
@@ -168,7 +167,7 @@ bool ParseEventSubscribeData(const Json::Value& values, EventSubscribeData& even
   * @param[out] event_subscribe_list	事件订阅数据列表
   * @return bool 解析成功 或失败
   */
-bool ParseEventSubscribeDataList(const std::string& subscribe_list_json, std::list<EventSubscribeData>& event_subscribe_list);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseEventSubscribeDataList(const std::string& subscribe_list_json, std::list<EventSubscribeData>& event_subscribe_list);
 
 } //namespace nim
 

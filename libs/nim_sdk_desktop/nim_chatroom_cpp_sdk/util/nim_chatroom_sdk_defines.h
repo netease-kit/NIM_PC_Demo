@@ -1,7 +1,6 @@
 /** @file nim_chatroom_sdk_defines.h
   * @brief 
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2017/08/03
   */
 

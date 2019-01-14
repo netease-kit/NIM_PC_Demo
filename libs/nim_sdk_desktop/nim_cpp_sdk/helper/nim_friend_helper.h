@@ -1,7 +1,6 @@
 ﻿/** @file nim_friend_helper.h
   * @brief SDK好友辅助方法
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2015/10/20
   */
 
@@ -15,7 +14,7 @@
 #include "nim_json_util.h"
 #include "nim_base_types.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -23,7 +22,7 @@
 namespace nim
 {
 /** @enum 云信好友数据标记Key,用以标记对应数据的有效性 */
-enum FriendProfileKey
+enum NIM_SDK_CPPWRAPPER_DLL_API FriendProfileKey
 {
 	kFriendProfileKeyNone = 0,						/**< 无数据  */
 	kFriendProfileKeyRelationship = 1,				/**< 主动好友关系  */
@@ -37,7 +36,7 @@ enum FriendProfileKey
 };
 
 /** @brief 云信好友 */
-struct FriendProfile
+struct NIM_SDK_CPPWRAPPER_DLL_API FriendProfile
 {
 	/** 构造函数 */
 	FriendProfile() : relationship_(kNIMFriendFlagNotFriend)
@@ -270,14 +269,14 @@ private:
 };
 
 /** @brief 云信好友变更事件 */
-struct FriendChangeEvent
+struct NIM_SDK_CPPWRAPPER_DLL_API FriendChangeEvent
 {
 	NIMFriendChangeType	type_;			/**< 事件类型 */
 	std::string			content_;		/**< 事件内容，根据事件类型通过提供的ParsexxxEvent接口(nim_cpp_friend.h)解析该内容 */
 };
 
 /** @brief 云信好友变更事件（请求添加） */
-struct FriendAddEvent
+struct NIM_SDK_CPPWRAPPER_DLL_API FriendAddEvent
 {
 	std::string		accid_;				/**< 用户ID */
 	NIMVerifyType	add_type_;			/**< 验证类型 */
@@ -285,19 +284,19 @@ struct FriendAddEvent
 };
 
 /** @brief 云信好友变更事件（删除） */
-struct FriendDelEvent
+struct NIM_SDK_CPPWRAPPER_DLL_API FriendDelEvent
 {
 	std::string		accid_;				/**< 用户ID */
 };
 
 /** @brief 云信好友变更事件（更新） */
-struct FriendProfileUpdateEvent
+struct NIM_SDK_CPPWRAPPER_DLL_API FriendProfileUpdateEvent
 {
 	FriendProfile	profile_;			/**< 用户信息 */
 };
 
 /** @brief 云信好友变更事件（多端同步） */
-struct FriendProfileSyncEvent
+struct NIM_SDK_CPPWRAPPER_DLL_API FriendProfileSyncEvent
 {
 	std::list<FriendProfile> profiles_;	/**< 用户信息列表 */
 };
@@ -308,7 +307,7 @@ struct FriendProfileSyncEvent
   * @param[out] profiles 好友信息
   * @return bool 解析成功 或失败
   */
-bool ParseFriendsProfile(const std::string& friends_profile_json, std::list<FriendProfile>& profiles);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseFriendsProfile(const std::string& friends_profile_json, std::list<FriendProfile>& profiles);
 
 /** @fn bool ParseFriendProfile(const std::string& friend_profile_json, FriendProfile& profile)
   * @brief 解析（单个）好友信息
@@ -316,7 +315,7 @@ bool ParseFriendsProfile(const std::string& friends_profile_json, std::list<Frie
   * @param[out] profile 好友信息
   * @return bool 解析成功 或失败
   */
-bool ParseFriendProfile(const std::string& friend_profile_json, FriendProfile& profile);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseFriendProfile(const std::string& friend_profile_json, FriendProfile& profile);
 
 /** @fn void ParseFriendProfile(const Json::Value& friend_profile_json, FriendProfile& profile)
   * @brief 解析（单个）好友信息
@@ -324,7 +323,7 @@ bool ParseFriendProfile(const std::string& friend_profile_json, FriendProfile& p
   * @param[out] profile 好友信息
   * @return void
   */
-void ParseFriendProfile(const Json::Value& friend_profile_json, FriendProfile& profile);
+NIM_SDK_CPPWRAPPER_DLL_API void ParseFriendProfile(const Json::Value& friend_profile_json, FriendProfile& profile);
 }
 
 #endif //_NIM_SDK_CPP_FRIEND_HELPER_H_

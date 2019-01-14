@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_robot.h
   * @brief 智能机器人
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2017.06.26
   */
 
@@ -11,7 +10,7 @@
 #include <string>
 #include <functional>
 #include "nim_robot_helper.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -22,7 +21,7 @@ namespace nim
 /** @class Robot
   * @brief NIM SDK提供的Robot接口
   */
-class Robot
+class NIM_SDK_CPPWRAPPER_DLL_API Robot
 {
 public:
 	typedef std::function<void(NIMResCode rescode, NIMRobotInfoChangeType type, const RobotInfos&)> RobotChangedCallback;		/**< 机器人信息变更事件通知回调模板 */
@@ -59,7 +58,11 @@ static RobotInfo QueryRobotInfoByAccidBlock(const std::string &accid, const std:
   * @return  void
   */
 static void GetRobotInfoAsync(const __int64 timetag, const RobotQueryCallback &callback, const std::string &json_extension = "");
-
+/** @fn void UnregRobotCb()
+	* 反注册Robot提供的所有回调
+	* @return void 无返回值
+	*/
+static void UnregRobotCb();
 };
 
 }//namespace

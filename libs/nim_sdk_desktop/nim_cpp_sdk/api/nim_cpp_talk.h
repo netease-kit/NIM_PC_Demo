@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_talk.h
   * @brief P2P和群组聊天
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg, Harrison
   * @date 2015/2/1
   */
 
@@ -12,7 +11,7 @@
 #include <functional>
 #include "nim_talk_helper.h"
 #include "nim_msg_helper.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -23,7 +22,7 @@ namespace nim
 /** @class Talk
   * @brief 聊天功能；主要包括发送消息、接收消息等功能
   */
-class Talk
+class NIM_SDK_CPPWRAPPER_DLL_API Talk
 {
 
 public:

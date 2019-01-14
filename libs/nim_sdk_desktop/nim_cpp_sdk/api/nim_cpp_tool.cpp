@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_tool.cpp
   * @brief NIM SDK提供的一些工具接口，主要包括获取SDK里app account对应的app data目录，计算md5等
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg, Harrison
   * @date 2015/09/21
   */
 
@@ -10,8 +9,7 @@
 #include "nim_json_util.h"
 #include "nim_string_util.h"
 #include "nim_cpp_global.h"
-#include "nim_cpp_win32_demo_helper.h"
-
+#include "callback_proxy.h"
 namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
@@ -30,16 +28,10 @@ typedef void(*nim_tool_filter_client_antispam_async)(const char* text, const cha
 
 static void CallbackGetAudioText(int res_code, const char *text, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		Tool::GetAudioTextCallback* cb = (Tool::GetAudioTextCallback*)callback;
 
-		PostTaskToUIThread(std::bind((*cb), res_code, PCharToString(text)));
-
-		//(*cb)(res_code, PCharToString(text));
-		delete cb;
-		cb = nullptr;
-	}
+	CallbackProxy::DoSafeCallback<Tool::GetAudioTextCallback>(callback, [=](const Tool::GetAudioTextCallback& cb){
+		CallbackProxy::Invoke(cb, res_code, PCharToString(text));
+	}, true);
 }
 
 std::string Tool::GetUserAppdataDir(const std::string& app_account)
@@ -121,14 +113,10 @@ bool Tool::GetAudioTextAsync(const AudioInfo& audio_info, const GetAudioTextCall
 
 static void CallbackFilterClientAntispam(bool succedd, int ret, const char *text, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		Tool::FilterClientAntispamCallback* cb = (Tool::FilterClientAntispamCallback*)callback;
-		PostTaskToUIThread(std::bind((*cb), succedd, ret, PCharToString(text)));
-		//(*cb)(succedd, ret, PCharToString(text));
-		delete cb;
-		cb = nullptr;
-	}
+
+	CallbackProxy::DoSafeCallback<Tool::FilterClientAntispamCallback>(callback, [=](const Tool::FilterClientAntispamCallback& cb){
+		CallbackProxy::Invoke(cb, succedd, ret, PCharToString(text));
+	}, true);
 }
 
 void Tool::FilterClientAntispam(const std::string& text, const std::string& replace_str, const std::string& lib_name, const FilterClientAntispamCallback& callback)
@@ -140,4 +128,5 @@ void Tool::FilterClientAntispam(const std::string& text, const std::string& repl
 	}
 	NIM_SDK_GET_FUNC(nim_tool_filter_client_antispam_async)((char *)text.c_str(), (char *)replace_str.c_str(), (char *)lib_name.c_str(), nullptr, &CallbackFilterClientAntispam, cb_pointer);
 }
+
 }

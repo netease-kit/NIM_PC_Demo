@@ -1,14 +1,13 @@
 ﻿/** @file nim_cpp_rts.cpp
   * @brief NIM Rts提供的相关接口
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author gq
   * @date 2015/7/3
   */
 
 #include "nim_cpp_rts.h"
 #include "nim_sdk_util.h"
-#include "nim_cpp_win32_demo_helper.h"
 #include "nim_string_util.h"
+#include "callback_proxy.h"
 
 namespace nim
 {
@@ -39,227 +38,163 @@ typedef	void (*nim_rts_set_rec_data_cb_func)(nim_rts_rec_data_cb_func cb, const 
 
 void StartChannelCallbackWrapper(int code, const char *session_id, int channel_type, const char* uid, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::StartChannelCallback* cb_pointer = (Rts::StartChannelCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (nim::NIMResCode)code, PCharToString(session_id), channel_type, PCharToString(uid)));
 
-			//(*cb_pointer)((nim::NIMResCode)code, PCharToString(session_id), channel_type, PCharToString(uid));
-		}
-		delete cb_pointer;
-	}
+	CallbackProxy::DoSafeCallback<Rts::StartChannelCallback>(user_data, [=](const Rts::StartChannelCallback& cb){
+
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)code, PCharToString(session_id), channel_type, PCharToString(uid));
+	},true);
+
 }
 void StartNotifyCallbackWrapper(const char *session_id, int channel_type, const char* uid, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::StartNotifyCallback* cb_pointer = (Rts::StartNotifyCallback*)user_data;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<Rts::StartNotifyCallback>(user_data, [=](const Rts::StartNotifyCallback& cb){
+
+		std::string custom_info;
+		std::string json(json_extension);
+		Json::Value valus;
+		Json::Reader reader;
+		if (reader.parse(json, valus) && valus.isObject())
 		{
-			std::string custom_info;
-			std::string json(json_extension);
-			Json::Value valus;
-			Json::Reader reader;
-			if (reader.parse(json, valus) && valus.isObject())
-			{
-				custom_info = valus[nim::kNIMRtsCreateCustomInfo].asString();
-			}
-
-			PostTaskToUIThread(std::bind((*cb_pointer), PCharToString(session_id), channel_type, PCharToString(uid), custom_info));
-
-			//(*cb_pointer)(PCharToString(session_id), channel_type, PCharToString(uid), custom_info);
+			custom_info = valus[nim::kNIMRtsCreateCustomInfo].asString();
 		}
-	}
+
+		CallbackProxy::Invoke(cb, PCharToString(session_id), channel_type, PCharToString(uid), custom_info);
+	});
+
+
 }
 void CreateConfCallbackWrapper(int code, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::CreateConfCallback* cb_pointer = (Rts::CreateConfCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (nim::NIMResCode)code));
-			//(*cb_pointer)((nim::NIMResCode)code);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<Rts::CreateConfCallback>(user_data, [=](const Rts::CreateConfCallback& cb){
+
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)code);
+	},true);
 }
 void JoinConfCallbackWrapper(int code, const char *session_id, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::JoinConfCallback* cb_pointer = (Rts::JoinConfCallback*)user_data;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<Rts::JoinConfCallback>(user_data, [=](const Rts::JoinConfCallback& cb){
+
+		int64_t channel_id = 0;
+		std::string custom_info;
+		Json::Value values;
+		Json::Reader reader;
+		std::string json(json_extension);
+		if (reader.parse(json, values) && values.isObject())
 		{
-			int64_t channel_id = 0;
-			std::string custom_info;
-			Json::Value values;
-			Json::Reader reader;
-			std::string json(json_extension);
-			if (reader.parse(json, values) && values.isObject())
-			{
-				channel_id = values[kNIMRtsChannelId].asInt64();
-				custom_info = values[kNIMRtsCustomInfo].asString();
-			}
-			PostTaskToUIThread(std::bind((*cb_pointer), (nim::NIMResCode)code, PCharToString(session_id), channel_id, custom_info));
-			//(*cb_pointer)((nim::NIMResCode)code, PCharToString(session_id), channel_id, custom_info);
+			channel_id = values[kNIMRtsChannelId].asInt64();
+			custom_info = values[kNIMRtsCustomInfo].asString();
 		}
-		delete cb_pointer;
-	}
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)code, PCharToString(session_id), channel_id, custom_info);
+	}, true);
+
 }
 void AckCallbackWrapper(int code, const char *session_id, int channel_type, bool accept, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::AckCallback* cb_pointer = (Rts::AckCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (nim::NIMResCode)code, PCharToString(session_id), channel_type, accept));
+	CallbackProxy::DoSafeCallback<Rts::AckCallback>(user_data, [=](const Rts::AckCallback& cb){
 
-			//(*cb_pointer)((nim::NIMResCode)code, PCharToString(session_id), channel_type, accept);
-		}
-		delete cb_pointer;
-	}
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)code, PCharToString(session_id), channel_type, accept);
+	}, true);
+
 }
 void AckNotifyCallbackWrapper(const char *session_id, int channel_type, bool accept, const char* uid, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::AckNotifyCallback* cb_pointer = (Rts::AckNotifyCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), PCharToString(session_id), channel_type, accept, PCharToString(uid)));
 
-			//(*cb_pointer)(PCharToString(session_id), channel_type, accept, PCharToString(uid));
-		}
-	}
+	CallbackProxy::DoSafeCallback<Rts::AckNotifyCallback>(user_data, [=](const Rts::AckNotifyCallback& cb){
+
+		CallbackProxy::Invoke(cb, PCharToString(session_id), channel_type, accept, PCharToString(uid));
+	});
+
 }
 void SyncAckNotifyCallbackWrapper(const char *session_id, int channel_type, bool accept, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::SyncAckNotifyCallback* cb_pointer = (Rts::SyncAckNotifyCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), PCharToString(session_id), channel_type, accept));
 
-			//(*cb_pointer)(PCharToString(session_id), channel_type, accept);
-		}
-	}
+	CallbackProxy::DoSafeCallback<Rts::SyncAckNotifyCallback>(user_data, [=](const Rts::SyncAckNotifyCallback& cb){
+
+		CallbackProxy::Invoke(cb, PCharToString(session_id), channel_type, accept);
+	});
+
 }
 void ConnectNotifyCallbackWrapper(const char *session_id, int channel_type, int code, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::ConnectNotifyCallback* cb_pointer = (Rts::ConnectNotifyCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), PCharToString(session_id), channel_type, code, PCharToString(json_extension)));
 
-			//(*cb_pointer)(PCharToString(session_id), channel_type, code, PCharToString(json_extension));
-		}
-	}
+	CallbackProxy::DoSafeCallback<Rts::ConnectNotifyCallback>(user_data, [=](const Rts::ConnectNotifyCallback& cb){
+
+		CallbackProxy::Invoke(cb, PCharToString(session_id), channel_type, code, PCharToString(json_extension));
+	});
+
 }
 void MemberNotifyCallbackWrapper(const char *session_id, int channel_type, int type, const char* uid, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::MemberNotifyCallback* cb_pointer = (Rts::MemberNotifyCallback*)user_data;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<Rts::MemberNotifyCallback>(user_data, [=](const Rts::MemberNotifyCallback& cb){
+
+		int32_t leave_type = kNIMRtsMemberLeftNormal;
+		Json::Value values;
+		Json::Reader reader;
+		std::string json = PCharToString(json_extension);
+		if (reader.parse(json, values) && values.isObject())
 		{
-			int32_t leave_type = kNIMRtsMemberLeftNormal;
-			Json::Value values;
-			Json::Reader reader;
-			std::string json = PCharToString(json_extension);
-			if (reader.parse(json, values) && values.isObject())
-			{
-				leave_type = values[kNIMRtsLeaveType].asInt();
-			}
-			PostTaskToUIThread(std::bind((*cb_pointer), PCharToString(session_id), channel_type, PCharToString(uid), type, leave_type));
-			//(*cb_pointer)(PCharToString(session_id), channel_type, PCharToString(uid), type);
+			leave_type = values[kNIMRtsLeaveType].asInt();
 		}
-	}
+		CallbackProxy::Invoke(cb, PCharToString(session_id), channel_type, PCharToString(uid), type, leave_type);
+	});
+
 }
 void HangupCallbackWrapper(int code, const char *session_id, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::HangupCallback* cb_pointer = (Rts::HangupCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (nim::NIMResCode)code, PCharToString(session_id)));
 
-			//(*cb_pointer)((nim::NIMResCode)code, PCharToString(session_id));
-		}
-		delete cb_pointer;
-	}
+	CallbackProxy::DoSafeCallback<Rts::HangupCallback>(user_data, [=](const Rts::HangupCallback& cb){
+
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)code, PCharToString(session_id));
+	},true);
+
 }
 void HangupNotifyCallbackWrapper(const char *session_id, const char* uid, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::HangupNotifyCallback* cb_pointer = (Rts::HangupNotifyCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), PCharToString(session_id), PCharToString(uid)));
-		}
-	}
+	CallbackProxy::DoSafeCallback<Rts::HangupNotifyCallback>(user_data, [=](const Rts::HangupNotifyCallback& cb){
+
+		CallbackProxy::Invoke(cb, PCharToString(session_id), PCharToString(uid));
+	});
+
 }
 void OptCallbackWrapper(int res_code, const char *session_id, int channel_type, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::OptCallback* cb_pointer = (Rts::OptCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (nim::NIMResCode)res_code, PCharToString(session_id), channel_type, PCharToString(json_extension)));
-			//(*cb_pointer)((nim::NIMResCode)res_code, PCharToString(session_id), channel_type, PCharToString(json_extension));
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<Rts::OptCallback>(user_data, [=](const Rts::OptCallback& cb){
+
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)res_code, PCharToString(session_id), channel_type, PCharToString(json_extension));
+	});
+
 }
 void ControlCallbackWrapper(int code, const char *session_id, const char *info, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::ControlCallback* cb_pointer = (Rts::ControlCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (nim::NIMResCode)code, PCharToString(session_id), PCharToString(info)));
 
-			//(*cb_pointer)((nim::NIMResCode)code, PCharToString(session_id), PCharToString(info));
-		}
-		delete cb_pointer;
-	}
+	CallbackProxy::DoSafeCallback<Rts::ControlCallback>(user_data, [=](const Rts::ControlCallback& cb){
+
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)code, PCharToString(session_id), PCharToString(info));
+	},true);
+
 }
 void ControlNotifyCallbackWrapper(const char *session_id, const char *info, const char* uid, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::ControlNotifyCallback* cb_pointer = (Rts::ControlNotifyCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), PCharToString(session_id), PCharToString(info), PCharToString(uid)));
+	CallbackProxy::DoSafeCallback<Rts::ControlNotifyCallback>(user_data, [=](const Rts::ControlNotifyCallback& cb){
 
-			//(*cb_pointer)(PCharToString(session_id), PCharToString(info), PCharToString(uid));
-		}
-	}
+		CallbackProxy::Invoke(cb, PCharToString(session_id), PCharToString(info), PCharToString(uid));
+	});
+
 }
 void RecDataCallbackWrapper(const char *session_id, int channel_type, const char* uid, const char* data, unsigned int size, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Rts::RecDataCallback* cb_pointer = (Rts::RecDataCallback*)user_data;
-		if (*cb_pointer)
-		{
-			std::string data_temp(data, size);
 
-			PostTaskToUIThread(std::bind((*cb_pointer), PCharToString(session_id), channel_type, PCharToString(uid), data_temp));
+	CallbackProxy::DoSafeCallback<Rts::RecDataCallback>(user_data, [=](const Rts::RecDataCallback& cb){
 
-			//(*cb_pointer)(PCharToString(session_id), channel_type, PCharToString(uid), data_temp);
-		}
-	}
+		std::string data_temp(data, size);
+		CallbackProxy::Invoke(cb, PCharToString(session_id), channel_type, PCharToString(uid), data_temp);
+	});
+
 }
 
 void Rts::SetProxy(NIMProxyType type, const std::string& host, int port, const std::string& user, const std::string& password)
@@ -299,7 +234,7 @@ void Rts::CreateConf(const std::string& name, const std::string& custom_info, co
 	{
 		cb_pointer = new CreateConfCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_rts_create_conf)(name.c_str(), custom_info.c_str(), "", &CreateConfCallbackWrapper, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_rts_create_conf)(name.c_str(), custom_info.c_str(), "", &CreateConfCallbackWrapper, cb_pointer);
 }
 
 //NIM 加入多人rts会话
@@ -316,7 +251,7 @@ void Rts::JoinConf(const std::string& name, const std::string& session_id, bool 
 	values_temp[nim::kNIMRtsSessionId] = session_id;
 	Json::FastWriter fs;
 	json = fs.write(values_temp);
-	return NIM_SDK_GET_FUNC(nim_rts_join_conf)(name.c_str(), json.c_str(), &JoinConfCallbackWrapper, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_rts_join_conf)(name.c_str(), json.c_str(), &JoinConfCallbackWrapper, cb_pointer);
 }
 
 //NIM 回复收到的邀请
@@ -333,7 +268,7 @@ void Rts::Ack(const std::string& session_id, int channel_type, bool accept, bool
 	values_temp[nim::kNIMRtsAudioRecord] = audio_record ? 1 : 0;
 	Json::FastWriter fs;
 	json = fs.write(values_temp);
-	return NIM_SDK_GET_FUNC(nim_rts_ack)(session_id.c_str(), channel_type, accept, json.c_str(), &AckCallbackWrapper, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_rts_ack)(session_id.c_str(), channel_type, accept, json.c_str(), &AckCallbackWrapper, cb_pointer);
 }
 
 //NIM 设置收到对方回复的通知回调
@@ -345,7 +280,7 @@ void Rts::SetAckNotifyCb(const AckNotifyCallback& cb)
 	{
 		g_ack_notify_cb_pointer = new AckNotifyCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_rts_set_ack_notify_cb_func)(&AckNotifyCallbackWrapper, g_ack_notify_cb_pointer);
+	NIM_SDK_GET_FUNC(nim_rts_set_ack_notify_cb_func)(&AckNotifyCallbackWrapper, g_ack_notify_cb_pointer);
 }
 
 //NIM 设置收到本人其他端回复的同步通知回调
@@ -357,7 +292,7 @@ void Rts::SetSyncAckNotifyCb(const SyncAckNotifyCallback& cb)
 	{
 		g_syncack_notify_cb_pointer = new SyncAckNotifyCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_rts_set_sync_ack_notify_cb_func)(&SyncAckNotifyCallbackWrapper, g_syncack_notify_cb_pointer);
+	NIM_SDK_GET_FUNC(nim_rts_set_sync_ack_notify_cb_func)(&SyncAckNotifyCallbackWrapper, g_syncack_notify_cb_pointer);
 }
 
 //状态回调相关
@@ -370,7 +305,7 @@ void Rts::SetConnectNotifyCb(const ConnectNotifyCallback& cb)
 	{
 		g_connect_notify_cb_pointer = new ConnectNotifyCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_rts_set_connect_notify_cb_func)(&ConnectNotifyCallbackWrapper, g_connect_notify_cb_pointer);
+	NIM_SDK_GET_FUNC(nim_rts_set_connect_notify_cb_func)(&ConnectNotifyCallbackWrapper, g_connect_notify_cb_pointer);
 }
 
 //NIM 设置监听通道成员状态回调
@@ -382,7 +317,7 @@ void Rts::SetMemberChangeCb(const MemberNotifyCallback& cb)
 	{
 		g_member_notify_cb_pointer = new MemberNotifyCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_rts_set_member_change_cb_func)(&MemberNotifyCallbackWrapper, g_member_notify_cb_pointer);
+	NIM_SDK_GET_FUNC(nim_rts_set_member_change_cb_func)(&MemberNotifyCallbackWrapper, g_member_notify_cb_pointer);
 }
 
 //控制接口
@@ -394,7 +329,7 @@ void Rts::Control(const std::string& session_id, const std::string& info, const 
 	{
 		cb_pointer = new ControlCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_rts_control)(session_id.c_str(), info.c_str(), "", &ControlCallbackWrapper, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_rts_control)(session_id.c_str(), info.c_str(), "", &ControlCallbackWrapper, cb_pointer);
 }
 
 //NIM 设置收到会话控制的通知回调
@@ -406,13 +341,13 @@ void Rts::SetControlNotifyCb(const ControlNotifyCallback& cb)
 	{
 		g_control_notify_cb_pointer = new ControlNotifyCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_rts_set_control_notify_cb_func)(&ControlNotifyCallbackWrapper, g_control_notify_cb_pointer);
+	NIM_SDK_GET_FUNC(nim_rts_set_control_notify_cb_func)(&ControlNotifyCallbackWrapper, g_control_notify_cb_pointer);
 }
 
 //NIM 设置音视频会话类型
 void Rts::SetVChatMode(const std::string& session_id, int mode)
 {
-	return NIM_SDK_GET_FUNC(nim_rts_set_vchat_mode)(session_id.c_str(), mode, "");
+	NIM_SDK_GET_FUNC(nim_rts_set_vchat_mode)(session_id.c_str(), mode, "");
 }
 
 //结束相关
@@ -424,7 +359,7 @@ void Rts::Hangup(const std::string& session_id, const HangupCallback& cb)
 	{
 		cb_pointer = new HangupCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_rts_hangup)(session_id.c_str(), "", &HangupCallbackWrapper, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_rts_hangup)(session_id.c_str(), "", &HangupCallbackWrapper, cb_pointer);
 }
 
 //NIM 设置结束会话通知回调
@@ -436,7 +371,7 @@ void Rts::SetHangupNotifyCb(const HangupNotifyCallback& cb)
 	{
 		g_hangup_notify_cb_pointer = new HangupNotifyCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_rts_set_hangup_notify_cb_func)(&HangupNotifyCallbackWrapper, g_hangup_notify_cb_pointer);
+	NIM_SDK_GET_FUNC(nim_rts_set_hangup_notify_cb_func)(&HangupNotifyCallbackWrapper, g_hangup_notify_cb_pointer);
 }
 
 void Rts::Relogin(const std::string& session_id, int channel_type, OptCallback cb)
@@ -446,7 +381,7 @@ void Rts::Relogin(const std::string& session_id, int channel_type, OptCallback c
 	{
 		cb_pointer = new OptCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_rts_relogin)(session_id.c_str(), channel_type, "", &OptCallbackWrapper, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_rts_relogin)(session_id.c_str(), channel_type, "", &OptCallbackWrapper, cb_pointer);
 }
 //数据相关
 //NIM 发送数据
@@ -460,7 +395,7 @@ void Rts::SendData(const std::string& session_id, int channel_type, const std::s
 		Json::FastWriter fs;
 		json = fs.write(values_temp);
 	}
-	return NIM_SDK_GET_FUNC(nim_rts_send_data)(session_id.c_str(), channel_type, data.c_str(), data.size(), json.c_str());
+	NIM_SDK_GET_FUNC(nim_rts_send_data)(session_id.c_str(), channel_type, data.c_str(), data.size(), json.c_str());
 }
 
 //NIM 设置监听数据接收回调
@@ -472,7 +407,7 @@ void Rts::SetRecDataCb(const RecDataCallback& cb)
 	{
 		g_rec_data_cb_pointer = new RecDataCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_rts_set_rec_data_cb_func)(&RecDataCallbackWrapper, g_rec_data_cb_pointer);
+	NIM_SDK_GET_FUNC(nim_rts_set_rec_data_cb_func)(&RecDataCallbackWrapper, g_rec_data_cb_pointer);
 }
 
 }  // namespace nim

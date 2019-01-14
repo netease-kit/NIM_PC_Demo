@@ -1,7 +1,6 @@
 ﻿/** @file nim_user_helper.h
   * @brief SDK用户信息辅助方法
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2015/10/20
   */
 
@@ -15,7 +14,7 @@
 #include "nim_json_util.h"
 #include "nim_base_types.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -23,7 +22,7 @@
 namespace nim
 {
 /** @enum 云信用户名片数据标记Key,用以标记对应数据的有效性 */
-enum UserNameCardValueKey
+	NIM_SDK_CPPWRAPPER_DLL_API enum UserNameCardValueKey
 {
 	kUserNameCardKeyNone		= 0,			/**< 无内容 */
 	kUserNameCardKeyName		= 1,			/**< 昵称 */
@@ -38,7 +37,7 @@ enum UserNameCardValueKey
 };
 
 /** @brief 云信用户名片 */
-struct UserNameCard
+struct NIM_SDK_CPPWRAPPER_DLL_API UserNameCard
 {
 	/** 构造函数，推荐使用 */
 	UserNameCard(const std::string& accid) : value_available_flag_(0), create_timetag_(0), update_timetag_(0), gender_(0)
@@ -278,7 +277,7 @@ private:
 };
 
 /** @brief 黑名单 静音名单信息 */
-struct BlackMuteListInfo
+struct NIM_SDK_CPPWRAPPER_DLL_API BlackMuteListInfo
 {
 	std::string		accid_;				/**< 用户ID */
 	bool			set_black_;			/**< 是否黑名单 */
@@ -290,7 +289,7 @@ struct BlackMuteListInfo
 };
 
 /** @brief 黑名单和静音名单变更通知 */
-struct SpecialRelationshipChangeEvent
+struct NIM_SDK_CPPWRAPPER_DLL_API SpecialRelationshipChangeEvent
 {
 	NIMUserSpecialRelationshipChangeType type_;		/**< 黑名单/静音名单更新事件类型 */
 	std::string							 content_;	/**< 黑名单/静音名单更新事件内容，根据事件类型调用ParseXXXChange接口（nim_cpp_user.h）解析该内容 */
@@ -302,7 +301,7 @@ struct SpecialRelationshipChangeEvent
   * @param[out] namecards 用户名片
   * @return bool 解析成功或失败 
   */
-bool ParseNameCards(const std::string& namecards_json, std::list<UserNameCard>& namecards);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseNameCards(const std::string& namecards_json, std::list<UserNameCard>& namecards);
 
 /** @fn bool ParseNameCards(const Json::Value& namecards_json, std::list<UserNameCard>& namecards)
   * @brief 解析用户名片
@@ -310,7 +309,7 @@ bool ParseNameCards(const std::string& namecards_json, std::list<UserNameCard>& 
   * @param[out] namecards 用户名片
   * @return bool 解析成功或失败
   */
-bool ParseNameCards(const Json::Value& namecards_json, std::list<UserNameCard>& namecards);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseNameCards(const Json::Value& namecards_json, std::list<UserNameCard>& namecards);
 
 /** @fn bool ParseNameCard(const std::string& namecard_json, UserNameCard& namecard)
   * @brief 解析用户名片
@@ -318,7 +317,7 @@ bool ParseNameCards(const Json::Value& namecards_json, std::list<UserNameCard>& 
   * @param[out] namecard 用户名片
   * @return bool 解析成功或失败 
   */
-bool ParseNameCard(const std::string& namecard_json, UserNameCard& namecard);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseNameCard(const std::string& namecard_json, UserNameCard& namecard);
 
 /** @fn bool ParseNameCard(const std::string& namecard_json, UserNameCard& namecard)
   * @brief 解析用户名片
@@ -326,7 +325,7 @@ bool ParseNameCard(const std::string& namecard_json, UserNameCard& namecard);
   * @param[out] namecard 用户名片
   * @return bool 解析成功或失败 
   */
-void ParseNameCard(const Json::Value& namecard_json, UserNameCard& namecard);
+NIM_SDK_CPPWRAPPER_DLL_API void ParseNameCard(const Json::Value& namecard_json, UserNameCard& namecard);
 
 /** @fn bool ParseSpecialListInfo(const std::string& list_json, std::list<BlackMuteListInfo>& black_mute_list)
   * @brief 解析黑名单/静音列表
@@ -334,7 +333,7 @@ void ParseNameCard(const Json::Value& namecard_json, UserNameCard& namecard);
   * @param[out] black_mute_list 黑名单/静音列表
   * @return bool 解析成功或失败 
   */
-bool ParseSpecialListInfo(const std::string& list_json, std::list<BlackMuteListInfo>& black_mute_list);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseSpecialListInfo(const std::string& list_json, std::list<BlackMuteListInfo>& black_mute_list);
 }
 
 #endif //_NIM_SDK_CPP_USER_HELPER_H_

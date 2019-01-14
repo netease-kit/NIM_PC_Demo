@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_global.h
   * @brief 辅助能力
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg
   * @date 2015/2/1
   */
 
@@ -12,7 +11,7 @@
 #include <string>
 #include "nim_base_types.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -24,10 +23,10 @@ namespace nim
 /** @class Global
   * @brief NIM SDK提供的一些全局接口
   */
-class Global
+ class NIM_SDK_CPPWRAPPER_DLL_API Global
 {
 public:
-	struct CachedFileInfo
+	struct NIM_SDK_CPPWRAPPER_DLL_API CachedFileInfo
 	{
 		std::string file_type_;
 		std::string file_path_;

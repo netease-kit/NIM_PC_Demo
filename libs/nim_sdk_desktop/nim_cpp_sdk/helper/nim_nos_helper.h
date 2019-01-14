@@ -1,7 +1,6 @@
 ﻿/** @file nim_nos_helper.h
   * @brief NOS数据结构定义
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Redrain
   * @date 2016/12/16
   */
 
@@ -15,7 +14,7 @@
 #include "json.h"
 #include "../util/nim_build_config.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -24,7 +23,7 @@ namespace nim
 {
 
 	/** @brief 初始化nos参数 */
-	struct InitNosConfigParam
+	struct NIM_SDK_CPPWRAPPER_DLL_API InitNosConfigParam
 	{
 		/** 构造函数 */
 		InitNosConfigParam() {}
@@ -73,7 +72,7 @@ namespace nim
 		static const int32_t kMINSURVIVALTIME;/**< int32_t 资源生命周期 最小取值 */
 	};
 	/** @brief 初始化结果 */
-	struct InitNosResult
+	struct NIM_SDK_CPPWRAPPER_DLL_API InitNosResult
 	{
 		NIMNosInitConfigResultType result_; /**< enum 初始化结果 */
 		std::list<std::string> success_req_tags_; /**< list 初始化成功的tag列表 */
@@ -83,7 +82,7 @@ namespace nim
 	};
 
 /** @brief 上传完成的结果 */
-struct UploadMediaResult
+struct NIM_SDK_CPPWRAPPER_DLL_API UploadMediaResult
 {
 	std::string url_;				/**< 上传地址 */
 	std::string res_id_;			/**< 资源id */
@@ -94,7 +93,7 @@ struct UploadMediaResult
 };
 
 /** @brief 下载完成的结果 */
-struct DownloadMediaResult
+struct NIM_SDK_CPPWRAPPER_DLL_API DownloadMediaResult
 {
 	std::string file_path_;			/**< 本地绝对路径 */
 	std::string call_id_;			/**< 请求者id */
@@ -105,7 +104,7 @@ struct DownloadMediaResult
 };
 
 /** @brief 传输过程中的数据 */
-struct ProgressData
+struct NIM_SDK_CPPWRAPPER_DLL_API ProgressData
 {
 	std::string res_id_;			/**< 资源id */
 
@@ -120,7 +119,7 @@ struct ProgressData
   * @param[out] res 结果结构体
   * @return bool 解析成功 或失败
   */
-bool ParseUploadResult(const std::string& url, const std::string& json, UploadMediaResult& res);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseUploadResult(const std::string& url, const std::string& json, UploadMediaResult& res);
 
 /** @fn bool ParseDownloadResult(const std::string& file_path, const std::string& call_id, const std::string& res_id, DownloadMediaResult& res)
   * @brief 解析NOS上传过程数据
@@ -131,7 +130,7 @@ bool ParseUploadResult(const std::string& url, const std::string& json, UploadMe
   * @param[out] res 数据结构体
   * @return bool 解析成功 或失败
   */
-bool ParseDownloadResult(const std::string& file_path, const std::string& call_id, const std::string& res_id, DownloadMediaResult& res);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseDownloadResult(const std::string& file_path, const std::string& call_id, const std::string& res_id, DownloadMediaResult& res);
 
 /** @fn bool ParseUploadProgress(const std::string& json, ProgressData& res)
   * @brief 解析NOS上传过程数据
@@ -139,7 +138,7 @@ bool ParseDownloadResult(const std::string& file_path, const std::string& call_i
   * @param[out] res 数据结构体
   * @return bool 解析成功 或失败
   */
-bool ParseProgressData(const std::string& json, ProgressData& res);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseProgressData(const std::string& json, ProgressData& res);
 
 } //namespace nim
 

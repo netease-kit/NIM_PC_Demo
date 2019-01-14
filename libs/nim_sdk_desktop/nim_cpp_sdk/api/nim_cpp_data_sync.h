@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_data_sync.h
   * @brief 数据同步
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg
   * @date 2015/09/23
   */
 
@@ -11,7 +10,7 @@
 #include <string>
 #include <functional>
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -21,7 +20,7 @@ namespace nim
 /** @class DataSync
   * @brief NIM SDK提供的数据同步相关接口
   */
-class DataSync
+class NIM_SDK_CPPWRAPPER_DLL_API DataSync
 {
 
 public:

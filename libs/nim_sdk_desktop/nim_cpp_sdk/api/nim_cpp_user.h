@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_user.h
   * @brief 用户数据
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg
   * @date 2015/8/17
   */
 
@@ -12,7 +11,7 @@
 #include <list>
 #include <functional>
 #include "nim_user_helper.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -23,10 +22,9 @@ namespace nim
 /** @class User
   * @brief NIM SDK提供的用户相关接口
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg
   * @date 2015/8/17
   */
-class User
+class NIM_SDK_CPPWRAPPER_DLL_API User
 {
 
 public:

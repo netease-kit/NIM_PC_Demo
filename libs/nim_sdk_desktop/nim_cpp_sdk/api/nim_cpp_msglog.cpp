@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_msglog.cpp
   * @brief NIM SDK提供的消息历史接口
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg, Harrison
   * @date 2015/2/1
   */
 
@@ -10,8 +9,8 @@
 #include "nim_json_util.h"
 #include "nim_string_util.h"
 #include "nim_cpp_talk.h"
-#include "nim_cpp_win32_demo_helper.h"
-
+#include "callback_proxy.h"
+#include <algorithm>
 namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
@@ -131,18 +130,14 @@ static void CallbackQueryMsg(int res_code
 	, const char *json_extension
 	, const void *callback)
 {
-	if (callback)
-	{
-		MsgLog::QueryMsgCallback* cb_pointer = (MsgLog::QueryMsgCallback*)callback;
-		if (*cb_pointer)
-		{
-			QueryMsglogResult res;
-			ParseMsglogs(PCharToString(result), res);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, PCharToString(id), to_type, res));
-			//(*cb_pointer)((nim::NIMResCode)res_code, PCharToString(id), to_type, res);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<MsgLog::QueryMsgCallback>(callback, [=](const MsgLog::QueryMsgCallback& cb){
+
+		QueryMsglogResult res;
+		ParseMsglogs(PCharToString(result), res);
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)res_code, PCharToString(id), to_type,res);
+	}, true);
+
 }
 
 static void CallbackModifyMultipleMsglog(int res_code
@@ -151,16 +146,10 @@ static void CallbackModifyMultipleMsglog(int res_code
 	, const char *json_extension
 	, const void *callback)
 {
-	if (callback)
-	{
-		MsgLog::ModifyMultipleMsglogCallback* cb_pointer = (MsgLog::ModifyMultipleMsglogCallback*)callback;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, PCharToString(uid), to_type));
-//			(*cb_pointer)((nim::NIMResCode)res_code, PCharToString(uid), to_type);
-		}
-		delete cb_pointer;
-	}
+	CallbackProxy::DoSafeCallback<MsgLog::ModifyMultipleMsglogCallback>(callback, [=](const MsgLog::ModifyMultipleMsglogCallback& cb){
+
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)res_code, PCharToString(uid),to_type);
+	}, true);
 }
 
 static void CallbackModifySingleMsglog(int res_code
@@ -168,32 +157,21 @@ static void CallbackModifySingleMsglog(int res_code
 	, const char *json_extension
 	, const void *user_data)
 {
-	if (user_data)
-	{
-		MsgLog::ModifySingleMsglogCallback* cb_pointer = (MsgLog::ModifySingleMsglogCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, PCharToString(msg_id)));
-			//(*cb_pointer)((nim::NIMResCode)res_code, PCharToString(msg_id));
-		}
-		delete cb_pointer;
-	}
+	CallbackProxy::DoSafeCallback<MsgLog::ModifySingleMsglogCallback>(user_data, [=](const MsgLog::ModifySingleMsglogCallback& cb){
+
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)res_code, PCharToString(msg_id));
+	}, true);
 }
 
 static void CallbackMsglogRes(int res_code
 	, const char *json_extension
 	, const void *user_data)
 {
-	if (user_data)
-	{
-		MsgLog::DBFunctionCallback* cb_pointer = (MsgLog::DBFunctionCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code));
-			//cb((nim::NIMResCode)res_code);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<MsgLog::DBFunctionCallback>(user_data, [=](const MsgLog::DBFunctionCallback& cb){
+
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)res_code);
+	},true);
 }
 
 static void CallbackImportDBProgress(int64_t imported_count
@@ -201,15 +179,10 @@ static void CallbackImportDBProgress(int64_t imported_count
 	, const char *json_extension
 	, const void *callback)
 {
-	if (callback)
-	{
-		MsgLog::ImportDbPrgCallback* cb_pointer = (MsgLog::ImportDbPrgCallback*)callback;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), imported_count, total_count));
-			//(*cb_pointer)(imported_count, total_count);
-		}
-	}
+	CallbackProxy::DoSafeCallback<MsgLog::ImportDbPrgCallback>(callback, [=](const MsgLog::ImportDbPrgCallback& cb){
+
+		CallbackProxy::Invoke(cb, imported_count, total_count);
+	});
 }
 
 static void CallbackQueryMsgByID(int res_code
@@ -218,18 +191,14 @@ static void CallbackQueryMsgByID(int res_code
 	, const char *json_extension
 	, const void *callback)
 {
-	if (callback)
-	{
-		MsgLog::QuerySingleMsgCallback* cb_pointer = (MsgLog::QuerySingleMsgCallback*)callback;
-		if (*cb_pointer)
-		{
-			IMMessage msg_out;
-			ParseMessage(PCharToString(msg), msg_out);
-			PostTaskToUIThread(std::bind((*cb_pointer), (nim::NIMResCode)res_code, PCharToString(msg_id), msg_out));
-			//(*cb_pointer)((nim::NIMResCode)res_code, PCharToString(msg_id), msg_out);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<MsgLog::QuerySingleMsgCallback>(callback, [=](const MsgLog::QuerySingleMsgCallback& cb){
+
+		IMMessage msg_out;
+		ParseMessage(PCharToString(msg), msg_out);
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)res_code, PCharToString(msg_id), msg_out);
+	},true);
+
 }
 
 bool MsgLog::QueryMsgByIDAysnc(const std::string &client_msg_id, const QuerySingleMsgCallback &cb, const std::string &json_extension/* = ""*/)
@@ -620,8 +589,7 @@ static void CallbackMsgStatusChanged(int rescode, const char *result, const char
 		{
 			std::string res = PCharToString(result);
 			MessageStatusChangedResult result(rescode, res);
-			PostTaskToUIThread(std::bind((*cb_pointer), result));
-//			(*cb_pointer)(result);
+			CallbackProxy::Invoke(*cb_pointer, result);
 		}
 	}
 }

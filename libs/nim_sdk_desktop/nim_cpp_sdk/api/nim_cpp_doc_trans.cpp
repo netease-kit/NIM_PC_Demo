@@ -1,14 +1,13 @@
 ﻿/** @file nim_cpp_doc_trans.h
   * @brief NIM SDK提供的文档转换相关接口，其中文档上传下载,请使用nos接口nim_nos_upload_ex/nim_nos_download/nim_nos_download_ex
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author redrain
   * @date 2016/12/15
   */
 
 #include "nim_cpp_doc_trans.h"
 #include "nim_sdk_util.h"
-#include "nim_cpp_win32_demo_helper.h"
 #include "nim_cpp_global.h"
+#include "callback_proxy.h"
 
 namespace nim
 {
@@ -25,46 +24,40 @@ typedef char* (*nim_doctrans_get_page_url)(const char *url_prefix, NIMDocTransco
 
 static void CallbackNotify(int32_t code, const char *json_extension, const void *user_data)
 {
-	DocTrans::DocInfoCallback* cb = (DocTrans::DocInfoCallback*)user_data;
-	if (cb != nullptr)
-	{
+	CallbackProxy::DoSafeCallback<DocTrans::DocInfoCallback>(user_data, [=](const DocTrans::DocInfoCallback& cb){
+
 		std::string json;
 		json.append(json_extension);
 		DocTransInfo info;
 		ParseDocTransInfo(json, info);
-		PostTaskToUIThread(std::bind((*cb), code, info));
-		//(*cb)(code, info);
-	}
+		CallbackProxy::Invoke(cb, code, info);
+
+	});
 }
 
 static void CallbackDocInfo(int32_t code, const char *json_extension, const void *user_data)
 {
-	DocTrans::DocInfoCallback* cb = (DocTrans::DocInfoCallback*)user_data;
-	if (cb != nullptr)
-	{
+	CallbackProxy::DoSafeCallback<DocTrans::DocInfoCallback>(user_data, [=](const DocTrans::DocInfoCallback& cb){
 		std::string json;
 		json.append(json_extension);
 		DocTransInfo info;
 		ParseDocTransInfo(json, info);
-		PostTaskToUIThread(std::bind((*cb), code, info));
-		//(*cb)(code, info);
-	}
-	delete cb;
+		CallbackProxy::Invoke(cb, code, info);
+
+	},true);
 }
 
 static void CallbackDocInfos(int32_t code, const char *json_extension, const void *user_data)
 {
-	DocTrans::DocInfosCallback* cb = (DocTrans::DocInfosCallback*)user_data;
-	if (cb != nullptr)
-	{
+
+	CallbackProxy::DoSafeCallback<DocTrans::DocInfosCallback>(user_data, [=](const DocTrans::DocInfosCallback& cb){
 		std::string json;
 		json.append(json_extension);
 		std::list<DocTransInfo> infos;
 		int32_t count = ParseDocTransInfos(json, infos);
-		PostTaskToUIThread(std::bind((*cb), code, count, infos));
-		//(*cb)(code, count, infos);
-	}
-	delete cb;
+		CallbackProxy::Invoke(cb, code, count, infos);
+
+	}, true);
 }
 
 static DocTrans::DocInfoCallback* g_notify_cb_pointer_ = nullptr;

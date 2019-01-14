@@ -1,7 +1,6 @@
 ﻿/** @file nim_doc_trans_helper.cpp
   * @brief 文档传输辅助方法和数据结构定义
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Redrain
   * @date 2016/12/15
   */
 
@@ -11,7 +10,7 @@ namespace nim
 {
 #include "nim_doc_trans_def.h"
 
-bool ParseDocTransInfo( const std::string& json, DocTransInfo& info )
+ bool ParseDocTransInfo( const std::string& json, DocTransInfo& info )
 {
 	Json::Value value;
 	Json::Reader reader;
@@ -50,7 +49,7 @@ bool ParseDocTransInfo( const std::string& json, DocTransInfo& info )
 	return false;
 }
 
-int32_t ParseDocTransInfos( const std::string& json, std::list<DocTransInfo>& info_list )
+ int32_t ParseDocTransInfos( const std::string& json, std::list<DocTransInfo>& info_list )
 {
 	int count = 0;
 	Json::Value values;

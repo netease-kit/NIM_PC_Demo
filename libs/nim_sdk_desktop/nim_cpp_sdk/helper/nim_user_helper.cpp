@@ -1,7 +1,6 @@
 ﻿/** @file nim_user_helper.cpp
   * @brief SDK用户信息辅助方法
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2015/10/20
   */
 

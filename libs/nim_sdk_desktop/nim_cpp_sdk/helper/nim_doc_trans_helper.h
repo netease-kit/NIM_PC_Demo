@@ -1,7 +1,6 @@
 ﻿/** @file nim_doc_trans_helper.h
   * @brief 文档传输辅助方法和数据结构定义
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Redrain
   * @date 2016/12/15
   */
 
@@ -13,7 +12,7 @@
 #include <functional>
 #include "json.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -21,7 +20,7 @@
 namespace nim
 {
 /** @brief 文档传输的图片信息 */
-struct PictureInfo
+struct  NIM_SDK_CPPWRAPPER_DLL_API PictureInfo
 {
 	NIMDocTranscodingQuality quality_;		/**< 转码图像清晰度 */
 	int width_;		/**< 图片宽度 */
@@ -31,7 +30,7 @@ struct PictureInfo
 };
 
 /** @brief 文档传输信息 */
-struct DocTransInfo
+struct  NIM_SDK_CPPWRAPPER_DLL_API DocTransInfo
 {
 	std::string id_;	/**< 标识ID */
 	std::string name_;		/**< 转码文档名称 */
@@ -60,7 +59,7 @@ struct DocTransInfo
   * @param[out] infos 文档传输信息
   * @return bool 解析成功 或失败
   */
-bool ParseDocTransInfo(const std::string& json, DocTransInfo& info);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseDocTransInfo(const std::string& json, DocTransInfo& info);
 
 /** @fn int32_t ParseDocTransInfos(const std::string& json, std::list<DocTransInfo>& infos)
   * @brief 解析一组文档传输信息
@@ -68,7 +67,7 @@ bool ParseDocTransInfo(const std::string& json, DocTransInfo& info);
   * @param[out] infos 文档传输信息
   * @return int32_t 服务器总条数
   */
-int32_t ParseDocTransInfos(const std::string& json, std::list<DocTransInfo>& info_list);
+NIM_SDK_CPPWRAPPER_DLL_API int32_t ParseDocTransInfos(const std::string& json, std::list<DocTransInfo>& info_list);
 
 } //namespace nim
 

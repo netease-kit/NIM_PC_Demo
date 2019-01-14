@@ -1,7 +1,6 @@
 ﻿/** @file nim_sysmsg_helper.h
   * @brief sysmsg 辅助方法和数据结构定义
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2015/10/20
   */
 
@@ -15,7 +14,7 @@
 #include "nim_json_util.h"
 #include "nim_sdk_util.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -23,7 +22,7 @@
 namespace nim
 {
 /** @brief 系统消息和自定义通知属性设置 */
-struct SysMessageSetting
+struct NIM_SDK_CPPWRAPPER_DLL_API SysMessageSetting
 {
 	BoolStatus need_push_; 				/**< 是否需要推送 */
 	BoolStatus push_need_badge_;		/**< 是否要做消息计数 */
@@ -92,7 +91,7 @@ struct SysMessageSetting
 };
 
 /** @brief 系统消息和自定义通知数据 */
-struct SysMessage
+struct NIM_SDK_CPPWRAPPER_DLL_API SysMessage
 {
 	int64_t		timetag_;			/**< 通知时间戳（毫秒） */
 	NIMSysMsgType	type_;			/**< 通知类型 */
@@ -144,7 +143,7 @@ struct SysMessage
   * @param[out] msg 系统消息或自定义通知
   * @return bool 解析成功或失败 
   */
-bool ParseSysMessage(const std::string& sysmsg_json, SysMessage& msg);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseSysMessage(const std::string& sysmsg_json, SysMessage& msg);
 
 /** @fn bool ParseSysMessages(const std::string& sysmsgs_json, std::list<SysMessage>& msgs, int* unread)
   * @brief 解析系统消息或自定义通知
@@ -153,7 +152,7 @@ bool ParseSysMessage(const std::string& sysmsg_json, SysMessage& msg);
   * @param[out] unread 当前总计的未读数
   * @return bool 解析成功或失败 
   */
-bool ParseSysMessages(const std::string& sysmsgs_json, std::list<SysMessage>& msgs, int* unread);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseSysMessages(const std::string& sysmsgs_json, std::list<SysMessage>& msgs, int* unread);
 
 /** @fn void ParseSysMessageContent(const Json::Value& content_json, SysMessage& msg)
   * @brief 解析系统消息或自定义通知的内容
@@ -161,7 +160,7 @@ bool ParseSysMessages(const std::string& sysmsgs_json, std::list<SysMessage>& ms
   * @param[out] msg 系统消息或自定义通知
   * @return void
   */
-void ParseSysMessageContent(const Json::Value& content_json, SysMessage& msg);
+NIM_SDK_CPPWRAPPER_DLL_API void ParseSysMessageContent(const Json::Value& content_json, SysMessage& msg);
 } //namespace nim
 
 #endif //_NIM_SDK_CPP_SYSMSG_HELPER_H_

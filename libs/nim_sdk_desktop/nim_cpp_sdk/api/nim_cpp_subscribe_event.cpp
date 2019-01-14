@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_subscribe_event.cpp
   * @brief NIM 事件订阅相关接口
   * @copyright (c) 2017, NetEase Inc. All rights reserved
-  * @author Redrain
   * @date 2017/03/23
   */
 
@@ -9,8 +8,7 @@
 #include "nim_sdk_util.h"
 #include "nim_json_util.h"
 #include "nim_string_util.h"
-#include "nim_cpp_win32_demo_helper.h"
-
+#include "callback_proxy.h"
 
 namespace nim
 {
@@ -31,151 +29,108 @@ typedef void(*nim_batch_query_subscribe_event)(int event_type, const char *json_
 // 不销毁该回调函数
 static void CallbackPushEvent(int res_code, const char *event_info_json, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		SubscribeEvent::PushEventCallback* cb_pointer = (SubscribeEvent::PushEventCallback*)user_data;
-		if (*cb_pointer)
-		{
-			EventData event_data;
-			ParseEventData(PCharToString(event_info_json), event_data);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, event_data));
-			//(*cb_pointer)((NIMResCode)res_code, event_data);
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<SubscribeEvent::PushEventCallback>(user_data, [=](const SubscribeEvent::PushEventCallback& cb){
+
+		EventData event_data;
+		ParseEventData(PCharToString(event_info_json), event_data);
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)res_code, event_data);
+	});
 }
 
 static void CallbackBatchPushEvent(int res_code, const char *event_list_json, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		SubscribeEvent::BatchPushEventCallback* cb_pointer = (SubscribeEvent::BatchPushEventCallback*)user_data;
-		if (*cb_pointer)
-		{
-			std::list<EventData> event_data_list;
-			ParseEventDataList(PCharToString(event_list_json), event_data_list);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, event_data_list));
-			//(*cb_pointer)((NIMResCode)res_code, event_data_list);
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<SubscribeEvent::BatchPushEventCallback>(user_data, [=](const SubscribeEvent::BatchPushEventCallback& cb){
+
+		std::list<EventData> event_data_list;
+		ParseEventDataList(PCharToString(event_list_json), event_data_list);
+		CallbackProxy::Invoke(cb, (nim::NIMResCode)res_code, event_data_list);
+	});
+
 }
 
 // 执行完回调函数后销毁之
 static void CallbackPublishEvent(int res_code, int event_type, const char *event_info_json, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		SubscribeEvent::PublishEventCallback* cb_pointer = (SubscribeEvent::PublishEventCallback*)user_data;
-		if (*cb_pointer)
-		{
-			EventData event_data;
-			ParseEventData(PCharToString(event_info_json), event_data);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, event_type, event_data));
-			//(*cb_pointer)((NIMResCode)res_code, event_type, event_data);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<SubscribeEvent::PublishEventCallback>(user_data, [=](const SubscribeEvent::PublishEventCallback& cb){
+
+		EventData event_data;
+		ParseEventData(PCharToString(event_info_json), event_data);
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, event_type, event_data);
+	},true);
+
 }
 
 static void CallbackSubscribe(int res_code, int event_type, const char *faild_list_json, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		SubscribeEvent::SubscribeEventCallback* cb_pointer = (SubscribeEvent::SubscribeEventCallback*)user_data;
-		if (*cb_pointer)
-		{
-			std::list<std::string> faild_list;
-			JsonArrayStringToList(PCharToString(faild_list_json), faild_list);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, event_type, faild_list));
-			//(*cb_pointer)((NIMResCode)res_code, event_type, faild_list);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<SubscribeEvent::SubscribeEventCallback>(user_data, [=](const SubscribeEvent::SubscribeEventCallback& cb){
+
+		std::list<std::string> faild_list;
+		JsonArrayStringToList(PCharToString(faild_list_json), faild_list);
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, event_type, faild_list);
+	}, true);
+
 }
 
 static void CallbackUnSubscribe(int res_code, int event_type, const char *faild_list_json, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		SubscribeEvent::UnSubscribeEventCallback* cb_pointer = (SubscribeEvent::UnSubscribeEventCallback*)user_data;
-		if (*cb_pointer)
-		{
-			std::list<std::string> faild_list;
-			JsonArrayStringToList(PCharToString(faild_list_json), faild_list);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, event_type, faild_list));
-			//(*cb_pointer)((NIMResCode)res_code, event_type, faild_list);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<SubscribeEvent::UnSubscribeEventCallback>(user_data, [=](const SubscribeEvent::UnSubscribeEventCallback& cb){
+
+		std::list<std::string> faild_list;
+		JsonArrayStringToList(PCharToString(faild_list_json), faild_list);
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, event_type, faild_list);
+	}, true);
 }
 
 static void CallbackBatchUnSubscribe(int res_code, int event_type, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		SubscribeEvent::BatchUnSubscribeEventCallback* cb_pointer = (SubscribeEvent::BatchUnSubscribeEventCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, event_type));
-			//(*cb_pointer)((NIMResCode)res_code, event_type);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<SubscribeEvent::BatchUnSubscribeEventCallback>(user_data, [=](const SubscribeEvent::BatchUnSubscribeEventCallback& cb){
+
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, event_type);
+	}, true);
+
 }
 
 static void CallbackQuerySubscribe(int res_code, int event_type, const char *subscribe_list_json, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		SubscribeEvent::QuerySubscribeEventCallback* cb_pointer = (SubscribeEvent::QuerySubscribeEventCallback*)user_data;
-		if (*cb_pointer)
-		{
-			std::list<EventSubscribeData> subscribe_list;
-			ParseEventSubscribeDataList(PCharToString(subscribe_list_json), subscribe_list);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, event_type, subscribe_list));
-			//(*cb_pointer)((NIMResCode)res_code, event_type, subscribe_list);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<SubscribeEvent::QuerySubscribeEventCallback>(user_data, [=](const SubscribeEvent::QuerySubscribeEventCallback& cb){
+
+		std::list<EventSubscribeData> subscribe_list;
+		ParseEventSubscribeDataList(PCharToString(subscribe_list_json), subscribe_list);
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, event_type, subscribe_list);
+	}, true);
+
 }
 
 static void CallbackBatchQuerySubscribe(int res_code, int event_type, const char *subscribe_list_json, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		SubscribeEvent::BatchQuerySubscribeEventCallback* cb_pointer = (SubscribeEvent::BatchQuerySubscribeEventCallback*)user_data;
-		if (*cb_pointer)
-		{
-			std::list<EventSubscribeData> subscribe_list;
-			ParseEventSubscribeDataList(PCharToString(subscribe_list_json), subscribe_list);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, event_type, subscribe_list));
-			//(*cb_pointer)((NIMResCode)res_code, event_type, subscribe_list);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<SubscribeEvent::BatchQuerySubscribeEventCallback>(user_data, [=](const SubscribeEvent::BatchQuerySubscribeEventCallback& cb){
+
+		std::list<EventSubscribeData> subscribe_list;
+		ParseEventSubscribeDataList(PCharToString(subscribe_list_json), subscribe_list);
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, event_type, subscribe_list);
+	}, true);
 }
 
-static SubscribeEvent::PushEventCallback *g_cb_push_event = nullptr;
+static SubscribeEvent::PushEventCallback g_cb_push_event = nullptr;
 void SubscribeEvent::RegPushEventCb( const PushEventCallback &cb, const std::string& json_extension /*= ""*/ )
 {
-	if (g_cb_push_event)
-	{
-		delete g_cb_push_event;
-		g_cb_push_event = nullptr;
-	}
-	g_cb_push_event = new PushEventCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_subscribe_event_reg_push_event_cb)(json_extension.c_str(), &CallbackPushEvent, g_cb_push_event);
+	g_cb_push_event = cb;
+	NIM_SDK_GET_FUNC(nim_subscribe_event_reg_push_event_cb)(json_extension.c_str(), &CallbackPushEvent, &g_cb_push_event);
 }
 
-static SubscribeEvent::BatchPushEventCallback *g_cb_batch_push_event = nullptr;
+static SubscribeEvent::BatchPushEventCallback g_cb_batch_push_event = nullptr;
 void SubscribeEvent::RegBatchPushEventCb( const BatchPushEventCallback &cb, const std::string& json_extension /*= ""*/ )
-{
-	if (g_cb_batch_push_event)
-	{
-		delete g_cb_batch_push_event;
-		g_cb_batch_push_event = nullptr;
-	}
-	g_cb_batch_push_event = new BatchPushEventCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_subscribe_event_reg_batch_push_event_cb)(json_extension.c_str(), &CallbackBatchPushEvent, g_cb_batch_push_event);
+{	
+	g_cb_batch_push_event = cb;
+	NIM_SDK_GET_FUNC(nim_subscribe_event_reg_batch_push_event_cb)(json_extension.c_str(), &CallbackBatchPushEvent, &g_cb_batch_push_event);
 }
 
 bool SubscribeEvent::Publish( const EventData &event_data, const PublishEventCallback &cb, const std::string& json_extension /*= ""*/ )

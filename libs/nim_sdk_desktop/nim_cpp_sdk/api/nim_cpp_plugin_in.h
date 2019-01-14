@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_plugin_in.h
   * @brief 插件接入，接入聊天室需要调用该接口
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2015/12/29
   */
 
@@ -11,7 +10,7 @@
 #include <string>
 #include <functional>
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -23,7 +22,7 @@ namespace nim
 /** @class PluginIn
   * @brief NIM SDK 提供的plugin接入接口类
   */
-class PluginIn
+class NIM_SDK_CPPWRAPPER_DLL_API PluginIn
 {
 public:
 	typedef std::function<void(int error_code, const std::string& result)>	ChatRoomRequestEnterCallback;	/**<  获取聊天室登录信息回调*/
@@ -42,7 +41,7 @@ public:
   *				415:服务不可用，没有聊天室服务器可分配
   *				13003:在黑名单中
   */
-	static void ChatRoomRequestEnterAsync(const int64_t room_id, const ChatRoomRequestEnterCallback &callback, const std::string& json_extension = "");
+	 static void ChatRoomRequestEnterAsync(const int64_t room_id, const ChatRoomRequestEnterCallback &callback, const std::string& json_extension = "");
 };
 
 } 

@@ -1,7 +1,6 @@
 ﻿/** @file nim_chatroom_cpp.h
   * @brief 聊天室SDK
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg, Harrison
   * @date 2015/12/29
   */
 
@@ -11,7 +10,7 @@
 #include <string>
 #include <functional>
 #include "nim_chatroom_helper.h"
-
+#include "nim_chatroom_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim_chatroom
 * @brief 聊天室
@@ -21,9 +20,10 @@ namespace nim_chatroom
 /** @class ChatRoom
   * @brief 聊天室
   */
-class ChatRoom
+class NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoom
 {
 public:
+	typedef std::function<void(const std::function< void()>&)> SDKClosure;
 	typedef std::function<void(int64_t room_id, const NIMChatRoomEnterStep step, int error_code, const ChatRoomInfo& info, const ChatRoomMemberInfo& my_info)>	EnterCallback;	/**< 登录回调, 如果错误码为kResRoomLocalNeedRequestAgain，聊天室重连机制结束，则需要向IM服务器重新请求进入该聊天室权限 */
 	typedef std::function<void(int64_t room_id, int error_code, NIMChatRoomExitReason exit_reason)>	ExitCallback;	/**< 登出、被踢回调 */
 	typedef std::function<void(int64_t room_id, int error_code, const NIMChatRoomExitReasonInfo& exit_info)>	ExitCallback_2;	/**< 登出、被踢回调 */
@@ -121,6 +121,16 @@ static void RegLinkConditionCb(const LinkConditionCallback& cb, const std::strin
   * @return bool 模块加载结果
   */
 static bool Init(const std::string& app_install_dir, const std::string& json_extension = "");
+
+
+#ifdef CPPWRAPPER_DLL
+/** @fn void SetCallbackFunction(const ChatRoom::SDKClosure& callback)
+  * 当以动态库使用SDK时 设置SDK回调方法，为了不阻塞SDK线程，在回调中应该把任务抛到应用层的线程中
+  * @param[in] callback	  回调方法
+  * @return void 无返回值
+  */
+static void SetCallbackFunction(const ChatRoom::SDKClosure& callback);
+#endif//CPPWRAPPER_DLL
 
 /** @fn void Cleanup(const std::string& json_extension = "")
   * 聊天室模块清理(SDK卸载前调用一次)

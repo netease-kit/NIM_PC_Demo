@@ -1,7 +1,6 @@
-/** @file nim_cpp_talk.cpp
+﻿/** @file nim_cpp_talk.cpp
   * @brief 聊天功能；主要包括发送消息、接收消息等功能
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg, Harrison
   * @date 2015/2/1
   */
 
@@ -10,7 +9,7 @@
 #include "nim_json_util.h"
 #include "nim_string_util.h"
 #include "nim_cpp_global.h"
-#include "nim_cpp_win32_demo_helper.h"
+#include "callback_proxy.h"
 
 namespace nim
 {
@@ -34,104 +33,80 @@ typedef void(*nim_talk_reg_receive_broadcast_msgs_cb)(const char *json_extension
 
 static void CallbackSendMsgAck(const char *result, const void *callback)
 {
-	if (callback)
-	{
-		Talk::SendMsgAckCallback* cb_pointer = (Talk::SendMsgAckCallback*)callback;
-		if (*cb_pointer)
-		{
-			SendMessageArc arc;
-			ParseSendMessageAck(PCharToString(result), arc);
-			PostTaskToUIThread(std::bind((*cb_pointer), arc));
-			//(*cb_pointer)(arc);
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<Talk::SendMsgAckCallback>(callback, [=](const Talk::SendMsgAckCallback& cb){
+
+		SendMessageArc arc;
+		ParseSendMessageAck(PCharToString(result), arc);
+		CallbackProxy::Invoke(cb, arc);
+	});
 }
 
 static void CallbackReceiveMsg(const char *content, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		Talk::ReceiveMsgCallback* cb_pointer = (Talk::ReceiveMsgCallback*)callback;
-		if (*cb_pointer)
-		{
-			IMMessage msg;
-			ParseReceiveMessage(PCharToString(content), msg);
-			PostTaskToUIThread(std::bind((*cb_pointer), msg));
-			//(*cb_pointer)(msg);
-		}
-	}
+	CallbackProxy::DoSafeCallback<Talk::ReceiveMsgCallback>(callback, [=](const Talk::ReceiveMsgCallback& cb){
+
+		IMMessage msg;
+		ParseReceiveMessage(PCharToString(content), msg);
+		CallbackProxy::Invoke(cb, msg);
+	});
 }
 
 static void CallbackReceiveMessages(const char *content, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		Talk::ReceiveMsgsCallback* cb_pointer = (Talk::ReceiveMsgsCallback*)callback;
-		if (*cb_pointer)
+	CallbackProxy::DoSafeCallback<Talk::ReceiveMsgsCallback>(callback, [=](const Talk::ReceiveMsgsCallback& cb){
+		std::list<IMMessage> msgs;
+		Json::Reader reader;
+		Json::Value value;
+		if (reader.parse(PCharToString(content), value) && value.isArray())
 		{
-			std::list<IMMessage> msgs;
-			Json::Reader reader;
-			Json::Value value;
-			if (reader.parse(PCharToString(content), value) && value.isArray())
+			int size = value.size();
+			for (int i = 0; i < size; i++)
 			{
-				int size = value.size();
-				for (int i = 0; i < size; i++)
-				{
-					IMMessage msg;
-					ParseReceiveMessage(value[i], msg);
-					msgs.push_back(msg);
-				}
+				IMMessage msg;
+				ParseReceiveMessage(value[i], msg);
+				msgs.push_back(msg);
 			}
-			PostTaskToUIThread(std::bind((*cb_pointer), msgs));
-			//(*cb_pointer)(msgs);
 		}
-	}
+		CallbackProxy::Invoke(cb, msgs);
+	});
 }
 
 static void CallbackFileUploadProcess(int64_t uploaded_size, int64_t file_size, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		Talk::FileUpPrgCallback* cb_pointer = (Talk::FileUpPrgCallback*)callback;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), uploaded_size, file_size));
-			//(*cb_pointer)(uploaded_size, file_size);
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<Talk::FileUpPrgCallback>(callback, [=](const Talk::FileUpPrgCallback& cb){
+		CallbackProxy::Invoke(cb, uploaded_size, file_size);
+	});
 }
 
 static bool FilterTeamNotification(const char *content, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		Talk::TeamNotificationFilter* cb_point = (Talk::TeamNotificationFilter *)callback;
-		if (*cb_point)
-		{
-			IMMessage msg;
-			ParseReceiveMessage(PCharToString(content), msg);
-			return (*cb_point)(msg);
-		}
-	}
-	return false;
+
+	return CallbackProxy::DoSafeCallback<Talk::TeamNotificationFilter>(callback, [=](const Talk::TeamNotificationFilter& cb){
+		IMMessage msg;
+		ParseReceiveMessage(PCharToString(content), msg);
+		return CallbackProxy::Invoke(cb, msg);
+	});
+
 }
 
 static Talk::SendMsgAckCallback g_cb_send_msg_ack_ = nullptr;
 void Talk::RegSendMsgCb(const SendMsgAckCallback& cb, const std::string& json_extension)
 {
 	g_cb_send_msg_ack_ = cb;
-	return NIM_SDK_GET_FUNC(nim_talk_reg_ack_cb)(json_extension.c_str(), &CallbackSendMsgAck, &g_cb_send_msg_ack_);
+	NIM_SDK_GET_FUNC(nim_talk_reg_ack_cb)(json_extension.c_str(), &CallbackSendMsgAck, &g_cb_send_msg_ack_);
 }
 
 void Talk::SendMsg(const std::string& json_msg, const std::string& json_extension/* = ""*/, FileUpPrgCallback* pcb/* = nullptr*/)
 {
 	if (pcb)
 	{
-		return NIM_SDK_GET_FUNC(nim_talk_send_msg)(json_msg.c_str(), nullptr, &CallbackFileUploadProcess, pcb);
+		NIM_SDK_GET_FUNC(nim_talk_send_msg)(json_msg.c_str(), nullptr, &CallbackFileUploadProcess, pcb);
 	} 
 	else
 	{
-		return NIM_SDK_GET_FUNC(nim_talk_send_msg)(json_msg.c_str(), nullptr, nullptr, nullptr);
+		NIM_SDK_GET_FUNC(nim_talk_send_msg)(json_msg.c_str(), nullptr, nullptr, nullptr);
 	}
 }
 
@@ -152,14 +127,14 @@ static Talk::ReceiveMsgCallback g_cb_pointer = nullptr;
 void Talk::RegReceiveCb(const ReceiveMsgCallback& cb, const std::string& json_extension)
 {
 	g_cb_pointer = cb;
-	return NIM_SDK_GET_FUNC(nim_talk_reg_receive_cb)(json_extension.c_str(), &CallbackReceiveMsg, &g_cb_pointer);
+	NIM_SDK_GET_FUNC(nim_talk_reg_receive_cb)(json_extension.c_str(), &CallbackReceiveMsg, &g_cb_pointer);
 }
 
 static Talk::ReceiveMsgsCallback g_cb_msgs_pointer = nullptr;
 void Talk::RegReceiveMessagesCb(const ReceiveMsgsCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	g_cb_msgs_pointer = cb;
-	return NIM_SDK_GET_FUNC(nim_talk_reg_receive_msgs_cb)(json_extension.c_str(), &CallbackReceiveMessages, &g_cb_msgs_pointer);
+	NIM_SDK_GET_FUNC(nim_talk_reg_receive_msgs_cb)(json_extension.c_str(), &CallbackReceiveMessages, &g_cb_msgs_pointer);
 }
 
 std::string Talk::CreateTextMessage(const std::string& receiver_id
@@ -527,45 +502,33 @@ void Talk::RegTeamNotificationFilter(const TeamNotificationFilter& filter, const
 {
 	
 	g_team_notification_filter_ = filter;
-	return NIM_SDK_GET_FUNC(nim_talk_reg_notification_filter_cb)(json_extension.c_str(), &FilterTeamNotification, &g_team_notification_filter_);
+	NIM_SDK_GET_FUNC(nim_talk_reg_notification_filter_cb)(json_extension.c_str(), &FilterTeamNotification, &g_team_notification_filter_);
 }
 
-static void ReceiveRecallMsg(int rescode, const char *content, const char *json_extension, const void *call_back)
+static void ReceiveRecallMsg(int rescode, const char *content, const char *json_extension, const void *callback)
 {
-	if (call_back)
-	{
-		Talk::RecallMsgsCallback *cb_pointer = (Talk::RecallMsgsCallback *)call_back;
-		if (*cb_pointer)
-		{
-			std::list<RecallMsgNotify> notifys;
-			ParseRecallMsgNotify(PCharToString(content), notifys);
-			//(*cb_pointer)(kNIMResSuccess, notifys);
-			PostTaskToUIThread(std::bind((*cb_pointer), kNIMResSuccess, notifys));
-		}
-	}
+	CallbackProxy::DoSafeCallback<Talk::RecallMsgsCallback>(callback, [=](const Talk::RecallMsgsCallback& cb){
+		std::list<RecallMsgNotify> notifys;
+		ParseRecallMsgNotify(PCharToString(content), notifys);
+		CallbackProxy::Invoke(cb, kNIMResSuccess, notifys);
+	});
 }
 
 static Talk::RecallMsgsCallback g_recall_msg_cb_ = nullptr;
 void Talk::RegRecallMsgsCallback(const RecallMsgsCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	g_recall_msg_cb_ = cb;
-	return NIM_SDK_GET_FUNC(nim_talk_reg_recall_msg_cb)(json_extension.c_str(), &ReceiveRecallMsg, &g_recall_msg_cb_);
+	NIM_SDK_GET_FUNC(nim_talk_reg_recall_msg_cb)(json_extension.c_str(), &ReceiveRecallMsg, &g_recall_msg_cb_);
 }
 
-static void CallbackRecallMsg(int rescode, const char *content, const char *json_extension, const void *call_back)
+static void CallbackRecallMsg(int rescode, const char *content, const char *json_extension, const void *callback)
 {
-	if (call_back)
-	{
-		Talk::RecallMsgsCallback *cb_pointer = (Talk::RecallMsgsCallback *)call_back;
-		if (*cb_pointer)
-		{
-			std::list<RecallMsgNotify> notifys;
-			ParseRecallMsgNotify(PCharToString(content), notifys);
-			//(*cb_pointer)((NIMResCode)rescode, notifys);
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)rescode, notifys));
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<Talk::RecallMsgsCallback>(callback, [=](const Talk::RecallMsgsCallback& cb){
+		std::list<RecallMsgNotify> notifys;
+		ParseRecallMsgNotify(PCharToString(content), notifys);
+		CallbackProxy::Invoke(cb, (NIMResCode)rescode, notifys);
+	},true);
 }
 
 void Talk::RecallMsg(const IMMessage &msg, const std::string &notify, const RecallMsgsCallback& cb, const std::string& json_extension/* = ""*/)
@@ -588,68 +551,59 @@ std::string Talk::GetAttachmentPathFromMsg(const IMMessage& msg)
 
 static void CallbackReceiveBroadcastMsg(const char *content, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		Talk::ReceiveBroadcastMsgCallback* cb_pointer = (Talk::ReceiveBroadcastMsgCallback*)callback;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<Talk::ReceiveBroadcastMsgCallback>(callback, [=](const Talk::ReceiveBroadcastMsgCallback& cb){
+		BroadcastMessage msg;
+		Json::Value values;
+		Json::Reader reader;
+		if (reader.parse(PCharToString(content), values) && values.isObject())
 		{
-			BroadcastMessage msg;
-			Json::Value values;
-			Json::Reader reader;
-			if (reader.parse(PCharToString(content), values) && values.isObject())
-			{
-				msg.body_ = values[kNIMBroadcastMsgKeyBody].asString();
-				msg.from_id_ = values[kNIMBroadcastMsgKeyFromAccid].asString();
-				msg.id_ = values[kNIMBroadcastMsgKeyID].asUInt64();
-				msg.time_ = values[kNIMBroadcastMsgKeyTime].asUInt64();
-			}
-			PostTaskToUIThread(std::bind((*cb_pointer), msg));
-			//(*cb_pointer)(msg);
+			msg.body_ = values[kNIMBroadcastMsgKeyBody].asString();
+			msg.from_id_ = values[kNIMBroadcastMsgKeyFromAccid].asString();
+			msg.id_ = values[kNIMBroadcastMsgKeyID].asUInt64();
+			msg.time_ = values[kNIMBroadcastMsgKeyTime].asUInt64();
 		}
-	}
+		CallbackProxy::Invoke(cb, msg);
+	});
+
 }
 
 static void CallbackReceiveBroadcastMessages(const char *content, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		Talk::ReceiveBroadcastMsgsCallback* cb_pointer = (Talk::ReceiveBroadcastMsgsCallback*)callback;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<Talk::ReceiveBroadcastMsgsCallback>(callback, [=](const Talk::ReceiveBroadcastMsgsCallback& cb){
+		std::list<BroadcastMessage> msgs;
+		Json::Reader reader;
+		Json::Value value;
+		if (reader.parse(PCharToString(content), value) && value.isArray())
 		{
-			std::list<BroadcastMessage> msgs;
-			Json::Reader reader;
-			Json::Value value;
-			if (reader.parse(PCharToString(content), value) && value.isArray())
+			int size = value.size();
+			for (int i = 0; i < size; i++)
 			{
-				int size = value.size();
-				for (int i = 0; i < size; i++)
-				{
-					BroadcastMessage msg;
-					msg.body_ = value[i][kNIMBroadcastMsgKeyBody].asString();
-					msg.from_id_ = value[i][kNIMBroadcastMsgKeyFromAccid].asString();
-					msg.id_ = value[i][kNIMBroadcastMsgKeyID].asUInt64();
-					msg.time_ = value[i][kNIMBroadcastMsgKeyTime].asUInt64();
-					msgs.push_back(msg);
-				}
+				BroadcastMessage msg;
+				msg.body_ = value[i][kNIMBroadcastMsgKeyBody].asString();
+				msg.from_id_ = value[i][kNIMBroadcastMsgKeyFromAccid].asString();
+				msg.id_ = value[i][kNIMBroadcastMsgKeyID].asUInt64();
+				msg.time_ = value[i][kNIMBroadcastMsgKeyTime].asUInt64();
+				msgs.push_back(msg);
 			}
-			PostTaskToUIThread(std::bind((*cb_pointer), msgs));
-			//(*cb_pointer)(msgs);
 		}
-	}
+		CallbackProxy::Invoke(cb, msgs);
+	});
 }
 
 static Talk::ReceiveBroadcastMsgCallback g_cb_broadcast = nullptr;
 void Talk::RegReceiveBroadcastMsgCb(const ReceiveBroadcastMsgCallback& cb, const std::string& json_extension)
 {
 	g_cb_broadcast = cb;
-	return NIM_SDK_GET_FUNC(nim_talk_reg_receive_broadcast_cb)(json_extension.c_str(), &CallbackReceiveBroadcastMsg, &g_cb_broadcast);
+	NIM_SDK_GET_FUNC(nim_talk_reg_receive_broadcast_cb)(json_extension.c_str(), &CallbackReceiveBroadcastMsg, &g_cb_broadcast);
 }
 
 static Talk::ReceiveBroadcastMsgsCallback g_cb_broadcast_msgs = nullptr;
 void Talk::RegReceiveBroadcastMsgsCb(const ReceiveBroadcastMsgsCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	g_cb_broadcast_msgs = cb;
-	return NIM_SDK_GET_FUNC(nim_talk_reg_receive_broadcast_msgs_cb)(json_extension.c_str(), &CallbackReceiveBroadcastMessages, &g_cb_broadcast_msgs);
+	NIM_SDK_GET_FUNC(nim_talk_reg_receive_broadcast_msgs_cb)(json_extension.c_str(), &CallbackReceiveBroadcastMessages, &g_cb_broadcast_msgs);
 }
 
 void Talk::UnregTalkCb()

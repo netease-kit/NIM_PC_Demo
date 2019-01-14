@@ -1,7 +1,6 @@
 ﻿/** @file nim_string_util.cpp
   * @brief string操作辅助方法
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Harrison
   * @date 2016/09/08
   */
 

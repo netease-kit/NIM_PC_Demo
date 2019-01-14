@@ -1,7 +1,6 @@
 ﻿/** @file nim_session_helper.h
   * @brief Session 辅助方法和数据结构定义
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2015/10/22
   */
 
@@ -13,7 +12,7 @@
 #include <functional>
 #include "json.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -22,7 +21,7 @@ namespace nim
 {
 
 /** @brief 会话数据 */
-struct SessionData
+struct NIM_SDK_CPPWRAPPER_DLL_API SessionData
 {
 	std::string		id_;					/**< 会话ID */
 	NIMSessionType	type_;					/**< 会话类型 */
@@ -55,7 +54,7 @@ struct SessionData
 };
 
 /** @brief 会话列表数据 */
-struct SessionDataList
+struct NIM_SDK_CPPWRAPPER_DLL_API SessionDataList
 {
 	int			count_;					/**< 会话列表项数量 */
 	int			unread_count_;			/**< 会话列表总的未读消息数 */
@@ -70,7 +69,7 @@ struct SessionDataList
   * @param[out] session 会话信息
   * @return bool 解析成功 或失败
   */
-bool ParseSession(const std::string& session_json, SessionData& session);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseSession(const std::string& session_json, SessionData& session);
 
 /** @fn bool ParseSession(const Json::Value& session_json, SessionData& session)
   * @brief 解析会话信息
@@ -78,7 +77,7 @@ bool ParseSession(const std::string& session_json, SessionData& session);
   * @param[out] session 会话信息
   * @return void 
   */
-void ParseSession(const Json::Value& session_json, SessionData& session);
+NIM_SDK_CPPWRAPPER_DLL_API void ParseSession(const Json::Value& session_json, SessionData& session);
 
 /** @fn bool ParseSessionList(const std::string& sessions_json, SessionDataList& session_list)
   * @brief 解析会话列表信息
@@ -86,7 +85,7 @@ void ParseSession(const Json::Value& session_json, SessionData& session);
   * @param[out] session_list 会话信息
   * @return bool 解析成功 或失败
   */
-bool ParseSessionList(const std::string& sessions_json, SessionDataList& session_list);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseSessionList(const std::string& sessions_json, SessionDataList& session_list);
 } //namespace nim
 
 #endif //_NIM_SDK_CPP_SESSION_HELPER_H_

@@ -1,7 +1,6 @@
 ﻿/** @file nim_chatroom_helper.h
   * @brief 聊天室SDK辅助方法
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg, Harrison
   * @date 2015/12/29
   */
 
@@ -12,35 +11,24 @@
 #include <list>
 #include <functional>
 #include <algorithm>
-#include "json.h"
-#include "nim_json_util.h"
+#include "nim_chatroom_json_util.h"
 #include "nim_chatroom_sdk_defines.h"
-
+#include "nim_chatroom_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim_chatroom
 * @brief 聊天室
 */
 namespace nim_chatroom
 {
-	struct ChatRoomPlatformConfig
+	struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomPlatformConfig
 	{
-		static const char * kPlatformConfigToken;//平台配置标签
-		static const char * kNtserverAddress;//部分 IM 错误信息统计上报地址,
-		static const char * kUploadStatisticsData;//错误信息统计是否上报,私有化如果不上传相应数据，此项配置应为false
-		bool ToJsonObject(Json::Value& values) const
-		{
-			for (auto it = ntserver_address_list_.begin();it != ntserver_address_list_.end();it++)
-			{
-				values[kNtserverAddress].append(*it);
-			}
-			values[kUploadStatisticsData] = upload_statistics_data_;
-			return true;
-		}
+		
+		bool ToJsonObject(Json::Value& values) const;
 		std::string	ToJsonString() const
 		{
 			Json::Value values;
 			if(ToJsonObject(values))
-				return nim::GetJsonStringWithNoStyled(values);
+				return nim_chatroom::GetJsonStringWithNoStyled(values);
 			return std::string("");			
 		}
 		void AddNTServerAddress(const std::string& add)
@@ -66,7 +54,7 @@ namespace nim_chatroom
 		bool upload_statistics_data_;/*错误信息统计是否上报,私有化如不上报此项应配置为false*/
 	};
 /** @brief 聊天室登录信息*/
-struct ChatRoomEnterInfo
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomEnterInfo
 {
 	/** @fn void SetNick(const std::string &nick)
 	  * @brief 设置进入聊天室后展示的昵称,选填
@@ -95,7 +83,7 @@ struct ChatRoomEnterInfo
       */
 	void SetExt(const Json::Value &ext)
 	{
-		values_[kNIMChatRoomEnterKeyExt] = nim::GetJsonStringWithNoStyled(ext);
+		values_[kNIMChatRoomEnterKeyExt] = nim_chatroom::GetJsonStringWithNoStyled(ext);
 	}
 
 	/** @fn void SetNotifyExt(const std::string &notify_ext)
@@ -105,7 +93,7 @@ struct ChatRoomEnterInfo
       */
 	void SetNotifyExt(const Json::Value &notify_ext)
 	{
-		values_[kNIMChatRoomEnterKeyNotifyExt] = nim::GetJsonStringWithNoStyled(notify_ext);
+		values_[kNIMChatRoomEnterKeyNotifyExt] = nim_chatroom::GetJsonStringWithNoStyled(notify_ext);
 	}
 
 	/** @fn std::string ToJsonString() const
@@ -114,14 +102,14 @@ struct ChatRoomEnterInfo
       */
 	std::string	ToJsonString() const
 	{
-		return values_.empty() ? "" : nim::GetJsonStringWithNoStyled(values_);
+		return values_.empty() ? "" : nim_chatroom::GetJsonStringWithNoStyled(values_);
 	}
 
 private:
 	Json::Value		values_;
 };
 
-struct ChatRoomAnoymityEnterInfo
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomAnoymityEnterInfo
 {
 	std::list<std::string> address_;	/**< 聊天室地址，地址通过应用服务器接口获取 */
 	std::string app_data_file_;			/**< 应用数据目录，匿名登录时必填,使用默认路径时只需传入单个目录名（不以反斜杠结尾)，使用自定义路径时需传入完整路径（以反斜杠结尾，并确保有正确的读写权限！） */
@@ -144,7 +132,7 @@ struct ChatRoomAnoymityEnterInfo
 		Json::Value values;
 		Json::FastWriter fw;
 		std::string addr_str;
-		nim::StrListToJsonString(address_, addr_str);
+		nim_chatroom::StrListToJsonString(address_, addr_str);
 		values[kNIMChatRoomEnterKeyAddress] = addr_str;
 		values[kNIMChatRoomEnterKeyAppDataPath] = app_data_file_;
 		values[kNIMChatRoomEnterKeyLogLevel] = sdk_log_level_;
@@ -155,7 +143,7 @@ struct ChatRoomAnoymityEnterInfo
 };
 
 /** @brief 聊天室信息*/
-struct ChatRoomInfo
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomInfo
 {
 	int64_t			id_;				/**< 聊天室ID */
 	std::string		name_;				/**< 聊天室名称 */
@@ -206,12 +194,12 @@ struct ChatRoomInfo
 		values[kNIMChatRoomInfoKeyOnlineCount] = online_count_;
 		values[kNIMChatRoomInfoKeyMuteAll] = mute_all_;
 		 values[kNIMChatRoomInfoKeyQueuelevel] = queuelevel;
-		return nim::GetJsonStringWithNoStyled(values);
+		return nim_chatroom::GetJsonStringWithNoStyled(values);
 	}
 };
 
 /** @brief 聊天室通知*/
-struct ChatRoomNotification
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomNotification
 {
 	NIMChatRoomNotificationId		id_;			/**< 通知类型 */
 	std::string						ext_;			/**< 上层开发自定义的事件通知扩展字段, 必须为可以解析为json的非格式化的字符串 */
@@ -238,8 +226,8 @@ struct ChatRoomNotification
 		ext_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyExt].asString();
 		operator_id_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyOpt].asString();
 		operator_nick_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyOptNick].asString();
-		nim::JsonStrArrayToList(values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTargetNick], target_nick_);
-		nim::JsonStrArrayToList(values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTarget], target_ids_);
+		nim_chatroom::JsonStrArrayToList(values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTargetNick], target_nick_);
+		nim_chatroom::JsonStrArrayToList(values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTarget], target_ids_);
 		if (id_ == kNIMChatRoomNotificationIdMemberTempMute || id_ == kNIMChatRoomNotificationIdMemberTempUnMute)
 			temp_mute_duration_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyTempMuteDuration].asInt64();
 		if (id_ == kNIMChatRoomNotificationIdMemberIn)
@@ -262,7 +250,7 @@ struct ChatRoomNotification
 };
 
 /** @brief 聊天室队列通知内容*/
-struct ChatRoomQueueChangedNotification
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomQueueChangedNotification
 {
 	std::string		type_;		/**< 队列变更类型 OFFER, POLL, DROP*/
 	std::string		key_;		/**< 队列变更元素的Key*/
@@ -287,7 +275,7 @@ struct ChatRoomQueueChangedNotification
 };
 /** @brief  通知麦序队列中有批量变更，发生在元素提交者离开聊天室或者从聊天室异常掉线时*/
 
-struct ChatRoomQueueBatchChangedNotification
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomQueueBatchChangedNotification
 {
 	std::string		type_;		/**< 队列变更类型 OFFER, POLL, DROP*/
 	std::string		key_;		/**< 队列变更元素的Key*/
@@ -325,7 +313,7 @@ struct ChatRoomQueueBatchChangedNotification
 };
 
 /** @brief 聊天室消息属性设置 */
-struct ChatRoomMessageSetting
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomMessageSetting
 {
 	bool			resend_flag_;				/**< 消息重发标记位 */
 	std::string		ext_;						/**< 第三方扩展字段, 必须为可以解析为json的非格式化的字符串，长度限制4096 */
@@ -378,7 +366,7 @@ struct ChatRoomMessageSetting
 };
 
 /** @brief 聊天室消息*/
-struct ChatRoomMessage
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomMessage
 {
 public:
 	int64_t			room_id_;					/**< 消息所属的聊天室id,服务器填写,发送方不需要填写 */
@@ -443,12 +431,12 @@ public:
 		values[kNIMChatRoomMsgKeyBody] = msg_body_;
 
 		msg_setting_.ToJsonValue(values);
-		return nim::GetJsonStringWithNoStyled(values);
+		return nim_chatroom::GetJsonStringWithNoStyled(values);
 	}
 };
 
 /** @brief 获取聊天室成员参数*/
-struct ChatRoomGetMembersParameters
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomGetMembersParameters
 {
 	NIMChatRoomGetMemberType type_;	/**< 成员类型 */
 	int64_t timestamp_offset_;		/**< 成员时间戳偏移量*/
@@ -467,12 +455,12 @@ struct ChatRoomGetMembersParameters
 		values[kNIMChatRoomGetMembersKeyType] = type_;
 		values[kNIMChatRoomGetMembersKeyOffset] = timestamp_offset_;
 		values[kNIMChatRoomGetMembersKeyLimit] = limit_;
-		return nim::GetJsonStringWithNoStyled(values);
+		return nim_chatroom::GetJsonStringWithNoStyled(values);
 	}
 };
 
 /** @brief 获取聊天室消息历史参数*/
-struct ChatRoomGetMsgHistoryParameters
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomGetMsgHistoryParameters
 {
 	int64_t start_timetag_;			/**<开始时间,单位毫秒 */
 	int limit_;						/**<本次返回的消息数量*/
@@ -524,7 +512,7 @@ struct ChatRoomGetMsgHistoryParameters
 			values[kNIMChatRoomGetMsgHistoryKeyMsgtypes].append(Json::Value(*it));
 			it++;
 		}		
-		return nim::GetJsonStringWithNoStyled(values);
+		return nim_chatroom::GetJsonStringWithNoStyled(values);
 	}
 private:	
 	static std::vector<NIMChatRoomMsgType> kMsg_Types_List; /*= {kNIMChatRoomMsgTypeText,	
@@ -540,7 +528,7 @@ private:
 };
 
 /** @brief 设置聊天室成员身份标识参数*/
-struct ChatRoomSetMemberAttributeParameters
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomSetMemberAttributeParameters
 {
 	std::string account_id_;				/**<成员ID */
 	NIMChatRoomMemberAttribute attribute_;	/**<身份标识 */
@@ -561,7 +549,7 @@ struct ChatRoomSetMemberAttributeParameters
 		values[kNIMChatRoomSetMemberAttributeKeyAttribute] = attribute_;
 		values[kNIMChatRoomSetMemberAttributeKeyOpt] = opt_;
 		values[kNIMChatRoomSetMemberAttributeKeyNotifyExt] = notify_ext_;
-		return nim::GetJsonStringWithNoStyled(values);
+		return nim_chatroom::GetJsonStringWithNoStyled(values);
 	}
 
 private:
@@ -570,7 +558,7 @@ private:
 };
 
 /** @brief 聊天室成员信息*/
-struct ChatRoomMemberInfo
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomMemberInfo
 {
 	int64_t			room_id_;			/**<聊天室id */
 	std::string		account_id_;		/**<成员账号 */
@@ -662,13 +650,13 @@ struct ChatRoomMemberInfo
 		values[kNIMChatRoomMemberInfoKeyUpdateTimetag] = update_timetag_;
 		values[kNIMChatRoomMemberInfoKeyTempMute] = temp_muted_ ? 1 : 0;
 		values[kNIMChatRoomMemberInfoKeyTempMuteRestDuration] = temp_muted_duration_;
-		return nim::GetJsonStringWithNoStyled(values);
+		return nim_chatroom::GetJsonStringWithNoStyled(values);
 	}
 
 };
 
 /** @brief 聊天室麦序队列元素*/
-struct ChatRoomQueueElement
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomQueueElement
 {
 	std::string key_;		/**<元素的UniqKey,长度限制128字节 */
 	std::string value_;		/**<元素的内容，长度限制4096字节 */
@@ -678,7 +666,7 @@ struct ChatRoomQueueElement
 typedef std::list<ChatRoomQueueElement> ChatRoomQueue;
 
 /** @brief 聊天室退出时的信息*/
-struct NIMChatRoomExitReasonInfo
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API NIMChatRoomExitReasonInfo
 {
 	std::string notify_ext_;/**<string 附加信息长度限制2048字节 */
 	NIMChatRoomExitReason code_;/**< enum 退出原因的代码 */
@@ -686,7 +674,7 @@ struct NIMChatRoomExitReasonInfo
 };
 
 /** 重载符号= */
-bool operator == (const NIMChatRoomExitReasonInfo& info,NIMChatRoomExitReason code);
+NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API bool operator == (const NIMChatRoomExitReasonInfo& info,NIMChatRoomExitReason code);
 
 /** @fn bool ParseChatRoomEnterCallbackResultInfo(const std::string& result, ChatRoomInfo& room_info, ChatRoomMemberInfo& my_info)
   * @brief 解析聊天室登录结果
@@ -695,7 +683,7 @@ bool operator == (const NIMChatRoomExitReasonInfo& info,NIMChatRoomExitReason co
   * @param[out] my_info 
   * @return bool 解析成功 或失败
   */
-bool ParseChatRoomEnterCallbackResultInfo(const std::string& result, ChatRoomInfo& room_info, ChatRoomMemberInfo& my_info);
+NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API bool ParseChatRoomEnterCallbackResultInfo(const std::string& result, ChatRoomInfo& room_info, ChatRoomMemberInfo& my_info);
 
 /** @fn bool ParseChatRoomMemberInfos(const std::string& infos_json_str, std::list<ChatRoomMemberInfo>& infos)
   * @brief 解析聊天室成员信息
@@ -703,7 +691,7 @@ bool ParseChatRoomEnterCallbackResultInfo(const std::string& result, ChatRoomInf
   * @param[out] infos 
   * @return bool 解析成功 或失败
   */
-bool ParseChatRoomMemberInfos(const std::string& infos_json_str, std::list<ChatRoomMemberInfo>& infos);
+NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API bool ParseChatRoomMemberInfos(const std::string& infos_json_str, std::list<ChatRoomMemberInfo>& infos);
 
 /** @fn bool ParseChatRoomMsgs(const std::string& msgs_json_str, std::list<ChatRoomMessage>& msgs)
   * @brief 解析聊天室成员信息
@@ -711,10 +699,10 @@ bool ParseChatRoomMemberInfos(const std::string& infos_json_str, std::list<ChatR
   * @param[out] msgs 
   * @return bool 解析成功 或失败
   */
-bool ParseChatRoomMsgs(const std::string& msgs_json_str, std::list<ChatRoomMessage>& msgs);
+NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API bool ParseChatRoomMsgs(const std::string& msgs_json_str, std::list<ChatRoomMessage>& msgs);
 
 /** @brief 机器人信息 */
-struct RobotInfo
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API RobotInfo
 {
 public:
 	/** 设置机器人云信id */
@@ -814,7 +802,7 @@ typedef std::list<RobotInfo> RobotInfos;
   * @param[out] infos 机器人信息
   * @return bool 解析成功或失败 
   */
-bool ParseRobotInfosStringToRobotInfos(const std::string &infos_json, RobotInfos &infos);
+NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API bool ParseRobotInfosStringToRobotInfos(const std::string &infos_json, RobotInfos &infos);
 
 /** @fn bool ParseRobotInfoStringToRobotInfo(const std::string& info_json, RobotInfos &info)
   * @brief 解析机器人信息
@@ -822,11 +810,11 @@ bool ParseRobotInfosStringToRobotInfos(const std::string &infos_json, RobotInfos
   * @param[out] info 机器人信息
   * @return bool 解析成功或失败 
   */
-bool ParseRobotInfoStringToRobotInfo(const std::string &info_json, RobotInfo &info);
+NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API bool ParseRobotInfoStringToRobotInfo(const std::string &info_json, RobotInfo &info);
 
 typedef ChatRoomQueueElement ChatRoomMember;
 /** @brief 聊天室批量更新成员*/
-struct ChatRoomBatchMembers
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomBatchMembers
 {
 
 	std::map < std::string,std::string>members_values_;
@@ -856,13 +844,13 @@ struct ChatRoomBatchMembers
 			values[i][kNIMChatRoomQueueElementValue] = it->second.c_str();
 			i++;
 		}
-		return nim::GetJsonStringWithNoStyled(values);
+		return nim_chatroom::GetJsonStringWithNoStyled(values);
 	}
 
 
 };
 
-bool ParseBatchInfosStringToNotMembers(const std::string &infos_json, std::list<std::string> &lst_members);
+NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API bool ParseBatchInfosStringToNotMembers(const std::string &infos_json, std::list<std::string> &lst_members);
 
 
 } //namespace nim_chatroom

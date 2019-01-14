@@ -1,7 +1,6 @@
 ﻿/** @file nim_chatroom_helper.cpp
   * @brief 聊天室SDK辅助方法
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg, Harrison
   * @date 2015/12/29
   */
 
@@ -10,12 +9,21 @@
 namespace nim_chatroom
 {
 	std::vector<NIMChatRoomMsgType> ChatRoomGetMsgHistoryParameters::kMsg_Types_List;
-	const char * ChatRoomPlatformConfig::kPlatformConfigToken = "platform_config_token";//平台配置标签
-	const char * ChatRoomPlatformConfig::kNtserverAddress = "nt_server";//部分 IM 错误信息统计上报地址,
-	const char * ChatRoomPlatformConfig::kUploadStatisticsData = "is_upload_statistics_data";//错误信息统计是否上报,私有化如果不上传相应数据，此项配置应为false
+	const char * kPlatformConfigToken = "platform_config_token";//平台配置标签
+	const char * kNtserverAddress = "nt_server";//部分 IM 错误信息统计上报地址,
+	const char * kUploadStatisticsData = "is_upload_statistics_data";//错误信息统计是否上报,私有化如果不上传相应数据，此项配置应为false
 	bool operator == (const NIMChatRoomExitReasonInfo& info,NIMChatRoomExitReason code)
 	{
 		return info.code_ == code;
+	}
+	bool ChatRoomPlatformConfig::ToJsonObject(Json::Value& values) const
+	{		
+		for (auto it = ntserver_address_list_.begin(); it != ntserver_address_list_.end(); it++)
+		{
+			values[kPlatformConfigToken][kNtserverAddress].append(*it);
+		}
+		values[kPlatformConfigToken][kUploadStatisticsData] = upload_statistics_data_;
+		return true;
 	}
 bool ParseChatRoomEnterCallbackResultInfo(const std::string& result, ChatRoomInfo& room_info, ChatRoomMemberInfo& my_info)
 {

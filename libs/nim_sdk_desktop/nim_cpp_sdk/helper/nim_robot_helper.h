@@ -1,7 +1,6 @@
 ﻿/** @file nim_robot_helper.h
   * @brief SDK波特机器人辅助方法
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2017/06/26
   */
 
@@ -15,7 +14,7 @@
 #include "nim_json_util.h"
 #include "nim_base_types.h"
 #include "nim_sdk_defines.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
 * @brief namespace nim
@@ -23,7 +22,7 @@
 namespace nim
 {
 /** @brief 机器人信息 */
-struct RobotInfo
+struct NIM_SDK_CPPWRAPPER_DLL_API RobotInfo
 {
 public:
 	/** 设置机器人云信id */
@@ -122,7 +121,7 @@ typedef std::list<RobotInfo> RobotInfos;
   * @param[out] infos 机器人信息
   * @return bool 解析成功或失败 
   */
-bool ParseRobotInfosStringToRobotInfos(const std::string &infos_json, RobotInfos &infos);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseRobotInfosStringToRobotInfos(const std::string &infos_json, RobotInfos &infos);
 
 /** @fn bool ParseRobotInfoStringToRobotInfo(const std::string& info_json, RobotInfos &info)
   * @brief 解析机器人信息
@@ -130,7 +129,7 @@ bool ParseRobotInfosStringToRobotInfos(const std::string &infos_json, RobotInfos
   * @param[out] info 机器人信息
   * @return bool 解析成功或失败 
   */
-bool ParseRobotInfoStringToRobotInfo(const std::string &info_json, RobotInfo &info);
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseRobotInfoStringToRobotInfo(const std::string &info_json, RobotInfo &info);
 
 }
 

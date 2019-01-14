@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_subscribe_event.h
   * @brief 事件订阅
   * @copyright (c) 2017, NetEase Inc. All rights reserved
-  * @author Redrain
   * @date 2017/03/23
   */
 
@@ -12,7 +11,7 @@
 #include <list>
 #include <functional>
 #include "nim_subscribe_event_helper.h"
-
+#include "nim_sdk_cpp_wrapper_dll.h"
 
 /**
 * @namespace nim
@@ -23,7 +22,7 @@ namespace nim
 /** @class SubscribeEvent
   * @brief NIM 订阅事件相关接口
   */
-class SubscribeEvent
+class NIM_SDK_CPPWRAPPER_DLL_API SubscribeEvent
 {
 public:
 	typedef std::function<void(NIMResCode res_code, const nim::EventData& event_data)> PushEventCallback;	/**< 接收订阅事件回调模板 */

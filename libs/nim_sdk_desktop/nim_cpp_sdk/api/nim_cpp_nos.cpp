@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_nos.cpp
   * @brief NIM SDK提供的NOS云存储服务接口
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg, Harrison
   * @date 2015/2/1
   */
 
@@ -10,8 +9,7 @@
 #include "nim_json_util.h"
 #include "nim_string_util.h"
 #include "nim_cpp_talk.h"
-#include "nim_cpp_win32_demo_helper.h"
-
+#include "callback_proxy.h"
 namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
@@ -72,172 +70,131 @@ struct DownloadCallbackExUserData
 };
 static void CallbackInitConfig(enum NIMNosInitConfigResultType rescode, const char* json_result, const char *json_extension, const void *user_data)
 {
-	NOS::InitNosResultCallback* cb = (NOS::InitNosResultCallback*)(user_data);
-	if (cb != nullptr && *cb != nullptr)
-	{
+	CallbackProxy::DoSafeCallback<NOS::InitNosResultCallback>(user_data, [=](const NOS::InitNosResultCallback& cb){
+
 		InitNosResult result;
 		result.result_ = rescode;
 		result.FromJsonString(json_result);
-		PostTaskToUIThread([cb, result](){
-			(*cb)(result);
-			delete cb;
-		}); 
-	}
+		CallbackProxy::Invoke(cb, result);
+	},true);
+
 }
 static void CallbackUpload(int res_code, const char *url, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		NOS::UploadMediaCallback cb = ((UploadCallbackUserData*)user_data)->callback_result;
-		if (cb)
-		{
-			//cb((NIMResCode)res_code, PCharToString(url));
-			PostTaskToUIThread(std::bind((cb), (NIMResCode)res_code, PCharToString(url)));
-		}
+
+	NOS::UploadMediaCallback cb_result = ((UploadCallbackUserData*)user_data)->callback_result;
+	CallbackProxy::DoSafeCallback<NOS::UploadMediaCallback>(&cb_result, [=](const NOS::UploadMediaCallback& cb){
+
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, PCharToString(url));
 		delete ((UploadCallbackUserData*)user_data)->callback_progress_pointer;
 		delete ((UploadCallbackUserData*)user_data)->callback_speed_pointer;
 		delete ((UploadCallbackUserData*)user_data)->callback_transfer_pointer;
 		delete (UploadCallbackUserData*)user_data;
-	}
+	});
 }
 
 static void CallbackDownload(int res_code, const char *file_path, const char *call_id, const char *res_id, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		NOS::DownloadMediaCallback cb = ((DownloadCallbackUserData*)user_data)->callback_result;
-		if (cb)
-		{
-			PostTaskToUIThread(std::bind((cb), (NIMResCode)res_code, PCharToString(file_path), PCharToString(call_id), PCharToString(res_id)));
-			//cb((NIMResCode)res_code, PCharToString(file_path), PCharToString(call_id), PCharToString(res_id));
-		}
+	NOS::DownloadMediaCallback cb_result = ((DownloadCallbackUserData*)user_data)->callback_result;
+	CallbackProxy::DoSafeCallback<NOS::DownloadMediaCallback>(&cb_result, [=](const NOS::DownloadMediaCallback& cb){
+
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, PCharToString(file_path), PCharToString(call_id), PCharToString(res_id));
 		delete ((DownloadCallbackUserData*)user_data)->callback_progress_pointer;
 		delete ((DownloadCallbackUserData*)user_data)->callback_speed_pointer;
 		delete ((DownloadCallbackUserData*)user_data)->callback_transfer_pointer;
 		delete (DownloadCallbackUserData*)user_data;
-	}
+	});
 }
 
 static void CallbackProgress(int64_t completed_size, int64_t total_size, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		NOS::ProgressCallback* cb = (NOS::ProgressCallback*)callback;
-		if (*cb)
-		{
-			PostTaskToUIThread(std::bind((*cb), completed_size, total_size));
-			//(*cb)(completed_size, total_size);
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<NOS::ProgressCallback>(callback, [=](const NOS::ProgressCallback& cb){
+
+		CallbackProxy::Invoke(cb, completed_size, total_size);
+	});
 }
 
 static void CallbackUploadEx(int res_code, const char *url, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		NOS::UploadMediaExCallback cb = ((UploadCallbackExUserData*)user_data)->callback_result;
-		if (cb)
-		{
-			UploadMediaResult result;
-			ParseUploadResult(PCharToString(url), PCharToString(json_extension), result);
-			PostTaskToUIThread(std::bind((cb), (NIMResCode)res_code, result));
-			//cb((NIMResCode)res_code, result);
-		}
+	NOS::UploadMediaExCallback cb_result = ((UploadCallbackExUserData*)user_data)->callback_result;
+	CallbackProxy::DoSafeCallback<NOS::UploadMediaExCallback>(&cb_result, [=](const NOS::UploadMediaExCallback& cb){
+
+		UploadMediaResult result;
+		ParseUploadResult(PCharToString(url), PCharToString(json_extension), result);
+
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, result);
 		delete ((UploadCallbackExUserData*)user_data)->callback_progress_pointer;
 		delete ((UploadCallbackExUserData*)user_data)->callback_speed_pointer;
 		delete ((UploadCallbackExUserData*)user_data)->callback_transfer_pointer;
 		delete (UploadCallbackExUserData*)user_data;
-	}
+	});
 }
 
 
 
 static void CallbackDownloadEx(int res_code, const char *file_path, const char *call_id, const char *res_id, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		NOS::DownloadMediaExCallback cb = ((DownloadCallbackExUserData*)user_data)->callback_result;
-		if (cb)
-		{
-			DownloadMediaResult result;
-			ParseDownloadResult(PCharToString(file_path), PCharToString(call_id), PCharToString(res_id), result);
-			PostTaskToUIThread(std::bind((cb), (NIMResCode)res_code, result));
-			//cb((NIMResCode)res_code, result);
-		}
+	NOS::DownloadMediaExCallback cb_result = ((DownloadCallbackExUserData*)user_data)->callback_result;
+	CallbackProxy::DoSafeCallback<NOS::DownloadMediaExCallback>(&cb_result, [=](const NOS::DownloadMediaExCallback& cb){
+
+		DownloadMediaResult result;
+		ParseDownloadResult(PCharToString(file_path), PCharToString(call_id), PCharToString(res_id), result);
+	
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, result);
 		delete ((DownloadCallbackExUserData*)user_data)->callback_progress_pointer;
 		delete ((DownloadCallbackExUserData*)user_data)->callback_speed_pointer;
 		delete ((DownloadCallbackExUserData*)user_data)->callback_transfer_pointer;
 		delete (DownloadCallbackExUserData*)user_data;
-	}
+	});
 }
 
 static void CallbackProgressEx(int64_t completed_size, int64_t total_size, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		NOS::ProgressExCallback* cb = (NOS::ProgressExCallback*)callback;
-		if (*cb)
-		{
-			ProgressData data;
-			ParseProgressData(PCharToString(json_extension), data);
-			PostTaskToUIThread(std::bind((*cb), completed_size, total_size, data));
-			//(*cb)(completed_size, total_size, data);
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<NOS::ProgressExCallback>(callback, [=](const NOS::ProgressExCallback& cb){
+
+		ProgressData data;
+		ParseProgressData(PCharToString(json_extension), data);
+		CallbackProxy::Invoke(cb, completed_size, total_size, data);
+	});
 }
 
 static void CallbackSpeed(int64_t speed, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		NOS::SpeedCallback* cb = (NOS::SpeedCallback*)callback;
-		if (*cb)
-		{
-			PostTaskToUIThread(std::bind((*cb), speed));
-			//(*cb)(speed);
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<NOS::SpeedCallback>(callback, [=](const NOS::SpeedCallback& cb){
+
+		CallbackProxy::Invoke(cb, speed);
+	});
 }
 
 static void CallbackTransferInfo(int64_t actual_size, int64_t speed, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		NOS::TransferInfoCallback* cb = (NOS::TransferInfoCallback*)callback;
-		if (*cb)
-		{
-			PostTaskToUIThread(std::bind((*cb), actual_size, speed));
-			//(*cb)(actual_size, speed);	
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<NOS::TransferInfoCallback>(callback, [=](const NOS::TransferInfoCallback& cb){
+
+		CallbackProxy::Invoke(cb, actual_size, speed);
+	});
 }
 
 static void CallbackMediaDownloadResult(int res_code, const char *file_path, const char *call_id, const char *res_id, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		NOS::DownloadMediaCallback* cb = (NOS::DownloadMediaCallback*)user_data;
-		if (*cb)
-		{
-			PostTaskToUIThread(std::bind((*cb), (NIMResCode)res_code, PCharToString(file_path), PCharToString(call_id), PCharToString(res_id)));
-			//(*cb)((NIMResCode)res_code, PCharToString(file_path), PCharToString(call_id), PCharToString(res_id));
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<NOS::DownloadMediaCallback>(user_data, [=](const NOS::DownloadMediaCallback& cb){
+
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, PCharToString(file_path), PCharToString(call_id), PCharToString(res_id));
+	});
 }
 
 static void CallbackMediaUploadResult(int res_code, const char *url, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		NOS::UploadMediaExCallback *cb = (NOS::UploadMediaExCallback*)user_data;
-		if (*cb)
-		{
-			UploadMediaResult result;
-			ParseUploadResult(PCharToString(url), PCharToString(json_extension), result);
-			PostTaskToUIThread(std::bind((*cb), (NIMResCode)res_code, result));
-			//(*cb)((NIMResCode)res_code, result);
-		}
-	}
+	CallbackProxy::DoSafeCallback<NOS::UploadMediaExCallback>(user_data, [=](const NOS::UploadMediaExCallback& cb){
+
+		UploadMediaResult result;
+		ParseUploadResult(PCharToString(url), PCharToString(json_extension), result);
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, result);
+	});
 }
 class UploadCallbackUserDataMaker
 {
@@ -289,14 +246,14 @@ static NOS::DownloadMediaCallback g_cb_pointer = nullptr;
 void NOS::RegDownloadCb(const DownloadMediaCallback& cb)
 {
 	g_cb_pointer = cb;
-	return NIM_SDK_GET_FUNC(nim_nos_reg_download_cb)(&CallbackMediaDownloadResult, &g_cb_pointer);
+	NIM_SDK_GET_FUNC(nim_nos_reg_download_cb)(&CallbackMediaDownloadResult, &g_cb_pointer);
 }
 
 static NOS::UploadMediaExCallback g_cb_upload_pointer = nullptr;
 void NOS::RegUploadCb(const UploadMediaExCallback& cb)
 {
 	g_cb_upload_pointer = cb;
-	return NIM_SDK_GET_FUNC(nim_nos_reg_upload_cb)(&CallbackMediaUploadResult, &g_cb_upload_pointer);
+	NIM_SDK_GET_FUNC(nim_nos_reg_upload_cb)(&CallbackMediaUploadResult, &g_cb_upload_pointer);
 }
 
 bool NOS::FetchMedia(const IMMessage& msg, const DownloadMediaCallback& callback_result, const ProgressCallback& callback_progress)

@@ -1,7 +1,6 @@
 ﻿/** @file nim_cpp_vchat.cpp
   * @brief NIM VChat提供的音视频（包括设备）相关接口
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author gq
   * @date 2015/4/30
   */
 
@@ -9,7 +8,7 @@
 #include "nim_sdk_util.h"
 #include "nim_json_util.h"
 #include "nim_string_util.h"
-#include "nim_cpp_win32_demo_helper.h"
+#include "callback_proxy.h"
 
 namespace nim
 {
@@ -158,6 +157,7 @@ typedef bool(*nim_vchat_join_room)(NIMVideoChatMode mode, const char *room_name,
 * @return void 无返回值
 */
 typedef void(*nim_vchat_update_rtmp_url)(const char *rtmp_url, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+
 typedef void(*nim_vchat_select_video_adaptive_strategy)(NIMVChatVideoEncodeMode mode, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 //typedef void(*nim_vchat_set_streaming_mode)(bool streaming, const char* json_info, nim_vchat_opt_cb_func cb, const void *user_data);
 
@@ -168,22 +168,19 @@ typedef void (*nim_vchat_set_uid_picture_as_main)(const char *uid, const char* j
 
 static void OnOptCallback(bool ret, int code, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		VChat::OptCallback* cb_pointer = (VChat::OptCallback*)user_data;
-		if (*cb_pointer)
-		{
-			//(*cb_pointer)(ret, code, PCharToString(json_extension));
-			PostTaskToUIThread(std::bind((*cb_pointer), ret, code, PCharToString(json_extension)));
-		}
-		delete user_data;
-	}
+
+	CallbackProxy::DoSafeCallback<VChat::OptCallback>(user_data, [=](const VChat::OptCallback& cb){
+
+		CallbackProxy::Invoke(cb, ret, code, PCharToString(json_extension));
+
+	}, true);
 }
 
 static void CallbackNetDetect(bool ret, int rescode, const char *json_params, const void *user_data)
 {
-	if (user_data != nullptr)
-	{
+
+	CallbackProxy::DoSafeCallback<VChat::NetDetectCallback>(user_data, [=](const VChat::NetDetectCallback& cb){
+
 		NetDetectCbInfo res;
 		res.res_code_ = rescode;
 		Json::Reader reader;
@@ -197,11 +194,9 @@ static void CallbackNetDetect(bool ret, int rescode, const char *json_params, co
 			res.rtt_mdev_ = values[kNIMNetDetectRttmdev].asInt();
 			res.expand_info_ = values[kNIMNetDetectDetail].asString();
 		}
-		VChat::NetDetectCallback *cb = (VChat::NetDetectCallback *)user_data;
-		PostTaskToUIThread(std::bind((*cb), rescode, res));
-		//(*cb)(rescode, res);
-		delete cb;
-	}
+		CallbackProxy::Invoke(cb, rescode, res);
+
+	}, true);
 }
 //dll-------------------------------
 //NIM vchat初始化
@@ -405,15 +400,11 @@ bool VChat::Control(uint64_t channel_id, NIMVChatControlType type)
 }
 static void mp4_record_opt_cb(bool ret, int code, const char *file, int64_t time, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		VChat::Mp4OptCallback* cb_pointer = (VChat::Mp4OptCallback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), ret, code, PCharToString(file), time));
-		}
-		delete user_data;
-	}
+
+	CallbackProxy::DoSafeCallback<VChat::Mp4OptCallback>(user_data, [=](const VChat::Mp4OptCallback& cb){
+
+		CallbackProxy::Invoke(cb, ret, code, PCharToString(file), time);
+	}, true);
 }
 void VChat::StartRecord(const std::string& path, const std::string& uid, Mp4OptCallback cb)
 {
@@ -449,7 +440,7 @@ static void audio_record_opt_cb(bool ret, int code, const char *file, int64_t ti
 		VChat::AudioRecordCallback* cb_pointer = (VChat::AudioRecordCallback*)user_data;
 		if (*cb_pointer)
 		{
-			PostTaskToUIThread(std::bind((*cb_pointer), ret, code, PCharToString(file), time));
+			CallbackProxy::Invoke(*cb_pointer,ret, code, PCharToString(file), time);
 		}
 		delete user_data;
 	}
@@ -564,15 +555,11 @@ void VChat::SetMemberBlacklist(const std::string& uid, bool add, bool audio, con
 
 static void OnOpt2Callback(int code, int64_t cannel_id, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		VChat::Opt2Callback* cb_pointer = (VChat::Opt2Callback*)user_data;
-		if (*cb_pointer)
-		{
-			PostTaskToUIThread(std::bind((*cb_pointer), code, cannel_id, PCharToString(json_extension)));
-		}
-		delete user_data;
-	}
+
+	CallbackProxy::DoSafeCallback<VChat::Opt2Callback>(user_data, [=](const VChat::Opt2Callback& cb){
+
+		CallbackProxy::Invoke(cb, code, cannel_id, PCharToString(json_extension));
+	}, true);
 }
 void VChat::CreateRoom(const std::string& room_name, const std::string& custom_info, const std::string& json_extension, Opt2Callback cb)
 {
@@ -587,12 +574,12 @@ bool VChat::JoinRoom(NIMVideoChatMode mode, const std::string& room_name, const 
 void VChat::UpdateRtmpUrl(const std::string& rtmp_url, OptCallback cb)
 {
 	OptCallback* cb_pointer = new OptCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_vchat_update_rtmp_url)(rtmp_url.c_str(), "", OnOptCallback, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_vchat_update_rtmp_url)(rtmp_url.c_str(), "", OnOptCallback, cb_pointer);
 }
 void VChat::SelectVideoAdaptiveStrategy(NIMVChatVideoEncodeMode mode, const std::string& json_extension, OptCallback cb)
 {
 	OptCallback* cb_pointer = new OptCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_vchat_select_video_adaptive_strategy)(mode, json_extension.c_str(), OnOptCallback, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_vchat_select_video_adaptive_strategy)(mode, json_extension.c_str(), OnOptCallback, cb_pointer);
 }
 //void VChat::SetStreamingMode(bool streaming, OptCallback cb)
 //{
@@ -603,7 +590,7 @@ void VChat::SelectVideoAdaptiveStrategy(NIMVChatVideoEncodeMode mode, const std:
 void VChat::SetUidAsMainPicture(const std::string& uid, const std::string& json_extension, OptCallback cb)
 {
 	OptCallback* cb_pointer = new OptCallback(cb);
-	return NIM_SDK_GET_FUNC(nim_vchat_set_uid_picture_as_main)(uid.c_str(), json_extension.c_str(), OnOptCallback, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_vchat_set_uid_picture_as_main)(uid.c_str(), json_extension.c_str(), OnOptCallback, cb_pointer);
 }
 
 }  // namespace nim

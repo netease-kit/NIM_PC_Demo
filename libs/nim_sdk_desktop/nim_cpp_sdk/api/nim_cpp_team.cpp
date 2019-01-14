@@ -1,7 +1,6 @@
-/** @file nim_cpp_team.cpp
-  * @brief »∫◊Èπ¶ƒ‹£ª÷˜“™∞¸¿®≤È—Ø»∫–≈œ¢°¢≤È—Ø»∫≥…‘±–≈œ¢°¢º”»À°¢Ãﬂ»Àµ»π¶ƒ‹
+Ôªø/** @file nim_cpp_team.cpp
+  * @brief Áæ§ÁªÑÂäüËÉΩÔºõ‰∏ªË¶ÅÂåÖÊã¨Êü•ËØ¢Áæ§‰ø°ÊÅØ„ÄÅÊü•ËØ¢Áæ§ÊàêÂëò‰ø°ÊÅØ„ÄÅÂä†‰∫∫„ÄÅË∏¢‰∫∫Á≠âÂäüËÉΩ
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author towik, Oleg, Harrison
   * @date 2015/2/1
   */
 
@@ -10,8 +9,7 @@
 #include "nim_json_util.h"
 #include "nim_string_util.h"
 #include "nim_cpp_global.h"
-#include "nim_cpp_win32_demo_helper.h"
-
+#include "callback_proxy.h"
 namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
@@ -54,136 +52,93 @@ typedef void(*nim_team_msg_query_unread_list)(const char *tid, const char *json_
 
 static void CallbackTeamEvent(int res_code, int notification_id, const char *tid, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Team::TeamEventCallback* cb_pointer = (Team::TeamEventCallback*)user_data;
-		if (*cb_pointer)
-		{
-			TeamEvent team_event;
-			ParseTeamEvent(res_code, PCharToString(tid), (nim::NIMNotificationId)notification_id, PCharToString(result), team_event);
-			PostTaskToUIThread(std::bind((*cb_pointer), team_event));
-			//(*cb_pointer)(team_event);
-		}
-	}
+
+	CallbackProxy::DoSafeCallback<Team::TeamEventCallback>(user_data, [=](const Team::TeamEventCallback& cb){
+		TeamEvent team_event;
+		ParseTeamEvent(res_code, PCharToString(tid), (nim::NIMNotificationId)notification_id, PCharToString(result), team_event);
+		CallbackProxy::Invoke(cb, team_event);
+	});
 }
 
 static void CallbackTeamChange(int res_code, int notification_id, const char *tid, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Team::TeamEventCallback* cb_pointer = (Team::TeamEventCallback*)user_data;
-		if (*cb_pointer)
-		{
-			TeamEvent team_event;
-			ParseTeamEvent(res_code, PCharToString(tid), (nim::NIMNotificationId)notification_id, PCharToString(result), team_event);
-			PostTaskToUIThread(std::bind((*cb_pointer), team_event));
-			//(*cb_pointer)(team_event);
-		}
-		delete cb_pointer;
-	}
+	CallbackProxy::DoSafeCallback<Team::TeamEventCallback>(user_data, [=](const Team::TeamEventCallback& cb){
+		TeamEvent team_event;
+		ParseTeamEvent(res_code, PCharToString(tid), (nim::NIMNotificationId)notification_id, PCharToString(result), team_event);
+		CallbackProxy::Invoke(cb, team_event);
+	},true);
+
 }
 
 static void CallbackQueryMyTeams(int team_count, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Team::QueryAllMyTeamsCallback* cb_pointer = (Team::QueryAllMyTeamsCallback*)user_data;
-		if (*cb_pointer)
-		{
-			std::list<std::string> team_id_list;
-			JsonStrArrayToList(GetJsonValueFromJsonString(PCharToString(result)), team_id_list);
-			PostTaskToUIThread(std::bind((*cb_pointer), team_count, team_id_list));
-			//(*cb_pointer)(team_count, team_id_list);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<Team::QueryAllMyTeamsCallback>(user_data, [=](const Team::QueryAllMyTeamsCallback& cb){
+		std::list<std::string> team_id_list;
+		JsonStrArrayToList(GetJsonValueFromJsonString(PCharToString(result)), team_id_list);
+		CallbackProxy::Invoke(cb, team_count, team_id_list);
+	}, true);
+
 }
 
 static void CallbackQueryTeamMembers(const char *tid, int member_count, bool include_user_info, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Team::QueryTeamMembersCallback* cb_pointer = (Team::QueryTeamMembersCallback*)user_data;
-		if (*cb_pointer)
-		{
-			std::list<nim::TeamMemberProperty> team_member_info_list;
-			ParseTeamMemberPropertysJson(PCharToString(result), team_member_info_list);
-			PostTaskToUIThread(std::bind((*cb_pointer), PCharToString(tid), member_count, team_member_info_list));
-			//(*cb_pointer)(PCharToString(tid), member_count, team_member_info_list);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<Team::QueryTeamMembersCallback>(user_data, [=](const Team::QueryTeamMembersCallback& cb){
+		std::list<nim::TeamMemberProperty> team_member_info_list;
+		ParseTeamMemberPropertysJson(PCharToString(result), team_member_info_list);
+		CallbackProxy::Invoke(cb, PCharToString(tid), member_count, team_member_info_list);
+	}, true);
+
 }
 
 static void CallbackQueryTeamMember(const char *tid, const char *id, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Team::QueryTeamMemberCallback* cb_pointer = (Team::QueryTeamMemberCallback*)user_data;
-		if (*cb_pointer)
-		{
-			nim::TeamMemberProperty prop;
-			ParseTeamMemberPropertyJson(PCharToString(result), prop);
-			PostTaskToUIThread(std::bind((*cb_pointer), prop));
-			//(*cb_pointer)(prop);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<Team::QueryTeamMemberCallback>(user_data, [=](const Team::QueryTeamMemberCallback& cb){
+		nim::TeamMemberProperty prop;
+		ParseTeamMemberPropertyJson(PCharToString(result), prop);
+		CallbackProxy::Invoke(cb, prop);
+	}, true);
 }
 
 static void CallbackQueryAllMyTeamsInfo(int team_count, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Team::QueryAllMyTeamsInfoCallback* cb_pointer = (Team::QueryAllMyTeamsInfoCallback*)user_data;
-		if (*cb_pointer)
-		{
-			std::list<nim::TeamInfo> team_info_list;
-			ParseTeamInfosJson(PCharToString(result), team_info_list);
-			PostTaskToUIThread(std::bind((*cb_pointer), team_count, team_info_list));
-			//(*cb_pointer)(team_count, team_info_list);
-		}
-		delete cb_pointer;
-	}
+	CallbackProxy::DoSafeCallback<Team::QueryAllMyTeamsInfoCallback>(user_data, [=](const Team::QueryAllMyTeamsInfoCallback& cb){
+		std::list<nim::TeamInfo> team_info_list;
+		ParseTeamInfosJson(PCharToString(result), team_info_list);
+		CallbackProxy::Invoke(cb, team_count, team_info_list);
+	}, true);
 }
 
 static void CallbackQueryMyAllMemberInfos(int count, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Team::QueryMyAllMemberInfosCallback* cb_pointer = (Team::QueryMyAllMemberInfosCallback*)user_data;
-		if (*cb_pointer)
-		{
-			std::list<nim::TeamMemberProperty> my_infos_list;
-			ParseTeamMemberPropertysJson(PCharToString(result), my_infos_list);
-			PostTaskToUIThread(std::bind((*cb_pointer), count, my_infos_list));
-			//(*cb_pointer)(count, my_infos_list);	
-		}
-		delete cb_pointer;
-	}
+
+
+	CallbackProxy::DoSafeCallback<Team::QueryMyAllMemberInfosCallback>(user_data, [=](const Team::QueryMyAllMemberInfosCallback& cb){
+		std::list<nim::TeamMemberProperty> my_infos_list;
+		ParseTeamMemberPropertysJson(PCharToString(result), my_infos_list);
+		CallbackProxy::Invoke(cb, count, my_infos_list);
+	}, true);
+
 }
 
 static void CallbackQueryTeamInfo(const char *tid, const char *result, const char *json_extension, const void *callback)
 {
-	if (callback)
-	{
-		Team::QueryTeamInfoCallback* cb_pointer = (Team::QueryTeamInfoCallback*)callback;
-		if (*cb_pointer)
-		{
-			nim::TeamInfo team_info;
-			ParseTeamInfoJson(PCharToString(result), team_info);
-			PostTaskToUIThread(std::bind((*cb_pointer), PCharToString(tid), team_info));
-			//(*cb_pointer)(PCharToString(tid), team_info);
-		}
-		delete cb_pointer;
-	}
+
+	CallbackProxy::DoSafeCallback<Team::QueryTeamInfoCallback>(callback, [=](const Team::QueryTeamInfoCallback& cb){
+		nim::TeamInfo team_info;
+		ParseTeamInfoJson(PCharToString(result), team_info);
+		CallbackProxy::Invoke(cb, PCharToString(tid), team_info);
+	}, true);
+
 }
 
 static Team::TeamEventCallback g_cb_team_event_ = nullptr;
 void Team::RegTeamEventCb(const TeamEventCallback& cb, const std::string& json_extension)
 {
 	g_cb_team_event_ = cb;
-	return NIM_SDK_GET_FUNC(nim_team_reg_team_event_cb)(json_extension.c_str(), &CallbackTeamEvent, &g_cb_team_event_);
+	NIM_SDK_GET_FUNC(nim_team_reg_team_event_cb)(json_extension.c_str(), &CallbackTeamEvent, &g_cb_team_event_);
 }
 
 bool Team::CreateTeamAsync(const TeamInfo& team_info
@@ -549,7 +504,7 @@ void Team::QueryAllMyTeamsAsync(const QueryAllMyTeamsCallback& cb, const std::st
 	{
 		cb_pointer = new QueryAllMyTeamsCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_team_query_all_my_teams_async)(json_extension.c_str(), &CallbackQueryMyTeams, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_team_query_all_my_teams_async)(json_extension.c_str(), &CallbackQueryMyTeams, cb_pointer);
 }
 
 void Team::QueryAllMyTeamsInfoAsync(const QueryAllMyTeamsInfoCallback& cb, const std::string& json_extension/* = ""*/)
@@ -559,7 +514,7 @@ void Team::QueryAllMyTeamsInfoAsync(const QueryAllMyTeamsInfoCallback& cb, const
 	{
 		cb_pointer = new QueryAllMyTeamsInfoCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_team_query_all_my_teams_info_async)(json_extension.c_str(), &CallbackQueryAllMyTeamsInfo, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_team_query_all_my_teams_info_async)(json_extension.c_str(), &CallbackQueryAllMyTeamsInfo, cb_pointer);
 }
 
 void Team::QueryMyAllMemberInfosAsync( const QueryMyAllMemberInfosCallback& cb, const std::string& json_extension /*= ""*/ )
@@ -569,7 +524,7 @@ void Team::QueryMyAllMemberInfosAsync( const QueryMyAllMemberInfosCallback& cb, 
 	{
 		cb_pointer = new QueryMyAllMemberInfosCallback(cb);
 	}
-	return NIM_SDK_GET_FUNC(nim_team_query_my_all_member_infos_async)(json_extension.c_str(), &CallbackQueryMyAllMemberInfos, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_team_query_my_all_member_infos_async)(json_extension.c_str(), &CallbackQueryMyAllMemberInfos, cb_pointer);
 }
 
 bool Team::QueryTeamMembersAsync(const std::string& tid, const QueryTeamMembersCallback& cb, const std::string& json_extension/* = ""*/)
@@ -714,29 +669,24 @@ bool Team::MuteAsync(const std::string& tid, bool set_mute, const TeamEventCallb
 
 static void CallbackQueryMembersOnline(int res_code, int count, const char *tid, const char *result, const char *json_extension, const void *user_data)
 {
-	if (user_data)
-	{
-		Team::QueryTeamMembersOnlineCallback* cb_pointer = (Team::QueryTeamMembersOnlineCallback*)user_data;
-		if (*cb_pointer)
+
+	CallbackProxy::DoSafeCallback<Team::QueryTeamMembersOnlineCallback>(user_data, [=](const Team::QueryTeamMembersOnlineCallback& cb){
+		Json::Value values;
+		Json::Reader reader;
+		std::list<TeamMemberProperty> members;
+		if (reader.parse(PCharToString(result), values) && values.isArray())
 		{
-			Json::Value values;
-			Json::Reader reader;
-			std::list<TeamMemberProperty> members;
-			if (reader.parse(PCharToString(result), values) && values.isArray())
+			auto size = values.size();
+			for (int i = 0; i < size; i++)
 			{
-				auto size = values.size();
-				for (int i = 0; i < size; i++)
-				{
-					TeamMemberProperty prop;
-					ParseTeamMemberPropertyJson(values[i], prop);
-					members.push_back(prop);
-				}
+				TeamMemberProperty prop;
+				ParseTeamMemberPropertyJson(values[i], prop);
+				members.push_back(prop);
 			}
-			PostTaskToUIThread(std::bind((*cb_pointer), (NIMResCode)res_code, PCharToString(tid), members));
-			//(*cb_pointer)((NIMResCode)res_code, PCharToString(tid), members);
 		}
-		delete cb_pointer;
-	}
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, PCharToString(tid), members);
+	}, true);
+
 }
 
 bool Team::QueryMuteListOnlineAsync(const std::string& tid, const QueryTeamMembersOnlineCallback& cb, const std::string& json_extension/* = ""*/)

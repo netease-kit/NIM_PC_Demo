@@ -1,7 +1,6 @@
 ﻿/** @file nim_robot_helper.cpp
   * @brief SDK波特机器人辅助方法
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
-  * @author Oleg
   * @date 2017/06/26
   */
 
