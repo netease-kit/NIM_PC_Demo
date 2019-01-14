@@ -9,9 +9,9 @@
 #include "gui/main/main_form.h"
 #include "callback/chatroom_callback.h"
 #include "module/config/config_helper.h"
-#include "cef/cef_module/cef_manager.h"
+#include "cef/cef_module/manager/cef_manager.h"
 #include "duilib/Utils/MultiLangSupport.h"
-
+#include "nim_service\module\local\local_helper.h"
 void MainThread::Init()
 {
 	nbase::ThreadManager::RegisterThread(kThreadUI);
@@ -119,6 +119,9 @@ static void InitNim()
 			if (auto pchar = root->Attribute("kNIMPreloadImageResize")){
 				config.preload_image_resize_ = (std::string)pchar;
 			}
+			if (auto pchar = root->Attribute("kNIMPreloadAttachImageNameTemplate")) {
+				config.preload_image_name_template_ = (std::string)pchar;
+			}
 			if (auto pchar = root->Attribute("kNIMTeamNotificationUnreadCount")){
 				int need = -1;
 				nbase::StringToInt((std::string)pchar, &need);
@@ -164,25 +167,38 @@ static void InitNim()
 			}
 		}
 	}
+	
 	config.database_encrypt_key_ = "Netease"; //string（db key必填，目前只支持最多32个字符的加密密钥！建议使用32个字符）
 
 	std::string app_key = app_sdk::AppSDKInterface::GetAppKey();
 	std::wstring app_install;// = QPath::GetAppPath() + L"\\x64_dlls\\";
 	bool ret = nim::Client::Init(app_key, "Netease", nbase::UTF16ToUTF8(app_install), config); // 载入云信sdk，初始化安装目录和用户目录
 	assert(ret);
+#ifdef CPPWRAPPER_DLL
+	nim::Client::SetCallbackFunction([](const StdClosure & task) {
+		nbase::ThreadManager::PostTask(ThreadId::kThreadUI, task);
+});
+#endif // #ifdef CPPWRAPPER_DLL
+
+	
 	//初始化聊天室
 	{
 		Json::Value extension;
 		nim_chatroom::ChatRoomPlatformConfig chatroom_platform_config;
 		chatroom_platform_config.AddNTServerAddress(config.ntserver_address_);
 		chatroom_platform_config.EnableUploadStatisticsData(config.upload_statistics_data_);
-		chatroom_platform_config.ToJsonObject(extension[nim_chatroom::ChatRoomPlatformConfig::kPlatformConfigToken]);
+		chatroom_platform_config.ToJsonObject(extension);
 		ret = nim_chatroom::ChatRoom::Init(nbase::UTF16ToUTF8(app_install), nim::GetJsonStringWithNoStyled(extension));
+#ifdef CPPWRAPPER_DLL
+		nim_chatroom::ChatRoom::SetCallbackFunction([](const StdClosure & task) {
+			nbase::ThreadManager::PostTask(ThreadId::kThreadUI, task);
+		});
+#endif//CPPWRAPPER_DLL
 		nim_chatroom::ChatRoom::SetMsgsBatchReport(true);
 		assert(ret);
 	}	
 	// 初始化云信音视频
-	ret = nim::VChat::Init("");
+	ret = nim::VChat::Init(nbase::UTF16ToUTF8(QPath::GetAppPath()) + "nim_server.conf");
 	assert(ret);
 	// 初始化云信http
 	nim_http::Init();

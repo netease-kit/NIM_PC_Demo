@@ -1,6 +1,7 @@
 #pragma once
 #include "module/plugins/main_plugins_base.h"
-#include "gui/cef/cef_tip.h"
+#include "gui/cef/cef_example.h"
+
 class CefTestPlugin : public nim_comp::MainPluginBase<>
 {
 public:
@@ -14,11 +15,11 @@ public:
 	virtual bool ShowSearchBar() const override{ return false; }
 	virtual void DoInit() override
 	{
-		auto cef_tip_ = new CefTip;
-		ui::GlobalManager::FillBoxWithCache(cef_tip_, L"ceftest/cef_test_tip.xml", &CefTip::CreateControl);
+		auto cef_example = new CefExample;
+		ui::GlobalManager::FillBoxWithCache(cef_example, L"ceftest/cef_example.xml");
 		auto cef_box = dynamic_cast<ui::Box*>(page_->FindSubControl(L"cef_box"));
 		if (cef_box != nullptr)
-			cef_box->Add(cef_tip_);
+			cef_box->Add(cef_example);
 	}
 protected:
 	virtual ui::OptionBox* CreatePluginIcon() override

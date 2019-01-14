@@ -8,7 +8,7 @@
 #include "util/window_ex.h"
 #include "shared/auto_unregister.h"
 
-#include "cef/cef_module/cef_control.h"
+#include "cef/cef_module/cef_control/cef_control.h"
 class CefTip;
 class CefForm : public nim_comp::WindowEx
 {

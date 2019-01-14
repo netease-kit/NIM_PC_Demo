@@ -180,6 +180,12 @@
     <ClInclude Include="gui\plugins\addresbook_plugin\contact_profile_tip.h">
       <Filter>gui\plugins\addresbook_plugin</Filter>
     </ClInclude>
+    <ClInclude Include="gui\cef\cef_example.h">
+      <Filter>gui\cef</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\cef\cef_chatroom_list.h">
+      <Filter>gui\cef</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -274,6 +280,12 @@
     </ClCompile>
     <ClCompile Include="gui\plugins\addresbook_plugin\mytree.cpp">
       <Filter>gui\plugins\addresbook_plugin</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\cef\cef_example.cpp">
+      <Filter>gui\cef</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\cef\cef_chatroom_list.cpp">
+      <Filter>gui\cef</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

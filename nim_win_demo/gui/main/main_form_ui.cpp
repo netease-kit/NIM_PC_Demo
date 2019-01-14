@@ -7,11 +7,11 @@
 #include "gui/msglogmanage/msglog_manage_form.h"
 #include "gui/contact_select_form/contact_select_form.h"
 #include "gui/chatroom_frontpage.h"
-#include "cef/cef_module/cef_manager.h"
 #include "gui/cef/cef_form.h"
 #include "gui/cef/cef_native_form.h"
 #include "gui/main/session_list.h"
 #include "gui/test_gif/test_gif_form.h"
+#include "cef/cef_module/manager/cef_manager.h"
 #include "nim_service/module/service/session_service.h"
 using namespace ui;
 
@@ -108,14 +108,18 @@ void MainForm::InitWindow()
 	box_unread_ = (nim_comp::CustomButtonBox*) this->FindControl(L"box_unread");
 	label_unread_ = (Label*) this->FindControl(L"label_unread");
 	((OptionBox*) FindControl(L"btn_session_list"))->Selected(true, true);
-	ui::ListBox* session_list = (ListBox*)FindControl(L"session_list");
-	nim_ui::SessionListManager::GetInstance()->AttachListBox(session_list);
-	unregister_cb.Add(nim_ui::SessionListManager::GetInstance()->RegUnreadCountChange(nbase::Bind(&MainForm::OnUnreadCountChange, this, std::placeholders::_1)));
+	if (1)
+	{
+		ui::ListBox* session_list = (ListBox*)FindControl(L"session_list");
+		nim_ui::SessionListManager::GetInstance()->AttachListBox(session_list);
+		unregister_cb.Add(nim_ui::SessionListManager::GetInstance()->RegUnreadCountChange(nbase::Bind(&MainForm::OnUnreadCountChange, this, std::placeholders::_1)));
 
-	ui::TreeView* friend_list = (TreeView*) FindControl(L"friend_list");
-	nim_ui::ContactsListManager::GetInstance()->AttachFriendListBox(friend_list);
-	ui::TreeView* group_list = (TreeView*) FindControl(L"group_list");
-	nim_ui::ContactsListManager::GetInstance()->AttachGroupListBox(group_list);
+		ui::TreeView* friend_list = (TreeView*)FindControl(L"friend_list");
+		nim_ui::ContactsListManager::GetInstance()->AttachFriendListBox(friend_list);
+		ui::TreeView* group_list = (TreeView*)FindControl(L"group_list");
+		nim_ui::ContactsListManager::GetInstance()->AttachGroupListBox(group_list);
+	}
+	
 
 	Button* main_menu_button = (Button*) FindControl(L"main_menu_button");
 	main_menu_button->AttachClick(nbase::Bind(&MainForm::MainMenuButtonClick, this, std::placeholders::_1));

@@ -64,10 +64,11 @@
 //nim_ui
 #include "ui_component/ui_kit/export/nim_ui_all.h"
 
-// chatroom
+//chatroom
 #include "nim_chatroom_cpp_api.h"
 
 //custom_app_sdk
 #include "app_sdk.h"
 
+//login manager
 #include "nim_service/module/login/login_manager.h"

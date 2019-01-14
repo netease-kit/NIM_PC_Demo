@@ -67,7 +67,6 @@ void CefNativeForm::InitWindow()
 	cef_control_->AttachLoadStart(nbase::Bind(&CefNativeForm::OnLoadStart, this));
 	cef_control_->AttachLoadEnd(nbase::Bind(&CefNativeForm::OnLoadEnd, this, std::placeholders::_1));
 	cef_control_->AttachLoadError(nbase::Bind(&CefNativeForm::OnLoadError, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-	cef_control_->AttachJsCallback(nbase::Bind(&CefNativeForm::OnJsCallback, this, std::placeholders::_1, std::placeholders::_2));
 
 	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"cef/html/cef_test.html";
 	cef_control_->LoadURL(html_path);
@@ -112,9 +111,18 @@ bool CefNativeForm::OnClicked( ui::EventArgs* arg )
 	}
 	else if (name == L"btn_send_js")
 	{
-		std::wstring text = edit_js_->GetText();
-		CefString js_string = L"receiveMessage('" + text + L"');";
-		cef_control_->ExecJavaScript(js_string);
+		std::string text = edit_js_->GetUTF8Text();
+		Json::Value values;
+		values["message"] = text;
+		cef_control_->CallJSFunction(L"showJsMessage", nbase::UTF8ToUTF16(values.toStyledString()), ToWeakCallback([this](const std::string& json_result) {
+			Json::Value values;
+			Json::Reader reader;
+			if (reader.parse(json_result, values))
+			{
+				std::wstring message = nbase::UTF8ToUTF16(values["message"].asString());
+				ShowMsgBox(nullptr, MsgboxCallback(), message.c_str(), false);
+			}
+		}), L"");
 	}
 	else if(name == L"btn_max_restore")
 	{
@@ -188,14 +196,4 @@ void CefNativeForm::OnLoadEnd(int httpStatusCode)
 void CefNativeForm::OnLoadError(CefLoadHandler::ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl)
 {
 	return;
-}
-
-void CefNativeForm::OnJsCallback(const CefString& fun_name, const CefString& param)
-{
-	if (fun_name == L"NimCefWebFunction")
-	{
-		MutiLanSupport* multilan = MutiLanSupport::GetInstance();
-		std::wstring content = nbase::StringPrintf(multilan->GetStringViaID(L"STRID_CEF_BROWSER_RECEIVE_JS_MSG").c_str(), param.c_str());
-		ShowMsgBox(GetHWND(), MsgboxCallback(), content, false);
-	}
 }

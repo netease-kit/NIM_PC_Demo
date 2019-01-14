@@ -8,7 +8,7 @@
 #include "util/window_ex.h"
 #include "shared/auto_unregister.h"
 
-#include "cef/cef_module/cef_native_control.h"
+#include "cef/cef_module/cef_control/cef_native_control.h"
 
 class CefNativeForm : public nim_comp::WindowEx
 {
@@ -41,7 +41,6 @@ private:
 	void OnLoadStart();
 	void OnLoadEnd(int httpStatusCode);
 	void OnLoadError(CefLoadHandler::ErrorCode errorCode, const CefString& errorText, const CefString& failedUrl);
-	void OnJsCallback(const CefString& fun_name, const CefString& param);
 
 public:
 	static const LPCTSTR kClassName;

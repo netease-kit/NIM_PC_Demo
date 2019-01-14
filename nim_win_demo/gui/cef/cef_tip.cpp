@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "cef_tip.h"
+#include "module\cef\cef_global_methods.h"
 using namespace ui;
 using namespace std;
 
@@ -38,8 +39,10 @@ void CefTip::DoInit()
 	cef_control_->AttachLoadStart(nbase::Bind(&CefTip::OnLoadStart, this));
 	cef_control_->AttachLoadEnd(nbase::Bind(&CefTip::OnLoadEnd, this, std::placeholders::_1));
 	cef_control_->AttachLoadError(nbase::Bind(&CefTip::OnLoadError, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-	cef_control_->AttachJsCallback(nbase::Bind(&CefTip::OnJsCallback, this, std::placeholders::_1, std::placeholders::_2));
 	cef_control_->AttachDevToolAttachedStateChange(nbase::Bind(&CefTip::OnDevToolVisibleChange, this, std::placeholders::_1));
+	cef_control_->AttachAfterCreated(nbase::Bind(&CefTip::OnAfterCreated, this, std::placeholders::_1));
+	cef_control_->AttachBeforeCLose(nbase::Bind(&CefTip::OnBeforeClose, this, std::placeholders::_1));
+	cef_control_->AttachBeforeContextMenu(nbase::Bind(&CefTip::OnBeforeContextMenu, this, std::placeholders::_1, std::placeholders::_2));
 	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"cef/html/cef_test.html";
 	cef_control_->LoadURL(html_path);
 }
@@ -64,9 +67,18 @@ bool CefTip::OnClicked(ui::EventArgs* arg)
 	}
 	else if (name == L"btn_send_js")
 	{
-		std::wstring text = edit_js_->GetText();
-		CefString js_string = L"receiveMessage('" + text + L"');";
-		cef_control_->ExecJavaScript(js_string);
+		std::string text = edit_js_->GetUTF8Text();
+		Json::Value values;
+		values["message"] = text;
+		cef_control_->CallJSFunction(L"showJsMessage", nbase::UTF8ToUTF16(values.toStyledString()), ToWeakCallback([this](const std::string& json_result) {
+			Json::Value values;
+			Json::Reader reader;
+			if (reader.parse(json_result, values))
+			{
+				std::wstring message = nbase::UTF8ToUTF16(values["message"].asString());
+				ShowMsgBox(GetWindow()->GetHWND(), MsgboxCallback(), message.c_str(), false);
+			}
+		}));
 	}
 	else if (name == L"btn_dev")
 	{
@@ -84,6 +96,25 @@ bool CefTip::OnReturn(ui::EventArgs* arg)
 	}
 
 	return false;
+}
+
+void CefTip::ShowMessage(const std::string& params, nim_cef::ReportResultFunction callback)
+{
+	Json::Value values;
+	Json::Reader reader;
+	if (reader.parse(params.c_str(), values))
+	{
+		if (values.isMember("message"))
+		{
+			std::wstring message = nbase::UTF8ToUTF16(values["message"].asString());
+			MutiLanSupport* multilan = MutiLanSupport::GetInstance();
+			std::wstring content = nbase::StringPrintf(multilan->GetStringViaID(L"STRID_CEF_BROWSER_RECEIVE_JS_MSG").c_str(), message.c_str());
+			ShowMsgBox(GetWindow()->GetHWND(), MsgboxCallback(), content, false);
+
+			if (callback)
+				callback(false, R"({"message": "Call C++ function successfully."})");
+		}
+	}
 }
 
 void CefTip::OnBeforeMenu(CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model)
@@ -137,15 +168,27 @@ void CefTip::OnLoadError(CefLoadHandler::ErrorCode errorCode, const CefString& e
 	return;
 }
 
-void CefTip::OnJsCallback(const CefString& fun_name, const CefString& param)
+void CefTip::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 {
-	if (fun_name == L"NimCefWebFunction")
+	cef_control_->RegisterCppFunc(L"showCppMessage", nbase::Bind(&CefTip::ShowMessage, this, std::placeholders::_1, std::placeholders::_2));
+
+	if (!global_functions_.get())
 	{
-		MutiLanSupport* multilan = MutiLanSupport::GetInstance();
-		std::wstring content = nbase::StringPrintf(multilan->GetStringViaID(L"STRID_CEF_BROWSER_RECEIVE_JS_MSG").c_str(), param.c_str());
-		ShowMsgBox(GetWindow()->GetHWND(), MsgboxCallback(), content, false);
+		global_functions_.reset(new nim_comp::CefGlobalFunctions(cef_control_));
+		global_functions_->Init();
 	}
 }
+
+void CefTip::OnBeforeClose(CefRefPtr<CefBrowser> browser)
+{
+	
+}
+
+void CefTip::OnBeforeContextMenu(CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model)
+{
+	model->Clear();
+}
+
 void CefTip::ShowDevView()
 {
 	if (cef_control_->IsAttachedDevTools())
