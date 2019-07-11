@@ -17,64 +17,64 @@ public:
 	static DpiManager* GetInstance();
 
 	/**
-	* 获取系统DPI(开启DPI感知后有效)
-	* @return UINT	DPI
+	* @brief 获取系统DPI，开启DPI感知后有效
+	* @return UINT DPI
 	*/
-	static UINT GetSystemDpi();
+	static UINT GetSystemDPI();
 
 	/**
-	* 获取某个显示器的DPI(开启DPI感知后有效)
+	* @brief 获取某个显示器的DPI，开启DPI感知后有效
 	* @param[in] HMONITOR句柄
-	* @return UINT	DPI
+	* @return UINT DPI
 	*/
-	static UINT GetMonitorDpi(HMONITOR hMonitor);
+	static UINT GetMonitorDPI(HMONITOR hMonitor);
 
 	/**
-	* 获取主显示器DPI(开启DPI感知后有效)
-	* @return UINT	DPI
+	* @brief 获取主显示器DPI，开启DPI感知后有效
+	* @return UINT DPI
 	*/
-	static UINT GetMainMonitorDpi();
+	static UINT GetMainMonitorDPI();
 		
 	/**
-	* 从注册表获取DPI(不开启DPI感知也有效)
-	* @return UINT	DPI
+	* @brief 从注册表获取DPI，不开启DPI感知也有效
+	* @return UINT DPI
 	*/
-	static UINT GetDpiFromRegistry();
+	static UINT GetDPIFromRegistry();
 
 	/**
-	* 是否程序自己适配DPI缩放效果
+	* @brief 是否程序自己适配DPI缩放效果
 	* @return bool true 是，false 否
 	*/
 	bool IsAdaptDPI();
 
 	/**
-	* 设置是否程序自己适配DPI缩放，默认不自己适配
+	* @brief 设置是否程序自己适配DPI缩放，默认不自己适配
 	* @return bool true 设置成功，false 设置失败
 	*/
 	bool SetAdaptDPI();
 
 	/**
-	* 获取当前界面缩放比
+	* @brief 获取当前界面缩放比
 	* @return UINT	缩放比
 	*/
 	UINT GetScale();
 
 	/**
-	* 根据DPI值设置界面缩放比（只有程序自己处理DPI缩放时才有效）
+	* @brief 根据DPI值设置界面缩放比，只有程序自己处理DPI缩放时才有效
 	* @param[in] uDPI DPI值
 	* @return void	无返回值
 	*/
 	void SetScale(UINT uDPI);
 
 	/**
-	* 根据界面缩放比来缩放整数（只有程序自己处理DPI缩放时才有效）
+	* @brief 根据界面缩放比来缩放整数，只有程序自己处理DPI缩放时才有效
 	* @param[in] iValue 整数
 	* @return int	缩放后的值
 	*/
 	int ScaleInt(int &iValue);
 
 	/**
-	* 根据界面缩放比来缩放SIZE（只有程序自己处理DPI缩放时才有效）
+	* @brief 根据界面缩放比来缩放SIZE，只有程序自己处理DPI缩放时才有效
 	* @param[in] pSize SIZE指针
 	* @return void	无返回值
 	*/
@@ -83,7 +83,7 @@ public:
 	void ScaleSize(CSize &size);
 
 	/**
-	* 根据界面缩放比来缩放POINT（只有程序自己处理DPI缩放时才有效）
+	* @brief 根据界面缩放比来缩放POINT，只有程序自己处理DPI缩放时才有效
 	* @param[in] pSize SIZE指针
 	* @return void	无返回值
 	*/
@@ -92,7 +92,7 @@ public:
 	void ScalePoint(CPoint &point);
 
 	/**
-	* 根据界面缩放比来缩放RECT（只有程序自己处理DPI缩放时才有效）
+	* @brief 根据界面缩放比来缩放RECT，只有程序自己处理DPI缩放时才有效
 	* @param[in] pSize SIZE指针
 	* @return void	无返回值
 	*/

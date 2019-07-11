@@ -87,7 +87,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\json\;..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\;$(ProjectDir)../../nim_sdk/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -102,7 +102,7 @@
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\json\;..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\;$(ProjectDir)../../nim_sdk/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -119,7 +119,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\json\;..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\;$(ProjectDir)../../nim_sdk/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -138,7 +138,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\json\;..\..\libs\nim_sdk_desktop\nim_c_sdk\include\;..\..\libs\nim_sdk_desktop\nim_c_sdk\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\api\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\util\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\helper\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_audio_cpp\;..\..\libs\nim_sdk_desktop\nim_cpp_sdk\nim_http_cpp\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\;$(ProjectDir)../../nim_sdk/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <PrecompiledHeader>Use</PrecompiledHeader>
@@ -159,6 +159,7 @@
   <ItemGroup>
     <ClCompile Include="closure.cpp" />
     <ClCompile Include="cmd_line.cpp" />
+    <ClCompile Include="cpp_wrapper_util.cpp" />
     <ClCompile Include="db_helper.cpp" />
     <ClCompile Include="image_ole_i.c">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -188,15 +189,28 @@
     <ClCompile Include="ui\msgbox.cpp" />
     <ClCompile Include="ui\toast\toast.cpp" />
     <ClCompile Include="ui\ui_menu.cpp" />
+    <ClCompile Include="unzip.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="utf8_file_util.cpp" />
     <ClCompile Include="util.cpp" />
     <ClCompile Include="xml_util.cpp" />
+    <ClCompile Include="zip.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">NotUsing</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">NotUsing</PrecompiledHeader>
+    </ClCompile>
     <ClCompile Include="zoom_image.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="auto_unregister.h" />
     <ClInclude Include="closure.h" />
     <ClInclude Include="cmd_line.h" />
+    <ClInclude Include="cpp_wrapper_util.h" />
     <ClInclude Include="db_helper.h" />
     <ClInclude Include="image_ole_i.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">false</ExcludedFromBuild>
@@ -220,9 +234,11 @@
     <ClInclude Include="ui\msgbox.h" />
     <ClInclude Include="ui\toast\toast.h" />
     <ClInclude Include="ui\ui_menu.h" />
+    <ClInclude Include="unzip.h" />
     <ClInclude Include="utf8_file_util.h" />
     <ClInclude Include="util.h" />
     <ClInclude Include="xml_util.h" />
+    <ClInclude Include="zip.h" />
     <ClInclude Include="zoom_image.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

@@ -3,6 +3,8 @@
 #include <iostream>
 #include <fstream>
 #include "jsoncpp/include/json/json.h"
+#include "ui_component\ui_kit\module\runtime_data\runtime_data_manager.h"
+#include "app_sdk/app_config/app_sdk_config.h"
 namespace app_sdk
 {
 	enum NimServerConfType
@@ -20,8 +22,9 @@ namespace app_sdk
 	static bool GetNimServerConfJsonObject(const std::string& key,Json::Value& value)
 	{
 		bool ret = false;
-		std::wstring server_conf_path = QPath::GetAppPath();
-		server_conf_path.append(L"nim_server.conf");
+		std::string server_conf_path = app_sdk::AppSDKConfig::GetInstance()->GetAppConfigPath();
+		if (server_conf_path.empty())
+			return false;
 		std::filebuf file;
 		if (file.open(server_conf_path, std::ios::in))
 		{

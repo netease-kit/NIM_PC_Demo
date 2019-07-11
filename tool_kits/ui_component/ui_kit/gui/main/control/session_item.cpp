@@ -10,10 +10,10 @@
 
 #include "shared/ui/ui_menu.h"
 #include "shared/pin_yin_helper.h"
+#include "shared/ui/toast/toast.h"
 
 #include "module/online_state_event/online_state_event_util.h"
 #include "module/session/transfer_file_manager.h"
-
 
 using namespace ui;
 
@@ -35,7 +35,6 @@ void SessionItem::InitCtrl()
 		AttachSelect(nbase::Bind(&SessionItem::OnDbClicked, this, std::placeholders::_1));
 	else
 		AttachDoubleClick(nbase::Bind(&SessionItem::OnDbClicked, this, std::placeholders::_1));
-	this->AttachMenu(nbase::Bind(&SessionItem::OnSessionItemMenu, this, std::placeholders::_1));
 
 	label_name_ = (Label*) this->FindSubControl(L"label_name");
 	label_msg_ = (Label*) this->FindSubControl(L"label_msg");
@@ -50,15 +49,17 @@ void SessionItem::InitCtrl()
 void SessionItem::InitMsg(const nim::SessionData &msg)
 {
 	msg_ = msg;
-	head_image_->AttachClick(nbase::Bind(&SessionItem::OnHeadImageClicked, this, msg_.is_robot_session_, std::placeholders::_1));
+	if (msg_.type_ == nim::kNIMSessionTypeTeam
+		|| msg_.type_ == nim::kNIMSessionTypeP2P)
+	{
+		head_image_->AttachClick(nbase::Bind(&SessionItem::OnHeadImageClicked, this, msg_.is_robot_session_, std::placeholders::_1));
+		this->AttachMenu(nbase::Bind(&SessionItem::OnSessionItemMenu, this, std::placeholders::_1));
+	}
 
 	SetUTF8Name(msg_.id_);
 	SetUTF8DataID(msg_.id_);
 
-	if (msg.is_robot_session_)
-		InitRobotProfile();
-	else
-		InitUserProfile(); //设置用户名和头像
+	InitUserProfile(); //设置用户名和头像
 	UpdateMsgContent(); //更新消息内容
 	UpdateUnread(); //刷新未读条数	
 	ShowAtmeTip(true);
@@ -107,10 +108,9 @@ void SessionItem::InitMsg(const nim::SessionData &msg)
 	else if (SubscribeEventManager::GetInstance()->IsEnabled())
 	{
 		EventDataEx data;
-		if (!msg_.is_robot_session_)
-			SubscribeEventManager::GetInstance()->GetEventData(nim::kNIMEventTypeOnlineState, msg.id_, data);
-		else
-			data.online_client_.online_client_type_.insert(nim::kNIMClientTypeDefault);
+		SubscribeEventManager::GetInstance()->GetEventData(nim::kNIMEventTypeOnlineState, msg.id_, data);
+		if (data.online_client_.online_client_type_.size() == 0 && msg.id_ == LoginManager::GetInstance()->GetAccount())
+			data.online_client_.online_client_type_.insert(nim::kNIMClientTypePCWindows);
 		SetOnlineState(data);
 	}
 
@@ -122,14 +122,6 @@ void SessionItem::InitMsg(const nim::SessionData &msg)
 	{
 		SetMute(nim_comp::SessionManager::GetInstance()->IsTeamMsgMuteShown(msg_.id_, -1));
 	}
-}
-
-void SessionItem::InitRobotProfile()
-{
-	nim::RobotInfo info;
-	UserService::GetInstance()->GetRobotInfo(msg_.id_, info);
-	label_name_->SetText(nbase::UTF8ToUTF16(info.GetName()));
-	head_image_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(msg_.id_, true));
 }
 
 void SessionItem::SetMute(bool mute)
@@ -161,7 +153,7 @@ void SessionItem::InitUserProfile()
 
 void SessionItem::SetOnlineState(const EventDataEx& data)
 {
-	label_online_state_->SetText(OnlineStateEventUtil::GetOnlineState(data.online_client_, data.multi_config_, true));
+	label_online_state_->SetText(OnlineStateEventUtil::GetOnlineState(msg_.id_, data, true));
 }
 
 void GetMsgContent(const nim::SessionData &msg, std::wstring &show_text)
@@ -293,25 +285,6 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 					}
 				}
 					break;
-				case nim::kNIMMessageTypeRobot:
-				{
-					bool out_msg = false;
-					Json::Value values;
-					Json::Reader reader;
-					if (reader.parse(msg_.msg_attach_, values) && values.isObject())
-						out_msg = values[nim::kNIMBotRobotReceivedMsgKeyMsgOut].asBool();
-					if (out_msg)
-					{
-						std::string robot_id = values[nim::kNIMBotRobotMsgKeyRobotID].asString();
-						nim::RobotInfo info;
-						UserService::GetInstance()->GetRobotInfo(robot_id, info);
-						if (!info.GetName().empty())
-						{
-							show_text = nbase::UTF8ToUTF16(info.GetName()) + L": " + show_text;
-						}
-					}
-				}
-					break;
 				default:
 					break;
 				}						
@@ -432,6 +405,18 @@ void SessionItem::PopupSessionItemMenu(POINT point)
 	CMenuElementUI* del_session_msg = (CMenuElementUI*)pMenu->FindControl(L"del_session_msg");
 	del_session_msg->AttachSelect(nbase::Bind(&SessionItem::DelSessionItemMenuItemClick, this, std::placeholders::_1));
 
+	ui::ListContainerElement* del_session_msg_online = (ui::ListContainerElement*)pMenu->FindControl(L"del_session_msg_online");
+	if (del_session_msg_online != nullptr)
+		if (msg_.type_ == nim::kNIMSessionTypeP2P)
+		{
+			del_session_msg_online->SetVisible(true);
+			del_session_msg_online->AttachSelect(nbase::Bind(&SessionItem::DelSessionItemMenuItemClick, this, std::placeholders::_1));
+		}
+		else
+		{
+			del_session_msg_online->SetVisible(false);
+		}
+		
 	pMenu->Show();
 }
 
@@ -472,12 +457,37 @@ bool SessionItem::DelSessionItemMenuItemClick(ui::EventArgs* param)
 			nim::MsgLog::BatchStatusDeleteAsync(msg_.id_, msg_.type_, nbase::Bind(&SessionItem::BatchStatusDeleteCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 		}));		
 	}
+	else if (name == L"del_session_msg_online")
+	{
+		auto box = dynamic_cast<ui::ListContainerElement*>(param->pSender);
+		bool delete_roaming = dynamic_cast<ui::CheckBox*>(box->FindSubControl(L"chkbox_delete_roaming"))->IsSelected();
+		auto task = [this, delete_roaming]() {
+			nim::MsgLog::DeleteHistoryOnlineAsync(msg_.id_, delete_roaming, "", \
+				ToWeakCallback([](nim::NIMResCode res_code, const std::string& session_id) {
+					ShowMsgBox(nullptr, nullptr, \
+						(res_code == nim::NIMResCode::kNIMResSuccess ? 
+						L"STRID_SESSION_ITEM_DELETE_ONLINE_MSGLOG_SUCCESS":
+						L"STRID_SESSION_ITEM_DELETE_ONLINE_MSGLOG_FAILED" ),
+						true, L"STRING_MULTIVIDEOCHATFORM_TITLE_PROMPT", true, L"STRING_OK", true);
+			}));
+		};
+		Post2UI(ToWeakCallback(task));
+		box->GetWindow()->Close();
+	}
 	return true;
 }
 
 bool SessionItem::OnDbClicked(ui::EventArgs* arg)
 {
-	SessionManager::GetInstance()->OpenSessionBox(msg_.id_, msg_.type_);
+	if (msg_.type_ == nim::kNIMSessionTypeTeam
+		|| msg_.type_ == nim::kNIMSessionTypeP2P)
+	{
+		SessionManager::GetInstance()->OpenSessionBox(msg_.id_, msg_.type_);
+	}
+	else
+	{
+		shared::Toast::ShowToast(L"不支持群(普通群和高级群)和P2P类型以外的会话展示。", 1000);
+	}
 	return true;
 }
 

@@ -23,19 +23,19 @@ namespace nim_comp
 
 	VideoManager::~VideoManager()
 	{
-		if (video_form_ == NULL || !IsWindow(video_form_->GetHWND()))
+		if (video_form_ == NULL || !IsWindow(video_form_flag_.expired() ? NULL : video_form_->GetHWND()))
 		{
 			video_form_.release();
 		}
-		if (multi_video_form_ == NULL || !IsWindow(multi_video_form_->GetHWND()))
+		if (multi_video_form_ == NULL || !IsWindow(multi_video_form_flag_.expired() ? NULL : multi_video_form_->GetHWND()))
 		{
 			multi_video_form_.release();
 		}
-		if (setting_form_ == NULL || !IsWindow(setting_form_->GetHWND()))
+		if (setting_form_ == NULL || !IsWindow(setting_form_flag_.expired() ? NULL : setting_form_->GetHWND()))
 		{
 			setting_form_.release();
 		}
-		if (multi_vchat_invite_form_ == NULL || !IsWindow(multi_vchat_invite_form_->GetHWND()))
+		if (multi_vchat_invite_form_ == NULL || !IsWindow(multi_vchat_invite_form_flag_.expired() ? NULL : multi_vchat_invite_form_->GetHWND()))
 		{
 			multi_vchat_invite_form_.release();
 		}
@@ -410,14 +410,27 @@ namespace nim_comp
 		return true;
 	}
 
-	void VideoManager::DoMultiVChat(const std::list<UTF8String>& friend_list, const MultiRoomCreatedCallback& cb)
+    void VideoManager::DestroyVideoChatForm()
+    {
+        if (IsVideoChatFormExist(true) && !video_form_flag_.expired())
+        {
+            video_form_->DirectQuit();
+        }
+
+        if (IsMultiVideoChatFormExist(true) && !multi_video_form_flag_.expired())
+        {
+            multi_video_form_->DirectQuit();
+        }
+    }
+
+    void VideoManager::DoMultiVChat(const std::list<UTF8String>& friend_list, const MultiRoomCreatedCallback& cb)
 	{
 		//创建多人音视频房间
 		//发送自定义系统消息给成员
 		//显示视频界面
 		UTF8String current_user_id = LoginManager::GetInstance()->GetAccount();
 		std::string room_name = nim::Tool::GetUuid();
-		if (atoi(GetConfigValue("multi_video").c_str()) < 1)
+		if (atoi(GetConfigValue("kNIMMultiVideo").c_str()) < 1)
 		{
 			shared::Toast::ShowToast(L"功能未开放，请参考源码和群视频开发手册进行对接", 2000);
 			return;
@@ -475,7 +488,7 @@ namespace nim_comp
 						nim::SystemMsg::SendCustomNotificationMsg(msg.ToJsonString());
 					}
 					//弹出多人视频界面
-					if (multi_video_form_ == NULL || !IsWindow(multi_video_form_->GetHWND()))
+					if (multi_video_form_ == NULL || !IsWindow(multi_video_form_flag_.expired() ? NULL : multi_video_form_->GetHWND()))
 					{
 						multi_video_form_.release();
 						multi_video_form_.reset(new MultiVideoChatForm(room_name, multi_vchat_session_id_, channel_id, true, true, current_user_id));
@@ -723,12 +736,12 @@ namespace nim_comp
 		value[nim::kNIMVChatNeedFromNick] = 0;
 		if (1)
 		{
-			std::string video_quality = GetConfigValue("video_quality");
-			std::string audio_record = GetConfigValue("audio_record");
-			std::string video_record = GetConfigValue("video_record");
-			std::string record_type = GetConfigValue("record_type");
-			std::string record_host_speaker = GetConfigValue("record_host_speaker");
-			std::string keep_calling = GetConfigValue("keep_calling");
+			std::string video_quality = GetConfigValue("kNIMVideoQuality");
+			std::string audio_record = GetConfigValue("kNIMAudioRecord");
+			std::string video_record = GetConfigValue("kNIMVideoRecord");
+			std::string record_type = GetConfigValue("kNIMRecordType");
+			std::string record_host_speaker = GetConfigValue("kNIMRecordHostSpeaker");
+			std::string keep_calling = GetConfigValue("kNIMKeepCalling");
 			value[nim::kNIMVChatVideoQuality] = atoi(video_quality.c_str());
 			value[nim::kNIMVChatRecord] = atoi(audio_record.c_str());
 			value[nim::kNIMVChatVideoRecord] = atoi(video_record.c_str());
@@ -742,7 +755,7 @@ namespace nim_comp
 		}
 		std::string json_value = fs.write(value);
 		std::wstring apns = ui::MutiLanSupport::GetInstance()->GetStringViaID(mode == nim::kNIMVideoChatModeAudio ? L"STRID_VIDEO_AUDIO_INVITING_TEST" : L"STRID_VIDEO_VIDEO_INVITING_TEST");
-		return nim::VChat::Start(mode, nbase::UTF16ToUTF8(apns), "test custom info", json_value);
+		return nim::VChat::Start(mode, nbase::UTF16ToUTF8(apns), custom_info, json_value);
 	}
 	//设置视频类型
 	bool VideoManager::SetVoipMode(nim::NIMVideoChatMode mode)
@@ -757,11 +770,11 @@ namespace nim_comp
 		std::string json_value;
 		if (accept)
 		{
-			std::string video_quality = GetConfigValue("video_quality");
-			std::string audio_record = GetConfigValue("audio_record");
-			std::string video_record = GetConfigValue("video_record");
-			std::string record_type = GetConfigValue("record_type");
-			std::string record_host_speaker = GetConfigValue("record_host_speaker");
+			std::string video_quality = GetConfigValue("kNIMVideoQuality");
+			std::string audio_record = GetConfigValue("kNIMAudioRecord");
+			std::string video_record = GetConfigValue("kNIMVideoRecord");
+			std::string record_type = GetConfigValue("kNIMRecordType");
+			std::string record_host_speaker = GetConfigValue("kNIMRecordHostSpeaker");
 
 			Json::FastWriter fs;
 			Json::Value value;
@@ -781,12 +794,13 @@ namespace nim_comp
 		QLOG_APP(L"VChatControl channel_id={0}, type={1}") << channel_id << type;
 		return nim::VChat::Control(channel_id, type);
 	}
-	void VideoManager::EndChat(const std::string& session_id)
+	void VideoManager::EndChat(const std::string& session_id, bool is_time_out/* = false*/)
 	{
 		QLOG_APP(L"EndChat {0}") << session_id;
 		Json::FastWriter fs;
 		Json::Value value;
 		value[nim::kNIMVChatSessionId] = session_id;
+		value[nim::kNIMVChatTimeout] = is_time_out;
 		std::string json_value = fs.write(value);
 		nim::VChat::End(json_value);
 	}
@@ -827,11 +841,11 @@ namespace nim_comp
 		Json::Value value;
 		value[nim::kNIMVChatSessionId] = session_id;
 
-		std::string video_quality = GetConfigValue("video_quality");
-		std::string audio_record = GetConfigValue("audio_record");
-		std::string video_record = GetConfigValue("video_record");
-		std::string record_type = GetConfigValue("record_type");
-		std::string record_host_speaker = GetConfigValue("record_host_speaker");
+		std::string video_quality = GetConfigValue("kNIMVideoQuality");
+		std::string audio_record = GetConfigValue("kNIMAudioRecord");
+		std::string video_record = GetConfigValue("kNIMVideoRecord");
+		std::string record_type = GetConfigValue("kNIMRecordType");
+		std::string record_host_speaker = GetConfigValue("kNIMRecordHostSpeaker");
 		value[nim::kNIMVChatVideoQuality] = atoi(video_quality.c_str());
 		value[nim::kNIMVChatRecord] = atoi(audio_record.c_str());
 		value[nim::kNIMVChatVideoRecord] = atoi(video_record.c_str());
@@ -1080,7 +1094,7 @@ namespace nim_comp
 							if (code == 200)
 							{
 								//弹出多人视频界面
-								if (multi_video_form_ == NULL || !IsWindow(multi_video_form_->GetHWND()))
+								if (multi_video_form_ == NULL || !IsWindow(multi_video_form_flag_.expired() ? NULL : multi_video_form_->GetHWND()))
 								{
 									std::string creator_id = VideoManager::GetInstance()->GetMultiVChatCreator();
 									multi_video_form_.release();

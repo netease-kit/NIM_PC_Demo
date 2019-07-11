@@ -1,5 +1,8 @@
 ﻿// Copyright (c) 2012, NetEase Inc. All rights reserved.
+//
+// WRT
 // 2012/5/4
+//
 // base config
 
 #ifndef BASE_BASE_CONFIG_H_

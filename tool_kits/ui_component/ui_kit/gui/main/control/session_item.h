@@ -50,13 +50,6 @@ public:
 	void InitUserProfile();
 
 	/**
-	* 初始化机器人信息
-	* @return void	无返回值
-	*/
-	void InitRobotProfile();
-
-
-	/**
 	* 设置好友在线状态
 	* @param[in] EventDataEx 事件数据
 	* @return void	无返回值

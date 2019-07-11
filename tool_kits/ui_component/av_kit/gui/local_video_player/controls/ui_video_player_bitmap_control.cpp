@@ -8,6 +8,18 @@ namespace ui
 
 VideoPlayerBitmapControl::VideoPlayerBitmapControl()
 {
+#ifdef SUPPORTLOCALPLAYER
+	static std::once_flag o_f;
+	std::call_once(o_f, []() {
+
+		TCHAR path_envirom[4096] = { 0 };
+		GetEnvironmentVariable(L"path", path_envirom, 4096);
+		std::wstring local_video_player_path = QPath::GetAppPath().append(L"live_player").append(L";");
+		std::wstring new_envirom(local_video_player_path);
+		new_envirom.append(path_envirom);
+		SetEnvironmentVariable(L"path", new_envirom.c_str());
+	});
+#endif
 	timestamp_ = 0;
 	width_ = 0;
 	height_ = 0;

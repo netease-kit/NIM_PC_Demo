@@ -5,15 +5,12 @@
 #include <vector>
 #include "base/time/time.h"
 #include "base/base_types.h"
-
 namespace shared
 {
 namespace tools
 {
-
 // 在FrameworkThread的线程过程中调用
 void InitTool();
-
 // os
 int			GetOSVersion();
 std::string GetOSVersionString();

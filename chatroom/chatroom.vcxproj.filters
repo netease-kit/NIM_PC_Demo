@@ -71,5 +71,8 @@
     <ClCompile Include="gui\chatroom_form_robot.cpp">
       <Filter>gui</Filter>
     </ClCompile>
+    <ClCompile Include="gui\chatroom_form_char_list.cpp">
+      <Filter>gui</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <VListBox class="menu">
+        <MenuElement class="MenuElement" name="del_session_item" width="158">
+            <Label class="menu_text" textid="STRID_SESSION_ITEM_DELETE_SESSION"/>
+        </MenuElement>
+        <MenuElement class="MenuElement" name="del_session_msg" width="158">
+            <Label class="menu_text" textid="STRID_SESSION_ITEM_DELETE_MSGLOG"/>
+        </MenuElement>
+		<ListContainerElement class="MenuElement" name="del_session_msg_online" width="158">
+			<VBox height="auto" valign="center" mouse="false">
+				<Label class="menu_text" textid="STRID_SESSION_ITEM_DELETE_ONLINE_MSGLOG" mouse="false"/>
+				<CheckBox class="checkbox_font12" name="chkbox_delete_roaming" textid="STRID_SESSION_ITEM_DELETE_ONLINE_MSGLOG_ADD_ROAMING" normaltextcolor="dark2color" selected="true" mouse="true" />
+			</VBox>
+        </ListContainerElement>
+    </VListBox>
+</Window>

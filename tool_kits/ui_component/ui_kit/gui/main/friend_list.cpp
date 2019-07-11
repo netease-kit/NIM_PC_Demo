@@ -18,9 +18,6 @@ FriendList::FriendList(ui::TreeView* friend_list) :
 	pos_tip_(nullptr)
 {
 	friend_list->SelectNextWhenActiveRemoved(false);
-	auto robot_list_change_cb = nbase::Bind(&FriendList::OnRobotChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	unregister_cb.Add(UserService::GetInstance()->RegRobotListChange(robot_list_change_cb));
-
 	auto friend_list_change_cb = nbase::Bind(&FriendList::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2);
 	unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(friend_list_change_cb));
 	auto user_info_change_cb = nbase::Bind(&FriendList::OnUserInfoChange, this, std::placeholders::_1);
@@ -123,14 +120,6 @@ void FriendList::OnGetFriendList(const std::list<nim::UserNameCard> &user)
 		{
 			AddListItem(it->GetAccId(), kFriendItemTypeP2P);
 		}
-	}
-}
-
-void FriendList::OnGetRobotList(const nim::RobotInfos &robots)
-{
-	for (auto &robot : robots)
-	{
-		AddListItem(robot.GetAccid(), kFriendItemTypeRobot);
 	}
 }
 
@@ -394,18 +383,6 @@ bool FriendList::OnHeadImageClick(const std::string& uid, FriendItemType type, u
 {
 	ProfileForm::ShowProfileForm(uid, type == kFriendItemTypeRobot);
 	return true;
-}
-
-void FriendList::OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots)
-{
-	if (rescode == nim::kNIMResSuccess)
-	{
-		ui::TreeNode* tree_node = GetGroup(GT_ROBOT, L'');
-		if (tree_node)
-			tree_node->RemoveAllChildNode();
-
-		OnGetRobotList(robots);
-	}
 }
 
 void FriendList::OnFriendListChange(FriendChangeType change_type, const std::string& accid)

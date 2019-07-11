@@ -1,5 +1,5 @@
 ﻿#pragma once
-#include "nim_chatroom_helper.h"
+#include "src/cpp_sdk/nim_chatroom/helper/nim_chatroom_helper.h"
 
 namespace nim_chatroom
 {

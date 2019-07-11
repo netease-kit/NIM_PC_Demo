@@ -16,6 +16,7 @@ typedef std::function<void(const std::string&, const std::string&, bool)> OnTeam
 typedef std::function<void(const std::string&, const std::string&)> OnTeamOwnerChange;
 
 typedef std::function<void(const nim::TeamInfo& team_info)> OnGetTeamInfo;
+typedef std::function<void(const std::string&, bool mute_all)> OnTeamMuteChange;
 
 typedef OnTeamAdminSet OnMuteMember;
 
@@ -110,18 +111,25 @@ public:
 	UnregisterCallback RegChangeTeamOwner(OnTeamOwnerChange set_team_owner);
 
 	/**
-	* 注册群成员被静音(或接触静音)改变的回调
+	* 注册群成员被静音(或解除静音)改变的回调
 	* @param[in] mute 回调函数
 	* @return UnregisterCallback 反注册对象
 	*/
 	UnregisterCallback RegMuteMember(OnMuteMember mute);
+
+    /**
+    * 注册群静音(或解除静音)改变的回调
+    * @param[in] change 回调函数
+    * @return UnregisterCallback 反注册对象
+    */
+    UnregisterCallback RegChangeTeamMute(OnTeamMuteChange change);
 
 	/**
 	* 注册群消息通知模式改变的回调
 	* @param[in] mute 回调函数
 	* @return UnregisterCallback 反注册对象
 	*/
-	UnregisterCallback RegChangeTeamNotification(OnTeamNotificationModeChange mute);
+    UnregisterCallback RegChangeTeamNotification(OnTeamNotificationModeChange mute);
 
 	/**
 	* 触发增加群的的回调
@@ -203,6 +211,13 @@ public:
 	* @return void	无返回值
 	*/
 	void InvokeMuteMember(const std::string& tid, const std::string& uid, bool set_mute);
+
+    /**
+    * 触发群静音的的回调
+    * @param[in] tinfo 群组信息
+    * @return void	无返回值
+    */
+    void InvokeChangeTeamMute(const std::string& tid, bool is_mute);
 
 	/**
 	* 触发群消息通知模式的的回调
@@ -318,10 +333,11 @@ private:
 	UnregistedCallbackList<OnTeamMemberListRemove> remove_team_memberlist_cb_;
 	std::map<int, std::unique_ptr<OnTeamMemberChange>>	change_team_member_cb_;
 	std::map<int, std::unique_ptr<OnTeamNameChange>>	change_team_name_cb_;
-	std::map<int, std::unique_ptr<OnTeamAdminSet>>		change_team_admin_cb_;
-	std::map<int, std::unique_ptr<OnTeamOwnerChange>>	set_team_owner_cb_;
+    std::map<int, std::unique_ptr<OnTeamAdminSet>>		change_team_admin_cb_;
+    std::map<int, std::unique_ptr<OnTeamOwnerChange>>	set_team_owner_cb_;
 	std::map<int, std::unique_ptr<OnMuteMember>>		mute_member_cb_;
 	std::map<int, std::unique_ptr<OnTeamNotificationModeChange>>		notification_change_cb_;
+    std::map<int, std::unique_ptr<OnTeamMuteChange>>    change_team_mute_cb_;
 
 	std::map<std::string, nim::TeamInfo> cached_tinfo_;
 	std::set<std::string> on_query_tids_; //正在查询其群信息，但还没返回的群id

@@ -25,6 +25,10 @@ private:
 	 * 右键菜单
 	 */
 	void OnBeforeContextMenu(CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model);
+	/**
+	 * 页面加载完成
+	 */
+	void OnLoadEnd(int httpStatusCode);
 
 private:
 	ui::CefControl*	cef_control_;

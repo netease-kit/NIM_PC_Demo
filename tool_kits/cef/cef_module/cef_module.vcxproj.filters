@@ -78,6 +78,9 @@
     <ClInclude Include="util\util.h">
       <Filter>util</Filter>
     </ClInclude>
+    <ClInclude Include="cef_control\cef_control_base.h">
+      <Filter>control</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -104,12 +107,6 @@
     <ClCompile Include="cef_control\cef_control_ui.cpp">
       <Filter>control</Filter>
     </ClCompile>
-    <ClCompile Include="cef_control\cef_native_control.cpp">
-      <Filter>control</Filter>
-    </ClCompile>
-    <ClCompile Include="cef_control\cef_native_control_ui.cpp">
-      <Filter>control</Filter>
-    </ClCompile>
     <ClCompile Include="handler\browser_handler.cpp">
       <Filter>handler</Filter>
     </ClCompile>
@@ -118,6 +115,15 @@
     </ClCompile>
     <ClCompile Include="util\memory_dc.cpp">
       <Filter>util</Filter>
+    </ClCompile>
+    <ClCompile Include="cef_control\cef_control_base.cpp">
+      <Filter>control</Filter>
+    </ClCompile>
+    <ClCompile Include="cef_control\cef_control_base_ui.cpp">
+      <Filter>control</Filter>
+    </ClCompile>
+    <ClCompile Include="cef_control\cef_native_control.cpp">
+      <Filter>control</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

@@ -198,7 +198,7 @@ LRESULT SessionForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 
 	if (NULL != active_session_box_)
 	{
-		bool bHandle = false;
+		BOOL bHandle = false;
 		LRESULT ret = active_session_box_->HandleMessage(uMsg, wParam, lParam, bHandle);
 		if (bHandle)
 			return ret;

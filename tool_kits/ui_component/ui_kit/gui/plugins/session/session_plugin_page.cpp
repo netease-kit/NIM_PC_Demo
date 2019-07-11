@@ -19,6 +19,20 @@ void SessionPluginPage::DoInit()
 	session_box_tab_ = dynamic_cast<ui::TabBox*>(FindSubControl(L"session_container"));
 	if (session_box_tab_ != nullptr)
 		session_box_tab_->GetWindow()->AddMessageFilter(this);
+	GetPlugin()->AttachSelect([this](ui::EventArgs* param) {
+		if (active_session_box_ != nullptr)
+		{
+			BOOL handle = false;
+			active_session_box_->HandleMessage(WM_ACTIVATE, WA_ACTIVE, 0, handle);
+			//::SetActiveWindow(NULL);
+			auto session_id = active_session_box_->GetSessionId();
+			nbase::ThreadManager::PostTask(active_session_box_->ToWeakCallback([this, session_id]() {
+				//::SetActiveWindow(GetHWND());
+				nim_ui::SessionListManager::GetInstance()->InvokeSelectSessionItem(session_id, true, false);
+			}));			
+		}
+		return true;
+	});
 }
 void SessionPluginPage::OnSessionListAttached()
 {
@@ -30,7 +44,7 @@ void SessionPluginPage::OnSessionListAttached()
 		CloseSessionBox(id);
 	})));
 }
-LRESULT SessionPluginPage::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
+LRESULT SessionPluginPage::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	LRESULT ret = S_FALSE;
 	auto active_session_box = GetSelectedSessionBox();
@@ -109,7 +123,7 @@ LRESULT SessionPluginPage::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lPara
 				}					
 			}
 		}
-		bool handle = false;
+		BOOL handle = false;
 		ret = active_session_box->HandleMessage(uMsg, wParam, lParam, handle);
 		if (handle)
 			return ret;

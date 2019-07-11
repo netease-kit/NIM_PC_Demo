@@ -77,6 +77,12 @@ namespace nim_comp
 			const std::list<UTF8String>& friend_list = std::list<UTF8String>(),
 			const MultiRoomCreatedCallback& cb = MultiRoomCreatedCallback());
 
+        /**
+        * 关闭所有正在聊天的窗口，包括群组和一对一音视频聊天
+        * @return void 无返回值
+        */
+        void DestroyVideoChatForm();
+
 		/**
 		* 显示音视频设置窗口
 		* @param[in] video 是否包含视频功能
@@ -240,9 +246,10 @@ namespace nim_comp
 		/**
 		* 结束音视频通话
 		* @param[in] session_id 会话id
+		* @param[in] is_time_out 做为发起方时是否因呼叫超时而结束
 		* @return void	无返回值
 		*/
-		void EndChat(const std::string& session_id);
+		void EndChat(const std::string& session_id,bool is_time_out = false);
 
 		/**
 		* 设置观众模式

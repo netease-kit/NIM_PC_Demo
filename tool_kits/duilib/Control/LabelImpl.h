@@ -87,6 +87,12 @@ void LabelTemplate<InheritType>::SetUTF8TextId(const std::string& strTextId)
 }
 
 template<typename InheritType>
+bool LabelTemplate<InheritType>::HasHotState()
+{
+	return m_textColorMap.HasHotColor() || __super::HasHotState();
+}
+
+template<typename InheritType>
 CSize LabelTemplate<InheritType>::EstimateText(CSize szAvailable, bool& bReEstimateSize)
 {
 	if (m_bSingleLine)
@@ -221,7 +227,7 @@ void LabelTemplate<InheritType>::PaintText(IRenderContext* pRender)
 				std::wstring clrColor = GetStateTextColor(kControlStateHot);
 				if (!clrColor.empty()) {
 					DWORD dwClrColor = GlobalManager::GetTextColor(clrColor);
-					pRender->DrawText(rc, GetText(), dwClrColor, m_iFont, m_uTextStyle, m_nHotAlpha, m_bLineLimit);
+					pRender->DrawText(rc, GetText(), dwClrColor, m_iFont, m_uTextStyle, (BYTE)m_nHotAlpha, m_bLineLimit);
 				}
 			}
 

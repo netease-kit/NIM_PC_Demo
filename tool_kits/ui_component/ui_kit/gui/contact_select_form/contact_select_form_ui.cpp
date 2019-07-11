@@ -138,7 +138,7 @@ void ContactSelectForm::InitWindow()
 		title_id = L"STRING_INVITEUSERFORM_START_VCHAT";
 		title = ui::MutiLanSupport::GetInstance()->GetStringViaID(title_id);
 		btn_confirm->SetText(title);
-		TeamService* team_service = TeamService::GetInstance();
+		//TeamService* team_service = TeamService::GetInstance();
 		nim::Team::QueryTeamMembersAsync(uid_or_tid_, nbase::Bind(&ContactSelectForm::OnGetTeamMembers, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	}
 	else

@@ -1,27 +1,9 @@
 #include "cef_manager.h"
-#include "include/cef_sandbox_win.h"
 #include "include/wrapper/cef_closure_task.h"
 #include "include/base/cef_bind.h"
 
 #include "app/client_app.h"
 #include "handler/browser_handler.h"
-
-#if defined(SUPPORT_CEF)
-#if defined(SUPPORT_CEF_FLASH)
-#if defined(_DEBUG)
-#pragma comment(lib, "cef_sandbox_d.lib")
-#else
-#pragma comment(lib, "cef_sandbox.lib")
-#endif
-#pragma comment(lib, "Version.lib")
-#pragma comment(lib, "Psapi.lib")
-#pragma comment(lib, "Ws2_32.lib")
-#endif
-
-#if defined(SUPPORT_CEF_FLASH)
-CefScopedSandboxInfo scoped_sandbox;
-#endif
-#endif
 
 namespace nim_cef
 {
@@ -104,6 +86,11 @@ void CefManager::AddCefDllToPath()
 	std::wstring new_envirom(cef_path);
 	new_envirom.append(L";").append(path_envirom);
 	SetEnvironmentVariable(L"path", new_envirom.c_str());
+
+	// 解决播放flash弹出黑框的问题
+	// https://blog.csdn.net/zhuhongshu/article/details/77482985
+	std::wstring cmd_path = cef_path + L"\\dummy_cmd.exe";
+	SetEnvironmentVariable(L"ComSpec", cmd_path.c_str());
 }
 
 // Cef的初始化接口，同时备注了使用各个版本的Cef时遇到的各种坑
@@ -118,25 +105,18 @@ bool CefManager::Initialize(const std::wstring& app_data_dir, CefSettings &setti
 #endif
 	is_enable_offset_render_ = is_enable_offset_render;
 
-	void* sandbox_info = NULL;
-#if defined(SUPPORT_CEF)
-#if defined(SUPPORT_CEF_FLASH)
-	sandbox_info = scoped_sandbox.sandbox_info();
-#endif
-#endif
-
 	CefMainArgs main_args(GetModuleHandle(NULL));
 	CefRefPtr<ClientApp> app(new ClientApp);
 	
 	// 如果是在子进程中调用，会堵塞直到子进程退出，并且exit_code返回大于等于0
 	// 如果在Browser进程中调用，则立即返回-1
-	int exit_code = CefExecuteProcess(main_args, app.get(), sandbox_info);
+	int exit_code = CefExecuteProcess(main_args, app.get(), NULL);
 	if (exit_code >= 0)
 		return false;
 
 	GetCefSetting(app_data_dir, settings);
 
-	bool bRet = CefInitialize(main_args, settings, app.get(), sandbox_info);
+	bool bRet = CefInitialize(main_args, settings, app.get(), NULL);
 	
 	if (is_enable_offset_render_)
 	{
@@ -214,9 +194,7 @@ void CefManager::GetCefSetting(const std::wstring& app_data_dir, CefSettings &se
 	if (false == nbase::FilePathIsExist(app_data_dir, true))
 		nbase::CreateDirectory(app_data_dir);
 
-#if !defined(SUPPORT_CEF_FLASH)
 	settings.no_sandbox = true;
-#endif
 
 	// 设置localstorage，不要在路径末尾加"\\"，否则运行时会报错
 	CefString(&settings.cache_path) = app_data_dir + L"CefLocalStorage";
@@ -228,7 +206,9 @@ void CefManager::GetCefSetting(const std::wstring& app_data_dir, CefSettings &se
 	// cef1916版本debug模式:在单进程模式下程序退出时会触发中断
 #ifdef _DEBUG
 	settings.single_process = true;
+	settings.remote_debugging_port = 10080;
 #else
+	CefString(&settings.browser_subprocess_path) = QPath::GetAppPath() + L"render.exe";
 	settings.single_process = false;
 #endif
 
@@ -237,7 +217,6 @@ void CefManager::GetCefSetting(const std::wstring& app_data_dir, CefSettings &se
 	// 开启Cef多线程消息循环，兼容nbase库消息循环
 	settings.multi_threaded_message_loop = true;
 
-	// settings.browser_subprocess_path
 
 	// 开启离屏渲染
 	settings.windowless_rendering_enabled = is_enable_offset_render_;

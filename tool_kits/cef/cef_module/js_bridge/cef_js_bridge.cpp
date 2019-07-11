@@ -46,7 +46,7 @@ void CefJSBridge::RemoveCallbackFuncWithFrame(CefRefPtr<CefFrame> frame)
 		{
 			if (it->second.first->IsSame(frame->GetV8Context()))
 			{
-				render_callback_.erase(it++);
+				it = render_callback_.erase(it);
 			}
 			else
 			{
@@ -145,10 +145,10 @@ void CefJSBridge::UnRegisterJSFuncWithFrame(CefRefPtr<CefFrame> frame)
 	{
 		for (auto it = render_registered_function_.begin(); it != render_registered_function_.end();)
 		{
-			auto frame = browser->GetFrame(it->first.second);
-			if (frame.get() && frame->GetV8Context()->IsSame(frame->GetV8Context()))
+			auto child_frame = browser->GetFrame(it->first.second);
+			if (child_frame.get() && child_frame->GetV8Context()->IsSame(frame->GetV8Context()))
 			{
-				render_registered_function_.erase(it++);
+				it = render_registered_function_.erase(it);
 			}
 			else
 			{

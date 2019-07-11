@@ -1,6 +1,6 @@
 // Copyright (c) 2011, NetEase Inc. All rights reserved.
 //
-//
+// Author: RL
 // Date: 2011/10/6
 //
 // template_util unittest

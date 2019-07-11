@@ -41,7 +41,7 @@ public:
 	* @param[in] is_robot 该id是不是机器人
 	* @return wstring 头像的路径
 	*/
-	std::wstring GetUserPhoto(const std::string &accid, bool is_robot = false);
+	std::wstring GetUserPhoto(const std::string &accid);
 
 	/**
 	* 获取群组头像

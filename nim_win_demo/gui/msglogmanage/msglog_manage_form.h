@@ -5,6 +5,19 @@
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @date 2016/10/12
   */
+
+enum MigrateMsglogOption	// 导入还是导出
+{
+	kExport,
+	kImport
+};
+
+enum MigrateMsglogTarget	// 本地还是云储存
+{
+	kLocal,
+	kRemote
+};
+
 class MsglogManageForm : public nim_comp::WindowEx
 {
 public:
@@ -44,7 +57,23 @@ public:
 	* @param[in] export_or_import true:导出，false:导入
 	* @return bool true 成功，false 失败
 	*/
-	bool SetType(bool export_or_import);
+	bool SetType(nim::LogsBackupRemoteOperate option, MigrateMsglogTarget target);
+
+	/**
+	* 数据导入导出进度的回调
+	* @param[in] operate 导入导出类型
+	* @param[in] progress 进度
+	* @return void	无返回值
+	*/
+	void OnMigrateMsglogProgressCallbackUI(nim::LogsBackupRemoteOperate operate, float progress);
+
+	/**
+	* 数据导入导出完成的回调
+	* @param[in] operate 导入导出类型
+	* @param[in] state 最终状态
+	* @return void	无返回值
+	*/
+	void OnMigrateMsglogCompletedCallbackUI(nim::LogsBackupRemoteOperate operate, nim::LogsBackupRemoteState state);
 
 private:
 	/**
@@ -83,6 +112,12 @@ private:
 	void Export(const std::string& path);
 
 	/**
+	* 导出到云端
+	* @return bool	是否可以进行导出操作
+	*/
+	bool ExportToRemote();
+
+	/**
 	* 响应导出完成的回调函数
 	* @param[in] res_code 导出结果错误码
 	* @return void	无返回值
@@ -95,6 +130,12 @@ private:
 	* @return void	无返回值
 	*/
 	void Import(const std::string& path);
+
+	/**
+	* 从云端导入
+	* @return bool 是否可以进行导入操作
+	*/
+	bool ImportFromRemote();
 
 	/**
 	* 响应导入过程的回调函数
@@ -130,19 +171,20 @@ public:
 private:
 	nbase::WeakCallbackFlag close_timer_;
 
-	bool export_or_import_;
+	nim::LogsBackupRemoteOperate export_or_import_;
 	bool db_running_;
 	bool open_file_;
 
-	ui::Label*	tip_text_;
-	ui::Button* btn_sel_;
-	ui::Button* btn_run_;
-	ui::RichEdit* path_edit_;
+	ui::Label*		tip_text_;
+	ui::Button*		btn_sel_;
+	ui::Button*		btn_run_;
+	ui::Button*		btn_cancel_;
+	ui::RichEdit*	path_edit_;
 
-	ui::Progress* progress_;
-	ui::Label*	result_text_;
-	ui::Label*	progress_text_;
-	ui::Box*	path_box_;
-	ui::Box*	prg_box_;
-
+	ui::Progress*	progress_;
+	ui::Label*		result_text_;
+	ui::Label*		progress_text_;
+	ui::Box*		path_box_;
+	ui::Box*		prg_box_;
+	ui::Button*		btn_close_;
 };

@@ -444,7 +444,7 @@ namespace nim_comp
 		image_text.AddText(text.c_str(), 200, 50, 0xffff00ff, 25, 0, 100, false);
 		yuv_image_list_.push_back(image_text);
 		std::wstring dir = QPath::GetAppPath();
-		dir.append(L"themes\\default\\login\\logo.png");
+		dir.append(L"resources\\themes\\default\\login\\logo.png");
 		YuvImage image0;
 		image0.LoadImage(dir.c_str());
 		yuv_image_list_.push_back(image0);

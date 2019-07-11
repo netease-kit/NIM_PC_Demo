@@ -12,13 +12,6 @@ namespace nim_comp
 		virtual void InitUserInfo(const nim::UserNameCard & info) = 0;
 
 		/**
-		* 初始化机器人信息，只能使用一次，否则会多次注册回调
-		* @param[in] info 机器人信息
-		* @return void	无返回值
-		*/
-		virtual void InitRobotInfo(const nim::RobotInfo & info) = 0;
-
-		/**
 		* 获取所展示名片信息
 		* @return UserNameCard	名片信息
 		*/

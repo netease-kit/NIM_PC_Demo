@@ -1,6 +1,7 @@
 #pragma once
 #include "module/emoji/richedit_util.h"
 #include "module/emoji/richedit_olecallback.h"
+#include "cef/cef_module/cef_control/cef_control.h"
 #include <time.h>
 
 namespace nim_chatroom
@@ -8,6 +9,7 @@ namespace nim_chatroom
 enum SenderType
 {
 	kMember,
+	kJsb,
 	kRobot
 };
 
@@ -23,6 +25,7 @@ public:
 	virtual std::wstring GetWindowClassName() const override;
 	virtual std::wstring GetWindowId() const override;
 	virtual UINT GetClassStyle() const override;
+	virtual ui::Control* CreateControl(const std::wstring& pstrClass) override;
 	virtual LRESULT OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) override;
 
 	virtual void InitWindow() override;
@@ -50,6 +53,12 @@ public:
 public:
 	void SetAnonymity(bool anonymity);
 
+private: // cef
+	void OnLoadEnd(int httpStatusCode);
+	void OnAfterCreated(CefRefPtr<CefBrowser> browser);
+	void OnBeforeContextMenu(CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model);
+	void OnBeforeClose(CefRefPtr<CefBrowser> browser);
+
 private:
 	void InitHeader();
 	void GetOnlineCount();	// 刷新在线人数
@@ -69,8 +78,7 @@ private:
 	void AddNotifyItem(const ChatRoomNotification& notification, bool is_history, bool first_msg_each_batch = false);
 	void AddText(const std::wstring &text, const std::wstring &sender_name, const std::string &sender_id, SenderType sender_type, bool is_history, bool first_msg_each_batch = false);
 	void AddNotify(const std::wstring &notify, bool is_history, bool first_msg_each_batch = false);
-	void AddRobotMsg(const ChatRoomMessage& result, bool is_history, bool first_msg_each_batch = false);
-	void AddJsb(const int value, const std::wstring &sender_name, bool is_history, bool first_msg_each_batch = false);
+	void AddJsb(const int value, const std::wstring &sender_name, const std::string& sender_id, bool is_history, bool first_msg_each_batch = false);
 	void OnBtnSend();
 	void OnBtnLogin();
 	void SendText(const std::string &text);
@@ -81,6 +89,7 @@ private:
 	LRESULT HandleDiscuzMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 private:
+	void GetMemberInfo(const std::string& params, nim_cef::ReportResultFunction callback);
 	void SetMemberAdmin(const std::string &id, bool is_admin);	//设置成员列表界面中某个成员的类型
 	void SetMemberBlacklist(const std::string &id, bool is_black);
 	void SetMemberMute(const std::string &id, bool is_mute);
@@ -137,20 +146,11 @@ private:
 	void HideAtListForm();
 
 	/**
-	* 响应@列表被单击的回调函数
-	* @param[in] uid 被选择的用户id
-	* @return void	无返回值
-	*/
-	void OnSelectAtItemCallback(const std::string& uid, bool is_robot);
-
-	/**
 	* 初始化机器人列表
 	* @return void	无返回值
 	*/
 	void InitRobots();
 #pragma endregion At
-
-	void AddImage(const std::string &url, bool end_down, const std::wstring &file_tag = L"");
 	void DownloadImage(const std::string &url, const std::wstring &photo_path, bool is_complex_element, bool is_history);
 	void OnDownloadCallback(bool success, const std::string& file_path, bool is_complex_element, bool is_history);
 
@@ -207,7 +207,7 @@ private:
 	ui::RichEdit*	bulletin_ = NULL;	//公告
 
 	ui::TabBox*		list_tab_ = NULL;
-	ui::RichEdit*	msg_list_ = NULL;
+	ui::CefControl*	msg_list_ = NULL;
 	ui::RichEdit*	input_edit_ = NULL;
 	ui::CheckBox*	btn_face_ = NULL;
 

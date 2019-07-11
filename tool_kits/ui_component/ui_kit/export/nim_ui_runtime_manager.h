@@ -3,6 +3,7 @@
 namespace nim_ui
 {
 	using UIStyle = nim_comp::UIStyle;
+	using SDKInitCallback = std::function<void()>;
 	class RunTimeDataManager
 	{
 	public:
@@ -12,5 +13,10 @@ namespace nim_ui
 	public:
 		void SetUIStyle(UIStyle style);
 		UIStyle GetUIStyle() const;
+		UnregisterCallback RegSDKInited(const SDKInitCallback& cb);
+		void SetSDKInited();
+		bool IsSDKInited() const;
+	private:
+		UnregistedCallbackList<SDKInitCallback> sdk_init_cb_;
 	};
 }

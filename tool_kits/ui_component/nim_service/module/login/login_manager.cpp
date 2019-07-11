@@ -78,7 +78,7 @@ bool LoginManager::IsLinkActive()
 
 void LoginManager::CreateSingletonRunMutex()
 {
-	std::string config = GetConfigValue("check_singleton");
+	std::string config = GetConfigValue("kNIMCheckSingleton");
 	if (!config.empty() && 0 == atoi(config.c_str()))
 		return;
 
@@ -95,7 +95,7 @@ void LoginManager::ReleaseSingletonRunMutex()
 
 bool LoginManager::CheckSingletonRun(const std::wstring& username)
 {
-	std::string config = GetConfigValue("check_singleton");
+	std::string config = GetConfigValue("kNIMCheckSingleton");
 	if (!config.empty() && 0 == atoi(config.c_str()))
 		return true;
 
@@ -125,12 +125,12 @@ void LoginManager::ReadDemoLogLevel()
 				nbase::StringToInt((std::string)pchar, &log_level);
 				SetDemoLogLevel(log_level);
 			}
-			if (auto pchar = root->Attribute("limit_file_size")){
+			if (auto pchar = root->Attribute("kNIMLimitFileSize")){
 				int file_size = 15;
 				nbase::StringToInt((std::string)pchar, &file_size);
 				SetFileSizeLimit(file_size);
 			}
-			if (auto pchar = root->Attribute("team_msg_ack_ui")){
+			if (auto pchar = root->Attribute("kNIMTeamMsgAckUI")){
 				int enabled = 0;
 				nbase::StringToInt((std::string)pchar, &enabled);
 				if (enabled > 0)

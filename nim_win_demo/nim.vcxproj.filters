@@ -70,6 +70,12 @@
     <Filter Include="gui\plugins\addresbook_plugin">
       <UniqueIdentifier>{35387c85-4e45-4612-967c-5a0db0b3147a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="module\nim_app">
+      <UniqueIdentifier>{869a9643-b240-4e72-b250-8064c49f6f2d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="module\msglog_manager">
+      <UniqueIdentifier>{5dff8f1a-1247-4591-8539-5f5a226cc0c6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="gui\login\login_form.h">
@@ -108,14 +114,8 @@
     <ClInclude Include="gui\proxy\proxy_form.h">
       <Filter>gui\proxy</Filter>
     </ClInclude>
-    <ClInclude Include="..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\nim_audio_cpp.h">
-      <Filter>module\tools_sdk</Filter>
-    </ClInclude>
     <ClInclude Include="gui\cef\cef_form.h">
       <Filter>gui\cef</Filter>
-    </ClInclude>
-    <ClInclude Include="..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\nim_tools_http_cpp.h">
-      <Filter>module\tools_sdk</Filter>
     </ClInclude>
     <ClInclude Include="gui\cef\cef_native_form.h">
       <Filter>gui\cef</Filter>
@@ -186,6 +186,18 @@
     <ClInclude Include="gui\cef\cef_chatroom_list.h">
       <Filter>gui\cef</Filter>
     </ClInclude>
+    <ClInclude Include="nim_app.h">
+      <Filter>module\nim_app</Filter>
+    </ClInclude>
+    <ClInclude Include="module\msglog_manager\msglog_callback.h">
+      <Filter>module\msglog_manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\nim_sdk\src\cpp_sdk\nim_tools\audio\nim_audio_cpp.h">
+      <Filter>module\tools_sdk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\nim_sdk\src\cpp_sdk\nim_tools\http\nim_tools_http_cpp.h">
+      <Filter>module\tools_sdk</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="main.cpp">
@@ -224,14 +236,8 @@
     <ClCompile Include="gui\proxy\proxy_form.cpp">
       <Filter>gui\proxy</Filter>
     </ClCompile>
-    <ClCompile Include="..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_audio_cpp\nim_audio_cpp.cpp">
-      <Filter>module\tools_sdk</Filter>
-    </ClCompile>
     <ClCompile Include="gui\cef\cef_form.cpp">
       <Filter>gui\cef</Filter>
-    </ClCompile>
-    <ClCompile Include="..\libs\nim_sdk_desktop\nim_tools_cpp_sdk\nim_http_cpp\nim_tools_http_cpp.cpp">
-      <Filter>module\tools_sdk</Filter>
     </ClCompile>
     <ClCompile Include="gui\cef\cef_native_form.cpp">
       <Filter>gui\cef</Filter>
@@ -286,6 +292,18 @@
     </ClCompile>
     <ClCompile Include="gui\cef\cef_chatroom_list.cpp">
       <Filter>gui\cef</Filter>
+    </ClCompile>
+    <ClCompile Include="nim_app.cpp">
+      <Filter>module\nim_app</Filter>
+    </ClCompile>
+    <ClCompile Include="module\msglog_manager\msglog_callback.cpp">
+      <Filter>module\msglog_manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\nim_sdk\src\cpp_sdk\nim_tools\audio\nim_audio_cpp.cpp">
+      <Filter>module\tools_sdk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\nim_sdk\src\cpp_sdk\nim_tools\http\nim_tools_http_cpp.cpp">
+      <Filter>module\tools_sdk</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

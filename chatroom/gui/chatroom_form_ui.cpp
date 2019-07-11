@@ -22,6 +22,7 @@ ChatroomForm::ChatroomForm(__int64 room_id)
 	time_start_history_ = 0;
 
 	room_mute_ = false;
+
 }
 
 ChatroomForm::~ChatroomForm()
@@ -56,6 +57,17 @@ std::wstring ChatroomForm::GetWindowId() const
 UINT ChatroomForm::GetClassStyle() const
 {
 	return (UI_CLASSSTYLE_FRAME | CS_DBLCLKS);
+}
+
+
+ui::Control* ChatroomForm::CreateControl(const std::wstring& pstrClass)
+{
+	if (pstrClass == L"CefControl")
+	{
+		return new ui::CefControl;
+	}
+
+	return NULL;
 }
 
 LRESULT ChatroomForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
@@ -99,19 +111,27 @@ void ChatroomForm::InitWindow()
 	input_edit_->SetOleCallback(richeditolecallback_);
 	richeditolecallback_->SetCustomMode(true);
 
-	msg_list_ = (RichEdit*)FindControl(L"intercommunicate_list");
-	msg_list_->SetSelAllOnFocus(false);
-	msg_list_->SetNoSelOnKillFocus(false);
-//	msg_list_->SetAutoURLDetect(true); 开启自动检测URL功能后，对于自定义超链接的判断会产生影响
-	msg_list_->SetNoCaretReadonly();
-	msg_list_->SetEventMask(msg_list_->GetEventMask() | ENM_LINK | ENM_MOUSEEVENTS | ENM_SCROLLEVENTS | ENM_KEYEVENTS);
-	msg_list_->SetLimitText(INT_MAX);
+	msg_list_ = (ui::CefControl*)FindControl(L"intercommunicate_list");
+	msg_list_->AttachLoadEnd(nbase::Bind(&ChatroomForm::OnLoadEnd, this, std::placeholders::_1));
+	msg_list_->AttachAfterCreated(nbase::Bind(&ChatroomForm::OnAfterCreated, this, std::placeholders::_1));
+	msg_list_->AttachBeforeCLose(nbase::Bind(&ChatroomForm::OnBeforeClose, this, std::placeholders::_1));
+	msg_list_->AttachBeforeContextMenu(nbase::Bind(&ChatroomForm::OnBeforeContextMenu, this, std::placeholders::_1, std::placeholders::_2));
+	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"cef_themes/chatroom_list/chat_list.html";
+	msg_list_->LoadURL(html_path);
 
-	text_services = msg_list_->GetTextServices();
-	richeditolecallback_ = new nim_comp::IRichEditOleCallbackEx(text_services, std::function<void()>());
-	text_services->Release();
-	msg_list_->SetOleCallback(richeditolecallback_);
-	richeditolecallback_->SetCustomMode(true);
+//	msg_list_ = (RichEdit*)FindControl(L"intercommunicate_list");
+//	msg_list_->SetSelAllOnFocus(false);
+//	msg_list_->SetNoSelOnKillFocus(false);
+//	msg_list_->SetAutoURLDetect(true); 开启自动检测URL功能后，对于自定义超链接的判断会产生影响
+//	msg_list_->SetNoCaretReadonly();
+//	msg_list_->SetEventMask(msg_list_->GetEventMask() | ENM_LINK | ENM_MOUSEEVENTS | ENM_SCROLLEVENTS | ENM_KEYEVENTS);
+//	msg_list_->SetLimitText(INT_MAX);
+
+//	text_services = msg_list_->GetTextServices();
+//	richeditolecallback_ = new nim_comp::IRichEditOleCallbackEx(text_services, std::function<void()>());
+//	text_services->Release();
+//	msg_list_->SetOleCallback(richeditolecallback_);
+//	richeditolecallback_->SetCustomMode(true);
 
 	// 当需要支持gif时，再启用此功能
 	//auto callback = nbase::Bind(&ChatroomForm::TimeHandle, this);
@@ -159,28 +179,6 @@ LRESULT ChatroomForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	}
 	else if (uMsg == WM_MOUSEWHEEL)
 	{
-		//处理@列表的滚动
-		if (HandleAtMouseWheel(wParam, lParam))
-		{
-			return 0;
-		}
-		POINT pt;
-		pt.x = LOWORD(lParam);
-		pt.y = HIWORD(lParam);	
-		ScreenToClient(GetHWND(), &pt);
-		if (msg_list_->GetPos().IsPointIn(pt) && list_tab_->GetCurSel() == 0 && !is_loading_history_)
-		{
-			int zDelta = (int)(short)HIWORD(wParam);
-			if (zDelta > 0)
-			{
-				if (msg_list_->GetScrollPos().cy == 0)
-				{
-					is_loading_history_ = true;
-					GetHistorys();
-					return 0;
-				}
-			}
-		}
 	}
 	else if (uMsg == WM_KEYDOWN)
 	{
@@ -598,7 +596,7 @@ bool ChatroomForm::AddMuteMenuItemClick(ui::EventArgs* args)
 	param.account_id_ = clicked_user_account_;
 	param.attribute_ = kNIMChatRoomMemberAttributeMuteList;
 	param.opt_ = true;
-	
+
 	ChatRoom::SetMemberAttributeOnlineAsync(room_id_, param, nbase::Bind(&ChatroomForm::OnSetMemberAttributeCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 	clicked_user_account_.clear();

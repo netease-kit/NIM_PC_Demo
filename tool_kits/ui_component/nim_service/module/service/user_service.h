@@ -108,28 +108,6 @@ public:
 	bool GetUserInfo(const std::string &id, nim::UserNameCard &info);
 
 	/**
-	* 获取本地的机器人信息
-	* @param[in] id 机器人云信ID
-	* @param[out] info 机器人信息
-	* @return bool true 查询到，false 没有查询到
-	*/
-	bool GetRobotInfo(const std::string &id, nim::RobotInfo &info);
-
-	/**
-	* 获取本地的所有的机器人信息
-	* @param[out] info 机器人信息
-	* @return bool true 查询到，false 没有查询到
-	*/
-	bool GetAllRobotInfo(nim::RobotInfos &info);
-
-	/**
-	* 初始化聊天室的所有的机器人信息（匿名聊天室）
-	* @param[in] room_id 聊天室ID
-	* @return
-	*/
-	void InitChatroomRobotInfos(long long room_id);
-
-	/**
 	* 获取Id对应的用户是不是机器人
 	* @param[in] accid 机器人云信ID
 	* @return bool true 是，false 不是
@@ -193,13 +171,6 @@ public:
 	* @return UnregisterCallback 反注册对象
 	*/
 	UnregisterCallback RegFriendListChange(const OnFriendListChangeCallback& callback);
-
-	/**
-	* 注册机器人列表改变的回调
-	* @param[in] callback 回调函数
-	* @return UnregisterCallback 反注册对象
-	*/
-	UnregisterCallback RegRobotListChange(const nim::Robot::RobotChangedCallback& callback);
 
 	/**
 	* 注册用户名、头像改变的回调

@@ -3,7 +3,6 @@
 #include "export/nim_ui_session_list_manager.h"
 #include "export/nim_ui_window_manager.h"
 #include "module/session/session_util.h"
-#include "nim_cpp_client.h"
 namespace nim_comp
 {
 void TalkCallback::OnSendMsgCallback(const nim::SendMessageArc& arc)
@@ -126,6 +125,7 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 			std::wstring notify_text = GetRecallNotifyTextEx(talk_id, notify.session_type_, notify.from_id_, notify.operator_id_,notify.from_nick_);
 			nim::IMMessage msg;
 			msg.timetag_ = notify.msglog_timetag_;
+			msg.feature_ = notify.notify_feature_;
 			msg.client_msg_id_ = QString::GetGUID();
 			msg.receiver_accid_ = talk_id;
 			msg.session_type_ = notify.session_type_;
@@ -137,6 +137,7 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 			values["notify_from"] = notify.from_id_;
 			values["operator_id"] = notify.operator_id_;
 			values["from_nick"] = notify.from_nick_;
+			values["feature"] = msg.feature_;
 			msg.attach_ = values.toStyledString();
 			msg.content_ = nbase::UTF16ToUTF8(notify_text);
 			msg.msg_setting_.push_need_badge_ = BS_FALSE; //设置会话列表不需要计入未读数

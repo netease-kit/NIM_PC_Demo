@@ -1,4 +1,4 @@
-ï»¿#ifndef UI_UTILS_WINIMPLBASE_H_
+#ifndef UI_UTILS_WINIMPLBASE_H_
 #define UI_UTILS_WINIMPLBASE_H_
 
 #pragma once
@@ -12,80 +12,345 @@ namespace ui
 #define UI_CLASSSTYLE_FRAME		(CS_VREDRAW | CS_HREDRAW)
 #define UI_CLASSSTYLE_DIALOG	(CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS | CS_SAVEBITS)
 
+#ifndef WM_DPICHANGED
+#define WM_DPICHANGED       0x02E0
+#endif
+
 enum UILIB_RESOURCETYPE
 {
-	UILIB_FILE=1,		// æ¥è‡ªç£ç›˜æ–‡ä»¶
-	UILIB_ZIP,			// æ¥è‡ªç£ç›˜zipå‹ç¼©åŒ…
-	UILIB_RESOURCE,		// æ¥è‡ªèµ„æº
-	UILIB_ZIPRESOURCE,	// æ¥è‡ªèµ„æºçš„zipå‹ç¼©åŒ…
+	UILIB_FILE = 1,		// À´×Ô´ÅÅÌÎÄ¼ş
+	UILIB_ZIP,			// À´×Ô´ÅÅÌzipÑ¹Ëõ°ü
+	UILIB_RESOURCE,		// À´×Ô×ÊÔ´
+	UILIB_ZIPRESOURCE,	// À´×Ô×ÊÔ´µÄzipÑ¹Ëõ°ü
 };
 
 class UILIB_API WindowImplBase : public Window, public IUIMessageFilter
 {
 public:
-	WindowImplBase(){};
-	virtual ~WindowImplBase(){}
+	WindowImplBase();
+	virtual ~WindowImplBase();
+
+	/**
+	 * @brief µ±½ÓÊÕµ½´°¿Ú´´½¨ÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @return ÎŞ
+	 */
 	virtual void InitWindow(){}
+
+	/**
+	 * @brief µ±½ÓÊÕµ½´°¿ÚÏú»ÙÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] hWnd ÒªÏú»ÙµÄ´°¿Ú¾ä±ú
+	 * @return ÎŞ
+	 */
 	virtual void OnFinalMessage( HWND hWnd ) override;
-		
+
+	/**
+	 * @brief »ñÈ¡´°¿ÚÑùÊ½
+	 * @return ·µ»Ø´°¿ÚÑùÊ½
+	 */
 	virtual LONG GetStyle();
+
+	/**
+	 * @brief »ñÈ¡´°¿ÚÀàÑùÊ½
+	 * @return ·µ»Ø´°¿ÚÀàÑùÊ½
+	 */
 	virtual UINT GetClassStyle() const;
+
+	/**
+	 * @brief ´ı²¹³ä
+	 * @param[in] ´ı²¹³ä
+	 * @return ´ı²¹³ä
+	 */
 	virtual UILIB_RESOURCETYPE GetResourceType() const;
+
+	/**
+	 * @brief ´ı²¹³ä
+	 * @param[in] ´ı²¹³ä
+	 * @return ´ı²¹³ä
+	 */
 	virtual std::wstring GetResourceID() const;
+
+	/**
+	 * @brief µ±Òª´´½¨µÄ¿Ø¼ş²»ÊÇ±ê×¼µÄ¿Ø¼şÃû³ÆÊ±»áµ÷ÓÃ¸Ãº¯Êı
+	 * @param[in] pstrClass ¿Ø¼şÃû³Æ
+	 * @return ·µ»ØÒ»¸ö×Ô¶¨Òå¿Ø¼şÖ¸Õë£¬Ò»°ãÇé¿öÏÂ¸ù¾İ pstrClass ²ÎÊı´´½¨×Ô¶¨ÒåµÄ¿Ø¼ş
+	 */
 	virtual Control* CreateControl(const std::wstring& pstrClass);
 
-	virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM /*lParam*/, bool& /*bHandled*/);
-	virtual LRESULT OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-	virtual LRESULT OnDestroy(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-	virtual LRESULT OnNcActivate(UINT /*uMsg*/, WPARAM wParam, LPARAM /*lParam*/, BOOL& bHandled);
+	/**
+	 * @brief ½ÓÊÕËùÓĞÏûÏ¢
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief µ±ÊÕµ½´°¿Ú¹Ø±ÕÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief µ±ÊÕµ½´°¿Ú±»Ïú»ÙÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	virtual LRESULT OnDestroy(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief µ±ÊÕµ½»î¶¯»ò·Ç»î¶¯×´Ì¬ÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	virtual LRESULT OnNcActivate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief µ±ÊÕµ½Òª¼ÆËã¿Í»§ÇøÓò´óĞ¡ÏûÏ¢Ê±£¨WM_NCCALCSIZE£©±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
 	virtual LRESULT OnNcCalcSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief ´°¿ÚÎ»ÖÃ»ò Z ´ÎĞò·¢Éú¸Ä±äÊ±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
 	virtual LRESULT OnWindowPosChanging(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-	virtual LRESULT OnNcPaint(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& /*bHandled*/);
+
+	/**
+	 * @brief µ±½ÓÊÕµ½»æÖÆ±êÌâÀ¸ÇøÓòÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	virtual LRESULT OnNcPaint(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief µ±½ÓÊÕµ½±êÌâÀ¸ÇøÓòË«»÷ÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	virtual LRESULT OnNcLButtonDbClick(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief µ±½ÓÊÕµ½ WM_NCHITTEST ÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
 	virtual LRESULT OnNcHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief µ±½ÓÊÕµ½ WM_GETMINMAXINFO ÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
 	virtual LRESULT OnGetMinMaxInfo(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-	virtual LRESULT OnMouseWheel(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
+
+	/**
+	 * @brief µ±½ÓÊÕµ½Êó±êĞü¸¡ÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	virtual LRESULT OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief µ±½ÓÊÕµ½´°¿Ú´óĞ¡¸Ä±äÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
 	virtual LRESULT OnMouseHover(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief µ±½ÓÊÕµ½´°¿Ú´óĞ¡¸Ä±äÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
 	virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief µ±½ÓÊÕµ½×Ö·û°´¼üÏûÏ¢Ê±£¨WM_CHAR£©±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
 	virtual LRESULT OnChar(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief ½ÓÊÕ´°¿Ú¿ØÖÆÃüÁîÏûÏ¢Ê±£¨WM_SYSCOMMAND£©±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
 	virtual LRESULT OnSysCommand(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
-	virtual LRESULT OnKeyDown(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-	virtual LRESULT OnKillFocus(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-	virtual LRESULT OnSetFocus(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-	virtual LRESULT OnLButtonDown(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-	virtual LRESULT OnLButtonUp(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
-	virtual LRESULT OnMouseMove(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled);
+
+	/**
+	 * @brief ½ÓÊÕ¼üÅÌ°´¼ü°´ÏÂÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	virtual LRESULT OnKeyDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief ½ÓÊÕÊ§È¥½¹µãÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	virtual LRESULT OnKillFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief ½ÓÊÕ»ñÈ¡½¹µãÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	virtual LRESULT OnSetFocus(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief ½ÓÊÕµ½Êó±ê×ó¼ü°´ÏÂÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	virtual LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief ½ÓÊÕµ½Êó±ê×ó¼üµ¯ÆğÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	virtual LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief ½ÓÊÕµ½Êó±êÒÆ¶¯ÏûÏ¢Ê±±»µ÷ÓÃ
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief ´°¿ÚÏûÏ¢µÄÅÉ·¢º¯Êı
+	 * @param[in] uMsg ÏûÏ¢ÄÚÈİ
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ·µ»Ø true Ôò¼ÌĞøÅÉ·¢¸ÃÏûÏ¢£¬·ñÔò²»ÔÙÅÉ·¢¸ÃÏûÏ¢
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 public:
 	/**
-	* æ¿€æ´»çª—å£
-	* @return void æ— è¿”å›å€¼
+	* @brief ¼¤»î´°¿Ú
+	* @return void ÎŞ·µ»ØÖµ
 	*/
 	virtual void ActiveWindow();
 
 	/**
-	* è®¾ç½®çª—å£æ ‡é¢˜
-	* @param[in] title çª—å£æ ‡é¢˜
-	* @return void æ— è¿”å›å€¼
+	* @brief ÉèÖÃ´°¿Ú±êÌâ
+	* @param[in] title ´°¿Ú±êÌâ
+	* @return void ÎŞ·µ»ØÖµ
 	*/
 	virtual void SetTaskbarTitle(const std::wstring &title);
 
 	/**
-	* ç½®é¡¶çª—å£
-	* @param[in] forever æ˜¯å¦ä¸€ç›´ç½®é¡¶
-	* @return void æ— è¿”å›å€¼
+	* @brief ÖÃ¶¥´°¿Ú
+	* @param[in] forever ÊÇ·ñÒ»Ö±ÖÃ¶¥
+	* @return void ÎŞ·µ»ØÖµ
 	*/
 	void ToTopMost(bool forever);
 		
 protected:
+	/**
+	 * @brief ´´½¨´°¿ÚÊ±±»µ÷ÓÃ£¬ÓÉ×ÓÀàÊµÏÖÓÃÒÔ»ñÈ¡´°¿ÚÆ¤·ôÄ¿Â¼
+	 * @return ×ÓÀàĞèÊµÏÖ²¢·µ»Ø´°¿ÚÆ¤·ôÄ¿Â¼
+	 */
 	virtual std::wstring GetSkinFolder() = 0;
+
+	/**
+	 * @brief ´´½¨´°¿ÚÊ±±»µ÷ÓÃ£¬ÓÉ×ÓÀàÊµÏÖÓÃÒÔ»ñÈ¡´°¿ÚÆ¤·ô XML ÃèÊöÎÄ¼ş
+	 * @return ×ÓÀàĞèÊµÏÖ²¢·µ»Ø´°¿ÚÆ¤·ô XML ÃèÊöÎÄ¼ş
+	 */
 	virtual std::wstring GetSkinFile() = 0;
+
+	/**
+	 * @brief ´´½¨´°¿ÚÊ±±»µ÷ÓÃ£¬ÓÉ×ÓÀàÊµÏÖÓÃÒÔ»ñÈ¡´°¿ÚÎ¨Ò»µÄÀàÃû³Æ
+	 * @return ×ÓÀàĞèÊµÏÖ²¢·µ»Ø´°¿ÚÎ¨Ò»µÄÀàÃû³Æ
+	 */
 	virtual std::wstring GetWindowClassName(void) const = 0 ;
 
-	static LPBYTE m_lpResourceZIPBuffer;
-
 private:
-	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);	//æ•…æ„ä¸å¼„æˆè™šå‡½æ•°ï¼Œéœ€è¦å®šåˆ¶å¤„ç†ä½¿ç”¨InitWindowå‡½æ•°
+	/**
+	 * @brief ÊÕµ½´°¿Ú´´½¨ÏûÏ¢Ê±±»µ÷ÓÃ£¬ÇëÊ¹ÓÃ InitWindow ½Ó¿ÚÀ´ÊµÏÖ×Ô¶¨ÒåĞèÇó
+	 * @param[in] uMsg ÏûÏ¢ID
+	 * @param[in] wParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[in] lParam ÏûÏ¢¸½¼Ó²ÎÊı
+	 * @param[out] bHandled ÏûÏ¢ÊÇ·ñÒÑ¾­±»´¦Àí
+	 * @return ·µ»ØÏûÏ¢´¦Àí½á¹û
+	 */
+	LRESULT OnCreate(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief ´°¿Ú¹¦ÄÜ°´Å¥±»µã»÷Ê±µ÷ÓÃ
+	 * @param[in] param Ğ¯´øµÄ²ÎÊı
+	 * @return Ê¼ÖÕ·µ»Ø true
+	 */
 	bool OnButtonClick(EventArgs* param);
 };
 

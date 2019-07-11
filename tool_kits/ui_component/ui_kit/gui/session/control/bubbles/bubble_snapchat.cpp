@@ -12,9 +12,9 @@ void MsgBubbleSnapChat::InitInfo(const nim::IMMessage &msg)
 	path_ = nbase::UTF8ToUTF16(msg.local_res_path_);
 	thumb_ = QPath::GetAppPath();
 	if (my_msg_)
-		thumb_ += L"themes\\default\\session\\snapchat_send.png";
+		thumb_ += L"resources\\themes\\default\\session\\snapchat_send.png";
 	else
-		thumb_ += L"themes\\default\\session\\snapchat_receive.png";
+		thumb_ += L"resources\\themes\\default\\session\\snapchat_receive.png";
 
 	bubble_box_->SetBkImage(L"");
 	image_->SetForeStateImage(ui::kControlStateNormal, L"");
@@ -73,13 +73,18 @@ void MsgBubbleSnapChat::ViewSnapchatImage()
 		std::wstring path_;
 	};
 	if (nbase::FilePathIsExist(path_, false))
-	{
-		ImageViewManager::GetInstance()->StartViewPic(path_, L"", true, true);
-		nim::MsgLog::DeleteAsync(sid_, type_, msg_.client_msg_id_, ToWeakCallback([this](nim::NIMResCode res_code, const std::string& msg_id){
-			nbase::ThreadManager::PostTask(ThreadId::kThreadGlobalMisc, DeleteFileTask(path_));
+	{		
+		auto no_topmost_cb = ImageViewManager::GetInstance()->StartViewPicEx(path_, L"", true, true,true);
+		nim::MsgLog::DeleteAsync(sid_, type_, msg_.client_msg_id_, ToWeakCallback([this, no_topmost_cb](nim::NIMResCode res_code, const std::string& msg_id){
 			SessionBox* session_form = dynamic_cast<SessionBox*>(SessionManager::GetInstance()->FindSessionBox(sid_));
 			if (session_form)
+			{
+				auto temp_path = path_;
 				session_form->OnSnapchatReadCallback(msg_.client_msg_id_);
+				nbase::ThreadManager::PostTask(ThreadId::kThreadGlobalMisc, DeleteFileTask(temp_path));
+				if (no_topmost_cb != nullptr)
+					nbase::ThreadManager::PostDelayedTask(no_topmost_cb,nbase::TimeDelta::FromMilliseconds(200));
+			}				
 		}));
 	}
 }

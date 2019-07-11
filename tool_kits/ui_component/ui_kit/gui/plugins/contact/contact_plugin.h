@@ -3,7 +3,7 @@
 #include "gui/plugins/contact/contact_plugin_page.h"
 namespace nim_comp
 {
-	class ContactPlugin : public MainPluginBase<MainPluginIcon,ContactPluginPage>
+	class ContactPlugin : public MainPluginBase<IMainPlugin::PluginType::PluginType_Main,MainPluginIcon,ContactPluginPage>
 	{
 	public:
 		ContactPlugin();

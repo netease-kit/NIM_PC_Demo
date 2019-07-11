@@ -660,7 +660,7 @@ namespace nim_comp
 		{
 			RefreshMemberAudioStatus();
 		};
-		Post2UI(closure);
+		Post2UI(ToWeakCallback(closure));
 	}
 
 	void  MultiVideoChatForm::ExChangeBitmapControl(int bitmap_i_index,int bitmap_j_index)
@@ -700,7 +700,7 @@ namespace nim_comp
 		}
 		else
 		{
-			std::wstring image = PhotoService::GetInstance()->GetUserPhoto(video_uids[bitmap_i_index][bitmap_j_index].uid, false);
+			std::wstring image = PhotoService::GetInstance()->GetUserPhoto(video_uids[bitmap_i_index][bitmap_j_index].uid);
 			video_ctrl_preview_[bitmap_i_index][bitmap_j_index]->SetBkImage(image);
 			//camera_page_tip[bitmap_i_index][bitmap_j_index]->SetBkImage(image);
 			//camera_page_tip[bitmap_i_index][bitmap_j_index]->SetVisible(true);
@@ -968,7 +968,7 @@ namespace nim_comp
 			}
 			InitCbCameraSetting();
 		};
-		Post2UI(closure);
+		Post2UI(ToWeakCallback(closure));
 	}
 
 	void MultiVideoChatForm::OnAudioDeviceStartCallback(bool result)
@@ -1422,7 +1422,7 @@ namespace nim_comp
 				{
 					if (status != kWaiting)
 					{
-						std::wstring image = PhotoService::GetInstance()->GetUserPhoto(uid, false);
+						std::wstring image = PhotoService::GetInstance()->GetUserPhoto(uid);
 						small_camera_page_tip_[find_i_index][find_j_index]->SetBkImage(L"");
 						video_ctrl_preview_[find_i_index][find_j_index]->SetBkImage(image);
 					}
@@ -1615,7 +1615,7 @@ namespace nim_comp
 				AdjustVideoBitmap(*it, false, false, kWaiting);
 			}
 		};
-		Post2UI(closure);
+		Post2UI(ToWeakCallback(closure));
 	}
 
 	void MultiVideoChatForm::AdjustWindowSize()

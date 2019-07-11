@@ -19,18 +19,6 @@ UserService::UserService()
 
 	//向SDK注册监听用户名片变化
 	nim::User::RegUserNameCardChangedCb(nbase::Bind(&UserService::OnUserInfoChangeBySDK, this, std::placeholders::_1));
-
-	nim::Robot::RegChangedCallback(nbase::Bind(&UserService::OnRobotChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-}
-
-nim::RobotInfos UserService::InvokeGetAllRobotsInfoBlock()
-{
-	auto robot_infos = nim::Robot::QueryAllRobotInfosBlock("");
-	for (auto &info : robot_infos)
-	{
-		robot_list_[info.GetAccid()] = info;
-	}
-	return robot_infos;
 }
 
 void UserService::InvokeGetAllUserInfo(const OnGetUserInfoCallback& cb)
@@ -128,61 +116,9 @@ bool UserService::GetUserInfo(const std::string &id, nim::UserNameCard &info)
 	}
 }
 
-bool UserService::GetRobotInfo(const std::string &id, nim::RobotInfo &info)
-{
-	auto iter = robot_list_.find(id);
-	if (iter != robot_list_.cend())
-	{
-		info = iter->second;
-		return true;
-	}
-	info = nim::Robot::QueryRobotInfoByAccidBlock(id, "");
-	return true;
-}
-
 bool UserService::IsRobotAccount(const std::string &accid)
 {
 	return robot_list_.find(accid) != robot_list_.end();
-}
-
-bool UserService::GetAllRobotInfo(nim::RobotInfos &info)
-{
-	if (robot_list_.empty())
-		InvokeGetAllRobotsInfoBlock();
-	for (auto &robot : robot_list_)
-	{
-		info.push_back(robot.second);
-	}
-	return !info.empty();
-}
-
-void UserService::InitChatroomRobotInfos(long long room_id)
-{
-	if (!robot_list_.empty())
-		return;
-	auto task = [this](int rescode, const nim_chatroom::RobotInfos& infos)
-	{
-		auto ui_task = [this, infos]()
-		{
-			for (auto &info : infos)
-			{
-				if (!info.GetRobotID().empty())
-				{
-					nim::RobotInfo robot;
-					robot.SetAccid(info.GetAccid());
-					robot.SetCreateTime(info.GetCreateTime());
-					robot.SetIcon(info.GetIcon());
-					robot.SetIntro(info.GetIntro());
-					robot.SetName(info.GetName());
-					robot.SetRobotID(info.GetRobotID());
-					robot.SetUpdateTime(info.GetUpdateTime());
-					robot_list_[info.GetAccid()] = robot;
-				}
-			}
-		};
-		nbase::ThreadManager::PostTask(kThreadUI, ui_task);
-	};
-	nim_chatroom::ChatRoom::GetRobotInfoAsync(room_id, 0, task);
 }
 
 void UserService::GetUserInfos(const std::list<std::string>& ids, std::list<nim::UserNameCard>& uinfos)
@@ -274,9 +210,11 @@ std::wstring UserService::GetUserName(const std::string &id, bool alias_prior/* 
 
 Json::Value UserService::GetUserCustom(const std::string &id)
 {
+	Json::Value ret;
 	nim::UserNameCard info;
-	GetUserInfo(id, info);
-	return info.GetExpand();
+	GetUserInfo(id, info);	
+	Json::Reader().parse(nim_cpp_wrapper_util::Json::FastWriter().write(info.GetExpand()), ret);
+	return ret;
 }
 
 std::wstring UserService::GetFriendAlias(const std::string & id)
@@ -295,18 +233,6 @@ UnregisterCallback UserService::RegFriendListChange(const OnFriendListChangeCall
 	friend_list_change_cb_list_[cb_id].reset(new_callback);
 	auto cb = ToWeakCallback([this, cb_id]() {
 		friend_list_change_cb_list_.erase(cb_id);
-	});
-	return cb;
-}
-
-UnregisterCallback UserService::RegRobotListChange(const nim::Robot::RobotChangedCallback& callback)
-{
-	nim::Robot::RobotChangedCallback* new_callback = new nim::Robot::RobotChangedCallback(callback);
-	int cb_id = (int)new_callback;
-	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
-	robot_change_cb_list_[cb_id].reset(new_callback);
-	auto cb = ToWeakCallback([this, cb_id]() {
-		robot_change_cb_list_.erase(cb_id);
 	});
 	return cb;
 }
@@ -387,8 +313,11 @@ void UserService::OnFriendListChangeBySDK(const nim::FriendChangeEvent& change_e
 		nim::Friend::ParseFriendProfileUpdateEvent(change_event, update_event);
 
 		std::string accid = update_event.profile_.GetAccId();
-		update_list.push_back(accid);
-		friend_list_.at(accid).Update(update_event.profile_);
+		if (friend_list_.find(accid) != friend_list_.end())
+		{
+			update_list.push_back(accid);
+			friend_list_.at(accid).Update(update_event.profile_);
+		}		
 		break;
 	}
 	default:
@@ -458,6 +387,9 @@ void UserService::OnSyncFriendList(const nim::FriendChangeEvent& change_event)
 
 	for each (const auto& id in delete_list)
 		InvokeFriendListChangeCallback(kChangeTypeDelete, id);
+
+	for each (const auto& id in update_list)
+		InvokeFriendListChangeCallback(kChangeTypeUpdate, id);
 }
 
 void UserService::OnUserInfoChangeBySDK(const std::list<nim::UserNameCard> &uinfo_list)
@@ -514,20 +446,6 @@ void UserService::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfo_lis
 		(*(it.second))(name_photo_list);
 	for (auto& it : misc_uinfo_change_cb_list_)
 		(*(it.second))(misc_uinfo_list);
-}
-
-void UserService::OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots)
-{
-	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
-	robot_list_.clear();
-	for (auto &info : robots)
-	{
-		robot_list_[info.GetAccid()] = info;
-		if (!info.GetIcon().empty())
-			PhotoService::GetInstance()->DownloadRobotPhoto(info);
-	}
-	for (auto& it : robot_change_cb_list_)
-		(*(it.second))(rescode, type, robots);
 }
 
 void UserService::InvokeGetUserInfo(const std::list<std::string>& account_list)

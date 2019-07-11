@@ -119,10 +119,6 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 			}
 		}
 	}
-	else if (msg.type_ == nim::kNIMMessageTypeRobot)
-	{
-		item = new MsgBubbleRobot;
-	}
 
 	if (item == nullptr)
 	{
@@ -181,14 +177,7 @@ bool MsgRecordForm::GetUserShowName(const nim::IMMessage &msg, std::string& show
 		}
 		else
 		{
-			nim::IMBotRobot robot_attach;
-			nim::RobotInfo robot_info;
-			nim::Talk::ParseBotRobotMessageAttach(msg, robot_attach);
-			UserService::GetInstance()->GetRobotInfo(robot_attach.robot_accid_, robot_info);
-			if (!robot_attach.out_msg_)
-				show_name = std::move(get_name_task());
-			else
-				show_name = std::move(robot_info.GetName());
+			show_name = "";
 		}
 		return true;
 	}
@@ -275,7 +264,7 @@ void MsgRecordForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 			long long older_time = 0;
 			for (size_t j = i + 1; j < len; j++)
 			{
-				if (!IsNoticeMsg(msg[j]))
+				if (!IsNoticeMsg(msg[j]) && !IsRTSMsg(msg[j].type_, msg[j].attach_))
 				{
 					older_time = msg[j].timetag_;
 					break;
@@ -296,7 +285,7 @@ void MsgRecordForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 		{
 			for (const auto &i : msg)
 			{
-				if (!IsNoticeMsg(i))
+				if (!IsNoticeMsg(i) && !IsRTSMsg(i.type_, i.attach_))
 				{
 					last_msg_time_ = i.timetag_;
 					break;

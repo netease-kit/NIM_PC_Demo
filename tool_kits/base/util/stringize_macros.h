@@ -1,7 +1,10 @@
 // Copyright (c) 2010 The Chromium Authors. All rights reserved.
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
+//
+// Ported & Modified by WR
 // 2013/8/30
+//
 // This file defines preprocessor macros for stringizing preprocessor
 // symbols (or their output) and manipulating preprocessor symbols
 // that define strings.

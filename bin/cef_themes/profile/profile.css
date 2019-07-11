@@ -22,6 +22,11 @@ body, h1, h2, h3, span, p, input {
   cursor: pointer;
 }
 
+.user-profile-header .user-avatar img:hover {
+    opacity:0.5;
+    cursor: pointer;
+}
+
 .user-profile-header .user-info #user-nickname {
   font-size: 24px;
 }

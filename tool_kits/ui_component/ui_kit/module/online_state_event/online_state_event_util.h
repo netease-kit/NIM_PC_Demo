@@ -1,5 +1,6 @@
 #pragma once
-#include "nim_service/module/subscribe_event/online_state_event_helper.h"
+#include "module/subscribe_event/online_state_event_helper.h"
+#include "module/subscribe_event/subscribe_event_manager.h"
 
 namespace nim_comp
 {
@@ -13,7 +14,7 @@ namespace nim_comp
 		* @param[in] is_simple 是否要简要信息（用于在列表展示）
 		* @return std::wstring 摘要信息
 		*/
-		static std::wstring GetOnlineState(const nim::EventOnlineClientType& online_client_type, const EventMultiConfig& multi_config, bool is_simple);
+		static std::wstring GetOnlineState(const std::string& accid, const EventDataEx& data, bool is_simple);
 
 	};
 

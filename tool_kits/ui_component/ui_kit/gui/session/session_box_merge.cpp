@@ -19,7 +19,7 @@ void SessionBox::SetInternVisible(bool bVisible /*= true*/)
 	}
 }
 
-void SessionBox::Invalidate() const
+void SessionBox::Invalidate()
 {
 	__super::Invalidate();
 

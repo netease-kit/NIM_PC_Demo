@@ -3,7 +3,7 @@
 namespace nim_comp
 {
 /** @class AtListItem
-  * @brief @åˆ—è¡¨çª—å£ä¸­çš„åˆ—è¡¨é¡¹
+  * @brief @ÁĞ±í´°¿ÚÖĞµÄÁĞ±íÏî
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @author Redrain
   * @date 2016/9/6
@@ -11,143 +11,136 @@ namespace nim_comp
 class AtListItem :public ui::ListContainerElement
 {
 public:
-	AtListItem(bool is_last_five, bool is_robot);
+	AtListItem(bool is_last_five);
 	~AtListItem();
 	
 	/**
-	* åˆå§‹åŒ–æ§ä»¶
-	* @return void	æ— è¿”å›å€¼
+	* ³õÊ¼»¯¿Ø¼ş
+	* @return void	ÎŞ·µ»ØÖµ
 	*/
 	void InitControls();
 
 	/**
-	* é‡å†™çˆ¶æ§ä»¶çš„è™šå‡½æ•°ï¼Œç”¨äºè§¦å‘å•å‡»æ¶ˆæ¯
-	* @return void	æ— è¿”å›å€¼
+	* ÖØĞ´¸¸¿Ø¼şµÄĞéº¯Êı£¬ÓÃÓÚ´¥·¢µ¥»÷ÏûÏ¢
+	* @return void	ÎŞ·µ»ØÖµ
 	*/
 	virtual void Activate() override;
 
 	/**
-	* æ˜¯å¦ä¸ºæœ€è¿‘5ä¸ªå‘è¨€äººé¡¹
-	* @return bool true æ˜¯ï¼Œfalse å¦
+	* ÊÇ·ñÎª×î½ü5¸ö·¢ÑÔÈËÏî
+	* @return bool true ÊÇ£¬false ·ñ
 	*/
 	bool IsLastFive() const	{ return is_last_five_; }
 
 	/**
-	* è®¾ç½®ç”¨æˆ·id
-	* @param[in] uid ç”¨æˆ·id
-	* @return void	æ— è¿”å›å€¼
+	* ÉèÖÃÓÃ»§id
+	* @param[in] uid ÓÃ»§id
+	* @return void	ÎŞ·µ»ØÖµ
 	*/
 	void SetUserID(const std::string& uid);
 
 	/**
-	* è·å–ç”¨æˆ·id
-	* @return string ç”¨æˆ·id
+	* »ñÈ¡ÓÃ»§id
+	* @return string ÓÃ»§id
 	*/
 	std::string GetUserID() const { return uid_;	}
 
 	/**
-	* æŸ¥è¯¢æ˜¯å¦ä¸ºæœºå™¨äºº
-	* @return bool
-	*/
-	bool IsRobot() { return is_robot_; }
-
-	/**
-	* è®¾ç½®ä¼šè¯ID
-	* @param[in] id ä¼šè¯id
-	* @return void	æ— è¿”å›å€¼
+	* ÉèÖÃ»á»°ID
+	* @param[in] id »á»°id
+	* @return void	ÎŞ·µ»ØÖµ
 	*/
 	void SetSessionId(const std::string& id) { session_id_ = id; }
 
 	/**
-	* è·å–è·å–ID
-	* @return string ä¼šè¯id
+	* »ñÈ¡»ñÈ¡ID
+	* @return string »á»°id
 	*/
 	std::string GetSessionId() const { return session_id_; }
 
 	/**
-	* è®¾ç½®å¤‡æ³¨å
-	* @param[in] name å¤‡æ³¨å
-	* @return void	æ— è¿”å›å€¼
+	* ÉèÖÃ±¸×¢Ãû
+	* @param[in] name ±¸×¢Ãû
+	* @return void	ÎŞ·µ»ØÖµ
 	*/
 	void SetAliasName(const std::wstring& name);
 
 	/**
-	* è·å–å¤‡æ³¨å
-	* @return string å¤‡æ³¨å
+	* »ñÈ¡±¸×¢Ãû
+	* @return string ±¸×¢Ãû
 	*/
 	std::string GetAliasName() const	{ return alias_name_; }
 
 	/**
-	* è®¾ç½®ç¾¤æ˜µç§°
-	* @param[in] name ç¾¤æ˜µç§°
-	* @return void	æ— è¿”å›å€¼
+	* ÉèÖÃÈºêÇ³Æ
+	* @param[in] name ÈºêÇ³Æ
+	* @return void	ÎŞ·µ»ØÖµ
 	*/
 	void SetTeamCardName(const std::wstring& name);
 	 
 	/**
-	* è·å–ç¾¤æ˜µç§°
-	* @return string ç¾¤æ˜µç§°
+	* »ñÈ¡ÈºêÇ³Æ
+	* @return string ÈºêÇ³Æ
 	*/
 	std::string GetTeamCardName() const { return team_card_name_; }
 
 	/**
-	* è®¾ç½®æ˜µç§°
-	* @param[in] name æ˜µç§°
-	* @return void	æ— è¿”å›å€¼
+	* ÉèÖÃêÇ³Æ
+	* @param[in] name êÇ³Æ
+	* @return void	ÎŞ·µ»ØÖµ
 	*/
 	void SetNickName(const std::wstring& name);
 
 	/**
-	* è·å–ç”¨æˆ·æ˜µç§°
-	* @return string æ˜µç§°
+	* »ñÈ¡ÓÃ»§êÇ³Æ
+	* @return string êÇ³Æ
 	*/
 	std::string GetNickName() const { return nick_name_; }
 
 	/**
-	* è®¾ç½®ç”¨æˆ·å¤´åƒ
-	* @param[in] head å¤´åƒè·¯å¾„
-	* @return void	æ— è¿”å›å€¼
+	* ÉèÖÃÓÃ»§Í·Ïñ
+	* @param[in] head Í·ÏñÂ·¾¶
+	* @return void	ÎŞ·µ»ØÖµ
 	*/
 	void SetHeadImage(std::wstring head);
 
 	/**
-	* è®¾ç½®åˆ—è¡¨é¡¹å®é™…æ˜¾ç¤ºçš„åå­—ï¼Œä¼˜å…ˆæ˜¾ç¤ºå¤‡æ³¨åï¼Œå…¶æ¬¡æ˜¾ç¤ºç¾¤åç‰‡ï¼Œæœ€åæ˜¾ç¤ºæ˜µç§°
-	* @param[in] name åå­—
-	* @return void	æ— è¿”å›å€¼
+	* ÉèÖÃÁĞ±íÏîÊµ¼ÊÏÔÊ¾µÄÃû×Ö£¬ÓÅÏÈÏÔÊ¾±¸×¢Ãû£¬Æä´ÎÏÔÊ¾ÈºÃûÆ¬£¬×îºóÏÔÊ¾êÇ³Æ
+	* @param[in] name Ãû×Ö
+	* @return void	ÎŞ·µ»ØÖµ
 	*/
 	void SetShowName(const std::wstring& name);
 
 	/**
-	* è·å–å®é™…æ˜¾ç¤ºçš„åå­—
-	* @return string åå­—
+	* »ñÈ¡Êµ¼ÊÏÔÊ¾µÄÃû×Ö
+	* @return string Ãû×Ö
 	*/
 	std::wstring GetShowName() const { return name_label_->GetText(); }
 
 	/**
-	* åˆ†åˆ«åŒ¹é…å¤‡æ³¨åï¼Œç¾¤åç‰‡ï¼Œæ˜µç§°ï¼Œuid
-	* @param[in] search_key åŒ¹é…å…³é”®å­—
-	* @return bool true åŒ¹é…æˆåŠŸï¼Œfalse åŒ¹é…å¤±è´¥
+	* ·Ö±ğÆ¥Åä±¸×¢Ãû£¬ÈºÃûÆ¬£¬êÇ³Æ£¬uid
+	* @param[in] search_key Æ¥Åä¹Ø¼ü×Ö
+	* @return bool true Æ¥Åä³É¹¦£¬false Æ¥ÅäÊ§°Ü
 	*/
 	bool Match(const std::string& search_key);
 
 public:
 	static const char *kLastFiveItemName;
 private:
-	bool		is_last_five_;	//æ˜¯å¦ä¸ºæ˜¾ç¤ºåœ¨åˆ—è¡¨æœ€å‰é¢çš„æœ€è¿‘å‘è¨€çš„5äººä¹‹ä¸€
-	bool		is_robot_ = false;
+	bool		is_last_five_;	//ÊÇ·ñÎªÏÔÊ¾ÔÚÁĞ±í×îÇ°ÃæµÄ×î½ü·¢ÑÔµÄ5ÈËÖ®Ò»
 	std::string	session_id_;
 	ui::Control	*head_icon_;
 	ui::Label	*name_label_;
 
 	std::string	uid_;
 
-	std::string	alias_name_;	//ç”¨æˆ·å¤‡æ³¨å,ä¼˜å…ˆæ˜¾ç¤º
+	std::string	alias_name_;	//ÓÃ»§±¸×¢Ãû,ÓÅÏÈÏÔÊ¾
 	std::string	alias_full_name_;
 	std::string	alias_simple_name_;
-	std::string	team_card_name_;//ç”¨æˆ·ç¾¤åç‰‡,å…¶æ¬¡æ˜¾ç¤º
+	std::string	team_card_name_;//ÓÃ»§ÈºÃûÆ¬,Æä´ÎÏÔÊ¾
 	std::string	team_card_full_name_;
 	std::string	team_card_simple_name_;
-	std::string	nick_name_;		//ç”¨æˆ·æ˜µç§°,æœ€åæ˜¾ç¤º
+	std::string	nick_name_;		//ÓÃ»§êÇ³Æ,×îºóÏÔÊ¾
 	std::string	nick_full_name_;
 	std::string	nick_simple_name_;
 

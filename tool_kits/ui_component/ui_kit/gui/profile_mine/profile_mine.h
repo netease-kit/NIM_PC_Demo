@@ -37,6 +37,7 @@ private:
 	 * 右键菜单
 	 */
 	void OnBeforeContextMenu(CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model);
+	CefRequestHandler::ReturnValue OnBeforeLoadResource(CefRefPtr<CefRequest> request, bool is_redirect);
 	void OnBeforeClose(CefRefPtr<CefBrowser> browser);
 	void OnMultiportPushConfigChange(int rescode, bool switch_on);
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
@@ -53,7 +54,6 @@ private:
 	void UpdateMultiportPushStatus(const std::string& params, nim_cef::ReportResultFunction callback);
 	void UpdateWebRTCStatus(const std::string& params, nim_cef::ReportResultFunction callback);
 	void UpdateHeadImage(const std::string& params, nim_cef::ReportResultFunction callback);
-
 public:
 	static const LPCTSTR kClassName;
 

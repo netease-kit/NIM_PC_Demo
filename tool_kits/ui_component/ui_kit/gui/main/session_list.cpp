@@ -27,24 +27,28 @@ SessionList::SessionList(ui::ListBox* session_list)
 	label_unread_sysmsg_ = (Label*)session_list->GetWindow()->FindControl(L"label_unread_sysmsg");
 	box_unread_sysmsg_->SetVisible(false);
 
-	nim::Session::RegChangeCb(nbase::Bind(&SessionList::OnSessionChangeCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	auto session_chagen_cb = session_list_->ToWeakCallback(std::bind(&SessionList::OnSessionChangeCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	nim::Session::RegChangeCb(session_chagen_cb);
 	
-	OnUserInfoChangeCallback cb1 = nbase::Bind(&SessionList::OnUserInfoChange, this, std::placeholders::_1);
-	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(cb1));
-	OnPhotoReadyCallback cb2 = nbase::Bind(&SessionList::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(cb2));
-	auto cb3 = nbase::Bind(&SessionList::OnTeamNameChange, this, std::placeholders::_1);
-	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(cb3));
-	auto receive_event_cb = nbase::Bind(&SessionList::OnReceiveEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
+	auto userinfo_change_cb = session_list_->ToWeakCallback(std::bind(&SessionList::OnUserInfoChange, this, std::placeholders::_1));
+	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(userinfo_change_cb));
+
+	auto userphoto_ready_cb = session_list_->ToWeakCallback(std::bind(&SessionList::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(userphoto_ready_cb));
+
+	auto team_name_change_cb = session_list_->ToWeakCallback(std::bind(&SessionList::OnTeamNameChange, this, std::placeholders::_1));
+	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(team_name_change_cb));
+	
+	auto receive_event_cb = session_list_->ToWeakCallback(std::bind(&SessionList::OnReceiveEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	unregister_cb.Add(SubscribeEventManager::GetInstance()->RegReceiveEventCallback(receive_event_cb));
 
-	auto robot_list_change_cb = nbase::Bind(&SessionList::OnRobotChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	unregister_cb.Add(UserService::GetInstance()->RegRobotListChange(robot_list_change_cb));
+	auto notify_cb = session_list_->ToWeakCallback(std::bind(&SessionList::OnNotifyChangeCallback, this, std::placeholders::_1, std::placeholders::_2));
+	unregister_cb.Add(MuteBlackService::GetInstance()->RegSyncSetMuteCallback(notify_cb));
 
-	unregister_cb.Add(MuteBlackService::GetInstance()->RegSyncSetMuteCallback(nbase::Bind(&SessionList::OnNotifyChangeCallback, this, std::placeholders::_1, std::placeholders::_2)));
-	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamNotification(nbase::Bind(&SessionList::OnTeamNotificationModeChangeCallback, this, std::placeholders::_1, std::placeholders::_2)));
+	auto team_notify_cb = session_list_->ToWeakCallback(std::bind(&SessionList::OnTeamNotificationModeChangeCallback, this, std::placeholders::_1, std::placeholders::_2));
+	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamNotification(team_notify_cb));
 
-	auto friend_list_change_cb = nbase::Bind(&SessionList::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2);
+	auto friend_list_change_cb = session_list_->ToWeakCallback(nbase::Bind(&SessionList::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2));
 	unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(friend_list_change_cb));
 
 	session_list_->AttachBubbledEvent(kEventReturn, nbase::Bind(&SessionList::OnReturnEventsClick, this, std::placeholders::_1));
@@ -102,6 +106,10 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data)
 }
 SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data, bool notify_event)
 {
+	// 机器人功能下线，不显示机器人消息在会话列表
+	if (item_data.msg_type_ == nim::kNIMMessageTypeRobot)
+		return nullptr;
+
 	bool invoke_additem = false;
 	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(nbase::UTF8ToUTF16(item_data.id_)));
 
@@ -517,19 +525,6 @@ void SessionList::OnSessionChangeCallback(nim::NIMResCode rescode, const nim::Se
 	}
 }
 
-void SessionList::OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots)
-{
-	if (rescode == nim::kNIMResSuccess)
-	{
-		for (auto &robot : robots)
-		{
-			SessionItem* session_item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(nbase::UTF8ToUTF16(robot.GetAccid())));
-			if (session_item != NULL)
-				session_item->InitRobotProfile();
-		}
-	}
-}
-
 void SessionList::OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos)
 {
 	for (auto iter = uinfos.cbegin(); iter != uinfos.cend(); iter++)
@@ -538,7 +533,7 @@ void SessionList::OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos)
 
 void SessionList::OnFriendListChange(FriendChangeType change_type, const std::string& accid)
 {
-	if (change_type == kChangeTypeUpdate)
+	if (change_type == kChangeTypeUpdate || change_type == kChangeTypeAdd)
 	{
 		SessionItem* session_item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
 		if (session_item != NULL)

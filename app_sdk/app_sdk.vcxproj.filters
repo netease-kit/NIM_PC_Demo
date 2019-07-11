@@ -31,6 +31,9 @@
     <Filter Include="sdk_interface">
       <UniqueIdentifier>{038b6cd3-3e6f-4145-a006-58862452a03a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="app_config">
+      <UniqueIdentifier>{e487c015-7dff-4588-9835-ae6a03e667d1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -63,6 +66,9 @@
     <ClInclude Include="app_sdk_config_helper.h">
       <Filter>sdk_interface</Filter>
     </ClInclude>
+    <ClInclude Include="app_config\app_sdk_config.h">
+      <Filter>app_config</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -76,6 +82,9 @@
     </ClCompile>
     <ClCompile Include="app_sdk_interface.cpp">
       <Filter>sdk_interface</Filter>
+    </ClCompile>
+    <ClCompile Include="app_config\app_sdk_config.cpp">
+      <Filter>app_config</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

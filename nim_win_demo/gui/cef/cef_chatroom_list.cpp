@@ -19,13 +19,11 @@ void CefChatroomList::DoInit()
 {
 	// 初始化 Cef Control
 	cef_control_ = static_cast<ui::CefControl*>(FindSubControl(L"cef_control"));
+	cef_control_->AttachLoadEnd(nbase::Bind(&CefChatroomList::OnLoadEnd, this, std::placeholders::_1));
 	cef_control_->AttachAfterCreated(nbase::Bind(&CefChatroomList::OnAfterCreated, this, std::placeholders::_1));
 	cef_control_->AttachBeforeContextMenu(nbase::Bind(&CefChatroomList::OnBeforeContextMenu, this, std::placeholders::_1, std::placeholders::_2));
 	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"cef_themes/chatroom_list/chatroom_list.html";
 	cef_control_->LoadURL(html_path);
-
-	// 获取房间列表
-	InvokChatroomList();
 }
 
 ui::Control* CefChatroomList::CreateControl(const std::wstring& pstrClass)
@@ -109,4 +107,10 @@ void CefChatroomList::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 void CefChatroomList::OnBeforeContextMenu(CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model)
 {
 	model->Clear();
+}
+
+void CefChatroomList::OnLoadEnd(int httpStatusCode)
+{
+	// 获取房间列表
+	InvokChatroomList();
 }

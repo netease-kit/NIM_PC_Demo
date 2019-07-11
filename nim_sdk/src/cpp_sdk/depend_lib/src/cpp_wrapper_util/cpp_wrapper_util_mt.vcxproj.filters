@@ -1,0 +1,90 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="convert_utf.c">
+      <Filter>util_src</Filter>
+    </ClCompile>
+    <ClCompile Include="nim_json_util.cpp">
+      <Filter>util_src</Filter>
+    </ClCompile>
+    <ClCompile Include="nim_sdk_util.cpp">
+      <Filter>util_src</Filter>
+    </ClCompile>
+    <ClCompile Include="nim_string_util.cpp">
+      <Filter>util_src</Filter>
+    </ClCompile>
+    <ClCompile Include="json_reader.cpp">
+      <Filter>json_src</Filter>
+    </ClCompile>
+    <ClCompile Include="json_value.cpp">
+      <Filter>json_src</Filter>
+    </ClCompile>
+    <ClCompile Include="json_writer.cpp">
+      <Filter>json_src</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="json_src">
+      <UniqueIdentifier>{2aca07ba-8e15-4cbb-8191-f917fef4f0b2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include">
+      <UniqueIdentifier>{37b9a837-e11a-4840-afc4-55a3078716b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\json">
+      <UniqueIdentifier>{62e2ad62-4701-4c3c-878d-251f3dc475cb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\util">
+      <UniqueIdentifier>{8a4d1eb8-ceec-4ed1-be21-6ef6497af0ad}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="util_src">
+      <UniqueIdentifier>{8f653f04-a307-4030-8832-957929aeb024}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\assertions.h">
+      <Filter>include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\autolink.h">
+      <Filter>include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\config.h">
+      <Filter>include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\features.h">
+      <Filter>include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\forwards.h">
+      <Filter>include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\json.h">
+      <Filter>include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\reader.h">
+      <Filter>include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\value.h">
+      <Filter>include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\version.h">
+      <Filter>include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\json\writer.h">
+      <Filter>include\json</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\callback_proxy.h">
+      <Filter>include\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\convert_utf.h">
+      <Filter>include\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\nim_json_util.h">
+      <Filter>include\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\nim_sdk_util.h">
+      <Filter>include\util</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\..\..\include\depend_lib\include\nim_string_util.h">
+      <Filter>include\util</Filter>
+    </ClInclude>
+  </ItemGroup>
+</Project>

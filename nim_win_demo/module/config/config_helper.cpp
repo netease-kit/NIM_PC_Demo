@@ -3,7 +3,9 @@
 
 
 ConfigHelper::ConfigHelper() :
-adapt_dpi_(true), uistyle_id_(1)
+adapt_dpi_(true), uistyle_id_(1), 
+private_settings_enable_(false),
+private_settings_url_("")
 {
 	ReadConfig();
 }
@@ -32,13 +34,15 @@ bool ConfigHelper::IsAdaptDpi()
 
 void ConfigHelper::SetLanguage(const std::string& language)
 {
+	std::string full_language = "lang\\" + language;
+
 	Json::FastWriter writer;
 	Json::Value value;
-	value["language"] = language;
+	value["language"] = full_language;
 	std::string language_config = writer.write(value);
 	bool ret = PublicDB::GetInstance()->InsertConfigData("language", language_config);
 	if (ret)
-		language_ = language;
+		language_ = full_language;
 	else
 	{
 		ASSERT(false);
@@ -50,7 +54,8 @@ std::string ConfigHelper::GetLanguage()
 {
 	if (!language_.empty())
 		return language_;
-	return "zh_CN"; //缺省为中文
+
+	return "lang\\zh_CN"; //缺省为中文
 }
 int ConfigHelper::GetUIStyle()
 {
@@ -71,6 +76,41 @@ void ConfigHelper::SetUIStyle(int style_id)
 		QLOG_ERR(L"Set uistyle failed!");
 	}
 }
+bool ConfigHelper::UsePrivateSettings(std::string& url) const
+{
+	url = private_settings_url_;
+	return private_settings_enable_;
+}
+void ConfigHelper::UsePrivateSettings(bool use, const std::string& url)
+{
+	Json::FastWriter writer;
+	Json::Value value;
+	value["enable"] = use;
+	value["url"] = url;
+	std::string private_setting_config = writer.write(value);
+	bool ret = PublicDB::GetInstance()->InsertConfigData("private_settings", private_setting_config);
+	if (ret)
+	{
+		private_settings_enable_ = use;
+		private_settings_url_ = url;
+	}
+	else
+	{
+		ASSERT(false);
+		QLOG_ERR(L"Set private settings failed!");
+	}
+}
+
+bool ConfigHelper::UsePrivateSettings() const
+{
+	return private_settings_enable_;
+}
+
+void ConfigHelper::UsePrivateSettings(bool use)
+{
+	UsePrivateSettings(use, private_settings_url_);
+}
+
 void ConfigHelper::ReadConfig()
 {
 	Json::Reader reader;
@@ -101,5 +141,15 @@ void ConfigHelper::ReadConfig()
 	{
 		if (value.isMember("uistyle"))
 			uistyle_id_ = value["uistyle"].asInt();
+	}
+	//private settings
+	std::string private_setting_config;
+	PublicDB::GetInstance()->QueryConfigData("private_settings", private_setting_config);
+	if (reader.parse(private_setting_config, value))
+	{
+		if (value.isMember("enable"))
+			private_settings_enable_ = value["enable"].asBool();
+		if(value.isMember("url"))
+			private_settings_url_ = value["url"].asString();
 	}
 }

@@ -483,18 +483,84 @@ bool IsNoticeMsg(const nim::IMMessage& msg)
 {
 	if (msg.type_ == nim::kNIMMessageTypeNotification || msg.type_ == nim::kNIMMessageTypeTips)
 		return true;
+	return false;
+}
 
-	if (msg.type_ == nim::kNIMMessageTypeCustom)
+bool IsRTSMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
+{
+	if (msg_type == nim::kNIMMessageTypeCustom)
 	{
 		Json::Value json;
-		if (StringToJson(msg.attach_, json) && json.isObject())
+		if (StringToJson(msg_attach, json) && json.isObject())
 		{
-			int sub_type = json["type"].asInt();
-			if (sub_type == CustomMsgType_Rts)
-				return true;
+			return json["type"].asInt() == CustomMsgType_Rts;
 		}
 	}
+	return false;
+}
 
+bool IsP2PMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
+{
+	if (msg_type == nim::kNIMMessageTypeCustom)
+	{
+		Json::Value json;
+		if (StringToJson(msg_attach, json) && json.isObject())
+		{
+			return json["type"].asInt() == CustomMsgType_TransferFile;
+		}
+	}
+	return false;
+}
+
+bool IsJSBMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
+{
+	if (msg_type == nim::kNIMMessageTypeCustom)
+	{
+		Json::Value json;
+		if (StringToJson(msg_attach, json) && json.isObject())
+		{
+			return json["type"].asInt() == CustomMsgType_Jsb;
+		}
+	}
+	return false;
+}
+
+bool IsSnapChatMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
+{
+	if (msg_type == nim::kNIMMessageTypeCustom)
+	{
+		Json::Value json;
+		if (StringToJson(msg_attach, json) && json.isObject())
+		{
+			return json["type"].asInt() == CustomMsgType_SnapChat;
+		}
+	}
+	return false;
+}
+
+bool IsStickerMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
+{
+	if (msg_type == nim::kNIMMessageTypeCustom)
+	{
+		Json::Value json;
+		if (StringToJson(msg_attach, json) && json.isObject())
+		{
+			return json["type"].asInt() == CustomMsgType_Sticker;
+		}
+	}
+	return false;
+}
+
+bool IsMeetingMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
+{
+	if (msg_type == nim::kNIMMessageTypeCustom)
+	{
+		Json::Value json;
+		if (StringToJson(msg_attach, json) && json.isObject())
+		{
+			return json["type"].asInt() == CustomMsgType_Meeting;
+		}
+	}
 	return false;
 }
 
@@ -647,7 +713,8 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 		else if (id == nim::kNIMNotificationIdNetcallBill || \
 			id == nim::kNIMNotificationIdNetcallMiss || \
 			id == nim::kNIMNotificationIdLocalNetcallReject || \
-			id == nim::kNIMNotificationIdLocalNetcallNoResponse)
+			id == nim::kNIMNotificationIdLocalNetcallNoResponse || \
+			id == nim::kNIMNotificationIdLocalNetcallCanceled)
 		{
 			//未接电话,{"time":139323423424,"calltype":1,"from":"account_temp","channel":6144978055925334000}
 			//话单,{"time":139323423424,"calltype":1,"duration":5,"channel":6144978055925334000}
@@ -698,7 +765,12 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 			{
 				time_tip = mls->GetStringViaID(L"STRID_SESSION_ITEM_UNCONNECTED");
 			}
-
+			else if (id == nim::kNIMNotificationIdLocalNetcallCanceled)
+			{
+				time_tip = mls->GetStringViaID(L"STRID_SESSION_ITEM_CANCELED");
+			}
+			if (json[nim::kNIMNotificationKeyData].isMember(nim::kNIMNotificationIdNetCallEXTKey))
+				time_tip.append(L" ext = ").append(nbase::UTF8ToUTF16(json[nim::kNIMNotificationKeyData][nim::kNIMNotificationIdNetCallEXTKey].asString()));
 			show_text = nbase::StringPrintf(L"%s %s", chat_mode.c_str(), time_tip.c_str());
 		}
 		else
@@ -769,7 +841,8 @@ bool IsNetCallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
 		if (id == nim::kNIMNotificationIdNetcallBill || \
 			id == nim::kNIMNotificationIdNetcallMiss || \
 			id == nim::kNIMNotificationIdLocalNetcallReject || \
-			id == nim::kNIMNotificationIdLocalNetcallNoResponse)
+			id == nim::kNIMNotificationIdLocalNetcallNoResponse || \
+			id == nim::kNIMNotificationIdLocalNetcallCanceled)
 		{
 			return true;
 		}
@@ -825,6 +898,19 @@ std::wstring GetCustomMsg(const std::string &sender_accid, const std::string &ms
 		}
 	}
 	return show_text;
+}
+
+bool IsRecallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
+{
+	if (msg_type != nim::kNIMMessageTypeText)
+	{
+		return false;
+	}
+	Json::Value values;
+	return (Json::Reader().parse(msg_attach, values)
+		&& values.isObject()
+		&& values.isMember("comment")
+		&& values["comment"].asString().compare( "is_recall_notification") == 0);
 }
 
 std::wstring GetRecallNotifyText(const std::string& session_id, nim::NIMSessionType session_type, const std::string& msg_from_id, const std::string& msg_from_nick)

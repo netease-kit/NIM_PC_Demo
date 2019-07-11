@@ -39,7 +39,7 @@ public:
 	* @param[in] team_mute 设置/取消 群成员全员禁言状态
 	* @return void 无返回值
 	*/
-	void SetMute(bool mute, bool team_mute);
+	void SetMute(bool mute);
 
 	/**
 	* 设置本成员为管理员

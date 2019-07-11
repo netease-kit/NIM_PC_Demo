@@ -30,7 +30,7 @@ using namespace ui;
 namespace nim_comp
 {
 
-LRESULT SessionBox::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, bool &bHandle)
+LRESULT SessionBox::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandle)
 {
 	if (uMsg == WM_KEYDOWN)
 	{
@@ -38,7 +38,8 @@ LRESULT SessionBox::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, bool 
 		{
 			if (::GetKeyState(VK_CONTROL) < 0 && input_edit_->IsFocused())
 			{
-				input_edit_->PasteSpecial(CF_TEXT);
+				if (!PasteClipboard())
+					input_edit_->PasteSpecial(CF_TEXT);
 				bHandle = true;
 				return 1;
 			}
@@ -289,9 +290,7 @@ bool SessionBox::Notify(ui::EventArgs* param)
 			}
 			else
 			{
-				nim::RobotInfo info;
-				UserService::GetInstance()->GetRobotInfo(at.uid_, info);
-				show_name = info.GetName();
+				show_name = "";
 			}
 			uid_at_someone_[show_name] = at;
 
@@ -1014,7 +1013,7 @@ bool SessionBox::OnBtnHeaderClick(ui::EventArgs* param)
 	}
 	else if (session_type_ == nim::kNIMSessionTypeP2P)
 	{
-		ProfileForm::ShowProfileForm(session_id_, is_robot_session_);
+		ProfileForm::ShowProfileForm(session_id_, false);
 	}
 	return true;
 }
@@ -1051,4 +1050,48 @@ void SessionBox::ShowCustomMsgForm()
 	CustomMsgForm* f = WindowsManager::SingletonShow<CustomMsgForm>(CustomMsgForm::kClassName);
 	f->SetSession(session_id_, session_type_, label_title_->GetText());
 }
+
+bool SessionBox::PasteClipboard()
+{
+	bool ret = false;
+	if (OpenClipboard(NULL))
+	{
+		try
+		{
+			HANDLE h = ::GetClipboardData(CF_HDROP);
+			if (h != NULL && h != INVALID_HANDLE_VALUE)
+			{
+				HDROP file = (HDROP)::GlobalLock(h);
+				if (file != NULL)
+				{
+					OnDropFile(file);
+					::GlobalUnlock(h);
+					throw(true);
+				}
+			}
+			HBITMAP bmp = (HBITMAP)::GetClipboardData(CF_BITMAP);
+			if (bmp != NULL)
+			{
+				std::wstring image_path(QPath::GetUserAppDataDir(nim_comp::LoginManager::GetInstance()->GetAccount()));
+				image_path.append(nbase::UTF8ToUTF16(QString::GetGUID())).append(L".png");
+				if (CaptureWindow::SaveBitmapToFile(bmp, image_path))
+				{
+					if (nbase::FilePathIsExist(image_path, false))
+					{
+						OnClipCallback(true, image_path);
+						throw(true);
+					}
+				}
+			}
+			throw(false);
+		}
+		catch (bool ret)
+		{
+			CloseClipboard();
+		}
+	}
+	return ret;
+}
+
+
 } // namespace nim_comp

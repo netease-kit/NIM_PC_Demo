@@ -12,6 +12,7 @@ namespace nim_comp
 		TeamInfoBox() = default;
 		TeamInfoBox(bool create_or_display, nim::NIMTeamType type, const std::string& team_id, const nim::TeamInfo& team_info, bool value= false);
 		virtual ~TeamInfoBox();
+
 	public:
 		virtual void DoInit() override;
 		bool IsCreateOrDisplay() const;
@@ -43,8 +44,6 @@ namespace nim_comp
 		*/
 		void OnGetTeamMembers(const std::string& team_id, int count, const std::list<nim::TeamMemberProperty>& team_member_list);
 
-	
-
 		/**
 		* 处理群头像点击的消息
 		* @param[in] args 消息的相关信息
@@ -52,6 +51,13 @@ namespace nim_comp
 		*/
 		bool OnHeadImageClicked(ui::EventArgs* args);
 	private:
+        /**
+         * 处理 Option 选项选择事件
+         * @param[in] 附带参数
+         * @reutrn bool true 继续传递控件消息，false 停止传递控件消息
+         */
+        bool OnClicked(ui::EventArgs* args);
+
 		/**
 		* 处理头像修改完毕后的回调函数
 		* @param[in] id 用户id
@@ -214,11 +220,11 @@ namespace nim_comp
 		/**
 		* 响应用户头像改变的回调函数
 		* @param[in] type 头像类型
-		* @param[in] accid 用户id
+		* @param[in] tid 群组id
 		* @param[in] photo_path 头像路径
 		* @return void	无返回值
 		*/
-		void OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path);
+		void OnUserPhotoReady(PhotoType type, const std::string& tid, const std::wstring &photo_path);
 
 		/**
 		* 响应群移除的回调函数
@@ -232,12 +238,25 @@ namespace nim_comp
 		* @return void	无返回值
 		*/
 		void OnTeamNameChange(const nim::TeamInfo& team_info);
+        /**
+        * 响应群禁言状态改变事件
+        * @param[in] tid 群id
+        * @param[in] mute_all 是否禁言，true 为禁言，否则为 false
+        * @return void	无返回值
+        */
+        void OnTeamMuteChange(const std::string& tid, bool mute_all);
 		/**
 		* 判断是否为可以显示到群列表的群成员类型
 		* @param[in] user_type 群成员类型
 		* @return bool true 是，false 否
 		*/
 		bool IsTeamMemberType(const nim::NIMTeamUserType user_type);
+        /**
+        * 修改群组消息通知状态改变事件
+        * @param[in] id 群组 id
+        * @param[in] bits 
+        */
+        void OnTeamNotificationModeChangeCallback(const std::string& id, int64_t bits);
 	
 		void RefreshInfo(nim::TeamInfo* team_info);
 	private:
@@ -264,5 +283,7 @@ namespace nim_comp
 		std::wstring temp_file_path_;
 		std::string new_header_url_;
 		bool view_mode_;
+        bool saving_settings_ = false;
+		static const std::vector<std::wstring> options_name_list_;
 	};
 }

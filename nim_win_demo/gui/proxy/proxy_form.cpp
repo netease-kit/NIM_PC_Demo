@@ -1,6 +1,8 @@
 #include "shared/ui/msgbox.h"
 #include "proxy_form.h"
 #include "base/network/network_util.h"
+#include "public_define/nim_chatroom_define_include.h"
+
 //#include "base/network/http.h"
 //#include "util/NetStateTestHelper.h"
 //#include "LibNEPLoginHelper.h"
@@ -10,7 +12,8 @@ const LPCTSTR ProxyForm::kClassName = L"ProxyForm";
 ProxySettingList ProxyForm::proxy_setting_list_;
 
 
-ProxyForm::ProxyForm()
+ProxyForm::ProxyForm():
+	befor_close_cb_(nullptr)
 {
 	
 }
@@ -76,11 +79,14 @@ void ProxyForm::ApplyProxySetting()
 	proxy_chatroom_->ApplyProxySetting();
 	proxy_vchat_->ApplyProxySetting();
 	proxy_rts_->ApplyProxySetting();
-	proxy_httptool_->ApplyProxySetting();
+	proxy_httptool_->ApplyProxySetting();	
 }
 void ProxyForm::Close(UINT nRet/* = IDOK*/)
-{
-	ApplyProxySetting();
+{	
+	if (befor_close_cb_ != nullptr)
+	{
+		befor_close_cb_();
+	}
 	nim_comp::WindowEx::Close(nRet);
 }
 void ProxyForm::ConfirmSetting()
@@ -164,18 +170,25 @@ bool ProxyTip::OnProxyTypeSelected(ui::EventArgs * msg)
 	case 2:
 	case 3:
 		addr_ctrl_->SetEnabled(true);
-		port_ctrl_->SetText(L"1080");
+        if (port_ctrl_->GetText().empty())
+            port_ctrl_->SetText(L"1080");
 		port_ctrl_->SetEnabled(true);
 		user_ctrl_->SetEnabled(false);
 		pass_ctrl_->SetEnabled(false);		
 		break;
 	case 4:
 		addr_ctrl_->SetEnabled(true);
-		port_ctrl_->SetText(L"1080");
+        if (port_ctrl_->GetText().empty())
+            port_ctrl_->SetText(L"1080");
 		port_ctrl_->SetEnabled(true);
 		user_ctrl_->SetEnabled(true);
 		pass_ctrl_->SetEnabled(true);
-		
+		break;
+	case 5:
+		addr_ctrl_->SetEnabled(true);
+		port_ctrl_->SetEnabled(true);
+		user_ctrl_->SetEnabled(true);
+		pass_ctrl_->SetEnabled(true);
 		break;
 	default:
 		break;
@@ -223,6 +236,8 @@ nim::NIMProxyType ProxyTip::ConvertIndexToProxyType(int index)
 		return nim::kNIMProxySocks4a;
 	case 4:
 		return nim::kNIMProxySocks5;
+	case 5:
+		return nim::kNIMProxyNrtc;
 	}
 	return nim::kNIMProxyNone;
 }
@@ -244,6 +259,9 @@ nbase::ProxyType  ProxyTip::ConvertNimProxytypeToBaseProxyType(nim::NIMProxyType
 		break;
 	case nim::kNIMProxySocks5:
 		return nbase::ProxyType::kProxyTypeSocks5;
+		break;
+	case nim::kNIMProxyNrtc:
+		return nbase::ProxyType::kProxyTypeNrtc;
 		break;
 	default:
 		return nbase::ProxyType::kProxyTypeNone;
@@ -268,6 +286,9 @@ nim::NIMProxyType ProxyTip::ConvertBaseProxytypeToNimProxyType(nbase::ProxyType 
 		break;
 	case nbase::ProxyType::kProxyTypeSocks5:
 		return nim::kNIMProxySocks5;
+		break;
+	case nbase::ProxyType::kProxyTypeNrtc:
+		return nim::kNIMProxyNrtc;
 		break;
 	default:
 		return nim::kNIMProxyNone;
@@ -460,7 +481,7 @@ std::vector<std::wstring> ProxyTipGlobal::GetSupportedProxyTypeName()
 }
 std::vector<std::wstring> ProxyTipSub_VChat::GetSupportedProxyTypeName()
 {
-	std::vector<std::wstring> ret = { L"noproxy", L"socks5proxy" };
+	std::vector<std::wstring> ret = { L"noproxy", L"socks5proxy", L"privateproxy" };
 	return ret;
 }
 std::vector<std::wstring> ProxyTipSub_Rts::GetSupportedProxyTypeName()

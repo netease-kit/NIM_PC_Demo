@@ -193,7 +193,7 @@ void AudioManager::OnCancelCaptureCallback(int code)
 	ClearCaptureId();
 }
 
-void AudioManager::OnEnumCaptureDeviceCallback(int rescode, const wchar_t* device_list)
+void AudioManager::OnEnumCaptureDeviceCallback(int rescode, const std::wstring& device_list)
 {
 	assert(nbase::MessageLoop::current()->ToUIMessageLoop());
 	for (auto& it : enum_device_cb_list_)

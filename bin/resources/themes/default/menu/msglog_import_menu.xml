@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<VListBox class="menu">
+		<MenuElement class="MenuElement" name="import_form_local" width="120">
+			<Label class="menu_text" width="stretch" text="从本地导入" mouse="false"/>
+		</MenuElement>
+		<MenuElement class="MenuElement" name="import_form_remote" width="120">
+			<Label class="menu_text" width="stretch" text="从云端导入" mouse="false"/>
+		</MenuElement>
+	</VListBox>
+</Window>

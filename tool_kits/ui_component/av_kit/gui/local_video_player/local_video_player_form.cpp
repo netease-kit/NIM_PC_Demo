@@ -27,9 +27,13 @@ bool LocalVideoPlayerForm::StartPlay()
 		Shutdown();
 
 	NELP_RET ret = NELP_OK;
-	ret = Nelp_Create(nullptr, &nelp_handle_);
+	std::string log_path = nbase::UTF16ToUTF8(QPath::GetUserAppDataDir(""));
+	ret = Nelp_Create(log_path.c_str(), &nelp_handle_);
 	if (ret != NELP_OK)
+	{
+		QLOG_ERR(L"load nelp fail!");
 		return false;
+	}
 	InstFormMap[nelp_handle_] = this;
 	ST_NELP_PARAM param = {0};
 	std::string url = nbase::UTF16ToUTF8(path_);
@@ -37,13 +41,21 @@ bool LocalVideoPlayerForm::StartPlay()
 	param.enBufferStrategy = EN_NELP_ANTI_JITTER;
 	try
 	{
-		if (Nelp_InitParam(nelp_handle_, &param) != NELP_OK) throw(false);			
+		if (Nelp_InitParam(nelp_handle_, &param) != NELP_OK)
+		{
+			QLOG_ERR(L"load nelp init fail!");
+			throw(false);
+		}
 		Nelp_RegisterMessageCB(nelp_handle_, LocalVideoPlayerForm::PlayerMessageCB);
 		Nelp_RegisterGetVideoFrameCB(nelp_handle_, EN_ARGB8888, LocalVideoPlayerForm::VideoFrameCB);
 		Nelp_SetVolume(nelp_handle_, volume_);
 		Nelp_SetMute(nelp_handle_, muted_);
 		Nelp_SetPlaybackTimeout(nelp_handle_, -1);
-		if (Nelp_PrepareToPlay(nelp_handle_) != NELP_OK) throw(false);
+		if (Nelp_PrepareToPlay(nelp_handle_) != NELP_OK)
+		{
+			QLOG_ERR(L"load nelp prepare fail!");
+			throw(false);
+		}
 		throw(true);
 	}	
 	catch (bool ret)

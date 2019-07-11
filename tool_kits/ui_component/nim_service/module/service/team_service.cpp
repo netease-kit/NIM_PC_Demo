@@ -245,7 +245,19 @@ namespace nim_comp
 		return unregister;
 	}
 
-	void TeamService::InvokeMuteMember(const std::string& tid, const std::string& uid, bool set_mute)
+    UnregisterCallback TeamService::RegChangeTeamMute(OnTeamMuteChange change)
+    {
+        assert(nbase::MessageLoop::current()->ToUIMessageLoop());
+        OnTeamMuteChange* new_cb = new OnTeamMuteChange(change);
+        int cb_id = (int)new_cb;
+        change_team_mute_cb_[cb_id].reset(new_cb);
+        auto unregister = ToWeakCallback([this, cb_id]() {
+            change_team_mute_cb_.erase(cb_id);
+        });
+        return unregister;
+    }
+
+    void TeamService::InvokeMuteMember(const std::string& tid, const std::string& uid, bool set_mute)
 	{
 		assert(nbase::MessageLoop::current()->ToUIMessageLoop());
 
@@ -257,7 +269,19 @@ namespace nim_comp
 		}
 	}
 
-	UnregisterCallback TeamService::RegChangeTeamNotification(OnTeamNotificationModeChange mute)
+    void TeamService::InvokeChangeTeamMute(const std::string& tid, bool is_mute)
+    {
+        assert(nbase::MessageLoop::current()->ToUIMessageLoop());
+
+        QLOG_APP(L"invoke team mute status: {0}") << is_mute;
+
+        for (auto& it : change_team_mute_cb_)
+        {
+            (*it.second)(tid, is_mute);
+        }
+    }
+
+    UnregisterCallback TeamService::RegChangeTeamNotification(OnTeamNotificationModeChange mute)
 	{
 		assert(nbase::MessageLoop::current()->ToUIMessageLoop());
 		OnTeamNotificationModeChange* new_cb = new OnTeamNotificationModeChange(mute);

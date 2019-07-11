@@ -13,6 +13,9 @@
 #include "gui/plugins/session/session_plugin.h"
 #include "nim_service\module\subscribe_event\subscribe_event_manager.h"
 #include "main_form_menu.h"
+//#include "OleIdl.h"
+#include "ShObjIdl.h"
+#include <shlobj.h>
 
 namespace nim_comp
 {
@@ -28,6 +31,7 @@ namespace nim_comp
 		OnPhotoReadyCallback cb2 = nbase::Bind(&MainFormEx::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
 		unregister_cb.Add(nim_comp::PhotoService::GetInstance()->RegPhotoReady(cb2));
 		main_menu_handler_->SetHostWindow(this);
+		drop_helper_ = nullptr;
 	}
 
 	MainFormEx::~MainFormEx()
@@ -57,6 +61,8 @@ namespace nim_comp
 
 	void MainFormEx::InitWindow()
 	{
+		SessionManager::GetInstance()->SetEnableMerge(false);
+		InitDragDrop();
 		main_bar_ = dynamic_cast<ui::VBox*>(FindControl(L"main_bar"));
 		main_plugins_bar_ = dynamic_cast<ui::VBox*>(FindControl(L"main_plugin_bar"));
 		simple_plugin_bar_ = dynamic_cast<ui::VBox*>(FindControl(L"simple_plugin_bar"));
@@ -251,16 +257,18 @@ namespace nim_comp
 		ui::VBox* plugin_bar = nullptr;
 		for (auto plugin : plugins)
 		{
-			if (plugin->IsActivePage())
+			if (plugin->GetPluginType() == IMainPlugin::PluginType::PluginType_Main)
 				plugin_bar = main_plugins_bar_;
-			else
+			else if(plugin->GetPluginType() == IMainPlugin::PluginType::PluginType_Simple)
 				plugin_bar = simple_plugin_bar_;
+			else
+				continue;
 			auto icon = plugin->GetPluginIcon();
 			auto page = plugin->GetPluginPage();
 			if (icon != nullptr)	plugin_bar->Add(icon);
 			if (page != nullptr)	main_plugins_showpage_->Add(page);
 			plugin->DoInit();
-			if (plugin->IsActivePage())
+			if (plugin->GetPluginType() == IMainPlugin::PluginType::PluginType_Main)
 			{
 				plugin->SetGroup(L"Main_Plugin_Group");
 				plugin->AttachSelect(plugin->ToWeakCallback([this, plugin](ui::EventArgs* param){
@@ -576,7 +584,139 @@ namespace nim_comp
 	}
 	void MainFormEx::OnFinalMessage(HWND hWnd)
 	{
+		UnInitDragDrop();
 		TrayIconManager::GetInstance()->Destroy();
 		__super::OnFinalMessage(hWnd);
+	}
+	//drop
+
+	bool MainFormEx::InitDragDrop()
+	{
+		if (NULL != drop_helper_)
+			return false;
+
+		if (FAILED(CoCreateInstance(CLSID_DragDropHelper, NULL,
+			CLSCTX_INPROC_SERVER,
+			IID_IDropTargetHelper,
+			(void**)&drop_helper_)))
+		{
+			QLOG_ERR(L"MainFormEx::InitDragDrop Create CLSID_DragDropHelper faild");
+			return false;
+		}
+
+		if (FAILED(RegisterDragDrop(this->GetHWND(), this)))
+		{
+			QLOG_ERR(L"MainFormEx::InitDragDrop RegisterDragDrop faild");
+			return false;
+		}
+
+		QLOG_APP(L"MainFormEx::InitDragDrop succeed");
+		return true;
+	}
+
+	void MainFormEx::UnInitDragDrop()
+	{
+		if (NULL != drop_helper_)
+			drop_helper_->Release();
+
+		RevokeDragDrop(this->GetHWND());
+	}
+
+	HRESULT MainFormEx::QueryInterface(REFIID iid, void ** ppvObject)
+	{
+		if (NULL == drop_helper_)
+			return E_NOINTERFACE;
+
+		return drop_helper_->QueryInterface(iid, ppvObject);
+	}
+
+	ULONG MainFormEx::AddRef(void)
+	{
+		if (NULL == drop_helper_)
+			return 0;
+
+		return drop_helper_->AddRef();
+	}
+
+	ULONG MainFormEx::Release(void)
+	{
+		if (NULL == drop_helper_)
+			return 0;
+
+		return drop_helper_->Release();
+	}
+
+	HRESULT MainFormEx::DragEnter(IDataObject * pDataObject, DWORD grfKeyState, POINTL pt, DWORD * pdwEffect)
+	{
+		if (NULL == drop_helper_)
+			return S_OK;
+
+		// 如果不是拖拽会话盒子
+		auto active_session_box = SessionManager::GetInstance()->GetFirstActiveSession();
+		if (NULL != active_session_box)
+		{
+			active_session_box->DragEnter(pDataObject, grfKeyState, pt, pdwEffect);
+			ActiveWindow();
+		}
+		else
+		{
+			*pdwEffect = DROPEFFECT_MOVE;
+		}
+
+		drop_helper_->DragEnter(this->GetHWND(), pDataObject, (LPPOINT)&pt, *pdwEffect);
+		return S_OK;
+	}
+
+	HRESULT MainFormEx::DragOver(DWORD grfKeyState, POINTL pt, DWORD *pdwEffect)
+	{
+		if (NULL == drop_helper_)
+			return S_OK;
+
+		// 如果不是拖拽会话盒子
+		auto active_session_box = SessionManager::GetInstance()->GetFirstActiveSession();
+		if (NULL != active_session_box)
+		{
+			active_session_box->DragOver(grfKeyState, pt, pdwEffect);
+		}
+		else
+		{
+			*pdwEffect = DROPEFFECT_MOVE;
+		}
+
+		drop_helper_->DragOver((LPPOINT)&pt, *pdwEffect);
+		return S_OK;
+	}
+
+	HRESULT MainFormEx::DragLeave(void)
+	{
+		if (NULL == drop_helper_)
+			return S_OK;
+
+		// 如果不是拖拽会话盒子
+		auto active_session_box = SessionManager::GetInstance()->GetFirstActiveSession();
+		if (NULL != active_session_box)
+		{
+			active_session_box->DragLeave();
+		}
+
+		drop_helper_->DragLeave();
+		return S_OK;
+	}
+
+	HRESULT MainFormEx::Drop(IDataObject *pDataObj, DWORD grfKeyState, POINTL pt, DWORD __RPC_FAR *pdwEffect)
+	{
+		// 如果不是拖拽会话盒子
+		auto active_session_box = SessionManager::GetInstance()->GetFirstActiveSession();
+		if (NULL != active_session_box)
+		{
+			active_session_box->Drop(pDataObj, grfKeyState, pt, pdwEffect);
+		}
+		else
+		{
+			*pdwEffect = DROPEFFECT_MOVE;
+		}
+
+		drop_helper_->Drop(pDataObj, (LPPOINT)&pt, *pdwEffect);
+		return S_OK;
 	}
 }

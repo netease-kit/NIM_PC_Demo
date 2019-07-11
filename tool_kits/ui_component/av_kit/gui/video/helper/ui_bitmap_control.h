@@ -84,7 +84,7 @@ public:
 	* 获取图像宽高比
 	* @return float 比例
 	*/
-	float GetPicWHPercent() { return height_ > 0 ? width_*1.0 / height_ : 0; }
+	float GetPicWHPercent() { return height_ > 0 ? width_*1.0f / height_ : 0; }
 
 protected:
 	std::string account_;

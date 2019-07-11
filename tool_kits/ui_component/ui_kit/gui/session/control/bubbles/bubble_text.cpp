@@ -114,6 +114,14 @@ bool MsgBubbleText::OnMenu( ui::EventArgs* arg )
 {
 	bool can_recall = !IsNetCallMsg(msg_.type_, msg_.attach_);
 	bool can_retweet = msg_.type_ != nim::kNIMMessageTypeNotification && msg_.type_ != nim::kNIMMessageTypeRobot;
+	text_->SetNoSelOnKillFocus(false);
+	text_->HideSelection(false, false);
+	long start_pos = 0, end_pos = 0;
+	text_->GetSel(start_pos, end_pos);
+	if (start_pos == end_pos)
+	{
+		text_->SetSelAll();
+		}
 	PopupMenu(true, can_recall, can_retweet);
 	return false;
 }
@@ -133,5 +141,10 @@ void MsgBubbleText::OnMenuCopy()
 		text_->Copy();
 	}
 }
-
+void MsgBubbleText::OnMenuClose()
+{
+	text_->SetNoSelOnKillFocus(true);
+	text_->HideSelection(true, true);
+	text_->SetSelNone();
+}
 }

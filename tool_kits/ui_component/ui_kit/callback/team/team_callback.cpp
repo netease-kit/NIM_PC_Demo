@@ -1,4 +1,5 @@
 ﻿#include "team_callback.h"
+#include "shared/cpp_wrapper_util.h"
 #include "module/session/session_manager.h"
 #include "module/db/user_db.h"
 #include "gui/team_info/team_notify.h"
@@ -69,6 +70,19 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 
 			TeamService::GetInstance()->GetTeamInfo(tid);
 		}
+	}
+	else if (info.notification_id_ == nim::kNIMNotificationIdLocalMute)
+	{
+		if (info.res_code_ == nim::kNIMResSuccess)
+		{
+            // 通过重新获取 teaminfo 的方式让会话窗口更新当前群状态，此时禁言状态已经被修改将拿到最新的 teaminfo 用于更新界面
+            SessionBox* session = SessionManager::GetInstance()->FindSessionBox(tid);
+            if (session)
+                session->InvokeGetTeamInfo();
+
+            // 通知群组预览界面一些需要关注禁言信息变化的组件
+            TeamService::GetInstance()->InvokeChangeTeamMute(tid, info.opt_);
+        }
 	}
 	else if (info.notification_id_ == nim::kNIMNotificationIdTeamDismiss)
 	{
@@ -162,7 +176,7 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 		int sz = (int)info.src_data_.size();
 		for (auto i = 0; i < sz; i++)
 		{
-			Json::Value unread_info = info.src_data_[i];
+			Json::Value unread_info = std::move(shared::tools::NimCppWrapperJsonValueToJsonValue(info.src_data_[i]));
 			SessionBox* session = SessionManager::GetInstance()->FindSessionBox(tid);
 			if (session)
 				session->UpdateUnreadCount(unread_info["client_msg_id"].asString(), unread_info["count"].asInt());

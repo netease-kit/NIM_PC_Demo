@@ -32,7 +32,7 @@ void SubscribeEventManager::OnPushEventCallback(const std::list<nim::EventData>&
 		return;
 
 	// 更新event_list_里面的数据
-	auto update_event_list = [this](const EventDataEx &data){
+	auto update_event_list = ToWeakCallback([this](const EventDataEx &data){
 		auto iter = event_list_.find(data.data_.event_type_);
 		if (iter != event_list_.end())
 		{
@@ -59,7 +59,7 @@ void SubscribeEventManager::OnPushEventCallback(const std::list<nim::EventData>&
 		}
 		
 		InvokeReceiveEventCallback(data.data_.event_type_, data.data_.readonly_publisher_accid_, data);
-	};
+	});
 
 	for (auto const &iter: event_list)
 	{

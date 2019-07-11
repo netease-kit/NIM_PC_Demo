@@ -5,7 +5,6 @@
 #include "module/service/mute_black_service.h"
 #include "av_kit/module/video/video_manager.h"
 #include "head_modify_form.h"
-#include "api/nim_cpp_friend.h"
 #include "callback/team/team_callback.h"
 namespace nim_comp
 {
@@ -99,29 +98,6 @@ namespace nim_comp
 
 		auto friend_list_change_cb = nbase::Bind(&ProfileBox::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2);
 		unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(friend_list_change_cb));
-
-		auto robot_list_change_cb = nbase::Bind(&ProfileBox::OnRobotChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-		unregister_cb.Add(UserService::GetInstance()->RegRobotListChange(robot_list_change_cb));
-	}
-	void ProfileBox::InitRobotInfo(const nim::RobotInfo & info)
-	{
-		m_robot = info;
-		common_info_->SetVisible(false);
-		common_other_->SetVisible(false);
-		sex_icon->SetVisible(false);
-		FindSubControl(L"only_me")->SetVisible(false);
-		robot_info_->SetVisible(true);
-		user_id_label->SetUTF8Text(info.GetAccid());
-		show_name_label->SetUTF8Text(info.GetName());
-		robot_intro_->SetText(nbase::UTF8ToUTF16(info.GetIntro()));
-		head_image_btn->SetEnabled(false);
-		head_image_btn->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(info.GetAccid(), true));
-		add_or_del->SetVisible(false);
-		start_chat->AttachClick(nbase::Bind(&ProfileBox::OnStartChatBtnClicked, this, std::placeholders::_1));
-
-		ui::MutiLanSupport* mls = ui::MutiLanSupport::GetInstance();
-		std::wstring title = nbase::StringPrintf(mls->GetStringViaID(L"STRID_PROFILE_FORM_WHOSE_NAMECARD").c_str(), nbase::UTF8ToUTF16(info.GetName()).c_str());
-		SetTaskbarTitle(title); //任务栏标题
 	}
 
 	void ProfileBox::InitUserInfo(const nim::UserNameCard &info)
@@ -363,10 +339,12 @@ namespace nim_comp
 	{
 		if (ret == MB_YES)
 		{
-			nim::Friend::Delete(m_uinfo.GetAccId(), ToWeakCallback([this](int res_code) {
+			nim::DeleteFriendOption option;
+			option.delete_alias_ = dynamic_cast<ui::CheckBox*>(FindSubControl(L"chkbox_delete_with_alias"))->IsSelected();
+			nim::Friend::DeleteEx(m_uinfo.GetAccId(), option, ToWeakCallback([this](nim::NIMResCode res_code) {
 				if (res_code == 200)
 					Close();
-			}));
+				}));
 		}
 	}
 
@@ -654,20 +632,6 @@ namespace nim_comp
 
 			add_or_del->SelectItem(user_type == nim::kNIMFriendFlagNormal ? 0 : 1);
 			SetShowName();
-		}
-	}
-
-	void ProfileBox::OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots)
-	{
-		if (rescode == nim::kNIMResSuccess)
-		{
-			for (auto &robot : robots)
-			{
-				if (m_robot.GetAccid() == robot.GetAccid())
-				{
-					InitRobotInfo(robot);
-				}
-			}
 		}
 	}
 

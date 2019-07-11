@@ -55,6 +55,7 @@ protected:
 	* @return void 无返回值
 	*/
 	virtual void OnMenuCopy();
+	virtual void OnMenuClose() override;
 private:
 	ui::Box*		msg_text_;
 	ui::RichEdit*	text_;

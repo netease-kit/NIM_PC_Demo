@@ -33,6 +33,12 @@ void CheckBoxTemplate<InheritType>::Selected(bool bSelected, bool bTriggerEvent)
 }
 
 template<typename InheritType>
+bool CheckBoxTemplate<InheritType>::HasHotState()
+{
+	return m_selectedColorMap.HasHotColor() || __super::HasHotState();
+}
+
+template<typename InheritType>
 Image* CheckBoxTemplate<InheritType>::GetEstimateImage()
 {
 	Image* estimateImage = __super::GetEstimateImage();

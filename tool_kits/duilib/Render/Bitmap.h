@@ -12,9 +12,10 @@ public:
 	GdiBitmap();
 	~GdiBitmap();
 
-	static HBITMAP CreateDIBBitmap(HDC hdc, int width, int height, LPVOID* pBits);
+	static HBITMAP CreateDIBBitmap(HDC hdc, int width, int height, bool flipBItmap, LPVOID* pBits);
 
-	virtual void Init(HDC hSrcDC, int width, int height) override;
+	virtual bool Init(HDC hSrcDC, int width, int height, bool flipBItmap) override;
+	virtual void Clear() override;
 	virtual HBITMAP DetachBitmap() override;
 
 	virtual HBITMAP GetBitmap() override;
@@ -22,8 +23,8 @@ public:
 	virtual int	GetWidth() override;
 	virtual int GetHeight() override;
 
-	virtual void ClearAlpha(const UiRect& rcDirty) override;
-	virtual void RestoreAlpha(const UiRect& rcDirty, const UiRect& rcShadowPadding) override;
+	virtual void ClearAlpha(const UiRect& rcDirty, int alpha) override;
+	virtual void RestoreAlpha(const UiRect& rcDirty, const UiRect& rcShadowPadding, int alpha) override;
 private:
 	void CleanUp();
 

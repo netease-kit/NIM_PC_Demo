@@ -30,14 +30,8 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="client_app.h">
-      <Filter>app</Filter>
-    </ClInclude>
     <ClInclude Include="util.h">
       <Filter>头文件</Filter>
-    </ClInclude>
-    <ClInclude Include="js_handler.h">
-      <Filter>app\js_handler</Filter>
     </ClInclude>
     <ClInclude Include="..\cef_module\js_bridge\cef_js_bridge.h">
       <Filter>js_bridge</Filter>
@@ -45,25 +39,31 @@
     <ClInclude Include="..\cef_module\js_bridge\ipc_string_define.h">
       <Filter>js_bridge</Filter>
     </ClInclude>
+    <ClInclude Include="app\client_app.h">
+      <Filter>app</Filter>
+    </ClInclude>
+    <ClInclude Include="app\js_handler\js_handler.h">
+      <Filter>app\js_handler</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="client_app_render.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
-    <ClCompile Include="client_app.cpp">
-      <Filter>app</Filter>
-    </ClCompile>
-    <ClCompile Include="js_handler.cpp">
-      <Filter>app\js_handler</Filter>
-    </ClCompile>
     <ClCompile Include="..\cef_module\js_bridge\cef_js_bridge.cpp">
       <Filter>js_bridge</Filter>
+    </ClCompile>
+    <ClCompile Include="app\client_app.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="app\client_app_render.cpp">
+      <Filter>app</Filter>
+    </ClCompile>
+    <ClCompile Include="app\js_handler\js_handler.cpp">
+      <Filter>app\js_handler</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

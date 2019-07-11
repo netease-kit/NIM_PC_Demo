@@ -1,11 +1,13 @@
 #pragma once
 #include "module/plugins/main_plugins_base.h"
 #include "module/tray_icon/tray_icon_manager.h"
+
+interface IDropTargetHelper;
 namespace nim_comp
 {
 	class IMainPlugin;
 	class IMainFormMenuHandler;
-	class MainFormEx : public WindowEx, public ITrayIconEventHandler
+	class MainFormEx : public WindowEx, public IDropTarget, public ITrayIconEventHandler
 	{
 	public:
 		MainFormEx(IMainFormMenuHandler* main_menu_handler);
@@ -137,6 +139,17 @@ namespace nim_comp
 		*/
 		bool OnClearInputBtnClicked(ui::EventArgs* param);
 		void OnWndSizeMax(bool max);
+
+	public:
+		bool InitDragDrop();
+		void UnInitDragDrop();
+		HRESULT STDMETHODCALLTYPE QueryInterface(REFIID iid, void ** ppvObject);
+		ULONG STDMETHODCALLTYPE AddRef(void);
+		ULONG STDMETHODCALLTYPE Release(void);
+		HRESULT STDMETHODCALLTYPE DragEnter(IDataObject * pDataObject, DWORD grfKeyState, POINTL pt, DWORD * pdwEffect);
+		HRESULT STDMETHODCALLTYPE DragOver(DWORD grfKeyState, POINTL pt, DWORD *pdwEffect);
+		HRESULT STDMETHODCALLTYPE DragLeave(void);
+		HRESULT STDMETHODCALLTYPE Drop(IDataObject *pDataObj, DWORD grfKeyState, POINTL pt, DWORD __RPC_FAR *pdwEffect);
 	public:
 		static const LPCTSTR kClassName;
 	private:
@@ -155,6 +168,8 @@ namespace nim_comp
 		ui::ButtonBox* search_bar_;
 		ui::Button* btn_max_restore_;
 		AutoUnregister	unregister_cb;
+
+		IDropTargetHelper	*drop_helper_;
 	private:
 		IMainFormMenuHandler* main_menu_handler_;
 	};

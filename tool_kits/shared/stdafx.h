@@ -35,4 +35,4 @@
 #include "duilib/UIlib.h"
 
 //sdk
-#include "nim_cpp_api.h"
+#include "include/nim_cpp_api.h"

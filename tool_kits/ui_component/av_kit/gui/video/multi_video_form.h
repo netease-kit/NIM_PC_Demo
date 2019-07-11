@@ -172,6 +172,12 @@ namespace nim_comp
 		* @param[in] video true:视频 false:音频
 		*/
 		void SetCacheMemberVideo(std::string uid, bool video) { cache_members_info_[uid] = video; }
+
+        /**
+        * 直接关闭窗口
+        * @return void	无返回值
+        */
+        void DirectQuit();
 	private:
 		/**
 		* 处理所有控件的所有消息
@@ -193,12 +199,6 @@ namespace nim_comp
 		* @return void	无返回值
 		*/
 		void EnterEndCallPage(MultiEndCallEnum end_reason);
-
-		/**
-		* 直接关闭窗口
-		* @return void	无返回值
-		*/
-		void DirectQuit();
 
 		/**
 		* 自动关闭窗口

@@ -453,9 +453,6 @@
     <ClInclude Include="export\nim_ui_notify_center.h">
       <Filter>export</Filter>
     </ClInclude>
-    <ClInclude Include="gui\session\control\bubbles\bubble_robot.h">
-      <Filter>gui\session\control\bubbles</Filter>
-    </ClInclude>
     <ClInclude Include="gui\main\control\custom_button_box.h">
       <Filter>gui\main\control</Filter>
     </ClInclude>
@@ -856,9 +853,6 @@
     </ClCompile>
     <ClCompile Include="export\nim_ui_notify_center.cpp">
       <Filter>export</Filter>
-    </ClCompile>
-    <ClCompile Include="gui\session\control\bubbles\bubble_robot.cpp">
-      <Filter>gui\session\control\bubbles</Filter>
     </ClCompile>
     <ClCompile Include="gui\main\control\custom_button_box.cpp">
       <Filter>gui\main\control</Filter>

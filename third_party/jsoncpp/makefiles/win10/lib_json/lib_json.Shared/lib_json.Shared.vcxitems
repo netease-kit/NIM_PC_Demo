@@ -1,0 +1,47 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Label="Globals">
+    <MSBuildAllProjects>$(MSBuildAllProjects);$(MSBuildThisFileFullPath)</MSBuildAllProjects>
+    <HasSharedItems>true</HasSharedItems>
+    <ItemsProjectGuid>{1109035a-298c-47b9-b300-8f65ab9d21c5}</ItemsProjectGuid>
+    <ItemsRootNamespace>lib_json</ItemsRootNamespace>
+    <ItemsProjectName>lib_json.Shared</ItemsProjectName>
+    <CodeSharingProject>248F659F-DAC5-46E8-AC09-60EC9FC95053</CodeSharingProject>
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+    <ClCompile>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories);$(MSBuildThisFileDirectory)</AdditionalIncludeDirectories>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ProjectCapability Include="SourceItemsFromImports" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\include\json\autolink.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\include\json\config.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\include\json\features.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\include\json\forwards.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\include\json\json.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\include\json\reader.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\include\json\value.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\include\json\writer.h" />
+    <ClInclude Include="$(MSBuildThisFileDirectory)..\..\..\..\src\lib_json\json_batchallocator.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\src\lib_json\json_internalarray.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\src\lib_json\json_internalmap.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\src\lib_json\json_valueiterator.inl" />
+    <None Include="$(MSBuildThisFileDirectory)..\..\..\..\src\lib_json\sconscript" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\src\lib_json\json_reader.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\src\lib_json\json_value.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+    <ClCompile Include="$(MSBuildThisFileDirectory)..\..\..\..\src\lib_json\json_writer.cpp">
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+</Project>

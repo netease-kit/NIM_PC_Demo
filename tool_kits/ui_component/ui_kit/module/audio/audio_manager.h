@@ -4,7 +4,7 @@
 typedef std::function<void(const std::string& session_id, int code)> StartCaptureCallback;
 typedef std::function<void(int rescode, const std::string& sid, const std::string& cid, const std::string& file_path, const std::string& file_ext, long file_size, int audio_duration)> StopCaptureCallback;
 typedef std::function<void(const std::string& session_id, int code)> CancelCaptureCallback;
-typedef std::function<void(int rescode, const wchar_t* device_list)> EnumCaptureDeviceCallback;
+typedef std::function<void(int rescode, const std::wstring& device_list)> EnumCaptureDeviceCallback;
 
 namespace nim_comp
 {
@@ -148,7 +148,7 @@ public:
 	* @param[in] rescode 操作结果，一切正常200
 	* @param[in] device_list 设备列表
 	*/
-	void OnEnumCaptureDeviceCallback(int rescode, const wchar_t* device_list);
+	void OnEnumCaptureDeviceCallback(int rescode, const std::wstring& device_list);
 
 	/**
 	* 返回当前正在播放的语音消息所在的会话id

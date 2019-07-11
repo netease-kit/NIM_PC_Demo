@@ -28,6 +28,10 @@ public:
 	int GetInterval(int nIndex); //ºÁÃëÎªµ¥Î» 
 	 
 	static std::unique_ptr<ImageInfo> LoadImage(const std::wstring& strImageFullPath);
+	static std::unique_ptr<ImageInfo> LoadImage(HGLOBAL hGlobal, const std::wstring& imageFullPath);
+
+private:
+	static std::unique_ptr<ImageInfo> LoadImageByBitmap(std::unique_ptr<Gdiplus::Bitmap>& pGdiplusBitmap, const std::wstring& imageFullPath);
 
 public:
 	int nX;
@@ -98,6 +102,7 @@ public:
 	void SetControl(Control* control) {	m_pControl = control; }
 	Image& operator[](ControlStateType stateType) {	return m_stateImageMap[stateType]; }
 
+	bool HasHotImage();
 	bool PaintStatusImage(IRenderContext* pRender, ControlStateType stateType, const std::wstring& sImageModify = L"");
 	Image* GetEstimateImage();
 	void ClearCache();
@@ -117,6 +122,7 @@ public:
 	void SetImage(StateImageType stateImageType, ControlStateType stateType, const std::wstring& strImagePath);
 	std::wstring GetImagePath(StateImageType stateImageType, ControlStateType stateType);
 
+	bool HasHotImage();
 	bool PaintStatusImage(IRenderContext* pRender, StateImageType stateImageType, ControlStateType stateType, const std::wstring& sImageModify = L"");
 	Image* GetEstimateImage(StateImageType stateImageType);
 
@@ -134,6 +140,7 @@ public:
 	void SetControl(Control* control);
 	std::wstring& operator[](ControlStateType stateType) { return m_stateColorMap[stateType]; }
 
+	bool HasHotColor();
 	void PaintStatusColor(IRenderContext* pRender, UiRect rcPaint, ControlStateType stateType);
 
 private:

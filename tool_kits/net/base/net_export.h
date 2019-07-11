@@ -1,5 +1,8 @@
 // Copyright (c) 2013, NetEase Inc. All rights reserved.
+//
+// WRT
 // 2013/8/30
+//
 // This file defines NET_BASE_EXPORT_H_ macro
 
 #ifndef NET_BASE_EXPORT_H_

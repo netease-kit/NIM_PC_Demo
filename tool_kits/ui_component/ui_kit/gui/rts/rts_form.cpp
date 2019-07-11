@@ -153,8 +153,8 @@ bool RtsForm::OnClicked(ui::EventArgs* arg)
 	std::wstring name = arg->pSender->GetName();		
 	if(name == L"btn_accept")
 	{
-		bool data_record = atoi(GetConfigValue("rts_record").c_str()) > 0;
-		bool audio_record = atoi(GetConfigValue("audio_record").c_str()) > 0;
+		bool data_record = atoi(GetConfigValue("kNIMRtsRecord").c_str()) > 0;
+		bool audio_record = atoi(GetConfigValue("kNIMAudioRecord").c_str()) > 0;
 		need_ack_ = false;
 		nim::Rts::Ack(session_id_, type_, true, data_record, audio_record, nbase::Bind(&RtsForm::OnAckCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));
 	}
@@ -367,8 +367,8 @@ void RtsForm::ShowStartUI(bool creater)
 
 	if (creater)
 	{
-		bool data_record = atoi(GetConfigValue("rts_record").c_str()) > 0;
-		bool audio_record = atoi(GetConfigValue("audio_record").c_str()) > 0;
+		bool data_record = atoi(GetConfigValue("kNIMRtsRecord").c_str()) > 0;
+		bool audio_record = atoi(GetConfigValue("kNIMAudioRecord").c_str()) > 0;
 		bool webrtc = VideoManager::GetInstance()->GetWebrtc();
 		nim::RtsStartInfo info;
 		info.apns_ = nbase::UTF16ToUTF8(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RTS_INVITE_TEST"));

@@ -13,10 +13,10 @@ namespace nim_comp
   * @date 2016/8/27
   */
 class SdkDataObject;
-class SessionManager : public nbase::SupportWeakCallback
+class SessionManager :public nbase::Singleton<SessionManager>, public nbase::SupportWeakCallback
 {
 public:
-	SINGLETON_DEFINE(SessionManager);
+	//SINGLETON_DEFINE(SessionManager);
 public:
 	SessionManager();
 	~SessionManager();
@@ -42,6 +42,8 @@ public:
 	* @return bool true 激活，false 非激活
 	*/
 	bool IsSessionBoxActive(const std::string& id);
+
+	SessionBox* GetFirstActiveSession();
 
 	/**
 	* 根据会话id，找回会话盒子控件

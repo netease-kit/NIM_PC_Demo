@@ -51,7 +51,7 @@ namespace nim_comp
 
 	void VideoForm::StartChat()
 	{
-		bool ret = VideoManager::GetInstance()->StartChat((current_video_mode_ ? nim::kNIMVideoChatModeVideo : nim::kNIMVideoChatModeAudio), "", "", session_id_, session_id_);
+		bool ret = VideoManager::GetInstance()->StartChat((current_video_mode_ ? nim::kNIMVideoChatModeVideo : nim::kNIMVideoChatModeAudio), "", "User-defined data custom_info", session_id_, session_id_);
 		if (ret)
 		{
 			//VideoManager::GetInstance()->SetAudioMuted(false);
@@ -409,7 +409,7 @@ namespace nim_comp
 		if (success)
 		{
 			//QLOG_APP(L"old video frame scale {0}") << nim::VChat::GetVideoFrameScaleType();
-			std::string video_scale = GetConfigValue("video_scale");
+			std::string video_scale = GetConfigValue("kNIMVideoScale");
 			if (!video_scale.empty())
 			{
 				nim::VChat::SetVideoFrameScaleType((nim::NIMVChatVideoFrameScaleType)atoi(video_scale.c_str()));

@@ -91,20 +91,32 @@ void MsgBubbleVideo::PlayVideo()
 {
 #ifdef SUPPORTLOCALPLAYER
 	{
-		static LocalVideoPlayerForm* player = nullptr;
-		if (player == nullptr)
+		auto osversion = shared::tools::GetOSVersion();
+		if (osversion >= 600)
 		{
-			player = nim_comp::WindowsManager::SingletonShow<LocalVideoPlayerForm>(LocalVideoPlayerForm::kClassName, [&](){
-				player = nullptr;
-			}, L"");
-		}		
-		if (player != nullptr)
+			static LocalVideoPlayerForm* player = nullptr;
+			if (player == nullptr)
+			{
+				player = nim_comp::WindowsManager::SingletonShow<LocalVideoPlayerForm>(LocalVideoPlayerForm::kClassName, [&]() {
+					player = nullptr;
+				}, L"");
+			}
+			if (player != nullptr)
+			{
+				if (!player->SamePath(path_))
+					player->CenterWindow();
+				player->Play(path_);
+				player->ToTopMost(false);
+			}
+		}
+		else
 		{
-			if (!player->SamePath(path_))
-				player->CenterWindow();
-			player->Play(path_);
-			player->ToTopMost(false);			
-		}	
+			auto tempPath = path_;
+			tempPath.append(L".mp4");
+			if (!nbase::FilePathIsExist(tempPath, false))
+				nbase::CopyFile(path_, tempPath);
+			Post2GlobalMisc(nbase::Bind(&shared::tools::SafeOpenUrl, tempPath, SW_SHOW));
+		}
 	}
 #else
 	{

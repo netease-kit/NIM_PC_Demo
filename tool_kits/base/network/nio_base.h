@@ -68,7 +68,8 @@ enum ProxyType
     kProxyTypeSocks4A,
     kProxyTypeSocks5,
     kProxyTypeHttp11,
-    kProxyTypeSocks5UDP
+	kProxyTypeSocks5UDP,
+	kProxyTypeNrtc
 };
 struct ProxySetting : protected ProxySet
 {

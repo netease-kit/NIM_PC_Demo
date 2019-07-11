@@ -5,7 +5,7 @@
 namespace nim_comp
 {
 	class ISessionDock;
-	class SessionPlugin : public MainPluginBase<SessionPluginIcon, SessionPluginPage>
+	class SessionPlugin : public MainPluginBase<IMainPlugin::PluginType::PluginType_Main,SessionPluginIcon, SessionPluginPage>
 	{
 	public:
 		SessionPlugin();

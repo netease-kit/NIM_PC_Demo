@@ -8,7 +8,6 @@
 namespace nim_cef
 {
 BrowserHandler::BrowserHandler()
-	: browser_client_(nullptr)
 {
 	handle_delegate_ = NULL;
 	is_focus_oneditable_field_ = false;
@@ -41,6 +40,31 @@ CefRefPtr<CefBrowserHost> BrowserHandler::GetBrowserHost()
 UnregisterCallback BrowserHandler::AddAfterCreateTask(const StdClosure& cb)
 {
 	return task_list_after_created_.AddCallback(cb);
+}
+
+void BrowserHandler::CloseAllBrowser()
+{
+	class CloseAllBrowserTask : public CefTask
+	{
+		IMPLEMENT_REFCOUNTING(CloseAllBrowserTask);
+	public:
+		CloseAllBrowserTask(const std::vector<CefRefPtr<CefBrowser>>& browser_list)
+		{
+			browser_list_.assign(browser_list.begin(), browser_list.end());
+		}
+	public:
+		void Execute()
+		{
+			for (auto it : browser_list_)
+			{
+				if (it != nullptr)
+					it->GetHost()->CloseBrowser(true);
+			}
+		}
+	private:
+		std::vector<CefRefPtr<CefBrowser>> browser_list_;
+	};
+	CefPostTask(TID_UI, new CloseAllBrowserTask(browser_list_));
 }
 
 bool BrowserHandler::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
@@ -109,10 +133,8 @@ bool BrowserHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 
 void BrowserHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 {
-	REQUIRE_UI_THREAD();	
+	REQUIRE_UI_THREAD();
 	nbase::ThreadManager::PostTask(kThreadUI, ToWeakCallback([this, browser](){
-		if (browser_client_ == nullptr)
-			browser_client_ = browser->GetHost()->GetClient();
 		browser_list_.emplace_back(browser);
 		if (browser_ != nullptr)
 			browser_->GetHost()->WasHidden(true);
@@ -125,7 +147,7 @@ void BrowserHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 		}
 
 		// 有窗模式下，浏览器创建完毕后，让上层更新一下自己的位置；因为在异步状态下，上层更新位置时可能Cef窗口还没有创建出来
-		if (!CefManager::GetInstance()->IsEnableOffsetRender())
+		if (!CefManager::GetInstance()->IsEnableOffsetRender() && handle_delegate_)
 		{
 			handle_delegate_->UpdateWindowPos();
 		}
@@ -168,7 +190,7 @@ void BrowserHandler::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 		{
 			handle_delegate_->OnBeforeClose(browser);
 		}
-	}));	
+	}));
 }
 #pragma endregion
 
@@ -416,29 +438,39 @@ bool BrowserHandler::OnQuotaRequest(CefRefPtr<CefBrowser> browser,
 	callback->Continue(new_size <= max_size);
 	return true;
 }
-void BrowserHandler::CloseAllBrowser()
+
+void BrowserHandler::OnBeforeDownload(
+	CefRefPtr<CefBrowser> browser,
+	CefRefPtr<CefDownloadItem> download_item,
+	const CefString& suggested_name,
+	CefRefPtr<CefBeforeDownloadCallback> callback)
 {
-	class CloseAllBrowserTask : public CefTask
-	{
-		IMPLEMENT_REFCOUNTING(CloseAllBrowserTask);
-	public:
-		CloseAllBrowserTask(const std::vector<CefRefPtr<CefBrowser>>& browser_list)
-		{
-			browser_list_.assign(browser_list.begin(), browser_list.end());
-		}
-	public:
-		void Execute()
-		{
-			for (auto it : browser_list_)
-			{
-				if (it != nullptr)
-					it->GetHost()->CloseBrowser(true);
-			}
-		}
-	private:
-		std::vector<CefRefPtr<CefBrowser>> browser_list_;
-	};
-	CefPostTask(TID_UI, new CloseAllBrowserTask(browser_list_));
+	if (handle_delegate_)
+		handle_delegate_->OnBeforeDownload(browser, download_item, suggested_name, callback);
+}
+
+void BrowserHandler::OnDownloadUpdated(
+	CefRefPtr<CefBrowser> browser,
+	CefRefPtr<CefDownloadItem> download_item,
+	CefRefPtr<CefDownloadItemCallback> callback)
+{
+	if (handle_delegate_)
+		handle_delegate_->OnDownloadUpdated(browser, download_item, callback);
+}
+
+bool BrowserHandler::OnFileDialog(
+	CefRefPtr<CefBrowser> browser, 
+	FileDialogMode mode, 
+	const CefString& title, 
+	const CefString& default_file_path, 
+	const std::vector<CefString>& accept_filters, 
+	int selected_accept_filter, 
+	CefRefPtr<CefFileDialogCallback> callback)
+{
+	if (handle_delegate_)
+		return handle_delegate_->OnFileDialog(browser, mode, title, default_file_path, accept_filters, selected_accept_filter, callback);
+	else
+		return false;
 }
 
 }

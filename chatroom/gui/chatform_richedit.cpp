@@ -202,6 +202,7 @@ void ChatroomForm::TimeHandle()
 // 		}
 	}
 
+#if 0
 	if (msg_list_)
 	{
 		ITextServices * text_service = msg_list_->GetTextServices();
@@ -214,6 +215,7 @@ void ChatroomForm::TimeHandle()
 			text_service->Release();
 		}
 	}
+#endif
 }
 
 }

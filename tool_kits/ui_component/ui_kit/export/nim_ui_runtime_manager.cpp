@@ -11,4 +11,19 @@ namespace nim_ui
 	{
 		return nim_comp::RunTimeDataManager::GetInstance()->GetUIStyle();
 	}
+	UnregisterCallback RunTimeDataManager::RegSDKInited(const SDKInitCallback& cb)
+	{
+		return sdk_init_cb_.AddCallback(cb);
+	}
+	void RunTimeDataManager::SetSDKInited()
+	{
+		nim_comp::RunTimeDataManager::GetInstance()->SetSDKInited(true);
+		sdk_init_cb_();
+	}
+
+	bool RunTimeDataManager::IsSDKInited() const
+	{
+		return nim_comp::RunTimeDataManager::GetInstance()->IsSDKInited();
+	}
+
 }

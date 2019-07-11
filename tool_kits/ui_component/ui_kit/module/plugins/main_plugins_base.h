@@ -5,6 +5,12 @@ namespace nim_comp
 	class IMainPlugin : public virtual nbase::SupportWeakCallback
 	{
 	public:
+		enum class PluginType
+		{
+			PluginType_Main = 0,
+			PluginType_Simple,
+		};
+	public:
 		using PluginFlagType = std::string;
 	public:
 		IMainPlugin();
@@ -21,6 +27,7 @@ namespace nim_comp
 			action->SetGroup(group_name);
 			return true;
 		}
+		virtual PluginType GetPluginType() const = 0;
 		virtual bool AttachSelect(const ui::EventCallback& callback)
 		{
 			auto action = GetPluginIconAction();
@@ -42,7 +49,7 @@ namespace nim_comp
 			if (action != nullptr)
 				action->Selected(sel, btrigger);
 		}
-		virtual bool IsActivePage() const { return true; }
+		virtual bool IsActivePage() { return GetPluginIconAction()->IsSelected(); }
 		virtual bool ShowSearchBar() const { return true; }
 		virtual void DoInit() {}
 	protected:
@@ -75,11 +82,11 @@ namespace nim_comp
 		MainPluginPage() = default;
 		virtual ~MainPluginPage() = default;
 	};
-	template<typename TIcon = MainPluginIcon, typename TPage = MainPluginPage>
+	template<IMainPlugin::PluginType type,typename TIcon = MainPluginIcon, typename TPage = MainPluginPage>
 	class MainPluginBase : public IMainPlugin
 	{
 	public:
-		MainPluginBase() : icon_(nullptr), page_(nullptr)
+		MainPluginBase() : icon_(nullptr), page_(nullptr),type_(type)
 		{
 			static_assert(std::is_base_of<MainPluginIcon, TIcon>::value && std::is_base_of<MainPluginPage, TPage>::value, "icon or page type error");
 		}
@@ -97,6 +104,10 @@ namespace nim_comp
 			}				
 			return icon_;
 		}
+		virtual IMainPlugin::PluginType GetPluginType() const override
+		{
+			return type_;
+		}
 		virtual ui::Box* GetPluginPage()
 		{
 			if (page_ == nullptr)
@@ -113,5 +124,6 @@ namespace nim_comp
 	protected:
 		TIcon* icon_;
 		TPage* page_;
+		IMainPlugin::PluginType type_;
 	};
 }

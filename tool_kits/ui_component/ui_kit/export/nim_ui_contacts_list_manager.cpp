@@ -47,12 +47,6 @@ void ContactsListManager::OnGetAllFriendInfo(const std::list<nim::UserNameCard> 
 	{
 		friend_list_->OnGetFriendList(uinfos);
 	}
-
-	auto robot_list = nim_comp::UserService::GetInstance()->InvokeGetAllRobotsInfoBlock();
-	if (NULL != friend_list_)
-	{
-		friend_list_->OnGetRobotList(robot_list);
-	}
 }
 
 void ContactsListManager::FillSearchResultList(ui::ListBox* search_result_list, const UTF8String& search_key)

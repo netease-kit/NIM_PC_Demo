@@ -1,5 +1,4 @@
 #pragma once
-#include "nim_client_helper.h"
 
 namespace nim_comp
 {

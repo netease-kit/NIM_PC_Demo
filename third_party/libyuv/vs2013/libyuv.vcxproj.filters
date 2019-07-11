@@ -1,0 +1,36 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <ClCompile Include="..\source\compare.cc" />
+    <ClCompile Include="..\source\convert.cc" />
+    <ClCompile Include="..\source\convert_from.cc" />
+    <ClCompile Include="..\source\convertfrom.cc" />
+    <ClCompile Include="..\source\cpu_id.cc" />
+    <ClCompile Include="..\source\format_conversion.cc" />
+    <ClCompile Include="..\source\planar_functions.cc" />
+    <ClCompile Include="..\source\rotate.cc" />
+    <ClCompile Include="..\source\rotate_neon.cc" />
+    <ClCompile Include="..\source\row_common.cc" />
+    <ClCompile Include="..\source\row_neon.cc" />
+    <ClCompile Include="..\source\row_posix.cc" />
+    <ClCompile Include="..\source\row_win.cc" />
+    <ClCompile Include="..\source\scale.cc" />
+    <ClCompile Include="..\source\video_common.cc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\source\rotate_priv.h" />
+    <ClInclude Include="..\source\row.h" />
+    <ClInclude Include="..\include\libyuv.h" />
+    <ClInclude Include="..\include\libyuv\basic_types.h" />
+    <ClInclude Include="..\include\libyuv\compare.h" />
+    <ClInclude Include="..\include\libyuv\convert.h" />
+    <ClInclude Include="..\include\libyuv\convert_from.h" />
+    <ClInclude Include="..\include\libyuv\cpu_id.h" />
+    <ClInclude Include="..\include\libyuv\format_conversion.h" />
+    <ClInclude Include="..\include\libyuv\planar_functions.h" />
+    <ClInclude Include="..\include\libyuv\rotate.h" />
+    <ClInclude Include="..\include\libyuv\scale.h" />
+    <ClInclude Include="..\include\libyuv\version.h" />
+    <ClInclude Include="..\include\libyuv\video_common.h" />
+  </ItemGroup>
+</Project>

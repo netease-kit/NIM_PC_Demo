@@ -48,7 +48,7 @@ void TestGifForm::InitWindow()
 		auto seek = dynamic_cast<ui::RichEdit*>(FindControl(L"seek"));		
 		nbase::StringToInt(seek->GetText(), &count);		
 		auto gif = FindControl(L"gif");
-		gif->StartGifPlayForUI(0, count);
+		gif->StartGifPlayForUI(kGifStopFirst, count);
 		return true;
 	});
 	auto gif = FindControl(L"gif");

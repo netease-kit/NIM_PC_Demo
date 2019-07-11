@@ -13,6 +13,10 @@
   * @author towik
   * @date 2015/1/1
   */
+namespace nim_comp
+{
+	class IMainFormMenuHandler;
+}
 class MainForm : 
 	public nim_comp::WindowEx,
 	public ITrayIconDelegate
@@ -23,7 +27,7 @@ public:
 
 	/**
 	* 虚函数，指定本界面的xml布局文件和图片素材所在的目录的相对路径
-	* @return std::wstring 返回该目录相对于[安装目录]/bin/themes/default的路径
+	* @return std::wstring 返回该目录相对于[安装目录]/bin/resources/themes/default的路径
 	*/
 	virtual std::wstring GetSkinFolder() override;
 
@@ -328,6 +332,7 @@ private:
 	bool			is_trayicon_left_double_clicked_;
 
 	AutoUnregister	unregister_cb;
+	nim_comp::IMainFormMenuHandler* main_menu_handler_;
 };
 
 using namespace nbase;

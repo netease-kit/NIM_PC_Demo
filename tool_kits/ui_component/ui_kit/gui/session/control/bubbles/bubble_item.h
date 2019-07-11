@@ -1,6 +1,7 @@
 ﻿#pragma once
 #include <atomic>
 #include "module/session/session_util.h"
+#include "shared/ui/ui_menu.h"
 
 enum BubbleEventType
 {
@@ -25,12 +26,13 @@ static const std::wstring kBubbleBox = L"BubbleBox";
   * @author Redrain
   * @date 2015/9/11
   */
-class MsgBubbleItem : public ui::ListContainerElement
+class MsgBubbleItem : public ui::ListContainerElement,public ui::IUIMessageFilter
 {
 	friend class SessionBox;
 public:
 	MsgBubbleItem();
 	virtual ~MsgBubbleItem();
+	virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
 	typedef std::function<const std::map<std::string,nim::TeamMemberProperty>&()> TeamMemberGetter;
 	/**
 	* 初始化控件内部指针
@@ -216,15 +218,15 @@ protected:
 	*/
 	virtual void OnMenuTransform();
 	/**
+	* 菜单关闭
+	* @return void 无返回值
+	*/
+	virtual void OnMenuClose() {};
+	/**
 	* 此条消息是否展示右键菜单的撤回按钮，点对点：自己发送的消息。群：身为群主或管理员，可以撤回其他人发送的消息
 	* @return bool
 	*/
 	virtual bool IsShowRecallButton();
-	/**
-* 此条消息是否展示右键菜单的转发按钮,机器会话消息不转发
-* @return bool
-*/
-	virtual bool IsShowRetweetButton();
 private:
 
 	/** 
@@ -264,6 +266,7 @@ private:
 	ui::Control*	status_load_failed_;
 	ui::Label*		status_receipt_;
 	ui::Control*	play_status_;
+	ui::CMenuWnd*	menu_;
 protected:
 	nim::IMMessage			msg_;
 
@@ -272,6 +275,7 @@ protected:
 	
 	bool			action_menu_;
 	bool			my_msg_;
+	bool			menu_in_show_;
 	TeamMemberGetter team_member_getter_;
 };
 class AttachMentDecorate

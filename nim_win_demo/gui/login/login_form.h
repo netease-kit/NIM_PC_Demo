@@ -119,12 +119,14 @@ public:
 private:
 	void InitLoginData();
 	void OnLogin();
+	void OnLogin_i();
+	bool InitSDK(const std::string& pravate_settings_file_path = "");
 	void CheckAutoLogin();
 	bool OnSwitchToLoginPage();
 public:
 	static const LPCTSTR kClassName;
 	bool login_function_;
-
+	bool anonymous_chatroom_login_;
 private:
 	ui::Control*	usericon_;
 	ui::Control*	passwordicon_;
@@ -140,5 +142,10 @@ private:
 	ui::CheckBox*	remember_pwd_ckb_ = nullptr;
 	ui::CheckBox*	remember_user_ckb_ = nullptr;
 	ui::CheckBox* use_new_uistyle_;
+	ui::CheckBox* use_private_settings_;
+	ui::CheckBox* chkbox_private_use_proxy_enable_;
+	ui::RichEdit* private_settings_url_;
+
+	UnregisterCallback sdk_init_autounreg_cb_;
 
 };

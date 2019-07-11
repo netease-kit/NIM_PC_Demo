@@ -15,6 +15,8 @@ public:
 	AnimationPlayerBase();
 	~AnimationPlayerBase() { }
 
+	void SetAnimationType(int type) { m_animationType = type; };
+	int GetAnimationType() const { return m_animationType; };
 	void SetStartValue(int startValue) { m_startValue = startValue; }
 	int GetStartValue() { return m_startValue; }
 
@@ -31,6 +33,7 @@ public:
 	void Reset();
 	virtual void Init();
 	virtual void Start();
+	virtual void Stop();
 	virtual void Continue();
 	virtual void ReverseContinue();
 	virtual void StartTimer();
@@ -42,6 +45,7 @@ private:
 	void Complete();
 
 protected:
+	int m_animationType;
 	int m_startValue;
 	int m_endValue;
 	int m_currentValue;

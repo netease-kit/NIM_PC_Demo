@@ -1,4 +1,5 @@
 ﻿#include "resource.h"
+#include "shared/cpp_wrapper_util.h"
 #include "unread_form.h"
 #include "export/nim_ui_all.h"
 
@@ -160,8 +161,8 @@ void UnreadForm::OnLoadListCallback(const nim::TeamEvent& result)
 	if (result.src_data_["client_msg_id"].asString() != msg_.client_msg_id_)
 		return;
 
-	Json::Value reads = result.src_data_["read"];
-	Json::Value unreads = result.src_data_["unread"];
+	Json::Value reads = std::move(shared::tools::NimCppWrapperJsonValueToJsonValue(result.src_data_["read"]));
+	Json::Value unreads = std::move(shared::tools::NimCppWrapperJsonValueToJsonValue(result.src_data_["unread"]));
 	unread_list_->RemoveAll();
 	read_list_->RemoveAll();
 	UpdateReadCount(reads.size());

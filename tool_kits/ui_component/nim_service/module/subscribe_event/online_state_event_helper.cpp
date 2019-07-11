@@ -38,7 +38,7 @@ std::string OnlineStateEventHelper::EventConfigToJsonString(const EventConfig &c
 	values[kMultiConfigNetState] = config.net_state_;
  	values[kMultiConfigOnlineState] = config.online_state_;
 
-	return nim::GetJsonStringWithNoStyled(values);
+	return Json::FastWriter().write(values);
 }
 
 EventConfig OnlineStateEventHelper::JsonStringToEventConfig(const std::string& config_json)

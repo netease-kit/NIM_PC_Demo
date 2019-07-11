@@ -50,11 +50,10 @@
 #include "shared/util.h"
 
 //sdk
-#include "nim_cpp_api.h"
-#include "nim_chatroom_cpp_api.h"
+#include "include/nim_cpp_api.h"
+#include "include/nim_chatroom_cpp_api.h"
 //tool
-#include "nim_tools_http_cpp.h"
-#include "nim_audio_cpp.h"
+#include "include/nim_cpp_tools_api.h"
 
 //notify
 #include "module/service/notify_center.h"

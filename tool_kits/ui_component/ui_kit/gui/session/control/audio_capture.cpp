@@ -1,5 +1,6 @@
 #include "audio_capture.h"
 #include "module/audio/audio_manager.h"
+#include "module/video/video_manager.h"
 
 using namespace ui;
 namespace nim_comp
@@ -77,7 +78,20 @@ bool AudioCaptureView::OnClicked(ui::EventArgs* param)
 		if (aac_option != nullptr)
 			aac = aac_option->IsSelected();
 		msg_uuid_ = QString::GetGUID();
-		if (!AudioManager::GetInstance()->StartCapture(session_id_, msg_uuid_, aac ? nim_audio::AAC : nim_audio::AMR))
+
+        std::string device_path;
+        int no = 0;
+        nim_comp::VideoManager::GetInstance()->GetDefaultDevicePath(no, device_path, nim::kNIMDeviceTypeAudioIn);
+
+        std::wstring device_name;
+        std::list<MEDIA_DEVICE_DRIVE_INFO> device_list = nim_comp::VideoManager::GetInstance()->GetDeviceInfo(nim::kNIMDeviceTypeAudioIn);
+        for (auto& device : device_list)
+        {
+            if (device.device_path_ == device_path)
+                device_name = nbase::UTF8ToUTF16(device.friendly_name_);
+        }
+
+		if (!AudioManager::GetInstance()->StartCapture(session_id_, msg_uuid_, aac ? nim_audio::AAC : nim_audio::AMR, 180, device_name.c_str()))
 		{
 			button_start_->SetEnabled(false);
 			button_stop_->SetEnabled(false);
@@ -170,14 +184,14 @@ void AudioCaptureView::OnCancelCaptureCallback(const std::string& session_id, in
 		return;
 }
 
-void AudioCaptureView::OnEnumCaptureDeviceCallback(int rescode, const wchar_t* device_list)
+void AudioCaptureView::OnEnumCaptureDeviceCallback(int rescode, const std::wstring& device_list)
 {
 	// 如果正在本控件正在录制，就直接返回
 	if (AudioManager::GetInstance()->GetCaptureSid() == session_id_)
 		return;
 
 	MutiLanSupport* mls = MutiLanSupport::GetInstance();
-	if (rescode != nim_audio::kSuccess || NULL == device_list)
+	if (rescode != nim_audio::kSuccess || device_list.empty())
 	{
 		time_text_->SetVisible(false);
 		tip_text->SetText(mls->GetStringViaID(L"STRID_AUDIO_CAPTURE_DEVICE_NOT_FOUND"));

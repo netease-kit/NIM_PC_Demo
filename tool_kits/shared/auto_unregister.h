@@ -60,23 +60,7 @@ public:
 		{
 			(*it.second)(params...);
 		}
-	}
-	template<typename... TParams>
-	void operator ()(TParams&&... params)
-	{
-		for (auto& it : element_list_)
-		{
-			(*it.second)(std::forward<TParams>(params)...);
-		}
-	}
-	template<>
-	void operator ()()
-	{
-		for (auto& it : element_list_)
-		{
-			(*it.second)();
-		}
-	}
+	}	
 private:
 	std::unordered_map<int, std::shared_ptr<TCallback>> element_list_;
 };

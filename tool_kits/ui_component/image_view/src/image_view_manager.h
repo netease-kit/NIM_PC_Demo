@@ -16,11 +16,12 @@ public:
 		std::wstring path_;
 	};
 	typedef std::vector<ImageViewInfo> ImageViewInfoList;
-
+	typedef std::function<void()> ImageViewSetNoTopMostCB;
 	ImageViewManager();
 	~ImageViewManager();
 
 	bool StartViewPic(const std::wstring &path_pic, std::wstring message_id, bool size, bool nosave = false);
+	ImageViewSetNoTopMostCB StartViewPicEx(const std::wstring &path_pic, std::wstring message_id, bool size, bool nosave = false,bool topmost=false);
 	//判断form_id是否与图片预览窗体的类名一致
 	bool JudgeViewImage(const std::wstring &form_id);
 	//图片预览窗体关闭时，用来重置指向图片预览窗体的指针为NULL

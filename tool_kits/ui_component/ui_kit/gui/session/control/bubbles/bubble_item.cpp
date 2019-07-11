@@ -4,7 +4,6 @@
 #include "gui/profile_form/profile_form.h"
 #include "gui/session/session_box.h"
 #include "callback/session/session_callback.h"
-#include "nim_cpp_team.h"
 #include "bubble_audio.h"
 #include "nim_service\module\local\local_helper.h"
 using namespace ui;
@@ -12,9 +11,9 @@ using namespace ui;
 namespace nim_comp
 {
 MsgBubbleItem::MsgBubbleItem():
-team_member_getter_(nullptr)
+team_member_getter_(nullptr), menu_in_show_(false), action_menu_(true)
 {
-	action_menu_ = true;
+	
 }
 
 MsgBubbleItem::~MsgBubbleItem()
@@ -134,7 +133,7 @@ void MsgBubbleItem::SetShowTime(bool show)
 
 void MsgBubbleItem::SetShowHeader()
 {
-	msg_header_button_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(msg_.sender_accid_, false));
+	msg_header_button_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(msg_.sender_accid_));
 }
 
 void MsgBubbleItem::SetShowName(bool show, const std::string& from_nick)
@@ -261,7 +260,16 @@ void MsgBubbleItem::HideAllStatus(int type)
 		status_receipt_->SetVisible(false);
 	}
 }
-
+LRESULT MsgBubbleItem::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+{
+	if (uMsg == WM_DESTROY)
+	{
+		menu_in_show_ = false;
+		Post2UI(ToWeakCallback([this]() {OnMenuClose(); }));
+	}
+	bHandled = false;
+	return S_FALSE;
+}
 class MsgBubbleAudio;
 void MsgBubbleItem::PopupMenu(bool copy, bool recall, bool retweet/* = true*/)
 {
@@ -271,47 +279,63 @@ void MsgBubbleItem::PopupMenu(bool copy, bool recall, bool retweet/* = true*/)
 	POINT point;
 	::GetCursorPos(&point);
 
-	CMenuWnd* pMenu = new CMenuWnd(NULL);
+	menu_ = new CMenuWnd(NULL);
 	STRINGorID xml(L"bubble_menu.xml");
-	pMenu->Init(xml, _T("xml"), point);
+	menu_->Init(xml, _T("xml"), point);
 	
-	CMenuElementUI* cop = (CMenuElementUI*) pMenu->FindControl(L"copy");
+	CMenuElementUI* cop = (CMenuElementUI*) menu_->FindControl(L"copy");
 	cop->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
 	cop->SetVisible(copy);
 
-	CMenuElementUI* del = (CMenuElementUI*)pMenu->FindControl(L"delete");
+	CMenuElementUI* del = (CMenuElementUI*)menu_->FindControl(L"delete");
 	del->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
 	
-	CMenuElementUI* transform = (CMenuElementUI*)pMenu->FindControl(L"transform");
+	CMenuElementUI* transform = (CMenuElementUI*)menu_->FindControl(L"transform");
 	transform->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
 	transform->SetVisible(dynamic_cast<MsgBubbleAudio*>(this) != nullptr);
 
-	CMenuElementUI* rec = (CMenuElementUI*)pMenu->FindControl(L"recall");
+	CMenuElementUI* rec = (CMenuElementUI*)menu_->FindControl(L"recall");
 	rec->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
 	rec->SetVisible(recall && IsShowRecallButton());
 
-	CMenuElementUI* ret = (CMenuElementUI*)pMenu->FindControl(L"retweet");
+	CMenuElementUI* ret = (CMenuElementUI*)menu_->FindControl(L"retweet");
 	ret->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
-	ret->SetVisible(retweet && IsShowRetweetButton());
-
-	pMenu->Show();
+	ret->SetVisible(retweet);
+	menu_in_show_ = true;
+	menu_->AddMessageFilter(this);
+	menu_->Show();
 }
 
 bool MsgBubbleItem::OnMenu( ui::EventArgs* arg )
 {
 	std::wstring name = arg->pSender->GetName();
-	if(name == L"copy")
+	if (name == L"copy")
+	{
 		OnMenuCopy();
-	else if(name == L"delete")
+	}
+	else if (name == L"delete")
+	{
+		menu_->RemoveMessageFilter(this);
 		OnMenuDelete();
+	}
 	else if (name == L"transform")
+	{
 		OnMenuTransform();
+	}
 	else if (name == L"retweet")
+	{
 		m_pWindow->SendNotify(this, ui::kEventNotify, BET_RETWEET, 0);
+	}
 	else if (name == L"recall")
+	{
+		menu_->RemoveMessageFilter(this);
 		m_pWindow->SendNotify(this, ui::kEventNotify, BET_RECALL, 0);
+	}
 	else if (name == L"at_ta")
+	{
 		m_pWindow->SendNotify(this, ui::kEventNotify, BET_MENUATTA, 0);
+	}
+
 	return false;
 }
 
@@ -354,21 +378,6 @@ bool MsgBubbleItem::IsShowRecallButton()
 		ret = false;
 	}
 	return ret;
-}
-
-bool MsgBubbleItem::IsShowRetweetButton()
-{	
-	ui::Box* parent = this;
-	do 
-	{
-		if (dynamic_cast<SessionBox*>(parent) == nullptr)
-			parent = parent->GetParent();
-		else
-			break;
-	} while (parent != nullptr);
-	if (parent != nullptr)
-		return !dynamic_cast<SessionBox*>(parent)->IsRobotSession();
-	return true;
 }
 
 ThumbDecorate::ThumbDecorate() 

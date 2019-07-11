@@ -71,7 +71,7 @@ private:
 	* @param[in] rescode 操作结果，一切正常200
 	* @param[in] device_list 设备列表
 	*/
-	void OnEnumCaptureDeviceCallback(int rescode, const wchar_t* device_list);
+	void OnEnumCaptureDeviceCallback(int rescode, const std::wstring& device_list);
 
 	/**
 	* 录制播放时，更新录制进度的回调函数

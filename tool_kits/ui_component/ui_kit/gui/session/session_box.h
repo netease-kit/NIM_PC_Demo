@@ -16,7 +16,6 @@
 #include "gui/session/control/bubbles/bubble_transferfile.h"
 #include "gui/session/control/bubbles/bubble_sticker.h"
 #include "gui/session/control/bubbles/bubble_video.h"
-#include "gui/session/control/bubbles/bubble_robot.h"
 #include "gui/session/control/team_item.h"
 #include "gui/emoji/emoji_form.h"
 #include "gui/team_info/team_info.h"
@@ -78,11 +77,6 @@ public:
 	* @return void	无返回值
 	*/
 	virtual void UninitSessionBox();
-	/**
-	* 判断会话是否为robot会话
-	* @return bool	
-	*/
-	virtual bool IsRobotSession() const;
 #pragma endregion Init
 
 	//////////////////////////////////////////////////////////////////////////
@@ -240,7 +234,7 @@ public:
 	* @param[in] bHandled 是否处理了消息，如果处理了不继续传递消息
 	* @return LRESULT 处理结果
 	*/
-	LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, bool &bHandle);
+	LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL &bHandle);
 
 	/**
 	* 拦截并处理按下ESC键的消息
@@ -495,12 +489,21 @@ private:
 	* @return void 无返回值
 	*/
 	void ShowCustomMsgForm();
+
 	/**
 	* 当发送消息被拒绝时发送该消息自己，该消息不漫游、不存云端、不多端同步、不离线
 	* @param[in] tip 提示内容
 	* @return void	无返回值
 	*/
+
 	void SendRefusedTip(const std::wstring &tip);
+
+	/**
+	 * 处理剪切板内容判断是否是 bmp 类型数据，如果是则另存为 PNG 用于插入到聊天输入框
+	 * @return true 是图片数据，false 不是图片数据
+	 */
+	bool SessionBox::PasteClipboard();
+
 #pragma endregion UI
 
 #pragma region TaskBar
@@ -555,7 +558,7 @@ public:
 	* 覆盖基类虚函数，为了在重绘任务栏显示的缩略图
 	* @return void	无返回值
 	*/
-	virtual void Invalidate() const override;
+	virtual void Invalidate() override;
 
 	/**
 	* 覆盖基类虚函数，为了在重绘任务栏显示的缩略图
@@ -578,7 +581,6 @@ public:
 	void InitAtMeView(std::vector<ForcePushManager::ForcePushInfo> &infos);
 
 private:
-
 	/**
 	* 如果msg包含atme消息，就添加到AtMeView控件
 	* @param[in] msg 消息
@@ -648,7 +650,7 @@ private:
 	* @param[in] uid 被选择的用户id
 	* @return void	无返回值
 	*/
-	void OnSelectAtItemCallback(const std::string& uid, bool is_robot);
+	void OnSelectAtItemCallback(const std::string& uid);
 
 	/**
 	* 获取最近发消息的5个人（不包括自己）,最新发言的在列表最前
@@ -897,15 +899,6 @@ private:
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 
 	/**
-	* 响应机器人信息改变的回调函数
-	* @param[in] rescode 错误码
-	* @param[in] type 类型
-	* @param[in] robots 机器人列表
-	* @return void 无返回值
-	*/
-	void OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots);
-
-	/**
 	* 会话框中某人的头像下载完成的回调函数
 	* @param[in] accid 头像下载完成的用户id
 	* @param[in] photo_path 头像本地路径
@@ -970,7 +963,21 @@ public:
 	*/
 	bool IsTeamValid() { return is_team_valid_; };
 	
+	/**
+	 * 更新未读消息数量
+	 * @param[in] msg_id 消息 id
+	 * @param[in] unread 未读数
+	 @ @return void	无返回值
+	 */
 	void UpdateUnreadCount(const std::string &msg_id, const int unread);
+
+	/**
+	 * 更新禁言状态
+	 * @param[in] mute_type 禁言状态
+	 * @return void 无返回值
+	 */
+	void ShowEditControls();
+
 private:
 	/** 
 	* 有群成员增加的回调函数
@@ -1088,7 +1095,7 @@ private:
 	* @param[in] team_mute 设置/取消 群成员全员禁言状态
 	* @return void 无返回值
 	*/
-	void SetTeamMemberMute(const std::string& tid, const std::string& uid, bool set_mute, bool team_mute);
+	void SetTeamMemberMute(const std::string& tid, const std::string& uid, bool set_mute);
 
 	/**
 	* 更新群公告
@@ -1179,6 +1186,7 @@ private:
 	ui::Label*		label_member_;
 	ui::Button*		btn_refresh_member_;
 	ui::ListBox*	member_list_;
+	ui::VBox*		bottom_panel_;
 	std::map<std::string, nim::TeamMemberProperty> team_member_info_list_;
 	bool			mute_all_;
 private:
@@ -1204,8 +1212,6 @@ private:
 private:
 	ISessionDock*	session_form_;
 	std::string		session_id_;
-	bool			is_robot_session_ = false;
-	nim::RobotInfo	robot_info_;
 	nim::NIMSessionType session_type_;
 	nim::TeamInfo	team_info_;
 	bool			is_team_valid_;

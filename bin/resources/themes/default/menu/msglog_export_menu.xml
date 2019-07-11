@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<VListBox class="menu">
+		<MenuElement class="MenuElement" name="export_to_local" width="120">
+			<Label class="menu_text" width="stretch" text="导出到本地" mouse="false"/>
+		</MenuElement>
+		<MenuElement class="MenuElement" name="export_to_remote" width="120">
+			<Label class="menu_text" width="stretch" text="导出到云端" mouse="false"/>
+		</MenuElement>
+	</VListBox>
+</Window>

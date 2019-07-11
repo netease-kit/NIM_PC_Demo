@@ -25,7 +25,9 @@ class BrowserHandler :
 	public CefJSDialogHandler,
 	public CefKeyboardHandler,	
 	public CefLoadHandler,
-	public CefRequestHandler
+	public CefRequestHandler,
+	public CefDownloadHandler,
+	public CefDialogHandler
 {
 public:
 	BrowserHandler();
@@ -52,8 +54,6 @@ public:
 		virtual void OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect& rect) = 0;
 
 		virtual void UpdateWindowPos() = 0;
-
-		virtual void UpdateUI() = 0;
 
 		// 在非UI线程中被调用
 		virtual void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model) = 0;
@@ -111,9 +111,29 @@ public:
 
 		virtual void OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser, TerminationStatus status) = 0;
 
-		/**
-		 * 封装一些 JS 与 C++ 交互的功能
-		 */
+		// 文件下载相关
+		virtual void OnBeforeDownload(
+			CefRefPtr<CefBrowser> browser,
+			CefRefPtr<CefDownloadItem> download_item,
+			const CefString& suggested_name,
+			CefRefPtr<CefBeforeDownloadCallback> callback) = 0;
+
+		virtual void OnDownloadUpdated(
+			CefRefPtr<CefBrowser> browser,
+			CefRefPtr<CefDownloadItem> download_item,
+			CefRefPtr<CefDownloadItemCallback> callback) = 0;
+
+		// 打开文件 Dialog
+		virtual bool OnFileDialog(
+			CefRefPtr<CefBrowser> browser,
+			FileDialogMode mode,
+			const CefString& title,
+			const CefString& default_file_path,
+			const std::vector<CefString>& accept_filters,
+			int selected_accept_filter,
+			CefRefPtr<CefFileDialogCallback> callback) = 0;
+
+		// 封装一些 JS 与 C++ 交互的功能
 		virtual bool OnExecuteCppFunc(const CefString& function_name, const CefString& params, int js_callback_id, CefRefPtr<CefBrowser> browser) = 0;
 
 		virtual bool OnExecuteCppCallbackFunc(int cpp_callback_id, const CefString& json_string) = 0;
@@ -138,15 +158,13 @@ public:
 
 	CefRefPtr<CefBrowserHost> GetBrowserHost();
 
-	CefRefPtr<CefClient> GetBrowserClient(){ return browser_client_; }
 	// 添加一个任务到队列中，当Browser对象创建成功后，会依次触发任务
 	// 比如创建Browser后调用LoadUrl加载网页，但是这时Browser很可能还没有创建成功，就把LoadUrl任务添加到队列
 	 UnregisterCallback AddAfterCreateTask(const StdClosure& cb);
 
+	 void CloseAllBrowser();
 public:
-
-	void CloseAllBrowser();
-
+	
 	// CefClient methods. Important to return |this| for the handler callbacks.
 	virtual CefRefPtr<CefContextMenuHandler> GetContextMenuHandler() OVERRIDE {	return this; }
 	virtual CefRefPtr<CefRenderHandler>  GetRenderHandler() OVERRIDE { return this; }
@@ -158,6 +176,8 @@ public:
 	virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() OVERRIDE{ return this; }
 	virtual CefRefPtr<CefLoadHandler> GetLoadHandler() OVERRIDE{ return this; }
 	virtual CefRefPtr<CefRequestHandler> GetRequestHandler() OVERRIDE{ return this; }
+	virtual CefRefPtr<CefDownloadHandler> GetDownloadHandler() OVERRIDE { return this; }
+	virtual CefRefPtr<CefDialogHandler> GetDialogHandler() OVERRIDE { return this; }
 	virtual bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)	OVERRIDE;
 
 	// CefLifeSpanHandler methods
@@ -266,8 +286,28 @@ public:
 	void OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser,
 		TerminationStatus status) OVERRIDE;
 
+	// CefDownloadHandler methods
+	virtual void OnBeforeDownload(
+		CefRefPtr<CefBrowser> browser,
+		CefRefPtr<CefDownloadItem> download_item,
+		const CefString& suggested_name,
+		CefRefPtr<CefBeforeDownloadCallback> callback) OVERRIDE;
+
+	virtual void OnDownloadUpdated(
+		CefRefPtr<CefBrowser> browser,
+		CefRefPtr<CefDownloadItem> download_item,
+		CefRefPtr<CefDownloadItemCallback> callback) OVERRIDE;
+
+	// CefDialogHandler methods
+	virtual bool OnFileDialog(CefRefPtr<CefBrowser> browser,
+		FileDialogMode mode,
+		const CefString& title,
+		const CefString& default_file_path,
+		const std::vector<CefString>& accept_filters,
+		int selected_accept_filter,
+		CefRefPtr<CefFileDialogCallback> callback) OVERRIDE;
+
 protected:
-	CefRefPtr<CefClient>	browser_client_;
 	CefRefPtr<CefBrowser>	browser_;
 	std::vector<CefRefPtr<CefBrowser>> browser_list_;
 	HWND					hwnd_;
@@ -276,6 +316,7 @@ protected:
 	std::string				paint_buffer_;
 	bool					is_focus_oneditable_field_;
 	UnregistedCallbackList<StdClosure>	task_list_after_created_;
+
 	IMPLEMENT_REFCOUNTING(BrowserHandler);
 };
 }

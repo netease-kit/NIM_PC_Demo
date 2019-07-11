@@ -3,6 +3,7 @@
 
 #include <memory>
 #include <mutex>
+#include "../util/at_exit.h"
 namespace nbase
 {
 //饿汉模式
@@ -17,7 +18,8 @@ TypeName(const TypeName&) = delete;				\
 TypeName& operator=(const TypeName&) = delete
 
 // 懒汉模式
-template <typename TSingleton>
+//release_atexitmanager 是否由atexitmanager来释放
+template <typename TSingleton,bool release_atexitmanager = true>
 class Singleton
 {
 	//如果TSingleton的构造函数是private/protected需要在类定义时引入此宏,如下所示
@@ -51,6 +53,13 @@ public:
 		static std::once_flag oc;
 		std::call_once(oc, [&] {
 			instance = std::make_unique<TSingleton>();
+			if (release_atexitmanager)
+			{
+				AtExitManager::RegisterCallback([&](void*) {
+					instance.reset(nullptr);
+					oc._Flag = 0;
+				}, nullptr);
+			}
 		});
 		return instance;
 	}

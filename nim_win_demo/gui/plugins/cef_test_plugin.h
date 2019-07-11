@@ -2,7 +2,7 @@
 #include "module/plugins/main_plugins_base.h"
 #include "gui/cef/cef_example.h"
 
-class CefTestPlugin : public nim_comp::MainPluginBase<>
+class CefTestPlugin : public nim_comp::MainPluginBase<nim_comp::IMainPlugin::PluginType::PluginType_Main>
 {
 public:
 	CefTestPlugin() = default;

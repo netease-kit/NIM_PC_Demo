@@ -2,8 +2,10 @@
 #include "shared/util.h"
 #include <DbgHelp.h>
 #include "util/user.h"
+#include "module/runtime_data/runtime_data_manager.h"
 
 bool g_need_restart_after_dump = false;
+#define APPDATA_DIR L"Netease"
 
 BOOL CALLBACK MyMiniDumpCallback(PVOID, const PMINIDUMP_CALLBACK_INPUT input, PMINIDUMP_CALLBACK_OUTPUT output)
 {
@@ -60,7 +62,21 @@ LONG WINAPI MyUnhandledExceptionFilter(EXCEPTION_POINTERS* exp)
 	nbase::Time::TimeStruct qt = nbase::Time::Now().ToTimeStruct(true);
 	std::wstring file = nbase::StringPrintf(L"%04d%02d%02d_%02d%02d%02d.dmp", 
 		qt.year_, qt.month_, qt.day_of_month_, qt.hour_, qt.minute_, qt.second_);
-	std::wstring dir = QPath::GetUserAppDataDir("");
+
+    std::wstring dir;
+    if (nim_comp::RunTimeDataManager::GetInstance()->IsSDKInited())
+    {
+		dir = QPath::GetUserAppDataDir("");
+    }
+    else
+    {
+#ifdef DEBUG
+        dir = nbase::win32::GetLocalAppDataDir() + APPDATA_DIR L"\\NIM_DEBUG\\";
+#else
+        dir = nbase::win32::GetLocalAppDataDir() + APPDATA_DIR L"\\NIM\\";
+#endif
+    }
+
 	dir.append(file);
 
 	WriteDump(exp, dir);

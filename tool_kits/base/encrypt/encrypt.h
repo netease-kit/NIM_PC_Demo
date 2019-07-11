@@ -28,6 +28,8 @@ enum EncryptMethod
     ENC_AES256        =     16,
     ENC_DES64         =     17,
 	ENC_DES128        =     18,    // TODO
+	ENC_AES128_CBC = 19,
+	ENC_AES256_CBC = 20,
 
     //    hash
     ENC_MD2           =     100,
@@ -52,6 +54,10 @@ class EncryptMethodInterface
 public:
 	virtual bool SetEncryptKey(const std::string &key) = 0;
 	virtual bool SetDecryptKey(const std::string &key) = 0;
+	virtual bool SetEncryptIvParameterSpec(const std::string &iv) = 0;
+	virtual bool SetDecryptIvParameterSpec(const std::string &iv) = 0;
+	virtual bool EnableEncryptPadding(bool enable,int value) = 0;
+	virtual bool EnableDecryptPadding(bool enable, int value) = 0;
 	virtual nbase::EncryptMethod Type() const = 0;
 	virtual bool Encrypt(std::string &data) = 0;
 	virtual bool Decrypt(std::string &data) = 0;

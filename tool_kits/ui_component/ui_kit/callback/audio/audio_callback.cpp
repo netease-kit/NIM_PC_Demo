@@ -90,8 +90,9 @@ void AudioCallback::OnCancelCaptureCallback(int code)
 
 void AudioCallback::OnEnumCaptureDeviceCallback(int rescode, const wchar_t* device_list)
 {
-	QLOG_PRO(L"OnEnumCaptureDeviceCallback: code={0}") << rescode;
-	Post2UI(nbase::Bind(&AudioManager::OnEnumCaptureDeviceCallback, AudioManager::GetInstance(), rescode, device_list));
+    std::wstring devices = device_list;
+    QLOG_PRO(L"OnEnumCaptureDeviceCallback: code={0}") << rescode;
+	Post2UI(std::bind(&AudioManager::OnEnumCaptureDeviceCallback, AudioManager::GetInstance(), rescode, devices));
 }
 
 }

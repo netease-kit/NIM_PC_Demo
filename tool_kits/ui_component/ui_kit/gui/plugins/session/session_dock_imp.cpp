@@ -2,7 +2,6 @@
 #include "session_plugin_page.h"
 #include "gui/session/session_box.h"
 #include "export\nim_ui_session_list_manager.h"
-#include "api\nim_cpp_session.h"
 using namespace nim_comp;
 HWND SessionPluginPage::Create()
 {
@@ -108,7 +107,8 @@ void SessionPluginPage::SetActiveSessionBox(const std::string &session_id)
 	{
 		active_session_box_ = box;
 		GetPlugin()->Selected(true, true);
-		session_box_tab_->SelectItem(box); bool handle = false;
+		session_box_tab_->SelectItem(box);
+        BOOL handle = false;
 		box->HandleMessage(WM_ACTIVATE, WA_ACTIVE, 0, handle);
 		Post2UI(box->ToWeakCallback([session_id, box](){
 			if (nim_ui::SessionListManager::GetInstance()->CheckSessionItem(session_id))
@@ -122,7 +122,7 @@ bool SessionPluginPage::IsActiveSessionBox(const SessionBox *session_box)
 {
 	if (session_box == nullptr)
 		return false;
-	return session_box_tab_->GetCurSel() == session_box_tab_->GetItemIndex((ui::Control*)session_box);
+	return GetPlugin()->IsActivePage() && session_box_tab_->GetCurSel() == session_box_tab_->GetItemIndex((ui::Control*)session_box);
 }
 bool SessionPluginPage::IsActiveSessionBox(const std::wstring &session_id)
 {

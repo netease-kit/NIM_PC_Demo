@@ -24,13 +24,6 @@ public:
 	* @return void	无返回值
 	*/
 	virtual void InitUserInfo(const nim::UserNameCard & info) override;
-
-	/**
-	* 初始化机器人信息，只能使用一次，否则会多次注册回调
-	* @param[in] info 机器人信息
-	* @return void	无返回值
-	*/
-	virtual void InitRobotInfo(const nim::RobotInfo & info) override;
 	/**
 	* 获取所展示名片信息
 	* @return UserNameCard	名片信息
@@ -253,15 +246,6 @@ private:
 	* @return void 无返回值
 	*/
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
-
-	/**
-	* 响应机器人信息改变的回调函数
-	* @param[in] rescode 错误码
-	* @param[in] type 类型
-	* @param[in] robots 机器人列表
-	* @return void 无返回值
-	*/
-	void OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots);
 
 	/**
 	* 响应用户头像改变的回调函数

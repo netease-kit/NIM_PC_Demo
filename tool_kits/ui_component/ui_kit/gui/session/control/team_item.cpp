@@ -66,11 +66,11 @@ namespace nim_comp
 		}
 	}
 
-	void TeamItem::SetMute(bool mute, bool team_mute/* = false*/)
+	void TeamItem::SetMute(bool mute)
 	{
 		is_mute_ = mute;
 		icon_mute_->SetBkImage(L"..\\public\\icon\\mute.png");
-		icon_mute_->SetVisible(team_mute || mute);
+		icon_mute_->SetVisible(mute);
 	}
 
 	void TeamItem::SetOwner(bool is_owner)

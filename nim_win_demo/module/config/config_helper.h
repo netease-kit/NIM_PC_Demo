@@ -51,6 +51,30 @@ public:
 	* @return void 无返回值
 	*/
 	void SetUIStyle(int style_id);
+	/**
+* 是否使用私有化配置
+* @param[in] url 私有化配置地址
+* @return bool 
+*/
+	bool UsePrivateSettings(std::string& url) const;
+	/**
+* 是否使用私有化配置
+* @return bool
+*/
+	bool UsePrivateSettings() const;
+	/**
+	* 设置是否使用私有化配置
+	* @param[in] use 
+	* @param[in] url  私有化配置地址
+	* @return void 无返回值
+	*/
+	void UsePrivateSettings(bool use,const std::string& url);
+	/**
+	* 设置是否使用私有化配置
+	* @param[in] use
+	* @return void 无返回值
+	*/
+	void UsePrivateSettings(bool use);
 private:
 	/**
 	* 读取配置信息
@@ -62,4 +86,6 @@ private:
 	bool adapt_dpi_;
 	std::string language_;
 	int uistyle_id_;
+	bool private_settings_enable_;
+	std::string private_settings_url_;
 };

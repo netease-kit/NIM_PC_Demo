@@ -1,6 +1,7 @@
 #include "chatroom_form.h"
 #include "chatroom_frontpage.h"
-#include "nim_chatroom_helper.h"
+#include "shared/cpp_wrapper_util.h"
+#include "src/cpp_sdk/nim_chatroom/helper/nim_chatroom_helper.h"
 #include "module/session/session_util.h"
 #include "gui/login/login_form.h"
 #include "module/service/user_service.h"
@@ -37,7 +38,6 @@ void ChatroomForm::SetAnonymity(bool anonymity)
 		FindControl(L"logout")->SetVisible(false);
 		auto form = (ChatroomFrontpage*)nim_comp::WindowsManager::GetInstance()->GetWindow(ChatroomFrontpage::kClassName, ChatroomFrontpage::kClassName);
 		form->SetAnonymity(true);
-		nim_comp::UserService::GetInstance()->InitChatroomRobotInfos(room_id_);
 	}
 	else
 	{
@@ -199,7 +199,6 @@ void ChatroomForm::OnEnterCallback(int error_code, const ChatRoomInfo& info, con
 	{
 		ui::Box* kicked_tip_box = (ui::Box*)this->FindControl(L"kicked_tip_box");
 		kicked_tip_box->SetVisible(false);
-		InitRobots();
 	}
 
 	if (info.id_ == 0)
@@ -222,6 +221,8 @@ void ChatroomForm::OnEnterCallback(int error_code, const ChatRoomInfo& info, con
 
 	};
 	Post2UI(task);
+
+	GetHistorys();
 
 	OnGetChatRoomInfoCallback(room_id_, error_code, info);
 	GetMembers();
@@ -416,7 +417,6 @@ void ChatroomForm::OnRegLinkConditionCallback(__int64 room_id, const NIMChatRoom
 	}
 	else if (condition == kNIMChatRoomLinkConditionDead)
 	{
-		msg_list_->SetText(L"");
 		input_edit_->SetText(L"");
 	}
 }
@@ -497,6 +497,12 @@ void ChatroomForm::OnTempMuteCallback(__int64 room_id, int error_code, const Cha
 			std::wstring tip = nbase::StringPrintf(L"TempMute, error:%d", error_code);
 			nim_ui::ShowToast(tip, 5000);
 			return;
+		}
+
+		auto iter = members_map_.find(info.account_id_);
+		if (iter == members_map_.end())
+		{
+			members_map_[info.account_id_] = info;
 		}
 
 		SetMemberTempMute(info.account_id_, info.temp_muted_, info.temp_muted_ ? info.temp_muted_duration_ : 0);
@@ -596,15 +602,10 @@ void ChatroomForm::GetMsgHistoryCallback(__int64 room_id, int error_code, const 
 
 	StdClosure cb = [=](){
 		is_loading_history_ = false;
-		bool record_time = false;
-		for (auto it = msgs.rbegin(); it != msgs.rend(); it++)
+		for (auto it = msgs.begin(); it != msgs.end(); it++)
 		{
-			AddMsgItem(*it, true, !record_time);
-			if (!record_time)
-			{
-				time_start_history_ = it->timetag_ - 1;
-				record_time = true;
-			}
+			AddMsgItem(*it, true, false);
+			time_start_history_ = it->timetag_ - 1;
 			if (time_start_history_ < 0)
 				time_start_history_ = 0;
 		}
@@ -661,7 +662,7 @@ void ChatroomForm::AddMsgItem(const ChatRoomMessage& result, bool is_history, bo
 		if (reader.parse(result.msg_attach_, json))
 		{
 			ChatRoomNotification notification;
-			notification.ParseFromJsonValue(json);
+			notification.ParseFromJsonValue(shared::tools::JsonValueToNimCppWrapperJsonValue(json));
 			AddNotifyItem(notification, is_history, first_msg_each_batch);
 		}
 	}
@@ -675,12 +676,10 @@ void ChatroomForm::AddMsgItem(const ChatRoomMessage& result, bool is_history, bo
 			if (sub_type == nim_comp::CustomMsgType_Jsb && json["data"].isObject())
 			{
 				int value = json["data"]["value"].asInt();
-				AddJsb(value, nbase::UTF8ToUTF16(result.from_nick_), is_history, first_msg_each_batch);
+				AddJsb(value, nbase::UTF8ToUTF16(result.from_nick_), result.from_id_, is_history, first_msg_each_batch);
 			}
 		}
 	}
-	else if (result.msg_type_ == kNIMChatRoomMsgTypeRobot)
-		AddRobotMsg(result, is_history, first_msg_each_batch);
 
 	if (!result.from_nick_.empty())
 		nick_account_map_[result.from_nick_] = result.from_id_;
@@ -691,9 +690,6 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 	MutiLanSupport* mls = MutiLanSupport::GetInstance();
 	std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
 
-	bool first_msg = msg_list_->GetTextLength() == 0;
-	if (first_msg)
-		msg_list_->ReplaceSel(L"\r\n", false);
 	auto it_nick = notification.target_nick_.cbegin();
 	auto it_id = notification.target_ids_.cbegin();
 	for (;	it_nick != notification.target_nick_.cend(), it_id != notification.target_ids_.cend();
@@ -796,16 +792,12 @@ void ChatroomForm::AddNotifyItem(const ChatRoomNotification& notification, bool 
 		std::string toast = nbase::StringPrintf("notification_id:%d, from_nick:%s(%s), notify_ext:%s", notification.id_, notification.operator_nick_.c_str(), notification.operator_id_.c_str(), notification.ext_.c_str());
 		nim_ui::ShowToast(nbase::UTF8ToUTF16(toast), 5000, this->GetHWND());
 	}
-
-	if (first_msg)
-		msg_list_->SetSel(0, 0);
 }
 
 void ChatroomForm::OnBtnSend()
 {
 	if (!nim_ui::LoginManager::GetInstance()->IsLinkActive())
 	{
-		msg_list_->SetText(L"");
 		return;
 	}
 
@@ -846,142 +838,6 @@ void ChatroomForm::OnBtnSend()
 			}
 		}
 	}
-}
-
-void ChatroomForm::AddText(const std::wstring &text, const std::wstring &sender_name, const std::string &sender_id, SenderType sender_type, bool is_history, bool first_msg_each_batch/* = false*/)
-{
-	if (text.empty()) return;
-	long old_begin = 0, old_end = 0;
-	if (msg_list_->GetTextLength() > 0)
-	{
-		if (is_history)
-		{
-			if (first_msg_each_batch)
-				msg_list_->SetSel(0, 0);
-			else
-				msg_list_->GetSel(old_begin, old_end);
-			msg_list_->ReplaceSel(ROOMMSG_R_N, false);
-		}
-		else
-		{
-			msg_list_->SetSel(-1, -1);
-			msg_list_->ReplaceSel(ROOMMSG_R_N, false);
-		}
-	}
-
-	long lSelBegin = 0, lSelEnd = 0;
-
-	CHARFORMAT2 cf;
-	msg_list_->GetDefaultCharFormat(cf); //获取消息字体
-	cf.dwMask = CFM_LINK | CFM_FACE | CFM_COLOR;
-	cf.dwEffects = CFE_LINK;
-
-	// 添加发言人，并设置他的颜色
-	lSelEnd = lSelBegin = is_history ? old_end + 1 : msg_list_->GetTextLength();
-	msg_list_->SetSel(lSelEnd, lSelEnd);
-	msg_list_->ReplaceSel(sender_name, false);
-
-	lSelEnd = is_history ? lSelEnd + sender_name.length() : msg_list_->GetTextLength();
-	msg_list_->ReplaceSel(L" ", false);
-	msg_list_->SetSel(lSelBegin, lSelEnd);
-	msg_list_->SetSelectionCharFormat(cf);
-	lSelEnd++;
-
-	if (sender_type == kRobot)
-	{
-		Json::Value values;
-		values["type"] = kRobot;
-		values["id"] = sender_id;
-		values["name"] = nbase::UTF16ToUTF8(sender_name);
-		msg_list_sender_name_link_[sender_name] = values;
-	}
-
-	// 设置文本的缩进
-	PARAFORMAT2 pf;
-	ZeroMemory(&pf, sizeof(PARAFORMAT2));
-	pf.cbSize = sizeof(pf);
-	pf.dwMask = PFM_STARTINDENT | PFM_LINESPACING;
-	LONG lineSpace = (LONG)(1.2 * 20);//设置1.2行间距
-	pf.dxStartIndent = 0;
-	pf.bLineSpacingRule = 5;
-	pf.dyLineSpacing = lineSpace;
-	msg_list_->SetParaFormat(pf);
-	msg_list_->SetSel(lSelEnd, lSelEnd);
-	msg_list_->ReplaceSel(ROOMMSG_R_N, false);
-	lSelEnd++;
-
-	// 添加正文，并设置他的颜色	
-	msg_list_->SetSel(lSelEnd, lSelEnd);
-	nim_comp::InsertTextToEdit(msg_list_, text);
-	//设置文本字体
-	msg_list_->GetDefaultCharFormat(cf); //获取消息字体
-	long lSelBegin2 = 0, lSelEnd2 = 0;
-	msg_list_->GetSel(lSelBegin2, lSelEnd2);
-	msg_list_->SetSel(lSelEnd, lSelEnd2);
-	msg_list_->SetSelectionCharFormat(cf);
-
-	// 设置正文文本的缩进
-	msg_list_->SetSel(lSelEnd, lSelEnd);
-	pf.dxStartIndent = 150;
-	msg_list_->SetParaFormat(pf);
-
-	if (!is_history)
-		msg_list_->EndDown();
-
-	msg_list_->SetSel(lSelEnd2, lSelEnd2);
-	input_edit_->SetFocus();
-}
-
-void ChatroomForm::AddNotify(const std::wstring &notify, bool is_history, bool first_msg_each_batch/* = false*/)
-{
-	if (notify.empty()) return;
-	long old_begin = 0, old_end = 0;
-	// 
-	if (msg_list_->GetTextLength() != 0)
-	{
-		if (is_history)
-		{
-			if (first_msg_each_batch)
-				msg_list_->SetSel(0, 0);
-			else
-				msg_list_->GetSel(old_begin, old_end);
-			msg_list_->ReplaceSel(ROOMMSG_R_N, false);
-		}
-		else
-		{
-			msg_list_->SetSel(-1, -1);
-			msg_list_->ReplaceSel(ROOMMSG_R_N, false);
-		}
-	}
-
-	//
-	long lSelBegin = 0, lSelEnd = 0;
-	CHARFORMAT2 cf;
-	msg_list_->GetDefaultCharFormat(cf); //获取消息字体
-	cf.dwMask |= CFM_COLOR;
-	cf.crTextColor = RGB(255, 0, 0);
-
-	// 添加通知消息，并设置他的颜色
-	lSelEnd = lSelBegin = is_history ? old_end + 1 : msg_list_->GetTextLength();
-	msg_list_->SetSel(lSelEnd, lSelEnd);
-	msg_list_->ReplaceSel(notify, false);
-
-	lSelEnd = is_history ? lSelBegin + notify.length() : msg_list_->GetTextLength();
-	msg_list_->SetSel(lSelBegin, lSelEnd);
-	msg_list_->SetSelectionCharFormat(cf);
-
-	// 设置正文文本的缩进
-	msg_list_->SetSel(lSelEnd, lSelEnd);
-	PARAFORMAT2 pf;
-	ZeroMemory(&pf, sizeof(PARAFORMAT2));
-	pf.cbSize = sizeof(pf);
-	pf.dwMask = PFM_STARTINDENT;
-	pf.dxStartIndent = 150;
-	msg_list_->SetParaFormat(pf);
-
-	if (!is_history)
-		msg_list_->EndDown();
-
 }
 
 void ChatroomForm::SendText(const std::string &text)
@@ -1045,7 +901,6 @@ void ChatroomForm::OnBtnJsb()
 {
 	if (!nim_ui::LoginManager::GetInstance()->IsLinkActive())
 	{
-		msg_list_->SetText(L"");
 		return;
 	}
 
@@ -1061,101 +916,8 @@ void ChatroomForm::OnBtnJsb()
 
 		SendJsb(writer.write(json));
 		std::wstring my_name = nim_ui::UserManager::GetInstance()->GetUserName(nim_ui::LoginManager::GetInstance()->GetAccount(), false);
-		AddJsb(jsb, my_name, false);
+		AddJsb(jsb, my_name, nim_ui::LoginManager::GetInstance()->GetAccount(), false);
 	}
-}
-
-void ChatroomForm::AddJsb(const int value, const std::wstring &sender_name, bool is_history, bool first_msg_each_batch/* = false*/)
-{
-	std::wstring file_name;
-	if (value == 1)
-		file_name = L"../session/jsb_s.png";
-	else if (value == 2)
-		file_name = L"../session/jsb_j.png";
-	else if (value == 3)
-		file_name = L"../session/jsb_b.png";
-
-	if (file_name.empty()) return;
-
-	long old_begin = 0, old_end = 0;
-
-	// 
-	if (msg_list_->GetTextLength() != 0)
-	{
-		if (is_history)
-		{
-			if (first_msg_each_batch)
-				msg_list_->SetSel(0, 0);
-			else
-				msg_list_->GetSel(old_begin, old_end);
-			msg_list_->ReplaceSel(ROOMMSG_R_N, false);
-		}
-		else
-		{
-			msg_list_->SetSel(-1, -1);
-			msg_list_->ReplaceSel(ROOMMSG_R_N, false);
-		}
-	}
-
-	//
-	long lSelBegin = 0, lSelEnd = 0;
-	CHARFORMAT2 cf;
-	msg_list_->GetDefaultCharFormat(cf); //获取消息字体
-	cf.dwMask = CFM_LINK | CFM_FACE | CFM_COLOR;
-	cf.dwEffects = CFE_LINK;
-
-	// 添加发言人，并设置他的颜色
-	lSelEnd = lSelBegin = is_history ? old_end + 1 : msg_list_->GetTextLength();
-	msg_list_->SetSel(lSelEnd, lSelEnd);
-	msg_list_->ReplaceSel(sender_name, false);
-
-	lSelEnd = is_history ? lSelBegin + sender_name.length() : msg_list_->GetTextLength();
-	msg_list_->ReplaceSel(L" ", false);
-	msg_list_->SetSel(lSelBegin, lSelEnd);
-	msg_list_->SetSelectionCharFormat(cf);
-	lSelEnd++;
-
-	// 设置文本的缩进
-	PARAFORMAT2 pf;
-	ZeroMemory(&pf, sizeof(PARAFORMAT2));
-	pf.cbSize = sizeof(pf);
-	pf.dwMask = PFM_STARTINDENT | PFM_LINESPACING;
-	LONG lineSpace = (LONG)(1.2 * 20);//设置1.2行间距
-	pf.dxStartIndent = 0;
-	pf.bLineSpacingRule = 5;
-	pf.dyLineSpacing = lineSpace;
-	msg_list_->SetParaFormat(pf);
-	msg_list_->SetSel(lSelEnd, lSelEnd);
-	msg_list_->ReplaceSel(ROOMMSG_R_N, false);
-	lSelEnd++;
-	// 添加正文，并设置他的颜色	
-	msg_list_->SetSel(lSelEnd, lSelEnd);
-	std::wstring file = QPath::GetAppPath();
-	file.append(L"themes\\default\\session\\" + file_name);
-	if (nbase::FilePathIsExist(file, false))
-	{
-		ITextServices* service = msg_list_->GetTextServices();
-		if (!nim_comp::Re_InsertJsb(service, file, file_name))
-		{
-			QLOG_ERR(L"insert jsb {0} fail") << file;
-		}
-		service->Release();
-	}
-	else
-	{
-		QLOG_ERR(L"jsb {0} miss") << file;
-	}
-
-	// 设置正文文本的缩进
-	msg_list_->SetSel(lSelEnd, lSelEnd);
-	pf.dxStartIndent = 150;
-	msg_list_->SetParaFormat(pf);
-
-	if (!is_history)
-		msg_list_->EndDown();
-	input_edit_->SetFocus();
-
-	msg_list_->SetSel(lSelEnd + 1, lSelEnd + 1);
 }
 
 void ChatroomForm::SendJsb(const std::string & attach)
@@ -1196,168 +958,5 @@ void ChatroomForm::SendImage(const std::wstring &src)
 			ChatRoom::SendMsg(room_id_, send_msg);
 		}
 	});
-}
-
-void ChatroomForm::SetMemberAdmin(const std::string &id, bool is_admin)
-{
-	if (id == creater_id_)
-		return;
-
-	if (id == nim_ui::LoginManager::GetInstance()->GetAccount())
-		bulletin_->SetReadOnly(!is_admin);
-
-	auto info = members_map_.find(id);
-	if (info == members_map_.end())
-		return;
-
-	auto iter = std::find(managers_list_.begin(), managers_list_.end(), id);
-	if (is_admin)
-	{
-		if (iter != managers_list_.end())
-			return;
-
-		managers_list_.push_back(id);
-
-		auto iter_member = std::find(members_list_.begin(), members_list_.end(), id);
-		if (iter_member != members_list_.end())
-			members_list_.erase(iter_member);
-
-		info->second.type_ = 2;
-		members_map_[id] = info->second;
-	}
-	else
-	{
-		if (iter == managers_list_.end())
-			return;
-
-		members_list_.push_back(id);
-		managers_list_.erase(iter);
-
-		info->second.type_ = 0;
-		members_map_[id] = info->second;
-	}
-
-	// 单击了在线成员列表后会重新刷新成员，所以只有切换到在线成员列表页时，才操作UI
-	if (option_online_members_->IsSelected())
-	{
-		if (NULL != online_members_virtual_list_->FindSubControl(nbase::UTF8ToUTF16(id)))
-			online_members_virtual_list_->Refresh();
-
-// 		ui::ButtonBox* member_item = (ui::ButtonBox*)online_members_list_->FindSubControl(nbase::UTF8ToUTF16(id));
-// 		if (member_item)
-// 		{
-// 			ui::Control* member_type = (ui::Control*)member_item->FindSubControl(L"member_type");
-// 
-// 			if (is_admin)
-// 			{
-// 				member_type->SetBkImage(L"icon_manager.png");
-// 				online_members_list_->SetItemIndex(member_item, 1);
-// 			}
-// 			else
-// 			{
-// 				member_type->SetBkImage(L"");
-// 				online_members_list_->SetItemIndex(member_item, online_members_list_->GetCount() - 1);
-// 			}
-// 		}
-	}
-}
-
-void ChatroomForm::SetMemberBlacklist(const std::string &id, bool is_black)
-{
-	if (id == creater_id_)
-		return;
-
-	auto info = members_map_.find(id);
-	if (info != members_map_.end())
-	{
-		info->second.is_blacklist_ = is_black;
-		members_map_[id] = info->second;
-	}
-}
-
-void ChatroomForm::SetMemberMute(const std::string &id, bool is_mute)
-{
-	if (id == creater_id_)
-		return;
-
-	auto info = members_map_.find(id);
-	if (info != members_map_.end())
-	{
-		info->second.is_muted_ = is_mute;
-		members_map_[id] = info->second;
-	}
-}
-
-void ChatroomForm::SetMemberFixed(const std::string &id, bool is_fixed)
-{
-	if (id == creater_id_)
-		return;
-
-	auto info = members_map_.find(id);
-	if (info != members_map_.end())
-	{
-		info->second.guest_flag_ = is_fixed ? kNIMChatRoomGuestFlagNoGuest : kNIMChatRoomGuestFlagGuest;
-		members_map_[id] = info->second;
-	}
-}
-
-void ChatroomForm::SetMemberTempMute(const std::string &id, bool temp_mute, __int64 duration)
-{
-	auto info = members_map_.find(id);
-	if (info != members_map_.end())
-	{
-		info->second.temp_muted_ = temp_mute;
-		info->second.temp_muted_duration_ = temp_mute ? duration : 0;
-		members_map_[id] = info->second;
-		auto iter = temp_unmute_id_task_map_.find(id);
-		if (iter != temp_unmute_id_task_map_.end())
-		{
-			(*iter).second.Cancel();
-			temp_unmute_id_task_map_.erase(iter);
-		}
-		if (temp_mute)
-		{
-			StdClosure task = nbase::Bind(&ChatroomForm::SetMemberTempMute, this, id, false, 0);
-			nbase::WeakCallbackFlag weak_flag;
-			task = weak_flag.ToWeakCallback(task);
-			temp_unmute_id_task_map_[id] = weak_flag;
-			nbase::ThreadManager::PostDelayedTask(task, nbase::TimeDelta::FromSeconds(duration));
-		}
-	}
-}
-
-void ChatroomForm::SetRoomMemberMute(bool mute)
-{
-	if (room_mute_ == mute)
-		return;
-
-	for (auto& it : members_map_)
-	{
-		if (it.second.type_ < 1)
-			SetMemberMute(it.first, mute);
-	}
-}
-
-void ChatroomForm::RemoveMember(const std::string &uid)
-{
-	// 单击了在线成员列表后会重新刷新成员，所以只有切换到在线成员列表页时，才操作UI
-	auto exit_member = members_map_.find(uid);
-	if (exit_member != members_map_.end())
-	{
-		if (!exit_member->second.is_blacklist_ && 
-			(exit_member->second.type_ == 0 || exit_member->second.type_ == 4))
-		{
-			members_map_.erase(exit_member);
-
-			if (option_online_members_->IsSelected())
-			{
-				auto iter_member = std::find(members_list_.begin(), members_list_.end(), uid);
-				if (iter_member != members_list_.end())
-					members_list_.erase(iter_member);
-
-				online_members_virtual_list_->Refresh();
-			}
-		}
-	}
 }
 }

@@ -14,16 +14,16 @@ class Control;
 
 enum HorAlignType
 {
-	kHorAlignLeft,
-	kHorAlignCenter,
-	kHorAlignRight,
+	kHorAlignLeft,		// 靠左对齐
+	kHorAlignCenter,	// 水平居中
+	kHorAlignRight,		// 靠右对齐
 };
 
 enum VerAlignType
 {
-	kVerAlignTop,
-	kVerAlignCenter,
-	kVerAlignBottom,
+	kVerAlignTop,		// 顶端对齐
+	kVerAlignCenter,	// 垂直居中
+	kVerAlignBottom,	// 底部对齐
 };
 
 enum StateImageType
@@ -37,10 +37,10 @@ enum StateImageType
 // Flags used for controlling the paint
 enum ControlStateType
 {
-	kControlStateNormal,
-	kControlStateHot,
-	kControlStatePushed,
-	kControlStateDisabled
+	kControlStateNormal,	// 普通状态
+	kControlStateHot,		// 焦点状态
+	kControlStatePushed,	// 按下状态
+	kControlStateDisabled	// 禁用状态
 };
 
 enum AnimationType
@@ -58,16 +58,16 @@ enum AnimationType
 
 enum GifStopType
 {
-	kGifStopCurrent = -1,//当前帧
-	kGifStopFirst = 0,//gif 停止时定位到第一帧	
-	kGifStopLast = 0xFFFF,//最后一帧
+	kGifStopCurrent = -1,	// 当前帧
+	kGifStopFirst = 0,		// GIF 停止时定位到第一帧	
+	kGifStopLast = 0xFFFF,	// 最后一帧
 };
 
 enum CursorType
 {
-	kCursorArrow,
-	kCursorHand,
-	kCursorHandIbeam
+	kCursorArrow,		// 箭头
+	kCursorHand,		// 手柄
+	kCursorHandIbeam	// 
 };
 
 //定义所有消息类型
@@ -110,6 +110,12 @@ enum EventType
 	kEventTouchMove,
 	kEventTouchUp,
 	kEventTouchEnd,
+
+	kEventPointBegin,
+	kEventPointDown,
+	kEventPointMove,
+	kEventPointUp,
+	kEventPointEnd,
 
 	kEventSetFocus,
 	kEventKillFocus,
@@ -179,9 +185,9 @@ struct EventArgs
      pSender(nullptr),
 	 dwTimestamp(0),
 	 chKey(0),
-	 wKeyState(0),
 	 wParam(0),
-	 lParam(0)
+	 lParam(0),
+	 pressure(0.0f)
 	{
 		ptMouse.x = ptMouse.y = 0;
 	}
@@ -191,9 +197,9 @@ struct EventArgs
 	DWORD dwTimestamp;
 	POINT ptMouse;
 	TCHAR chKey;
-	WORD wKeyState;
 	WPARAM wParam;
 	LPARAM lParam;
+	FLOAT pressure;
 };
 
 EventType StringToEnum(const std::wstring& messageType);

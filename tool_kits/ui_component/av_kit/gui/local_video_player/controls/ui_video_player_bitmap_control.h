@@ -1,5 +1,5 @@
-﻿#ifndef _UIBITMAPCONTROL_H_
-#define _UIBITMAPCONTROL_H_
+﻿#ifndef _UI_VIDEO_PLAYER_BITMAPCONTROL_H_
+#define _UI_VIDEO_PLAYER_BITMAPCONTROL_H_
 #pragma once
 #ifdef SUPPORTLOCALPLAYER
 #include <map>
@@ -66,4 +66,4 @@ protected:
 
 }
 #endif
-#endif // _UIBITMAPCONTROL_H_
+#endif // _UI_VIDEO_PLAYER_BITMAPCONTROL_H_

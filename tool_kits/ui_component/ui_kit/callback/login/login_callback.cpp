@@ -11,7 +11,7 @@
 #include "cef/cef_module/manager/cef_manager.h"
 #include "util/user.h"
 #include "shared/xml_util.h"
-#include "nim_cpp_client.h"
+#include "module\runtime_data\runtime_data_manager.h"
 
 namespace nim_comp
 {
@@ -224,6 +224,7 @@ void LoginCallback::DoLogout(bool over, nim::NIMLogoutType type)
 
 	WindowsManager::GetInstance()->SetStopRegister(true);
 	WindowsManager::GetInstance()->DestroyAllWindows();
+    VideoManager::GetInstance()->DestroyVideoChatForm();
 
 	if(status == LoginStatus_NONE)
 	{
@@ -265,8 +266,10 @@ void LoginCallback::UILogoutCallback()
 	}
 	else
 	{
-		nim_cef::CefManager::GetInstance()->PostQuitMessage(0);
-		_DoBeforeAppExit();
+        nim_cef::CefManager::GetInstance()->PostQuitMessage(0);
+		auto status = LoginManager::GetInstance()->GetLoginStatus();
+		if(RunTimeDataManager::GetInstance()->IsSDKInited())
+			_DoBeforeAppExit();
 	}
 }
 
@@ -322,6 +325,28 @@ void LoginCallback::OnMultispotLoginCallback(const nim::MultiSpotLoginRes& res)
 void LoginCallback::OnMultispotChange(bool online, const std::list<nim::OtherClientPres>& clients)
 {
 	nim_ui::SessionListManager::GetInstance()->OnMultispotChange(online, clients);
+
+	// 将其他端登录信息同步到事件订阅的缓存中，保证第一次登录时可以看到自己账号其他端的登录信息
+	// 只能保证详细到端的信息，无法详细到网络情况（如 WIFI 或 4G）
+	std::list<nim::EventData> event_list;
+	nim::EventData data;
+	Json::Value values;
+	int i = 0;
+
+	for (auto client : clients)
+	{
+		values["online"][i] = client.client_type_;
+		i++;
+	}
+
+	data.event_type_ = 1;
+	data.readonly_event_time_ = clients.front().login_time_;
+	data.readonly_client_type_ = clients.front().client_type_;
+	data.readonly_publisher_accid_ = clients.front().app_account_;
+	data.readonly_nim_config_ = values.toStyledString();
+
+	event_list.push_back(data);
+	SubscribeEventManager::GetInstance()->OnPushEventCallback(event_list);
 }
 
 void LoginCallback::OnKickoutOtherClientCallback(const nim::KickOtherRes& res)

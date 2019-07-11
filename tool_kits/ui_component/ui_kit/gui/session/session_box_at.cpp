@@ -198,9 +198,6 @@ bool SessionBox::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 	if ((input_edit_ == NULL) || !input_edit_->IsFocused())
 		return false;
 
-	if (is_robot_session_)
-		return false;
-
 	AtlistForm* at_list_form = (AtlistForm*)WindowsManager::GetInstance()->GetWindow(AtlistForm::kClassName, nbase::UTF8ToUTF16(session_id_));
 	if (NULL == at_list_form)
 		return false;
@@ -357,9 +354,6 @@ bool SessionBox::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 
 bool SessionBox::HandleAtMouseWheel(WPARAM wParam, LPARAM lParam)
 {
-	if (is_robot_session_)
-		return false;
-
 	AtlistForm* at_list_form = (AtlistForm*)WindowsManager::GetInstance()->GetWindow(AtlistForm::kClassName, nbase::UTF8ToUTF16(session_id_));
 	if (at_list_form == NULL)
 		return false;
@@ -375,9 +369,6 @@ bool SessionBox::HandleAtMouseWheel(WPARAM wParam, LPARAM lParam)
 
 void SessionBox::HideAtListForm()
 {
-	if (is_robot_session_)
-		return;
-
 	AtlistForm* at_list_form = (AtlistForm*)WindowsManager::GetInstance()->GetWindow(AtlistForm::kClassName, nbase::UTF8ToUTF16(session_id_));
 	if (at_list_form == NULL)
 		return;
@@ -388,7 +379,7 @@ void SessionBox::HideAtListForm()
 	}
 }
 
-void SessionBox::OnSelectAtItemCallback(const std::string& uid, bool is_robot)
+void SessionBox::OnSelectAtItemCallback(const std::string& uid)
 {
 	if (uid.empty())
 		return;
@@ -406,28 +397,20 @@ void SessionBox::OnSelectAtItemCallback(const std::string& uid, bool is_robot)
 			return;
 		
 		std::string show_name;
-		if (!is_robot)
+
+		auto i = team_member_info_list_.find(uid);
+		if (i != team_member_info_list_.end())
 		{
-			auto i = team_member_info_list_.find(uid);
-			if (i != team_member_info_list_.end())
-			{
-				show_name = i->second.GetNick();
-			}
-			if (show_name.empty())
-			{
-				show_name = nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(uid, false));
-			}
+			show_name = i->second.GetNick();
 		}
-		else
+		if (show_name.empty())
 		{
-			nim::RobotInfo info;
-			UserService::GetInstance()->GetRobotInfo(uid, info);
-			show_name = info.GetName();
+			show_name = nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(uid, false));
 		}
 
 		AtSomeone da;
 		da.uid_ = uid;
-		da.is_robot_ = is_robot;
+		da.is_robot_ = false;
 		uid_at_someone_[show_name] = da;
 
 		std::wstring show_text = nbase::UTF8ToUTF16(show_name);

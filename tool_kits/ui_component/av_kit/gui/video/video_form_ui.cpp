@@ -217,10 +217,8 @@ namespace nim_comp
 
 		FreeVideo();
 		FreeAudio();
-		//if (is_start_)
-		{
-			VideoManager::GetInstance()->EndChat(session_id_);
-		}
+
+		VideoManager::GetInstance()->EndChat(session_id_,status_ == STATUS_NO_RESPONSE);
 
 		__super::OnFinalMessage(hWnd);
 	}
@@ -446,11 +444,11 @@ namespace nim_comp
 
 		QLOG_APP(L"EnterEndCallPage {0}:{1}") << why << end_call_tip->GetText();
 
-		if (need_save_close)
-		{
-			auto closure = nbase::Bind(&VideoForm::OnAutoCloseWnd, this);
-			nbase::ThreadManager::PostDelayedTask(kThreadUI, ToWeakCallback(closure), nbase::TimeDelta::FromSeconds(6));
-		}
+        if (need_save_close)
+        {
+            auto closure = nbase::Bind(&VideoForm::OnAutoCloseWnd, this);
+            nbase::ThreadManager::PostDelayedTask(kThreadUI, ToWeakCallback(closure), nbase::TimeDelta::FromSeconds(6));
+        }
 	}
 
 	void VideoForm::BeforeClose()
@@ -473,7 +471,7 @@ namespace nim_comp
 
 	void VideoForm::DirectQuit()
 	{
-		DestroyWindow(this->GetHWND());
+        ::DestroyWindow(this->GetHWND());
 	}
 
 	bool VideoForm::Notify(ui::EventArgs* msg)

@@ -38,9 +38,7 @@ void FriendItem::Init(FriendItemType type, const std::string &accid)
 	}
 	else
 	{
-		nim::RobotInfo info;
-		UserService::GetInstance()->GetRobotInfo(id_, info);
-		nick_name_ = nbase::UTF8ToUTF16(info.GetName());
+		nick_name_ = L"";
 	}
 	contact_->SetText(nick_name_);
 
@@ -48,7 +46,7 @@ void FriendItem::Init(FriendItemType type, const std::string &accid)
 	if (type_ == kFriendItemTypeTeam)
 		head_ctrl->SetBkImage(PhotoService::GetInstance()->GetTeamPhoto(id_, false));
 	else
-		head_ctrl->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(accid, type_ == kFriendItemTypeRobot));
+		head_ctrl->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(accid));
 
 	nick_name_ = nbase::MakeLowerString(nick_name_);
 	nick_name_full_spell_ = nbase::MakeLowerString(PinYinHelper::GetInstance()->ConvertToFullSpell(nick_name_));
@@ -86,7 +84,7 @@ bool FriendItem::Match(const UTF8String& search_key)
 
 void FriendItem::SetOnlineState(const EventDataEx& data)
 {
-	label_online_state_->SetText(OnlineStateEventUtil::GetOnlineState(data.online_client_, data.multi_config_, true));
+	label_online_state_->SetText(OnlineStateEventUtil::GetOnlineState(id_, data, true));
 }
 
 bool FriendItem::OnDbClicked(ui::EventArgs* arg)

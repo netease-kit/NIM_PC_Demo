@@ -32,7 +32,7 @@ bool UnreadItem::InitInfo(const nim::TeamMemberProperty &json)
 {
 	member_ = json;
 	std::string id = json.GetAccountID();
-	btn_head_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(id, false));
+	btn_head_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(id));
 	std::string nick = json.GetNick();
 	if (nick.empty())
 		nick = nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(id));

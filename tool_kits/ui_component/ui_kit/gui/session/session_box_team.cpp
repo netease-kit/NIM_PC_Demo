@@ -72,6 +72,7 @@ void SessionBox::OnGetTeamInfoCallback(const std::string& tid, const nim::TeamIn
 
 	is_header_enable_ = true;
 
+	ShowEditControls();
 	ResetNewBroadButtonVisible();
 }
 
@@ -124,10 +125,7 @@ void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, cons
 
 			item->InitControl();
 			item->InitInfo(tm_info.second);
-			if (mute_all_ && user_type != nim::kNIMTeamUserTypeCreator && user_type != nim::kNIMTeamUserTypeManager)
-				SetTeamMemberMute(tid, uid, tm_info.second.IsMute(), mute_all_);
-			else
-				SetTeamMemberMute(tid, uid, tm_info.second.IsMute(), false);
+			SetTeamMemberMute(tid, uid, tm_info.second.IsMute());
 		}
 		else
 		{
@@ -152,12 +150,6 @@ void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, cons
 
 		if (LoginManager::GetInstance()->IsEqual(tm_info.second.GetAccountID()))
 		{
-			auto user_type = tm_info.second.GetUserType();
-			if (mute_all_ && user_type != nim::kNIMTeamUserTypeCreator && user_type != nim::kNIMTeamUserTypeManager)
-				SetTeamMuteUI(true);
-			else
-				SetTeamMuteUI(tm_info.second.IsMute());
-
 			auto bits = tm_info.second.GetBits();
 			InvokeSetTeamNotificationMode(bits);
 		}
@@ -241,9 +233,9 @@ void SessionBox::OnTeamMemberAdd(const std::string& tid, const nim::TeamMemberPr
 		item->InitInfo(team_member_info);
 		std::string uid = team_member_info.GetAccountID();
 		if (mute_all_ && user_type != nim::kNIMTeamUserTypeCreator && user_type != nim::kNIMTeamUserTypeManager)
-			SetTeamMemberMute(tid, uid, team_member_info.IsMute(), mute_all_);
+			SetTeamMemberMute(tid, uid, team_member_info.IsMute());
 		else
-			SetTeamMemberMute(tid, uid, team_member_info.IsMute(), false);
+			SetTeamMemberMute(tid, uid, team_member_info.IsMute());
 
 		std::wstring str = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MEMBER_NUM_EX").c_str(), member_list_->GetCount());
 		label_member_->SetText(str);
@@ -319,6 +311,8 @@ void SessionBox::OnTeamAdminSet(const std::string& tid, const std::string& uid, 
 			btn_new_broad_->SetVisible(admin);
 			btn_new_broad_->SetEnabled(admin);
 		}
+
+		ShowEditControls();
 	}
 }
 
@@ -326,12 +320,16 @@ void SessionBox::OnTeamMuteMember(const std::string& tid, const std::string& uid
 {
 	if (tid == session_id_)
 	{
-		auto member_info = GetTeamMemberInfo(uid);
-		auto user_type = member_info.GetUserType();
-		if (mute_all_ && user_type != nim::kNIMTeamUserTypeCreator && user_type != nim::kNIMTeamUserTypeManager)
-			SetTeamMemberMute(tid, uid, set_mute, mute_all_);
-		else
-			SetTeamMemberMute(tid, uid, set_mute, false);
+		for (auto& member : team_member_info_list_)
+		{
+			if (member.second.GetAccountID() == uid)
+			{
+				member.second.SetMute(set_mute);
+			}
+		}
+
+		SetTeamMemberMute(tid, uid, set_mute);
+		ShowEditControls();
 	}
 }
 
@@ -376,7 +374,8 @@ void SessionBox::OnTeamOwnerChange(const std::string& tid, const std::string& ui
 			btn_new_broad_->SetVisible(true);
 			btn_new_broad_->SetEnabled(true);
 		}
-			
+
+		ShowEditControls();
 	}
 }
 
@@ -470,17 +469,13 @@ void SessionBox::RefreshMsglistShowname(const std::string& uid)
 	}
 }
 
-void SessionBox::SetTeamMemberMute(const std::string& tid, const std::string& uid, bool set_mute, bool team_mute)
+void SessionBox::SetTeamMemberMute(const std::string& tid, const std::string& uid, bool set_mute)
 {
 	std::wstring wid = nbase::UTF8ToUTF16(uid);
 
 	TeamItem* item = dynamic_cast<TeamItem*>(member_list_->FindSubControl(wid));
 	if (item)
-		item->SetMute(set_mute, team_mute);
-
-//	if (LoginManager::GetInstance()->IsEqual(uid))
-//		SetTeamMuteUI(set_mute);
-
+		item->SetMute(set_mute);
 }
 
 void SessionBox::SetTeamMuteUI(bool mute)
@@ -542,54 +537,40 @@ void SessionBox::HandleEnterTeamEvent()
 {
 	RemoveTip(STT_LEAVE);
 	is_team_valid_ = true;
-
 	is_header_enable_ = true;
-	input_edit_->SetEnabled(true);
-	btn_send_->SetEnabled(true);
-	FindSubControl(L"btn_custom_msg")->SetEnabled(true);
-	FindSubControl(L"btn_msg_record")->SetEnabled(true);
 	ResetNewBroadButtonVisible();
-	
+
+	input_edit_->SetEnabled(true);
+	input_edit_->SetReadOnly(false);
+	bottom_panel_->SetEnabled(true);
 }
 
 void SessionBox::HandleLeaveTeamEvent()
 {
 	AddTip(STT_LEAVE);
 	is_team_valid_ = false;
-
 	is_header_enable_ = false;
 	btn_invite_->SetEnabled(false);
-	input_edit_->SetReadOnly(true);
-	FindSubControl(L"bottom_panel")->SetEnabled(false);
 	btn_new_broad_->SetEnabled(false);
 	btn_refresh_member_->SetEnabled(false);
 
-/*
-	ContactSelectForm *contact_select_form = (ContactSelectForm *)WindowsManager::GetInstance()->GetWindow\
-		(ContactSelectForm::kClassName, nbase::UTF8ToUTF16(session_id_));
-	if (contact_select_form)
-		contact_select_form->Close();
-*/
+	input_edit_->SetEnabled(false);
+	input_edit_->SetReadOnly(true);
+	bottom_panel_->SetEnabled(false);
 }
 
 void SessionBox::HandleDismissTeamEvent()
 {
 	AddTip(STT_DISMISS);
 	is_team_valid_ = false;
-
 	is_header_enable_ = false;
 	btn_invite_->SetEnabled(false);
-	input_edit_->SetReadOnly(true);
-	FindSubControl(L"bottom_panel")->SetEnabled(false);
 	btn_new_broad_->SetEnabled(false);
 	btn_refresh_member_->SetEnabled(false);
 
-/*
-	ContactSelectForm *contact_select_form = (ContactSelectForm *)WindowsManager::GetInstance()->GetWindow\
-		(ContactSelectForm::kClassName, nbase::UTF8ToUTF16(session_id_));
-	if (contact_select_form)
-		contact_select_form->Close();
-*/
+	input_edit_->SetEnabled(false);
+	input_edit_->SetReadOnly(true);
+	bottom_panel_->SetEnabled(false);
 }
 
 void SessionBox::UpdateUnreadCount(const std::string &msg_id, const int unread)
@@ -638,4 +619,26 @@ void SessionBox::SendTeamReceiptIfNeeded(bool auto_detect/* = false*/)
 	if (!new_msgs_need_to_send_mq_.empty())
 		InvokeSetRead(new_msgs_need_to_send_mq_);
 }
+
+void SessionBox::ShowEditControls()
+{
+	nim::NIMTeamUserType member_type = nim::kNIMTeamUserTypeNomal;
+	bool member_is_mute = false;
+	for (const auto& member : team_member_info_list_)
+	{
+		if (member.second.GetAccountID() == LoginManager::GetInstance()->GetAccount())
+		{
+			member_type = member.second.GetUserType();
+			member_is_mute = member.second.IsMute();
+			break;
+		}
+	}
+
+	bool disable_input = mute_all_ && member_type != nim::kNIMTeamUserTypeCreator && member_type != nim::kNIMTeamUserTypeManager;
+	input_edit_->SetEnabled(!(disable_input || member_is_mute));
+	input_edit_->SetReadOnly((disable_input || member_is_mute));
+	bottom_panel_->SetEnabled(!(disable_input || member_is_mute));
+	FindSubControl(L"mute_tips")->SetVisible(mute_all_);
+}
+
 }

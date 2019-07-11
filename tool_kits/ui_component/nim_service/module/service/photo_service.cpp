@@ -5,29 +5,19 @@
 namespace nim_comp
 {
 
-std::wstring PhotoService::GetUserPhoto(const std::string &accid, bool is_robot)
+std::wstring PhotoService::GetUserPhoto(const std::string &accid)
 {
 	std::wstring default_photo = QPath::GetAppPath() + L"res\\faces\\default\\default.png";
 	if (!nbase::FilePathIsExist(default_photo, false))
 		default_photo = L"";
 
 	std::wstring photo_path;
-	if (!is_robot)
-	{
-		nim::UserNameCard info;
-		UserService::GetInstance()->GetUserInfo(accid, info);
-		if (!info.ExistValue(nim::kUserNameCardKeyIconUrl) || info.GetIconUrl().empty())
-			return default_photo;
-		photo_path = GetPhotoDir(kUser) + nbase::UTF8ToUTF16(QString::GetMd5(info.GetIconUrl()));
-	}
-	else
-	{
-		nim::RobotInfo rinfo;
-		UserService::GetInstance()->GetRobotInfo(accid, rinfo);
-		if (rinfo.GetIcon().empty())
-			return default_photo;
-		photo_path = GetPhotoDir(kUser) + nbase::UTF8ToUTF16(QString::GetMd5(rinfo.GetIcon()));
-	}
+
+	nim::UserNameCard info;
+	UserService::GetInstance()->GetUserInfo(accid, info);
+	if (!info.ExistValue(nim::kUserNameCardKeyIconUrl) || info.GetIconUrl().empty())
+		return default_photo;
+	photo_path = GetPhotoDir(kUser) + nbase::UTF8ToUTF16(QString::GetMd5(info.GetIconUrl()));
 
 	// ¼ì²éÍ¼Æ¬ÊÇ·ñ´æÔÚ
 	if (!CheckPhotoOK(photo_path))
@@ -195,7 +185,7 @@ std::wstring PhotoService::GetTeamPhoto(const std::string &tid, bool full_path/*
 {
 	std::wstring default_photo = QPath::GetAppPath();
 	if (full_path)
-		default_photo.append(L"themes\\default\\public\\header\\head_team.png");
+		default_photo.append(L"resources\\themes\\default\\public\\header\\head_team.png");
 	else
 		default_photo = L"../public/header/head_team.png";
 

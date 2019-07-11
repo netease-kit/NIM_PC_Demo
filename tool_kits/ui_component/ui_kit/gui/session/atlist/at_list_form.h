@@ -2,7 +2,7 @@
 #include "util/window_ex.h"
 #include "at_list_item.h"
 
-typedef std::function<void(const std::string& uid, bool is_robot)> OnSelectAtItem;
+typedef std::function<void(const std::string& uid)> OnSelectAtItem;
 
 namespace nim_comp
 {
@@ -44,13 +44,6 @@ public:
 	* @return void 无返回值
 	*/
 	void InitTeamMembers(const std::map<std::string, nim::TeamMemberProperty>& team_member_info_list);
-
-	/**
-	* 为@列表初始化机器人信息
-	* @param[in] infos 机器人信息
-	* @return void 无返回值
-	*/
-	void InitRobotInfos(const nim::RobotInfos &infos);
 
 	/**
 	* 根据关键字去显示或隐藏@列表项
@@ -119,7 +112,7 @@ private:
 	* @param[in] is_last_five 是否为最近发言人
 	* @return AtListItem* 列表项控件
 	*/
-	AtListItem* CreateAtListItem(const std::string& uid, bool is_last_five, bool is_robot);
+	AtListItem* CreateAtListItem(const std::string& uid, bool is_last_five);
 
 	/**
 	* 添加一个列表项控件到列表
@@ -128,7 +121,7 @@ private:
 	* @param[in] is_last_five 是否为最近发言人
 	* @return AtListItem* 列表项控件
 	*/
-	AtListItem* AddListItem(const std::string& uid, int index, bool is_last_five, bool is_robot = false);
+	AtListItem* AddListItem(const std::string& uid, int index, bool is_last_five);
 
 	/**
 	* 移除一个列表项控件
@@ -235,7 +228,6 @@ private:
     std::string	session_id_;
 	nim::NIMSessionType session_type_;
 
-	nim::RobotInfos robots_info_;
 	std::map<std::string, nim::TeamMemberProperty> team_member_info_list_;
 	ui::ListBox				*robot_members_container_ = nullptr;
 	ui::ListBox				*team_members_container_ = nullptr;

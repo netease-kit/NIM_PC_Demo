@@ -3,7 +3,7 @@
 #include "team_plugin_page.h"
 namespace nim_comp
 {
-	class TeamPlugin : public MainPluginBase<MainPluginIcon, TeamPluginPage>
+	class TeamPlugin : public MainPluginBase<IMainPlugin::PluginType::PluginType_Main,MainPluginIcon, TeamPluginPage>
 	{
 	public:
 		TeamPlugin();

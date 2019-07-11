@@ -48,7 +48,6 @@ void AtlistForm::InitWindow()
 	m_pRoot->AttachBubbledEvent(kEventClick, nbase::Bind(&AtlistForm::OnSelectItem, this, std::placeholders::_1));
 
 	team_members_container_ = (ui::ListBox *)FindControl(L"team_list_box");
-	robot_members_container_ = (ui::ListBox *)FindControl(L"robot_list_box");
 
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(nbase::Bind(&AtlistForm::OnUserInfoChange, this, std::placeholders::_1)));
 	unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(nbase::Bind(&AtlistForm::OnFriendInfoChange, this, std::placeholders::_1, std::placeholders::_2)));
@@ -73,46 +72,22 @@ void AtlistForm::InitTeamMembers(const std::map<std::string, nim::TeamMemberProp
 	}
 }
 
-void AtlistForm::InitRobotInfos(const nim::RobotInfos &infos)
+nim_comp::AtListItem* AtlistForm::AddListItem(const std::string& uid, int index, bool is_last_five)
 {
-	if (robot_members_container_->GetCount() > 0)
-		robot_members_container_->RemoveAll();
-
-	for (auto &robot : infos)
-	{
-		AtListItem *robot_member = AddListItem(robot.GetAccid(), -1, false, true);
-		ASSERT(robot_member != NULL);
-	}
-}
-
-AtListItem* AtlistForm::AddListItem(const std::string& uid, int index, bool is_last_five, bool is_robot /*= false*/)
-{
-	AtListItem *item = CreateAtListItem(uid, is_last_five, is_robot);
+	AtListItem *item = CreateAtListItem(uid, is_last_five);
 	if (index == -1)
 	{
-		if (!is_robot)
-			team_members_container_->Add(item);
-		else
-			robot_members_container_->Add(item);
+		team_members_container_->Add(item);
 	} 
 	else
 	{
-		if (!is_robot)
-			team_members_container_->AddAt(item, index);
-		else
-			robot_members_container_->AddAt(item, index);
+		team_members_container_->AddAt(item, index);
 	}
 
-	std::wstring photo = PhotoService::GetInstance()->GetUserPhoto(uid, is_robot);
+	std::wstring photo = PhotoService::GetInstance()->GetUserPhoto(uid);
 	item->SetHeadImage(photo);
 
-	if (is_robot && !robot_members_container_->IsVisible())
-	{
-		int robot_count = robot_members_container_->GetCount();
-		robot_members_container_->SetVisible(robot_count > 0);
-		FindControl(L"robot")->SetVisible(robot_count > 0);
-	}
-	else if (!is_robot && !team_members_container_->IsVisible())
+	if (!team_members_container_->IsVisible())
 	{
 		int member_count = team_members_container_->GetCount();
 		team_members_container_->SetVisible(member_count > 0);
@@ -167,9 +142,9 @@ void AtlistForm::CheckListItemHeadIcon(const std::string& uid, const std::wstrin
 	}
 }
 
-AtListItem *AtlistForm::CreateAtListItem(const std::string& uid, bool is_last_five, bool is_robot)
+nim_comp::AtListItem* AtlistForm::CreateAtListItem(const std::string& uid, bool is_last_five)
 {
-	AtListItem* item = new AtListItem(is_last_five, is_robot);
+	AtListItem* item = new AtListItem(is_last_five);
 	GlobalManager::FillBoxWithCache(item, L"session\\at_list\\at_list_item.xml");
 
 	item->InitControls();
@@ -177,43 +152,33 @@ AtListItem *AtlistForm::CreateAtListItem(const std::string& uid, bool is_last_fi
 	item->SetSessionId(session_id_);
 
 	std::wstring show_name;
-	if (!is_robot)
+
+	std::wstring alias = UserService::GetInstance()->GetFriendAlias(uid);
+	if (!alias.empty())
 	{
-		std::wstring alias = UserService::GetInstance()->GetFriendAlias(uid);
-		if (!alias.empty())
-		{
-			show_name = alias;
-			item->SetAliasName(alias);
-		}
+		show_name = alias;
+		item->SetAliasName(alias);
+	}
 
-		if (session_type_ == nim::kNIMSessionTypeTeam)
-		{
-			std::wstring card_name = GetTeamCardName(uid);
-			if (!card_name.empty())
-			{
-				if (show_name.empty())
-					show_name = card_name;
-				item->SetTeamCardName(card_name);
-			}
-		}
-
-		std::wstring nick = UserService::GetInstance()->GetUserName(uid, false);
-		if (!nick.empty())
+	if (session_type_ == nim::kNIMSessionTypeTeam)
+	{
+		std::wstring card_name = GetTeamCardName(uid);
+		if (!card_name.empty())
 		{
 			if (show_name.empty())
-				show_name = nick;
-			item->SetNickName(nick);
+				show_name = card_name;
+			item->SetTeamCardName(card_name);
 		}
 	}
-	else
+
+	std::wstring nick = UserService::GetInstance()->GetUserName(uid, false);
+	if (!nick.empty())
 	{
-		nim::RobotInfo robot;
-		UserService::GetInstance()->GetRobotInfo(uid, robot);
-		show_name = nbase::UTF8ToUTF16(robot.GetName());
-		item->SetNickName(show_name);
-		robots_info_.emplace_back(robot);
+		if (show_name.empty())
+			show_name = nick;
+		item->SetNickName(nick);
 	}
-	
+
 	item->SetShowName(show_name);
 
 	return item;
@@ -230,7 +195,7 @@ bool AtlistForm::OnSelectItem(EventArgs *param)
 		{
 			if (callback_select_)
 			{
-				StdClosure closure = nbase::Bind(callback_select_, item->GetUserID(), item->IsRobot());
+				StdClosure closure = nbase::Bind(callback_select_, item->GetUserID());
 				nbase::ThreadManager::PostTask(closure);
 			}
 		}
@@ -393,22 +358,16 @@ void AtlistForm::ShowWindow(bool bShow, bool bTakeFocus)
 void AtlistForm::SetShowPos(POINT pt)
 {
 	//第一个默认选中
-	bool has_robot = true;
-	int count = robot_members_container_->GetCount();
+	int count = team_members_container_->GetCount();
 	if (count == 0)
 	{
-		has_robot = false;
-		count = team_members_container_->GetCount();
-		if (count == 0)
-		{
-			this->ShowWindow(false, false);
-			return;
-		}
+		this->ShowWindow(false, false);
+		return;
 	}
 
 	for (int i = 0; i < count; i++)
 	{
-		Control *control = !has_robot ? team_members_container_->GetItemAt(i) : robot_members_container_->GetItemAt(i);
+		Control* control = team_members_container_->GetItemAt(i);
 		if (control->IsVisible())
 		{
 			AtListItem *item = static_cast<AtListItem*>(control);
@@ -431,17 +390,11 @@ bool AtlistForm::HandleMouseWheel(bool is_up)
 	{
 		if (is_up)
 		{
-			if (team_members_container_->IsFocused())
-				team_members_container_->SelectItem(team_members_container_->FindSelectable(team_members_container_->GetCurSel() - 1, false), false);
-			else
-				robot_members_container_->SelectItem(robot_members_container_->FindSelectable(robot_members_container_->GetCurSel() - 1, false), false);
+			team_members_container_->SelectItem(team_members_container_->FindSelectable(team_members_container_->GetCurSel() - 1, false), false);
 		} 
 		else
 		{
-			if (team_members_container_->IsFocused())
-				team_members_container_->SelectItem(team_members_container_->FindSelectable(team_members_container_->GetCurSel() + 1, true), false);
-			else
-				robot_members_container_->SelectItem(robot_members_container_->FindSelectable(robot_members_container_->GetCurSel() + 1, true), false);
+			team_members_container_->SelectItem(team_members_container_->FindSelectable(team_members_container_->GetCurSel() + 1, true), false);
 		}
 
 		return true;
@@ -453,11 +406,7 @@ bool AtlistForm::HandleKeyDown()
 {
 	if (::IsWindowVisible(m_hWnd))
 	{
-		if (team_members_container_->IsFocused())
-			team_members_container_->SelectItem(team_members_container_->FindSelectable(team_members_container_->GetCurSel() + 1, true), false);
-		else
-			robot_members_container_->SelectItem(robot_members_container_->FindSelectable(robot_members_container_->GetCurSel() + 1, true), false);
-
+		team_members_container_->SelectItem(team_members_container_->FindSelectable(team_members_container_->GetCurSel() + 1, true), false);
 		return true;
 	}
 	return false;
@@ -467,10 +416,7 @@ bool AtlistForm::HandleKeyUp()
 {
 	if (::IsWindowVisible(m_hWnd))
 	{
-		if (team_members_container_->IsFocused())
-			team_members_container_->SelectItem(team_members_container_->FindSelectable(team_members_container_->GetCurSel() - 1, false), false);
-		else
-			robot_members_container_->SelectItem(robot_members_container_->FindSelectable(robot_members_container_->GetCurSel() - 1, false), false);
+		team_members_container_->SelectItem(team_members_container_->FindSelectable(team_members_container_->GetCurSel() - 1, false), false);
 		return true;
 	}
 	return false;
@@ -481,10 +427,7 @@ bool AtlistForm::HandleKeyEnter()
 	if (::IsWindowVisible(m_hWnd))
 	{
 		Control *select_item = nullptr;
-		if (team_members_container_->IsFocused())
-			select_item = team_members_container_->GetItemAt(team_members_container_->GetCurSel());
-		else
-			select_item = robot_members_container_->GetItemAt(robot_members_container_->GetCurSel());
+		select_item = team_members_container_->GetItemAt(team_members_container_->GetCurSel());
 		if (NULL != select_item)
 		{
 			select_item->Activate();
@@ -509,10 +452,6 @@ void AtlistForm::OnUserPhotoChange(PhotoType type, const std::string& accid, con
 		CheckListItemHeadIcon(accid, photo_path);
 		return;
 	}
-	if (std::find_if(robots_info_.begin(), robots_info_.end(), [&](const nim::RobotInfo& info){
-		return info.GetAccid().compare(accid) == 0;
-	}) != robots_info_.end())
-		CheckListItemHeadIcon(accid, photo_path);
 }
 
 void AtlistForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)

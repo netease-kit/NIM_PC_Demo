@@ -1,0 +1,5 @@
+bin
+libeay32.def
+ssleay32.def
+include/openssl/e_os.h
+crypto/buildinf.h

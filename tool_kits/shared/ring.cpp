@@ -97,7 +97,6 @@ namespace shared
 		if (hwnd_)
 		{
 			Stop();
-			MCIWndDestroy(hwnd_);
 		}
 	}
 

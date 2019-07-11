@@ -1,5 +1,8 @@
 // Copyright (c) 2013, NetEase Inc. All rights reserved.
+//
+// WRT
 // 2013/8/30
+//
 // This file defines DB_EXPORT macro
 
 #ifndef DB_DB_EXPORT_H_

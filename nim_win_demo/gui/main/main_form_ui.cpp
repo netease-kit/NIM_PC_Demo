@@ -13,6 +13,8 @@
 #include "gui/test_gif/test_gif_form.h"
 #include "cef/cef_module/manager/cef_manager.h"
 #include "nim_service/module/service/session_service.h"
+#include "gui/main/main_form_menu.h"
+#include "ui_kit\guiex\main\main_form_menu.h"
 using namespace ui;
 
 const LPCTSTR MainForm::kClassName	= L"MainForm";
@@ -140,7 +142,8 @@ void MainForm::InitWindow()
 	TrayIcon::GetInstance()->SetTrayIcon(::LoadIconW(nbase::win32::GetCurrentModuleHandle(), MAKEINTRESOURCE(IDI_ICON)), MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MIANWINDOW_TITLE"));
 
 	nim_ui::NotifyCenter::GetInstance()->RegNotify(NT_LINK, nbase::Bind(&MainForm::CheckOnlineState, this, std::placeholders::_1));
-
+	main_menu_handler_ = new MainFormMenu();
+	main_menu_handler_->SetHostWindow(this);
 	nim_ui::ContactsListManager::GetInstance()->InvokeGetAllUserInfo();
 	nim_ui::SessionListManager::GetInstance()->QueryUnreadSysMsgCount();
 	nim_comp::SessionService::GetInstance()->InvokeLoadSessionList();
@@ -318,6 +321,8 @@ bool MainForm::MainMenuButtonClick(ui::EventArgs* param)
 
 void MainForm::PopupMainMenu(POINT point)
 {
+	main_menu_handler_->PopupMainMenu(point);
+	return;
 	//创建菜单窗口
 	CMenuWnd* pMenu = new CMenuWnd(NULL);
 	STRINGorID xml(L"main_menu.xml");
@@ -422,14 +427,14 @@ bool MainForm::AddressMenuItemClick(ui::EventArgs* param)
 bool MainForm::ExportMsglogMenuItemClick(ui::EventArgs* param)
 {
 	MsglogManageForm *form = nim_ui::WindowsManager::SingletonShow<MsglogManageForm>(MsglogManageForm::kClassName);
-	form->SetType(true);
+	form->SetType(nim::LogsBackupRemoteOperate_Export, kLocal);
 
 	return true;
 }
 bool MainForm::ImportMsglogMenuItemClick(ui::EventArgs* param)
 {
 	MsglogManageForm *form = nim_ui::WindowsManager::SingletonShow<MsglogManageForm>(MsglogManageForm::kClassName);
-	form->SetType(false);
+	form->SetType(nim::LogsBackupRemoteOperate_Import, kLocal);
 
 	return true;
 }

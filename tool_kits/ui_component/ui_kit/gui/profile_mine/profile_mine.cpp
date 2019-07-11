@@ -1,5 +1,7 @@
 ﻿#include "profile_mine.h"
 #include "av_kit/module/video/video_manager.h"
+#include "base/encrypt/encrypt.h"
+#include "base/encrypt/encrypt_impl.h"
 
 namespace nim_comp {
 
@@ -54,6 +56,7 @@ void ProfileMine::InitWindow()
 	cef_control_->AttachLoadEnd(nbase::Bind(&ProfileMine::OnLoadEnd, this, std::placeholders::_1));
 	cef_control_->AttachAfterCreated(nbase::Bind(&ProfileMine::OnAfterCreated, this, std::placeholders::_1));
 	cef_control_->AttachBeforeCLose(nbase::Bind(&ProfileMine::OnBeforeClose, this, std::placeholders::_1));
+	cef_control_->AttachBeforeNavigate(nbase::Bind(&ProfileMine::OnBeforeLoadResource, this, std::placeholders::_1, std::placeholders::_2));
 	cef_control_->AttachBeforeContextMenu(nbase::Bind(&ProfileMine::OnBeforeContextMenu, this, std::placeholders::_1, std::placeholders::_2));
 	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"cef_themes/profile/profile.html";
 	cef_control_->LoadURL(html_path);
@@ -84,9 +87,49 @@ void ProfileMine::OnBeforeContextMenu(CefRefPtr<CefContextMenuParams> params, Ce
 	model->Clear();
 }
 
+CefRequestHandler::ReturnValue ProfileMine::OnBeforeLoadResource(CefRefPtr<CefRequest> request, bool is_redirect)
+{
+	if (app_sdk::AppSDKInterface::IsSafeUrl(request->GetURL().ToString()))
+	{
+		CefRequest::HeaderMap headers;
+		request->GetHeaderMap(headers);
+
+		std::string appkey = app_sdk::AppSDKInterface::GetAppKey();
+		std::string referer = app_sdk::AppSDKInterface::GetReferrer();
+		std::string nonce = nim::Tool::GetUuid();
+		std::string curtime = nbase::Uint64ToString(nbase::Time::Now().ToTimeT());
+		std::string checksum_src = "";
+		checksum_src.append(appkey).append(nonce).append(curtime);
+		nbase::EncryptInterface_var encrypt_sha1(new nbase::Encrypt_Impl());
+		encrypt_sha1->SetMethod(nbase::ENC_SHA1);
+		encrypt_sha1->Encrypt(checksum_src);
+		const static char HEX_DIGITS[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+		std::string checksum;
+		for (size_t j = 0; j < checksum_src.length(); j++)
+		{
+			checksum.append(1, HEX_DIGITS[(checksum_src[j] >> 4) & 0x0f]).append(1, HEX_DIGITS[checksum_src[j] & 0x0f]);
+		}
+
+		headers.emplace("AppKey", appkey);
+		headers.emplace("Nonce", nonce);
+		headers.emplace("CurTime", curtime);
+		headers.emplace("CheckSum", checksum);
+		request->SetHeaderMap(headers);
+
+		// referer 要单独设置，不允许使用 SetHeaderMap 接口设置 referer 内容见 SetHeaderMap 注释
+		request->SetReferrer(referer, REFERRER_POLICY_ALWAYS);
+
+		QLOG_APP(L"ProfileMine::OnBeforeLoadResource short URL = {0}") << request->GetURL().ToString16();
+	}
+
+	return RV_CONTINUE;
+}
+
 void ProfileMine::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 {
+
 }
+
 void ProfileMine::OnMultiportPushConfigChange(int rescode, bool switch_on)
 {
 	if (rescode == nim::kNIMResSuccess)
@@ -148,6 +191,8 @@ void ProfileMine::SetUserInfo()
 	values["gender"] = info_.GetGender();
 	values["telephone"] = info_.GetMobile();
 
+	std::wstring birth = nbase::UTF8ToUTF16(values.toStyledString());
+
 	cef_control_->CallJSFunction(L"onUserInfoChanged", nbase::UTF8ToUTF16(values.toStyledString()), nullptr);
 }
 
@@ -194,10 +239,20 @@ void ProfileMine::UpdateUserInfo(const std::string& params, nim_cef::ReportResul
 			new_info.SetGender(gender);
 		}
 
-		std::string new_birthday = nbase::StringPrintf("%04d-%02d-%02d", birth_year, birth_month, birth_day);
-		if (!info_.ExistValue(nim::kUserNameCardKeyBirthday) || new_birthday != info_.GetBirth())
+		if (birth_year != 0 && birth_month != 0 && birth_day != 0)
 		{
-			new_info.SetBirth(nbase::StringPrintf("%04d-%02d-%02d", birth_year, birth_month, birth_day));
+			std::string new_birthday = nbase::StringPrintf("%04d-%02d-%02d", birth_year, birth_month, birth_day);
+			if (!info_.ExistValue(nim::kUserNameCardKeyBirthday) || new_birthday != info_.GetBirth())
+			{
+				new_info.SetBirth(nbase::StringPrintf("%04d-%02d-%02d", birth_year, birth_month, birth_day));
+			}
+		}
+		else
+		{
+			if (!info_.ExistValue(nim::kUserNameCardKeyBirthday) || !info_.GetBirth().empty())
+			{
+				new_info.SetBirth(nbase::StringPrintf("", birth_year, birth_month, birth_day));
+			}
 		}
 
 		if (!info_.ExistValue(nim::kUserNameCardKeyMobile) && !telephone.empty()
@@ -218,17 +273,18 @@ void ProfileMine::UpdateUserInfo(const std::string& params, nim_cef::ReportResul
 			new_info.SetSignature(signature);
 		}
 
-		if (new_info.ExistValue(nim::kUserNameCardKeyAll))
-		{
-			UserService::GetInstance()->InvokeUpdateMyInfo(new_info, nullptr);
-			if (callback)
-				callback(false, R"({ "message": "Update user info successfully." })");
-		}
-		else
-		{
-			if (callback)
-				callback(true, R"({ "message": "Failed to update user info." })");
-		}
+		UserService::GetInstance()->InvokeUpdateMyInfo(new_info, ToWeakCallback([callback](nim::NIMResCode res) {
+			if (res == 200)
+			{
+				if (callback)
+					callback(false, R"({ "message": "Update user info successfully." })");
+			}
+			else
+			{
+				if (callback)
+					callback(true, R"({ "message": "Failed to update user info." })");
+			}
+		}));
 	}
 }
 

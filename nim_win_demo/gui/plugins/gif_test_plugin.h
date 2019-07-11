@@ -1,7 +1,7 @@
 #pragma once
 #include "module/plugins/main_plugins_base.h"
 #include "gui\test_gif\test_gif_form.h"
-class GifTestPlugin : public nim_comp::MainPluginBase<>
+class GifTestPlugin : public nim_comp::MainPluginBase<nim_comp::IMainPlugin::PluginType::PluginType_Simple>
 {
 public:
 	virtual PluginFlagType GetPluginFlag() const

@@ -46,7 +46,7 @@ public:
 
 	/**
 	* 初始化cef组件
-	* @param[in] app_data_dir 应用路径名称，见nim::Client::Init的说明
+	* @param[in] app_data_dir 应用路径名称
 	* @param[in] settings Cef全部配置
 	* @param[in] is_enable_offset_render 是否开启离屏渲染
 	* @return bool true 继续运行，false 应该结束程序

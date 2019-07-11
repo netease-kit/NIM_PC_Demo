@@ -1,4 +1,5 @@
 #include "login_form.h"
+#include <fstream>
 #include "gui/main/main_form.h"
 #include "module/db/public_db.h"
 #include "module/login/login_manager.h"
@@ -10,15 +11,101 @@
 #include "gui/plugins/gif_test_plugin.h"
 #include "module/config/config_helper.h"
 #include "gui/plugins/addresbook_plugin/addresbook_plugin.h"
+#include "tool_kits\ui_component\ui_kit\export\nim_ui_runtime_manager.h"
+#include "gui/proxy/proxy_form.h"
+#include "nim_app.h"
 using namespace ui;
-
 void LoginForm::OnLogin()
+{
+	if (use_private_settings_->IsSelected())
+	{
+		chkbox_private_use_proxy_enable_->SetEnabled(false);		
+		std::string url = private_settings_url_->GetUTF8Text();
+		if (url.empty())
+		{
+			ShowMsgBox(this->GetHWND(), MsgboxCallback(), L"请输入私有化配置下载地址", false);
+			chkbox_private_use_proxy_enable_->SetEnabled(true);
+			return;
+		}		
+		nim_http::SetGlobalProxy(NIMProxyType::kNIMProxyNone, "", 0, "", "");		
+		nim_http::HttpRequest req(url, nullptr,0,
+		[this, url](bool ret, int code, const std::string& configs) {
+			Post2UI(this->ToWeakCallback([this,ret,code, configs, url]() {
+				if (ret && code == nim::kNIMResSuccess)
+				{
+					Json::Value json_config;
+					if (Json::Reader().parse(configs, json_config) && json_config.isObject() &&
+						json_config.isMember("version") && json_config.isMember("link"))
+					{
+						ConfigHelper::GetInstance()->UsePrivateSettings(true, url);
+						std::string priavet_setting_path = nbase::UTF16ToUTF8(QPath::GetAppPath().append(L"nim_private_server.conf"));
+						std::ofstream config(priavet_setting_path, std::ios::out | std::ios::trunc);
+						if (config.is_open())
+						{
+							config << configs;
+							config.close();
+						}						
+						if (InitSDK(priavet_setting_path))
+						{
+							nim::Global::SetProxy(nim::NIMProxyType::kNIMProxyNone, "", 0, "", "");
+							nim_chatroom::ChatRoom::SetProxy(nim_chatroom::kNIMChatRoomProxyNone, "", 0, "", "");
+							if (chkbox_private_use_proxy_enable_->IsSelected())
+							{
+								auto proxy_form = nim_comp::WindowsManager::SingletonShow<ProxyForm>(ProxyForm::kClassName);
+								proxy_form->AttachBeforClose([this]() {
+									Post2UI(ToWeakCallback([this]() {
+										OnLogin_i();
+									}));
+								});
+							}
+							else
+							{										
+								OnLogin_i();
+							}
+						}
+							
+					}					
+					else
+					{
+						ShowMsgBox(this->GetHWND(), MsgboxCallback(), L"私有化配置出错，请检查配置", false);
+						chkbox_private_use_proxy_enable_->SetEnabled(true);
+					}						
+				}
+				else
+				{
+					ShowMsgBox(this->GetHWND(), MsgboxCallback(), L"无法下载私有化配置", false);
+					chkbox_private_use_proxy_enable_->SetEnabled(true);
+				}
+			}));
+	});
+	nim_http::PostRequest(req);
+	}
+	else
+	{
+		ConfigHelper::GetInstance()->UsePrivateSettings(false);
+		chkbox_private_use_proxy_enable_->SetEnabled(false);
+		if (InitSDK())
+			OnLogin_i();
+	}
+}
+void LoginForm::OnLogin_i()
 {
 	DoInitUiKit(nim_ui::InitManager::kIM);
 	SetAnonymousChatroomVisible(false);
 	DoBeforeLogin();
 }
-
+bool LoginForm::InitSDK(const std::string& pravate_settings_file_path)
+{
+	if (!nim_ui::RunTimeDataManager::GetInstance()->IsSDKInited())
+	{		
+		if (!NimAPP::GetInstance()->InitNim(pravate_settings_file_path))
+		{
+			ShowMsgBox(this->GetHWND(), MsgboxCallback(), L"SDK初始化失败，请检查相关配置或运行环境", false);
+			return false;
+		}	
+	}
+	return true;
+}
 void LoginForm::DoInitUiKit(nim_ui::InitManager::InitMode mode)
 {
 	// InitUiKit接口第一个参数决定是否启用事件订阅模块，默认为false，如果是云信demo app则为true
@@ -36,6 +123,7 @@ void LoginForm::DoBeforeLogin()
 	{
 		usericon_->SetEnabled(false);
 		ShowLoginTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ACCOUNT_EMPTY"));
+		chkbox_private_use_proxy_enable_->SetEnabled(true);
 		return;
 	}
 
@@ -45,17 +133,20 @@ void LoginForm::DoBeforeLogin()
 	{
 		passwordicon_->SetEnabled(false);
 		ShowLoginTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_TIP_PASSWORD_EMPTY"));
+		chkbox_private_use_proxy_enable_->SetEnabled(true);
 		return;
-	}
-
+	}	
 	usericon_->SetEnabled(true);
 	passwordicon_->SetEnabled(true);
-
 	StartLogin(username, password);
 }
 
 void LoginForm::DoRegisterAccount()
 {
+	ConfigHelper::GetInstance()->UsePrivateSettings(false);
+	chkbox_private_use_proxy_enable_->SetEnabled(false);
+	if (!nim_ui::RunTimeDataManager::GetInstance()->IsSDKInited() && !InitSDK())
+			return;
 	MutiLanSupport* mls = MutiLanSupport::GetInstance();
 	std::string username = user_name_edit_->GetUTF8Text();
 	StringHelper::Trim(username);
@@ -207,7 +298,8 @@ void LoginForm::OnLoginError( int error )
 	else
 	{
 		OnCancelLogin();
-
+		if (use_private_settings_->IsSelected())
+			chkbox_private_use_proxy_enable_->SetEnabled(true);
 		MutiLanSupport* mls = MutiLanSupport::GetInstance();
 		if (error == nim::kNIMResUidPassError)
 		{
@@ -328,5 +420,7 @@ bool LoginForm::OnSwitchToLoginPage()
 	password_edit_->SetText(L"");
 	password_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_PASSWORD"));
 	FindControl(L"register_account")->SetVisible(true);
+	FindControl(L"private_settings")->SetVisible(!login_function_);
+
 	return true;
 }

@@ -14,12 +14,9 @@ namespace ui
 #define GET_Y_LPARAM(lp)                        ((int)(short)HIWORD(lp))
 	}
 
-CefControl::CefControl(void) :
-devtool_attached_(false)
+CefControl::CefControl(void)
 {
-#if !defined(SUPPORT_CEF)
-	ASSERT(FALSE && L"要使用Cef功能请开启SUPPORT_CEF宏");
-#endif
+
 }
 
 CefControl::~CefControl(void)
@@ -54,6 +51,7 @@ void CefControl::Init()
 
 	__super::Init();
 }
+
 void CefControl::ReCreateBrowser()
 {
 	if (browser_handler_->GetBrowser() == nullptr)
@@ -67,10 +65,7 @@ void CefControl::ReCreateBrowser()
 		CefBrowserHost::CreateBrowser(window_info, browser_handler_, L"", browser_settings, NULL);
 	}	
 }
-void CefControl::RepairBrowser()
-{
-	ReCreateBrowser();
-}
+
 void CefControl::SetPos(UiRect rc)
 {
 	__super::SetPos(rc);
@@ -155,7 +150,25 @@ void CefControl::Paint(IRenderContext* pRender, const UiRect& rcPaint)
 	}
 }
 
-LRESULT CefControl::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
+void CefControl::SetWindow(ui::Window* pManager, ui::Box* pParent, bool bInit)
+{
+	if (!browser_handler_)
+	{
+		__super::SetWindow(pManager, pParent, bInit);
+		return;
+	}
+
+	if (m_pWindow)
+	{
+		m_pWindow->RemoveMessageFilter(this);
+		__super::SetWindow(pManager, pParent, bInit);
+		pManager->AddMessageFilter(this);
+	}
+
+	browser_handler_->SetHostWindow(pManager->GetHWND());
+}
+
+LRESULT CefControl::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	if (!IsVisible() || !IsEnabled())
 	{
@@ -254,8 +267,41 @@ LRESULT CefControl::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool
 	return 0;
 }
 
+bool CefControl::AttachDevTools(Control* control)
+{
+	CefControl *view = dynamic_cast<CefControl*>(control);
+	if (devtool_attached_ || !view)
+		return true;
+
+	auto browser = browser_handler_->GetBrowser();
+	auto view_browser = view->browser_handler_->GetBrowser();
+	if (browser == nullptr || view_browser == nullptr)
+	{
+		auto weak = view->GetWeakFlag();
+		auto task = [this, weak, view](){
+			nbase::ThreadManager::PostTask(ThreadId::kThreadUI, ToWeakCallback([this, weak, view](){
+				if (weak.expired())
+					return;
+				AttachDevTools(view);
+			}));
+		};
+		view->browser_handler_->AddAfterCreateTask(task);
+	}
+	else
+	{
+		CefWindowInfo windowInfo;
+		windowInfo.SetAsWindowless(GetWindow()->GetHWND(), false);
+		CefBrowserSettings settings;
+		browser->GetHost()->ShowDevTools(windowInfo, view_browser->GetHost()->GetClient(), settings, CefPoint());
+		devtool_attached_ = true;
+		if (cb_devtool_visible_change_ != nullptr)
+			cb_devtool_visible_change_(devtool_attached_);
+	}
+	return true;
+}
+
 //////////////////////////////////////////////////////////////////////////////////
-LRESULT CefControl::SendButtonDownEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
+LRESULT CefControl::SendButtonDownEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	CefRefPtr<CefBrowserHost> host = browser_handler_->GetBrowserHost();
 
@@ -279,7 +325,7 @@ LRESULT CefControl::SendButtonDownEvent(UINT uMsg, WPARAM wParam, LPARAM lParam,
 	return 0;
 }
 
-LRESULT CefControl::SendButtonDoubleDownEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
+LRESULT CefControl::SendButtonDoubleDownEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	CefRefPtr<CefBrowserHost> host = browser_handler_->GetBrowserHost();
 
@@ -300,7 +346,7 @@ LRESULT CefControl::SendButtonDoubleDownEvent(UINT uMsg, WPARAM wParam, LPARAM l
 	return 0;
 }
 
-LRESULT CefControl::SendButtonUpEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
+LRESULT CefControl::SendButtonUpEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	CefRefPtr<CefBrowserHost> host = browser_handler_->GetBrowserHost();
 
@@ -312,8 +358,8 @@ LRESULT CefControl::SendButtonUpEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, b
 	CefMouseEvent mouse_event;
 	if (uMsg == WM_RBUTTONUP)
 	{
-		mouse_event.x = pt.x - m_rcItem.left;
-		mouse_event.y = pt.y - m_rcItem.top;
+		mouse_event.x = pt.x/* - m_rcItem.left*/;	// 这里不进行坐标转换，否则右键菜单位置不正确
+		mouse_event.y = pt.y/* - m_rcItem.top*/;
 	}
 	else
 	{
@@ -333,7 +379,7 @@ LRESULT CefControl::SendButtonUpEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, b
 	return 0;
 }
 
-LRESULT CefControl::SendMouseMoveEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
+LRESULT CefControl::SendMouseMoveEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	CefRefPtr<CefBrowserHost> host = browser_handler_->GetBrowserHost();
 
@@ -351,7 +397,7 @@ LRESULT CefControl::SendMouseMoveEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, 
 	return 0;
 }
 
-LRESULT CefControl::SendMouseWheelEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
+LRESULT CefControl::SendMouseWheelEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	CefRefPtr<CefBrowserHost> host = browser_handler_->GetBrowserHost();
 
@@ -376,7 +422,7 @@ LRESULT CefControl::SendMouseWheelEvent(UINT uMsg, WPARAM wParam, LPARAM lParam,
 	return 0;
 }
 
-LRESULT CefControl::SendMouseLeaveEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
+LRESULT CefControl::SendMouseLeaveEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	CefRefPtr<CefBrowserHost> host = browser_handler_->GetBrowserHost();
 
@@ -395,7 +441,7 @@ LRESULT CefControl::SendMouseLeaveEvent(UINT uMsg, WPARAM wParam, LPARAM lParam,
 	return 0;
 }
 
-LRESULT CefControl::SendKeyEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
+LRESULT CefControl::SendKeyEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	CefRefPtr<CefBrowserHost> host = browser_handler_->GetBrowserHost();
 	
@@ -418,7 +464,7 @@ LRESULT CefControl::SendKeyEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& 
 	return 0;
 }
 
-LRESULT CefControl::SendCaptureLostEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled)
+LRESULT CefControl::SendCaptureLostEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	CefRefPtr<CefBrowserHost> host = browser_handler_->GetBrowserHost();
 
@@ -538,193 +584,5 @@ int CefControl::GetCefKeyboardModifiers(WPARAM wparam, LPARAM lparam)
 }
 
 //////////////////////////////////////////////////////////////////////////////////
-void CefControl::LoadURL(const CefString& url)
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
-	{
-		CefRefPtr<CefFrame> frame = browser_handler_->GetBrowser()->GetMainFrame();
-		if (!frame)
-			return;
-
-		frame->LoadURL(url);
-	}
-	else
-	{
-		if (browser_handler_.get())
-		{
-			StdClosure cb = ToWeakCallback([this, url]()
-			{
-				LoadURL(url);
-			});
-			browser_handler_->AddAfterCreateTask(cb);
-		}
-	}
-}
-
-void CefControl::LoadString(const CefString& stringW, const CefString& url)
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
-	{
-		CefRefPtr<CefFrame> frame = browser_handler_->GetBrowser()->GetMainFrame();
-		if (!frame)
-			return;
-
-		frame->LoadStringW(stringW, url);
-	}
-	else
-	{
-		if (browser_handler_.get())
-		{
-			StdClosure cb = ToWeakCallback([this, stringW, url]()
-			{
-				LoadString(stringW, url);
-			});
-			browser_handler_->AddAfterCreateTask(cb);
-		}
-	}
-}
-
-void CefControl::GoBack()
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
-	{
-		return browser_handler_->GetBrowser()->GoBack();
-	}
-}
-
-void CefControl::GoForward()
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
-	{
-		return browser_handler_->GetBrowser()->GoForward();
-	}
-}
-
-bool CefControl::CanGoBack()
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
-	{
-		return browser_handler_->GetBrowser()->CanGoBack();
-	}
-	return false;
-}
-
-bool CefControl::CanGoForward()
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
-	{
-		return browser_handler_->GetBrowser()->CanGoForward();
-	}
-	return false;
-}
-
-void CefControl::Refresh()
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
-	{
-		return browser_handler_->GetBrowser()->Reload();
-	}
-}
-
-void CefControl::StopLoad()
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
-	{
-		return browser_handler_->GetBrowser()->StopLoad();
-	}
-}
-
-bool CefControl::IsLoading()
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
-	{
-		return browser_handler_->GetBrowser()->IsLoading();
-	}
-	return false;
-}
-
-CefString CefControl::GetURL()
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
-	{
-		return browser_handler_->GetBrowser()->GetMainFrame()->GetURL();
-	}
-
-	return CefString();
-}
-
-std::string CefControl::GetUTF8URL()
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get())
-	{
-		return nbase::UTF16ToUTF8(std::wstring(GetURL().c_str()));
-	}
-
-	return CefString();
-}
-
-CefString CefControl::GetMainURL(const CefString& url)
-{
-	std::string temp = url.ToString();
-	int end_pos = temp.find("#") == std::string::npos ? temp.length() : temp.find("#");
-	temp = temp.substr(0, end_pos);
-	return CefString(temp.c_str());
-}
-
-bool CefControl::RegisterCppFunc(const std::wstring& function_name, nim_cef::CppFunction function, bool global_function/* = false*/)
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get() && js_bridge_.get())
-	{
-		return js_bridge_->RegisterCppFunc(nbase::UTF16ToUTF8(function_name).c_str(), function, global_function ? nullptr : browser_handler_->GetBrowser());
-	}
-
-	return false;
-}
-
-void CefControl::UnRegisterCppFunc(const std::wstring& function_name)
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get() && js_bridge_.get())
-	{
-		js_bridge_->UnRegisterCppFunc(nbase::UTF16ToUTF8(function_name).c_str(), browser_handler_->GetBrowser());
-	}
-}
-
-bool CefControl::CallJSFunction(const std::wstring& js_function_name, const std::wstring& params, nim_cef::CallJsFunctionCallback callback, const std::wstring& frame_name /*= L""*/)
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get() && js_bridge_.get())
-	{
-		CefRefPtr<CefFrame> frame = frame_name == L"" ? browser_handler_->GetBrowser()->GetMainFrame() : browser_handler_->GetBrowser()->GetFrame(frame_name);
-
-		if (!js_bridge_->CallJSFunction(nbase::UTF16ToUTF8(js_function_name).c_str(),
-			nbase::UTF16ToUTF8(params).c_str(), frame, callback))
-		{
-			QLOG_ERR(L"Failed to call JavaScript function {0}") << js_function_name;
-			return false;
-		}
-
-		return true;
-	}
-
-	return false;
-}
-
-bool CefControl::CallJSFunction(const std::wstring& js_function_name, const std::wstring& params, nim_cef::CallJsFunctionCallback callback, int frame_id)
-{
-	if (browser_handler_.get() && browser_handler_->GetBrowser().get() && js_bridge_.get())
-	{
-		CefRefPtr<CefFrame> frame = browser_handler_->GetBrowser()->GetFrame(frame_id);
-
-		if (!js_bridge_->CallJSFunction(nbase::UTF16ToUTF8(js_function_name).c_str(),
-			nbase::UTF16ToUTF8(params).c_str(), frame, callback))
-		{
-			QLOG_ERR(L"Failed to call JavaScript function {0}") << js_function_name;
-			return false;
-		}
-
-		return true;
-	}
-
-	return false;
-}
 
 }

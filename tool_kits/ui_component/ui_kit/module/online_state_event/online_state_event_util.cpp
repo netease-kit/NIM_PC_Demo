@@ -58,7 +58,7 @@ namespace nim_comp
 		return L"";
 	}
 
-	std::wstring OnlineStateEventUtil::GetOnlineState(const nim::EventOnlineClientType& online_client_type, const EventMultiConfig& multi_config, bool is_simple)
+	std::wstring OnlineStateEventUtil::GetOnlineState(const std::string& accid, const EventDataEx& data, bool is_simple)
 	{
 		if (!SubscribeEventManager::GetInstance()->IsEnabled())
 			return L"";
@@ -68,7 +68,7 @@ namespace nim_comp
 		static const std::wstring pc_string = L"PC";
 
 		std::wstring online_state = offline_string;
-		const std::set<nim::NIMClientType> &online_client = online_client_type.online_client_type_;
+		const std::set<nim::NIMClientType>& online_client = data.online_client_.online_client_type_;
 
 		if (online_client.empty())
 		{
@@ -78,12 +78,13 @@ namespace nim_comp
 				return online_state;
 		}
 
-		if (online_client.find(nim::kNIMClientTypePCWindows) != online_client.end())
+		// 不判断本地 PC 在线状态
+		if (accid != LoginManager::GetInstance()->GetAccount() && online_client.find(nim::kNIMClientTypePCWindows) != online_client.end())
 		{
 			online_state = pc_string + online_string;
 
-			auto iter = multi_config.find(nim::kNIMClientTypePCWindows);
-			if (iter != multi_config.end())
+			auto iter = data.multi_config_.find(nim::kNIMClientTypePCWindows);
+			if (iter != data.multi_config_.end())
 			{
 				if (EventConfig::kOnlineStateOnline != iter->second.online_state_)
 				{
@@ -95,8 +96,8 @@ namespace nim_comp
 		{
 			online_state = L"Mac" + online_string;
 
-			auto iter = multi_config.find(nim::kNIMClientTypeMacOS);
-			if (iter != multi_config.end())
+			auto iter = data.multi_config_.find(nim::kNIMClientTypeMacOS);
+			if (iter != data.multi_config_.end())
 			{
 				if (EventConfig::kOnlineStateOnline != iter->second.online_state_)
 				{
@@ -106,8 +107,8 @@ namespace nim_comp
 		}
 		else if (online_client.find(nim::kNIMClientTypeiOS) != online_client.end())
 		{
-			auto iter = multi_config.find(nim::kNIMClientTypeiOS);
-			if (iter != multi_config.end() && EventConfig::kNetStateUnknow != iter->second.net_state_)
+			auto iter = data.multi_config_.find(nim::kNIMClientTypeiOS);
+			if (iter != data.multi_config_.end() && EventConfig::kNetStateUnknow != iter->second.net_state_)
 			{
 				if (is_simple)
 				{
@@ -125,8 +126,8 @@ namespace nim_comp
 		}
 		else if (online_client.find(nim::kNIMClientTypeAndroid) != online_client.end())
 		{
-			auto iter = multi_config.find(nim::kNIMClientTypeAndroid);
-			if (iter != multi_config.end() && EventConfig::kNetStateUnknow != iter->second.net_state_)
+			auto iter = data.multi_config_.find(nim::kNIMClientTypeAndroid);
+			if (iter != data.multi_config_.end() && EventConfig::kNetStateUnknow != iter->second.net_state_)
 			{
 				if (is_simple)
 				{
@@ -148,7 +149,7 @@ namespace nim_comp
 		}
 		else
 		{
-			online_state = online_string;
+			online_state = offline_string;
 		}
 
 		if (is_simple)

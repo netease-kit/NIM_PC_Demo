@@ -39,6 +39,13 @@ public:
 	*/
 	virtual void InitWindow() override;
 	virtual void Close(UINT nRet  = IDOK) override;
+	virtual void AttachBeforClose(const std::function<void()>& cb) { befor_close_cb_ = cb; };
+	static std::shared_ptr<nbase::ProxySetting> GetProxySetting(const std::wstring& name)
+	{
+		if (proxy_setting_list_.find(name) != proxy_setting_list_.end())
+			return proxy_setting_list_[name];
+		return nullptr;
+	}
 private:
 	ProxyTipSub* CreateSubModuleProxyTip(const std::function<ProxyTipSub*()>& sub_creator,const std::wstring& name);
 	void ApplyProxySetting();
@@ -53,6 +60,7 @@ private:
 	ProxyTipSub* proxy_vchat_;
 	ProxyTipSub* proxy_rts_;
 	ProxyTipSub* proxy_httptool_;
+	std::function<void()> befor_close_cb_;
 	static ProxySettingList proxy_setting_list_;
 };
 template<typename TProxySetting>

@@ -13,7 +13,7 @@
 #include "base/base_config.h"
 #include "base/base_export.h"
 #include "base/util/string_util.h"
-
+#include <assert.h>
 #if defined(OS_WIN)
 #include <objbase.h>
 #endif
@@ -27,6 +27,10 @@ class Dummy_Encrypt : public nbase::EncryptMethodInterface
 public:
 	bool  SetEncryptKey(const std::string &key) { return true; }
 	bool  SetDecryptKey(const std::string &key) { return true; }
+	bool SetEncryptIvParameterSpec(const std::string &iv) { return true; };
+	bool SetDecryptIvParameterSpec(const std::string &iv) { return true; };
+	bool EnableEncryptPadding(bool enable, int value) { return true; };
+	bool EnableDecryptPadding(bool enable, int value) { return true; };
 	nbase::EncryptMethod Type() const { return T; }
 	bool  Encrypt(std::string &data) { return true; }
 	bool  Decrypt(std::string &data) { return true; }
@@ -158,7 +162,7 @@ template<nbase::EncryptMethod T>
 class Openssl_Encrypt_Symmetry_Key : public nbase::EncryptMethodInterface
 {
 public:
-	Openssl_Encrypt_Symmetry_Key() { chiper_ = chiper(); }
+	Openssl_Encrypt_Symmetry_Key() :enable_padding_(false), padding_value_(0), iv_parameter_spec_(""){ chiper_ = chiper(); }
 	~Openssl_Encrypt_Symmetry_Key(){    
 	}
 	bool  SetEncryptKey(const std::string &key)
@@ -173,6 +177,28 @@ public:
 		ExpandKey(chiper_->key_len, key_);
 		return true;
 	}
+	bool SetEncryptIvParameterSpec(const std::string &iv)
+	{
+		iv_parameter_spec_ = iv;
+		return true;
+	}
+	bool SetDecryptIvParameterSpec(const std::string &iv)
+	{
+		iv_parameter_spec_ = iv;
+		return true;
+	}
+	bool EnableEncryptPadding(bool enable, int value)
+	{ 
+		enable_padding_ = enable;
+		padding_value_ = (value == 0 ? 0 : 1);
+		return true; 
+	};
+	bool EnableDecryptPadding(bool enable, int value)
+	{ 
+		enable_padding_ = enable;
+		padding_value_ = (value == 0 ? 0 : 1);
+		return true; 
+	};
 	nbase::EncryptMethod Type() const { return T; }
 	bool  Encrypt(std::string &data)
 	{
@@ -191,9 +217,11 @@ public:
 		if (!ddata.empty())
 			ddata.erase();
 		EVP_CIPHER_CTX    ctx;
-		if (!EVP_EncryptInit(&ctx, chiper_, (const unsigned char*)key_.c_str(), 0))
+		if (!EVP_EncryptInit(&ctx, chiper_, (const unsigned char*)key_.c_str(), (iv_parameter_spec_.empty() ? nullptr : (const unsigned char*)iv_parameter_spec_.c_str())))
 			return false;
 		unsigned char out[256];
+		if(enable_padding_)
+			EVP_CIPHER_CTX_set_padding(&ctx, padding_value_);
 		uint32_t      osize = sizeof(out);
 		// must ensure that the buffer size is count of block size
 		if (chiper_->block_size > 0)
@@ -234,8 +262,10 @@ public:
 			ddata.erase();
 
 		EVP_CIPHER_CTX ctx;
-		if (!EVP_DecryptInit(&ctx, chiper_, (const unsigned char*)key_.c_str(), 0))
+		if (!EVP_DecryptInit(&ctx, chiper_, (const unsigned char*)key_.c_str(), (iv_parameter_spec_.empty() ? nullptr : (const unsigned char*)iv_parameter_spec_.c_str())))
 			return false;
+		if(enable_padding_)
+			EVP_CIPHER_CTX_set_padding(&ctx, padding_value_);
 		unsigned char out[256];
 		uint32_t      osize = sizeof(out);    //    must >= inl+cipher_block_size
 		//    is there some bug?
@@ -322,6 +352,10 @@ private:
 			return EVP_aes_192_ecb();
 		case nbase::ENC_AES256:
 			return EVP_aes_256_ecb();
+		case nbase::ENC_AES256_CBC:
+			return EVP_aes_256_cbc();
+		case nbase::ENC_AES128_CBC:
+			return EVP_aes_128_cbc();
 		case nbase::ENC_DES64:
 			return EVP_des_ecb();
 		}
@@ -331,6 +365,9 @@ private:
 private:
 	const EVP_CIPHER       *chiper_;
 	std::string             key_;
+	bool						enable_padding_;
+	int						padding_value_;
+	std::string			  iv_parameter_spec_;
 };
 
 template<nbase::EncryptMethod T>
@@ -348,6 +385,22 @@ public:
 	{
 		return true;
 	}
+	bool SetEncryptIvParameterSpec(const std::string &iv)
+	{
+		return true;
+	}
+	bool SetDecryptIvParameterSpec(const std::string &iv)
+	{
+		return true;
+	}
+	bool EnableEncryptPadding(bool enable, int value)
+	{
+		return true;
+	};
+	bool EnableDecryptPadding(bool enable, int value)
+	{
+		return true;
+	};
 	nbase::EncryptMethod Type() const { return T; }
 	bool  Encrypt(std::string &data)
 	{
@@ -374,16 +427,15 @@ public:
 		if (!ddata.empty())
 			ddata.erase();
 
-		EVP_MD_CTX mdctx;
-		EVP_MD_CTX_init(&mdctx);
-		if (!EVP_DigestInit_ex(&mdctx, md_, NULL))
+		auto mdctx = EVP_MD_CTX_create();
+		if (!EVP_DigestInit_ex(mdctx, md_, NULL))
 		{
-			EVP_MD_CTX_cleanup(&mdctx);
+			EVP_MD_CTX_destroy(mdctx);
 			return false;
 		}
-		if (!EVP_DigestUpdate(&mdctx, (const unsigned char *)sdata, ssize))
+		if (!EVP_DigestUpdate(mdctx, (const unsigned char *)sdata, ssize))
 		{
-			EVP_MD_CTX_cleanup(&mdctx);
+			EVP_MD_CTX_destroy(mdctx);
 			return false;
 		}
 		unsigned char  obuf[1024];
@@ -392,19 +444,19 @@ public:
 
 		olen = EVP_MD_size(md_);
 		if (olen > sizeof(obuf))
-			pbuf = new unsigned char [olen];
+			pbuf = new unsigned char[olen];
 
-		if (!EVP_DigestFinal_ex(&mdctx, pbuf, &olen))
+		if (!EVP_DigestFinal_ex(mdctx, pbuf, &olen))
 		{
-			if ( pbuf != obuf )
-				delete [] pbuf;
-			EVP_MD_CTX_cleanup(&mdctx);
+			if (pbuf != obuf)
+				delete[] pbuf;
+			EVP_MD_CTX_destroy(mdctx);
 			return false;
 		}
 		ddata.append((const char *)pbuf, olen);
 		if (pbuf != obuf)
-			delete [] pbuf;
-		EVP_MD_CTX_cleanup(&mdctx);
+			delete[] pbuf;
+		EVP_MD_CTX_destroy(mdctx);
 		return true;
 	}
 	bool  Decrypt(const void *sdata, size_t ssize, std::string &ddata)
@@ -610,7 +662,7 @@ template<nbase::EncryptMethod T>
 class Openssl_Encrypt_Stream : public nbase::EncryptMethodInterface
 {
 public:
-	Openssl_Encrypt_Stream() : ectx_valid_(false), dctx_valid_(false)
+	Openssl_Encrypt_Stream() : ectx_valid_(false), dctx_valid_(false), iv_parameter_spec_(""),enable_padding_(false), padding_value_(0)
 	{     
 		chiper_ = chiper();
 	}
@@ -631,7 +683,7 @@ public:
 			EVP_CIPHER_CTX_cleanup(&ectx_);
 			ectx_valid_ = true;
 		}
-		if (!EVP_EncryptInit(&ectx_, chiper_, (const unsigned char*)key_.c_str(), 0))
+		if (!EVP_EncryptInit(&ectx_, chiper_, (const unsigned char*)key_.c_str(), (iv_parameter_spec_.empty() ? nullptr : (const unsigned char*)iv_parameter_spec_.c_str())))
 			return false;
 		ectx_valid_ = true;
 
@@ -647,12 +699,34 @@ public:
 			EVP_CIPHER_CTX_cleanup(&dctx_);
 			dctx_valid_ = false;
 		}
-		if (!EVP_EncryptInit(&dctx_, chiper_, (const unsigned char*)key_.c_str(), 0))
+		if (!EVP_EncryptInit(&dctx_, chiper_, (const unsigned char*)key_.c_str(), (iv_parameter_spec_.empty() ? nullptr : (const unsigned char*)iv_parameter_spec_.c_str())))
 			return false;
 		dctx_valid_ = true;
 
 		return true;
 	}
+	bool SetEncryptIvParameterSpec(const std::string &iv)
+	{
+		iv_parameter_spec_ = iv;
+		return true;
+	}
+	bool SetDecryptIvParameterSpec(const std::string &iv)
+	{
+		iv_parameter_spec_ = iv;
+		return true;
+	}
+	bool EnableEncryptPadding(bool enable, int value)
+	{
+		enable_padding_ = enable;
+		padding_value_ = (value == 0 ? 0 : 1);
+		return true;
+	};
+	bool EnableDecryptPadding(bool enable, int value)
+	{
+		enable_padding_ = enable;
+		padding_value_ = (value == 0 ? 0 : 1);
+		return true;
+	};
 	nbase::EncryptMethod Type() const { return T; }
 
 	size_t      EncodeSize(size_t size) { return size; }
@@ -793,6 +867,9 @@ private:
 private:
 	const EVP_CIPHER           *chiper_;
 	std::string                 key_;
+	bool						enable_padding_;
+	int						padding_value_;
+	std::string			  iv_parameter_spec_;
 	EVP_CIPHER_CTX              ectx_;            // encode (have state)
 	bool                        ectx_valid_;      // if true , will EVP_CIPHER_CTX_cleanup
 	EVP_CIPHER_CTX              dctx_;            // decode (have state)
@@ -814,8 +891,10 @@ public:
 		//support_methods_[nbase::ENC_IDEA] = 1;        
 		support_methods_[nbase::ENC_CAST]   = 1;
 		support_methods_[nbase::ENC_AES128] = 1;
+		support_methods_[nbase::ENC_AES128_CBC] = 1;
 		support_methods_[nbase::ENC_AES192] = 1;
 		support_methods_[nbase::ENC_AES256] = 1;
+		support_methods_[nbase::ENC_AES256_CBC] = 1;
 		support_methods_[nbase::ENC_DES64]  = 1;
 		support_methods_[nbase::ENC_MD2]    = 1;
 		support_methods_[nbase::ENC_MD4]    = 1;
@@ -839,6 +918,30 @@ public:
 			return false;
 		return method_->SetDecryptKey(key);
 	}
+	bool SetEncryptIvParameterSpec(const std::string &iv)
+	{
+		if (!method_)
+			return false;
+		return method_->SetEncryptIvParameterSpec(iv);
+	}
+	bool SetDecryptIvParameterSpec(const std::string &iv)
+	{
+		if (!method_)
+			return false;
+		return method_->SetDecryptIvParameterSpec(iv);
+	}
+	bool EnableEncryptPadding(bool enable, int value)
+	{
+		if (!method_)
+			return false;
+		return method_->EnableEncryptPadding(enable, value);
+	};
+	bool EnableDecryptPadding(bool enable, int value)
+	{
+		if (!method_)
+			return false;
+		return method_->EnableDecryptPadding(enable,value);;
+	};
 	nbase::EncryptMethod Type() const
 	{
 		if (!method_)
@@ -966,10 +1069,14 @@ public:
 			return new Openssl_Encrypt_Symmetry_Key<nbase::ENC_CAST>;
 		case nbase::ENC_AES128:
 			return new Openssl_Encrypt_Symmetry_Key<nbase::ENC_AES128>;
+		case nbase::ENC_AES128_CBC:
+			return new Openssl_Encrypt_Symmetry_Key<nbase::ENC_AES128_CBC>;
 		case nbase::ENC_AES192:
 			return new Openssl_Encrypt_Symmetry_Key<nbase::ENC_AES192>;
 		case nbase::ENC_AES256:
 			return new Openssl_Encrypt_Symmetry_Key<nbase::ENC_AES256>;
+		case nbase::ENC_AES256_CBC:
+			return new Openssl_Encrypt_Symmetry_Key<nbase::ENC_AES256_CBC>;
 		case nbase::ENC_DES64:
 			return new Openssl_Encrypt_Symmetry_Key<nbase::ENC_DES64>;
 		case nbase::ENC_MD2:

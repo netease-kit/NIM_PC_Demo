@@ -34,9 +34,29 @@ bool ImageViewManager::StartViewPic(const std::wstring &path_pic, std::wstring m
 		image_view_window_->CenterWindow();
 	}
 	::BringWindowToTop(image_view_window_->GetHWND());
+	::SetForegroundWindow(image_view_window_->GetHWND());
+	::SetWindowPos(image_view_window_->GetHWND(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+	::SetWindowPos(image_view_window_->GetHWND(), HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
 	return true;
 }
-
+ImageViewManager::ImageViewSetNoTopMostCB ImageViewManager::StartViewPicEx(const std::wstring &path_pic, std::wstring message_id, bool size, bool nosave , bool topmost )
+{
+	if (StartViewPic(path_pic, message_id, size, nosave))
+	{
+		if (topmost)
+		{
+			::SetWindowPos(image_view_window_->GetHWND(), HWND_TOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+			auto view_wnd = image_view_window_->GetHWND();
+			if (::IsWindow(view_wnd))
+			{
+				return [view_wnd]() {
+					::SetWindowPos(view_wnd, HWND_NOTOPMOST, 0, 0, 0, 0, SWP_NOSIZE | SWP_NOMOVE);
+				};
+			}
+		}
+	}
+	return []() {};
+}
 bool ImageViewManager::JudgeViewImage(const std::wstring &form_id)
 {
 	bool bRet = false;

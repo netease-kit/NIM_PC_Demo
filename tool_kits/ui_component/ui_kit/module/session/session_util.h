@@ -198,6 +198,48 @@ bool StringToJson(const std::string &str, Json::Value &json);
 bool IsNoticeMsg(const nim::IMMessage& msg);
 
 /**
+* 会话消息是否为白板的发起结束类型的消息
+* @param[in] msg 会话消
+* @return bool true 包含，false 不包含
+*/
+bool IsRTSMsg(nim::NIMMessageType msg_type, const std::string& msg_attach);
+
+/**
+* 会话消息是否为局域网P2P类型的消息
+* @param[in] msg 会话消
+* @return bool true 包含，false 不包含
+*/
+bool IsP2PMsg(nim::NIMMessageType msg_type, const std::string& msg_attach);
+
+/**
+* 会话消息是否为JSB类型的消息
+* @param[in] msg 会话消
+* @return bool true 包含，false 不包含
+*/
+bool IsJSBMsg(nim::NIMMessageType msg_type, const std::string& msg_attach);
+
+/**
+* 会话消息是否为阅后即焚类型的消息
+* @param[in] msg 会话消
+* @return bool true 包含，false 不包含
+*/
+bool IsSnapChatMsg(nim::NIMMessageType msg_type, const std::string& msg_attach);
+
+/**
+* 会话消息是否为贴图类型的消息
+* @param[in] msg 会话消
+* @return bool true 包含，false 不包含
+*/
+bool IsStickerMsg(nim::NIMMessageType msg_type, const std::string& msg_attach);
+
+/**
+* 会话消息是否为多人会议控制协议类型的消息
+* @param[in] msg 会话消
+* @return bool true 包含，false 不包含
+*/
+bool IsMeetingMsg(nim::NIMMessageType msg_type, const std::string& msg_attach);
+
+/**
 * 获取通知消息显示的文本
 * @param[in] msg_attach 会话消息附加字段
 * @param[in] from_account 发送者用户id
@@ -224,6 +266,13 @@ bool IsNetCallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach);
 */
 std::wstring GetCustomMsg(const std::string &sender_accid, const std::string &msg_attach);
 
+/**
+* 判断是否是撤回消息
+* @param[in] msg_type 消息类型
+* @param[in] msg_attach 会话消息附加字段
+* @return bool true 成功，false 失败
+*/
+bool IsRecallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach);
 /**
 * 获取回撤消息的提示文本
 * @param[in] session_id 会话id

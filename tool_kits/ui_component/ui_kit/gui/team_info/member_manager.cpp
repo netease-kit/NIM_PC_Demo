@@ -106,55 +106,67 @@ bool MemberManagerForm::OnBtnConfirmClick(ui::EventArgs* param)
 	std::string user_id = member_info_.GetAccountID();
 	std::string team_card = member_info_.GetNick();
 	nim::NIMTeamUserType user_type = member_info_.GetUserType();
-	std::string tid = tid_;
-	if (((Option*)FindControl(L"owner"))->IsSelected())
-	{
-		if (member_info_.IsMute())
+	std::string tid = tid_;	
+	auto task_member_type = ToWeakCallback([this,user_id,tid, user_type]() {
+		auto task_team_event_cb = ToWeakCallback([this](const nim::TeamEvent& result) {
+			TeamCallback::OnTeamEventCallback(result);
+			Close();
+		});
+
+		if (((Option*)FindControl(L"owner"))->IsSelected())
 		{
-			nim::Team::MuteMemberAsync(tid_, user_id, false, ToWeakCallback([this, tid, user_id](const nim::TeamEvent& result){
-				if (result.res_code_ == nim::kNIMResSuccess)
-				{
-					nim::Team::TransferTeamAsync(tid, user_id, false, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
-				}
-			}));
+			if (member_info_.IsMute())
+			{
+				nim::Team::MuteMemberAsync(tid_, user_id, false, ToWeakCallback([this, tid, user_id, task_team_event_cb](const nim::TeamEvent& result) {
+					if (result.res_code_ == nim::kNIMResSuccess)
+					{
+						nim::Team::TransferTeamAsync(tid, user_id, false, task_team_event_cb);
+					}
+				}));
+			}
+			else
+			{
+				nim::Team::TransferTeamAsync(tid_, user_id, false, task_team_event_cb);
+			}				
+		}
+		else if (((Option*)FindControl(L"manager"))->IsSelected() && user_type != nim::kNIMTeamUserTypeManager)
+		{
+			std::list<std::string> uids_list;
+			uids_list.push_back(user_id);
+			nim::Team::AddManagersAsync(tid_, uids_list, task_team_event_cb);
+		}
+		else if (((Option*)FindControl(L"member"))->IsSelected() && user_type != nim::kNIMTeamUserTypeNomal)
+		{
+			std::list<std::string> uids_list;
+			uids_list.push_back(user_id);
+			nim::Team::RemoveManagersAsync(tid_, uids_list, task_team_event_cb);
 		}
 		else
-			nim::Team::TransferTeamAsync(tid_, user_id, false, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
-	}
-	else if (((Option*)FindControl(L"manager"))->IsSelected() && user_type != nim::kNIMTeamUserTypeManager)
-	{
-		std::list<std::string> uids_list;
-		uids_list.push_back(user_id);
-		nim::Team::AddManagersAsync(tid_, uids_list, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
-	}
-	else if (((Option*)FindControl(L"member"))->IsSelected() && user_type != nim::kNIMTeamUserTypeNomal)
-	{
-		std::list<std::string> uids_list;
-		uids_list.push_back(user_id);
-		nim::Team::RemoveManagersAsync(tid_, uids_list, nbase::Bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
-	}
-	
+		{
+			Close();
+		}
+	});	
 	std::string new_team_card = nbase::StringTrim(re_team_card_->GetUTF8Text());
-// 	if (!team_card.empty() && new_team_card.empty())
-// 	{
-// 		MsgboxCallback cb = ToWeakCallback([this](MsgBoxRet ret) {
-// 			this->ActiveWindow();
-// 		});
-// 		ShowMsgBox(m_hWnd, ToWeakCallback(cb), L"STRID_MEMBER_MANAGE_NICKNAME_NOT_EMPTY");
-// 		return true;
-// 	}
-
 	if (new_team_card != team_card)
 	{
-		nim::TeamMemberProperty values(tid_, user_id, member_info_.GetUserType());
-		values.SetNick(new_team_card);
-		if (user_id != LoginManager::GetInstance()->GetAccount())
-			nim::Team::UpdateOtherNickAsync(values, nbase::Bind(&OnTeamEventCallback, user_id, new_team_card, std::placeholders::_1));
-		else 
-			nim::Team::UpdateMyPropertyAsync(values, nbase::Bind(&OnTeamEventCallback, user_id, new_team_card, std::placeholders::_1));
+		auto task = [new_team_card, user_id, task_member_type,this]() {
+			auto team_event_callback = ToWeakCallback([this, user_id, new_team_card,task_member_type](const nim::TeamEvent& team_event) {
+				OnTeamEventCallback(user_id, new_team_card, team_event);
+				task_member_type();
+			});
+			nim::TeamMemberProperty values(tid_, user_id, member_info_.GetUserType());
+			values.SetNick(new_team_card);
+			if (user_id != LoginManager::GetInstance()->GetAccount())
+				nim::Team::UpdateOtherNickAsync(values, team_event_callback);
+			else
+				nim::Team::UpdateMyPropertyAsync(values, team_event_callback);
+		};
+		nbase::ThreadManager::PostTask(task);
 	}
-
-	Close();
+	else
+	{
+		task_member_type();
+	}	
 	return true; 
 }
 

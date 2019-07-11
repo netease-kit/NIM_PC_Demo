@@ -34,14 +34,6 @@ public:
 	*/
 	void OnGetFriendList(const std::list<nim::UserNameCard> &user);
 
-	/**
-	* 响应获取机器人列表的回调函数
-	* @param[in] robots 机器人信息列表
-	* @return void	无返回值
-	*/
-	void OnGetRobotList(const nim::RobotInfos &robots);
-
-
 private:
 	/**
 	* 添加一个好友列表项
@@ -116,15 +108,6 @@ private:
 	bool OnHeadImageClick(const std::string& uid, FriendItemType type, ui::EventArgs*);
 
 private:
-
-	/**
-	* 响应机器人列表列表改变的回调函数
-	* @param[in] rescode 错误码
-	* @param[in] type 类型
-	* @param[in] robots 机器人列表
-	* @return void 无返回值
-	*/
-	void OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots);
 
 	/**
 	* 响应用户列表改变的回调函数

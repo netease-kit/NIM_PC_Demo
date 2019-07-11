@@ -84,6 +84,7 @@
 #include "Utils/StringUtil.h"
 #include "Utils/MultiLangSupport.h"
 #include "Utils/TimerManager.h"
+#include "Utils/OnScreenKeyboardManager.h"
 #include "Utils/Shadow.h"
 
 #include "Animation/AnimationPlayer.h"
@@ -93,6 +94,11 @@
 #include "Render/Clip.h"
 #include "Render/Bitmap.h"
 #include "Render/Render.h"
+#include "Render/Pen.h"
+#include "Render/Brush.h"
+#include "Render/Matrix.h"
+#include "Render/Path.h"
+#include "Render/Factory.h"
 
 #include "Core/Define.h"
 #include "Core/Markup.h"

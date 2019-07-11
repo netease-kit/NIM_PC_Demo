@@ -57,6 +57,7 @@ SessionBox::SessionBox(std::string id, nim::NIMSessionType type)
 
 SessionBox::~SessionBox()
 {
+	SessionManager::GetInstance()->RemoveSessionBox(session_id_);
 /*
 	ContactSelectForm *contact_select_form = (ContactSelectForm *)WindowsManager::GetInstance()->GetWindow\
 		(ContactSelectForm::kClassName, nbase::UTF8ToUTF16(session_id_));
@@ -75,9 +76,6 @@ ISessionDock* SessionBox::GetSessionForm() const
 void SessionBox::InitSessionBox()
 {
 	ASSERT(session_form_ != NULL);
-
-	UserService::GetInstance()->GetRobotInfo(session_id_, robot_info_);
-	is_robot_session_ = !robot_info_.GetAccid().empty();
 
 	AttachBubbledEvent(ui::kEventAll, nbase::Bind(&SessionBox::Notify, this, std::placeholders::_1));
 	AttachBubbledEvent(ui::kEventClick, nbase::Bind(&SessionBox::OnClicked, this, std::placeholders::_1));
@@ -125,6 +123,7 @@ void SessionBox::InitSessionBox()
 	btn_refresh_member_ = (Button*)FindSubControl(L"btn_refresh_member");
 	btn_refresh_member_->SetEnabled(false);
 	member_list_ = (ListBox*)FindSubControl(L"member_list");
+	bottom_panel_ = (VBox*)FindSubControl(L"bottom_panel");
 
 	ITextServices * text_services = input_edit_->GetTextServices();
 	richedit_ole_callback_ = new IRichEditOleCallbackEx(text_services, std::function<void()>());
@@ -157,32 +156,9 @@ void SessionBox::InitSessionBox()
 			taskbar_item_->Init(nbase::UTF8ToUTF16(session_id_));
 	}
 
-	if (is_robot_session_)
-	{
-		btn_audio->SetVisible(false);
-		btn_video->SetVisible(false);
-		btn_rts->SetVisible(false);
-		btn_face_->SetVisible(false);
-		btn_capture_audio_->SetVisible(false);
-		FindSubControl(L"btn_image")->SetVisible(false);
-		FindSubControl(L"btn_snapchat")->SetVisible(false);
-		FindSubControl(L"btn_file")->SetVisible(false);
-		FindSubControl(L"btn_transfer_file")->SetVisible(false);
-		FindSubControl(L"btn_jsb")->SetVisible(false);
-		FindSubControl(L"btn_tip")->SetVisible(false);
-		FindSubControl(L"btn_clip")->SetVisible(false);
-		FindSubControl(L"btn_custom_msg")->SetVisible(false);
-	}
-	else
-	{
-		OnSelectAtItem cb = nbase::Bind(&SessionBox::OnSelectAtItemCallback, this, std::placeholders::_1, std::placeholders::_2);
-		AtlistForm *at_list_form = new AtlistForm(session_id_, session_type_, ToWeakCallback(cb));
-		at_list_form->Create(this->GetWindow()->GetHWND(), L"", WS_POPUPWINDOW, 0L);
-		nim::RobotInfos infos;
-		UserService::GetInstance()->GetAllRobotInfo(infos);
-		if (infos.size() > 0)
-			at_list_form->InitRobotInfos(infos);
-	}
+	OnSelectAtItem cb = nbase::Bind(&SessionBox::OnSelectAtItemCallback, this, std::placeholders::_1);
+	AtlistForm *at_list_form = new AtlistForm(session_id_, session_type_, ToWeakCallback(cb));
+	at_list_form->Create(this->GetWindow()->GetHWND(), L"", WS_POPUPWINDOW, 0L);
 
 	CheckHeader();
 	//CheckTeamType(nim::kNIMTeamTypeNormal);
@@ -232,9 +208,6 @@ void SessionBox::InitSessionBox()
 		unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(friend_list_change_cb));
 	}
 
-	auto robot_list_change_cb = nbase::Bind(&SessionBox::OnRobotChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3);
-	unregister_cb.Add(UserService::GetInstance()->RegRobotListChange(robot_list_change_cb));
-
 	auto hied_right = dynamic_cast<ui::Button*>(FindSubControl(L"hide_right"));
 	auto show_right = dynamic_cast<ui::Button*>(FindSubControl(L"show_right"));
 	hied_right->AttachClick([this, show_right,hied_right](ui::EventArgs* param){
@@ -276,11 +249,6 @@ void SessionBox::UninitSessionBox()
 		input_edit_droptarget_->Release();
 		input_edit_droptarget_ = NULL;
 	}
-}
-
- bool SessionBox::IsRobotSession() const
-{
-	return is_robot_session_;
 }
 
 void SessionBox::OnNotifyChangeCallback(std::string id, bool mute)
@@ -329,7 +297,7 @@ void SessionBox::AddNewMsg(const nim::IMMessage &msg, bool create)
 
 	ShowMsg(msg, false, show_time);
 
-	if(!IsNoticeMsg(msg))
+	if(!IsNoticeMsg(msg) && !IsRTSMsg(msg.type_, msg.attach_))
 		last_msg_time_ = msg.timetag_;
 
 	if (first_show_msg_)
@@ -384,16 +352,10 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 	}
 
 	MsgBubbleItem* item = NULL;
-
-	if (msg.type_ == nim::kNIMMessageTypeText 
-		|| IsNetCallMsg(msg.type_, msg.attach_))
+	if (IsRecallMsg(msg.type_, msg.attach_))
 	{
 		Json::Value values;
-		Json::Reader reader;
-		if (reader.parse(msg.attach_, values) 
-			&& values.isObject() 
-			&& values.isMember("comment")
-			&& values["comment"].asString() == "is_recall_notification")
+		if (Json::Reader().parse(msg.attach_, values))
 		{
 			nim::IMMessage notify_msg = msg;
 			if (values.isMember("notify_from"))
@@ -401,11 +363,19 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 				std::string from_id = values["notify_from"].asString();
 				std::string from_nick = values["from_nick"].asString();
 				std::string operator_id = values["operator_id"].asString();
+				if (values.isMember("feature"))
+					notify_msg.feature_ = (nim::NIMMessageFeature)values["feature"].asInt();
 				if (operator_id.empty())
 					operator_id = from_id;
-				notify_msg.content_ = nbase::UTF16ToUTF8(GetRecallNotifyTextEx(GetSessionId(), GetSessionType(), from_id, operator_id,from_nick));
+				notify_msg.content_ = nbase::UTF16ToUTF8(GetRecallNotifyTextEx(GetSessionId(), GetSessionType(), from_id, operator_id, from_nick));
+				if (notify_msg.feature_ == nim::kNIMMessageFeatureRoamMsg)
+					notify_msg.content_.append(" [roaming]");
+				else if (notify_msg.feature_ == nim::kNIMMessageFeatureLeaveMsg)
+					notify_msg.content_.append(" [leave]");
+				else if (notify_msg.feature_ == nim::kNIMMessageFeatureSyncMsg)
+					notify_msg.content_.append(" [sync]");
+				else;
 			}
-
 			MsgBubbleNotice* cell = new MsgBubbleNotice;
 			GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
 			if (first)
@@ -416,10 +386,12 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 			cell->InitInfo(notify_msg, session_id_, true);
 			return nullptr;
 		}
-		else
-		{
-			item = new MsgBubbleText;
-		}		
+	}
+
+	if (msg.type_ == nim::kNIMMessageTypeText	|| 
+		IsNetCallMsg(msg.type_, msg.attach_))
+	{		
+		item = new MsgBubbleText;
 	}
 	else if (msg.type_ == nim::kNIMMessageTypeImage)
 		item = new MsgBubbleImage;
@@ -510,8 +482,9 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 	}
 	else if (msg.type_ == nim::kNIMMessageTypeRobot)
 	{
-		item = new MsgBubbleRobot;
+		return nullptr;
 	}
+	
 	if (item == nullptr)
 	{
 		QLOG_WAR(L"unknown msg: cid={0} msg_type={1}") << bubble_id << msg.type_;
@@ -593,7 +566,7 @@ void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 			long long older_time = 0;
 			for (size_t j = i + 1; j < len; j++)
 			{
-				if (!IsNoticeMsg(msg[j]))
+				if (!IsNoticeMsg(msg[j]) && !IsRTSMsg(msg[j].type_, msg[j].attach_))
 				{
 					older_time = msg[j].timetag_;
 					break;
@@ -645,7 +618,7 @@ void SessionBox::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 		{
 			for (const auto &i : msg)
 			{
-				if (!IsNoticeMsg(i))
+				if (!IsNoticeMsg(i) && !IsRTSMsg(i.type_, i.attach_))
 				{
 					last_msg_time_ = i.timetag_;
 					break;
@@ -979,6 +952,8 @@ void SessionBox::OnRecallMsgCallback(nim::NIMResCode code, const nim::RecallMsgN
 		msg.sender_accid_ = notify.from_id_;
 		msg.status_ = nim::kNIMMsgLogStatusSent;
 		msg.type_ = nim::kNIMMessageTypeText;
+		msg.feature_ = notify.notify_feature_;
+
 		Json::Value values;
 		values["comment"] = "is_recall_notification";
 		values["notify_from"] = notify.from_id_;
@@ -1081,8 +1056,6 @@ void SessionBox::SendText(const std::string &text, bool team_msg_need_ack/* = fa
 
 		uid_at_someone_.clear();
 	}
-	if (is_robot_session_)
-		msg.type_ = nim::kNIMMessageTypeRobot;
 
 	if (team_msg_need_ack)
 		msg.msg_setting_.team_msg_need_ack_ = BS_TRUE;
@@ -1119,30 +1092,6 @@ void SessionBox::SendText(const std::string &text, bool team_msg_need_ack/* = fa
 			return;
 		}
 		json_msg = nim::Talk::CreateTextMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, msg.content_, msg.msg_setting_, msg.timetag_);
-	}
-	else
-	{
-		nim::IMBotRobot bot;
-		bot.robot_accid_ = is_robot_session_ ? session_id_ : robot_accid;
-		std::wstring robot_content = nbase::UTF8ToUTF16(text);
-		int index = robot_content.find(L"@");
-		if (index != -1)
-		{
-			int space_index = 0;
-			while (space_index != -1 && index != -1)
-			{
-				space_index = robot_content.find(L" ", index);
-				if (space_index != -1)
-				{
-					robot_content = robot_content.replace(index, space_index - index + 1, L"");
-					index = robot_content.find(L"@", index);
-				}
-			}
-		}
-		bot.sent_param_["content"] = robot_content.empty() ? " " : nbase::UTF16ToUTF8(robot_content);
-		bot.sent_param_["type"] = "01";
-		msg.attach_ = bot.ToJsonString();
-		json_msg = nim::Talk::CreateBotRobotMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, text, bot, msg.msg_setting_, msg.timetag_);
 	}
 
 	AddSendingMsg(msg);
@@ -1189,18 +1138,32 @@ void SessionBox::SendImage( const std::wstring &src )
 	nim::IMImage img;
 	img.md5_ = image_md5;
 	img.size_ = (long)nbase::GetFileSize(dest);
-
-	Gdiplus::Image image(dest.c_str());
-	if (image.GetLastStatus() != Gdiplus::Ok)
+	auto task = [&]() {
+		Gdiplus::Image image(dest.c_str());
+		if (image.GetLastStatus() != Gdiplus::Ok)
+		{
+			return false;
+		}
+		else
+		{
+			img.width_ = image.GetWidth();
+			img.height_ = image.GetHeight();
+			return true;
+		}
+		return false;
+	};
+	if (!task())
 	{
-		assert(0);
+		nbase::DeleteFile(dest);
+		nbase::CopyFile(src, dest);
+		if (!task())
+		{
+			assert(0);
+		}
 	}
-	else
-	{
-		img.width_ = image.GetWidth();
-		img.height_ = image.GetHeight();
-	}
-
+	std::wstring file_extension;
+	if (nbase::FilePathExtension(src, file_extension))
+		img.file_extension_ = nbase::UTF16ToUTF8(file_extension);
 	msg.attach_ = img.ToJsonString();
 
 	AddSendingMsg(msg);
@@ -1432,7 +1395,7 @@ void SessionBox::AddSendingMsg(const nim::IMMessage &msg)
 		show_time = CheckIfShowTime(last_msg_time_, msg.timetag_);
 	}
 	
-	if (!IsNoticeMsg(msg))
+	if (!IsNoticeMsg(msg) && !IsRTSMsg(msg.type_, msg.attach_))
 		last_msg_time_ = msg.timetag_;
 
 	MsgBubbleItem* item = ShowMsg(msg, false, show_time);
@@ -1685,28 +1648,22 @@ void SessionBox::CheckHeader()
 		if (SubscribeEventManager::GetInstance()->IsEnabled())
 		{
 			label_online_state_->SetVisible(true);
+
 			EventDataEx data;
-			if (!is_robot_session_)
-				SubscribeEventManager::GetInstance()->GetEventData(nim::kNIMEventTypeOnlineState, session_id_, data);
-			else
-				data.online_client_.online_client_type_.insert(nim::kNIMClientTypeDefault);
+			SubscribeEventManager::GetInstance()->GetEventData(nim::kNIMEventTypeOnlineState, session_id_, data);
+			if (data.online_client_.online_client_type_.size() == 0 && session_id_ == LoginManager::GetInstance()->GetAccount())
+				data.online_client_.online_client_type_.insert(nim::kNIMClientTypePCWindows);
 			SetOnlineState(data);
 		}
 
-		if (!is_robot_session_)
-		{
-			btn_invite_->SetVisible(true);
-			label_tid_->SetVisible(false);
-			if (IsFileTransPhone())
-				name = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MY_MOBILEPHONE");
-			else
-				name = UserService::GetInstance()->GetUserName(session_id_);
-		}
+		btn_invite_->SetVisible(true);
+		label_tid_->SetVisible(false);
+		if (IsFileTransPhone())
+			name = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MY_MOBILEPHONE");
 		else
-		{
-			name = nbase::UTF8ToUTF16(robot_info_.GetName());
-		}
-		photo = PhotoService::GetInstance()->GetUserPhoto(session_id_, is_robot_session_);
+			name = UserService::GetInstance()->GetUserName(session_id_);
+
+		photo = PhotoService::GetInstance()->GetUserPhoto(session_id_);
 	}
 
 	SetTitleName(name);
@@ -1735,7 +1692,7 @@ void SessionBox::SetOnlineState(const EventDataEx &data)
 {
 	if (session_type_ != nim::kNIMSessionTypeTeam)
 	{
-		label_online_state_->SetText(OnlineStateEventUtil::GetOnlineState(data.online_client_, data.multi_config_, false));
+		label_online_state_->SetText(OnlineStateEventUtil::GetOnlineState(session_id_, data, false));
 	}
 }
 
@@ -1808,39 +1765,6 @@ void SessionBox::WriteMsglogCallback(nim::NIMResCode res_code, const std::string
 	{
 		QLOG_APP(L"SessionBox::WriteMsglogCallback Faild: code:{0} index:{1} msg_id:{2} sender:{3} reveiver:{4}")
 			<< res_code << index << msg_id << msg.sender_accid_ << msg.receiver_accid_;
-	}
-}
-
-void SessionBox::OnRobotChange(nim::NIMResCode rescode, nim::NIMRobotInfoChangeType type, const nim::RobotInfos& robots)
-{
-	if (rescode == nim::kNIMResSuccess)
-	{
-		for (auto &robot : robots)
-		{
-			if (robot.GetAccid() == session_id_)
-			{
-				is_robot_session_ = true;
-				robot_info_ = robot;
-				FindSubControl(L"btn_audio")->SetVisible(false);
-				FindSubControl(L"btn_video")->SetVisible(false);
-				FindSubControl(L"btn_rts")->SetVisible(false);
-				btn_capture_audio_->SetVisible(false);
-				btn_face_->SetVisible(false);
-				FindSubControl(L"btn_image")->SetVisible(false);
-				FindSubControl(L"btn_snapchat")->SetVisible(false);
-				FindSubControl(L"btn_file")->SetVisible(false);
-				FindSubControl(L"btn_transfer_file")->SetVisible(false);
-				FindSubControl(L"btn_jsb")->SetVisible(false);
-				FindSubControl(L"btn_tip")->SetVisible(false);
-				FindSubControl(L"btn_clip")->SetVisible(false);
-				FindSubControl(L"btn_custom_msg")->SetVisible(false);
-				CheckHeader();			
-				break;
-			}
-		}
-		auto form = (AtlistForm *)WindowsManager::GetInstance()->GetWindow(AtlistForm::kClassName, nbase::UTF8ToUTF16(session_id_));
-		if (form)
-			form->InitRobotInfos(robots);
 	}
 }
 
@@ -1945,18 +1869,6 @@ void SessionBox::OnUserPhotoReady(PhotoType type, const std::string& accid, cons
 			if (bubble_item != NULL)
 			{
 				bool is_robot_response = false;
-				std::string robot_id;
-				if (bubble_item->msg_.type_ == nim::kNIMMessageTypeRobot)
-				{
-					nim::IMBotRobot robot_attach;
-					nim::Talk::ParseBotRobotMessageAttach(bubble_item->msg_, robot_attach);
-					is_robot_response = robot_attach.out_msg_;
-					robot_id = robot_attach.robot_accid_;
-				}
-				if (robot_id == accid && is_robot_response)
-				{
-					((MsgBubbleRobot *)bubble_item)->SetShowHeader();
-				}
 			}
 		}
 	};
@@ -2002,7 +1914,7 @@ void SessionBox::OnReceiveEvent(int event_type, const std::string &accid, const 
 
 void SessionBox::OnFriendListChange(FriendChangeType change_type, const std::string& accid)
 {
-	if (change_type == kChangeTypeUpdate)
+	if (accid == session_id_ && change_type == kChangeTypeUpdate || change_type == kChangeTypeAdd)
 	{
 		CheckHeader();
 	}

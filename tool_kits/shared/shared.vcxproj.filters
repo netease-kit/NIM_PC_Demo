@@ -49,6 +49,9 @@
       <Filter>ui\toast</Filter>
     </ClCompile>
     <ClCompile Include="db_helper.cpp" />
+    <ClCompile Include="unzip.cpp" />
+    <ClCompile Include="zip.cpp" />
+    <ClCompile Include="cpp_wrapper_util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmd_line.h" />
@@ -90,5 +93,8 @@
     </ClInclude>
     <ClInclude Include="templated_object_factory.h" />
     <ClInclude Include="db_helper.h" />
+    <ClInclude Include="unzip.h" />
+    <ClInclude Include="zip.h" />
+    <ClInclude Include="cpp_wrapper_util.h" />
   </ItemGroup>
 </Project>

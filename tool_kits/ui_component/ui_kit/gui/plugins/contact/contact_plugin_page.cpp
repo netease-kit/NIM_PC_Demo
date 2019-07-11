@@ -60,19 +60,12 @@ ProfileBox* ContactPluginPage::CrateProfile(const std::string &uid, bool is_robo
 	ui::GlobalManager::FillBoxWithCache(ret, L"profile_form/profile_box.xml");
 	ret->SetUTF8Name(uid);
 	contact_profile_container_->Add(ret);
-	if (!is_robot)
-	{
-		// 获取用户信息
-		nim::UserNameCard info;
-		UserService::GetInstance()->GetUserInfo(uid, info);
-		ret->InitUserInfo(info);
-	}
-	else
-	{
-		nim::RobotInfo info;
-		UserService::GetInstance()->GetRobotInfo(uid, info);
-		ret->InitRobotInfo(info);
-	}	
+
+	// 获取用户信息
+	nim::UserNameCard info;
+	UserService::GetInstance()->GetUserInfo(uid, info);
+	ret->InitUserInfo(info);
+
 	return ret;
 }
 std::string ContactPluginPage::GetActiveProfile() const

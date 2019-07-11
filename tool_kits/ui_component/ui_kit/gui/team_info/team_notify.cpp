@@ -161,13 +161,29 @@ void TeamNotifyForm::OnInviteYou(const nim::SysMessage &json)
 	Json::Reader reader;
 	if (reader.parse(json.attach_, values) && values.isObject())
 	{
-		if (values.isMember("attach"))
+		if (values.isMember(nim::kNIMNotificationKeyTeamInfo))
 		{
 			nim::Team::ParseTeamInfo(values[nim::kNIMNotificationKeyTeamInfo].toStyledString(), team_info);
-			QLOG_APP(L"OnReceiveTeamInviteMsgWithAttach: {0}") << values["attach"].asString();
+			
+
 		}
 		else
+		{
 			nim::Team::ParseTeamInfo(json.attach_, team_info);
+		}
+		if (values.isMember("attach"))
+		{
+			QLOG_APP(L"OnReceiveTeamInviteMsgWithAttach: {0}") << values["attach"].asString();
+			auto attach_ctrl = dynamic_cast<ui::RichEdit*>(FindControl(L"re_invite_attachment"));
+			if (attach_ctrl != nullptr)
+				attach_ctrl->SetUTF8Text(values["attach"].asString());
+		}
+		if (!json.content_.empty())
+		{
+			auto content_ctrl = dynamic_cast<ui::RichEdit*>(FindControl(L"re_invite_postscript"));
+			if (content_ctrl != nullptr)
+				content_ctrl->SetUTF8Text(json.content_);
+		}
 	}
 	if (team_info.GetInviteMode() == nim::kNIMTeamInviteModeManager)
 		re_invite_->SetText(nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_NOTIFY_ADMIN_INVITE_YOU").c_str(), nbase::UTF8ToUTF16(team_info.GetName()).c_str()));

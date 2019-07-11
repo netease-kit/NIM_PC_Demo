@@ -36,7 +36,7 @@ namespace nim_comp
 		virtual void OnNewMsg(SessionBox &session_box, bool create, bool flash) override;
 		virtual void AdjustFormSize() override;
 		virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
-		virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled) override;
+		virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
 		virtual LRESULT HostWindowHandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 	public:
 		virtual void DoInit() override;

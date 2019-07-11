@@ -1,5 +1,5 @@
 #include "include/cef_client.h"
-#include "client_app.h"
+#include "app/client_app.h"
 
 int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)
 {

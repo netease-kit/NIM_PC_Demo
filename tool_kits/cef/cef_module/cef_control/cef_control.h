@@ -5,93 +5,143 @@
  * @date 2016/7/19
  */
 #pragma once
-#include "include/cef_base.h"
-#include "cef_control_event.h"
-#include "js_bridge/cef_js_bridge.h"
-#include "handler/browser_handler.h"
+#include "cef_control_base.h"
 #include "util/memory_dc.h"
 
 namespace ui 
 {
 
-class CefControl :public Control, public IUIMessageFilter, public nim_cef::BrowserHandler::HandlerDelegate
+class CefControl :public CefControlBase, public IUIMessageFilter
 {	
 public:
 	CefControl(void);
 	~CefControl(void);	
 
+	/// 重写父类接口，提供个性化功能
 	virtual void Init() override;
 	virtual void SetPos(UiRect rc) override;
 	virtual void HandleMessage(EventArgs& event) override;
 	virtual void SetVisible(bool bVisible = true) override;
 	virtual void SetInternVisible(bool bVisible = true) override;
 	virtual void Paint(IRenderContext* pRender, const UiRect& rcPaint) override;
+	virtual void SetWindow(ui::Window* pManager, ui::Box* pParent, bool bInit) override;
 
-	// 处理窗体消息，转发到Cef浏览器对象
-	virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled) override;	
+	virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override; // 处理窗体消息，转发到Cef浏览器对象
+
+	/**
+	* @brief 打开开发者工具
+	* @param[in] view 一个 CefControl 控件实例(仅在CefControl类里需要传入)
+	* @return 成功返回 true，失败返回 false
+	*/
+	virtual bool AttachDevTools(Control* view) override;
+
 protected:
-	// 转换窗体消息并转发到Cef浏览器对象
-	LRESULT SendButtonDownEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
-	LRESULT SendButtonDoubleDownEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
-	LRESULT SendButtonUpEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
-	LRESULT SendMouseMoveEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
-	LRESULT SendMouseWheelEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
-	LRESULT SendMouseLeaveEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
-	LRESULT SendKeyEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
-	LRESULT SendCaptureLostEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, bool& bHandled);
+	virtual void ReCreateBrowser() override;
+
+protected:
+	/**
+	 * @brief 转发鼠标按下消息到 BrowserHost
+	 * @param[in] uMsg 消息
+	 * @param[in] wParam 消息附加参数
+	 * @param[in] lParam 消息附加参数
+	 * @param[out] bHandled 是否继续传递消息
+	 * @return 返回消息处理结果
+	 */
+	LRESULT SendButtonDownEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief 转发鼠标双击消息到 BrowserHost
+	 * @param[in] uMsg 消息
+	 * @param[in] wParam 消息附加参数
+	 * @param[in] lParam 消息附加参数
+	 * @param[out] bHandled 是否继续传递消息
+	 * @return 返回消息处理结果
+	 */
+	LRESULT SendButtonDoubleDownEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief 转发鼠标弹起消息到 BrowserHost
+	 * @param[in] uMsg 消息
+	 * @param[in] wParam 消息附加参数
+	 * @param[in] lParam 消息附加参数
+	 * @param[out] bHandled 是否继续传递消息
+	 * @return 返回消息处理结果
+	 */
+	LRESULT SendButtonUpEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief 转发鼠标移动消息到 BrowserHost
+	 * @param[in] uMsg 消息
+	 * @param[in] wParam 消息附加参数
+	 * @param[in] lParam 消息附加参数
+	 * @param[out] bHandled 是否继续传递消息
+	 * @return 返回消息处理结果
+	 */
+	LRESULT SendMouseMoveEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief 转发鼠标滚动消息到 BrowserHost
+	 * @param[in] uMsg 消息
+	 * @param[in] wParam 消息附加参数
+	 * @param[in] lParam 消息附加参数
+	 * @param[out] bHandled 是否继续传递消息
+	 * @return 返回消息处理结果
+	 */
+	LRESULT SendMouseWheelEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief 转发鼠标离开消息到 BrowserHost
+	 * @param[in] uMsg 消息
+	 * @param[in] wParam 消息附加参数
+	 * @param[in] lParam 消息附加参数
+	 * @param[out] bHandled 是否继续传递消息
+	 * @return 返回消息处理结果
+	 */
+	LRESULT SendMouseLeaveEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief 转发键盘相关消息到 BrowserHost
+	 * @param[in] uMsg 消息
+	 * @param[in] wParam 消息附加参数
+	 * @param[in] lParam 消息附加参数
+	 * @param[out] bHandled 是否继续传递消息
+	 * @return 返回消息处理结果
+	 */
+	LRESULT SendKeyEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
+
+	/**
+	 * @brief 转发捕获焦点消息到 BrowserHost
+	 * @param[in] uMsg 消息
+	 * @param[in] wParam 消息附加参数
+	 * @param[in] lParam 消息附加参数
+	 * @param[out] bHandled 是否继续传递消息
+	 * @return 返回消息处理结果
+	 */
+	LRESULT SendCaptureLostEvent(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	
+	/**
+	 * @brief 判断是否有按键按下
+	 * @param[in] wparam 消息附加参数
+	 * @return 返回 true 表示有按键按下，false 表示没有按键按下
+	 */
 	static bool IsKeyDown(WPARAM wparam);
+
+	/**
+	 * @brief 转换普通键盘消息到 CEF 可识别的键盘消息
+	 * @param[in] wparam 消息附加参数
+	 * @param[in] lparam 消息附加参数
+	 * @return 返回转换后的结果
+	 */
 	static int GetCefKeyboardModifiers(WPARAM wparam, LPARAM lparam);
+
+	/**
+	 * @brief 转换普通鼠标消息到 CEF 可识别的鼠标消息
+	 * @param[in] wparam 消息附加参数
+	 * @return 返回转换后的结果
+	 */
 	static int GetCefMouseModifiers(WPARAM wparam);
-private:
-	void ReCreateBrowser();
-public:
-	// 控件对外的控制接口
-	void LoadURL(const CefString& url);
-	void LoadString(const CefString& stringW, const CefString& url);
-	void GoBack();
-	void GoForward();
-	bool CanGoBack();
-	bool CanGoForward();
-	void Refresh();
-	void StopLoad();
-	bool IsLoading();
-
-	CefString GetURL();
-	std::string GetUTF8URL();
-	CefString GetMainURL(const CefString& url);
-
-	bool RegisterCppFunc(const std::wstring& function_name, nim_cef::CppFunction function, bool global_function = false);
-	void UnRegisterCppFunc(const std::wstring& function_name);
-	bool CallJSFunction(const std::wstring& js_function_name, const std::wstring& params, nim_cef::CallJsFunctionCallback callback, const std::wstring& frame_name = L"");
-	bool CallJSFunction(const std::wstring& js_function_name, const std::wstring& params, nim_cef::CallJsFunctionCallback callback, int frame_id);
-
-	virtual bool AttachDevTools(CefControl* view);
-	virtual void DettachDevTools();
-	virtual bool IsAttachedDevTools() const { return devtool_attached_; };
-	virtual void RepairBrowser();
-public:
-	// 事件处理接口回调函数，当浏览器发生这些事件后会调用回调函数来通知
-	void AttachBeforeContextMenu(const OnBeforeMenuEvent& callback){ cb_before_menu_ = callback; }
-	void AttachMenuCommand(const OnMenuCommandEvent& callback){ cb_menu_command_ = callback; }
-	void AttachTitleChange(const OnTitleChangeEvent& callback){ cb_title_change_ = callback; }
-	void AttachUrlChange(const OnUrlChangeEvent& callback){ cb_url_change_ = callback; }
-	void AttachMainURLChange(OnMainURLChengeEvent cb){ cb_main_url_change_ = cb; }
-	void AttachBeforeNavigate(const OnBeforeResourceLoadEvent& callback){ cb_before_resource_load_ = callback; }
-	void AttachLinkClick(const OnLinkClickEvent& callback){ cb_link_click_ = callback; }
-	void AttachLoadingStateChange(const OnLoadingStateChangeEvent& callback){ cb_loadstate_change_ = callback; }
-	void AttachLoadStart(const OnLoadStartEvent& callback){ cb_load_start_ = callback; }
-	void AttachLoadEnd(const OnLoadEndEvent& callback){ cb_load_end_ = callback; }
-	void AttachLoadError(const OnLoadErrorEvent& callback){ cb_load_error_ = callback; }
-	void AttachDevToolAttachedStateChange(const OnDevToolAttachedStateChangeEvent& callback){ cb_devtool_visible_change_ = callback; };
-	void AttachAfterCreated(const OnAfterCreatedEvent& callback){ cb_after_created_ = callback; }
-	void AttachBeforeCLose(const OnBeforeCloseEvent& callback) { cb_before_close_ = callback; }
-	void AttachBeforeBrowser(const OnBeforeBrowserEvent& callback) { cb_before_browser_ = callback; }
-	void AttachProtocolExecution(const OnProtocolExecutionEvent& callback) { cb_protocol_execution_ = callback; }
 
 private:
-	// 处理BrowserHandler的HandlerDelegate委托接口
-
 	// 当浏览器渲染数据变化时，会触发此接口，此时把渲染数据保存到内存dc
 	// 并且通知窗体刷新控件，在控件的Paint函数里把内存dc的位图画到窗体上
 	// 由此实现离屏渲染数据画到窗体上
@@ -106,96 +156,10 @@ private:
 
 	virtual void OnPopupSize(CefRefPtr<CefBrowser> browser, const CefRect& rect) OVERRIDE;
 
-	virtual void UpdateWindowPos() OVERRIDE;
-
-	virtual void UpdateUI() OVERRIDE;
-
-	virtual void OnBeforeContextMenu(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model) OVERRIDE;
-
-	virtual bool OnContextMenuCommand(CefRefPtr<CefBrowser> browser,
-		CefRefPtr<CefFrame> frame,
-		CefRefPtr<CefContextMenuParams> params,
-		int command_id,
-		CefContextMenuHandler::EventFlags event_flags) OVERRIDE;
-
-	virtual void OnAddressChange(CefRefPtr<CefBrowser> browser,	CefRefPtr<CefFrame> frame, const CefString& url) OVERRIDE;
-
-	virtual void OnTitleChange(CefRefPtr<CefBrowser> browser, const CefString& title) OVERRIDE;
-
-	virtual void OnLoadingStateChange(CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward) OVERRIDE;
-
-	virtual void OnLoadStart(CefRefPtr<CefBrowser> browser,	CefRefPtr<CefFrame> frame) OVERRIDE;
-
-	virtual void OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, int httpStatusCode) OVERRIDE;
-
-	virtual void OnLoadError(CefRefPtr<CefBrowser> browser,
-		CefRefPtr<CefFrame> frame,
-		CefLoadHandler::ErrorCode errorCode,
-		const CefString& errorText,
-		const CefString& failedUrl) OVERRIDE;
-
-	// 在非UI线程中被调用
-	virtual bool OnBeforePopup(CefRefPtr<CefBrowser> browser,
-		CefRefPtr<CefFrame> frame,
-		const CefString& target_url,
-		const CefString& target_frame_name,
-		CefLifeSpanHandler::WindowOpenDisposition target_disposition,
-		bool user_gesture,
-		const CefPopupFeatures& popupFeatures,
-		CefWindowInfo& windowInfo,
-		CefRefPtr<CefClient>& client,
-		CefBrowserSettings& settings,
-		bool* no_javascript_access) OVERRIDE;
-
-	virtual bool OnAfterCreated(CefRefPtr<CefBrowser> browser) OVERRIDE;
-
-	virtual void OnBeforeClose(CefRefPtr<CefBrowser> browser) OVERRIDE;
-
-	// 在非UI线程中被调用
-	virtual bool OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, bool is_redirect) OVERRIDE;
-
-	virtual void OnProtocolExecution(CefRefPtr<CefBrowser> browser, const CefString& url, bool& allow_os_execution) OVERRIDE;
-
-	// 在非UI线程中被调用
-	virtual CefRequestHandler::ReturnValue OnBeforeResourceLoad(
-		CefRefPtr<CefBrowser> browser,
-		CefRefPtr<CefFrame> frame,
-		CefRefPtr<CefRequest> request,
-		CefRefPtr<CefRequestCallback> callback) OVERRIDE;
-
-	virtual void OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser, CefRequestHandler::TerminationStatus status) OVERRIDE;
-
-	virtual bool OnExecuteCppFunc(const CefString& function_name, const CefString& params, int js_callback_id, CefRefPtr<CefBrowser> browser) OVERRIDE;
-
-	virtual bool OnExecuteCppCallbackFunc(int cpp_callback_id, const CefString& json_string) OVERRIDE;
-
 private:
-
-	CefRefPtr<nim_cef::BrowserHandler>		browser_handler_ = nullptr;
-	std::shared_ptr<nim_cef::CefJSBridge>	js_bridge_;
 	MemoryDC			dc_cef_;		// 内存dc,把cef离屏渲染的数据保存到dc中
 	MemoryDC			dc_cef_popup_;	// 内存dc,把cef的popup窗口的离屏渲染数据保存到dc中
 	CefRect				rect_popup_;	// 当网页的组合框一类的控件弹出时，记录弹出的位置
-	CefString			url_;
-
-	OnBeforeMenuEvent	cb_before_menu_ = nullptr;
-	OnMenuCommandEvent	cb_menu_command_ = nullptr;
-	OnTitleChangeEvent	cb_title_change_ = nullptr;
-	OnBeforeResourceLoadEvent	cb_before_resource_load_ = nullptr;
-	OnUrlChangeEvent	cb_url_change_ = nullptr;
-	OnMainURLChengeEvent cb_main_url_change_ = nullptr;
-	OnLinkClickEvent	cb_link_click_ = nullptr;
-	OnLoadingStateChangeEvent	cb_loadstate_change_ = nullptr;
-	OnLoadStartEvent	cb_load_start_ = nullptr;
-	OnLoadEndEvent		cb_load_end_ = nullptr;
-	OnLoadErrorEvent	cb_load_error_ = nullptr;
-	OnAfterCreatedEvent	cb_after_created_ = nullptr;
-	OnBeforeCloseEvent	cb_before_close_ = nullptr;
-	OnBeforeBrowserEvent cb_before_browser_ = nullptr;
-	OnProtocolExecutionEvent cb_protocol_execution_ = nullptr;
-	OnDevToolAttachedStateChangeEvent cb_devtool_visible_change_ = nullptr;
-	bool devtool_attached_;
-	int					js_callback_thread_id_ = -1; // 保存接收到 JS 调用 CPP 函数的代码所属线程，以后触发 JS 回调时把回调转到那个线程
 };
 
 }

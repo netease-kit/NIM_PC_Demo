@@ -35,6 +35,7 @@
 #include "base/file/file_util.h"
 #include "base/time/time.h"
 #include "base/framework/task.h"
+#include "base/memory/singleton.h"
 
 //shared project
 #include "shared/utf8_file_util.h"
@@ -58,11 +59,11 @@
 #include "shared/util.h"
 
 //sdk
-#include "nim_cpp_api.h"
-#include "nim_chatroom_cpp_api.h"
+#include "include/nim_cpp_api.h"
+#include "include/nim_chatroom_cpp_api.h"
 
 //tool
-#include "nim_tools_http_cpp.h"
+#include "include/nim_cpp_tools_api.h"
 
 //helper
 #include "shared/closure.h"

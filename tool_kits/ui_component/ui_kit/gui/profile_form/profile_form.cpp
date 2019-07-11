@@ -24,19 +24,10 @@ ProfileForm * ProfileForm::ShowProfileForm(UTF8String uid, bool is_robot/* = fal
 		form = new ProfileForm();
 		form->Create(NULL, L"", WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0L);
 		
-		if (!is_robot)
-		{
-			// 获取用户信息
-			nim::UserNameCard info;
-			UserService::GetInstance()->GetUserInfo(uid, info);
-			form->InitUserInfo(info);
-		}
-		else
-		{
-			nim::RobotInfo info;
-			UserService::GetInstance()->GetRobotInfo(uid, info);
-			form->InitRobotInfo(info);
-		}
+		// 获取用户信息
+		nim::UserNameCard info;
+		UserService::GetInstance()->GetUserInfo(uid, info);
+		form->InitUserInfo(info);
 	}
 	if (!::IsWindowVisible(form->m_hWnd))
 	{
@@ -117,10 +108,6 @@ void ProfileForm::InitWindow()
 void ProfileForm::InitUserInfo(const nim::UserNameCard & info)
 {
 	contant_->InitUserInfo(info);
-}
-void ProfileForm::InitRobotInfo(const nim::RobotInfo & info)
-{
-	contant_->InitRobotInfo(info);
 }
 nim::UserNameCard	ProfileForm::GetNameCard() const
 {

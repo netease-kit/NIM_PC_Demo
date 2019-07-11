@@ -1,6 +1,6 @@
 // Copyright (c) 2011, NetEase Inc. All rights reserved.
 //
-//
+// Author: RL
 // Date: 2011/11/6
 //
 // network utility function unittest

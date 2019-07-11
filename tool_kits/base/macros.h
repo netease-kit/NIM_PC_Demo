@@ -23,9 +23,15 @@
 #define SAFE_RELEASE(p)			{ if (NULL != p) { (p)->Release(); (p) = NULL; } }
 
 //namespace
-#define NAMESPACE_USING(n)		using namespace n;
-#define NAMESPACE_BEGIN(n)		namespace n {
-#define NAMESPACE_END(n)		}
+#ifndef NAMESPACE_USING_
+#define NAMESPACE_USING_(n)		using namespace n;
+#endif
+#ifndef NAMESPACE_BEGIN_
+#define NAMESPACE_BEGIN_(n)		namespace n {
+#endif
+#ifndef NAMESPACE_END_
+#define NAMESPACE_END_(n)		}
+#endif
 
 #ifndef COUNT_OF
 #define COUNT_OF(array)			(sizeof(array)/sizeof(array[0]))

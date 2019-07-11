@@ -2,6 +2,7 @@
 #include "export/nim_ui_session_list_manager.h"
 #include "module/session/force_push_manager.h"
 #include "module/service/mute_black_service.h"
+#include "module/runtime_data/runtime_data_manager.h"
 #include "gui/session/session_form.h"
 #include "gui/session/session_box.h"
 #include "gui/session/session_dock_def.h"
@@ -27,9 +28,11 @@ SessionBox* SessionManager::OpenSessionBox(std::string session_id, nim::NIMSessi
 		return NULL;
 	}
 
+	// 在当前列表中查找是否有要打开的会话
 	auto it_box = session_box_map_.find(session_id);
 	if (it_box != session_box_map_.end())
 	{
+		// 如果需要重新打开则删除原来的 session box 再重新创建一个，否则就激活当前查找到的 session box
 		ISessionDock *parent_form = it_box->second->GetSessionForm();
 		if (!reopen)
 		{
@@ -70,13 +73,21 @@ void SessionManager::AddNewMsg(const nim::IMMessage &msg)
 
 	bool create = false;
 	bool msg_notify = true;
-	if (msg.session_type_ == nim::kNIMSessionTypeTeam)
+	if (nim_comp::RunTimeDataManager::GetInstance()->GetUIStyle() == UIStyle::join)
 	{
-		if (!IsTeamMsgNotify(id, msg.sender_accid_))
-			msg_notify = false;
+		msg_notify = false;
 	}
 	else
-		msg_notify = !MuteBlackService::GetInstance()->IsInMuteList(id);
+	{
+		if (msg.session_type_ == nim::kNIMSessionTypeTeam)
+		{
+			if (!IsTeamMsgNotify(id, msg.sender_accid_))
+				msg_notify = false;
+		}
+		else
+			msg_notify = !MuteBlackService::GetInstance()->IsInMuteList(id);
+	}
+	
 
 	if (NULL == session_box)
 	{
@@ -86,8 +97,8 @@ void SessionManager::AddNewMsg(const nim::IMMessage &msg)
 			// 如果使用了合并会话功能并且已经有了会话窗体，则取消create标志
 			if (enable_merge_ && !session_box_map_.empty())
 				create = false;
-
-			session_box = CreateSessionBox(id, msg.session_type_);
+			if(create)
+				session_box = CreateSessionBox(id, msg.session_type_);
 			if (NULL == session_box)
 				return;
 		}
@@ -125,6 +136,18 @@ bool SessionManager::IsSessionBoxActive(const std::string& id)
 
 	return false;
 }
+SessionBox* SessionManager::GetFirstActiveSession()
+{
+	for (auto &it_box : session_box_map_)
+	{
+		ISessionDock *parent_form = it_box.second->GetSessionForm();
+		if (parent_form && parent_form->IsActiveSessionBox(it_box.second))
+		{
+			return it_box.second;
+		}
+	}
+	return nullptr;
+}
 
 SessionBox* SessionManager::FindSessionBox( const std::string &id )
 {
@@ -138,11 +161,7 @@ SessionBox* SessionManager::FindSessionBox( const std::string &id )
 void SessionManager::RemoveSessionBox( std::string id, const SessionBox* box /*=NULL*/)
 {
 	auto it_box = session_box_map_.find(id);
-	if (it_box == session_box_map_.end())
-	{
-		assert(0);
-	}
-	else
+	if (it_box != session_box_map_.end())
 	{
 		if (NULL == box || box == it_box->second)
 		{
