@@ -4,6 +4,12 @@
 
 ![GitHub](https://img.shields.io/badge/license-MIT-green.svg)
 
+## sdk版本更新
+[传输门](https://dev.yunxin.163.com/docs/product/IM%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97/Windows%E7%AB%AF%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)
+
+## demo版本更新
+[传输门](https://dev.yunxin.163.com/docs/product/IM%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/Demo%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97/Windows-Demo%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)
+
 ## 预览
 
 ![preview](PREVIEW.png)
