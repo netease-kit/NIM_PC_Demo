@@ -1,5 +1,5 @@
-﻿/** @file nim_cpp_api.h
-  * @brief NIM集合头文件
+﻿/** @file callback_proxy.h
+  * @brief C++封装层回调应用层工具类，开发者可以指定自己的异步回调方法,以防止卡死SDK线程(推荐)
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @date 2018/10/22
   */

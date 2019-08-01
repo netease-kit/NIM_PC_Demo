@@ -1,5 +1,5 @@
-/** @file nim_chatroom_define_include.h
-  * @brief nim chatroom ¹«¹²Êı¾İÀàĞÍ¶¨Òå×ÜµÄ°üº¬ÎÄ¼ş
+ï»¿/** @file nim_chatroom_define_include.h
+  * @brief nim chatroom å…¬å…±æ•°æ®ç±»å‹å®šä¹‰æ€»çš„åŒ…å«æ–‡ä»¶
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @date 2017/08/03
   */

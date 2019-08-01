@@ -44,11 +44,20 @@ public:
 
 	/** @fn static void QueryAllRecentSessionAsync(const QuerySessionListCallabck& cb, const std::string& json_extension = "")
 	* 查询会话列表
-	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			查询会话列表的回调函数
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @return void 无返回值
 	*/
 	static void QueryAllRecentSessionAsync(const QuerySessionListCallabck& cb, const std::string& json_extension = "");
+
+	/** @fn static void QueryAllRecentSessionAsync(NIMMessageType last_msg_excluded_type,const QuerySessionListCallabck& cb, const std::string& json_extension = "");
+	* 查询会话列表,可指定最后一条会话消息要排除掉的类型
+	* @param[in] last_msg_excluded_type 最后一条会话消息要排除掉的类型,如果不排除任何消息，参数请传入NIMMessageType::kNIMMessageTypeUnknown
+	* @param[in] cb			查询会话列表的回调函数
+	* @param[in] json_extension json扩展参数（备用，目前不需要）	
+	* @return void 无返回值
+	*/
+	static void QueryAllRecentSessionAsync(NIMMessageType last_msg_excluded_type,const QuerySessionListCallabck& cb, const std::string& json_extension = "");
 
 	/** @fn static bool DeleteRecentSession(nim::NIMSessionType to_type, const std::string& id, const DeleteRecentSessionCallabck& cb, const std::string& json_extension = "")
 	* 删除最近联系人

@@ -35,6 +35,18 @@ NIM_SDK_DLL_API void nim_session_reg_change_cb(const char *json_extension, nim_s
   */
 NIM_SDK_DLL_API void nim_session_query_all_recent_session_async(const char *json_extension, nim_session_query_recent_session_cb_func cb, const void *user_data);
 
+/** @fn void nim_session_query_all_recent_session_with_last_msg_excluded_type_async(const char *json_extension, nim_session_query_recent_session_cb_func cb, enum NIMMessageType last_msg_excluded_type,const void *user_data)
+  * 查询会话列表,可指定最后一条会话消息要排除掉的类型
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb			查询会话列表的回调函数， nim_session_query_recent_session_cb_func回调函数定义见nim_session_def.h
+  * @param[in] last_msg_excluded_type 最后一条会话消息要排除掉的类型,如果不排除任何消息，参数请传入NIMMessageType::kNIMMessageTypeUnknown
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_session_query_all_recent_session_with_last_msg_excluded_type_async(const char *json_extension, nim_session_query_recent_session_cb_func cb, enum NIMMessageType last_msg_excluded_type,const void *user_data);
+
+
+
 /** @fn void nim_session_delete_recent_session_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data)
   * 删除最近联系人
   * @param[in] to_type		会话类型

@@ -511,7 +511,7 @@ NIM_SDK_CPPWRAPPER_DLL_API bool ParseReceiveMessage(const std::string& msg_json,
   */
 NIM_SDK_CPPWRAPPER_DLL_API void ParseReceiveMessage(const nim_cpp_wrapper_util::Json::Value& msg_json_value, IMMessage& message);
 
-/** @fn void ParseReceiveMessage(const nim_cpp_wrapper_util::Json::Value& msg_json, IMMessage& message)
+/** @fn void ParseMessage(const nim_cpp_wrapper_util::Json::Value& msg_json, IMMessage& message)
   * @brief 解析消息
   * @param[in] msg_json 消息(Json Value数据)
   * @param[out] message 消息

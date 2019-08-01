@@ -178,6 +178,7 @@ bool Client::Init(const std::string& app_key
 	config_values[nim::kNIMLoginRetryMaxTimes] = config.login_max_retry_times_;
 	config_values[nim::kNIMUseHttps] = config.use_https_;
 	config_values[nim::kNIMTeamNotificationUnreadCount] = config.team_notification_unread_count_;
+	config_values[nim::kNIMVChatMissUnreadCount] = config.vchat_miss_unread_count_;
 	config_values[nim::kNIMResetUnreadCountWhenRecall] = config.reset_unread_count_when_recall_;
 	config_values[nim::kNIMAnimatedImageThumbnailEnabled] = config.animated_image_thumbnail_enabled_;
 	config_values[nim::kNIMClientAntispam] = config.client_antispam_;

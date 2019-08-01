@@ -559,7 +559,7 @@ namespace nim_comp
 			ShowStatusPage(SP_DIAL);
 			SwitchStatus(STATUS_CONNECTING);
 
-			bool ret = VideoManager::GetInstance()->VChatCalleeAck(channel_id_, true, session_id_);
+			bool ret = VideoManager::GetInstance()->VChatCalleeAck(channel_id_, nim_comp::kVChatAskAccept, session_id_);
 			if (ret)
 			{
 				is_start_ = true;
@@ -807,7 +807,7 @@ namespace nim_comp
 			{
 				if (status_ == STATUS_INVITING)
 				{
-					VideoManager::GetInstance()->VChatCalleeAck(channel_id_, false, session_id_);
+					VideoManager::GetInstance()->VChatCalleeAck(channel_id_, nim_comp::kVChatAskRefuse, session_id_);
 				}
 			}
 		}

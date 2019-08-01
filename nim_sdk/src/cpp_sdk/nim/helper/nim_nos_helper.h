@@ -130,7 +130,7 @@ NIM_SDK_CPPWRAPPER_DLL_API bool ParseUploadResult(const std::string& url, const 
   */
 NIM_SDK_CPPWRAPPER_DLL_API bool ParseDownloadResult(const std::string& file_path, const std::string& call_id, const std::string& res_id, DownloadMediaResult& res);
 
-/** @fn bool ParseUploadProgress(const std::string& json, ProgressData& res)
+/** @fn bool ParseProgressData(const std::string& json, ProgressData& res)
   * @brief 解析NOS上传过程数据
   * @param[in] json Json Value扩展数据
   * @param[out] res 数据结构体

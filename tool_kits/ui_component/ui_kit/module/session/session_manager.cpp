@@ -3,6 +3,7 @@
 #include "module/session/force_push_manager.h"
 #include "module/service/mute_black_service.h"
 #include "module/runtime_data/runtime_data_manager.h"
+#include "module/video/video_manager.h"
 #include "gui/session/session_form.h"
 #include "gui/session/session_box.h"
 #include "gui/session/session_dock_def.h"
@@ -104,15 +105,37 @@ void SessionManager::AddNewMsg(const nim::IMMessage &msg)
 		}
 	}
 
-	// 不播放 P2P 传送文件时自定义协商消息
+	Json::Reader reader;
+	Json::Value values;
+	reader.parse(msg.attach_, values);
 	if (msg.type_ == nim::kNIMMessageTypeCustom)
 	{
-		Json::Reader reader;
-		Json::Value values;
-
-		if (reader.parse(msg.attach_, values) && values.isMember(kJsonKeyCommand))
+		if (values.isMember(kJsonKeyCommand))
 		{
+			// 不播放 P2P 传送文件时自定义协商消息
 			msg_notify = values[kJsonKeyCommand].asString() == kJsonKeyTransferFileRequest;
+		}
+	}
+
+	if (msg.type_ == nim::kNIMMessageTypeTips && msg.session_type_ == nim::kNIMSessionTypeTeam)
+	{
+		// 群组视频邀请 tips 消息
+		if (values.isMember("id") && values["id"].asInt() == 100)
+		{
+			bool add_new_msg = false;
+			auto account = nim_comp::LoginManager::GetInstance()->GetAccount();
+			for (auto member : values["content"]["members"])
+			{
+				if (account == member.asString())
+					add_new_msg = true;
+
+				QLOG_APP(L"member = {0}") << member.asString();
+			}
+
+			if (add_new_msg)
+				VideoManager::GetInstance()->InvokeReceiveCustomP2PMessage(values["content"], msg.sender_accid_);
+			else
+				return;
 		}
 	}
 

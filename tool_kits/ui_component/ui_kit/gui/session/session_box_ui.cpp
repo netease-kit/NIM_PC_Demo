@@ -214,7 +214,11 @@ bool SessionBox::Notify(ui::EventArgs* param)
 		}
 		else if (param->wParam == BET_RETWEET)
 		{
-			OnMenuRetweetMessage(md);
+			nim::MsgLog::QueryMsgByIDAysnc(md.client_msg_id_, ToWeakCallback(
+				[this](nim::NIMResCode res_code, const std::string& msg_id, const nim::IMMessage& msg){
+				if (res_code == nim::kNIMResSuccess)
+					OnMenuRetweetMessage(msg);
+			}));			
 		}
 		else if (param->wParam == BET_RECALL)
 		{
@@ -1085,7 +1089,7 @@ bool SessionBox::PasteClipboard()
 			}
 			throw(false);
 		}
-		catch (bool ret)
+		catch (bool /*ret*/)
 		{
 			CloseClipboard();
 		}

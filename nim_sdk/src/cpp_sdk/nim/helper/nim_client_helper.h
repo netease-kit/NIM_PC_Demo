@@ -35,6 +35,7 @@ namespace nim
 	int				custom_timeout_;				/**< int 自定义通讯超时时间，暂时不开放设置 */
 	bool			use_https_;						/**< bool 是否启用HTTPS协议，默认为false */
 	bool			team_notification_unread_count_;/**< bool 群通知是否计入未读数，默认为false */
+	bool			vchat_miss_unread_count_;		/**< bool 语音消息未接通消息是否计入未读数，默认为false */
 	bool			reset_unread_count_when_recall_;/**< bool 撤回消息是否重新计算未读消息计数，默认为false */
 	bool			animated_image_thumbnail_enabled_;/**< bool 开启对动图缩略图的支持	，默认为false,开启后获取的缩略图为原格式，关闭后获取的缩略图为第一帧静态图 */
 	bool			client_antispam_;				/**< bool 客户端反垃圾，默认为false，如需开启请提前咨询技术支持或销售 */

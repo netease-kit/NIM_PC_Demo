@@ -318,11 +318,11 @@ NIM_SDK_CPPWRAPPER_DLL_API bool ParseNameCards(const nim_cpp_wrapper_util::Json:
   */
 NIM_SDK_CPPWRAPPER_DLL_API bool ParseNameCard(const std::string& namecard_json, UserNameCard& namecard);
 
-/** @fn bool ParseNameCard(const std::string& namecard_json, UserNameCard& namecard)
+/** @fn void ParseNameCard(const nim_cpp_wrapper_util::Json::Value& namecard_json, UserNameCard& namecard)
   * @brief 解析用户名片
   * @param[in] namecard_json 用户名片（Json Value数据）
   * @param[out] namecard 用户名片
-  * @return bool 解析成功或失败 
+  * @return void 
   */
 NIM_SDK_CPPWRAPPER_DLL_API void ParseNameCard(const nim_cpp_wrapper_util::Json::Value& namecard_json, UserNameCard& namecard);
 

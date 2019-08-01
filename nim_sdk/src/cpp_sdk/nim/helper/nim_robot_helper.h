@@ -121,8 +121,8 @@ typedef std::list<RobotInfo> RobotInfos;
   * @return bool 解析成功或失败 
   */
 NIM_SDK_CPPWRAPPER_DLL_API bool ParseRobotInfosStringToRobotInfos(const std::string &infos_json, RobotInfos &infos);
-
-/** @fn bool ParseRobotInfoStringToRobotInfo(const std::string& info_json, RobotInfos &info)
+			  
+/** @fn bool ParseRobotInfoStringToRobotInfo(const std::string &info_json, RobotInfo &info)
   * @brief 解析机器人信息
   * @param[in] info_json 机器人信息
   * @param[out] info 机器人信息

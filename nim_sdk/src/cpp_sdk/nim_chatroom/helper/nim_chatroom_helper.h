@@ -804,7 +804,7 @@ typedef std::list<RobotInfo> RobotInfos;
   */
 NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API bool ParseRobotInfosStringToRobotInfos(const std::string &infos_json, RobotInfos &infos);
 
-/** @fn bool ParseRobotInfoStringToRobotInfo(const std::string& info_json, RobotInfos &info)
+/** @fn bool ParseRobotInfoStringToRobotInfo(const std::string &info_json, RobotInfo &info)
   * @brief 解析机器人信息
   * @param[in] info_json 机器人信息
   * @param[out] info 机器人信息
@@ -849,7 +849,12 @@ struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomBatchMembers
 
 
 };
-
+/** @fn bool ParseBatchInfosStringToNotMembers(const std::string &infos_json, std::list<std::string> &lst_members)
+* @brief 解析成员列表
+ * @param[in] info_json 成员列表信息 json格式字符串
+ * @param[out] lst_members 成员列表
+ * @return bool 解析成功或失败
+*/
 NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API bool ParseBatchInfosStringToNotMembers(const std::string &infos_json, std::list<std::string> &lst_members);
 
 

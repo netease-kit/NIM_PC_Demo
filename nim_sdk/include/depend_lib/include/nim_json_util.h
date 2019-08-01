@@ -25,7 +25,8 @@ namespace nim
   */
 	 bool StrListToJsonString(const std::list<std::string>& list, std::string& out);
 
-/** @fn bool JsonStrArrayToList(const Json::Value& array_str, std::list<std::string>& out)
+	          
+/** @fn bool JsonStrArrayToList(const nim_cpp_wrapper_util::Json::Value& array_str, std::list<std::string>& out)
   * @brief 将一个string类型的Json Array解析成一个string类型的list
   * @param[in] array_str string类型的Json Array
   * @param[out] out string类型的list
@@ -41,7 +42,7 @@ namespace nim
   */
 	 bool JsonArrayStringToList(const std::string& array_str, std::list<std::string>& out);
 
-/** @fn bool ParseJsonValue(const std::string &content, Json::Value &values);
+/** @fn bool ParseJsonValue(const std::string &content, nim_cpp_wrapper_util::Json::Value &values);
   * @brief 解析JsonString
   * @param[in] content JsonString
   * @param[out] values JsonValue
@@ -49,7 +50,7 @@ namespace nim
   */
 	 bool ParseJsonValue(const std::string &content, nim_cpp_wrapper_util::Json::Value &values);
 
-/** @fn std::string GetJsonStringWithNoStyled(const Json::Value& values);
+/** @fn std::string GetJsonStringWithNoStyled(const nim_cpp_wrapper_util::Json::Value& values);
   * @brief 获得非格式化的Json string,传入SDK的json string格式要求为非格式化的，如果是格式化的json string可能会影响功能
   * @param[in] values Json Value
   * @return std::string 非格式化的json string

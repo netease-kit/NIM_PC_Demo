@@ -130,6 +130,11 @@ bool NimAPP::InitNim(const std::string& server_conf_file_path)
 				nbase::StringToInt((std::string)pchar, &need);
 				config.team_notification_unread_count_ = need > 0;
 			}
+			if (auto pchar = root->Attribute("kNIMVChatMissUnreadCount")) {
+				int need = -1;
+				nbase::StringToInt((std::string)pchar, &need);
+				config.vchat_miss_unread_count_ = need > 0;
+			}
 			if (auto pchar = root->Attribute("kNIMResetUnreadCountWhenRecall")) {
 				int need = -1;
 				nbase::StringToInt((std::string)pchar, &need);

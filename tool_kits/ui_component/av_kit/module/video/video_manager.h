@@ -25,6 +25,14 @@ namespace nim_comp
 		std::string device_path_;
 		std::string friendly_name_;
 	};
+
+	enum VChatAskType
+	{
+		kVChatAskAccept,	// 同意通话
+		kVChatAskRefuse,	// 拒绝通话
+		kVChatAskBusLine	// 占线
+	};
+
 	enum DeviceSessionType
 	{
 		kDeviceSessionTypeNone = 0x0,
@@ -233,7 +241,7 @@ namespace nim_comp
 		* @param[in] session_id 会话id
 		* @return bool true 成功，false 失败
 		*/
-		bool VChatCalleeAck(uint64_t channel_id, bool accept, const std::string& session_id);
+		bool VChatCalleeAck(uint64_t channel_id, VChatAskType ask_type, const std::string& session_id);
 
 		/**
 		* 音视频通话控制

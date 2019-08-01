@@ -1,0 +1,47 @@
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Cef Tests</title>
+    <script language="JavaScript">
+        // 通过调用NimCefWebFunction函数给渲染进程发送消息
+        function sendMessage() {
+          var message = document.getElementById("message").value;
+          NimCefWebInstance.call('showCppMessage',{message},(error, result) => {
+            console.log(result);
+          });
+        }        
+       // 写一个JS函数，让C++可以通过调用这个函数控制网页
+        ((obj) => {
+        obj.register('showJsMessage', (param)=>{
+                document.getElementById("result").value = "收到来自C++的消息:" + JSON.stringify(param);
+            })
+        })(NimCefWebInstance)        
+    </script>
+</head>
+
+<body bgcolor="white">
+<h3>Cef3.2623 C++与JS交互功能测试页面</h3>
+
+<fieldset style="margin-top:20px;border-color:#E2DED6;border-width:1px;border-style:Solid;">
+    <legend style="color:#333333;font-size:0.8em;font-weight:bold;">
+        JS调用C++测试
+    </legend>
+
+    <div style="margin-left:10px">
+        发送给C++的文本: <input type="text" id="message" value="你好C++！">
+        <br/><input type="button" onclick="sendMessage();" value="发送给C++">
+    </div>
+</fieldset>
+
+<fieldset style="margin-top:20px;border-color:#E2DED6;border-width:1px;border-style:Solid;">
+    <legend style="color:#333333;font-size:0.8em;font-weight:bold;">
+        C++调用JS测试
+    </legend>
+
+    <div style="margin-left:10px">
+        收到C++发来的的文本：
+        <br/><textarea rows="2" cols="40" id="result"></textarea>
+    </div>
+</fieldset>
+</body>
+</html>
