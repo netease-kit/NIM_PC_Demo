@@ -591,24 +591,47 @@ public:
 	*/
 	static bool IsAutoSubscribeAudio();
 
-	/** @fn void PublishVideo(bool pub, OptCallback cb)
+	/** @fn bool SetLocalVideoSimulcastMode(NIMVChatPublishVideoStreamMode video_stream_mode)
+	* 设置本地默认发布的视频流模式，默认为单流（自动发布模式下有效）
+	* @param[in] video_stream_mode 目前仅支持单/双流模式。
+	* @return bool 是否调用成功
+	*/
+	static bool SetLocalVideoSimulcastMode(NIMVChatPublishVideoStreamMode video_stream_mode);
+
+	/** @fn void PublishVideo( OptCallback cb)
 	* 通话中设置自己的视频数据发布接口。通话未发起时设置失败。
-	* 回调结果只代表本地的操作结果，远端是否成功等对应的通知kNIMVChatNotifyPublishVideoRet及kNIMVChatNotifyUnpublishVideoRet
-	* @param[in] pub 是否发布视频数据
+	* 回调结果只代表本地的操作结果，远端是否成功等对应的通知kNIMVChatNotifyPublishVideoRet
 	* @param[in] cb 操作结果，错误码见NIMVChatPubSubErrorCode。
 	* @return void 无返回值
 	*/
-	static void PublishVideo(bool pub, OptCallback cb);
+	static void PublishVideo(OptCallback cb);
 
-	/** @fn void SubscribeVideo(const std::string& uid, bool sub, OptCallback cb)
+	/** @fn void UnpublishVideo( OptCallback cb)
+	* 通话中设置自己的视频数据取消发布接口。该接口仅限于多人通话模式，且通话未发起时设置失败。
+	* 回调结果只代表本地的操作结果，远端是否成功等对应的通知kNIMVChatNotifyUnpublishVideoRet
+	* @param[in] cb 操作结果，错误码见NIMVChatPubSubErrorCode。
+	* @return void 无返回值
+	*/
+	static void UnpublishVideo( OptCallback cb);
+
+	/** @fn void SubscribeVideo(const std::string& uid,OptCallback cb)
 	* 通话中设置订阅某一方的视频数据，针对同一成员的设置如果还未返回则重复设置失败，通话未发起时设置失败。
-	* 回调结果只代表本地的操作结果，远端是否成功等对应的通知kNIMVChatNotifySubscribeVideoRet及kNIMVChatNotifyUnsubscribeVideoRet
+	* 回调结果只代表本地的操作结果，远端是否成功等对应的通知kNIMVChatNotifySubscribeVideoRet
 	* @param[in] uid 用户账号
-	* @param[in] sub 是否订阅视频数据
 	* @param[in] cb 结果回调错误码见NIMVChatPubSubErrorCode。
 	* @return void 无返回值
 	*/
-	static void SubscribeVideo(const std::string& uid, bool sub, OptCallback cb);
+	static void SubscribeVideo(const std::string& uid, OptCallback cb);
+
+
+	/** @fn void UnsubscribeVideo(const std::string& uid, OptCallback cb)
+	* 通话中设置取消订阅某一方的视频数据，针对同一成员的设置如果还未返回则重复设置失败，通话未发起时设置失败。
+	* 回调结果只代表本地的操作结果，远端是否成功等对应的通知NIMVChatNotifyUnsubscribeVideoRet
+	* @param[in] uid 用户账号
+	* @param[in] cb 结果回调错误码见NIMVChatPubSubErrorCode。
+	* @return void 无返回值
+	*/
+	static void UnsubscribeVideo(const std::string& uid, OptCallback cb);
 
 	/** @fn void SubscribeAudio(bool sub, OptCallback cb);
 	* 通话中设置订阅音频数据，默认自动订阅。音频数据没有单独订阅某一成员的接口。通话未发起时设置失败。

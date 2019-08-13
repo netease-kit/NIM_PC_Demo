@@ -258,6 +258,19 @@ enum NIMVChatPubSubNotifyType
 	kNIMVChatNotifyUnsubscribeAudioRet		= 7,	/**< 本地取消订阅远端音频操作的结果返回通知 */
 };
 
+/** @enum NIMVChatPublishVideoStreamMode 发布视频流模式 */
+enum NIMVChatPublishVideoStreamMode
+{
+	kNIMVChatPublishVideoSingleStream       = 0,	/**< 发布单流模式（默认） */
+	kNIMVChatPublishVideoDualStream         = 1,	/**< 发布双流模式 */
+};
+/** @enum NIMVChatPublishVideoSimulcastRes 视频流类型 */
+enum NIMVChatPublishVideoSimulcastRes
+{
+	kNIMVChatPublishVideoSimulcastResHigh   = 0,  /**< 高分辨率视频流 */
+	kNIMVChatPublishVideoSimulcastResLow    = 2,  /**< 低分辨率视频流 */
+};
+
 /** @enum NIMVChatPubSubErrorCode 订阅及发布相关通知类型 */
 enum NIMVChatPubSubErrorCode
 {
@@ -268,6 +281,7 @@ enum NIMVChatPubSubErrorCode
 	kNIMVChatPSErrCodeOptBusy		= -400,	/**< 操作繁忙 */
 	kNIMVChatPSErrCodeAutoMode		= -500,	/**< 模式互斥 （当前是自动发布） */
 	kNIMVChatPSErrCodeForbid		= -600,	/**< 操作无效，对点对模式不支持订阅相关功能 */
+	kNIMVChatPSErrCodeSubscribed    = -700, /**< 操作无效，视频类型冲突，需要取消之前订阅的流 */
 };
 
 /** @name 初始化 内容Json key for nim_vchat_init
@@ -333,39 +347,40 @@ static const char *kNIMVChatVEncodeMode		= "v_encode_mode";	/**< int, 使用的�
 /** @name json extension params for nim_vchat_cb_func
   * @{
   */
-static const char *kNIMVChatUid				= "uid";				/**< string 帐号 */
-static const char *kNIMVChatStatus			= "status";				/**< int 状态 */
-static const char *kNIMVChatRecordAddr		= "record_addr";		/**< string 录制地址（服务器开启录制时有效） */
-static const char *kNIMVChatRecordFile		= "record_file";		/**< string 服务器音频录制文件名（服务器开启录制时有效） */
-static const char *kNIMVChatVideoRecordFile = "video_record_file";	/**< string 服务器视频录制文件名（服务器开启录制时有效） */
-static const char *kNIMVChatType			= "type";				/**< int 状态 */
-static const char *kNIMVChatTime			= "time";				/**< int64 时间 单位毫秒 */
-static const char *kNIMVChatAccept			= "accept";				/**< int 是否接受 >0表示接受 */
-static const char *kNIMVChatClient			= "client";				/**< int 客户端类型 NIMClientType见nim_client_def.h */
-static const char *kNIMVChatMp4Start		= "mp4_start";			/**< key Mp4写入数据开始 kNIMVChatMp4File kNIMVChatTime(本地时间点) */
-static const char *kNIMVChatMp4Close		= "mp4_close";			/**< key 结束Mp4录制，返回时长及原因 kNIMVChatStatus(NIMVChatMp4RecordCode) kNIMVChatTime(时长) kNIMVChatMp4File */
-static const char *kNIMVChatMp4File			= "mp4_file";			/**< string mp4录制地址 */
-static const char *kNIMVChatAuRecordStart	= "audio_record_start";	/**< key 音频录制写入数据开始 kNIMVChatFile kNIMVChatTime */
-static const char *kNIMVChatAuRecordClose	= "audio_record_close";	/**< key 结束音频录制，返回时长及原因 kNIMVChatStatus(NIMVChatAudioRecordCode) kNIMVChatTime kNIMVChatFile */
-static const char *kNIMVChatFile			= "file";				/**< string 文件地址 */
-static const char *kNIMVChatCustomInfo		= "custom_info";		/**< string 自定义数据 */
-static const char *kNIMVChatVideo			= "video";				/**< key 视频 */
-static const char *kNIMVChatAudio			= "audio";				/**< key 音频 */
-static const char *kNIMVChatStaticInfo		= "static_info";		/**< key 音视频实时状态 */
-static const char *kNIMVChatFPS				= "fps";				/**< int 每秒帧率或者每秒发包数 */
-static const char *kNIMVChatKBPS			= "KBps";				/**< int 每秒流量，单位为“千字节” */
-static const char *kNIMVChatLostRate		= "lost_rate";			/**< int 丢包率，单位是百分比 */
-static const char *kNIMVChatRtt				= "rtt";				/**< int rtt 网络延迟 */
-static const char *kNIMVChatAudioVolume		= "audio_volume";		/**< key 音频实时音量通知，包含发送的音量kNIMVChatSelf和接收音量kNIMVChatReceiver，kNIMVChatStatus的音量值是pcm的平均值最大为int16_max */
-static const char *kNIMVChatSelf			= "self";				/**< key 本人信息 */
-static const char *kNIMVChatReceiver		= "receiver";			/**< key 接收信息 */
-static const char *kNIMVChatLiveState		= "live_state";			/**< key 直播状态 kNIMVChatStatus(NIMVChatLiveStateCode) */
-static const char *kNIMVChatMp4AudioType	= "mp4_audio";			/**< int mp4录制时音频情况，0标识只录制当前成员，1标识录制通话全部混音（等同音频文件录制的声音） */
-static const char *kNIMVChatMp4Recode		= "mp4_recode";			/**< bool mp4录制时重新编码开关 */
-static const char *kNIMVChatMp4Width		= "mp4_width";			/**< int 录制的mp4的宽度，默认为0，小于16无效，无效时取视频默认大小*/
-static const char *kNIMVChatMp4Height		= "mp4_height";			/**< int 录制的mp4的高度，默认为0，小于16无效，无效时取视频默认大小*/
-static const char *kNIMVChatTrafficStatRX	= "trafficstat_rx";		/**< uint64 下行流量（字节） */
-static const char *kNIMVChatTrafficStatTX	= "trafficstat_tx";		/**< uint64 上行流量（字节） */
+static const char *kNIMVChatUid				          = "uid";				/**< string 帐号 */
+static const char *kNIMVChatStatus			          = "status";				/**< int 状态 */
+static const char *kNIMVChatRecordAddr		          = "record_addr";		/**< string 录制地址（服务器开启录制时有效） */
+static const char *kNIMVChatRecordFile		          = "record_file";		/**< string 服务器音频录制文件名（服务器开启录制时有效） */
+static const char *kNIMVChatVideoRecordFile           = "video_record_file";	/**< string 服务器视频录制文件名（服务器开启录制时有效） */
+static const char *kNIMVChatType			          = "type";				/**< int 状态 */
+static const char *kNIMVChatTime			          = "time";				/**< int64 时间 单位毫秒 */
+static const char *kNIMVChatAccept			          = "accept";				/**< int 是否接受 >0表示接受 */
+static const char *kNIMVChatClient			          = "client";				/**< int 客户端类型 NIMClientType见nim_client_def.h */
+static const char *kNIMVChatMp4Start		          = "mp4_start";			/**< key Mp4写入数据开始 kNIMVChatMp4File kNIMVChatTime(本地时间点) */
+static const char *kNIMVChatMp4Close		          = "mp4_close";			/**< key 结束Mp4录制，返回时长及原因 kNIMVChatStatus(NIMVChatMp4RecordCode) kNIMVChatTime(时长) kNIMVChatMp4File */
+static const char *kNIMVChatMp4File			          = "mp4_file";			/**< string mp4录制地址 */
+static const char *kNIMVChatAuRecordStart	          = "audio_record_start";	/**< key 音频录制写入数据开始 kNIMVChatFile kNIMVChatTime */
+static const char *kNIMVChatAuRecordClose	          = "audio_record_close";	/**< key 结束音频录制，返回时长及原因 kNIMVChatStatus(NIMVChatAudioRecordCode) kNIMVChatTime kNIMVChatFile */
+static const char *kNIMVChatFile			          = "file";				/**< string 文件地址 */
+static const char *kNIMVChatCustomInfo		          = "custom_info";		/**< string 自定义数据 */
+static const char *kNIMVChatVideo			          = "video";				/**< key 视频 */
+static const char *kNIMVChatAudio			          = "audio";				/**< key 音频 */
+static const char *kNIMVChatStaticInfo		          = "static_info";		/**< key 音视频实时状态 */
+static const char *kNIMVChatFPS				          = "fps";				/**< int 每秒帧率或者每秒发包数 */
+static const char *kNIMVChatKBPS			          = "KBps";				/**< int 每秒流量，单位为“千字节” */
+static const char *kNIMVChatLostRate		          = "lost_rate";			/**< int 丢包率，单位是百分比 */
+static const char *kNIMVChatRtt				          = "rtt";				/**< int rtt 网络延迟 */
+static const char *kNIMVChatAudioVolume		          = "audio_volume";		/**< key 音频实时音量通知，包含发送的音量kNIMVChatSelf和接收音量kNIMVChatReceiver，kNIMVChatStatus的音量值是pcm的平均值最大为int16_max */
+static const char *kNIMVChatSelf			          = "self";				/**< key 本人信息 */
+static const char *kNIMVChatReceiver		          = "receiver";			/**< key 接收信息 */
+static const char *kNIMVChatLiveState		          = "live_state";			/**< key 直播状态 kNIMVChatStatus(NIMVChatLiveStateCode) */
+static const char *kNIMVChatMp4AudioType	          = "mp4_audio";			/**< int mp4录制时音频情况，0标识只录制当前成员，1标识录制通话全部混音（等同音频文件录制的声音） */
+static const char *kNIMVChatMp4Recode		          = "mp4_recode";			/**< bool mp4录制时重新编码开关 */
+static const char *kNIMVChatMp4Width		          = "mp4_width";			/**< int 录制的mp4的宽度，默认为0，小于16无效，无效时取视频默认大小*/
+static const char *kNIMVChatMp4Height		          = "mp4_height";			/**< int 录制的mp4的高度，默认为0，小于16无效，无效时取视频默认大小*/
+static const char *kNIMVChatTrafficStatRX	          = "trafficstat_rx";		/**< uint64 下行流量（字节） */
+static const char *kNIMVChatTrafficStatTX	          = "trafficstat_tx";		/**< uint64 上行流量（字节） */
+static const char *kNIMVChatVideoSimulcastResList     = "video_simulcast_res_list"; /**< json array 订阅发布视频分辨率类型列表*/
 /** @}*/ //json extension params
 
 /** @typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, int64_t channel_id, int code, const char *json_extension, const void *user_data)
@@ -393,7 +408,7 @@ static const char *kNIMVChatTrafficStatTX	= "trafficstat_tx";		/**< uint64 上�
   *				kNIMVideoChatSessionTypeInfoNotify			//实时状态		{"static_info":{"rtt":20, "video": {"fps":20, "KBps":200, "lost_rate":5, "width":1280,"height":720}, "audio": {"fps":17, "KBps":3", lost_rate":3 }}} \n
   *				kNIMVideoChatSessionTypeVolumeNotify		//音量状态 		{"audio_volume":{ "self": {"status":600}, "receiver": [{"uid":"id123","status":1000},{"uid":"id456","status":222}] }} \n
   *				kNIMVideoChatSessionTypeLiveState			//windows(pc)有效.直播状态		{"live_state":{"status":505 }} \n
-  *				kNIMVideoChatSessionTypePubSubNotify		//订阅及发布相关的通知，code返回(NIMVChatPubSubErrorCode),json包含kNIMVChatType(NIMVChatPubSubNotifyType) 远端视频额外带有kNIMVChatUid \n
+  *				kNIMVideoChatSessionTypePubSubNotify		//订阅及发布相关的通知，code返回(NIMVChatPubSubErrorCode),json包含kNIMVChatType(NIMVChatPubSubNotifyType) 远端视频额外带有kNIMVChatUid 本端订阅发布操作、远端发布带有kNIMVChatVideoSimulcastResList\n
   * @param[out] type NIMVideoChatSessionType
   * @param[out] channel_id 通话的通道id
   * @param[out] code 结果类型或错误类型

@@ -197,8 +197,11 @@ typedef bool(*nim_vchat_set_auto_publish)(bool auto_pub, bool auto_sub);
 typedef bool(*nim_vchat_is_auto_publish_video)();
 typedef bool(*nim_vchat_is_auto_subscribe_video)();
 typedef bool(*nim_vchat_is_auto_subscribe_audio)();
-typedef void(*nim_vchat_publish_video)(bool pub, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
-typedef void(*nim_vchat_subscribe_video)(const char *uid, bool sub, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+typedef bool(*nrtc_chat_set_local_video_simulcast_mode)(NIMVChatPublishVideoStreamMode video_stream_mode);
+typedef void(*nim_vchat_publish_video)(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+typedef void(*nim_vchat_unpublish_video)(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+typedef void(*nim_vchat_subscribe_video)(const char *uid, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+typedef void(*nim_vchat_unsubscribe_video)(const char *uid, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 typedef void(*nim_vchat_subscribe_audio)(bool sub, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 #else
 #include "nim_vchat.h"
@@ -694,16 +697,31 @@ bool VChat::IsAutoSubscribeAudio()
 {
 	return NIM_SDK_GET_FUNC(nim_vchat_is_auto_subscribe_audio)();
 }
-void VChat::PublishVideo(bool pub, OptCallback cb)
+bool VChat::SetLocalVideoSimulcastMode(NIMVChatPublishVideoStreamMode video_stream_mode)
+{
+	return NIM_SDK_GET_FUNC(nrtc_chat_set_local_video_simulcast_mode)(video_stream_mode);
+}
+void VChat::PublishVideo(OptCallback cb)
 {
 	OptCallback* cb_pointer = new OptCallback(cb);
-	NIM_SDK_GET_FUNC(nim_vchat_publish_video)(pub, "", OnOptCallback, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_vchat_publish_video)( "", OnOptCallback, cb_pointer);
 }
-void VChat::SubscribeVideo(const std::string& uid, bool sub, OptCallback cb)
+void VChat::UnpublishVideo(OptCallback cb)
 {
 	OptCallback* cb_pointer = new OptCallback(cb);
-	NIM_SDK_GET_FUNC(nim_vchat_subscribe_video)(uid.c_str(), sub, "", OnOptCallback, cb_pointer);
+	NIM_SDK_GET_FUNC(nim_vchat_unpublish_video)("", OnOptCallback, cb_pointer);
 }
+void VChat::SubscribeVideo(const std::string& uid, OptCallback cb)
+{
+	OptCallback* cb_pointer = new OptCallback(cb);
+	NIM_SDK_GET_FUNC(nim_vchat_subscribe_video)(uid.c_str(), "", OnOptCallback, cb_pointer);
+}
+void VChat::UnsubscribeVideo(const std::string& uid, OptCallback cb)
+{
+	OptCallback* cb_pointer = new OptCallback(cb);
+	NIM_SDK_GET_FUNC(nim_vchat_unsubscribe_video)(uid.c_str(), "", OnOptCallback, cb_pointer);
+}
+
 void VChat::SubscribeAudio(bool sub, OptCallback cb)
 {
 	OptCallback* cb_pointer = new OptCallback(cb);

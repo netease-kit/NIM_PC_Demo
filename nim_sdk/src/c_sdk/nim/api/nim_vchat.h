@@ -8,6 +8,7 @@
 #ifndef NIM_SDK_DLL_API_NIM_VCHAT_H_
 #define NIM_SDK_DLL_API_NIM_VCHAT_H_
 
+
 #include "public_define/defines/nim_sdk_dll.h"
 #include "public_define/defines/nim_define/nim_vchat_def.h"
 #include "public_define/defines/nim_define/nim_global_def.h"
@@ -150,7 +151,7 @@ NIM_SDK_DLL_API void nim_vchat_end(const char *json_extension);
 * @param[in] room_name 房间名
 * @param[in] custom_info 自定义的房间信息（加入房间的时候会返回）
 * @param[in] json_extension 无效
-* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效
+* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效,返回的channel id 无效
 * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
 * @return void 无返回值
 * @note 错误码	200:成功
@@ -407,28 +408,56 @@ NIM_SDK_DLL_API bool nim_vchat_is_auto_subscribe_video();
 */
 NIM_SDK_DLL_API bool nim_vchat_is_auto_subscribe_audio();
 
-/** @fn void nim_vchat_publish_video(bool pub, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
+/** @fn bool nim_chat_set_local_video_simulcast_mode(enum NIMVChatPublishVideoStreamMode video_stream_mode)
+* NRTC 设置本地默认发布的视频流模式，默认为单流（自动发布模式下有效）
+* @param[in] video_stream_mode 目前仅支持单/双流模式。
+* @return bool 是否调用成功
+*/
+NIM_SDK_DLL_API bool nim_chat_set_local_video_simulcast_mode(enum NIMVChatPublishVideoStreamMode video_stream_mode);
+
+/** @fn void nim_vchat_publish_video(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
 * 通话中设置自己的视频数据发布接口。该接口仅限于多人通话模式，且通话未发起时设置失败。
 * 回调结果只代表本地的操作结果，远端是否成功等对应的通知kNIMVChatNotifyPublishVideoRet及kNIMVChatNotifyUnpublishVideoRet
-* @param[in] pub 是否发布视频数据
 * @param[in] json_extension 无效扩展字段
 * @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效。错误码见NIMVChatPubSubErrorCode。
 * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
 * @return void 无返回值
 */
-NIM_SDK_DLL_API void nim_vchat_publish_video(bool pub, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_vchat_publish_video(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
-/** @fn void nim_vchat_subscribe_video(const char *uid, bool sub, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
+
+/** @fn void nim_vchat_unpublish_video(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
+* 通话中设置自己的视频数据取消发布接口。该接口仅限于多人通话模式，且通话未发起时设置失败。
+* 回调结果只代表本地的操作结果，远端是否成功等对应的通知kNIMVChatNotifyPublishVideoRet及kNIMVChatNotifyUnpublishVideoRet
+* @param[in] json_extension 无效扩展字段
+* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效。错误码见NIMVChatPubSubErrorCode。
+* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+*/
+NIM_SDK_DLL_API void nim_vchat_unpublish_video(const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+
+
+/** @fn void nim_vchat_subscribe_video(const char *uid, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
 * 通话中设置订阅某一方的视频数据，该接口仅限于多人通话模式，且通话未发起时设置失败。
 * 回调结果只代表本地的操作结果，远端是否成功等对应的通知kNIMVChatNotifySubscribeVideoRet及kNIMVChatNotifyUnsubscribeVideoRet
 * @param[in] uid 用户账号
-* @param[in] sub 是否订阅视频数据
 * @param[in] json_extension 无效扩展字段
 * @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension带有kNIMVChatId，即调用时传入的uid；错误码见NIMVChatPubSubErrorCode。
 * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
 * @return void 无返回值
 */
-NIM_SDK_DLL_API void nim_vchat_subscribe_video(const char *uid, bool sub, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_vchat_subscribe_video(const char *uid, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+
+/** @fn void nim_vchat_unsubscribe_video(const char *uid, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
+* 通话中设置取消订阅某一方的视频数据，该接口仅限于多人通话模式，且通话未发起时设置失败。
+* 回调结果只代表本地的操作结果，远端是否成功等对应的通知kNIMVChatNotifySubscribeVideoRet及kNIMVChatNotifyUnsubscribeVideoRet
+* @param[in] uid 用户账号
+* @param[in] json_extension 无效扩展字段
+* @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension带有kNIMVChatId，即调用时传入的uid；错误码见NIMVChatPubSubErrorCode。
+* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+*/
+NIM_SDK_DLL_API void nim_vchat_unsubscribe_video(const char *uid, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
 /** @fn void nim_vchat_subscribe_audio(bool sub, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
 * 通话中设置订阅音频数据，默认自动订阅。音频数据没有单独订阅某一成员的接口。该接口仅限于多人通话模式，且通话未发起时设置失败。
