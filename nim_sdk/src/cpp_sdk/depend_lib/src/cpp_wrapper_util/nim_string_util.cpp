@@ -4,8 +4,9 @@
   * @date 2016/09/08
   */
 
-#include "nim_string_util.h"
-#include "convert_utf.h"
+#include "include/depend_lib/include/nim_string_util.h"
+#include "include/depend_lib/include/convert_utf.h"
+
 std::string PCharToString(const char* str)
 {
 	std::string res_str;

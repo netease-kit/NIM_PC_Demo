@@ -10,6 +10,7 @@ namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
 typedef void(*nim_session_reg_change_cb)(const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+typedef void(*nim_session_query_last_few_session_async)(int limit, const char *json_extension, nim_session_query_recent_session_cb_func cb, const void *user_data);
 typedef void(*nim_session_query_all_recent_session_async)(const char *json_extension, nim_session_query_recent_session_cb_func cb, const void* user_data);
 typedef void(*nim_session_query_all_recent_session_with_last_msg_excluded_type_async)(const char *json_extension, nim_session_query_recent_session_cb_func cb, enum NIMMessageType last_msg_excluded_type,const void* user_data);
 typedef void(*nim_session_delete_recent_session_async)(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
@@ -72,6 +73,16 @@ void Session::RegChangeCb(const ChangeCallback& cb, const std::string& json_exte
 {
 	g_cb_session_changed_ = cb;
 	NIM_SDK_GET_FUNC(nim_session_reg_change_cb)(json_extension.c_str(), &CallbackSessionChange, &g_cb_session_changed_);
+}
+
+void Session::QueryLastFewSessionAsync(int limit, const QuerySessionListCallabck& cb, const std::string& json_extension /*= ""*/)
+{
+	QuerySessionListCallabck* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new QuerySessionListCallabck(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_session_query_last_few_session_async)(limit, json_extension.c_str(), &CallbackQuerySession, cb_pointer);
 }
 
 void Session::QueryAllRecentSessionAsync(const QuerySessionListCallabck& cb, const std::string& json_extension)

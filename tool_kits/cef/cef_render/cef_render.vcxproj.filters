@@ -30,9 +30,6 @@
     <ClInclude Include="Resource.h">
       <Filter>头文件</Filter>
     </ClInclude>
-    <ClInclude Include="util.h">
-      <Filter>头文件</Filter>
-    </ClInclude>
     <ClInclude Include="..\cef_module\js_bridge\cef_js_bridge.h">
       <Filter>js_bridge</Filter>
     </ClInclude>

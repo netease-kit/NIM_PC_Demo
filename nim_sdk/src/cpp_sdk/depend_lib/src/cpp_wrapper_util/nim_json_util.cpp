@@ -3,8 +3,8 @@
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @date 2015/09/08
   */
-#include "convert_utf.h"
-#include "nim_json_util.h"
+#include "include/depend_lib/include/convert_utf.h"
+#include "include/depend_lib/include/nim_json_util.h"
 namespace nim
 {
 

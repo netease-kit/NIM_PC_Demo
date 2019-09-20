@@ -21,9 +21,9 @@ std::wstring UserConfig::GetUserAudioPath()
 	return nim_comp::GetUserAudioPath();
 }
 
-bool UserConfig::GetAppLocalVersion(int &version, std::wstring &version_flag)
+bool UserConfig::GetAppLocalVersion(std::wstring &version)
 {
-	return nim_comp::LocalHelper::GetAppLocalVersion(version, version_flag);
+	return nim_comp::LocalHelper::GetSDKVersion(version);
 }
 
 UINT UserConfig::GetDefaultIcon()

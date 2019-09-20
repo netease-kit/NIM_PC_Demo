@@ -33,10 +33,11 @@ namespace nim
 	bool			sync_session_ack_;				/**< bool 设置是否已读未读状态多端同步，默认true */
 	int				login_max_retry_times_;			/**< int 登录重试最大次数，如需设置建议设置大于3次，默认填0，SDK默认设置次数 */
 	int				custom_timeout_;				/**< int 自定义通讯超时时间，暂时不开放设置 */
-	bool			use_https_;						/**< bool 是否启用HTTPS协议，默认为false */
+	bool			use_https_;						/**< bool 是否启用HTTPS协议，默认为true */
 	bool			team_notification_unread_count_;/**< bool 群通知是否计入未读数，默认为false */
 	bool			vchat_miss_unread_count_;		/**< bool 语音消息未接通消息是否计入未读数，默认为false */
 	bool			reset_unread_count_when_recall_;/**< bool 撤回消息是否重新计算未读消息计数，默认为false */
+	bool			upload_sdk_events_after_login_;	/**< bool，在调用 Login 接口后无论成功是否上报历史错误日志到服务器（目前支持 408、415、500）默认为false */
 	bool			animated_image_thumbnail_enabled_;/**< bool 开启对动图缩略图的支持	，默认为false,开启后获取的缩略图为原格式，关闭后获取的缩略图为第一帧静态图 */
 	bool			client_antispam_;				/**< bool 客户端反垃圾，默认为false，如需开启请提前咨询技术支持或销售 */
 	bool			team_msg_ack_;					/**< bool 群消息已读功能开关， 默认为false，如需开启请提前咨询技术支持或销售  */
@@ -59,13 +60,22 @@ namespace nim
 	
 	//private_server_setting 私有服务器配置（设置方法有两种，一个是配置以下信息，一个是通过配置server_conf_file_path_地址，信息从文件中读取）
 	bool			use_private_server_;			/**< bool 是否使用私有服务器，如果使用私有服务器，则必须设置为true */
+	bool			private_enable_https_;	/**< bool，（必填，私有化配置是否启用HTTPS协议，启用私有化配置时会覆盖 kNIMUseHttps，为true时kNIMDefaultNosUploadHost必填） */
 	std::string		lbs_address_;					/**< string lbs地址，如果选择使用私有服务器，则必填 */
 	std::string  	nos_lbs_address_;				/**< string nos lbs地址，如果选择使用私有服务器，则必填 */
 	std::string		default_link_address_;			/**< string 默认link服务器地址，如果选择使用私有服务器，则必填 */
 	std::string		default_nos_upload_address_;	/**< string 默认nos 上传服务器地址，如果选择使用私有服务器，则必填 */
 	std::string		default_nos_upload_host_;		/**< string 默认nos 上传服务器主机地址，仅 kNIMUseHttps设置为true 时有效，用作 https 上传时的域名校验及 http header host 字段填充 */
-	std::string		rsa_public_key_module_;			/**< string  RSA public key，如果选择使用私有服务器，则必填 */
-	int				rsa_version_;					/**< int RSA version，如果选择使用私有服务器，则必填 */
+	int special_flag_; /**< int 是否为专属集群 1:是 0: 否*/
+	std::string rsa_public_key_module_;			/**< string  RSA public key，如果选择使用私有服务器，则必填 【已废弃】*/
+	int	rsa_version_;					/**< int RSA version，如果选择使用私有服务器，则必填 【已废弃】*/
+	
+	int	default_initenc_;   /**< int  非对称加密算法 缺省值 0x0001(RSA) 其它算法后续开放*/
+	std::string initenc_key_; /**< string  非对称加密算法key 自定义时则必填 */
+	std::string initenc_key2_; /**< string  非对称加密算法key2 RSA:EXP,SM2: SM2Y 自定义时则必填 */
+	int	default_initenc_version_;   /**< int  非对称加密算法的 key version 自定义时则必填 */
+	int	default_enc_;     /**< int  对称加密算法  缺省值 0x0001(RC4)  其它算法后续开放*/
+
 	std::string		nos_download_address_;			/**< string nos 下载地址拼接模板，用于拼接最终得到的下载地址*/
 	std::string		nos_accelerate_host_;			/**< string 需要被加速主机名*/
 	std::string		nos_accelerate_address_;		/**< string nos 加速地址拼接模板，用于获得加速后的下载地址*/

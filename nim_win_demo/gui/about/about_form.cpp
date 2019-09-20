@@ -47,11 +47,10 @@ void AboutForm::InitWindow()
 
 	Label* version = (Label*) FindControl(L"version");
 	{
-		int ver = 0;
-		std::wstring vf;
-		nim_ui::UserConfig::GetInstance()->GetAppLocalVersion(ver, vf);
+		std::wstring ver;
+		nim_ui::UserConfig::GetInstance()->GetAppLocalVersion(ver);
 		std::wstring format = multilan->GetStringViaID(L"STRID_ABOUTFORM_VERSION");
-		version->SetText(nbase::StringPrintf(format.c_str(), vf.c_str(), ver));
+		version->SetText(nbase::StringPrintf(format.c_str(), ver.c_str()));
 	}
 }
 

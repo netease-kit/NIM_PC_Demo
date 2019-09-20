@@ -139,15 +139,16 @@ enum NIMSysMsgStatus
 /** @enum NIMSysMsgType 系统消息内容类型 */
 enum NIMSysMsgType
 {
-	kNIMSysMsgTypeTeamApply			= 0,		/**< 申请入群  */
-	kNIMSysMsgTypeTeamReject		= 1,		/**< 拒绝入群申请 */
-	kNIMSysMsgTypeTeamInvite		= 2,		/**< 邀请进群 kNIMSysMsgKeyAttach : {"team_info":team_info, "attach" : ""} attach为可选字段，作为应用自定义扩展字段,解析前需要判断有没有这个字段, 群组信息(Keys SEE MORE `nim_team_def.h` 『群组信息 Json Keys』) */
-	kNIMSysMsgTypeTeamInviteReject	= 3,		/**< 拒绝邀请 */
-	kNIMSysMsgTypeFriendAdd			= 5,		/**< 加好友, kNIMSysMsgKeyAttach: {"vt":verifyType} */
-	kNIMSysMsgTypeFriendDel			= 6,		/**< 删除好友 */
-	kNIMSysMsgTypeCustomP2PMsg		= 100,		/**< 点对点透传消息（透传消息的内容放到kNIMSysMsgKeyAttach）,SDK对该类消息不计入未读数, 即使kNIMSysMsgKeyPushNeedBadge为1 */
-	kNIMSysMsgTypeCustomTeamMsg		= 101,		/**< 群透传消息（透传消息的内容放到kNIMSysMsgKeyAttach）,SDK对该类消息不计入未读数, 即使kNIMSysMsgKeyPushNeedBadge为1 */
-	kNIMSysMsgTypeUnknown			= 1000,		/**< 未知类型，本地使用，发送时勿使用，作为默认 */
+	kNIMSysMsgTypeTeamApply				= 0,		/**< 申请入群  */
+	kNIMSysMsgTypeTeamReject			= 1,		/**< 拒绝入群申请 */
+	kNIMSysMsgTypeTeamInvite			= 2,		/**< 邀请进群 kNIMSysMsgKeyAttach : {"team_info":team_info, "attach" : ""} attach为可选字段，作为应用自定义扩展字段,解析前需要判断有没有这个字段, 群组信息(Keys SEE MORE `nim_team_def.h` 『群组信息 Json Keys』) */
+	kNIMSysMsgTypeTeamInviteReject		= 3,		/**< 拒绝邀请 */
+	kNIMSysMsgTypeFriendAdd				= 5,		/**< 加好友, kNIMSysMsgKeyAttach: {"vt":verifyType} */
+	kNIMSysMsgTypeFriendDel				= 6,		/**< 删除好友 */
+	kNIMSysMsgTypeCustomP2PMsg			= 100,		/**< 点对点透传消息（透传消息的内容放到kNIMSysMsgKeyAttach）,SDK对该类消息不计入未读数, 即使kNIMSysMsgKeyPushNeedBadge为1 */
+	kNIMSysMsgTypeCustomTeamMsg			= 101,		/**< 群透传消息（透传消息的内容放到kNIMSysMsgKeyAttach）,SDK对该类消息不计入未读数, 即使kNIMSysMsgKeyPushNeedBadge为1 */
+	kNIMSysMsgTypeCustomSuperTeamMsg	= 103,		/**< 超大群透传消息（透传消息的内容放到kNIMSysMsgKeyAttach）,SDK对该类消息不计入未读数, 即使kNIMSysMsgKeyPushNeedBadge为1 */
+	kNIMSysMsgTypeUnknown				= 1000,		/**< 未知类型，本地使用，发送时勿使用，作为默认 */
 };
 
 #ifdef __cplusplus

@@ -42,13 +42,13 @@ typedef void(*nim_chatroom_queue_drop_async)(const int64_t room_id, const char *
 typedef bool(*nim_chatroom_enter_with_anoymity)(const int64_t room_id, const char *anonymity_info, const char *enter_info, const char *json_extension);
 typedef char* (*nim_chatroom_query_all_robots_block)(const int64_t room_id, const char *json_extension);
 typedef char* (*nim_chatroom_query_robot_by_accid_block)(const int64_t room_id, const char *accid, const char *json_extension);
-typedef void (*nim_chatroom_get_robots_async)(const int64_t room_id, __int64 timetag, const char *json_extension, nim_chatroom_query_robots_cb_func cb, const void *user_data);
+typedef void (*nim_chatroom_get_robots_async)(const int64_t room_id, int64_t timetag, const char *json_extension, nim_chatroom_query_robots_cb_func cb, const void *user_data);
 typedef void (*nim_chatroom_set_msgs_batch_report)(bool set_batch, const char *json_extension);
 typedef void (*nim_chatroom_reg_receive_msgs_cb)(const char *json_extension, nim_chatroom_receive_msg_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_batch_upate_async)(const int64_t room_id, const char *element_info_json_str, bool need_notify, const char *notify_ext, const char *json_extension, nim_chatroom_batch_update_cb cb, const void *user_data);
 
 #else
-#include "nim_chatroom.h"
+#include "nim_sdk/src/c_sdk/nim_chatroom/api/nim_chatroom.h"
 #endif
 
 static void CallbackEnter(int64_t room_id, int step, int error_code, const char *result, const char *json_extension, const void *user_data)
@@ -215,7 +215,12 @@ void ChatRoom::RegLinkConditionCb(const LinkConditionCallback& cb, const std::st
 bool ChatRoom::Init(const std::string& app_install_dir, const std::string& json_extension/* = ""*/)
 {
 #ifdef NIM_SDK_DLL_IMPORT
+
+#if !defined (WIN32)
+	static const char *kSdkNimDll = "libnim_chatroom.so";
+#else
 	static const char *kSdkNimDll = "nim_chatroom.dll";
+#endif
 
 	if (NULL == nim_chatroom_sdk_instance)
 	{

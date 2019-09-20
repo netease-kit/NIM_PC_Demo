@@ -729,9 +729,11 @@ void VideoManager::StartDevice(nim::NIMDeviceType type, std::string device_path,
 		GetDefaultDevicePath(num_no, device_path, type);
 	}
 	SetDefaultDevicePath(device_path, type);
-	int width = 1280;
-	int height = 720;
-	if (1)
+	int width = 1920;
+	int height = 1080;
+	auto sWidth = GetConfigValue("video_width");
+	auto sHeight = GetConfigValue("video_height");
+	if (!sWidth.empty() && !sHeight.empty())
 	{
 		width = atoi(GetConfigValue("video_width").c_str());
 		height = atoi(GetConfigValue("video_height").c_str());

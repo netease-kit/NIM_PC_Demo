@@ -71,9 +71,9 @@ static const char *kNIMSessionRobotFlag		= "robot_session";		/**< bool, 是否�
 /** @enum NIMSessionType 会话类型 */
 enum NIMSessionType
 { 
-	kNIMSessionTypeP2P		= 0,			/**< 个人，即点对点 */
-	kNIMSessionTypeTeam = 1,			/**< 群组 */
-	kNIMSessionTypeSuperTeam = 5,			/**< 超大群组 */
+	kNIMSessionTypeP2P			= 0,			/**< 个人，即点对点 */
+	kNIMSessionTypeTeam			= 1,			/**< 群组 */
+	kNIMSessionTypeSuperTeam	= 5,			/**< 超大群组 */
 };
 
 /** @enum NIMSessionCommand 会话操作命令 */

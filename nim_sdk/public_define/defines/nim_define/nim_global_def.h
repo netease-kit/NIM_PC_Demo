@@ -9,6 +9,7 @@
 #define NIM_SDK_DLL_EXPORT_HEADERS_NIM_GLOBAL_DEF_H_
 
 #include "public_define/nim_util_include.h"
+#include "public_define/defines/nim_define/nim_res_code_def.h"
 
 #ifdef __cplusplus
 extern"C"

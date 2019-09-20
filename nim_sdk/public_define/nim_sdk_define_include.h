@@ -7,6 +7,10 @@
 #ifndef _NIM_SDK_CPP_NIM_SDK_DEFINES_H_
 #define _NIM_SDK_CPP_NIM_SDK_DEFINES_H_
 
+#if !defined(_WIN32) && !defined(WIN32)
+#include <pthread.h>
+#endif
+
 #ifndef DEF_UNDER_NO_NAMESPACE
 /**
 * @namespace nim
@@ -41,7 +45,6 @@ namespace nim
 #include "public_define/defines/nim_define/nim_signaling_def.h"
 
 #include "public_define/defines/nim_define/nim_super_team_def.h"
-
 
 #ifndef DEF_UNDER_NO_NAMESPACE
 }

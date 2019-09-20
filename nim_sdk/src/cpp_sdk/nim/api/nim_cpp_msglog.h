@@ -338,8 +338,8 @@ public:
 	* 根据时间段删除部分会话的历史消息
 	* @param[in] session_id	要删除消息的会话ID
 	* @param[in] to_type	要删除消息的会话类型
-	* @param[in] timestamp1	与 timestamp2 组成一个时间段，SDK 内部会判断大小调整入参顺序
-	* @param[in] timestamp2	与 timestamp1 组成一个时间段，SDK 内部会判断大小调整入参顺序
+	* @param[in] 单位ms timestamp1	与 timestamp2 组成一个时间段，SDK 内部会判断大小调整入参顺序
+	* @param[in] 单位ms timestamp2	与 timestamp1 组成一个时间段，SDK 内部会判断大小调整入参顺序
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
 	* @param[in] cb			操作结果的回调函数
 	* @return bool 检查参数如果不符合要求则返回失败

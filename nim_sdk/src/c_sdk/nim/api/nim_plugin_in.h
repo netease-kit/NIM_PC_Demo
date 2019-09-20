@@ -30,7 +30,7 @@ extern"C"
   *				415:服务不可用，没有聊天室服务器可分配
   *				13003:在黑名单中
   */
-NIM_SDK_DLL_API void nim_plugin_chatroom_request_enter_async(const int64_t room_id, const char *json_extension, nim_plugin_chatroom_request_enter_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_plugin_chatroom_request_enter_async(int64_t room_id, const char *json_extension, nim_plugin_chatroom_request_enter_cb_func cb, const void *user_data);
 
 #ifdef __cplusplus
 };

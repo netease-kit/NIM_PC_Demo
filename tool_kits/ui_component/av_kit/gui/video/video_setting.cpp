@@ -346,6 +346,7 @@ void VideoSettingForm::InitVideoQualityList()
 	quality_list.push_back(std::make_pair(L"480P（640x480）", nim::kNIMVChatVideoQualitySuper));
 	quality_list.push_back(std::make_pair(L"540P（960x540）", nim::kNIMVChatVideoQuality540p));
 	quality_list.push_back(std::make_pair(L"720P（1280x720）", nim::kNIMVChatVideoQuality720p));
+	quality_list.push_back(std::make_pair(L"1080P（1920x1080）", 7));
 	
 	for (auto quality : quality_list)
 	{

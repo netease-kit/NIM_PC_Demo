@@ -86,9 +86,8 @@ void LoginCallback::DoLogin(std::string user, std::string pass)
 		_InitUserFolder();
 		_InitLog();
 		{
-			int ver = 0;
-			std::wstring vf;
-			LocalHelper::GetAppLocalVersion(ver, vf);
+			std::wstring ver;
+			LocalHelper::GetSDKVersion(ver);
 			QLOG_APP(L"App Version {0}") << ver;
 			QLOG_APP(L"Account {0}") << LoginManager::GetInstance()->GetAccount();
 			QLOG_APP(L"UI ThreadId {0}") << GetCurrentThreadId();

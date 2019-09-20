@@ -3,13 +3,14 @@
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @date 2015/09/21
   */
-#include "src/cpp_sdk/nim/api//nim_cpp_client.h"
+#include "src/cpp_sdk/nim/api/nim_cpp_client.h"
 #include <future>
 #include <atomic>
 #include "include/nim_cpp_api.h"
 #include "src/cpp_sdk/nim/helper/nim_sdk_loader_helper.h"
-namespace nim
-{
+
+namespace nim {
+
 #ifdef NIM_SDK_DLL_IMPORT
 typedef bool(*nim_client_init)(const char *app_data_dir, const char *app_install_dir, const char *json_extension);
 typedef void(*nim_client_cleanup)(const char *json_extension);
@@ -32,8 +33,10 @@ typedef void(*nim_client_get_server_current_time)(bool calc_local, nim_client_ge
 #else
 #include "nim_client.h"
 #endif
-	SDKConfig g_nim_sdk_config_;
-	static void CallbackLogin(const char* json_res, const void *callback)
+
+SDKConfig g_nim_sdk_config_;
+
+static void CallbackLogin(const char* json_res, const void *callback)
 {
 	
 	CallbackProxy::DoSafeCallback<Client::LoginCallback>(callback, [=](const Client::LoginCallback& cb)
@@ -142,7 +145,6 @@ void UnregNIMCallback()
 	Client::UnregClientCb();
 	DataSync::UnregDataSyncCb();
 	Friend::UnregFriendCb();
-	Robot::UnregRobotCb();
 	Session::UnregSessionCb();
 	SystemMsg::UnregSysmsgCb();
 	Talk::UnregTalkCb();
@@ -156,7 +158,17 @@ bool Client::Init(const std::string& app_key
 	, const SDKConfig &config)
 {
 #ifdef NIM_SDK_DLL_IMPORT
-	static const char *kSdkNimDll = "nim.dll";
+#if defined(OS_MACOSX)
+    static const char *kSdkNimDll = "nim_sdk_Mac";
+#elif defined(OS_IOS)
+    static const char *kSdkNimDll = "nim_sdk_iOS";
+#elif defined(OS_LINUX)
+    static const char *kSdkNimDll = "libnim.so";
+#elif defined(WIN32)
+    static const char *kSdkNimDll = "nim.dll";
+#else
+    static const char *kSdkNimDll = nullptr;
+#endif
 	if (NULL == nim_sdk_instance)
 	{
 		nim_sdk_instance = new SDKInstance();
@@ -180,6 +192,7 @@ bool Client::Init(const std::string& app_key
 	config_values[nim::kNIMTeamNotificationUnreadCount] = config.team_notification_unread_count_;
 	config_values[nim::kNIMVChatMissUnreadCount] = config.vchat_miss_unread_count_;
 	config_values[nim::kNIMResetUnreadCountWhenRecall] = config.reset_unread_count_when_recall_;
+	config_values[nim::kNIMUploadSDKEventsAfterLogin] = config.upload_sdk_events_after_login_;
 	config_values[nim::kNIMAnimatedImageThumbnailEnabled] = config.animated_image_thumbnail_enabled_;
 	config_values[nim::kNIMClientAntispam] = config.client_antispam_;
 	config_values[nim::kNIMTeamMessageAckEnabled] = config.team_msg_ack_;
@@ -193,6 +206,13 @@ bool Client::Init(const std::string& app_key
 	config_values[nim::kNIMEnableUserDataFileDefRestoreProc] = config.enable_user_datafile_defrestoreproc_;
 	config_values[nim::kNIMUserDataFileLocalBackupFolder] = config.user_datafile_localbackup_folder_;
 
+	config_values[nim::kNIMSpecialFlag] = config.special_flag_;
+	config_values[nim::kNIMInitENC] = config.default_initenc_;
+	config_values[nim::kNIMInitENCKey] = config.initenc_key_;
+	config_values[nim::kNIMInitENCKey2] = config.initenc_key2_;
+	config_values[nim::kNIMInitENCVersion] = config.default_initenc_version_;
+	config_values[nim::kNIMENC] = config.default_enc_;
+
 	if (!config.server_conf_file_path_.empty())
 		config_root[nim::kNIMServerConfFilePath] = config.server_conf_file_path_;
 	if (config.use_private_server_)
@@ -202,6 +222,7 @@ bool Client::Init(const std::string& app_key
 		srv_config[nim::kNIMNosLbsAddress] = config.nos_lbs_address_;
 		srv_config[nim::kNIMDefaultLinkAddress] = config.default_link_address_;
 		srv_config[nim::kNIMDefaultNosUploadAddress] = config.default_nos_upload_address_;
+		srv_config[nim::kNIMPrivateEnableHttps] = config.private_enable_https_;
 		srv_config[nim::kNIMDefaultNosUploadHost] = config.default_nos_upload_host_;
 		srv_config[nim::kNIMRsaPublicKeyModule] = config.rsa_public_key_module_;
 		srv_config[nim::kNIMRsaVersion] = config.rsa_version_;
@@ -248,7 +269,7 @@ void Client::Cleanup2(const std::string& json_extension /*= ""*/)
 		}, json_extension.c_str());
 		while (!cleanup_flag)
 		{
-			Sleep(0);
+            std::this_thread::sleep_for(std::chrono::seconds(0));
 		}
 	};
 	std::thread cleanup_thread(cleanup_task);
@@ -463,4 +484,5 @@ void Client::UnregClientCb()
 	g_cb_kickother_ = nullptr;
 
 }
+
 }

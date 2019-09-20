@@ -10,6 +10,5 @@ namespace nim
 {
 	extern nim::SDKInstance* nim_sdk_instance;
 }
-#define NIM_SDK_GET_FUNC(function_ptr) \
-NIM_SDK_GET_FUNC_FROM_INSTANCE(nim_sdk_instance,function_ptr)
+#define NIM_SDK_GET_FUNC(function_ptr) NIM_SDK_GET_FUNC_FROM_INSTANCE(nim_sdk_instance,function_ptr)
 #endif

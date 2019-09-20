@@ -120,7 +120,8 @@ void Signaling::SignalingCreate(SignalingCreateParam param, SignalingOptCallback
 	{
 		cb_pointer = new SignalingOptCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_signaling_create)(&param.GetCParam(), OnOptCallback<SignalingCreateResParam>, cb_pointer);
+    auto create_param = param.GetCParam();
+	NIM_SDK_GET_FUNC(nim_signaling_create)(&create_param, OnOptCallback<SignalingCreateResParam>, cb_pointer);
 
 }
 void Signaling::SignalingClose(SignalingCloseParam param, SignalingOptCallback cb)
@@ -130,7 +131,8 @@ void Signaling::SignalingClose(SignalingCloseParam param, SignalingOptCallback c
 	{
 		cb_pointer = new SignalingOptCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_signaling_close)(&param.GetCParam(), OnOptCallback<SignalingCloseResParam>, cb_pointer);
+    auto close_param = param.GetCParam();
+	NIM_SDK_GET_FUNC(nim_signaling_close)(&close_param, OnOptCallback<SignalingCloseResParam>, cb_pointer);
 }
 void Signaling::Join(SignalingJoinParam param, SignalingOptCallback cb)
 {
@@ -139,7 +141,8 @@ void Signaling::Join(SignalingJoinParam param, SignalingOptCallback cb)
 	{
 		cb_pointer = new SignalingOptCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_signaling_join)(&param.GetCParam(), OnOptCallback<SignalingJoinResParam>, cb_pointer);
+    auto join_param = param.GetCParam();
+	NIM_SDK_GET_FUNC(nim_signaling_join)(&join_param, OnOptCallback<SignalingJoinResParam>, cb_pointer);
 }
 void Signaling::Leave(SignalingLeaveParam param, SignalingOptCallback cb)
 {
@@ -148,7 +151,8 @@ void Signaling::Leave(SignalingLeaveParam param, SignalingOptCallback cb)
 	{
 		cb_pointer = new SignalingOptCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_signaling_leave)(&param.GetCParam(), OnOptCallback<SignalingLeaveResParam>, cb_pointer);
+    auto leave_param = param.GetCParam();
+	NIM_SDK_GET_FUNC(nim_signaling_leave)(&leave_param, OnOptCallback<SignalingLeaveResParam>, cb_pointer);
 }
 void Signaling::QueryChannelInfo(SignalingQueryChannelInfoParam param, SignalingOptCallback cb)
 {
@@ -157,7 +161,8 @@ void Signaling::QueryChannelInfo(SignalingQueryChannelInfoParam param, Signaling
 	{
 		cb_pointer = new SignalingOptCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_signaling_query_channel_info)(&param.GetCParam(), OnOptCallback<SignalingQueryChannelInfoResParam>, cb_pointer);
+    auto query_param = param.GetCParam();
+	NIM_SDK_GET_FUNC(nim_signaling_query_channel_info)(&query_param, OnOptCallback<SignalingQueryChannelInfoResParam>, cb_pointer);
 }
 void Signaling::Call(SignalingCallParam param, SignalingOptCallback cb)
 {
@@ -166,7 +171,8 @@ void Signaling::Call(SignalingCallParam param, SignalingOptCallback cb)
 	{
 		cb_pointer = new SignalingOptCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_signaling_call)(&param.GetCParam(), OnOptCallback<SignalingCallResParam>, cb_pointer);
+    auto call_param = param.GetCParam();
+	NIM_SDK_GET_FUNC(nim_signaling_call)(&call_param, OnOptCallback<SignalingCallResParam>, cb_pointer);
 }
 void Signaling::Invite(SignalingInviteParam param, SignalingOptCallback cb)
 {
@@ -175,7 +181,8 @@ void Signaling::Invite(SignalingInviteParam param, SignalingOptCallback cb)
 	{
 		cb_pointer = new SignalingOptCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_signaling_invite)(&param.GetCParam(), OnOptCallback<SignalingInviteResParam>, cb_pointer);
+    auto invite_param = param.GetCParam();
+	NIM_SDK_GET_FUNC(nim_signaling_invite)(&invite_param, OnOptCallback<SignalingInviteResParam>, cb_pointer);
 }
 void Signaling::CancelInvite(SignalingCancelInviteParam param, SignalingOptCallback cb)
 {
@@ -184,7 +191,8 @@ void Signaling::CancelInvite(SignalingCancelInviteParam param, SignalingOptCallb
 	{
 		cb_pointer = new SignalingOptCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_signaling_cancel_invite)(&param.GetCParam(), OnOptCallback<SignalingCancelInviteResParam>, cb_pointer);
+    auto cancel_invite_param = param.GetCParam();
+	NIM_SDK_GET_FUNC(nim_signaling_cancel_invite)(&cancel_invite_param, OnOptCallback<SignalingCancelInviteResParam>, cb_pointer);
 }
 void Signaling::Reject(SignalingRejectParam param, SignalingOptCallback cb)
 {
@@ -193,7 +201,8 @@ void Signaling::Reject(SignalingRejectParam param, SignalingOptCallback cb)
 	{
 		cb_pointer = new SignalingOptCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_signaling_reject)(&param.GetCParam(), OnOptCallback<SignalingRejectResParam>, cb_pointer);
+    auto reject_param = param.GetCParam();
+	NIM_SDK_GET_FUNC(nim_signaling_reject)(&reject_param, OnOptCallback<SignalingRejectResParam>, cb_pointer);
 }
 void Signaling::Accept(SignalingAcceptParam param, SignalingOptCallback cb)
 {
@@ -202,7 +211,8 @@ void Signaling::Accept(SignalingAcceptParam param, SignalingOptCallback cb)
 	{
 		cb_pointer = new SignalingOptCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_signaling_accept)(&param.GetCParam(), OnOptCallback<SignalingAcceptResParam>, cb_pointer);
+    auto accept_param = param.GetCParam();
+	NIM_SDK_GET_FUNC(nim_signaling_accept)(&accept_param, OnOptCallback<SignalingAcceptResParam>, cb_pointer);
 }
 void Signaling::Control(SignalingControlParam param, SignalingOptCallback cb)
 {
@@ -211,7 +221,9 @@ void Signaling::Control(SignalingControlParam param, SignalingOptCallback cb)
 	{
 		cb_pointer = new SignalingOptCallback(cb);
 	}
-	NIM_SDK_GET_FUNC(nim_signaling_control)(&param.GetCParam(), OnOptCallback<SignalingControlResParam>, cb_pointer);
+    auto control_param = param.GetCParam();
+	NIM_SDK_GET_FUNC(nim_signaling_control)(&control_param, OnOptCallback<SignalingControlResParam>, cb_pointer);
 }
 
 }  // namespace nim
+

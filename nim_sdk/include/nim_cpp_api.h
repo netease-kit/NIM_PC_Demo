@@ -44,28 +44,32 @@
 #include "src/cpp_sdk/nim/api/nim_cpp_tool.h"
 //以dll方式使用时的导出定义
 #include "src/cpp_sdk/nim/nim_sdk_cpp_wrapper_dll.h"
-#if defined (WIN32)
-//数据通道相关API(白板等)
-#include "src/cpp_sdk/nim/api/nim_cpp_rts.h"
-//音视频,音视频设备相关API
-#include "src/cpp_sdk/nim/api/nim_cpp_vchat.h"
+//超大群
+#include "src/cpp_sdk/nim/api/nim_cpp_super_team.h"
+#include "src/cpp_sdk/nim/helper/nim_super_team_helper.h"
 //文档共享相关API
 #include "src/cpp_sdk/nim/api/nim_cpp_doc_trans.h"
 #include "src/cpp_sdk/nim/helper/nim_doc_trans_helper.h"
 //事件订阅
 #include "src/cpp_sdk/nim/api/nim_cpp_subscribe_event.h"
 #include "src/cpp_sdk/nim/helper/nim_subscribe_event_helper.h"
-//机器人
-#include "src/cpp_sdk/nim/api/nim_cpp_robot.h"
-#include "src/cpp_sdk/nim/helper/nim_robot_helper.h"
 //独立信令
 #include "src/cpp_sdk/nim/api/nim_cpp_signaling.h"
 #include "src/cpp_sdk/nim/helper/nim_signaling_helper.h"
-//超大群
-#include "src/cpp_sdk/nim/api/nim_cpp_super_team.h"
-#include "src/cpp_sdk/nim/helper/nim_super_team_helper.h"
+
+/*仅在 Windows 平台下使用的头*/
+#if defined (WIN32)
+    //数据通道相关API(白板等)
+    #include "src/cpp_sdk/nim/api/nim_cpp_rts.h"
+    //音视频,音视频设备相关API
+    #include "src/cpp_sdk/nim/api/nim_cpp_vchat.h"
+    //机器人
+    #include "src/cpp_sdk/nim/api/nim_cpp_robot.h"
+    #include "src/cpp_sdk/nim/helper/nim_robot_helper.h"
 #endif
+
 #include "src/cpp_sdk/nim/helper/nim_msg_helper.h"
 #include "src/cpp_sdk/nim/helper/nim_sdk_loader_helper.h"
 #include "src/cpp_sdk/nim/helper/nim_tool_helper.h"
+
 #endif

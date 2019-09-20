@@ -183,7 +183,6 @@
     <ClInclude Include="app\js_handler\js_handler.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
-    <ClInclude Include="util.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\cef_module\js_bridge\cef_js_bridge.cpp" />

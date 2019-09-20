@@ -49,7 +49,7 @@ NIM_SDK_DLL_API char *nim_robot_query_robot_by_accid_block(const char *accid, co
   * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void
   */
-NIM_SDK_DLL_API void nim_robot_get_robots_async(__int64 timetag, const char *json_extension, nim_robot_query_cb_func cb, const void *user_data);
+NIM_SDK_DLL_API void nim_robot_get_robots_async(int64_t timetag, const char *json_extension, nim_robot_query_cb_func cb, const void *user_data);
 
 #ifdef __cplusplus
 }

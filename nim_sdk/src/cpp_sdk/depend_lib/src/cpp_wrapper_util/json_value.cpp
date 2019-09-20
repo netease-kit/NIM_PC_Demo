@@ -675,7 +675,7 @@ Value::Int64 Value::asInt64() const {
   case booleanValue:
     return value_.bool_ ? 1 : 0;
   case stringValue://edited by Yunxin.Oleg 20150311
-	  return _atoi64(value_.string_);
+    return std::stoll(value_.string_);
   default:
     break;
   }
@@ -699,7 +699,7 @@ Value::UInt64 Value::asUInt64() const {
   case booleanValue:
     return value_.bool_ ? 1 : 0;
   case stringValue://edited by Yunxin.Oleg 20150311
-	  return _atoi64(value_.string_);
+	  return std::stoll(value_.string_);
   default:
     break;
   }

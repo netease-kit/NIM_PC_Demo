@@ -194,6 +194,12 @@ NIM_SDK_DLL_API void nim_client_get_multiport_push_config(const char *json_exten
 */
 NIM_SDK_DLL_API const char* const nim_client_version();
 
+/** @fn char* nim_client_current_user_account()
+* 获取当前登录用户的accid
+* @return const char* const  accid
+*/
+NIM_SDK_DLL_API const char* const nim_client_current_user_account();
+
 /** @fn void nim_client_get_server_current_time(bool calc_local,nim_client_get_server_current_time_cb_func cb, const char *json_extension,const void *user_data)
 * 获取当前服务器时间
 * @param[in] calc_local 是否在本地计算，false:直接到服务端查询 ,true:根据上次查询到的服务端时间与本地系统启动时间来计算，不会到服务端查询 

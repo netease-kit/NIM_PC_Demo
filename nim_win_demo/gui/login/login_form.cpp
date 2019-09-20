@@ -38,7 +38,7 @@ void LoginForm::OnLogin()
 						json_config.isMember("version") && json_config.isMember("link"))
 					{
 						ConfigHelper::GetInstance()->UsePrivateSettings(true, url);
-						std::string priavet_setting_path = nbase::UTF16ToUTF8(QPath::GetAppPath().append(L"nim_private_server.conf"));
+						std::string priavet_setting_path =  nbase::UTF16ToUTF8(QPath::GetAppPath().append(L"nim_private_server.conf"));
 						std::ofstream config(priavet_setting_path, std::ios::out | std::ios::trunc);
 						if (config.is_open())
 						{

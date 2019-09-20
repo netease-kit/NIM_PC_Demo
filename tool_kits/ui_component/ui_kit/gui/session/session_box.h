@@ -84,6 +84,12 @@ public:
 #pragma region Message
 public:
 	/**
+	* 将 Session 会话列表消息移动到最下方
+	* @return void 无返回值
+	*/
+	void EndDown(bool withAnimation = false);
+
+	/**
 	* 执行加载历史消息的操作
 	* @param[in] first_show_msg 是否是本会话窗体第一次加载历史消息(刚创建会话窗体时设置为true)
 	* @return void 无返回值
@@ -742,7 +748,13 @@ private:
 	* @return void	无返回值
 	*/
 	void SendFile(const std::wstring &src);
-
+	/**
+	* 发送文件消息
+	* @param[in] msg 要发送的消息
+	* @param[in] file 文件的相应信息
+	* @return void	无返回值
+	*/
+	void DoSendFile(nim::IMMessage &msg, nim::IMFile* file);
 	/**
 	* 发送一条猜拳消息
 	* @param[in] attach 包含猜拳结果的json串
@@ -777,6 +789,7 @@ private:
 	* @param[in] msg 会话消息
 	* @return void	无返回值
 	*/
+
 	void ReSendMsg(nim::IMMessage &msg);
 
 	/**

@@ -41,6 +41,15 @@ public:
 	* @note 错误码	200:成功
 	*/
 	static void RegChangeCb(const ChangeCallback& cb, const std::string& json_extension = "");
+	
+	/** @fn static void QueryLastFewSessionAsync(int limit, const QuerySessionListCallabck& cb, const std::string& json_extension = "")
+	* 查询指定数量的最后会话数据
+	* @param[in] limit		要返回的最大数量
+	* @param[in] cb			查询会话列表的回调函数
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @return void 无返回值
+	*/
+	static void QueryLastFewSessionAsync(int limit, const QuerySessionListCallabck& cb, const std::string& json_extension = "");
 
 	/** @fn static void QueryAllRecentSessionAsync(const QuerySessionListCallabck& cb, const std::string& json_extension = "")
 	* 查询会话列表
@@ -50,7 +59,7 @@ public:
 	*/
 	static void QueryAllRecentSessionAsync(const QuerySessionListCallabck& cb, const std::string& json_extension = "");
 
-	/** @fn static void QueryAllRecentSessionAsync(NIMMessageType last_msg_excluded_type,const QuerySessionListCallabck& cb, const std::string& json_extension = "");
+	/** @fn static void QueryAllRecentSessionAsync(NIMMessageType last_msg_excluded_type,const QuerySessionListCallabck& cb, const std::string& json_extension = "")
 	* 查询会话列表,可指定最后一条会话消息要排除掉的类型
 	* @param[in] last_msg_excluded_type 最后一条会话消息要排除掉的类型,如果不排除任何消息，参数请传入NIMMessageType::kNIMMessageTypeUnknown
 	* @param[in] cb			查询会话列表的回调函数
@@ -106,7 +115,7 @@ public:
 	*/
 	static bool SetSessionTop(enum NIMSessionType to_type, const std::string& id, bool top, const ChangeCallback& cb, const std::string& json_extension = "");
 
-	/** @fn static bool SetSessionExtendData(enum NIMSessionType to_type, const std::string& id, const std::string& data, const ChangeCallback& cb, const std::string& json_extension = "");
+	/** @fn static bool SetSessionExtendData(enum NIMSessionType to_type, const std::string& id, const std::string& data, const ChangeCallback& cb, const std::string& json_extension = "")
 	* 设置会话项扩展数据(扩展数据只保存在本地)
 	* @param[in] to_type		会话类型
 	* @param[in] id			对方的account id或者群组tid。
@@ -129,7 +138,7 @@ public:
 	*/
 	static bool SetAllUnreadCountZeroAsync(const SetUnreadCountZeroCallback& cb, const std::string& json_extension = "");
 
-/** @fn void QuerySessionDataById(NIMSessionType to_type, const std::string& id,const QuerySessionDataCallback& cb, const std::string& json_extension = "");
+/** @fn void QuerySessionDataById(NIMSessionType to_type, const std::string& id,const QuerySessionDataCallback& cb, const std::string& json_extension = "")
   	* 根据给定的id查询相应会话的信息
 	* @param[in] to_type		会话类型
   	* @param[in] id			对方的account id或者群组tid。

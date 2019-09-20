@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 2013
-VisualStudioVersion = 12.0.40629.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.28307.572
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "base", "..\tool_kits\base\base.vcxproj", "{8D9A6595-717A-41C8-B468-0011A72BE3D1}"
 EndProject
@@ -19,8 +19,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "ui_component", "ui_componen
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "image_view", "..\tool_kits\ui_component\image_view\image_view.vcxproj", "{92850844-A8E2-43FB-AE1D-14F72AA0A59C}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "capture_image", "..\tool_kits\ui_component\capture_image\capture_image.vcxproj", "{A8B95530-A231-4089-8F84-B1DBAD8F3008}"
+EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ui_kit", "..\tool_kits\ui_component\ui_kit\ui_kit.vcxproj", "{60840BD6-D601-4173-8944-E90809606FCF}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008} = {A8B95530-A231-4089-8F84-B1DBAD8F3008}
 		{9787A7D7-D476-43EF-AB59-F68EF84AD42C} = {9787A7D7-D476-43EF-AB59-F68EF84AD42C}
 	EndProjectSection
 EndProject
@@ -57,6 +60,7 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "av_kit", "..\tool_kits\ui_c
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "nim_service", "..\tool_kits\ui_component\nim_service\nim_service.vcxproj", "{5932C2B5-BCE9-4C61-9396-59484AC662E8}"
 	ProjectSection(ProjectDependencies) = postProject
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008} = {A8B95530-A231-4089-8F84-B1DBAD8F3008}
 		{9787A7D7-D476-43EF-AB59-F68EF84AD42C} = {9787A7D7-D476-43EF-AB59-F68EF84AD42C}
 	EndProjectSection
 EndProject
@@ -166,6 +170,22 @@ Global
 		{92850844-A8E2-43FB-AE1D-14F72AA0A59C}.Release|Win32.Build.0 = Release|Win32
 		{92850844-A8E2-43FB-AE1D-14F72AA0A59C}.Release|x64.ActiveCfg = Release|x64
 		{92850844-A8E2-43FB-AE1D-14F72AA0A59C}.Release|x64.Build.0 = Release|x64
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Debug_mt|Win32.ActiveCfg = Debug|Win32
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Debug_mt|Win32.Build.0 = Debug|Win32
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Debug_mt|x64.ActiveCfg = Debug|x64
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Debug_mt|x64.Build.0 = Debug|x64
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Debug|Win32.Build.0 = Debug|Win32
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Debug|x64.ActiveCfg = Debug|x64
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Debug|x64.Build.0 = Debug|x64
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Release_mt|Win32.ActiveCfg = Release|Win32
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Release_mt|Win32.Build.0 = Release|Win32
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Release_mt|x64.ActiveCfg = Release|x64
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Release_mt|x64.Build.0 = Release|x64
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Release|Win32.ActiveCfg = Release|Win32
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Release|Win32.Build.0 = Release|Win32
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Release|x64.ActiveCfg = Release|x64
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008}.Release|x64.Build.0 = Release|x64
 		{60840BD6-D601-4173-8944-E90809606FCF}.Debug_mt|Win32.ActiveCfg = Debug|Win32
 		{60840BD6-D601-4173-8944-E90809606FCF}.Debug_mt|Win32.Build.0 = Debug|Win32
 		{60840BD6-D601-4173-8944-E90809606FCF}.Debug_mt|x64.ActiveCfg = Debug|x64
@@ -372,6 +392,7 @@ Global
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{92850844-A8E2-43FB-AE1D-14F72AA0A59C} = {F5B50326-5715-4F56-9D74-462B34090A17}
+		{A8B95530-A231-4089-8F84-B1DBAD8F3008} = {F5B50326-5715-4F56-9D74-462B34090A17}
 		{60840BD6-D601-4173-8944-E90809606FCF} = {F5B50326-5715-4F56-9D74-462B34090A17}
 		{5650F9C4-7DD0-4C23-BFC7-022D253ACBFA} = {08C3B605-D19E-4E46-99E9-1560EC858C05}
 		{3C652D12-69E7-42F5-88FD-108D56DAA7F1} = {08C3B605-D19E-4E46-99E9-1560EC858C05}

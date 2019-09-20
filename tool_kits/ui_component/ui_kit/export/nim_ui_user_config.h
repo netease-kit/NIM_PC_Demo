@@ -55,7 +55,7 @@ public:
 	* @param[out] version_flag 版本标识
 	* @return bool true 成功，false 失败
 	*/
-	bool GetAppLocalVersion(int &version, std::wstring &version_flag);
+	bool GetAppLocalVersion(std::wstring &version);
 
 private:
 	UserConfig(){};

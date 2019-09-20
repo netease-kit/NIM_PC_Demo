@@ -355,7 +355,7 @@ bool NOS::UploadResourceEx2(const std::string& local_file, const std::string& ta
 	if (local_file.empty())
 		return false;
 	auto callback_result_userdata = UploadCallbackUserDataMaker::MakeUserData(callback_result, callback_progress, callback_speed, callback_transfer);
-	NIM_SDK_GET_FUNC(nim_nos_upload_ex2)(local_file.c_str(), json_extension.c_str(), tag.c_str(),
+	NIM_SDK_GET_FUNC(nim_nos_upload_ex2)(local_file.c_str(), tag.c_str(), json_extension.c_str(),
 		&CallbackUploadEx, callback_result_userdata,
 		&CallbackProgressEx, (callback_result_userdata == nullptr ? nullptr : callback_result_userdata->callback_progress_pointer),
 		&CallbackSpeed, (callback_result_userdata == nullptr ? nullptr : callback_result_userdata->callback_speed_pointer),

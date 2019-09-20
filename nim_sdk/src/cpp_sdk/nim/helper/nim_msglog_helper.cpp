@@ -75,7 +75,7 @@ NIMLogsBackupExportInfo* LogsBackupExportInfo::ToCStruct_i()
 NIMLogsBackupImportInfo* LogsBackupImportInfo::ToCStruct_i()
 {
 	if (!cloned_)
-		return false;
+		return nullptr;
 	src_user_data_ = NIMLogsBackupImportInfo::user_data_;
 	NIMLogsBackupImportInfo::ImportBackupFromRemoteDecryptCallback = [](const char* const file_path, const char* const encrypt_key, void* user_data) {
 		auto ret = (CastToCPP(user_data))->ImportBackupFromRemoteDecryptCallback(PCharToString(file_path), PCharToString(encrypt_key), (CastToCPP(user_data))->src_user_data_);

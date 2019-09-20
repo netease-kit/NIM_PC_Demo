@@ -257,6 +257,12 @@ void SessionBox::OnNotifyChangeCallback(std::string id, bool mute)
 		FindSubControl(L"not_disturb")->SetVisible(mute);
 }
 
+void SessionBox::EndDown(bool withAnimation /*= false*/)
+{
+	if (msg_list_)
+		msg_list_->EndDown(true, withAnimation);
+}
+
 void SessionBox::InvokeShowMsgs(bool first_show_msg)
 {
 	first_show_msg_ = first_show_msg;
@@ -316,7 +322,7 @@ void SessionBox::AddNewMsg(const nim::IMMessage &msg, bool create)
 	}
 	session_form_->OnNewMsg(*this, create, flash);
 	
-	if(at_end)
+	if (at_end && SessionManager::GetInstance()->IsSessionBoxActive(session_id_))
 	{
 		msg_list_->EndDown(true, false);
 	}
@@ -663,7 +669,7 @@ void SessionBox::AddWritingMsg(const nim::IMMessage &msg)
 		}
 	}
 
-	if (at_end)
+	if (at_end && SessionManager::GetInstance()->IsSessionBoxActive(session_id_))
 	{
 		msg_list_->EndDown(true, false);
 	}
@@ -1289,7 +1295,33 @@ void SessionBox::SendFile(const std::wstring &src)
 	file.display_name_ = nbase::UTF16ToUTF8(file_name);
 	file.file_extension_ = nbase::UTF16ToUTF8(file_exten);
 	msg.attach_ = file.ToJsonString();
-
+	DoSendFile(msg,&file);
+	
+}
+void SessionBox::DoSendFile(nim::IMMessage &msg, nim::IMFile* file)
+{
+	nim::IMFile temp_file;
+	if (file != nullptr)
+	{
+		temp_file = *file;
+	}
+	else
+	{
+		Json::Value json_file;
+		if (Json::Reader().parse(msg.attach_, json_file))
+		{
+			if (json_file.isMember(nim::kNIMMsgAttachKeyExt))
+				temp_file.file_extension_ = json_file[nim::kNIMMsgAttachKeyExt].asString();
+			if (json_file.isMember(nim::kNIMMsgAttachKeyMd5))
+				temp_file.md5_ = json_file[nim::kNIMMsgAttachKeyMd5].asString();
+			if (json_file.isMember(nim::kNIMMsgAttachKeyDisplayName))
+				temp_file.display_name_ = json_file[nim::kNIMMsgAttachKeyDisplayName].asString();
+			if (json_file.isMember(nim::kNIMMsgAttachKeyTag))
+				temp_file.msg_attachment_tag_ = json_file[nim::kNIMMsgAttachKeyTag].asString();
+			if (json_file.isMember(nim::kNIMMsgAttachKeySize))
+				temp_file.size_ = json_file[nim::kNIMMsgAttachKeySize].asInt64();
+		}
+	}
 	AddSendingMsg(msg);
 
 	nim::Talk::FileUpPrgCallback* cb_pointer = nullptr;
@@ -1298,10 +1330,9 @@ void SessionBox::SendFile(const std::wstring &src)
 	{
 		cb_pointer = new nim::Talk::FileUpPrgCallback(bubble->GetFileUpPrgCallback());
 	}
-	std::string json_msg = nim::Talk::CreateFileMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, file, msg.local_res_path_, nim::MessageSetting(), msg.timetag_);
+	std::string json_msg = nim::Talk::CreateFileMessage(msg.receiver_accid_, msg.session_type_, msg.client_msg_id_, temp_file, msg.local_res_path_, nim::MessageSetting(), msg.timetag_);
 	nim::Talk::SendMsg(json_msg, msg.client_msg_id_, cb_pointer);
 }
-
 void SessionBox::SendJsb( const std::string &attach )
 {
 	nim::IMMessage msg;
@@ -1407,10 +1438,15 @@ void SessionBox::ReSendMsg(nim::IMMessage &msg)
 	msg.msg_setting_.resend_flag_ = BS_TRUE;
 	msg.status_ = nim::kNIMMsgLogStatusSending;
 	msg.timetag_= 1000 * nbase::Time::Now().ToTimeT();
-
-	AddSendingMsg(msg);
-
-	nim::Talk::SendMsg(msg.ToJsonString(true));
+	if (msg.type_ == nim::kNIMMessageTypeFile)
+	{
+		DoSendFile(msg,nullptr);
+	}
+	else
+	{
+		AddSendingMsg(msg);
+		nim::Talk::SendMsg(msg.ToJsonString(true));
+	}	
 }
 
 void SessionBox::PackageMsg(nim::IMMessage &msg)

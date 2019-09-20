@@ -7,6 +7,10 @@
 #ifndef _NIM_UTIL_INCLUDE_H_
 #define _NIM_UTIL_INCLUDE_H_
 
+#if !defined(_WIN32) && !defined(WIN32)
+#include <pthread.h>
+#endif
+
 #include "public_define/util/stdbool.h"
 #include "public_define/util/nim_base_types.h"
 #include "public_define/util/nim_build_config.h"

@@ -5,7 +5,15 @@
 namespace nim_comp
 {
 
-bool LocalHelper::GetAppLocalVersion( int &version, std::wstring &version_flag )
+bool LocalHelper::GetSDKVersion(std::wstring& version)
+{
+	auto sdk_version = nim::Client::GetSDKVersion();
+	version = nbase::UTF8ToUTF16(sdk_version);
+
+	return !sdk_version.empty();
+}
+
+bool LocalHelper::GetAppLocalVersion(int &version, std::wstring &version_flag)
 {
 	std::wstring app_ver_path = QPath::GetAppPath();
 	app_ver_path.append(L"app_ver.dll");
@@ -14,10 +22,10 @@ bool LocalHelper::GetAppLocalVersion( int &version, std::wstring &version_flag )
 	if (shared::LoadXmlFromFile(document, app_ver_path))
 	{
 		TiXmlElement* root = document.RootElement();
-		if(root) 
+		if (root)
 		{
 			TiXmlElement* child = root->FirstChildElement();
-			if(child)
+			if (child)
 			{
 				std::string ver = child->Attribute("version");
 				std::string vf = child->Attribute("version_flag");

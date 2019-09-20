@@ -3,7 +3,9 @@
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @date 2015/10/20
   */
-
+#if !defined(WIN32)
+#include <pthread.h>
+#endif
 #include "src/cpp_sdk/nim/helper/nim_msg_helper.h"
 #include "include/depend_lib/include/nim_json_util.h"
 #include "public_define/defines/nim_define/nim_talk_def.h"
@@ -19,7 +21,7 @@ bool ParseRecallMsgNotify(const std::string& notify_json, std::list<RecallMsgNot
 	if (reader.parse(notify_json, values) && values.isArray())
 	{
 		auto size = values.size();
-		for (int i = 0; i < size; i++ )
+		for (auto i = 0; i < size; i++ )
 		{
 			nim_cpp_wrapper_util::Json::Value value = values[i];
 			RecallMsgNotify notify;

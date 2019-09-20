@@ -14,5 +14,6 @@
   * @param[in] str 字符指针
   * @return string 字符串
   */
-	 std::string PCharToString(const char* str);
+std::string PCharToString(const char* str);
+
 #endif //_NIM_SDK_CPP_NIM_STRING_UTIL_H_

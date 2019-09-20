@@ -10,6 +10,7 @@
 
 #include "public_define/defines/nim_sdk_dll.h"
 #include "public_define/defines/nim_define/nim_session_def.h"
+#include "public_define/defines/nim_define/nim_msglog_def.h"
 #include "public_define/nim_util_include.h"
 
 #ifdef __cplusplus
@@ -25,6 +26,16 @@ extern"C"
   * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_session_reg_change_cb(const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+
+/** @fn void nim_session_query_all_recent_session_async(const char *json_extension, nim_session_query_recent_session_cb_func cb, const void *user_data)
+  * 查询指定数量的最后会话数据
+  * @param[in] limit		要返回的最大数量
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb			查询会话列表的回调函数， nim_session_query_recent_session_cb_func回调函数定义见nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_session_query_last_few_session_async(int limit, const char *json_extension, nim_session_query_recent_session_cb_func cb, const void *user_data);
 
 /** @fn void nim_session_query_all_recent_session_async(const char *json_extension, nim_session_query_recent_session_cb_func cb, const void *user_data)
   * 查询会话列表

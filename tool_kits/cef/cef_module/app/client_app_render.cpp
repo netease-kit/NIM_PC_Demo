@@ -27,7 +27,7 @@ void ClientApp::OnWebKitInitialized()
 	 * param[in] params 调用该方法传递的参数，在前端指定的是一个 Object，但转到 Native 的时候转为了字符串
 	 * param[in] callback 执行该方法后的回调函数
 	 * 前端调用示例
-	 * NimCefWebHelper.call('showMessage', { message: 'Hello C++' }, (arguments) => {
+	 * NimCefWebInstance.call('showMessage', { message: 'Hello C++' }, (arguments) => {
 	 *    console.log(arguments)
 	 * })
 	 */

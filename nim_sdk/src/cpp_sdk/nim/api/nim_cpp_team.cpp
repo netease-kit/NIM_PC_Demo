@@ -720,7 +720,7 @@ static void CallbackQueryMembersOnline(int res_code, int count, const char *tid,
 		if (reader.parse(PCharToString(result), values) && values.isArray())
 		{
 			auto size = values.size();
-			for (int i = 0; i < size; i++)
+			for (auto i = 0; i < size; i++)
 			{
 				TeamMemberProperty prop;
 				ParseTeamMemberPropertyJson(values[i], prop);

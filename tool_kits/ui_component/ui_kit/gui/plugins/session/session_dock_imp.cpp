@@ -56,7 +56,7 @@ SessionBox* SessionPluginPage::CreateSessionBox(const std::string &session_id, n
 }
 void SessionPluginPage::CloseSessionBox(const std::string &session_id)
 {
-	auto task = [this,session_id](){
+	auto task = [this, session_id](){
 		auto box = GetSessionBoxByID(session_id);
 		if (box != nullptr)
 		{
@@ -64,14 +64,14 @@ void SessionPluginPage::CloseSessionBox(const std::string &session_id)
 			{
 				active_session_box_ = nullptr;
 				session_box_tab_->SelectItem(0);
-			}				
-			box->UninitSessionBox();			
+			}
+			box->UninitSessionBox();
 			session_box_tab_->Remove(box);
-		
-				
+
+
 		}
 	};
-	Post2UI(ToWeakCallback(task));	
+	Post2UI(ToWeakCallback(task));
 }
 bool SessionPluginPage::AttachSessionBox(SessionBox *session_box)
 {
@@ -108,14 +108,15 @@ void SessionPluginPage::SetActiveSessionBox(const std::string &session_id)
 		active_session_box_ = box;
 		GetPlugin()->Selected(true, true);
 		session_box_tab_->SelectItem(box);
-        BOOL handle = false;
+		BOOL handle = false;
 		box->HandleMessage(WM_ACTIVATE, WA_ACTIVE, 0, handle);
 		Post2UI(box->ToWeakCallback([session_id, box](){
 			if (nim_ui::SessionListManager::GetInstance()->CheckSessionItem(session_id))
-				nim_ui::SessionListManager::GetInstance()->InvokeSelectSessionItem(session_id,true,false);
+				nim_ui::SessionListManager::GetInstance()->InvokeSelectSessionItem(session_id, true, false);
 			else
 				nim_ui::SessionListManager::GetInstance()->InvokeSelectSessionItem(session_id, box->GetSessionType());
-		}));		
+			box->EndDown();
+		}));
 	}
 }
 bool SessionPluginPage::IsActiveSessionBox(const SessionBox *session_box)
