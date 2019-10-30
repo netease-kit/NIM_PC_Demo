@@ -150,7 +150,7 @@ NIM_SDK_DLL_API void nim_vchat_end(const char *json_extension);
 * NIM VCHAT 创建一个多人房间（后续需要主动调用加入接口进入房间）
 * @param[in] room_name 房间名
 * @param[in] custom_info 自定义的房间信息（加入房间的时候会返回）
-* @param[in] json_extension 无效
+* @param[in] json_extension 增加room_config的定义 详见定义，eg.{"room_config":{"rtmpTasks":[{"taskId":"stream_1","streamUrl":"rtmp://test.url","layoutMode":"0","layoutPara":"{\"k1\":\"v1\"}","record":true,"accid":"123"}]}}
 * @param[in] cb 结果回调见nim_vchat_def.h，返回的json_extension无效,返回的channel id 无效
 * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
 * @return void 无返回值

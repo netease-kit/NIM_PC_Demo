@@ -11,9 +11,13 @@
 #include <list>
 #include <functional>
 #include <algorithm>
+#if !defined(_WIN32) && !defined(WIN32)
+#include <pthread.h>
+#endif
 #include "public_define/nim_chatroom_define_include.h"
 #include "include/depend_lib/include/nim_json_util.h"
 #include "src/cpp_sdk/nim_chatroom/nim_chatroom_sdk_cpp_wrapper_dll.h"
+
 /**
 * @namespace nim_chatroom
 * @brief 聊天室

@@ -151,10 +151,10 @@ enum NIMVChatLiveStateCode
 /** @enum NIMVChatAudioMode 音频模式  */
 enum NIMVChatAudioMode
 {
-	kNIMVChatAdModeDefault		= 0,		/**< 默认值，此时参考kNIMVChatAudioHighRate */
-	kNIMVChatAdModeNormal		= 1,		/**< 窄带，kNIMVChatAudioHighRate无效 */
-	kNIMVChatAdModeHighVoip		= 2,		/**< 高清语音，kNIMVChatAudioHighRate无效 */
-	kNIMVChatAdModeHighMusic	= 3,		/**< 高清音乐，kNIMVChatAudioHighRate无效 */
+	kNIMVChatAdModeDefault		= 0,		/**< 默认值，为kNIMVChatAdModeHighVoip */
+	kNIMVChatAdModeNormal		= 1,		/**< 窄带  */
+	kNIMVChatAdModeHighVoip		= 2,		/**< 高清语音 */
+	kNIMVChatAdModeHighMusic	= 3,		/**< 高清音乐 */
 };
 
 /** @enum NIMVideoChatSessionStatus 音视频通话成员变化类型 */
@@ -284,6 +284,12 @@ enum NIMVChatPubSubErrorCode
 	kNIMVChatPSErrCodeSubscribed    = -700, /**< 操作无效，视频类型冲突，需要取消之前订阅的流 */
 };
 
+/** @enum NIMVChatServerSubscribeFallbackStrategy 服务器在下行弱网的时候切流策略 */
+enum NIMVChatServerSubscribeFallbackStrategy {
+	kNIMVChatSteamFallbackStrategyDisabled  = 0,  /**< 禁用服务器弱网切流策略 */
+	kNIMVChatSteamFallbackStrategyAudioOnly = 2,  /**< 默认策略允许服务器切小流、关视频 */
+};
+
 /** @name 初始化 内容Json key for nim_vchat_init
 * @{
 */
@@ -326,8 +332,7 @@ static const char *kNIMVChatRHostSpeaker	= "r_host_speaker";	/**< int 服务器�
 static const char *kNIMVChatMaxVideoRate	= "max_video_rate";	/**< int 视频发送编码码率 >=100000 <=5000000有效 */
 static const char *kNIMVChatVideoQuality	= "video_quality";	/**< int 视频聊天分辨率选择 NIMVChatVideoQuality */
 static const char *kNIMVChatVideoFrameRate	= "frame_rate";		/**< int 视频画面帧率 NIMVChatVideoFrameRate */
-static const char *kNIMVChatAudioHighRate	= "high_rate";		/**< int 是否使用语音高清模式 >0表示是（默认关闭）3.3.0 之前的版本无法加入已经开启高清语音的多人会议 */
-static const char *kNIMVChatAudioMode		= "audio_mode";		/**< int 音频模式选择，非默认时kNIMVChatAudioHighRate无效 */
+static const char *kNIMVChatAudioMode		= "audio_mode";		/**< int 音频模式选择 NIMVChatAudioMode*/
 static const char *kNIMVChatRtmpUrl			= "rtmp_url";		/**< string 直播推流地址(加入多人时有效)，非空代表主播旁路直播， kNIMVChatBypassRtmp决定是否开始推流 */
 static const char *kNIMVChatBypassRtmp		= "bypass_rtmp";	/**< int 是否旁路推流（如果rtmpurl为空是连麦观众，非空是主播的推流控制）， >0表示是 */
 static const char *kNIMVChatRtmpRecord		= "rtmp_record";	/**< int 是否开启服务器对直播推流录制（需要开启服务器能力）， >0表示是 */
@@ -341,6 +346,7 @@ static const char *kNIMVChatSound			= "sound";			/**< string 推送声音 */
 static const char *kNIMVChatKeepCalling		= "keepcalling";	/**< int, 是否强制持续呼叫（对方离线也会呼叫）,1表示是，0表示否。默认是 */
 //无效已经默认支持 static const char *kNIMVChatWebrtc			= "webrtc";			/**< int, 是否支持webrtc互通,1表示是，0表示否。默认否，无需要不要开启 */
 static const char *kNIMVChatVEncodeMode		= "v_encode_mode";	/**< int, 使用的视频编码策略NIMVChatVideoEncodeMode， 默认kNIMVChatVEModeNormal */
+static const char *kNIMVChatServerSubscribeFallbackStrategy		   = "server_sub_fb_stategy";	/**< int,服务器在下行弱网的时候切流策略NIMVChatServerSubscribeFallbackStrategy， 默认kNIMVChatSteamFallbackStrategyAudioOnly */
 
 /** @}*/ //json extension params
 
@@ -381,6 +387,20 @@ static const char *kNIMVChatMp4Height		          = "mp4_height";			/**< int 录�
 static const char *kNIMVChatTrafficStatRX	          = "trafficstat_rx";		/**< uint64 下行流量（字节） */
 static const char *kNIMVChatTrafficStatTX	          = "trafficstat_tx";		/**< uint64 上行流量（字节） */
 static const char *kNIMVChatVideoSimulcastResList     = "video_simulcast_res_list"; /**< json array 订阅发布视频分辨率类型列表*/
+
+/** @name json extension params for nim_vchat_create_room
+  * @{
+  */
+static const char *kNIMVChatRoomConfig                = "room_config";	     /**< key 房间配置 */
+static const char *kNIMVChatRTMPTasks                 = "rtmpTasks";         /**< array 推流参数配置,可以配置多个 */
+static const char *kNIMVChatRTMPTaskID                = "taskId";            /**< 必填 string 推流任务ID */
+static const char *kNIMVChatRTMPURL                   = "streamUrl";         /**< 必填 string 推流地址 */
+static const char *kNIMVChatRTMPLayoutMode            = "layoutMode";        /**< 必填 int 连麦方式 */
+static const char *kNIMVChatRTMPLayoutPara            = "layoutPara";        /**< 选填 string 自定义布局参数，仅对kNIMVChatSplitCustomLayout,kNIMVChatSplitAudioLayout模式有效 */
+static const char *kNIMVChatRTMPRecord                = "record";            /**< 选填 bool 推流参数配置 */
+static const char *kNIMVChatRTMPMainScreenAccid       = "accid";             /**< 选填 string 指定主屏显示的帐号 */
+
+
 /** @}*/ //json extension params
 
 /** @typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, int64_t channel_id, int code, const char *json_extension, const void *user_data)
