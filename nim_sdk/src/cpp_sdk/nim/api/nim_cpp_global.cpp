@@ -5,8 +5,9 @@
   */
 
 #include "src/cpp_sdk/nim/api//nim_cpp_global.h"
-#include "public_define/defines/nim_define/nim_client_def.h"
 #include "src/cpp_sdk/nim/helper/nim_sdk_loader_helper.h"
+#include "public_define/defines/nim_define/nim_client_def.h"
+
 namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
@@ -18,6 +19,7 @@ typedef void (*nim_global_reg_exception_report_cb)(const char *json_extension, n
 typedef void (*nim_global_get_sdk_cache_file_info_async)(const char *login_id, const char *file_type, int64_t end_timestamp, const char *json_extension, nim_sdk_get_cache_file_info_cb_func cb, const void *user_data);
 typedef void (*nim_global_del_sdk_cache_file_async)(const char *login_id, const char *file_type, int64_t end_timestamp, const char *json_extension, nim_sdk_del_cache_file_cb_func cb, const void *user_data);
 typedef void (*nim_global_sdk_feedback_async)(const char *url, const char *json_extension, nim_sdk_feedback_cb_func cb, const void *user_data);
+typedef void(*nim_global_reg_sdk_db_error_cb)(nim_global_sdk_db_error_cb_func cb, const void *user_data);
 #else
 #include "nim_global.h"
 #endif
@@ -141,5 +143,27 @@ void Global::SDKFeedbackAsync(const std::string &url, const std::string &json_ex
 		cb_pointer = new SDKFeedbackCallback(cb);
 	}
 	NIM_SDK_GET_FUNC(nim_global_sdk_feedback_async)(url.c_str(), json_extension.c_str(), &CallbackSDKFeedback, cb_pointer);
+}
+Global::SDKDBErrorCallback g_sdkdberror = nullptr;
+void Global::RegSDKDBError(const Global::SDKDBErrorCallback& cb)
+{
+	if (cb != nullptr)
+		g_sdkdberror = cb;
+	NIM_SDK_GET_FUNC(nim_global_reg_sdk_db_error_cb)([](const char *error_info, const void *user_data) {
+		CallbackProxy::DoSafeCallback<Global::SDKDBErrorCallback>(user_data, [=](const Global::SDKDBErrorCallback& cb) {
+
+			SDKDBErrorInfo error;
+			nim_cpp_wrapper_util::Json::Value json_error;
+			if (nim_cpp_wrapper_util::Json::Reader().parse(error_info, json_error))
+			{
+				error.db_name_ = json_error[kNIMDBErrDBName].asString();
+				error.attach_ = json_error[kNIMDBErrAttach].asString();
+				error.description_ = json_error[kNIMDBErrDescription_].asString();
+				error.operation_ = json_error[kNIMDBERROperation].asInt();
+				error.error_code_ = json_error[kNIMDBErrCode].asInt();
+			}
+			CallbackProxy::Invoke(cb, error);
+		});
+	},&g_sdkdberror);
 }
 }

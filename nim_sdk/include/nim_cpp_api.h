@@ -56,7 +56,9 @@
 //独立信令
 #include "src/cpp_sdk/nim/api/nim_cpp_signaling.h"
 #include "src/cpp_sdk/nim/helper/nim_signaling_helper.h"
-
+//会话服务
+#include "src/cpp_sdk/nim/api/nim_cpp_session_online_service.h"
+#include "src/cpp_sdk/nim/helper/nim_session_online_service_helper.h"
 /*仅在 Windows 平台下使用的头*/
 #if defined (WIN32)
     //数据通道相关API(白板等)

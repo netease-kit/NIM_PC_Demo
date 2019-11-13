@@ -142,17 +142,18 @@ static const char *kNIMUploadSDKEventsAfterLogin		= "upload_sdk_events_after_log
 static const char *kNIMAnimatedImageThumbnailEnabled	= "animated_image_thumbnail_enabled";	/**< bool，开启对动图缩略图的支持，默认为false，开启后获取的缩略图为原格式，关闭后获取的缩略图为第一帧静态图 */
 static const char *kNIMClientAntispam					= "client_antispam";		/**< bool，客户端反垃圾，默认为false，如需开启请提前咨询技术支持或销售 */
 static const char *kNIMTeamMessageAckEnabled			= "team_msg_ack";			/**< bool，群消息已读功能开关，默认为false，如需开启请提前咨询技术支持或销售  */
-static const char *kNIMNeedUpdateLBSBeforRelogin = "need_update_lbs_befor_relogin";  /**< bool 在进行重新登录前是否先刷新一下lbs,对于切换网络的场景适用  */
+static const char *kNIMNeedUpdateLBSBeforRelogin 		= "need_update_lbs_befor_relogin";  /**< bool 在进行重新登录前是否先刷新一下lbs,对于切换网络的场景适用  */
 static const char *kNIMServerConfFilePath				= "server_conf_file_path";	/**< string,  私有云服务器相关地址配置文件本地绝对路径，如果不填默认执行文件目录下的nim_server.conf */
 static const char *kNIMPrivateServerSetting				= "private_server_setting";	/**< json object, 私有服务器配置（设置方法有两种，一个是配置以下信息，一个是通过配置kNIMServerConfFilePath地址，信息从文件中读取） */
-static const char *kNIMPrivateEnableHttps = "https_enabled";				/**< bool，（必填，私有化配置是否启用HTTPS协议，启用私有化配置时会覆盖 kNIMUseHttps，为true时kNIMDefaultNosUploadHost必填） */
+static const char *kNIMPrivateEnableHttps 				= "https_enabled";			/**< bool，【7.0.0版本后已废弃,统一由kNIMUseHttps来设置】（必填，私有化配置是否启用HTTPS协议，启用私有化配置时会覆盖 kNIMUseHttps，为true时kNIMDefaultNosUploadHost必填） */
 static const char *kNIMLbsAddress						= "lbs";					/**< string, （必填，lbs地址） */
 static const char *kNIMNosLbsAddress					= "nos_lbs";				/**< string, （必填，nos lbs地址） */
-static const char *kNIMDefaultLinkAddress				= "link";					/**< string array, （必填，默认link服务器地址） */
+static const char *kNIMDefaultLinkAddress				= "link";					/**< string array, （默认link 服务器地址 kNIMIPProtVersion == 0 or auto (ipv4）必填 */
+static const char *kNIMDefaultLinkAddressIPV6			= "link_ipv6";			    /**< string array, （默认link ipv6服务器地址 kNIMIPProtVersion == 1(ipv6）必填 */
 static const char *kNIMDefaultNosUploadAddress			= "nos_uploader";			/**< string array, （必填，默认nos 上传服务器地址） */
 static const char *kNIMDefaultNosUploadHost				= "nos_uploader_host";		/**< string array, （kNIMPrivateEnableHttps设置为true 时必填，默认nos 上传服务器主机地址，用作 https 上传时的域名校验及 http header host 字段填充） */
-static const char *kNIMRsaPublicKeyModule				= "module";					/**< string, （必填，RSA public key） */
-static const char *kNIMRsaVersion						= "version";				/**< int, （必填，RSA version） */
+static const char *kNIMRsaPublicKeyModule				= "module";					/**< string, （必填，RSA public key 【6.9.0版本后已废弃】） */
+static const char *kNIMRsaVersion						= "version";				/**< int, （必填，RSA version 【6.9.0版本后已废弃】） */
 static const char *kNIMDownloadAddressTemplate			= "nos_downloader";			/**< string, 下载地址拼接模板，用于拼接最终得到的下载地址 */
 static const char *kNIMAccelerateHost					= "nos_accelerate_host";	/**< string, 需要被加速主机名*/
 static const char *kNIMAccelerateAddressTemplate		= "nos_accelerate";			/**< string, 加速地址拼接模板，用于获得加速后的下载地址*/
@@ -166,12 +167,17 @@ static const char *kNIMUserDataFileLocalBackupFolder	= "user_datafile_localbacku
 static const char *kNIMEnableUserDataFileLocalBackup	= "enable_user_datafile_backup";			/**< bool 是否开启用户数据备份(本地)功能  缺省true*/
 static const char *kNIMEnableUserDataFileLocalRestore	= "enable_user_datafile_restore";			/**< bool 是否开启用户数据恢复(本地)功能  缺省false*/
 static const char *kNIMEnableUserDataFileDefRestoreProc	= "enable_user_datafile_defrestoreproc";	/**< bool 是否使用缺省的用户数据恢复(本地)方案  缺省false enable_user_datafile_restore_ == true 生效*/
-static const char *kNIMSpecialFlag 						= "special_flag";/**< int 是否为专属集群 1:是 0: 否*/
-static const char *kNIMInitENC 							= "default_initenc"; /**< int  非对称加密算法 缺省值 0x0001(RSA) 其它算法后续开放*/
-static const char *kNIMInitENCKey 						= "initenc_key"; /**< string  非对称加密算法key 自定义时则必填 十六进制大整数 不带0x*/
-static const char *kNIMInitENCKey2 						= "initenc_key2"; /**< string  非对称加密算法key2 RSA:EXP,SM2: SM2Y 自定义时则必填 十六进制大整数 不带0x*/
-static const char *kNIMInitENCVersion 					= "initenc_version";   /**< int  非对称加密算法的 key version 自定义时则必填 */
-static const char *kNIMENC 								= "enc";     /**< int  对称加密算法  缺省值 0x0001(RC4)  其它算法后续开放*/
+static const char *kNIMDedicatedClusteFlag 				= "dedicated_cluste_flag";/**< int 是否为专属集群 1:是 0: 否*/
+static const char* kNIMHandShakeType 					= "hand_shake_type"; /**< int 登录时使用的握手协议类型 0:支持配置多种对称与非对称加密算法,1:只支持RAS + RC4，缺省 1 */
+static const char *kNIMNegoKeyNECA 						= "nego_key_neca"; /**< int  "交换密钥"协议加密算法 {1(RSA),2(SM2)}, def:1(RSA) 非对称加密 */
+static const char *kNIMNegoKeyNECAKeyPA 				= "nego_key_enca_key_parta"; /**< string  非对称加密算法key 自定义时则必填 十六进制大整数 不带0x*/
+static const char *kNIMNegoKeyNECAKeyPB 				= "nego_key_enca_key_partb"; /**< string  非对称加密算法key2 RSA:EXP,SM2: SM2Y 自定义时则必填 十六进制大整数 不带0x*/
+static const char *kNIMNegoKeyNECAKeyV 					= "nego_key_enca_key_version";   /**< int  非对称加密算法的 key version 自定义时则必填 */
+static const char *kNIMCommNECA 						= "comm_enca";     /**< int 通信加密算法 {1(RC4),2(AES128),4(SM4)} def:1(RC4) 对称加密*/
+
+static const char *kNIMIPProtVersion = "ip_protocol_version";   /**< int IP协议版本{0(IPV4),1(IPV6),2(Auto,SDK测试后自行选择,存在性能损耗)}。def:0(IPV4) */
+static const char *kNIMProbeIPV4URL = "probe_ipv4_url";/**< string 探测ipv4地址类型使用的url,IPProtVersion == 2(Auto) 时生效*/
+static const char *kNIMProbeIPV6URL = "probe_ipv6_url";/**< string 探测ipv6地址类型使用的url,IPProtVersion == 2(Auto) 时生效*/
 
 /** @}*/ //json extension params for nim_client_init API
 

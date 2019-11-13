@@ -151,6 +151,7 @@ void UnregNIMCallback()
 	Team::UnregTeamCb();
 	User::UnregUserCb();
 	SuperTeam::UnregSuperTeamCb();
+	SessionOnLineService::UnregSessionOnLineServiceCb();
 }
 bool Client::Init(const std::string& app_key
 	, const std::string& app_data_dir
@@ -205,13 +206,12 @@ bool Client::Init(const std::string& app_key
 	config_values[nim::kNIMEnableUserDataFileLocalRestore] = config.enable_user_datafile_restore_;
 	config_values[nim::kNIMEnableUserDataFileDefRestoreProc] = config.enable_user_datafile_defrestoreproc_;
 	config_values[nim::kNIMUserDataFileLocalBackupFolder] = config.user_datafile_localbackup_folder_;
-
-	config_values[nim::kNIMSpecialFlag] = config.special_flag_;
-	config_values[nim::kNIMInitENC] = config.default_initenc_;
-	config_values[nim::kNIMInitENCKey] = config.initenc_key_;
-	config_values[nim::kNIMInitENCKey2] = config.initenc_key2_;
-	config_values[nim::kNIMInitENCVersion] = config.default_initenc_version_;
-	config_values[nim::kNIMENC] = config.default_enc_;
+	config_values[nim::kNIMUploadStatisticsData] = config.upload_statistics_data_;
+	config_values[nim::kNIMDedicatedClusteFlag] = config.dedicated_cluste_flag_;
+	config_values[nim::kNIMHandShakeType] = config.hand_shake_type_;
+	config_values[nim::kNIMNegoKeyNECA] = config.nego_key_neca_;	
+	config_values[nim::kNIMCommNECA] = config.comm_neca_;
+	config_values[nim::kNIMIPProtVersion] = config.ip_protocol_version_;	
 
 	if (!config.server_conf_file_path_.empty())
 		config_root[nim::kNIMServerConfFilePath] = config.server_conf_file_path_;
@@ -221,8 +221,8 @@ bool Client::Init(const std::string& app_key
 		srv_config[nim::kNIMLbsAddress] = config.lbs_address_;
 		srv_config[nim::kNIMNosLbsAddress] = config.nos_lbs_address_;
 		srv_config[nim::kNIMDefaultLinkAddress] = config.default_link_address_;
+		srv_config[nim::kNIMDefaultLinkAddressIPV6] = config.default_link_address_ipv6_;
 		srv_config[nim::kNIMDefaultNosUploadAddress] = config.default_nos_upload_address_;
-		srv_config[nim::kNIMPrivateEnableHttps] = config.private_enable_https_;
 		srv_config[nim::kNIMDefaultNosUploadHost] = config.default_nos_upload_host_;
 		srv_config[nim::kNIMRsaPublicKeyModule] = config.rsa_public_key_module_;
 		srv_config[nim::kNIMRsaVersion] = config.rsa_version_;
@@ -230,7 +230,11 @@ bool Client::Init(const std::string& app_key
 		srv_config[nim::kNIMAccelerateHost] = config.nos_accelerate_host_;
 		srv_config[nim::kNIMAccelerateAddressTemplate] = config.nos_accelerate_address_;
 		srv_config[nim::kNIMNtserverAddress] = config.ntserver_address_;
-		config_values[kNIMUploadStatisticsData] = config.upload_statistics_data_;
+		srv_config[nim::kNIMNegoKeyNECAKeyPA] = config.nego_key_neca_key_parta_;
+		srv_config[nim::kNIMNegoKeyNECAKeyPB] = config.nego_key_neca_key_partb_;
+		srv_config[nim::kNIMNegoKeyNECAKeyV] = config.nego_key_neca_key_version_;
+		srv_config[nim::kNIMProbeIPV4URL] = config.probe_ipv4_url_;
+		srv_config[nim::kNIMProbeIPV6URL] = config.probe_ipv6_url_;
 		config_root[nim::kNIMPrivateServerSetting] = srv_config;
 	}
 	config_root[nim::kNIMGlobalConfig] = config_values;

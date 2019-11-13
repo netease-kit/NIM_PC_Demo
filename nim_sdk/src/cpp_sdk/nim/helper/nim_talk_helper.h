@@ -47,7 +47,8 @@ struct NIM_SDK_CPPWRAPPER_DLL_API MessageSetting
 	BoolStatus client_anti_spam_hitting_;	/**< (可选) 是否命中客户端反垃圾*/
 	BoolStatus team_msg_need_ack_;		/** 群消息是否需要已读业务，0：不需要，1：需要*/
 	BoolStatus team_msg_ack_sent_;		/**< 是否已经发送群消息已读回执 */
-	int team_msg_unread_count_;			/**< 群消息未读数 */		
+	int team_msg_unread_count_;			/**< 群消息未读数 */
+	BoolStatus is_update_session_;			/**< (可选) 消息是否需要刷新到session服务，0:否，1:是；只有消息存离线的情况下，才会判断该参数，缺省：1*/
 	/** 构造函数 */
 	MessageSetting() : resend_flag_(BS_NOT_INIT)
 		, server_history_saved_(BS_NOT_INIT)
@@ -65,7 +66,8 @@ struct NIM_SDK_CPPWRAPPER_DLL_API MessageSetting
 		, client_anti_spam_hitting_(BS_NOT_INIT)
 		, team_msg_need_ack_(BS_NOT_INIT)
 		, team_msg_ack_sent_(BS_NOT_INIT)
-		, team_msg_unread_count_(-1){}
+		, team_msg_unread_count_(-1)
+		, is_update_session_(BS_NOT_INIT){}
 
 	/** @fn void ToJsonValue(nim_cpp_wrapper_util::Json::Value& message) const
 	  * @brief 组装Json Value字符串
@@ -125,6 +127,8 @@ struct NIM_SDK_CPPWRAPPER_DLL_API MessageSetting
 			message[kNIMMsgKeyLocalKeyTeamMsgAckSent] = team_msg_ack_sent_;
 		if (team_msg_unread_count_ > -1)
 			message[kNIMMsgKeyLocalKeyTeamMsgUnreadCount] = team_msg_unread_count_;		
+		if (is_update_session_ != BS_NOT_INIT)
+			message[kNIMMsgKeyIsUpdateSession] = is_update_session_;
 	}
 
 	/** @fn void ParseMessageSetting(const nim_cpp_wrapper_util::Json::Value& message)
@@ -183,6 +187,8 @@ struct NIM_SDK_CPPWRAPPER_DLL_API MessageSetting
 			team_msg_ack_sent_ = message[kNIMMsgKeyTeamMsgAck].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeyLocalKeyTeamMsgUnreadCount))
 			team_msg_unread_count_ = message[kNIMMsgKeyLocalKeyTeamMsgUnreadCount].asUInt();		
+		if (message.isMember(kNIMMsgKeyIsUpdateSession))
+			is_update_session_ = message[kNIMMsgKeyIsUpdateSession].asBool() ? BS_TRUE : BS_FALSE;
 	}
 };
 

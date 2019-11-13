@@ -210,6 +210,7 @@
     <ClCompile Include="api\nim_cpp_robot.cpp" />
     <ClCompile Include="api\nim_cpp_rts.cpp" />
     <ClCompile Include="api\nim_cpp_session.cpp" />
+    <ClCompile Include="api\nim_cpp_session_online_service.cpp" />
     <ClCompile Include="api\nim_cpp_signaling.cpp" />
     <ClCompile Include="api\nim_cpp_subscribe_event.cpp" />
     <ClCompile Include="api\nim_cpp_super_team.cpp" />
@@ -229,6 +230,7 @@
     <ClCompile Include="helper\nim_robot_helper.cpp" />
     <ClCompile Include="helper\nim_sdk_loader_helper.cpp" />
     <ClCompile Include="helper\nim_session_helper.cpp" />
+    <ClCompile Include="helper\nim_session_online_service_helper.cpp" />
     <ClCompile Include="helper\nim_signaling_helper.cpp" />
     <ClCompile Include="helper\nim_subscribe_event_helper.cpp" />
     <ClCompile Include="helper\nim_super_team_helper.cpp" />
@@ -261,6 +263,8 @@
     <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_tools_def.h" />
     <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_user_def.h" />
     <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_vchat_def.h" />
+    <ClInclude Include="api\nim_cpp_session_online_service.h" />
+    <ClInclude Include="api\nim_cpp_signaling.h" />
     <ClInclude Include="api\nim_cpp_client.h" />
     <ClInclude Include="api\nim_cpp_data_sync.h" />
     <ClInclude Include="api\nim_cpp_doc_trans.h" />
@@ -271,7 +275,6 @@
     <ClInclude Include="api\nim_cpp_robot.h" />
     <ClInclude Include="api\nim_cpp_rts.h" />
     <ClInclude Include="api\nim_cpp_session.h" />
-    <ClInclude Include="api\nim_cpp_signaling.h" />
     <ClInclude Include="api\nim_cpp_subscribe_event.h" />
     <ClInclude Include="api\nim_cpp_super_team.h" />
     <ClInclude Include="api\nim_cpp_sysmsg.h" />
@@ -290,6 +293,7 @@
     <ClInclude Include="helper\nim_robot_helper.h" />
     <ClInclude Include="helper\nim_sdk_loader_helper.h" />
     <ClInclude Include="helper\nim_session_helper.h" />
+    <ClInclude Include="helper\nim_session_online_service_helper.h" />
     <ClInclude Include="helper\nim_signaling_helper.h" />
     <ClInclude Include="helper\nim_subscribe_event_helper.h" />
     <ClInclude Include="helper\nim_super_team_helper.h" />

@@ -129,6 +129,7 @@ static const char *kNIMMsgKeyClientAntiSpam = "client_anti_spam_hitting";	/**< i
 static const char *kNIMMsgKeyAntiSpamBizId = "anti_spam_business_id";	/**< string,  (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
 static const char *kNIMMsgKeyAntiSpamUsingYiDun = "anti_spam_using_yidun";	/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
 static const char *kNIMMsgKeyTeamMsgAck		= "team_msg_ack";		/**< (可选)int, 群消息是否需要已读业务，0：不需要，1：需要*/
+static const char *kNIMMsgKeyIsUpdateSession = "is_update_session";		/**< (可选)bool, 消息是否需要刷新到session服务，false:否，true:是；只有消息存离线的情况下，才会判断该参数，缺省：true*/
 
 
 //本地定义

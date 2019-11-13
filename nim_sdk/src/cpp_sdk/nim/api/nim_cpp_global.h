@@ -33,12 +33,27 @@ public:
 		int			file_count_;
 		int64_t		file_total_size_;
 	};
+	struct NIM_SDK_CPPWRAPPER_DLL_API SDKDBErrorInfo
+	{
+		enum DBOperation
+		{
+			kNIMDBOperationInsert	= 0x0001,	/**< 写操作*/
+			kNIMDBOperationRead		= 0x0002,	/**< 读操作*/
+			kNIMDBOperationUpdate	= 0x0004,	/**< 更新操作*/
+			kNIMDBOperationDelete	= 0x0008,	/**< 删除操作*/
+		};
+		std::string db_name_;
+		int error_code_;
+		int operation_;
+		std::string description_;
+		std::string attach_;
+	};
 	typedef std::function<void(bool conncet, NIMProxyDetectStep step, const std::string& json_extention)> DetectProxyCallback; 
 	typedef std::function<void(NIMSDKException exception,const std::string& log)> ExceptionCallback; 
 	typedef std::function<void(NIMResCode rescode, const CachedFileInfo &info)> GetCachedFileInfoCallback;
 	typedef std::function<void(NIMResCode rescode)> DeleteCachedFileCallback;
 	typedef DeleteCachedFileCallback SDKFeedbackCallback;
-
+	typedef std::function<void(const SDKDBErrorInfo& error_info)>  SDKDBErrorCallback;
 public:
 	/** @fn void FreeStrBuf(char *str)
 	* 释放SDK内部分配的内存
@@ -115,6 +130,13 @@ public:
 	* @return void 无返回值
 	*/
 	static void SDKFeedbackAsync(const std::string &url, const std::string &json_extension, const SDKFeedbackCallback &cb);
+
+	/** @fn void RegSDKDBError(const SDKDBErrorCallback& cb)
+	* 注册 SDK DB操作出错时的回调
+	* @param[in] cb SDKDBErrorCallback 出错时的回调
+	* @return void 无返回值
+	*/
+	static void RegSDKDBError(const SDKDBErrorCallback& cb);
 };
 
 } 

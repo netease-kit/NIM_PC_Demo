@@ -104,6 +104,31 @@ typedef void(*nim_sdk_del_cache_file_cb_func)(enum NIMResCode rescode, const voi
 */
 typedef void(*nim_sdk_feedback_cb_func)(enum NIMResCode rescode, const void *user_data);
 
+/** @enum NIMDBOperation 对DB进行的操作类型 */
+enum NIMDBOperation
+{
+	kNIMDBOperationInsert	= 0x0001,	/**< 写操作*/
+	kNIMDBOperationRead		= 0x0002,	/**< 读操作*/
+	kNIMDBOperationUpdate	= 0x0004,	/**< 更新操作*/
+	kNIMDBOperationDelete	= 0x0008,	/**< 删除操作*/
+}; 
+/** @name SDK DB操作出错时的反馈回调数据 error_info
+  * @{
+  */
+static const char *kNIMDBErrDBName = "db_name";			/**< 出错DB的名称 */
+static const char *kNIMDBERROperation = "operation";	/**< 出错DB的操作(读、写、更新、删除) */
+static const char *kNIMDBErrCode = "error_code";			/**< 错误码 */
+static const char *kNIMDBErrDescription_= "error_description";			/**< 相应的错误描述 */
+static const char *kNIMDBErrAttach = "error_attach";			/**< 具体的出错信息 */
+/** @}*/ //SDK DB操作出错时的反馈回调数据 error_info
+
+/** @typedef void (*nim_global_sdk_db_error_cb_func)(const char *error_info);
+* SDK DB操作出错时的反馈回调
+* @param[out] error_info 错误的相关信息
+* @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+* @return void 无返回值
+*/
+typedef void(*nim_global_sdk_db_error_cb_func)(const char *error_info, const void *user_data);
 
 /** @enum NIMProxyDetectStep 代理测试步骤 */
 enum NIMProxyDetectStep

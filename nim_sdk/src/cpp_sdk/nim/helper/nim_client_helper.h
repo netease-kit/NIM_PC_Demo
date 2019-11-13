@@ -42,6 +42,7 @@ namespace nim
 	bool			client_antispam_;				/**< bool 客户端反垃圾，默认为false，如需开启请提前咨询技术支持或销售 */
 	bool			team_msg_ack_;					/**< bool 群消息已读功能开关， 默认为false，如需开启请提前咨询技术支持或销售  */
 	bool			need_update_lbs_befor_relogin_; /**< bool 在进行重新登录前是否先刷新一下lbs,对于切换网络的场景适用  */
+	bool			upload_statistics_data_;					/**< bool 错误信息统计是否上报*/
 	/***********消息“已接收回执”发送配置 begin************/
 	//bool		enable_markread_after_save_db_; /**< bool, 是否开启消保存在本地DB以后再向服务端发送"已接收回执" 缺省 false 关闭*/
 	bool		caching_markread_; /**< bool 是否开启缓存式“已接收回执”发送，程序可能收到大量消息以至触发频控时可以考虑开启此开关 缺省 false 关闭*/
@@ -56,31 +57,42 @@ namespace nim
 	std::string		user_datafile_localbackup_folder_; /**< string 用户数据文件备份（本地）目录，缺省在数据文件所在目录创建一个db_file.back目录 */
 	/***********用户数据本地备份与恢复 end************/
 
+	/***********IP地址族相关设置 begin************/
+	int ip_protocol_version_;/**< int IP地址族设置 0:ipv4 1:ipv6 2:auto,经SDK测试后，自行选择,会有少许性能损耗。缺省 0(ipv4) */
+	/***********地址族相关设置 end************/
+	bool	dedicated_cluste_flag_; /**< bool 是否为专属集群 {true,false} def:false*/
+	int	hand_shake_type_; /**< int 登录时使用的握手协议类型 0:支持配置多种对称与非对称加密算法,1:只支持RAS + RC4，缺省 1 */
+	int	nego_key_neca_;    /**< int  "交换密钥"协议加密算法 {1(RSA),2(SM2)}, def:1(RSA) 非对称加密 */
+	int	comm_neca_;     /**< int 通信加密算法 {1(RC4),2(AES128),4(SM4)} def:1(RC4) 对称加密*/
+
 	std::string		server_conf_file_path_;			/**< string 私有云服务器相关地址配置文件本地绝对路径，如果不填默认执行文件目录下的server_conf.txt */
 	
 	//private_server_setting 私有服务器配置（设置方法有两种，一个是配置以下信息，一个是通过配置server_conf_file_path_地址，信息从文件中读取）
 	bool			use_private_server_;			/**< bool 是否使用私有服务器，如果使用私有服务器，则必须设置为true */
-	bool			private_enable_https_;	/**< bool，（必填，私有化配置是否启用HTTPS协议，启用私有化配置时会覆盖 kNIMUseHttps，为true时kNIMDefaultNosUploadHost必填） */
+	//bool			private_enable_https_;	/**< bool，【7.0.0版本后已废弃,统一由use_https_来设置】（必填，私有化配置是否启用HTTPS协议，启用私有化配置时会覆盖 kNIMUseHttps，为true时kNIMDefaultNosUploadHost必填） */
 	std::string		lbs_address_;					/**< string lbs地址，如果选择使用私有服务器，则必填 */
 	std::string  	nos_lbs_address_;				/**< string nos lbs地址，如果选择使用私有服务器，则必填 */
-	std::string		default_link_address_;			/**< string 默认link服务器地址，如果选择使用私有服务器，则必填 */
+	std::string		default_link_address_;			/**< string 默认link服务器地址，如果选择使用私有服务器，ip_protocol_version_ != 1(ipv4 or auto)则必填 */
+	std::string		default_link_address_ipv6_;			/**< string 默认link ipv6服务器地址，如果选择使用私有服务器，ip_protocol_version_ == 1(使用ipv6)则必填 */
 	std::string		default_nos_upload_address_;	/**< string 默认nos 上传服务器地址，如果选择使用私有服务器，则必填 */
-	std::string		default_nos_upload_host_;		/**< string 默认nos 上传服务器主机地址，仅 kNIMUseHttps设置为true 时有效，用作 https 上传时的域名校验及 http header host 字段填充 */
-	int special_flag_; /**< int 是否为专属集群 1:是 0: 否*/
-	std::string rsa_public_key_module_;			/**< string  RSA public key，如果选择使用私有服务器，则必填 【已废弃】*/
-	int	rsa_version_;					/**< int RSA version，如果选择使用私有服务器，则必填 【已废弃】*/
+	std::string		default_nos_upload_host_;		/**< string 默认nos 上传服务器主机地址，仅 kNIMUseHttps设置为true 时有效，用作 https 上传时的域名校验及 http header host 字段填充 */	
+	std::string rsa_public_key_module_;			/**< string  RSA public key，如果选择使用私有服务器，则必填 【6.9.0版本后已废弃】*/
+	int	rsa_version_;					/**< int RSA version，如果选择使用私有服务器，则必填 【6.9.0版本后已废弃】*/
 	
-	int	default_initenc_;   /**< int  非对称加密算法 缺省值 0x0001(RSA) 其它算法后续开放*/
-	std::string initenc_key_; /**< string  非对称加密算法key 自定义时则必填 */
-	std::string initenc_key2_; /**< string  非对称加密算法key2 RSA:EXP,SM2: SM2Y 自定义时则必填 */
-	int	default_initenc_version_;   /**< int  非对称加密算法的 key version 自定义时则必填 */
-	int	default_enc_;     /**< int  对称加密算法  缺省值 0x0001(RC4)  其它算法后续开放*/
+
+	std::string nego_key_neca_key_parta_;  /**< string  "交换密钥"协议加密算法密钥 part A 自定义时则必填 BigNumHex string 不含0x RSA:module,SM2:X*/
+	std::string nego_key_neca_key_partb_; /**< string  非对称加密算法key2 RSA:EXP,SM2: SM2Y 自定义时则必填 */
+	int	nego_key_neca_key_version_;   /**< int  非对称加密算法的 key version 自定义时则必填 */	
 
 	std::string		nos_download_address_;			/**< string nos 下载地址拼接模板，用于拼接最终得到的下载地址*/
 	std::string		nos_accelerate_host_;			/**< string 需要被加速主机名*/
 	std::string		nos_accelerate_address_;		/**< string nos 加速地址拼接模板，用于获得加速后的下载地址*/
-	std::string		ntserver_address_;				/**< string 部分 IM 错误信息统计上报地址*/
-	bool upload_statistics_data_;					/**< bool 错误信息统计是否上报*/
+	std::string		ntserver_address_;				/**< string 部分 IM 错误信息统计上报地址*/	
+
+	/***********IP地址族相关设置 begin************/
+	std::string probe_ipv4_url_;/**< string 探测ipv4地址类型使用的url,ip_protocol_version_ == 2(auto) 时生效*/
+	std::string probe_ipv6_url_;/**< string 探测ipv6地址类型使用的url,ip_protocol_version_ == 2(auto) 时生效  */
+	/***********地址族相关设置 end************/
 	/** 构造函数 */
 	SDKConfig();
 };

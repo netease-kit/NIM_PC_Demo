@@ -35,13 +35,14 @@ namespace nim
 		, enable_user_datafile_restore_(false)
 		, enable_user_datafile_defrestoreproc_(false)
 		, user_datafile_localbackup_folder_("")
-		, private_enable_https_(false)
-		, default_initenc_(0x0001)
-		, initenc_key_("")
-		, initenc_key2_("")
-		, default_initenc_version_(0)
-		, default_enc_(0x0001)
-		, special_flag_(0){}
+		, nego_key_neca_(0x0001)
+		, nego_key_neca_key_parta_("")
+		, nego_key_neca_key_partb_("")
+		, nego_key_neca_key_version_(0)
+		, comm_neca_(0x0001)
+		, dedicated_cluste_flag_(false)
+		, ip_protocol_version_(0)
+		, hand_shake_type_(1){}
  bool ParseOtherClientsPres(const nim_cpp_wrapper_util::Json::Value array_objs, std::list<OtherClientPres> &outs)
 {
 	if (array_objs.isArray())

@@ -51,5 +51,7 @@
 #include "src/c_sdk/nim/api/nim_super_team.h"
 //事件订阅
 #include "src/c_sdk/nim/api/nim_subscribe_event.h"
+//会话服务
+#include "src/c_sdk/nim/api/nim_session_online_service.h"
 
 #endif

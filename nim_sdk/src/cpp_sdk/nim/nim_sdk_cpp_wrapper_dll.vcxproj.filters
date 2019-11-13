@@ -6,19 +6,19 @@
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
     <Filter Include="api">
-      <UniqueIdentifier>{b8702752-58e3-4b7f-9038-abcf033782cb}</UniqueIdentifier>
+      <UniqueIdentifier>{b8702752-58e3-4b7f-9038-eacf033782cb}</UniqueIdentifier>
     </Filter>
     <Filter Include="helper">
-      <UniqueIdentifier>{e6f92ffc-2cff-49e3-b686-ef9eea838874}</UniqueIdentifier>
+      <UniqueIdentifier>{e6f92ffc-2cff-49e3-b686-5f9eea838874}</UniqueIdentifier>
     </Filter>
     <Filter Include="public_define">
-      <UniqueIdentifier>{c788dae0-f2c7-44d5-96c6-424bd45453c1}</UniqueIdentifier>
+      <UniqueIdentifier>{e3b5993b-68e1-4a9e-884b-59b06b5793a5}</UniqueIdentifier>
     </Filter>
     <Filter Include="public_define\defines">
-      <UniqueIdentifier>{3867d750-1a03-478d-ad55-7ddae21dff98}</UniqueIdentifier>
+      <UniqueIdentifier>{f1bff74c-843d-4543-a0c7-8db4af1664fd}</UniqueIdentifier>
     </Filter>
     <Filter Include="public_define\defines\nim_define">
-      <UniqueIdentifier>{684f2dc0-7424-4615-8851-30261a0fc258}</UniqueIdentifier>
+      <UniqueIdentifier>{f2c23097-92d6-4ccf-8032-c0ba5f256d65}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -118,20 +118,26 @@
     <ClCompile Include="helper\nim_robot_helper.cpp">
       <Filter>helper</Filter>
     </ClCompile>
-    <ClCompile Include="helper\nim_signaling_helper.cpp">
-      <Filter>helper</Filter>
-    </ClCompile>
     <ClCompile Include="api\nim_cpp_signaling.cpp">
       <Filter>api</Filter>
     </ClCompile>
-    <ClCompile Include="helper\nim_sdk_loader_helper.cpp">
+    <ClCompile Include="api\nim_cpp_super_team.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\nim_signaling_helper.cpp">
       <Filter>helper</Filter>
     </ClCompile>
     <ClCompile Include="helper\nim_super_team_helper.cpp">
       <Filter>helper</Filter>
     </ClCompile>
-    <ClCompile Include="api\nim_cpp_super_team.cpp">
+    <ClCompile Include="helper\nim_sdk_loader_helper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="api\nim_cpp_session_online_service.cpp">
       <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\nim_session_online_service_helper.cpp">
+      <Filter>helper</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -231,12 +237,17 @@
     <ClInclude Include="helper\nim_robot_helper.h">
       <Filter>helper</Filter>
     </ClInclude>
-    <ClInclude Include="nim_sdk_cpp_wrapper_dll.h" />
+    <ClInclude Include="api\nim_cpp_signaling.h">
+      <Filter>api</Filter>
+    </ClInclude>
     <ClInclude Include="helper\nim_signaling_helper.h">
       <Filter>helper</Filter>
     </ClInclude>
-    <ClInclude Include="api\nim_cpp_signaling.h">
+    <ClInclude Include="api\nim_cpp_super_team.h">
       <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\nim_super_team_helper.h">
+      <Filter>helper</Filter>
     </ClInclude>
     <ClInclude Include="helper\nim_sdk_loader_helper.h">
       <Filter>helper</Filter>
@@ -307,11 +318,12 @@
     <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_vchat_def.h">
       <Filter>public_define\defines\nim_define</Filter>
     </ClInclude>
-    <ClInclude Include="helper\nim_super_team_helper.h">
-      <Filter>helper</Filter>
-    </ClInclude>
-    <ClInclude Include="api\nim_cpp_super_team.h">
+    <ClInclude Include="nim_sdk_cpp_wrapper_dll.h" />
+    <ClInclude Include="api\nim_cpp_session_online_service.h">
       <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\nim_session_online_service_helper.h">
+      <Filter>helper</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

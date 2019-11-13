@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window>
+    <ButtonBox width="300" height="auto" halign="left" bkimage="file='../session/bubble_left.png' corner='25,15,15,15'" padding="20,5,10,5" >
+        <VBox name="container" menu="true" height="auto" >
+			<Label name="title" width="auto" height="24" font="2" mouse="false" />
+			<Control class="splitline_hor_level1" margin="0,2,0,0" mouse="false" margin="0,0,20,0" />
+             <VBox name="abstract_container" mouse="false" mousechild="false" childmargin="2" height="auto"  padding="0,2,0,2" />	
+			<Control class="splitline_hor_level1" mouse="false" margin="0,0,20,5"/>
+			<Button name="show_lgos" normaltextcolor="white" textid="STRID_SESSION_ITEM_MSG_TYPE_MESSAGELIST" cursortype="hand" width="auto" font="1" height="16" />
+		</VBox>
+    </ButtonBox>
+</Window>
