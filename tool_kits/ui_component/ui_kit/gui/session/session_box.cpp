@@ -441,6 +441,10 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 			{
 				item = new MsgBubbleSticker;
 			}
+			else if (sub_type == CustomMsgType_MultiRetweet)
+			{
+				item = new MsgBubbleMultiRetweet;
+			}
 			else if (sub_type == CustomMsgType_Rts)
 			{
 				if (json["data"].isObject())

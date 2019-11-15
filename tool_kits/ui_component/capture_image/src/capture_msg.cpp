@@ -137,6 +137,7 @@ LRESULT CaptureWindow::HandleMessage( UINT uMsg, WPARAM wParam, LPARAM lParam )
 	{
 		if( wParam == VK_ESCAPE)
 		{
+			SetFocus(GetRoot());
 			Close();
 		}
 	}

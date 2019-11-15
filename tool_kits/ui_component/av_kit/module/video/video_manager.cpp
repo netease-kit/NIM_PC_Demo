@@ -521,7 +521,7 @@ void VideoManager::DoMultiVChat(const std::list<UTF8String>& friend_list, const 
 					multi_video_form_.release();
 					multi_video_form_.reset(new MultiVideoChatForm(room_name, multi_vchat_session_id_, channel_id, true, true, current_user_id));
 					multi_video_form_flag_ = multi_video_form_->GetWeakFlag();
-					multi_video_form_->Create(NULL, L"", UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L);
+					multi_video_form_->Create(NULL, L"", UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L,false);
 					multi_video_form_->CenterWindow();
 
 				}
@@ -772,12 +772,16 @@ bool VideoManager::StartChat(nim::NIMVideoChatMode mode, const std::string& apns
 		std::string record_type = GetConfigValue("kNIMRecordType");
 		std::string record_host_speaker = GetConfigValue("kNIMRecordHostSpeaker");
 		std::string keep_calling = GetConfigValue("kNIMKeepCalling");
+		std::string stream_enc_type = GetConfigValue("NRTCStreamENCType");
+		std::string stream_enc_key = GetConfigValue("NRTCStreamENCKey");
 		value[nim::kNIMVChatVideoQuality] = atoi(video_quality.c_str());
 		value[nim::kNIMVChatRecord] = atoi(audio_record.c_str());
 		value[nim::kNIMVChatVideoRecord] = atoi(video_record.c_str());
 		value[nim::kNIMVChatRecordType] = atoi(record_type.c_str());
 		value[nim::kNIMVChatRHostSpeaker] = atoi(record_host_speaker.c_str());
 		//value[nim::kNIMVChatWebrtc] = GetWebrtc() ? 1 : 0;
+		value["stream_encrypt_type"] = atoi(stream_enc_type.c_str());
+		value["stream_encrypt_token"] = stream_enc_key;
 		if (!keep_calling.empty())
 		{
 			value[nim::kNIMVChatKeepCalling] = atoi(keep_calling.c_str());
@@ -805,7 +809,8 @@ bool VideoManager::VChatCalleeAck(uint64_t channel_id, VChatAskType ask_type, co
 		std::string video_record = GetConfigValue("kNIMVideoRecord");
 		std::string record_type = GetConfigValue("kNIMRecordType");
 		std::string record_host_speaker = GetConfigValue("kNIMRecordHostSpeaker");
-
+		std::string stream_enc_type = GetConfigValue("NRTCStreamENCType");
+		std::string stream_enc_key = GetConfigValue("NRTCStreamENCKey");
 		Json::FastWriter fs;
 		Json::Value value;
 		value[nim::kNIMVChatVideoQuality] = atoi(video_quality.c_str());
@@ -814,6 +819,8 @@ bool VideoManager::VChatCalleeAck(uint64_t channel_id, VChatAskType ask_type, co
 		value[nim::kNIMVChatRecordType] = atoi(record_type.c_str());
 		value[nim::kNIMVChatRHostSpeaker] = atoi(record_host_speaker.c_str());
 		value[nim::kNIMVChatSessionId] = session_id;
+		value["stream_encrypt_type"] = atoi(stream_enc_type.c_str());
+		value["stream_encrypt_token"] = stream_enc_key;
 		json_value = fs.write(value);
 	}
 
@@ -883,12 +890,15 @@ bool VideoManager::JoinRoom(nim::NIMVideoChatMode mode, const std::string& room_
 	std::string video_record = GetConfigValue("kNIMVideoRecord");
 	std::string record_type = GetConfigValue("kNIMRecordType");
 	std::string record_host_speaker = GetConfigValue("kNIMRecordHostSpeaker");
+	std::string stream_enc_type = GetConfigValue("NRTCStreamENCType");
+	std::string stream_enc_key = GetConfigValue("NRTCStreamENCKey");
 	value[nim::kNIMVChatVideoQuality] = atoi(video_quality.c_str());
 	value[nim::kNIMVChatRecord] = atoi(audio_record.c_str());
 	value[nim::kNIMVChatVideoRecord] = atoi(video_record.c_str());
 	value[nim::kNIMVChatRecordType] = atoi(record_type.c_str());
 	value[nim::kNIMVChatRHostSpeaker] = atoi(record_host_speaker.c_str());
-
+	value["stream_encrypt_type"] = atoi(stream_enc_type.c_str());
+	value["stream_encrypt_token"] = stream_enc_key;
 	std::string json_value = fs.write(value);
 	return nim::VChat::JoinRoom(mode, room_name, json_value, cb);
 }
@@ -1136,7 +1146,7 @@ void VideoManager::InvokeReceiveCustomP2PMessage(const Json::Value &json, const 
 								multi_video_form_.release();
 								multi_video_form_.reset(new MultiVideoChatForm(room_name, team_id, channel_id, video, false, creator_id));
 								multi_video_form_flag_ = multi_video_form_->GetWeakFlag();
-								multi_video_form_->Create(NULL, L"", UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L);
+								multi_video_form_->Create(NULL, L"", UI_WNDSTYLE_FRAME& ~WS_MAXIMIZEBOX, 0L,false);
 								multi_video_form_->CenterWindow();
 							}
 							multi_video_form_->ActiveWindow();

@@ -21,27 +21,24 @@ namespace app_sdk
 	};
 	static bool GetNimServerConfJsonObject(const std::string& key,Json::Value& value)
 	{
+		static Json::Value value_config;
+		static std::once_flag of;
 		bool ret = false;
-		std::string server_conf_path = app_sdk::AppSDKConfig::GetInstance()->GetAppConfigPath();
-		if (server_conf_path.empty())
-			return false;
-		std::filebuf file;
-		if (file.open(server_conf_path, std::ios::in))
-		{
-			std::istream iss(&file);
-			Json::Value doc;
-			Json::Reader reader;
-			if (reader.parse(iss, doc))
+		std::call_once(of, [](){
+			std::string server_conf_path = app_sdk::AppSDKConfig::GetInstance()->GetAppConfigPath();
+			std::filebuf file;
+			if (!server_conf_path.empty() && file.open(server_conf_path, std::ios::in))
 			{
-				if (doc.isMember(key))
-				{
-					value = doc[key];
-					ret = true;
-				}
-			}
+				Json::Reader().parse(std::istream(&file), value_config);
+				file.close();
+			}				
+		});
+		if (value_config.isObject() && value_config.isMember(key))
+		{
+			value = value_config[key];
+			ret = true;
 		}
-		file.close();
-		return ret;
+		return ret;		
 	}
 	/**
 	* 获取连接服务器的某一个配置信息

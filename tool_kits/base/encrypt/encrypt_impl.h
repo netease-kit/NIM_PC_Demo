@@ -71,29 +71,45 @@ static void Md5(const unsigned char *sdata, size_t ssize, std::string &ddata)
 	const EVP_MD *md = EVP_md5();
 	if (!md)
 		return;
-	EVP_MD_CTX mdctx;
-	EVP_MD_CTX_init(&mdctx);
-	if (!EVP_DigestInit_ex(&mdctx, md, NULL))
+	EVP_MD_CTX* mdctx = EVP_MD_CTX_new();
+	EVP_MD_CTX_init(mdctx);
+	if (!EVP_DigestInit_ex(mdctx, md, NULL))
 	{
-		EVP_MD_CTX_cleanup(&mdctx);
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+		EVP_MD_CTX_free(mdctx);
+#else
+		EVP_MD_CTX_cleanup(mdctx);
+#endif
 		return;
 	}
-	if (!EVP_DigestUpdate(&mdctx, (const unsigned char *)sdata, ssize))
+	if (!EVP_DigestUpdate(mdctx, (const unsigned char *)sdata, ssize))
 	{
-		EVP_MD_CTX_cleanup(&mdctx);
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+		EVP_MD_CTX_free(mdctx);
+#else
+		EVP_MD_CTX_cleanup(mdctx);
+#endif
 		return;
 	}
 	unsigned char     obuf[16];
 	unsigned int      olen;
 
-	if (!EVP_DigestFinal_ex(&mdctx, obuf, &olen))
+	if (!EVP_DigestFinal_ex(mdctx, obuf, &olen))
 	{
-		EVP_MD_CTX_cleanup(&mdctx);
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+		EVP_MD_CTX_free(mdctx);
+#else
+		EVP_MD_CTX_cleanup(mdctx);
+#endif
 		return;
 	}
 	ddata.assign((const char *)obuf,16);
 
-	EVP_MD_CTX_cleanup(&mdctx);
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+	EVP_MD_CTX_free(mdctx);
+#else
+	EVP_MD_CTX_cleanup(mdctx);
+#endif
 }
 
 // 1. if key.size()<16 , key = md5(key) first
@@ -130,28 +146,44 @@ static bool CreateGUID(std::string &guid)
 		const EVP_MD * md = EVP_md5();
 		if ( !md )  
 			return false;
-		EVP_MD_CTX mdctx;
-		EVP_MD_CTX_init(&mdctx);
-		if (!EVP_DigestInit_ex(&mdctx, md, NULL))
+		EVP_MD_CTX* mdctx = EVP_MD_CTX_new();
+		EVP_MD_CTX_init(mdctx);
+		if (!EVP_DigestInit_ex(mdctx, md, NULL))
 		{
-			EVP_MD_CTX_cleanup(&mdctx);
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+			EVP_MD_CTX_free(mdctx);
+#else
+			EVP_MD_CTX_cleanup(mdctx);
+#endif
 			return false;
 		}
-		if (!EVP_DigestUpdate(&mdctx, (const unsigned char *)guid.data(), guid.size()))
+		if (!EVP_DigestUpdate(mdctx, (const unsigned char *)guid.data(), guid.size()))
 		{
-			EVP_MD_CTX_cleanup(&mdctx);
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+			EVP_MD_CTX_free(mdctx);
+#else
+			EVP_MD_CTX_cleanup(mdctx);
+#endif
 			return false;
 		}
 		unsigned char obuf[16];
 		unsigned int  olen;
 
-		if (!EVP_DigestFinal_ex(&mdctx, obuf, &olen))
+		if (!EVP_DigestFinal_ex(mdctx, obuf, &olen))
 		{
-			EVP_MD_CTX_cleanup(&mdctx);
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+			EVP_MD_CTX_free(mdctx);
+#else
+			EVP_MD_CTX_cleanup(mdctx);
+#endif
 			return false;
 		}
 		guid.assign((const char *)obuf, 16);
-		EVP_MD_CTX_cleanup(&mdctx);
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+		EVP_MD_CTX_free(mdctx);
+#else
+		EVP_MD_CTX_cleanup(mdctx);
+#endif
 		return true;
 	}
 	return false;
@@ -168,13 +200,13 @@ public:
 	bool  SetEncryptKey(const std::string &key)
 	{
 		key_ = key; 
-		ExpandKey(chiper_->key_len, key_);
+		ExpandKey(EVP_CIPHER_key_length(chiper_), key_);
 		return true;
 	}
 	bool  SetDecryptKey(const std::string &key)
 	{
 		key_ = key; 
-		ExpandKey(chiper_->key_len, key_);
+		ExpandKey(EVP_CIPHER_key_length(chiper_), key_);
 		return true;
 	}
 	bool SetEncryptIvParameterSpec(const std::string &iv)
@@ -216,16 +248,22 @@ public:
 			return false;
 		if (!ddata.empty())
 			ddata.erase();
-		EVP_CIPHER_CTX    ctx;
-		if (!EVP_EncryptInit(&ctx, chiper_, (const unsigned char*)key_.c_str(), (iv_parameter_spec_.empty() ? nullptr : (const unsigned char*)iv_parameter_spec_.c_str())))
+		EVP_CIPHER_CTX*    ctx = EVP_CIPHER_CTX_new();
+#if (OPENSSL_VERSION_NUMBER >= 0x1010104fL)//"OpenSSL 1.1.1d  10 Sep 2019"
+		//ctx->encrypt = 1;
+#endif
+		if (!EVP_EncryptInit(ctx, chiper_, (const unsigned char*)key_.c_str(), (iv_parameter_spec_.empty() ? nullptr : (const unsigned char*)iv_parameter_spec_.c_str()))){
+			EVP_CIPHER_CTX_free(ctx);
 			return false;
+		}
 		unsigned char out[256];
 		if(enable_padding_)
-			EVP_CIPHER_CTX_set_padding(&ctx, padding_value_);
+			EVP_CIPHER_CTX_set_padding(ctx, padding_value_);
 		uint32_t      osize = sizeof(out);
 		// must ensure that the buffer size is count of block size
-		if (chiper_->block_size > 0)
-			osize = (sizeof(out)/chiper_->block_size) * chiper_->block_size;
+		int block_size = EVP_CIPHER_block_size(chiper_);
+		if (block_size > 0)
+			osize = (sizeof(out)/block_size) * block_size;
 		uint32_t block = ((uint32_t)ssize+osize-1) / osize;
 
 		uint32_t elen  = 0;
@@ -233,9 +271,10 @@ public:
 		for (uint32_t i = 0; i < block; i++)
 		{
 			int lin = ((uint32_t)ssize - elen)>osize ? osize : (uint32_t)ssize - elen;
-			if (!EVP_EncryptUpdate(&ctx, out, &lout, ((const unsigned char*)sdata) + elen, lin))
+			if (!EVP_EncryptUpdate(ctx, out, &lout, ((const unsigned char*)sdata) + elen, lin))
 			{
-				EVP_CIPHER_CTX_cleanup(&ctx);
+				//EVP_CIPHER_CTX_cleanup(ctx);
+				EVP_CIPHER_CTX_free(ctx);
 				return false;
 			}
 			assert(lout <= (int)sizeof(out));
@@ -244,14 +283,16 @@ public:
 			ddata.append((const char *)out, lout);
 		}
 		//lout = sizeof(out);
-		if (!EVP_EncryptFinal(&ctx, out, &lout))
+		if (!EVP_EncryptFinal(ctx, out, &lout))
 		{
-			EVP_CIPHER_CTX_cleanup(&ctx);
+			//EVP_CIPHER_CTX_cleanup(ctx);
+			EVP_CIPHER_CTX_free(ctx);
 			return false;
 		}
 		//elen += lout;   //    lin?
 		ddata.append((const char *)out, lout);
-		EVP_CIPHER_CTX_cleanup(&ctx);
+		//EVP_CIPHER_CTX_cleanup(ctx);
+		EVP_CIPHER_CTX_free(ctx);
 		return true;
 	}
 	bool  Decrypt(const void *sdata, size_t ssize, std::string &ddata)
@@ -261,17 +302,23 @@ public:
 		if (!ddata.empty())
 			ddata.erase();
 
-		EVP_CIPHER_CTX ctx;
-		if (!EVP_DecryptInit(&ctx, chiper_, (const unsigned char*)key_.c_str(), (iv_parameter_spec_.empty() ? nullptr : (const unsigned char*)iv_parameter_spec_.c_str())))
+		EVP_CIPHER_CTX*    ctx = EVP_CIPHER_CTX_new();
+#if (OPENSSL_VERSION_NUMBER >= 0x1010104fL)//"OpenSSL 1.1.1d  10 Sep 2019"
+		//ctx->encrypt = 0;
+#endif
+		if (!EVP_DecryptInit(ctx, chiper_, (const unsigned char*)key_.c_str(), (iv_parameter_spec_.empty() ? nullptr : (const unsigned char*)iv_parameter_spec_.c_str()))){
+			EVP_CIPHER_CTX_free(ctx);
 			return false;
+		}
 		if(enable_padding_)
-			EVP_CIPHER_CTX_set_padding(&ctx, padding_value_);
+			EVP_CIPHER_CTX_set_padding(ctx, padding_value_);
 		unsigned char out[256];
 		uint32_t      osize = sizeof(out);    //    must >= inl+cipher_block_size
 		//    is there some bug?
 		//    must ensure that the buffer size is count of block size
-		if (chiper_->block_size > 0)
-			osize = (sizeof(out)/chiper_->block_size-1) * chiper_->block_size;
+		int block_size = EVP_CIPHER_block_size(chiper_);
+		if (block_size > 0)
+			osize = (sizeof(out)/block_size-1) * block_size;
 		uint32_t block = ((uint32_t)ssize + osize - 1) / osize;
 
 		uint32_t elen  = 0;
@@ -279,21 +326,24 @@ public:
 		for (uint32_t i = 0; i < block; i++)
 		{
 			int lin = (uint32_t)ssize - elen>osize ? osize : ((uint32_t)ssize - elen);
-			if (!EVP_DecryptUpdate(&ctx, out, &lout, ((const unsigned char*)sdata) + elen, lin))
+			if (!EVP_DecryptUpdate(ctx, out, &lout, ((const unsigned char*)sdata) + elen, lin))
 			{
-				EVP_CIPHER_CTX_cleanup(&ctx);
+				//EVP_CIPHER_CTX_cleanup(ctx);
+				EVP_CIPHER_CTX_free(ctx);
 				return false;
 			}
 			elen += lin;
 			ddata.append((const char *)out, lout);
 		}
-		if (!EVP_DecryptFinal(&ctx,out, &lout))
+		if (!EVP_DecryptFinal(ctx,out, &lout))
 		{
-			EVP_CIPHER_CTX_cleanup(&ctx);
+			//EVP_CIPHER_CTX_cleanup(ctx);
+			EVP_CIPHER_CTX_free(ctx);
 			return false;
 		}
 		ddata.append((const char *)out, lout);
-		EVP_CIPHER_CTX_cleanup(&ctx);
+		//EVP_CIPHER_CTX_cleanup(ctx);
+		EVP_CIPHER_CTX_free(ctx);
 		return true;
 	}
 	bool  Encrypt(const std::string &sdata, std::string &ddata)
@@ -309,14 +359,16 @@ public:
 		// 16 bytes
 		for (;;)
 		{
-			char  buf[20];
-#if defined(OS_WIN) && defined(COMPILER_MSVC)
-			sprintf_s(buf, sizeof(buf), "%X%X",(unsigned int)time(0), (unsigned int)rand());
-#else
-			sprintf(buf,"%X%X", (unsigned int)time(0), (unsigned int)rand());
-#endif
-			int len = (int)strlen(buf);
-			RAND_add(buf, len, len >> 1);
+// 			char  buf[20];
+// #if defined(OS_WIN) && defined(COMPILER_MSVC)
+// 			//sprintf_s(buf, sizeof(buf), "%X%X",(unsigned int)time(0), (unsigned int)rand());
+// 			
+// #else
+// 			sprintf(buf,"%X%X", (unsigned int)time(0), (unsigned int)rand());
+// #endif
+			std::string buf = StringPrintf("%X%X",(unsigned int)time(0), (unsigned int)rand());
+			int len = buf.length();
+			RAND_add(buf.c_str(), len, len >> 1);
 			if (!RAND_status())   
 				continue;
 			unsigned char randstr[32];
@@ -427,15 +479,25 @@ public:
 		if (!ddata.empty())
 			ddata.erase();
 
-		auto mdctx = EVP_MD_CTX_create();
+		EVP_MD_CTX* mdctx = EVP_MD_CTX_create();// EVP_MD_CTX_new();
+		
+		EVP_MD_CTX_init(mdctx);
 		if (!EVP_DigestInit_ex(mdctx, md_, NULL))
 		{
-			EVP_MD_CTX_destroy(mdctx);
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+			EVP_MD_CTX_free(mdctx);
+#else
+			EVP_MD_CTX_cleanup(mdctx);
+#endif
 			return false;
 		}
 		if (!EVP_DigestUpdate(mdctx, (const unsigned char *)sdata, ssize))
 		{
-			EVP_MD_CTX_destroy(mdctx);
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+			EVP_MD_CTX_free(mdctx);
+#else
+			EVP_MD_CTX_cleanup(mdctx);
+#endif
 			return false;
 		}
 		unsigned char  obuf[1024];
@@ -444,19 +506,27 @@ public:
 
 		olen = EVP_MD_size(md_);
 		if (olen > sizeof(obuf))
-			pbuf = new unsigned char[olen];
+			pbuf = new unsigned char [olen];
 
 		if (!EVP_DigestFinal_ex(mdctx, pbuf, &olen))
 		{
-			if (pbuf != obuf)
-				delete[] pbuf;
-			EVP_MD_CTX_destroy(mdctx);
+			if ( pbuf != obuf )
+				delete [] pbuf;
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+			EVP_MD_CTX_free(mdctx);
+#else
+			EVP_MD_CTX_cleanup(mdctx);	
+#endif
 			return false;
 		}
 		ddata.append((const char *)pbuf, olen);
 		if (pbuf != obuf)
-			delete[] pbuf;
-		EVP_MD_CTX_destroy(mdctx);
+			delete [] pbuf;
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+		EVP_MD_CTX_free(mdctx);
+#else
+		EVP_MD_CTX_cleanup(mdctx);	
+#endif
 		return true;
 	}
 	bool  Decrypt(const void *sdata, size_t ssize, std::string &ddata)
@@ -488,13 +558,25 @@ private:
 		case nbase::ENC_MD4:
 			return EVP_md4();
 		case nbase::ENC_SHA:
-			return EVP_sha();
+		{
+			//return EVP_sha();
+			assert(0);
+			return 0;
+		}
 		case nbase::ENC_SHA1:
 			return EVP_sha1();
 		case nbase::ENC_DSS:
-			return EVP_dss();
+		{
+			//return EVP_dss();
+			assert(0);
+			return 0;
+		}
 		case nbase::ENC_DSS1:
-			return EVP_dss1();
+		{
+			//return EVP_dss1();
+			assert(0);
+			return 0;
+		}
 		default:
 			return 0;
 		}
@@ -552,8 +634,13 @@ public:
 		int           ret = -1;
 		try
 		{
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+			RSA_set0_key(rsa, n_, e_, d_);
+#else
 			rsa->n = n_;
 			rsa->e = e_;
+			rsa->d = d_;
+#endif
             uint32_t block_size = RSA_size(rsa);
             switch (padding_mode_) 
             {
@@ -596,8 +683,13 @@ public:
 		catch(...)
 		{
 		}
-		rsa->n = 0;       
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+		RSA_set0_key(rsa, 0, 0, 0);
+#else
+		rsa->n = 0;
 		rsa->e = 0;
+		rsa->d = 0;
+#endif
 		RSA_free(rsa);
 		return ret>=0 ? true : false;
 	}
@@ -614,9 +706,13 @@ public:
 		int           ret = -1;
 		try
 		{
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+			RSA_set0_key(rsa,n_,e_,d_);
+#else
 			rsa->n = n_;
-			rsa->d = d_;      
+			rsa->d = d_;
 			rsa->e = e_;
+#endif
             uint32_t block_size = RSA_size(rsa);
 			uint32_t nBlock    = ( (uint32_t)ssize + block_size -1 ) / block_size;
 			const unsigned char * psrc = (const unsigned char *)sdata;
@@ -635,9 +731,13 @@ public:
 		catch(...)
 		{
 		}
-		rsa->n = 0;       
-		rsa->d = 0; 
+#if(OPENSSL_VERSION_NUMBER >= 0x1010007fL)
+		RSA_set0_key(rsa, 0, 0, 0);
+#else
+		rsa->n = 0;
+		rsa->d = 0;
 		rsa->e = 0;
+#endif
 		RSA_free(rsa);
 		return ret>=0 ? true : false;
 	}
@@ -662,28 +762,40 @@ template<nbase::EncryptMethod T>
 class Openssl_Encrypt_Stream : public nbase::EncryptMethodInterface
 {
 public:
-	Openssl_Encrypt_Stream() : ectx_valid_(false), dctx_valid_(false), iv_parameter_spec_(""),enable_padding_(false), padding_value_(0)
+	Openssl_Encrypt_Stream() : ectx_valid_(false), dctx_valid_(false),ectx_(nullptr),dctx_(nullptr), iv_parameter_spec_(""),enable_padding_(false), padding_value_(0)
 	{     
 		chiper_ = chiper();
 	}
 	~Openssl_Encrypt_Stream()
 	{    
-		if (ectx_valid_)      
-			EVP_CIPHER_CTX_cleanup(&ectx_);
-		if (dctx_valid_)      
-			EVP_CIPHER_CTX_cleanup(&dctx_);
+		if (ectx_)	{
+			EVP_CIPHER_CTX_free(ectx_);
+			ectx_ = nullptr;
+		}
+		if (dctx_) {
+			EVP_CIPHER_CTX_free(dctx_);
+			dctx_ = nullptr;
+		}
 	}
 	bool  SetEncryptKey(const std::string &key)
 	{
 		key_ = key; 
-		ExpandKey(chiper_->key_len,key_);
+		ExpandKey(EVP_CIPHER_key_length(chiper_),key_);
+
+		if (!ectx_)
+		{
+			ectx_ = EVP_CIPHER_CTX_new(); 
+#if (OPENSSL_VERSION_NUMBER >= 0x1010104fL)//"OpenSSL 1.1.1d  10 Sep 2019"
+			//ectx_->encrypt = 1;
+#endif
+		}
 
 		if (ectx_valid_)
 		{
-			EVP_CIPHER_CTX_cleanup(&ectx_);
+			EVP_CIPHER_CTX_cleanup(ectx_);
 			ectx_valid_ = true;
 		}
-		if (!EVP_EncryptInit(&ectx_, chiper_, (const unsigned char*)key_.c_str(), (iv_parameter_spec_.empty() ? nullptr : (const unsigned char*)iv_parameter_spec_.c_str())))
+		if (!EVP_EncryptInit(ectx_, chiper_, (const unsigned char*)key_.c_str(), (iv_parameter_spec_.empty() ? nullptr : (const unsigned char*)iv_parameter_spec_.c_str())))
 			return false;
 		ectx_valid_ = true;
 
@@ -692,14 +804,22 @@ public:
 	bool  SetDecryptKey(const std::string &key)
 	{
 		key_ = key; 
-		ExpandKey(chiper_->key_len, key_);
+		ExpandKey(EVP_CIPHER_key_length(chiper_), key_);
+
+		if (!dctx_)
+		{
+			dctx_ = EVP_CIPHER_CTX_new();
+#if (OPENSSL_VERSION_NUMBER >= 0x1010104fL)//"OpenSSL 1.1.1d  10 Sep 2019"
+			//ectx_->encrypt = 0;
+#endif
+		}
 
 		if (dctx_valid_)
 		{
-			EVP_CIPHER_CTX_cleanup(&dctx_);
+			EVP_CIPHER_CTX_cleanup(dctx_);
 			dctx_valid_ = false;
 		}
-		if (!EVP_EncryptInit(&dctx_, chiper_, (const unsigned char*)key_.c_str(), (iv_parameter_spec_.empty() ? nullptr : (const unsigned char*)iv_parameter_spec_.c_str())))
+		if (!EVP_DecryptInit(dctx_, chiper_, (const unsigned char*)key_.c_str(), (iv_parameter_spec_.empty() ? nullptr : (const unsigned char*)iv_parameter_spec_.c_str())))
 			return false;
 		dctx_valid_ = true;
 
@@ -744,14 +864,14 @@ public:
 			return 0;
 
 		int lout;
-		if (!EVP_EncryptUpdate(&ectx_, (unsigned char *)obuf, &lout, (const unsigned char *)ibuf, (int)isize))
+		if (!EVP_EncryptUpdate(ectx_, (unsigned char *)obuf, &lout, (const unsigned char *)ibuf, (int)isize))
 		{
 			assert(false);
 			return 0;
 		}
 		assert(isize>=(size_t)lout);
 		size_t osize = lout;
-		if (!EVP_EncryptFinal(&ectx_, (unsigned char *)&obuf[lout], &lout))
+		if (!EVP_EncryptFinal(ectx_, (unsigned char *)&obuf[lout], &lout))
 		{
 			assert(false);
 			return 0;
@@ -773,14 +893,14 @@ public:
 			return 0;
 
 		int lout;
-		if (!EVP_DecryptUpdate(&dctx_, (unsigned char *)obuf, &lout, (const unsigned char *)ibuf, (int)isize))
+		if (!EVP_DecryptUpdate(dctx_, (unsigned char *)obuf, &lout, (const unsigned char *)ibuf, (int)isize))
 		{
 			assert(false);
 			return 0;
 		}
 		assert(isize>=(size_t)lout);
 		size_t osize = (size_t)lout;
-		if (!EVP_DecryptFinal(&dctx_, (unsigned char *)&obuf[lout], &lout))
+		if (!EVP_DecryptFinal(dctx_, (unsigned char *)&obuf[lout], &lout))
 		{
 			assert(false);
 			return 0;
@@ -859,8 +979,8 @@ public:
 private:
 	const EVP_CIPHER* chiper()
 	{
-		if (T==nbase::ENC_ARC4)
-			return EVP_rc4(); 
+		if (T == nbase::ENC_ARC4)
+			return EVP_rc4();		
 		return 0;
 	}
 
@@ -870,9 +990,9 @@ private:
 	bool						enable_padding_;
 	int						padding_value_;
 	std::string			  iv_parameter_spec_;
-	EVP_CIPHER_CTX              ectx_;            // encode (have state)
+	EVP_CIPHER_CTX*              ectx_;            // encode (have state)
 	bool                        ectx_valid_;      // if true , will EVP_CIPHER_CTX_cleanup
-	EVP_CIPHER_CTX              dctx_;            // decode (have state)
+	EVP_CIPHER_CTX*              dctx_;            // decode (have state)
 	bool                        dctx_valid_;      // if true , will EVP_CIPHER_CTX_cleanup
 };
 

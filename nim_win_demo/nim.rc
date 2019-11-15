@@ -50,8 +50,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 6,7,0,1547
- PRODUCTVERSION 6,7,0,0
+ FILEVERSION 7,0,0,494
+ PRODUCTVERSION 7,0,0,494
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -66,14 +66,14 @@ BEGIN
     BEGIN
         BLOCK "080404b0"
         BEGIN
-            VALUE "CompanyName", "网易"
+            VALUE "CompanyName", "网易公司"
             VALUE "FileDescription", "启动网易云信"
-            VALUE "FileVersion", "6.7.0.1547"
-            VALUE "InternalName", "nim.exe"
-            VALUE "LegalCopyright", "网易公司 Copyright (C) 2015"
-            VALUE "OriginalFilename", "nim.exe"
+            VALUE "FileVersion", "7.0.0.494"
+            VALUE "InternalName", "nim_demo.exe"
+            VALUE "LegalCopyright", "网易公司版权所有 (C) 2015-2019"
+            VALUE "OriginalFilename", "nim_demo.exe"
             VALUE "ProductName", "网易云信"
-            VALUE "ProductVersion", "6.7.0.0"
+            VALUE "ProductVersion", "7.0.0.494"
         END
     END
     BLOCK "VarFileInfo"
@@ -109,6 +109,14 @@ IDI_ICON                ICON                    "nim.ico"
 
 
 OKED
+
+
+
+
+
+
+
+
 
 
 

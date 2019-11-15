@@ -16,6 +16,7 @@
 #include "gui/session/control/bubbles/bubble_transferfile.h"
 #include "gui/session/control/bubbles/bubble_sticker.h"
 #include "gui/session/control/bubbles/bubble_video.h"
+#include "gui/session/control/bubbles/bubble_multi_retweet.h"
 #include "gui/session/control/team_item.h"
 #include "gui/emoji/emoji_form.h"
 #include "gui/team_info/team_info.h"

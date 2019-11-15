@@ -871,6 +871,10 @@ std::wstring GetCustomMsg(const std::string &sender_accid, const std::string &ms
 		{
 			show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_CHARTLET");
 		}
+		else if (sub_type == CustomMsgType_MultiRetweet)
+		{
+			show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_MESSAGELIST");
+		}
 		else if (sub_type == CustomMsgType_Rts)
 		{
 			show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_RTS");

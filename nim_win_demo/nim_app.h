@@ -64,6 +64,7 @@ public:
 	void CleanupSDKBeforLogin();
 private:
 	int InitEnvironment(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow);
+	void InitGlobalConfig(const std::string& server_conf_file_path,std::string& app_key, nim::SDKConfig& config);
 	//int InitRedistPackages();
 	int UninitEnvironment();
 	int InitInstance(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow);

@@ -1,6 +1,6 @@
 ﻿#include "msg_record.h"
 #include "module/audio/audio_manager.h"
-
+#include "module/multi_retweet/multi_retweet_manager.h"
 using namespace ui;
 
 namespace nim_comp
@@ -91,6 +91,10 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 			else if (sub_type == CustomMsgType_Sticker)
 			{
 				item = new MsgBubbleSticker;
+			}
+			else if (sub_type == CustomMsgType_MultiRetweet) 
+			{
+				item = new MsgBubbleMultiRetweet;
 			}
 			else if (sub_type == CustomMsgType_Rts)
 			{
@@ -248,8 +252,7 @@ void MsgRecordForm::ShowMore(bool more)
 
 void MsgRecordForm::ShowMsgs(const std::vector<nim::IMMessage> &msg)
 {
-	int pos = msg_list_->GetScrollRange().cy - msg_list_->GetScrollPos().cy;
-
+	int pos = msg_list_->GetScrollRange().cy - msg_list_->GetScrollPos().cy;	
 	bool show_time = false;
 	//msg倒序排列
 	size_t len = msg.size();

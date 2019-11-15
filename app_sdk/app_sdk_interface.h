@@ -10,19 +10,19 @@ public:
 	SINGLETON_DEFINE(AppSDKInterface);
 
 	/**
+	* 判断是否存在指定的配置项
+	* @param[in] key 需要判断的信息关键字
+	* @param[in] from_private_setting 公共配置中没有配置时，是否查找私有化配置项
+	* @return bool 
+	*/
+	static bool HasconfigValue(const std::string& key,bool from_private_setting = true);
+
+	/**
 	 * 获取连接服务器的某一个配置信息
 	 * @param[in] key 需要获取的信息关键字
 	 * @return string 配置信息
 	 */
 	static std::string GetConfigValue(const std::string& key);
-
-	/**
-	 * 获取连接服务器的某一个配置信息
-	 * @param[in] element_name 节点关键字
-	 * @param[in] key 需要获取的信息关键字
-	 * @return string 配置信息
-	 */
-	static std::string GetConfigValue(const std::string& element_name,const std::string& key);
 
 	/**
 	 * 获取配置文件的版本信息
@@ -100,10 +100,18 @@ public:
 	 */
 	void InvokeGetChatroomAddress(__int64 room_id,const std::string& uid,int type, const OnGetChatroomAddressCallback& cb);
 
-		
+private:
+	static void LoadConfig();
+	/**
+	* 获取连接服务器的某一个配置信息
+	* @param[in] key 需要获取的信息关键字
+	* @return string 配置信息
+	*/
+	static std::string GetConfigValueFromMap(const std::string& key);
 private:
 	static const std::string kAppKey;		
 	static const std::string kAppHost;
+	static std::map<std::string, std::string> config_map_;
 };
 
 }

@@ -3,6 +3,7 @@
 #include "module/login/login_manager.h"
 #include "module/subscribe_event/subscribe_event_manager.h"
 #include "shared/xml_util.h"
+#include "ui_kit\callback\session\session_callback.h"
 
 std::string GetConfigValue(const std::string& key)
 {
@@ -276,6 +277,22 @@ void UserService::OnFriendListChangeBySDK(const nim::FriendChangeEvent& change_e
 		delete_list.push_back(del_event.accid_);
 		update_list.push_back(del_event.accid_); // 删除好友之后，其原来的备注名改为其昵称
 		friend_list_.erase(del_event.accid_); // 从friend_list_删除
+		nim::IMMessage msg;
+		msg.session_type_ = nim::kNIMSessionTypeP2P;
+		msg.receiver_accid_ = del_event.accid_; ///nim_comp::LoginManager::GetInstance()->GetAccount();
+		msg.sender_accid_ = del_event.accid_;
+		msg.client_msg_id_ = QString::GetGUID();
+		msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
+		msg.status_ = nim::kNIMMsgLogStatusUnread;
+		msg.type_ = nim::kNIMMessageTypeText;
+		msg.msg_setting_.push_need_badge_ = BoolStatus::BS_TRUE;
+		msg.content_ = "Goodbye!";
+		nim::MsgLog::WriteMsglogToLocalAsync(del_event.accid_, msg, true, ToWeakCallback([msg](nim::NIMResCode res_code, const std::string& msg_id) {
+			if (res_code == nim::kNIMResSuccess)
+			{
+				nim_comp::TalkCallback::OnReceiveMsgCallback(msg);
+			}
+		}));
 		break;
 	}
 	case nim::kNIMFriendChangeTypeRequest:
@@ -291,10 +308,25 @@ void UserService::OnFriendListChangeBySDK(const nim::FriendChangeEvent& change_e
 				{
 					QLOG_ERR(L"UserService::OnFriendListChangeBySDK kNIMFriendChangeTypeRequest error, accid:{0}, profile_accid:{1}") << accid.c_str() << user_profile.GetAccId().c_str();
 					return;
-				}
-					
+				}					
 				friend_list_[user_profile.GetAccId()] = user_profile;
 				SubscribeEventManager::GetInstance()->SubscribeFriendEvent(user_profile.GetAccId());
+				nim::IMMessage msg;
+				msg.session_type_ = nim::kNIMSessionTypeP2P;
+				msg.receiver_accid_ = user_profile.GetAccId(); ///nim_comp::LoginManager::GetInstance()->GetAccount();
+				msg.sender_accid_ = user_profile.GetAccId(); 
+				msg.client_msg_id_ = QString::GetGUID();
+				msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
+				msg.status_ = nim::kNIMMsgLogStatusUnread;
+				msg.type_ = nim::kNIMMessageTypeText;
+				msg.msg_setting_.push_need_badge_ = BoolStatus::BS_TRUE;
+				msg.content_ = "Hello!";
+				nim::MsgLog::WriteMsglogToLocalAsync(user_profile.GetAccId(), msg, true, ToWeakCallback([msg](nim::NIMResCode res_code, const std::string& msg_id) {
+					if (res_code == nim::kNIMResSuccess)
+					{
+						nim_comp::TalkCallback::OnReceiveMsgCallback(msg);
+					}
+				}));
 				InvokeFriendListChangeCallback(kChangeTypeAdd, user_profile.GetAccId());
 			});
 			nim::Friend::GetFriendProfile(add_event.accid_, cb);

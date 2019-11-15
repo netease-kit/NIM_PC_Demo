@@ -33,6 +33,12 @@ public:
 	* @return bool 返回值true: 需要， false: 不需要
 	*/
 	virtual bool NeedDownloadResource();
+
+	/**
+* 是否需要下载消息项所需的资源 在合并转发的消息中使用
+* @return bool 返回值true: 需要， false: 不需要
+*/
+	virtual bool NeedDownloadResourceEx();
 public:
 	/**
 	* 单击了语音消息后，开始播放语音的回调函数

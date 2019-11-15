@@ -154,7 +154,12 @@ public:
 	* @return bool 返回值true: 需要， false: 不需要
 	*/ 
 	virtual bool NeedDownloadResource(){ return false; }
-
+	
+	/**
+	* 是否需要下载消息项所需的资源 在合并转发的消息中使用
+	* @return bool 返回值true: 需要， false: 不需要
+	*/
+	virtual bool NeedDownloadResourceEx() { return false; }
 	/**
 	* 此消息项接收的文件（图片、语音等），是否成功下载到本地的回调函数
 	* @param[in] success	是否下载成功

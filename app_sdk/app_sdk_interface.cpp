@@ -6,61 +6,63 @@
 #include "app_sdk_config_helper.h"
 namespace app_sdk
 {
-const std::map<std::string,std::tuple< std::string, NimServerConfType>> key_use_nim_server_conf = {
-	{ "kAppKey", std::make_tuple("appkey", NimServerConfType::NimServerConfType_String) },
-	{ "kNIMRtsRecord", std::make_tuple("rts_record", NimServerConfType::NimServerConfType_String) },
-	{ "kNIMRecordType", std::make_tuple("record_type", NimServerConfType::NimServerConfType_String) },
-	{ "kNIMMultiVideo", std::make_tuple("multi_video", NimServerConfType::NimServerConfType_String) },
-	{ "kNIMVideoScale", std::make_tuple("video_scale", NimServerConfType::NimServerConfType_String) },
-	{ "kNIMKeepCalling", std::make_tuple("keep_calling", NimServerConfType::NimServerConfType_String) },
-	{ "kNIMAudioRecord", std::make_tuple("audio_record", NimServerConfType::NimServerConfType_String) },
-	{ "kNIMPasswordMD5", std::make_tuple("password_use_md5", NimServerConfType::NimServerConfType_String) },
-	{ "kNIMVideoQuality", std::make_tuple("video_quality", NimServerConfType::NimServerConfType_String) },
-	{ "kNIMCefOsrEnabled", std::make_tuple("cef_osr_enabled", NimServerConfType::NimServerConfType_String) },
-	{ "kNIMLimitFileSize", std::make_tuple("limit_file_size", NimServerConfType::NimServerConfType_String) },
-	{ "kNIMCheckSingleton", std::make_tuple("check_singleton", NimServerConfType::NimServerConfType_String) },
-	{ "kNIMChatRoomAddress", std::make_tuple("chatroomDemoListUrl", NimServerConfType::NimServerConfType_String) },
-	{ "kNIMRecordHostSpeaker", std::make_tuple("record_host_speaker", NimServerConfType::NimServerConfType_String) }
-};
+	const std::map<std::string, std::tuple< std::string, NimServerConfType>> key_use_nim_server_conf = {
+		{ nim::kNIMAppKey, std::make_tuple("appkey", NimServerConfType::NimServerConfType_String) },
+		{ nim::kNIMUseHttps, std::make_tuple("https_enabled", NimServerConfType::NimServerConfType_Int) },
+		{ nim::kNIMDedicatedClusteFlag, std::make_tuple("dedicated_cluste_flag", NimServerConfType::NimServerConfType_Int) },
+		{ nim::kNIMNegoKeyNECA, std::make_tuple("nego_key_neca", NimServerConfType::NimServerConfType_Int) },
+		{ nim::kNIMCommNECA, std::make_tuple("comm_enca", NimServerConfType::NimServerConfType_Int) },
+		{ nim::kNIMIPProtVersion, std::make_tuple("ip_protocol_version", NimServerConfType::NimServerConfType_Int) },		
+		{ nim::kNIMHandShakeType, std::make_tuple("hand_shake_type", NimServerConfType::NimServerConfType_Int) },
+		{ "NRTCStreamENCType", std::make_tuple("nrtc_stream_enc_type", NimServerConfType::NimServerConfType_Int) },
+		{ "NRTCStreamENCKey", std::make_tuple("nrtc_stream_enc_key", NimServerConfType::NimServerConfType_String) },
+		{ "kNIMChatRoomAddress", std::make_tuple("chatroomDemoListUrl", NimServerConfType::NimServerConfType_String) }
+	};
 const std::string AppSDKInterface::kAppKey = "45c6af3c98409b18a84451215d0bdd6e";	
 const std::string AppSDKInterface::kAppHost = "http://app.netease.im";
+
+std::map<std::string, std::string> AppSDKInterface::config_map_;
+bool AppSDKInterface::HasconfigValue(const std::string& key, bool from_private_setting)
+{
+	bool ret = false;
+	if (config_map_.empty())
+	{
+		LoadConfig();
+	}
+	ret = (config_map_.find(key) != config_map_.end());
+	if (!ret && from_private_setting)
+	{
+		Json::Value json_value;
+		if (key_use_nim_server_conf.find(key) != key_use_nim_server_conf.end() &&
+			nbase::FilePathIsExist(nbase::UTF8ToUTF16(app_sdk::AppSDKConfig::GetInstance()->GetAppConfigPath()), false) &&
+			GetNimServerConfJsonObject(std::get<0>(key_use_nim_server_conf.find(key)->second), json_value))
+		{
+			ret = true;
+		}
+	}
+	return ret;
+}
 std::string AppSDKInterface::GetConfigValue(const std::string& key)
 {
-	if (GetConfigFileVersion() >= 1 && key_use_nim_server_conf.find(key) != key_use_nim_server_conf.end())
+	Json::Value json_value;
+	if (key_use_nim_server_conf.find(key) != key_use_nim_server_conf.end() && 
+		nbase::FilePathIsExist(nbase::UTF8ToUTF16(app_sdk::AppSDKConfig::GetInstance()->GetAppConfigPath()), false) &&
+		app_sdk::GetNimServerConfJsonObject(std::get<0>(key_use_nim_server_conf.find(key)->second), json_value))
 	{
 		auto it = key_use_nim_server_conf.find(key);
 		return GetConfigStringValueFromNimServerConf(std::get<0>(it->second), std::get<1>(it->second));
 	}			
-	return GetConfigValue("ServerConf",key);
+	return GetConfigValueFromMap(key);
 }	
-std::string AppSDKInterface::GetConfigValue(const std::string& element_name, const std::string& key)
+std::string AppSDKInterface::GetConfigValueFromMap(const std::string& key)
 {
-	std::string value;
-	std::wstring server_conf_path = QPath::GetAppPath();
-	server_conf_path.append(L"global_conf.txt");
-	TiXmlDocument document;
-	if (shared::LoadXmlFromFile(document, server_conf_path))
+	if (config_map_.empty())
 	{
-
-		TiXmlElement* root = document.RootElement();
-		TiXmlElement* element = nullptr;
-		if (element_name.compare(root->Value()) == 0)
-		{
-			element = root;
-		}
-		else
-		{
-			element = root->FirstChildElement(element_name);
-		}
-		if (element != nullptr)
-		{
-			if (auto pchar = element->Attribute(key.c_str()))
-			{
-				value = pchar;
-			}
-		}
+		LoadConfig();
 	}
-	return value;
+	if (config_map_.find(key) != config_map_.end())
+		return config_map_[key];
+	return "";
 }
 int AppSDKInterface::GetConfigFileVersion()
 {
@@ -87,9 +89,8 @@ int AppSDKInterface::GetConfigFileVersion()
 }
 std::string AppSDKInterface::GetAppKey()
 {
-	const static std::string config_key_AppKey = "kAppKey";
 	std::string app_key = kAppKey;
-	std::string new_app_key = GetConfigValue(config_key_AppKey);
+	std::string new_app_key = GetConfigValue(nim::kNIMAppKey);
 	if (!new_app_key.empty())
 	{
 		app_key = new_app_key;
@@ -146,13 +147,8 @@ void AppSDKInterface::InvokeFormatAccountAndPassword(const std::string &username
 	//如果是云信的demo password会进行md5编码，如果是开发者自己的应用可以引入其它方式
 	//甚至可以转到开发者自己的应用服务器，拿到真正的accid 与password,可以异步操作，但此时 user相关数据（user目录、image目录以及日志等）并未创建
 	bool password_use_md5 = IsNimDemoAppKey(GetAppKey());
-	auto password_use_md5_flag = GetConfigValue("TestConf", "kNIMPasswordMD5");
-	if (!password_use_md5_flag.empty())
-	{
-		int flag = 0;
-		nbase::StringToInt(password_use_md5_flag, &flag);
-		password_use_md5 = flag == 0 ? false : true;
-	}
+	if (!password_use_md5)
+		password_use_md5 = (HasconfigValue("kNIMPasswordMD5") && (std::atoi(GetConfigValue("kNIMPasswordMD5").c_str()) != 0));
 	cb(!(username.empty() || password.empty()), username, (password_use_md5 ? QString::GetMd5(password) : password));
 }
 void AppSDKInterface::InvokeRegisterAccount(const std::string &username, const std::string &password, const std::string &nickname, const OnRegisterAccountCallback& cb)
@@ -192,5 +188,27 @@ void AppSDKInterface::InvokeGetChatroomAddress(__int64 room_id, const std::strin
 			cb((rsp->GetResponseCode() == nim::kNIMResSuccess ? rsp->GetProtocolReplyCode() : rsp->GetResponseCode()), rsp->address_);
 		}
 	}));
+}
+void AppSDKInterface::LoadConfig()
+{
+	config_map_.clear();
+	std::wstring server_conf_path = QPath::GetAppPath();
+	server_conf_path.append(L"global_conf.txt");
+	TiXmlDocument document;
+	if (shared::LoadXmlFromFile(document, server_conf_path))
+	{
+
+		TiXmlElement* root = document.RootElement();
+		auto attribute = root->FirstAttribute();
+		while (attribute != nullptr)
+		{
+			config_map_[attribute->Name()] = attribute->ValueStr();
+			attribute = attribute->Next();
+		}
+	}
+	if (config_map_.empty())
+	{
+		config_map_["nim_global_conf_error"] = "nim_global_conf_error";
+	}
 }
 }

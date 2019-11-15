@@ -224,6 +224,7 @@
     <ClInclude Include="gui\main\control\event_item.h" />
     <ClInclude Include="gui\main\control\friend_item.h" />
     <ClInclude Include="gui\main\control\session_item.h" />
+    <ClInclude Include="gui\main\control\session_item_helper.h" />
     <ClInclude Include="gui\main\friend_list.h" />
     <ClInclude Include="gui\main\group_list.h" />
     <ClInclude Include="gui\main\multispot_form.h" />
@@ -256,6 +257,7 @@
     <ClInclude Include="gui\session\control\bubbles\bubble_image.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_item.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_location.h" />
+    <ClInclude Include="gui\session\control\bubbles\bubble_multi_retweet.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_notice.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_snapchat.h" />
     <ClInclude Include="gui\session\control\bubbles\bubble_sticker.h" />
@@ -272,6 +274,7 @@
     <ClInclude Include="gui\session\dragdrop\bitmap_control.h" />
     <ClInclude Include="gui\session\dragdrop\drag_form.h" />
     <ClInclude Include="gui\session\msg_record.h" />
+    <ClInclude Include="gui\session\msg_record_retweet.h" />
     <ClInclude Include="gui\session\session_box.h" />
     <ClInclude Include="gui\session\session_dock_def.h" />
     <ClInclude Include="gui\session\session_form.h" />
@@ -291,6 +294,12 @@
     <ClInclude Include="module\emoji\emoji_info.h" />
     <ClInclude Include="module\emoji\richedit_olecallback.h" />
     <ClInclude Include="module\emoji\richedit_util.h" />
+    <ClInclude Include="module\multi_retweet\multi_message_retweet_data_def.h" />
+    <ClInclude Include="module\multi_retweet\multi_message_retweet_info.h" />
+    <ClInclude Include="module\multi_retweet\multi_message_retweet_logs_archive.h" />
+    <ClInclude Include="module\multi_retweet\multi_retweet_define.h" />
+    <ClInclude Include="module\multi_retweet\multi_retweet_manager.h" />
+    <ClInclude Include="module\multi_retweet\multi_retweet_session.h" />
     <ClInclude Include="module\online_state_event\online_state_event_util.h" />
     <ClInclude Include="module\plugins\main_plugins_base.h" />
     <ClInclude Include="module\plugins\main_plugins_manager.h" />
@@ -351,6 +360,7 @@
     <ClCompile Include="gui\main\control\event_item.cpp" />
     <ClCompile Include="gui\main\control\friend_item.cpp" />
     <ClCompile Include="gui\main\control\session_item.cpp" />
+    <ClCompile Include="gui\main\control\session_item_helper.cpp" />
     <ClCompile Include="gui\main\team_event_form_custom.cpp" />
     <ClCompile Include="gui\main\friend_list.cpp" />
     <ClCompile Include="gui\main\group_list.cpp" />
@@ -384,6 +394,7 @@
     <ClCompile Include="gui\session\control\bubbles\bubble_image.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_item.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_location.cpp" />
+    <ClCompile Include="gui\session\control\bubbles\bubble_multi_retweet.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_notice.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_snapchat.cpp" />
     <ClCompile Include="gui\session\control\bubbles\bubble_sticker.cpp" />
@@ -400,6 +411,8 @@
     <ClCompile Include="gui\session\dragdrop\bitmap_control.cpp" />
     <ClCompile Include="gui\session\dragdrop\drag_form.cpp" />
     <ClCompile Include="gui\session\msg_record.cpp" />
+    <ClCompile Include="gui\session\msg_record_retweet.cpp" />
+    <ClCompile Include="gui\session\msg_record_retweet_ui.cpp" />
     <ClCompile Include="gui\session\msg_record_ui.cpp" />
     <ClCompile Include="gui\session\session_box.cpp" />
     <ClCompile Include="gui\session\session_box_at.cpp" />
@@ -426,6 +439,11 @@
     <ClCompile Include="module\emoji\emoji_info.cpp" />
     <ClCompile Include="module\emoji\richedit_olecallback.cpp" />
     <ClCompile Include="module\emoji\richedit_util.cpp" />
+    <ClCompile Include="module\multi_retweet\multi_message_retweet_data_def.cpp" />
+    <ClCompile Include="module\multi_retweet\multi_message_retweet_info.cpp" />
+    <ClCompile Include="module\multi_retweet\multi_message_retweet_logs_archive.cpp" />
+    <ClCompile Include="module\multi_retweet\multi_retweet_manager.cpp" />
+    <ClCompile Include="module\multi_retweet\multi_retweet_session.cpp" />
     <ClCompile Include="module\online_state_event\online_state_event_util.cpp" />
     <ClCompile Include="module\plugins\main_plugins_base.cpp" />
     <ClCompile Include="module\plugins\main_plugins_manager.cpp" />
@@ -474,7 +492,7 @@
     <ResourceCompile Include="ui_kit.rc" />
   </ItemGroup>
   <ItemGroup>
-    <Image Include="nim.ico" />
+    <None Include="module\multi_retweet\multi_message_retweet_body_cell_archive.inl" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

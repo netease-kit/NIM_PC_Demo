@@ -56,6 +56,7 @@ enum CustomMsgType
 	CustomMsgType_Rts,				//白板的发起结束消息
 	CustomMsgType_TransferFile,		//P2P传输文件
 	CustomMsgType_Meeting = 10,		//多人会议控制协议
+	CustomMsgType_MultiRetweet = 15,//多条消息合并转发
 };
 
 /**

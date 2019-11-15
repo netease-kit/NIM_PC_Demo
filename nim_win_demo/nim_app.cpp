@@ -100,97 +100,17 @@ void MainThread::OnMsgBoxCallback(MsgBoxRet ret, const std::string& dmp_path)
 */
 bool NimAPP::InitNim(const std::string& server_conf_file_path)
 {
-	std::wstring server_conf_path = QPath::GetAppPath();
-	server_conf_path.append(L"global_conf.txt");
 	nim::SDKConfig config;
-	TiXmlDocument document;
-	if (shared::LoadXmlFromFile(document, server_conf_path))
-	{
-		TiXmlElement* root = document.RootElement();
-		if (root)
-		{
-			if (auto pchar = root->Attribute("kNIMSDKLogLevel")) {
-				int log_level = 5;
-				nbase::StringToInt((std::string)pchar, &log_level);
-				config.sdk_log_level_ = (nim::NIMSDKLogLevel)log_level;
-			}
-			if (auto pchar = root->Attribute("kNIMPreloadImageQuality")) {
-				int quality = -1;
-				nbase::StringToInt((std::string)pchar, &quality);
-				config.preload_image_quality_ = quality;
-			}
-			if (auto pchar = root->Attribute("kNIMPreloadImageResize")) {
-				config.preload_image_resize_ = (std::string)pchar;
-			}
-			if (auto pchar = root->Attribute("kNIMPreloadAttachImageNameTemplate")) {
-				config.preload_image_name_template_ = (std::string)pchar;
-			}
-			if (auto pchar = root->Attribute("kNIMTeamNotificationUnreadCount")) {
-				int need = -1;
-				nbase::StringToInt((std::string)pchar, &need);
-				config.team_notification_unread_count_ = need > 0;
-			}
-			if (auto pchar = root->Attribute("kNIMVChatMissUnreadCount")) {
-				int need = -1;
-				nbase::StringToInt((std::string)pchar, &need);
-				config.vchat_miss_unread_count_ = need > 0;
-			}
-			if (auto pchar = root->Attribute("kNIMResetUnreadCountWhenRecall")) {
-				int need = -1;
-				nbase::StringToInt((std::string)pchar, &need);
-				config.reset_unread_count_when_recall_ = need > 0;
-			}
-			if (auto pchar = root->Attribute("kNIMAnimatedImageThumbnailEnabled")) {
-				int need = -1;
-				nbase::StringToInt((std::string)pchar, &need);
-				config.animated_image_thumbnail_enabled_ = need > 0;
-			}
-			if (auto pchar = root->Attribute("kNIMNosUseHttps")) {
-				int need = 0;
-				nbase::StringToInt((std::string)pchar, &need);
-				config.use_https_ = (need != 0);
-			}
-			if (auto pchar = root->Attribute("kNIMServerConfFilePath")) {
-				config.server_conf_file_path_ = (std::string)pchar;
-			}
-			if (auto pchar = root->Attribute("kNIMTeamMessageAckEnabled")) {
-				int need = 0;
-				nbase::StringToInt((std::string)pchar, &need);
-				config.team_msg_ack_ = (need != 0);
-			}
-			if (auto pchar = root->Attribute("kNIMCachingMarkreadEnabled")) {
-				int enable = 0;
-				nbase::StringToInt((std::string)pchar, &enable);
-				config.caching_markread_ = (enable != 0);
-			}
-			if (auto pchar = root->Attribute("kNIMCachingMarkreadTime")) {
-				int time = 1000;
-				nbase::StringToInt((std::string)pchar, &time);
-				config.caching_markread_time_ = time;
-			}
-			if (auto pchar = root->Attribute("kNIMCachingMarkreadCount")) {
-				int count = 10;
-				nbase::StringToInt((std::string)pchar, &count);
-				config.caching_markread_count_ = count;
-			}
-			if (auto pchar = root->Attribute("kNIMClientAntispam")) {
-				int enable = 10;
-				nbase::StringToInt((std::string)pchar, &enable);
-				config.client_antispam_ = (enable != 0);
-			}
-			if (!server_conf_file_path.empty())
-				config.server_conf_file_path_ = server_conf_file_path;
-		}
-	}
-
+	std::string app_key;
+	InitGlobalConfig(server_conf_file_path,app_key,config);
+	if (app_key.empty())
+		app_key = app_sdk::AppSDKInterface::GetAppKey();
 	//string（db key必填，目前只支持最多32个字符的加密密钥！建议使用32个字符）
 #ifdef _DEBUG
 	config.database_encrypt_key_ = "";
-#else
-	config.database_encrypt_key_ = "Netease";
 #endif
 
-	std::string app_key = app_sdk::AppSDKInterface::GetAppKey();
+	
 	std::wstring app_install;// = QPath::GetAppPath() + L"\\x64_dlls\\";
 	bool ret = nim::Client::Init(app_key, "Netease", nbase::UTF16ToUTF8(app_install), config); // 载入云信sdk，初始化安装目录和用户目录
 	assert(ret);
@@ -223,7 +143,6 @@ bool NimAPP::InitNim(const std::string& server_conf_file_path)
 	if (ret)
 	{
 		nim_ui::RunTimeDataManager::GetInstance()->SetSDKInited();
-		app_sdk::AppSDKConfig::GetInstance()->SetAppConfigPath(server_conf_file_path);
 		nim_chatroom::ChatroomCallback::InitChatroomCallback();
 		nim_chatroom::ChatRoom::SetMsgsBatchReport(true);
 	}	
@@ -296,6 +215,90 @@ int NimAPP::InitEnvironment(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmd
 	if (!nim_cef::CefManager::GetInstance()->Initialize(QPath::GetNimAppDataDir(APPDATA_DIR), settings, atoi(GetConfigValue("kNIMCefOsrEnabled").c_str()) > 0))
 		return 0;
 	return 1;
+}
+void NimAPP::InitGlobalConfig(const std::string& server_conf_file_path,std::string& app_key, nim::SDKConfig& config)
+{
+	if (!server_conf_file_path.empty())
+	{
+		config.server_conf_file_path_ = server_conf_file_path;
+	}
+	else
+	{
+		std::wstring server_conf_path = QPath::GetAppPath();
+		server_conf_path.append(L"global_conf.txt");
+		if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMServerConfFilePath,false))
+		{
+			std::string server_conf_file_path = GetConfigValue(nim::kNIMServerConfFilePath);
+			if (server_conf_file_path.empty())
+				server_conf_file_path = nbase::UTF16ToUTF8(QPath::GetAppPath().append(L"nim_server.conf"));
+			if (nbase::FilePathIsExist(QPath::GetAppPath().append(L"nim_server.conf"), false))
+				config.server_conf_file_path_ = server_conf_file_path;
+		}
+	}
+	if (!config.server_conf_file_path_.empty())
+		app_sdk::AppSDKConfig::GetInstance()->SetAppConfigPath(config.server_conf_file_path_);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMAppKey))
+		app_key = GetConfigValue(nim::kNIMAppKey);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMPreloadAttach))
+		config.preload_attach_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMPreloadAttach).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMDataBaseEncryptKey))
+		config.database_encrypt_key_ = std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMDataBaseEncryptKey).c_str());
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMPreloadImageQuality))
+		config.preload_image_quality_ = std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMPreloadImageQuality).c_str());
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMPreloadImageResize))
+		config.preload_image_resize_ = app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMPreloadImageResize);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMPreloadAttachImageNameTemplate))
+		config.preload_image_name_template_ = app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMPreloadAttachImageNameTemplate);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMSDKLogLevel))
+		config.sdk_log_level_ = (nim::NIMSDKLogLevel)std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMSDKLogLevel).c_str());
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMSyncSessionAck))
+		config.sync_session_ack_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMSyncSessionAck).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMLoginRetryMaxTimes))
+		config.login_max_retry_times_ = std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMLoginRetryMaxTimes).c_str());
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMUseHttps))
+		config.use_https_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMUseHttps).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMTeamNotificationUnreadCount))
+		config.team_notification_unread_count_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMTeamNotificationUnreadCount).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMVChatMissUnreadCount))
+		config.vchat_miss_unread_count_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMVChatMissUnreadCount).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMResetUnreadCountWhenRecall))
+		config.reset_unread_count_when_recall_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMResetUnreadCountWhenRecall).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMUploadSDKEventsAfterLogin))
+		config.upload_sdk_events_after_login_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMUploadSDKEventsAfterLogin).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMAnimatedImageThumbnailEnabled))
+		config.animated_image_thumbnail_enabled_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMAnimatedImageThumbnailEnabled).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMClientAntispam))
+		config.client_antispam_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMClientAntispam).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMTeamMessageAckEnabled))
+		config.team_msg_ack_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMTeamMessageAckEnabled).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMNeedUpdateLBSBeforRelogin))
+		config.need_update_lbs_befor_relogin_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMNeedUpdateLBSBeforRelogin).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMUploadStatisticsData))
+		config.upload_statistics_data_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMUploadStatisticsData).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMCachingMarkreadEnabled))
+		config.caching_markread_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMCachingMarkreadEnabled).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMCachingMarkreadTime))
+		config.caching_markread_time_ = std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMCachingMarkreadTime).c_str());
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMCachingMarkreadCount))
+		config.caching_markread_count_ = std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMCachingMarkreadCount).c_str());
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMUserDataFileLocalBackupFolder))
+		config.user_datafile_localbackup_folder_ = app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMUserDataFileLocalBackupFolder);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMEnableUserDataFileLocalBackup))
+		config.enable_user_datafile_backup_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMEnableUserDataFileLocalBackup).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMEnableUserDataFileLocalRestore))
+		config.enable_user_datafile_restore_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMEnableUserDataFileLocalRestore).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMEnableUserDataFileDefRestoreProc))
+		config.enable_user_datafile_defrestoreproc_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMEnableUserDataFileDefRestoreProc).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMDedicatedClusteFlag))
+		config.dedicated_cluste_flag_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMDedicatedClusteFlag).compare("0") != 0);
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMNegoKeyNECA))
+		config.nego_key_neca_ = std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMNegoKeyNECA).c_str());
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMCommNECA))
+		config.comm_neca_ = std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMCommNECA).c_str());
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMIPProtVersion))
+		config.ip_protocol_version_ = std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMIPProtVersion).c_str());
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMHandShakeType))
+		config.hand_shake_type_ = std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMHandShakeType).c_str());
 }
 int NimAPP::UninitEnvironment()
 {

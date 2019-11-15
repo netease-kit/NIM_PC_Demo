@@ -75,6 +75,8 @@ void MsgBubbleAudio::InitResPath(const nim::IMMessage& msg)
 	{
 		nim::IMAudio audio_data;
 		nim::Talk::ParseAudioMessageAttach(msg_, audio_data);
+		if (audio_data.md5_.empty())
+			audio_data.md5_ = nim::Tool::GetMd5(audio_data.url_);
 		std::string dir = nbase::UTF16ToUTF8(GetUserAudioPath());
 		res_path_ = dir + audio_data.md5_;
 	}
@@ -240,5 +242,9 @@ bool MsgBubbleAudio::NeedDownloadResource()
 		return false;
 	else
 		return true;
+}
+bool MsgBubbleAudio::NeedDownloadResourceEx()
+{
+	return NeedDownloadResource();
 }
 }

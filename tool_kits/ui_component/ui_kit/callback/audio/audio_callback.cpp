@@ -1,6 +1,7 @@
 ﻿#include "audio_callback.h"
 #include "module/session/session_manager.h"
 #include "gui/session/msg_record.h"
+#include "gui/session/msg_record_retweet.h"
 #include "module/audio/audio_manager.h"
 
 namespace nim_comp
@@ -22,6 +23,12 @@ void UIPlayAudioCallback( int code, std::string sid, std::string cid )
 	{
 		MsgRecordForm* f = dynamic_cast<MsgRecordForm*>(WindowsManager::GetInstance()->GetWindow(MsgRecordForm::kClassName, MsgRecordForm::kClassName));
 		if(f)
+			f->OnPlayAudioCallback(cid, code);
+	}
+	else if (wsid == MsgRecordRetweetForm::kClassName)
+	{
+		MsgRecordRetweetForm* f = dynamic_cast<MsgRecordRetweetForm*>(WindowsManager::GetInstance()->GetWindow(MsgRecordRetweetForm::kClassName, MsgRecordRetweetForm::kClassName));
+		if (f)
 			f->OnPlayAudioCallback(cid, code);
 	}
 	else
@@ -54,6 +61,12 @@ void UIStopAudioCallback( int code, const std::string &sid, const std::string &c
 	{
 		MsgRecordForm* f = dynamic_cast<MsgRecordForm*>(WindowsManager::GetInstance()->GetWindow(MsgRecordForm::kClassName, MsgRecordForm::kClassName));
 		if(f)
+			f->OnStopAudioCallback(cid, code);
+	}
+	else if (wsid == MsgRecordRetweetForm::kClassName)
+	{
+		MsgRecordRetweetForm* f = dynamic_cast<MsgRecordRetweetForm*>(WindowsManager::GetInstance()->GetWindow(MsgRecordRetweetForm::kClassName, MsgRecordRetweetForm::kClassName));
+		if (f)
 			f->OnStopAudioCallback(cid, code);
 	}
 	else

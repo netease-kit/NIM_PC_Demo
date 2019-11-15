@@ -234,4 +234,11 @@ bool MsgBubbleImage::NeedDownloadResource()
 	//else
 	//	return true;
 }
+bool MsgBubbleImage::NeedDownloadResourceEx()
+{
+	if( nbase::FilePathIsExist(path_, false) )
+		return false;
+	else
+		return true;
+}
 }

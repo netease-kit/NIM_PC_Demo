@@ -166,6 +166,9 @@
     <Filter Include="module\cef">
       <UniqueIdentifier>{14deafa2-7326-485a-a24b-55ffeec402bf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="module\multi_retweet">
+      <UniqueIdentifier>{90d1b266-5d9b-498e-9727-90b636ccd24b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -545,6 +548,33 @@
     </ClInclude>
     <ClInclude Include="module\cef\cef_global_methods.h">
       <Filter>module\cef</Filter>
+    </ClInclude>
+    <ClInclude Include="module\multi_retweet\multi_retweet_manager.h">
+      <Filter>module\multi_retweet</Filter>
+    </ClInclude>
+    <ClInclude Include="module\multi_retweet\multi_retweet_define.h">
+      <Filter>module\multi_retweet</Filter>
+    </ClInclude>
+    <ClInclude Include="module\multi_retweet\multi_retweet_session.h">
+      <Filter>module\multi_retweet</Filter>
+    </ClInclude>
+    <ClInclude Include="module\multi_retweet\multi_message_retweet_data_def.h">
+      <Filter>module\multi_retweet</Filter>
+    </ClInclude>
+    <ClInclude Include="module\multi_retweet\multi_message_retweet_info.h">
+      <Filter>module\multi_retweet</Filter>
+    </ClInclude>
+    <ClInclude Include="module\multi_retweet\multi_message_retweet_logs_archive.h">
+      <Filter>module\multi_retweet</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\main\control\session_item_helper.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\control\bubbles\bubble_multi_retweet.h">
+      <Filter>头文件</Filter>
+    </ClInclude>
+    <ClInclude Include="gui\session\msg_record_retweet.h">
+      <Filter>头文件</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -932,6 +962,33 @@
     <ClCompile Include="module\cef\cef_global_methods.cpp">
       <Filter>module\cef</Filter>
     </ClCompile>
+    <ClCompile Include="module\multi_retweet\multi_retweet_manager.cpp">
+      <Filter>module\multi_retweet</Filter>
+    </ClCompile>
+    <ClCompile Include="module\multi_retweet\multi_retweet_session.cpp">
+      <Filter>module\multi_retweet</Filter>
+    </ClCompile>
+    <ClCompile Include="module\multi_retweet\multi_message_retweet_data_def.cpp">
+      <Filter>module\multi_retweet</Filter>
+    </ClCompile>
+    <ClCompile Include="module\multi_retweet\multi_message_retweet_info.cpp">
+      <Filter>module\multi_retweet</Filter>
+    </ClCompile>
+    <ClCompile Include="module\multi_retweet\multi_message_retweet_logs_archive.cpp">
+      <Filter>module\multi_retweet</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\control\session_item_helper.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\control\bubbles\bubble_multi_retweet.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\msg_record_retweet.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\session\msg_record_retweet_ui.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="ui_kit.rc">
@@ -939,8 +996,8 @@
     </ResourceCompile>
   </ItemGroup>
   <ItemGroup>
-    <Image Include="nim.ico">
-      <Filter>资源文件</Filter>
-    </Image>
+    <None Include="module\multi_retweet\multi_message_retweet_body_cell_archive.inl">
+      <Filter>头文件</Filter>
+    </None>
   </ItemGroup>
 </Project>
