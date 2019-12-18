@@ -39,6 +39,15 @@ typedef void (*nim_talk_receive_cb_func)(const char *content, const char *json_e
   */
 typedef bool (*nim_talk_team_notification_filter_func)(const char *content, const char *json_extension, const void *user_data);
 
+/** @typedef bool(*nim_talk_message_filter_func)(const char *content, const char *json_extension, const void *user_data)
+  * 接收消息是否需要过滤的函数定义（堵塞线程，谨慎使用，避免耗时行为）
+  * @param[out] content			json string (Keys SEE MORE 『接收消息Json Keys』),批量接口回调时，内容为json string array
+  * @param[out] json_extension	json扩展数据（备用）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return bool true:APP已处理，SDK对这条消息不进行处理;false:APP未处理，SDK按正常逻辑处理
+  */
+typedef bool(*nim_talk_message_filter_func)(const char *content, const char *json_extension, const void *user_data);
+
 /** @typedef void (*nim_talk_recall_msg_func)(int rescode, const char *content, const char *json_extension, const void *user_data)
   * 消息撤回通知
   * @param[out] rescode			错误码

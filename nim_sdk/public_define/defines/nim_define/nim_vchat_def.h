@@ -63,13 +63,13 @@ enum NIMVideoChatMode{
 
 /** @enum NIMVChatVideoQuality 视频通话分辨率，最终长宽比不保证 */
 enum NIMVChatVideoQuality {
-	kNIMVChatVideoQualityNormal		= 0,		/**< 视频默认分辨率 480x320*/
-	kNIMVChatVideoQualityLow		= 1,		/**< 视频低分辨率 176x144*/
+	kNIMVChatVideoQualityNormal		= 0,		/**< 视频默认分辨率 480x360*/
+	kNIMVChatVideoQualityLow		= 1,		/**< 视频低分辨率 256x144*/
 	kNIMVChatVideoQualityMedium		= 2,		/**< 视频中分辨率 352x288*/
-	kNIMVChatVideoQualityHigh		= 3,		/**< 视频高分辨率 480x320*/
+	kNIMVChatVideoQualityHigh		= 3,		/**< 视频高分辨率 480x360*/
 	kNIMVChatVideoQualitySuper		= 4,		/**< 视频超高分辨率 640x480*/
-	kNIMVChatVideoQuality720p		= 5,		/**< 用于桌面分享级别的分辨率1280x720，需要使用高清摄像头并指定对应的分辨率，或者自定义通道传输 */
-	kNIMVChatVideoQuality540p		= 6,		/**< 介于720P与480P之间的类型，默认 960*540 */
+	kNIMVChatVideoQuality540p		= 5,		/**< 介于720P与480P之间的类型，默认 960*540 */
+	kNIMVChatVideoQuality720p		= 6,		/**< 用于桌面分享级别的分辨率1280x720，需要使用高清摄像头并指定对应的分辨率，或者自定义通道传输 */
 };
 
 /** @enum NIMVChatVideoFrameRate 视频通话帧率，实际帧率因画面采集频率和机器性能限制可能达不到期望值 */
@@ -216,12 +216,12 @@ enum NIMNetDetectType
 enum NIMNetDetectVideoQuality
 {
 	kNIMNDVideoQualityDefault	= 0, 		/**< 480P */
-	kNIMNDVideoQualityLow		= 1,		/**< 176*144 */
+	kNIMNDVideoQualityLow		= 1,		/**< 256*144 */
 	kNIMNDVideoQualityMedium	= 2, 		/**< 352*288 */
-	kNIMNDVideoQualityHigh		= 3, 		/**< 480*320 */
-	kNIMNDVideoQuality480p		= 4,		/**< 640*480 */
-	kNIMNDVideoQuality720p		= 5,		/**< 1280*720 */
-	kNIMNDVideoQuality540p		= 6,		/**< 960*540 */
+	kNIMNDVideoQualityHigh		= 3, 		/**< 480*360 */
+	kNIMNDVideoQuality480p      = 4,		/**< 640*480 */
+	kNIMNDVideoQuality540p      = 5,		/**< 960*540 */
+	kNIMNDVideoQuality720p		= 6,		/**< 1280*720 */
 };
 
 /** @enum NIMMainPictureOptCode 房间主画面设置返回码 */
@@ -399,8 +399,13 @@ static const char *kNIMVChatRTMPLayoutMode            = "layoutMode";        /**
 static const char *kNIMVChatRTMPLayoutPara            = "layoutPara";        /**< 选填 string 自定义布局参数，仅对kNIMVChatSplitCustomLayout,kNIMVChatSplitAudioLayout模式有效 */
 static const char *kNIMVChatRTMPRecord                = "record";            /**< 选填 bool 推流参数配置 */
 static const char *kNIMVChatRTMPMainScreenAccid       = "accid";             /**< 选填 string 指定主屏显示的帐号 */
+/** @}*/ //json extension params
 
 
+/** @name json extension params for nim_vchat_remote_audio_data_cb_func
+  * @{
+  */
+static const char *kNIMVChatAccount = "account";		/**< 用户账号 string */
 /** @}*/ //json extension params
 
 /** @typedef void (*nim_vchat_cb_func)(NIMVideoChatSessionType type, int64_t channel_id, int code, const char *json_extension, const void *user_data)
@@ -494,6 +499,20 @@ typedef void (*nim_vchat_opt2_cb_func)(int code, int64_t channel_id, const char 
  * @return void 无返回值
  */
 typedef void(*nim_vchat_rate_callback)(bool ret, int response_code,const char *json_extension,const void *user_data);
+
+/** @typedef void (*nim_vchat_remote_audio_data_cb_func)(unsigned __int64 time, const char *data, unsigned int size, int channels, int rate, const char *json_extension, const void *user_data)
+  * NRTC Device 远端音频数据监听接口
+  * @param[out] time 时间毫秒级，暂时无效
+  * @param[out] data 音频数据pcm格式
+  * @param[out] size data的数据长度
+  * @param[out] channels 通道数
+  * @param[out] rate 采样频
+  * @param[out] json_extension Json 扩展，返回kNIMVChatAccount（远端用户id）
+  * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void(*nim_vchat_remote_audio_data_cb_func)(unsigned __int64 time, const char *data, unsigned int size, int channels, int rate, const char *json_extension, const void *user_data);
+
 
 #ifdef __cplusplus
 };

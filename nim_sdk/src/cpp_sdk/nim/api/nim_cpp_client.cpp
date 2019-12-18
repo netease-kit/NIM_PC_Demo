@@ -206,7 +206,6 @@ bool Client::Init(const std::string& app_key
 	config_values[nim::kNIMEnableUserDataFileLocalRestore] = config.enable_user_datafile_restore_;
 	config_values[nim::kNIMEnableUserDataFileDefRestoreProc] = config.enable_user_datafile_defrestoreproc_;
 	config_values[nim::kNIMUserDataFileLocalBackupFolder] = config.user_datafile_localbackup_folder_;
-	config_values[nim::kNIMUploadStatisticsData] = config.upload_statistics_data_;
 	config_values[nim::kNIMDedicatedClusteFlag] = config.dedicated_cluste_flag_;
 	config_values[nim::kNIMHandShakeType] = config.hand_shake_type_;
 	config_values[nim::kNIMNegoKeyNECA] = config.nego_key_neca_;	
@@ -229,7 +228,6 @@ bool Client::Init(const std::string& app_key
 		srv_config[nim::kNIMDownloadAddressTemplate] = config.nos_download_address_;
 		srv_config[nim::kNIMAccelerateHost] = config.nos_accelerate_host_;
 		srv_config[nim::kNIMAccelerateAddressTemplate] = config.nos_accelerate_address_;
-		srv_config[nim::kNIMNtserverAddress] = config.ntserver_address_;
 		srv_config[nim::kNIMNegoKeyNECAKeyPA] = config.nego_key_neca_key_parta_;
 		srv_config[nim::kNIMNegoKeyNECAKeyPB] = config.nego_key_neca_key_partb_;
 		srv_config[nim::kNIMNegoKeyNECAKeyV] = config.nego_key_neca_key_version_;

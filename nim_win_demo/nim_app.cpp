@@ -119,13 +119,8 @@ bool NimAPP::InitNim(const std::string& server_conf_file_path)
 	});
 
 	//初始化聊天室
-	{
-		nim_cpp_wrapper_util::Json::Value extension;
-		nim_chatroom::ChatRoomPlatformConfig chatroom_platform_config;
-		chatroom_platform_config.AddNTServerAddress(config.ntserver_address_);
-		chatroom_platform_config.EnableUploadStatisticsData(config.upload_statistics_data_);
-		chatroom_platform_config.ToJsonObject(extension);
-		ret = nim_chatroom::ChatRoom::Init(nbase::UTF16ToUTF8(app_install), nim_cpp_wrapper_util::Json::FastWriter().write(extension));
+	{		
+		ret = nim_chatroom::ChatRoom::Init(nbase::UTF16ToUTF8(app_install), "");
 #ifdef CPPWRAPPER_DLL
 		nim_chatroom::ChatRoom::SetCallbackFunction([](const StdClosure & task) {
 			nbase::ThreadManager::PostTask(ThreadId::kThreadUI, task);
@@ -160,10 +155,23 @@ void NimAPP::CleanupSDKBeforLogin()
 }
 int NimAPP::InitInstance(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)
 {
-	
-
+	TCHAR module_path[MAX_PATH] = { 0 };	
+	std::wstring nim_http_tool_path;
+	if (GetModuleFileName(NULL, module_path, MAX_PATH) > 0)
+	{
+		std::wstring exe_path;
+		exe_path = module_path;
+		size_t pos = exe_path.find_last_of('\\');
+		if (pos != std::wstring::npos)
+			exe_path = exe_path.substr(0, pos + 1);
+		nim_http_tool_path = exe_path + L"nim_tools_http_app.dll";
+		std::wstring nim_http_tool_path_src = exe_path + L"nim_tools_http.dll";
+		if (!nbase::FilePathIsExist(nim_http_tool_path, false))
+			if (!nbase::CopyFile(nim_http_tool_path_src, nim_http_tool_path))
+				nim_http_tool_path = L"";
+	}
 	// 初始化云信http
-	nim_http::Init();
+	nim_http::Init(nim_http_tool_path);
 	g_need_restart_after_dump = true;
 	return 0;
 }
@@ -175,7 +183,7 @@ int NimAPP::ExitInstance()
 	nim_ui::InitManager::GetInstance()->CleanupUiKit();
 	if (nim_ui::RunTimeDataManager::GetInstance()->IsSDKInited())
 		nim_chatroom::ChatRoom::Cleanup();
-	
+	nim_http::Uninit();
 	return 0;
 }
 //int NimAPP::InitRedistPackages()
@@ -273,8 +281,6 @@ void NimAPP::InitGlobalConfig(const std::string& server_conf_file_path,std::stri
 		config.team_msg_ack_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMTeamMessageAckEnabled).compare("0") != 0);
 	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMNeedUpdateLBSBeforRelogin))
 		config.need_update_lbs_befor_relogin_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMNeedUpdateLBSBeforRelogin).compare("0") != 0);
-	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMUploadStatisticsData))
-		config.upload_statistics_data_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMUploadStatisticsData).compare("0") != 0);
 	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMCachingMarkreadEnabled))
 		config.caching_markread_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMCachingMarkreadEnabled).compare("0") != 0);
 	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMCachingMarkreadTime))

@@ -42,7 +42,6 @@ namespace nim
 	bool			client_antispam_;				/**< bool 客户端反垃圾，默认为false，如需开启请提前咨询技术支持或销售 */
 	bool			team_msg_ack_;					/**< bool 群消息已读功能开关， 默认为false，如需开启请提前咨询技术支持或销售  */
 	bool			need_update_lbs_befor_relogin_; /**< bool 在进行重新登录前是否先刷新一下lbs,对于切换网络的场景适用  */
-	bool			upload_statistics_data_;					/**< bool 错误信息统计是否上报*/
 	/***********消息“已接收回执”发送配置 begin************/
 	//bool		enable_markread_after_save_db_; /**< bool, 是否开启消保存在本地DB以后再向服务端发送"已接收回执" 缺省 false 关闭*/
 	bool		caching_markread_; /**< bool 是否开启缓存式“已接收回执”发送，程序可能收到大量消息以至触发频控时可以考虑开启此开关 缺省 false 关闭*/
@@ -87,7 +86,6 @@ namespace nim
 	std::string		nos_download_address_;			/**< string nos 下载地址拼接模板，用于拼接最终得到的下载地址*/
 	std::string		nos_accelerate_host_;			/**< string 需要被加速主机名*/
 	std::string		nos_accelerate_address_;		/**< string nos 加速地址拼接模板，用于获得加速后的下载地址*/
-	std::string		ntserver_address_;				/**< string 部分 IM 错误信息统计上报地址*/	
 
 	/***********IP地址族相关设置 begin************/
 	std::string probe_ipv4_url_;/**< string 探测ipv4地址类型使用的url,ip_protocol_version_ == 2(auto) 时生效*/

@@ -729,8 +729,8 @@ void VideoManager::StartDevice(nim::NIMDeviceType type, std::string device_path,
 		GetDefaultDevicePath(num_no, device_path, type);
 	}
 	SetDefaultDevicePath(device_path, type);
-	int width = 1920;
-	int height = 1080;
+	int width = 1280;
+	int height = 720;
 	auto sWidth = GetConfigValue("video_width");
 	auto sHeight = GetConfigValue("video_height");
 	if (!sWidth.empty() && !sHeight.empty())
@@ -764,28 +764,26 @@ bool VideoManager::StartChat(nim::NIMVideoChatMode mode, const std::string& apns
 	value[nim::kNIMVChatSound] = "video_chat_tip_receiver.aac";
 	value[nim::kNIMVChatNeedBadge] = 0;
 	value[nim::kNIMVChatNeedFromNick] = 0;
-	if (1)
+
+	std::string video_quality = GetConfigValue("kNIMVideoQuality");
+	std::string audio_record = GetConfigValue("kNIMAudioRecord");
+	std::string video_record = GetConfigValue("kNIMVideoRecord");
+	std::string record_type = GetConfigValue("kNIMRecordType");
+	std::string record_host_speaker = GetConfigValue("kNIMRecordHostSpeaker");
+	std::string keep_calling = GetConfigValue("kNIMKeepCalling");
+	std::string stream_enc_type = GetConfigValue("NRTCStreamENCType");
+	std::string stream_enc_key = GetConfigValue("NRTCStreamENCKey");
+	value[nim::kNIMVChatVideoQuality] = atoi(video_quality.c_str());
+	value[nim::kNIMVChatRecord] = atoi(audio_record.c_str());
+	value[nim::kNIMVChatVideoRecord] = atoi(video_record.c_str());
+	value[nim::kNIMVChatRecordType] = atoi(record_type.c_str());
+	value[nim::kNIMVChatRHostSpeaker] = atoi(record_host_speaker.c_str());
+	//value[nim::kNIMVChatWebrtc] = GetWebrtc() ? 1 : 0;
+	value["stream_encrypt_type"] = atoi(stream_enc_type.c_str());
+	value["stream_encrypt_token"] = stream_enc_key;
+	if (!keep_calling.empty())
 	{
-		std::string video_quality = GetConfigValue("kNIMVideoQuality");
-		std::string audio_record = GetConfigValue("kNIMAudioRecord");
-		std::string video_record = GetConfigValue("kNIMVideoRecord");
-		std::string record_type = GetConfigValue("kNIMRecordType");
-		std::string record_host_speaker = GetConfigValue("kNIMRecordHostSpeaker");
-		std::string keep_calling = GetConfigValue("kNIMKeepCalling");
-		std::string stream_enc_type = GetConfigValue("NRTCStreamENCType");
-		std::string stream_enc_key = GetConfigValue("NRTCStreamENCKey");
-		value[nim::kNIMVChatVideoQuality] = atoi(video_quality.c_str());
-		value[nim::kNIMVChatRecord] = atoi(audio_record.c_str());
-		value[nim::kNIMVChatVideoRecord] = atoi(video_record.c_str());
-		value[nim::kNIMVChatRecordType] = atoi(record_type.c_str());
-		value[nim::kNIMVChatRHostSpeaker] = atoi(record_host_speaker.c_str());
-		//value[nim::kNIMVChatWebrtc] = GetWebrtc() ? 1 : 0;
-		value["stream_encrypt_type"] = atoi(stream_enc_type.c_str());
-		value["stream_encrypt_token"] = stream_enc_key;
-		if (!keep_calling.empty())
-		{
-			value[nim::kNIMVChatKeepCalling] = atoi(keep_calling.c_str());
-		}
+		value[nim::kNIMVChatKeepCalling] = atoi(keep_calling.c_str());
 	}
 	std::string json_value = fs.write(value);
 	std::wstring apns = ui::MutiLanSupport::GetInstance()->GetStringViaID(mode == nim::kNIMVideoChatModeAudio ? L"STRID_VIDEO_AUDIO_INVITING_TEST" : L"STRID_VIDEO_VIDEO_INVITING_TEST");

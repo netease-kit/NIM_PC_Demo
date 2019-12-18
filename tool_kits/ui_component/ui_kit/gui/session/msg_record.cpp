@@ -156,7 +156,14 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 
 	if (msg.type_ == nim::kNIMMessageTypeAudio)
 		item->SetPlayed(true);
-
+	auto it_closure_befor_item_add = closure_befor_item_add_.find(bubble_id);
+	if (it_closure_befor_item_add != closure_befor_item_add_.end())
+	{
+		QLOG_WAR(L"it_closure_befor_item_add != closure_befor_item_add_.end() task count {0}") << it_closure_befor_item_add->second.size();
+		for (auto & it : it_closure_befor_item_add->second)
+			it();
+		closure_befor_item_add_.erase(it_closure_befor_item_add);
+	}
 	//if( item->NeedDownloadResource() )
 	//{
 	//	nim::NOS::FetchMedia(msg, nbase::Bind(&MsgRecordForm::OnDownloadCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4), nim::NOS::ProgressCallback());
@@ -211,8 +218,9 @@ void MsgRecordForm::RefreshRecord(std::string id, nim::NIMSessionType type)
 	SetTaskbarTitle(name);
 
 	msg_list_->RemoveAll();
+	closure_befor_item_add_.clear();
 	id_bubble_pair_.clear();
-
+	
 	AudioManager::GetInstance()->StopPlayAudio(nbase::UTF16ToUTF8(GetWindowId()));
 
 	if (type == nim::kNIMSessionTypeTeam)
@@ -342,15 +350,25 @@ void MsgRecordForm::OnDownloadCallback(nim::NIMResCode code, const std::string& 
 {
 	if (sid != session_id_)
 		return;
-
+	static auto OnDownloadCallback_task = [](MsgBubbleItem* item, bool success, const std::string& file_path) {
+		item->OnDownloadCallback(success, file_path);
+	};	
 	IdBubblePair::iterator it = id_bubble_pair_.find(cid);
 	if(it != id_bubble_pair_.end())
 	{
 		MsgBubbleItem* item = it->second;
-		if(item)
-		{
-			item->OnDownloadCallback(code == nim::kNIMResSuccess, file_path);
-		}
+		it->second->OnDownloadCallback(code == nim::kNIMResSuccess, file_path);		
+	}
+	else
+	{
+		QLOG_WAR(L"MsgRecordForm::OnDownloadCallback cid {0}") << cid;
+		closure_befor_item_add_[cid].emplace_back(ToWeakCallback(
+			[this, cid, code, file_path]() {
+				IdBubblePair::iterator it = id_bubble_pair_.find(cid);
+				if (it != id_bubble_pair_.end())
+					OnDownloadCallback_task(it->second,code == nim::kNIMResSuccess, file_path);
+			})
+		);
 	}
 }
 

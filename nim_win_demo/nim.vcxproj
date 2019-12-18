@@ -72,24 +72,28 @@
     <OutDir>$(ProjectDir)..\bin\</OutDir>
     <IntDir>$(ProjectDir)..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>nim_demo_d</TargetName>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>nim_demo_d</TargetName>
     <LinkIncremental>true</LinkIncremental>
     <OutDir>$(ProjectDir)..\bin\</OutDir>
     <IntDir>$(ProjectDir)..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\bin\</OutDir>
     <IntDir>$(ProjectDir)..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>nim_demo</TargetName>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <TargetName>nim_demo</TargetName>
     <LinkIncremental>false</LinkIncremental>
     <OutDir>$(ProjectDir)..\bin\</OutDir>
     <IntDir>$(ProjectDir)..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
+    <GenerateManifest>false</GenerateManifest>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -110,7 +114,9 @@
       <AdditionalLibraryDirectories>..\sdk\nim_sdk\cpp_sdk\libs\x86\mt\;..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libssld.lib;libcryptod.lib;custom_app_sdk_d.lib;cryptlib_d.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll;NELivePlayer.dll;nim_p2p_sdk_d.dll</DelayLoadDLLs>
-      <IgnoreSpecificDefaultLibraries>libcmtd.lib;</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>MSVCRTD.lib</IgnoreSpecificDefaultLibraries>
+      <EnableUAC>true</EnableUAC>
+      <ManifestFile>$(ProjectDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -133,6 +139,7 @@
       <AdditionalDependencies>dbghelp.lib;libyuv_d.lib;libssld.lib;libcryptod.lib;custom_app_sdk_d.lib;cryptlib_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
       <IgnoreSpecificDefaultLibraries>LIBCMTD.lib;LIBCMT.lib</IgnoreSpecificDefaultLibraries>
+      <ManifestFile>$(ProjectDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -142,7 +149,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;NIM_WIN_DESKTOP_ONLY_SDK;SUPPORTLOCALPLAYER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;NIM_SDK_DLL_IMPORT;SUPPORTLOCALPLAYER;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <TreatWarningAsError>false</TreatWarningAsError>
       <DisableSpecificWarnings>4100;4121;4127;4244;4310;4355;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <AdditionalIncludeDirectories>.\;..\;..\tool_kits\;..\tool_kits\cef\cef_module;..\tool_kits\cef\cef_wrapper\;..\tool_kits\ui_component\;..\tool_kits\ui_component\ui_kit\;..\tool_kits\ui_component\nim_service\;..\third_party\;..\third_party\openssl\include\;..\third_party\jsoncpp\include\;..\third_party\crypto++\cryptopp\;..\libs\nim_p2p_sdk\;..\libs\nim_p2p_sdk\src\;..\chatroom\;..\app_sdk\include;$(ProjectDir)../nim_sdk/;$(ProjectDir)../sdk/nim_sdk/depend_lib/src/jsoncpp/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
@@ -155,12 +162,15 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>dbghelp.lib;libyuv.lib;libssl.lib;libcrypto.lib;custom_app_sdk.lib;cryptlib.lib;ws2_32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;libyuv.lib;libssl.lib;libcrypto.lib;custom_app_sdk.lib;cryptlib.lib;ws2_32.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\sdk\nim_sdk\cpp_sdk\libs\x86\mt\;..\libs\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll;NELivePlayer.dll</DelayLoadDLLs>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
-      <IgnoreSpecificDefaultLibraries>libcmt.lib;</IgnoreSpecificDefaultLibraries>
+      <IgnoreSpecificDefaultLibraries>
+      </IgnoreSpecificDefaultLibraries>
+      <EnableUAC>true</EnableUAC>
+      <ManifestFile>$(ProjectDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -187,6 +197,7 @@
       <AdditionalLibraryDirectories>..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
       <IgnoreSpecificDefaultLibraries>LIBCMT.lib</IgnoreSpecificDefaultLibraries>
+      <ManifestFile>$(ProjectDir)$(TargetName)$(TargetExt).intermediate.manifest</ManifestFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -292,9 +303,13 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="nim.ico" />
+    <None Include="rt_manif.bin" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="nim.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Manifest Include="nim_demo.exe.intermediate.manifest" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

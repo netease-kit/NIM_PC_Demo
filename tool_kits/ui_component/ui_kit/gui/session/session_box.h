@@ -1254,7 +1254,7 @@ private:
 	std::list<MsgBubbleItem*> cached_msgs_bubbles_; //记录消息前后顺序
 
 	AutoUnregister	unregister_cb;
-
+	std::map< std::string, std::list<StdClosure>> closure_befor_item_add_;
 	std::list<nim::IMMessage> new_msgs_need_to_send_mq_;
 };
 }

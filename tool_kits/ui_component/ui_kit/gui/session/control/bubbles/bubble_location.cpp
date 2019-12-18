@@ -39,8 +39,7 @@ bool MsgBubbleLocation::OnClicked( ui::EventArgs* arg )
 	if( !title_.empty() )
 	{
 		//默认放大倍数：15
-		std::string point = nbase::StringPrintf("%lf,%lf,15", lat_, lng_);
-		Post2GlobalMisc( nbase::Bind(&OpenMap, title_, "", point));
+		OpenMap(title_, "", nbase::StringPrintf("%lf,%lf,15", lat_, lng_));
 	}
 	return true;
 }

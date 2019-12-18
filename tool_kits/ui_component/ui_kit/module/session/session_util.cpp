@@ -3,7 +3,8 @@
 #include "util/user.h"
 #include "module/emoji/richedit_util.h"
 #include "module/session/session_manager.h"
-
+#include "cef\cef_module\cef_control\cef_control.h"
+#include "util\windows_manager.h"
 namespace nim_comp
 {
 SessionType GetSessionType(const nim::IMMessage &msg)
@@ -397,46 +398,91 @@ void InsertFileToEdit(ui::RichEdit* edit, const std::wstring& file_path)
 
 	edit->SetFocus();
 }
+class MapView : public WindowEx
+{
+public:
+	MapView() :cef_control_(nullptr){};
+	virtual ~MapView() {};
+public:
+	//覆盖虚函数
+	virtual std::wstring GetSkinFolder() override { return L"session"; }
+	virtual std::wstring GetSkinFile() override { return L"map_view_form.xml"; }
+	virtual std::wstring GetWindowClassName() const override { return kClassName; }
+	virtual std::wstring GetWindowId() const override { return kClassName; };
+	virtual ui::Control* CreateControl(const std::wstring& pstrClass) override{
+		if (pstrClass.compare(L"CefControl") == 0)
+			return new ui::CefControl;
+	}
+	virtual void InitWindow() override {
+		cef_control_ = static_cast<ui::CefControl*>(FindControl(L"cef_control"));
+		if(cef_control_ != nullptr)
+		cef_control_->AttachTitleChange([this](const std::wstring& title) {
+			((ui::Label*)FindControl(L"title"))->SetText(title);
+			SetTaskbarTitle(title);
+		});
+	}
+	void LoadAddress(const std::string& title, const std::string& content, const std::string& point) {
+		if (cef_control_ != nullptr)
+		{
+			auto height = cef_control_->GetFixedHeight() - 18;
+			auto width = cef_control_->GetFixedWidth() - 18;
+			Post2GlobalMisc(ToWeakCallback([this, title, content, point, height, width]() {
+				std::wstring url(L"file:///");
+				url.append(MakeMapPage(title, content, point, height, width));
+				Post2UI(ToWeakCallback([this, url]() {
+					if (cef_control_ != nullptr)
+						cef_control_->LoadURL(url);
+					}));
+				}));
+		}		
+	}
+private:
+	std::wstring MakeMapPage(const std::string& title, const std::string& content, const std::string& point, int height, int width)
+	{
+		static const wchar_t kMapExampPath[] = L"res/web/map_marker.html";
+		static const wchar_t kMapUserPath[] = L"map_marker.html";
+		std::string title_info = title;
+		std::string content_info = content;
+		if (content_info.empty())
+		{
+			std::string value = title;
+			int left_pos = value.find(' ');
+			if (left_pos > 0)
+			{
+				title_info = value.substr(0, left_pos);
+				content_info = value.substr(left_pos + 1, value.size() - left_pos - 1);
+			}
+		}
+		std::wstring map_path;
 
+		std::wstring app = QPath::GetAppPath();
+		std::wstring path_examp = nbase::StringPrintf(L"%s%s", app.c_str(), kMapExampPath);
+
+		std::string file_data;
+		if (nbase::ReadFileToString(path_examp, file_data))
+		{
+			std::string file_data2;
+			nbase::StringPrintf(file_data2, file_data.c_str(), title_info.c_str(), content_info.c_str(), point.c_str(), width, height);
+
+			std::wstring user_data_path = GetUserDataPath();;
+			std::wstring path_user = nbase::StringPrintf(L"%s%s", user_data_path.c_str(), kMapUserPath);
+			if (nbase::WriteFile(path_user, file_data2) > 0)
+				map_path = path_user;
+		}
+		return map_path;
+	}
+public:
+	static const LPCTSTR kClassName;
+private:
+	ui::CefControl	*cef_control_;	
+};
+const LPCTSTR MapView::kClassName = L"MapView";
 void OpenMap(const std::string& title, const std::string& content, const std::string& point)
 {
-	static const wchar_t kMapExampPath[] = L"res/web/map_marker.html";
-	static const wchar_t kMapUserPath[] = L"map_marker.html";
-
-	std::string title_info = title;
-	std::string content_info = content;
-	if (content_info.empty())
-	{
-		std::string value = title;
-		int left_pos = value.find(' ');
-		if(left_pos > 0)
-		{
-			title_info = value.substr (0, left_pos);
-			content_info = value.substr (left_pos+1, value.size()-left_pos-1);
-		}
-	}
-	std::wstring map_path;
-
-	std::wstring app = QPath::GetAppPath();
-	std::wstring path_examp = nbase::StringPrintf(L"%s%s", app.c_str(), kMapExampPath);
-
-	std::string file_data;
-	if( nbase::ReadFileToString(path_examp, file_data) )
-	{
-		std::string file_data2;
-		nbase::StringPrintf(file_data2, file_data.c_str(),title_info.c_str(), content_info.c_str(), point.c_str());
-
-		std::wstring user_data_path = GetUserDataPath();;
-		std::wstring path_user = nbase::StringPrintf(L"%s%s", user_data_path.c_str(), kMapUserPath);
-		if( nbase::WriteFile(path_user, file_data2) > 0)
-		{
-			map_path = path_user;
-		}
-	}
-	if( !map_path.empty() )
-	{
-		Post2GlobalMisc( nbase::Bind(&shared::tools::SafeOpenUrl, map_path, SW_SHOW) );
-	}
+	MapView *form = (MapView*)nim_comp::WindowsManager::GetInstance()->GetWindow(MapView::kClassName, MapView::kClassName);
+	if (form == nullptr)
+		form = nim_comp::WindowsManager::SingletonShow<MapView>(MapView::kClassName);
+	form->LoadAddress(title, content, point);
 }
 
 bool IsResourceExist(const nim::IMMessage &msg)

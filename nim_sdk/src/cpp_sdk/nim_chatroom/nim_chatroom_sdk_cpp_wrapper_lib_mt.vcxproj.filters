@@ -12,13 +12,13 @@
       <UniqueIdentifier>{e6f92ffc-2cff-49e3-b686-5f9eea838874}</UniqueIdentifier>
     </Filter>
     <Filter Include="public_define">
-      <UniqueIdentifier>{54e07d02-f33d-4dab-859b-4c1bcfedf3f2}</UniqueIdentifier>
+      <UniqueIdentifier>{9f571ed5-6949-4ea3-acf8-a75e953ba64d}</UniqueIdentifier>
     </Filter>
     <Filter Include="public_define\defines">
-      <UniqueIdentifier>{12578cef-c2ae-42e6-b751-6529b2d79f35}</UniqueIdentifier>
+      <UniqueIdentifier>{8372ec99-eac5-4dcf-b5d4-aca34ccc25ee}</UniqueIdentifier>
     </Filter>
     <Filter Include="public_define\defines\nim_chatroom_define">
-      <UniqueIdentifier>{9bbf570c-b5ef-409e-8f11-5d4046c4cbf1}</UniqueIdentifier>
+      <UniqueIdentifier>{bc108394-9a9b-4396-9fe6-ae20a59747ab}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

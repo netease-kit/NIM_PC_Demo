@@ -62,7 +62,18 @@ void TalkCallback::OnReceiveMsgCallback(const nim::IMMessage& message)
 			ForcePushManager::GetInstance()->AddAtMeMsg(id, message);
 	}
 }
-
+bool TalkCallback::OnMessageFilterCallback(const nim::IMMessage& message)
+{
+	QLOG_PRO(L"OnMessageFilterCallback: {0}") << message.client_msg_id_ ;
+	bool ret = false;
+	//if (message.type_ == nim::NIMMessageType::kNIMMessageTypeText)
+	//{
+	//	if (message.content_.find("123456") != std::string::npos)
+	//		ret = true;
+	//}
+	QLOG_PRO(L"OnMessageFilterCallback: ret = {0}") << ret;
+	return ret;
+}
 void TalkCallback::OnReceiveMsgsCallback(const std::list<nim::IMMessage>& messages)
 {
 	//例子 开发者可以根据需求实现(比如为了减少UI刷新频率，只在最后一条消息收到后刷新UI等)

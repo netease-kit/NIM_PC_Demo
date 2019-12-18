@@ -203,6 +203,8 @@ typedef void(*nim_vchat_unpublish_video)(const char *json_extension, nim_vchat_o
 typedef void(*nim_vchat_subscribe_video)(const char *uid, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 typedef void(*nim_vchat_unsubscribe_video)(const char *uid, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 typedef void(*nim_vchat_subscribe_audio)(bool sub, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
+
+typedef void(*nim_vchat_set_remote_audio_data_cb)(const char *uid, nim_vchat_remote_audio_data_cb_func remote_data_cb, const void *remote_data_cb_user_data, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 #else
 #include "nim_vchat.h"
 #endif
@@ -726,6 +728,38 @@ void VChat::SubscribeAudio(bool sub, OptCallback cb)
 {
 	OptCallback* cb_pointer = new OptCallback(cb);
 	NIM_SDK_GET_FUNC(nim_vchat_subscribe_audio)(sub, "", OnOptCallback, cb_pointer);
+}
+static VChat::RemoteAudioDataCallback g_remote_audio_data_cb_ = nullptr;
+void VChat::SetRemoteAudioDataCb(RemoteAudioDataCallback cb)
+{
+    g_remote_audio_data_cb_ = cb;
+}
+static void CallbackRemoteAudioData(unsigned __int64 time, const char *data, unsigned int size, int channels, int rate, const char *json_extension, const void *user_data)
+{
+    if (user_data)
+    {
+        VChat::RemoteAudioDataCallback* cb = (VChat::RemoteAudioDataCallback*)user_data;
+        if (*cb)
+        {
+            nim_cpp_wrapper_util::Json::Reader reader;
+            nim_cpp_wrapper_util::Json::Value values;
+            if (reader.parse(PCharToString(json_extension), values) && values.isObject())
+            {
+                std::string uid = values[kNIMVChatAccount].asString();
+                (*cb)(uid, time, data, size, channels, rate);
+            }
+        }
+    }
+}
+void VChat::AddRemoteAudioDataCb(const std::string& uid, OptCallback cb)
+{
+    OptCallback* cb_pointer = new OptCallback(cb);
+    NIM_SDK_GET_FUNC(nim_vchat_set_remote_audio_data_cb)(uid.c_str(), CallbackRemoteAudioData, &g_remote_audio_data_cb_, "", OnOptCallback, cb_pointer);
+}
+void VChat::RemoveRemoteAudioDataCb(const std::string& uid, OptCallback cb)
+{
+    OptCallback* cb_pointer = new OptCallback(cb);
+    NIM_SDK_GET_FUNC(nim_vchat_set_remote_audio_data_cb)(uid.c_str(), nullptr, nullptr, "", OnOptCallback, cb_pointer);
 }
 
 }  // namespace nim

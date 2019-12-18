@@ -1,0 +1,10 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<Window caption="0,0,0,34" >
+    <VBox width="auto" height="auto" bkcolor="bk_wnd_lightcolor">
+        <HBox class="caption">
+            <Label class="font_title" name="title" width="stretch" valign="center" normaltextcolor="darkcolor" text="abc"/>
+            <Button class="btn_wnd_close" name="closebtn" margin="10,6,0,0"/>
+        </HBox>
+        <CefControl width="697" height="550" margin="2,2,2,2" name="cef_control" bkcolor="bk_wnd_lightcolor" />	
+    </VBox>
+</Window>

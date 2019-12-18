@@ -203,7 +203,12 @@ bool SessionBox::Notify(ui::EventArgs* param)
 		else if (param->wParam == BET_RELOAD)
 		{
 			item->SetLoadStatus(RS_LOADING);
-			nim::NOS::FetchMedia(md, nim::NOS::DownloadMediaCallback(), nim::NOS::ProgressCallback());
+			auto item_res_id = item->GetMsg().client_msg_id_;
+			nim::NOS::FetchMedia(md, 
+				item->ToWeakCallback([this, item_res_id](nim::NIMResCode res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
+					OnDownloadCallback(item_res_id, res_code == nim::NIMResCode::kNIMResSuccess, file_path);
+				}),
+				nim::NOS::ProgressCallback());
 		}
 		else if (param->wParam == BET_DELETE)
 		{

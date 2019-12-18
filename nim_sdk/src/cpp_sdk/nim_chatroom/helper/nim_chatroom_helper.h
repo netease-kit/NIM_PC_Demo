@@ -24,39 +24,7 @@
 */
 namespace nim_chatroom
 {
-	struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomPlatformConfig
-	{
-		
-		bool ToJsonObject(nim_cpp_wrapper_util::Json::Value& values) const;
-		std::string	ToJsonString() const
-		{
-			nim_cpp_wrapper_util::Json::Value values;
-			if(ToJsonObject(values))
-				return nim::GetJsonStringWithNoStyled(values);
-			return std::string("");			
-		}
-		void AddNTServerAddress(const std::string& add)
-		{
-			if(std::find_if(ntserver_address_list_.begin(),ntserver_address_list_.end(),[&](const std::string& item){
-				return item.compare(add) == 0;
-			}) == ntserver_address_list_.end())
-				ntserver_address_list_.emplace_back(add);
-		}
-		void AddNTServerAddress(std::string&& add)
-		{
-			if(std::find_if(ntserver_address_list_.begin(),ntserver_address_list_.end(),[&](const std::string& item){
-				return item.compare(add) == 0;
-			}) == ntserver_address_list_.end())
-				ntserver_address_list_.emplace_back(add);
-		}
-		void EnableUploadStatisticsData(bool enable)
-		{
-			upload_statistics_data_ = enable;
-		}
-	private:
-		std::vector<std::string> ntserver_address_list_;/*部分 IM 错误信息统计上报地址*/
-		bool upload_statistics_data_;/*错误信息统计是否上报,私有化如不上报此项应配置为false*/
-	};
+
 /** @brief 聊天室登录信息*/
 struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomEnterInfo
 {

@@ -23,7 +23,7 @@ typedef void(*nim_talk_reg_recall_msg_cb)(const char *json_extension, nim_talk_r
 typedef char*(*nim_talk_get_attachment_path_from_msg)(const char *json_msg);
 typedef void(*nim_talk_reg_receive_broadcast_cb)(const char *json_extension, nim_talk_receive_broadcast_cb_func cb, const void *user_data);
 typedef void(*nim_talk_reg_receive_broadcast_msgs_cb)(const char *json_extension, nim_talk_receive_broadcast_cb_func cb, const void *user_data);
-
+typedef void(*nim_talk_reg_message_filter_cb)(const char *json_extension, nim_talk_message_filter_func cb, const void *user_data);
 #else
 #include "nim_talk.h"
 #endif
@@ -502,6 +502,19 @@ void Talk::RegTeamNotificationFilter(const TeamNotificationFilter& filter, const
 	NIM_SDK_GET_FUNC(nim_talk_reg_notification_filter_cb)(json_extension.c_str(), &FilterTeamNotification, &g_team_notification_filter_);
 }
 
+static Talk::MessageFilter g_message_filter_ = nullptr;
+void Talk::RegMessageFilter(const MessageFilter& filter, const std::string& json_extension/* = ""*/)
+{
+	g_message_filter_ = filter;
+	NIM_SDK_GET_FUNC(nim_talk_reg_message_filter_cb)(json_extension.c_str(),
+		[](const char *content, const char *json_extension, const void *callback) ->bool{
+			return CallbackProxy::DoSafeCallback<Talk::MessageFilter>(callback, [=](const Talk::MessageFilter& cb) {
+				IMMessage msg;
+				ParseReceiveMessage(PCharToString(content), msg);
+				return CallbackProxy::Invoke(cb, msg);
+				});
+		}, &g_message_filter_);
+}
 static void ReceiveRecallMsg(int rescode, const char *content, const char *json_extension, const void *callback)
 {
 	CallbackProxy::DoSafeCallback<Talk::RecallMsgsCallback>(callback, [=](const Talk::RecallMsgsCallback& cb){

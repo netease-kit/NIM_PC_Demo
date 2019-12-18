@@ -42,6 +42,7 @@ void InitManager::InitUiKit(bool enable_subscribe_event, InitMode mode)
 		//注册返回发送消息结果的回调，和收到消息的回调。
 		nim::Talk::RegSendMsgCb(nbase::Bind(&nim_comp::TalkCallback::OnSendMsgCallback, std::placeholders::_1));
 		nim::Talk::RegReceiveCb(nbase::Bind(&nim_comp::TalkCallback::OnReceiveMsgCallback, std::placeholders::_1));
+		nim::Talk::RegMessageFilter(nbase::Bind(&nim_comp::TalkCallback::OnMessageFilterCallback,std::placeholders::_1));
 		nim::Talk::RegRecallMsgsCallback(nbase::Bind(&nim_comp::TalkCallback::OnReceiveRecallMsgCallback, std::placeholders::_1, std::placeholders::_2));
 		nim::Talk::RegReceiveMessagesCb(nbase::Bind(&nim_comp::TalkCallback::OnReceiveMsgsCallback, std::placeholders::_1));
 		//nim::SystemMsg::RegSendCustomSysmsgCb(nbase::Bind(&nim_comp::TalkCallback::OnSendCustomSysmsgCallback, std::placeholders::_1));

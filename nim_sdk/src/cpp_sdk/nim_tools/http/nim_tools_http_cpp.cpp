@@ -50,6 +50,7 @@ typeof_nim_http_set_proxy g_nim_http_set_proxy;
 typeof_nim_http_post_request	g_nim_http_post_request;
 typeof_nim_http_remove_request	g_nim_http_remove_request;
 typeof_nim_http_get_response_head g_nim_http_get_response_head;
+HMODULE g_hmod = NULL;
 struct CompletedCallbackUserData
 {
 	CompletedCallbackUserData() :
@@ -84,43 +85,38 @@ struct ResponseCallbackUserData
 
 void Init(const std::wstring &dll_path/* = L""*/)
 {
-	HMODULE hmod;
-	std::wstring dll_file(dll_path);
-	if (!dll_file.empty() && (*dll_file.rbegin() != L'/' && *dll_file.rbegin() != L'\\'))
-		dll_file.append(1, L'/');
-//#ifdef _DEBUG
-//	dll_file.append(L"nim_tools_http_d.dll");
-//#else
-	dll_file.append(L"nim_tools_http.dll");
-//#endif
-	hmod = ::LoadLibrary(dll_file.c_str());
-
-	g_nim_http_init = (typeof_nim_http_init)GetProcAddress(hmod, "nim_http_init");
-	g_nim_http_uninit = (typeof_nim_http_uninit)GetProcAddress(hmod,"nim_http_uninit");
-	g_nim_http_init_log = (typeof_nim_http_init_log)GetProcAddress(hmod, "nim_http_init_log");
-	g_nim_http_is_init_log = (typeof_nim_http_is_init_log)GetProcAddress(hmod, "nim_http_is_init_log");
-	g_nim_http_create_download_file_request = (typeof_nim_http_create_download_file_request)GetProcAddress(hmod,"nim_http_create_download_file_request");
-	g_nim_http_create_download_file_range_request = (typeof_nim_http_create_download_file_range_request)GetProcAddress(hmod,"nim_http_create_download_file_range_request");
-	g_nim_http_create_request = (typeof_nim_http_create_request)GetProcAddress(hmod,"nim_http_create_request");
-	g_nim_http_add_request_header = (typeof_nim_http_add_request_header)GetProcAddress(hmod,"nim_http_add_request_header");
-	g_nim_http_set_request_progress_cb = (typeof_nim_http_set_request_progress_cb)GetProcAddress(hmod,"nim_http_set_request_progress_cb");
-	g_nim_http_set_request_speed_cb = (typeof_nim_http_set_request_speed_cb)GetProcAddress(hmod, "nim_http_set_request_speed_cb");
-	g_nim_http_set_request_transfer_cb = (typeof_nim_http_set_request_transfer_cb)GetProcAddress(hmod, "nim_http_set_request_transfer_cb");
-	g_nim_http_set_request_method_as_post = (typeof_nim_http_set_request_method_as_post)GetProcAddress(hmod,"nim_http_set_request_method_as_post");
-	g_nim_http_set_timeout = (typeof_nim_http_set_timeout)GetProcAddress(hmod, "nim_http_set_timeout");
-	g_nim_http_set_low_speed = (typeof_nim_http_set_low_speed)GetProcAddress(hmod, "nim_http_set_low_speed");
-	g_nim_http_set_proxy = (typeof_nim_http_set_proxy)GetProcAddress(hmod, "nim_http_set_proxy");
-	g_nim_http_post_request = (typeof_nim_http_post_request)GetProcAddress(hmod,"nim_http_post_request");
-	g_nim_http_remove_request = (typeof_nim_http_remove_request)GetProcAddress(hmod,"nim_http_remove_request");
-	g_nim_http_get_response_head = (typeof_nim_http_get_response_head)GetProcAddress(hmod, "nim_http_get_response_head");
 	
-	g_nim_http_init();
+	std::wstring dll_file(dll_path);
+	if(dll_file.empty())
+		dll_file.append(L"nim_tools_http.dll");
+	g_hmod = ::LoadLibraryEx(dll_file.c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
+	g_nim_http_init = (typeof_nim_http_init)GetProcAddress(g_hmod, "nim_http_init");
+	g_nim_http_uninit = (typeof_nim_http_uninit)GetProcAddress(g_hmod,"nim_http_uninit");
+	g_nim_http_init_log = (typeof_nim_http_init_log)GetProcAddress(g_hmod, "nim_http_init_log");
+	g_nim_http_is_init_log = (typeof_nim_http_is_init_log)GetProcAddress(g_hmod, "nim_http_is_init_log");
+	g_nim_http_create_download_file_request = (typeof_nim_http_create_download_file_request)GetProcAddress(g_hmod,"nim_http_create_download_file_request");
+	g_nim_http_create_download_file_range_request = (typeof_nim_http_create_download_file_range_request)GetProcAddress(g_hmod,"nim_http_create_download_file_range_request");
+	g_nim_http_create_request = (typeof_nim_http_create_request)GetProcAddress(g_hmod,"nim_http_create_request");
+	g_nim_http_add_request_header = (typeof_nim_http_add_request_header)GetProcAddress(g_hmod,"nim_http_add_request_header");
+	g_nim_http_set_request_progress_cb = (typeof_nim_http_set_request_progress_cb)GetProcAddress(g_hmod,"nim_http_set_request_progress_cb");
+	g_nim_http_set_request_speed_cb = (typeof_nim_http_set_request_speed_cb)GetProcAddress(g_hmod, "nim_http_set_request_speed_cb");
+	g_nim_http_set_request_transfer_cb = (typeof_nim_http_set_request_transfer_cb)GetProcAddress(g_hmod, "nim_http_set_request_transfer_cb");
+	g_nim_http_set_request_method_as_post = (typeof_nim_http_set_request_method_as_post)GetProcAddress(g_hmod,"nim_http_set_request_method_as_post");
+	g_nim_http_set_timeout = (typeof_nim_http_set_timeout)GetProcAddress(g_hmod, "nim_http_set_timeout");
+	g_nim_http_set_low_speed = (typeof_nim_http_set_low_speed)GetProcAddress(g_hmod, "nim_http_set_low_speed");
+	g_nim_http_set_proxy = (typeof_nim_http_set_proxy)GetProcAddress(g_hmod, "nim_http_set_proxy");
+	g_nim_http_post_request = (typeof_nim_http_post_request)GetProcAddress(g_hmod,"nim_http_post_request");
+	g_nim_http_remove_request = (typeof_nim_http_remove_request)GetProcAddress(g_hmod,"nim_http_remove_request");
+	g_nim_http_get_response_head = (typeof_nim_http_get_response_head)GetProcAddress(g_hmod, "nim_http_get_response_head");
+	if(g_nim_http_init != nullptr)
+		g_nim_http_init();
 }
 
 
 void Uninit()
 {
 	g_nim_http_uninit();
+	::FreeLibrary(g_hmod);
 }
 
 void InitLog(const std::string& log_file_path)

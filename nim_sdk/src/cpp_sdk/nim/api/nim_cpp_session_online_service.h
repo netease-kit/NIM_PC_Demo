@@ -1,5 +1,5 @@
-/** @file nim_cpp_session_online_service.h
-  * @brief ª·ª∞∑˛ŒÒ
+Ôªø/** @file nim_cpp_session_online_service.h
+  * @brief ‰ºöËØùÊúçÂä°
   * @copyright (c) 2015-2019, NetEase Inc. All rights reserved
   * @date 2019/10/22
   */
@@ -20,61 +20,61 @@ namespace nim
 	class NIM_SDK_CPPWRAPPER_DLL_API SessionOnLineService
 	{
 	public:
-		typedef std::function<void(nim::NIMResCode, const SessionOnLineServiceHelper::SessionInfo&)> QuerySessionInfoCallback;	/**< ≤È—Øª·ª∞ªÿµ˜ƒ£∞Â */
-		typedef std::function<void(const SessionOnLineServiceHelper::QureySessionListResult&)> QuerySessionListCallabck;		/**< ≤È—Øª·ª∞¡–±Ìªÿµ˜ƒ£∞Â */
-		typedef std::function<void(nim::NIMResCode)> UpdateSessionInfoCallback;	/**< ∏¸–¬ª·ª∞ªÿµ˜ƒ£∞Â */
-		typedef std::function<void(nim::NIMResCode)> DeleteSessionInfoCallback;	/**< …æ≥˝ª·ª∞ªÿµ˜ƒ£∞Â */
-		typedef std::function<void(const SessionOnLineServiceHelper::SessionInfo&)> SessionChangedCallback;	/**< ª·ª∞±‰∏¸ªÿµ˜ƒ£∞Â */
+		typedef std::function<void(nim::NIMResCode, const SessionOnLineServiceHelper::SessionInfo&)> QuerySessionInfoCallback;	/**< Êü•ËØ¢‰ºöËØùÂõûË∞ÉÊ®°Êùø */
+		typedef std::function<void(const SessionOnLineServiceHelper::QureySessionListResult&)> QuerySessionListCallabck;		/**< Êü•ËØ¢‰ºöËØùÂàóË°®ÂõûË∞ÉÊ®°Êùø */
+		typedef std::function<void(nim::NIMResCode)> UpdateSessionInfoCallback;	/**< Êõ¥Êñ∞‰ºöËØùÂõûË∞ÉÊ®°Êùø */
+		typedef std::function<void(nim::NIMResCode)> DeleteSessionInfoCallback;	/**< Âà†Èô§‰ºöËØùÂõûË∞ÉÊ®°Êùø */
+		typedef std::function<void(const SessionOnLineServiceHelper::SessionInfo&)> SessionChangedCallback;	/**< ‰ºöËØùÂèòÊõ¥ÂõûË∞ÉÊ®°Êùø */
 
 		/** @fn static void QuerySessionList(uint64_t min_time, uint64_t max_time, bool need_last_msg, int limit, const QuerySessionListCallabck& cb)
-	  * ª·ª∞∑˛ŒÒ ≤È—Øª·ª∞¡–±Ì
-	  * @param[in] min_time ◊Ó–° ±º‰¥¡,Œ¥÷™ø…“‘ÃÓ0,±Ì æµΩ◊Ó‘Á ±º‰
-	  * @param[in] max_time ◊Ó¥Û ±º‰¥¡,Œ¥÷™ø…“‘ÃÓ0,±Ì æ¥”µ±«∞ ±º‰
-	  * @param[in] need_last_msg  «∑Ò–Ë“™∑µªÿlastMsg£¨ƒ¨»œtrue
-	  * @param[in] limit Ω·π˚ºØlimit£¨◊Ó¥Û100£¨»± °÷µ100
-	  * @param[in] cb Ω·π˚ªÿµ˜  ø…≤Èø¥QuerySessionListCallabck∂®“Â
-	  * @return void Œﬁ∑µªÿ÷µ
+	  * ‰ºöËØùÊúçÂä° Êü•ËØ¢‰ºöËØùÂàóË°®
+	  * @param[in] min_time ÊúÄÂ∞èÊó∂Èó¥Êà≥,Êú™Áü•ÂèØ‰ª•Â°´0,Ë°®Á§∫Âà∞ÊúÄÊó©Êó∂Èó¥
+	  * @param[in] max_time ÊúÄÂ§ßÊó∂Èó¥Êà≥,Êú™Áü•ÂèØ‰ª•Â°´0,Ë°®Á§∫‰ªéÂΩìÂâçÊó∂Èó¥
+	  * @param[in] need_last_msg ÊòØÂê¶ÈúÄË¶ÅËøîÂõûlastMsgÔºåÈªòËÆ§true
+	  * @param[in] limit ÁªìÊûúÈõÜlimitÔºåÊúÄÂ§ß100ÔºåÁº∫ÁúÅÂÄº100
+	  * @param[in] cb ÁªìÊûúÂõûË∞É  ÂèØÊü•ÁúãQuerySessionListCallabckÂÆö‰πâ
+	  * @return void Êó†ËøîÂõûÂÄº
 	  */
 		static void QuerySessionList(uint64_t min_time, uint64_t max_time, bool need_last_msg, int limit, const QuerySessionListCallabck& cb);
 
 		/** @fn static void QuerySession(nim::NIMSessionType to_type, const std::string& session_id, const QuerySessionInfoCallback& cb)
-		  * ª·ª∞∑˛ŒÒ ≤È—Øª·ª∞
-		  * @param[in] to_type ª·ª∞¿‡–Õ
-		  * @param[in] session_id ª·ª∞ID
-		  * @param[in] cb Ω·π˚ªÿµ˜  ø…≤Èø¥QuerySessionInfoCallback∂®“Â
-		  * @return void Œﬁ∑µªÿ÷µ
+		  * ‰ºöËØùÊúçÂä° Êü•ËØ¢‰ºöËØù
+		  * @param[in] to_type ‰ºöËØùÁ±ªÂûã
+		  * @param[in] session_id ‰ºöËØùID
+		  * @param[in] cb ÁªìÊûúÂõûË∞É  ÂèØÊü•ÁúãQuerySessionInfoCallbackÂÆö‰πâ
+		  * @return void Êó†ËøîÂõûÂÄº
 		  */
 		static void QuerySession(nim::NIMSessionType to_type, const std::string& session_id, const QuerySessionInfoCallback& cb);
 
 		/** @fn static void UpdateSession(nim::NIMSessionType to_type, const std::string& session_id, const std::string& ext, const UpdateSessionInfoCallback& cb)
-		  * ª·ª∞∑˛ŒÒ ∏¸–¬ª·ª∞
-		  * @param[in] to_type ª·ª∞¿‡–Õ
-		  * @param[in] session_id ª·ª∞ID
-		  * @param[in] ext ª·ª∞µƒ¿©’π◊÷∂Œ
-		  * @param[in] cb Ω·π˚ªÿµ˜  ø…≤Èø¥UpdateSessionInfoCallback∂®“Â
-		  * @return void Œﬁ∑µªÿ÷µ
+		  * ‰ºöËØùÊúçÂä° Êõ¥Êñ∞‰ºöËØù
+		  * @param[in] to_type ‰ºöËØùÁ±ªÂûã
+		  * @param[in] session_id ‰ºöËØùID
+		  * @param[in] ext ‰ºöËØùÁöÑÊâ©Â±ïÂ≠óÊÆµ
+		  * @param[in] cb ÁªìÊûúÂõûË∞É  ÂèØÊü•ÁúãUpdateSessionInfoCallbackÂÆö‰πâ
+		  * @return void Êó†ËøîÂõûÂÄº
 		  */
 		static void UpdateSession(nim::NIMSessionType to_type, const std::string& session_id, const std::string& ext, const UpdateSessionInfoCallback& cb);
 
 		/** @fn static void DeleteSession(const DeleteSessionParam& param, const DeleteSessionInfoCallback& cb)
-		  * ª·ª∞∑˛ŒÒ …æ≥˝ª·ª∞
-		  * @param[in] param “™…æ≥˝µƒª·ª∞¡–
-		  * @param[in] cb Ω·π˚ªÿµ˜  ø…≤Èø¥DeleteSessionInfoCallback∂®“Â
-		  * @param[in] user_data APPµƒ◊‘∂®“Â”√ªß ˝æ›£¨SDK÷ª∏∫‘¥´ªÿ∏¯ªÿµ˜∫Ø ˝cb£¨≤ª◊ˆ»Œ∫Œ¥¶¿Ì£°
-		  * @return void Œﬁ∑µªÿ÷µ
+		  * ‰ºöËØùÊúçÂä° Âà†Èô§‰ºöËØù
+		  * @param[in] param Ë¶ÅÂà†Èô§ÁöÑ‰ºöËØùÂàó
+		  * @param[in] cb ÁªìÊûúÂõûË∞É  ÂèØÊü•ÁúãDeleteSessionInfoCallbackÂÆö‰πâ
+		  * @param[in] user_data APPÁöÑËá™ÂÆö‰πâÁî®Êà∑Êï∞ÊçÆÔºåSDKÂè™Ë¥üË¥£‰º†ÂõûÁªôÂõûË∞ÉÂáΩÊï∞cbÔºå‰∏çÂÅö‰ªª‰ΩïÂ§ÑÁêÜÔºÅ
+		  * @return void Êó†ËøîÂõûÂÄº
 		  */
 		static void DeleteSession(const SessionOnLineServiceHelper::DeleteSessionParam& param, const DeleteSessionInfoCallback& cb);
 
 		/** @fn static void RegSessionChanged(const SessionChangedCallback& cb)
-		  * ª·ª∞∑˛ŒÒ ◊¢≤·ª·ª∞±‰∏¸ªÿµ˜
-		  * @param[in] cb Ω·π˚ªÿµ˜  ø…≤Èø¥SessionChangedCallback∂®“Â
-		  * @return void Œﬁ∑µªÿ÷µ
+		  * ‰ºöËØùÊúçÂä° Ê≥®ÂÜå‰ºöËØùÂèòÊõ¥ÂõûË∞É
+		  * @param[in] cb ÁªìÊûúÂõûË∞É  ÂèØÊü•ÁúãSessionChangedCallbackÂÆö‰πâ
+		  * @return void Êó†ËøîÂõûÂÄº
 		  */
 		static void RegSessionChanged(const SessionChangedCallback& cb);
 
 		/** @fn void UnregSessionOnLineServiceCb()
-		* ∑¥◊¢≤· SessionOnLineService À˘”–ªÿµ˜
-		* @return void Œﬁ∑µªÿ÷µ
+		* ÂèçÊ≥®ÂÜå SessionOnLineService ÊâÄÊúâÂõûË∞É
+		* @return void Êó†ËøîÂõûÂÄº
 		*/
 		static void UnregSessionOnLineServiceCb();
 	};

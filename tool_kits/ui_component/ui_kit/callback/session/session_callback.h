@@ -26,6 +26,13 @@ public:
 	static void OnReceiveMsgCallback(const nim::IMMessage& message);
 
 	/**
+	* 收到消息过滤的回调，需要在程序开始运行时就注册好。
+	* @param[in] message 接收到的消息内容及其他相关信息
+	* @return bool	true:SDK不需要处理，false:SDK以正常逻辑处理
+	*/
+	static bool OnMessageFilterCallback(const nim::IMMessage& message);
+
+	/**
 	* 收到批量普通消息的回调，需要在程序开始运行时就注册好。
 	* @param[in] messages 接收到的消息内容及其他相关信息
 	* @return void	无返回值

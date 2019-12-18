@@ -540,7 +540,14 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 		cached_msgs_bubbles_.insert(cached_msgs_bubbles_.begin(), 1, item);
 	else
 		cached_msgs_bubbles_.push_back(item);
-
+	auto it_closure_befor_item_add = closure_befor_item_add_.find(bubble_id);
+	if (it_closure_befor_item_add != closure_befor_item_add_.end())
+	{
+		QLOG_WAR(L"it_closure_befor_item_add != closure_befor_item_add_.end() task count {0}") << it_closure_befor_item_add->second.size();
+		for (auto & it : it_closure_befor_item_add->second)
+			it();
+		closure_befor_item_add_.erase(it_closure_befor_item_add);
+	}
 	return item;
 }
 void SessionBox::InvokeShowSpecifiedCountMsgs(unsigned count)
@@ -899,14 +906,24 @@ void SessionBox::OnSnapchatReadCallback(const std::string& client_msg_id)
 
 void SessionBox::OnDownloadCallback(const std::string &res_id, bool success, const std::string& file_path)
 {
+	static auto OnDownloadCallback_task = [](MsgBubbleItem* item, bool success, const std::string& file_path) {
+		item->OnDownloadCallback(success, file_path);
+	};
 	IdBubblePair::iterator it = id_bubble_pair_.find(res_id);
 	if (it != id_bubble_pair_.end())
 	{
-		MsgBubbleItem* item = it->second;
-		if (item)
-		{
-			item->OnDownloadCallback(success, file_path);
-		}
+		OnDownloadCallback_task(it->second,success, file_path);
+	}
+	else
+	{
+		QLOG_WAR(L"MsgRecordForm::OnDownloadCallback cid {0}") << res_id;
+		closure_befor_item_add_[res_id].emplace_back(ToWeakCallback(
+			[this, res_id, success, file_path]() {
+			IdBubblePair::iterator it = id_bubble_pair_.find(res_id);
+			if (it != id_bubble_pair_.end())
+				OnDownloadCallback_task(it->second, success, file_path);
+		})
+		);
 	}
 }
 
@@ -980,15 +997,7 @@ void SessionBox::OnRecallMsgCallback(nim::NIMResCode code, const nim::RecallMsgN
 
 void SessionBox::OnRetweetResDownloadCallback(nim::NIMResCode code, const std::string& file_path, const std::string& sid, const std::string& cid)
 {
-	IdBubblePair::iterator it = id_bubble_pair_.find(cid);
-	if (it != id_bubble_pair_.end())
-	{
-		MsgBubbleItem* item = it->second;
-		if (item)
-		{
-			item->OnDownloadCallback(code == nim::kNIMResSuccess, file_path);
-		}
-	}
+	OnDownloadCallback(cid,code == nim::kNIMResSuccess, file_path);	
 }
 
 MsgBubbleItem* SessionBox::FindBubbleByTransferFileSID(TransferFileSessionID transfer_file_session_id)
@@ -1592,7 +1601,7 @@ int SessionBox::RemoveMsgItem(const std::string& client_msg_id)
 	auto iter1 = id_bubble_pair_.find(client_msg_id);
 	if (iter1 != id_bubble_pair_.end())
 		id_bubble_pair_.erase(client_msg_id); //从id_bubble_pair_删除
-
+	closure_befor_item_add_.erase(client_msg_id);
 	msg_list_->Remove(msg_item); //最后从msg_list_中删除并销毁该MsgBubbleItem
 
 	return index;

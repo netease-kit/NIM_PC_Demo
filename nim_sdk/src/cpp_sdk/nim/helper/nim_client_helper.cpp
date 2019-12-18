@@ -25,7 +25,6 @@ namespace nim
 		, reset_unread_count_when_recall_(false)
 		, upload_sdk_events_after_login_(false)
 		, animated_image_thumbnail_enabled_(false)
-		, upload_statistics_data_(true)
 		, client_antispam_(false)
 		, team_msg_ack_(false)
 		, caching_markread_(false)

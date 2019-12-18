@@ -49,6 +49,7 @@ public:
 	typedef std::function<void(bool ret, int code, const std::string& json_extension)> OptCallback;				/**< 操作回调模板 */
 	typedef std::function<void(int code, int64_t channel_id, const std::string& json_extension)> Opt2Callback;	/**< 操作回调模板 */
 	typedef std::function<void(int id, bool ret, int code, const std::string& json_extension)> EffectOptCallback;				/**< 操作回调模板 */
+    typedef std::function<void(const std::string& accid, uint64_t time, const char *data, uint32_t size, int32_t channels, int32_t rate)> RemoteAudioDataCallback;    /**< 远端音频数据回调 */
 
 	/** @fn static bool Init(const std::string& json_info)
 	* NIM VCHAT初始化，需要在SDK的nim_client_init成功之后
@@ -641,6 +642,33 @@ public:
 	* @return void 无返回值
 	*/
 	static void SubscribeAudio(bool sub, OptCallback cb);
+
+
+    /** @fn SetRemoteAudioDataCb(RemoteAudioDataCallback cb)
+    * 全局设置远端音频数据回调接口，
+    * 针对不同用户的数据回调都由该接口返回，不允许回调使用过程中修改;该数据回调为同步回调，需要保证快速处理，防止影响音频播放。
+    * @param[in] cb 数据回调接口RemoteAudioDataCallback。
+    * @return void 无返回值
+    */
+    static void SetRemoteAudioDataCb(RemoteAudioDataCallback cb);
+
+    /** @fn void AddRemoteAudioDataCb(const std::string& uid, OptCallback cb)
+    * 通话中设置用户远端数据回调
+    * 该成员加入通话后设置才有效，否则cb会返回失败，数据回调由SetRemoteAudioDataCb接口设置
+    * @param[in] uid 用户账号
+    * @param[in] cb 接口调用结果。
+    * @return void 无返回值
+    */
+    static void AddRemoteAudioDataCb(const std::string& uid, OptCallback cb);
+
+    /** @fn void RemoveRemoteAudioDataCb(const std::string& uid, OptCallback cb)
+    * 通话中取消用户远端数据回调
+    * 该成员加入通话后设置才有效，否则cb会返回失败
+    * @param[in] uid 用户账号
+    * @param[in] cb 接口调用结果。
+    * @return void 无返回值
+    */
+    static void RemoveRemoteAudioDataCb(const std::string& uid, OptCallback cb);
 
 };
 }

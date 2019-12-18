@@ -1,5 +1,6 @@
 #include "login_form.h"
 #include <fstream>
+#include "base/util/string_util.h"
 #include "gui/main/main_form.h"
 #include "module/db/public_db.h"
 #include "module/login/login_manager.h"
@@ -14,6 +15,8 @@
 #include "tool_kits\ui_component\ui_kit\export\nim_ui_runtime_manager.h"
 #include "gui/proxy/proxy_form.h"
 #include "nim_app.h"
+
+#include "ui_component\ui_kit\util\user.h"
 using namespace ui;
 void LoginForm::OnLogin()
 {
@@ -391,6 +394,7 @@ void LoginForm::OnLoginOK()
 	PublicDB::GetInstance()->GetLoginData()->remember_psw_ = remember_pwd_ckb_->IsSelected() ? 1 : 0;
 	PublicDB::GetInstance()->GetLoginData()->remember_user_ = remember_user_ckb_->IsSelected() ? 1 : 0;
 	PublicDB::GetInstance()->SaveLoginData();
+	nim_http::InitLog(nbase::UTF16ToUTF8(nim_comp::GetUserDataPath().append(L"nim_demo_http.log")));
 }
 
 void LoginForm::CheckAutoLogin()

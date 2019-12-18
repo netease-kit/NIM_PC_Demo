@@ -34,7 +34,7 @@ public:
 	typedef std::function<void(const NIMResCode, const std::list<RecallMsgNotify>&)>	RecallMsgsCallback;	/**< 消息撤回通知回调模板 */
 	typedef std::function<void(const BroadcastMessage&)>	ReceiveBroadcastMsgCallback;	/**< 接收广播消息通知回调模板 */
 	typedef std::function<void(const std::list<BroadcastMessage>&)>	ReceiveBroadcastMsgsCallback;	/**< 批量接收广播消息通知回调模板 */
-
+	typedef std::function<bool(const IMMessage&)> MessageFilter; /**< 消息过滤器 */
 	/** @fn static void RegSendMsgCb(const SendMsgCallback& cb, const std::string& json_extension = "")
 	* (全局回调)注册发送消息回调函数 （必须全局注册,统一接受回调后分发消息到具体的会话。注意：客户端发包之后,服务器不一定会返回！！！）
 	* @param[in] json_extension json扩展参数（备用,目前不需要）
@@ -323,6 +323,14 @@ public:
 	* @return void 无返回值
 	*/
 	static void RegTeamNotificationFilter(const TeamNotificationFilter& filter, const std::string& json_extension = "");
+
+	/** @fn static void RegMessageFilter(const MessageFilter& filter, const std::string& json_extension = "")
+	* (全局回调)注册消息过滤接口 （堵塞线程，谨慎使用，避免耗时行为）
+	* @param[in] json_extension json扩展参数（备用,目前不需要）
+	* @param[in] filter	过滤接口
+	* @return void 无返回值
+	*/
+	static void RegMessageFilter(const MessageFilter& filter, const std::string& json_extension = "");
 
 	/** @fn static void RegRecallMsgsCallback(const RecallMsgsCallback& cb, const std::string& json_extension = "");
 	* (全局回调)注册消息回调通知接口
