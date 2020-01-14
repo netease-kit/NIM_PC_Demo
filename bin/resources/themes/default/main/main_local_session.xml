@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window>
+	<ListContainerElement class="listitem" height="auto" cursortype="hand" height="60">
+		<HBox height="auto" mouse="false" valign="center" padding="10">
+				<Control bkimage="local_session_icon.png" width="auto" height="auto" margin="3,0,10" mouse="false"/>
+				<Label textid="STRID_MAINWINDOW_LOCAL_SESSION" font="2" valign="center" mouse="false"/>
+			</HBox>
+			<Control class="splitline_hor_level1"/>
+		<Control class="splitline_hor_level1" name="split_line" valign="bottom"/>
+	</ListContainerElement>
+</Window>

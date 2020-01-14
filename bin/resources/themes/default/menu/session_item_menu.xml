@@ -2,7 +2,7 @@
 <Window>
     <VListBox class="menu">
         <MenuElement class="MenuElement" name="del_session_item" width="158">
-            <Label class="menu_text" textid="STRID_SESSION_ITEM_DELETE_SESSION"/>
+            <Label class="menu_text" name="del_session_item_text" textid="STRID_SESSION_ITEM_DELETE_SESSION"/>
         </MenuElement>
         <MenuElement class="MenuElement" name="del_session_msg" width="158">
             <Label class="menu_text" textid="STRID_SESSION_ITEM_DELETE_MSGLOG"/>
