@@ -24,7 +24,7 @@ namespace nim
 			session.last_message_ = json_session[kMINSessionOLSRVInfoLastMSG].asString();
 			return true;
 		}
-		bool SessionOnLineServiceHelper::ParseQureySessionListResult(const std::string& result_json, QureySessionListResult& result)
+		bool SessionOnLineServiceHelper::ParseQuerySessionListResult(const std::string& result_json, QuerySessionListResult& result)
 		{
 			nim_cpp_wrapper_util::Json::Value json_result;
 			if (!nim_cpp_wrapper_util::Json::Reader().parse(result_json, json_result))

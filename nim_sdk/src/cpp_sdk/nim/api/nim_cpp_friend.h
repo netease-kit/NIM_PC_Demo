@@ -155,6 +155,16 @@ public:
 	*/
 	static bool QueryFriendshipBlock(const std::string& accid, const std::string& json_extension = "");
 
+	/** @fn static bool QueryFriendListByKeyword(std::string& keyword, const GetFriendsListCallback& cb, const std::string& json_extension = "")
+	* 增量获取好友列表
+	* @param[in] keyword 要查询的关键字
+	* @param[in] cb	获取好友列表回调函数
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @return bool 返回 true 表示发送查询请求成功，返回 false 表示关键字为空
+	* @note 错误码	200:成功
+	*/
+	static bool QueryFriendListByKeyword(std::string& keyword, const GetFriendsListCallback& cb, const std::string& json_extension = "");
+
 };
 
 }

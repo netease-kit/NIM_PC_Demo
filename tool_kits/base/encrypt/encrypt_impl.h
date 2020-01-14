@@ -222,13 +222,13 @@ public:
 	bool EnableEncryptPadding(bool enable, int value)
 	{ 
 		enable_padding_ = enable;
-		padding_value_ = (value == 0 ? 0 : 1);
+		padding_value_ = (value == 0 ? 0 : value);
 		return true; 
 	};
 	bool EnableDecryptPadding(bool enable, int value)
 	{ 
 		enable_padding_ = enable;
-		padding_value_ = (value == 0 ? 0 : 1);
+		padding_value_ = (value == 0 ? 0 : value);
 		return true; 
 	};
 	nbase::EncryptMethod Type() const { return T; }
@@ -838,13 +838,13 @@ public:
 	bool EnableEncryptPadding(bool enable, int value)
 	{
 		enable_padding_ = enable;
-		padding_value_ = (value == 0 ? 0 : 1);
+		padding_value_ = (value == 0 ? 0 : value);
 		return true;
 	};
 	bool EnableDecryptPadding(bool enable, int value)
 	{
 		enable_padding_ = enable;
-		padding_value_ = (value == 0 ? 0 : 1);
+		padding_value_ = (value == 0 ? 0 : value);
 		return true;
 	};
 	nbase::EncryptMethod Type() const { return T; }

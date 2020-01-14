@@ -1,4 +1,4 @@
-// Copyright 2011 Baptiste Lepilleur
+ï»¿// Copyright 2011 Baptiste Lepilleur
 // Distributed under MIT license, or public domain if desired and
 // recognized in your jurisdiction.
 // See file LICENSE for detail or copy at http://jsoncpp.sourceforge.net/LICENSE
@@ -287,7 +287,7 @@ void FastWriter::enableYAMLCompatibility() { yamlCompatiblityEnabled_ = true; }
 std::string FastWriter::write(const Value& root) {
   document_ = "";
   writeValue(root);
-  //document_ += "\n"; ÔÆĞÅÄ¿Ç°·şÎñÆ÷Ï£ÍûÉ¾µôÄ©Î²»Ø³µ·û,¿ª·¢ÕßÈç¹ûÓĞĞèÒª¿É×ÔĞĞµ÷ÕûÖØĞÂ±àÒëlib Yunxin.Oleg
+  //document_ += "\n"; äº‘ä¿¡ç›®å‰æœåŠ¡å™¨å¸Œæœ›åˆ æ‰æœ«å°¾å›è½¦ç¬¦,å¼€å‘è€…å¦‚æœæœ‰éœ€è¦å¯è‡ªè¡Œè°ƒæ•´é‡æ–°ç¼–è¯‘lib Yunxin.Oleg
   return document_;
 }
 

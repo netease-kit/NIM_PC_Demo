@@ -67,7 +67,7 @@ bool AsyncModalRunnerManager::DoModal(ModalWndBase *dlg)
 {
 	if (dlg == nullptr)
 		return false;
-	std::shared_ptr<AsyncModalRunner> runner(new AsyncModalRunner(this));
+	std::shared_ptr<AsyncModalRunner> runner = std::make_shared<AsyncModalRunner>(this);
 	{
 		nbase::NAutoLock lock(&threads_lock_);
 		runners_.push_back(runner);

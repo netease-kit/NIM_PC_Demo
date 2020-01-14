@@ -566,6 +566,21 @@ NIM_SDK_DLL_API void nim_team_msg_query_unread_list(const char *tid, const char 
 */
 NIM_SDK_DLL_API void nim_team_query_members_invitor(const char *tid, const char *members,  nim_team_query_members_invitor_cb_func cb,const void *user_data);
 
+/** @fn void nim_team_query_teams_info_by_keyword(const char *keyword, nim_team_query_all_my_teams_cb_func cb, const char *json_extension, const void *user_data);
+* 查询群成员的邀请人 accid
+* @param[in] keyword		要查询的关键字
+* @param[in] query_type		查询条件，见：NIMTeamQueryType
+* @param[in] cb				查询群信息的回调函数
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] user_data		APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+* @note 错误码	200:成功
+*/
+NIM_SDK_DLL_API void nim_team_query_teams_info_by_keyword(const char *keyword, 
+	nim_team_query_all_my_teams_cb_func cb, 
+	const char *json_extension, 
+	const void *user_data);
+
 #ifdef __cplusplus
 };
 #endif //__cplusplus

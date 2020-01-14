@@ -511,7 +511,7 @@ typedef void(*nim_vchat_rate_callback)(bool ret, int response_code,const char *j
   * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void(*nim_vchat_remote_audio_data_cb_func)(unsigned __int64 time, const char *data, unsigned int size, int channels, int rate, const char *json_extension, const void *user_data);
+typedef void(*nim_vchat_remote_audio_data_cb_func)(uint64_t time, const char *data, unsigned int size, int channels, int rate, const char *json_extension, const void *user_data);
 
 
 #ifdef __cplusplus

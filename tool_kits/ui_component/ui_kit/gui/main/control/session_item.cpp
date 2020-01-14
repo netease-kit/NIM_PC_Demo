@@ -21,6 +21,7 @@ using namespace ui;
 namespace nim_comp
 {
 SessionItem::SessionItem()
+	: is_online_session_(false)
 {
 
 }
@@ -31,7 +32,7 @@ SessionItem::~SessionItem()
 }
 
 void SessionItem::InitCtrl()
-{	
+{
 	if (RunTimeDataManager::GetInstance()->GetUIStyle() == UIStyle::join)
 		AttachSelect(nbase::Bind(&SessionItem::OnDbClicked, this, std::placeholders::_1));
 	else
@@ -123,6 +124,11 @@ void SessionItem::InitMsg(const nim::SessionData &msg)
 	{
 		SetMute(nim_comp::SessionManager::GetInstance()->IsTeamMsgMuteShown(msg_.id_, -1));
 	}
+}
+
+void SessionItem::SetOnlineSessionType(bool is_online_session)
+{
+	is_online_session_ = is_online_session;
 }
 
 void SessionItem::SetMute(bool mute)
@@ -331,6 +337,12 @@ void SessionItem::PopupSessionItemMenu(POINT point)
 
 	CMenuElementUI* del_session_item = (CMenuElementUI*)pMenu->FindControl(L"del_session_item");
 	del_session_item->AttachSelect(nbase::Bind(&SessionItem::DelSessionItemMenuItemClick, this, std::placeholders::_1));
+	if (is_online_session_)
+	{
+		auto del_session_label = dynamic_cast<Label*>(del_session_item->FindSubControl(L"del_session_item_text"));
+		if (del_session_label)
+			del_session_label->SetTextId(L"STRID_SESSION_ITEM_DELETE_ONLINE_SESSION");
+	}
 
 	CMenuElementUI* del_session_msg = (CMenuElementUI*)pMenu->FindControl(L"del_session_msg");
 	del_session_msg->AttachSelect(nbase::Bind(&SessionItem::DelSessionItemMenuItemClick, this, std::placeholders::_1));
@@ -360,7 +372,18 @@ bool SessionItem::DelSessionItemMenuItemClick(ui::EventArgs* param)
 		auto closure = [this, has_transfer_task](MsgBoxRet ret) {
 			if (ret == MB_YES)
 			{
-				nim::Session::DeleteRecentSession(msg_.type_, msg_.id_, nbase::Bind(&SessionItem::DeleteRecentSessionCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+				if (is_online_session_)
+				{
+					nim::SessionOnLineServiceHelper::DeleteSessionParam delete_param;
+					delete_param.AddSession(msg_.type_, msg_.id_);
+					nim::SessionOnLineService::DeleteSession(delete_param, [](nim::NIMResCode res_code) {
+						QLOG_APP(L"delete online session, code={0}") << res_code;
+					});
+				}
+				else
+				{
+					nim::Session::DeleteRecentSession(msg_.type_, msg_.id_, nbase::Bind(&SessionItem::DeleteRecentSessionCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+				}
 				SubscribeEventManager::GetInstance()->UnSubscribeSessionEvent(msg_);
 				m_pWindow->SendNotify(this, ui::kEventNotify, SET_DELETE, 0);
 

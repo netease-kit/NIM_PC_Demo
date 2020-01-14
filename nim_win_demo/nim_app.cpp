@@ -169,6 +169,8 @@ int NimAPP::InitInstance(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLin
 		if (!nbase::FilePathIsExist(nim_http_tool_path, false))
 			if (!nbase::CopyFile(nim_http_tool_path_src, nim_http_tool_path))
 				nim_http_tool_path = L"";
+		if (!nbase::FilePathIsExist(nim_http_tool_path, false))
+				nim_http_tool_path = L"";
 	}
 	// ≥ı ºªØ‘∆–≈http
 	nim_http::Init(nim_http_tool_path);
@@ -236,11 +238,11 @@ void NimAPP::InitGlobalConfig(const std::string& server_conf_file_path,std::stri
 		server_conf_path.append(L"global_conf.txt");
 		if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMServerConfFilePath,false))
 		{
-			std::string server_conf_file_path = GetConfigValue(nim::kNIMServerConfFilePath);
-			if (server_conf_file_path.empty())
-				server_conf_file_path = nbase::UTF16ToUTF8(QPath::GetAppPath().append(L"nim_server.conf"));
+			std::string nim_server_conf_file_path = GetConfigValue(nim::kNIMServerConfFilePath);
+			if (nim_server_conf_file_path.empty())
+				nim_server_conf_file_path = nbase::UTF16ToUTF8(QPath::GetAppPath().append(L"nim_server.conf"));
 			if (nbase::FilePathIsExist(QPath::GetAppPath().append(L"nim_server.conf"), false))
-				config.server_conf_file_path_ = server_conf_file_path;
+				config.server_conf_file_path_ = nim_server_conf_file_path;
 		}
 	}
 	if (!config.server_conf_file_path_.empty())

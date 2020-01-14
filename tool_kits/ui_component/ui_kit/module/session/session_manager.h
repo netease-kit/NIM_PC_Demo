@@ -79,6 +79,23 @@ public:
 	* @return void 无返回值
 	*/
 	void QueryMyAllTeamMemberInfos();
+
+	/**
+	 * 注册会话数据变更回调
+	 * @param[in] cb 回调函数
+	 * @return void 无返回值
+	 */
+	void RegSessionChangedCallback(const nim::Session::ChangeCallback& cb) { session_changed_callbacks_.push_back(cb); }
+
+	/**
+	 * 会话变更服务器的统一入口函数
+	 * @param[in] rescode 返回码
+	 * @param[in] data 会话消息的具体信息和内容
+	 * @param[in] total_unread_counts 未读消息条数
+	 * @return void 无返回值
+	 */
+	void InvokeSessionChangedCallback(nim::NIMResCode rescode, const nim::SessionData& data, int total_unread_counts);
+
 public:
 	/**
 	* 设置是否开启会话合并功能
@@ -198,8 +215,8 @@ private:
 	SessionBox	*draging_session_box_;	// 当下正在被拖拽的会话盒子
 	ISessionDock	*drop_session_form_;	// 拖入会话盒子的会话窗口，用于附加拖拽来的会话盒子
 
+	std::list<nim::Session::ChangeCallback> session_changed_callbacks_;
 	std::map<std::string, SessionBox*>	session_box_map_;
-
 	std::map<std::string, uint64_t>		team_list_bits_;
 	shared::Ring ring_;
 };

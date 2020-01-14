@@ -1,14 +1,15 @@
 ﻿#include "nim_ui_session_list_manager.h"
-#include "gui/main/session_list.h"
 #include "callback/session/session_callback.h"
-#include "gui/main/team_event_form.h"
 #include "nim_service/module/service/session_service.h"
+#include "gui/main/team_event_form.h"
+#include "gui/main/session_list.h"
 
 namespace nim_ui
 {
 SessionListManager::SessionListManager()
 {
 	nim_comp::SessionService::GetInstance()->RegSessionDataChangedCallback(nbase::Bind(&SessionListManager::OnQuerySessionListCallback, this, std::placeholders::_1));
+	nim_comp::SessionService::GetInstance()->RegOnlineSessionDataChangedCallback(nbase::Bind(&SessionListManager::OnQueryOnlineSessionListCallback, this, std::placeholders::_1, std::placeholders::_2));
 }
 
 bool SessionListManager::AttachListBox(ui::ListBox *list_box)
@@ -23,6 +24,26 @@ bool SessionListManager::AttachListBox(ui::ListBox *list_box)
 		session_list_.reset(new nim_comp::SessionList(list_box));
 	}
 	return true;
+}
+
+bool SessionListManager::AttachCloudListBox(ui::ListBox* list_box)
+{
+	if (NULL == list_box)
+	{
+		if (session_list_cloud_ != nullptr)
+			session_list_cloud_ = nullptr;
+	}
+	else
+	{
+		session_list_cloud_.reset(new nim_comp::SessionListCloud(list_box));
+	}
+	return true;
+}
+
+void SessionListManager::ShowCloudSession(bool show /*= true*/)
+{
+	session_list_->Show(!show);
+	session_list_cloud_->Show(show);
 }
 
 void SessionListManager::QueryUnreadSysMsgCount()
@@ -54,6 +75,11 @@ void SessionListManager::InvokeSelectSessionItem(const std::string &id, bool sel
 	if (item == nullptr || item->IsSelected() == sel)
 		return;
 	item->Selected(sel, trigger);
+
+	auto online_session_item = session_list_cloud_->GetSessionItem(id);
+	if (online_session_item == nullptr || online_session_item->IsSelected() == sel)
+		return;
+	online_session_item->Selected(sel, trigger);
 }
 void SessionListManager::InvokeSelectSessionItem(const std::string &id, nim::NIMSessionType session_type, bool create/* = true*/, bool sel/* = true*/, bool trigger/* = true*/)
 {
@@ -98,6 +124,10 @@ void SessionListManager::InvokeResetSessionUnread(const std::string &id)
 	if (NULL == session_list_)
 		return;
 	session_list_->ResetUnreadCount(id);
+
+	if (NULL == session_list_cloud_)
+		return;
+	session_list_cloud_->ResetUnreadCount(id);
 }
 
 void SessionListManager::UISysmsgUnread(int count)
@@ -144,6 +174,41 @@ void SessionListManager::OnQuerySessionListCallback(const std::list<nim::Session
 		session_list_->AddSessionItem(session,false);
 	}
 }
+
+void SessionListManager::OnQueryOnlineSessionListCallback(bool has_more, const nim::SessionOnLineServiceHelper::SessionList& session_list)
+{
+	if (session_list.empty())
+		return;
+
+	for each (auto& session in session_list)
+	{
+		Json::Value msg_values;
+		Json::Reader reader;
+
+		nim::SessionData session_data;
+		session_data.id_ = session.id_;
+		session_data.type_ = session.type_;
+
+		if (reader.parse(session.last_message_, msg_values))
+		{
+			session_data.msg_attach_ = msg_values[nim::kNIMMsgKeyAttach].asString();
+			session_data.msg_content_ = msg_values[nim::kNIMMsgKeyBody].asString();
+			session_data.msg_id_ = msg_values[nim::kNIMMsgKeyClientMsgid].asString();
+			session_data.msg_type_ = static_cast<nim::NIMMessageType>(msg_values[nim::kNIMMsgKeyType].asInt());
+			session_data.msg_status_ = static_cast<nim::NIMMsgLogStatus>(msg_values[nim::kNIMMsgKeyLocalLogStatus].asInt());
+			session_data.msg_sub_status_ = static_cast<nim::NIMMsgLogSubStatus>(msg_values[nim::kNIMMsgKeyLocalLogSubStatus].asInt());
+			session_data.msg_sender_accid_ = msg_values[nim::kNIMMsgKeyFromAccount].asString();
+			session_data.msg_timetag_ = msg_values[nim::kNIMMsgKeyTime].asUInt64();
+			session_data.last_updated_msg_ = true;
+		}
+
+		session_list_cloud_->AddSessionItem(session_data);
+	}
+
+	// 增加获取更多按钮
+	session_list_cloud_->AddLoadMore(has_more);
+}
+
 void SessionListManager::InsertLocalMsg(const nim_comp::InsertLocalMessageCallback& cb, nim::NIMSessionType session_type, const std::string& session_id, __int64 time, bool status_delete)
 {
 	nim::IMMessage msg;

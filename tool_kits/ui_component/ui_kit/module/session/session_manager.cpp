@@ -14,6 +14,8 @@ SessionManager::SessionManager()
 	enable_merge_ = true;
 	use_custom_drag_image_ = true;
 	ring_.Init(NULL);
+
+	nim::Session::RegChangeCb(nbase::Bind(&SessionManager::InvokeSessionChangedCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
 
 SessionManager::~SessionManager()
@@ -260,6 +262,12 @@ void SessionManager::QueryMyTeamMemberInfo(const std::string& tid)
 void SessionManager::QueryMyAllTeamMemberInfos()
 {
 	nim::Team::QueryMyAllMemberInfosAsync(nbase::Bind(&SessionManager::OnQueryMyAllTeamMemberInfos, this, std::placeholders::_1, std::placeholders::_2));
+}
+
+void SessionManager::InvokeSessionChangedCallback(nim::NIMResCode rescode, const nim::SessionData& data, int total_unread_counts)
+{
+	for (auto& cb : session_changed_callbacks_)
+		cb(rescode, data, total_unread_counts);
 }
 
 void SessionManager::OnQueryMyTeamMemberInfo(const std::string& tid, const nim::TeamMemberProperty& team_member_info)

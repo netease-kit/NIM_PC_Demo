@@ -24,6 +24,14 @@ enum NIMUserSpecialRelationshipChangeType
 	kNIMUserSpecialRelationshipChangeTypeSyncMuteAndBlackList	= 3,	/**< 同步黑名单和静音名单 */
 };
 
+/** @enum NIMUserQueryType 查询用户信息条件选项 */
+enum NIMUserQueryType
+{
+	kNIMUserQueryDefault		= 0,	/**< 查询默认条件，将匹配账户ID和昵称 */
+	kNIMUserQueryByAccId		= 1,	/**< 仅匹配账户ID */
+	kNIMUserQueryByNickname		= 2		/**< 仅匹配用户昵称 */
+};
+
 /** @name 用户特殊关系（黑名单、静音名单） Json Keys
   * 例子 [{"accid" : "litianyi01","is_mute" : 1},{"accid" : "litianyi03","is_black" : 1},...]
   * @{

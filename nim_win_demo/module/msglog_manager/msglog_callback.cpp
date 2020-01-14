@@ -10,42 +10,78 @@
 #include "modes.h"
 #include "files.h"
 #include "hex.h"
-
+#include <openssl/aes.h>
 
 bool CBC_AESDecryptFile(std::string sKey, std::string sIV, const std::string& src, const std::string& des)
 {
-	int key_size = CryptoPP::AES::MAX_KEYLENGTH;
-	CryptoPP::SecByteBlock key(key_size);
-	memset(key, 0x30, key_size);
-	(int)sKey.size() <= key_size ? memcpy(key, sKey.c_str(), sKey.size()) : memcpy(key, sKey.c_str(), key_size);
-
-
-	CryptoPP::byte iv[CryptoPP::AES::BLOCKSIZE];
-	memset(iv, 0x30, CryptoPP::AES::BLOCKSIZE);
-	sIV.size() <= CryptoPP::AES::BLOCKSIZE ? memcpy(iv, sIV.c_str(), sIV.size()) : memcpy(iv, sIV.c_str(), CryptoPP::AES::BLOCKSIZE);
-
-	CryptoPP::CBC_Mode<CryptoPP::AES>::Decryption aes(key, key.size(), iv);
-
-	CryptoPP::FileSource(src.c_str(), true, \
-		new CryptoPP::StreamTransformationFilter(aes, new CryptoPP::FileSink(des.c_str()), CryptoPP::BlockPaddingSchemeDef::BlockPaddingScheme::PKCS_PADDING,true));
+	
+	FILE* i_stream = fopen(src.c_str(), "rb");
+	if (i_stream != NULL)
+	{
+		FILE* o_stream = fopen(des.c_str(), "wb+");
+		if (o_stream != NULL)
+		{
+			nbase::EncryptInterface_var chiper;
+			int file_length = 0;
+			chiper.reset(new nbase::Encrypt_Impl());
+			chiper->SetMethod(nbase::EncryptMethod::ENC_AES256_CBC);
+			chiper->SetDecryptKey(sKey);
+			chiper->SetDecryptIvParameterSpec(sIV);
+			chiper->EnableDecryptPadding(true, 1);
+			int count = 0;
+			fseek(i_stream, 0, SEEK_END);
+			file_length = ftell(i_stream);
+			fseek(i_stream, 0, SEEK_SET);
+			std::shared_ptr<char[]> buffer(new char[file_length]());
+			std::string o_buffer;
+			count = fread(buffer.get(), 1, file_length, i_stream);
+			if (count > 0)
+			{
+				std::string temp_buffer;
+				temp_buffer.append(buffer.get(), count);
+				chiper->Decrypt(temp_buffer, o_buffer);
+				fwrite(o_buffer.data(), o_buffer.size(), 1, o_stream);
+			}			
+			fclose(o_stream);
+		}
+		fclose(i_stream);
+	}
 	return true;
 }
 
 bool CBC_AESEncryptFile(std::string sKey, std::string sIV, const std::string& src, const std::string& des)
 {
-	int key_size = CryptoPP::AES::MAX_KEYLENGTH;
-	CryptoPP::SecByteBlock key(key_size);
-	memset(key, 0x30, key.size());
-	(int)sKey.size() <= key_size ? memcpy(key, sKey.c_str(), sKey.size()) : memcpy(key, sKey.c_str(), key_size);
-
-	CryptoPP::byte iv[CryptoPP::AES::BLOCKSIZE];
-	memset(iv, 0x30, CryptoPP::AES::BLOCKSIZE);
-	sIV.size() <= CryptoPP::AES::BLOCKSIZE ? memcpy(iv, sIV.c_str(), sIV.size()) : memcpy(iv, sIV.c_str(), CryptoPP::AES::BLOCKSIZE);
-
-	CryptoPP::CBC_Mode<CryptoPP::AES>::Encryption aes(key, key.size(), iv);
-
-	CryptoPP::FileSource(src.c_str(), true, \
-		new CryptoPP::StreamTransformationFilter(aes, new CryptoPP::FileSink(des.c_str()), CryptoPP::BlockPaddingSchemeDef::BlockPaddingScheme::PKCS_PADDING, true));
+	FILE* i_stream = fopen(src.c_str(), "rb");
+	if (i_stream != NULL)
+	{
+		FILE* o_stream = fopen(des.c_str(), "wb");
+		if (o_stream != NULL)
+		{		
+			nbase::EncryptInterface_var chiper;
+			int file_length = 0;
+			chiper.reset(new nbase::Encrypt_Impl());
+			chiper->SetMethod(nbase::EncryptMethod::ENC_AES256_CBC);
+			chiper->SetEncryptKey(sKey);
+			chiper->SetEncryptIvParameterSpec(sIV);
+			chiper->EnableEncryptPadding(true, 1);
+			int count = 0;
+			fseek(i_stream, 0, SEEK_END);
+			file_length = ftell(i_stream);
+			fseek(i_stream, 0, SEEK_SET);
+			std::shared_ptr<char[]> buffer(new char[file_length]());
+			std::string o_buffer;			
+			count = fread(buffer.get(), 1, file_length, i_stream);
+			if (count > 0)
+			{
+				std::string temp_buffer;
+				temp_buffer.append(buffer.get(), count);
+				chiper->Encrypt(temp_buffer, o_buffer);
+				fwrite(o_buffer.data(), o_buffer.size(), 1, o_stream);
+			}			
+			fclose(o_stream);
+		}
+		fclose(i_stream);
+	}
 	return true;
 }
 

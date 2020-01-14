@@ -36,6 +36,7 @@ public:
 	typedef std::function<void(const std::string& tid, const TeamInfo& result)>	QueryTeamInfoCallback;		/**< 查询指定群信息回调模板 */
 	typedef std::function<void(NIMResCode error_code, const std::string& tid, const std::list<TeamMemberProperty>& team_member_propertys)>	QueryTeamMembersOnlineCallback;	/**< 查询群成员信息回调模板 */
 	typedef std::function<void(NIMResCode error_code, const std::string& tid, const std::map<std::string,std::string>& invitor_map)>	QueryTeamMembersInvitorCallback;	/**< 查询群成员邀请人accid 列表回调模板 */
+	typedef QueryAllMyTeamsInfoCallback QueryTeamsInfoCallback;
 	/** @fn static void RegTeamEventCb(const TeamEventCallback& cb, const std::string& json_extension = "")
 	* (全局回调)统一注册接收群通知回调函数（创建群,收到邀请等群通知通过此接口广播，注意：服务器推送过来的群通知和APP发起请求的回调统一处理！）
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -503,15 +504,24 @@ public:
 	*/
 	static void TeamMsgQueryUnreadList(const std::string& tid, const IMMessage& msg, const TeamEventCallback& cb, const std::string& json_extension = "");
 	
-	/** @fn void TeamQueryTeamMembersInvitor(const std::string& tid, const std::list<std::string>& members, const QueryTeamMembersInvitorCallback& cb);
-	* 查询群成员的邀请人 accid
+	/** @fn void QueryTeamMembersInvitor(const std::string& tid, const std::list<std::string>& members, const QueryTeamMembersInvitorCallback& cb);
+	* 查询群成员的邀请人 accid 由接口 原 TeamQueryTeamMembersInvitor方法
 	* @param[in] tid		群组id
 	* @param[in] members		要查询 的群成员accid列表
 	* @param[in] cb		回调函数
 	* @return void 无返回值
 	* @note 错误码	200:成功
 	*/
-	static void TeamQueryTeamMembersInvitor(const std::string& tid, const std::list<std::string>& members, const QueryTeamMembersInvitorCallback& cb);
+	static void QueryTeamMembersInvitor(const std::string& tid, const std::list<std::string>& members, const QueryTeamMembersInvitorCallback& cb);
+
+	/** @fn static bool QueryTeamInfoAsync(const std::string& tid, const QueryTeamInfoCallback& cb, const std::string& json_extension = "")
+	* 查询群信息
+	* @param[in] keyword		要查询的关键字
+	* @param[in] cb				查询群信息的回调函数
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @return bool 检查参数如果不符合要求则返回失败
+	*/
+	static bool QueryTeamInfoByKeywordAsync(const std::string& keyword, const QueryTeamsInfoCallback& cb, const std::string& json_extension = "");
 };
 
 } 

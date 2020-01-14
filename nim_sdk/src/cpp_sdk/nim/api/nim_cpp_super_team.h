@@ -65,6 +65,29 @@ public:
 		, const SuperTeamEventCallback& cb
 		, const std::string& json_extension = "");
 
+	/** @fn static bool InviteAsync2(const std::string& tid, const std::list<std::string>& ids, const std::string& invitation_postscript, const TeamEventCallback& cb, const std::string& json_extension = "")
+	* 邀请
+	* @param[in] tid		群组id
+	* @param[in] ids		邀请对象id
+	* @param[in] invitation_postscript 邀请附言
+	* @param[in] invitation_attachment 用户可自定义的补充邀请信息
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		邀请的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				810:如果是高级群，返回810表示邀请成功并带上timetag
+	*				404:非法用户
+	*				801:群人数超限
+	*				802:没有权限
+	*				803:群不存在
+	*/
+	static bool InviteAsync2(const std::string& tid
+		, const std::list<std::string>& ids
+		, const std::string& invitation_postscript
+		, const std::string& invitation_attachment
+		, const SuperTeamEventCallback& cb
+		, const std::string& json_extension = "");
+
 	/** @fn static bool KickAsync(const std::string& tid, const std::list<std::string>& ids, const SuperTeamEventCallback& cb, const std::string& json_extension = "")
 	* 踢人
 	* @param[in] tid		群组id
@@ -128,6 +151,192 @@ public:
 	*/
 	static bool UpdateMyPropertyAsync(const SuperTeamMemberProperty& prop, const SuperTeamEventCallback& cb, const std::string& json_extension = "");
 
+	/** @fn static bool ApplyJoinAsync(const std::string& tid, const std::string& reason, const SuperTeamEventCallback& cb, const std::string& json_extension = "")
+	* 申请入群
+	* @param[in] tid		群组id
+	* @param[in] reason		附言
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		申请入群的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:群验证方式为拒绝所有人申请
+	*				808:申请成功，等待验证
+	*				809:已经在群里
+	*				801:人数限制
+	*				803:群不存在
+	*				806:群数量上限
+	*/
+	static bool ApplyJoinAsync(const std::string& tid
+		, const std::string& reason
+		, const SuperTeamEventCallback& cb
+		, const std::string& json_extension = "");
+
+	/** @fn static bool PassJoinApplyAsync(const std::string& tid, const std::string& applicant_id, const SuperTeamEventCallback& cb, const std::string& json_extension = "")
+	* 同意入群申请
+	* @param[in] tid			群组id
+	* @param[in] applicant_id	申请者id
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb				同意入群申请的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				809:已经在群里
+	*				801:人数限制
+	*				802:没有权限
+	*				803:群不存在
+	*/
+	static bool PassJoinApplyAsync(const std::string& tid
+		, const std::string& applicant_id
+		, const SuperTeamEventCallback& cb
+		, const std::string& json_extension = "");
+
+	/** @fn static bool RejectJoinApplyAsync(const std::string& tid, const std::string& applicant_id, const std::string& reason, const SuperTeamEventCallback& cb, const std::string& json_extension = "")
+	* 拒绝入群申请
+	* @param[in] tid			群组id
+	* @param[in] applicant_id	申请者id
+	* @param[in] reason			附言
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb				拒绝入群申请的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功，如果用户处于申请状态则会通知申请用户被拒绝
+	*				802:没有权限
+	*				803:群不存在
+	*				809:已经在群里
+	*/
+	static bool RejectJoinApplyAsync(const std::string& tid
+		, const std::string& applicant_id
+		, const std::string& reason
+		, const SuperTeamEventCallback& cb
+		, const std::string& json_extension = "");
+
+	/** @fn static bool AddManagersAsync(const std::string& tid, const std::list<std::string>& ids, const SuperTeamEventCallback& cb, const std::string& json_extension = "")
+	* 添加管理员
+	* @param[in] tid	群组id
+	* @param[in] ids	管理员id
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		添加管理员的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
+	*				815:管理员数量上限
+	*/
+	static bool AddManagersAsync(const std::string& tid
+		, const std::list<std::string>& ids
+		, const SuperTeamEventCallback& cb
+		, const std::string& json_extension = "");
+
+	/** @fn static bool RemoveManagersAsync(const std::string& tid, const std::list<std::string>& ids, const SuperTeamEventCallback& cb, const std::string& json_extension = "")
+	* 删除管理员
+	* @param[in] tid	群组id
+	* @param[in] ids	管理员id
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		删除管理员的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
+	*/
+	static bool RemoveManagersAsync(const std::string& tid
+		, const std::list<std::string>& ids
+		, const SuperTeamEventCallback& cb
+		, const std::string& json_extension = "");
+
+	/** @fn static bool TransferTeamAsync(const std::string& tid, const std::string& new_owner_id, bool is_leave, const SuperTeamEventCallback& cb, const std::string& json_extension = "")
+	* 移交群主
+	* @param[in] tid			群组id
+	* @param[in] new_owner_id	移交对象id
+	* @param[in] is_leave		是否同时退出群
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		移交群主的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
+	*				806:群数量上限
+	*/
+	static bool TransferTeamAsync(const std::string& tid
+		, const std::string& new_owner_id
+		, bool is_leave
+		, const SuperTeamEventCallback& cb
+		, const std::string& json_extension = "");
+
+	/** @fn static bool UpdateOtherNickAsync(const TeamMemberProperty& prop, const SuperTeamEventCallback& cb, const std::string& json_extension = "")
+	* 修改别人的群昵称
+	* @param[in] prop	群成员属性
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		修改别人的群昵称的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
+	*				804:不在群里
+	*/
+	static bool UpdateOtherNickAsync(const SuperTeamMemberProperty& prop, const SuperTeamEventCallback& cb, const std::string& json_extension = "");
+
+	/** @fn static bool AcceptInvitationAsync(const std::string& tid, const std::string& invitor_id, const SuperTeamEventCallback& cb, const std::string& json_extension = "")
+	* 接受邀请
+	* @param[in] tid		群组id
+	* @param[in] invitor_id	邀请者id
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		接受邀请的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
+	*				809:已经在群里
+	*/
+	static bool AcceptInvitationAsync(const std::string& tid
+		, const std::string& invitor_id
+		, const SuperTeamEventCallback& cb
+		, const std::string& json_extension = "");
+
+	/** @fn static bool RejectInvitationAsync(const std::string& tid, const std::string& invitor_id, const std::string& reason, const SuperTeamEventCallback& cb, const std::string& json_extension = "")
+	* 拒绝邀请
+	* @param[in] tid		群组id
+	* @param[in] invitor_id	邀请者id
+	* @param[in] reason	附言
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		拒绝邀请的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				802:没有权限
+	*				803:群不存在
+	*				809:已经在群里
+	*/
+	static bool RejectInvitationAsync(const std::string& tid
+		, const std::string& invitor_id
+		, const std::string& reason
+		, const SuperTeamEventCallback& cb
+		, const std::string& json_extension = "");
+
+	/** @fn static bool MuteMemberAsync(const std::string& tid, const std::string& member_id, bool set_mute, const SuperTeamEventCallback& cb, const std::string& json_extension = "")
+	* 禁言/解除禁言
+	* @param[in] tid		群组id
+	* @param[in] member_id	操作对象id
+	* @param[in] set_mute	禁言/解除禁言
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		踢人的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				404:禁言对象不存在
+	*				414:参数错误
+	*				803:群不存在
+	*				802:没有权限
+	*/
+	static bool MuteMemberAsync(const std::string& tid, const std::string& member_id, bool set_mute, const SuperTeamEventCallback& cb, const std::string& json_extension = "");
+
+	/** @fn static bool MuteAsync(const std::string& tid, bool set_mute, const SuperTeamEventCallback& cb, const std::string& json_extension = "")
+	* 群禁言/解除群禁言
+	* @param[in] tid		群组id
+	* @param[in] set_mute	禁言/解除禁言
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		踢人的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				414:参数错误
+	*/
+	static bool MuteAsync(const std::string& tid, bool set_mute, const SuperTeamEventCallback& cb, const std::string& json_extension = "");
+
 	/** @fn static bool QueryAllMySuperTeamsAsync(const QueryAllMySuperTeamsCallback& cb, const std::string& json_extension = "")
 	* 查询所有群
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -143,6 +352,15 @@ public:
 	* @return void 无返回值
 	*/
 	static void QueryAllMySuperTeamsInfoAsync(const QueryAllMySuperTeamsInfoCallback& cb, const std::string& json_extension = "");
+
+	/** @fn static QuerySuperTeamsInfoByKeywordAsync(const std::string& keyword, NIMSuperTeamQueryType query_type, QueryAllMySuperTeamsInfoCallback& cb, const std::string& json_extension = "");
+	* 查询所有群信息
+	* @param[in] keyword 要查询的关键字
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @param[in] cb		查询所有群信息的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	*/
+	static bool QuerySuperTeamsInfoByKeywordAsync(const std::string& keyword, const QueryAllMySuperTeamsInfoCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static void QueryMyAllMemberInfosAsync(const QueryMyAllMemberInfosCallback& cb, const std::string& json_extension = "")
 	* 查询所有群里我的成员信息（使用场景：获取了所有群列表后，需要查询自己在每个群里自己的成员信息，使用成员信息里的bits字段，可以判断当某个群发来消息后，是否做消息通知）

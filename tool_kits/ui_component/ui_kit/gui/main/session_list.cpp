@@ -3,6 +3,7 @@
 #include "gui/main/team_event_form.h"
 #include "duilib/Utils/MultiLangSupport.h"
 #include "ui_kit_base/invoke_safe_callback.h"
+#include "export/nim_ui_session_list_manager.h"
 namespace nim_comp
 {
 
@@ -18,6 +19,10 @@ SessionList::SessionList(ui::ListBox* session_list)
 	Box* multispot_and_events = (Box*)GlobalManager::CreateBox(L"main/main_session_multispot_and_event.xml");
 	session_list->AddAt(multispot_and_events, 0);
 
+	ListContainerElement* cloud_session_list = (ListContainerElement*)GlobalManager::CreateBox(L"main/main_cloud_session.xml");
+	session_list->AddAt(cloud_session_list, 1);
+	cloud_session_list->AttachClick(nbase::Bind(&SessionList::OnSwitchCloudSession, this, std::placeholders::_1));
+
 	ButtonBox* btn_events = (ButtonBox*)multispot_and_events->FindSubControl(L"btn_events");
 	ButtonBox* btn_multispot_info = (ButtonBox*)multispot_and_events->FindSubControl(L"multispot_info");
 	btn_events->AttachClick(nbase::Bind(&SessionList::OnEventsClick, this, std::placeholders::_1));
@@ -26,10 +31,10 @@ SessionList::SessionList(ui::ListBox* session_list)
 	box_unread_sysmsg_ = (Box*)session_list->GetWindow()->FindControl(L"box_unread_sysmsg");
 	label_unread_sysmsg_ = (Label*)session_list->GetWindow()->FindControl(L"label_unread_sysmsg");
 	box_unread_sysmsg_->SetVisible(false);
-
-	auto session_chagen_cb = session_list_->ToWeakCallback(std::bind(&SessionList::OnSessionChangeCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
-	nim::Session::RegChangeCb(session_chagen_cb);
 	
+	auto changed_cb = session_list_->ToWeakCallback(std::bind(&SessionList::OnSessionChangeCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	SessionManager::GetInstance()->RegSessionChangedCallback(changed_cb);
+
 	auto userinfo_change_cb = session_list_->ToWeakCallback(std::bind(&SessionList::OnUserInfoChange, this, std::placeholders::_1));
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(userinfo_change_cb));
 
@@ -67,6 +72,11 @@ bool SessionList::OnReturnEventsClick(ui::EventArgs* param)
 	}
 
 	return true;
+}
+
+void SessionList::Show(bool show)
+{
+	session_list_->SetVisible(show);
 }
 
 int SessionList::AdjustMsg(const nim::SessionData &msg)
@@ -192,7 +202,7 @@ void SessionList::RemoveAllSessionItem()
 {
 	//回话列表的第一项是多端同步和消息中心，所以要专门写个清除函数
 	int count = session_list_->GetCount();
-	for (int i = count - 1; i > 0; --i)
+	for (int i = count - 1; i > 1; --i)
 	{
 		session_list_->RemoveAt(i);
 	}
@@ -567,6 +577,12 @@ void SessionList::OnReceiveEvent(int event_type, const std::string &accid, const
 			return;
 		item->SetOnlineState(data);
 	}
+}
+
+bool SessionList::OnSwitchCloudSession(ui::EventArgs* msg)
+{
+	nim_ui::SessionListManager::GetInstance()->ShowCloudSession();
+	return true;
 }
 
 bool SessionList::OnEventsClick(ui::EventArgs* param)

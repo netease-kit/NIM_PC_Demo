@@ -18,6 +18,8 @@ typedef void (*nim_user_reg_user_name_card_changed_cb)(const char *json_extensio
 typedef void (*nim_user_get_user_name_card)(const char *accids, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data);
 typedef void (*nim_user_get_user_name_card_online)(const char *accids, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data);
 typedef void (*nim_user_update_my_user_name_card)(const char *info_json, const char *json_extension, nim_user_update_my_name_card_cb_func cb, const void *user_data);
+typedef void(*nim_user_query_by_keyword)(const char* keyword, const char *json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data);
+typedef void (*nim_user_update_push_token)(const char* cer_name, const char* token, int type);
 #else
 #include "nim_user.h"
 #endif
@@ -237,6 +239,22 @@ bool User::UpdateMyUserNameCard(const UserNameCard& namecard, const UpdateMyUser
 	return true;
 }
 
+bool User::QueryUserListByKeyword(const std::string& keyword, const GetUserNameCardCallback& cb, const std::string& json_extension /*= ""*/)
+{
+	if (keyword.empty())
+		return false;
+
+	GetUserNameCardCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new GetUserNameCardCallback(cb);
+	}
+
+	NIM_SDK_GET_FUNC(nim_user_query_by_keyword)(keyword.c_str(), json_extension.c_str(), &CallbackGetUserNameCard, cb_pointer);
+
+	return true;
+}
+
 bool User::ParseBlackListInfoChange(const SpecialRelationshipChangeEvent& change_event, BlackMuteListInfo& info)
 {
 	if (change_event.type_ != kNIMUserSpecialRelationshipChangeTypeMarkBlack)
@@ -277,6 +295,11 @@ bool User::ParseSyncSpecialRelationshipChange(const SpecialRelationshipChangeEve
 		return false;
 
 	return ParseSpecialListInfo(change_event.content_, black_mute_list);
+}
+
+void User::UpdatePushToken(const std::string& cer_name, const std::string& token, int type)
+{
+    NIM_SDK_GET_FUNC(nim_user_update_push_token)(cer_name.c_str(), token.c_str(), type);
 }
 
 void User::UnregUserCb()

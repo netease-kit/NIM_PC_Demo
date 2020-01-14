@@ -255,7 +255,7 @@ bool MsglogManageForm::ExportToRemote()
 {
 	nim::LogsBackupExportInfo export_info;
 
-	export_info.SetEncryptKey(QString::GetGUID());
+	export_info.SetEncryptKey(QString::GetMd5(QString::GetGUID()));
 	export_info.ExportBackupToRemoteLogFiter = MsglogCallback::OnMigrateLogFilter;
 	export_info.ExportBackupToRemoteEncryptCallback = MsglogCallback::OnMigrateMsglogEncryptCallback;
 	export_info.ExportBackupToRemotePackageCallback = MsglogCallback::OnMigrateMsglogPackageCallback;

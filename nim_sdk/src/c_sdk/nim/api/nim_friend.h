@@ -98,6 +98,16 @@ NIM_SDK_DLL_API void nim_friend_get_profile(const char *accid, const char *json_
   */
 NIM_SDK_DLL_API bool nim_friend_query_friendship_block(const char *accid, const char *json_extension);
 
+/** @fn bool nim_friend_query_by_keyword(const char *keyword, const char *json_extension, nim_friend_get_list_cb_func cb, const void *user_data)
+  * 根据指定条件查询好友信息
+  * @param[in] keyword			要查询的关键字
+  * @param[in] json_extension	json扩展参数（备用，目前不需要）
+  * @param[in] cb				操作结果回调
+  * @param[in] user_data		APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_friend_query_by_keyword(const char *keyword, const char *json_extension, nim_friend_get_list_cb_func cb, const void *user_data);
+
 #ifdef __cplusplus
 }
 #endif

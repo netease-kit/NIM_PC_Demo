@@ -13,13 +13,27 @@ namespace nim
 typedef void(*nim_super_team_reg_team_event_cb)(const char *json_extension, nim_super_team_event_cb_func cb, const void *user_data);
 typedef void(*nim_super_team_query_team_info_online_async)(const char *tid, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
 typedef void(*nim_super_team_invite_async)(const char *tid, const char *jsonlist_uids, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
+typedef void(*nim_super_team_invite_async2)(const char *tid, const char *jsonlist_uids, const char *invitation_postscript, const char *invitation_attachment, const char *json_extension, nim_team_event_cb_func cb, const void* user_data);
 typedef void(*nim_super_team_kick_async)(const char *tid, const char *jsonlist_uids, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
 typedef void(*nim_super_team_leave_async)(const char *tid, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
 typedef void(*nim_super_team_update_team_info_async)(const char *tid, const char *json_info, const char *json_extension, nim_super_team_event_cb_func cb_func, const void* user_data);
 typedef void(*nim_super_team_update_my_property_async)(const char *info, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
+typedef void(*nim_super_team_apply_join_async)(const char *tid, const char *reason, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
+typedef void(*nim_super_team_pass_join_apply_async)(const char *tid, const char *applicant_id, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
+typedef void(*nim_super_team_reject_join_apply_async)(const char *tid, const char *applicant_id, const char *reason, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
+typedef void(*nim_super_team_add_managers_async)(const char *tid, const char *jsonlist_admin_ids, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
+typedef void(*nim_super_team_remove_managers_async)(const char *tid, const char *jsonlist_admin_ids, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
+typedef void(*nim_super_team_transfer_team_async)(const char *tid, const char *new_owner, bool is_leave, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
+typedef void(*nim_super_team_update_other_nick_async)(const char *info, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
+typedef void(*nim_super_team_accept_invitation_async)(const char *tid, const char *invitor, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
+typedef void(*nim_super_team_reject_invitation_async)(const char *tid, const char *invitor, const char *reason, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
+typedef void(*nim_super_team_mute_member_async)(const char *tid, const char *member_id, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
+typedef void(*nim_super_team_mute_async)(const char *tid, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
+typedef void(*nim_super_team_msg_ack_read)(const char *tid, const char *json_msgs, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 
 typedef void(*nim_super_team_query_all_my_teams_async)(const char *json_extension, nim_super_team_query_all_my_teams_cb_func cb, const void* user_data);
 typedef void(*nim_super_team_query_all_my_teams_info_async)(const char *json_extension, nim_super_team_query_all_my_teams_info_cb_func cb, const void* user_data);
+typedef void(*nim_super_team_query_teams_info_by_keyword_async)(const char* keyword, const char *json_extension, nim_super_team_query_all_my_teams_info_cb_func cb, const void *user_data);
 typedef void(*nim_super_team_query_my_all_member_infos_async)(const char *json_extension,	nim_super_team_query_my_all_member_infos_cb_func cb, const void *user_data);
 typedef void(*nim_super_team_query_team_members_async)(const char *tid, bool include_user_info, const char *json_extension, nim_super_team_query_team_members_cb_func cb, const void* user_data);
 typedef void(*nim_super_team_query_team_member_async)(const char *tid, const char *user_id, const char *json_extension, nim_super_team_query_team_member_cb_func cb, const void *user_data);
@@ -52,7 +66,6 @@ static void CallbackSuperTeamChange(int res_code, int notification_id, const cha
 
 static void CallbackQueryMySuperTeams(int team_count, const char *result, const char *json_extension, const void *user_data)
 {
-
 	CallbackProxy::DoSafeCallback<SuperTeam::QueryAllMySuperTeamsCallback>(user_data, [=](const SuperTeam::QueryAllMySuperTeamsCallback& cb){
 		std::list<std::string> team_id_list;
 		JsonStrArrayToList(GetJsonValueFromJsonString(PCharToString(result)), team_id_list);
@@ -63,7 +76,6 @@ static void CallbackQueryMySuperTeams(int team_count, const char *result, const 
 
 static void CallbackQuerySuperTeamMembers(int error_code, const char *tid, int member_count, bool include_user_info, const char *result, const char *json_extension, const void *user_data)
 {
-
 	CallbackProxy::DoSafeCallback<SuperTeam::QuerySuperTeamMembersCallback>(user_data, [=](const SuperTeam::QuerySuperTeamMembersCallback& cb){
 		std::list<nim::SuperTeamMemberProperty> team_member_info_list;
 		ParseSuperTeamMemberPropertysJson(PCharToString(result), team_member_info_list);
@@ -105,7 +117,6 @@ static void CallbackQueryMyAllMemberInfos(int count, const char *result, const c
 
 static void CallbackQuerySuperTeamInfo(const char *tid, const char *result, const char *json_extension, const void *callback)
 {
-
 	CallbackProxy::DoSafeCallback<SuperTeam::QuerySuperTeamInfoCallback>(callback, [=](const SuperTeam::QuerySuperTeamInfoCallback& cb){
 		nim::SuperTeamInfo team_info;
 		ParseSuperTeamInfoJson(PCharToString(result), team_info);
@@ -138,6 +149,34 @@ bool SuperTeam::InviteAsync(const std::string& tid
 	StrListToJsonString(ids, uids);
 	NIM_SDK_GET_FUNC(nim_super_team_invite_async)(tid.c_str()
 		, uids.c_str()
+		, json_extension.c_str()
+		, &CallbackSuperTeamChange
+		, cb_pointer);
+
+	return true;
+}
+
+bool SuperTeam::InviteAsync2(const std::string& tid
+	, const std::list<std::string>& ids
+	, const std::string& invitation_postscript
+	, const std::string& invitation_attachment
+	, const SuperTeamEventCallback& cb
+	, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty() || ids.empty())
+		return false;
+
+	SuperTeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SuperTeamEventCallback(cb);
+	}
+	std::string uids;
+	StrListToJsonString(ids, uids);
+	NIM_SDK_GET_FUNC(nim_super_team_invite_async2)(tid.c_str()
+		, uids.c_str()
+		, invitation_postscript.c_str()
+		, invitation_attachment.c_str()
 		, json_extension.c_str()
 		, &CallbackSuperTeamChange
 		, cb_pointer);
@@ -227,6 +266,249 @@ bool SuperTeam::UpdateMyPropertyAsync(const SuperTeamMemberProperty& prop, const
 	return true;
 }
 
+bool SuperTeam::ApplyJoinAsync(const std::string& tid
+	, const std::string& reason
+	, const SuperTeamEventCallback& cb
+	, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty())
+		return false;
+
+	SuperTeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SuperTeamEventCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_super_team_apply_join_async)(tid.c_str()
+		, reason.c_str()
+		, json_extension.c_str()
+		, &CallbackSuperTeamChange
+		, cb_pointer);
+
+	return true;
+}
+
+bool SuperTeam::PassJoinApplyAsync(const std::string& tid
+	, const std::string& applicant_id
+	, const SuperTeamEventCallback& cb
+	, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty() || applicant_id.empty())
+		return false;
+
+	SuperTeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SuperTeamEventCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_super_team_pass_join_apply_async)(tid.c_str()
+		, applicant_id.c_str()
+		, json_extension.c_str()
+		, &CallbackSuperTeamChange
+		, cb_pointer);
+
+	return true;
+}
+
+bool SuperTeam::RejectJoinApplyAsync(const std::string& tid
+	, const std::string& applicant_id
+	, const std::string& reason
+	, const SuperTeamEventCallback& cb
+	, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty() || applicant_id.empty())
+		return false;
+
+	SuperTeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SuperTeamEventCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_super_team_reject_join_apply_async)(tid.c_str()
+		, applicant_id.c_str()
+		, reason.c_str()
+		, json_extension.c_str()
+		, &CallbackSuperTeamChange
+		, cb_pointer);
+
+	return true;
+}
+
+bool SuperTeam::AddManagersAsync(const std::string& tid
+	, const std::list<std::string>& ids
+	, const SuperTeamEventCallback& cb
+	, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty() || ids.empty())
+		return false;
+
+	SuperTeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SuperTeamEventCallback(cb);
+	}
+	std::string uids;
+	StrListToJsonString(ids, uids);
+	NIM_SDK_GET_FUNC(nim_super_team_add_managers_async)(tid.c_str()
+		, uids.c_str()
+		, json_extension.c_str()
+		, &CallbackSuperTeamChange
+		, cb_pointer);
+
+	return true;
+}
+
+bool SuperTeam::RemoveManagersAsync(const std::string& tid
+	, const std::list<std::string>& ids
+	, const SuperTeamEventCallback& cb
+	, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty() || ids.empty())
+		return false;
+
+	SuperTeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SuperTeamEventCallback(cb);
+	}
+	std::string uids;
+	StrListToJsonString(ids, uids);
+	NIM_SDK_GET_FUNC(nim_super_team_remove_managers_async)(tid.c_str()
+		, uids.c_str()
+		, json_extension.c_str()
+		, &CallbackSuperTeamChange
+		, cb_pointer);
+
+	return true;
+}
+
+bool SuperTeam::TransferTeamAsync(const std::string& tid
+	, const std::string& new_owner_id
+	, bool is_leave
+	, const SuperTeamEventCallback& cb
+	, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty() || new_owner_id.empty())
+		return false;
+
+	SuperTeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SuperTeamEventCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_super_team_transfer_team_async)(tid.c_str()
+		, new_owner_id.c_str()
+		, is_leave
+		, json_extension.c_str()
+		, &CallbackSuperTeamChange
+		, cb_pointer);
+
+	return true;
+}
+
+bool SuperTeam::UpdateOtherNickAsync(const SuperTeamMemberProperty& prop, const SuperTeamEventCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	if (prop.GetSuperTeamID().empty() || prop.GetAccountID().empty())
+		return false;
+
+	SuperTeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SuperTeamEventCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_super_team_update_other_nick_async)(prop.ToJsonString().c_str()
+		, json_extension.c_str()
+		, &CallbackSuperTeamChange
+		, cb_pointer);
+
+	return true;
+}
+
+bool SuperTeam::AcceptInvitationAsync(const std::string& tid
+	, const std::string& invitor_id
+	, const SuperTeamEventCallback& cb
+	, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty() || invitor_id.empty())
+		return false;
+
+	SuperTeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SuperTeamEventCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_super_team_accept_invitation_async)(tid.c_str()
+		, invitor_id.c_str()
+		, json_extension.c_str()
+		, &CallbackSuperTeamChange
+		, cb_pointer);
+
+	return true;
+}
+
+bool SuperTeam::RejectInvitationAsync(const std::string& tid
+	, const std::string& invitor_id
+	, const std::string& reason
+	, const SuperTeamEventCallback& cb
+	, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty() || invitor_id.empty())
+		return false;
+
+	SuperTeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SuperTeamEventCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_super_team_reject_invitation_async)(tid.c_str()
+		, invitor_id.c_str()
+		, reason.c_str()
+		, json_extension.c_str()
+		, &CallbackSuperTeamChange
+		, cb_pointer);
+
+	return true;
+}
+
+bool SuperTeam::MuteMemberAsync(const std::string& tid, const std::string& member_id, bool set_mute, const SuperTeamEventCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty() || member_id.empty())
+		return false;
+
+	SuperTeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SuperTeamEventCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_super_team_mute_member_async)(tid.c_str()
+		, member_id.c_str()
+		, set_mute
+		, json_extension.c_str()
+		, &CallbackSuperTeamChange
+		, cb_pointer);
+
+	return true;
+}
+
+bool SuperTeam::MuteAsync(const std::string& tid, bool set_mute, const SuperTeamEventCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	if (tid.empty())
+		return false;
+
+	SuperTeamEventCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SuperTeamEventCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_super_team_mute_async)(tid.c_str()
+		, set_mute
+		, json_extension.c_str()
+		, &CallbackSuperTeamChange
+		, cb_pointer);
+
+	return true;
+}
+
 void SuperTeam::QueryAllMySuperTeamsAsync(const QueryAllMySuperTeamsCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	QueryAllMySuperTeamsCallback* cb_pointer = nullptr;
@@ -245,6 +527,21 @@ void SuperTeam::QueryAllMySuperTeamsInfoAsync(const QueryAllMySuperTeamsInfoCall
 		cb_pointer = new QueryAllMySuperTeamsInfoCallback(cb);
 	}
 	NIM_SDK_GET_FUNC(nim_super_team_query_all_my_teams_info_async)(json_extension.c_str(), &CallbackQueryAllMySuperTeamsInfo, cb_pointer);
+}
+
+bool SuperTeam::QuerySuperTeamsInfoByKeywordAsync(const std::string& keyword, const QueryAllMySuperTeamsInfoCallback& cb, const std::string& json_extension /*= ""*/)
+{
+	if (keyword.empty())
+		return false;
+
+	QueryAllMySuperTeamsInfoCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new QueryAllMySuperTeamsInfoCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_super_team_query_teams_info_by_keyword_async)(keyword.c_str(), json_extension.c_str(), &CallbackQueryAllMySuperTeamsInfo, cb_pointer);
+
+	return true;
 }
 
 void SuperTeam::QueryMyAllMemberInfosAsync( const QueryMyAllMemberInfosCallback& cb, const std::string& json_extension /*= ""*/ )

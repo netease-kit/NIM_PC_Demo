@@ -132,6 +132,7 @@ static const char *kNIMPreloadImageResize				= "preload_image_resize";	/**< stri
 static const char *kNIMPreloadAttachImageNameTemplate = "preload_image_name_template";			/**< 预下载图片命名规则，以{filename}为token进行替换 */
 static const char *kNIMSDKLogLevel						= "sdk_log_level";			/**< int，定义见NIMSDKLogLevel（选填，SDK默认的内置级别为kNIMSDKLogLevelPro） */
 static const char *kNIMPushCerName						= "push_cer_name";			/**< string，推送证书名（选填，iOS端需要,PC SDK该设置无效） */
+static const char *kNIMPushToken                        = "push_token";            /**< string，推送设备token（选填，iOS端需要,PC SDK该设置无效） */
 static const char *kNIMSyncSessionAck					= "sync_session_ack";		/**< bool，设置是否已读未读状态多端同步，默认true */
 static const char *kNIMLoginRetryMaxTimes				= "login_retry_max_times";	/**< int，登录重试最大次数，如需设置建议设置大于3次，默认填0，SDK默认设置次数 */
 static const char *kNIMUseHttps							= "use_https";				/**< bool，是否启用HTTPS协议，默认为true */

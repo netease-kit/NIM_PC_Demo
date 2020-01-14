@@ -26,6 +26,7 @@ class NIM_SDK_CPPWRAPPER_DLL_API Session
 {
 
 public:
+    typedef std::function<int32_t(const std::string&)> BadgeCountCallback;    /**< app角标未读计数通知回调模板 (仅iOS有效）*/
 	typedef std::function<void(nim::NIMResCode, const SessionData&, int)> ChangeCallback;	/**< 会话变更通知回调模板 */
 	typedef std::function<void(int, const SessionDataList&)> QuerySessionListCallabck;		/**< 查询会话列表回调模板 */
 	typedef ChangeCallback DeleteRecentSessionCallabck;										/**< 删除会话回调模板 */
@@ -41,6 +42,15 @@ public:
 	* @note 错误码	200:成功
 	*/
 	static void RegChangeCb(const ChangeCallback& cb, const std::string& json_extension = "");
+    
+    /** @fn static void RegBadgeCountCb(const BadgeCountCallback& cb, const std::string& json_extension = "")
+    * (全局回调)注册app角标计数回调（仅iOS有效）
+    * @param[in] json_extension json扩展参数（备用，目前不需要）
+    * @param[in] cb    app角标未读计数回调函数
+    * @return void 无返回值
+    * @note 错误码    200:成功
+    */
+    static void RegBadgeCountCb(const BadgeCountCallback& cb, const std::string& json_extension = "");
 	
 	/** @fn static void QueryLastFewSessionAsync(int limit, const QuerySessionListCallabck& cb, const std::string& json_extension = "")
 	* 查询指定数量的最后会话数据

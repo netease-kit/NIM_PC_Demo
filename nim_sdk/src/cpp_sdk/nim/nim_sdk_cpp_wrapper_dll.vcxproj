@@ -29,27 +29,27 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -99,6 +99,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)../../../;$(ProjectDir)../depend_lib/include/</AdditionalIncludeDirectories>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <StringPooling>true</StringPooling>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -124,6 +125,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)../../../;$(ProjectDir)../depend_lib/include/</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -151,6 +153,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)../../../;$(ProjectDir)../depend_lib/include/</AdditionalIncludeDirectories>
       <StringPooling>true</StringPooling>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -180,6 +183,7 @@
       <AdditionalIncludeDirectories>$(ProjectDir)../../../;$(ProjectDir)../depend_lib/include/</AdditionalIncludeDirectories>
       <DebugInformationFormat>OldStyle</DebugInformationFormat>
       <StringPooling>true</StringPooling>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -207,6 +211,7 @@
     <ClCompile Include="api\nim_cpp_global.cpp" />
     <ClCompile Include="api\nim_cpp_msglog.cpp" />
     <ClCompile Include="api\nim_cpp_nos.cpp" />
+    <ClCompile Include="api\nim_cpp_pass_through_proxy.cpp" />
     <ClCompile Include="api\nim_cpp_robot.cpp" />
     <ClCompile Include="api\nim_cpp_rts.cpp" />
     <ClCompile Include="api\nim_cpp_session.cpp" />
@@ -227,6 +232,7 @@
     <ClCompile Include="helper\nim_msglog_helper.cpp" />
     <ClCompile Include="helper\nim_msg_helper.cpp" />
     <ClCompile Include="helper\nim_nos_helper.cpp" />
+    <ClCompile Include="helper\nim_pass_through_proxy_helper.cpp" />
     <ClCompile Include="helper\nim_robot_helper.cpp" />
     <ClCompile Include="helper\nim_sdk_loader_helper.cpp" />
     <ClCompile Include="helper\nim_session_helper.cpp" />
@@ -263,6 +269,7 @@
     <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_tools_def.h" />
     <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_user_def.h" />
     <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_vchat_def.h" />
+    <ClInclude Include="api\nim_cpp_pass_through_proxy.h" />
     <ClInclude Include="api\nim_cpp_session_online_service.h" />
     <ClInclude Include="api\nim_cpp_signaling.h" />
     <ClInclude Include="api\nim_cpp_client.h" />
@@ -290,6 +297,7 @@
     <ClInclude Include="helper\nim_msglog_helper.h" />
     <ClInclude Include="helper\nim_msg_helper.h" />
     <ClInclude Include="helper\nim_nos_helper.h" />
+    <ClInclude Include="helper\nim_pass_through_proxy_helper.h" />
     <ClInclude Include="helper\nim_robot_helper.h" />
     <ClInclude Include="helper\nim_sdk_loader_helper.h" />
     <ClInclude Include="helper\nim_session_helper.h" />
@@ -303,6 +311,11 @@
     <ClInclude Include="helper\nim_tool_helper.h" />
     <ClInclude Include="helper\nim_user_helper.h" />
     <ClInclude Include="nim_sdk_cpp_wrapper_dll.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\depend_lib\src\cpp_wrapper_util\cpp_wrapper_util_md.vcxproj">
+      <Project>{20f2845c-a2c7-42a2-99f9-52ae69bd6976}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

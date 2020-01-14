@@ -31,6 +31,13 @@ public:
 	void InitMsg(const nim::SessionData &msg);
 
 	/**
+	 * 初始化一个云端会话列表项
+	 * @param[in] msg 云端会话数据信息
+	 * @return void 无返回值
+	 */
+	void SetOnlineSessionType(bool is_online_session);
+
+	/**
 	* 用昵称、用户名等信息匹配搜索关键字
 	* @param[in] search_key 关键字
 	* @return bool true 匹配成功，false 匹配失败
@@ -184,6 +191,7 @@ private:
 	ui::Box*		box_unread_;
 	ui::Label*		label_unread_;
 
+	bool			is_online_session_;
 	nim::SessionData msg_;
 	std::set<std::string> relate_ids;
 };

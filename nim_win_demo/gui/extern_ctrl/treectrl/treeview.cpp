@@ -28,9 +28,9 @@ std::shared_ptr<ITreeItemUIStyle> TreeComponent::GetUIStyle(const std::shared_pt
 		if (it == style_group.end())
 		{
 			std::function<std::shared_ptr<ITreeItemUIStyle>()> style_crator = nullptr;
-			auto it = style_factory_.find(item->GetIUIStyleName());
-			if (it != style_factory_.end())
-				style_crator = it->second;
+			auto it_ui_style_name = style_factory_.find(item->GetIUIStyleName());
+			if (it_ui_style_name != style_factory_.end())
+				style_crator = it_ui_style_name->second;
 			if (style_crator != nullptr)
 			{
 				style_group.emplace(std::make_pair(id, style_crator()));
@@ -211,9 +211,9 @@ ui::CSize TreeComponent::GetUIStyleSize(std::string style_name)
 	else
 	{
 		std::function<std::shared_ptr<ITreeItemUIStyle>()> style_crator = nullptr;
-		auto it = style_factory_.find(style_name);
-		if (it != style_factory_.end())
-			style_crator = it->second;
+		auto it_style = style_factory_.find(style_name);
+		if (it_style != style_factory_.end())
+			style_crator = it_style->second;
 		if (style_crator != nullptr)
 		{
 			auto ui_temp = style_crator();

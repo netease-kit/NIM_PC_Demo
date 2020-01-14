@@ -119,6 +119,17 @@ NIM_SDK_DLL_API	void nim_user_update_my_user_name_card(const char *info_json, co
 */
 NIM_SDK_DLL_API void nim_user_update_push_token(const char* cer_name, const char* token, int type);
 
+/** @fn void nim_user_query_by_keyword(const char* keyword, const char* json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data)
+  * 获取本地的指定帐号的用户名片
+  * @param[in] keyword		要查询的关键字
+  * @param[in] query_type	查询条件，见：NIMUserQueryType
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb 操作结果回调
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_user_query_by_keyword(const char* keyword, const char* json_extension, nim_user_get_user_name_card_cb_func cb, const void *user_data);
+
 #ifdef __cplusplus
 };
 #endif //__cplusplus

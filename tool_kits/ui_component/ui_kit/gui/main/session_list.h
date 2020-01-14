@@ -29,6 +29,13 @@ public:
 	~SessionList(){};
 
 	/**
+	 * 是否显示会话列表
+	 * @param[in] show true 为显示，false 为不显示
+	 * @return void 无返回值
+	 */
+	void Show(bool show);
+
+	/**
 	* 按每个会话最后一条消息的时间排序会话的位置
 	* @param[in] msg 被排序的会话数据
 	* @return int 在绘画列表中的位置
@@ -48,6 +55,7 @@ public:
 	* @return SessionItem* 被添加的会话控件的指针
 	*/
 	SessionItem* AddSessionItem(const nim::SessionData &msg, bool notify_event);
+
 	/**
 	* 从会话列表查找会话控件
 	* @param[in] session_id 会话id
@@ -193,6 +201,13 @@ private:
 	
 private:
 	/**
+	* 切换云端会话列表
+	* @param[in] param 发送事件的控件的相关信息
+	* @return bool true 继续传递控件消息，false 停止传递控件消息
+	*/
+	bool OnSwitchCloudSession(ui::EventArgs* msg);
+
+	/**
 	* 响应会话控件的通知事件
 	* @param[in] param 发送事件的控件的相关信息
 	* @return bool true 继续传递控件消息，false 停止传递控件消息
@@ -221,9 +236,22 @@ private:
 	*/
 	void OnFriendListChange(FriendChangeType change_type, const std::string& accid);
 
+	/**
+	 * 禁音事件变更
+	 * @param[in] id 用户id
+	 * @param[in] mute 是否静音
+	 */
 	void OnNotifyChangeCallback(std::string id, bool mute);
+
+	/**
+	* 群组消息通知类型改变通知
+	* @param[in] tid 群组ID
+	* @param[in] bits 变更后的群组消息通知类型
+	* @return void 无返回值
+	*/
 	void OnTeamNotificationModeChangeCallback(const std::string &tid, const int64_t bits);
 
+	
 	bool OnReturnEventsClick(ui::EventArgs* param);
 private:
 	ui::ListBox*	session_list_;

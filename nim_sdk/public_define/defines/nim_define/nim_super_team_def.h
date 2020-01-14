@@ -177,12 +177,48 @@ enum NIMSuperTeamUserType
 	kNIMSuperTeamUserTypeLocalWaitAccept = 100,	/**< 本地记录等待正在入群的用户 */
 };
 
+/** @enum NIMSuperTeamBeInviteMode 被邀请人同意方式 */
+enum NIMSuperTeamBeInviteMode
+{
+	kNIMSuperTeamBeInviteModeNeedAgree = 0,	/**< 需要同意 */
+	kNIMSuperTeamBeInviteModeNotNeedAgree = 1,	/**< 不需要同意 */
+};
+
+/** @enum NIMSuperTeamInviteMode 谁可以邀请他人入群 */
+enum NIMSuperTeamInviteMode
+{
+	kNIMSuperTeamInviteModeManager = 0,	/**< 管理员 */
+	kNIMSuperTeamInviteModeEveryone = 1,	/**< 所有人 */
+};
+
+/** @enum NIMSuperTeamUpdateInfoMode 谁可以修改群资料 */
+enum NIMSuperTeamUpdateInfoMode
+{
+	kNIMSuperTeamUpdateInfoModeManager = 0,	/**< 管理员 */
+	kNIMSuperTeamUpdateInfoModeEveryone = 1,	/**< 所有人 */
+};
+
+/** @enum NIMSuperTeamUpdateCustomMode 谁可以更新群自定义属性 */
+enum NIMSuperTeamUpdateCustomMode
+{
+	kNIMSuperTeamUpdateCustomModeManager = 0,	/**< 管理员 */
+	kNIMSuperTeamUpdateCustomModeEveryone = 1,	/**< 所有人 */
+};
+
 /** @enum NIMSuperTeamJoinMode 群允许加入类型 */
 enum NIMSuperTeamJoinMode 
 {
 	kNIMSuperTeamJoinModeNoAuth		= 0,		/**< 不用验证 */
 	kNIMSuperTeamJoinModeNeedAuth	= 1,		/**< 需要验证 */
 	kNIMSuperTeamJoinModeRejectAll	= 2,		/**< 拒绝所有人入群 */
+};
+
+/** @enum NIMSuperTeamQueryType 根据关键字查询群组信息类型 */
+enum NIMSuperTeamQueryType
+{
+	kNIMQuerySuperTeamDefault		= 1,		/** 默认查询条件，群组 ID 和群名称任意匹配则返回 */
+	kNIMQuerySuperTeamByTeamId		= 2,		/** 仅匹配群组 ID */
+	kNIMQuerySuperTeamByTeamName	= 3			/** 仅匹配群名称 */
 };
 
 /** @name 搜索本地群组相关信息扩展参数

@@ -153,6 +153,13 @@ enum NIMTeamUpdateCustomMode
 	kNIMTeamUpdateCustomModeEveryone  = 1,	/**< 所有人 */
 };
 
+enum NIMTeamQueryType
+{
+	kNIMTeamQueryDefault		= 0,	/**< 默认，匹配群组 ID 和群名称 */
+	kNIMTeamQueryByTeamId		= 1,	/**< 仅匹配群组 ID，传字符串，SDK 会自动转为 long 类型数据与群组 ID 严格匹配 */
+	kNIMTeamQueryByTeamName		= 2		/**< 仅匹配群组名称 */
+};
+
 /** @name 群组信息 Json Keys
   * @{
   */

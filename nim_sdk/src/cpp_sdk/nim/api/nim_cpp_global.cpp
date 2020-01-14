@@ -39,11 +39,11 @@ void Global::SetProxy(NIMProxyType type, const std::string& host, int port, cons
 	NIM_SDK_GET_FUNC(nim_global_set_proxy)(type, host.c_str(), port, user.c_str(), password.c_str());
 }
 
-static void CallbackDetectProxy(bool connect, NIMProxyDetectStep step, const char *json_extention, const void *user_data)
+static void CallbackDetectProxy(bool connect, NIMProxyDetectStep step, const char *json_extension, const void *user_data)
 {
 	CallbackProxy::DoSafeCallback<Global::DetectProxyCallback>(user_data, [=](const Global::DetectProxyCallback& cb){
 
-		CallbackProxy::Invoke(cb, connect, step, PCharToString(json_extention));
+		CallbackProxy::Invoke(cb, connect, step, PCharToString(json_extension));
 	},true);
 }
 

@@ -34,33 +34,6 @@ void MsgBubbleText::InitControl(bool bubble_right)
 	text_->SetEventMask(ENM_LINK);
 	text_->SetAutoURLDetect(true);
 	text_->AttachMenu(nbase::Bind(&MsgBubbleText::OnMenu, this, std::placeholders::_1));
-	text_->AttachGetNaturalSize([this](LONG width, LONG height, CSize& sz)->bool{
-		if (text_has_emoji_)
-			return false;
-		ITextServices *text_service = text_->GetTextServices();
-		if (text_service == nullptr)
-			return false;
-		LONG lWidth = width;
-		LONG lHeight = height;
-		SIZEL szExtent = { -1, -1 };
-		std::wstring text(std::move(text_->GetText()));
-		std::wstring text_temp(text);
-		ui::StringHelper::ReplaceAll(L" ", L"!", text_temp);
-		text_->SetText(text_temp);
-		text_service->TxGetNaturalSize(
-			DVASPECT_CONTENT,
-			GetWindow()->GetPaintDC(),
-			NULL,
-			NULL,
-			TXTNS_FITTOCONTENT,
-			&szExtent,
-			&lWidth,
-			&lHeight);
-		text_->SetText(text);
-		sz.cx = (int)lWidth;
-		sz.cy = (int)lHeight;
-		return true;		
-	});
 }
 
 void MsgBubbleText::InitInfo(const nim::IMMessage &msg)

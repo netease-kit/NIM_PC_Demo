@@ -46,6 +46,7 @@ namespace nim
 
 #include "public_define/defines/nim_define/nim_super_team_def.h"
 #include "public_define/defines/nim_define/nim_session_online_service_def.h"
+#include "public_define/defines/nim_define/nim_pass_through_proxy_def.h"
 
 #ifndef DEF_UNDER_NO_NAMESPACE
 }

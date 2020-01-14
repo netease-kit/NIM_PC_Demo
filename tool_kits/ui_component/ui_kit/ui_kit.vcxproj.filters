@@ -576,6 +576,9 @@
     <ClInclude Include="gui\session\msg_record_retweet.h">
       <Filter>头文件</Filter>
     </ClInclude>
+    <ClInclude Include="gui\main\session_list_cloud.h">
+      <Filter>gui\main</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -988,6 +991,9 @@
     </ClCompile>
     <ClCompile Include="gui\session\msg_record_retweet_ui.cpp">
       <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="gui\main\session_list_cloud.cpp">
+      <Filter>gui\main</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

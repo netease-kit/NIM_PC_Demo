@@ -176,8 +176,11 @@ void StringAppendVT(const CharType *format, va_list ap, std::basic_string<CharTy
 	std::basic_string<CharType> heap_buffer;
 	for (;;)
 	{
-		if (result != -1)
+		if (result < 0)
 		{
+			// On Windows, vsnprintfT always returns the number of characters in a
+			// fully-formatted string, so if we reach this point, something else is
+			// wrong and no amount of buffer-doubling is going to fix it.
 			assert(0);
 			return; /* not expected, result should be -1 here */
 		}

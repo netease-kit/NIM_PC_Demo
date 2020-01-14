@@ -10,6 +10,7 @@ namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
 typedef void(*nim_session_reg_change_cb)(const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+typedef void(*nim_session_reg_badge_count_cb)(const char *json_extension, nim_session_badge_count_cb_func cb, const void *user_data);
 typedef void(*nim_session_query_last_few_session_async)(int limit, const char *json_extension, nim_session_query_recent_session_cb_func cb, const void *user_data);
 typedef void(*nim_session_query_all_recent_session_async)(const char *json_extension, nim_session_query_recent_session_cb_func cb, const void* user_data);
 typedef void(*nim_session_query_all_recent_session_with_last_msg_excluded_type_async)(const char *json_extension, nim_session_query_recent_session_cb_func cb, enum NIMMessageType last_msg_excluded_type,const void* user_data);
@@ -57,6 +58,14 @@ static void CallbackSessionChange(int rescode, const char *result, int total_unr
 		CallbackProxy::Invoke(cb, (nim::NIMResCode)rescode, session, total_unread_counts);
 	});
 }
+
+static int32_t CallbackBadgeCount(const char *json_extension, const void *user_data)
+{
+    return CallbackProxy::DoSafeCallback<Session::BadgeCountCallback>(user_data, [=](const Session::BadgeCountCallback& cb){
+
+        return CallbackProxy::Invoke(cb, PCharToString(json_extension));
+    });
+}
 static void CallbackQuerySessionData(int rescode, const char *result, const void *user_data)
 {
 
@@ -75,6 +84,12 @@ void Session::RegChangeCb(const ChangeCallback& cb, const std::string& json_exte
 	NIM_SDK_GET_FUNC(nim_session_reg_change_cb)(json_extension.c_str(), &CallbackSessionChange, &g_cb_session_changed_);
 }
 
+static Session::BadgeCountCallback g_cb_badge_count_ = nullptr;
+void Session::RegBadgeCountCb(const BadgeCountCallback& cb, const std::string& json_extension)
+{
+    g_cb_badge_count_  = cb;
+    NIM_SDK_GET_FUNC(nim_session_reg_badge_count_cb)(json_extension.c_str(), &CallbackBadgeCount, &g_cb_badge_count_);
+}
 void Session::QueryLastFewSessionAsync(int limit, const QuerySessionListCallabck& cb, const std::string& json_extension /*= ""*/)
 {
 	QuerySessionListCallabck* cb_pointer = nullptr;
@@ -195,6 +210,7 @@ void Session::QuerySessionDataById(NIMSessionType to_type, const std::string& id
 void Session::UnregSessionCb()
 {
 	g_cb_session_changed_ = nullptr;
+    g_cb_badge_count_ = nullptr;
 }
 
 }

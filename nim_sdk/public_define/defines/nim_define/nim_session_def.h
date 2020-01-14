@@ -44,6 +44,15 @@ typedef void (*nim_session_query_recent_session_cb_func)(int total_unread_count,
   */
 typedef void(*nim_session_query_sessiondata_by_id_cb_func)(int rescode,const char *result, const void *user_data);
 
+/** @typedef int(*nim_session_badge_count_cb_func)(const char *json_extension, const void *user_data)
+* 获取badge回调（仅支持iOS）
+* @param[out] json_extension    json扩展数据（备用）
+* @param[out] user_data        APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+* @return int badge数量
+*/
+typedef int (*nim_session_badge_count_cb_func)(const char *json_extension, const void *user_data);
+
+
 /** @name 会话列表的Json Keys
   * @{
   */

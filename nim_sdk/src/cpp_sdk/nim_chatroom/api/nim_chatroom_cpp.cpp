@@ -48,7 +48,7 @@ typedef void (*nim_chatroom_reg_receive_msgs_cb)(const char *json_extension, nim
 typedef void(*nim_chatroom_batch_upate_async)(const int64_t room_id, const char *element_info_json_str, bool need_notify, const char *notify_ext, const char *json_extension, nim_chatroom_batch_update_cb cb, const void *user_data);
 
 #else
-#include "nim_sdk/src/c_sdk/nim_chatroom/api/nim_chatroom.h"
+#include "nim_chatroom.h"
 #endif
 
 static void CallbackEnter(int64_t room_id, int step, int error_code, const char *result, const char *json_extension, const void *user_data)
@@ -216,10 +216,12 @@ bool ChatRoom::Init(const std::string& app_install_dir, const std::string& json_
 {
 #ifdef NIM_SDK_DLL_IMPORT
 
-#if !defined (WIN32)
+#if defined (OS_POSIX)
 	static const char *kSdkNimDll = "libnim_chatroom.so";
-#else
+#elif defined(WIN32)
 	static const char *kSdkNimDll = "nim_chatroom.dll";
+#else
+    static const char *kSdkNimDll = nullptr;
 #endif
 
 	if (NULL == nim_chatroom_sdk_instance)
@@ -232,7 +234,9 @@ bool ChatRoom::Init(const std::string& app_install_dir, const std::string& json_
 #endif
 
 	NIM_CHATROOM_SDK_GET_FUNC(nim_chatroom_init)(json_extension.c_str());
-	nim_chatroom_sdk_instance->OnSDKInited();
+#ifdef NIM_SDK_DLL_IMPORT
+    nim_chatroom_sdk_instance->OnSDKInited();
+#endif
 	return true;
 }
 #ifdef CPPWRAPPER_DLL
@@ -770,9 +774,6 @@ void ChatRoom::GetRobotInfoAsync(const int64_t room_id, const int64_t timetag, c
 		cb_pointer = new RobotQueryCallback(callback);
 	}
 	NIM_CHATROOM_SDK_GET_FUNC(nim_chatroom_get_robots_async)(room_id, timetag, json_extension.c_str(), &CallbackRobotQuery, cb_pointer);
-	((nim_chatroom_get_robots_async)nim_chatroom_sdk_instance->GetFunction("nim_chatroom_get_robots_async") != NULL ?
-		((nim_chatroom_get_robots_async)nim_chatroom_sdk_instance->GetFunction("nim_chatroom_get_robots_async")) :
-		(nim::nim_print_unfound_func_name("nim_chatroom_get_robots_async"), (nim_chatroom_get_robots_async)nim::unfound_function_holder));
 }
 
 

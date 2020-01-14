@@ -28,26 +28,26 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>true</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
     <ConfigurationType>StaticLibrary</ConfigurationType>
     <UseDebugLibraries>false</UseDebugLibraries>
-    <PlatformToolset>v120_xp</PlatformToolset>
+    <PlatformToolset>v141_xp</PlatformToolset>
     <WholeProgramOptimization>true</WholeProgramOptimization>
     <CharacterSet>Unicode</CharacterSet>
   </PropertyGroup>
@@ -178,7 +178,7 @@
       <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\bin\;</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalDependencies>vfw32.lib;jsoncpp.lib;tinyxml.lib;wxsqlite3.lib;duilib.lib;nim_capture_image.lib;custom_app_sdk.lib</AdditionalDependencies>
+      <AdditionalDependencies>vfw32.lib;tinyxml.lib;wxsqlite3.lib;duilib.lib;nim_capture_image.lib;custom_app_sdk.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>..\..\..\libs\x64\;$(ProjectDir)../../../sdk/nim_sdk/cpp_sdk/libs/x64/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -229,6 +229,7 @@
     <ClInclude Include="gui\main\group_list.h" />
     <ClInclude Include="gui\main\multispot_form.h" />
     <ClInclude Include="gui\main\session_list.h" />
+    <ClInclude Include="gui\main\session_list_cloud.h" />
     <ClInclude Include="gui\main\team_event_form.h" />
     <ClInclude Include="gui\plugins\contact\contact_plugin.h" />
     <ClInclude Include="gui\plugins\contact\contact_plugin_page.h" />
@@ -361,6 +362,7 @@
     <ClCompile Include="gui\main\control\friend_item.cpp" />
     <ClCompile Include="gui\main\control\session_item.cpp" />
     <ClCompile Include="gui\main\control\session_item_helper.cpp" />
+    <ClCompile Include="gui\main\session_list_cloud.cpp" />
     <ClCompile Include="gui\main\team_event_form_custom.cpp" />
     <ClCompile Include="gui\main\friend_list.cpp" />
     <ClCompile Include="gui\main\group_list.cpp" />
@@ -475,11 +477,17 @@
     <ProjectReference Include="..\..\db\db.vcxproj">
       <Project>{745e6452-9fe1-435b-833a-767617eee1da}</Project>
     </ProjectReference>
+    <ProjectReference Include="..\..\duilib\duilib.vcxproj">
+      <Project>{e106acd7-4e53-4aee-942b-d0dd426db34e}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\..\shared\shared.vcxproj">
       <Project>{9951345f-620b-4bed-bb51-4f928cafd454}</Project>
     </ProjectReference>
     <ProjectReference Include="..\av_kit\av_kit.vcxproj">
       <Project>{d4e26a0d-098b-46c5-bc9c-38679b902e23}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\capture_image\capture_image.vcxproj">
+      <Project>{a8b95530-a231-4089-8f84-b1dbad8f3008}</Project>
     </ProjectReference>
     <ProjectReference Include="..\image_view\image_view.vcxproj">
       <Project>{92850844-a8e2-43fb-ae1d-14f72aa0a59c}</Project>

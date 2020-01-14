@@ -341,8 +341,8 @@ int InsertTextToEdit(ui::RichEdit* edit, const std::wstring &str)
 			else
 			{
 				emo = str.substr(p2, q - p2 + 1);
-				ret += _FindEmoji(edit, emo) ? 1 : 0;
-
+				if (_FindEmoji(edit, emo))
+					ret += 1;
 				p1 = q + 1;
 			}
 		}

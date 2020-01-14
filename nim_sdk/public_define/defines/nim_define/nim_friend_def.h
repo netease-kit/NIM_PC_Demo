@@ -29,8 +29,14 @@ static const char *kNIMFriendKeyEx			= "ex";		/**< string, 扩展字段,必须�
 static const char *kNIMFriendKeyCreateTime	= "create_timetag"; /**< long, 创建时间戳(ms)*/
 static const char *kNIMFriendKeyUpdateTime	= "update_timetag"; /**< long, 更新时间戳(ms)*/
 static const char *kNIMFriendServerEx		= "server_ex"; /**< string, 服务端扩展字段，此字段客户端sdk只读，服务端api读写*/
-static const char *kNIMFriendDeleteAlias	= "delete_alias"; /**< bool, 删除好友时是否删除备注信息*/
 /** @}*/ //好友简况 Json Keys
+
+/** @name 删除好有拓展选项 Json Keys
+  * @{
+  */
+  //协议定义
+static const char *kNIMFriendDeleteAlias = "delete_alias"; /**< bool, 删除好友时是否删除备注信息*/
+/** @}*/ //删除好有拓展选项 Json Keys
 
 /** @enum NIMFriendFlag 好友类型  */
 enum NIMFriendFlag
@@ -61,6 +67,14 @@ enum NIMFriendChangeType
 	kNIMFriendChangeTypeDel			= 2, /**< 删除好友 */
 	kNIMFriendChangeTypeUpdate		= 3, /**< 更新好友 */
 	kNIMFriendChangeTypeSyncList	= 5, /**< 好友列表同步与更新 */
+};
+
+/** @enum NIMFriendQueryType 查询好友信息的依据条件 */
+enum NIMFriendQueryType
+{
+	kNIMFriendQueryDefault		= 0, /**< 同时匹配账户ID和备注名 */
+	kNIMFriendQueryByAccId		= 1, /**< 仅匹配账户ID */
+	kNIMFriendQueryByAlias		= 2  /**< 仅匹配备注名 */
 };
 
 /** @typedef void (*nim_friend_opt_cb_func)(int res_code, const char *json_extension, const void *user_data)

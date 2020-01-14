@@ -1,9 +1,9 @@
-/** @file nim_session_online_service.h
-  * @brief »á»°·şÎñonline ½Ó¿ÚÍ·ÎÄ¼ş
-  * @copyright (c) 2015-2019, NetEase Inc. All rights reserved
-  * @author cqu227hk
-  * @date 2019/10/21
-  */
+ï»¿/** @file nim_session_online_service.h
+* @brief ä¼šè¯æœåŠ¡online æ¥å£å¤´æ–‡ä»¶
+* @copyright (c) 2015-2019, NetEase Inc. All rights reserved
+* @author cqu227hk
+* @date 2019/10/21
+*/
 #ifndef NIM_SDK_DLL_API_NIM_SESSION_ONLINE_SERVICE_H_
 #define NIM_SDK_DLL_API_NIM_SESSION_ONLINE_SERVICE_H_
 
@@ -14,55 +14,55 @@
 extern"C"
 {
 #endif
-	/** @fn void nim_session_online_service_query_session_list(uint64_t min_time,uint64_t max_time,bool need_last_msg,int limit,nim_session_online_service_query_session_list_cb_func cb, const void *user_data);
-	  * »á»°·şÎñ ²éÑ¯»á»°ÁĞ±í
-	  * @param[in] min_time ×îĞ¡Ê±¼ä´Á,Î´Öª¿ÉÒÔÌî0,±íÊ¾µ½×îÔçÊ±¼ä
-	  * @param[in] max_time ×î´óÊ±¼ä´Á,Î´Öª¿ÉÒÔÌî0,±íÊ¾´Óµ±Ç°Ê±¼ä
-	  * @param[in] need_last_msg ÊÇ·ñĞèÒªlastMsg£¬Ä¬ÈÏtrue
-	  * @param[in] limit ½á¹û¼¯limit£¬×î´ó100£¬È±Ê¡Öµ100
-	  * @param[in] cb ½á¹û»Øµ÷  ¿É²é¿´nim_session_online_service_query_session_list_cb_func¶¨Òå
-	  * @param[in] user_data APPµÄ×Ô¶¨ÒåÓÃ»§Êı¾İ£¬SDKÖ»¸ºÔğ´«»Ø¸ø»Øµ÷º¯Êıcb£¬²»×öÈÎºÎ´¦Àí£¡
-	  * @return void ÎŞ·µ»ØÖµ
-	  */
-	NIM_SDK_DLL_API void nim_session_online_service_query_session_list(uint64_t min_time,uint64_t max_time,bool need_last_msg,int limit,nim_session_online_service_query_session_list_cb_func cb, const void *user_data);
+/** @fn void nim_session_online_service_query_session_list(uint64_t min_time,uint64_t max_time,bool need_last_msg,int limit,nim_session_online_service_query_session_list_cb_func cb, const void *user_data);
+	* ä¼šè¯æœåŠ¡ æŸ¥è¯¢ä¼šè¯åˆ—è¡¨
+	* @param[in] min_time æœ€å°æ—¶é—´æˆ³,æœªçŸ¥å¯ä»¥å¡«0,è¡¨ç¤ºåˆ°æœ€æ—©æ—¶é—´
+	* @param[in] max_time æœ€å¤§æ—¶é—´æˆ³,æœªçŸ¥å¯ä»¥å¡«0,è¡¨ç¤ºä»å½“å‰æ—¶é—´
+	* @param[in] need_last_msg æ˜¯å¦éœ€è¦lastMsgï¼Œé»˜è®¤true
+	* @param[in] limit ç»“æœé›†limitï¼Œæœ€å¤§100ï¼Œç¼ºçœå€¼100
+	* @param[in] cb ç»“æœå›è°ƒ  å¯æŸ¥çœ‹nim_session_online_service_query_session_list_cb_funcå®šä¹‰
+	* @param[in] user_data APPçš„è‡ªå®šä¹‰ç”¨æˆ·æ•°æ®ï¼ŒSDKåªè´Ÿè´£ä¼ å›ç»™å›è°ƒå‡½æ•°cbï¼Œä¸åšä»»ä½•å¤„ç†ï¼
+	* @return void æ— è¿”å›å€¼
+	*/
+NIM_SDK_DLL_API void nim_session_online_service_query_session_list(uint64_t min_time,uint64_t max_time,bool need_last_msg,int limit,nim_session_online_service_query_session_list_cb_func cb, const void *user_data);
 
-	/** @fn void nim_session_online_service_query_session(int to_type,char* session_id, nim_session_online_service_query_session_cb_func cb, const void *user_data)
-	  * »á»°·şÎñ ²éÑ¯»á»°
-	  * @param[in] to_type »á»°ÀàĞÍ
-	  * @param[in] session_id »á»°ID
-	  * @param[in] cb ½á¹û»Øµ÷  ¿É²é¿´nim_session_online_service_query_session_cb_func¶¨Òå
-	  * @param[in] user_data APPµÄ×Ô¶¨ÒåÓÃ»§Êı¾İ£¬SDKÖ»¸ºÔğ´«»Ø¸ø»Øµ÷º¯Êıcb£¬²»×öÈÎºÎ´¦Àí£¡
-	  * @return void ÎŞ·µ»ØÖµ
-	  */
-	NIM_SDK_DLL_API void nim_session_online_service_query_session(int to_type,char* session_id, nim_session_online_service_query_session_cb_func cb, const void *user_data);
+/** @fn void nim_session_online_service_query_session(int to_type, const char* session_id, nim_session_online_service_query_session_cb_func cb, const void* user_data)
+	* ä¼šè¯æœåŠ¡ æŸ¥è¯¢ä¼šè¯
+	* @param[in] to_type ä¼šè¯ç±»å‹
+	* @param[in] session_id ä¼šè¯ID
+	* @param[in] cb ç»“æœå›è°ƒ  å¯æŸ¥çœ‹nim_session_online_service_query_session_cb_funcå®šä¹‰
+	* @param[in] user_data APPçš„è‡ªå®šä¹‰ç”¨æˆ·æ•°æ®ï¼ŒSDKåªè´Ÿè´£ä¼ å›ç»™å›è°ƒå‡½æ•°cbï¼Œä¸åšä»»ä½•å¤„ç†ï¼
+	* @return void æ— è¿”å›å€¼
+	*/
+NIM_SDK_DLL_API void nim_session_online_service_query_session(int to_type, const char* session_id, nim_session_online_service_query_session_cb_func cb, const void* user_data);
 
-	/** @fn void nim_session_online_service_update_session(int to_type, char* session_id, char* ext, nim_session_online_service_update_session_cb_func cb, const void *user_data)
-	  * »á»°·şÎñ ¸üĞÂ»á»°
-	  * @param[in] to_type »á»°ÀàĞÍ
-	  * @param[in] session_id »á»°ID
-	  * @param[in] ext À©Õ¹×Ö¶Î
-	  * @param[in] cb ½á¹û»Øµ÷  ¿É²é¿´nim_session_online_service_update_session_cb_func¶¨Òå
-	  * @param[in] user_data APPµÄ×Ô¶¨ÒåÓÃ»§Êı¾İ£¬SDKÖ»¸ºÔğ´«»Ø¸ø»Øµ÷º¯Êıcb£¬²»×öÈÎºÎ´¦Àí£¡
-	  * @return void ÎŞ·µ»ØÖµ
-	  */
-	NIM_SDK_DLL_API void nim_session_online_service_update_session(int to_type, char* session_id, char* ext, nim_session_online_service_update_session_cb_func cb, const void *user_data);
+/** @fn void nim_session_online_service_update_session(int to_type, const char* session_id, const char* ext, nim_session_online_service_update_session_cb_func cb, const void* user_data)
+	* ä¼šè¯æœåŠ¡ æ›´æ–°ä¼šè¯
+	* @param[in] to_type ä¼šè¯ç±»å‹
+	* @param[in] session_id ä¼šè¯ID
+	* @param[in] ext æ‰©å±•å­—æ®µ
+	* @param[in] cb ç»“æœå›è°ƒ  å¯æŸ¥çœ‹nim_session_online_service_update_session_cb_funcå®šä¹‰
+	* @param[in] user_data APPçš„è‡ªå®šä¹‰ç”¨æˆ·æ•°æ®ï¼ŒSDKåªè´Ÿè´£ä¼ å›ç»™å›è°ƒå‡½æ•°cbï¼Œä¸åšä»»ä½•å¤„ç†ï¼
+	* @return void æ— è¿”å›å€¼
+	*/
+NIM_SDK_DLL_API void nim_session_online_service_update_session(int to_type, const char* session_id, const char* ext, nim_session_online_service_update_session_cb_func cb, const void* user_data);
 
-	/** @fn void nim_session_online_service_delete_session(char* session_list, nim_session_online_service_delete_session_cb_func cb, const void *user_data)
-	  * »á»°·şÎñ É¾³ı»á»°
-	  * @param[in] session_list ÒªÉ¾³ıµÄ»á»°ÁĞ±í json array
-	  * @param[in] cb ½á¹û»Øµ÷  ¿É²é¿´nim_session_online_service_delete_session_cb_func¶¨Òå
-	  * @param[in] user_data APPµÄ×Ô¶¨ÒåÓÃ»§Êı¾İ£¬SDKÖ»¸ºÔğ´«»Ø¸ø»Øµ÷º¯Êıcb£¬²»×öÈÎºÎ´¦Àí£¡
-	  * @return void ÎŞ·µ»ØÖµ
-	  */
-	NIM_SDK_DLL_API void nim_session_online_service_delete_session(char* session_list, nim_session_online_service_delete_session_cb_func cb, const void *user_data);
+/** @fn void nim_session_online_service_delete_session(const char* session_list, nim_session_online_service_delete_session_cb_func cb, const void* user_data)
+	* ä¼šè¯æœåŠ¡ åˆ é™¤ä¼šè¯
+	* @param[in] session_list è¦åˆ é™¤çš„ä¼šè¯åˆ—è¡¨ json array
+	* @param[in] cb ç»“æœå›è°ƒ  å¯æŸ¥çœ‹nim_session_online_service_delete_session_cb_funcå®šä¹‰
+	* @param[in] user_data APPçš„è‡ªå®šä¹‰ç”¨æˆ·æ•°æ®ï¼ŒSDKåªè´Ÿè´£ä¼ å›ç»™å›è°ƒå‡½æ•°cbï¼Œä¸åšä»»ä½•å¤„ç†ï¼
+	* @return void æ— è¿”å›å€¼
+	*/
+NIM_SDK_DLL_API void nim_session_online_service_delete_session(const char* session_list, nim_session_online_service_delete_session_cb_func cb, const void* user_data);
 
-	/** @fn void nim_session_online_service_reg_session_changed(nim_session_online_service_session_changed_cb_func cb, const void *user_data)
-	  * »á»°·şÎñ ×¢²á»á»°±ä¸ü»Øµ÷
-	  * @param[in] cb ½á¹û»Øµ÷  ¿É²é¿´nim_session_online_service_session_changed_cb_func¶¨Òå
-	  * @param[in] user_data APPµÄ×Ô¶¨ÒåÓÃ»§Êı¾İ£¬SDKÖ»¸ºÔğ´«»Ø¸ø»Øµ÷º¯Êıcb£¬²»×öÈÎºÎ´¦Àí£¡
-	  * @return void ÎŞ·µ»ØÖµ
-	  */
-	NIM_SDK_DLL_API void nim_session_online_service_reg_session_changed(nim_session_online_service_session_changed_cb_func cb, const void *user_data);
+/** @fn void nim_session_online_service_reg_session_changed(nim_session_online_service_session_changed_cb_func cb, const void *user_data)
+	* ä¼šè¯æœåŠ¡ æ³¨å†Œä¼šè¯å˜æ›´å›è°ƒ
+	* @param[in] cb ç»“æœå›è°ƒ  å¯æŸ¥çœ‹nim_session_online_service_session_changed_cb_funcå®šä¹‰
+	* @param[in] user_data APPçš„è‡ªå®šä¹‰ç”¨æˆ·æ•°æ®ï¼ŒSDKåªè´Ÿè´£ä¼ å›ç»™å›è°ƒå‡½æ•°cbï¼Œä¸åšä»»ä½•å¤„ç†ï¼
+	* @return void æ— è¿”å›å€¼
+	*/
+NIM_SDK_DLL_API void nim_session_online_service_reg_session_changed(nim_session_online_service_session_changed_cb_func cb, const void *user_data);
 
 	
 #ifdef __cplusplus

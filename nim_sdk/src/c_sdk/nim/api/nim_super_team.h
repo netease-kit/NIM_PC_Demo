@@ -46,6 +46,31 @@ NIM_SDK_DLL_API void nim_super_team_invite_async(const char *tid,
 	nim_super_team_opt_cb_func cb, 
 	const void *user_data);
 
+/** @fn void nim_super_team_invite_async2(const char *tid, const char *jsonlist_uids, const char *invitation_postscript, const char *invitation_attachment,const char *json_extension, nim_team_opt_cb_func cb, const void *user_data)
+  * 邀请
+  * @param[in] tid		群组id
+  * @param[in] jsonlist_uids		uids string array
+  * @param[in] invitation_postscript 邀请附言
+  * @param[in] invitation_attachment 用户可自定义的补充邀请信息
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		邀请的回调函数, nim_team_opt_cb_func回调函数定义见nim_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				810:如果是高级群，返回810表示邀请成功并带上timetag
+  *				404:非法用户
+  *				801:群人数超限
+  *				802:没有权限
+  *				803:群不存在
+  */
+NIM_SDK_DLL_API void nim_super_team_invite_async2(const char *tid,
+	const char *jsonlist_uids,
+	const char *invitation_postscript,
+	const char *invitation_attachment,
+	const char *json_extension,
+	nim_super_team_opt_cb_func cb,
+	const void *user_data);
+
 /** @fn void nim_super_team_kick_async(const char *tid, const char *jsonlist_uids, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
   * 踢人
   * @param[in] tid		群组id
@@ -146,6 +171,19 @@ NIM_SDK_DLL_API void nim_super_team_query_all_my_teams_info_async(const char *js
 	nim_super_team_query_all_my_teams_info_cb_func cb, 
 	const void *user_data);
 
+/** @fn void nim_super_team_query_teams_info_by_keyword_async(const char* keyword, const char *json_extension,nim_super_team_query_all_my_teams_info_cb_func cb, const void *user_data)
+  * 查询本地所有群信息（默认查询有效群-群有效AND我在群里-）
+  * @param[in] keyword 要查询的关键字
+  * @param[in] json_extension 扩展参数（备用，目前不需要）
+  * @param[in] cb		查询所有群信息的回调函数, nim_super_team_query_all_my_teams_info_cb_func回调函数定义见nim_super_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_super_team_query_teams_info_by_keyword_async(const char* keyword, 
+	const char *json_extension,
+	nim_super_team_query_all_my_teams_info_cb_func cb,
+	const void *user_data);
+
 /** @fn void nim_super_team_query_my_all_member_infos_async(const char *json_extension, nim_super_team_query_my_all_member_infos_cb_func cb, const void *user_data)
   * 查询本地所有群里我的成员信息（使用场景：获取了所有群列表后，需要查询自己在每个群里自己的成员信息，使用成员信息里的bits字段，可以判断当某个群发来消息后，是否做消息通知）
   * @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -234,6 +272,246 @@ NIM_SDK_DLL_API char *nim_super_team_query_team_info_block(const char *tid);
 NIM_SDK_DLL_API void nim_super_team_query_team_info_online_async(const char *tid, 
 	const char *json_extension, 
 	nim_super_team_opt_cb_func cb, 
+	const void *user_data);
+
+/** @fn void nim_super_team_apply_join_async(const char *tid, const char *reason, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
+  * 申请入群
+  * @param[in] tid		群组id
+  * @param[in] reason	附言
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		申请入群的回调函数, nim_super_team_opt_cb_func回调函数定义见nim_super_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				802:群验证方式为拒绝所有人申请
+  *				808:申请成功，等待验证
+  *				809:已经在群里
+  *				801:人数限制
+  *				803:群不存在
+  *				805:群类型不对
+  */
+NIM_SDK_DLL_API void nim_super_team_apply_join_async(const char *tid,
+	const char *reason,
+	const char *json_extension,
+	nim_super_team_opt_cb_func cb,
+	const void *user_data);
+
+/** @fn void nim_super_team_pass_join_apply_async(const char *tid, const char *applicant_id, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
+  * 同意入群申请
+  * @param[in] tid		群组id
+  * @param[in] applicant_id	申请者id
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		同意入群申请的回调函数, nim_super_team_opt_cb_func回调函数定义见nim_super_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				509:操作已失效
+  *				809:已经在群里
+  *				801:人数限制
+  *				802:没有权限
+  *				803:群不存在
+  *				805:群类型不对
+  */
+NIM_SDK_DLL_API void nim_super_team_pass_join_apply_async(const char *tid,
+	const char *applicant_id,
+	const char *json_extension,
+	nim_super_team_opt_cb_func cb,
+	const void *user_data);
+
+/** @fn void nim_super_team_reject_join_apply_async(const char *tid, const char *applicant_id, const char *reason, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
+  * 拒绝入群申请
+  * @param[in] tid		群组id
+  * @param[in] applicant_id	申请者id
+  * @param[in] reason		附言
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		拒绝入群申请的回调函数, nim_super_team_opt_cb_func回调函数定义见nim_super_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功，如果用户处于申请状态则会通知申请用户被拒绝
+  *				509:操作已失效
+  *				802:没有权限
+  *				803:群不存在
+  *				805:群类型不对
+  */
+NIM_SDK_DLL_API void nim_super_team_reject_join_apply_async(const char *tid,
+	const char *applicant_id,
+	const char *reason,
+	const char *json_extension,
+	nim_super_team_opt_cb_func cb,
+	const void *user_data);
+
+/** @fn void nim_super_team_add_managers_async(const char *tid, const char *jsonlist_admin_ids, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
+  * 添加管理员
+  * @param[in] tid		群组id
+  * @param[in] jsonlist_admin_ids	uids string array
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		添加管理员的回调函数, nim_super_team_opt_cb_func回调函数定义见nim_super_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				802:没有权限
+  *				803:群不存在
+  *				805:群类型不对
+  */
+NIM_SDK_DLL_API void nim_super_team_add_managers_async(const char *tid,
+	const char *jsonlist_admin_ids,
+	const char *json_extension,
+	nim_super_team_opt_cb_func cb,
+	const void *user_data);
+
+/** @fn void nim_super_team_remove_managers_async(const char *tid, const char *jsonlist_admin_ids, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
+  * 删除管理员
+  * @param[in] tid		群组id
+  * @param[in] jsonlist_admin_ids	uids string array
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		删除管理员的回调函数, nim_super_team_opt_cb_func回调函数定义见nim_super_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				802:没有权限
+  *				803:群不存在
+  *				805:群类型不对
+  */
+NIM_SDK_DLL_API void nim_super_team_remove_managers_async(const char *tid,
+	const char *jsonlist_admin_ids,
+	const char *json_extension,
+	nim_super_team_opt_cb_func cb,
+	const void *user_data);
+
+/** @fn void nim_super_team_transfer_team_async(const char *tid, const char *new_owner, bool is_leave, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
+  * 移交群主
+  * @param[in] tid		群组id
+  * @param[in] new_owner	移交对象uid
+  * @param[in] is_leave		是否同时退出群
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		移交群主的回调函数, nim_super_team_opt_cb_func回调函数定义见nim_super_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				802:没有权限
+  *				803:群不存在
+  *				805:群类型不对
+  *				806:群数量上限
+  */
+NIM_SDK_DLL_API void nim_super_team_transfer_team_async(const char *tid,
+	const char *new_owner,
+	bool is_leave,
+	const char *json_extension,
+	nim_super_team_opt_cb_func cb,
+	const void *user_data);
+
+/** @fn void nim_super_team_update_my_property_async(const char *info, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
+  * 更新自己的群属性
+  * @param[in] info		json string 群组成员信息,包含tid和需要修改的字段（目前支持修改kNIMTeamUserKeyNick、kNIMTeamUserKeyBits、kNIMTeamUserKeyCustom三个字段） (Keys SEE MORE `nim_super_team_def.h` 『群组属性 Json Keys』
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		更新自己的群属性的回调函数, nim_super_team_opt_cb_func回调函数定义见nim_super_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				803:群不存在
+  *				804:不在群里
+  *				805:群类型不对
+  */
+NIM_SDK_DLL_API void nim_super_team_update_my_property_async(const char *info,
+	const char *json_extension,
+	nim_super_team_opt_cb_func cb,
+	const void *user_data);
+
+/** @fn void nim_super_team_update_other_nick_async(const char *info, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
+  * 修改别人的群昵称
+  * @param[in] info		json string tlist 包含tid,accid,nick字段 (Keys SEE MORE `nim_super_team_def.h` 『群组属性 Json Keys』
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		修改别人的群昵称的回调函数, nim_super_team_opt_cb_func回调函数定义见nim_super_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				802:没有权限
+  *				803:群不存在
+  *				804:不在群里
+  *				805:群类型不对
+  */
+NIM_SDK_DLL_API void nim_super_team_update_other_nick_async(const char *info,
+	const char *json_extension,
+	nim_super_team_opt_cb_func cb,
+	const void *user_data);
+
+/** @fn void nim_super_team_accept_invitation_async(const char *tid, const char *invitor, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
+  * 接受邀请
+  * @param[in] tid		群组id
+  * @param[in] invitor	邀请者id
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		接受邀请的回调函数, nim_super_team_opt_cb_func回调函数定义见nim_super_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				802:没有权限
+  *				803:群不存在
+  *				805:群类型不对
+  */
+NIM_SDK_DLL_API void nim_super_team_accept_invitation_async(const char *tid,
+	const char *invitor,
+	const char *json_extension,
+	nim_super_team_opt_cb_func cb,
+	const void *user_data);
+
+/** @fn void nim_super_team_reject_invitation_async(const char *tid, const char *invitor, const char *reason, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
+  * 拒绝邀请
+  * @param[in] tid		群组id
+  * @param[in] invitor	邀请者id
+  * @param[in] reason	附言
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		拒绝邀请的回调函数, nim_super_team_opt_cb_func回调函数定义见nim_super_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				802:没有权限
+  *				803:群不存在
+  *				805:群类型不对
+  */
+NIM_SDK_DLL_API void nim_super_team_reject_invitation_async(const char *tid,
+	const char *invitor,
+	const char *reason,
+	const char *json_extension,
+	nim_super_team_opt_cb_func cb,
+	const void *user_data);
+
+/** @fn void nim_super_team_mute_member_async(const char *tid, const char *member_id, bool set_mute, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
+  * 对群成员禁言/解除禁言
+  * @param[in] tid		群组id
+  * @param[in] member_id 群成员id
+  * @param[in] set_mute	禁言(true)、解除禁言(false)
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb		拒绝邀请的回调函数, nim_super_team_opt_cb_func回调函数定义见nim_super_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				404:禁言对象不存在
+  *				414:参数错误
+  *				803:群不存在
+  *				802:没有权限
+  */
+NIM_SDK_DLL_API void nim_super_team_mute_member_async(const char *tid,
+	const char *member_id,
+	bool set_mute,
+	const char *json_extension,
+	nim_super_team_opt_cb_func cb,
+	const void *user_data);
+
+/** @fn void nim_super_team_mute_async(const char *tid, bool set_mute, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
+* 对群禁言/解除禁言
+* @param[in] tid		群组id
+* @param[in] set_mute	禁言(true)、解除禁言(false)
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] cb		拒绝邀请的回调函数, nim_super_team_opt_cb_func回调函数定义见nim_super_team_def.h
+* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+* @note 错误码	200:成功
+*				414:参数错误
+*/
+NIM_SDK_DLL_API void nim_super_team_mute_async(const char *tid,
+	bool set_mute,
+	const char *json_extension,
+	nim_super_team_opt_cb_func cb,
 	const void *user_data);
 
 #ifdef __cplusplus

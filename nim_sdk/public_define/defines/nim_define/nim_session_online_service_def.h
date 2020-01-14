@@ -75,18 +75,18 @@ static const char *kMINSessionOLSRVQueryListInfos = "query_list_sessions";						
 /** @}*/ // 会话服务 【查询会话列表】参数定义
 
 /** @name 会话服务 【查询会话】参数定义 */
-static const char *kMINSessionOLSRVQueryType = "query_session_tpye";		/**< int 会话类型 */
+static const char *kMINSessionOLSRVQueryType = "query_session_type";		/**< int 会话类型 */
 static const char *kMINSessionOLSRVQueryID = "query_session_id";				/**< string 会话ID*/
 /** @}*/ // 会话服务 【查询会话】参数定义
 
 /** @name 会话服务 【更新会话】参数定义 */
-static const char *kMINSessionOLSRVUpdateType = "update_session_tpye";		/**< int 会话类型 */
+static const char *kMINSessionOLSRVUpdateType = "update_session_type";		/**< int 会话类型 */
 static const char *kMINSessionOLSRVUpdateID = "update_session_id";				/**< string 会话ID*/
 static const char *kMINSessionOLSRVUpdateEXT = "update_ext";						/**< string 扩展字段，可自定义*/
 /** @}*/ // 会话服务 【更新会话】参数定义
 
 /** @name 会话服务 【删除会话】参数定义 */
-static const char *kMINSessionOLSRVDeleteType = "delete_session_tpye";		/**< int 会话类型 */
+static const char *kMINSessionOLSRVDeleteType = "delete_session_type";		/**< int 会话类型 */
 static const char *kMINSessionOLSRVDeleteID = "delete_session_id";				/**< string 会话ID*/
 /** @}*/ // 会话服务 【删除会话】参数定义
 

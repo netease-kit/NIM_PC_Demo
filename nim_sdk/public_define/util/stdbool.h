@@ -1,4 +1,4 @@
-/** @file stdbool.h
+﻿/** @file stdbool.h
   * @brief
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @author Harrison

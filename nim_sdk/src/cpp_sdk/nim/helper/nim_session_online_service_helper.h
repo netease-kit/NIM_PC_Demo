@@ -31,10 +31,10 @@ namespace nim
 			std::string		last_message_;			/**< 最后一条会话 json string */
 			uint64_t	update_time_;/**< 最后更新时间戳 */
 		};
-		typedef std::list< SessionInfo> SessionList; /**< 会话列表 */
+		typedef std::list<SessionInfo> SessionList; /**< 会话列表 */
 
 		/** @brief 会话服务 查询会话列表应答数据定义 */
-		struct NIM_SDK_CPPWRAPPER_DLL_API QureySessionListResult
+		struct NIM_SDK_CPPWRAPPER_DLL_API QuerySessionListResult
 		{
 			nim::NIMResCode		res_code;					/**< 返回的错误码 成功:200 */
 			SessionList	session_list_; /**< 会话列表 */
@@ -59,7 +59,7 @@ namespace nim
 		  * @param[out] result 会话信息
 		  * @return bool 解析成功 或失败
 		  */
-		static bool ParseQureySessionListResult(const std::string& sessions_json, QureySessionListResult& result);
+		static bool ParseQuerySessionListResult(const std::string& sessions_json, QuerySessionListResult& result);
 		
 		/** @fn std::string DeleteSessionParamToJsonString(const DeleteSessionParam& param)
 		  * @brief 解析查询会话列表结果

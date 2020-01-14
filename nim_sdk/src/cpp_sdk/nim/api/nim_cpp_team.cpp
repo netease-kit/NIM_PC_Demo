@@ -45,6 +45,7 @@ typedef void(*nim_team_mute_async)(const char *tid, bool set_mute, const char *j
 typedef void(*nim_team_msg_ack_read)(const char *tid, const char *json_msgs, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 typedef void(*nim_team_msg_query_unread_list)(const char *tid, const char *json_msg, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 typedef void(*nim_team_query_members_invitor)(const char *tid, const char *members, nim_team_query_members_invitor_cb_func cb, const void *user_data);
+typedef void(*nim_team_query_teams_info_by_keyword)(const char *keyword, nim_team_query_all_my_teams_cb_func cb, const char *json_extension, const void *user_data);
 #else
 #include "nim_team.h"
 #endif
@@ -128,8 +129,6 @@ static void CallbackQueryAllMyTeamsInfo(int team_count, const char *result, cons
 
 static void CallbackQueryMyAllMemberInfos(int count, const char *result, const char *json_extension, const void *user_data)
 {
-
-
 	CallbackProxy::DoSafeCallback<Team::QueryMyAllMemberInfosCallback>(user_data, [=](const Team::QueryMyAllMemberInfosCallback& cb){
 		std::list<nim::TeamMemberProperty> my_infos_list;
 		ParseTeamMemberPropertysJson(PCharToString(result), my_infos_list);
@@ -720,7 +719,7 @@ static void CallbackQueryMembersOnline(int res_code, int count, const char *tid,
 		if (reader.parse(PCharToString(result), values) && values.isArray())
 		{
 			auto size = values.size();
-			for (auto i = 0; i < size; i++)
+			for (nim_cpp_wrapper_util::Json::ArrayIndex i = 0; i < size; i++)
 			{
 				TeamMemberProperty prop;
 				ParseTeamMemberPropertyJson(values[i], prop);
@@ -784,7 +783,7 @@ void Team::TeamMsgQueryUnreadList(const std::string& tid, const IMMessage& msg, 
 		, &CallbackTeamChange
 		, cb_pointer);
 }
-void Team::TeamQueryTeamMembersInvitor(const std::string& tid, const std::list<std::string>& members, const QueryTeamMembersInvitorCallback& cb)
+void Team::QueryTeamMembersInvitor(const std::string& tid, const std::list<std::string>& members, const QueryTeamMembersInvitorCallback& cb)
 {
 	QueryTeamMembersInvitorCallback* cb_pointer = nullptr;
 	if (cb)
@@ -801,4 +800,23 @@ void Team::TeamQueryTeamMembersInvitor(const std::string& tid, const std::list<s
 		, &CallbackQueryTeamMembersInvitor
 		, cb_pointer);
 }
+
+bool Team::QueryTeamInfoByKeywordAsync(const std::string& keyword, const QueryTeamsInfoCallback& cb, const std::string& json_extension /*= ""*/)
+{
+	if (keyword.empty())
+		return false;
+
+	QueryTeamsInfoCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new QueryTeamsInfoCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_team_query_teams_info_by_keyword)(keyword.c_str()
+		, &CallbackQueryAllMyTeamsInfo
+		, json_extension.c_str()
+		, cb_pointer);
+
+	return true;
+}
+
 }

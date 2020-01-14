@@ -24,6 +24,7 @@ typedef void(*nim_msglog_delete_all_async)(bool delete_sessions, const char *jso
 typedef void(*nim_msglog_delete_by_time_async)(const char *account_id, enum NIMSessionType to_type, uint64_t from_time, uint64_t to_time, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_query_msg_online_async)(const char *id, nim::NIMSessionType to_type, int limit_count, int64_t from_time, int64_t end_time, int64_t end_msg_id, bool reverse, bool need_save_to_local, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_query_msg_online_async2)(const char *id,NIMQueryMsgOnlineAsyncParam query_param, nim_msglog_query_cb_func cb, const void *user_data);
+typedef void(*nim_msglog_query_msg_by_keyword_online_async)(const char *id, const char* keyword, NIMQueryMsgByKeywordOnlineAsyncParam query_param, nim_msglog_query_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_query_msg_by_id_async)(const char *client_msg_id, const char *json_extension, nim_msglog_query_single_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_query_msg_by_options_async)(NIMMsgLogQueryRange query_range, const char *ids, int limit_count, int64_t from_time, int64_t end_time, const char *end_client_msg_id, bool reverse, NIMMessageType msg_type, const char *search_content, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_update_localext_async)(const char *msg_id, const char *local_ext, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
@@ -105,6 +106,7 @@ MsgLog::QueryMsgOnlineAsyncParam::QueryMsgOnlineAsyncParam() :
 {
 
 }
+
 bool MsgLog::QueryMsgOnlineAsyncParam::FormatParam()
 {
 	if (id_.empty() || limit_count_ <= 0)
@@ -128,6 +130,15 @@ bool MsgLog::QueryMsgOnlineAsyncParam::FormatParam()
 	json_extension_ = fw.write(extension);
 	return true;
 }
+
+
+MsgLog::QueryMsgByKeywordOnlineParam::QueryMsgByKeywordOnlineParam()
+	: limit_count_(20)
+	, reverse_(true)
+{
+
+}
+
 static void CallbackQueryMsg(int res_code
 	, const char *id
 	, nim::NIMSessionType to_type
@@ -316,6 +327,30 @@ bool MsgLog::QueryMsgOnlineAsync(const MsgLog::QueryMsgOnlineAsyncParam& param, 
 		query_param, &CallbackQueryMsg, cb_pointer);
 	return true;
 }
+
+bool MsgLog::QueryMsgByKeywordOnlineAsync(const MsgLog::QueryMsgByKeywordOnlineParam& param, const QueryMsgCallback& cb)
+{
+	if (param.id_.empty() || param.limit_count_ <= 0 || param.keyword_.empty())
+		return false;
+	if (!(const_cast<MsgLog::QueryMsgByKeywordOnlineParam&>(param)).FormatParam())
+		return false;
+	QueryMsgCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new QueryMsgCallback(cb);
+	}
+	NIMQueryMsgByKeywordOnlineAsyncParam query_param;
+	query_param.to_type_ = param.to_type_;
+	query_param.limit = param.limit_count_;
+	query_param.from_time_ = param.from_time_;
+	query_param.end_time_ = param.end_time_;
+	query_param.reverse_ = param.reverse_;
+	NIM_SDK_GET_FUNC(nim_msglog_query_msg_by_keyword_online_async)(param.id_.c_str(),
+		param.keyword_.c_str(), query_param, &CallbackQueryMsg, cb_pointer);
+
+	return true;
+}
+
 bool MsgLog::QueryMsgOfSpecifiedTypeInASessionAsync(nim::NIMSessionType to_type
 	, const std::string &id
 	, int limit_count

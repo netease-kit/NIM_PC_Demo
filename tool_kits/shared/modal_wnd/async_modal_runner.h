@@ -28,7 +28,6 @@
 #include "base/callback/callback.h"
 #include <memory>
 #include <list>
-
 class AsyncModalRunner : protected nbase::Thread
 {
 public:
@@ -47,8 +46,11 @@ private:
 	friend class AsyncModalRunnerManager;
 	friend class std::shared_ptr<AsyncModalRunner>;
 	friend class std::_Ref_count<AsyncModalRunner>;
-	
-	AsyncModalRunner(Delegate *delegate);
+	friend class std::_Ref_count_obj<AsyncModalRunner>;
+	template<class _Ty,
+		class... _Types>
+		friend _NODISCARD inline std::shared_ptr<_Ty> std::make_shared(_Types&&... _Args);
+	AsyncModalRunner(Delegate *delegate);	
 	virtual ~AsyncModalRunner();
 
 	void Run();

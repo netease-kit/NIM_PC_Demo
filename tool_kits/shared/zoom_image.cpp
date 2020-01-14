@@ -409,7 +409,7 @@ bool CalculateImageSize(const std::wstring& file, SIZE& size, int max_width, int
 	}
 	else if( nbase::FilePathIsExist(file, false) )
 	{
-		std::auto_ptr<Gdiplus::Image> img;
+		std::shared_ptr<Gdiplus::Image> img;
 		img.reset( Gdiplus::Image::FromFile( file.c_str() ) );
 		if(img.get() != NULL)
 		{

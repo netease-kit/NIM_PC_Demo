@@ -217,17 +217,17 @@ void LabelTemplate<InheritType>::PaintText(IRenderContext* pRender)
 	if (m_animationManager.GetAnimationPlayer(kAnimationHot)) {
 		if ((stateType == kControlStateNormal || stateType == kControlStateHot)
 			&& !GetStateTextColor(kControlStateHot).empty()) {
-			std::wstring clrColor = GetStateTextColor(kControlStateNormal);
-			if (!clrColor.empty()) {
-				DWORD dwClrColor = GlobalManager::GetTextColor(clrColor);
-				pRender->DrawText(rc, GetText(), dwClrColor, m_iFont, m_uTextStyle, 255, m_bLineLimit);
+			std::wstring clrTextColor = GetStateTextColor(kControlStateNormal);
+			if (!clrTextColor.empty()) {
+				DWORD dwClrTextColor = GlobalManager::GetTextColor(clrTextColor);
+				pRender->DrawText(rc, GetText(), dwClrTextColor, m_iFont, m_uTextStyle, 255, m_bLineLimit);
 			}
 
 			if (m_nHotAlpha > 0) {
-				std::wstring clrColor = GetStateTextColor(kControlStateHot);
-				if (!clrColor.empty()) {
-					DWORD dwClrColor = GlobalManager::GetTextColor(clrColor);
-					pRender->DrawText(rc, GetText(), dwClrColor, m_iFont, m_uTextStyle, (BYTE)m_nHotAlpha, m_bLineLimit);
+				std::wstring clrStateTextColor = GetStateTextColor(kControlStateHot);
+				if (!clrStateTextColor.empty()) {
+					DWORD dwClrTextColor = GlobalManager::GetTextColor(clrStateTextColor);
+					pRender->DrawText(rc, GetText(), dwClrTextColor, m_iFont, m_uTextStyle, (BYTE)m_nHotAlpha, m_bLineLimit);
 				}
 			}
 

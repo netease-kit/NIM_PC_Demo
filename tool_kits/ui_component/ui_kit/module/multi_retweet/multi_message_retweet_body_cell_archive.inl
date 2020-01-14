@@ -8,8 +8,7 @@ namespace nim_comp
 	{
 		Json::Value json_msg;
 		Json::Reader().parse(data, json_msg);
-		nim::IMMessage&& msg = std::forward<nim::IMMessage>(ToMessageLog(json_msg));
-		return msg;
+		return ToMessageLog(json_msg);
 	}
 	inline std::string BodyCellArchive::ToString(const nim::IMMessage& msg)
 	{

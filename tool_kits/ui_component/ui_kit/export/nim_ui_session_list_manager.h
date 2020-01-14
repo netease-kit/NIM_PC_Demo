@@ -2,6 +2,8 @@
 
 #include "nim_ui_dll.h"
 #include "gui/main/session_list.h"
+#include "gui/main/session_list_cloud.h"
+
 namespace nim_ui
 {
 /** @class SessionListManager
@@ -22,6 +24,20 @@ public:
 	* @return void	无返回值
 	*/
 	bool AttachListBox(ui::ListBox *list_box);
+
+	/**
+	* 把传入的列表控件作为云端会话列表控件，控制列表控件来展示云端会话
+	* @param[in] list_box 作为会话列表的列表控件指针(当控件被销毁时应该传入nullprt)
+	* @return void	无返回值
+	*/
+	bool AttachCloudListBox(ui::ListBox* list_box);
+
+	/**
+	 * 显示云端会话列表
+	 * @param[in] show true 为显示云端，false 为显示本地的
+	 * @return void 无返回值
+	 */
+	void ShowCloudSession(bool show = true);
 
 	/**
 	* 主动向sdk查询未读的系统消息数
@@ -135,6 +151,9 @@ public:
 	* @return void 无返回值
 	*/
 	void OnQuerySessionListCallback(const std::list<nim::SessionData>& sessions);
+
+	void OnQueryOnlineSessionListCallback(bool has_more, const nim::SessionOnLineServiceHelper::SessionList& session_list);
+
 	/**
 	* 插入一条本地消息,为了在SDK会话列表产生一条数据
 	* @param[in] cb 结果回调
@@ -149,6 +168,7 @@ private:
 	SessionListManager();
 	~SessionListManager(){};
 	std::unique_ptr<nim_comp::SessionList> session_list_;
+	std::unique_ptr<nim_comp::SessionListCloud> session_list_cloud_;
 };
 
 }

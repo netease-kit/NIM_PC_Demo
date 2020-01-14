@@ -223,6 +223,8 @@ enum NIMNotificationId
 	kNIMNotificationIdSuperTeamAddManager = 407,	/**< 超大群增加管理员，{"ids":["a1","a2"],"uinfos":["uinfo1", "uinfo2"]}*/
 	kNIMNotificationIdSuperTeamRemoveManager = 408,    /**< 超大群删除管理员，{"ids":["a1","a2"],"uinfos":["uinfo1", "uinfo2"]}*/
 	kNIMNotificationIdSuperTeamMuteMember = 409,	/**< 超大群禁言/解禁群成员，{"uinfos":["uinfo1", "uinfo2"],“tinfo”:tinfo,"id":"a1","mute":1-禁言,0-解禁}*/
+	kNIMNotificationIdSuperTeamApplyPass = 410,	/**< 超大群申请加入成功，{"tinfo":tinfo,"id":"a1","uinfos":["uinfo1", "uinfo2"]}*/
+	kNIMNotificationIdSuperTeamInviteAccept = 411 /**< 超大群接受邀请进群，{"tinfo":tinfo,"id":"a1"}*/
 };
 
 /** @enum NIMMsgLogSubStatus 消息子状态 */
@@ -401,7 +403,17 @@ typedef struct
 	enum NIMMessageType* msg_type_list_;/**< list 要获取或排除掉的消息类型 由 is_exclusion_type_ 参数决定*/
 	int type_list_length_;/**<  int type list 长度 */
 	bool is_exclusion_type_;/**< bool true : 获取除msg_type_list_中指定的所有类型消息 ,false :只获取 msg_type_list_ 中指定的类型的消息*/
-}NIMQueryMsgOnlineAsyncParam;
+} NIMQueryMsgOnlineAsyncParam;
+
+/** @brief根据关键字村云端查询消息记录的参数定义 */
+typedef struct
+{
+	enum NIMSessionType to_type_;/**< enum 会话类型，双人0，群组1 (nim_msglog_def.h) */
+	int limit;/**< int 本次查询的消息条数上限(最多100条) */
+	int64_t from_time_;/**< int64_t 起始时间点，单位：毫秒 */
+	int64_t end_time_;/**<  int64_t 结束时间点，单位：毫秒 */
+	bool reverse_;/**< bool true：反向查询(按时间正序起查，正序排列)，false：按时间逆序起查，逆序排列（建议默认为false） */
+} NIMQueryMsgByKeywordOnlineAsyncParam;
 
 
 /** @name 群组通知 Json Keys

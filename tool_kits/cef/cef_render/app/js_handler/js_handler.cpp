@@ -40,14 +40,22 @@ bool CefJSHandler::Execute(const CefString& name, CefRefPtr<CefV8Value> object, 
 		}
 		else
 		{
+#if defined(CEF_STRING_TYPE_UTF16)
+			exception = L"Invalid arguments.";
+#else
 			exception = "Invalid arguments.";
+#endif
 			return false;
 		}
 
 		// Ö´ÐÐ C++ ·½·¨
 		if (!js_bridge_->CallCppFunction(function_name, params, callback))
 		{
+#if defined(CEF_STRING_TYPE_UTF16)
+			exception = nbase::UTF8ToUTF16(nbase::StringPrintf("Failed to call function %s.", function_name.c_str())).c_str();
+#else
 			exception = nbase::StringPrintf("Failed to call function %s.", function_name).c_str();
+#endif
 			return false;
 		}
 

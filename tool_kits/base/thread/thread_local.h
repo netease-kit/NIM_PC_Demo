@@ -77,7 +77,8 @@ public:
 
 	void Set(bool val)
 	{
-		tlp_.Set(reinterpret_cast<void*>(val ? 1 : 0));
+		//tlp_.Set(reinterpret_cast<void*>(val ? 1 : 0)); 
+		tlp_.Set(IntToPtr(val ? 1 : 0));
 	}
 
 private:

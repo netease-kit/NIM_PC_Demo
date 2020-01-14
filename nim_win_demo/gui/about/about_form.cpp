@@ -50,7 +50,7 @@ void AboutForm::InitWindow()
 		std::wstring ver;
 		nim_ui::UserConfig::GetInstance()->GetAppLocalVersion(ver);
 		std::wstring format = multilan->GetStringViaID(L"STRID_ABOUTFORM_VERSION");
-		version->SetText(nbase::StringPrintf(format.c_str(), ver));
+		version->SetText(nbase::StringPrintf(format.c_str(), ver.c_str()));
 	}
 }
 

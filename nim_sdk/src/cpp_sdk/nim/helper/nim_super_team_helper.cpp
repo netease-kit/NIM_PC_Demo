@@ -123,6 +123,7 @@ void ParseSuperTeamInfoJson(const nim_cpp_wrapper_util::Json::Value& team_info_j
 	team_info.SetMemberCount(team_info_json[nim::kNIMSuperTeamInfoKeyMemberCount].asUInt());
 	team_info.SetProperty(team_info_json[nim::kNIMSuperTeamInfoKeyProperty].asString());
 	team_info.SetValid(team_info_json[nim::kNIMSuperTeamInfoKeyValidFlag].asUInt() == 0 ? false : true);
+	team_info.SetBeInviteMode((NIMSuperTeamBeInviteMode)(team_info_json[nim::kNIMSuperTeamInfoKeyBeInviteMode].asInt()));
 	//群属性,开发者无需关注 20161011 oleg
 	//team_info.SetConfigBits(team_info_json[nim::kNIMSuperTeamInfoKeyBits].asUInt64());
 	team_info.SetMemberValid(team_info_json[nim::kNIMSuperTeamInfoKeyMemberValid].asUInt() == 0 ? false : true);

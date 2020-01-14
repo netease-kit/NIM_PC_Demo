@@ -1,4 +1,4 @@
-/** @file nim_util_include.h
+﻿/** @file nim_util_include.h
   * @brief 
   * @copyright (c) 2015-2017, NetEase Inc. All rights reserved
   * @date 2017/08/03

@@ -437,6 +437,8 @@ void VideoManager::DoMultiVChat(const std::list<UTF8String>& friend_list, const 
 	}
 	auto join_room_cb = [=](int code, int64_t channel_id, const std::string& json_extension)
 	{
+		QLOG_APP(L"Received custom info {0}") << nbase::UTF8ToUTF16(json_extension);
+
 		StdClosure closure = [=]()
 		{
 			if (code == 200)

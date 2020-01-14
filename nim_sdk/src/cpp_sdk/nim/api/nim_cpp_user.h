@@ -136,6 +136,15 @@ public:
 	*/
 	static bool UpdateMyUserNameCard(const UserNameCard& namecard, const UpdateMyUserNameCardCallback& cb, const std::string& json_extension = "");
 
+	/** @fn static bool QueryUserListByKeyword(const std::string& keyword, const GetUserNameCardCallback& cb, const std::string& json_extension = "")
+	* 获取本地的指定帐号的用户名片
+	* @param[in] keyword	要查询的关键字
+	* @param[in] cb			操作结果回调
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @return bool 检查参数如果不符合要求则返回失败
+	*/
+	static bool QueryUserListByKeyword(const std::string& keyword, const GetUserNameCardCallback& cb, const std::string& json_extension = "");
+
 	/** @fn static bool ParseBlackListInfoChange(const SpecialRelationshipChangeEvent& change_event, BlackMuteListInfo& info)
 	* 解析黑名单变更通知
 	* @param[in] change_event 特殊关系变更通知
@@ -159,6 +168,16 @@ public:
 	* @return bool 解析是否成功
 	*/
 	static bool ParseSyncSpecialRelationshipChange(const SpecialRelationshipChangeEvent& change_event, std::list<BlackMuteListInfo>& black_mute_list);
+    
+    
+    /** @fn void UpdatePushToken(const std::string& cer_name, const std::string& token, int type))
+    * 更新推送证书
+    * @param[in] cer_name 云信后台配置的s推送证明名称
+    * @param[in] token  设备token
+    * @param[in] type  1： pushkit (仅iOS) 其他 apns 默认填0
+    * @return void 无返回值
+    */
+    static void UpdatePushToken(const std::string& cer_name, const std::string& token, int type);
 
 	/** @fn void UnregUserCb()
 	* 反注册User提供的所有回调

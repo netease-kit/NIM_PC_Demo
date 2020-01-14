@@ -310,16 +310,10 @@
     <None Include="nim.ico">
       <Filter>资源文件</Filter>
     </None>
-    <None Include="rt_manif.bin">
-      <Filter>资源文件</Filter>
-    </None>
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="nim.rc">
       <Filter>资源文件</Filter>
     </ResourceCompile>
-  </ItemGroup>
-  <ItemGroup>
-    <Manifest Include="nim_demo.exe.intermediate.manifest" />
   </ItemGroup>
 </Project>

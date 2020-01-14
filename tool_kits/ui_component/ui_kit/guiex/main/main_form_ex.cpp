@@ -85,6 +85,7 @@ namespace nim_comp
 		nim_ui::ContactsListManager::GetInstance()->InvokeGetAllUserInfo();
 		nim_ui::SessionListManager::GetInstance()->QueryUnreadSysMsgCount();
 		nim_comp::SessionService::GetInstance()->InvokeLoadSessionList();
+		nim_comp::SessionService::GetInstance()->InvokeLoadOnlineSessionList();
 		
 
 		ui::ButtonBox* main_menu_button = (ui::ButtonBox*)FindControl(L"main_menu_button");

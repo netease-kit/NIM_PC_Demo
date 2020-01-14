@@ -139,6 +139,12 @@
     <ClCompile Include="helper\nim_session_online_service_helper.cpp">
       <Filter>helper</Filter>
     </ClCompile>
+    <ClCompile Include="helper\nim_pass_through_proxy_helper.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="api\nim_cpp_pass_through_proxy.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\nim_client_helper.h">
@@ -324,6 +330,15 @@
     </ClInclude>
     <ClInclude Include="helper\nim_session_online_service_helper.h">
       <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_pass_through_proxy_def.h">
+      <Filter>public_define\defines\nim_define</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\nim_pass_through_proxy_helper.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="api\nim_cpp_pass_through_proxy.h">
+      <Filter>api</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

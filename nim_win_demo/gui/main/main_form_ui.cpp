@@ -147,6 +147,7 @@ void MainForm::InitWindow()
 	nim_ui::ContactsListManager::GetInstance()->InvokeGetAllUserInfo();
 	nim_ui::SessionListManager::GetInstance()->QueryUnreadSysMsgCount();
 	nim_comp::SessionService::GetInstance()->InvokeLoadSessionList();
+	nim_comp::SessionService::GetInstance()->InvokeLoadOnlineSessionList();
 	nim_ui::SubscribeEventManager::GetInstance()->StartAutoSubscribe();
 
 }

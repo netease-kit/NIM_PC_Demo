@@ -159,27 +159,52 @@ bool Client::Init(const std::string& app_key
 	, const SDKConfig &config)
 {
 #ifdef NIM_SDK_DLL_IMPORT
-#if defined(OS_MACOSX)
-    static const char *kSdkNimDll = "nim_sdk_Mac";
-#elif defined(OS_IOS)
-    static const char *kSdkNimDll = "nim_sdk_iOS";
-#elif defined(OS_LINUX)
-    static const char *kSdkNimDll = "libnim.so";
-#elif defined(WIN32)
-    static const char *kSdkNimDll = "nim.dll";
-#else
-    static const char *kSdkNimDll = nullptr;
-#endif
-	if (NULL == nim_sdk_instance)
-	{
-		nim_sdk_instance = new SDKInstance();
-	}
-	if (!nim_sdk_instance->LoadSdkDll(app_install_dir.c_str(), kSdkNimDll))
-		return false;
+	#if defined(WIN32) || defined(_WIN32) || defined(__WIN32__) || defined(__NT__)
+		//define something for Windows (32-bit and 64-bit, this part is common)
+		static const char *kSdkNimDll = "nim.dll";
+	#ifdef _WIN64
+		// define something for Windows (64-bit only)
+	#else
+		// define something for Windows (32-bit only)
+	#endif
+	#elif __APPLE__
+	#include "TargetConditionals.h"
+	#if TARGET_IPHONE_SIMULATOR
+		// iOS Simulator
+		static const char *kSdkNimDll = "nim_sdk_iOS";
+	#elif TARGET_OS_IPHONE
+		// iOS device
+		static const char *kSdkNimDll = "nim_sdk_iOS";
+	#elif TARGET_OS_MAC
+		// Other kinds of Mac OS
+		static const char *kSdkNimDll = "nim_sdk_Mac";
+	#else
+	#   error "Unknown Apple platform"
+		static const char *kSdkNimDll = nullptr;
+	#endif
+	#elif __ANDROID__
+		// android
+	#elif __linux__
+		// linux
+		static const char *kSdkNimDll = "libnim.so";
+	#elif __unix__ // all unices not caught above
+		// Unix
+	#elif defined(_POSIX_VERSION)
+		// POSIX
+	#else
+	#   error "Unknown compiler"
+		static const char *kSdkNimDll = nullptr;
+	#endif
+		if (NULL == nim_sdk_instance)
+		{
+			nim_sdk_instance = new SDKInstance();
+		}
+		if (!nim_sdk_instance->LoadSdkDll(app_install_dir.c_str(), kSdkNimDll))
+			return false;
 #endif
 	g_nim_sdk_config_ = config;
 	nim_cpp_wrapper_util::Json::Value config_root;
-	//sdk能力参数（必填）
+	// SDK 能力参数（必填）
 	nim_cpp_wrapper_util::Json::Value config_values;
 	config_values[nim::kNIMDataBaseEncryptKey] = config.database_encrypt_key_;
 	config_values[nim::kNIMPreloadAttach] = config.preload_attach_;	
@@ -187,6 +212,8 @@ bool Client::Init(const std::string& app_key
 	config_values[nim::kNIMPreloadImageQuality] = config.preload_image_quality_;
 	config_values[nim::kNIMPreloadImageResize] = config.preload_image_resize_;
 	config_values[nim::kNIMSDKLogLevel] = config.sdk_log_level_;
+    config_values[nim::kNIMPushCerName] = config.push_cer_name_;
+    config_values[nim::kNIMPushToken] = config.push_token_;
 	config_values[nim::kNIMSyncSessionAck] = config.sync_session_ack_;
 	config_values[nim::kNIMLoginRetryMaxTimes] = config.login_max_retry_times_;
 	config_values[nim::kNIMUseHttps] = config.use_https_;
@@ -237,11 +264,12 @@ bool Client::Init(const std::string& app_key
 	}
 	config_root[nim::kNIMGlobalConfig] = config_values;
 	config_root[nim::kNIMAppKey] = app_key;	
-	auto ret  = NIM_SDK_GET_FUNC(nim_client_init)(app_data_dir.c_str(), app_install_dir.c_str(), GetJsonStringWithNoStyled(config_root).c_str());
-	if (ret)
-		nim_sdk_instance->OnSDKInited();
-	return ret;
 
+	auto ret  = NIM_SDK_GET_FUNC(nim_client_init)(app_data_dir.c_str(), app_install_dir.c_str(), GetJsonStringWithNoStyled(config_root).c_str());
+	if (ret && nim_sdk_instance)
+		nim_sdk_instance->OnSDKInited();
+
+	return ret;
 }
 void Client::SetCallbackFunction(const SDKClosure& callback)
 {

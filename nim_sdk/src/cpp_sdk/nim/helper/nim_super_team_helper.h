@@ -83,6 +83,16 @@ public:
 			SetUpdateTimetag(new_info.GetUpdateTimetag());
 		if (new_info.ExistValue(kNIMSuperTeamInfoKeyServerCustom))
 			SetServerCustom(new_info.GetServerCustom());
+		if (new_info.ExistValue(kNIMSuperTeamInfoKeyBeInviteMode))
+			SetBeInviteMode(new_info.GetBeInviteMode());
+		/*
+		if (new_info.ExistValue(kNIMSuperTeamInfoKeyInviteMode))
+			SetInviteMode(new_info.GetInviteMode());
+		if (new_info.ExistValue(kNIMSuperTeamInfoKeyUpdateInfoMode))
+			SetUpdateInfoMode(new_info.GetUpdateInfoMode());
+		if (new_info.ExistValue(kNIMSuperTeamInfoKeyUpdateCustomMode))
+			SetUpdateCustomMode(new_info.GetUpdateCustomMode());
+		*/
 	}
 
 public:
@@ -288,6 +298,56 @@ public:
 	{
 		return team_info_json_value_[nim::kNIMSuperTeamInfoKeyIcon].asString();
 	}
+
+	/** 设置邀请入群是否需要验证*/
+	void SetBeInviteMode(int be_invite_mode)
+	{
+		team_info_json_value_[nim::kNIMSuperTeamInfoKeyBeInviteMode] = be_invite_mode;
+	}
+
+	/** 获取邀请入群是否需要验证标记 */
+	int GetBeInviteMode() const
+	{
+		return team_info_json_value_[nim::kNIMSuperTeamInfoKeyBeInviteMode].asUInt();
+	}
+
+#if 0
+	/** 设置谁可以邀请他人入群 */
+	void SetInviteMode(NIMTeamInviteMode mode)
+	{
+		team_info_json_value_[nim::kNIMSuperTeamInfoKeyInviteMode] = mode;
+	}
+
+	/** 获取谁可以邀请他人入群 */
+	NIMTeamInviteMode GetInviteMode() const
+	{
+		return (NIMTeamInviteMode)team_info_json_value_[nim::kNIMSuperTeamInfoKeyInviteMode].asUInt();
+	}
+
+	/** 设置谁可以修改群资料 */
+	void SetUpdateInfoMode(NIMSuperTeamUpdateInfoMode mode)
+	{
+		team_info_json_value_[nim::kNIMSuperTeamInfoKeyUpdateInfoMode] = mode;
+	}
+
+	/** 获取谁可以修改群资料 */
+	NIMSuperTeamUpdateInfoMode GetUpdateInfoMode() const
+	{
+		return (NIMSuperTeamUpdateInfoMode)team_info_json_value_[nim::kNIMSuperTeamInfoKeyUpdateInfoMode].asUInt();
+	}
+
+	/** 设置谁可以修改群资料属性 */
+	void SetUpdateCustomMode(NIMSuperTeamUpdateCustomMode mode)
+	{
+		team_info_json_value_[nim::kNIMSuperTeamInfoKeyUpdateCustomMode] = mode;
+	}
+
+	/** 获取谁可以修改群资料属性 */
+	NIMSuperTeamUpdateCustomMode GetUpdateCustomMode() const
+	{
+		return (NIMSuperTeamUpdateCustomMode)team_info_json_value_[nim::kNIMSuperTeamInfoKeyUpdateCustomMode].asUInt();
+	}
+#endif
 
 	/** @fn bool ExistValue(const std::string& nim_team_info_key) const
 	  * @brief 群组信息数据标记Key对应的数据是否有效（存在，非初始值状态）

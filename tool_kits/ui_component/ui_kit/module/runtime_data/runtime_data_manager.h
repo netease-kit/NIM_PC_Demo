@@ -4,7 +4,7 @@ namespace nim_comp
 {	
 	class RunTimeDataManager : public nbase::Singleton<RunTimeDataManager>
 	{
-		SingletonHideConstructor(RunTimeDataManager);
+		SingletonHideConstructor(typename RunTimeDataManager);
 	private:
 		RunTimeDataManager() : 
 			uistyle_(UIStyle::join), is_searching_friend_(false), is_atting_someone_(false), is_sdk_inited_(false)

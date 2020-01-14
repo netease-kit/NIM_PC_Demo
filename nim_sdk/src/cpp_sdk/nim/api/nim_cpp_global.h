@@ -48,7 +48,7 @@ public:
 		std::string description_;
 		std::string attach_;
 	};
-	typedef std::function<void(bool conncet, NIMProxyDetectStep step, const std::string& json_extention)> DetectProxyCallback; 
+	typedef std::function<void(bool conncet, NIMProxyDetectStep step, const std::string& json_extension)> DetectProxyCallback; 
 	typedef std::function<void(NIMSDKException exception,const std::string& log)> ExceptionCallback; 
 	typedef std::function<void(NIMResCode rescode, const CachedFileInfo &info)> GetCachedFileInfoCallback;
 	typedef std::function<void(NIMResCode rescode)> DeleteCachedFileCallback;

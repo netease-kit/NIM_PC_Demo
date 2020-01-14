@@ -64,7 +64,7 @@ namespace app_sdk
 	static auto CreateHttpRequest(const TParams&... params)->
 		std::shared_ptr<typename TSharedHttpRequest::element_type>
 	{
-		using TRequest = TSharedHttpRequest::element_type;
+		using TRequest = typename TSharedHttpRequest::element_type;
 		static_assert(std::is_base_of<IHttpRequest, TRequest>::value, "app_sdk::IHttpRequest should be base of TRequest");
 		return std::make_shared< TRequest>(params...);
 	}
