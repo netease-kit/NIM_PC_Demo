@@ -57,7 +57,7 @@ extern"C"
 	typedef void(*nim_session_online_service_session_changed_cb_func)(const char *session_info, const void *user_data);
 
 /** @name 会话服务 【会话信息】定义 */
-static const char *kMINSessionOLSRVInfoType = "info_session_tpye";     /**< int 会话类型 */
+static const char *kMINSessionOLSRVInfoType = "info_session_type";     /**< int 会话类型 */
 static const char *kMINSessionOLSRVInfoID = "info_session_id";				/**< string 会话ID*/
 static const char *kMINSessionOLSRVInfoUpdateT = "info_update_time";/**< uint64_t 会话最后更新时间*/
 static const char *kMINSessionOLSRVInfoEXT = "info_ext";						/**< string 扩展字段，可自定义*/

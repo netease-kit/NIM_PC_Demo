@@ -21,7 +21,7 @@ static void CallbackReceivedHttpMsg(const char* from_accid, const char* body, ui
 {
 	CallbackProxy::DoSafeCallback<PassThroughProxy::ReceivedHttpMsgCb>(user_data, [=](const PassThroughProxy::ReceivedHttpMsgCb& cb) {
 		CallbackProxy::Invoke(cb, PCharToString(from_accid), PCharToString(body), timestamp);
-	}, true);
+	});
 }
 
 static void CallbackSendHttpRequest(int res_code, const char *headers, const char *body, const char *json_extension, const void *user_data)
@@ -44,7 +44,7 @@ void PassThroughProxy::SendHttpRequest(const std::string& host,
 	const std::string& headers,
 	const std::string& body,
 	const std::string& json_extension,
-	SendHttpRequestCallback callback)
+	const SendHttpRequestCallback& callback)
 {
 	SendHttpRequestCallback* cb_pointer = nullptr;
 	if (callback)

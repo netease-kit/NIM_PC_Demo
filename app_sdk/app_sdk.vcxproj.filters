@@ -13,14 +13,8 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
-    <Filter Include="appbase">
-      <UniqueIdentifier>{ede85809-d650-4926-9af2-41f47fca51c3}</UniqueIdentifier>
-    </Filter>
     <Filter Include="module">
       <UniqueIdentifier>{efde33ad-56b6-4351-bc26-e0ea7245cb68}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="appbase\http">
-      <UniqueIdentifier>{fc352e6d-1f44-43a4-891e-4cf1b6c9746d}</UniqueIdentifier>
     </Filter>
     <Filter Include="include">
       <UniqueIdentifier>{7e4349ed-3ba0-475b-bbe9-40b79673442c}</UniqueIdentifier>
@@ -34,6 +28,12 @@
     <Filter Include="app_config">
       <UniqueIdentifier>{e487c015-7dff-4588-9835-ae6a03e667d1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="include\appbase">
+      <UniqueIdentifier>{ede85809-d650-4926-9af2-41f47fca51c3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="include\appbase\http">
+      <UniqueIdentifier>{fc352e6d-1f44-43a4-891e-4cf1b6c9746d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <Text Include="ReadMe.txt" />
@@ -46,10 +46,10 @@
       <Filter>头文件</Filter>
     </ClInclude>
     <ClInclude Include="base\http\http_protocol_interface_define.h">
-      <Filter>appbase\http</Filter>
+      <Filter>include\appbase\http</Filter>
     </ClInclude>
     <ClInclude Include="base\http\sdk_http_manager.h">
-      <Filter>appbase\http</Filter>
+      <Filter>include\appbase\http</Filter>
     </ClInclude>
     <ClInclude Include="protocol\sdk_pro.h">
       <Filter>protocol</Filter>
@@ -75,7 +75,7 @@
       <Filter>源文件</Filter>
     </ClCompile>
     <ClCompile Include="base\http\http_protocol_interface_define.cpp">
-      <Filter>appbase\http</Filter>
+      <Filter>include\appbase\http</Filter>
     </ClCompile>
     <ClCompile Include="protocol\sdk_pro.cpp">
       <Filter>protocol</Filter>

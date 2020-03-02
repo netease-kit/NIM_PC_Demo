@@ -51,7 +51,7 @@ public:
 		const std::string& headers,
 		const std::string& body,
 		const std::string& json_extension,
-		SendHttpRequestCallback callback);
+		const SendHttpRequestCallback& callback);
 };
 
 } 

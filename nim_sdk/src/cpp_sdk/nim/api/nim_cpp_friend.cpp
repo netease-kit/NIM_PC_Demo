@@ -225,7 +225,7 @@ bool Friend::QueryFriendshipBlock(const std::string& accid, const std::string& j
 	return 	NIM_SDK_GET_FUNC(nim_friend_query_friendship_block)(accid.c_str(), json_extension.c_str());
 }
 
-bool Friend::QueryFriendListByKeyword(std::string& keyword, const GetFriendsListCallback& cb, const std::string& json_extension /*= ""*/)
+bool Friend::QueryFriendListByKeyword(const std::string& keyword, const GetFriendsListCallback& cb, const std::string& json_extension /*= ""*/)
 {
 	if (keyword.empty())
 		return false;

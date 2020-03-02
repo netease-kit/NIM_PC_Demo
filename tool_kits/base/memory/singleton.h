@@ -6,7 +6,7 @@
 #include "../util/at_exit.h"
 namespace nbase
 {
-//饿汉模式
+	//饿汉模式
 #define SINGLETON_DEFINE(TypeName)				\
 static TypeName* GetInstance()					\
 {												\

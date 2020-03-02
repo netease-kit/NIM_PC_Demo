@@ -28,6 +28,7 @@ typedef void(*nim_client_reg_kickout_other_client_cb)(const char *json_extension
 typedef void(*nim_client_reg_sync_multiport_push_config_cb)(const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
 typedef void(*nim_client_set_multiport_push_config)(const char *switch_content, const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
 typedef void(*nim_client_get_multiport_push_config)(const char *json_extension, nim_client_multiport_push_config_cb_func cb, const void *user_data);
+typedef const char* const(*nim_client_current_user_account)();
 typedef const char* const(*nim_client_version)();
 typedef void(*nim_client_get_server_current_time)(bool calc_local, nim_client_get_server_current_time_cb_func cb, const char *json_extension, const void *user_data);
 #else
@@ -494,6 +495,10 @@ void Client::GetMultiportPushConfigAsync(const MultiportPushConfigCallback& cb, 
 std::string Client::GetSDKVersion()
 {
 	return NIM_SDK_GET_FUNC(nim_client_version)();
+}
+std::string GetCurrentUserAccount()
+{
+	return NIM_SDK_GET_FUNC(nim_client_current_user_account)();
 }
 void Client::GetServerCurrentTime(const Client::GetCurrentServerTimeCallback& cb, bool calc_local/* = false*/)
 {

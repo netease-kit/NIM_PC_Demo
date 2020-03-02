@@ -1,7 +1,21 @@
 #include "des.h"
 #include "base/base_types.h"
 #include "base/util/string_util.h"
-
+#if _MSC_VER>=1900
+#include "stdio.h" 
+_ACRTIMP_ALT FILE* __cdecl __acrt_iob_func(unsigned);
+#ifdef __cplusplus 
+extern "C"
+{
+#endif 
+	FILE* __cdecl __iob_func(unsigned i) {
+		return __acrt_iob_func(i);
+	}
+#ifdef __cplusplus 
+}
+#endif 
+#pragma comment (lib,"legacy_stdio_definitions.lib")
+#endif /* _MSC_VER>=1900 */
 // permuted choice table (PC1)
 const static char PC1_Table[56] = {
 	57, 49, 41, 33, 25, 17,  9,  1, 58, 50, 42, 34, 26, 18,

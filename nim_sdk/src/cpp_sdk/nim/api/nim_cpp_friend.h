@@ -163,7 +163,7 @@ public:
 	* @return bool 返回 true 表示发送查询请求成功，返回 false 表示关键字为空
 	* @note 错误码	200:成功
 	*/
-	static bool QueryFriendListByKeyword(std::string& keyword, const GetFriendsListCallback& cb, const std::string& json_extension = "");
+	static bool QueryFriendListByKeyword(const std::string& keyword, const GetFriendsListCallback& cb, const std::string& json_extension = "");
 
 };
 

@@ -216,6 +216,12 @@ public:
 	*/
 	static std::string GetSDKVersion();
 
+	/** @fn void GetCurrentUserAccount()
+	* 获取当前登录的用户账号	(accid)
+	* @return std::string 当前登录的用户账号(accid)
+	* @note 没有登录时将返回空字符串	*/
+	static std::string GetCurrentUserAccount();
+
 	/** @fn void GetServerCurrentTime(bool calc_local, const Client::GetCurrentServerTimeCallback& cb)
 	* 获取当前服务器时间
 	* @param[in] cb 操作结果的回调函数
