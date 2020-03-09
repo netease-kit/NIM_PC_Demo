@@ -53,7 +53,7 @@ void TestGifForm::InitWindow()
 	});
 	auto gif = FindControl(L"gif");
 	gif->AttachGifPlayStop([this](ui::EventArgs* param){
-		ShowMsgBox(GetHWND(), MsgboxCallback(), L"≤•∑≈ÕÍ≥…!", false);
+		ShowMsgBox(GetHWND(), MsgboxCallback(), L"STRID_GIFTEST_PLAY_COMPLETED");
 		return true;
 	});
 	auto button = dynamic_cast<ui::CheckBox*>(FindControl(L"button"));

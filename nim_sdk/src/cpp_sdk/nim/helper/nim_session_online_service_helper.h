@@ -1,4 +1,4 @@
-﻿/** @file nim_cpp_session_online_service_helper.h
+﻿/** @file nim_session_online_service_helper.h
   * @brief SessionOnLineService 辅助方法和数据结构定义
   * @copyright (c) 2015-2019, NetEase Inc. All rights reserved
   * @date 2019/10/22

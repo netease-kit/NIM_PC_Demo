@@ -24,9 +24,17 @@ void MainThread::Init()
 
 	std::wstring theme_dir = QPath::GetAppPath();
 	bool adapt_api = ConfigHelper::GetInstance()->IsAdaptDpi();
-	std::wstring language = nbase::UTF8ToUTF16(ConfigHelper::GetInstance()->GetLanguage());
+	std::wstring language_res = nbase::UTF8ToUTF16(ConfigHelper::GetInstance()->GetLanguage());
+	ui::LanguageSetting language_setting;
+	language_setting.m_strResource = language_res;
+	if (language_setting.m_strResource.compare(L"lang\\zh_CN") == 0)
+		language_setting.m_enumType = ui::LanguageType::Simplified_Chinese;
+	else if(language_setting.m_strResource.compare(L"lang\\en_US") == 0)
+		language_setting.m_enumType = ui::LanguageType::American_English;
+	else
+		language_setting.m_enumType = ui::LanguageType::Simplified_Chinese;
 	ui::GlobalManager::Startup(theme_dir + L"resources\\", ExternCtrlManager::CreateExternCtrl, adapt_api, 
-		L"themes\\default", language);
+		L"themes\\default", language_setting);
 	nim_ui::UserConfig::GetInstance()->SetDefaultIcon(IDI_ICON);
 
 	std::wstring app_crash = QCommand::Get(kCmdAppCrash);

@@ -331,6 +331,8 @@ void SessionItem::UpdateUnread()
 
 void SessionItem::PopupSessionItemMenu(POINT point)
 {
+	if (is_online_session_)//因为涉及到位置切换，所以取消右键
+		return;
 	CMenuWnd* pMenu = new CMenuWnd(NULL);
 	STRINGorID xml(L"session_item_menu.xml");
 	pMenu->Init(xml, _T("xml"), point);
@@ -406,8 +408,9 @@ bool SessionItem::DelSessionItemMenuItemClick(ui::EventArgs* param)
 	else if (name == L"del_session_msg")
 	{
 		nim::Session::SetUnreadCountZeroAsync(msg_.type_, msg_.id_, ToWeakCallback([this](nim::NIMResCode res_code, const nim::SessionData&, int){
-			if (res_code == nim::kNIMResSuccess)
-			nim::MsgLog::BatchStatusDeleteAsync(msg_.id_, msg_.type_, nbase::Bind(&SessionItem::BatchStatusDeleteCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+			if (res_code == nim::kNIMResSuccess)			
+			nim::MsgLog::BatchStatusDeleteAsyncEx(msg_.id_, msg_.type_, (atoi(GetConfigValue("kNIMMsglogRevert").c_str()) != 0),
+				nbase::Bind(&SessionItem::BatchStatusDeleteCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 		}));		
 	}
 	else if (name == L"del_session_msg_online")
@@ -439,7 +442,9 @@ bool SessionItem::OnDbClicked(ui::EventArgs* arg)
 	}
 	else
 	{
-		shared::Toast::ShowToast(L"不支持群(普通群和高级群)和P2P类型以外的会话展示。", 1000);
+		shared::Toast::ShowToast(
+			ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_ITEM_NON_TEAM_P2P_NOT_SUPPORTED_TIP"), 
+			1000);
 	}
 	return true;
 }

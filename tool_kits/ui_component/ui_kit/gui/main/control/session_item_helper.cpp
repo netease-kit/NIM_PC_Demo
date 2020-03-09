@@ -1,13 +1,25 @@
 #include "gui/main/control/session_item_helper.h"
 #include "duilib/Utils/MultiLangSupport.h"
+#include "module/emoji/emoji_info.h"
 namespace nim_comp
 {
 	void SessionItemHelper::GetMsgContent(const nim::SessionData &msg, std::wstring &show_text)
 	{
 		ui::MutiLanSupport* mls = ui:: MutiLanSupport::GetInstance();
 		if (msg.msg_type_ == nim::kNIMMessageTypeText)
-		{
+		{			
 			show_text = nbase::UTF8ToUTF16(msg.msg_content_);
+			if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+			{
+				std::vector<emoji::Emoticon> vec;
+				emoji::GetEmoticon(vec);
+				for (auto it : vec)
+				{
+					nbase::StringReplaceAll(it.tag, L"[" + it.tip + L"]", show_text);
+				}
+			}
+			
+			
 		}
 		else if (msg.msg_type_ == nim::kNIMMessageTypeImage)
 		{

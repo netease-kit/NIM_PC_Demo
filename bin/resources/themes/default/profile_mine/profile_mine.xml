@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window size="450,650" caption="0,0,0,34">
-	<VBox width="auto" height="auto" bkcolor="bk_wnd_lightcolor" >
+<Window size="420,650" caption="0,0,0,34" textid="STRID_PROFILE_FORM_PROFILE">
+	<VBox width="420" height="auto" bkcolor="bk_wnd_lightcolor" >
 		<Box width="stretch" height="auto" bkcolor="bk_wnd_darkcolor">
 			<HBox width="auto" height="auto" halign="right" margin="0,6,6,0">
 				<Button class="btn_wnd_min" name="minbtn"/>
 				<Button class="btn_wnd_close" name="closebtn" margin="2"/>
 			</HBox>
 		</Box>
-		<HBox width="450" height="650">
-			<CefControl name="cef_control" bkcolor="bk_wnd_lightcolor"/>
+		<HBox height="auto">
+			<CefControl name="cef_control" height="534" bkcolor="bk_wnd_lightcolor"/>
 		</HBox>
 	</VBox>
 </Window>

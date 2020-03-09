@@ -14,6 +14,14 @@
 extern"C"
 {
 #endif
+/** @fn void nim_msglog_register_delete_msgs_self_callback(const nim_msglog_delete_message_self_notify_cb_func cb, const void *user_data)
+  * 注册单向删除消息推送回调
+  * @param[in] cb			单向删除消息记录推送回调函数定义， nim_msglog_delete_message_self_notify_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+	NIM_SDK_DLL_API void nim_msglog_register_delete_msgs_self_callback(const nim_msglog_delete_message_self_notify_cb_func cb, const void *user_data);
+
 /** @fn void nim_msglog_query_msg_by_id_async(const char *client_msg_id, const char *json_extension, nim_msglog_query_single_cb_func cb, const void *user_data)
   * 根据消息ID查询本地（单条）消息
   * @param[in] client_msg_id	客户端消息ID
@@ -223,6 +231,20 @@ NIM_SDK_DLL_API void nim_msglog_insert_msglog_async(const char *talk_id, const c
   */
 NIM_SDK_DLL_API void nim_msglog_batch_status_delete_async(const char *account_id, enum NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
 
+/** @fn void nim_msglog_batch_status_delete_async_ex(const char *account_id, enum NIMSessionType to_type, bool revert_by_query_online,const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data)
+  * 批量删除指定对话的消息。删除成功后，将相应会话项的最后一条消息的状态kNIMSessionMsgStatus设置为已删除状态，并通过nim_session_reg_change_cb注册的回调通知上层相应会话项的kNIMSessionCommandMsgDeleted事件。
+  * @param[in] account_id	会话id，对方的account id或者群组tid
+  * @param[in] to_type	    会话类型
+  * @param[in] revert_by_online_query	是否可以通过服务端查询消息记录(含入库选项)进行恢复,true:是,false:否
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb			操作结果的回调函数， nim_msglog_res_ex_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
+  */
+NIM_SDK_DLL_API void nim_msglog_batch_status_delete_async_ex(const char *account_id, enum NIMSessionType to_type, bool revert_by_query_online, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
+
 /** @fn void nim_msglog_delete_by_session_type_async(bool delete_sessions, enum NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data)
   * 删除指定会话类型的所有消息
   * @param[in] delete_sessions 是否删除指定会话类型的所有会话列表项。
@@ -237,6 +259,22 @@ NIM_SDK_DLL_API void nim_msglog_batch_status_delete_async(const char *account_id
   *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_delete_by_session_type_async(bool delete_sessions, enum NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
+
+/** @fn void nim_msglog_delete_by_session_type_async_ex(bool delete_sessions, enum NIMSessionType to_type, bool revert_by_query_online, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data)
+  * 删除指定会话类型的所有消息
+  * @param[in] delete_sessions 是否删除指定会话类型的所有会话列表项。
+  *							   ture则删除，并通过nim_session_reg_change_cb注册的回调通知上层kNIMSessionCommandRemoveAllP2P或kNIMSessionCommandRemoveAllTeam事件（不会触发每个会话项的kNIMSessionCommandRemove事件）；
+  *							   false则不删除，并将指定会话类型的所有会话项的最后一条消息的状态kNIMSessionMsgStatus设置为已删除状态，并通过nim_session_reg_change_cb注册的回调通知上层kNIMSessionCommandAllP2PMsgDeleted或kNIMSessionCommandAllTeamMsgDeleted事件（不会触发每个会话项的kNIMSessionCommandUpdate事件，避免频繁通知上层）。
+  * @param[in] to_type	    会话类型
+  * @param[in] revert_by_online_query	是否可以通过服务端查询消息记录(含入库选项)进行恢复,true:是,false:否
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb			操作结果的回调函数， nim_msglog_res_ex_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
+  */
+NIM_SDK_DLL_API void nim_msglog_delete_by_session_type_async_ex(bool delete_sessions, enum NIMSessionType to_type, bool revert_by_query_online, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
 
 /** @fn void nim_msglog_delete_async(const char *account_id, enum NIMSessionType to_type, const char *msg_id, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data)
   * 删除指定一条消息
@@ -266,6 +304,21 @@ NIM_SDK_DLL_API void nim_msglog_delete_async(const char *account_id, enum NIMSes
   */
 NIM_SDK_DLL_API void nim_msglog_delete_all_async(bool delete_sessions, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
 
+/** @fn void nim_msglog_delete_all_async_ex(bool delete_sessions, bool revert_by_query_online, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data)
+  * 删除全部消息历史
+  * @param[in] delete_sessions 是否删除所有会话列表项（即全部最近联系人）。
+  *							   ture则删除，并通过nim_session_reg_change_cb注册的回调通知上层kNIMSessionCommandRemoveAll事件（不会触发每个会话项的kNIMSessionCommandRemove事件）；
+  *							   false则不删除，并将所有会话项的最后一条消息的状态kNIMSessionMsgStatus设置为已删除状态，并通过nim_session_reg_change_cb注册的回调通知上层kNIMSessionCommandAllMsgDeleted事件（不会触发每个会话项的kNIMSessionCommandUpdate事件，避免频繁通知上层）。
+  * @param[in] revert_by_online_query	是否可以通过服务端查询消息记录(含入库选项)进行恢复,true:是,false:否
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb			操作结果的回调函数， nim_msglog_modify_res_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
+  */
+NIM_SDK_DLL_API void nim_msglog_delete_all_async_ex(bool delete_sessions, bool revert_by_query_online, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
+
 /** @fn void nim_msglog_delete_by_time_async(const char *account_id, enum NIMSessionType to_type, uint64_t timestamp1, uint64_t timestamp2, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
   * 根据时间区间删除指定会话指定类型的本地消息
   * @param[in] account_id	会话id，对方的account id或者群组tid
@@ -280,6 +333,22 @@ NIM_SDK_DLL_API void nim_msglog_delete_all_async(bool delete_sessions, const cha
   *				0:失败
   */
 NIM_SDK_DLL_API void nim_msglog_delete_by_time_async(const char *account_id, enum NIMSessionType to_type, uint64_t timestamp1, uint64_t timestamp2, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
+
+/** @fn void nim_msglog_delete_by_time_async_ex(const char *account_id, enum NIMSessionType to_type, bool revert_by_query_online, uint64_t timestamp1, uint64_t timestamp2, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
+  * 根据时间区间删除指定会话指定类型的本地消息
+  * @param[in] account_id	会话id，对方的account id或者群组tid
+  * @param[in] to_type	    会话类型
+  * @param[in] revert_by_online_query	是否可以通过服务端查询消息记录(含入库选项)进行恢复,true:是,false:否
+  * @param[in] timestamp1	与 timestamp2 组成一个时间段，SDK 内部会判断大小调整入参顺序
+  * @param[in] timestamp2	与 timestamp1 组成一个时间段，SDK 内部会判断大小调整入参顺序
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb			操作结果的回调函数， nim_msglog_modify_res_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
+  */
+NIM_SDK_DLL_API void nim_msglog_delete_by_time_async_ex(const char *account_id, enum NIMSessionType to_type, bool revert_by_query_online, uint64_t timestamp1, uint64_t timestamp2, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
 
 /** @fn void nim_msglog_export_db_async(const char *dst_path, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data)
   * 导出整个消息历史DB文件（不包括系统消息历史）。直接拷贝DB文件即可，SDK层不返回进度给APP层。
@@ -408,6 +477,18 @@ NIM_SDK_DLL_API void nim_cancel_export_backup_to_remote();
   * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_msglog_delete_history_online_async(const char *account_id, bool delete_roaming, const char *json_extension, nim_msglog_delete_history_online_res_cb_func cb, const void *user_data);
+
+/** @fn void nim_msglog_delete_message_self_async(const char *json_msg, const char *ext, const char *json_extension, nim_msglog_delete_message_self_res_cb_func cb, const void *user_data)
+  * 单向删除某条消息记录(同时删除本地与云端)
+  * @param[in] json_msg 要删除的消息
+  * @param[in] ext 用户自定义扩展字段
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb			操作结果的回调函数， nim_msglog_delete_message_self_res_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+NIM_SDK_DLL_API void nim_msglog_delete_message_self_async(const char *json_msg, const char *ext, const char *json_extension, nim_msglog_delete_message_self_res_cb_func cb, const void *user_data);
 
 #ifdef __cplusplus
 };

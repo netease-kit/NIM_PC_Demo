@@ -57,7 +57,12 @@ void SessionListCloud::AddSessionItem(const nim::SessionData& session_data)
 	{
 		if (item) session_list_cloud_->Remove(item);
 		item = new SessionItem;
-		GlobalManager::FillBoxWithCache(item, L"main/session_item.xml");
+		std::wstring session_item_xml = L"main/session_item.xml";
+		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::Simplified_Chinese)
+			session_item_xml = L"main/session_item.xml";
+		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+			session_item_xml = L"main/session_item_en.xml";
+		GlobalManager::FillBoxWithCache(item, session_item_xml);
 		int index = AdjustMsg(session_data);
 		item->InitCtrl();
 		item->InitMsg(session_data);
@@ -108,7 +113,7 @@ bool SessionListCloud::AddLoadMore(bool has_more)
 	if (has_more)
 	{
 		label_more->SetStateTextColor(kControlStateNormal, L"link_blue");
-		label_more->SetText(L"加载更多");
+		label_more->SetText(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_LIST_CLOUD_LOAD_MORE"));
 		session_list_cloud_->Add(label_more);
 		label_more->AttachButtonUp([this, label_more](ui::EventArgs* args) {
 			session_list_cloud_->Remove(label_more);
@@ -118,7 +123,7 @@ bool SessionListCloud::AddLoadMore(bool has_more)
 	}
 	else
 	{
-		label_more->SetText(L"没有更多会话了");
+		label_more->SetText(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_LIST_CLOUD_NO_MORE_SESSION"));
 		session_list_cloud_->Add(label_more);
 	}
 

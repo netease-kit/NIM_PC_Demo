@@ -23,24 +23,30 @@
         <i id="user-gender" class="fas fa-mars user-sex-male"></i>
       </div>
       <div class="user-account-info">
-        <span>账号：</span><span id="user-account"></span>
+        <span>账号:</span><span id="user-account"></span>
       </div>
     </div>
   </div>
-  <div id="user-details">
-    <div id="user-details-preview" style="display: block;">
-      <div class="details-item mb-4">
-        <span class="item-title">生日：</span><span id="user-birthday"></span>
-      </div>
-      <div class="details-item mb-4">
-        <span class="item-title">手机：</span><span id="user-telephone"></span>
-      </div>
-      <div class="details-item mb-4">
-        <span class="item-title">邮箱：</span><span id="user-email"></span>
-      </div>
-      <div class="details-item mb-4">
-        <span class="item-title">签名：</span><span id="user-signature"></span>
-      </div>
+  <div id="user-details" >
+    <div id="user-details-preview" >
+      <table border="0" width="100%">
+        <tr>
+            <td valign="top" height="58" ><span for="birthday" class="item-title" style="width:70px;">生日</span></td>
+            <td valign="top"><span class="content-item" id="user-birthday"></span></td>
+        </tr>
+        <tr>
+            <td valign="top" height="58" ><span class="item-title" style="width:70px;white-space:nowrap;">手机</span></td>
+            <td valign="top"><span class="content-item" id="user-telephone"></span></td>
+        </tr>
+        <tr>
+            <td valign="top" height="58" ><span class="item-title" style="width:70px;white-space:nowrap;">邮箱</span></td>
+            <td valign="top"><span class="content-item" id="user-email"></span></td>
+        </tr>
+        <tr>
+            <td valign="top" height="58" ><span class="item-title" style="width:70px;white-space:nowrap;">签名</span></td>
+            <td valign="top"><textarea class="content-item " id="user-signature" rows="3"  style="readonly:readonly;width:100%;background-color:#FFFFFF;outline: none; border:0;resize: none;" ></textarea></td>
+          </tr>
+    </table>
       <div class="mt-2 float-right">
         <button id="edit-profile" class="btn btn-secondary">
           <i class="fas fa-edit"></i>
@@ -49,56 +55,50 @@
       </div>
     </div>
 
-    <div id="user-details-edit" class="" style="display: none;">      
-      <div class="form-group row">
-        <label for="nickname" class="ml-4 ml-4 col-form-label">昵称</label>
-        <div class="ml-5">
-          <input type="text" class="form-control" id="user-nickname-edit" placeholder="输入昵称">
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="sex" class="ml-4 col-form-label">性别</label>
-        <div class="ml-5">
-          <select class="custom-select mr-sm-2" id="user-gender-edit">
-            <option value="1">男</option>
-            <option value="2">女</option>
-          </select>
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="birthday" class="ml-4 col-form-label">生日</label>
-        <div class="ml-5">
-          <input class="form-control" id="user-birthday-edit" type="text" placeholder="选择生日">
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="telephone" class="ml-4 col-form-label">手机</label>
-        <div class="ml-5">
-          <input type="text" class="form-control" id="user-telephone-edit" placeholder="输入手机号">
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="email" class="ml-4 col-form-label">邮箱</label>
-        <div class="ml-5">
-          <input type="email" class="form-control" id="user-email-edit" placeholder="输入邮箱地址">
-        </div>
-      </div>
-      <div class="form-group row">
-        <label for="signature" class="ml-4 col-form-label">签名</label>
-        <div class="ml-5">
-          <input type="text" class="form-control" id="user-signature-edit" placeholder="介绍一下自己">
-        </div>
-      </div>
-      <div class="pt-4 float-right">
-        <button id="cancel" type="button" class="btn btn-secondary mr-2">
-          <i class="fas fa-backspace"></i>
-          取消编辑
-        </button>
-        <button id="submit" type="button" class="btn btn-primary">
-          <i class="fas fa-save"></i>
-          保存信息
-        </button>
-      </div>
+    <div id="user-details-edit" class="" style="display: none;">  
+
+        <table border="0" width="100%" >
+            <tr>
+                <td valign="top" class="details-item" height="58" ><label for="nickname" class="col-form-label" style="width:75px;" >昵称</label></td>
+                <td valign="top"><input type="text" class="form-control" width="100%" id="user-nickname-edit" ></td>
+            </tr>
+            <tr>
+                <td valign="top" class="details-item" height="58" ><label for="sex" class="col-form-label" >性别</label></td>
+                <td valign="top">
+                    <select class="custom-select mr-sm-2" id="user-gender-edit">
+                        <option value="1">男</option>
+                        <option value="2">女</option>
+                    </select>
+                </td>
+            </tr>
+            <tr>
+                <td valign="top" class="details-item" height="58" ><label for="birthday" class="col-form-label" >生日</label></td>
+                <td valign="top"><input class="form-control" id="user-birthday-edit" type="text" ></td>
+            </tr>
+            <tr>
+                <td valign="top" class="details-item" height="58" ><label for="telephone" class="col-form-label">手机</label></td>
+                <td valign="top"><input type="text" class="form-control" id="user-telephone-edit" ></td>
+            </tr>
+            <tr>
+                <td valign="top" class="details-item" height="58" ><label for="email" class="col-form-label">邮箱</label></td>
+                <td valign="top"><input type="email" class="form-control" id="user-email-edit" ></td>
+            </tr>
+            <tr>
+                <td valign="top" class="details-item" height="58" ><label for="signature" class="col-form-label">签名</label></td>
+                <td valign="top"><textarea class="form-control" id="user-signature-edit" rows="3" cols="35" style="outline: none; border:1;resize: none;"></textarea></td>
+                
+            </tr>
+        </table>
+        <div class="pt-4 float-right">
+            <button id="cancel" type="button" class="btn btn-secondary mr-2">
+              <i class="fas fa-backspace"></i>
+              取消
+            </button>
+            <button id="submit" type="button" class="btn btn-primary">
+              <i class="fas fa-save"></i>
+              保存
+            </button>
+        </div>      
     </div>
   </div>
 
@@ -119,7 +119,7 @@
     </div>
   </div>
 
-  <script tyoe="text/javascript" src="../global/nim-helpers-1.0.0/profile-functions.js"></script>
+  <script type="text/javascript" src="../global/nim-helpers-1.0.0/profile-functions.js"></script>
   <script type="text/javascript" src="../global/jquery-3.3.1-dist/jquery-3.3.1.min.js"></script>
   <script type="text/javascript" src="../global/bootstrap-4.1.3-dist/js/bootstrap.min.js"></script>
   <script type="text/javascript" src="../global/bootstrap-4.1.3-dist/js/bootstrap.bundle.min.js"></script>

@@ -339,10 +339,10 @@ void VideoSettingForm::InitVideoQualityList()
 
 	// 不使用 map 的原因是 map 会打乱次序
 	std::list<std::pair<std::wstring, int>> quality_list;
-	quality_list.push_back(std::make_pair(L"默认（480x320）", nim::kNIMVChatVideoQualityNormal));
-	quality_list.push_back(std::make_pair(L"低（176x144）", nim::kNIMVChatVideoQualityLow));
-	quality_list.push_back(std::make_pair(L"中（352x288）", nim::kNIMVChatVideoQualityMedium));
-	quality_list.push_back(std::make_pair(L"高（480x320）", nim::kNIMVChatVideoQualityHigh));
+	quality_list.push_back(std::make_pair(L"Normal（480x320）", nim::kNIMVChatVideoQualityNormal));
+	quality_list.push_back(std::make_pair(L"Low（176x144）", nim::kNIMVChatVideoQualityLow));
+	quality_list.push_back(std::make_pair(L"Medium（352x288）", nim::kNIMVChatVideoQualityMedium));
+	quality_list.push_back(std::make_pair(L"High（480x320）", nim::kNIMVChatVideoQualityHigh));
 	quality_list.push_back(std::make_pair(L"480P（640x480）", nim::kNIMVChatVideoQualitySuper));
 	quality_list.push_back(std::make_pair(L"540P（960x540）", nim::kNIMVChatVideoQuality540p));
 	quality_list.push_back(std::make_pair(L"720P（1280x720）", nim::kNIMVChatVideoQuality720p));

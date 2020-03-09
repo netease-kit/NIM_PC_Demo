@@ -67,8 +67,8 @@ void EmojiForm::InitWindow()
 		box->AttachClick(nbase::Bind(&EmojiForm::OnEmojiClicked, this, std::placeholders::_1));
 		std::wstring tag = i->tag;
 		assert(tag.size() > 2);
-		box->SetToolTipText( tag.substr(1, tag.size() - 2) );
-
+		box->SetToolTipText( i->tip );
+		box->SetDataID(i->tag);
 		Control* c = box->FindSubControl(L"ctrl_emoj");
 		c->SetBkImage(i->path);
 	}
@@ -162,7 +162,7 @@ bool EmojiForm::OnEmojiClicked( ui::EventArgs* arg )
 	if (is_closing_)
 		return false;
 
-	std::wstring tip = arg->pSender->GetToolTipText();
+	std::wstring tip = arg->pSender->GetDataID();
 	if( tip.empty() )
 	{
 		this->Close();
@@ -171,7 +171,7 @@ bool EmojiForm::OnEmojiClicked( ui::EventArgs* arg )
 
 	if( sel_cb_ )
 	{
-		std::wstring face_tag = L"[" + tip + L"]";
+		std::wstring face_tag = tip;
 		Post2UI( nbase::Bind(sel_cb_, face_tag) );
 	}
 

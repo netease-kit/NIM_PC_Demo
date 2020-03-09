@@ -30,31 +30,16 @@
             <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_CLEAR_CHAT_RECORD" margin="27,0,0,0"/>
         </MenuElement>
 		
-        <MenuElement class="MenuElement" name="clear_chat_record_ex" width="180" visible="false">
-            <Button normalimage="icon_recycle_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_CLEAR_REMAIN_SESSION" margin="27,0,0,0"/>
-        </MenuElement>
-		
         <MenuElement class="MenuElement" name="clear_chat_record_p2p" width="180" visible="true">
             <Button normalimage="icon_recycle_normal.png" valign="center" mouse="false" />
             <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_CLEAR_P2P" margin="27,0,0,0"/>
         </MenuElement>
 		
-        <MenuElement class="MenuElement" name="clear_chat_record_p2p_ex" width="180" visible="false">
-            <Button normalimage="icon_recycle_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_CLEAR_P2P_REMAIN_SESSION" margin="27,0,0,0"/>
-        </MenuElement>
-		
-        <MenuElement class="MenuElement" name="clear_chat_record_team" width="180" visible="false">
+        <MenuElement class="MenuElement" name="clear_chat_record_team" width="180" >
             <Button normalimage="icon_recycle_normal.png" valign="center" mouse="false" />
             <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_CLEAR_TEAM" margin="27,0,0,0"/>
         </MenuElement>
 		
-        <MenuElement class="MenuElement" name="clear_chat_record_team_ex" width="180" visible="false">
-            <Button normalimage="icon_recycle_normal.png" valign="center" mouse="false" />
-            <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_CLEAR_TEAM_REMAIN_SESSION" margin="27,0,0,0"/>
-        </MenuElement>
-
         <MenuElement class="MenuElement" name="vchat_setting" width="180">
             <Button margin="2,0,0,0" normalimage="icon_setting_normal.png" valign="center" mouse="false" />
             <Label class="menu_text" textid="STRID_MAINWINDOW_MENU_AUDIO_VIDEO_SETTING" margin="27,0,0,0"/>

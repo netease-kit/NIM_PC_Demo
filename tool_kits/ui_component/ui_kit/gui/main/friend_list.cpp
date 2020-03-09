@@ -63,7 +63,7 @@ FriendList::FriendList(ui::TreeView* friend_list) :
 	tree_node->SetVisible(false);
 	tree_node->SetEnabled(false);
 
-	tree_node = ListItemUtil::CreateFirstLetterListItem(L"Èº×é");
+	tree_node = ListItemUtil::CreateFirstLetterListItem(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_TEAMS"));
 	friend_list_->GetRootNode()->AddChildNode(tree_node);
 	tree_node_ver_.push_back(tree_node);
 	tree_node->SetVisible(false);

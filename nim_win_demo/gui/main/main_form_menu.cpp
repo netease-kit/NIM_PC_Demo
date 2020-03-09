@@ -10,7 +10,12 @@ void MainFormMenu::OnPopupMainMenu(POINT point)
 {
 	//创建菜单窗口
 	CMenuWnd* pMenu = new CMenuWnd(NULL);
-	STRINGorID xml(L"main_menu.xml");
+	std::wstring main_menu_xml_path = L"main_menu.xml";
+	if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::Simplified_Chinese)
+		main_menu_xml_path = L"main_menu.xml";
+	if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+		main_menu_xml_path = L"main_menu_en.xml";
+	STRINGorID xml(main_menu_xml_path.c_str());
 	pMenu->Init(xml, _T("xml"), point);
 	//注册回调
 	CMenuElementUI* look_log = (CMenuElementUI*)pMenu->FindControl(L"look_log");
@@ -31,17 +36,12 @@ void MainFormMenu::OnPopupMainMenu(POINT point)
 
 	CMenuElementUI* clear_chat_record = (CMenuElementUI*)pMenu->FindControl(L"clear_chat_record");
 	clear_chat_record->AttachSelect(nbase::Bind(&MainFormMenu::ClearChatRecordMenuItemClick, this, true, std::placeholders::_1));
-	CMenuElementUI* clear_chat_record_ex = (CMenuElementUI*)pMenu->FindControl(L"clear_chat_record_ex");
-	clear_chat_record_ex->AttachSelect(nbase::Bind(&MainFormMenu::ClearChatRecordMenuItemClick, this, false, std::placeholders::_1));
-
+	
 	CMenuElementUI* clear_chat_record_p2p = (CMenuElementUI*)pMenu->FindControl(L"clear_chat_record_p2p");
 	clear_chat_record_p2p->AttachSelect(nbase::Bind(&MainFormMenu::ClearChatRecordBySessionTypeMenuItemClick, this, true, nim::kNIMSessionTypeP2P, std::placeholders::_1));
-	CMenuElementUI* clear_chat_record_p2p_ex = (CMenuElementUI*)pMenu->FindControl(L"clear_chat_record_p2p_ex");
-	clear_chat_record_p2p_ex->AttachSelect(nbase::Bind(&MainFormMenu::ClearChatRecordBySessionTypeMenuItemClick, this, false, nim::kNIMSessionTypeP2P, std::placeholders::_1));
+
 	CMenuElementUI* clear_chat_record_team = (CMenuElementUI*)pMenu->FindControl(L"clear_chat_record_team");
 	clear_chat_record_team->AttachSelect(nbase::Bind(&MainFormMenu::ClearChatRecordBySessionTypeMenuItemClick, this, true, nim::kNIMSessionTypeTeam, std::placeholders::_1));
-	CMenuElementUI* clear_chat_record_team_ex = (CMenuElementUI*)pMenu->FindControl(L"clear_chat_record_team_ex");
-	clear_chat_record_team_ex->AttachSelect(nbase::Bind(&MainFormMenu::ClearChatRecordBySessionTypeMenuItemClick, this, false, nim::kNIMSessionTypeTeam, std::placeholders::_1));
 
 	CMenuElementUI* vchat_setting = (CMenuElementUI*)pMenu->FindControl(L"vchat_setting");
 	vchat_setting->AttachSelect(nbase::Bind(&MainFormMenu::VChatSettingMenuItemClick, this, std::placeholders::_1));
@@ -126,14 +126,15 @@ bool MainFormMenu::ImportMsglogFromLocal()
 }
 
 bool MainFormMenu::ClearChatRecordMenuItemClick(bool del_session, ui::EventArgs* param)
-{
-	nim::MsgLog::DeleteAllAsync(del_session, nim::MsgLog::DeleteAllCallback());
+{	
+	nim::MsgLog::DeleteAllAsyncEx(del_session, (atoi(GetConfigValue("kNIMMsglogRevert").c_str()) != 0),nim::MsgLog::DeleteAllCallback());
 	return true;
 }
 
 bool MainFormMenu::ClearChatRecordBySessionTypeMenuItemClick(bool del_session, nim::NIMSessionType type, ui::EventArgs* param)
 {
-	nim::MsgLog::DeleteBySessionTypeAsync(del_session, type, nim::MsgLog::DeleteBySessionTypeCallback());
+	nim::MsgLog::DeleteBySessionTypeAsyncEx(del_session, type, (atoi(GetConfigValue("kNIMMsglogRevert").c_str()) != 0),
+		nim::MsgLog::DeleteBySessionTypeCallback());
 	return true;
 }
 
@@ -173,9 +174,17 @@ bool MainFormMenu::ShowMigrateMsglogMenu(ui::EventArgs* param, nim::LogsBackupRe
 	{
 	case nim::LogsBackupRemoteOperate_Export:
 		xml_file = L"msglog_export_menu.xml";
+		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::Simplified_Chinese)
+			xml_file = L"msglog_export_menu.xml";
+		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+			xml_file = L"msglog_export_menu_en.xml";
 		break;
 	case nim::LogsBackupRemoteOperate_Import:
 		xml_file = L"msglog_import_menu.xml";
+		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::Simplified_Chinese)
+			xml_file = L"msglog_import_menu.xml";
+		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+			xml_file = L"msglog_import_menu_en.xml";
 		break;
 	}
 	STRINGorID xml(xml_file.c_str());

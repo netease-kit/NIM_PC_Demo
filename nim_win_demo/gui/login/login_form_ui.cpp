@@ -32,7 +32,11 @@ std::wstring LoginForm::GetSkinFolder()
 
 std::wstring LoginForm::GetSkinFile()
 {
-    return L"login.xml";
+	if(ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::Simplified_Chinese)
+		return   L"login.xml";
+	else if(ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+		return   L"login_en.xml";
+	return   L"login.xml";
 }
 
 std::wstring LoginForm::GetWindowClassName() const
@@ -77,18 +81,7 @@ void LoginForm::InitWindow()
     btn_register_ = (Button*)FindControl(L"btn_register");
     btn_cancel_ = (Button*)FindControl(L"btn_cancel");
     remember_pwd_ckb_ = (CheckBox *)FindControl(L"chkbox_remember_pwd");
-    remember_user_ckb_ = (CheckBox *)FindControl(L"chkbox_remember_username");
-
-    use_new_uistyle_ = (CheckBox *)FindControl(L"chkbox_use_new_uistyle");
-    use_new_uistyle_->Selected(ConfigHelper::GetInstance()->GetUIStyle() == 1);
-    use_new_uistyle_->AttachSelect([](ui::EventArgs* param) {
-        ConfigHelper::GetInstance()->SetUIStyle(1);
-        return true;
-    });
-    use_new_uistyle_->AttachUnSelect([](ui::EventArgs* param) {
-        ConfigHelper::GetInstance()->SetUIStyle(0);
-        return true;
-    });
+    remember_user_ckb_ = (CheckBox *)FindControl(L"chkbox_remember_username");   
     use_private_settings_ = dynamic_cast<ui::CheckBox*>(FindControl(L"chkbox_use_private_enable"));
     chkbox_private_use_proxy_enable_ = dynamic_cast<ui::CheckBox*>(FindControl(L"chkbox_private_use_proxy_enable"));
     private_settings_url_ = dynamic_cast<ui::RichEdit*>(FindControl(L"private_settings_url"));
@@ -301,11 +294,39 @@ bool LoginForm::OnClicked(ui::EventArgs* msg)
     }
     else if (name == L"proxy_setting")
     {
-        if (InitSDK())
-        {
-            nim_comp::WindowsManager::SingletonShow<ProxyForm>(ProxyForm::kClassName);
-        }
-        use_private_settings_->SetVisible(false);
+		RECT rect = msg->pSender->GetPos();
+		CPoint point;
+		point.x = rect.left - 15;
+		point.y = rect.bottom;
+		ClientToScreen(m_hWnd, &point);
+		CMenuWnd* pMenu = new CMenuWnd(NULL);
+		STRINGorID xml(L"login_setting_menu.xml");
+		pMenu->Init(xml, _T("xml"), point);
+		//×¢²á»Øµ÷
+		CMenuElementUI* proxy_setting = (CMenuElementUI*)pMenu->FindControl(L"proxy_setting");
+		proxy_setting->AttachSelect(ToWeakCallback([this](ui::EventArgs* args) {
+			if (InitSDK())
+			{
+				nim_comp::WindowsManager::SingletonShow<ProxyForm>(ProxyForm::kClassName);
+				use_private_settings_->SetVisible(false);
+			}			
+			return true;
+			}));
+		CMenuElementUI* use_new_uistyle = (CMenuElementUI*)pMenu->FindControl(L"use_new_uistyle");
+		use_new_uistyle->AttachSelect(ToWeakCallback([](ui::EventArgs* args) {
+			//CMenuElementUI* menu_item = (CMenuElementUI*)(args->pSender);
+			//CheckBox* check_new_uistyle = (CheckBox*)menu_item->FindSubControl(L"check_new_uistyle");
+			auto value = ConfigHelper::GetInstance()->GetUIStyle();
+			if (value == 1)
+				value = 0;
+			else
+				value = 1;
+			ConfigHelper::GetInstance()->SetUIStyle(value);
+			return true;
+			}));
+		auto checkbox_uistyle = (ui::CheckBox*)use_new_uistyle->FindSubControl(L"check_new_uistyle");
+		checkbox_uistyle->Selected(ConfigHelper::GetInstance()->GetUIStyle() == 1);
+          
     }
     else if (name == L"anonymous_chatroom")
     {

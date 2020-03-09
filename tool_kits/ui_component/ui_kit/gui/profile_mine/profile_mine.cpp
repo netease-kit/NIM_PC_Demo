@@ -58,7 +58,10 @@ void ProfileMine::InitWindow()
 	cef_control_->AttachBeforeCLose(nbase::Bind(&ProfileMine::OnBeforeClose, this, std::placeholders::_1));
 	cef_control_->AttachBeforeNavigate(nbase::Bind(&ProfileMine::OnBeforeLoadResource, this, std::placeholders::_1, std::placeholders::_2));
 	cef_control_->AttachBeforeContextMenu(nbase::Bind(&ProfileMine::OnBeforeContextMenu, this, std::placeholders::_1, std::placeholders::_2));
+	
 	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"cef_themes/profile/profile.html";
+	if(ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+		html_path = L"file://" + QPath::GetAppPath() + L"cef_themes/profile/profile_en.html";
 	cef_control_->LoadURL(html_path);
 }
 

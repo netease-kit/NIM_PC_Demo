@@ -2,10 +2,10 @@
 <Window>
 	<VListBox class="menu">
 		<MenuElement class="MenuElement" name="import_form_local" width="120">
-			<Label class="menu_text" width="stretch" text="从本地导入" mouse="false"/>
+			<Label class="menu_text" width="stretch" textid="STRID_MAINWINDOW_MENU_IMPORT_MSG_LOG_FROM_LOCAL" mouse="false"/>
 		</MenuElement>
 		<MenuElement class="MenuElement" name="import_form_remote" width="120">
-			<Label class="menu_text" width="stretch" text="从云端导入" mouse="false"/>
+			<Label class="menu_text" width="stretch" textid="STRID_MAINWINDOW_MENU_IMPORT_MSG_LOG_FROM_CLOUD" mouse="false"/>
 		</MenuElement>
 	</VListBox>
 </Window>

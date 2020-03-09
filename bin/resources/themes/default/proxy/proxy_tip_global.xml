@@ -36,7 +36,7 @@
 				<Control />								
 			</HBox>
 			<HBox height="auto" margin="0,0,0,0">			
-				<Label textid="STRID_PROXY_TIP" font="2" normaltextcolor="link_red" width="240" singleline="true" valign="center" />		
+				<Label textid="STRID_PROXY_TIP" font="2" normaltextcolor="link_red" width="auto" singleline="true" valign="center" />		
 				<Control />
 				<HBox height="30" margin="0,0,0,0" visible="true" valign="center" width="auto">
 					<Control name="gifanim" width="auto" height="auto" bkimage="..\public\animation\ani_loading.gif" valign="center"/>

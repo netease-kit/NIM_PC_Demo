@@ -50,7 +50,6 @@
             <Event type="unselect" receiver="chkbox_remember_username" applyattribute="selected=&quot;false&quot;"/>
           </CheckBox>
           <Control />
-          <CheckBox class="checkbox_font12" name="chkbox_use_new_uistyle" textid="STRID_LOGIN_NEW_UISTYLE" normaltextcolor="dark2color" />
           <!--Button name="forget_password" cursortype="hand" font="1" normaltextcolor="link_gray" textid="STRID_LOGIN_FORGET_PASSWORD" /-->
         </HBox>
 
@@ -74,7 +73,7 @@
             <HBox height="auto">
               <CheckBox class="checkbox_font12" name="chkbox_use_private_enable" textid="STRID_LOGIN_FORM_PRIVATESETTINGS_ENABLE" normaltextcolor="dark2color" selected="false" />
               <Control />
-              <CheckBox class="checkbox_font12" name="chkbox_private_use_proxy_enable" text="启用代理" normaltextcolor="dark2color" selected="false" visible="false" />
+              <CheckBox class="checkbox_font12" name="chkbox_private_use_proxy_enable" textid="STRID_LOGIN_FORM_PROXY_ENABLE" normaltextcolor="dark2color" selected="false" visible="false" />
             </HBox>
             <HBox name="private_settings_container" height="20" bordersize="1" bordercolor="group_name" padding="5,1,5,1" margin="0,10,0,0" visible="false">
               <RichEdit class="simple prompt" name="private_settings_url" width="stretch" height="16" margin="0,5,0,5" valign="center" font="1" prompttextid="STRID_LOGIN_FORM_INPUT_PRIVATESETTINGS_URL"/>

@@ -12,16 +12,21 @@
 namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
+typedef void (*nim_msglog_register_delete_msgs_self_callback)(const nim_msglog_delete_message_self_notify_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_query_msg_async)(const char* account_id, nim::NIMSessionType to_type, int limit_count, int64_t last_time, const char *json_extension, nim_msglog_query_cb_func cb, const void* user_data);
 typedef void(*nim_msglog_batch_status_read_async)(const char* account_id, nim::NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void* user_data);
 typedef void(*nim_msglog_set_status_async)(const char* msg_id, nim::NIMMsgLogStatus msglog_status, const char *json_extension, nim_msglog_res_cb_func cb, const void* user_data);
 typedef void(*nim_msglog_set_sub_status_async)(const char* msg_id, nim::NIMMsgLogSubStatus msglog_sub_status, const char *json_extension, nim_msglog_res_cb_func cb, const void* user_data);
 typedef void(*nim_msglog_batch_status_delete_async)(const char* account_id, nim::NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void* user_data);
+typedef void(*nim_msglog_batch_status_delete_async_ex)(const char* account_id, nim::NIMSessionType to_type, bool revert_by_online_query,const char *json_extension, nim_msglog_res_ex_cb_func cb, const void* user_data);
 typedef void(*nim_msglog_insert_msglog_async)(const char *talk_id, const char *json_msg, bool need_update_session, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_delete_by_session_type_async)(bool delete_sessions, NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
+typedef void(*nim_msglog_delete_by_session_type_async_ex)(bool delete_sessions, NIMSessionType to_type, bool revert_by_query_online, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_delete_async)(const char *account_id, NIMSessionType to_type, const char *msg_id, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_delete_all_async)(bool delete_sessions, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
+typedef void(*nim_msglog_delete_all_async_ex)(bool delete_sessions, bool revert_by_query_online, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_delete_by_time_async)(const char *account_id, enum NIMSessionType to_type, uint64_t from_time, uint64_t to_time, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
+typedef void(*nim_msglog_delete_by_time_async_ex)(const char *account_id, enum NIMSessionType to_type, bool revert_by_query_online, uint64_t from_time, uint64_t to_time, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_query_msg_online_async)(const char *id, nim::NIMSessionType to_type, int limit_count, int64_t from_time, int64_t end_time, int64_t end_msg_id, bool reverse, bool need_save_to_local, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_query_msg_online_async2)(const char *id,NIMQueryMsgOnlineAsyncParam query_param, nim_msglog_query_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_query_msg_by_keyword_online_async)(const char *id, const char* keyword, NIMQueryMsgByKeywordOnlineAsyncParam query_param, nim_msglog_query_cb_func cb, const void *user_data);
@@ -54,6 +59,7 @@ typedef void(*nim_msglog_query_the_message_of_the_specified_type_async)(enum NIM
 	const char *json_extension, 
 	nim_msglog_query_cb_func cb, 
 	const void *user_data);
+typedef void (*nim_msglog_delete_message_self_async)(const char *, const char *, const char *, nim_msglog_delete_message_self_res_cb_func cb, const void *user_data);
 #else
 #include "nim_msglog.h"
 #endif
@@ -215,6 +221,31 @@ static void CallbackQueryMsgByID(int res_code
 		CallbackProxy::Invoke(cb, (NIMResCode)res_code, PCharToString(msg_id), msg_out);
 	},true);
 
+}
+MsgLog::DeleteMsglogSelfNotifyCallback g_delete_msglog_self_notify_cb = nullptr;
+void MsgLog::RegDeleteMsglogSelfNotify(const DeleteMsglogSelfNotifyCallback &cb)
+{
+	g_delete_msglog_self_notify_cb = cb;
+	NIM_SDK_GET_FUNC(nim_msglog_register_delete_msgs_self_callback)([](const char *infos, const void *user_data) {
+		CallbackProxy::DoSafeCallback<MsgLog::DeleteMsglogSelfNotifyCallback>(user_data, [=](const MsgLog::DeleteMsglogSelfNotifyCallback& cb) {
+			nim_cpp_wrapper_util::Json::Value json_param;
+			if (nim_cpp_wrapper_util::Json::Reader().parse(infos, json_param) &&
+				json_param.isArray())
+			{
+				DeleteMsglogSelfNotifyParam param;
+				for (auto it : json_param)
+				{
+					DeleteMsglogSelfNotifyItemInfo info;
+					info.session_id_ = it[kNIMDELMSGSelfNotifyKeySessionID].asString();
+					info.client_id_ = it[kNIMDELMSGSelfNotifyKeyMsgClientID].asString();
+					info.ext_ = it[kNIMDELMSGSelfNotifyKeyEXT].asString();
+					param.item_list.emplace_back(info);
+				}
+				if(!param.item_list.empty())
+					CallbackProxy::Invoke(cb, param);
+			}
+		}, false);
+	}, &g_delete_msglog_self_notify_cb);
 }
 bool MsgLog::QueryMsgByIDAysnc(const std::string &client_msg_id, const QuerySingleMsgCallback &cb, const std::string &json_extension/* = ""*/)
 {
@@ -448,6 +479,29 @@ bool MsgLog::BatchStatusReadAsync(const std::string& account_id
 	return true;
 }
 
+bool MsgLog::BatchStatusDeleteAsyncEx(const std::string& account_id
+	, nim::NIMSessionType to_type
+	, bool revert_by_query_online
+	, const BatchStatusDeleteCallback& cb
+	, const std::string& json_extension/* = ""*/)
+{
+	if (account_id.empty())
+		return false;
+
+	BatchStatusReadCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new BatchStatusReadCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_msglog_batch_status_delete_async_ex)(account_id.c_str()
+		, to_type
+		, revert_by_query_online
+		, json_extension.c_str()
+		, &CallbackModifyMultipleMsglog
+		, cb_pointer);
+
+	return true;
+}
 bool MsgLog::BatchStatusDeleteAsync(const std::string& account_id
 	, nim::NIMSessionType to_type
 	, const BatchStatusDeleteCallback& cb
@@ -556,6 +610,26 @@ bool MsgLog::DeleteBySessionTypeAsync(bool delete_sessions
 
 	return true;
 }
+bool MsgLog::DeleteBySessionTypeAsyncEx(bool delete_sessions
+	, NIMSessionType to_type
+	, bool revert_by_query_online
+	, const DeleteBySessionTypeCallback& cb
+	, const std::string& json_extension/* = ""*/)
+{
+	DeleteBySessionTypeCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new DeleteBySessionTypeCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_msglog_delete_by_session_type_async_ex)(delete_sessions
+		, to_type
+		, revert_by_query_online
+		, json_extension.c_str()
+		, &CallbackModifyMultipleMsglog
+		, cb_pointer);
+
+	return true;
+}
 
 bool MsgLog::DeleteAsync(const std::string& session_id
 	, NIMSessionType to_type
@@ -593,6 +667,18 @@ bool MsgLog::DeleteAllAsync(bool delete_sessions, const DeleteAllCallback& cb, c
 	return true;
 }
 
+bool MsgLog::DeleteAllAsyncEx(bool delete_sessions, bool revert_by_query_online, const DeleteAllCallback& cb, const std::string& json_extension)
+{
+	DeleteAllCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new DeleteAllCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_msglog_delete_all_async_ex)(delete_sessions, revert_by_query_online, json_extension.c_str(), &CallbackMsglogRes, cb_pointer);
+
+	return true;
+}
+
 bool MsgLog::DeleteMsgByTimeAsync(const std::string& session_id, NIMSessionType to_type, uint64_t timestamp1, uint64_t timestamp2, const DeleteMsgByTimeCallback& cb, const std::string& json_extension /*= ""*/)
 {
 	DeleteMsgByTimeCallback* cb_pointer = nullptr;
@@ -601,6 +687,18 @@ bool MsgLog::DeleteMsgByTimeAsync(const std::string& session_id, NIMSessionType 
 		cb_pointer = new DeleteMsgByTimeCallback(cb);
 	}
 	NIM_SDK_GET_FUNC(nim_msglog_delete_by_time_async)(session_id.c_str(), to_type, timestamp1, timestamp2, json_extension.c_str(), &CallbackMsglogRes, cb_pointer);
+
+	return true;
+}
+
+bool MsgLog::DeleteMsgByTimeAsyncEx(const std::string& session_id, NIMSessionType to_type, bool revert_by_query_online, uint64_t timestamp1, uint64_t timestamp2, const DeleteMsgByTimeCallback& cb, const std::string& json_extension /*= ""*/)
+{
+	DeleteMsgByTimeCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new DeleteMsgByTimeCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_msglog_delete_by_time_async_ex)(session_id.c_str(), to_type,revert_by_query_online, timestamp1, timestamp2, json_extension.c_str(), &CallbackMsglogRes, cb_pointer);
 
 	return true;
 }
@@ -760,5 +858,26 @@ void MsgLog::DeleteHistoryOnlineAsync(const std::string& accid, bool delete_roam
 			CallbackProxy::Invoke(cb, (NIMResCode)res_code,id);
 		}, true);
 	}, cb_pointer);
+}
+
+void MsgLog::DeleteMessageSelfAsync(const IMMessage &msg, const std::string ext, const DeleteMsglogSelfCallback& cb)
+{
+	DeleteMsglogSelfCallback* cb_pointer = nullptr;
+	if (cb != nullptr)
+	{
+		cb_pointer = new DeleteMsglogSelfCallback(cb);
+	}
+	std::string json_msg;
+	NIM_SDK_GET_FUNC(nim_msglog_delete_message_self_async)(msg.ToJsonString(false).c_str(), ext.c_str(), "", \
+		[](int res_code, const void *user_data) {
+			CallbackProxy::DoSafeCallback<MsgLog::DeleteMsglogSelfCallback>(user_data, [=](const MsgLog::DeleteMsglogSelfCallback& cb) {
+				CallbackProxy::Invoke(cb, (NIMResCode)res_code);
+				}, true);
+		}, cb_pointer);
+}
+void MsgLog::UnregMsglogCb()
+{
+	UnregMsgologCb();
+	g_delete_msglog_self_notify_cb = nullptr;
 }
 }

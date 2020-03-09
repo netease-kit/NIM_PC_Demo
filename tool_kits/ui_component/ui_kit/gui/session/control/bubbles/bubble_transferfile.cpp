@@ -197,7 +197,7 @@ void MsgBubbleTransferFile::SetBubbleStatus(TransferFileSessionState status, boo
 		break;
 	case TransferFileSessionState_CMDTimeout:
 		progress_vertlayout_->SetVisible(false);
-		http_status_->SetText(L"对方无应答");
+		http_status_->SetText(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_TRANSFERFILEBUBBLE_NO_ANSWER").c_str());
 		break;
 	case TransferFileSessionState_ReceiverRejected:
 	case TransferFileSessionState_Rejected:

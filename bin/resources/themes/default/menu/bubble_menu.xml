@@ -8,6 +8,10 @@
         <MenuElement class="MenuElement" name="delete" width="170">
             <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_DELETE"/>
         </MenuElement>
+        
+        <MenuElement class="MenuElement" name="delete_local" width="170">
+            <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_DELETE_LOCAL"/>
+        </MenuElement>
 
         <MenuElement class="MenuElement" name="transform" width="170">
             <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_TRANS"/>

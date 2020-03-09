@@ -19,6 +19,7 @@ typedef void(*nim_talk_reg_receive_msgs_cb)(const char *json_extension, nim_talk
 typedef void(*nim_talk_reg_notification_filter_cb)(const char *json_extension, nim_talk_team_notification_filter_func cb, const void *user_data);
 typedef char*(*nim_talk_create_retweet_msg)(const char* src_msg_json, const char* client_msg_id, const NIMSessionType retweet_to_session_type, const char* retweet_to_session_id, const char* msg_setting, int64_t timetag);
 typedef void(*nim_talk_recall_msg)(const char *json_msg, const char *notify, const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data);
+typedef void(*nim_talk_recall_msg2)(const char *json_msg, const char *notify, const char *apnstext, const char *pushpayload, const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data);
 typedef void(*nim_talk_reg_recall_msg_cb)(const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data);
 typedef char*(*nim_talk_get_attachment_path_from_msg)(const char *json_msg);
 typedef void(*nim_talk_reg_receive_broadcast_cb)(const char *json_extension, nim_talk_receive_broadcast_cb_func cb, const void *user_data);
@@ -551,6 +552,15 @@ void Talk::RecallMsg(const IMMessage &msg, const std::string &notify, const Reca
 	NIM_SDK_GET_FUNC(nim_talk_recall_msg)(msg.ToJsonString(false).c_str(), notify.c_str(), json_extension.c_str(), &CallbackRecallMsg, cb_pointer);
 }
 
+void Talk::RecallMsg2(const IMMessage &msg, const std::string &notify, const RecallMsgsCallback& cb, const std::string& apnstext /*= ""*/, const std::string& pushpayloadconst /*= ""*/, const std::string& json_extension/* = ""*/)
+{
+	RecallMsgsCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new RecallMsgsCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_talk_recall_msg2)(msg.ToJsonString(false).c_str(), notify.c_str(), apnstext.c_str(), pushpayloadconst.c_str(), json_extension.c_str(),  &CallbackRecallMsg, cb_pointer);
+}
 std::string Talk::GetAttachmentPathFromMsg(const IMMessage& msg)
 {
 	const char* file_path = NIM_SDK_GET_FUNC(nim_talk_get_attachment_path_from_msg)(msg.ToJsonString(false).c_str());

@@ -47,7 +47,7 @@ void InitManager::InitUiKit(bool enable_subscribe_event, InitMode mode)
 		nim::Talk::RegReceiveMessagesCb(nbase::Bind(&nim_comp::TalkCallback::OnReceiveMsgsCallback, std::placeholders::_1));
 		//nim::SystemMsg::RegSendCustomSysmsgCb(nbase::Bind(&nim_comp::TalkCallback::OnSendCustomSysmsgCallback, std::placeholders::_1));
 		nim::MsgLog::RegMessageStatusChangedCb(nbase::Bind(&nim_comp::TalkCallback::OnMsgStatusChangedCallback, std::placeholders::_1));
-
+		nim::MsgLog::RegDeleteMsglogSelfNotify(nbase::Bind(&nim_comp::TalkCallback::OnReceiveDeleteMsglogSelfNotifyCallback, std::placeholders::_1));
 		nim::Talk::RegReceiveBroadcastMsgCb(nbase::Bind(&nim_comp::TalkCallback::OnReceiveBroadcastMsgCallback, std::placeholders::_1));
 		nim::Talk::RegReceiveBroadcastMsgsCb(nbase::Bind(&nim_comp::TalkCallback::OnReceiveBroadcastMsgsCallback, std::placeholders::_1));
 

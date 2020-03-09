@@ -355,6 +355,23 @@ public:
 	*				10508:本地错误码,超过配置有效期或者所需参数不存在
 	*/
 	static void RecallMsg(const IMMessage &msg, const std::string &notify, const RecallMsgsCallback& cb, const std::string& json_extension = "");
+
+	/** @fn static void RecallMsg2(const IMMessage &msg, const std::string &notify,const RecallMsgsCallback& cb, const std::string& apnstext = "", const std::string& pushpayloadconst = "", const std::string& json_extension = "");
+	* 撤回消息
+	* @param[in] msg 消息
+	* @param[in] notify 自定义通知消息
+	* @param[in] cb	回调
+	* @param[in] apnstext 透传消息推送文本，不填则不推送
+	* @param[in] pushpayloadconst 第三方自定义的推送属性，限制json，长度2048
+	* @param[in] json_extension json扩展参数（备用,目前不需要）	
+	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				414:参数错误
+	*				508:撤回时间超过配制有效期，默认是2分钟
+	*				10414:本地错误码，参数错误
+	*				10508:本地错误码,超过配置有效期或者所需参数不存在
+	*/
+	static void RecallMsg2(const IMMessage &msg, const std::string &notify,const RecallMsgsCallback& cb, const std::string& apnstext = "", const std::string& pushpayloadconst = "", const std::string& json_extension = "");
 	
 	/** @fn static std::string GetAttachmentPathFromMsg(const IMMessage& msg)
 	*  从消息体中获取附件（图片、语音、视频等）的本地路径

@@ -114,6 +114,8 @@ void MainForm::InitWindow()
 	{
 		ui::ListBox* session_list = (ListBox*)FindControl(L"session_list");
 		nim_ui::SessionListManager::GetInstance()->AttachListBox(session_list);
+		ui::ListBox* session_list_cloud = (ListBox*)FindControl(L"session_list_cloud");
+		nim_ui::SessionListManager::GetInstance()->AttachCloudListBox(session_list_cloud);
 		unregister_cb.Add(nim_ui::SessionListManager::GetInstance()->RegUnreadCountChange(nbase::Bind(&MainForm::OnUnreadCountChange, this, std::placeholders::_1)));
 
 		ui::TreeView* friend_list = (TreeView*)FindControl(L"friend_list");
@@ -326,7 +328,12 @@ void MainForm::PopupMainMenu(POINT point)
 	return;
 	//创建菜单窗口
 	CMenuWnd* pMenu = new CMenuWnd(NULL);
-	STRINGorID xml(L"main_menu.xml");
+	std::wstring main_menu_xml_path = L"main_menu.xml";
+	if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::Simplified_Chinese)
+		main_menu_xml_path = L"main_menu.xml";
+	if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+		main_menu_xml_path = L"main_menu_en.xml";
+	STRINGorID xml(main_menu_xml_path.c_str());
 	pMenu->Init(xml, _T("xml"), point);
 	//注册回调
 	CMenuElementUI* look_log = (CMenuElementUI*)pMenu->FindControl(L"look_log");
@@ -345,17 +352,12 @@ void MainForm::PopupMainMenu(POINT point)
 
 	CMenuElementUI* clear_chat_record = (CMenuElementUI*)pMenu->FindControl(L"clear_chat_record");
 	clear_chat_record->AttachSelect(nbase::Bind(&MainForm::ClearChatRecordMenuItemClick, this, true, std::placeholders::_1));
-	CMenuElementUI* clear_chat_record_ex = (CMenuElementUI*)pMenu->FindControl(L"clear_chat_record_ex");
-	clear_chat_record_ex->AttachSelect(nbase::Bind(&MainForm::ClearChatRecordMenuItemClick, this, false, std::placeholders::_1));
 
 	CMenuElementUI* clear_chat_record_p2p = (CMenuElementUI*)pMenu->FindControl(L"clear_chat_record_p2p");
 	clear_chat_record_p2p->AttachSelect(nbase::Bind(&MainForm::ClearChatRecordBySessionTypeMenuItemClick, this, true, nim::kNIMSessionTypeP2P, std::placeholders::_1));
-	CMenuElementUI* clear_chat_record_p2p_ex = (CMenuElementUI*)pMenu->FindControl(L"clear_chat_record_p2p_ex");
-	clear_chat_record_p2p_ex->AttachSelect(nbase::Bind(&MainForm::ClearChatRecordBySessionTypeMenuItemClick, this, false, nim::kNIMSessionTypeP2P, std::placeholders::_1));
+
 	CMenuElementUI* clear_chat_record_team = (CMenuElementUI*)pMenu->FindControl(L"clear_chat_record_team");
 	clear_chat_record_team->AttachSelect(nbase::Bind(&MainForm::ClearChatRecordBySessionTypeMenuItemClick, this, true, nim::kNIMSessionTypeTeam, std::placeholders::_1));
-	CMenuElementUI* clear_chat_record_team_ex = (CMenuElementUI*)pMenu->FindControl(L"clear_chat_record_team_ex");
-	clear_chat_record_team_ex->AttachSelect(nbase::Bind(&MainForm::ClearChatRecordBySessionTypeMenuItemClick, this, false, nim::kNIMSessionTypeTeam, std::placeholders::_1));
 
 	CMenuElementUI* vchat_setting = (CMenuElementUI*)pMenu->FindControl(L"vchat_setting");
 	vchat_setting->AttachSelect(nbase::Bind(&MainForm::VChatSettingMenuItemClick, this, std::placeholders::_1));
@@ -442,13 +444,13 @@ bool MainForm::ImportMsglogMenuItemClick(ui::EventArgs* param)
 
 bool MainForm::ClearChatRecordMenuItemClick(bool del_session, ui::EventArgs* param)
 {
-	nim::MsgLog::DeleteAllAsync(del_session, nim::MsgLog::DeleteAllCallback());
+	nim::MsgLog::DeleteAllAsyncEx(del_session, (atoi(GetConfigValue("kNIMMsglogRevert").c_str()) != 0),nim::MsgLog::DeleteAllCallback());
 	return true;
 }
 
 bool MainForm::ClearChatRecordBySessionTypeMenuItemClick(bool del_session, nim::NIMSessionType type, ui::EventArgs* param)
 {
-	nim::MsgLog::DeleteBySessionTypeAsync(del_session, type, nim::MsgLog::DeleteBySessionTypeCallback());
+	nim::MsgLog::DeleteBySessionTypeAsyncEx(del_session, type, (atoi(GetConfigValue("kNIMMsglogRevert").c_str()) != 0), nim::MsgLog::DeleteBySessionTypeCallback());
 	return true;
 }
 

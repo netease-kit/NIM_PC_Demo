@@ -69,6 +69,8 @@ void CefNativeForm::InitWindow()
 	cef_control_->AttachLoadError(nbase::Bind(&CefNativeForm::OnLoadError, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
 	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"cef/html/cef_test.html";
+	if(ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+		html_path = L"file://" + QPath::GetAppPath() + L"cef/html/cef_test_en.html";
 	cef_control_->LoadURL(html_path);
 }
 

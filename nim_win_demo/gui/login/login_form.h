@@ -141,7 +141,6 @@ private:
 	ui::Button*		btn_cancel_;
 	ui::CheckBox*	remember_pwd_ckb_ = nullptr;
 	ui::CheckBox*	remember_user_ckb_ = nullptr;
-	ui::CheckBox* use_new_uistyle_;
 	ui::CheckBox* use_private_settings_;
 	ui::CheckBox* chkbox_private_use_proxy_enable_;
 	ui::RichEdit* private_settings_url_;

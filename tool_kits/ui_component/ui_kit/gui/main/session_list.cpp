@@ -162,7 +162,12 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data, bool
 		if (item)
 			session_list_->Remove(item);
 		item = new SessionItem;
-		GlobalManager::FillBoxWithCache(item, L"main/session_item.xml");
+		std::wstring session_item_xml = L"main/session_item.xml";
+		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::Simplified_Chinese)
+			session_item_xml = L"main/session_item.xml";
+		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+			session_item_xml = L"main/session_item_en.xml";
+		GlobalManager::FillBoxWithCache(item, session_item_xml);
 		index = AdjustMsg(item_data_new); //删掉之后重新算一次
 		if (index >= 0)
 			session_list_->AddAt(item, index);

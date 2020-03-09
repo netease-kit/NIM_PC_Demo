@@ -178,10 +178,11 @@
       <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\bin\;</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalDependencies>vfw32.lib;tinyxml.lib;wxsqlite3.lib;duilib.lib;nim_capture_image.lib;custom_app_sdk.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>..\..\..\libs\x64\;$(ProjectDir)../../../sdk/nim_sdk/cpp_sdk/libs/x64/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\..\..\libs\x64\;$(ProjectDir)../../../nim_sdk/cpp_sdk/libs/x64/mt/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -476,9 +477,6 @@
     </ProjectReference>
     <ProjectReference Include="..\..\db\db.vcxproj">
       <Project>{745e6452-9fe1-435b-833a-767617eee1da}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\..\duilib\duilib.vcxproj">
-      <Project>{e106acd7-4e53-4aee-942b-d0dd426db34e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\shared\shared.vcxproj">
       <Project>{9951345f-620b-4bed-bb51-4f928cafd454}</Project>

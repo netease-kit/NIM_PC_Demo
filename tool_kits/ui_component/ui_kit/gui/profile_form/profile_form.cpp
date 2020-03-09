@@ -101,7 +101,10 @@ std::wstring ProfileForm::GetWindowId() const
 
 void ProfileForm::InitWindow()
 {	
-	ui::GlobalManager::FillBoxWithCache(contant_, L"profile_form/profile_box.xml");
+	std::wstring profile_box = L"profile_form/profile_box.xml";
+	if(ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+		profile_box = L"profile_form/profile_box_en.xml";
+	ui::GlobalManager::FillBoxWithCache(contant_, profile_box);
 	auto container = dynamic_cast<ui::Box*>(FindControl(L"container"));
 	container->Add(contant_);
 }

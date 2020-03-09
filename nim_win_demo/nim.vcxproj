@@ -23,7 +23,6 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>IM</RootNamespace>
     <ProjectName>nim_demo</ProjectName>
-    <WindowsTargetPlatformVersion>7.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -185,7 +184,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>dbghelp.lib;libyuv.lib;libssl.lib;libcrypto.lib;custom_app_sdk.lib;ws2_32.lib;Userenv.lib;jsoncpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>dbghelp.lib;vfw32.lib;tinyxml.lib;wxsqlite3.lib;libyuv.lib;libssl.lib;libcrypto.lib;custom_app_sdk.lib;ws2_32.lib;Userenv.lib;jsoncpp.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll</DelayLoadDLLs>
       <IgnoreSpecificDefaultLibraries>
@@ -286,9 +285,6 @@
     </ProjectReference>
     <ProjectReference Include="..\tool_kits\base\base.vcxproj">
       <Project>{8d9a6595-717a-41c8-b468-0011a72be3d1}</Project>
-    </ProjectReference>
-    <ProjectReference Include="..\tool_kits\duilib\duilib.vcxproj">
-      <Project>{e106acd7-4e53-4aee-942b-d0dd426db34e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\tool_kits\shared\shared.vcxproj">
       <Project>{9951345f-620b-4bed-bb51-4f928cafd454}</Project>

@@ -327,7 +327,7 @@
   <!--个人名片专用-->
   <Class name="switch" value="normalimage=&quot;../profile_form/off_normal.png&quot; pushedimage=&quot;../profile_form/off_pushed.png&quot; disabledimage=&quot;../profile_form/off_pushed.png&quot; selectednormalimage=&quot;../profile_form/on_normal.png&quot; selectedpushedimage=&quot;../profile_form/on_pushed.png&quot; selecteddisabledimage=&quot;../profile_form/on_pushed.png&quot; cursortype=&quot;hand&quot;"/>
   <Class name="space" value="width=&quot;30&quot; valign=&quot;center&quot;"/>
-  <Class name="combo_attrib" value="width=&quot;96&quot; height=&quot;30&quot; valign=&quot;center&quot; bkimage=&quot;file='../public/combo/normal.png' corner='5,5,30,5'&quot; vscrollbar=&quot;true&quot;"/>
+  <Class name="combo_attrib" value="width=&quot;97&quot; height=&quot;30&quot; valign=&quot;center&quot; bkimage=&quot;file='../public/combo/normal.png' corner='5,5,30,5'&quot; vscrollbar=&quot;true&quot;"/>
   <Class name="item_box_attrib" value="width=&quot;stretch&quot; height=&quot;39&quot;"/>
   <Class name="label_attrib" value="valign=&quot;center&quot; margin=&quot;0,0,0,2&quot; font=&quot;2&quot; normaltextcolor=&quot;profile_nickname&quot;"/>
   <Class name="edit_attrib" value="height=&quot;30&quot; valign=&quot;center&quot; padding=&quot;10,0,10,0&quot; font=&quot;2&quot; normaltextcolor=&quot;profile_account&quot; align=&quot;vcenter&quot; bordercolor=&quot;profile_account&quot; bordersize=&quot;1&quot;"/>

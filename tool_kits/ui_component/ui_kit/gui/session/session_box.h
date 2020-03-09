@@ -130,6 +130,13 @@ public:
 	void AddWritingMsg(const nim::IMMessage &msg);
 
 	/**
+	* 在聊天框内添加一个“对方正在输入”的状态消息（当在输入框编辑时调用）
+	* @param[in] msg	“对方正在输入”消息的数据
+	* @return void 无返回值
+	*/
+	void OnDeleteMsglogNotfiy(const std::string &msg_id,const std::string& ext);
+
+	/**
 	* 添加一个被转发的消息到聊天框
 	* @param[in] msg 消息数据
 	* @return void 无返回值

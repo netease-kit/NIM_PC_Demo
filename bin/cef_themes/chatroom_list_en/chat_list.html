@@ -1,0 +1,39 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8" />
+  <title>Chat List</title>
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+  <link rel="stylesheet" type="text/css" href="../global/bootstrap-3.3.7-dist/css/bootstrap.min.css">
+  <link rel="stylesheet" type="text/css" href="chat_list.css">
+</head>
+
+<body>
+  <div id="loading" style="visibility: hidden; display: none;">
+    <i class="fa fa-spinner fa-spin"></i>
+  </div>
+  <div class="container-fluid" id="chat-list-container">
+  </div>
+  <div id="menu" style="visibility: hidden; display: none;">
+    <ul>
+      <li><a href="#" id="kick">Kick</a></li>
+      <li><a href="#" id="mute">Banned</a></li>
+      <li><a href="#" id="unmute">Unbanned</a></li>
+      <li><a href="#" id="black">Blacklisted him</a></li>
+      <li><a href="#" id="cancel-black">Unblacklist</a></li>
+      <li><a href="#" id="set-admin">Appoint Admin</a></li>
+      <li><a href="#" id="cancel-admin">Dismiss Admin</a></li>
+      <li><a href="#" id="temp-mute">Banned 60s(test)</a></li>
+      <li><a href="#" id="temp-unmute">Temporarily Unbanned</a></li>
+    </ul>
+  </div>
+  <script type="text/javascript" src="emoji.json"></script>
+  <script type="text/javascript" src="../global/jquery-3.3.1-dist/jquery-3.3.1.min.js"></script>
+  <script type="text/javascript" src="../global/bootstrap-3.3.7-dist/js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="../global/fontawesome-free-5.4.2-web/js/all.min.js"></script>
+  <script type="text/javascript" src="../global/nim-helpers-1.0.0/chatroom-functions.js"></script>
+  <script type="text/javascript" src="chat_list.js"></script>
+</body>
+</html>

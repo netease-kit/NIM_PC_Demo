@@ -12,9 +12,9 @@ namespace
 	UINT WM_TASKBARBUTTONCREATED = ::RegisterWindowMessage(TEXT("TaskbarButtonCreated"));
 
 	// 定义会话盒子针对P2P、群组会话不同状态下的尺寸
-	const int kNormalSessionBoxWidth = 550;
+	const int kNormalSessionBoxWidth = 650;
 	const int kNormalSessionBoxHeight = 600;
-	const int kLargeSessionBoxWidth = 740;
+	const int kLargeSessionBoxWidth = 800;
 	const int kLargeSessionBoxHeight = 600;
 
 	// 窗口收到WM_CLOSE消息的原因

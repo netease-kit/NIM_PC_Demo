@@ -16,9 +16,9 @@
 		<VBox margin="10,10,10,10" height="auto" name="prg_box" childmargin="10" >
 			<Progress name="progress" width="stretch" height="4" margin="0,0,0,0" bkcolor="bk_progress_bk" progresscolor="bk_progress_progress" mouse="false"/>
 			<HBox height="auto" >
-				<Label class="font_title" name="result_text" normaltextcolor="lightcolor"/>
+				<Label class="font_title" name="result_text" normaltextcolor="lightcolor" font="1"/>
 				<Control />
-				<Label class="font_title" name="progress_text" normaltextcolor="lightcolor"/>
+				<Label class="font_title" name="progress_text" normaltextcolor="lightcolor" font="1"/>
 			</HBox>
 		</VBox>
 		<HBox name="hbox_send" height="30" margin="10,10,10,10">

@@ -23,6 +23,8 @@ void CefChatroomList::DoInit()
 	cef_control_->AttachAfterCreated(nbase::Bind(&CefChatroomList::OnAfterCreated, this, std::placeholders::_1));
 	cef_control_->AttachBeforeContextMenu(nbase::Bind(&CefChatroomList::OnBeforeContextMenu, this, std::placeholders::_1, std::placeholders::_2));
 	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"cef_themes/chatroom_list/chatroom_list.html";
+	if(ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+		html_path = L"file://" + QPath::GetAppPath() + L"cef_themes/chatroom_list_en/chatroom_list.html";
 	cef_control_->LoadURL(html_path);
 }
 

@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <VListBox class="menu">
+        <MenuElement class="MenuElement" name="use_new_uistyle" width="110">
+            <Event type="mouseenter" receiver=".\check_new_uistyle" applyattribute="state=&quot;hot&quot;"/>
+            <Event type="mouseleave" receiver=".\check_new_uistyle" applyattribute="state=&quot;normal&quot;"/>            
+            <Box>
+                <CheckBox class="checkbox_font12 menu_text" name="check_new_uistyle" margin="0,0,0,0" font="0" valign="center" mouse="false" textid="STRID_LOGIN_NEW_UISTYLE" />
+            </Box>
+        </MenuElement>
+		<MenuElement class="MenuElement" name="proxy_setting" width="110">
+            <Label class="menu_text" font="1" textid="STRID_PROXY_SETTING_TITLE" margin="0,0,0,0"/>
+        </MenuElement>        
+    </VListBox>
+</Window>

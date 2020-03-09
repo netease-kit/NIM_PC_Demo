@@ -30,7 +30,7 @@ void CefNativeControl::Init()
 	{
 		LONG style = GetWindowLong(m_pWindow->GetHWND(), GWL_STYLE);
 		SetWindowLong(m_pWindow->GetHWND(), GWL_STYLE, style | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
-		ASSERT((GetWindowExStyle(m_pWindow->GetHWND()) & WS_EX_LAYERED) == 0 && L"无法在分层窗口内使用本控件");
+		ASSERT((GetWindowExStyle(m_pWindow->GetHWND()) & WS_EX_LAYERED) == 0 && L"This control cannot be used inside a layered window");
 
 		browser_handler_ = new nim_cef::BrowserHandler;
 		browser_handler_->SetHostWindow(m_pWindow->GetHWND());

@@ -142,7 +142,7 @@ void UnreadForm::LoadList(const nim::IMMessage &msg, const std::map<std::string,
 		content = content.substr(0, 10);
 		content += L"...";
 	}
-	content = L"消息:" + content;
+	content = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_UNREADMSG_CENTER_MESSAGE") + content;
 	form_title_->SetText(content);
 
 	DoLoadList();

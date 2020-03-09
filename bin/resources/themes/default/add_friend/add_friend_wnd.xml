@@ -16,9 +16,9 @@
                 <Control />
 
                 <HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
-                    <Button class="btn_global_white_80x30" name="cancel" textid="STRING_NO_"/>
+                    <Button class="btn_global_white_80x30" name="cancel" textid="STRING_NO_" textpadding="8,0,8,0"/>
                     <Control width="10"/>
-                    <Button class="btn_global_green_80x30" name="confirm" textid="STRING_SEARCH_"/>
+                    <Button class="btn_global_green_80x30" name="confirm" textid="STRING_SEARCH_" textpadding="8,0,8,0"/>
                 </HBox>
             </VBox>
             <!--资料-->
@@ -45,11 +45,11 @@
                 </HBox>
 
                 <HBox width="auto" height="auto" halign="right" margin="0,40,20,20">
-                    <Button class="btn_global_white_80x30" name="pre_step" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH"/>
+                    <Button class="btn_global_white_80x30" name="pre_step" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH" textpadding="8,0,8,0"/>
                     <TabBox name="addfriend_or_chat" margin="10,0,0,0" width="auto" height="auto">
-                        <Button class="btn_global_green_80x30" name="add_friend" textid="STRID_ADD_FRIEND_ADD"/>
-                        <Button class="btn_global_green_80x30" name="chat" textid="STRID_ADD_FRIEND_CHAT"/>
-						<Button class="btn_global_green_80x30" name="remove" textid="STRID_ADD_FRIEND_REMOVE_BLACK"/>
+                        <Button class="btn_global_green_80x30" name="add_friend" textid="STRID_ADD_FRIEND_ADD" textpadding="8,0,8,0"/>
+                        <Button class="btn_global_green_80x30" name="chat" textid="STRID_ADD_FRIEND_CHAT" textpadding="8,0,8,0"/>
+						<Button class="btn_global_green_80x30" name="remove" textid="STRID_ADD_FRIEND_REMOVE_BLACK" textpadding="8,0,8,0"/>
                     </TabBox>
                 </HBox>
             </VBox>
@@ -69,9 +69,9 @@
                 <Control />
 				
                 <HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
-                    <Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH"/>
+                    <Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH" textpadding="8,0,8,0"/>
                     <Control width="10"/>
-					<Button  class="btn_global_green_80x30" name="ok" textid="STRING_COMPLETE_"/>
+					<Button  class="btn_global_green_80x30" name="ok" textid="STRING_COMPLETE_" textpadding="8,0,8,0"/>
                 </HBox>
             </VBox>
             <!--请求-->
@@ -89,9 +89,9 @@
 
                     <Control />
                     <HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
-                        <Button  class="btn_global_white_80x30" name="pre_step" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH"/>
+                        <Button  class="btn_global_white_80x30" name="pre_step" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH" textpadding="8,0,8,0"/>
                         <Control width="10"/>
-                        <Button  class="btn_global_green_80x30" name="send" textid="STRID_ADD_FRIEND_SEND"/>
+                        <Button  class="btn_global_green_80x30" name="send" textid="STRID_ADD_FRIEND_SEND" textpadding="8,0,8,0"/>
                     </HBox>
                 </VBox>
             </VBox>
@@ -109,9 +109,9 @@
 
                 <Control />
                 <HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
-                    <Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH"/>
+                    <Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH" textpadding="8,0,8,0"/>
                     <Control width="10"/>
-                    <Button  class="btn_global_green_80x30" name="ok" textid="STRING_COMPLETE_"/>
+                    <Button  class="btn_global_green_80x30" name="ok" textid="STRING_COMPLETE_" textpadding="8,0,8,0"/>
                 </HBox>
             </VBox>
             <!--警告-->
@@ -130,9 +130,9 @@
 
                 <Control />
                 <HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
-                    <Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH"/>
+                    <Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH" textpadding="8,0,8,0"/>
                     <Control width="10"/>
-                    <Button  class="btn_global_green_80x30" name="ok" textid="STRING_COMPLETE_"/>
+                    <Button  class="btn_global_green_80x30" name="ok" textid="STRING_COMPLETE_" textpadding="8,0,8,0"/>
                 </HBox>
             </VBox>
             <!--完成-->
@@ -148,9 +148,9 @@
 
                 <Control />
                 <HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
-                    <Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH"/>
+                    <Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH" textpadding="8,0,8,0" />
                     <Control width="10"/>
-                    <Button  class="btn_global_green_80x30" name="ok" textid="STRING_COMPLETE_"/>
+                    <Button  class="btn_global_green_80x30" name="ok" textid="STRING_COMPLETE_" textpadding="8,0,8,0"/>
                 </HBox>
 
             </VBox>
@@ -167,9 +167,9 @@
 
 				<Control />
 				<HBox width="auto" height="auto" halign="right" margin="0,0,20,20">
-					<Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH"/>
+					<Button  class="btn_global_white_80x30" name="continue_search" textid="STRID_ADD_FRIEND_CONTINUE_SEARCH" textpadding="8,0,8,0"/>
 					<Control width="10"/>
-					<Button  class="btn_global_green_80x30" name="ok" textid="STRING_COMPLETE_"/>
+					<Button  class="btn_global_green_80x30" name="ok" textid="STRING_COMPLETE_" textpadding="8,0,8,0"/>
 				</HBox>
 			</VBox>
 

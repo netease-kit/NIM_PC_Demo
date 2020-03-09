@@ -39,9 +39,12 @@ void ProxyForm::InitWindow()
 	auto global_proxy = dynamic_cast<ui::Box*>(FindControl(L"global_proxy"));
 	if (global_proxy != nullptr)
 	{
-		proxy_name = L"Global 代理设置";
+		proxy_name = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_PROXY_GLOBAL_SETTIN");
 		global_proxy_ = new ProxyTipGlobal;
-		ui::GlobalManager::FillBoxWithCache(global_proxy_, L"proxy/proxy_tip_global.xml");
+		if(ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::Simplified_Chinese)
+			ui::GlobalManager::FillBoxWithCache(global_proxy_, L"proxy/proxy_tip_global.xml");
+		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+			ui::GlobalManager::FillBoxWithCache(global_proxy_, L"proxy/proxy_tip_global_en.xml");
 		global_proxy_->SetProxyName(proxy_name);
 		if (proxy_setting_list_.find(proxy_name) == proxy_setting_list_.end())
 			proxy_setting_list_[proxy_name] = ProxyTipGlobal::CreateSetting();
@@ -51,10 +54,15 @@ void ProxyForm::InitWindow()
 	auto proxys = dynamic_cast<ui::ListBox*>(FindControl(L"proxys"));
 	if (proxys != nullptr)
 	{
-		proxy_chatroom_ = CreateSubModuleProxyTip([](){return (new ProxyTipSub_Chatroom()); }, L"Chatroom 代理设置");
-		proxy_vchat_ = CreateSubModuleProxyTip([](){return (new ProxyTipSub_VChat()); }, L"VChat 代理设置");
-		proxy_rts_ = CreateSubModuleProxyTip([](){return (new ProxyTipSub_Rts()); }, L"Rts(白板) 代理设置");
-		proxy_httptool_ = CreateSubModuleProxyTip([](){return (new ProxyTipSub_Httptool); }, L"Httptool 代理设置");
+		MutiLanSupport* multilan = MutiLanSupport::GetInstance();
+		proxy_chatroom_ = CreateSubModuleProxyTip([](){return (new ProxyTipSub_Chatroom()); }, 
+			multilan->GetStringViaID(L"STRID_PROXY_CHATROOM_SETTIN"));
+		proxy_vchat_ = CreateSubModuleProxyTip([](){return (new ProxyTipSub_VChat()); }, 
+			multilan->GetStringViaID(L"STRID_PROXY_VCHAT_SETTIN"));
+		proxy_rts_ = CreateSubModuleProxyTip([](){return (new ProxyTipSub_Rts()); }, 
+			multilan->GetStringViaID(L"STRID_PROXY_RTS_SETTIN"));
+		proxy_httptool_ = CreateSubModuleProxyTip([](){return (new ProxyTipSub_Httptool); }, 
+			multilan->GetStringViaID(L"STRID_PROXY_HTTPTOOL_SETTIN"));
 		proxys->Add(proxy_chatroom_);
 		proxys->Add(proxy_vchat_);
 		proxys->Add(proxy_rts_);

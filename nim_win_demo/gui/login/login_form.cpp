@@ -26,7 +26,8 @@ void LoginForm::OnLogin()
 		std::string url = private_settings_url_->GetUTF8Text();
 		if (url.empty())
 		{
-			ShowMsgBox(this->GetHWND(), MsgboxCallback(), L"请输入私有化配置下载地址", false);
+			ShowMsgBox(this->GetHWND(), MsgboxCallback(), 
+				MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_INPUT_PRIVATESETTINGS_URL"), false);
 			chkbox_private_use_proxy_enable_->SetEnabled(true);
 			return;
 		}		
@@ -41,7 +42,7 @@ void LoginForm::OnLogin()
 						json_config.isMember("version") && json_config.isMember("link"))
 					{
 						ConfigHelper::GetInstance()->UsePrivateSettings(true, url);
-						std::string priavet_setting_path =  nbase::UTF16ToUTF8(QPath::GetAppPath().append(L"nim_private_server.conf"));
+						std::string priavet_setting_path =  nbase::UTF16ToUTF8(QPath::GetNimAppDataDir(L"").append(L"nim_private_server.conf"));
 						std::ofstream config(priavet_setting_path, std::ios::out | std::ios::trunc);
 						if (config.is_open())
 						{
@@ -70,13 +71,17 @@ void LoginForm::OnLogin()
 					}					
 					else
 					{
-						ShowMsgBox(this->GetHWND(), MsgboxCallback(), L"私有化配置出错，请检查配置", false);
+						ShowMsgBox(this->GetHWND(), MsgboxCallback(), 
+							MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_PRIVATESETTINGS_ERROR_A_CHECK"), 
+							false);
 						chkbox_private_use_proxy_enable_->SetEnabled(true);
 					}						
 				}
 				else
 				{
-					ShowMsgBox(this->GetHWND(), MsgboxCallback(), L"无法下载私有化配置", false);
+					ShowMsgBox(this->GetHWND(), MsgboxCallback(), 
+						MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_UNABLE_DOWNLOAD_PRIVATESETTINGS"),
+						false);
 					chkbox_private_use_proxy_enable_->SetEnabled(true);
 				}
 			}));
@@ -103,7 +108,9 @@ bool LoginForm::InitSDK(const std::string& pravate_settings_file_path)
 	{		
 		if (!NimAPP::GetInstance()->InitNim(pravate_settings_file_path))
 		{
-			ShowMsgBox(this->GetHWND(), MsgboxCallback(), L"SDK初始化失败，请检查相关配置或运行环境", false);
+			ShowMsgBox(this->GetHWND(), MsgboxCallback(), 
+				MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_SDK_INIT_ERR_CHECK_PRIVATESETTINGS"),
+				false);
 			return false;
 		}	
 	}

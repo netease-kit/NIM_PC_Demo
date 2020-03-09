@@ -10,7 +10,7 @@
                 <RichEdit class="simple prompt input" name="re_tid" width="stretch" height="32" margin="0,15,0,5" padding="5,5,5,0" font="2" prompttextid="STRID_TEAM_SEARCH_INPUT_PROMPT"/>
                 <Label name="error_tip" normaltextcolor="obvious_tip" visible="false"/>
                 <Control />
-                <Button class="btn_global_green_80x30" name="btn_search" halign="right" normaltextcolor="white" textid="STRING_SEARCH"/>
+                <Button class="btn_global_green_80x30" name="btn_search" halign="right" normaltextcolor="white" textid="STRING_SEARCH" textpadding="8,0,8,0"/>
             </VBox>
             
             <VBox name="page_apply" visible="false">
@@ -28,16 +28,16 @@
                 <Control />
                 <HBox height="auto">
                     <Control />
-                    <Button class="btn_global_white_80x30" name="btn_return_search" textid="STRID_TEAM_SEARCH_RETURN_SEARCH"/>
+                    <Button class="btn_global_white_80x30" name="btn_return_search" textid="STRID_TEAM_SEARCH_RETURN_SEARCH" textpadding="8,0,8,0"/>
                     <Control width="10"/>
-                    <Button class="btn_global_green_80x30" name="btn_apply" normaltextcolor="white" textid="STRID_TEAM_SEARCH_JOIN"/>
+                    <Button class="btn_global_green_80x30" name="btn_apply" normaltextcolor="white" textid="STRID_TEAM_SEARCH_JOIN" textpadding="8,0,8,0"/>
                 </HBox>
             </VBox>
             
             <VBox name="page_apply_ok" visible="false">
                 <RichEdit name="re_apply" width="stretch" height="80" rich="true" multiline="true" vscrollbar="false" readonly="true" font="3"/>
                 <Control />
-                <Button class="btn_global_green_80x30" name="btn_apply_ok" halign="right" normaltextcolor="white" textid="STRING_COMPLETE"/>
+                <Button class="btn_global_green_80x30" name="btn_apply_ok" halign="right" normaltextcolor="white" textid="STRING_COMPLETE" textpadding="8,0,8,0"/>
             </VBox>
         </Box>
     </VBox>

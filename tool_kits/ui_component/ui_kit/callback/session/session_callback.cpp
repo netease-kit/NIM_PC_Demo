@@ -196,5 +196,15 @@ void TalkCallback::OnQuerySessionListCallback(int unread_count, const nim::Sessi
 	QLOG_PRO(L"local session list: count :{0} - unread :{1}") << session_list.count_ << session_list.unread_count_;
 	nim_ui::SessionListManager::GetInstance()->OnQuerySessionListCallback(session_list.sessions_);
 }
-
+void TalkCallback::OnReceiveDeleteMsglogSelfNotifyCallback(const nim::DeleteMsglogSelfNotifyParam& param)
+{
+	QLOG_PRO(L"delete message log self notify callback") ;
+	std::vector<nim::IMMessage> vec;
+	for (auto it : param.item_list)
+	{
+		SessionBox* session_form = SessionManager::GetInstance()->FindSessionBox(it.session_id_);
+		if(session_form != nullptr)
+			session_form->OnDeleteMsglogNotfiy(it.client_id_,it.ext_);
+	}	
+}
 }

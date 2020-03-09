@@ -92,6 +92,13 @@ public:
 	* @return void 无返回值
 	*/
 	static void OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::list<nim::RecallMsgNotify>& message);
+
+	/**
+	* 单向删除消息记录推回调
+	* @param[in] 被单向删除的消息列表
+	* @return void 无返回值
+	*/
+	static void OnReceiveDeleteMsglogSelfNotifyCallback(const nim::DeleteMsglogSelfNotifyParam& param);
 };
 
 }

@@ -13,6 +13,7 @@ namespace nim_comp
 			std::wstring  tag;  //such as "[大笑]"
 			std::wstring  file; //"emoji_00.png"
 			std::wstring  path; //full path
+			std::wstring  tip;
 		};
 
 		/**

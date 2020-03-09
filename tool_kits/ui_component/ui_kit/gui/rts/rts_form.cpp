@@ -136,12 +136,16 @@ bool RtsForm::Notify(ui::EventArgs* msg)
 			if (msg->Type == kEventSelect)
 			{
 				InitMic();
-				nim::Rts::Control(session_id_, nbase::UTF16ToUTF8(L"开启音频"), nim::Rts::ControlCallback());
+				nim::Rts::Control(session_id_, 
+					nbase::UTF16ToUTF8(mls->GetStringViaID(L"STRID_RTS_OPEN_AUDIO")), 
+					nim::Rts::ControlCallback());
 			}
 			else if (msg->Type == kEventUnSelect)
 			{
 				FreeMic();
-				nim::Rts::Control(session_id_, nbase::UTF16ToUTF8(L"关闭音频"), nim::Rts::ControlCallback());
+				nim::Rts::Control(session_id_, 
+					nbase::UTF16ToUTF8(mls->GetStringViaID(L"STRID_RTS_CLOSE_AUDIO")), 
+					nim::Rts::ControlCallback());
 			}
 		}
 	}

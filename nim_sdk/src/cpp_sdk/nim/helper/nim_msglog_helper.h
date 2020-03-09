@@ -30,6 +30,19 @@ struct NIM_SDK_CPPWRAPPER_DLL_API QueryMsglogResult
 	QueryMsglogResult() : count_(0), source_(kNIMMsglogQuerySourceLocal) {}
 };
 
+/** @brief 单向删除消息记录回调参数 */
+struct NIM_SDK_CPPWRAPPER_DLL_API DeleteMsglogSelfNotifyItemInfo
+{
+	std::string session_id_; /*会话id*/
+	std::string client_id_; /*消息ID*/
+	std::string ext_; /*自定义字段*/
+};
+/** @brief 单向删除消息记录回调参数 */
+struct NIM_SDK_CPPWRAPPER_DLL_API DeleteMsglogSelfNotifyParam
+{
+	std::list<DeleteMsglogSelfNotifyItemInfo> item_list;	/**< 被删除的消息基本信息 */
+};
+
 /** @brief 发送消息已读回执 */
 struct NIM_SDK_CPPWRAPPER_DLL_API MessageStatusChanged
 {

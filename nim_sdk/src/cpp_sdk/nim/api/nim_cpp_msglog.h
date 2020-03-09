@@ -38,8 +38,10 @@ typedef ModifySingleMsglogCallback SetSubStatusCallback;/**< 修改消息历史�
 typedef ModifySingleMsglogCallback UpdateLocalExtCallback;/**< 修改消息历史本地扩展字段内容回调模板 */
 typedef ModifySingleMsglogCallback WriteMsglogCallback;	/**< 保存消息历史回调模板 */
 typedef ModifySingleMsglogCallback DeleteCallback;		/**< 删除消息历史回调模板 */
+typedef std::function < void(const DeleteMsglogSelfNotifyParam&)>DeleteMsglogSelfNotifyCallback; /**<单向删除消息记录通知回调*/
 
 typedef std::function<void(NIMResCode res_code)> DBFunctionCallback;		/**< 消息历史变更回调模板 */	
+typedef std::function<void(NIMResCode res_code)> DeleteMsglogSelfCallback; /**<单向删除消息记录回调*/
 
 typedef DBFunctionCallback DeleteAllCallback;		/**< 删除全部消息历史回调模板 */
 
@@ -104,6 +106,17 @@ private:
 private:
 	std::string json_extension_;
 };
+/** @fn void UnregMsglogCb()
+* 反注册Msglog提供的所有回调
+* @return void 无返回值
+*/
+static void UnregMsglogCb();
+/** @fn  void RegDeleteMsglogSelfNotify(const DeleteMsglogSelfNotifyCallback &cb)
+* 注册单向删除消息记录通知回调
+* @param[in] cb				单向删除消息记录通知回调
+* @return void 无返回值
+*/
+static void RegDeleteMsglogSelfNotify(const DeleteMsglogSelfNotifyCallback &cb);
 
 /** @fn static bool QueryMsgByIDAysnc(const std::string &client_msg_id, const QuerySingleMsgCallback &cb, const std::string &json_extension = "")
 	* 根据消息ID查询本地（单条）消息
@@ -268,6 +281,24 @@ static bool BatchStatusDeleteAsync(const std::string& account_id
 	, const BatchStatusDeleteCallback& cb
 	, const std::string& json_extension = "");
 
+/** @fn static bool BatchStatusDeleteAsyncEx(const std::string& account_id, nim::NIMSessionType to_type, bool revert_by_query_online,const BatchStatusDeleteCallback& cb, const std::string& json_extension = "")
+* 删除某个会话的全部聊天记录
+* @param[in] account_id	要删除会话的id，account_id/uid或者tid
+* @param[in] to_type	    会话类型，双人0，群组1 (见nim_msglog_def.h)
+* @param[in] revert_by_online_query	是否可以通过服务端查询消息记录(含入库选项)进行恢复,true:是,false:否
+* @param[in] cb			操作结果的回调函数
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @return bool 检查参数如果不符合要求则返回失败
+* @note 错误码	200:成功
+*				0:失败
+*/
+static bool BatchStatusDeleteAsyncEx(const std::string& account_id
+	, nim::NIMSessionType to_type
+	, bool revert_by_query_online
+	, const BatchStatusDeleteCallback& cb
+	, const std::string& json_extension = "");
+
+
 /** @fn static bool SetStatusAsync(const std::string& msg_id, nim::NIMMsgLogStatus msglog_status, const SetStatusCallback& cb, const std::string& json_extension = "")
 * 设置消息状态
 * @param[in] msg_id		消息id
@@ -331,6 +362,24 @@ static bool DeleteBySessionTypeAsync(bool delete_sessions
 	, const DeleteBySessionTypeCallback& cb
 	, const std::string& json_extension = "");
 
+/** @fn static bool DeleteBySessionTypeAsyncEx(bool delete_sessions, NIMSessionType to_type, const DeleteBySessionTypeCallback& cb, const std::string& json_extension = "")
+* 删除指定会话类型的所有消息
+* @param[in] delete_sessions	    是否删除会话
+* @param[in] to_type	    会话类型
+* @param[in] revert_by_online_query	是否可以通过服务端查询消息记录(含入库选项)进行恢复,true:是,false:否
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] cb			操作结果的回调函数
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @return bool 检查参数如果不符合要求则返回失败
+* @note 错误码	200:成功
+*				0:失败
+*/
+static bool DeleteBySessionTypeAsyncEx(bool delete_sessions
+	, NIMSessionType to_type
+	, bool revert_by_query_online
+	, const DeleteBySessionTypeCallback& cb
+	, const std::string& json_extension = "");
+
 /** @fn static bool DeleteAsync(const std::string& session_id, NIMSessionType to_type, const std::string& msg_id, const DeleteCallback& cb, const std::string& json_extension = "")
 * 删除指定一条消息
 * @param[in] session_id	会话id，对方的account id或者群组tid
@@ -361,6 +410,20 @@ static bool DeleteAsync(const std::string& session_id
 */
 static bool DeleteAllAsync(bool delete_sessions, const DeleteAllCallback& cb, const std::string& json_extension = "");
 
+/** @fn static bool DeleteAllAsyncEx(bool delete_sessions, bool revert_by_query_online, const DeleteAllCallback& cb, const std::string& json_extension = "")
+* 删除全部消息历史
+* @param[in] delete_sessions 是否删除所有会话列表项（即全部最近联系人）。
+*							   ture则删除，并通过nim_session_reg_change_cb注册的回调通知上层kNIMSessionCommandRemoveAll事件（不会触发每个会话项的kNIMSessionCommandRemove事件）；
+*							   false则不删除，并将所有会话项的最后一条消息的状态kNIMSessionMsgStatus设置为已删除状态，并通过nim_session_reg_change_cb注册的回调通知上层kNIMSessionCommandAllMsgDeleted事件（不会触发每个会话项的kNIMSessionCommandUpdate事件，避免频繁通知上层）。
+* @param[in] revert_by_online_query	是否可以通过服务端查询消息记录(含入库选项)进行恢复,true:是,false:否
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] cb			操作结果的回调函数
+* @return bool 检查参数如果不符合要求则返回失败
+* @note 错误码	200:成功
+*				0:失败
+*/
+static bool DeleteAllAsyncEx(bool delete_sessions, bool revert_by_query_online, const DeleteAllCallback& cb, const std::string& json_extension = "");
+
 /** @fn static bool DeleteMsgByTimeAsync(const std::string& session_id, NIMSessionType to_type, uint64_t from_time, uint64_t to_time, const DeleteMsgByTimeCallback& cb, const std::string& json_extension = "");
 * 根据时间段删除部分会话的历史消息
 * @param[in] session_id	要删除消息的会话ID
@@ -374,6 +437,21 @@ static bool DeleteAllAsync(bool delete_sessions, const DeleteAllCallback& cb, co
 *				0:失败
 */
 static bool DeleteMsgByTimeAsync(const std::string& session_id, NIMSessionType to_type, uint64_t timestamp1, uint64_t timestamp2, const DeleteMsgByTimeCallback& cb, const std::string& json_extension = "");
+
+/** @fn static bool DeleteMsgByTimeAsyncEx(const std::string& session_id, NIMSessionType to_type, bool revert_by_query_online, uint64_t from_time, uint64_t to_time, const DeleteMsgByTimeCallback& cb, const std::string& json_extension = "");
+* 根据时间段删除部分会话的历史消息
+* @param[in] session_id	要删除消息的会话ID
+* @param[in] to_type	要删除消息的会话类型
+* @param[in] revert_by_online_query	是否可以通过服务端查询消息记录(含入库选项)进行恢复,true:是,false:否
+* @param[in] 单位ms timestamp1	与 timestamp2 组成一个时间段，SDK 内部会判断大小调整入参顺序
+* @param[in] 单位ms timestamp2	与 timestamp1 组成一个时间段，SDK 内部会判断大小调整入参顺序
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] cb			操作结果的回调函数
+* @return bool 检查参数如果不符合要求则返回失败
+* @note 错误码	200:成功
+*				0:失败
+*/
+static bool DeleteMsgByTimeAsyncEx(const std::string& session_id, NIMSessionType to_type, bool revert_by_query_online, uint64_t timestamp1, uint64_t timestamp2, const DeleteMsgByTimeCallback& cb, const std::string& json_extension = "");
 
 /** @fn static bool ExportDbAsync(const std::string& dst_path, const ExportDbCallback& cb, const std::string& json_extension = "")
 * 导出整个消息历史DB文件（不包括系统消息历史）
@@ -502,8 +580,18 @@ static void CancelExportBackupToRemote();
 * @note 错误码	200:成功
 */
 static void DeleteHistoryOnlineAsync(const std::string& accid,bool delete_roaming,const std::string& json_extension,const DeleteHistoryOnLineAsyncCallback& cb);
-};
 
+/** @fn void DeleteMessageSelfAsync(const MsgLog& msg, const std::string ext, const DeleteMsglogSelfCallback& cb)
+  * 单向删除某条消息记录(同时删除本地与云端)
+  * @param[in] msg 要删除的消息
+  * @param[in] ext 用户自定义扩展字段
+  * @param[in] cb	操作结果的回调函数
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+static void DeleteMessageSelfAsync(const IMMessage &msg, const std::string ext, const DeleteMsglogSelfCallback& cb);
+
+};
 } 
 
 #endif //_NIM_SDK_CPP_MSGLOG_H_

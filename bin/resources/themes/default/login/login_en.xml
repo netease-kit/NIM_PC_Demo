@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window caption="0,0,0,160" shadowattached="false" custom_shadow="20,70,20,20" textid="STRID_LOGIN_FORM_LOGIN">
+  <Box width="348" height="auto">
+    <Box width="130" height="150" margin="0,10,0,0" halign="center">
+      <Control width="auto" height="auto" halign="center" valign="center" bkimage="head_shadow.png" mouse="false"/>
+    </Box>
+
+    <Box height="auto" margin="0,50,0,0" padding="14,14,14,14" bkimage="file='../public/bk/bk_shadow.png' corner='30,30,30,30'">
+      <VBox height="auto" bkcolor="bk_wnd_logincolor" borderround="3,3,3,3">
+        <VBox height="auto">
+          <HBox height="20" margin="0,6,5,40">
+            <Control />
+            <Button name="proxy_setting" width="20" height="20" tooltiptextid="STRID_LOGIN_FORM_SET_PROXY" 
+                    forenormalimage="file='btn_set.png' source='1,1,21,21'" 
+                    hotimage="../public/button/btn_wnd_bk_hovered.png" 
+                    pushedimage="../public/button/btn_wnd_bk_pushed.png"/>
+            <Button class="btn_wnd_min" name="minbtn" margin="4,0,4,0"/>
+            <Button class="btn_wnd_close" name="closebtn"/>
+          </HBox>
+          <HBox height="auto" margin="20,0,20,0">           
+            <Control />
+            <Button name="register_account" margin="0,5,0,0" halign="right" textid="STRID_LOGIN_FORM_REGISTER" cursortype="hand" font="24" normaltextcolor="link_green"/>
+            <Button name="enter_login" margin="0,5,0,0" halign="right" textid="STRID_LOGIN_FORM_LOGIN_DIRECTLY" cursortype="hand" font="24" normaltextcolor="link_green" visible="false"/>
+          </HBox>
+          <!--帐号和密码-->
+          <VBox name="enter_panel" width="stretch" height="auto" margin="20,10,20,0" bkimage="user_password.png">
+            <HBox height="41" padding="14,1,10,0">
+              <Control name="usericon" width="16" height="16" valign="center" normalimage="user_1.png" disabledimage="user_2.png"/>
+              <RichEdit class="simple prompt" name="username" width="stretch" height="auto" margin="10,0,10,0" valign="center" font="2" prompttextid="STRID_LOGIN_FORM_ACCOUNT"/>
+            </HBox>
+            <HBox name="nick_name_panel" height="40" padding="14,1,0,0" visible="false" margin="0,0,0,0">
+              <Control name="nick_name_icon" width="16" height="16" valign="center" normalimage="nickname.png" disabledimage="nickname.png"/>
+              <RichEdit class="simple prompt" name="nickname" width="stretch" height="auto" margin="10,0,10,0" valign="center" font="2" prompttextid="STRID_LOGIN_FORM_NICKNAME"/>
+            </HBox>
+            <HBox height="41" padding="14,0,10,1" margin="0,2,0,0">
+              <Control name="passwordicon" width="16" height="16" valign="center" normalimage="password_1.png" disabledimage="password_2.png"/>
+              <RichEdit class="simple prompt" name="password" width="stretch" height="auto" margin="10,0,10,0" valign="center" font="2" password="true" prompttextid="STRID_LOGIN_FORM_PASSWORD"/>
+            </HBox>
+          </VBox>
+        </VBox>
+
+        <!--记住密码-->
+        <HBox name="login_cache_conf" height="auto" margin="29,20,29,0">
+          <CheckBox class="checkbox_font12" name="chkbox_remember_username" textid="STRID_LOGIN_REMEMBER_ME" normaltextcolor="dark2color">
+            <Event type="unselect" receiver="chkbox_remember_pwd" applyattribute="selected=&quot;false&quot;"/>
+          </CheckBox>
+          <!--Control /-->
+          <CheckBox class="checkbox_font12" name="chkbox_remember_pwd" textid="STRID_LOGIN_REMEMBER_PWD" normaltextcolor="dark2color" margin="11,0,0,0">
+            <Event type="select" receiver="chkbox_remember_username" applyattribute="selected=&quot;true&quot;"/>
+            <Event type="unselect" receiver="chkbox_remember_username" applyattribute="selected=&quot;false&quot;"/>
+          </CheckBox>          
+          <!--Button name="forget_password" cursortype="hand" font="1" normaltextcolor="link_gray" textid="STRID_LOGIN_FORGET_PASSWORD" /-->
+        </HBox>
+
+        <!--登录提示-->
+        <Label name="login_ing_tip" margin="20,20,20,0" font="1" textid="STRID_LOGIN_FORM_LOGINING" visible="false"/>
+        <Label name="login_error_tip" margin="20,20,20,0" font="1" normaltextcolor="obvious_tip" visible="false" />
+
+        <!--登录和取消按钮-->
+        <Box width="stretch" height="40" margin="20,20,20,10">
+          <Button name="btn_login" width="stretch" height="40" font="8" normaltextcolor="white" textid="STRID_LOGIN_FORM_LOGIN"
+                  normalimage="login0.png" hotimage="login1.png" pushedimage="login2.png" disabledimage="login3.png"/>
+          <Button name="btn_register" width="stretch" height="40" font="8" normaltextcolor="white" textid="STRID_LOGIN_FORM_REGISTER"
+                  normalimage="login0.png" hotimage="login1.png" pushedimage="login2.png" disabledimage="login3.png" visible="false"/>
+          <Button name="btn_cancel" width="stretch" height="40" font="8" normaltextcolor="darkcolor" textid="STRID_LOGIN_FORM_CANCEL_LOGIN" visible="false"
+                  normalimage="file='cancel0.png' corner='10,10,10,10'" hotimage="file='cancel1.png' corner='10,10,10,10'"
+                  pushedimage="file='cancel2.png' corner='10,10,10,10'" disabledimage="file='cancel0.png' corner='10,10,10,10' fade='128'"/>
+        </Box>
+        <VBox margin="20,5,20,20" height="auto">
+          <Button name="anonymous_chatroom" margin="0,0,0,0" halign="center" textid="STRID_LOGIN_FORM_ANONYMOUSCHATROOM" cursortype="hand" font="24" normaltextcolor="link_green"/>
+          <VBox name="private_settings" height="auto" margin="0,5,0,0">
+            <HBox height="auto">
+              <CheckBox class="checkbox_font12" name="chkbox_use_private_enable" textid="STRID_LOGIN_FORM_PRIVATESETTINGS_ENABLE" normaltextcolor="dark2color" selected="false" />
+              <Control />
+              <CheckBox class="checkbox_font12" name="chkbox_private_use_proxy_enable" textid="STRID_LOGIN_FORM_PROXY_ENABLE" normaltextcolor="dark2color" selected="false" visible="false" />
+            </HBox>
+            <HBox name="private_settings_container" height="20" bordersize="1" bordercolor="group_name" padding="5,1,5,1" margin="0,10,0,0" visible="false">
+              <RichEdit class="simple prompt" name="private_settings_url" width="stretch" height="16" margin="0,5,0,5" valign="center" font="1" prompttextid="STRID_LOGIN_FORM_INPUT_PRIVATESETTINGS_URL"/>
+            </HBox>
+          </VBox>
+        </VBox>
+        <!-- 注册成功toast提示 -->
+        <Label name="register_ok_toast" normalimage="register_ok.png" halign="center" valign="center" float="true" visible="false" fadealpha="true"/>
+
+      </VBox>
+    </Box>
+
+    <!--头像-->
+    <Box margin="0,10,0,0" mouse="false" width="130" height="150" halign="center">
+      <Control width="auto" height="auto" halign="center" valign="center" bkimage="logo.png"/>
+      <Button name="headicon" width="106" height="106" borderround="106,106,106,106" halign="center" valign="center" mouse="false" fadealpha="true"/>
+      <Control width="auto" height="auto" bkimage="mask.png" halign="center" valign="center" mouse="false"/>
+    </Box>
+  </Box>
+</Window>

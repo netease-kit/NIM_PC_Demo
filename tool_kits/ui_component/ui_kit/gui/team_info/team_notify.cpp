@@ -87,14 +87,14 @@ bool TeamNotifyForm::OnClicked( ui::EventArgs* arg )
 	std::wstring name = arg->pSender->GetName();
 	if(name == L"btn_ask_no")
 	{
-		QLOG_PRO(L"拒绝加入");
+		QLOG_PRO(L"Refuse to join");
 		nim::Team::RejectJoinApplyAsync(tid_, uid_, "", nbase::Bind(&TeamEventItem::TeamEventCb, msg_id_, std::placeholders::_1));
 
 		this->Close();
 	}
 	else if(name == L"btn_ask_yes")
 	{
-		QLOG_PRO(L"同意加入");
+		QLOG_PRO(L"Agree to join");
 		nim::Team::PassJoinApplyAsync(tid_, uid_, nbase::Bind(&TeamEventItem::TeamEventCb, msg_id_, std::placeholders::_1));
 
 		this->Close();
@@ -105,14 +105,14 @@ bool TeamNotifyForm::OnClicked( ui::EventArgs* arg )
 	}
 	else if(name == L"btn_reject")
 	{
-		QLOG_PRO(L"拒绝邀请");
+		QLOG_PRO(L"Refuse invite");
 		nim::Team::RejectInvitationAsync(tid_, uid_, "", nbase::Bind(&TeamEventItem::TeamEventCb, msg_id_, std::placeholders::_1));
 
 		this->Close();
 	}
 	else if(name == L"btn_accept")
 	{
-		QLOG_PRO(L"接受邀请");
+		QLOG_PRO(L"Accept invite");
 		nim::Team::AcceptInvitationAsync(tid_, uid_, nbase::Bind(&TeamEventItem::TeamEventCb, msg_id_, std::placeholders::_1));
 
 		this->Close();

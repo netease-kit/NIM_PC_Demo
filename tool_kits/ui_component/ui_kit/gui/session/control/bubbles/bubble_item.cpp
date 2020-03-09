@@ -280,7 +280,10 @@ void MsgBubbleItem::PopupMenu(bool copy, bool recall, bool retweet/* = true*/)
 	::GetCursorPos(&point);
 
 	menu_ = new CMenuWnd(NULL);
-	STRINGorID xml(L"bubble_menu.xml");
+	std::wstring menu_xml(L"bubble_menu.xml");
+	if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+		menu_xml = L"bubble_menu_en.xml";
+	STRINGorID xml(menu_xml.c_str());
 	menu_->Init(xml, _T("xml"), point);
 	
 	CMenuElementUI* cop = (CMenuElementUI*) menu_->FindControl(L"copy");
@@ -289,6 +292,9 @@ void MsgBubbleItem::PopupMenu(bool copy, bool recall, bool retweet/* = true*/)
 
 	CMenuElementUI* del = (CMenuElementUI*)menu_->FindControl(L"delete");
 	del->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
+
+	CMenuElementUI* del_local = (CMenuElementUI*)menu_->FindControl(L"delete_local");
+	del_local->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
 	
 	CMenuElementUI* transform = (CMenuElementUI*)menu_->FindControl(L"transform");
 	transform->AttachSelect(nbase::Bind(&MsgBubbleItem::OnMenu, this, std::placeholders::_1));
@@ -318,6 +324,11 @@ bool MsgBubbleItem::OnMenu( ui::EventArgs* arg )
 		menu_->RemoveMessageFilter(this);
 		OnMenuDelete();
 	}
+	else if (name == L"delete_local")
+	{
+		menu_->RemoveMessageFilter(this);
+		OnMenuDeleteLocal();
+	}
 	else if (name == L"transform")
 	{
 		OnMenuTransform();
@@ -344,6 +355,10 @@ void MsgBubbleItem::OnMenuDelete()
 	m_pWindow->SendNotify(this, ui::kEventNotify, BET_DELETE, 0);
 }
 
+void MsgBubbleItem::OnMenuDeleteLocal()
+{
+	m_pWindow->SendNotify(this, ui::kEventNotify, BET_DELETE_LOCAL, 0);
+}
 void MsgBubbleItem::OnMenuTransform()
 {
 	m_pWindow->SendNotify(this, ui::kEventNotify, BET_TRANSFORM, 0);

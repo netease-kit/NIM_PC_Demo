@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <Window>
-    <OptionBox width="44" height="44" halign="center" mousechild="false" cursortype="hand" margin="0,0,0,10" >
+    <OptionBox width="60" height="44" halign="center" mousechild="false" cursortype="hand" margin="0,0,0,10" >
 		<Control name="icon" bkimage="../plugins/addresbook/icon_addressbook_unselected.png" valign="top" halign="center" width="16" height="16" margin="0,7,0,0" /> 
 		<Label name="name" textid="STRID_PLUGIN_NAME_ADDRESSBOOK" font="1" halign="center" margin="0,0,0,4" valign="bottom" normaltextcolor="lightcolor"/>
 		<Event type="select" receiver=".\icon" applyattribute="bkimage=&quot;../plugins/addresbook/icon_addressbook_selected.png&quot;"/>

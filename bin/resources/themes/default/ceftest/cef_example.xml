@@ -4,9 +4,9 @@
 <Box bkcolor="bk_wnd_lightcolor"> 
 	<VBox>
 		<HBox height="34" bkcolor="bk_wnd_darkcolor">
-			<Button name="btn_basic_example" width="130" height="34" text="基础演示" bkcolor="white" cursortype="hand"/>
+			<Button name="btn_basic_example" width="130" height="34" textid="STRID_CEF_BROWSER_FUNCTION_DEMO" bkcolor="white" cursortype="hand"/>
 			<Control class="splitline_ver_level1"/>
-			<Button name="btn_chatroom_list" width="130" height="34" text="聊天室" bkcolor="bk_main_wnd_title" normaltextcolor="white" cursortype="hand"/>
+			<Button name="btn_chatroom_list" width="130" height="34" textid="STRID_CEF_BROWSER_CHATROOM" bkcolor="bk_main_wnd_title" normaltextcolor="white" cursortype="hand"/>
 			<Control class="splitline_ver_level1"/>
 		</HBox>
 		<Box name="cef_example_box">

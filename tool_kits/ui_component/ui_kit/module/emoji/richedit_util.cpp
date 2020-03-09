@@ -133,7 +133,10 @@ bool Re_InsertCustomItem(ITextServices *text_service, InsertCustomItemErrorCallb
 		{
 			OSVERSIONINFO os = { sizeof(OSVERSIONINFO) };
 			::GetVersionEx(&os);
-			std::wstring fontName = os.dwMajorVersion >= 6 ? L"微软雅黑" : L"新宋体";
+			std::wstring fontName = os.dwMajorVersion >= 6 ?
+				ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_GLOBALMANAGER_FONT_MSYH")
+				:
+				ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_GLOBALMANAGER_FONT_DEFXP");
 			image_ole->SetFont((BSTR)(fontName.c_str()), 20, RGB(0x1a, 0x30, 0x47));
 			if (image_path.size() == 0)
 			{
@@ -234,7 +237,10 @@ bool Re_InsertDescriptionItem(ITextServices *text_service, InsertCustomItemError
 
 		OSVERSIONINFO os = { sizeof(OSVERSIONINFO) };
 		::GetVersionEx(&os);
-		std::wstring fontName = os.dwMajorVersion >= 6 ? L"微软雅黑" : L"新宋体";
+		std::wstring fontName = os.dwMajorVersion >= 6 ? 
+			ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_GLOBALMANAGER_FONT_MSYH")
+			:
+			ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRING_GLOBALMANAGER_FONT_DEFXP");
 		image_ole->SetFont((BSTR)(fontName.c_str()), fontSize, clrfont);
 		image_ole->SetBgColor(clrBg);
 

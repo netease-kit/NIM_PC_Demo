@@ -50,7 +50,7 @@
                 </Box>
                 <HBox width="stretch" height="45">
                     <Control width="stretch"/>
-                    <Button width="auto" height="20" valign="center" margin="0,0,14,0" font="1" normaltextcolor="white" textid="STRID_CHATROOM_SMOOTH" textpadding="2,0,2,0"
+                    <Button width="auto" height="20" valign="center" margin="0,0,14,0" font="1" normaltextcolor="white" textid="STRID_CHATROOM_SMOOTH" textpadding="8,0,8,0"
                             normalimage="file='round_btn_normal.png' corner='9,0,9,0'" hotimage="file='round_btn_hovered.png' corner='9,0,9,0'" pushedimage="file='round_btn_normal.png' corner='9,0,9,0'"/>
                 </HBox>
             </VBox>

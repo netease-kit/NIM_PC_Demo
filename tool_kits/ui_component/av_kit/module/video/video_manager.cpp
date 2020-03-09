@@ -432,7 +432,9 @@ void VideoManager::DoMultiVChat(const std::list<UTF8String>& friend_list, const 
 	std::string room_name = nim::Tool::GetUuid();
 	if (atoi(GetConfigValue("kNIMMultiVideo").c_str()) < 1)
 	{
-		shared::Toast::ShowToast(L"功能未开放，请参考源码和群视频开发手册进行对接", 2000);
+		shared::Toast::ShowToast(
+			ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_MANAGER_FUNCTION_NOT_OPEN"), 
+			2000);
 		return;
 	}
 	auto join_room_cb = [=](int code, int64_t channel_id, const std::string& json_extension)
@@ -534,7 +536,7 @@ void VideoManager::DoMultiVChat(const std::list<UTF8String>& friend_list, const 
 			else
 			{
 				QLOG_ERR(L"join room error code:{0}") << code;
-				std::wstring toast = nbase::StringPrintf(L"创建房间失败");
+				std::wstring toast = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_MANAGER_CREATE_ROOM_FAILED");
 				shared::Toast::ShowToast(toast, 2000);
 			}
 		};
@@ -553,7 +555,7 @@ void VideoManager::DoMultiVChat(const std::list<UTF8String>& friend_list, const 
 			QLOG_ERR(L"create room error roomname:{0} code:{1}") << room_name << code;
 			StdClosure closure = []()
 			{
-				std::wstring toast = nbase::StringPrintf(L"加入房间失败");
+				std::wstring toast = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_MANAGER_JION_ROOM_FAILED");
 				shared::Toast::ShowToast(toast, 5000);
 			};
 			Post2UI(closure);
@@ -1154,7 +1156,7 @@ void VideoManager::InvokeReceiveCustomP2PMessage(const Json::Value &json, const 
 						else
 						{
 							QLOG_ERR(L"join room error code:{0}") << code;
-							std::wstring toast = nbase::StringPrintf(L"加入群视频房间失败");
+							std::wstring toast = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_MANAGER_JION_TEAM_VIDEO_ROOM_FAILED");
 							VideoManager::GetInstance()->SetMultiVChatStatus(kMultiVChatEnd);
 							shared::Toast::ShowToast(toast, 2000);
 						}
@@ -1167,7 +1169,7 @@ void VideoManager::InvokeReceiveCustomP2PMessage(const Json::Value &json, const 
 					VideoManager::GetInstance()->SetMultiVChatStatus(kMultiVChatEnd);
 					if (multi_vchat_invite_form_ != NULL && IsWindow(multi_vchat_invite_form_->GetHWND()))
 						multi_vchat_invite_form_->Close();
-					std::wstring toast = nbase::StringPrintf(L"移动端已接听");
+					std::wstring toast = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_MANAGER_ANSWERED_BY_MOBILE");
 					shared::Toast::ShowToast(toast, 2000);
 					QLOG_ERR(toast);
 				}
@@ -1176,14 +1178,14 @@ void VideoManager::InvokeReceiveCustomP2PMessage(const Json::Value &json, const 
 			else if (vchat_status == kMultiVChatJoin&&opt == 2)
 			{
 				VideoManager::GetInstance()->SetMultiVChatStatus(kMultiVChatEnd);
-				std::wstring toast = nbase::StringPrintf(L"加入群聊失败");
+				std::wstring toast = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_MANAGER_JION_TEAM_CHAT_FAILED");
 				QLOG_ERR(toast);
 				shared::Toast::ShowToast(toast, 2000);
 			}
 			else if (vchat_status == kMultiVChatJoin&&opt == 3) //群视频其他端已进入
 			{
 				VideoManager::GetInstance()->SetMultiVChatStatus(kMultiVChatEnd);
-				std::wstring toast = nbase::StringPrintf(L"移动端已接听");
+				std::wstring toast = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_MANAGER_ANSWERED_BY_MOBILE");
 				QLOG_ERR(toast);
 				shared::Toast::ShowToast(toast, 2000);
 			}

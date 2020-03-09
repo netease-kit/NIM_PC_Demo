@@ -685,7 +685,10 @@ void SessionBox::AddWritingMsg(const nim::IMMessage &msg)
 		msg_list_->EndDown(true, false);
 	}
 }
-
+void SessionBox::OnDeleteMsglogNotfiy(const std::string &msg_id, const std::string& ext)
+{
+	RemoveMsgItem(msg_id);
+}
 void SessionBox::TryToTransferFile(const std::wstring& src)
 {
 	received_p2p_reply_ = false;
@@ -704,7 +707,7 @@ void SessionBox::TryToTransferFile(const std::wstring& src)
 	auto closure = [this]() {
 		if (!received_p2p_reply_)
 		{
-			AddTextTip(L"对方不在线或不支持 P2P 文件传输！");
+			AddTextTip(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_THE_OTHER_UNOL_OR_UNSUPPOT_P2P"));
 		}
 	};
 
@@ -764,7 +767,7 @@ void SessionBox::TransferFile()
 		if (!transfer_file_session_id)
 		{
 			QLOG_ERR(L"Failed to transfer file to {0}") << session_id_.c_str();
-			AddTextTip(L"传送文件失败，不支持 P2P 文件传送或加载模块失败！");
+			AddTextTip(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_THE_OTHER_UNSUPPOT_P2P_OR_MODULE_INVALID"));
 			return;
 		}
 	}
@@ -1095,7 +1098,7 @@ void SessionBox::SendText(const std::string &text, bool team_msg_need_ack/* = fa
 				}
 				else if (ret == 2)
 				{
-					AddTextTip(L"消息含有违禁词，禁止发送");
+					AddTextTip(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MESSAGE_INCLUDE_PROHIBITED_WORDS"));
 					return;
 				}
 				else if (ret == 3)

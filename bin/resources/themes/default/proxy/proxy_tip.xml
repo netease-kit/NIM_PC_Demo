@@ -46,7 +46,7 @@
 			</HBox>
 			<Control width="stretch"/>
 			<HBox width="auto" height="auto" valign="center" padding="5,0,5,0" bkcolor="bk_wnd_lightcolor" margin="0,0,15,0">
-				<Label text="Same as global" valign="center" font="1" normaltextcolor="gray" margin="0,0,0,0"/>
+				<Label text="Use global" valign="center" font="1" normaltextcolor="gray" margin="0,0,0,0"/>
 				<CheckBox class="checkbox_green" name="use_global" margin="3,0,0,0" valign="center" normaltextcolor="gray" font="2" selected="true" />	
 			</HBox>
 		</HBox>

@@ -1,11 +1,11 @@
 body, h1, h2, h3, span, p, input {
   font-family: 'Microsoft YaHei UI', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 16px;
+  font-size: 18px;
 }
 
 /* 用户基础信息部分 */
 .user-profile-header {
-  padding: 30px 0 30px 40px;
+  padding: 15px 0 30px 40px;
   background-color: #F0F2F5;
   border-bottom: 1px solid #D2D4D6;
   overflow: auto;
@@ -43,35 +43,39 @@ body, h1, h2, h3, span, p, input {
 
 .user-profile-header .user-info .user-account-info {
   margin: 10px 0 0 0;
-  color: #6b8299;
+  color: #000000;
 }
 
 /* 用户详细信息部分 */
 
 #user-details {
   overflow: auto;
-  padding: 40px 40px 20px 40px;
+  padding: 14px 30px 20px 30px;
 }
 
 #user-details #user-details-preview .details-item {
-  color: #6b8299;
+  color: #000000;
 }
 
-#user-details #user-details-preview .details-item .item-title {
-  margin: 0 20px 0 0;
-  font-weight: 700;
+#user-details #user-details-preview .content-item {
+  color: #727374;
+}
+
+#user-details #user-details-preview .details-item.item-title {
+  margin: 0 0px 0 0;
+  font-weight: 350;
 }
 
 #user-details #user-details-edit .form {
-  margin: 30px 0 0 0;
+  margin: 0px 0 0 0;
 }
 
 #user-details #user-details-edit .form .field .item-title,
 #user-details #user-details-edit .form .fields .field .item-title {
   margin: 0 20px 0 0;
-  font-weight: 700;
+  font-weight: 350;
   font-size: 14px;
-  color: #6b8299;
+  color: #000000;
 }
 
 /* 开关组 */

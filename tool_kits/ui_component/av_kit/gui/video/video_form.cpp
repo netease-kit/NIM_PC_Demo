@@ -81,7 +81,7 @@ namespace nim_comp
 		}
 		else
 		{
-			QLOG_ERR(L"发起{0}聊天失败") << (current_video_mode_ ? L"视频" : L"语音");
+			QLOG_ERR(L"Start of {0} chat failed") << (current_video_mode_ ? L"video" : L"audio");
 			EnterEndCallPage(END_CALL_STARTFAIL);
 		}
 	}
@@ -137,17 +137,17 @@ namespace nim_comp
 		{
 		case nim::kNIMTagControlOpenAudio:
 		{
-			wprintf_s(L"-----提示，对方打开了麦克风\n");
+			wprintf_s(L"-----Tip,The other party turned on the microphone\n");
 		}
 		break;
 		case nim::kNIMTagControlCloseAudio:
 		{
-			wprintf_s(L"-----提示，对方关闭了麦克风\n");
+			wprintf_s(L"-----Tip,The other party turned off the microphone\n");
 		}
 		break;
 		case nim::kNIMTagControlOpenVideo:
 		{
-			wprintf_s(L"-----提示，对方打开了摄像头\n");
+			wprintf_s(L"-----Tip,The other party opened the camera\n");
 			camera_is_open_other_ = true;
 			camera_closed_label_->SetVisible(false);
 		}
@@ -224,13 +224,13 @@ namespace nim_comp
 		break;
 		case nim::kNIMTagControlBusyLine:
 		{
-			wprintf_s(L"---------------对方占线\n");
+			wprintf_s(L"---------------The other party is busy\n");
 			SwitchStatus(STATUS_BUSYING);
 		}
 		break;
 		case nim::kNIMTagControlCamaraNotAvailable:
 		{
-			wprintf_s(L"-----对方摄像头不可用\n");
+			wprintf_s(L"-----The other camera is unavailable\n");
 		}
 		break;
 		case nim::kNIMTagControlReceiveStartNotifyFeedback:

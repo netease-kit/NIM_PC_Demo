@@ -41,7 +41,7 @@
             <Control />
             <Button class="btn_global_white_80x30" name="cancel_btn" textid="STRING_NO_"/>
             <Control width="10"/>
-            <Button class="btn_global_white_80x30" name="select_image_btn" textid="STRID_HEAD_MODIFY_BUTTON_SELECT_IMAGE"/>
+            <Button class="btn_global_white_80x30" name="select_image_btn" textid="STRID_HEAD_MODIFY_BUTTON_SELECT_IMAGE" textpadding="5,0,5,0"/>
             <Control width="10"/>
             <Button class="btn_global_green_80x30" name="save_image_btn" textid="STRID_HEAD_MODIFY_BUTTON_SAVE_IMAGE"/>
         </HBox>

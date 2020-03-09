@@ -162,7 +162,9 @@ bool MsglogManageForm::SetType(nim::LogsBackupRemoteOperate option, MigrateMsglo
 {
 	if (db_running_ || open_file_)
 	{
-		ShowMsgBox(m_hWnd, MsgboxCallback(), L"当前正在处理中，请稍候再试", false);
+		ShowMsgBox(m_hWnd, MsgboxCallback(),
+			MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_PROCING_TRY_AGAIN"), 
+			false);
 		return false;
 	}
 	
@@ -200,7 +202,10 @@ bool MsglogManageForm::SetType(nim::LogsBackupRemoteOperate option, MigrateMsglo
 		path_box_->SetVisible(false);
 		prg_box_->SetVisible(true);
 		btn_run_->SetVisible(false);
-		result_text_->SetText(export_or_import_ == nim::LogsBackupRemoteOperate_Export ? L"导出中..." : L"导入中...");
+		result_text_->SetText(export_or_import_ == nim::LogsBackupRemoteOperate_Export ? 
+			MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_EXPORTING")
+			: 
+			MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_IMPORTING"));
 		progress_text_->SetText(L"0%");
 	}
 	
@@ -364,52 +369,65 @@ void MsglogManageForm::OnMigrateMsglogCompletedCallbackUI(nim::LogsBackupRemoteO
 			switch (state)
 			{			
 			case nim::LogsBackupRemoteState_UserCanceled:
-				show_text = export_or_import_ == nim::LogsBackupRemoteOperate_Export ? L"已取消导出操作" : L"已取消导入操作";
+				show_text = export_or_import_ == nim::LogsBackupRemoteOperate_Export ? 
+					MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_EXPORT_CANCELED")
+					: 
+					MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_IMPORT_CANCELED");
 				break;
 			case nim::LogsBackupRemoteState_IMP_NoBackup://没有备份文件
-				show_text = L"导入失败:未查找到云端的消息记录备份";
+				show_text = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_IMPORT_ERR_NO_BACKUP");
 				break;
 			case nim::LogsBackupRemoteState_IMP_SyncFromSrvError://查询备份失败一般是网络错误
-				show_text = L"导入失败:查询备份记录失败";
+				show_text = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_IMPORT_ERR_SYNC_BACKUP");
 				break;
 			case nim::LogsBackupRemoteState_IMP_DownloadBackupFailed://下载备份文件出错
-				show_text = L"导入失败:下载记录失败";
+				show_text = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_IMPORT_ERR_DOWNLOAD_BACKUP");
 				break;
 			case nim::LogsBackupRemoteState_IMP_RAWError://解密/解压出来的源文件格式错误
-				show_text = L"导入失败:解密/解压出来的源文件格式错误";
+				show_text = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_IMPORT_ERR_DECRYPT_UNZIP");
 				break;
 			case nim::LogsBackupRemoteState_IMP_ParseRAWError://解析源文件格式错误
-				show_text = L"导入失败:解析源文件格式错误";
+				show_text = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_IMPORT_ERR_PARSERAW");
 				break;
 			case nim::LogsBackupRemoteState_IMP_LocalDBFailed://导入本地DB出错	
-				show_text = L"导入失败:导入本地DB出错";
+				show_text = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_IMPORT_ERR_DB");
 				break;
 			case nim::LogsBackupRemoteState_EXP_LocalDBFailed://打开本地DB失败
-				show_text = L"导出失败:打开本地DB失败";
+				show_text = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_EXPORT_ERR_DB");
 				break;
 			case nim::LogsBackupRemoteState_EXP_RAWError://导出到源文件失败
-				show_text = L"导出失败:导出到源文件失败";
+				show_text = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_EXPORT_ERR_RAW");
 				break;
 			case nim::LogsBackupRemoteState_EXP_UploadBackupFailed://上传备份文件出错
-				show_text = L"导出失败:上传备份文件出错";
+				show_text = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_EXPORT_ERR_UPLOAD");
 				break;
 			case nim::LogsBackupRemoteState_EXP_SyncToSrvError://同步到服务器出错一般是网络错误
-				show_text = L"导出失败:备份文件同步到服务器出错";
+				show_text = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_EXPORT_ERR_SYNCSRV");
 				break;
 			case nim::LogsBackupRemoteState_SDKError:
-				show_text = export_or_import_ == nim::LogsBackupRemoteOperate_Export ? L"导出记录到云端失败" : L"导入记录到本地失败";
+				show_text = export_or_import_ == nim::LogsBackupRemoteOperate_Export ? 
+					MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_EXPORT_FAIL_TIP")
+					: 
+					MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_IMPORT_FAIL_TIP");
 				break;		
 			case nim::LogsBackupRemoteState_Done:
-				show_text = export_or_import_ == nim::LogsBackupRemoteOperate_Export ? L"导出成功，请在新设备上从云端导入消息吧" : L"导入记录到本地完成";
+				show_text = export_or_import_ == nim::LogsBackupRemoteOperate_Export ? 
+					MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_EXPORT_SUCCESS_TIP")
+					:
+					MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_IMPORT_SUCCESS_TIP");
 				break;
 			case nim::LogsBackupRemoteState_Done_NoLogs:
-				show_text = export_or_import_ == nim::LogsBackupRemoteOperate_Export ? L"没有可导出的记录" : L"没有可导入的记录";
+				show_text = export_or_import_ == nim::LogsBackupRemoteOperate_Export ? 
+					MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_EXPORT_NOLOGS_TIP")
+					:
+					MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MSGLOGMANAGEFORM_IMPORT_NOLOGS_TIP");
 				break;
 			default:
 				break;
 			}
 			progress_->SetValue(100);
 			result_text_->SetText(show_text);
+			progress_text_->SetVisible(false);
 			progress_text_->SetText(L"100%");
 			btn_cancel_->SetVisible(false);
 			SetDbStatus(false);

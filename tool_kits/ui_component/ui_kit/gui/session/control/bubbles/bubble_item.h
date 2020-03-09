@@ -8,6 +8,7 @@ enum BubbleEventType
 	BET_RESEND,		//重新发送 
 	BET_RELOAD,		//重新下载
 	BET_DELETE,		//删除
+	BET_DELETE_LOCAL,		//删除本地
 	BET_TRANSFORM,	//转文字
 	BET_SHOWPROFILE,//显示资料
 	BET_RETWEET,	//转发
@@ -216,6 +217,12 @@ protected:
 	* @return void 无返回值
 	*/
 	virtual void OnMenuDelete();
+
+	/**
+	* 处理“删除本地”菜单项的操作
+	* @return void 无返回值
+	*/
+	virtual void OnMenuDeleteLocal();
 
 	/**
 	* 处理“转换为文本”菜单项的操作

@@ -99,25 +99,25 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\..\..\..\..\libs\x86\md\</OutDir>
-    <IntDir>..\..\temp\x86</IntDir>
+    <IntDir>..\..\temp\x86\md\</IntDir>
     <TargetName>cpp_wrapper_util_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\..\..\..\..\libs\x64\md\</OutDir>
-    <IntDir>..\..\temp\x64</IntDir>
+    <IntDir>..\..\temp\x64\md\</IntDir>
     <TargetName>cpp_wrapper_util_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\..\..\..\..\libs\x86\md\</OutDir>
-    <IntDir>..\..\temp\x86</IntDir>
+    <IntDir>..\..\temp\x86\md\</IntDir>
     <TargetName>cpp_wrapper_util</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\..\..\..\..\libs\x64\md\</OutDir>
-    <IntDir>..\..\temp\x64</IntDir>
+    <IntDir>..\..\temp\x64\md\</IntDir>
     <TargetName>cpp_wrapper_util</TargetName>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -176,6 +176,7 @@
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)../../../../../;$(ProjectDir)../../../../../include/depend_lib/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4251;4275;4091;4244;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -202,6 +203,7 @@
       <ConformanceMode>false</ConformanceMode>
       <AdditionalIncludeDirectories>$(ProjectDir)../../../../../;$(ProjectDir)../../../../../include/depend_lib/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+      <DisableSpecificWarnings>4251;4275;4091;4244;</DisableSpecificWarnings>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

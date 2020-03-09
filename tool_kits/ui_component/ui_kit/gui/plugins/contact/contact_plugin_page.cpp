@@ -57,7 +57,10 @@ void ContactPluginPage::SetActiveProfile(const std::string &uid, bool is_robot, 
 ProfileBox* ContactPluginPage::CrateProfile(const std::string &uid, bool is_robot)
 {
 	ProfileBox* ret = new ProfileBox;
-	ui::GlobalManager::FillBoxWithCache(ret, L"profile_form/profile_box.xml");
+	std::wstring profile_box = L"profile_form/profile_box.xml";
+	if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+		profile_box = L"profile_form/profile_box_en.xml";
+	ui::GlobalManager::FillBoxWithCache(ret, profile_box);
 	ret->SetUTF8Name(uid);
 	contact_profile_container_->Add(ret);
 

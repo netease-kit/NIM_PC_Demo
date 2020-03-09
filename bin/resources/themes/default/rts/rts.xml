@@ -27,7 +27,7 @@
 				<HBox height="auto" margin="20,10,10,0" >
 					<Button  class="btn_global_green_80x30" margin="0,0,10,0" name="btn_showtype" normaltextcolor="white" textid="STRID_RTS_SHOW_ALL"/>
 					<Button  class="btn_global_green_80x30" margin="0,0,10,0" name="btn_clear" normaltextcolor="white" textid="STRID_RTS_CLEAR_ALL"/>
-					<Button  class="btn_global_green_80x30" name="btn_undo" normaltextcolor="white" textid="STRID_RTS_PREVIOUS_STEP"/>
+					<Button  class="btn_global_green_80x30" name="btn_undo" textpadding="5,0,5,0" normaltextcolor="white" textid="STRID_RTS_PREVIOUS_STEP"/>
 				</HBox>
 				<HBox height="auto" margin="20,10,10,0" >
 					<CheckBox name="speak" width="22" height="22" valign="center" selectednormalimage="speak0.png" normalimage="speak1.png" visible="false" />

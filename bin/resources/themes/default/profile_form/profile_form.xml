@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<Window caption="0,0,0,160">
+<Window caption="0,0,0,160" textid="STRID_PROFILE_FORM_PROFILE">
 	<Box width="auto" height="auto" bkcolor="bk_wnd_lightcolor" >
 		<Box name="container" width="auto" height="auto" />
 		<Box width="stretch" height="auto" bkcolor="bk_wnd_darkcolor">

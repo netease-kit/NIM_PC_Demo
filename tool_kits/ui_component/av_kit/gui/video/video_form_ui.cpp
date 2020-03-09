@@ -285,14 +285,14 @@ namespace nim_comp
 		int FORM_CX = 0, FORM_CY = 0;
 		if (video)
 		{
-			FORM_CX = 500;
+			FORM_CX = 510;
 			FORM_CY = 410;
 
 			AllowWindowMaxsize(status_ == STATUS_TALKING);
 		}
 		else
 		{
-			FORM_CX = 280;
+			FORM_CX = 290;
 			FORM_CY = 410;
 
 			AllowWindowMaxsize(false);

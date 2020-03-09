@@ -1,5 +1,5 @@
 ﻿<?xml version="1.0" encoding="UTF-8"?>
-<Window size="280,410" mininfo="280,410" caption="0,0,0,34" shadowattached="false">
+<Window size="290,410" mininfo="280,410" caption="0,0,0,34" shadowattached="false">
     <Class name="Microphone1" value="forenormalimage=&quot;file='microphone10.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='microphone13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
     <Class name="Microphone2" value="forenormalimage=&quot;file='microphone20.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='microphone23.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
     <Class name="Speaker1" value="forenormalimage=&quot;file='speaker10.png' dest='3,3,25,25'&quot; foredisabledimage=&quot;file='speaker13.png' dest='3,3,25,25'&quot; hotimage=&quot;btn_icon_hover.png&quot; pushedimage=&quot;btn_icon_pressed.png&quot;"/>
@@ -65,14 +65,17 @@
                     <Button class="Face1" name="face_open" width="28" height="28" margin="5,0,0,0" tooltiptextid="STRID_VIDEO_OPEN_FACIAL" valign="center" visible="false"/>
                     <Button class="Face2" name="face_close" width="28" height="28" margin="5,0,0,0" tooltiptextid="STRID_VIDEO_CLOSE_FACIAL" valign="center" visible="false"/>
 
-                    <Button name="into_video" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_VIDEO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
-                    <Button name="into_audio" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_AUDIO" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
+                    <Button name="into_video" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_VIDEO" textpadding="5,0,5,0" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
+                    <Button name="into_audio" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_AUDIO" textpadding="5,0,5,0" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
 					
                     <Button name="rotate" margin="10,0,0,0" valign="center" visible="false" tooltiptextid="STRID_VIDEO_ROTATE_SWITCH" textid="STRID_VIDEO_ROTATE_SWITCH" normaltextcolor="white" font="1" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
 
                     <Control />
                     <Label name="time_tick" normaltextcolor="white" font="1" valign="center" visible="false"/>
-                    <Button name="stop_chat" margin="8,0,10,0" valign="center" font="2" normaltextcolor="white" textid="STRID_VIDEO_EXIT_CHAT" normalimage="hangup0.png" hotimage="hangup1.png" pushedimage="hangup2.png"/>
+                    <Button name="stop_chat" margin="8,0,10,0" width="70" valign="center" font="2" normaltextcolor="white" textid="STRID_VIDEO_EXIT_CHAT" 
+                    normalimage="file='hangup0.png' corner='5,5,5,5' " 
+                    hotimage="file='hangup1.png' corner='5,5,5,5'" 
+                    pushedimage="file='hangup2.png' corner='5,5,5,5'"/>
             </HBox>
 
             <HBox name="confirm_page" height="auto" margin="0,0,0,15" valign="bottom">
@@ -93,7 +96,7 @@
                 <Control name="place_ctrl_2" width="22" height="22" halign="center" bkimage="speaker10.png" mouse="false"/>
             </VBox>
 
-            <Label name="netstat" width="200" height="32" margin="130,0,0,36" valign="bottom" bkimage="file='netstat.png' corner='30,10,10,10'" textpadding="10,4,0,0" font="2" normaltextcolor="obvious_tip" textid="STRID_VIDEO_TIP_NETSTAT_BAD"/>
+            <Label name="netstat" width="auto" height="32" margin="130,0,0,36" valign="bottom" bkimage="file='netstat.png' corner='30,10,10,10'" textpadding="3,4,0,0" font="2" normaltextcolor="obvious_tip" textid="STRID_VIDEO_TIP_NETSTAT_BAD"/>
             <HBox name="hbox_camera_fail" width="158" height="32" margin="70,0,0,36" valign="bottom" bkimage="file='netstat.png' corner='30,10,10,10'">
                 <Label margin="10,4,0,0" font="2" normaltextcolor="obvious_tip" textid="STRID_VIDEO_TIP_START_VIDEO_FAIL"/>
                 <Button name="go_setting" margin="3,4,0,0" normaltextcolor="link_green" cursortype="hand" font="26" textid="STRID_VIDEO_SETTING"/>

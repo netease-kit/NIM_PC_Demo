@@ -746,7 +746,10 @@ bool ChatroomForm::RemoveTempMuteMenuItemClick(ui::EventArgs* args)
 
 ui::Control* ChatroomForm::CreateElement()
 {
-	ui::ButtonBox* room_member_item = (ui::ButtonBox*)ui::GlobalManager::CreateBoxWithCache(L"chatroom/room_member_item.xml");
+	std::wstring item_xml = L"chatroom/room_member_item.xml";
+	if(ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+		item_xml = L"chatroom/room_member_item_en.xml";
+	ui::ButtonBox* room_member_item = (ui::ButtonBox*)ui::GlobalManager::CreateBoxWithCache(item_xml);
 	return room_member_item;
 }
 
@@ -785,11 +788,17 @@ void ChatroomForm::FillElement(ui::Control *control, int index)
 	ui::Control* member_type = (ui::Control*)room_member_item->FindSubControl(L"member_type");
 	if (info.type_ == 1)//创建者
 	{
-		member_type->SetBkImage(L"icon_anchor.png");
+		std::wstring bk = L"icon_anchor.png";
+		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+			bk = L"icon_anchor_en.png";
+		member_type->SetBkImage(bk);
 	}
 	else if (info.type_ == 2)//管理员
 	{
-		member_type->SetBkImage(L"icon_manager.png");
+		std::wstring bk = L"icon_manager.png";
+		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+			bk = L"icon_manager_en.png";
+		member_type->SetBkImage(bk);
 	}
 	else
 	{

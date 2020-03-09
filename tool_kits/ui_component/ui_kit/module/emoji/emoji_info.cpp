@@ -4,6 +4,7 @@
 
 #define EMOTICON_EMOTICON_TAG	"Tag"
 #define EMOTICON_EMOTICON_FILE	"File"
+#define EMOTICON_EMOTICON_TIP	"Tip"
 
 namespace nim_comp
 {
@@ -22,6 +23,8 @@ namespace nim_comp
 			std::string file = element->Attribute(EMOTICON_EMOTICON_FILE);
 			emoticon.file = nbase::UTF8ToUTF16(file);
 
+			std::string tip = element->Attribute(EMOTICON_EMOTICON_TIP);
+			emoticon.tip = nbase::UTF8ToUTF16(tip);
 			emoticon.path = dir + L"res\\emoji\\" + emoticon.file;
 		}
 
@@ -48,8 +51,12 @@ namespace nim_comp
 		void LoadEmoji()
 		{
 			std::wstring xml_file = QPath::GetAppPath();
-			xml_file.append(L"res\\emoji.xml");
-
+			if(ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::Simplified_Chinese)
+				xml_file.append(L"res\\emoji.xml");
+			else if(ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+				xml_file.append(L"res\\emoji_en.xml");
+			else
+				xml_file.append(L"res\\emoji.xml");
 			std::unique_ptr<FILE, nbase::DeleterFileClose> fp;
 			FILE* fp_file = nullptr;
 			errno_t err = _wfopen_s(&fp_file, xml_file.c_str(), L"rb");

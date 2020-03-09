@@ -8,6 +8,21 @@
 
 namespace ui 
 {
+	enum LanguageType
+	{
+		Simplified_Chinese,//简体中文
+		American_English//英文
+	};
+	class LanguageSetting
+	{
+	public:
+		LanguageSetting() :
+			m_enumType(LanguageType::Simplified_Chinese), 
+			m_strResource(L"lang\\zh_CN") {}
+	public:
+		LanguageType m_enumType;
+		std::wstring m_strResource;
+	};
 /**
 * @brief 全局属性管理工具类
 * 用于管理一些全局属性的工具类，包含全局样式（global.xml）和语言设置等
@@ -24,7 +39,7 @@ public:
 	 * @param[in] language 使用语言，默认为 lang\\zh_CN
 	 * @return 无
 	 */
-	static void Startup(const std::wstring& strResourcePath, const CreateControlCallback& callback, bool bAdaptDpi, const std::wstring& theme = L"themes\\default", const std::wstring& language = L"lang\\zh_CN");
+	static void Startup(const std::wstring& strResourcePath, const CreateControlCallback& callback, bool bAdaptDpi, const std::wstring& theme = L"themes\\default", const LanguageSetting& language = LanguageSetting());
 
 	/**
 	 * @brief 释放资源
@@ -32,6 +47,11 @@ public:
 	 */
 	static void Shutdown();
 
+	/**
+	 * @brief 获取当前语言配置
+	 * @return 返回当前语言配置
+	 */
+	static LanguageSetting GetLanguageSetting();
 	/**
 	 * @brief 获取当前程序所在目录
 	 * @return 返回当前程序所在目录
@@ -469,6 +489,8 @@ private:
 	static DWORD m_dwDefaultLinkFontColor;
 	static DWORD m_dwDefaultLinkHoverFontColor;
 	static DWORD m_dwDefaultSelectedBkColor;
+
+	static LanguageSetting m_objLanguageSetting;
 };
 
 } // namespace ui

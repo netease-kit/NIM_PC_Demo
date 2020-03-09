@@ -177,7 +177,8 @@
       <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\bin\;</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalDependencies>vfw32.lib;tinyxml.lib;wxsqlite3.lib;nim_capture_image.lib;custom_app_sdk.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>..\..\..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>

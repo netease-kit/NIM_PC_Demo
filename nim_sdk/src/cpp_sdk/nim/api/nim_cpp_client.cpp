@@ -153,6 +153,7 @@ void UnregNIMCallback()
 	User::UnregUserCb();
 	SuperTeam::UnregSuperTeamCb();
 	SessionOnLineService::UnregSessionOnLineServiceCb();
+	MsgLog::UnregMsglogCb();
 }
 bool Client::Init(const std::string& app_key
 	, const std::string& app_data_dir
@@ -496,7 +497,7 @@ std::string Client::GetSDKVersion()
 {
 	return NIM_SDK_GET_FUNC(nim_client_version)();
 }
-std::string GetCurrentUserAccount()
+std::string Client::GetCurrentUserAccount()
 {
 	return NIM_SDK_GET_FUNC(nim_client_current_user_account)();
 }

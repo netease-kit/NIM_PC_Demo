@@ -54,8 +54,17 @@ std::string ConfigHelper::GetLanguage()
 {
 	if (!language_.empty())
 		return language_;
-
-	return "lang\\zh_CN"; //缺省为中文
+	LANGID lid = GetSystemDefaultLangID();
+	switch (lid)
+	{
+	case 0x0404://Chinese   (Taiwan   Region) 
+	case 0X0804://Chinese(PRC)
+	case 0x0c04://Chinese(Hong   Kong   SAR, PRC)
+	case 0x1004://Chinese(Singapore)
+		return "lang\\zh_CN"; 
+	default:
+		return "lang\\en_US";
+	}
 }
 int ConfigHelper::GetUIStyle()
 {

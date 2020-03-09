@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+    <VListBox class="menu">
+        <MenuElement class="MenuElement" name="copy" width="188">
+            <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_COPY"/>
+        </MenuElement>
+
+        <MenuElement class="MenuElement" name="delete" width="188">
+            <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_DELETE"/>
+        </MenuElement>
+        
+        <MenuElement class="MenuElement" name="delete_local" width="188">
+            <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_DELETE_LOCAL"/>
+        </MenuElement>
+
+        <MenuElement class="MenuElement" name="transform" width="188">
+            <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_TRANS"/>
+        </MenuElement>
+		
+        <MenuElement class="MenuElement" name="recall" width="188">
+            <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_RECALL"/>
+        </MenuElement>
+		
+        <MenuElement class="MenuElement" name="retweet" width="188">
+            <Label class="menu_text" textid="STRID_SESSION_BUBBLE_MENU_RETWEET"/>
+        </MenuElement>
+    </VListBox>
+</Window>

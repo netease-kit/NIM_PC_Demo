@@ -211,6 +211,18 @@ bool SessionBox::Notify(ui::EventArgs* param)
 				nim::NOS::ProgressCallback());
 		}
 		else if (param->wParam == BET_DELETE)
+		{			
+			std::string msg_id = md.client_msg_id_;
+			nim::MsgLog::QueryMsgByIDAysnc(msg_id, 
+				[this](nim::NIMResCode res_code, const std::string& msg_id, const nim::IMMessage& msg) {
+					nim::MsgLog::DeleteMessageSelfAsync(msg, "delete message log self",
+						ToWeakCallback([this, msg_id](nim::NIMResCode res_code) {
+							if (res_code != nim::kNIMResSuccess)
+								ShowMsgBox(GetWindow()->GetHWND(), MsgboxCallback(), L"STRID_SESSION_DELETEMSGLOG_FAILED", true);
+					}));
+			});			
+		}
+		else if (param->wParam == BET_DELETE_LOCAL)
 		{
 			RemoveMsgItem(md.client_msg_id_);
 			//if (session_type_ == nim::kNIMSessionTypeTeam)
@@ -792,7 +804,9 @@ void SessionBox::OnVChatSelectedCallback(const std::list<UTF8String>& selected_f
 			{
 				nim::UserNameCard user_info;
 				UserService::GetInstance()->GetUserInfo(LoginManager::GetInstance()->GetAccount(), user_info);
-				std::wstring tip = nbase::StringPrintf(L"%s发起了群视频", nbase::UTF8ToUTF16(user_info.GetName()).c_str());
+				std::wstring tip = nbase::StringPrintf(
+					ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_CREATE_MULTIVIDEO"), 
+					nbase::UTF8ToUTF16(user_info.GetName()).c_str());
 				int64_t timetag_ = 1000 * nbase::Time::Now().ToTimeT();
 				nim::IMMessage msg;
 				msg.session_type_ = nim::kNIMSessionTypeTeam;

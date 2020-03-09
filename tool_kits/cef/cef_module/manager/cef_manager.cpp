@@ -80,7 +80,7 @@ void CefManager::AddCefDllToPath()
 #endif
 	if (!nbase::FilePathIsExist(cef_path, true))
 	{
-		MessageBox(NULL, L"请解压Cef.rar压缩包", L"提示", MB_OK);
+		MessageBox(NULL, L"Please unzip the Cef.rar", L"TIP", MB_OK);
 		exit(0);
 	}
 	std::wstring new_envirom(cef_path);

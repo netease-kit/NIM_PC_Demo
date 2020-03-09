@@ -14,7 +14,7 @@
 extern"C"
 {
 #endif
-	/** @typedef void(*nim_msglog_delete_history_online_res_cb_func)(int res_code, const char *accid,const void *user_data)
+/** @typedef void(*nim_msglog_delete_history_online_res_cb_func)(int res_code, const char *accid,const void *user_data)
   * 删除与某一账号云端的历史记录回调函数定义
   * @param[out] res_code		操作结果，成功200
   * @param[out] accid			进行删除操作时传入的对方accid
@@ -22,6 +22,22 @@ extern"C"
   * @return void 无返回值
   */
 typedef void(*nim_msglog_delete_history_online_res_cb_func)(int res_code, const char *accid,const void *user_data);
+
+/** @typedef void(*nim_msglog_delete_message_self_res_cb_func)(int res_code, const char *result,const void *user_data)
+* 单向删除消息记录回调函数定义
+* @param[out] res_code		操作结果，成功200
+* @param[out] user_data	APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+* @return void 无返回值
+*/
+typedef void(*nim_msglog_delete_message_self_res_cb_func)(int res_code, const void *user_data);
+
+/** @typedef void(*nim_msglog_delete_message_self_notify_cb_func)(const char *infos,const void *user_data)
+* 单向删除消息记录推送回调函数定义
+* @param[out] infos	被删除的消息摘要 数组包括session_id ,client_id,ext字段
+* @param[out] user_data	APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+* @return void 无返回值
+*/
+typedef void(*nim_msglog_delete_message_self_notify_cb_func)(const char *infos, const void *user_data);
 
 /** @typedef void (*nim_msglog_query_single_cb_func)(int res_code, const char *msg_id, const char *result, const char *json_extension, const void *user_data)
   * 查询单条消息历史回调函数定义
@@ -446,6 +462,14 @@ static const char *kNIMNotificationIdNetCallDurationKey = "duration";		/**< int6
 static const char *kNIMNotificationIdNetCallFromKey		= "from";			/**< string 发起者帐号 */
 static const char *kNIMNotificationIdNetCallEXTKey = "ext";			/**< string 会发起时传入的 custominfo参数 */
 /** @}*/ //kNIMNotificationIdNetcallBill/kNIMNotificationIdNetcallMiss/kNIMNotificationIdLocalNetcallReject/kNIMNotificationIdLocalNetcallNoResponse Data Keys
+
+/** @name 单向删除某条消息服务端推送 Json Keys
+  * @{
+  */
+static const char *kNIMDELMSGSelfNotifyKeySessionID = "session_id";				/**< string, 会话id*/
+static const char *kNIMDELMSGSelfNotifyKeyMsgClientID = "client_id";			/**< string 消息ID*/
+static const char *kNIMDELMSGSelfNotifyKeyEXT = "ext";			/**< string 用户自定义数据 */
+/** @}*/ //单向删除某条消息服务端推送 Json Keys
 
 #ifdef __cplusplus
 };

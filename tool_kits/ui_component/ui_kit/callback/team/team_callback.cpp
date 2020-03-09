@@ -37,7 +37,9 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 					ids.append(L",");
 				}
 				ids.pop_back();
-				std::wstring toast = nbase::StringPrintf(L"以下成员入群失败，原因是他们所有的群数量超限\r\n%s", ids.c_str());
+				std::wstring toast = nbase::StringPrintf(
+					ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_CALLBACK_PART_INVITE_FAILED_COUNT"),
+					ids.c_str());
 				nim_ui::ShowToast(toast, 5000);
 			}
 		}
@@ -162,12 +164,14 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 				ids.append(L",");
 			}
 			ids.pop_back();
-			std::wstring toast = nbase::StringPrintf(L"以下成员入群失败，原因是他们所有的群数量超限\r\n%s", ids.c_str());
+			std::wstring toast = nbase::StringPrintf(
+				ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_CALLBACK_PART_INVITE_FAILED_COUNT"), 
+				ids.c_str());
 			nim_ui::ShowToast(toast, 5000);
 		}
 		else if (info.res_code_ == nim::kNIMResTeamInviteSuccess)
 		{
-			std::wstring toast = L"邀请已发送,等待对方通过";
+			std::wstring toast = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_TEAM_CALLBACK_INVITATION_WAIT_PASS");
 			nim_ui::ShowToast(toast, 5000);
 		}
 	}

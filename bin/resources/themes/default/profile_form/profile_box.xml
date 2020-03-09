@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Window caption="0,0,0,160">
-	<VBox width="414" height="auto" valign="center" halign="center" >
+	<VBox width="420" height="auto" valign="center" halign="center" >
 		<Box width="stretch" height="auto" bkcolor="bk_wnd_darkcolor">
 			<HBox width="auto" height="auto" margin="23,36,0,36">
 				<Box width="auto" height="auto" valign="center" >
@@ -51,9 +51,9 @@
 				<Control class="space"/>
 				<Label class="label_attrib" name="birthday" normaltextcolor="profile_account"/>
 				<HBox name="birthday_combobox" width="stretch" height="auto" valign="center" childmargin="4" visible="false">
-					<Combo class="combo_attrib" name="year"/>
+					<Combo class="combo_attrib" name="year" />
 					<Combo class="combo_attrib" name="month"/>
-					<Combo class="combo_attrib" name="day" width="95"/>
+					<Combo class="combo_attrib" name="day" width="97"/>
 				</HBox>
 			</HBox>
 			<HBox class="item_box_attrib">
@@ -73,8 +73,8 @@
 			<HBox width="stretch" height="auto">
 				<Label valign="top" margin="0,10,0,0" font="2" textid="STRID_PROFILE_FORM_SIGN"/>
 				<Control class="space"/>
-				<Label name="signature" valign="top" width="295" maxheight="38" margin="0,10,0,0" font="2" singleline="false" linelimit="true" normaltextcolor="profile_account"/>
-				<RichEdit class="prompt" name="signature_edit" width="295" height="60" margin="0,4,0,0" valign="top"
+				<Label name="signature" valign="top" width="300" maxheight="38" margin="0,10,0,0" font="2" singleline="false" linelimit="true" normaltextcolor="profile_account"/>
+				<RichEdit class="prompt" name="signature_edit" width="299" height="60" margin="0,4,0,0" valign="top"
 					padding="10,8,10,8" align="top" font="2" normaltextcolor="profile_account" multiline="true"
 					vscrollbar="true" autovscroll="true" wantreturnmsg="true" wanttab="false"
 					bordersize="1" bordercolor="profile_account" visible="false"/>

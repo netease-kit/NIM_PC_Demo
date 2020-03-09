@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Window>
+	<VListBox class="menu">
+		<MenuElement class="MenuElement" name="import_form_local" width="170">
+			<Label class="menu_text" width="stretch" textid="STRID_MAINWINDOW_MENU_IMPORT_MSG_LOG_FROM_LOCAL" mouse="false"/>
+		</MenuElement>
+		<MenuElement class="MenuElement" name="import_form_remote" width="170">
+			<Label class="menu_text" width="stretch" textid="STRID_MAINWINDOW_MENU_IMPORT_MSG_LOG_FROM_CLOUD" mouse="false"/>
+		</MenuElement>
+	</VListBox>
+</Window>
