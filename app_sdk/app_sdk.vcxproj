@@ -99,7 +99,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
     <Lib>
-      <AdditionalDependencies>nim_cpp_sdk_d.lib;nim_chatroom_cpp_sdk_d.lib</AdditionalDependencies>
+      <AdditionalDependencies>cpp_wrapper_util_d.lib;nim_cpp_sdk_d.lib;nim_chatroom_cpp_sdk_d.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>../libs;$(ProjectDir)../nim_sdk/libs/x86/mt/</AdditionalLibraryDirectories>
