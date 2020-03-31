@@ -16,6 +16,12 @@ namespace nim_ui
 		UnregisterCallback RegSDKInited(const SDKInitCallback& cb);
 		void SetSDKInited();
 		bool IsSDKInited() const;
+		void SetIMInited();
+		bool IsIMInited() const;
+		void SetVChatInited();
+		bool IsVChatInited() const;
+		void SetChatRoomInited();
+		bool IsChatRoomInited() const;
 	private:
 		UnregistedCallbackList<SDKInitCallback> sdk_init_cb_;
 	};

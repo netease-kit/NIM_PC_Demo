@@ -25,5 +25,28 @@ namespace nim_ui
 	{
 		return nim_comp::RunTimeDataManager::GetInstance()->IsSDKInited();
 	}
-
+	void RunTimeDataManager::SetIMInited()
+	{
+		nim_comp::RunTimeDataManager::GetInstance()->SetIMInited(true);
+	}
+	bool RunTimeDataManager::IsIMInited() const
+	{
+		return nim_comp::RunTimeDataManager::GetInstance()->IsIMInited();
+	}
+	void RunTimeDataManager::SetVChatInited()
+	{
+		nim_comp::RunTimeDataManager::GetInstance()->SetVChatInited(true);
+	}
+	bool RunTimeDataManager::IsVChatInited() const
+	{
+		return nim_comp::RunTimeDataManager::GetInstance()->IsVChatInited();
+	}
+	void RunTimeDataManager::SetChatRoomInited()
+	{
+		nim_comp::RunTimeDataManager::GetInstance()->SetChatRoomInited(true);
+	}
+	bool RunTimeDataManager::IsChatRoomInited() const
+	{
+		return nim_comp::RunTimeDataManager::GetInstance()->IsChatRoomInited();
+	}
 }

@@ -109,9 +109,6 @@ void InitManager::CleanupUiKit()
 
 	nim_p2p::NimP2PDvelopKit::GetInstance()->UnInit();
 	nim_audio::Audio::Cleanup();
-	nim::VChat::Cleanup();
-	nim::Client::Cleanup2();
-
 	CancelAllAsyncModalDialogs();
 
 	init_ = false;

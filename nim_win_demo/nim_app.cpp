@@ -121,23 +121,34 @@ bool NimAPP::InitNim(const std::string& server_conf_file_path)
 	
 	std::wstring app_install;// = QPath::GetAppPath() + L"\\x64_dlls\\";
 	bool ret = nim::Client::Init(app_key, "Netease", nbase::UTF16ToUTF8(app_install), config); // 载入云信sdk，初始化安装目录和用户目录
+	if (ret)
+	{
+		nim_ui::RunTimeDataManager::GetInstance()->SetIMInited();
+		nim::Client::SetCallbackFunction([](const StdClosure & task) {
+			nbase::ThreadManager::PostTask(ThreadId::kThreadUI, task);
+			});
+	}
 	assert(ret);
-	nim::Client::SetCallbackFunction([](const StdClosure & task) {
-		nbase::ThreadManager::PostTask(ThreadId::kThreadUI, task);
-	});
-
 	//初始化聊天室
 	{		
 		ret = nim_chatroom::ChatRoom::Init(nbase::UTF16ToUTF8(app_install), "");
+		if (ret)
+		{
+			nim_ui::RunTimeDataManager::GetInstance()->SetChatRoomInited();
 #ifdef CPPWRAPPER_DLL
-		nim_chatroom::ChatRoom::SetCallbackFunction([](const StdClosure & task) {
-			nbase::ThreadManager::PostTask(ThreadId::kThreadUI, task);
-		});	
+			nim_chatroom::ChatRoom::SetCallbackFunction([](const StdClosure & task) {
+				nbase::ThreadManager::PostTask(ThreadId::kThreadUI, task);
+				});
 #endif
+		}
 		assert(ret);
 	}
 	// 初始化云信音视频
 	ret = nim::VChat::Init(server_conf_file_path);
+	if (ret)
+	{
+		nim_ui::RunTimeDataManager::GetInstance()->SetVChatInited();
+	}
 	assert(ret);
 	
 	// InitUiKit接口参数决定是否启用事件订阅模块，默认为false，如果是云信demo app则为true
@@ -192,7 +203,14 @@ int NimAPP::ExitInstance()
 	// 程序结束之前，清理云信sdk和UI组件
 	nim_ui::InitManager::GetInstance()->CleanupUiKit();
 	if (nim_ui::RunTimeDataManager::GetInstance()->IsSDKInited())
-		nim_chatroom::ChatRoom::Cleanup();
+	{
+		if(nim_ui::RunTimeDataManager::GetInstance()->IsChatRoomInited())
+			nim_chatroom::ChatRoom::Cleanup();
+		if (nim_ui::RunTimeDataManager::GetInstance()->IsVChatInited())
+			nim::VChat::Cleanup();
+		if (nim_ui::RunTimeDataManager::GetInstance()->IsIMInited())
+			nim::Client::Cleanup2();
+	}	
 	nim_http::Uninit();
 	return 0;
 }
