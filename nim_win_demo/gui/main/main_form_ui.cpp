@@ -69,7 +69,7 @@ void MainForm::OnEsc( BOOL &bHandled )
 void MainForm::OnFinalMessage(HWND hWnd)
 {
 	TrayIcon::GetInstance()->Destroy();
-	nim_ui::SessionListManager::GetInstance()->AttachListBox(nullptr);
+	nim_ui::SessionListManager::GetInstance()->AttachListBox(nullptr,nullptr);
 	nim_ui::ContactsListManager::GetInstance()->AttachFriendListBox(nullptr);
 	nim_ui::ContactsListManager::GetInstance()->AttachGroupListBox(nullptr);
 
@@ -112,8 +112,9 @@ void MainForm::InitWindow()
 	((OptionBox*) FindControl(L"btn_session_list"))->Selected(true, true);
 	if (1)
 	{
-		ui::ListBox* session_list = (ListBox*)FindControl(L"session_list");
-		nim_ui::SessionListManager::GetInstance()->AttachListBox(session_list);
+		ui::VirtualListBox* session_list = (ui::VirtualListBox*)FindControl(L"session_list");
+		ui::ListBox* function_list = dynamic_cast<ui::ListBox*>(FindControl(L"function_list"));
+		nim_ui::SessionListManager::GetInstance()->AttachListBox(session_list, function_list);
 		ui::ListBox* session_list_cloud = (ListBox*)FindControl(L"session_list_cloud");
 		nim_ui::SessionListManager::GetInstance()->AttachCloudListBox(session_list_cloud);
 		unregister_cb.Add(nim_ui::SessionListManager::GetInstance()->RegUnreadCountChange(nbase::Bind(&MainForm::OnUnreadCountChange, this, std::placeholders::_1)));

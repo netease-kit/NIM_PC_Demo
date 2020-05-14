@@ -156,6 +156,115 @@ NIM_SDK_DLL_API void nim_session_reset_all_unread_count_async(const char *json_e
   *				0:失败
   */
 NIM_SDK_DLL_API void nim_session_query_sessiondata_by_id_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_query_sessiondata_by_id_cb_func cb, const void *user_data);
+
+/** @fn void nim_session_query_stick_top_session_list(nim_session_query_stick_top_session_list_cb_func cb, const void* user_data)
+  * 获取置顶会话列表
+  * @param[in] cb		获取置顶会话列表回调， 定义见nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
+  */
+NIM_SDK_DLL_API void nim_session_query_stick_top_session_list(nim_session_query_stick_top_session_list_cb_func cb, const void* user_data);
+
+/** @fn void nim_session_set_to_stick_top(const char* session_id, enum NIMSessionType to_type,const char* ext,nim_session_set_to_stick_top_cb_func cb, const void* user_data)
+  * 置顶会话
+  * @param[in] session_id		会话ID
+  * @param[in] to_type		会话类型
+  * @param[in] ext		扩展信息
+  * @param[in] cb		置顶会话回调， 定义见nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
+  */
+NIM_SDK_DLL_API void nim_session_set_to_stick_top(const char* session_id, enum NIMSessionType to_type, const char* ext, nim_session_set_to_stick_top_cb_func cb, const void* user_data);
+
+
+/** @fn void nim_session_cancel_stick_top(const char* session_id, enum NIMSessionType to_type, nim_session_cancel_stick_top_cb_func cb, const void* user_data)
+  * 取消置顶会话
+  * @param[in] session_id		会话ID
+  * @param[in] to_type		会话类型
+  * @param[in] cb		取消置顶会话回调， 定义见nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
+  */
+NIM_SDK_DLL_API void nim_session_cancel_stick_top(const char* session_id, enum NIMSessionType to_type, nim_session_cancel_stick_top_cb_func cb, const void* user_data);
+
+/** @fn void nim_session_update_stick_top(const char* session_id, enum NIMSessionType to_type,const char* ext, nim_session_update_stick_top_cb_func cb, const void* user_data)
+  * 更新置顶会话
+  * @param[in] session_id		会话ID
+  * @param[in] to_type		会话类型
+  * @param[in] ext		扩展信息
+  * @param[in] cb		更新置顶会话回调， 定义见nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
+  */
+NIM_SDK_DLL_API void nim_session_update_stick_top(const char* session_id, enum NIMSessionType to_type,const char* ext, nim_session_update_stick_top_cb_func cb, const void* user_data);
+
+/** @fn void nim_session_reg_set_to_stick_top_notify_cb(nim_session_set_to_stick_top_notify_cb_func cb, const void* user_data)
+  * (全局回调)注册会话置顶通知回调
+  * @param[in] cb			会话置顶通知回调函数， nim_session_change_cb_func回调函数定义见nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_session_reg_set_to_stick_top_notify_cb(nim_session_set_to_stick_top_notify_cb_func cb, const void* user_data);
+
+/** @fn void nim_session_reg_cancell_stick_top_notify_cb(nim_session_cancel_stick_top_notify_cb_func cb, const void* user_data)
+  * (全局回调)注册取消置顶通知回调
+  * @param[in] cb	取消会话置顶通知回调函数， nim_session_change_cb_func回调函数定义见nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_session_reg_cancell_stick_top_notify_cb(nim_session_cancel_stick_top_notify_cb_func cb, const void* user_data);
+
+/** @fn void void nim_session_reg_update_stick_top_notify_cb(nim_session_update_stick_top_notify_cb_func cb, const void* user_data)
+  * (全局回调)注册更新置顶通知回调
+  * @param[in] cb		更新会话置顶通知回调函数， nim_session_change_cb_func回调函数定义见nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_session_reg_update_stick_top_notify_cb(nim_session_update_stick_top_notify_cb_func cb, const void* user_data);
+
+/** @fn void nim_session_query_session_hasmore_roammsg(const SessionMainTagInfo* session_main_tag_info, nim_session_query_session_hasmore_roammsg_cb_func cb, const void* user_data)
+  * 查询会话是漫游消息未拉取信息
+  * @param[in] session_main_tag_info 要查询会话信息
+  * @param[in] cb	结果回调，详见 nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_session_query_session_hasmore_roammsg(const SessionMainTagInfo* session_main_tag_info, nim_session_query_session_hasmore_roammsg_cb_func cb, const void* user_data);
+
+/** @fn void nim_session_query_all_session_hasmore_roammsg(nim_session_query_all_session_hasmore_roammsg_cb_func cb, const void* user_data)
+  * 查询所有漫游消息未拉取完全的会话
+  * @param[in] cb	结果回调，详见 nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_session_query_all_session_hasmore_roammsg(nim_session_query_all_session_hasmore_roammsg_cb_func cb, const void* user_data);
+
+/** @fn void nim_session_update_session_hasmore_roammsg(const char *json_msg, nim_session_update_session_hasmore_roammsg_cb_func cb, const void* user_data)
+  * 更新会话漫游消息未拉取信息
+  * @param[in] json_msg 对应的消息内容
+  * @param[in] cb	结果回调，详见 nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_session_update_session_hasmore_roammsg(const char *json_msg, nim_session_update_session_hasmore_roammsg_cb_func cb, const void* user_data);
+
+/** @fn void nim_session_update_session_hasmore_roammsg(const char *json_msg, nim_session_update_session_hasmore_roammsg_cb_func cb, const void* user_data)
+  * 删除会话漫游消息未拉取信息
+  * @param[in] session_main_tag_info 要删除的会话信息
+  * @param[in] cb	结果回调，详见 nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_session_delete_session_hasmore_roammsg(const SessionMainTagInfo* session_main_tag_info, nim_session_delete_session_hasmore_roammsg_cb_func cb, const void* user_data);
+
 #ifdef __cplusplus
 };
 #endif //__cplusplus

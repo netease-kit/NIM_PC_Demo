@@ -490,6 +490,38 @@ NIM_SDK_DLL_API void nim_msglog_delete_history_online_async(const char *account_
   */
 NIM_SDK_DLL_API void nim_msglog_delete_message_self_async(const char *json_msg, const char *ext, const char *json_extension, nim_msglog_delete_message_self_res_cb_func cb, const void *user_data);
 
+/** @fn void nim_msglog_delete_message_self_async(const char *json_msg, const char *ext, const char *json_extension, nim_msglog_delete_message_self_res_cb_func cb, const void *user_data)
+  * 查询某条消息是否为thread聊天的根消息
+  * @param[in] msg_client_id 要查询的消息的客户端ID
+  * @param[in] cb			操作结果的回调函数， nim_msglog_query_message_is_thread_root_async_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+NIM_SDK_DLL_API void nim_msglog_query_message_is_thread_root_async(const char* msg_client_id, nim_msglog_query_message_is_thread_root_async_cb_func cb, const void* user_data);
+
+/** @fn void nim_msglog_query_message_online(const NIMQueryMsgAsyncParam& param, nim_msglog_query_single_cb_func cb, const void* user_data)
+  * 查询某条消息的具体内容一般用在thread talk 场景中
+  * @param[in] param 要查询的消息的相关参数，可以在msglog.threadinfo中得到
+  * @param[in] cb			操作结果的回调函数， nim_msglog_query_single_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+NIM_SDK_DLL_API void nim_msglog_query_message_online(const NIMQueryMsgAsyncParam& param, nim_msglog_query_single_cb_func cb, const void* user_data);
+
+/** @fn void nim_msglog_query_thread_history_msg(const char* json_msg,const NIMQueryThreadHistoryMsgAsyncParam& param, const nim_msglog_query_thread_history_msg_cb_func& cb)
+  * 分页查询thread talk消息历史
+  * @param[in] json_msg thread聊天的root消息
+  * @param[in] param 查询thread聊天历史参数
+  * @param[in] cb			操作结果的回调函数， nim_msglog_query_thread_history_msg_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+NIM_SDK_DLL_API void nim_msglog_query_thread_history_msg(const char* json_msg, const NIMQueryThreadHistoryMsgAsyncParam& param, const nim_msglog_query_thread_history_msg_cb_func& cb, const void* user_data);
+
+
 #ifdef __cplusplus
 };
 #endif //__cplusplus

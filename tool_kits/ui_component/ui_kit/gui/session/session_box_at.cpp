@@ -137,7 +137,7 @@ std::string SessionBox::GetShowName(const std::string& uid)
 	auto i = team_member_info_list_.find(uid);
 	if (i != team_member_info_list_.end())
 	{
-		card_name = i->second.GetNick();
+		card_name = i->second->GetNick();
 	}
 	if (!card_name.empty())
 		return card_name;
@@ -315,13 +315,16 @@ bool SessionBox::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 	}
 	else
 	{
+	auto task = ToWeakCallback([this]() {
 		// 获取当前光标之前的所有文本
 		long start = 0;
 		long end = 0;
 		input_edit_->GetSel(start, end);
 		std::wstring sel_str = input_edit_->GetTextRange(0, end);
 		size_t pos = sel_str.rfind(L"@");
-
+		AtlistForm* at_list_form = (AtlistForm*)WindowsManager::GetInstance()->GetWindow(AtlistForm::kClassName, nbase::UTF8ToUTF16(session_id_));
+		if (NULL == at_list_form)
+			return false;
 		if (pos == std::wstring::npos || end == 0)
 		{
 			at_list_form->ShowWindow(false, false);
@@ -347,6 +350,9 @@ bool SessionBox::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 				at_list_form->ShowWindow(false, false);
 			}
 		}
+		});
+	Post2UI(task);
+		
 	}
 
 	return false;
@@ -401,7 +407,7 @@ void SessionBox::OnSelectAtItemCallback(const std::string& uid)
 		auto i = team_member_info_list_.find(uid);
 		if (i != team_member_info_list_.end())
 		{
-			show_name = i->second.GetNick();
+			show_name = i->second->GetNick();
 		}
 		if (show_name.empty())
 		{

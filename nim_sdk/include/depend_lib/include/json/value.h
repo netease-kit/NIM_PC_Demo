@@ -507,6 +507,31 @@ namespace nim_cpp_wrapper_util {
 			iterator begin();
 			iterator end();
 
+			/// Implicit type conversion 2020/04/20
+			operator std::string() const {
+				return asString();
+			}
+			operator int64_t() const {
+				return asInt64();
+			}
+			operator uint64_t() const {
+				return asUInt64();
+			}
+			operator int32_t() const {
+				return asInt();
+			}
+			operator uint32_t() const {
+				return asUInt();
+			}
+			operator double() const {
+				return asDouble();
+			}
+			operator float() const {
+				return asFloat();
+			}
+			operator bool() const {
+				return asBool();
+			}
 		private:
 			void initBasic(ValueType type, bool allocated = false);
 

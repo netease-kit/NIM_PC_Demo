@@ -11,32 +11,28 @@ using namespace ui;
 SessionListCloud::SessionListCloud(ui::ListBox* session_list)
 	: session_list_cloud_(session_list)
 {
-	ListContainerElement* local_session_list = (ListContainerElement*)GlobalManager::CreateBox(L"main/main_local_session.xml");
-	session_list_cloud_->AddAt(local_session_list, 0);
-	local_session_list->AttachClick(nbase::Bind(&SessionListCloud::OnSwitchLocalSession, this, std::placeholders::_1));
-
-	auto changed_cb = local_session_list->ToWeakCallback(std::bind(&SessionListCloud::OnSessionChangeCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	auto changed_cb = session_list_cloud_->ToWeakCallback(std::bind(&SessionListCloud::OnSessionChangeCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	SessionManager::GetInstance()->RegSessionChangedCallback(changed_cb);
 
-	auto userinfo_change_cb = local_session_list->ToWeakCallback(std::bind(&SessionListCloud::OnUserInfoChange, this, std::placeholders::_1));
+	auto userinfo_change_cb = session_list_cloud_->ToWeakCallback(std::bind(&SessionListCloud::OnUserInfoChange, this, std::placeholders::_1));
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(userinfo_change_cb));
 
-	auto userphoto_ready_cb = local_session_list->ToWeakCallback(std::bind(&SessionListCloud::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	auto userphoto_ready_cb = session_list_cloud_->ToWeakCallback(std::bind(&SessionListCloud::OnUserPhotoReady, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	unregister_cb.Add(PhotoService::GetInstance()->RegPhotoReady(userphoto_ready_cb));
 
-	auto team_name_change_cb = local_session_list->ToWeakCallback(std::bind(&SessionListCloud::OnTeamNameChange, this, std::placeholders::_1));
+	auto team_name_change_cb = session_list_cloud_->ToWeakCallback(std::bind(&SessionListCloud::OnTeamNameChange, this, std::placeholders::_1));
 	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamName(team_name_change_cb));
 
-	auto receive_event_cb = local_session_list->ToWeakCallback(std::bind(&SessionListCloud::OnReceiveEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+	auto receive_event_cb = session_list_cloud_->ToWeakCallback(std::bind(&SessionListCloud::OnReceiveEvent, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	unregister_cb.Add(SubscribeEventManager::GetInstance()->RegReceiveEventCallback(receive_event_cb));
 
-	auto notify_cb = local_session_list->ToWeakCallback(std::bind(&SessionListCloud::OnNotifyChangeCallback, this, std::placeholders::_1, std::placeholders::_2));
+	auto notify_cb = session_list_cloud_->ToWeakCallback(std::bind(&SessionListCloud::OnNotifyChangeCallback, this, std::placeholders::_1, std::placeholders::_2));
 	unregister_cb.Add(MuteBlackService::GetInstance()->RegSyncSetMuteCallback(notify_cb));
 
-	auto team_notify_cb = local_session_list->ToWeakCallback(std::bind(&SessionListCloud::OnTeamNotificationModeChangeCallback, this, std::placeholders::_1, std::placeholders::_2));
+	auto team_notify_cb = session_list_cloud_->ToWeakCallback(std::bind(&SessionListCloud::OnTeamNotificationModeChangeCallback, this, std::placeholders::_1, std::placeholders::_2));
 	unregister_cb.Add(TeamService::GetInstance()->RegChangeTeamNotification(team_notify_cb));
 
-	auto friend_list_change_cb = local_session_list->ToWeakCallback(nbase::Bind(&SessionListCloud::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2));
+	auto friend_list_change_cb = session_list_cloud_->ToWeakCallback(nbase::Bind(&SessionListCloud::OnFriendListChange, this, std::placeholders::_1, std::placeholders::_2));
 	unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(friend_list_change_cb));
 }
 
@@ -51,7 +47,7 @@ void SessionListCloud::AddSessionItem(const nim::SessionData& session_data)
 	int item_index = session_list_cloud_->GetItemIndex(item);
 	if (item && item_index == 1)
 	{
-		item->InitMsg(session_data); //应该插入自己紧靠前面或后面的位置，就不用删除，直接更新。
+		item->InitMsg(std::make_shared<nim::SessionData>( session_data)); //应该插入自己紧靠前面或后面的位置，就不用删除，直接更新。
 	}
 	else
 	{
@@ -65,7 +61,7 @@ void SessionListCloud::AddSessionItem(const nim::SessionData& session_data)
 		GlobalManager::FillBoxWithCache(item, session_item_xml);
 		int index = AdjustMsg(session_data);
 		item->InitCtrl();
-		item->InitMsg(session_data);
+		item->InitMsg(std::make_shared<nim::SessionData>(session_data));
 		item->SetOnlineSessionType(true);
 		item->AttachAllEvents(nbase::Bind(&SessionListCloud::OnItemNotify, this, std::placeholders::_1));
 		if (index >= 0)
@@ -215,37 +211,6 @@ void SessionListCloud::OnSessionChangeCallback(nim::NIMResCode rescode, const ni
 		}
 	}
 	break;
-	/*case nim::kNIMSessionCommandRemoveAll:
-	{
-		std::list<nim::SessionData> unsubscribe_list;
-		for (int i = session_list_->GetCount() - 1; i >= 0; i--)
-		{
-			SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
-			if (item && !item->GetIsTeam())
-			{
-				unsubscribe_list.push_back(item->GetSessionData());
-			}
-		}
-		SubscribeEventManager::GetInstance()->UnSubscribeSessionEvent(unsubscribe_list);
-		RemoveAllSessionItem();
-	}
-	break;*/
-	/*case nim::kNIMSessionCommandRemoveAllP2P:
-	{
-		std::list<nim::SessionData> unsubscribe_list;
-		for (int i = session_list_->GetCount() - 1; i >= 0; i--)
-		{
-			SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
-			if (item && !item->GetIsTeam())
-			{
-				unsubscribe_list.push_back(item->GetSessionData());
-				session_list_->RemoveAt(i);
-			}
-		}
-		SubscribeEventManager::GetInstance()->UnSubscribeSessionEvent(unsubscribe_list);
-		InvokeUnreadCountChange();
-	}
-	break;*/
 	case nim::kNIMSessionCommandRemoveAllTeam:
 	{
 		for (int i = session_list_cloud_->GetCount() - 1; i >= 0; i--)

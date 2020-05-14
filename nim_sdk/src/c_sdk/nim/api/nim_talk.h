@@ -179,7 +179,16 @@ NIM_SDK_DLL_API void nim_talk_reg_receive_broadcast_cb(const char *json_extensio
   */
 NIM_SDK_DLL_API void nim_talk_reg_receive_broadcast_msgs_cb(const char *json_extension, nim_talk_receive_broadcast_cb_func cb, const void *user_data);
 
-
+/** @fn void nim_talk_reply_msg(const char* json_msg, const char* json_reply_msg, const char* json_extension, nim_nos_upload_prg_cb_func prg_cb, const void* prg_user_data)
+  * 回复消息
+  * @param[in] json_msg	被回复消息的消息体Json string (Keys SEE MORE `nim_talk_def.h` 『消息结构 Json Keys』)
+    * @param[in] json_reply_msg	回复消息的消息体Json string (Keys SEE MORE `nim_talk_def.h` 『消息结构 Json Keys』)
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] prg_cb		上传进度的回调函数, 如果发送的消息里包含了文件资源，则通过此回调函数通知上传进度, nim_sysmsg_receive_cb_func回调函数定义见nim_nos_def.h
+  * @param[in] prg_user_data APP的自定义用户数据，SDK只负责传回给回调函数prg_cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_talk_reply_msg(const char* json_msg, const char* json_reply_msg, const char* json_extension, nim_nos_upload_prg_cb_func prg_cb, const void* prg_user_data);
 #ifdef __cplusplus
 };
 #endif //__cplusplus

@@ -2,6 +2,6 @@
 <Window>
 	<VBox width="140" height="auto" bkcolor="bk_wnd_darkcolor">
 		<Label name="team_member" valign="bottom" font="2" mouse="false" width="stretch" margin="16,12,0,12" normaltextcolor="link_tip" textid="STDID_ATLISTFORM_TEAMMEMBER" visible="false"/>	
-		<VListBox name="team_list_box" width="140" height="auto" maxheight="200" vscrollbar="true" hscrollbar="false" bkcolor="white" vscrollunit="80" visible="false"/>
+		<VirtualListBox name="team_list_box" width="140" height="auto" maxheight="200" vscrollbar="true" hscrollbar="false" bkcolor="white" vscrollunit="80" visible="false"/>
 	</VBox>
 </Window>

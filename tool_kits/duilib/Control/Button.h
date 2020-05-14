@@ -20,7 +20,7 @@ public:
 	 * @param[in] callback 要绑定的回调函数
 	 * @return 无
 	 */
-	void AttachClick(const EventCallback& callback)	{ OnEvent[kEventClick] += callback;	}
+	void AttachClick(const EventCallback& callback)	{ OnEvent[kEventClick] += callback;	}	
 };
 
 #include "ButtonImpl.h"

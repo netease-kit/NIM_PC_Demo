@@ -19,6 +19,26 @@
 */
 namespace nim
 {
+/** @brief 会话数据 */
+	struct NIM_SDK_CPPWRAPPER_DLL_API StickTopSessionInfo
+	{
+		bool top_;
+		std::string		id_;					/**< 会话ID */
+		NIMSessionType	type_;		/**< 会话类型 */
+		std::string		ext_;				/**< 扩展信息*/
+		int64_t			create_time_;	/**< 创建时间*/
+		int64_t			update_time_;	/**< 更新时间*/
+		/** 构造函数 */
+		StickTopSessionInfo() : 
+			top_(false),
+			id_(""), 
+			type_(NIMSessionType::kNIMSessionTypeP2P), 
+			ext_(""), 
+			create_time_(0), 
+			update_time_(0) 
+		{
+		}
+	};
 
 /** @brief 会话数据 */
 struct NIM_SDK_CPPWRAPPER_DLL_API SessionData
@@ -39,7 +59,7 @@ struct NIM_SDK_CPPWRAPPER_DLL_API SessionData
 	bool			placed_on_top_;			/**< 置顶标识 */
 	std::string		extend_data_;			/**< 本地扩展字段,限制4096 */
 	bool			is_robot_session_;		/**< 是否为机器人会话, 默认为false */
-
+	StickTopSessionInfo stick_top_info_;	/**< 置顶信息 v7.6添加,推荐使用此字段代替 "placed_on_top_" 字段*/
 	/** 构造函数 */
 	SessionData() : unread_count_(0)
 				, msg_timetag_(0)
@@ -62,7 +82,18 @@ struct NIM_SDK_CPPWRAPPER_DLL_API SessionDataList
 
 	SessionDataList() : count_(0), unread_count_(0) {}
 };
-
+struct NIM_SDK_CPPWRAPPER_DLL_API StickTopSession
+{
+	StickTopSessionInfo stick_top_info_;	/**< 置顶信息 */
+	SessionData session_data_; /**< 会话信息*/
+	static std::string ToJsonString(const StickTopSession& stick_session);
+	static void ToJsonObject(const StickTopSession& stick_session,nim_cpp_wrapper_util::Json::Value& value);
+};
+struct NIM_SDK_CPPWRAPPER_DLL_API StickTopSessionList
+{
+	std::list<StickTopSession> sessions_;	/**< 置顶会话列表项数据 */
+	static std::string ToJsonString(const StickTopSessionList& stick_session_list);
+};
 /** @fn bool ParseSession(const std::string& session_json, SessionData& session)
   * @brief 解析会话信息
   * @param[in] session_json 会话信息(Json Value数据字符串)
@@ -71,7 +102,7 @@ struct NIM_SDK_CPPWRAPPER_DLL_API SessionDataList
   */
 NIM_SDK_CPPWRAPPER_DLL_API bool ParseSession(const std::string& session_json, SessionData& session);
 
-/** @fn bool ParseSession(const nim_cpp_wrapper_util::Json::Value& session_json, SessionData& session)
+/** @fn void ParseSession(const nim_cpp_wrapper_util::Json::Value& session_json, SessionData& session)
   * @brief 解析会话信息
   * @param[in] session_json 会话信息(Json Value数据)
   * @param[out] session 会话信息
@@ -86,6 +117,31 @@ NIM_SDK_CPPWRAPPER_DLL_API void ParseSession(const nim_cpp_wrapper_util::Json::V
   * @return bool 解析成功 或失败
   */
 NIM_SDK_CPPWRAPPER_DLL_API bool ParseSessionList(const std::string& sessions_json, SessionDataList& session_list);
+
+/** @fn bool ParseStickTopSession(const std::string& session_json, StickTopSession& session);
+  * @brief 解析置顶会话信息
+  * @param[in] session_json 置顶会话信息(Json Value数据字符串)
+  * @param[out] session 置顶会话信息
+  * @return bool 解析成功 或失败
+  */
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseStickTopSession(const std::string& session_json, StickTopSession& session);
+
+/** @fn void ParseStickTopSession(const nim_cpp_wrapper_util::Json::Value& session_json, StickTopSession& session)
+  * @brief 解析置顶会话信息
+  * @param[in] session_json 置顶会话信息(Json Value数据)
+  * @param[out] session 置顶会话信息
+  * @return void
+  */
+NIM_SDK_CPPWRAPPER_DLL_API void ParseStickTopSession(const nim_cpp_wrapper_util::Json::Value& session_json, StickTopSession& session);
+
+/** @fn bool ParseStickTopSessionList(const std::string& sessions_json, StickTopSessionList& stick_top_session_list)
+  * @brief 解析置顶会话列表信息
+  * @param[in] sessions_json 置顶会话列表信息(Json Value数据字符串)
+  * @param[out] stick_top_session_list 置顶会话信息
+  * @return bool 解析成功 或失败
+  */
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseStickTopSessionList(const std::string& sessions_json, StickTopSessionList& stick_top_session_list);
+
 } //namespace nim
 
 #endif //_NIM_SDK_CPP_SESSION_HELPER_H_

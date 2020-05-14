@@ -74,5 +74,23 @@ void ParseMessage(const nim_cpp_wrapper_util::Json::Value& msg_json, IMMessage& 
 	message.sub_status_ = (NIMMsgLogSubStatus)msg_json[kNIMMsgKeyLocalLogSubStatus].asUInt();
 
 	message.msg_setting_.ParseMessageSetting(msg_json);
+
+	//thread
+	if (msg_json.isMember(kNIMMsgKeyThreadInfo))
+	{
+		message.thread_info_.reply_msg_from_account_ = msg_json[kNIMMsgKeyThreadInfo][kNIMMsgKeyReplyMsgFromAccount].asString();
+		message.thread_info_.reply_msg_to_account_ = msg_json[kNIMMsgKeyThreadInfo][kNIMMsgKeyReplyMsgToAccount].asString();
+		message.thread_info_.reply_msg_time_ = msg_json[kNIMMsgKeyThreadInfo][kNIMMsgKeyReplyMsgTime].asUInt64();
+		message.thread_info_.reply_msg_id_server_ = msg_json[kNIMMsgKeyThreadInfo][kNIMMsgKeyReplyMsgIdServer].asUInt64();
+		message.thread_info_.reply_msg_id_client_ = msg_json[kNIMMsgKeyThreadInfo][kNIMMsgKeyReplyMsgIdClient].asString();
+
+		message.thread_info_.thread_msg_from_account_ = msg_json[kNIMMsgKeyThreadInfo][kNIMMsgKeyThreadMsgFromAccount].asString();
+		message.thread_info_.thread_msg_to_account_ = msg_json[kNIMMsgKeyThreadInfo][kNIMMsgKeyThreadMsgToAccount].asString();
+		message.thread_info_.thread_msg_time_ = msg_json[kNIMMsgKeyThreadInfo][kNIMMsgKeyThreadMsgTime].asUInt64();
+		message.thread_info_.thread_msg_id_server_ = msg_json[kNIMMsgKeyThreadInfo][kNIMMsgKeyThreadMsgIdServer].asUInt64();
+		message.thread_info_.thread_msg_id_client_ = msg_json[kNIMMsgKeyThreadInfo][kNIMMsgKeyThreadMsgIdClient].asString();
+
+		message.thread_info_.deleted_ = msg_json[kNIMMsgKeyThreadInfo][kNIMMsgKeyDeleted].asInt();
+	}
 }
 }

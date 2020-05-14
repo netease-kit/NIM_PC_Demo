@@ -1,7 +1,7 @@
 #pragma once
 #include "util/window_ex.h"
 #include "at_list_item.h"
-
+#include "shared/pin_yin_helper.h"
 typedef std::function<void(const std::string& uid)> OnSelectAtItem;
 
 namespace nim_comp
@@ -13,8 +13,61 @@ namespace nim_comp
   * @date 2016/9/6
   */
 class AtListItem;
-class AtlistForm : public WindowEx
+class AtlistForm : public WindowEx, public ui::VirtualListInterface
 {
+	class ItemMatcher
+	{
+	public:
+		void SetAliasName(const std::wstring& name)
+		{
+			alias_name_ = nbase::UTF16ToUTF8(name);
+			alias_full_name_ = nbase::MakeLowerString(PinYinHelper::GetInstance()->ConvertToFullSpell(name));
+			alias_simple_name_ = nbase::MakeLowerString(PinYinHelper::GetInstance()->ConvertToSimpleSpell(name));
+		}
+
+		void SetTeamCardName(const std::wstring& name)
+		{
+			team_card_name_ = nbase::UTF16ToUTF8(name);
+			team_card_full_name_ = nbase::MakeLowerString(PinYinHelper::GetInstance()->ConvertToFullSpell(name));
+			team_card_simple_name_ = nbase::MakeLowerString(PinYinHelper::GetInstance()->ConvertToSimpleSpell(name));
+		}
+
+		void SetNickName(const std::wstring& name)
+		{
+			nick_name_ = nbase::UTF16ToUTF8(name);
+			nick_full_name_ = nbase::MakeLowerString(PinYinHelper::GetInstance()->ConvertToFullSpell(name));
+			nick_simple_name_ = nbase::MakeLowerString(PinYinHelper::GetInstance()->ConvertToSimpleSpell(name));
+		}
+
+		bool Match(const std::string& search_key)
+		{
+			if (alias_name_.find(search_key) != std::string::npos
+				|| alias_full_name_.find(search_key) != std::string::npos
+				|| alias_simple_name_.find(search_key) != std::string::npos
+				|| team_card_name_.find(search_key) != std::string::npos
+				|| team_card_full_name_.find(search_key) != std::string::npos
+				|| team_card_simple_name_.find(search_key) != std::string::npos
+				|| nick_name_.find(search_key) != std::string::npos
+				|| nick_full_name_.find(search_key) != std::string::npos
+				|| nick_simple_name_.find(search_key) != std::string::npos
+				|| uid_.find(search_key) != std::string::npos)
+			{
+				return true;
+			}
+			return false;
+		}
+	public:
+		std::string	uid_;
+		std::string	alias_name_;	//用户备注名,优先显示
+		std::string	alias_full_name_;
+		std::string	alias_simple_name_;
+		std::string	team_card_name_;//用户群名片,其次显示
+		std::string	team_card_full_name_;
+		std::string	team_card_simple_name_;
+		std::string	nick_name_;		//用户昵称,最后显示
+		std::string	nick_full_name_;
+		std::string	nick_simple_name_;
+	};
 public:
 	/**
 	* 构造函数
@@ -43,7 +96,7 @@ public:
 	* @param[in] team_member_info_list 群成员信息表
 	* @return void 无返回值
 	*/
-	void InitTeamMembers(const std::map<std::string, nim::TeamMemberProperty>& team_member_info_list);
+	void InitTeamMembers(const std::map<std::string, std::shared_ptr<nim::TeamMemberProperty>>& team_member_info_list);
 
 	/**
 	* 根据关键字去显示或隐藏@列表项
@@ -97,7 +150,25 @@ public:
 	* @return void	无返回值
 	*/
 	void CloseForm();
+	/**
+	 * @brief 创建一个子项
+	 * @return 返回创建后的子项指针
+	 */
+	virtual ui::Control* CreateElement() override;
 
+	/**
+	 * @brief 填充指定子项
+	 * @param[in] control 子项控件指针
+	 * @param[in] index 索引
+	 * @return 返回创建后的子项指针
+	 */
+	virtual void FillElement(ui::Control* control, int index) override;
+
+	/**
+	 * @brief 获取子项总数
+	 * @return 返回子项总数
+	 */
+	virtual int GetElementtCount() override;
 private:
 	/**
 	* 拦截并处理窗口关闭消息，让他自动隐藏，调用CloseForm函数直接销毁窗体
@@ -114,14 +185,7 @@ private:
 	*/
 	AtListItem* CreateAtListItem(const std::string& uid, bool is_last_five);
 
-	/**
-	* 添加一个列表项控件到列表
-	* @param[in] uid 用户id
-	* @param[in] index 插入位置，-1代表插入到末尾
-	* @param[in] is_last_five 是否为最近发言人
-	* @return AtListItem* 列表项控件
-	*/
-	AtListItem* AddListItem(const std::string& uid, int index, bool is_last_five);
+
 
 	/**
 	* 移除一个列表项控件
@@ -221,6 +285,8 @@ private:
 	*/
 	void OnTeamMemberRemove(const std::string& tid, const std::string& uid);
 
+	void RefrashShowListData();
+	void UpdateLastFive(const std::list<std::string>& last_five);
 public:
     static const LPCTSTR kClassName;
 
@@ -228,11 +294,13 @@ private:
     std::string	session_id_;
 	nim::NIMSessionType session_type_;
 
-	std::map<std::string, nim::TeamMemberProperty> team_member_info_list_;
-	ui::ListBox				*robot_members_container_ = nullptr;
-	ui::ListBox				*team_members_container_ = nullptr;
-
+	std::map<std::string, std::shared_ptr<nim::TeamMemberProperty>> team_member_info_list_;
+	//ui::ListBox				*team_members_container_ = nullptr;
+	ui::VirtualListBox* team_members_container_;
+	std::vector<std::shared_ptr<ItemMatcher>> team_member_sort_list_;
+	std::vector<std::shared_ptr<ItemMatcher>> team_member_match_list_;
 	std::list<std::string>	uid_last_five_;	//最近发消息的5个人（不包括自己）,最新发言的在列表最后
+	std::map<std::string, std::string> uid_last_five_for_fined_;
 
 	OnSelectAtItem			callback_select_;//选中某项后的回调函数
 	AutoUnregister	unregister_cb;

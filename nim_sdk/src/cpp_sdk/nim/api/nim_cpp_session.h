@@ -10,6 +10,7 @@
 #include <string>
 #include <functional>
 #include "src/cpp_sdk/nim/helper/nim_session_helper.h"
+#include "src/cpp_sdk/nim/helper/nim_talk_helper.h"
 #include "src/cpp_sdk/nim/nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
@@ -33,6 +34,18 @@ public:
 	typedef ChangeCallback DeleteAllRecentSessionCallabck;									/**< 删除全部会话回调模板 */
 	typedef ChangeCallback SetUnreadCountZeroCallback;										/**< 会话未读消息数清零回调模板 */
 	typedef std::function<void(nim::NIMResCode, const SessionData&)> QuerySessionDataCallback; /**< 会话信息查询结果回调模板 */
+	typedef std::function<void(const StickTopSession&)> SetToStickTopSessionNotifyCallback;/**< 置顶会话通知回调模板 */
+	typedef std::function<void(const std::string& session_id,nim::NIMSessionType)> CancelStickTopSessionNotifyCallback;/**< 取消置顶会话通知回调模板 */
+	typedef std::function<void(const StickTopSession&)> UpdateStickTopSessionNotifyCallback;/**< 更新置顶会话通知回调模板 */
+	typedef std::function<void(nim::NIMResCode, const StickTopSession&)> SetToStickTopSessionCallback;/**< 置顶会话回调模板 */
+	typedef std::function<void(nim::NIMResCode, const std::string & session_id, nim::NIMSessionType)> CancelStickTopSessionCallback;/**< 取消置顶会话回调模板 */
+	typedef std::function<void(nim::NIMResCode, const StickTopSession&)> UpdateStickTopSessionCallback;/**< 更新置顶会话回调模板 */
+	typedef std::function<void(nim::NIMResCode, const StickTopSessionList&)> QueryStickTopSessionListCallback;/**< 查询置顶会话列表回调模板 */
+
+	typedef std::function<void(nim::NIMResCode, const SessionRoamMsgHasMoreTagInfo& info)> QueryHasmoreRoammsgCallback;/**< 查询会话是漫游消息未拉取信息回调模板*/
+	typedef std::function<void(nim::NIMResCode, const std::list<SessionRoamMsgHasMoreTagInfo>& info_list)> QueryAllHasmoreRoammsgCallback;/**< 查询所有漫游消息未拉取完全的会话回调模板*/
+	typedef std::function<void(nim::NIMResCode)> UpdateHasmoreRoammsgCallback;/**< 更新会话是漫游消息未拉取信息回调模板*/
+	typedef std::function<void(nim::NIMResCode)> DeleteHasmoreRoammsgCallback;/**< 删除会话是漫游消息未拉取信息回调模板*/
 
 	/** @fn static void RegChangeCb(const ChangeCallback& cb, const std::string& json_extension = "")
 	* (全局回调)注册最近会话列表项变更通知
@@ -148,7 +161,7 @@ public:
 	*/
 	static bool SetAllUnreadCountZeroAsync(const SetUnreadCountZeroCallback& cb, const std::string& json_extension = "");
 
-/** @fn void QuerySessionDataById(NIMSessionType to_type, const std::string& id,const QuerySessionDataCallback& cb, const std::string& json_extension = "")
+	/** @fn void QuerySessionDataById(NIMSessionType to_type, const std::string& id,const QuerySessionDataCallback& cb, const std::string& json_extension = "")
   	* 根据给定的id查询相应会话的信息
 	* @param[in] to_type		会话类型
   	* @param[in] id			对方的account id或者群组tid。
@@ -159,6 +172,107 @@ public:
   	*				0:失败
   	*/
 	static void QuerySessionDataById(NIMSessionType to_type, const std::string& id,const QuerySessionDataCallback& cb, const std::string& json_extension = "");
+	
+	/** @fn static void RegSetToStickTopSessionNotifyCB(const SetToStickTopSessionNotifyCallback& cb)
+	* (全局回调)注册置顶会话通知回调
+	* @param[in] cb			置顶会话通知回调模板
+	* @return void 无返回值
+	*/
+	static void RegSetToStickTopSessionNotifyCB(const SetToStickTopSessionNotifyCallback& cb);
+
+	/** @fn static void RegCancelStickTopSessionNotifyCB(const CancelStickTopSessionNotifyCallback& cb)
+	* (全局回调)注册取消置顶会话通知回调
+	* @param[in] cb			取消置顶会话通知回调模板
+	* @return void 无返回值
+	*/
+	static void RegCancelStickTopSessionNotifyCB(const CancelStickTopSessionNotifyCallback& cb);
+
+	/** @fn static void RegUpdateStickTopSessionNotifyCB(const UpdateStickTopSessionNotifyCallback& cb)
+	* (全局回调)注册更新置顶会话通知回调
+	* @param[in] cb			更新置顶会话通知回调模板
+	* @return void 无返回值
+	*/
+	static void RegUpdateStickTopSessionNotifyCB(const UpdateStickTopSessionNotifyCallback& cb);
+	
+	/** @fn void QueryStickTopSessionList(const QueryStickTopSessionListCallback& cb)
+	* 查询置顶会话列表
+	* @param[in] cb			置顶会话列表查询结果的回调函数
+	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				0:失败
+	*/
+	static void QueryStickTopSessionList(const QueryStickTopSessionListCallback& cb);
+
+	/** @fn void SetToStickTopSession(const std::string& session_id, nim::NIMSessionType to_type, const std::string& ext,const SetToStickTopSessionCallback& cb)
+	* 设置置顶会话
+	* @param[in] session_id			会话id
+	* @param[in] to_type			会话类型
+	* @param[in] ext			扩展字段
+	* @param[in] cb			置顶会话设置结果的回调函数
+	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				0:失败
+	*/
+	static void SetToStickTopSession(const std::string& session_id, nim::NIMSessionType to_type, const std::string& ext,const SetToStickTopSessionCallback& cb);
+
+	/** @fn void UpdateToStickTopSession(const std::string& session_id, nim::NIMSessionType to_type, const std::string& ext, const UpdateStickTopSessionCallback& cb)
+	* 更新置顶会话列表
+	* @param[in] session_id			会话id
+	* @param[in] to_type			会话类型
+	* @param[in] ext			扩展字段
+	* @param[in] cb			更新置顶会话设置结果的回调函数
+	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				0:失败
+	*/
+	static void UpdateToStickTopSession(const std::string& session_id, nim::NIMSessionType to_type, const std::string& ext, const UpdateStickTopSessionCallback& cb);
+
+	/** @fn void CancelToStickTopSession(const std::string& session_id, nim::NIMSessionType to_type,const CancelStickTopSessionCallback& cb)
+	* 取消置顶会话列表
+	* @param[in] session_id			会话id
+	* @param[in] to_type			会话类型
+	* @param[in] cb			取消置顶会话设置结果的回调函数
+	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				0:失败
+	*/
+	static void CancelToStickTopSession(const std::string& session_id, nim::NIMSessionType to_type,const CancelStickTopSessionCallback& cb);
+
+	/** @fn void QueryHasmoreRoammsg(const std::string& session_id, nim::NIMSessionType to_type, const QueryHasmoreRoammsgCallback& cb)
+	* 查询会话是漫游消息未拉取信息
+	* @param[in] session_id			会话id
+	* @param[in] to_type			会话类型
+	* @param[in] cb			查询会话是漫游消息未拉取信息回调函数
+	* @return void 无返回值
+	* @note 错误码	200:成功
+	*				0:失败
+	*/
+	static void QueryHasmoreRoammsg(const std::string& session_id, nim::NIMSessionType to_type, const QueryHasmoreRoammsgCallback& cb);
+
+    /** @fn void QueryAllHasmoreRoammsg(const QueryAllHasmoreRoammsgCallback& cb)
+    * 查询所有漫游消息未拉取完全的会话
+    * @param[in] cb	结果回调
+    * @return void 无返回值
+    */
+	static void QueryAllHasmoreRoammsg(const QueryAllHasmoreRoammsgCallback& cb);
+
+	/** @fn void UpdateHasmoreRoammsg(const IMMessage& msg,const UpdateHasmoreRoammsgCallback& cb)
+	* 查询会话是漫游消息未拉取信息
+	* @param[in] msg	对应的消息内容
+	* @param[in] cb	结果回调
+	* @return void 无返回值
+	*/
+	static void UpdateHasmoreRoammsg(const IMMessage& msg,const UpdateHasmoreRoammsgCallback& cb);
+
+	/** @fn void DeleteHasmoreRoammsg(const std::string& session_id, nim::NIMSessionType to_type, const DeleteHasmoreRoammsgCallback& cb)
+	* 删除会话是漫游消息未拉取信息
+	* @param[in] session_id			会话id
+	* @param[in] to_type			会话类型
+	* @param[in] cb	结果回调
+	* @return void 无返回值
+	*/
+	static void DeleteHasmoreRoammsg(const std::string& session_id, nim::NIMSessionType to_type, const DeleteHasmoreRoammsgCallback& cb);
+
 	/** @fn void UnregSessionCb()
 	* 反注册Session提供的所有回调
 	* @return void 无返回值

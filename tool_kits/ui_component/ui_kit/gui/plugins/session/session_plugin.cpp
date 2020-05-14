@@ -34,17 +34,18 @@ ui::Box* SessionPlugin::CreatePluginPage()
 }
 void SessionPlugin::DoInit()
 {
-	ui::ListBox* session_list = dynamic_cast<ui::ListBox*>(page_->FindSubControl(L"session_list"));
+	ui::VirtualListBox* session_list = dynamic_cast<ui::VirtualListBox*>(page_->FindSubControl(L"session_list"));
+	ui::ListBox* function_list = dynamic_cast<ui::ListBox*>(page_->FindSubControl(L"function_list"));
 	ui::ListBox* session_list_cloud = dynamic_cast<ui::ListBox*>(page_->FindSubControl(L"session_list_cloud"));
 	session_list->SelectNextWhenActiveRemoved(false);
 	session_list_cloud->SelectNextWhenActiveRemoved(false);
 	detach_list_function_ = session_list->ToWeakCallback([]() {
-		nim_ui::SessionListManager::GetInstance()->AttachListBox(nullptr);
+		nim_ui::SessionListManager::GetInstance()->AttachListBox(nullptr,nullptr);
 	});
 	detach_cloud_list_function_ = session_list_cloud->ToWeakCallback([]() {
 		nim_ui::SessionListManager::GetInstance()->AttachCloudListBox(nullptr);
 	});
-	nim_ui::SessionListManager::GetInstance()->AttachListBox(session_list);
+	nim_ui::SessionListManager::GetInstance()->AttachListBox(session_list, function_list);
 	nim_ui::SessionListManager::GetInstance()->AttachCloudListBox(session_list_cloud);
 	page_->OnSessionListAttached();
 	icon_->OnSessionListAttached();

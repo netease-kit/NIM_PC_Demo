@@ -470,7 +470,7 @@ NIM_SDK_DLL_API void nim_vchat_unsubscribe_video(const char *uid, const char *js
 */
 NIM_SDK_DLL_API void nim_vchat_subscribe_audio(bool sub, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data);
 
-/** @fn void nim_vchat_set_remote_audio_data_cb(const char *uid, nim_vchat_remote_audio_data_cb_func remote_data_cb, const void *remote_data_cb_user_data, const char *json_extension, nrtc_chat_opt_cb_func cb, const void *user_data)
+/** @fn void nim_vchat_set_remote_audio_data_cb(const char *uid, nim_vchat_remote_audio_data_cb_func remote_data_cb, const void *remote_data_cb_user_data, const char *json_extension, nim_vchat_opt_cb_func cb, const void *user_data)
   * 通话中设置监听远端音频数据扩展接口，成员进入后才能设置，成员退出后设置失效
   * @param[in] uid 远端用户id
   * @param[in] remote_data_cb 数据回调见nim_vchat_def.h。该数据回调为同步回调，需要保证快速处理，防止影响音频播放。

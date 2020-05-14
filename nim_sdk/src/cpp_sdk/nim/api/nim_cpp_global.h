@@ -137,6 +137,14 @@ public:
 	* @return void 无返回值
 	*/
 	static void RegSDKDBError(const SDKDBErrorCallback& cb);
+
+	/** @fn void UploadSDKLog(const std::string& feedback_message,const UploadSDKLogCallback& cb)
+	* 上传SDK日志到服务器
+	* @param[in] feedback_message 反馈信息
+	* @param[in] cb 操作结果的回调函数
+	* @return void
+	 */
+	static void UploadSDKLog(const std::string& feedback_message, const SDKFeedbackCallback& cb);
 };
 
 } 

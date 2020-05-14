@@ -40,6 +40,7 @@ typedef void(*nim_chatroom_queue_list_async)(const int64_t room_id, const char *
 typedef void(*nim_chatroom_queue_header_async)(const int64_t room_id, const char *json_extension, nim_chatroom_queue_header_cb_func cb, const void *user_data);
 typedef void(*nim_chatroom_queue_drop_async)(const int64_t room_id, const char *json_extension, nim_chatroom_queue_drop_cb_func cb, const void *user_data);
 typedef bool(*nim_chatroom_enter_with_anoymity)(const int64_t room_id, const char *anonymity_info, const char *enter_info, const char *json_extension);
+typedef bool(*nim_chatroom_independent_enter)(const int64_t room_id, const char *);
 typedef char* (*nim_chatroom_query_all_robots_block)(const int64_t room_id, const char *json_extension);
 typedef char* (*nim_chatroom_query_robot_by_accid_block)(const int64_t room_id, const char *accid, const char *json_extension);
 typedef void (*nim_chatroom_get_robots_async)(const int64_t room_id, int64_t timetag, const char *json_extension, nim_chatroom_query_robots_cb_func cb, const void *user_data);
@@ -254,7 +255,10 @@ bool ChatRoom::AnonymousEnter(const int64_t room_id, const ChatRoomAnoymityEnter
 {
 	return NIM_CHATROOM_SDK_GET_FUNC(nim_chatroom_enter_with_anoymity)(room_id, anonymity_info.ToJsonString().c_str(), info.ToJsonString().c_str(), json_extension.c_str());
 }
-
+bool ChatRoom::IndependentEnter(const int64_t room_id, const ChatRoomIndependentEnterInfo& info)
+{
+	return NIM_CHATROOM_SDK_GET_FUNC(nim_chatroom_independent_enter)(room_id,info.ToJsonString().c_str());
+}
 void ChatRoom::Exit(const int64_t room_id, const std::string& json_extension/* = ""*/)
 {
 	NIM_CHATROOM_SDK_GET_FUNC(nim_chatroom_exit)(room_id, json_extension.c_str());

@@ -29,7 +29,9 @@
           hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" />
     </HBox>
     <Control class="splitline_hor_level1" margin="0,15,0,15"/>
-    <TileListBox name="user_list" vscrollbar="true" vscrollunit="75" columns="3" height="230" mousechild="false" />
+    <Box name="user_list_container" height="auto">
+        <VirtualTileBox name="user_list" vscrollbar="true" vscrollunit="75" columns="3" height="230" itemsize="170,64" column="3" mousechild="false" />
+    </Box>
     <Control class="splitline_hor_level1"/>
 
     <VListBox name="info_list" height="auto" maxheight="200" vscrollbar="true" vscrollunit="75" mousechild="false">

@@ -58,7 +58,11 @@ SessionBox* SessionManager::OpenSessionBox(std::string session_id, nim::NIMSessi
 	session_box->InvokeShowMsgs(true);
 	session_box->InitAtMeView(infos);
 	if (session_box->GetSessionForm() != nullptr)
+	{
 		session_box->GetSessionForm()->ActiveWindow();
+		session_box->GetSessionForm()->SetActiveSessionBox(session_id);
+	}
+		
 	return session_box;
 }
 

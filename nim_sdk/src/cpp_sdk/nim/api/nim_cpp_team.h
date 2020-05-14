@@ -37,6 +37,8 @@ public:
 	typedef std::function<void(NIMResCode error_code, const std::string& tid, const std::list<TeamMemberProperty>& team_member_propertys)>	QueryTeamMembersOnlineCallback;	/**< 查询群成员信息回调模板 */
 	typedef std::function<void(NIMResCode error_code, const std::string& tid, const std::map<std::string,std::string>& invitor_map)>	QueryTeamMembersInvitorCallback;	/**< 查询群成员邀请人accid 列表回调模板 */
 	typedef QueryAllMyTeamsInfoCallback QueryTeamsInfoCallback;
+	typedef QueryAllMyTeamsInfoCallback GetTeamInfoBatchSFTransCallback;/**< 查询所有群信息回调模板 顺丰专用 */
+	typedef std::function<void(const std::list<std::string>& success_ids, const std::list<std::string>& failure_ids)> UpdateTInfoLocalCallback;		/**< 更新本地缓存回调模板顺丰专用 */
 	/** @fn static void RegTeamEventCb(const TeamEventCallback& cb, const std::string& json_extension = "")
 	* (全局回调)统一注册接收群通知回调函数（创建群,收到邀请等群通知通过此接口广播，注意：服务器推送过来的群通知和APP发起请求的回调统一处理！）
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -522,6 +524,27 @@ public:
 	* @return bool 检查参数如果不符合要求则返回失败
 	*/
 	static bool QueryTeamInfoByKeywordAsync(const std::string& keyword, const QueryTeamsInfoCallback& cb, const std::string& json_extension = "");
+
+	/** @fn static void UpdateTInfoLocal(const std::list<TeamInfo>& team_infos, const UpdateTInfoLocalCallback& cb,bool notify_event = true,  const std::string& json_extension = "")
+	* 更新群信息顺丰专用
+	* @param[in] tid		群组id
+	* @param[in] team_infos	群组信息
+	* @param[in] notify_event	更新后是否触发事件以通知应用层
+	* @param[in] cb		更新群信息的回调函数,回调中会指明更新成功与失败的群ID
+	* @param[in] json_extension json扩展参数（备用，目前不需要）
+	* @return void
+	*/
+	static void UpdateTInfoLocal(const std::list<TeamInfo>& team_infos, const UpdateTInfoLocalCallback& cb, const std::string& json_extension = "");
+
+	/** @fn static bool GetTeamInfoBatch(const GetTeamInfoBatchCallback& cb, uint64_t  time_tag = 0, const std::string& json_extension = "")
+* 查询所有群顺丰专用
+* @param[in] cb		查询所有群的回调函数
+* @param[in] time_tag	时间戳，没有特殊需求此参数赋0
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @return void 无返回值
+*/
+	static void GetTeamInfoBatchSFTrans(const GetTeamInfoBatchSFTransCallback& cb, uint64_t  time_tag = 0, const std::string& json_extension = "");
+
 };
 
 } 

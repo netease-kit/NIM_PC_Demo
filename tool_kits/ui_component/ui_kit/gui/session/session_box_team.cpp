@@ -73,7 +73,7 @@ void SessionBox::OnGetTeamInfoCallback(const std::string& tid, const nim::TeamIn
 	is_header_enable_ = true;
 
 	ShowEditControls();
-	ResetNewBroadButtonVisible();
+	RefreshNewbroadButtonState();
 }
 
 void SessionBox::InvokeGetTeamMember()
@@ -81,20 +81,119 @@ void SessionBox::InvokeGetTeamMember()
 	btn_refresh_member_->SetEnabled(false);
 	nim::Team::QueryTeamMembersAsync(session_id_, nbase::Bind(&SessionBox::OnGetTeamMemberCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 }
-
+void SessionBox::RefreshMemberList(bool sort/* = false*/)
+{
+	if (sort)
+		SortTeamMembers();
+	if (member_list_ != nullptr)
+		member_list_->Refresh();
+}
+void SessionBox::AddTeamMemberData(const nim::TeamMemberProperty& data)
+{
+	auto ptr_data = std::make_shared<nim::TeamMemberProperty>(data);
+	team_member_info_list_[data.GetAccountID()] = ptr_data;
+	team_member_sort_list_.emplace_back(ptr_data);
+	if (data.GetUserType() == nim::kNIMTeamUserTypeCreator)
+		team_owner_accid_ = data.GetAccountID();
+}
+void SessionBox::RemoveTeamMemberData(const std::string uid)
+{
+	team_member_info_list_.erase(uid);
+	auto it = std::find_if(team_member_sort_list_.begin(), team_member_sort_list_.end(), [&](const std::shared_ptr<nim::TeamMemberProperty>& item) {
+		return uid.compare(item->GetAccountID()) == 0;
+		});
+	if (it != team_member_sort_list_.end())
+		team_member_sort_list_.erase(it);
+}
+void SessionBox::RemoveTeamMemberData(const std::list<std::string> uid_list)
+{
+	for (auto it : uid_list)
+		RemoveTeamMemberData(it);
+}
+void SessionBox::SetTeamMemberDataAdmin(const std::string uid, bool admin)
+{
+	if (team_member_info_list_.find(uid) != team_member_info_list_.end())
+		team_member_info_list_[uid]->SetUserType(admin ? nim::kNIMTeamUserTypeManager : nim::kNIMTeamUserTypeNomal);
+	auto it = std::find_if(team_member_sort_list_.begin(), team_member_sort_list_.end(), [&](const std::shared_ptr<nim::TeamMemberProperty>& item) {
+		return uid.compare(item->GetAccountID()) == 0;
+		});
+	if (it != team_member_sort_list_.end())
+		(*it)->SetUserType(admin ? nim::kNIMTeamUserTypeManager : nim::kNIMTeamUserTypeNomal);
+}
+void SessionBox::TeamOwnerChanged(const std::string new_owner_accid)
+{
+	if (team_owner_accid_ == new_owner_accid)
+		return;
+	auto info_list_it = team_member_info_list_.find(team_owner_accid_);
+	if (info_list_it != team_member_info_list_.end())
+		info_list_it->second->SetUserType(nim::kNIMTeamUserTypeNomal);
+	auto sort_list_it = std::find_if(team_member_sort_list_.begin(), team_member_sort_list_.end(), [&](const std::shared_ptr<nim::TeamMemberProperty>& item) {
+		return team_owner_accid_.compare(item->GetAccountID()) == 0;
+		});
+	if (sort_list_it != team_member_sort_list_.end())
+		(*sort_list_it)->SetUserType(nim::kNIMTeamUserTypeNomal);
+	team_owner_accid_ = new_owner_accid;
+	info_list_it = team_member_info_list_.find(team_owner_accid_);
+	if (info_list_it != team_member_info_list_.end())
+		info_list_it->second->SetUserType(nim::kNIMTeamUserTypeCreator);
+	sort_list_it = std::find_if(team_member_sort_list_.begin(), team_member_sort_list_.end(), [&](const std::shared_ptr<nim::TeamMemberProperty>& item) {
+		return team_owner_accid_.compare(item->GetAccountID()) == 0;
+		});
+	if (sort_list_it != team_member_sort_list_.end())
+		(*sort_list_it)->SetUserType(nim::kNIMTeamUserTypeCreator);
+}
+void SessionBox::RefreshNewbroadButtonState()
+{
+	bool set_new_broad_visible = team_info_.GetUpdateInfoMode() == nim::kNIMTeamUpdateCustomModeEveryone;
+	auto info_list_it = team_member_info_list_.find(team_owner_accid_);
+	if (info_list_it != team_member_info_list_.end())
+	{
+		if (info_list_it->second->GetUserType() == nim::kNIMTeamUserTypeCreator || info_list_it->second->GetUserType() == nim::kNIMTeamUserTypeManager)
+			set_new_broad_visible = true;
+	}
+	btn_new_broad_->SetVisible(set_new_broad_visible);
+	btn_new_broad_->SetEnabled(set_new_broad_visible);	
+}
+void SessionBox::SortTeamMembers()
+{
+	std::sort(team_member_sort_list_.begin(), team_member_sort_list_.end(), [](const std::shared_ptr<nim::TeamMemberProperty>& item1, const std::shared_ptr<nim::TeamMemberProperty>& item2) {
+		auto get_user_type = [](const std::shared_ptr<nim::TeamMemberProperty>& itme) {
+			switch (itme->GetUserType())
+			{
+			case nim::kNIMTeamUserTypeNomal:
+				return 0;
+			case nim::kNIMTeamUserTypeManager:
+				return 1;
+			case nim::kNIMTeamUserTypeCreator:
+				return 3;
+			default:
+				return -1;
+			}
+		};
+		auto user_type1 = get_user_type(item1);
+		auto user_type2 = get_user_type(item2);
+		if (user_type1 == user_type2)
+			return std::less<std::string>()(item1->GetAccountID(), item2->GetAccountID());
+		else
+			return user_type2 < user_type1;
+		});
+}
 void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, const std::list<nim::TeamMemberProperty>& team_member_info_list)
 {
 	team_member_info_list_.clear();
+	team_member_sort_list_.clear();
+	if(team_member_info_list.size() > 255)
+		team_member_sort_list_.reserve(team_member_info_list.size());
 	std::set<std::string> account_set;
 	for (auto& it : team_member_info_list)
 	{
 		if (IsTeamMemberType(it.GetUserType()))
 		{
-			team_member_info_list_[it.GetAccountID()] = it;
+			AddTeamMemberData(it);
 			account_set.insert(it.GetAccountID());
 		}
-	}
-
+	}	
+	SortTeamMembers();
 	// 设置群信息
 	btn_refresh_member_->SetEnabled(true);
 	member_list_->RemoveAll();
@@ -108,51 +207,20 @@ void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, cons
 	AtlistForm* at_list_form = (AtlistForm*)WindowsManager::GetInstance()->GetWindow(AtlistForm::kClassName, nbase::UTF8ToUTF16(session_id_));
 	if (at_list_form)
 		at_list_form->InitTeamMembers(team_member_info_list_);
-
+	member_list_->Refresh();
+	
 	// 初始化群成员控件
 	for (const auto &tm_info : team_member_info_list_)
 	{
-		std::string uid = tm_info.second.GetAccountID();
-		if (member_list_->FindSubControl(nbase::UTF8ToUTF16(uid)) == NULL)
-		{
-			TeamItem* item = new TeamItem;
-			GlobalManager::FillBoxWithCache(item, L"session/team_item.xml");
-			auto user_type = tm_info.second.GetUserType();
-			if (user_type == nim::kNIMTeamUserTypeCreator)
-				member_list_->AddAt(item, 0);
-			else
-				member_list_->Add(item);
-
-			item->InitControl();
-			item->InitInfo(tm_info.second);
-			SetTeamMemberMute(tid, uid, tm_info.second.IsMute());
-		}
-		else
-		{
-			QLOG_WAR(L"OnGetTeamMemberCb found the duplicate id, id={0}") << nbase::UTF8ToUTF16(uid).c_str();
-		}
-
-		RefreshMsglistShowname(uid); //刷新消息列表中显示的名字
-
-		bool set_new_broad_visible = team_info_.GetUpdateInfoMode() == nim::kNIMTeamUpdateCustomModeEveryone;
-		if (!set_new_broad_visible)
-		{
-			if (LoginManager::GetInstance()->IsEqual(tm_info.second.GetAccountID()))
-			{
-				if (tm_info.second.GetUserType() == nim::kNIMTeamUserTypeCreator || tm_info.second.GetUserType() == nim::kNIMTeamUserTypeManager)
-				{
-					btn_new_broad_->SetVisible(true);
-					btn_new_broad_->SetEnabled(true);
-				}
-				set_new_broad_visible = true;
-			}
-		}
-
-		if (LoginManager::GetInstance()->IsEqual(tm_info.second.GetAccountID()))
-		{
-			auto bits = tm_info.second.GetBits();
-			InvokeSetTeamNotificationMode(bits);
-		}
+		std::string uid = tm_info.second->GetAccountID();
+		RefreshMsglistShowname(uid); //刷新消息列表中显示的名字	
+	}
+	RefreshNewbroadButtonState();
+	auto it = team_member_info_list_.find(LoginManager::GetInstance()->GetAccount());
+	if (it != team_member_info_list_.end())
+	{
+		auto bits = it->second->GetBits();
+		InvokeSetTeamNotificationMode(bits);
 	}
 }
 
@@ -166,40 +234,11 @@ void SessionBox::OnTeamNotificationModeChangeCallback(const std::string& id, int
 	if (session_id_ == id)
 		InvokeSetTeamNotificationMode(bits);
 }
-
-void SessionBox::ResetNewBroadButtonVisible()
-{
-	if (team_info_.GetUpdateInfoMode() != nim::kNIMTeamUpdateCustomModeEveryone)
-	{
-		for (const auto &tm_info : team_member_info_list_)
-		{
-			if (LoginManager::GetInstance()->IsEqual(tm_info.second.GetAccountID()))
-			{
-				if (tm_info.second.GetUserType() == nim::kNIMTeamUserTypeCreator || tm_info.second.GetUserType() == nim::kNIMTeamUserTypeManager)
-				{
-					btn_new_broad_->SetVisible(true);
-					btn_new_broad_->SetEnabled(true);
-				}					
-				else
-				{
-					btn_new_broad_->SetVisible(false);
-				}					
-				break;
-			}
-		}
-	}
-	else
-	{
-		btn_new_broad_->SetVisible(true);
-		btn_new_broad_->SetEnabled(true);
-	}		
-}
-
 nim::TeamMemberProperty SessionBox::GetTeamMemberInfo(const std::string& uid)
 {
 	auto iter = team_member_info_list_.find(uid);
 	if (iter != team_member_info_list_.cend())
-		return iter->second;
+		return *iter->second;
 	else
 		return nim::TeamMemberProperty();
 }
@@ -211,64 +250,38 @@ void SessionBox::OnTeamMemberAdd(const std::string& tid, const nim::TeamMemberPr
 
 	if(tid == session_id_)
 	{
-		team_member_info_list_[team_member_info.GetAccountID()] = team_member_info;
-		std::wstring wid = nbase::UTF8ToUTF16(team_member_info.GetAccountID());
+		AddTeamMemberData(team_member_info);
 
-		Control* ctrl = member_list_->FindSubControl(wid);
-		if (ctrl)
-		{
-			QLOG_WAR(L"OnTeamMemberAdd found the duplicate id, id={0}") << wid.c_str();
-			member_list_->Remove(ctrl);
-		}
-
-		TeamItem* item = new TeamItem;
-		GlobalManager::FillBoxWithCache(item, L"session/team_item.xml");
-		auto user_type = team_member_info.GetUserType();
-		if (user_type == nim::kNIMTeamUserTypeCreator)
-			member_list_->AddAt(item, 0);
-		else
-			member_list_->Add(item);
-
-		item->InitControl();
-		item->InitInfo(team_member_info);
 		std::string uid = team_member_info.GetAccountID();
-		if (mute_all_ && user_type != nim::kNIMTeamUserTypeCreator && user_type != nim::kNIMTeamUserTypeManager)
+		if (mute_all_ && team_member_info.GetUserType() != nim::kNIMTeamUserTypeCreator && team_member_info.GetUserType() != nim::kNIMTeamUserTypeManager)
 			SetTeamMemberMute(tid, uid, team_member_info.IsMute());
 		else
 			SetTeamMemberMute(tid, uid, team_member_info.IsMute());
 
-		std::wstring str = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MEMBER_NUM_EX").c_str(), member_list_->GetCount());
+		std::wstring str = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MEMBER_NUM_EX").c_str(), team_member_info_list_.size());
 		label_member_->SetText(str);
 
 		if (LoginManager::GetInstance()->IsEqual(team_member_info.GetAccountID()))
 		{
 			btn_header_->SetEnabled(true);
 		}
+		RefreshMemberList(true);
 	}
 }
 
 void SessionBox::OnTeamMemberRemove(const std::string& tid, const std::list<std::string>& uid_list)
 {
+	RemoveTeamMemberData(uid_list);
+	RefreshMemberList(true);
+	std::wstring str = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MEMBER_NUM_EX").c_str(), team_member_info_list_.size());
+	label_member_->SetText(str);
 	if(tid == session_id_)
 	{
 		for (auto uid : uid_list)
-		{
-			std::wstring wid = nbase::UTF8ToUTF16(uid);
-
-			Control* ctrl = member_list_->FindSubControl(wid);
-			if (ctrl)
-			{
-				member_list_->Remove(ctrl);
-			}
-
-			std::wstring str = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MEMBER_NUM_EX").c_str(), member_list_->GetCount());
-			label_member_->SetText(str);
-
-			team_member_info_list_.erase(uid);
-
-			RefreshMsglistShowname(uid);
+		{			
+			RefreshMsglistShowname(uid);			
 		}		
-	}
+	}	
 }
 
 void SessionBox::OnTeamMemberChange(const std::string& tid_uid, const std::string& team_card)
@@ -280,7 +293,7 @@ void SessionBox::OnTeamMemberChange(const std::string& tid_uid, const std::strin
 		auto it = team_member_info_list_.find(uid);
 		if (it != team_member_info_list_.end())
 		{
-			it->second.SetNick(team_card);
+			it->second->SetNick(team_card);
 		}
 		std::wstring wid = nbase::UTF8ToUTF16(uid);
 
@@ -296,23 +309,10 @@ void SessionBox::OnTeamAdminSet(const std::string& tid, const std::string& uid, 
 {
 	if(tid == session_id_)
 	{
-		//更新数据
-		if (team_member_info_list_.find(uid) != team_member_info_list_.end())
-			team_member_info_list_[uid].SetUserType(admin ? nim::kNIMTeamUserTypeManager : nim::kNIMTeamUserTypeNomal);
-		std::wstring wid = nbase::UTF8ToUTF16(uid);		
-		TeamItem* item = dynamic_cast<TeamItem*>(member_list_->FindSubControl(wid));
-		if(item)
-		{
-			item->SetAdmin(admin);
-		}
-
-		if (team_info_.GetUpdateInfoMode() != nim::kNIMTeamUpdateCustomModeEveryone && LoginManager::GetInstance()->IsEqual(uid))
-		{
-			btn_new_broad_->SetVisible(admin);
-			btn_new_broad_->SetEnabled(admin);
-		}
-
+		SetTeamMemberDataAdmin(uid, admin);
+		RefreshNewbroadButtonState();
 		ShowEditControls();
+		RefreshMemberList(true);
 	}
 }
 
@@ -322,9 +322,9 @@ void SessionBox::OnTeamMuteMember(const std::string& tid, const std::string& uid
 	{
 		for (auto& member : team_member_info_list_)
 		{
-			if (member.second.GetAccountID() == uid)
+			if (member.second->GetAccountID() == uid)
 			{
-				member.second.SetMute(set_mute);
+				member.second->SetMute(set_mute);
 			}
 		}
 
@@ -337,45 +337,10 @@ void SessionBox::OnTeamOwnerChange(const std::string& tid, const std::string& ui
 {
 	if (tid == session_id_)
 	{
-		for (auto& it_member : team_member_info_list_)
-		{
-			if (it_member.second.GetUserType() == nim::kNIMTeamUserTypeCreator && it_member.second.GetAccountID() != uid)
-				it_member.second.SetUserType(nim::kNIMTeamUserTypeNomal);
-		}
-		auto team_member = team_member_info_list_.find(uid);
-		if (team_member != team_member_info_list_.end())
-		{
-			team_member->second.SetUserType(nim::kNIMTeamUserTypeCreator);
-		}
-
-		std::wstring wid = nbase::UTF8ToUTF16(uid);
-		for (int i = 0; i < member_list_->GetCount(); i++)
-		{
-			TeamItem* item = dynamic_cast<TeamItem*>(member_list_->GetItemAt(i));
-			if (item->GetTeamUserType() == nim::kNIMTeamUserTypeCreator)
-			{
-				item->SetOwner(false);
-
-				if (team_info_.GetUpdateInfoMode() == nim::kNIMTeamUpdateCustomModeEveryone)
-					break;
-
-				if(LoginManager::GetInstance()->IsEqual(item->GetUTF8Name()))
-					btn_new_broad_->SetVisible(false);
-
-				break;
-			}
-		}
-
-		TeamItem* item = dynamic_cast<TeamItem*>(member_list_->FindSubControl(wid));
-		if (item)
-			item->SetOwner(true);
-		if (LoginManager::GetInstance()->IsEqual(nbase::UTF16ToUTF8(wid)))
-		{
-			btn_new_broad_->SetVisible(true);
-			btn_new_broad_->SetEnabled(true);
-		}
-
+		TeamOwnerChanged(uid);
+		RefreshNewbroadButtonState();		
 		ShowEditControls();
+		RefreshMemberList(true);
 	}
 }
 
@@ -538,7 +503,7 @@ void SessionBox::HandleEnterTeamEvent()
 	RemoveTip(STT_LEAVE);
 	is_team_valid_ = true;
 	is_header_enable_ = true;
-	ResetNewBroadButtonVisible();
+	RefreshNewbroadButtonState();
 
 	input_edit_->SetEnabled(true);
 	input_edit_->SetReadOnly(false);
@@ -624,21 +589,44 @@ void SessionBox::ShowEditControls()
 {
 	nim::NIMTeamUserType member_type = nim::kNIMTeamUserTypeNomal;
 	bool member_is_mute = false;
-	for (const auto& member : team_member_info_list_)
+	auto it = team_member_info_list_.find(LoginManager::GetInstance()->GetAccount());
+	if (it != team_member_info_list_.end())
 	{
-		if (member.second.GetAccountID() == LoginManager::GetInstance()->GetAccount())
-		{
-			member_type = member.second.GetUserType();
-			member_is_mute = member.second.IsMute();
-			break;
-		}
+		member_type = it->second->GetUserType();
+		member_is_mute = it->second->IsMute();
 	}
-
 	bool disable_input = mute_all_ && member_type != nim::kNIMTeamUserTypeCreator && member_type != nim::kNIMTeamUserTypeManager;
 	input_edit_->SetEnabled(!(disable_input || member_is_mute));
 	input_edit_->SetReadOnly((disable_input || member_is_mute));
 	bottom_panel_->SetEnabled(!(disable_input || member_is_mute));
 	FindSubControl(L"mute_tips")->SetVisible(mute_all_);
+}
+ui::Control* SessionBox::CreateElement()
+{
+	TeamItem* item = new TeamItem;
+	GlobalManager::FillBoxWithCache(item, L"session/team_item.xml");
+	return item;	
+}
+
+void SessionBox::FillElement(ui::Control* control, int index)
+{
+	TeamItem* item = (TeamItem*)control;	
+	if (nullptr == item || index >= (int)team_member_sort_list_.size())
+		return;
+	auto it = team_member_sort_list_.at(index);
+	item->SetUTF8Name(it->GetAccountID());
+	item->InitControl();
+	item->InitInfo(*it);	
+	if (it->GetUserType() == nim::kNIMTeamUserTypeManager)
+		item->SetAdmin(true);
+	else if (it->GetUserType() == nim::kNIMTeamUserTypeCreator)
+		item->SetOwner(true);
+	SetTeamMemberMute(it->GetTeamID(), it->GetAccountID(), it->IsMute());
+}
+
+int SessionBox::GetElementtCount()
+{
+	return (int)team_member_sort_list_.size();
 }
 
 }

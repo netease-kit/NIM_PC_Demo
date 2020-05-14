@@ -23,7 +23,17 @@ namespace nim_comp
 SessionItem::SessionItem()
 	: is_online_session_(false)
 {
-
+	if (RunTimeDataManager::GetInstance()->GetUIStyle() == UIStyle::join)
+	{
+		DetachEvent(ui::EventType::kEventSelect);
+		AttachSelect(nbase::Bind(&SessionItem::OnDbClicked, this, std::placeholders::_1));
+	}
+	else
+	{
+		DetachEvent(ui::EventType::kEventMouseDoubleClick);
+		AttachDoubleClick(nbase::Bind(&SessionItem::OnDbClicked, this, std::placeholders::_1));
+	}
+	SelectWhenInternalMenu(false);
 }
 
 SessionItem::~SessionItem()
@@ -33,11 +43,7 @@ SessionItem::~SessionItem()
 
 void SessionItem::InitCtrl()
 {
-	if (RunTimeDataManager::GetInstance()->GetUIStyle() == UIStyle::join)
-		AttachSelect(nbase::Bind(&SessionItem::OnDbClicked, this, std::placeholders::_1));
-	else
-		AttachDoubleClick(nbase::Bind(&SessionItem::OnDbClicked, this, std::placeholders::_1));
-
+	
 	label_name_ = (Label*) this->FindSubControl(L"label_name");
 	label_msg_ = (Label*) this->FindSubControl(L"label_msg");
 	label_online_state_ = (Label*) this->FindSubControl(L"online_state");
@@ -48,18 +54,20 @@ void SessionItem::InitCtrl()
 	head_image_ = (ButtonBox*)this->FindSubControl(L"head_image");
 }
 
-void SessionItem::InitMsg(const nim::SessionData &msg)
+void SessionItem::InitMsg(const std::shared_ptr< nim::SessionData> &msg)
 {
 	msg_ = msg;
-	if (msg_.type_ == nim::kNIMSessionTypeTeam
-		|| msg_.type_ == nim::kNIMSessionTypeP2P)
+	if (msg_->type_ == nim::kNIMSessionTypeTeam
+		|| msg_->type_ == nim::kNIMSessionTypeP2P)
 	{
-		head_image_->AttachClick(nbase::Bind(&SessionItem::OnHeadImageClicked, this, msg_.is_robot_session_, std::placeholders::_1));
+		head_image_->DetachEvent(ui::EventType::kEventClick);
+		head_image_->AttachClick(nbase::Bind(&SessionItem::OnHeadImageClicked, this, msg_->is_robot_session_, std::placeholders::_1));
+		DetachEvent(ui::EventType::kEventMouseMenu);
 		this->AttachMenu(nbase::Bind(&SessionItem::OnSessionItemMenu, this, std::placeholders::_1));
 	}
 
-	SetUTF8Name(msg_.id_);
-	SetUTF8DataID(msg_.id_);
+	SetUTF8Name(msg_->id_);
+	SetUTF8DataID(msg_->id_);
 
 	InitUserProfile(); //设置用户名和头像
 	UpdateMsgContent(); //更新消息内容
@@ -67,24 +75,24 @@ void SessionItem::InitMsg(const nim::SessionData &msg)
 	ShowAtmeTip(true);
 
 	//更新时间
-	if (msg_.msg_timetag_ > 0 && msg_.msg_status_ != nim::kNIMMsgLogStatusDeleted)
+	if (msg_->msg_timetag_ > 0 && msg_->msg_status_ != nim::kNIMMsgLogStatusDeleted)
 	{
-		std::wstring str = GetMessageTime(msg_.msg_timetag_, true);
+		std::wstring str = GetMessageTime(msg_->msg_timetag_, true);
 		label_time_->SetText(str);
 		label_time_->SetVisible(true);
 	}
 	else
 		label_time_->SetVisible(false);
 
-	if (msg_.type_ == nim::kNIMSessionTypeTeam) // 需要先获得群里最近一条消息中所有人的昵称，再UpdateMsg
+	if (msg_->type_ == nim::kNIMSessionTypeTeam) // 需要先获得群里最近一条消息中所有人的昵称，再UpdateMsg
 	{
 		//head_image_->SetMouseEnabled(false); //群头像不响应点击
 
 		relate_ids.clear();
-		relate_ids.insert(msg_.msg_sender_accid_);
+		relate_ids.insert(msg_->msg_sender_accid_);
 		Json::Reader reader;
 		Json::Value attach;
-		if (reader.parse(msg_.msg_attach_, attach))
+		if (reader.parse(msg_->msg_attach_, attach))
 		{
 			if (attach.isObject() && attach.isMember(nim::kNIMNotificationKeyData))
 			{
@@ -110,19 +118,19 @@ void SessionItem::InitMsg(const nim::SessionData &msg)
 	else if (SubscribeEventManager::GetInstance()->IsEnabled())
 	{
 		EventDataEx data;
-		SubscribeEventManager::GetInstance()->GetEventData(nim::kNIMEventTypeOnlineState, msg.id_, data);
-		if (data.online_client_.online_client_type_.size() == 0 && msg.id_ == LoginManager::GetInstance()->GetAccount())
+		SubscribeEventManager::GetInstance()->GetEventData(nim::kNIMEventTypeOnlineState, msg->id_, data);
+		if (data.online_client_.online_client_type_.size() == 0 && msg->id_ == LoginManager::GetInstance()->GetAccount())
 			data.online_client_.online_client_type_.insert(nim::kNIMClientTypePCWindows);
 		SetOnlineState(data);
 	}
 
-	if (msg_.type_ == nim::kNIMSessionTypeP2P)
+	if (msg_->type_ == nim::kNIMSessionTypeP2P)
 	{
-		SetMute(nim_comp::MuteBlackService::GetInstance()->IsInMuteList(msg_.id_));
+		SetMute(nim_comp::MuteBlackService::GetInstance()->IsInMuteList(msg_->id_));
 	}
 	else
 	{
-		SetMute(nim_comp::SessionManager::GetInstance()->IsTeamMsgMuteShown(msg_.id_, -1));
+		SetMute(nim_comp::SessionManager::GetInstance()->IsTeamMsgMuteShown(msg_->id_, -1));
 	}
 }
 
@@ -138,29 +146,29 @@ void SessionItem::SetMute(bool mute)
 
 void SessionItem::InitUserProfile()
 {
-	if (msg_.type_ == nim::kNIMSessionTypeP2P)
+	if (msg_->type_ == nim::kNIMSessionTypeP2P)
 	{
-		if (LoginManager::GetInstance()->IsEqual(msg_.id_))
+		if (LoginManager::GetInstance()->IsEqual(msg_->id_))
 		{
 			label_name_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_MY_MOBILEPHONE"));
 		}
 		else
 		{
-			label_name_->SetText(UserService::GetInstance()->GetUserName(msg_.id_));
+			label_name_->SetText(UserService::GetInstance()->GetUserName(msg_->id_));
 		}
-		head_image_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(msg_.id_));
+		head_image_->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(msg_->id_));
 	}
 	else
 	{
-		std::wstring tname = TeamService::GetInstance()->GetTeamName(msg_.id_);
+		std::wstring tname = TeamService::GetInstance()->GetTeamName(msg_->id_);
 		label_name_->SetText(tname);
-		head_image_->SetBkImage(PhotoService::GetInstance()->GetTeamPhoto(msg_.id_, false));
+		head_image_->SetBkImage(PhotoService::GetInstance()->GetTeamPhoto(msg_->id_, false));
 	}
 }
 
 void SessionItem::SetOnlineState(const EventDataEx& data)
 {
-	label_online_state_->SetText(OnlineStateEventUtil::GetOnlineState(msg_.id_, data, true));
+	label_online_state_->SetText(OnlineStateEventUtil::GetOnlineState(msg_->id_, data, true));
 }
 void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 {
@@ -168,16 +176,16 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 		return;
 
 	std::wstring show_text;
-	if (msg_.msg_status_ != nim::kNIMMsgLogStatusDeleted)
+	if (msg_->msg_status_ != nim::kNIMMsgLogStatusDeleted)
 	{
-		SessionItemHelper::GetMsgContent(msg_, show_text);
+		SessionItemHelper::GetMsgContent(*msg_, show_text);
 
 		bool need_prefix = true;
-		if (msg_.msg_type_ == nim::kNIMMessageTypeText)
+		if (msg_->msg_type_ == nim::kNIMMessageTypeText)
 		{
 			Json::Value values;
 			Json::Reader reader;
-			if (reader.parse(msg_.msg_attach_, values)
+			if (reader.parse(msg_->msg_attach_, values)
 				&& values.isObject()
 				&& values.isMember("comment")
 				&& values["comment"].asString() == "is_recall_notification")
@@ -190,18 +198,18 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 					std::string operator_id = values["operator_id"].asString();
 					if (operator_id.empty())
 						operator_id = from_id;
-					show_text = GetRecallNotifyTextEx(msg_.id_, msg_.type_, from_id, operator_id,from_nick);
+					show_text = GetRecallNotifyTextEx(msg_->id_, msg_->type_, from_id, operator_id,from_nick);
 				}
 			}
 		}
 
-		if (need_prefix && msg_.type_ == nim::kNIMSessionTypeTeam)
+		if (need_prefix && msg_->type_ == nim::kNIMSessionTypeTeam)
 		{
-			if (msg_.msg_type_ == nim::kNIMMessageTypeNotification && !IsNetCallMsg((nim::NIMMessageType)msg_.msg_type_, msg_.msg_attach_))
+			if (msg_->msg_type_ == nim::kNIMMessageTypeNotification && !IsNetCallMsg((nim::NIMMessageType)msg_->msg_type_, msg_->msg_attach_))
 				; // do nothing
 			else
 			{
-				switch (msg_.msg_type_)
+				switch (msg_->msg_type_)
 				{
 				case nim::kNIMMessageTypeText:
 				case nim::kNIMMessageTypeImage:
@@ -214,7 +222,7 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 				case nim::kNIMMessageTypeCustom:
 				case nim::kNIMMessageTypeUnknown:
 				{
-					std::wstring nick_name = UserService::GetInstance()->GetUserName(msg_.msg_sender_accid_);
+					std::wstring nick_name = UserService::GetInstance()->GetUserName(msg_->msg_sender_accid_);
 					if (!nick_name.empty())
 					{
 						show_text = nick_name + L": " + show_text;
@@ -227,7 +235,7 @@ void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 			}
 		}
 
-		if (msg_.msg_status_ == nim::kNIMMsgLogStatusSendFailed)
+		if (msg_->msg_status_ == nim::kNIMMsgLogStatusSendFailed)
 		{
 			show_text = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_FAILED") + show_text;
 		}
@@ -244,38 +252,37 @@ void SessionItem::ClearMsg()
 
 long long SessionItem::GetMsgTime()
 {
-	return msg_.msg_timetag_;
+	return msg_->msg_timetag_;
 }
 
 int SessionItem::GetUnread()
 {
-	return msg_.unread_count_;
+	return msg_->unread_count_;
 }
 
 void SessionItem::SetUnread(int unread)
 {
-	msg_.unread_count_ = unread;
+	if (is_online_session_)
+		msg_->unread_count_ = unread;
 	UpdateUnread();
 }
 
 void SessionItem::AddUnread()
 {
-	msg_.unread_count_++;
+	if (is_online_session_)
+		msg_->unread_count_ += 1;
 	UpdateUnread();
-
 	ShowAtmeTip(true);
 }
 
 void SessionItem::ResetUnread()
 {
-	if (msg_.unread_count_ > 0)
-	{
-		msg_.unread_count_ = 0;
-		UpdateUnread();
-		ShowAtmeTip(false);
-
-		InvokeResetUnread(msg_.id_, msg_.type_);
-	}
+	if (is_online_session_ && msg_->unread_count_ != 0)
+		msg_->unread_count_ = 0;
+	UpdateUnread();
+	ShowAtmeTip(false);
+	InvokeResetUnread(msg_->id_, msg_->type_);
+	Invalidate();
 }
 
 void SessionItem::DeleteRecentSessionCb(nim::NIMResCode code, const nim::SessionData &result, int total_unread_counts)
@@ -294,7 +301,7 @@ void SessionItem::ShowAtmeTip(bool show)
 {
 	if (show)
 	{
-		label_atme_->SetVisible((ForcePushManager::GetInstance()->IsContainAtMeMsg(msg_.id_)));
+		label_atme_->SetVisible((ForcePushManager::GetInstance()->IsContainAtMeMsg(msg_->id_)));
 	}
 	else
 	{
@@ -304,10 +311,10 @@ void SessionItem::ShowAtmeTip(bool show)
 
 void SessionItem::UpdateUnread()
 {
-	if (msg_.unread_count_ > 0)
+	if (msg_->unread_count_ > 0)
 	{
-		if (msg_.unread_count_ < 100) {
-			label_unread_->SetText(nbase::StringPrintf(L"%d", msg_.unread_count_));
+		if (msg_->unread_count_ < 100) {
+			label_unread_->SetText(nbase::StringPrintf(L"%d", msg_->unread_count_));
 		}
 		else {
 			label_unread_->SetText(L"99+");
@@ -317,16 +324,17 @@ void SessionItem::UpdateUnread()
 	else
 	{
 		box_unread_->SetVisible(false);
+		label_unread_->SetText(L"0");
 	}
 
-	if (msg_.unread_count_ == 0)
+	if (msg_->unread_count_ == 0)
 		// 重置对应会话中的@me消息为已读
-		ForcePushManager::GetInstance()->ResetAtMeMsg(msg_.id_);
+		ForcePushManager::GetInstance()->ResetAtMeMsg(msg_->id_);
 
 	// 通知会话窗口中的会话合并项
-	SessionBox *session_box = SessionManager::GetInstance()->FindSessionBox(msg_.id_);
+	SessionBox *session_box = SessionManager::GetInstance()->FindSessionBox(msg_->id_);
 	if (session_box)
-		session_box->GetSessionForm()->InvokeSetSessionUnread(msg_.id_, msg_.unread_count_);
+		session_box->GetSessionForm()->InvokeSetSessionUnread(msg_->id_, msg_->unread_count_);
 }
 
 void SessionItem::PopupSessionItemMenu(POINT point)
@@ -351,7 +359,7 @@ void SessionItem::PopupSessionItemMenu(POINT point)
 
 	ui::ListContainerElement* del_session_msg_online = (ui::ListContainerElement*)pMenu->FindControl(L"del_session_msg_online");
 	if (del_session_msg_online != nullptr)
-		if (msg_.type_ == nim::kNIMSessionTypeP2P)
+		if (msg_->type_ == nim::kNIMSessionTypeP2P)
 		{
 			del_session_msg_online->SetVisible(true);
 			del_session_msg_online->AttachSelect(nbase::Bind(&SessionItem::DelSessionItemMenuItemClick, this, std::placeholders::_1));
@@ -369,7 +377,7 @@ bool SessionItem::DelSessionItemMenuItemClick(ui::EventArgs* param)
 	std::wstring name = param->pSender->GetName();
 	if (name == L"del_session_item")
 	{
-		bool has_transfer_task = TransferFileManager::GetInstance()->HasTransferTask(msg_.id_);
+		bool has_transfer_task = TransferFileManager::GetInstance()->HasTransferTask(msg_->id_);
 
 		auto closure = [this, has_transfer_task](MsgBoxRet ret) {
 			if (ret == MB_YES)
@@ -377,21 +385,21 @@ bool SessionItem::DelSessionItemMenuItemClick(ui::EventArgs* param)
 				if (is_online_session_)
 				{
 					nim::SessionOnLineServiceHelper::DeleteSessionParam delete_param;
-					delete_param.AddSession(msg_.type_, msg_.id_);
+					delete_param.AddSession(msg_->type_, msg_->id_);
 					nim::SessionOnLineService::DeleteSession(delete_param, [](nim::NIMResCode res_code) {
 						QLOG_APP(L"delete online session, code={0}") << res_code;
 					});
 				}
 				else
 				{
-					nim::Session::DeleteRecentSession(msg_.type_, msg_.id_, nbase::Bind(&SessionItem::DeleteRecentSessionCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+					nim::Session::DeleteRecentSession(msg_->type_, msg_->id_, nbase::Bind(&SessionItem::DeleteRecentSessionCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 				}
-				SubscribeEventManager::GetInstance()->UnSubscribeSessionEvent(msg_);
+				SubscribeEventManager::GetInstance()->UnSubscribeSessionEvent(*msg_);
 				m_pWindow->SendNotify(this, ui::kEventNotify, SET_DELETE, 0);
 
 				if (has_transfer_task)
 				{
-					TransferFileManager::GetInstance()->RemoveAllTaskBySessionBoxId(msg_.id_);
+					TransferFileManager::GetInstance()->RemoveAllTaskBySessionBoxId(msg_->id_);
 				}
 			}
 		};
@@ -407,9 +415,9 @@ bool SessionItem::DelSessionItemMenuItemClick(ui::EventArgs* param)
 	}
 	else if (name == L"del_session_msg")
 	{
-		nim::Session::SetUnreadCountZeroAsync(msg_.type_, msg_.id_, ToWeakCallback([this](nim::NIMResCode res_code, const nim::SessionData&, int){
+		nim::Session::SetUnreadCountZeroAsync(msg_->type_, msg_->id_, ToWeakCallback([this](nim::NIMResCode res_code, const nim::SessionData&, int){
 			if (res_code == nim::kNIMResSuccess)			
-			nim::MsgLog::BatchStatusDeleteAsyncEx(msg_.id_, msg_.type_, (atoi(GetConfigValue("kNIMMsglogRevert").c_str()) != 0),
+			nim::MsgLog::BatchStatusDeleteAsyncEx(msg_->id_, msg_->type_, (atoi(GetConfigValue("kNIMMsglogRevert").c_str()) != 0),
 				nbase::Bind(&SessionItem::BatchStatusDeleteCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 		}));		
 	}
@@ -418,7 +426,7 @@ bool SessionItem::DelSessionItemMenuItemClick(ui::EventArgs* param)
 		auto box = dynamic_cast<ui::ListContainerElement*>(param->pSender);
 		bool delete_roaming = dynamic_cast<ui::CheckBox*>(box->FindSubControl(L"chkbox_delete_roaming"))->IsSelected();
 		auto task = [this, delete_roaming]() {
-			nim::MsgLog::DeleteHistoryOnlineAsync(msg_.id_, delete_roaming, "", \
+			nim::MsgLog::DeleteHistoryOnlineAsync(msg_->id_, delete_roaming, "", \
 				ToWeakCallback([](nim::NIMResCode res_code, const std::string& session_id) {
 					ShowMsgBox(nullptr, nullptr, \
 						(res_code == nim::NIMResCode::kNIMResSuccess ? 
@@ -435,10 +443,10 @@ bool SessionItem::DelSessionItemMenuItemClick(ui::EventArgs* param)
 
 bool SessionItem::OnDbClicked(ui::EventArgs* arg)
 {
-	if (msg_.type_ == nim::kNIMSessionTypeTeam
-		|| msg_.type_ == nim::kNIMSessionTypeP2P)
+	if (msg_->type_ == nim::kNIMSessionTypeTeam
+		|| msg_->type_ == nim::kNIMSessionTypeP2P)
 	{
-		SessionManager::GetInstance()->OpenSessionBox(msg_.id_, msg_.type_);
+		SessionManager::GetInstance()->OpenSessionBox(msg_->id_, msg_->type_);
 	}
 	else
 	{
@@ -459,14 +467,14 @@ bool SessionItem::OnSessionItemMenu(ui::EventArgs* arg)
 
 bool SessionItem::OnHeadImageClicked(bool is_robot, ui::EventArgs * arg)
 {
-	if (msg_.type_ == nim::kNIMSessionTypeTeam)
+	if (msg_->type_ == nim::kNIMSessionTypeTeam)
 	{
-		auto team_info = nim::Team::QueryTeamInfoBlock(msg_.id_);
-		TeamInfoForm::ShowTeamInfoForm(false, team_info.GetType(), msg_.id_, team_info);
+		auto team_info = nim::Team::QueryTeamInfoBlock(msg_->id_);
+		TeamInfoForm::ShowTeamInfoForm(false, team_info.GetType(), msg_->id_, team_info);
 	}
-	else if (msg_.type_ == nim::kNIMSessionTypeP2P)
+	else if (msg_->type_ == nim::kNIMSessionTypeP2P)
 	{
-		ProfileForm::ShowProfileForm(msg_.id_, is_robot);
+		ProfileForm::ShowProfileForm(msg_->id_, is_robot);
 	}
 	return true;
 }

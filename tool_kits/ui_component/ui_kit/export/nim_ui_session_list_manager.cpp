@@ -12,7 +12,7 @@ SessionListManager::SessionListManager()
 	nim_comp::SessionService::GetInstance()->RegOnlineSessionDataChangedCallback(nbase::Bind(&SessionListManager::OnQueryOnlineSessionListCallback, this, std::placeholders::_1, std::placeholders::_2));
 }
 
-bool SessionListManager::AttachListBox(ui::ListBox *list_box)
+bool SessionListManager::AttachListBox(ui::VirtualListBox*list_box, ui::ListBox* top_function_list)
 {
 	if (NULL == list_box)
 	{
@@ -21,7 +21,7 @@ bool SessionListManager::AttachListBox(ui::ListBox *list_box)
 	}
 	else
 	{
-		session_list_.reset(new nim_comp::SessionList(list_box));
+		session_list_.reset(new nim_comp::SessionList(list_box, top_function_list));
 	}
 	return true;
 }
@@ -71,11 +71,9 @@ void SessionListManager::InvokeSelectSessionItem(const std::string &id, bool sel
 {
 	if (session_list_ == nullptr)
 		return;
-	auto item = session_list_->GetSessionItem(id);
-	if (item == nullptr || item->IsSelected() == sel)
+	if (!session_list_->HasSession(id) || session_list_->IsSessionSelected(id))
 		return;
-	item->Selected(sel, trigger);
-
+	session_list_->SelectSession(id, sel,trigger);
 	auto online_session_item = session_list_cloud_->GetSessionItem(id);
 	if (online_session_item == nullptr || online_session_item->IsSelected() == sel)
 		return;
@@ -85,8 +83,7 @@ void SessionListManager::InvokeSelectSessionItem(const std::string &id, nim::NIM
 {
 	if (session_list_ == nullptr)
 		return;
-	auto item = session_list_->GetSessionItem(id);
-	if (item == nullptr)
+	if (!session_list_ ->HasSession(id))
 	{
 		if (create)
 		{
@@ -96,21 +93,22 @@ void SessionListManager::InvokeSelectSessionItem(const std::string &id, nim::NIM
 	}
 	else
 	{
-		if(item->IsSelected() != sel)
-			item->Selected(sel, trigger);
+		if (session_list_->IsSessionSelected(id) != sel)
+			session_list_->SelectSession(id, sel, trigger);
 	}	
 }
 bool SessionListManager::AddSessionItem(const nim::SessionData &msg)
 {
 	if (session_list_ == nullptr)
 		return false;
-	return session_list_->AddSessionItem(msg) != nullptr;
+	session_list_->AddSessionItem(msg) != nullptr;
+	return true;
 }
 bool SessionListManager::CheckSessionItem(const std::string &session_id)
 {
 	if (session_list_ == nullptr)
 		return false;
-	return session_list_->GetSessionItem(session_id) != nullptr;
+	return session_list_->HasSession(session_id);
 }
 void SessionListManager::InvokeAddSessionUnread(const std::string &id)
 {
@@ -168,11 +166,7 @@ void SessionListManager::OnQuerySessionListCallback(const std::list<nim::Session
 {
 	if (sessions.empty())
 		return;
-
-	for each (auto& session in sessions)
-	{
-		session_list_->AddSessionItem(session,false);
-	}
+	session_list_->AddSessionItem(sessions);	
 }
 
 void SessionListManager::OnQueryOnlineSessionListCallback(bool has_more, const nim::SessionOnLineServiceHelper::SessionList& session_list)

@@ -130,7 +130,7 @@ void GetMessageContent(const nim::IMMessage &msg, std::wstring &show_text)
 }
 
 
-void UnreadForm::LoadList(const nim::IMMessage &msg, const std::map<std::string, nim::TeamMemberProperty> &team_members)
+void UnreadForm::LoadList(const nim::IMMessage &msg, const std::map<std::string, std::shared_ptr<nim::TeamMemberProperty>> &team_members)
 {
 	//QLOG_PRO(L"query end events: count={0}") <<count;
 	members_ = team_members;
@@ -175,7 +175,7 @@ void UnreadForm::OnLoadListCallback(const nim::TeamEvent& result)
 		if (members_.find(id) == members_.end())
 			prop.SetAccountID(id);
 		else
-			prop = members_[id];
+			prop = *members_[id];
 		AddItem(prop, false);
 	}
 	sz = (int)unreads.size();
@@ -186,7 +186,7 @@ void UnreadForm::OnLoadListCallback(const nim::TeamEvent& result)
 		if (members_.find(id) == members_.end())
 			prop.SetAccountID(id);
 		else
-			prop = members_[id];
+			prop = *members_[id];
 		AddItem(prop, true);
 	}
 }
@@ -204,7 +204,7 @@ void UnreadForm::UpdateUnreadCount(const std::string &msg_id, const int unread, 
 	if (cont)
 		unread_list_->Remove(cont);
 
-	AddItem(members_[read_accid], false);
+	AddItem(*members_[read_accid], false);
 }
 
 void UnreadForm::DoLoadList()

@@ -34,7 +34,7 @@ public:
 	MsgBubbleItem();
 	virtual ~MsgBubbleItem();
 	virtual LRESULT MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
-	typedef std::function<const std::map<std::string,nim::TeamMemberProperty>&()> TeamMemberGetter;
+	typedef std::function<const std::map<std::string, std::shared_ptr<nim::TeamMemberProperty>>&()> TeamMemberGetter;
 	/**
 	* 初始化控件内部指针
 	* @param[in] bubble_right 是否显示到右侧

@@ -255,7 +255,7 @@
 		static const char *kNIMChatRoomEnterKeyNotifyExt = "notify_ext";	/**< string, 进入聊天室通知开发者扩展字段,必须为可以解析为Json的非格式化的字符串,选填,聊天室成员收到聊天室进入通知中可以获取该数据 */
 		/** @}*/ //进入聊天室的可选填信息Json Keys
 
-		/** @name 匿名进入聊天室的信息Json Keys
+		/** @name 独立聊天室进入的信息Json Keys
 		* @{
 		*/
 		static const char *kNIMChatRoomEnterKeyAppKey = "app_key";	/**< string, 应用appkey，匿名登录时必填 */
@@ -263,7 +263,9 @@
 		static const char *kNIMChatRoomEnterKeyLogLevel = "log_level";	/**< int，匿名登录时选填,定义见NIMSDKLogLevel（选填，SDK默认的内置级别为kNIMSDKLogLevelPro） */
 		static const char *kNIMChatRoomEnterKeyAddress = "address";	/**< string array，聊天室地址，地址通过应用服务器接口获取 */
 		static const char *kNIMChatRoomEnterKeyRandomID = "random_id";	/**< int，是否开启随机ID模式，默认为关闭(0)，建议默认值 */
-		/** @}*/ //匿名进入聊天室的信息Json Keys
+		static const char *kNIMChatRoomEnterKeyAccID = "accid";	/**< string，登录聊天室的账号非匿名模式下使用 */
+		static const char *kNIMChatRoomEnterKeyToken = "token";	/**< string，登录聊天室的密码非匿名模式下使用*/
+		/** @}*/ //独立聊天室进入的信息Json Keys
 
 
 		/** @name 消息结构 Json Keys

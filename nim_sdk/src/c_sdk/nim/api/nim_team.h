@@ -581,6 +581,27 @@ NIM_SDK_DLL_API void nim_team_query_teams_info_by_keyword(const char *keyword,
 	const char *json_extension, 
 	const void *user_data);
 
+/** @fn void nim_team_get_team_info_batch_sftrans(const char *json_extension, nim_team_query_all_my_teams_info_cb_func cb, const void *user_data)
+  * 查询所有群信息（顺丰专用）
+  * @param[in] json_extension 扩展参数，可以条件获取缓存中有的无效群(我已经不在里面的群OR解散的群)，SDK2.7.0以上支持，例如 "{"include_invalid" : true}"，参数可查询nim_team_def.h 搜索本地群组相关信息扩展参数
+  * @param[in] cb		查询所有群信息的回调函数, nim_team_query_all_my_teams_info_cb_func回调函数定义见nim_team_def.h
+  * @param[in] time_tag 时间戳，没有特殊需求此参数赋0
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_team_get_team_info_batch_sftrans(const char *json_extension, nim_team_query_all_my_teams_info_cb_func cb, unsigned __int64  time_tag, const void* user_data);
+
+/** @fn void nim_team_update_tinfo_local(const char *json_info_list,	nim_team_update_tinfo_local_cb_func cb_func, const bool notify_event, const void* user_data);
+  * 更新本地缓存的群信息（顺丰专用）
+  * @param[in] json_info_list 要更新的群信息
+  * @param[in] cb_func	 结果回调
+  * @param[in] notify_event	 就否触发群信息更新事件
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_team_update_tinfo_local(const char *json_info_list,
+	nim_team_update_tinfo_local_cb_func cb_func, const void* user_data);
+
 #ifdef __cplusplus
 };
 #endif //__cplusplus

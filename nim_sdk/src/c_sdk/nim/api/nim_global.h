@@ -103,6 +103,15 @@ NIM_SDK_DLL_API void nim_global_sdk_feedback_async(const char *url, const char *
 */
 NIM_SDK_DLL_API void nim_global_reg_sdk_db_error_cb(nim_global_sdk_db_error_cb_func cb, const void *user_data);
 
+/** @fn void nim_global_upload_sdk_log(const char* feedback_message, nim_global_upload_sdk_log_cb_func cb, const void* user_data)
+* 上传SDK日志到服务器
+* @param[in] feedback_message 反馈信息
+* @param[in] cb 操作结果的回调函数
+* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void
+ */
+NIM_SDK_DLL_API void nim_global_upload_sdk_log(const char* feedback_message, nim_global_upload_sdk_log_cb_func cb, const void* user_data);
+
 #ifdef __cplusplus
 };
 #endif //__cplusplus

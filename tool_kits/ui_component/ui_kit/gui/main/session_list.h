@@ -17,7 +17,7 @@ typedef std::function<void(nim::NIMResCode, const std::string&)> InsertLocalMess
   * @author Redrain
   * @date 2015/9/14
   */
-class SessionList : public nbase::SupportWeakCallback
+class SessionList : public nbase::SupportWeakCallback,public ui::VirtualListInterface
 {
 public:
 	/**
@@ -25,7 +25,7 @@ public:
 	* @param[in] list_box 作为会话列表的列表控件指针
 	* @return void	无返回值
 	*/
-	SessionList(ui::ListBox* session_list);
+	SessionList(ui::VirtualListBox* session_list,ui::ListBox* top_function_list);
 	~SessionList(){};
 
 	/**
@@ -56,19 +56,23 @@ public:
 	*/
 	SessionItem* AddSessionItem(const nim::SessionData &msg, bool notify_event);
 
-	/**
-	* 从会话列表查找会话控件
-	* @param[in] session_id 会话id
-	* @return SessionItem* 会话控件的指针
-	*/
-	SessionItem* GetSessionItem(const std::string &session_id);
+	void AddSessionItem(const std::list<nim::SessionData>& list);
 
 	/**
+	* 是否存在指定会话
+	* @param[in] session_id 会话id
+	* @return bool
+	*/
+	bool HasSession(const std::string& session_id);
+	void SelectSession(const std::string& session_id,bool sel,bool trigger = true);
+	int GetCurSel();
+	bool IsSessionSelected(const std::string& session_id);
+	/**
 	* 移除某个会话控件
-	* @param[in] item 会话控件指针
+	* @param[in] session_id 会话id
 	* @return void 无返回值
 	*/
-	void DeleteSessionItem(SessionItem* item);
+	void DeleteSessionItem(const std::string& session_id);
 
 	/**
 	* 移除所有会话控件
@@ -157,6 +161,26 @@ public:
 	* @return UnregisterCallback 反注册对象
 	*/
 	UnregisterCallback RegRemoveItem(const OnRemoveItemCallback& callback);
+
+	/**
+	 * @brief 创建一个子项
+	 * @return 返回创建后的子项指针
+	 */
+	virtual ui::Control* CreateElement() override;
+
+	/**
+	 * @brief 填充指定子项
+	 * @param[in] control 子项控件指针
+	 * @param[in] index 索引
+	 * @return 返回创建后的子项指针
+	 */
+	virtual void FillElement(ui::Control* control, int index) override;
+
+	/**
+	 * @brief 获取子项总数
+	 * @return 返回子项总数
+	 */
+	virtual int GetElementtCount() override;
 private:
 	/**
 	* 注册给sdk的回调函数，会话消息变化（如有新消息、删除会话记录）时执行
@@ -254,8 +278,16 @@ private:
 	
 	bool OnReturnEventsClick(ui::EventArgs* param);
 private:
-	ui::ListBox*	session_list_;
-
+	int AddSessionItemData(const nim::SessionData& item_data);
+	bool DeleteSessionItemData(const std::string& session_id);
+	void DeleteSessionDataByType(nim::NIMSessionType type, std::list<nim::SessionData>& unsubscribe_list);
+	void ResetAllSessionUnreadCount(int type);//0:all 1:p2p 2:team
+	void SortSessionItems(bool sel_force_visible = false);
+private:
+	ui::VirtualListBox*	session_list_;
+	ui::ListBox* top_session_list_;
+	std::vector< std::shared_ptr<nim::SessionData>> session_list_sort_data_;
+	std::map < std::string, std::shared_ptr<nim::SessionData>> session_list_data_;
 	ui::Box*		box_unread_sysmsg_;
 	ui::Label*		label_unread_sysmsg_;
 
@@ -267,5 +299,6 @@ private:
 	std::map<int, std::unique_ptr<OnUnreadCountChangeCallback>> unread_count_change_cb_list_;
 	std::map<int, std::shared_ptr<OnRemoveItemCallback>> remove_item_cb_list_;
 	std::map<int, std::shared_ptr<OnAddItemCallback>> add_item_cb_list_;
+	std::string cursel_id_;
 };
 }

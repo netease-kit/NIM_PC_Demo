@@ -6,7 +6,7 @@
 #include "module/service/photo_service.h"
 namespace nim_comp
 {
-	class TeamInfoBox : public ui::VBox,public ITeamInfoUI
+	class TeamInfoBox : public ui::VBox,public ITeamInfoUI,public ui::VirtualTileInterface
 	{
 	public:
 		TeamInfoBox() = default;
@@ -34,6 +34,25 @@ namespace nim_comp
 		* @return void	无返回值
 		*/
 		virtual void UpdateTeamMember() override;
+		/**
+* @brief 创建一个子项
+* @return 返回创建后的子项指针
+*/
+		virtual ui::Control* CreateElement() override;
+
+		/**
+		* @brief 填充指定子项
+		* @param[in] control 子项控件指针
+		* @param[in] index 索引
+		* @return 返回创建后的子项指针
+		*/
+		virtual void FillElement(ui::Control* control, int index) override;
+
+		/**
+		* @brief 获取子项总数
+		* @return 返回子项总数
+		*/
+		virtual int GetElementtCount() override;
 	private:
 		/**
 		* 响应获取到群成员信息的回调含塑化
@@ -259,8 +278,15 @@ namespace nim_comp
         void OnTeamNotificationModeChangeCallback(const std::string& id, int64_t bits);
 	
 		void RefreshInfo(nim::TeamInfo* team_info);
+
+		void SortTeamMembers();
+		void RefreshMemberList(bool sort = false);
+		void AddTeamMemberData(const nim::TeamMemberProperty& data);
+		void RemoveTeamMemberData(const std::string uid);
+		void SetTeamMemberDataAdmin(const std::string uid, bool admin);
+		void TeamOwnerChanged(const std::string new_owner_accid);
 	private:
-		ui::ListBox* tile_box_;
+		ui::VirtualTileBox* tile_box_;
 		ui::RichEdit* re_team_name_;
 		ui::RichEdit* re_team_intro_;
 		ui::Button* invitebtn_;
@@ -273,7 +299,8 @@ namespace nim_comp
 		std::string tid_;
 		nim::NIMTeamType type_;
 		nim::TeamInfo team_info_;
-		std::map<std::string, nim::TeamMemberProperty> team_member_list_;
+		std::map<std::string, std::shared_ptr<nim::TeamMemberProperty>> team_member_list_;
+		std::vector<std::shared_ptr<nim::TeamMemberProperty>> team_member_sort_list_;
 		nim::TeamMemberProperty my_property_;
 		AutoUnregister unregister_cb;
 		std::function<void(const std::wstring& title)> taskbar_title_function_;
@@ -285,5 +312,6 @@ namespace nim_comp
 		bool view_mode_;
         bool saving_settings_ = false;
 		static const std::vector<std::wstring> options_name_list_;
+		std::string team_owner_accid_;
 	};
 }

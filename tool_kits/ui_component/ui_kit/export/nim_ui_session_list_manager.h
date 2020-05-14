@@ -23,7 +23,7 @@ public:
 	* @param[in] list_box 作为会话列表的列表控件指针(当控件被销毁时应该传入nullprt)
 	* @return void	无返回值
 	*/
-	bool AttachListBox(ui::ListBox *list_box);
+	bool AttachListBox(ui::VirtualListBox*list_box, ui::ListBox* top_function_list);
 
 	/**
 	* 把传入的列表控件作为云端会话列表控件，控制列表控件来展示云端会话

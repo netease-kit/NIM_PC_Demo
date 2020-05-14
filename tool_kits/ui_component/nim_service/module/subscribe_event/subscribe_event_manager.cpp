@@ -227,7 +227,13 @@ void SubscribeEventManager::SubscribeSessionEvent(const nim::SessionData& sessio
 void SubscribeEventManager::UnSubscribeSessionEvent(const nim::SessionData& session)
 {
 	std::list<nim::SessionData> unsubscribe_list;
-	unsubscribe_list.push_back(session);
+	unsubscribe_list.emplace_back(session);
+	UnSubscribeSessionEvent(unsubscribe_list);
+}
+void SubscribeEventManager::UnSubscribeSessionEvent(nim::SessionData&& session)
+{
+	std::list<nim::SessionData> unsubscribe_list;
+	unsubscribe_list.emplace_back(session);
 	UnSubscribeSessionEvent(unsubscribe_list);
 }
 

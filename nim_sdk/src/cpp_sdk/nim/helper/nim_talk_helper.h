@@ -193,6 +193,33 @@ struct NIM_SDK_CPPWRAPPER_DLL_API MessageSetting
 };
 
 /** @brief P2P和群组消息 */
+struct NIM_SDK_CPPWRAPPER_DLL_API IMMessageThreadInfo
+{
+	std::string reply_msg_from_account_;//被回复消息的消息发送者
+	std::string reply_msg_to_account_;// 被回复消息的消息接受者，群的话是tid
+	uint64_t reply_msg_time_;// 被回复消息的消息发送时间
+	uint64_t reply_msg_id_server_;// 被回复消息的消息ID(serverId)
+	std::string reply_msg_id_client_;// 被回复消息的消息ID(clientId)
+
+	std::string thread_msg_from_account_;// thread消息的消息发送者
+	std::string thread_msg_to_account_;// thread消息的消息接受者，群的话是tid
+	uint64_t thread_msg_time_;// thread消息的消息发送时间
+	uint64_t thread_msg_id_server_;// thread消息的消息ID(serverId)
+	std::string thread_msg_id_client_;// thread消息的消息ID(clientId)
+	int deleted_;// 消息是否已经被删除（可能是撤回，也可能是单向删除），查询thread消息历史时可能会有这个字段，大于0表示已经删除（目前撤回和单向删除都是1，未来可能区分）
+	IMMessageThreadInfo() :
+		reply_msg_from_account_(""),
+		reply_msg_to_account_(""),
+		reply_msg_time_(0),
+		reply_msg_id_server_(0),
+		reply_msg_id_client_(""),
+		thread_msg_from_account_(""),
+		thread_msg_to_account_(""),
+		thread_msg_time_(0),
+		thread_msg_id_server_(0),
+		thread_msg_id_client_(""),
+		deleted_(0) {}
+};
 struct NIM_SDK_CPPWRAPPER_DLL_API IMMessage
 {
 public:
@@ -216,7 +243,8 @@ public:
 	std::string	   local_res_id_;				/**< 媒体文件ID（客户端） */
 	NIMMsgLogStatus	status_;					/**< 消息状态（客户端） */
 	NIMMsgLogSubStatus	sub_status_;			/**< 消息子状态（客户端） */
-
+public:
+	IMMessageThreadInfo thread_info_;
 public:
 	NIMClientType  readonly_sender_client_type_;	/**< 发送者客户端类型（只读） */
 	std::string	   readonly_sender_device_id_;		/**< 发送者客户端设备ID（只读） */
@@ -302,6 +330,22 @@ public:
 			values[kNIMMsgKeyFromDeviceId] = readonly_sender_device_id_;
 			values[kNIMMsgKeyFromNick] = readonly_sender_nickname_;
 			values[kNIMMsgKeyServerMsgid] = readonly_server_id_;
+		}
+		//thread
+		{
+			values[kNIMMsgKeyThreadInfo][kNIMMsgKeyReplyMsgFromAccount] = thread_info_.reply_msg_from_account_;
+			values[kNIMMsgKeyThreadInfo][kNIMMsgKeyReplyMsgToAccount] = thread_info_.reply_msg_to_account_;
+			values[kNIMMsgKeyThreadInfo][kNIMMsgKeyReplyMsgTime] = thread_info_.reply_msg_time_;
+			values[kNIMMsgKeyThreadInfo][kNIMMsgKeyReplyMsgIdServer] = thread_info_.reply_msg_id_server_;
+			values[kNIMMsgKeyThreadInfo][kNIMMsgKeyReplyMsgIdClient] = thread_info_.reply_msg_id_client_;
+
+			values[kNIMMsgKeyThreadInfo][kNIMMsgKeyThreadMsgFromAccount] = thread_info_.thread_msg_from_account_;
+			values[kNIMMsgKeyThreadInfo][kNIMMsgKeyThreadMsgToAccount] = thread_info_.thread_msg_to_account_;
+			values[kNIMMsgKeyThreadInfo][kNIMMsgKeyThreadMsgTime] = thread_info_.thread_msg_time_;
+			values[kNIMMsgKeyThreadInfo][kNIMMsgKeyThreadMsgIdServer] = thread_info_.thread_msg_id_server_;
+			values[kNIMMsgKeyThreadInfo][kNIMMsgKeyThreadMsgIdClient] = thread_info_.thread_msg_id_client_;
+
+			values[kNIMMsgKeyThreadInfo][kNIMMsgKeyDeleted] = thread_info_.deleted_;
 		}
 		return values;
 	}

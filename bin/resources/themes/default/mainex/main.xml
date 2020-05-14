@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
-<Window size="950,700" mininfo="950,700" caption="0,0,0,68" sizebox="4,4,4,4" textid="STRID_MIANWINDOW_TITLE">	
+<Window size="950,700" mininfo="950,700" caption="0,0,0,68" sizebox="4,4,4,4" textid="STRID_MIANWINDOW_TITLE" shadowattached="false">	
 	<Box bkcolor="bk_wnd_darkcolor"> 
 		<VBox name="main_bar" width="64"  halign="left" >
 			<Box width="auto" height="auto" halign="center" margin="0,20,0,0">

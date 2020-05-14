@@ -36,7 +36,7 @@ class TaskbarTabItem;
   * @author Redrain
   * @date 2015/9/10
   */
-class SessionBox : public ui::VBox
+class SessionBox : public ui::VBox,  public ui::VirtualListInterface
 {
 public:
 	friend class SessionForm;
@@ -998,7 +998,25 @@ public:
 	 * @return void 无返回值
 	 */
 	void ShowEditControls();
+	/**
+	 * @brief 创建一个子项
+	 * @return 返回创建后的子项指针
+	 */
+	virtual Control* CreateElement() override;
 
+	/**
+	 * @brief 填充指定子项
+	 * @param[in] control 子项控件指针
+	 * @param[in] index 索引
+	 * @return 返回创建后的子项指针
+	 */
+	virtual void FillElement(Control* control, int index) override;
+
+	/**
+	 * @brief 获取子项总数
+	 * @return 返回子项总数
+	 */
+	virtual int GetElementtCount() override;
 private:
 	/** 
 	* 有群成员增加的回调函数
@@ -1157,12 +1175,6 @@ private:
 	void HandleDismissTeamEvent();
 
 	/**
-	* 重置新建公告入口
-	* @return void 无返回值
-	*/
-	void ResetNewBroadButtonVisible();	
-
-	/**
 	* 响应用户列表改变的回调函数
 	* @param[in] change_type 好友变化类型
 	* @param[in] accid 用户id
@@ -1176,6 +1188,14 @@ private:
 
 	void OnNotifyChangeCallback(std::string id, bool mute);
 	void OnVChatSelectedCallback(const std::list<UTF8String>& selected_friends, const std::list<UTF8String>& selected_teams);
+	void SortTeamMembers();
+	void RefreshMemberList(bool sort = false);
+	void AddTeamMemberData(const nim::TeamMemberProperty& data);
+	void RemoveTeamMemberData(const std::string uid);
+	void RemoveTeamMemberData(const std::list<std::string> uid_list);
+	void SetTeamMemberDataAdmin(const std::string uid,bool admin);
+	void TeamOwnerChanged(const std::string new_owner_accid);
+	void RefreshNewbroadButtonState();
 #pragma endregion Team
 
 public:
@@ -1206,9 +1226,13 @@ private:
 	ui::RichEdit*	edit_broad_;
 	ui::Label*		label_member_;
 	ui::Button*		btn_refresh_member_;
-	ui::ListBox*	member_list_;
+	//ui::ListBox*	member_list_;
+	ui::VirtualListBox* member_list_;
 	ui::VBox*		bottom_panel_;
-	std::map<std::string, nim::TeamMemberProperty> team_member_info_list_;
+	std::map < std::string, std::shared_ptr<nim::TeamMemberProperty>> team_member_info_list_;
+
+	std::vector< std::shared_ptr<nim::TeamMemberProperty>> team_member_sort_list_;
+	std::string team_owner_accid_;
 	bool			mute_all_;
 private:
 	// @功能相关变量

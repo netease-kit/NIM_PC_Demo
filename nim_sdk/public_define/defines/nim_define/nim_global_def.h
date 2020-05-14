@@ -130,6 +130,14 @@ static const char *kNIMDBErrAttach = "error_attach";			/**< 具体的出错信�
 */
 typedef void(*nim_global_sdk_db_error_cb_func)(const char *error_info, const void *user_data);
 
+/** @typedef void(*nim_global_upload_sdk_log_cb_func)(int rescode, const void* user_data)
+* 上传SDK日志回调
+* @param[out] rescode
+* @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+* @return void 无返回值
+*/
+typedef void(*nim_global_upload_sdk_log_cb_func)(int rescode, const void* user_data);
+
 /** @enum NIMProxyDetectStep 代理测试步骤 */
 enum NIMProxyDetectStep
 {

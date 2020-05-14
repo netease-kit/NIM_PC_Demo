@@ -36,7 +36,7 @@ typedef void(*nim_client_multiport_push_config_cb_func)(int rescode, const char 
 typedef void(*nim_client_dnd_cb_func)(int rescode,const char *content, const char *json_params, const void *user_data);
 
 /** @typedef void(*nim_client_get_server_current_time_cb_func)(int rescode, bool calc_local, uint64_t time,const char *json_params, const void *user_data)
-* 多端推送设置/同步回调
+* 获取服务端时间回调
 * @param[out] rescode
 * @param[out] calc_local 是否为本地计算
 * @param[out] time 当前服务器时间(ms)
@@ -177,6 +177,10 @@ static const char *kNIMCommNECA 						= "comm_enca";     /**< int 通信加密�
 static const char *kNIMIPProtVersion = "ip_protocol_version";   /**< int IP协议版本{0(IPV4),1(IPV6),2(Auto,SDK测试后自行选择,存在性能损耗)}。def:0(IPV4) */
 static const char *kNIMProbeIPV4URL = "probe_ipv4_url";/**< string 探测ipv4地址类型使用的url,IPProtVersion == 2(Auto) 时生效*/
 static const char *kNIMProbeIPV6URL = "probe_ipv6_url";/**< string 探测ipv6地址类型使用的url,IPProtVersion == 2(Auto) 时生效*/
+
+static const char *kNIMSyncDataTypeConfig = "sync_data_type_config";/**< json array {"sync_data_type_config":[{"key":28,"type":0}]} 同步数据类型配置*/
+static const char *kNIMSyncDataTypeConfigKey = "key";/**< int 同步数据类型配置的具体数据kye 28:置顶会话*/
+static const char *kNIMSyncDataTypeConfigValue = "value";/**< int 同步数据类型配置的具体数据value 0:不更新 1:自动更新*/
 
 /** @}*/ //json extension params for nim_client_init API
 

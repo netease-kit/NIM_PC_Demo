@@ -28,7 +28,7 @@ public:
 	* @param[in] msg 消息内容和信息
 	* @return void	无返回值
 	*/
-	void InitMsg(const nim::SessionData &msg);
+	void InitMsg(const std::shared_ptr< nim::SessionData> &msg);
 
 	/**
 	 * 初始化一个云端会话列表项
@@ -48,7 +48,7 @@ public:
 	* 是否为群组项
 	* @return bool true 是，false 否
 	*/
-	bool GetIsTeam() { return msg_.type_ == nim::kNIMSessionTypeTeam; }
+	bool GetIsTeam() { return (msg_ == nullptr ? false : msg_->type_ == nim::kNIMSessionTypeTeam); }
 
 	/**
 	* 初始化头像和用户名/群名
@@ -86,7 +86,7 @@ public:
 	* 获取会话消息数据
 	* @return nim::SessionData 消息内容
 	*/
-	nim::SessionData& GetSessionData() { return msg_; }
+	std::shared_ptr<nim::SessionData>& GetSessionData() { return msg_; }
 	
 	/**
 	* 获取本会话项未读数
@@ -192,7 +192,7 @@ private:
 	ui::Label*		label_unread_;
 
 	bool			is_online_session_;
-	nim::SessionData msg_;
+	std::shared_ptr<nim::SessionData> msg_;
 	std::set<std::string> relate_ids;
 };
 

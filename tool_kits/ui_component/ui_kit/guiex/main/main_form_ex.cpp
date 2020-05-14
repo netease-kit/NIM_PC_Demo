@@ -19,6 +19,27 @@
 
 namespace nim_comp
 {
+	class ShadowWnd : public WindowEx
+	{
+	public:
+		virtual std::wstring GetSkinFolder() override {
+			return L"mainex";
+		}
+
+		virtual std::wstring GetSkinFile()override {
+			return L"main_shadow.xml";
+		}
+
+		virtual std::wstring GetWindowClassName() const override {
+			return L"ShadowWnd";
+		}
+
+		virtual std::wstring GetWindowId() const override {
+			return L"ShadowWnd";
+		}
+	};
+
+
 	const LPCTSTR MainFormEx::kClassName = L"MainFormEx";
 	MainFormEx::MainFormEx(IMainFormMenuHandler* main_menu_handler) : 
 		is_trayicon_left_double_clicked_(false), is_busy_(false),
@@ -58,7 +79,17 @@ namespace nim_comp
 	{
 		return kClassName;
 	}
-
+	HWND MainFormEx::Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle,
+		bool isLayeredWindow, const ui::UiRect& rc)
+	{
+		shadow_wnd_ = new ShadowWnd();
+		//shadow_wnd_->SetShadowImage(L".. / public / bk / bk_shadow2.png' corner='14, 14, 14, 14'");
+		
+		auto ret = WindowEx::Create(hwndParent/*shadow_wnd_->GetHWND()*/, pstrName, dwStyle, dwExStyle, false, rc);
+		shadow_wnd_->Create(ret, shadow_wnd_->GetWindowClassName().c_str(), WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
+		shadow_wnd_->ShowWindow();
+		return ret;
+	}
 	void MainFormEx::InitWindow()
 	{
 		SessionManager::GetInstance()->SetEnableMerge(false);
@@ -563,9 +594,19 @@ namespace nim_comp
 			if (wParam == SIZE_RESTORED)
 				OnWndSizeMax(false);
 			else if (wParam == SIZE_MAXIMIZED)
-				OnWndSizeMax(true);
+				OnWndSizeMax(true);			
 		}
-		return __super::HandleMessage(uMsg, wParam, lParam);
+		auto ret   = __super::HandleMessage(uMsg, wParam, lParam);
+		if (uMsg == WM_MOVE || uMsg == WM_SIZE)
+		{
+			if (shadow_wnd_->GetHWND() != NULL && ::IsWindow(shadow_wnd_->GetHWND()))
+			{
+				auto pos = this->GetPos(true);
+				pos.Inflate(ui::UiRect(17, 17, 17, 17));
+				shadow_wnd_->SetPos(pos, false, SWP_NOZORDER | SWP_NOACTIVATE, GetHWND());
+			}			
+		}
+		return ret;
 	}
 	void MainFormEx::OnWndSizeMax(bool max)
 	{

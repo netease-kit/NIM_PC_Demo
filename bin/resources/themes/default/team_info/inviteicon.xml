@@ -1,8 +1,7 @@
 <?xml version="1.0" encoding="utf-8" standalone="yes" ?>
 <Window>
-    <HBox width="170" height="64" margin="0,5,0,5" name="invite_add_button">
+    <HBox width="44" height="44" margin="0,5,-32,-32" name="invite_add_button" valign="bottom" halign="right" >
 		<Button name="InviteBtn" normalimage="..\public\button\invite_normal.png" hotimage="..\public\button\invite_hover.png" pushedimage="..\public\button\invite_pushed.png" 
-			width="44" height="44" margin="10,10,0,10" cursortype="hand"/>
-		<Label name="uname" font="2" normaltextcolor="darkcolor" textid="STRID_TEAM_INFO_INVITE" width="stretch" maxwidth="90" margin="10,0,0,0" valign="center" mouse="false"/>
+			width="44" height="44" margin="10,10,0,10" cursortype="hand"/>		
     </HBox>
 </Window>

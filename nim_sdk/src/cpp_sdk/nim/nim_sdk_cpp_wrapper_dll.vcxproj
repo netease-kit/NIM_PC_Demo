@@ -231,6 +231,9 @@
     <ClCompile Include="api\nim_cpp_super_team.cpp" />
     <ClCompile Include="api\nim_cpp_sysmsg.cpp" />
     <ClCompile Include="api\nim_cpp_talk.cpp" />
+    <ClCompile Include="api\nim_cpp_talkex_collect.cpp" />
+    <ClCompile Include="api\nim_cpp_talkex_pin_message.cpp" />
+    <ClCompile Include="api\nim_cpp_talkex_quick_comment.cpp" />
     <ClCompile Include="api\nim_cpp_team.cpp" />
     <ClCompile Include="api\nim_cpp_tool.cpp" />
     <ClCompile Include="api\nim_cpp_user.cpp" />
@@ -251,6 +254,9 @@
     <ClCompile Include="helper\nim_subscribe_event_helper.cpp" />
     <ClCompile Include="helper\nim_super_team_helper.cpp" />
     <ClCompile Include="helper\nim_sysmsg_helper.cpp" />
+    <ClCompile Include="helper\nim_talkex_helper_collect.cpp" />
+    <ClCompile Include="helper\nim_talkex_helper_pin_message.cpp" />
+    <ClCompile Include="helper\nim_talkex_helper_quick_comment.cpp" />
     <ClCompile Include="helper\nim_talk_helper.cpp" />
     <ClCompile Include="helper\nim_team_helper.cpp" />
     <ClCompile Include="helper\nim_tool_helper.cpp" />
@@ -265,6 +271,7 @@
     <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_global_def.h" />
     <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_msglog_def.h" />
     <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_nos_def.h" />
+    <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_pass_through_proxy_def.h" />
     <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_plugin_in_def.h" />
     <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_res_code_def.h" />
     <ClInclude Include="..\..\..\public_define\defines\nim_define\nim_robot_def.h" />
@@ -296,6 +303,7 @@
     <ClInclude Include="api\nim_cpp_super_team.h" />
     <ClInclude Include="api\nim_cpp_sysmsg.h" />
     <ClInclude Include="api\nim_cpp_talk.h" />
+    <ClInclude Include="api\nim_cpp_talkex.h" />
     <ClInclude Include="api\nim_cpp_team.h" />
     <ClInclude Include="api\nim_cpp_tool.h" />
     <ClInclude Include="api\nim_cpp_user.h" />
@@ -316,6 +324,9 @@
     <ClInclude Include="helper\nim_subscribe_event_helper.h" />
     <ClInclude Include="helper\nim_super_team_helper.h" />
     <ClInclude Include="helper\nim_sysmsg_helper.h" />
+    <ClInclude Include="helper\nim_talkex_helper_collect.h" />
+    <ClInclude Include="helper\nim_talkex_helper_pin_message.h" />
+    <ClInclude Include="helper\nim_talkex_helper_quick_comment.h" />
     <ClInclude Include="helper\nim_talk_helper.h" />
     <ClInclude Include="helper\nim_team_helper.h" />
     <ClInclude Include="helper\nim_tool_helper.h" />

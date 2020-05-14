@@ -282,7 +282,7 @@ bool SessionBox::Notify(ui::EventArgs* param)
 				}
 				else
 				{
-					nim::NIMTeamUserType type = team_member_info_list_[LoginManager::GetInstance()->GetAccount()].GetUserType();
+					nim::NIMTeamUserType type = team_member_info_list_[LoginManager::GetInstance()->GetAccount()]->GetUserType();
 					ProfileForm::ShowProfileForm(session_id_, md.sender_accid_, type);
 				}
 			}
@@ -302,7 +302,7 @@ bool SessionBox::Notify(ui::EventArgs* param)
 				auto i = team_member_info_list_.find(at.uid_);
 				if (i != team_member_info_list_.end())
 				{
-					show_name = i->second.GetNick();
+					show_name = i->second->GetNick();
 				}
 				if (show_name.empty())
 				{

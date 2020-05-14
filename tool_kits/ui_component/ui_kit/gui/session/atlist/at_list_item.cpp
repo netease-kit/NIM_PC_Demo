@@ -14,7 +14,13 @@ AtListItem::AtListItem(bool is_last_five)
 {
 
 }
+AtListItem::AtListItem()
+	: head_icon_(NULL)
+	, name_label_(NULL)
+	, is_last_five_(false)
+{
 
+}
 AtListItem::~AtListItem()
 {
 
@@ -34,10 +40,10 @@ void AtListItem::Activate()
 	ButtonTemplate::Activate();
 }
 
-void AtListItem::SetUserID(const std::string& uid)
+void AtListItem::SetUserID(const std::string& uid, bool last_five)
 {
 	uid_ = uid;
-
+	is_last_five_ = last_five;
 	if (is_last_five_)
 	{
 		//如果是最近发言的5人之一，就不设置本item的Name为uid，否则会影响到@列表的查找

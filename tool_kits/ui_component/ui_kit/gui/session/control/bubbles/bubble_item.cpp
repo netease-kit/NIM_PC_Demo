@@ -382,7 +382,7 @@ bool MsgBubbleItem::IsShowRecallButton()
 				auto it = members.find(LoginManager::GetInstance()->GetAccount());
 				if (it != members.end())
 				{
-					auto user_type = it->second.GetUserType();
+					auto user_type = it->second->GetUserType();
 					ret = (user_type == nim::kNIMTeamUserTypeCreator || user_type == nim::kNIMTeamUserTypeManager);
 				}
 			}

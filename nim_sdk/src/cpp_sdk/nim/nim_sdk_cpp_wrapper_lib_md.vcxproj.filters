@@ -145,6 +145,24 @@
     <ClCompile Include="api\nim_cpp_pass_through_proxy.cpp">
       <Filter>api</Filter>
     </ClCompile>
+    <ClCompile Include="api\nim_cpp_talkex_collect.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\nim_talkex_helper_collect.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="api\nim_cpp_talkex_quick_comment.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\nim_talkex_helper_quick_comment.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
+    <ClCompile Include="api\nim_cpp_talkex_pin_message.cpp">
+      <Filter>api</Filter>
+    </ClCompile>
+    <ClCompile Include="helper\nim_talkex_helper_pin_message.cpp">
+      <Filter>helper</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="helper\nim_client_helper.h">
@@ -339,6 +357,18 @@
     </ClInclude>
     <ClInclude Include="api\nim_cpp_pass_through_proxy.h">
       <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="api\nim_cpp_talkex.h">
+      <Filter>api</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\nim_talkex_helper_collect.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\nim_talkex_helper_quick_comment.h">
+      <Filter>helper</Filter>
+    </ClInclude>
+    <ClInclude Include="helper\nim_talkex_helper_pin_message.h">
+      <Filter>helper</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

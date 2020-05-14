@@ -48,6 +48,10 @@ namespace nim
 #include "public_define/defines/nim_define/nim_session_online_service_def.h"
 #include "public_define/defines/nim_define/nim_pass_through_proxy_def.h"
 
+#include "public_define/defines/nim_define/nim_talkex_def_collect.h"
+#include "public_define/defines/nim_define/nim_talkex_def_quick_comment.h"
+#include "public_define/defines/nim_define/nim_talkex_def_pin_message.h"
+
 #ifndef DEF_UNDER_NO_NAMESPACE
 }
 #endif //DEF_UNDER_NO_NAMESPACE

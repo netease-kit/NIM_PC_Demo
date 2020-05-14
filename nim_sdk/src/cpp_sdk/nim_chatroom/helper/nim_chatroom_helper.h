@@ -81,6 +81,40 @@ private:
 	nim_cpp_wrapper_util::Json::Value		values_;
 };
 
+struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomIndependentEnterInfo
+{
+	std::list<std::string> address_;	/**< 聊天室地址，地址通过应用服务器接口获取 */
+	std::string app_data_file_;			/**< 应用数据目录 */
+	int sdk_log_level_;					/**< 匿名登录时选填,定义见NIMSDKLogLevel（选填，SDK默认的内置级别为kNIMSDKLogLevelPro） */
+	std::string app_key_;				/**< 应用appkey，匿名登录时必填 */
+	std::string accid_;					/**< 登录聊天室的账号*/
+	std::string token_;					/**< 登录聊天室的密码*/
+
+	ChatRoomIndependentEnterInfo()
+	{
+		sdk_log_level_ = 5;
+	}
+
+	/** @fn std::string ToJsonString() const
+	  * @brief 组装Json Value字符串
+	  * @return void
+	  */
+	std::string	ToJsonString() const
+	{
+		nim_cpp_wrapper_util::Json::Value values;
+		nim_cpp_wrapper_util::Json::FastWriter fw;
+		std::string addr_str;
+		nim::StrListToJsonString(address_, addr_str);
+		values[kNIMChatRoomEnterKeyAddress] = addr_str;
+		values[kNIMChatRoomEnterKeyAppDataPath] = app_data_file_;
+		values[kNIMChatRoomEnterKeyLogLevel] = sdk_log_level_;
+		values[kNIMChatRoomEnterKeyAppKey] = app_key_;
+		values[kNIMChatRoomEnterKeyAccID] = accid_;
+		values[kNIMChatRoomEnterKeyToken] = token_;
+		return fw.write(values);
+	}
+};
+
 struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomAnoymityEnterInfo
 {
 	std::list<std::string> address_;	/**< 聊天室地址，地址通过应用服务器接口获取 */

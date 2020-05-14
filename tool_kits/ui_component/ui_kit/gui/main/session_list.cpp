@@ -9,27 +9,59 @@ namespace nim_comp
 
 using namespace ui;
 
-SessionList::SessionList(ui::ListBox* session_list)
+SessionList::SessionList(ui::VirtualListBox* session_list, ui::ListBox* top_session_list)
 {
 	ASSERT(session_list != NULL);
 	session_list_ = session_list;
+	session_list_->SelectNextWhenActiveRemoved(false);
+	top_session_list_ = top_session_list;
+	cursel_id_ = "";
+	session_list_->AttachSelect([this](ui::EventArgs* args) {
+		int index = session_list_->GetCurSel();
+		SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(index));
+		if (item != nullptr)
+			cursel_id_ = item->GetUTF8Name();
+		return true;
+		});
+	int kRoomMemberItemHeight = 60;
+	session_list_->SetElementHeight(ui::DpiManager::GetInstance()->ScaleInt(kRoomMemberItemHeight));
+	session_list_->SetDataProvider(this);
+	session_list_->InitElement(12);
+	session_list_->Refresh();
 	sys_msg_unread_ = 0;
 	custom_msg_unread_ = 0;
 
 	Box* multispot_and_events = (Box*)GlobalManager::CreateBox(L"main/main_session_multispot_and_event.xml");
-	session_list->AddAt(multispot_and_events, 0);
+	top_session_list_->AddAt(multispot_and_events, 0);
 
 	ListContainerElement* cloud_session_list = (ListContainerElement*)GlobalManager::CreateBox(L"main/main_cloud_session.xml");
-	session_list->AddAt(cloud_session_list, 1);
-	cloud_session_list->AttachClick(nbase::Bind(&SessionList::OnSwitchCloudSession, this, std::placeholders::_1));
+	top_session_list_->AddAt(cloud_session_list, 1);
+	ListContainerElement* local_session_list = (ListContainerElement*)GlobalManager::CreateBox(L"main/main_local_session.xml");
+	local_session_list->SetVisible(false);
+	top_session_list_->AddAt(local_session_list, 2);
+	
+	cloud_session_list->AttachClick(ToWeakCallback([local_session_list, cloud_session_list](ui::EventArgs* msg) {
+		nim_ui::SessionListManager::GetInstance()->ShowCloudSession();
+		local_session_list->SetVisible(true);
+		cloud_session_list->SetVisible(false);
+		return true;
+		}));
+
+	
+	local_session_list->AttachClick(ToWeakCallback([local_session_list,cloud_session_list](ui::EventArgs* msg) {
+		nim_ui::SessionListManager::GetInstance()->ShowCloudSession(false);
+		cloud_session_list->SetVisible(true);
+		local_session_list->SetVisible(false);
+		return true;
+		}));
 
 	ButtonBox* btn_events = (ButtonBox*)multispot_and_events->FindSubControl(L"btn_events");
 	ButtonBox* btn_multispot_info = (ButtonBox*)multispot_and_events->FindSubControl(L"multispot_info");
 	btn_events->AttachClick(nbase::Bind(&SessionList::OnEventsClick, this, std::placeholders::_1));
 	btn_multispot_info->AttachClick(nbase::Bind(&SessionList::OnMultispotClick, this, std::placeholders::_1));
 
-	box_unread_sysmsg_ = (Box*)session_list->GetWindow()->FindControl(L"box_unread_sysmsg");
-	label_unread_sysmsg_ = (Label*)session_list->GetWindow()->FindControl(L"label_unread_sysmsg");
+	box_unread_sysmsg_ = (Box*)top_session_list_->GetWindow()->FindControl(L"box_unread_sysmsg");
+	label_unread_sysmsg_ = (Label*)top_session_list_->GetWindow()->FindControl(L"label_unread_sysmsg");
 	box_unread_sysmsg_->SetVisible(false);
 	
 	auto changed_cb = session_list_->ToWeakCallback(std::bind(&SessionList::OnSessionChangeCallback, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
@@ -74,6 +106,78 @@ bool SessionList::OnReturnEventsClick(ui::EventArgs* param)
 	return true;
 }
 
+int SessionList::AddSessionItemData(const nim::SessionData& item_data)
+{
+	int ret = 0;
+	std::shared_ptr<nim::SessionData> item_data_new = std::make_shared<nim::SessionData>(item_data);
+	auto it = session_list_data_.find(item_data.id_);
+	if (it != session_list_data_.end())
+	{
+		if (nim::kNIMSessionCommandMsgDeleted != item_data.command_ && it->second->msg_timetag_ > item_data.msg_timetag_)
+		{
+			item_data_new = it->second;
+			item_data_new->unread_count_ = item_data.unread_count_;
+		}
+	}
+	if (session_list_data_[item_data_new->id_] == nullptr)
+		session_list_data_[item_data_new->id_] = item_data_new;
+	else
+		*session_list_data_[item_data_new->id_] = *item_data_new;
+	auto sort_it = std::find_if(session_list_sort_data_.begin(), session_list_sort_data_.end(), [&](const std::shared_ptr<nim::SessionData>& item) {
+		return item->id_.compare(item_data_new->id_) == 0;
+		});
+	if (sort_it == session_list_sort_data_.end())
+	{
+		ret = 1;
+		session_list_sort_data_.emplace_back(session_list_data_[item_data_new->id_]);
+	}
+	return ret;
+}
+
+bool SessionList::DeleteSessionItemData(const std::string& session_id)
+{
+	auto it = session_list_data_.find(session_id);
+	if (it == session_list_data_.end())
+		return false;
+	session_list_data_.erase(session_id);
+	auto sort_it = std::find_if(session_list_sort_data_.begin(), session_list_sort_data_.end(), [&](const std::shared_ptr<nim::SessionData>& item) {
+		return item->id_.compare(session_id) == 0;
+		});
+	if (sort_it != session_list_sort_data_.end())
+		session_list_sort_data_.erase(sort_it);
+	if (session_id.compare(cursel_id_) == 0)
+	{
+		cursel_id_.clear();
+		session_list_->SelectItem(-1, false, false);
+	}
+		
+}
+void SessionList::DeleteSessionDataByType(nim::NIMSessionType type, std::list<nim::SessionData>& unsubscribe_list)
+{
+	for (auto it = session_list_sort_data_.begin(); it != session_list_sort_data_.end(); it++)
+	{
+		if (it->operator->()->type_ == type)
+		{
+			unsubscribe_list.emplace_back(*(*it));
+			session_list_data_.erase(it->operator->()->id_);
+			it = session_list_sort_data_.erase(it);
+			continue;
+		}
+	}
+}
+void SessionList::ResetAllSessionUnreadCount(int type)
+{
+	for (auto it : session_list_sort_data_)
+	{
+		if(type == 1 && it->type_ == nim::NIMSessionType::kNIMSessionTypeP2P)
+			it->unread_count_ = 0;
+		else if (type == 1 && it->type_ == nim::NIMSessionType::kNIMSessionTypeTeam)
+			it->unread_count_ = 0;
+		else
+			it->unread_count_ = 0;
+	}
+}
+
 void SessionList::Show(bool show)
 {
 	session_list_->SetVisible(show);
@@ -105,24 +209,28 @@ void SessionList::OnTeamNotificationModeChangeCallback(const std::string &tid, c
 void SessionList::OnNotifyChangeCallback(std::string id, bool mute)
 {
 	std::wstring wid = nbase::UTF8ToUTF16(id);
-	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(wid));
-	if (item && !item->GetIsTeam())
-		item->SetMute(mute);
+	auto it = session_list_data_.find(id);
+	it->second->placed_on_top_;	
+	if (it != session_list_data_.end() && (it->second->type_ == nim::NIMSessionType::kNIMSessionTypeTeam || it->second->type_ == nim::NIMSessionType::kNIMSessionTypeSuperTeam))
+	{
+		SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(wid));
+		if (item && !item->GetIsTeam())
+			item->SetMute(mute);
+	}	
 }
 
 SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data)
 {
-	return AddSessionItem(item_data, true);
+	AddSessionItem(item_data, true);
+	SortSessionItems();
+	
+	return nullptr;
 }
 SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data, bool notify_event)
 {
 	// 机器人功能下线，不显示机器人消息在会话列表
 	if (item_data.msg_type_ == nim::kNIMMessageTypeRobot)
 		return nullptr;
-
-	bool invoke_additem = false;
-	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(nbase::UTF8ToUTF16(item_data.id_)));
-
 	// 此处有一个隐含问题，当从列表中删除一个正在传送文件的 session item 时
 	// SDK 会回调到上层 SendCommand 来发送一条消息给对端告诉对端取消了文件传输
 	// 当界面已经删除了这个 item 后又收到了消息回执会重新将 item 添加到列表中
@@ -133,7 +241,7 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data, bool
 	{
 		if (values.isMember(kJsonKeyCommand))
 		{
-			if ((values[kJsonKeyCommand].asString() == kJsonKeyCancelTransferFile || 
+			if ((values[kJsonKeyCommand].asString() == kJsonKeyCancelTransferFile ||
 				values[kJsonKeyCommand].asString() == kJsonKeyCancelReceiveFile))
 			{
 				return nullptr;
@@ -141,65 +249,56 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data, bool
 		}
 	}
 
-	nim::SessionData item_data_new = item_data;
-	if (item)
-	{
-		if (nim::kNIMSessionCommandMsgDeleted != item_data.command_ && item->GetMsgTime() > item_data.msg_timetag_)
-		{
-			item_data_new = item->GetSessionData();
-			item_data_new.unread_count_ = item_data.unread_count_;
-		}
-	}
-
-	int index = AdjustMsg(item_data_new);
-
-	if (item && (session_list_->GetItemIndex(item) == index - 1 || session_list_->GetItemIndex(item) == index))
-	{
-		item->InitMsg(item_data_new); //应该插入自己紧靠前面或后面的位置，就不用删除，直接更新。
-	}
-	else
-	{
-		if (item)
-			session_list_->Remove(item);
-		item = new SessionItem;
-		std::wstring session_item_xml = L"main/session_item.xml";
-		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::Simplified_Chinese)
-			session_item_xml = L"main/session_item.xml";
-		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
-			session_item_xml = L"main/session_item_en.xml";
-		GlobalManager::FillBoxWithCache(item, session_item_xml);
-		index = AdjustMsg(item_data_new); //删掉之后重新算一次
-		if (index >= 0)
-			session_list_->AddAt(item, index);
-		else
-			session_list_->Add(item);
-		invoke_additem = notify_event;
-		item->InitCtrl();
-		item->InitMsg(item_data_new);
-		item->AttachAllEvents(nbase::Bind(&SessionList::OnItemNotify, this, std::placeholders::_1));
-	}
-
+	bool invoke_additem = false;
+	invoke_additem = (AddSessionItemData(item_data) == 1 ? notify_event:false);
+	SortSessionItems();
 	InvokeUnreadCountChange();
 	if (invoke_additem)
 		for (auto it : add_item_cb_list_)
 			(*it.second)(item_data.id_);
-	return item;
+	return nullptr;
 }
-SessionItem* SessionList::GetSessionItem(const std::string &session_id)
+void SessionList::AddSessionItem(const std::list<nim::SessionData>& list)
 {
-	std::wstring wid = nbase::UTF8ToUTF16(session_id);
-	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(wid));
-	return item;
+	for (auto it : list)
+		AddSessionItem(it, false);
+	SortSessionItems();
 }
-
-void SessionList::DeleteSessionItem(SessionItem* item)
+bool SessionList::HasSession(const std::string &session_id)
+{	
+	return session_list_data_.find(session_id) != session_list_data_.end();
+}
+void SessionList::SelectSession(const std::string& session_id,bool sel, bool trigger)
 {
-	assert(item);
-	auto id = item->GetUTF8Name();
-	session_list_->Remove(item);
+	auto it = session_list_data_.find(session_id);
+	if (it == session_list_data_.end())
+	{
+		return;
+	}		
+	else
+	{
+		cursel_id_ = session_id;
+		SortSessionItems(true);
+	}
+		
+}
+int SessionList::GetCurSel()
+{
+	return session_list_->GetCurSel();
+}
+bool SessionList::IsSessionSelected(const std::string& session_id)
+{
+	return session_id.compare(cursel_id_) == 0;
+}
+void SessionList::DeleteSessionItem(const std::string& session_id)
+{
+	if (session_list_ == nullptr)
+		return;
+	DeleteSessionItemData(session_id);
+	SortSessionItems();
 	InvokeUnreadCountChange();	
 	for (auto it : remove_item_cb_list_)
-		(*it.second)(id);
+		(*it.second)(session_id);
 }
 
 
@@ -248,22 +347,50 @@ UnregisterCallback SessionList::RegRemoveItem(const OnRemoveItemCallback& callba
 	});
 	return cb;
 }
+ui::Control* SessionList::CreateElement()
+{
+	SessionItem* item = new SessionItem;
+	std::wstring session_item_xml = L"main/session_item.xml";
+	if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::Simplified_Chinese)
+		session_item_xml = L"main/session_item.xml";
+	if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
+		session_item_xml = L"main/session_item_en.xml";
+	GlobalManager::FillBoxWithCache(item, session_item_xml);
+	item->InitCtrl();
+	item->DetachEvent(ui::EventType::kEventAll);
+	item->AttachAllEvents(nbase::Bind(&SessionList::OnItemNotify, this, std::placeholders::_1));
+	return item;
+}
+void SessionList::FillElement(ui::Control* control, int index)
+{
+	SessionItem* item = (SessionItem*)control;
+	auto item_data_new = session_list_sort_data_.at(index);	
+	item->InitMsg(item_data_new);	
+	//item->SetUnread(item_data_new->unread_count_);
+	if (cursel_id_.compare(item_data_new->id_) == 0)
+	{
+		item->Selected(true, false);
+	}
+	else
+	{
+		item->Selected(false, false);
+	}
+	//item->SetIndex(index);
+}
+int SessionList::GetElementtCount()
+{
+	return session_list_data_.size();
+}
 void SessionList::InvokeUnreadCountChange()
 {
 	if (unread_count_change_cb_list_.empty())
 		return;
 
 	int unread_count = sys_msg_unread_ + custom_msg_unread_;
-
-	int count = session_list_->GetCount();
-	for (int i = 0; i < count; i++)
+	for (auto it : session_list_data_)
 	{
-		SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
-		if (item)
-		{
-			unread_count += item->GetUnread();
-		}
-	}
+		unread_count += it.second->unread_count_;
+	}	
 
 	for (auto& it : unread_count_change_cb_list_)
 		(*(it.second))(unread_count);
@@ -276,17 +403,28 @@ void SessionList::AddUnreadCount(const std::string &id)
 	if (item)
 	{		
 		item->AddUnread();
+	}
+	auto it = session_list_data_.find(id);
+	if (it != session_list_data_.end())
+	{
+		it->second->unread_count_ += 1;
 		InvokeUnreadCountChange();
 	}
 }
 
 void SessionList::ResetUnreadCount(const std::string &id)
-{
-	std::wstring wid = nbase::UTF8ToUTF16(id);
-	SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(wid));
-	if (item)
-	{	
-		item->ResetUnread();
+{	
+	auto it = session_list_data_.find(id);
+	if (it != session_list_data_.end())
+	{
+		it->second->unread_count_ = 0;
+		std::wstring wid = nbase::UTF8ToUTF16(id);
+		SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(wid));
+		if (item)
+		{
+			item->ResetUnread();
+		}
+		session_list_->Refresh();
 		InvokeUnreadCountChange();
 	}
 }
@@ -483,7 +621,7 @@ void SessionList::OnSessionChangeCallback(nim::NIMResCode rescode, const nim::Se
 			SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
 			if (item && !item->GetIsTeam())
 			{
-				unsubscribe_list.push_back(item->GetSessionData());
+				unsubscribe_list.emplace_back(*(item->GetSessionData()));
 			}
 		}
 		SubscribeEventManager::GetInstance()->UnSubscribeSessionEvent(unsubscribe_list);
@@ -493,29 +631,19 @@ void SessionList::OnSessionChangeCallback(nim::NIMResCode rescode, const nim::Se
 	case nim::kNIMSessionCommandRemoveAllP2P:
 	{		
 		std::list<nim::SessionData> unsubscribe_list;
-		for (int i = session_list_->GetCount() - 1; i >= 0; i--)
-		{
-			SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
-			if (item && !item->GetIsTeam())
-			{
-				unsubscribe_list.push_back(item->GetSessionData());
-				session_list_->RemoveAt(i);
-			}
-		}
+		DeleteSessionDataByType(nim::NIMSessionType::kNIMSessionTypeP2P, unsubscribe_list);
+		SortSessionItems();
 		SubscribeEventManager::GetInstance()->UnSubscribeSessionEvent(unsubscribe_list);
 		InvokeUnreadCountChange();
 	}
 	break;
 	case nim::kNIMSessionCommandRemoveAllTeam:
 	{
-		for (int i = session_list_->GetCount() - 1; i >= 0; i--)
-		{
-			SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
-			if (item && item->GetIsTeam())
-			{
-				session_list_->RemoveAt(i);
-			}
-		}
+		std::list<nim::SessionData> unsubscribe_list;
+		DeleteSessionDataByType(nim::NIMSessionType::kNIMSessionTypeTeam, unsubscribe_list);
+		SortSessionItems();
+		SubscribeEventManager::GetInstance()->UnSubscribeSessionEvent(unsubscribe_list);
+		InvokeUnreadCountChange();		
 	}
 	break;
 	case nim::kNIMSessionCommandRemove:
@@ -524,6 +652,21 @@ void SessionList::OnSessionChangeCallback(nim::NIMResCode rescode, const nim::Se
 	case nim::kNIMSessionCommandAllP2PMsgDeleted:
 	case nim::kNIMSessionCommandAllTeamMsgDeleted:
 	{
+		int type = 0;
+		switch (data.command_ )
+		{
+		case nim::kNIMSessionCommandAllMsgDeleted:
+			type = 0;
+			break;
+		case nim::kNIMSessionCommandAllP2PMsgDeleted:
+			type = 1;
+			break;
+		case nim::kNIMSessionCommandAllTeamMsgDeleted:
+			type = 2;
+			break;
+		}		
+		ResetAllSessionUnreadCount(type);
+		SortSessionItems();
 		for (int i = session_list_->GetCount() - 1; i >= 0; i--)
 		{
 			SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
@@ -619,9 +762,54 @@ bool SessionList::OnItemNotify(ui::EventArgs* msg)
 	 	assert(item);
 	 	if(msg->wParam == SET_DELETE)
 	 	{
-	 		this->DeleteSessionItem(item);
+			auto id = item->GetSessionData()->id_;
+			Post2UI(ToWeakCallback([this,id]() {
+				DeleteSessionItem(id);
+			}));
 	 	}
 	}
 	return true;
+}
+void SessionList::SortSessionItems(bool sel_force_visible)
+{
+	bool selected_visible = false;
+	if (sel_force_visible)
+	{
+		selected_visible = true;
+	}		
+	else
+	{
+		if (!cursel_id_.empty())
+		{
+			std::vector<int> collection;
+			session_list_->GetDisplayCollection(collection);
+			int index = 0;
+			for (auto it : session_list_sort_data_)
+			{
+				if (it->id_.compare(cursel_id_) == 0)
+					break;
+				index++;
+			}
+			selected_visible = collection.end() != std::find_if(collection.begin(), collection.end(), [&](int item) {return index == item; });
+		}
+	}	
+	std::sort(session_list_sort_data_.begin(), session_list_sort_data_.end(), [](const std::shared_ptr<nim::SessionData>& item1, const std::shared_ptr<nim::SessionData>& item2) {
+		
+		auto user_type1 = item1->msg_timetag_;
+		auto user_type2 = item2->msg_timetag_;
+			return user_type2 < user_type1;
+		});
+	session_list_->Refresh();	
+	if (selected_visible && !cursel_id_.empty())
+	{
+		int index = 0;
+		for (auto it : session_list_sort_data_)
+		{
+			if (it->id_.compare(cursel_id_) == 0)
+				break;
+			index++;
+		}
+		session_list_->EnsureVisible(index, false);		
+	}
 }
 }

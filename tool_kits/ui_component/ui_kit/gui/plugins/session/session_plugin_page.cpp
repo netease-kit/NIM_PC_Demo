@@ -24,12 +24,13 @@ void SessionPluginPage::DoInit()
 		{
 			BOOL handle = false;
 			active_session_box_->HandleMessage(WM_ACTIVATE, WA_ACTIVE, 0, handle);
-			//::SetActiveWindow(NULL);
-			auto session_id = active_session_box_->GetSessionId();
-			nbase::ThreadManager::PostTask(active_session_box_->ToWeakCallback([this, session_id]() {
-				//::SetActiveWindow(GetHWND());
-				nim_ui::SessionListManager::GetInstance()->InvokeSelectSessionItem(session_id, true, false);
-			}));			
+			//cqu227hk 2020/03/30
+			////::SetActiveWindow(NULL);
+			//auto session_id = active_session_box_->GetSessionId();
+			//nbase::ThreadManager::PostTask(active_session_box_->ToWeakCallback([this, session_id]() {
+			//	//::SetActiveWindow(GetHWND());
+			//	nim_ui::SessionListManager::GetInstance()->InvokeSelectSessionItem(session_id, true, false);
+			//}));			
 		}
 		return true;
 	});

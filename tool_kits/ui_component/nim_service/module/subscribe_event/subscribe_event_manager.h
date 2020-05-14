@@ -128,6 +128,12 @@ namespace nim_comp
 		* @return void	无返回值
 		*/
 		void UnSubscribeSessionEvent(const nim::SessionData& session);
+		/**
+		* 取消订阅最近会话列表中陌生人的事件
+		* @param[in] sessions 会话列表数据
+		* @return void	无返回值
+		*/
+		void UnSubscribeSessionEvent(nim::SessionData&& session);
 
 		/**
 		* 取消订阅最近会话列表中陌生人的事件

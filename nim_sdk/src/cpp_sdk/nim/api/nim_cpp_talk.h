@@ -400,6 +400,15 @@ public:
 	*/
 	static void RegReceiveBroadcastMsgsCb(const ReceiveBroadcastMsgsCallback& cb, const std::string& json_extension = "");
 
+	/** @fn void ReplyMessage(const IMMessage& msg, const std::string& json_reply_msg, FileUpPrgCallback* prg_cb = nullptr)
+	* 回复消息thread 聊天场景
+	* @param[in] msg	被回复消息的消息体
+	* @param[in] json_reply_msg	回复消息的消息体,可通过各种createxxxmessage接口创建
+	* @param[in] prg_cb		传进度的回调函数, 如果发送的消息里包含了文件资源,则通过此回调函数通知上传进度
+	* @return void 无返回值
+	*/
+	static void ReplyMessage(const IMMessage& msg, const std::string& json_reply_msg, FileUpPrgCallback* prg_cb = nullptr);
+
 };
 
 } 

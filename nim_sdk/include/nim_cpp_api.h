@@ -62,6 +62,8 @@
 //透传服务
 #include "src/cpp_sdk/nim/api/nim_cpp_pass_through_proxy.h"
 #include "src/cpp_sdk/nim/helper/nim_pass_through_proxy_helper.h"
+#include "src/cpp_sdk/nim/api/nim_cpp_talkex.h"
+#include "src/cpp_sdk/nim/helper/nim_talkex_helper_collect.h"
 /*仅在 Windows 平台下使用的头*/
 #if defined (WIN32)
     //数据通道相关API(白板等)

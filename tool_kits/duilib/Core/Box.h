@@ -280,6 +280,13 @@ public:
 	 */
 	void AttachBubbledEvent(EventType eventType, const EventCallback& callback)	{ OnBubbledEvent[eventType] += callback; }
 
+	/**
+	 * @brief 绑定事件处理函数
+	 * @param[in] eventType 事件类型
+	 * @return callback 指定回调函数
+	 */
+	void DettachBubbledEvent(EventType eventType) { OnBubbledEvent.erase(eventType); }
+
 private:
 	friend WindowBuilder;
 

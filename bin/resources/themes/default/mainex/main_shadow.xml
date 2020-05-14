@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8" standalone="yes" ?>
+<Window  shadowattached="false">	
+	<Box visible="true" bkimage="file='../public/bk/bk_shadow2.png' corner='30,30,30,30'" >
+        
+    </Box>
+</Window>

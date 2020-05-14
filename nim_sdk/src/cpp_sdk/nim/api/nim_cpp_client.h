@@ -232,7 +232,7 @@ public:
 	* 如果返回 code != 200,同样会返回一个本地计算结果
 	*/
 	static void GetServerCurrentTime(const Client::GetCurrentServerTimeCallback& cb, bool calc_local = false);
-
+	   
 	/** @fn void UnregClientCb()
 	* 反注册Client提供的所有回调
 	* @return void 无返回值

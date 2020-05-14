@@ -20,6 +20,7 @@ typedef void (*nim_global_get_sdk_cache_file_info_async)(const char *login_id, c
 typedef void (*nim_global_del_sdk_cache_file_async)(const char *login_id, const char *file_type, int64_t end_timestamp, const char *json_extension, nim_sdk_del_cache_file_cb_func cb, const void *user_data);
 typedef void (*nim_global_sdk_feedback_async)(const char *url, const char *json_extension, nim_sdk_feedback_cb_func cb, const void *user_data);
 typedef void(*nim_global_reg_sdk_db_error_cb)(nim_global_sdk_db_error_cb_func cb, const void *user_data);
+typedef void(*nim_global_upload_sdk_log)(const char* feedback_message, nim_global_upload_sdk_log_cb_func cb, const void* user_data);
 #else
 #include "nim_global.h"
 #endif
@@ -165,5 +166,18 @@ void Global::RegSDKDBError(const Global::SDKDBErrorCallback& cb)
 			CallbackProxy::Invoke(cb, error);
 		});
 	},&g_sdkdberror);
+}
+void Global::UploadSDKLog(const std::string& feedback_message, const SDKFeedbackCallback& cb)
+{
+	SDKFeedbackCallback* callback = nullptr;
+	if (cb != nullptr)
+	{
+		callback = new SDKFeedbackCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_global_upload_sdk_log)(feedback_message.c_str(), [](int rescode, const void* callback) {
+		CallbackProxy::DoSafeCallback<SDKFeedbackCallback>(callback, [=](const SDKFeedbackCallback& cb) {
+			CallbackProxy::Invoke(cb, (NIMResCode)rescode);
+			}, true);
+		}, callback);
 }
 }

@@ -31,6 +31,7 @@ typedef void(*nim_client_get_multiport_push_config)(const char *json_extension, 
 typedef const char* const(*nim_client_current_user_account)();
 typedef const char* const(*nim_client_version)();
 typedef void(*nim_client_get_server_current_time)(bool calc_local, nim_client_get_server_current_time_cb_func cb, const char *json_extension, const void *user_data);
+
 #else
 #include "nim_client.h"
 #endif
@@ -154,6 +155,8 @@ void UnregNIMCallback()
 	SuperTeam::UnregSuperTeamCb();
 	SessionOnLineService::UnregSessionOnLineServiceCb();
 	MsgLog::UnregMsglogCb();
+	TalkEx::QuickComment::UnregAllCb();
+	TalkEx::PinMsg::UnregAllCb();
 }
 bool Client::Init(const std::string& app_key
 	, const std::string& app_data_dir
@@ -240,6 +243,17 @@ bool Client::Init(const std::string& app_key
 	config_values[nim::kNIMNegoKeyNECA] = config.nego_key_neca_;	
 	config_values[nim::kNIMCommNECA] = config.comm_neca_;
 	config_values[nim::kNIMIPProtVersion] = config.ip_protocol_version_;	
+	if (!config.sync_data_type_list_.empty())
+	{
+		for (auto it : config.sync_data_type_list_)
+		{
+			nim_cpp_wrapper_util::Json::Value item;
+			item[kNIMSyncDataTypeConfigKey] = it.first;
+			item[kNIMSyncDataTypeConfigValue] = it.second;
+			config_values[kNIMSyncDataTypeConfig].append(item);
+		}
+		
+	}
 
 	if (!config.server_conf_file_path_.empty())
 		config_root[nim::kNIMServerConfFilePath] = config.server_conf_file_path_;
@@ -511,6 +525,7 @@ void Client::GetServerCurrentTime(const Client::GetCurrentServerTimeCallback& cb
 	}
 	NIM_SDK_GET_FUNC(nim_client_get_server_current_time)(calc_local, &CallbackGetServerCurrentTime, "", callback);
 }
+
 void Client::UnregClientCb()
 {
 	g_cb_relogin_ = nullptr;

@@ -93,6 +93,8 @@ namespace nim
 	std::string probe_ipv4_url_;/**< string 探测ipv4地址类型使用的url,ip_protocol_version_ == 2(auto) 时生效*/
 	std::string probe_ipv6_url_;/**< string 探测ipv6地址类型使用的url,ip_protocol_version_ == 2(auto) 时生效  */
 	/***********地址族相关设置 end************/
+
+	std::map<int /*key*/, int /*value*/> sync_data_type_list_;/**< map 数据同步类型 key(28:置顶会话) value(0:不同步,1:自动同步)*/
 	/** 构造函数 */
 	SDKConfig();
 };

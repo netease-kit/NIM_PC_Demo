@@ -122,7 +122,11 @@ void SessionBox::InitSessionBox()
 	label_member_ = (Label*)FindSubControl(L"label_member");
 	btn_refresh_member_ = (Button*)FindSubControl(L"btn_refresh_member");
 	btn_refresh_member_->SetEnabled(false);
-	member_list_ = (ListBox*)FindSubControl(L"member_list");
+	member_list_ = (VirtualListBox*)FindSubControl(L"member_list");
+	int kRoomMemberItemHeight = 50;
+	member_list_->SetElementHeight(ui::DpiManager::GetInstance()->ScaleInt(kRoomMemberItemHeight));
+	member_list_->SetDataProvider(this);
+	member_list_->InitElement(30);
 	bottom_panel_ = (VBox*)FindSubControl(L"bottom_panel");
 
 	ITextServices * text_services = input_edit_->GetTextServices();
@@ -526,8 +530,8 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 	else
 	{
 		auto iter = team_member_info_list_.find(msg.sender_accid_);
-		if (iter != team_member_info_list_.cend() && !iter->second.GetNick().empty())
-			item->SetShowName(true, iter->second.GetNick()); //显示群名片
+		if (iter != team_member_info_list_.cend() && !iter->second->GetNick().empty())
+			item->SetShowName(true, iter->second->GetNick()); //显示群名片
 		else
 		{
 			std::string show_name = nbase::UTF16ToUTF8(UserService::GetInstance()->GetUserName(msg.sender_accid_));
@@ -1822,6 +1826,7 @@ void SessionBox::WriteMsglogCallback(nim::NIMResCode res_code, const std::string
 
 void SessionBox::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 {
+	bool need_refresh_member_list = false;
 	auto refresh_msglist = [this](const nim::UserNameCard& info) //更新消息列表中消息气泡的头像和名称
 	{
 		bool refresh_icon = info.ExistValue(nim::kUserNameCardKeyIconUrl);
@@ -1829,7 +1834,7 @@ void SessionBox::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 		if (refresh_show_name)
 		{
 			auto iter = team_member_info_list_.find(info.GetAccId());
-			if (iter != team_member_info_list_.cend() && !iter->second.GetNick().empty()) //设置了群名片，不更新
+			if (iter != team_member_info_list_.cend() && !iter->second->GetNick().empty()) //设置了群名片，不更新
 				refresh_show_name = false;
 		}
 
@@ -1872,16 +1877,19 @@ void SessionBox::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 				auto iter = team_member_info_list_.find(info.GetAccId());
 				if (iter != team_member_info_list_.end())
 				{
-					//更新群成员列表信息
-					TeamItem* item = (TeamItem*)member_list_->FindSubControl(nbase::UTF8ToUTF16(info.GetAccId()));
-					if (item != NULL)
-						item->InitInfo(iter->second);
+					////更新群成员列表信息
+					//TeamItem* item = (TeamItem*)member_list_->FindSubControl(nbase::UTF8ToUTF16(info.GetAccId()));
+					//if (item != NULL)
+					//	item->InitInfo(iter->second);
+					need_refresh_member_list = true;
 				}
 			}
 		}
 
 		refresh_msglist(info);
 	}
+	if (need_refresh_member_list)
+		RefreshMemberList(true);
 }
 
 void SessionBox::OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path)
@@ -1912,19 +1920,6 @@ void SessionBox::OnUserPhotoReady(PhotoType type, const std::string& accid, cons
 		}
 	};
 
-	auto refresh_msglist_robot_photo = [=]() //更新消息列表头像
-	{
-		int msg_count = msg_list_->GetCount();
-		for (int i = 0; i < msg_count; i++)
-		{
-			MsgBubbleItem* bubble_item = dynamic_cast<MsgBubbleItem*>(msg_list_->GetItemAt(i));
-			if (bubble_item != NULL)
-			{
-				bool is_robot_response = false;
-			}
-		}
-	};
-
 	if (accid == session_id_)
 	{
 		SetHeaderPhoto(photo_path);
@@ -1949,8 +1944,6 @@ void SessionBox::OnUserPhotoReady(PhotoType type, const std::string& accid, cons
 		else
 			refresh_msglist_photo();
 	}
-	else if (type == kRobot)
-		refresh_msglist_robot_photo();
 }
 
 void SessionBox::OnReceiveEvent(int event_type, const std::string &accid, const EventDataEx &data)

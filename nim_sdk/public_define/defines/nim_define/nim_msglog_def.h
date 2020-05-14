@@ -117,6 +117,30 @@ typedef void (*nim_msglog_import_prg_cb_func)(int64_t imported_count, int64_t to
   */
 typedef void (*nim_msglog_status_changed_cb_func)(int res_code, const char *result, const char *json_extension, const void *user_data);
 
+/** @typedef void (*nim_msglog_query_message_is_thread_root_async_cb_func)(int res_code, const char *client_id, bool is_root, int reply_count, const void *user_data)
+  * 查询某条消息是否为thread聊天的根消息结果回调
+  * @param[out] res_code 		操作结果，成功200
+  * @param[out] client_id 		被查询的消息的客户端id
+  * @param[out] is_root			是否为根消息 true/false
+  * @param[out] reply_count	当为根消息时会同时返回被回复数量(回复数量是基于本地缓存数据统计,可以通过查询云端thread talk历史记录拿到精确值)
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_msglog_query_message_is_thread_root_async_cb_func)(int res_code, const char *client_id, bool is_root, int reply_count, const void *user_data);
+
+/** @typedef void (*nim_msglog_query_thread_history_msg_cb_func)(int res_code, const char *root_msg, int total, uint64_t timestamp, const char *msgs, const void *user_data)
+  * 查询thread 聊天的记录结果回调
+  * @param[out] res_code 		操作结果，成功200
+  * @param[out] root_msg 		thread 聊天根消息的内容
+  * @param[out] total			总的消息数量
+  * @param[out] timestamp	最的一条回复消息的时间戳
+	* @param[out] msgs	回复消息的列表 json object array string (SEE MORE 『查询消息历史结果Json Keys』 as follows)（查询结果的实际数量需要解析该结果获取）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_msglog_query_thread_history_msg_cb_func)(int res_code, const char *root_msg, int total, uint64_t timestamp, const char *msgs, const void *user_data);
+
+
 /** @name 消息状态变更通知结果 Json Keys
   * @{
   */
@@ -205,7 +229,8 @@ enum NIMNotificationId
 
 	kNIMNotificationIdNetcallMiss			= 101,			/**< 未接电话,{"calltype":1,"channel":6146078138783760761,"from":"id1","ids":["id1","id2"],"time":1430995380471}*/
 	kNIMNotificationIdNetcallBill			= 102,			/**< 话单,{"calltype":2,"channel":6146077129466446197,"duration":8,"ids":["id1","id2"],"time":1430995117398}*/
-	
+	kNIMNotificationIdNetcallReject		= 103,			/**< 拒绝电话,{"calltype":1,"channel":6144978055925334000,"from":"id1","ids":["id1"],"time":139323423424}*/
+
 	//服务器在线同步协议返回的结果
 	kNIMNotificationIdTeamSyncCreate		= 1000,			/**< 创建群 {"team_info" : team_info} //群组信息(Keys SEE MORE `nim_team_def.h` 『群组信息 Json Keys』)*/
 	kNIMNotificationIdTeamMemberChanged		= 1001,			/**< 群成员变更{"team_member" : team_member_info} //群组成员信息（不包括自己）(Keys SEE MORE `nim_team_def.h` 『群组成员信息 Json Keys』)*/
@@ -451,7 +476,7 @@ static const char *kNIMNotificationKeyTeamMember = "team_member";	/**< string, t
 static const char *kNIMNotificationKeyUserNameCards = "name_cards";	/**< json string array, 操作者和被操作者双方的 用户名片 Json Keys*/
 /** @}*/ //群组通知 Json Keys
 
-/** @name kNIMNotificationIdNetcallBill/kNIMNotificationIdNetcallMiss/kNIMNotificationIdLocalNetcallReject/kNIMNotificationIdLocalNetcallNoResponse Data Keys
+/** @name kNIMNotificationIdNetcallBill/kNIMNotificationIdNetcallMiss/kNIMNotificationIdNetcallReject/kNIMNotificationIdLocalNetcallReject/kNIMNotificationIdLocalNetcallNoResponse Data Keys
   * @{
   */
 static const char *kNIMNotificationIdNetCallTypeKey		= "calltype";		/**< int 通话类型对应NIMVideoChatMode */
@@ -461,7 +486,7 @@ static const char *kNIMNotificationIdNetCallChannelKey	= "channel";		/**< int64 
 static const char *kNIMNotificationIdNetCallDurationKey = "duration";		/**< int64 通话时长 单位秒 */
 static const char *kNIMNotificationIdNetCallFromKey		= "from";			/**< string 发起者帐号 */
 static const char *kNIMNotificationIdNetCallEXTKey = "ext";			/**< string 会发起时传入的 custominfo参数 */
-/** @}*/ //kNIMNotificationIdNetcallBill/kNIMNotificationIdNetcallMiss/kNIMNotificationIdLocalNetcallReject/kNIMNotificationIdLocalNetcallNoResponse Data Keys
+/** @}*/ //kNIMNotificationIdNetcallBill/kNIMNotificationIdNetcallMiss/kNIMNotificationIdNetcallReject/kNIMNotificationIdLocalNetcallReject/kNIMNotificationIdLocalNetcallNoResponse Data Keys
 
 /** @name 单向删除某条消息服务端推送 Json Keys
   * @{
@@ -470,6 +495,27 @@ static const char *kNIMDELMSGSelfNotifyKeySessionID = "session_id";				/**< stri
 static const char *kNIMDELMSGSelfNotifyKeyMsgClientID = "client_id";			/**< string 消息ID*/
 static const char *kNIMDELMSGSelfNotifyKeyEXT = "ext";			/**< string 用户自定义数据 */
 /** @}*/ //单向删除某条消息服务端推送 Json Keys
+
+  /** @brief 云端查询某条消息参数一般用在thread聊天场景中 */
+typedef struct
+{
+	enum NIMSessionType to_type_;/**< enum 会话类型，双人0，群组1,超大群5 (nim_msglog_def.h) */
+	char from_account[128];/**< string 消息的发送方 */
+	char to_account[128];/**< string 消息的接收方 */
+	int64_t server_id;/**< int64_t 消息的服务端id */
+	char client_id[128];/**< string 消息的客户端id */
+	int64_t time;/**<  int64_t 消息时间戳 */ 
+} NIMQueryMsgAsyncParam;
+
+/** @brief 云端查询thread聊天历史参数 */
+typedef struct
+{
+	int64_t from_time;/**< int64_t 起始时间 缺省0*/
+	int64_t to_time;/**< int64_t 结束时间 缺省0*/
+	int64_t exclude_msg_id; /**< int64_t 截至消息的服务端id，不包含在查询结果中 缺省0*/
+	int32_t linit;/**<  int32_t 查询条数限制 缺省100*/
+	int32_t reverse;/**<  int64_t 排序 缺省0 false*/
+} NIMQueryThreadHistoryMsgAsyncParam;
 
 #ifdef __cplusplus
 };

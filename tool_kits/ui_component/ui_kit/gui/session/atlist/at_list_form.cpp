@@ -13,6 +13,7 @@ AtlistForm::AtlistForm(std::string session_id, nim::NIMSessionType session_type,
 	session_id_ = session_id;
 	session_type_ = session_type;
 	callback_select_ = cb;
+	team_members_container_ = nullptr;
 
 	ASSERT(!session_id_.empty());
 }
@@ -47,7 +48,11 @@ void AtlistForm::InitWindow()
 	m_pRoot->AttachBubbledEvent(kEventReturn, nbase::Bind(&AtlistForm::OnSelectItem, this, std::placeholders::_1));
 	m_pRoot->AttachBubbledEvent(kEventClick, nbase::Bind(&AtlistForm::OnSelectItem, this, std::placeholders::_1));
 
-	team_members_container_ = (ui::ListBox *)FindControl(L"team_list_box");
+	team_members_container_ = (ui::VirtualListBox *)FindControl(L"team_list_box");
+	int kRoomMemberItemHeight = 40;
+	team_members_container_->SetElementHeight(ui::DpiManager::GetInstance()->ScaleInt(kRoomMemberItemHeight));
+	team_members_container_->SetDataProvider(this);
+	team_members_container_->InitElement(30);
 
 	unregister_cb.Add(UserService::GetInstance()->RegUserInfoChange(nbase::Bind(&AtlistForm::OnUserInfoChange, this, std::placeholders::_1)));
 	unregister_cb.Add(UserService::GetInstance()->RegFriendListChange(nbase::Bind(&AtlistForm::OnFriendInfoChange, this, std::placeholders::_1, std::placeholders::_2)));
@@ -61,40 +66,14 @@ void AtlistForm::InitWindow()
 	}
 }
 
-void AtlistForm::InitTeamMembers(const std::map<std::string, nim::TeamMemberProperty>& team_member_info_list)
+void AtlistForm::InitTeamMembers(const std::map<std::string, std::shared_ptr<nim::TeamMemberProperty>>& team_member_info_list)
 {
 	team_member_info_list_ = team_member_info_list;
 	team_member_info_list_.erase(LoginManager::GetInstance()->GetAccount());
-	for (auto &user_info : team_member_info_list_)
-	{
-		AtListItem *member = AddListItem(user_info.first, -1, false);
-		ASSERT(member != NULL);
-	}
-}
-
-nim_comp::AtListItem* AtlistForm::AddListItem(const std::string& uid, int index, bool is_last_five)
-{
-	AtListItem *item = CreateAtListItem(uid, is_last_five);
-	if (index == -1)
-	{
-		team_members_container_->Add(item);
-	} 
-	else
-	{
-		team_members_container_->AddAt(item, index);
-	}
-
-	std::wstring photo = PhotoService::GetInstance()->GetUserPhoto(uid);
-	item->SetHeadImage(photo);
-
-	if (!team_members_container_->IsVisible())
-	{
-		int member_count = team_members_container_->GetCount();
-		team_members_container_->SetVisible(member_count > 0);
-		FindControl(L"team_member")->SetVisible(member_count > 0);
-	}
-
-	return item;
+	RefrashShowListData();
+	team_members_container_->RemoveAll();
+	team_members_container_->Refresh();
+	team_members_container_->SetVisible(team_member_info_list_.size() > 0);
 }
 
 void AtlistForm::RemoveListItem(const std::string& uid)
@@ -195,7 +174,8 @@ bool AtlistForm::OnSelectItem(EventArgs *param)
 		{
 			if (callback_select_)
 			{
-				StdClosure closure = nbase::Bind(callback_select_, item->GetUserID());
+				std::string id = item->GetUserID();
+				StdClosure closure = nbase::Bind(callback_select_, id/*item->GetUserID()*/);
 				nbase::ThreadManager::PostTask(closure);
 			}
 		}
@@ -244,7 +224,7 @@ std::wstring AtlistForm::GetTeamCardName(const std::string& uid)
 	auto i = team_member_info_list_.find(uid);
 	if (i != team_member_info_list_.end())
 	{
-		return nbase::UTF8ToUTF16(i->second.GetNick());
+		return nbase::UTF8ToUTF16(i->second->GetNick());
 	}
 
 	return L"";
@@ -276,8 +256,17 @@ LRESULT AtlistForm::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/,
 bool AtlistForm::Match(const std::wstring& search_key, bool match_visible)
 {
 	std::wstring low_search_key = nbase::MakeLowerString(search_key);
-	if (low_search_key.empty()) 
+	if (low_search_key.empty())
 		return false;
+	team_member_match_list_.clear();
+	for (auto it : team_member_sort_list_)
+	{
+		if (it->Match(nbase::UTF16ToUTF8(search_key)))
+			team_member_match_list_.emplace_back(it);
+	}
+	team_members_container_->Refresh();
+	return team_member_match_list_.size() > 0;
+	
 
 	// 匹配时删除之前的最近5个发言人
 	RemoveLastFiveSender();
@@ -313,46 +302,24 @@ bool AtlistForm::Match(const std::wstring& search_key, bool match_visible)
 
 void AtlistForm::ShowMemberItems(std::list<std::string> &last_five)
 {
-	// 先删除之前的最近5个发言人
-	RemoveLastFiveSender();
-
-	// 增加新的5个最近发言人
-	for (auto it = last_five.begin(); it != last_five.end(); ++it)
-	{
-		auto i = team_member_info_list_.find(*it);
-		if (i != team_member_info_list_.end()) //排除已离开群的
-			uid_last_five_.push_back(*it);
-	}
-
-	for (auto it = uid_last_five_.rbegin(); it != uid_last_five_.rend(); ++it)
-	{
-		AtListItem *member = AddListItem(*it, 0, true);
-		ASSERT(member != NULL);
-	}
-
-	// 显示除了5个最近发言人之外的所有人
-	int count = team_members_container_->GetCount();
-	size_t hide_count = 0;
-
-	for (int i = uid_last_five_.size(); i < count; i++)
-	{
-		AtListItem *item = static_cast<AtListItem*>(team_members_container_->GetItemAt(i));
-		if (item != NULL)
-		{
-			if (hide_count <= uid_last_five_.size() &&
-				std::find(uid_last_five_.begin(), uid_last_five_.end(), item->GetUserID()) != uid_last_five_.end())
-			{
-				item->SetVisible(false);
-				hide_count++;
-			}
-			else
-				item->SetVisible(true);
-		}
-	}
+	UpdateLastFive(last_five);
+	RefrashShowListData();
+	team_members_container_->Refresh();
+	team_members_container_->SetVisible(team_member_sort_list_.size() > 0);
 }
 void AtlistForm::ShowWindow(bool bShow, bool bTakeFocus)
 {
 	WindowEx::ShowWindow(bShow, bTakeFocus);
+	auto task = ToWeakCallback([this]() {
+		team_member_match_list_.clear();
+		if (team_members_container_ != nullptr)
+			team_members_container_->Refresh();
+	});
+	if (!bShow)
+	{
+		Post2UI(task);
+	}
+		
 	RunTimeDataManager::GetInstance()->SetAttingSomeOne(bShow);
 }
 void AtlistForm::SetShowPos(POINT pt)
@@ -440,6 +407,68 @@ bool AtlistForm::HandleKeyEnter()
 void AtlistForm::CloseForm()
 {
 	::DestroyWindow(m_hWnd);
+}
+
+ui::Control* AtlistForm::CreateElement()
+{
+	AtListItem* item = new AtListItem();
+	GlobalManager::FillBoxWithCache(item, L"session\\at_list\\at_list_item.xml");
+	return item;	
+}
+
+void AtlistForm::FillElement(ui::Control* control, int index)
+{
+	std::vector<std::shared_ptr<ItemMatcher>>* team_member_list = nullptr;
+	if (team_member_match_list_.size() > 0)
+		team_member_list = &team_member_match_list_;
+	else
+		team_member_list = &team_member_sort_list_;
+	AtListItem* item = (AtListItem *)control;
+	std::string uid = team_member_list->at(index)->uid_;
+	bool is_last_five = uid_last_five_for_fined_.find(uid) != uid_last_five_for_fined_.end();
+	item->InitControls();
+	item->SetUserID(uid, is_last_five);
+	item->SetSessionId(session_id_);
+
+	std::wstring show_name;
+	std::wstring alias = UserService::GetInstance()->GetFriendAlias(uid);
+	if (!alias.empty())
+	{
+		show_name = alias;
+		item->SetAliasName(alias);
+	}
+
+	if (session_type_ == nim::kNIMSessionTypeTeam)
+	{
+		std::wstring card_name = GetTeamCardName(uid);
+		if (!card_name.empty())
+		{
+			if (show_name.empty())
+				show_name = card_name;
+			item->SetTeamCardName(card_name);
+		}
+	}
+
+	std::wstring nick = UserService::GetInstance()->GetUserName(uid, false);
+	if (!nick.empty())
+	{
+		if (show_name.empty())
+			show_name = nick;
+		item->SetNickName(nick);
+	}
+	std::wstring photo = PhotoService::GetInstance()->GetUserPhoto(uid);
+	item->SetHeadImage(photo);
+	item->SetShowName(show_name);
+}
+
+int AtlistForm::GetElementtCount()
+{
+	std::vector<std::shared_ptr<ItemMatcher>>* team_member_list = nullptr;
+	if (team_member_match_list_.size() > 0)
+		team_member_list = &team_member_match_list_;
+	else
+		team_member_list = &team_member_sort_list_;
+	return team_member_list->size();
 }
 
 void AtlistForm::OnUserPhotoChange(PhotoType type, const std::string& accid, const std::wstring &photo_path)
@@ -537,7 +566,7 @@ void AtlistForm::OnTeamCardChange(const std::string& tid_uid, const std::string&
 		auto i = team_member_info_list_.find(uid);
 		if (i != team_member_info_list_.end())
 		{
-			i->second.SetNick(team_card);
+			i->second->SetNick(team_card);
 		}
 
 		std::wstring wuid = nbase::UTF8ToUTF16(uid);
@@ -580,8 +609,9 @@ void AtlistForm::OnTeamMemberAdd(const std::string& tid, const nim::TeamMemberPr
 		if (i != team_member_info_list_.end()) //已添加
 			return;
 
-		team_member_info_list_[uid] = team_member_info;
-		AddListItem(uid, -1, false);
+		team_member_info_list_[uid] = std::make_shared<nim::TeamMemberProperty>( team_member_info);
+		RefrashShowListData();
+		team_members_container_->Refresh();
 	}
 }
 
@@ -595,6 +625,57 @@ void AtlistForm::OnTeamMemberRemove(const std::string& tid, const std::string& u
 
 		team_member_info_list_.erase(uid);
 		RemoveListItem(uid);
+	}
+}
+void AtlistForm::RefrashShowListData()
+{
+	auto init_match_fun = [this](const std::shared_ptr< ItemMatcher>& item,const std::shared_ptr<nim::TeamMemberProperty>& member_info) {
+		auto uid = member_info->GetAccountID();
+		item->uid_ = uid;
+		std::wstring alias = UserService::GetInstance()->GetFriendAlias(uid);
+		if (!alias.empty())
+			item->SetAliasName(alias);
+		std::wstring nick = UserService::GetInstance()->GetUserName(uid, false);
+		if (!nick.empty())
+			item->SetNickName(nick);
+		std::wstring card_name = nbase::UTF8ToUTF16(member_info->GetNick());
+		if (!card_name.empty())
+			item->SetTeamCardName(card_name);
+	};
+	team_member_sort_list_.clear();
+	team_member_sort_list_.reserve(team_member_info_list_.size());	
+	for (auto it = uid_last_five_.rbegin(); it != uid_last_five_.rend(); it++)
+	{
+		auto member_info_it = team_member_info_list_.find(*it);
+		if (member_info_it != team_member_info_list_.end())
+		{
+			auto item = std::make_shared< ItemMatcher>();
+			init_match_fun(item, member_info_it->second);			
+			team_member_sort_list_.emplace_back(item);
+		}			
+	}
+	for (auto it : team_member_info_list_)
+	{
+		if (uid_last_five_for_fined_.find(it.first) == uid_last_five_for_fined_.end())
+		{
+			auto item = std::make_shared< ItemMatcher>();
+			init_match_fun(item, it.second);
+			team_member_sort_list_.emplace_back(item);
+		}
+	}
+}
+void AtlistForm::UpdateLastFive(const std::list<std::string>& last_five)
+{
+	uid_last_five_.clear();
+	uid_last_five_for_fined_.clear();
+	for (auto it : last_five)
+	{
+		if (team_member_info_list_.find(it) != team_member_info_list_.end())
+			uid_last_five_.emplace_back(it);
+	}
+	for (auto it : uid_last_five_)
+	{
+		uid_last_five_for_fined_[it] = it;
 	}
 }
 }

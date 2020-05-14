@@ -51,7 +51,7 @@ SessionBox* SessionPluginPage::CreateSessionBox(const std::string &session_id, n
 	session_box_tab_->Add(session_box);
 	session_box->InitSessionBox();
 	session_box_tab_->SelectItem(session_box);
-	SetActiveSessionBox(session_id);
+	//SetActiveSessionBox(session_id);cqu227hk 2020/03/30
 	return session_box;
 }
 void SessionPluginPage::CloseSessionBox(const std::string &session_id)

@@ -60,6 +60,10 @@ typedef void(*nim_msglog_query_the_message_of_the_specified_type_async)(enum NIM
 	nim_msglog_query_cb_func cb, 
 	const void *user_data);
 typedef void (*nim_msglog_delete_message_self_async)(const char *, const char *, const char *, nim_msglog_delete_message_self_res_cb_func cb, const void *user_data);
+//thread talk
+typedef void (*nim_msglog_query_message_is_thread_root_async)(const char* msg_client_id, nim_msglog_query_message_is_thread_root_async_cb_func cb, const void* user_data);
+typedef void (*nim_msglog_query_message_online)(const NIMQueryMsgAsyncParam& param, nim_msglog_query_single_cb_func cb, const void* user_data);
+typedef void (*nim_msglog_query_thread_history_msg)(const char* json_msg, const NIMQueryThreadHistoryMsgAsyncParam& param, const nim_msglog_query_thread_history_msg_cb_func& cb, const void* user_data);
 #else
 #include "nim_msglog.h"
 #endif
@@ -875,6 +879,73 @@ void MsgLog::DeleteMessageSelfAsync(const IMMessage &msg, const std::string ext,
 				}, true);
 		}, cb_pointer);
 }
+void MsgLog::QueryMessageIsThreadRoot(const std::string msg_client_id, const QueryMessageIsThreadRootAsyncCallback& cb)
+{
+	QueryMessageIsThreadRootAsyncCallback* cb_pointer = nullptr;
+	if (cb != nullptr)
+	{
+		cb_pointer = new QueryMessageIsThreadRootAsyncCallback(cb);
+	}
+	std::string json_msg;
+	NIM_SDK_GET_FUNC(nim_msglog_query_message_is_thread_root_async)(msg_client_id.c_str(), 
+		[](int res_code, const char* client_id, bool is_root, int reply_count, const void* user_data) {
+			CallbackProxy::DoSafeCallback<MsgLog::QueryMessageIsThreadRootAsyncCallback>(user_data, [=](const MsgLog::QueryMessageIsThreadRootAsyncCallback& cb) {
+				CallbackProxy::Invoke(cb, (NIMResCode)res_code, PCharToString(client_id), is_root, reply_count);
+				}, true);
+		}, cb_pointer);
+}
+void MsgLog::QueryMessageOnline(const QueryMsgAsyncParam& param, const QueryMessageOnlineCallback& cb)
+{
+	QueryMessageOnlineCallback* cb_pointer = nullptr;
+	if (cb != nullptr)
+	{
+		cb_pointer = new QueryMessageOnlineCallback(cb);
+	}
+	NIMQueryMsgAsyncParam c_param;
+	memset(&c_param, 0, sizeof(NIMQueryMsgAsyncParam));
+	c_param.to_type_ = param.to_type_;
+	memcpy(c_param.from_account, param.from_account.data(), param.from_account.length());
+	memcpy(c_param.to_account, param.to_account.data(), param.to_account.length());
+	c_param.server_id = param.server_id;
+	memcpy(c_param.client_id, param.client_id.data(), param.client_id.length());
+	c_param.time = param.time;
+	std::string json_msg;
+	NIM_SDK_GET_FUNC(nim_msglog_query_message_online)(c_param,
+		[](int res_code, const char* msg_id, const char* result, const char* json_extension, const void* user_data) {
+			CallbackProxy::DoSafeCallback<MsgLog::QueryMessageOnlineCallback>(user_data, [=](const MsgLog::QueryMessageOnlineCallback& cb) {
+				IMMessage msg_out;
+				ParseMessage(PCharToString(result), msg_out);
+				CallbackProxy::Invoke(cb, (NIMResCode)res_code, PCharToString( msg_id),msg_out);
+				}, true);
+		}, cb_pointer);
+}
+void MsgLog::QueryThreadHistoryMsg(const IMMessage& msg, const QueryThreadHistoryMsgAsyncParam& param, const QueryThreadHistoryMsgCallback& cb)
+{
+	QueryThreadHistoryMsgCallback* cb_pointer = nullptr;
+	if (cb != nullptr)
+	{
+		cb_pointer = new QueryThreadHistoryMsgCallback(cb);
+	}
+	NIMQueryThreadHistoryMsgAsyncParam c_param;
+	memset(&c_param, 0, sizeof(NIMQueryThreadHistoryMsgAsyncParam));	
+	c_param.from_time = param.from_time;
+	c_param.to_time = param.to_time;
+	c_param.exclude_msg_id = param.exclude_msg_id;
+	c_param.linit = param.linit;
+	c_param.reverse = param.reverse;
+	std::string json_msg;
+	NIM_SDK_GET_FUNC(nim_msglog_query_thread_history_msg)(msg.ToJsonString(false).c_str(),c_param,
+		[](int res_code, const char* root_msg, int total, uint64_t timestamp, const char* msgs, const void* user_data) {
+			CallbackProxy::DoSafeCallback<MsgLog::QueryThreadHistoryMsgCallback>(user_data, [=](const MsgLog::QueryThreadHistoryMsgCallback& cb) {
+				IMMessage obj_msg_out;
+				ParseMessage(PCharToString(root_msg), obj_msg_out);
+				QueryMsglogResult res;
+				ParseMsglogs(PCharToString(msgs), res);
+				CallbackProxy::Invoke(cb, (NIMResCode)res_code, obj_msg_out,total, timestamp, res.msglogs_);
+				}, true);
+		}, cb_pointer);
+}
+
 void MsgLog::UnregMsglogCb()
 {
 	UnregMsgologCb();

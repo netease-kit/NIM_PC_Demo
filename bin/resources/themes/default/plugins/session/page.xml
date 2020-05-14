@@ -2,8 +2,11 @@
 <Window>
 	<Box>
 		<HBox >
-			<VListBox class="list" width="280" name="session_list" vscrollunit="100" margin="0,68,0,0"/>
-			<VListBox class="list" width="280" name="session_list_cloud" vscrollunit="100" margin="0,68,0,0" visible="false"/>
+            <VBox width="auto">
+                <VListBox class="list" width="280" name="function_list" vscrollunit="100" margin="0,68,0,0" height="auto"/>
+                <VirtualListBox class="list" width="280" name="session_list" vscrollunit="100" margin="0,0,0,0"/>
+                <VListBox class="list" width="280" name="session_list_cloud" vscrollunit="100" margin="0,0,0,0" visible="false"/>            
+            </VBox>
 			<Control class="splitline_ver_level1" margin="0,0,0,0"/>
 			<TabBox name="session_container" fadeswitch="false" >
 				<Box>

@@ -140,6 +140,21 @@ static const char *kNIMMsgKeyAntiSpamUsingYiDun = "anti_spam_using_yidun";	/**< 
 static const char *kNIMMsgKeyTeamMsgAck		= "team_msg_ack";		/**< (可选)int, 群消息是否需要已读业务，0：不需要，1：需要*/
 static const char *kNIMMsgKeyIsUpdateSession = "is_update_session";		/**< (可选)bool, 消息是否需要刷新到session服务，false:否，true:是；只有消息存离线的情况下，才会判断该参数，缺省：true*/
 
+//thread 消息信息
+
+static const char *kNIMMsgKeyThreadInfo = "thread_info";/**< (可选) json object，被回复消息的消息发送者 */
+static const char *kNIMMsgKeyReplyMsgFromAccount = "reply_msg_from_account";/**< (可选)string，从属thread_info节点，被回复消息的消息发送者 */
+static const char *kNIMMsgKeyReplyMsgToAccount = "replymsg_to_account";  /**< (可选)string，从属thread_info节点，被回复消息的消息接受者，群的话是tid*/
+static const char *kNIMMsgKeyReplyMsgTime = "reply_msg_time";       /**< (可选)long，从属thread_info节点，被回复消息的消息发送时间*/
+static const char *kNIMMsgKeyReplyMsgIdServer = "reply_msg_id_server";   /**< (可选)long，从属thread_info节点，被回复消息的消息ID)serverId)*/
+static const char *kNIMMsgKeyReplyMsgIdClient = "reply_msg_id_client";   /**< (可选)string，从属thread_info节点，被回复消息的消息ID)clientId)*/
+static const char *kNIMMsgKeyThreadMsgFromAccount = "thread_msg_from_account";/**< (可选)string，从属thread_info节点，thread消息的消息发送者*/
+static const char *kNIMMsgKeyThreadMsgToAccount = "thread_msg_to_account";  /**< (可选)string，t从属thread_info节点，hread消息的消息接受者，群的话是tid*/
+static const char *kNIMMsgKeyThreadMsgTime = "thread_msg_time";       /**< (可选)long，从属thread_info节点，thread消息的消息发送时间*/
+static const char *kNIMMsgKeyThreadMsgIdServer = "thread_msg_id_server";   /**< (可选)long，从属thread_info节点，thread消息的消息ID)serverId)*/
+static const char *kNIMMsgKeyThreadMsgIdClient = "thread_msg_id_client";   /**< (可选)string，从属thread_info节点，thread消息的消息ID)clientId)*/
+static const char *kNIMMsgKeyDeleted = "deleted";              /**< int 从属thread_info节点，消息是否已经被删除（可能是撤回，也可能是单向删除），查询thread消息历史时可能会有这个字段，大于0表示已经删除（目前撤回和单向删除都是1，未来可能区分）*/
+
 
 //本地定义
 static const char *kNIMMsgKeyLocalKeyTeamMsgAckSent	= "team_msg_ack_sent";	/**< bool 是否已经发送群消息已读回执 */

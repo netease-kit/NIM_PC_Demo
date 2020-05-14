@@ -138,6 +138,14 @@ static void SetCallbackFunction(const ChatRoom::SDKClosure& callback);
   */
 static void Cleanup(const std::string& json_extension = "");
 
+/** @fn bool IndependentEnter(const int64_t room_id,const ChatRoomIndependentEnterInfo& info)
+* 聊天室独立进入
+* @param[in] room_id			  聊天室ID
+* @param[in] info	  聊天室进入信息
+* @return bool 进入信息是否正确,返回失败则不会触发进入回调
+*/
+static bool IndependentEnter(const int64_t room_id,const ChatRoomIndependentEnterInfo& info);
+
 /** @fn bool AnonymousEnter(const int64_t room_id, const ChatRoomAnoymityEnterInfo& anonymity_info, const ChatRoomEnterInfo& info, const std::string& json_extension = "")
   * 聊天室匿名进入
   * @param[in] room_id			  聊天室ID

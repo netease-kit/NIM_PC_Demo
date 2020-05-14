@@ -53,7 +53,9 @@ typedef std::function<void(const MessageStatusChangedResult&)>	MessageStatusChan
 
 typedef std::function<void(const NIMResCode res_code,const std::string& accid)>	DeleteHistoryOnLineAsyncCallback;	/**< 删除与某账号的所有云端历史记录与漫游消息的回调模板 */
 
-	
+typedef std::function<void(const NIMResCode res_code, const std::string & client_id,bool is_root,int reply_count)> QueryMessageIsThreadRootAsyncCallback;
+typedef std::function<void(const NIMResCode res_code, const std::string & client_id, const IMMessage & msg)> QueryMessageOnlineCallback;
+typedef std::function<void(const NIMResCode res_code, const IMMessage & root_msg,int total,uint64_t last_msg_time,const std::list<IMMessage>& msg_list)> QueryThreadHistoryMsgCallback;
 
 class NIM_SDK_CPPWRAPPER_DLL_API AllMessageTypeList
 {
@@ -106,6 +108,27 @@ private:
 private:
 	std::string json_extension_;
 };
+class NIM_SDK_CPPWRAPPER_DLL_API QueryMsgAsyncParam
+{
+public:
+	NIMSessionType to_type_;/**< enum 会话类型，双人0，群组1,超大群5 (nim_msglog_def.h) */
+	std::string from_account;/**< string 消息的发送方 */
+	std::string to_account;/**< string 消息的接收方 */
+	int64_t server_id;/**< int64_t 消息的服务端id */
+	std::string client_id;/**< string 消息的客户端id */
+	int64_t time;/**<  int64_t 消息时间戳 */
+};
+
+class QueryThreadHistoryMsgAsyncParam
+{
+public:	
+	int64_t from_time;/**< int64_t 起始时间 缺省0*/
+	int64_t to_time;/**< int64_t 结束时间 缺省0*/
+	int64_t exclude_msg_id; /**< int64_t 截至消息的服务端id，不包含在查询结果中 缺省0*/
+	int32_t linit;/**<  int32_t 查询条数限制 缺省100*/
+	int32_t reverse;/**<  int64_t 排序 缺省0 false*/
+};
+
 /** @fn void UnregMsglogCb()
 * 反注册Msglog提供的所有回调
 * @return void 无返回值
@@ -591,6 +614,32 @@ static void DeleteHistoryOnlineAsync(const std::string& accid,bool delete_roamin
   */
 static void DeleteMessageSelfAsync(const IMMessage &msg, const std::string ext, const DeleteMsglogSelfCallback& cb);
 
+/** @fn QueryMessageIsThreadRoot(const std::string msg_client_id, const QueryMessageIsThreadRootAsyncCallback& cb)
+  * 查询某条消息是否为thread聊天的根消息
+  * @param[in] msg_client_id 要查询的消息的客户端ID
+  * @param[in] cb			操作结果的回调函数
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+static void QueryMessageIsThreadRoot(const std::string msg_client_id, const QueryMessageIsThreadRootAsyncCallback& cb);
+
+/** @fn void QueryMessageOnline(const QueryMsgAsyncParam& param, const QueryMessageOnlineCallback& cb)
+  * 查询某条消息的具体内容一般用在thread talk 场景中
+  * @param[in] param 要查询的消息的相关参数，可以在msglog.threadinfo中得到
+  * @param[in] cb			查询结果的回调函数
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+static void QueryMessageOnline(const QueryMsgAsyncParam& param, const QueryMessageOnlineCallback& cb);
+
+/** @fn QueryThreadHistoryMsg(const QueryThreadHistoryMsgAsyncParam& param, const QueryThreadHistoryMsgCallback& cb)
+  * 分页查询thread talk消息历史
+  * @param[in] param 要查询的消息的相关参数，可以在msglog.threadinfo中得到
+  * @param[in] cb			查询结果的回调函数
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+static void QueryThreadHistoryMsg(const IMMessage& msg,const QueryThreadHistoryMsgAsyncParam& param, const QueryThreadHistoryMsgCallback& cb);
 };
 } 
 

@@ -39,7 +39,7 @@ public:
 	* @param[in] result 查询到的系统消息列表
 	* @return void	无返回值
 	*/
-	void LoadList(const nim::IMMessage &msg, const std::map<std::string, nim::TeamMemberProperty> &team_members);
+	void LoadList(const nim::IMMessage &msg, const std::map<std::string, std::shared_ptr<nim::TeamMemberProperty>> &team_members);
 
 	void OnLoadListCallback(const nim::TeamEvent& result);
 
@@ -86,7 +86,7 @@ private:
 	ui::Label*	read_title_ =nullptr;
 	ui::Label*  unread_title_ = nullptr;
 	ui::Label*  form_title_ = nullptr;
-	std::map<std::string, nim::TeamMemberProperty> members_;
+	std::map<std::string, std::shared_ptr<nim::TeamMemberProperty>> members_;
 	AutoUnregister unregister_cb;
 
 	nim::IMMessage msg_;

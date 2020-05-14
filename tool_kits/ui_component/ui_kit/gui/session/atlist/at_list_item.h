@@ -12,6 +12,7 @@ class AtListItem :public ui::ListContainerElement
 {
 public:
 	AtListItem(bool is_last_five);
+	AtListItem();
 	~AtListItem();
 	
 	/**
@@ -37,7 +38,7 @@ public:
 	* @param[in] uid 用户id
 	* @return void	无返回值
 	*/
-	void SetUserID(const std::string& uid);
+	void SetUserID(const std::string& uid, bool last_five = false);
 
 	/**
 	* 获取用户id

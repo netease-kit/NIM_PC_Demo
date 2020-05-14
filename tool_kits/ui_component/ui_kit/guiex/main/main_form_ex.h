@@ -18,7 +18,8 @@ namespace nim_comp
 		virtual std::wstring GetSkinFile() override;
 		virtual std::wstring GetWindowClassName() const override;
 		virtual std::wstring GetWindowId() const override;	
-
+		virtual HWND Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle,
+			bool isLayeredWindow = true, const ui::UiRect& rc = ui::UiRect(0, 0, 0, 0)) override;
 		/**
 		* 窗口初始化函数
 		* @return void	无返回值
@@ -172,5 +173,6 @@ namespace nim_comp
 		IDropTargetHelper	*drop_helper_;
 	private:
 		IMainFormMenuHandler* main_menu_handler_;
+		WindowEx* shadow_wnd_;
 	};
 }

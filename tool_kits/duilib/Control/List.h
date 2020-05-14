@@ -237,8 +237,11 @@ public:
 	 */
 	void AttachReturn(const EventCallback& callback) { OnEvent[kEventReturn] += callback; }
 
+	void SelectWhenInternalMenu(bool sel);
+
 protected:
 	int m_iIndex;
+	bool m_bSelectWhenInternalMenu;
 	IListOwner* m_pOwner;
 };
 

@@ -25,6 +25,7 @@ typedef char*(*nim_talk_get_attachment_path_from_msg)(const char *json_msg);
 typedef void(*nim_talk_reg_receive_broadcast_cb)(const char *json_extension, nim_talk_receive_broadcast_cb_func cb, const void *user_data);
 typedef void(*nim_talk_reg_receive_broadcast_msgs_cb)(const char *json_extension, nim_talk_receive_broadcast_cb_func cb, const void *user_data);
 typedef void(*nim_talk_reg_message_filter_cb)(const char *json_extension, nim_talk_message_filter_func cb, const void *user_data);
+typedef void(*nim_talk_reply_msg)(const char* json_msg, const char* json_reply_msg, const char* json_extension, nim_nos_upload_prg_cb_func prg_cb, const void* prg_user_data);
 #else
 #include "nim_talk.h"
 #endif
@@ -624,6 +625,19 @@ void Talk::RegReceiveBroadcastMsgsCb(const ReceiveBroadcastMsgsCallback& cb, con
 {
 	g_cb_broadcast_msgs = cb;
 	NIM_SDK_GET_FUNC(nim_talk_reg_receive_broadcast_msgs_cb)(json_extension.c_str(), &CallbackReceiveBroadcastMessages, &g_cb_broadcast_msgs);
+}
+void Talk::ReplyMessage(const IMMessage& msg, const std::string& json_reply_msg, FileUpPrgCallback* prg_cb /*= nullptr*/)
+{
+	auto json_msg = msg.ToJsonString(false);
+	if (prg_cb)
+	{
+		
+		NIM_SDK_GET_FUNC(nim_talk_reply_msg)(json_msg.c_str(), json_reply_msg.c_str(), nullptr, &CallbackFileUploadProcess, prg_cb);
+	}
+	else
+	{
+		NIM_SDK_GET_FUNC(nim_talk_reply_msg)(json_msg.c_str(), json_reply_msg.c_str(), nullptr, nullptr, nullptr);
+	}
 }
 
 void Talk::UnregTalkCb()

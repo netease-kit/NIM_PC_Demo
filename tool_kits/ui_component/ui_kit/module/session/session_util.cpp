@@ -760,8 +760,9 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 			id == nim::kNIMNotificationIdNetcallMiss || \
 			id == nim::kNIMNotificationIdLocalNetcallReject || \
 			id == nim::kNIMNotificationIdLocalNetcallNoResponse || \
-			id == nim::kNIMNotificationIdLocalNetcallCanceled)
-		{
+			id == nim::kNIMNotificationIdLocalNetcallCanceled ||
+			id == 103)
+		{			
 			//未接电话,{"time":139323423424,"calltype":1,"from":"account_temp","channel":6144978055925334000}
 			//话单,{"time":139323423424,"calltype":1,"duration":5,"channel":6144978055925334000}
 			int type = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationIdNetCallTypeKey].asUInt();
@@ -796,8 +797,10 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 				else
 					nbase::StringPrintf(time_tip, mls->GetStringViaID(L"STRID_SESSION_ITEM_SECOND").c_str(), s);
 			}
-			else if (id == nim::kNIMNotificationIdLocalNetcallReject)
+			else if (id == nim::kNIMNotificationIdLocalNetcallReject || id == 103)
 			{
+				std::string call_from_id = json[nim::kNIMNotificationKeyData][nim::kNIMNotificationIdNetCallFromKey].asString();
+				b_create = LoginManager::GetInstance()->IsEqual(call_from_id);
 				if (b_create)
 				{
 					time_tip = mls->GetStringViaID(L"STRID_SESSION_ITEM_OTHER_BUSY");
@@ -888,9 +891,10 @@ bool IsNetCallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
 			id == nim::kNIMNotificationIdNetcallMiss || \
 			id == nim::kNIMNotificationIdLocalNetcallReject || \
 			id == nim::kNIMNotificationIdLocalNetcallNoResponse || \
-			id == nim::kNIMNotificationIdLocalNetcallCanceled)
+			id == nim::kNIMNotificationIdLocalNetcallCanceled || \
+			id == 103)
 		{
-			return true;
+			return false;
 		}
 	}
 
