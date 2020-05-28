@@ -134,7 +134,7 @@ namespace nim
 			using AddPinMessageNotifyCallback = std::function<void( const std::string & session, int to_type, const PinMessageInfo&)>;
 			using UnPinMessageNotifyCallback = std::function<void(const std::string& session, int to_type, const std::string& id)>;
 			using UpdatePinMessageNotifyCallback = std::function<void(const std::string & session, int to_type, const PinMessageInfo&)>;
-			/** @fn void PinMessage(const IMMessage& msg,const PinMessageInfo& pin_info, const PinMessageCallback& cb)
+			/** @fn void AddPinMessage(const IMMessage& msg,const PinMessageInfo& pin_info, const PinMessageCallback& cb)
 			* Pin某条消息
 			* @param[in] msg	要Pin的消息
 			* @param[in] pin_info	Pin的内容 只需赋值 ext参数,其它参数SDK来补充

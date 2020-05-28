@@ -61,6 +61,15 @@ enum NIMVideoChatMode{
 	kNIMVideoChatModeVideo	=	2	/**< 视频通话模式 */
 };
 
+/** @enum NIMVChatConnectStatus 视频通话连接状态 */
+enum NIMVChatConnectStatus {
+    kNIMVChatConnectNone    = 0,		/**< 不在通话中 */
+    kNIMVChatConnecting     = 1,		/**< 正在连接中 */
+    kNIMVChatConnected      = 2,        /**< 正在通话中 */
+    kNIMVChatReConnecting   = 3,		/**< 正在重新连接中 */
+    kNIMVChatDisconnect     = 4,		/**< 连接断开 */
+};
+
 /** @enum NIMVChatVideoQuality 视频通话分辨率，最终长宽比不保证 */
 enum NIMVChatVideoQuality {
 	kNIMVChatVideoQualityNormal		= 0,		/**< 视频默认分辨率 480x360*/
@@ -154,7 +163,7 @@ enum NIMVChatAudioMode
 	kNIMVChatAdModeDefault		= 0,		/**< 默认值，为kNIMVChatAdModeHighVoip */
 	kNIMVChatAdModeNormal		= 1,		/**< 窄带  */
 	kNIMVChatAdModeHighVoip		= 2,		/**< 高清语音 */
-	kNIMVChatAdModeHighMusic	= 3,		/**< 高清音乐 */
+	kNIMVChatAdModeHighMusic	= 3,		/**< 高清音乐。注意：高清音乐模式仅限耳机场景下使用，其他场景可能导致音频质量不佳 */
 };
 
 /** @enum NIMVideoChatSessionStatus 音视频通话成员变化类型 */
@@ -501,7 +510,7 @@ typedef void (*nim_vchat_opt2_cb_func)(int code, int64_t channel_id, const char 
 typedef void(*nim_vchat_rate_callback)(bool ret, int response_code,const char *json_extension,const void *user_data);
 
 /** @typedef void (*nim_vchat_remote_audio_data_cb_func)(unsigned __int64 time, const char *data, unsigned int size, int channels, int rate, const char *json_extension, const void *user_data)
-  * NRTC Device 远端音频数据监听接口
+  * NIM Device 远端音频数据监听接口
   * @param[out] time 时间毫秒级，暂时无效
   * @param[out] data 音频数据pcm格式
   * @param[out] size data的数据长度

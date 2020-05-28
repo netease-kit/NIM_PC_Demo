@@ -192,7 +192,14 @@ int NimAPP::InitInstance(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLin
 				nim_http_tool_path = L"";
 	}
 	// ≥ı ºªØ‘∆–≈http
-	nim_http::Init(nim_http_tool_path);
+	try {
+		nim_http::Init(nim_http_tool_path);
+	}
+	catch (const std::exception& e)
+	{
+		MessageBoxA(NULL, e.what(), "exception", 0);
+	}
+	
 	g_need_restart_after_dump = true;
 	return 0;
 }
@@ -278,7 +285,7 @@ void NimAPP::InitGlobalConfig(const std::string& server_conf_file_path,std::stri
 	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMPreloadAttach))
 		config.preload_attach_ = (app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMPreloadAttach).compare("0") != 0);
 	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMDataBaseEncryptKey))
-		config.database_encrypt_key_ = std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMDataBaseEncryptKey).c_str());
+		config.database_encrypt_key_ = app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMDataBaseEncryptKey);
 	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMPreloadImageQuality))
 		config.preload_image_quality_ = std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMPreloadImageQuality).c_str());
 	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMPreloadImageResize))

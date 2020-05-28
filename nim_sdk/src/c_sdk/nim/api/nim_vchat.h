@@ -111,6 +111,12 @@ NIM_SDK_DLL_API void nim_vchat_set_viewer_mode(bool viewer);
 */
 NIM_SDK_DLL_API bool nim_vchat_get_viewer_mode();
 
+/** @fn int nim_vchat_get_connect_status()
+  * NIM VCHAT  获取当前通话状态
+  * @return int 通话状态NIMVChatConnectStatus
+  */
+NIM_SDK_DLL_API int nim_vchat_get_connect_status();
+
 /** @fn void nim_vchat_set_audio_mute(bool muted)
 * NIM VCHAT 设置音频静音，全局有效（重新发起时也生效）；此开关打开音频只发静音包
 * @param[in] muted true 静音，false 不静音

@@ -24,7 +24,7 @@ namespace nim_comp
 		else if (msg.msg_type_ == nim::kNIMMessageTypeImage)
 		{
 			Json::Value msg_attach;
-			if (Json::Reader().parse(msg.msg_attach_, msg_attach) && msg_attach.isMember("description"))
+			if (Json::Reader().parse(msg.msg_attach_, msg_attach) && msg_attach.isObject() && msg_attach.isMember("description"))
 				show_text = nbase::UTF8ToUTF16(msg_attach["description"].asString());
 			if (show_text.empty())
 				show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_IMAGE");
@@ -66,7 +66,7 @@ namespace nim_comp
 			bool out_msg = false;
 			Json::Value values;
 			Json::Reader reader;
-			if (reader.parse(msg.msg_attach_, values) && values.isObject())
+			if (reader.parse(msg.msg_attach_, values) && values.isObject() && values.isObject())
 				out_msg = values[nim::kNIMBotRobotReceivedMsgKeyMsgOut].asBool();
 			if (!out_msg)
 				show_text = nbase::UTF8ToUTF16(msg.msg_content_);
@@ -76,7 +76,7 @@ namespace nim_comp
 		else
 		{
 			Json::Value extern_info;
-			if (Json::Reader().parse(msg.msg_attach_, extern_info) && extern_info.isMember("virtual_local_message") && extern_info["virtual_local_message"].asBool())
+			if (Json::Reader().parse(msg.msg_attach_, extern_info) && extern_info.isObject() && extern_info.isMember("virtual_local_message") && extern_info["virtual_local_message"].asBool())
 			{
 				show_text = L"";
 			}

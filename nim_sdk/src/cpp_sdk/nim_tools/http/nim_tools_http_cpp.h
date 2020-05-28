@@ -20,7 +20,6 @@
 */
 namespace nim_http
 {
-
 /** 请求完成回调
 	@param[out] 传输结果，true代表传输成功，false代表传输失败
 	@param[out] http响应码
@@ -33,6 +32,14 @@ typedef std::function<void(bool, int)> CompletedCallback;
 	@param[out] http响应实体内容
  */
 typedef std::function<void(bool, int, const std::string&)> ResponseCallback;
+
+/** 请求响应回调
+	@param[out] 传输结果，true代表传输成功，false代表传输失败
+	@param[out] http响应码
+	@param[out] http响应实体内容
+	@param[out] http响应Head内容
+ */
+typedef std::function<void(bool, int, const std::string&,const std::string&)> ResponseCallbackEx;
 
 /** 请求过程回调
 	@param[out] 总的待上传字节数
@@ -166,6 +173,21 @@ public:
 		const ResponseCallback& response_cb, const ProgressCallback& progress_cb = ProgressCallback(),
 		const SpeedCallback& speed_cb = SpeedCallback(), const TransferCallback& transfer_cb = TransferCallback());
 
+	/**
+	* NIM HTTP 创建上传任务
+	* @param[in] url					资源保存地址
+	* @param[in] post_body				上传的数据
+	* @param[in] post_body_size			上传数据的大小
+	* @param[in] response_cb			结束回调
+	* @param[in] progress_cb			进度回调
+	* @param[in] speed_cb				实时速度回调
+	* @param[in] transfer_cb			传输信息回调
+	* @return HttpRequestHandle			http任务句柄
+	*/
+	HttpRequest(const std::string& url, const char* post_body, size_t post_body_size,
+		const ResponseCallbackEx& response_cb, const ProgressCallback& progress_cb = ProgressCallback(),
+		const SpeedCallback& speed_cb = SpeedCallback(), const TransferCallback& transfer_cb = TransferCallback());
+
 	/** 
 	* NIM HTTP 创建任务
 	* @param[in] key			头的key
@@ -215,7 +237,7 @@ public:
 
 private:
 	static void CompletedCallbackWrapper(const void* user_data, bool is_ok, int response_code);
-	static void ResponseCallbackWrapper(const void* user_data, bool is_ok, int response_code, const char* content);
+	static void ResponseCallbackWrapper(const void* user_data, bool is_ok, int response_code, const char* content,const char* head);
 	static void ProgressCallbackWrapper(const void* user_data, double upload_size, double uploaded_size, double download_size, double downloaded_size);
 	static void SpeedCallbackWrapper(const void* user_data, double upload_speed, double download_speed);
 	static void TransferCallbackWrapper(const void* user_data, double actual_upload_size, double upload_speed, double actual_download_size, double download_speed);

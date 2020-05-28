@@ -154,7 +154,7 @@ bool SessionList::DeleteSessionItemData(const std::string& session_id)
 }
 void SessionList::DeleteSessionDataByType(nim::NIMSessionType type, std::list<nim::SessionData>& unsubscribe_list)
 {
-	for (auto it = session_list_sort_data_.begin(); it != session_list_sort_data_.end(); it++)
+	for (auto it = session_list_sort_data_.begin(); it != session_list_sort_data_.end(); )
 	{
 		if (it->operator->()->type_ == type)
 		{
@@ -162,6 +162,10 @@ void SessionList::DeleteSessionDataByType(nim::NIMSessionType type, std::list<ni
 			session_list_data_.erase(it->operator->()->id_);
 			it = session_list_sort_data_.erase(it);
 			continue;
+		}
+		else
+		{
+			it++;
 		}
 	}
 }
@@ -237,7 +241,7 @@ SessionItem* SessionList::AddSessionItem(const nim::SessionData &item_data, bool
 	// 所以此处不响应取消传送文件请求的消息
 	Json::Value values;
 	Json::Reader reader;
-	if (reader.parse(item_data.msg_attach_, values))
+	if (reader.parse(item_data.msg_attach_, values) && values.isObject())
 	{
 		if (values.isMember(kJsonKeyCommand))
 		{
@@ -304,12 +308,9 @@ void SessionList::DeleteSessionItem(const std::string& session_id)
 
 void SessionList::RemoveAllSessionItem()
 {
-	//回话列表的第一项是多端同步和消息中心，所以要专门写个清除函数
-	int count = session_list_->GetCount();
-	for (int i = count - 1; i > 1; --i)
-	{
-		session_list_->RemoveAt(i);
-	}
+	session_list_->RemoveAll();
+	session_list_sort_data_.clear();
+	session_list_data_.clear();
 	InvokeUnreadCountChange();
 }
 
@@ -616,13 +617,9 @@ void SessionList::OnSessionChangeCallback(nim::NIMResCode rescode, const nim::Se
 	case nim::kNIMSessionCommandRemoveAll:
 	{
 		std::list<nim::SessionData> unsubscribe_list;
-		for (int i = session_list_->GetCount() - 1; i >= 0; i--)
+		for (auto it : session_list_data_)
 		{
-			SessionItem* item = dynamic_cast<SessionItem*>(session_list_->GetItemAt(i));
-			if (item && !item->GetIsTeam())
-			{
-				unsubscribe_list.emplace_back(*(item->GetSessionData()));
-			}
+			unsubscribe_list.emplace_back(*it.second);
 		}
 		SubscribeEventManager::GetInstance()->UnSubscribeSessionEvent(unsubscribe_list);
 		RemoveAllSessionItem();

@@ -115,6 +115,12 @@ typedef void(*nim_vchat_set_viewer_mode)(bool viewer);
 */
 typedef bool(*nim_vchat_get_viewer_mode)();
 
+/** @fn int nim_vchat_get_connect_status()
+  * NIM VCHAT  获取当前通话状态
+  * @return int 通话状态NIMVChatConnectStatus
+  */
+typedef int(*nim_vchat_get_connect_status)();
+
 /** @fn void nim_vchat_set_audio_mute(bool muted)
 * NIM VCHAT 设置音频静音，全局有效（重新发起时也生效）
 * @param[in] muted true 静音，false 不静音
@@ -606,6 +612,10 @@ bool VChat::GetViewerMode()
 	return NIM_SDK_GET_FUNC(nim_vchat_get_viewer_mode)();
 }
 
+NIMVChatConnectStatus GetConnectStatus()
+{
+    return (NIMVChatConnectStatus)NIM_SDK_GET_FUNC(nim_vchat_get_connect_status)();
+}
 void VChat::SetAudioMuted(bool muted)
 {
 	NIM_SDK_GET_FUNC(nim_vchat_set_audio_mute)(muted);

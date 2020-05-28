@@ -439,6 +439,12 @@ public:
 	*/
 	static bool GetViewerMode();
 
+    /** @fn static NIMVChatConnectStatus GetConnectStatus()
+    * NIM VCHAT 获取当前通话状态
+    * @return NIMVChatConnectStatus 通话连接状态枚举
+    */
+    static NIMVChatConnectStatus GetConnectStatus();
+
 	/** @fn static void SetAudioMuted(bool muted)
 	* NIM VCHAT 设置音频发送静音，全局有效（重新发起时也生效）
 	* @param[in] muted true 静音，false 不静音

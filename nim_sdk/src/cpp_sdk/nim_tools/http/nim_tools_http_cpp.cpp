@@ -6,7 +6,8 @@
 */
 
 #include "src/cpp_sdk/nim_tools/http/nim_tools_http_cpp.h"
-
+#include <assert.h>
+#include <exception>
 namespace nim_http
 {
 
@@ -20,6 +21,8 @@ typedef HttpRequestHandle (*typeof_nim_http_create_download_file_range_request)(
 	__int64 range_start, nim_http_request_completed_cb complete_cb, const void* user_data);
 typedef HttpRequestHandle (*typeof_nim_http_create_request)(const char* url, const char* post_body, size_t post_body_size, 
 	nim_http_request_response_cb response_cb, const void* user_data);
+typedef HttpRequestHandle(*typeof_nim_http_create_request_ex)(const char* url, const char* post_body, size_t post_body_size,
+	nim_http_request_response_ex_cb response_cb, const void* user_data);
 typedef void (*typeof_nim_http_add_request_header)(HttpRequestHandle request_handle, const char* key, const char* value);
 typedef void (*typeof_nim_http_set_request_progress_cb)(HttpRequestHandle request_handle, nim_http_request_progress_cb progress_callback, const void* user_data);
 typedef void(*typeof_nim_http_set_request_speed_cb)(HttpRequestHandle request_handle, nim_http_request_speed_cb speed_callback, const void* user_data);
@@ -32,24 +35,25 @@ typedef HttpRequestID (*typeof_nim_http_post_request)(HttpRequestHandle);
 typedef void (*typeof_nim_http_remove_request)(HttpRequestID http_request_id);
 typedef const char* const(*typeof_nim_http_get_response_head)(HttpRequestID http_request_id);
 
-typeof_nim_http_init	g_nim_http_init;
-typeof_nim_http_uninit	g_nim_http_uninit;
-typeof_nim_http_init_log g_nim_http_init_log;
-typeof_nim_http_is_init_log g_nim_http_is_init_log;
-typeof_nim_http_create_download_file_request	g_nim_http_create_download_file_request;
-typeof_nim_http_create_download_file_range_request	g_nim_http_create_download_file_range_request;
-typeof_nim_http_create_request	g_nim_http_create_request;
-typeof_nim_http_add_request_header	g_nim_http_add_request_header;
-typeof_nim_http_set_request_progress_cb	g_nim_http_set_request_progress_cb;
-typeof_nim_http_set_request_speed_cb	g_nim_http_set_request_speed_cb;
-typeof_nim_http_set_request_transfer_cb	g_nim_http_set_request_transfer_cb;
-typeof_nim_http_set_request_method_as_post	g_nim_http_set_request_method_as_post;
-typeof_nim_http_set_timeout	g_nim_http_set_timeout;
-typeof_nim_http_set_low_speed g_nim_http_set_low_speed;
-typeof_nim_http_set_proxy g_nim_http_set_proxy;
-typeof_nim_http_post_request	g_nim_http_post_request;
-typeof_nim_http_remove_request	g_nim_http_remove_request;
-typeof_nim_http_get_response_head g_nim_http_get_response_head;
+typeof_nim_http_init	g_nim_http_init = nullptr;
+typeof_nim_http_uninit	g_nim_http_uninit = nullptr;
+typeof_nim_http_init_log g_nim_http_init_log = nullptr;
+typeof_nim_http_is_init_log g_nim_http_is_init_log = nullptr;
+typeof_nim_http_create_download_file_request	g_nim_http_create_download_file_request = nullptr;
+typeof_nim_http_create_download_file_range_request	g_nim_http_create_download_file_range_request = nullptr;
+typeof_nim_http_create_request	g_nim_http_create_request = nullptr;
+typeof_nim_http_create_request_ex g_nim_http_create_request_ex = nullptr;
+typeof_nim_http_add_request_header	g_nim_http_add_request_header = nullptr;
+typeof_nim_http_set_request_progress_cb	g_nim_http_set_request_progress_cb = nullptr;
+typeof_nim_http_set_request_speed_cb	g_nim_http_set_request_speed_cb = nullptr;
+typeof_nim_http_set_request_transfer_cb	g_nim_http_set_request_transfer_cb = nullptr;
+typeof_nim_http_set_request_method_as_post	g_nim_http_set_request_method_as_post = nullptr;
+typeof_nim_http_set_timeout	g_nim_http_set_timeout = nullptr;
+typeof_nim_http_set_low_speed g_nim_http_set_low_speed = nullptr;
+typeof_nim_http_set_proxy g_nim_http_set_proxy = nullptr;
+typeof_nim_http_post_request	g_nim_http_post_request = nullptr;
+typeof_nim_http_remove_request	g_nim_http_remove_request = nullptr;
+typeof_nim_http_get_response_head g_nim_http_get_response_head = nullptr;
 HMODULE g_hmod = NULL;
 struct CompletedCallbackUserData
 {
@@ -77,7 +81,7 @@ struct ResponseCallbackUserData
 	{
 
 	}
-	ResponseCallback response_cb;
+	ResponseCallbackEx response_cb;
 	ProgressCallback* progress_cb_pointer;
 	SpeedCallback* speed_cb_pointer;
 	TransferCallback* transfer_cb_pointer;
@@ -85,38 +89,53 @@ struct ResponseCallbackUserData
 
 void Init(const std::wstring &dll_path/* = L""*/)
 {
-	
+	static std::wstring http_tool_file_extension = L".dll";
+	static std::string http_tool_load_exception = "Load http tool library error!";
 	std::wstring dll_file(dll_path);
-	if(dll_file.empty())
+	if (dll_path.find(http_tool_file_extension) != dll_path.length() - http_tool_file_extension.length())//路径中不包含http库文件
+	{
+		if (!dll_file.empty() && (*dll_file.rbegin() != L'/' && *dll_file.rbegin() != L'\\'))
+			dll_file.append(1, L'/');
 		dll_file.append(L"nim_tools_http.dll");
+	}	
 	g_hmod = ::LoadLibraryEx(dll_file.c_str(), NULL, LOAD_WITH_ALTERED_SEARCH_PATH);
-	g_nim_http_init = (typeof_nim_http_init)GetProcAddress(g_hmod, "nim_http_init");
-	g_nim_http_uninit = (typeof_nim_http_uninit)GetProcAddress(g_hmod,"nim_http_uninit");
-	g_nim_http_init_log = (typeof_nim_http_init_log)GetProcAddress(g_hmod, "nim_http_init_log");
-	g_nim_http_is_init_log = (typeof_nim_http_is_init_log)GetProcAddress(g_hmod, "nim_http_is_init_log");
-	g_nim_http_create_download_file_request = (typeof_nim_http_create_download_file_request)GetProcAddress(g_hmod,"nim_http_create_download_file_request");
-	g_nim_http_create_download_file_range_request = (typeof_nim_http_create_download_file_range_request)GetProcAddress(g_hmod,"nim_http_create_download_file_range_request");
-	g_nim_http_create_request = (typeof_nim_http_create_request)GetProcAddress(g_hmod,"nim_http_create_request");
-	g_nim_http_add_request_header = (typeof_nim_http_add_request_header)GetProcAddress(g_hmod,"nim_http_add_request_header");
-	g_nim_http_set_request_progress_cb = (typeof_nim_http_set_request_progress_cb)GetProcAddress(g_hmod,"nim_http_set_request_progress_cb");
-	g_nim_http_set_request_speed_cb = (typeof_nim_http_set_request_speed_cb)GetProcAddress(g_hmod, "nim_http_set_request_speed_cb");
-	g_nim_http_set_request_transfer_cb = (typeof_nim_http_set_request_transfer_cb)GetProcAddress(g_hmod, "nim_http_set_request_transfer_cb");
-	g_nim_http_set_request_method_as_post = (typeof_nim_http_set_request_method_as_post)GetProcAddress(g_hmod,"nim_http_set_request_method_as_post");
-	g_nim_http_set_timeout = (typeof_nim_http_set_timeout)GetProcAddress(g_hmod, "nim_http_set_timeout");
-	g_nim_http_set_low_speed = (typeof_nim_http_set_low_speed)GetProcAddress(g_hmod, "nim_http_set_low_speed");
-	g_nim_http_set_proxy = (typeof_nim_http_set_proxy)GetProcAddress(g_hmod, "nim_http_set_proxy");
-	g_nim_http_post_request = (typeof_nim_http_post_request)GetProcAddress(g_hmod,"nim_http_post_request");
-	g_nim_http_remove_request = (typeof_nim_http_remove_request)GetProcAddress(g_hmod,"nim_http_remove_request");
-	g_nim_http_get_response_head = (typeof_nim_http_get_response_head)GetProcAddress(g_hmod, "nim_http_get_response_head");
-	if(g_nim_http_init != nullptr)
-		g_nim_http_init();
+	if (g_hmod != NULL)
+	{
+		g_nim_http_init = (typeof_nim_http_init)GetProcAddress(g_hmod, "nim_http_init");
+		g_nim_http_uninit = (typeof_nim_http_uninit)GetProcAddress(g_hmod, "nim_http_uninit");
+		g_nim_http_init_log = (typeof_nim_http_init_log)GetProcAddress(g_hmod, "nim_http_init_log");
+		g_nim_http_is_init_log = (typeof_nim_http_is_init_log)GetProcAddress(g_hmod, "nim_http_is_init_log");
+		g_nim_http_create_download_file_request = (typeof_nim_http_create_download_file_request)GetProcAddress(g_hmod, "nim_http_create_download_file_request");
+		g_nim_http_create_download_file_range_request = (typeof_nim_http_create_download_file_range_request)GetProcAddress(g_hmod, "nim_http_create_download_file_range_request");
+		g_nim_http_create_request = (typeof_nim_http_create_request)GetProcAddress(g_hmod, "nim_http_create_request");
+		g_nim_http_create_request_ex = (typeof_nim_http_create_request_ex)GetProcAddress(g_hmod, "nim_http_create_request_ex");
+		g_nim_http_add_request_header = (typeof_nim_http_add_request_header)GetProcAddress(g_hmod, "nim_http_add_request_header");
+		g_nim_http_set_request_progress_cb = (typeof_nim_http_set_request_progress_cb)GetProcAddress(g_hmod, "nim_http_set_request_progress_cb");
+		g_nim_http_set_request_speed_cb = (typeof_nim_http_set_request_speed_cb)GetProcAddress(g_hmod, "nim_http_set_request_speed_cb");
+		g_nim_http_set_request_transfer_cb = (typeof_nim_http_set_request_transfer_cb)GetProcAddress(g_hmod, "nim_http_set_request_transfer_cb");
+		g_nim_http_set_request_method_as_post = (typeof_nim_http_set_request_method_as_post)GetProcAddress(g_hmod, "nim_http_set_request_method_as_post");
+		g_nim_http_set_timeout = (typeof_nim_http_set_timeout)GetProcAddress(g_hmod, "nim_http_set_timeout");
+		g_nim_http_set_low_speed = (typeof_nim_http_set_low_speed)GetProcAddress(g_hmod, "nim_http_set_low_speed");
+		g_nim_http_set_proxy = (typeof_nim_http_set_proxy)GetProcAddress(g_hmod, "nim_http_set_proxy");
+		g_nim_http_post_request = (typeof_nim_http_post_request)GetProcAddress(g_hmod, "nim_http_post_request");
+		g_nim_http_remove_request = (typeof_nim_http_remove_request)GetProcAddress(g_hmod, "nim_http_remove_request");
+		g_nim_http_get_response_head = (typeof_nim_http_get_response_head)GetProcAddress(g_hmod, "nim_http_get_response_head");
+		if (g_nim_http_init != nullptr)
+			g_nim_http_init();
+	}
+	else
+	{
+		throw(std::exception(http_tool_load_exception.c_str()));
+	}
 }
 
 
 void Uninit()
 {
-	g_nim_http_uninit();
-	::FreeLibrary(g_hmod);
+	if(g_nim_http_uninit != nullptr)
+		g_nim_http_uninit();
+	if(g_hmod != NULL)
+		::FreeLibrary(g_hmod);
 }
 
 void InitLog(const std::string& log_file_path)
@@ -263,14 +282,57 @@ HttpRequest::HttpRequest(const std::string& url, const char* post_body, size_t p
 	if (response_cb)
 	{
 		response_cb_userdata = new ResponseCallbackUserData();
+		response_cb_userdata->response_cb = [response_cb](bool ret, int code, const std::string& body, const std::string& head) {
+			response_cb(ret, code, body);
+		};
+		response_cb_userdata->progress_cb_pointer = progress_cb_pointer;
+		response_cb_userdata->speed_cb_pointer = speed_cb_pointer;
+		response_cb_userdata->transfer_cb_pointer = transfer_cb_pointer;
+	}
+	http_reuqest_handle_ = g_nim_http_create_request_ex(url.c_str(), post_body, post_body_size,
+		&ResponseCallbackWrapper, response_cb_userdata);
+	
+	if (proxy_type_ != kNIMProxyNone)
+		SetProxy(proxy_type_, proxy_host_, proxy_port_, proxy_user_, proxy_pass_);
+
+	if (progress_cb)
+		g_nim_http_set_request_progress_cb(http_reuqest_handle_, &ProgressCallbackWrapper, progress_cb_pointer);
+
+	if (speed_cb)
+		g_nim_http_set_request_speed_cb(http_reuqest_handle_, &SpeedCallbackWrapper, speed_cb_pointer);
+
+	if (transfer_cb)
+		g_nim_http_set_request_transfer_cb(http_reuqest_handle_, &TransferCallbackWrapper, transfer_cb_pointer);
+}
+
+HttpRequest::HttpRequest(const std::string& url, const char* post_body, size_t post_body_size,
+	const ResponseCallbackEx& response_cb, const ProgressCallback& progress_cb,
+	const SpeedCallback& speed_cb, const TransferCallback& transfer_cb)
+{
+	ProgressCallback* progress_cb_pointer = nullptr;
+	if (progress_cb)
+		progress_cb_pointer = new ProgressCallback(progress_cb);
+
+	SpeedCallback* speed_cb_pointer = nullptr;
+	if (speed_cb)
+		speed_cb_pointer = new SpeedCallback(speed_cb);
+
+	TransferCallback* transfer_cb_pointer = nullptr;
+	if (transfer_cb)
+		transfer_cb_pointer = new TransferCallback(transfer_cb);
+
+	ResponseCallbackUserData* response_cb_userdata = nullptr;
+	if (response_cb)
+	{
+		response_cb_userdata = new ResponseCallbackUserData();
 		response_cb_userdata->response_cb = response_cb;
 		response_cb_userdata->progress_cb_pointer = progress_cb_pointer;
 		response_cb_userdata->speed_cb_pointer = speed_cb_pointer;
 		response_cb_userdata->transfer_cb_pointer = transfer_cb_pointer;
 	}
-	http_reuqest_handle_ = g_nim_http_create_request(url.c_str(), post_body, post_body_size,
+	http_reuqest_handle_ = g_nim_http_create_request_ex(url.c_str(), post_body, post_body_size,
 		&ResponseCallbackWrapper, response_cb_userdata);
-	
+
 	if (proxy_type_ != kNIMProxyNone)
 		SetProxy(proxy_type_, proxy_host_, proxy_port_, proxy_user_, proxy_pass_);
 
@@ -336,14 +398,14 @@ void HttpRequest::CompletedCallbackWrapper(const void* user_data, bool is_ok, in
 	}
 }
 
-void HttpRequest::ResponseCallbackWrapper(const void* user_data, bool is_ok, int response_code, const char* content)
+void HttpRequest::ResponseCallbackWrapper(const void* user_data, bool is_ok, int response_code, const char* content, const char* head)
 {
 	if (user_data)
 	{
 		auto response_cb_userdata = (ResponseCallbackUserData*)user_data;
 		if (response_cb_userdata->response_cb)
 		{
-			response_cb_userdata->response_cb(is_ok, response_code, std::string(content));
+			response_cb_userdata->response_cb(is_ok, response_code, std::string(content),std::string(head));
 		}
 		ProgressCallback* progress_cb = response_cb_userdata->progress_cb_pointer;
 		SpeedCallback* speed_cb = response_cb_userdata->speed_cb_pointer;

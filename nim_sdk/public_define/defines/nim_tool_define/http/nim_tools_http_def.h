@@ -12,13 +12,14 @@ extern"C"
 #endif
 
 /** @enum NIMProxyType 代理类型 */
-	enum NIMProxyType
-	{
+enum NIMProxyType
+{
 	kNIMProxyNone		= 0,	/**< 不使用代理*/
 	kNIMProxyHttp11		= 1,	/**< HTTP 1.1 Proxy*/
 	kNIMProxySocks4		= 4,	/**< Socks4 Proxy*/
 	kNIMProxySocks4a	= 5,	/**< Socks4a Proxy*/
 	kNIMProxySocks5		= 6,	/**< Socks5 Proxy*/
+    kNIMProxySocks5HostName = 7,	/**< Socks5 host name Proxy*/
 };
 
 /** @typedef void* HttpRequestHandle
@@ -50,7 +51,18 @@ typedef void (*nim_http_request_completed_cb)(const void *user_data, bool result
   */
 typedef void (*nim_http_request_response_cb)(const void *user_data, bool result, int response_code, const char *response_content);
 
-/** @typedef void (*nim_http_request_progress_cb)(const void *user_data, double total_upload_size, double uploaded_size, double total_download_size, double downloaded_size)
+/** @typedef void (*nim_http_request_response_ex_cb)(const void *user_data, bool result, int response_code, const char *response_content, const char *response_header)
+  * nim callback function that has been registered in nim_http_create_*** API
+  * @param[out] user_data			回传的自定义数据
+  * @param[out] result				传输结果，true代表传输成功，false代表传输失败
+  * @param[out] response_code		http响应码
+  * @param[out] response_content	http响应实体内容
+  * @param[out] response_header	    http响应头
+  * @return void					无返回值
+  */
+typedef void(*nim_http_request_response_ex_cb)(const void *user_data, bool result, int response_code, const char *response_content, const char *response_header);
+
+/** @typedef void (*nim_http_request_progress_cb)(const void* user_data, double total_upload_size, double uploaded_size, double total_download_size, double downloaded_size)
   * nim callback function that has been registered in nim_http_set_request_progress_cb API
   * @param[out] user_data				回传的自定义数据
   * @param[out] total_upload_size		总的待上传的字节数
