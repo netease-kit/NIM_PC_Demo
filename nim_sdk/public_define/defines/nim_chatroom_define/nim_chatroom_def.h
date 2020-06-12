@@ -283,6 +283,7 @@
 		static const char *kNIMChatRoomMsgKeyHistorySave = "history_save";		/**< int,(可选)该消息是否存储云端历史,可选，0:不是,1:是, 默认1 */
 		static const char *kNIMChatRoomMsgKeyAntiSpamUsingYiDun = "anti_spam_using_yidun";	/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
 		static const char *kNIMChatRoomMsgKeyBody = "body";				/**< string,(可选)文本消息内容（聊天室机器人文本消息） */
+		static const char* kNIMChatRoomMsgKeyYiDunAntiCheating = "yidun_anti_cheating";		/**< (可选)String, 易盾反垃圾增强反作弊专属字段, 限制json，长度限制1024*/
 		//以下定义对于客户端只读
 		static const char *kNIMChatRoomMsgKeyRoomID = "room_id";			/**< long, 消息所属的聊天室id,服务器填写,发送方不需要填写 */
 		static const char *kNIMChatRoomMsgKeyFromAccount = "from_id";			/**< string, 消息发送者的账号,服务器填写,发送方不需要填写 */

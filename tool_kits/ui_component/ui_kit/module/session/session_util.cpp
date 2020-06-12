@@ -619,20 +619,6 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 	if (StringToJson(msg_attach, json) && json.isObject())
 	{
 		nim::NIMNotificationId id = (nim::NIMNotificationId)json[nim::kNIMNotificationKeyId].asInt();
-
-		//test
-		if (json[nim::kNIMNotificationKeyData].isMember("attach"))
-		{
-			if (id == nim::kNIMNotificationIdTeamKick)
-			{
-				QLOG_APP(L"GetNotifyMsg Kick : {0}") << json[nim::kNIMNotificationKeyData]["attach"].asString();
-			}
-			else if (id == nim::kNIMNotificationIdTeamInvite)
-			{
-				QLOG_APP(L"GetNotifyMsg invite : {0}") << json[nim::kNIMNotificationKeyData]["attach"].asString();
-			}
-		}
-
 		std::wstring team_type = mls->GetStringViaID(TeamService::GetInstance()->GetTeamType(session_id) == 0 ? L"STRID_SESSION_ITEM_GROUP" : L"STRID_SESSION_ITEM_TEAM");
 		std::wstring you = mls->GetStringViaID(L"STRID_SESSION_ITEM_YOU");
 		std::wstring admin = mls->GetStringViaID(L"STRID_SESSION_ITEM_ADMIN");

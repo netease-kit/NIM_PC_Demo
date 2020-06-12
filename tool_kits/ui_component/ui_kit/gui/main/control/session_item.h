@@ -64,6 +64,12 @@ public:
 	void SetOnlineState(const EventDataEx& data);
 
 	/**
+	* 隐藏在线状态
+	* @return void	无返回值
+	*/
+	void HideOnlineState();
+
+	/**
 	* 更新会话列表项的显示内容
 	* @param[in] id 会话id
 	* @return void	无返回值
@@ -109,9 +115,9 @@ public:
 
 	/**
 	* 重置本会话项未读数
-	* @return void 无返回值
+	* @return bool 是否被重置
 	*/
-	void ResetUnread();
+	bool ResetUnread();
 
 	/**
 	* 删除最近会话项的回调函数

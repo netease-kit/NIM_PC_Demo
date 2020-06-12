@@ -116,10 +116,13 @@
       </Box>
 
       <TabBox name="session_or_friend_list_tabbox" fadeswitch="true">
-        <HBox>
-        <VListBox class="list" name="session_list" vscrollunit="100" bkcolor=""/>
-        <VListBox class="list" name="session_list_cloud" vscrollunit="100" visible="false" />
-        </HBox>
+        <VBox>
+            <VListBox class="list" name="function_list" vscrollunit="100" margin="0,0,0,0" height="auto"/>
+            <HBox>
+                <VirtualListBox class="list" name="session_list" vscrollunit="100" bkcolor=""/>
+                <VListBox class="list" name="session_list_cloud" vscrollunit="100" visible="false" />
+            </HBox>
+        </VBox>        
         <TreeView class="list" name="friend_list" vscrollunit="100"/>
         <TreeView class="list" name="group_list" vscrollunit="100"/>
       </TabBox>

@@ -91,8 +91,21 @@ void SessionBox::RefreshMemberList(bool sort/* = false*/)
 void SessionBox::AddTeamMemberData(const nim::TeamMemberProperty& data)
 {
 	auto ptr_data = std::make_shared<nim::TeamMemberProperty>(data);
+	bool update = team_member_info_list_.find(data.GetAccountID()) != team_member_info_list_.end();
 	team_member_info_list_[data.GetAccountID()] = ptr_data;
-	team_member_sort_list_.emplace_back(ptr_data);
+	if (update)
+	{
+		auto sort_list_it = std::find_if(team_member_sort_list_.begin(), team_member_sort_list_.end(), 
+			[&](const std::shared_ptr<nim::TeamMemberProperty>& item) {return item->GetAccountID().compare(ptr_data->GetAccountID()) == 0; });
+		if (sort_list_it != team_member_sort_list_.end())
+		{
+			*sort_list_it = ptr_data;
+		}
+	}
+	else
+	{
+		team_member_sort_list_.emplace_back(ptr_data);
+	}	
 	if (data.GetUserType() == nim::kNIMTeamUserTypeCreator)
 		team_owner_accid_ = data.GetAccountID();
 }
@@ -196,7 +209,7 @@ void SessionBox::OnGetTeamMemberCallback(const std::string& tid, int count, cons
 	SortTeamMembers();
 	// 设置群信息
 	btn_refresh_member_->SetEnabled(true);
-	member_list_->RemoveAll();
+	//member_list_->RemoveAll();
 	label_member_->SetText(nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_SESSION_MEMBER_NUM_EX").c_str(), team_member_info_list_.size()));
 	//btn_new_broad_->SetVisible(set_new_broad_visible);
 

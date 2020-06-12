@@ -26,7 +26,7 @@ SessionList::SessionList(ui::VirtualListBox* session_list, ui::ListBox* top_sess
 	int kRoomMemberItemHeight = 60;
 	session_list_->SetElementHeight(ui::DpiManager::GetInstance()->ScaleInt(kRoomMemberItemHeight));
 	session_list_->SetDataProvider(this);
-	session_list_->InitElement(12);
+	session_list_->InitElement(200);
 	session_list_->Refresh();
 	sys_msg_unread_ = 0;
 	custom_msg_unread_ = 0;
@@ -423,10 +423,12 @@ void SessionList::ResetUnreadCount(const std::string &id)
 		SessionItem* item = dynamic_cast<SessionItem*>(session_list_->FindSubControl(wid));
 		if (item)
 		{
-			item->ResetUnread();
-		}
-		session_list_->Refresh();
-		InvokeUnreadCountChange();
+			if (item->ResetUnread())
+			{
+				session_list_->Refresh();
+				InvokeUnreadCountChange();
+			}
+		}		
 	}
 }
 

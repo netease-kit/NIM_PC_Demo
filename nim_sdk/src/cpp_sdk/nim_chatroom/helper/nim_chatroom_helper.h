@@ -329,14 +329,15 @@ struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomMessageSetting
 	std::string anti_spam_bizid_;		/**< (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
 	int anti_spam_using_yidun_;	/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
 	int				high_priority_;				/**< 高优先级消息标记,1:是; 非高优先级消息不带该字段,服务器填写,发送方不需要填写*/
-
+	std::string yidun_anti_cheating_;		/**< (可选)String, 易盾反垃圾增强反作弊专属字段, 限制json，长度限制1024*/
 	/** 构造函数 */
 	ChatRoomMessageSetting() : resend_flag_(false)
 		, anti_spam_enable_(false)
 		, history_save_(true)
 		,anti_spam_bizid_("")
 		,anti_spam_using_yidun_(1)
-		, high_priority_(0){}
+		, high_priority_(0)
+		, yidun_anti_cheating_(""){}
 
 	/** @fn void ToJsonValue(nim_cpp_wrapper_util::Json::Value& message) const
 	  * @brief 组装Json Value字符串
@@ -353,6 +354,8 @@ struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomMessageSetting
 			message[kNIMChatRoomMsgKeyAntiSpamBizId] = anti_spam_bizid_;
 		message[kNIMChatRoomMsgKeyHistorySave] = history_save_ ? 1 : 0;
 		message[kNIMChatRoomMsgKeyAntiSpamUsingYiDun] = anti_spam_using_yidun_;
+		if (!yidun_anti_cheating_.empty())
+			message[kNIMChatRoomMsgKeyYiDunAntiCheating] = yidun_anti_cheating_;
 	}
 
 	/** @fn void ParseMessageSetting(const nim_cpp_wrapper_util::Json::Value& message)
@@ -368,6 +371,8 @@ struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomMessageSetting
 			anti_spam_enable_ = message[kNIMChatRoomMsgKeyAntiSpamEnable].asInt() == 1;
 		anti_spam_content_ = message[kNIMChatRoomMsgKeyAntiSpamContent].asString();
 		high_priority_ = message[kNIMChatRoomMsgKeyHighPriorityFlag].asInt();
+		if(message.isMember(kNIMChatRoomMsgKeyYiDunAntiCheating))
+			yidun_anti_cheating_ = message[kNIMChatRoomMsgKeyYiDunAntiCheating].asString();
 	}
 };
 

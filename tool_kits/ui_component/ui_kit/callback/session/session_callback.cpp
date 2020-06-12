@@ -114,6 +114,8 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 			<< code << notify.from_id_ << notify.to_id_ << notify.notify_timetag_ << notify.msglog_timetag_ << notify.msg_id_;
 
 		UTF8String talk_id;
+		if (notify.session_type_ == nim::kNIMSessionTypeSuperTeam)
+			continue;
 		if (notify.session_type_ == nim::kNIMSessionTypeTeam)
 			talk_id = notify.to_id_;
 		else

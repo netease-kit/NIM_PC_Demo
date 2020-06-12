@@ -46,7 +46,7 @@ static void CallbackGetBlackList(int res_code, const char *mute_black_list_json,
 			if (black->set_black_)
 				out_black_list.push_back(*black);
 		}
-		CallbackProxy::Invoke(cb, (NIMResCode)res_code, black_list);
+		CallbackProxy::Invoke(cb, (NIMResCode)res_code, out_black_list);
 
 	}, true);
 

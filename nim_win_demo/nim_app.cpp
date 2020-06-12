@@ -158,7 +158,10 @@ bool NimAPP::InitNim(const std::string& server_conf_file_path)
 	{
 		nim_ui::RunTimeDataManager::GetInstance()->SetSDKInited();
 		nim_chatroom::ChatroomCallback::InitChatroomCallback();
-		nim_chatroom::ChatRoom::SetMsgsBatchReport(true);
+		bool chatoom_msg_batch_report = false;
+		if (app_sdk::AppSDKInterface::HasconfigValue("chatoom_msg_batch_report"))
+			chatoom_msg_batch_report = (app_sdk::AppSDKInterface::GetConfigValue("chatoom_msg_batch_report").compare("0") != 0);
+		nim_chatroom::ChatRoom::SetMsgsBatchReport(chatoom_msg_batch_report);
 	}	
 	else
 	{

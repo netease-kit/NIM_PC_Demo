@@ -139,7 +139,7 @@ static const char *kNIMMsgKeyAntiSpamBizId = "anti_spam_business_id";	/**< strin
 static const char *kNIMMsgKeyAntiSpamUsingYiDun = "anti_spam_using_yidun";	/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
 static const char *kNIMMsgKeyTeamMsgAck		= "team_msg_ack";		/**< (可选)int, 群消息是否需要已读业务，0：不需要，1：需要*/
 static const char *kNIMMsgKeyIsUpdateSession = "is_update_session";		/**< (可选)bool, 消息是否需要刷新到session服务，false:否，true:是；只有消息存离线的情况下，才会判断该参数，缺省：true*/
-
+static const char* kNIMMsgKeyYiDunAntiCheating = "yidun_anti_cheating";		/**< (可选)String, 易盾反垃圾增强反作弊专属字段, 限制json，长度限制1024*/
 //thread 消息信息
 
 static const char *kNIMMsgKeyThreadInfo = "thread_info";/**< (可选) json object，被回复消息的消息发送者 */
@@ -154,7 +154,10 @@ static const char *kNIMMsgKeyThreadMsgTime = "thread_msg_time";       /**< (可�
 static const char *kNIMMsgKeyThreadMsgIdServer = "thread_msg_id_server";   /**< (可选)long，从属thread_info节点，thread消息的消息ID)serverId)*/
 static const char *kNIMMsgKeyThreadMsgIdClient = "thread_msg_id_client";   /**< (可选)string，从属thread_info节点，thread消息的消息ID)clientId)*/
 static const char *kNIMMsgKeyDeleted = "deleted";              /**< int 从属thread_info节点，消息是否已经被删除（可能是撤回，也可能是单向删除），查询thread消息历史时可能会有这个字段，大于0表示已经删除（目前撤回和单向删除都是1，未来可能区分）*/
-
+//v7.8 新增
+static const char* kNIMMsgKeyThirdPartyCBEXT = "third_party_callback_ext";              /**< (可选)string第三方回调回来的自定义扩展字段*/
+static const char* kNIMMsgKeySubType = "msg_sub_type";              /**<(可选)int，消息的子类型，客户端定义，服务器透传*/
+static const char* kNIMMsgKeyAntiCheatingYiDun = "yidun_anti_cheating";              /**< (可选)String, 易盾反垃圾增强反作弊专属字段, 限制json，长度限制1024 */
 
 //本地定义
 static const char *kNIMMsgKeyLocalKeyTeamMsgAckSent	= "team_msg_ack_sent";	/**< bool 是否已经发送群消息已读回执 */

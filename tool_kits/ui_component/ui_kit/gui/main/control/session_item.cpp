@@ -115,21 +115,21 @@ void SessionItem::InitMsg(const std::shared_ptr< nim::SessionData> &msg)
 			UserService::GetInstance()->GetUserInfos(uids, uinfos);
 		}
 	}
-	else if (SubscribeEventManager::GetInstance()->IsEnabled())
-	{
-		EventDataEx data;
-		SubscribeEventManager::GetInstance()->GetEventData(nim::kNIMEventTypeOnlineState, msg->id_, data);
-		if (data.online_client_.online_client_type_.size() == 0 && msg->id_ == LoginManager::GetInstance()->GetAccount())
-			data.online_client_.online_client_type_.insert(nim::kNIMClientTypePCWindows);
-		SetOnlineState(data);
-	}
-
 	if (msg_->type_ == nim::kNIMSessionTypeP2P)
 	{
+		if (SubscribeEventManager::GetInstance()->IsEnabled())
+		{
+			EventDataEx data;
+			SubscribeEventManager::GetInstance()->GetEventData(nim::kNIMEventTypeOnlineState, msg->id_, data);
+			if (data.online_client_.online_client_type_.size() == 0 && msg->id_ == LoginManager::GetInstance()->GetAccount())
+				data.online_client_.online_client_type_.insert(nim::kNIMClientTypePCWindows);
+			SetOnlineState(data);
+		}
 		SetMute(nim_comp::MuteBlackService::GetInstance()->IsInMuteList(msg_->id_));
 	}
 	else
 	{
+		HideOnlineState();
 		SetMute(nim_comp::SessionManager::GetInstance()->IsTeamMsgMuteShown(msg_->id_, -1));
 	}
 }
@@ -168,7 +168,17 @@ void SessionItem::InitUserProfile()
 
 void SessionItem::SetOnlineState(const EventDataEx& data)
 {
+	if (label_online_state_ == nullptr)
+		return;
 	label_online_state_->SetText(OnlineStateEventUtil::GetOnlineState(msg_->id_, data, true));
+	if (!label_online_state_->IsVisible())
+		label_online_state_->SetVisible(true);
+}
+void SessionItem::HideOnlineState()
+{
+	if (label_online_state_ == nullptr)
+		return;
+	label_online_state_->SetVisible(false);
 }
 void SessionItem::UpdateMsgContent(const std::string& id /*= ""*/)
 {
@@ -275,7 +285,7 @@ void SessionItem::AddUnread()
 	ShowAtmeTip(true);
 }
 
-void SessionItem::ResetUnread()
+bool SessionItem::ResetUnread()
 {
 	if (is_online_session_ && msg_->unread_count_ != 0)
 		msg_->unread_count_ = 0;
@@ -283,6 +293,7 @@ void SessionItem::ResetUnread()
 	ShowAtmeTip(false);
 	InvokeResetUnread(msg_->id_, msg_->type_);
 	Invalidate();
+	return true;
 }
 
 void SessionItem::DeleteRecentSessionCb(nim::NIMResCode code, const nim::SessionData &result, int total_unread_counts)
