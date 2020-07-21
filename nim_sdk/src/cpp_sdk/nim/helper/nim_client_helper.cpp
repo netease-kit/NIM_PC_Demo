@@ -41,7 +41,18 @@ namespace nim
 		, comm_neca_(0x0001)
 		, dedicated_cluste_flag_(false)
 		, ip_protocol_version_(0)
-		, hand_shake_type_(1){}
+		, hand_shake_type_(1)
+	{
+		custom_client_type_ = std::make_pair(false, 0);
+	}
+	void SDKConfig::SetCustomClientType(int type)
+	{
+		custom_client_type_ = std::make_pair(true,type);
+	}
+	int SDKConfig::GetCustomClientType() const
+	{
+		return custom_client_type_.second;
+	}
  bool ParseOtherClientsPres(const nim_cpp_wrapper_util::Json::Value array_objs, std::list<OtherClientPres> &outs)
 {
 	if (array_objs.isArray())
@@ -57,6 +68,8 @@ namespace nim
 			pres.device_id_ = array_objs[index][kNIMPresDeviceID].asString();
 			pres.login_time_ = array_objs[index][kNIMPresLoginTime].asInt64();
 			pres.custom_data_ = array_objs[index][kNIMPresCustomTag].asString();
+			if(array_objs[index].isMember(kNIMPresCustomClientType))
+				pres.custom_client_type_ = array_objs[index][kNIMPresCustomClientType].asInt();
 			outs.push_back(pres);
 		}
 		return true;

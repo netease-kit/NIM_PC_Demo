@@ -92,5 +92,9 @@ void ParseMessage(const nim_cpp_wrapper_util::Json::Value& msg_json, IMMessage& 
 
 		message.thread_info_.deleted_ = msg_json[kNIMMsgKeyThreadInfo][kNIMMsgKeyDeleted].asInt();
 	}
+	//v7.8 <--
+	message.third_party_callback_ext_ = msg_json[kNIMMsgKeyThirdPartyCBEXT].asString();
+	message.sub_type_ = msg_json[kNIMMsgKeySubType].asInt();
+	// --> v7.8
 }
 }

@@ -513,7 +513,7 @@ typedef struct
 	int64_t from_time;/**< int64_t 起始时间 缺省0*/
 	int64_t to_time;/**< int64_t 结束时间 缺省0*/
 	int64_t exclude_msg_id; /**< int64_t 截至消息的服务端id，不包含在查询结果中 缺省0*/
-	int32_t linit;/**<  int32_t 查询条数限制 缺省100*/
+	int32_t limit;/**<  int32_t 查询条数限制 缺省100*/
 	int32_t reverse;/**<  int64_t 排序 缺省0 false*/
 } NIMQueryThreadHistoryMsgAsyncParam;
 

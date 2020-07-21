@@ -62,7 +62,7 @@ typedef void (*nim_http_request_response_cb)(const void *user_data, bool result,
   */
 typedef void(*nim_http_request_response_ex_cb)(const void *user_data, bool result, int response_code, const char *response_content, const char *response_header);
 
-/** @typedef void (*nim_http_request_progress_cb)(const void* user_data, double total_upload_size, double uploaded_size, double total_download_size, double downloaded_size)
+/** @typedef void(*nim_http_request_progress_cb)(const void *user_data, double total_upload_size, double uploaded_size, double total_download_size, double downloaded_size)
   * nim callback function that has been registered in nim_http_set_request_progress_cb API
   * @param[out] user_data				回传的自定义数据
   * @param[out] total_upload_size		总的待上传的字节数

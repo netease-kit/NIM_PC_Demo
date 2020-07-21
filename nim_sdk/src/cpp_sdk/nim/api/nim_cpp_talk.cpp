@@ -141,7 +141,8 @@ std::string Talk::CreateTextMessage(const std::string& receiver_id
 	, const std::string& client_msg_id
 	, const std::string& content
 	, const MessageSetting& msg_setting
-	, int64_t timetag/* = 0*/)
+	, int64_t timetag/* = 0*/
+	, int32_t sub_type/* = 0*/)
 {
 	nim_cpp_wrapper_util::Json::Value values;
 	values[kNIMMsgKeyToAccount] = receiver_id;
@@ -156,7 +157,8 @@ std::string Talk::CreateTextMessage(const std::string& receiver_id
 	//选填
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
-
+	if (sub_type > 0)
+		values[kNIMMsgKeySubType] = sub_type;
 	return GetJsonStringWithNoStyled(values);
 }
 
@@ -166,7 +168,8 @@ std::string Talk::CreateImageMessage(const std::string& receiver_id
 	, const IMImage& image
 	, const std::string& file_path
 	, const MessageSetting& msg_setting
-	, int64_t timetag/* = 0*/)
+	, int64_t timetag/* = 0*/
+	, int32_t sub_type/* = 0*/)
 {
 	nim_cpp_wrapper_util::Json::Value values;
 	values[kNIMMsgKeyToAccount] = receiver_id;
@@ -183,7 +186,8 @@ std::string Talk::CreateImageMessage(const std::string& receiver_id
 	//选填
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
-
+	if (sub_type > 0)
+		values[kNIMMsgKeySubType] = sub_type;
 	return GetJsonStringWithNoStyled(values);
 }
 
@@ -193,7 +197,8 @@ std::string Talk::CreateFileMessage(const std::string& receiver_id
 	, const IMFile& file
 	, const std::string& file_path
 	, const MessageSetting& msg_setting
-	, int64_t timetag/* = 0*/)
+	, int64_t timetag/* = 0*/
+	, int32_t sub_type/* = 0*/)
 {
 	nim_cpp_wrapper_util::Json::Value values;
 	values[kNIMMsgKeyToAccount] = receiver_id;
@@ -210,7 +215,8 @@ std::string Talk::CreateFileMessage(const std::string& receiver_id
 	//选填
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
-
+	if (sub_type > 0)
+		values[kNIMMsgKeySubType] = sub_type;
 	return GetJsonStringWithNoStyled(values);
 }
 
@@ -220,7 +226,8 @@ std::string Talk::CreateAudioMessage(const std::string& receiver_id
 	, const IMAudio& audio
 	, const std::string& file_path
 	, const MessageSetting& msg_setting
-	, int64_t timetag/* = 0*/)
+	, int64_t timetag/* = 0*/
+	, int32_t sub_type/* = 0*/)
 {
 	nim_cpp_wrapper_util::Json::Value values;
 	values[kNIMMsgKeyToAccount] = receiver_id;
@@ -237,7 +244,8 @@ std::string Talk::CreateAudioMessage(const std::string& receiver_id
 	//选填
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
-
+	if (sub_type > 0)
+		values[kNIMMsgKeySubType] = sub_type;
 	return GetJsonStringWithNoStyled(values);
 }
 
@@ -247,7 +255,8 @@ std::string Talk::CreateVideoMessage(const std::string& receiver_id
 	, const IMVideo& video
 	, const std::string& file_path
 	, const MessageSetting& msg_setting
-	, int64_t timetag/* = 0*/)
+	, int64_t timetag/* = 0*/
+	, int32_t sub_type/* = 0*/)
 {
 	nim_cpp_wrapper_util::Json::Value values;
 	values[kNIMMsgKeyToAccount] = receiver_id;
@@ -264,7 +273,8 @@ std::string Talk::CreateVideoMessage(const std::string& receiver_id
 	//选填
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
-
+	if (sub_type > 0)
+		values[kNIMMsgKeySubType] = sub_type;
 	return GetJsonStringWithNoStyled(values);
 }
 
@@ -273,7 +283,8 @@ std::string Talk::CreateLocationMessage(const std::string& receiver_id
 	, const std::string& client_msg_id
 	, const IMLocation& location
 	, const MessageSetting& msg_setting
-	, int64_t timetag/* = 0*/)
+	, int64_t timetag/* = 0*/
+	, int32_t sub_type/* = 0*/)
 {
 	nim_cpp_wrapper_util::Json::Value values;
 	values[kNIMMsgKeyToAccount] = receiver_id;
@@ -288,7 +299,8 @@ std::string Talk::CreateLocationMessage(const std::string& receiver_id
 	//选填
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
-
+	if (sub_type > 0)
+		values[kNIMMsgKeySubType] = sub_type;
 	return GetJsonStringWithNoStyled(values);
 }
 
@@ -297,7 +309,8 @@ std::string Talk::CreateTipMessage(const std::string& receiver_id
 	, const std::string& client_msg_id
 	, const std::string& tip_content
 	, const MessageSetting& msg_setting
-	, int64_t timetag/* = 0*/)
+	, int64_t timetag/* = 0*/
+	, int32_t sub_type/* = 0*/)
 {
 	nim_cpp_wrapper_util::Json::Value values;
 	values[kNIMMsgKeyToAccount] = receiver_id;
@@ -306,13 +319,12 @@ std::string Talk::CreateTipMessage(const std::string& receiver_id
 	values[kNIMMsgKeyBody] = tip_content;
 	values[kNIMMsgKeyType] = kNIMMessageTypeTips;
 	values[kNIMMsgKeyLocalTalkId] = receiver_id;
-
 	msg_setting.ToJsonValue(values);
-
 	//选填
 	if (timetag > 0)
 		values[kNIMMsgKeyTime] = timetag;
-
+	if (sub_type > 0)
+		values[kNIMMsgKeySubType] = sub_type;
 	return GetJsonStringWithNoStyled(values);
 }
 
@@ -322,7 +334,8 @@ std::string Talk::CreateBotRobotMessage(const std::string& receiver_id
 	, const std::string& content
 	, const IMBotRobot& bot_msg
 	, const MessageSetting& msg_setting
-	, int64_t timetag/* = 0*/)
+	, int64_t timetag/* = 0*/
+	, int32_t sub_type/* = 0*/)
 {
 	nim_cpp_wrapper_util::Json::Value values;
 	values[kNIMMsgKeyToAccount] = receiver_id;
@@ -332,7 +345,8 @@ std::string Talk::CreateBotRobotMessage(const std::string& receiver_id
 	values[kNIMMsgKeyType] = kNIMMessageTypeRobot;
 	values[kNIMMsgKeyLocalTalkId] = receiver_id;
 	values[kNIMMsgKeyAttach] = bot_msg.ToJsonString();
-
+	if(sub_type > 0)
+		values[kNIMMsgKeySubType] = sub_type;
 	msg_setting.ToJsonValue(values);
 
 	//选填
@@ -356,21 +370,6 @@ std::string Talk::CreateRetweetMessage(const std::string& src_msg_json
 	std::string out_msg = (std::string)msg;	
 	Global::FreeBuf((void *)msg);
 	return out_msg;
-// 	IMMessage msg;
-// 	bool ret = ParseIMMessage(src_msg_json, msg);
-// 	msg.feature_ = kNIMMessageFeatureDefault;
-// 	msg.session_type_ = retweet_to_session_type;
-// 	msg.receiver_accid_ = retweet_to_session_id;
-// 	msg.sender_accid_.clear();
-// 	msg.timetag_ = timetag;
-// 	msg.client_msg_id_ = client_msg_id;
-// 	msg.msg_setting_ = msg_setting;
-// 	msg.local_res_id_ = client_msg_id;
-// 	msg.local_talk_id_ = retweet_to_session_id;
-// 	msg.status_ = kNIMMsgLogStatusSending;
-// 	msg.sub_status_ = kNIMMsgLogSubStatusNone;
-// 
-// 	return msg.ToJsonString(true);
 }
 
 bool Talk::ParseIMMessage(const std::string& json_msg, IMMessage& msg)

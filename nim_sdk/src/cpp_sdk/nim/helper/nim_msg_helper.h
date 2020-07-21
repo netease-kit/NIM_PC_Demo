@@ -26,6 +26,7 @@ struct NIM_SDK_CPPWRAPPER_DLL_API SendMessageArc
 	std::string msg_id_;	/**< 消息ID */
 	NIMResCode rescode_;	/**< 错误码 */
 	int64_t	msg_timetag_;	/**< 消息时间戳 */
+	std::string third_party_callback_ext_; /**< 第三方回调回来的自定义扩展字段 */
 };
 
 /** @brief 消息撤回通知 */

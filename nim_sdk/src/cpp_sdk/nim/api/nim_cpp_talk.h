@@ -100,6 +100,7 @@ public:
 	*  @param[in] content 文本内容
 	*  @param[in] msg_setting 消息属性设置
 	*  @param[in] timetag 消息时间
+	*  @param[in] sub_type 消息子类型( > 0 ),由开发者自定义,服务端只负责透传 v7.8
 	*  @return std::string 文字消息Json字符串
 	*/
 	static std::string CreateTextMessage(const std::string& receiver_id
@@ -107,7 +108,8 @@ public:
 		, const std::string& client_msg_id
 		, const std::string& content
 		, const MessageSetting& msg_setting
-		, int64_t timetag = 0);
+		, int64_t timetag = 0
+		, int32_t sub_type = 0);
 
 	/** @fn static std::string CreateImageMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMImage& image, const std::string& file_path, const MessageSetting& msg_setting, int64_t timetag  = 0)
 	* 生成图片消息内容,生成的字符串在调用SendMsg时直接传入
@@ -118,6 +120,7 @@ public:
 	*  @param[in] file_path 文件本地绝对路径
 	*  @param[in] msg_setting 消息属性设置
 	*  @param[in] timetag 消息时间
+	*  @param[in] sub_type 消息子类型( > 0 ),由开发者自定义,服务端只负责透传 v7.8
 	*  @return std::string 图片消息Json字符串
 	*/
 	static std::string CreateImageMessage(const std::string& receiver_id
@@ -126,7 +129,8 @@ public:
 		, const IMImage& image
 		, const std::string& file_path
 		, const MessageSetting& msg_setting
-		, int64_t timetag = 0);
+		, int64_t timetag = 0
+		, int32_t sub_type = 0);
 
 	/** @fn static std::string CreateFileMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMFile& file, const std::string& file_path, const MessageSetting& msg_setting, int64_t timetag  = 0)
 	* 生成文件消息内容,生成的字符串在调用SendMsg时直接传入
@@ -137,6 +141,7 @@ public:
 	*  @param[in] file_path 文件本地绝对路径
 	*  @param[in] msg_setting 消息属性设置
 	*  @param[in] timetag 消息时间
+	*  @param[in] sub_type 消息子类型( > 0 ),由开发者自定义,服务端只负责透传 v7.8
 	*  @return std::string 文件消息Json字符串
 	*/
 	static std::string CreateFileMessage(const std::string& receiver_id
@@ -145,7 +150,8 @@ public:
 		, const IMFile& file
 		, const std::string& file_path
 		, const MessageSetting& msg_setting
-		, int64_t timetag = 0);
+		, int64_t timetag = 0
+		, int32_t sub_type = 0);
 
 	/** @fn static std::string CreateAudioMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMAudio& audio, const std::string& file_path, const MessageSetting& msg_setting, int64_t timetag  = 0)
 	* 生成语音消息内容,生成的字符串在调用SendMsg时直接传入
@@ -156,6 +162,7 @@ public:
 	*  @param[in] file_path 文件本地绝对路径
 	*  @param[in] msg_setting 消息属性设置
 	*  @param[in] timetag 消息时间
+	*  @param[in] sub_type 消息子类型( > 0 ),由开发者自定义,服务端只负责透传 v7.8
 	*  @return std::string 语音消息Json字符串
 	*/
 	static std::string CreateAudioMessage(const std::string& receiver_id
@@ -164,7 +171,8 @@ public:
 		, const IMAudio& audio
 		, const std::string& file_path
 		, const MessageSetting& msg_setting
-		, int64_t timetag = 0);
+		, int64_t timetag = 0
+		, int32_t sub_type = 0);
 
 	/** @fn static std::string CreateVideoMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMVideo& video, const std::string& file_path, const MessageSetting& msg_setting, int64_t timetag  = 0)
 	* 生成视频消息内容,生成的字符串在调用SendMsg时直接传入
@@ -175,6 +183,7 @@ public:
 	*  @param[in] file_path 文件本地绝对路径
 	*  @param[in] msg_setting 消息属性设置
 	*  @param[in] timetag 消息时间
+	*  @param[in] sub_type 消息子类型( > 0 ),由开发者自定义,服务端只负责透传 v7.8
 	*  @return std::string 视频消息Json字符串
 	*/
 	static std::string CreateVideoMessage(const std::string& receiver_id
@@ -183,7 +192,8 @@ public:
 		, const IMVideo& video
 		, const std::string& file_path
 		, const MessageSetting& msg_setting
-		, int64_t timetag = 0);
+		, int64_t timetag = 0
+		, int32_t sub_type = 0);
 
 	/** @fn static std::string CreateLocationMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const IMLocation& location, const MessageSetting& msg_setting, int64_t timetag  = 0)
 	* 生成位置消息内容,生成的字符串在调用SendMsg时直接传入
@@ -193,6 +203,7 @@ public:
 	*  @param[in] location IMLocation,位置信息
 	*  @param[in] msg_setting 消息属性设置
 	*  @param[in] timetag 消息时间
+	*  @param[in] sub_type 消息子类型( > 0 ),由开发者自定义,服务端只负责透传 v7.8
 	*  @return std::string 位置消息Json字符串
 	*/
 	static std::string CreateLocationMessage(const std::string& receiver_id
@@ -200,7 +211,8 @@ public:
 		, const std::string& client_msg_id
 		, const IMLocation& location
 		, const MessageSetting& msg_setting
-		, int64_t timetag = 0);
+		, int64_t timetag = 0
+		, int32_t sub_type = 0);
 
 	/** @fn static std::string CreateTipMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const std::string& tip_content, const MessageSetting& msg_setting, int64_t timetag  = 0)
 	* 生成Tip消息内容,生成的字符串在调用SendMsg时直接传入
@@ -210,6 +222,7 @@ public:
 	*  @param[in] tip_content Tip文本内容
 	*  @param[in] msg_setting 消息属性设置
 	*  @param[in] timetag 消息时间
+	*  @param[in] sub_type 消息子类型( > 0 ),由开发者自定义,服务端只负责透传 v7.8
 	*  @return std::string 位置消息Json字符串
 	*/
 	static std::string CreateTipMessage(const std::string& receiver_id
@@ -217,7 +230,8 @@ public:
 		, const std::string& client_msg_id
 		, const std::string& tip_content
 		, const MessageSetting& msg_setting
-		, int64_t timetag = 0);
+		, int64_t timetag = 0
+		, int32_t sub_type = 0);
 
 	/** @fn static std::string CreateBotRobotMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const std::string& content, const IMBotRobot& bot_msg, const MessageSetting& msg_setting, int64_t timetag  = 0)
 	* 生成Tip消息内容,生成的字符串在调用SendMsg时直接传入
@@ -228,6 +242,7 @@ public:
 	*  @param[in] bot_msg 机器人消息信息
 	*  @param[in] msg_setting 消息属性设置
 	*  @param[in] timetag 消息时间
+	*  @param[in] sub_type 消息子类型( > 0 ),由开发者自定义,服务端只负责透传 v7.8
 	*  @return std::string 位置消息Json字符串
 	*/	
 	static std::string CreateBotRobotMessage(const std::string& receiver_id
@@ -236,7 +251,8 @@ public:
 		, const std::string& content
 		, const IMBotRobot& bot_msg
 		, const MessageSetting& msg_setting
-		, int64_t timetag = 0);
+		, int64_t timetag = 0
+		, int32_t sub_type = 0);
 
 	/** @fn static std::string CreateRetweetMessage(const std::string& src_msg_json	, const std::string& client_msg_id	, const NIMSessionType retweet_to_session_type	, const std::string& retweet_to_session_id	, const MessageSetting& msg_setting	, int64_t timetag = 0)
 	* 由其他消息生成转发消息

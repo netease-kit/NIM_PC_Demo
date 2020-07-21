@@ -387,14 +387,18 @@ public:
 	std::string		from_nick_;					/**< 发送方昵称,服务器填写,发送方不需要填写 */
 	std::string		from_avatar_;				/**< 发送方头像,服务器填写,发送方不需要填写 */
 	std::string		from_ext_;					/**< 发送方身份扩展字段,服务器填写,发送方不需要填写 */
-
+	//v7.8 <--
+	std::string third_party_callback_ext_;/**< 第三方回调回来的自定义扩展字段 */
+	// --> v7.8
 public:
 	NIMChatRoomMsgType	msg_type_;				/**< 消息类型 */
 	std::string		msg_attach_;				/**< 消息内容,长度限制2048,json结构, 文本消息和其他消息保持一致 */
 	std::string		client_msg_id_;				/**< 客户端消息id */
 	std::string		msg_body_;					/**< 文本消息内容（聊天室机器人文本消息） */
 	ChatRoomMessageSetting msg_setting_;		/**< 消息属性设置 */
-
+	//v7.8 <--
+	int32_t sub_type_;						/**< 消息的子类型，客户端定义，服务器透传 */
+	// --> v7.8
 public:
 	std::string	   local_res_path_;				/**< 媒体文件本地绝对路径（客户端） */
 	std::string	   local_res_id_;				/**< 媒体文件ID（客户端） */
@@ -402,7 +406,7 @@ public:
 	/** 构造函数 */
 	ChatRoomMessage() :room_id_(-1)
 		, from_client_type_(kNIMChatRoomClientTypeDefault)
-		, timetag_(0){}
+		, timetag_(0), third_party_callback_ext_(""),sub_type_(0){}
 
 	/** @fn void ParseFromJsonValue(const nim_cpp_wrapper_util::Json::Value &values)
 	  * @brief 从JsonValue中解析得到聊天室消息
@@ -425,6 +429,10 @@ public:
 		local_res_id_ = values[kNIMChatRoomMsgKeyLocalResId].asString();
 		msg_body_ = values[kNIMChatRoomMsgKeyBody].asString();
 		msg_setting_.ParseMessageSetting(values);
+		if(values.isMember(kNIMChatRoomMsgKeyThirdPartyCBEXT))
+			third_party_callback_ext_ = values[kNIMChatRoomMsgKeyThirdPartyCBEXT].asString();
+		if(values.isMember(kNIMChatRoomMsgKeySubType))
+			sub_type_ = values[kNIMChatRoomMsgKeySubType].asInt();
 	}
 
 	/** @fn std::string ToJsonString() const
@@ -440,7 +448,8 @@ public:
 		values[kNIMChatRoomMsgKeyLocalFilePath] = local_res_path_;
 		values[kNIMChatRoomMsgKeyLocalResId] = local_res_id_;
 		values[kNIMChatRoomMsgKeyBody] = msg_body_;
-
+		values[kNIMChatRoomMsgKeyThirdPartyCBEXT] = third_party_callback_ext_;
+		values[kNIMChatRoomMsgKeySubType] = sub_type_;
 		msg_setting_.ToJsonValue(values);
 		return nim::GetJsonStringWithNoStyled(values);
 	}

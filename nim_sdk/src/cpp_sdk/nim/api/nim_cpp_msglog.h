@@ -65,7 +65,7 @@ public:
 private://judge
 	std::vector<nim::NIMMessageType> list_;
 };
-/** @class MsgLog
+/** @class QueryMsgOnlineAsyncParam
 * 在线查询消息参数（不包括系统消息）
 */	
 class NIM_SDK_CPPWRAPPER_DLL_API QueryMsgOnlineAsyncParam
@@ -91,6 +91,9 @@ private:
 	std::string json_extension_;
 };
 
+/** @class QueryMsgByKeywordOnlineParam
+* 根据关键字在线查询消息参数（不包括系统消息）
+*/
 class NIM_SDK_CPPWRAPPER_DLL_API QueryMsgByKeywordOnlineParam
 {
 	friend class MsgLog;
@@ -108,6 +111,9 @@ private:
 private:
 	std::string json_extension_;
 };
+/** @class QueryMsgAsyncParam
+* 查询消息参数（不包括系统消息）
+*/
 class NIM_SDK_CPPWRAPPER_DLL_API QueryMsgAsyncParam
 {
 public:
@@ -119,16 +125,38 @@ public:
 	int64_t time;/**<  int64_t 消息时间戳 */
 };
 
-class QueryThreadHistoryMsgAsyncParam
+/** @class QueryThreadHistoryMsgAsyncParam
+* 查询thread聊天消息参数（不包括系统消息）
+*/
+class NIM_SDK_CPPWRAPPER_DLL_API QueryThreadHistoryMsgAsyncParam
 {
 public:	
 	int64_t from_time;/**< int64_t 起始时间 缺省0*/
 	int64_t to_time;/**< int64_t 结束时间 缺省0*/
 	int64_t exclude_msg_id; /**< int64_t 截至消息的服务端id，不包含在查询结果中 缺省0*/
-	int32_t linit;/**<  int32_t 查询条数限制 缺省100*/
+	int32_t limit;/**<  int32_t 查询条数限制 缺省100*/
 	int32_t reverse;/**<  int64_t 排序 缺省0 false*/
 };
-
+/** @class QueryMsgByOptionsAsyncParam
+* 根据指定条件查询本地消息（不包括系统消息）
+*/
+class NIM_SDK_CPPWRAPPER_DLL_API QueryMsgByOptionsAsyncParam
+{
+public:
+	QueryMsgByOptionsAsyncParam() : limit_count_(100), reverse_(false) {}
+	NIMMsgLogQueryRange query_range_;/**< 消息历史的检索范围（目前暂不支持某些范围的组合检索，详见NIMMsgLogQueryRange说明）*/
+	std::list<std::string> ids_; /**< 会话id（对方的account id或者群组tid）的集合，目前暂不支持多个的组合检索，详见NIMMsgLogQueryRange说明*/
+	int limit_count_;/**< 本次查询的消息条数上限(最多100条) */
+	int64_t from_time_;/**< 起始时间点，单位：毫秒 */
+	int64_t end_time_;/**< 结束时间点，单位：毫秒 */
+	std::string end_client_msg_id_;/**< 结束查询的最后一条消息的end_client_msg_id(不包含在查询结果中) */
+	bool reverse_;/**< true：反向查询(按时间正序起查，正序排列)，false：按时间逆序起查，逆序排列（建议默认为false） */
+	NIMMessageType msg_type_;/**< 检索的消息类型（目前只支持kNIMMessageTypeText、kNIMMessageTypeImage和kNIMMessageTypeFile这三种类型消息） */
+	int32_t		msg_sub_type_; /**< 消息的子类型 */
+	std::string search_content_;/**< 检索文本（目前只支持kNIMMessageTypeText和kNIMMessageTypeFile这两种类型消息的文本关键字检索，即支持文字消息和文件名的检索 */
+public:
+	std::string ToJsonString() const;
+};
 /** @fn void UnregMsglogCb()
 * 反注册Msglog提供的所有回调
 * @return void 无返回值
@@ -257,8 +285,8 @@ static bool QueryMsgOfSpecifiedTypeInASessionAsync(nim::NIMSessionType to_type
 * @param[in] reverse		true：反向查询(按时间正序起查，正序排列)，false：按时间逆序起查，逆序排列（建议默认为false）
 * @param[in] msg_type		检索的消息类型（目前只支持kNIMMessageTypeText、kNIMMessageTypeImage和kNIMMessageTypeFile这三种类型消息）
 * @param[in] search_content	检索文本（目前只支持kNIMMessageTypeText和kNIMMessageTypeFile这两种类型消息的文本关键字检索，即支持文字消息和文件名的检索。如果合并检索，需使用未知类型消息kNIMMessageTypeUnknown）
-* @param[in] json_extension	json扩展参数（备用，目前不需要）
 * @param[in] cb				在线查询消息的回调函数
+* @param[in] json_extension	json扩展参数（备用，目前不需要）
 * @return bool 检查参数如果不符合要求则返回失败
 * @note 错误码	200:成功
 */
@@ -273,6 +301,15 @@ static bool QueryMsgByOptionsAsync(NIMMsgLogQueryRange query_range
 	, const std::string &search_content
 	, const QueryMsgCallback& cb
 	, const std::string& json_extension = "");
+
+/** @fn static bool QueryMsgByOptionsAsyncEx(const QueryMsgByOptionsAsyncParam& param, const QueryMsgCallback& cb)
+* 根据指定条件查询本地消息,使用此接口可以完成全局搜索等功能,具体请参阅开发手册 http://dev.netease.im/docs/product/IM%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/SDK%E5%BC%80%E5%8F%91%E9%9B%86%E6%88%90/Windows%E5%BC%80%E5%8F%91%E9%9B%86%E6%88%90/%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95
+* @param[in] param	查询参数
+* @param[in] cb				在线查询消息的回调函数
+* @return bool 检查参数如果不符合要求则返回失败
+* @note 错误码	200:成功
+*/
+static bool QueryMsgByOptionsAsyncEx(const QueryMsgByOptionsAsyncParam& param, const QueryMsgCallback& cb);
 
 /** @fn static bool BatchStatusReadAsync(const std::string& account_id, nim::NIMSessionType to_type, const BatchStatusReadCallback& cb, const std::string& json_extension = "")
 * 批量设置已读状态

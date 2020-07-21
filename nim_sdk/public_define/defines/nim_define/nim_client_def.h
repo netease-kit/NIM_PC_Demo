@@ -144,10 +144,12 @@ static const char *kNIMAnimatedImageThumbnailEnabled	= "animated_image_thumbnail
 static const char *kNIMClientAntispam					= "client_antispam";		/**< bool，客户端反垃圾，默认为false，如需开启请提前咨询技术支持或销售 */
 static const char *kNIMTeamMessageAckEnabled			= "team_msg_ack";			/**< bool，群消息已读功能开关，默认为false，如需开启请提前咨询技术支持或销售  */
 static const char *kNIMNeedUpdateLBSBeforRelogin 		= "need_update_lbs_befor_relogin";  /**< bool 在进行重新登录前是否先刷新一下lbs,对于切换网络的场景适用  */
+static const char *kNIMCustomClientType = "custom_client_type";  /**< (可选)int 自定义客户端类型字段,大于0 否则初始化会失败*/
 static const char *kNIMServerConfFilePath				= "server_conf_file_path";	/**< string,  私有云服务器相关地址配置文件本地绝对路径，如果不填默认执行文件目录下的nim_server.conf */
 static const char *kNIMPrivateServerSetting				= "private_server_setting";	/**< json object, 私有服务器配置（设置方法有两种，一个是配置以下信息，一个是通过配置kNIMServerConfFilePath地址，信息从文件中读取） */
 static const char *kNIMPrivateEnableHttps 				= "https_enabled";			/**< bool，【7.0.0版本后已废弃,统一由kNIMUseHttps来设置】（必填，私有化配置是否启用HTTPS协议，启用私有化配置时会覆盖 kNIMUseHttps，为true时kNIMDefaultNosUploadHost必填） */
 static const char *kNIMLbsAddress						= "lbs";					/**< string, （必填，lbs地址） */
+static const char* kNIMLbsBackupAddress = "lbs.backup";					/**< string list, （私有化参数 选填，lbs备用地址） */
 static const char *kNIMNosLbsAddress					= "nos_lbs";				/**< string, （必填，nos lbs地址） */
 static const char *kNIMDefaultLinkAddress				= "link";					/**< string array, （默认link 服务器地址 kNIMIPProtVersion == 0 or auto (ipv4）必填 */
 static const char *kNIMDefaultLinkAddressIPV6			= "link_ipv6";			    /**< string array, （默认link ipv6服务器地址 kNIMIPProtVersion == 1(ipv6）必填 */
@@ -182,6 +184,8 @@ static const char *kNIMSyncDataTypeConfig = "sync_data_type_config";/**< json ar
 static const char *kNIMSyncDataTypeConfigKey = "key";/**< int 同步数据类型配置的具体数据kye 28:置顶会话*/
 static const char *kNIMSyncDataTypeConfigValue = "value";/**< int 同步数据类型配置的具体数据value 0:不更新 1:自动更新*/
 
+static const char* kNIMHttpDNSServerInterface = "httpdns_server_interface";/**< string list 私有化参数,选填 如果有特定的地址可以配置在这个参数中*/
+
 /** @}*/ //json extension params for nim_client_init API
 
 /** @name json extension params for nim_client_kick_other_client API
@@ -214,6 +218,8 @@ static const char *kNIMPresMac			= "mac";				/**< string, 登录设备的mac地�
 static const char *kNIMPresDeviceID		= "device_id";			/**< string, 设备id，uuid */
 static const char *kNIMPresLoginTime	= "login_time";			/**< long, 本次登录时间, 精度到ms */
 static const char *kNIMPresCustomTag	= "custom_tag";			/**< string, 本次登录用户自定义字段 */
+static const char *kNIMPresCustomClientType = "custom_client_type";/**< int, 自定义客户端类型字段,大于0 */
+
 /** @}*/ //json params for nim_json_transport_cb_func that has been registered in nim_client_login and nim_client_reg_auto_relogin_cb API
 
 /** @name json params for nim_json_transport_cb_func that has been registered in nim_client_reg_multispot_login_notify_cb API
@@ -244,6 +250,8 @@ static const char *kNIMLogoutErrorCode		= "err_code"/*kNIMResCode*/;		/**< int, 
   */
 static const char *kNIMKickoutClientType	= "client_type";	/**< int, 客户端类型NIMClientType */
 static const char *kNIMKickoutReasonCode	= "reason_code";	/**< int, 返回的被踢原因NIMKickReason */
+static const char* kNIMKickoutReasonDescription = "reason_description";	/**< string, 返回的被踢描述 */
+static const char* kNIMKickoutReasonCustomClientType = "custom_client_type";	/**< int 自定义客户端类型 > 0 */
 /** @}*/ //json params for nim_json_transport_cb_func that has been registered in nim_client_reg_kickout_cb API
 
 /** @name json params for nim_json_transport_cb_func that has been registered in nim_client_reg_kickout_other_client_cb API

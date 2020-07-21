@@ -165,6 +165,16 @@ NIM_SDK_DLL_API void nim_msglog_query_msg_by_options_async(enum NIMMsgLogQueryRa
 														   nim_msglog_query_cb_func cb, 
 														   const void *user_data);
 
+/** @fn void nim_msglog_query_msg_by_options_async_ex(const char *json_param, nim_msglog_query_cb_func cb, const void *user_data)
+  * 根据指定条件查询本地消息,使用此接口可以完成全局搜索等功能,具体请参阅开发手册 http://dev.netease.im/docs/product/IM%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/SDK%E5%BC%80%E5%8F%91%E9%9B%86%E6%88%90/Windows%E5%BC%80%E5%8F%91%E9%9B%86%E6%88%90/%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95
+  * @param[in] json_param		查询参数
+  * @param[in] cb				本地查询消息的回调函数， nim_msglog_query_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data		APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+NIM_SDK_DLL_API void nim_msglog_query_msg_by_options_async_ex(const char *json_param, nim_msglog_query_cb_func cb, const void *user_data);
+
 /** @fn void nim_msglog_batch_status_read_async(const char *account_id, enum NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void *user_data)
   * 批量设置未读状态为已读消息状态
   * @param[in] account_id	会话id，对方的account id或者群组tid

@@ -32,6 +32,7 @@ typedef void(*nim_msglog_query_msg_online_async2)(const char *id,NIMQueryMsgOnli
 typedef void(*nim_msglog_query_msg_by_keyword_online_async)(const char *id, const char* keyword, NIMQueryMsgByKeywordOnlineAsyncParam query_param, nim_msglog_query_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_query_msg_by_id_async)(const char *client_msg_id, const char *json_extension, nim_msglog_query_single_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_query_msg_by_options_async)(NIMMsgLogQueryRange query_range, const char *ids, int limit_count, int64_t from_time, int64_t end_time, const char *end_client_msg_id, bool reverse, NIMMessageType msg_type, const char *search_content, const char *json_extension, nim_msglog_query_cb_func cb, const void *user_data);
+typedef void(*nim_msglog_query_msg_by_options_async_ex)( const char *json_param, nim_msglog_query_cb_func cb, const void *user_data);
 typedef void(*nim_msglog_update_localext_async)(const char *msg_id, const char *local_ext, const char *json_extension, nim_msglog_res_cb_func cb, const void *user_data);
 						
 typedef void(*nim_msglog_export_db_async)(const char *dst_path, const char *json_extension, nim_msglog_modify_res_cb_func cb, const void *user_data);
@@ -148,7 +149,22 @@ MsgLog::QueryMsgByKeywordOnlineParam::QueryMsgByKeywordOnlineParam()
 {
 
 }
-
+std::string MsgLog::QueryMsgByOptionsAsyncParam::ToJsonString() const
+{
+	nim_cpp_wrapper_util::Json::Value param_json;
+	param_json[kNIMQueryMsgByOptionsAsyncKeyQueryRange] = query_range_;
+	for (auto it : ids_)
+		param_json[kNIMQueryMsgByOptionsAsyncKeyIDS].append(it);
+	param_json[kNIMQueryMsgByOptionsAsyncKeyLimit] = limit_count_;
+	param_json[kNIMQueryMsgByOptionsAsyncKeyFromTime] = from_time_;
+	param_json[kNIMQueryMsgByOptionsAsyncKeyEndTime] = end_time_;
+	param_json[kNIMQueryMsgByOptionsAsyncKeyEndClientMSGID] = end_client_msg_id_;
+	param_json[kNIMQueryMsgByOptionsAsyncKeyReverse] = reverse_;
+	param_json[kNIMQueryMsgByOptionsAsyncKeyMsgType] = msg_type_;
+	param_json[kNIMQueryMsgByOptionsAsyncKeyMsgSubType] = msg_sub_type_;
+	param_json[kNIMQueryMsgByOptionsAsyncKeySearchContent] = search_content_;
+	return nim_cpp_wrapper_util::Json::FastWriter().write(param_json);
+}
 static void CallbackQueryMsg(int res_code
 	, const char *id
 	, nim::NIMSessionType to_type
@@ -460,7 +476,19 @@ bool MsgLog::QueryMsgByOptionsAsync(NIMMsgLogQueryRange query_range
 
 	return true;
 }
+bool MsgLog::QueryMsgByOptionsAsyncEx(const QueryMsgByOptionsAsyncParam& param, const QueryMsgCallback& cb)
+{
+	QueryMsgCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new QueryMsgCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_msglog_query_msg_by_options_async_ex)(param.ToJsonString().c_str()
+		, &CallbackQueryMsg
+		, cb_pointer);
 
+	return true;
+}
 bool MsgLog::BatchStatusReadAsync(const std::string& account_id
 	, nim::NIMSessionType to_type
 	, const BatchStatusReadCallback& cb
@@ -931,7 +959,7 @@ void MsgLog::QueryThreadHistoryMsg(const IMMessage& msg, const QueryThreadHistor
 	c_param.from_time = param.from_time;
 	c_param.to_time = param.to_time;
 	c_param.exclude_msg_id = param.exclude_msg_id;
-	c_param.linit = param.linit;
+	c_param.limit = param.limit;
 	c_param.reverse = param.reverse;
 	std::string json_msg;
 	NIM_SDK_GET_FUNC(nim_msglog_query_thread_history_msg)(msg.ToJsonString(false).c_str(),c_param,

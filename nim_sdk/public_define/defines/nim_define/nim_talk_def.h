@@ -177,6 +177,8 @@ static const char *kNIMSendAckKeyMsgId		= "msg_id";			/**< string,客户端消�
 static const char *kNIMSendAckKeyTalkId		= "talk_id";		/**< string,会话id */
 static const char *kNIMSendAckKeyRescode	= "rescode";		/**< int,消息错误码(NIMResCode) */
 static const char *kNIMSendAckKeyTimetag	= "msg_timetag";	/**< long,消息时间戳(毫秒),收到ack包时更新上层缓存的消息时间戳 */
+static const char* kNIMSendAckKeyCallbackExt = "third_party_callback_ext";		/**< string,第三方回调回来的自定义扩展字段 v7.8*/
+
 /** @}*/ //发送消息回执Json Keys
 
 /** @name attach多媒体资源参数通用键名定义，可替代不同类型多媒体所使用的相同的参数的键名.
@@ -265,6 +267,21 @@ static const char *kNIMBroadcastMsgKeyFromAccid	= "from_accid";		/**< jstring，
 static const char *kNIMBroadcastMsgKeyTime		= "time";			/**< int64， 时间戳*/
 static const char *kNIMBroadcastMsgKeyBody		= "body";			/**< string，内容 */
 /** @}*/ // 广播消息 Json Keys
+
+/** @name 根据指定条件查询本地消息参数 Json Keys
+  * @{
+  */
+static const char *kNIMQueryMsgByOptionsAsyncKeyQueryRange = "query_range";				/**< enum NIMMsgLogQueryRange，消息历史的检索范围（目前暂不支持某些范围的组合检索，详见NIMMsgLogQueryRange说明）*/
+static const char *kNIMQueryMsgByOptionsAsyncKeyIDS = "ids";		/**< jsonstring 会话id（对方的account id或者群组tid）的集合，目前暂不支持多个的组合检索，详见NIMMsgLogQueryRange说明 */
+static const char *kNIMQueryMsgByOptionsAsyncKeyLimit = "limit_count";			/**< int32， 本次查询的消息条数上限(最多100条)*/
+static const char *kNIMQueryMsgByOptionsAsyncKeyFromTime = "from_time";			/**< int64，起始时间点，单位：毫秒 */
+static const char *kNIMQueryMsgByOptionsAsyncKeyEndTime = "end_time";			/**< int64，结束时间点，单位：毫秒 */
+static const char *kNIMQueryMsgByOptionsAsyncKeyEndClientMSGID = "end_client_msg_id";			/**< string，结束查询的最后一条消息的end_client_msg_id(不包含在查询结果中) */
+static const char *kNIMQueryMsgByOptionsAsyncKeyReverse = "reverse";			/**< bool，true：反向查询(按时间正序起查，正序排列)，false：按时间逆序起查，逆序排列（建议默认为false） */
+static const char *kNIMQueryMsgByOptionsAsyncKeyMsgType = "msg_type";			/**< enum NIMMessageType  检索的消息类型（目前只支持kNIMMessageTypeText、kNIMMessageTypeImage和kNIMMessageTypeFile这三种类型消息） */
+static const char *kNIMQueryMsgByOptionsAsyncKeyMsgSubType = "msg_sub_type";			/**< int32，消息的子类型 */
+static const char *kNIMQueryMsgByOptionsAsyncKeySearchContent = "search_content";			/**< string，检索文本（目前只支持kNIMMessageTypeText和kNIMMessageTypeFile这两种类型消息的文本关键字检索，即支持文字消息和文件名的检索 */
+/** @}*/ // 根据指定条件查询本地消息参数 Json Keys
 
 #ifdef __cplusplus
 };

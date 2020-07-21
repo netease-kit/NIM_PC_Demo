@@ -295,17 +295,19 @@ std::string ChatRoom::CreateRoomMessage(const NIMChatRoomMsgType msg_type
 	, const std::string& attach
 	, const std::string& msg_body
 	, const ChatRoomMessageSetting& msg_setting
-	, int64_t timetag/* = 0*/)
+	, int64_t timetag/* = 0*/
+	, int32_t msg_sub_type/* = 0*/)
 {
 	nim_cpp_wrapper_util::Json::Value values;
 	values[kNIMChatRoomMsgKeyType] = msg_type;
 	values[kNIMChatRoomMsgKeyAttach] = attach;
 	values[kNIMChatRoomMsgKeyClientMsgid] = client_msg_id;
 	values[kNIMChatRoomMsgKeyBody] = msg_body;
+	if(msg_sub_type > 0)
+		values[kNIMChatRoomMsgKeySubType] = msg_sub_type;
 	msg_setting.ToJsonValue(values);
 	return nim::GetJsonStringWithNoStyled(values);
 }
-
 static void CallbackGetMembersOnline(int64_t room_id, int error_code, const char *result, const char *json_extension, const void *user_data)
 {
 

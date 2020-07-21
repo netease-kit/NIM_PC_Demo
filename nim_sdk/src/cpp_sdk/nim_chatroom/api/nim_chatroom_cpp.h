@@ -207,6 +207,7 @@ static void SendMsg(const int64_t room_id, const std::string& json_msg, const st
   * @param[in] msg_body			文本消息内容
   * @param[in] msg_setting		消息属性
   * @param[in] timetag			消息时间
+  * @param[in] sub_type 消息子类型( > 0 ),由开发者自定义,服务端只负责透传 v7.8
   * @return std::string 消息json string
   */
 static std::string CreateRoomMessage(const NIMChatRoomMsgType msg_type
@@ -214,7 +215,8 @@ static std::string CreateRoomMessage(const NIMChatRoomMsgType msg_type
 	, const std::string& attach
 	, const std::string& msg_body
 	, const ChatRoomMessageSetting& msg_setting
-	, int64_t timetag = 0);
+	, int64_t timetag = 0
+    , int32_t msg_sub_type = 0);
 
 /** @fn void GetMembersOnlineAsync(const int64_t room_id, const ChatRoomGetMembersParameters &parameters, const GetMembersCallback &callback, const std::string& json_extension = "")
   * 异步查询成员列表

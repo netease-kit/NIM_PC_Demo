@@ -84,6 +84,8 @@ static void CallbackKickout(const char* json_res, const void *callback)
 		{
 			res.client_type_ = (NIMClientType)values[kNIMKickoutClientType].asUInt();
 			res.kick_reason_ = (NIMKickReason)values[kNIMKickoutReasonCode].asUInt();
+			res.kickout_description_ = values[kNIMKickoutReasonDescription].asString();
+			res.custom_client_type_ = values[kNIMKickoutReasonCustomClientType].asUInt();
 		}
 		CallbackProxy::Invoke(cb, res);
 	});
@@ -228,6 +230,8 @@ bool Client::Init(const std::string& app_key
 	config_values[nim::kNIMUploadSDKEventsAfterLogin] = config.upload_sdk_events_after_login_;
 	config_values[nim::kNIMAnimatedImageThumbnailEnabled] = config.animated_image_thumbnail_enabled_;
 	config_values[nim::kNIMClientAntispam] = config.client_antispam_;
+	if(config.custom_client_type_.first)
+		config_values[nim::kNIMCustomClientType] = config.custom_client_type_.second;
 	config_values[nim::kNIMTeamMessageAckEnabled] = config.team_msg_ack_;
 	config_values[nim::kNIMNeedUpdateLBSBeforRelogin] = config.need_update_lbs_befor_relogin_;
 	//config_values[nim::kNIMMarkreadAfterSaveDBEnabled] = config.enable_markread_after_save_db_;
@@ -276,6 +280,12 @@ bool Client::Init(const std::string& app_key
 		srv_config[nim::kNIMNegoKeyNECAKeyV] = config.nego_key_neca_key_version_;
 		srv_config[nim::kNIMProbeIPV4URL] = config.probe_ipv4_url_;
 		srv_config[nim::kNIMProbeIPV6URL] = config.probe_ipv6_url_;
+		if (!config.http_dns_server_interface_.empty())
+			for (auto it : config.http_dns_server_interface_)
+				srv_config[kNIMHttpDNSServerInterface].append(it);
+		if(!config.lbs_backup_address_.empty())
+			for(auto it : config.lbs_backup_address_)
+				srv_config[kNIMLbsBackupAddress].append(it);
 		config_root[nim::kNIMPrivateServerSetting] = srv_config;
 	}
 	config_root[nim::kNIMGlobalConfig] = config_values;

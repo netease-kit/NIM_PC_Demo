@@ -242,7 +242,8 @@ public:
 	std::string		attach_;					/**< 消息附件 */
 	std::string		client_msg_id_;				/**< 消息ID（客户端） */
 	MessageSetting	msg_setting_;				/**< 消息属性设置 */
-
+	std::string		third_party_callback_ext_;	/**< 第三方回调回来的自定义扩展字段 v7.8添加 */
+	int32_t			sub_type_;				/**< 消息的子类型，客户端定义，服务器透传 */
 public:
 	std::string	   local_res_path_;				/**< 媒体文件本地绝对路径（客户端） */
 	std::string	   local_talk_id_;				/**< 会话ID（客户端） */
@@ -304,6 +305,11 @@ public:
 			sub_status_ = (NIMMsgLogSubStatus)values[kNIMMsgKeyLocalLogSubStatus].asUInt();
 
 			msg_setting_.ParseMessageSetting(values);
+
+			//v7.8 <--
+			third_party_callback_ext_ = values[kNIMMsgKeyThirdPartyCBEXT].asString();
+			sub_type_ = values[kNIMMsgKeySubType].asInt();
+			// --> v7.8
 		}
 	}
 
@@ -327,7 +333,7 @@ public:
 		values[kNIMMsgKeyLocalResId] = local_res_id_;
 		values[kNIMMsgKeyLocalLogStatus] = status_;
 		values[kNIMMsgKeyLocalLogSubStatus] = sub_status_;
-
+		values[kNIMMsgKeySubType] = sub_type_;
 		msg_setting_.ToJsonValue(values);
 
 		if (!use_to_send)
@@ -336,6 +342,7 @@ public:
 			values[kNIMMsgKeyFromDeviceId] = readonly_sender_device_id_;
 			values[kNIMMsgKeyFromNick] = readonly_sender_nickname_;
 			values[kNIMMsgKeyServerMsgid] = readonly_server_id_;
+			values[kNIMMsgKeyThirdPartyCBEXT] = third_party_callback_ext_;
 		}
 		//thread
 		{

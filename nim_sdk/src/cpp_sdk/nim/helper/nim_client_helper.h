@@ -19,7 +19,7 @@
 */
 namespace nim
 {
-
+	class Client;
 /** @brief SDK设置项 */
  struct NIM_SDK_CPPWRAPPER_DLL_API SDKConfig
 {
@@ -72,6 +72,7 @@ namespace nim
 	bool			use_private_server_;			/**< bool 是否使用私有服务器，如果使用私有服务器，则必须设置为true */
 	//bool			private_enable_https_;	/**< bool，【7.0.0版本后已废弃,统一由use_https_来设置】（必填，私有化配置是否启用HTTPS协议，启用私有化配置时会覆盖 kNIMUseHttps，为true时kNIMDefaultNosUploadHost必填） */
 	std::string		lbs_address_;					/**< string lbs地址，如果选择使用私有服务器，则必填 */
+	std::list<std::string>		lbs_backup_address_;		/** string list  lbs备用地址,没有可不填*/
 	std::string  	nos_lbs_address_;				/**< string nos lbs地址，如果选择使用私有服务器，则必填 */
 	std::string		default_link_address_;			/**< string 默认link服务器地址，如果选择使用私有服务器，ip_protocol_version_ != 1(ipv4 or auto)则必填 */
 	std::string		default_link_address_ipv6_;			/**< string 默认link ipv6服务器地址，如果选择使用私有服务器，ip_protocol_version_ == 1(使用ipv6)则必填 */
@@ -95,8 +96,15 @@ namespace nim
 	/***********地址族相关设置 end************/
 
 	std::map<int /*key*/, int /*value*/> sync_data_type_list_;/**< map 数据同步类型 key(28:置顶会话) value(0:不同步,1:自动同步)*/
+	std::list<std::string>		http_dns_server_interface_;	/**< string list httpdns服务请求地址，如果没有特定地址可以不填*/
 	/** 构造函数 */
 	SDKConfig();
+public:
+	void SetCustomClientType(int type);
+	int GetCustomClientType() const;
+private:
+	friend class Client;
+	std::pair<bool,int>	custom_client_type_;/**< (可选)int, 自定义客户端类型字段,启用该配置时必须0,否则初始化会报错 */
 };
 
 /** @brief 多端登陆客户端信息 */
@@ -108,9 +116,10 @@ namespace nim
 	std::string	mac_address_;			/**< 登录设备的mac地址 */
 	std::string	device_id_;				/**< 设备id，uuid */
 	int64_t		login_time_;			/**< 本次登陆时间, 精度到ms */
-	std::string custom_data_;			/**< 自定义字段/
+	std::string custom_data_;			/**< 自定义字段 */
+	int	custom_client_type_;			/**< int, 自定义客户端类型字段,大于0 */
 	/** 构造函数 */
-	OtherClientPres() : login_time_(0) {}
+	OtherClientPres() : login_time_(0), custom_client_type_(0){}
 };
 
 /** @brief 登录结果回调信息 */
@@ -130,6 +139,8 @@ struct NIM_SDK_CPPWRAPPER_DLL_API KickoutRes
 {
 	NIMClientType client_type_;			/**< int, 客户端类型NIMClientType */
 	NIMKickReason kick_reason_;			/**< 返回的被踢原因NIMKickReason */
+	std::string kickout_description_;	/**< string 返回的被踢描述 */
+	int32_t custom_client_type_;	/**< 自定义客户端类型，若没有，服务器会填0 */
 };
 
 /** @brief 多端登录回调信息 */

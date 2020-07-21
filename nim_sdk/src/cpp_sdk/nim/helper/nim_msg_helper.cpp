@@ -54,6 +54,8 @@ bool ParseSendMessageAck(const std::string& arc_json, SendMessageArc& arc)
 		arc.msg_id_ = values[kNIMSendAckKeyMsgId].asString();
 		arc.talk_id_ = values[kNIMSendAckKeyTalkId].asString();
 		arc.msg_timetag_ = values[kNIMSendAckKeyTimetag].asInt64();
+		if(values.isMember(kNIMSendAckKeyCallbackExt))
+			arc.third_party_callback_ext_ = values[kNIMSendAckKeyCallbackExt].asString();
 		return true;
 	}
 	return false;
