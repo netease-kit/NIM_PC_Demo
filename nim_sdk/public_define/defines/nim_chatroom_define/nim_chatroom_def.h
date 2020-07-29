@@ -421,8 +421,10 @@
 		/** @enum NIMChatRoomGetMemberType 查询成员的成员类型 */
 		enum NIMChatRoomGetMemberType
 		{
-			kNIMChatRoomGetMemberTypeSolid = 0, /**< 固定成员,固定成员,包括创建者,管理员,普通等级用户,受限用户(禁言+黑名单),即使非在线也可以在列表中看到,有数量限制*/
-			kNIMChatRoomGetMemberTypeTemp = 1, /**< 非固定成员,非固定成员,又称临时成员,只有在线时才能在列表中看到,数量无上限*/
+			kNIMChatRoomGetMemberTypeSolid = 0, /**< 固定成员,固定成员,包括创建者,管理员,普通等级用户,受限用户(禁言+黑名单),即使非在线也可以在列表中看到,有数量限制,查询时时间戳使用"updatetime"*/
+			kNIMChatRoomGetMemberTypeTemp = 1, /**< 非固定成员,非固定成员,又称临时成员,只有在线时才能在列表中看到,数量无上限,查询时时间戳使用"进入聊天室时间" */
+			kNIMChatRoomGetMemberTypeSolidOL = 2,/**< 在线固定成员 查询时时间戳使用"updatetime"*/
+			kNIMChatRoomGetMemberTypeTempOL = 3,/**< 非固定成员(反向查询) 查询时时间戳使用"进入聊天室时间"*/
 		};
 
 		/** @enum NIMChatRoomMemberAttribute 设置成员的成员身份 */
