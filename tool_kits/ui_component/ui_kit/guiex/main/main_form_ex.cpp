@@ -44,7 +44,8 @@ namespace nim_comp
 	MainFormEx::MainFormEx(IMainFormMenuHandler* main_menu_handler) : 
 		is_trayicon_left_double_clicked_(false), is_busy_(false),
 		main_menu_handler_(main_menu_handler),
-		btn_max_restore_(nullptr)
+		btn_max_restore_(nullptr),
+		shadow_wnd_(nullptr)
 	{
 		OnUserInfoChangeCallback cb1 = nbase::Bind(&MainFormEx::OnUserInfoChange, this, std::placeholders::_1);
 		unregister_cb.Add(nim_comp::UserService::GetInstance()->RegUserInfoChange(cb1));
@@ -78,17 +79,11 @@ namespace nim_comp
 	std::wstring MainFormEx::GetWindowId() const
 	{
 		return kClassName;
-	}
+	}	
 	HWND MainFormEx::Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle,
 		bool isLayeredWindow, const ui::UiRect& rc)
 	{
-		shadow_wnd_ = new ShadowWnd();
-		//shadow_wnd_->SetShadowImage(L".. / public / bk / bk_shadow2.png' corner='14, 14, 14, 14'");
-		
-		auto ret = WindowEx::Create(hwndParent/*shadow_wnd_->GetHWND()*/, pstrName, dwStyle, dwExStyle, false, rc);
-		shadow_wnd_->Create(ret, shadow_wnd_->GetWindowClassName().c_str(), WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
-		shadow_wnd_->ShowWindow();
-		return ret;
+		return WindowEx::Create(hwndParent, pstrName, dwStyle, dwExStyle, false, rc);
 	}
 	void MainFormEx::InitWindow()
 	{
@@ -597,15 +592,27 @@ namespace nim_comp
 				OnWndSizeMax(true);			
 		}
 		auto ret   = __super::HandleMessage(uMsg, wParam, lParam);
+		if (uMsg == WM_CREATE)
+		{
+			shadow_wnd_ = new ShadowWnd();
+			shadow_wnd_->Create(GetHWND(), shadow_wnd_->GetWindowClassName().c_str(),  WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
+			SetWindowLong(shadow_wnd_->GetHWND(), GWL_EXSTYLE, GetWindowLong(shadow_wnd_->GetHWND(), GWL_EXSTYLE) | WS_EX_TRANSPARENT);
+			shadow_wnd_->ShowWindow(true, false);
+		}
 		if (uMsg == WM_MOVE || uMsg == WM_SIZE)
 		{
-			if (shadow_wnd_->GetHWND() != NULL && ::IsWindow(shadow_wnd_->GetHWND()))
+			if (shadow_wnd_ != nullptr)
 			{
-				auto pos = this->GetPos(true);
-				pos.Inflate(ui::UiRect(17, 17, 17, 17));
-				shadow_wnd_->SetPos(pos, false, SWP_NOZORDER | SWP_NOACTIVATE, GetHWND());
-			}			
-		}
+				if (shadow_wnd_->GetHWND() != NULL && ::IsWindow(shadow_wnd_->GetHWND()))
+				{
+					int shadow_corner = 14;
+					auto pos = this->GetPos(true);
+					shadow_corner = DpiManager::GetInstance()->ScaleInt(shadow_corner);
+					pos.Inflate(shadow_corner, shadow_corner);
+					shadow_wnd_->SetPos(pos, false, SWP_NOZORDER | SWP_NOACTIVATE, NULL, false);
+				}
+			}
+		}		
 		return ret;
 	}
 	void MainFormEx::OnWndSizeMax(bool max)

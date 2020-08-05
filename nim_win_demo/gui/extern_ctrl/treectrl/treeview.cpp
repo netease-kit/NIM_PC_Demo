@@ -72,15 +72,19 @@ std::shared_ptr<ITreeItemUIStyle> TreeComponent::GetUIStyle(const std::shared_pt
 	}
 	return ret;
 }
+int DpiScaleInt(int value)
+{
+	return ui::DpiManager::GetInstance()->ScaleInt(value);
+}
 TreeComponent::TreeComponent() : 
 	ui::ListBox(new ui::VLayout), 
 	doc_(new TreeDoc),
 	show_tree_line_(true), 
 	show_check_box_(true),
 	show_expand_button_(true),
-	expand_button_width_(14),
-	checkbox_button_width_(14),
-	level_space_widht_(14),
+	expand_button_width_(DpiScaleInt(14)),
+	checkbox_button_width_(DpiScaleInt(14)),
+	level_space_widht_(DpiScaleInt(14)),
 	selected_item_(nullptr)
 {  
 	doc_->AttachRemoveItem(std::bind(&TreeComponent::OnRemoveItemCallback, this, std::placeholders::_1));

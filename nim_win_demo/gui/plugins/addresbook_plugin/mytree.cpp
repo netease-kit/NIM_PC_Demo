@@ -10,7 +10,9 @@ std::string MyAddressbookContact::OnGetIUIStyleName() const
 }
 int MyAddresbookDepartmentUI::GetHeight() 
 { 
-	return 30; 
+	int height = 30;
+	ui::DpiManager::GetInstance()->ScaleInt(height);
+	return height;
 };
 void MyAddresbookDepartmentUI::OnFill()
 {
@@ -22,7 +24,9 @@ void MyAddresbookDepartmentUI::OnFill()
 }
 int MyAddressbookContactUI::GetHeight() 
 { 
-	return 48; 
+	int height = 48;
+	ui::DpiManager::GetInstance()->ScaleInt(height);
+	return height;
 };
 void MyAddressbookContactUI::OnFill()
 {
