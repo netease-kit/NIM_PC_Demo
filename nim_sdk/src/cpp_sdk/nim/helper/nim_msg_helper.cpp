@@ -12,8 +12,30 @@
 #include "public_define/defines/nim_define/nim_msglog_def.h"
 namespace nim
 {
-
-
+	bool ParseRecallMsgNotify(const nim_cpp_wrapper_util::Json::Value& json_value, RecallMsgNotify& notify)
+	{
+		notify.from_id_ = json_value[kNIMRecallMsgKeyFromAccID].asString();
+		notify.to_id_ = json_value[kNIMRecallMsgKeyToAccID].asString();
+		notify.msg_id_ = json_value[kNIMRecallMsgKeyMsgId].asString();
+		notify.operator_id_ = json_value[kNIMRecallMsgKeyOpeAccID].asString();
+		notify.notify_ = json_value[kNIMRecallMsgKeyNotify].asString();
+		notify.session_type_ = (NIMSessionType)json_value[kNIMRecallMsgKeyToType].asInt();
+		notify.notify_timetag_ = json_value[kNIMRecallMsgKeyTime].asUInt64();
+		notify.notify_feature_ = (NIMMessageFeature)json_value[kNIMRecallMsgKeyNotifyFeature].asInt();
+		notify.msglog_exist_ = json_value[kNIMRecallMsgKeyMsgExist].asBool();
+		notify.msglog_timetag_ = json_value[kNIMRecallMsgKeyMsgTime].asUInt64();
+		notify.from_nick_ = json_value[kNIMRecallMsgKeyMsgFromNick].asString();
+		return true;
+	}
+	bool ParseRecallMsgNotify(const std::string json_value, RecallMsgNotify& notify)
+	{
+		nim_cpp_wrapper_util::Json::Value value;
+		if (nim_cpp_wrapper_util::Json::Reader().parse(json_value, value))
+		{
+			return ParseRecallMsgNotify(value, notify);
+		}
+		return false;
+	}
 bool ParseRecallMsgNotify(const std::string& notify_json, std::list<RecallMsgNotify>& notifys)
 {
 	nim_cpp_wrapper_util::Json::Value values;
@@ -21,23 +43,11 @@ bool ParseRecallMsgNotify(const std::string& notify_json, std::list<RecallMsgNot
 	if (reader.parse(notify_json, values) && values.isArray())
 	{
 		auto size = values.size();
-		for (auto i = 0; i < size; i++ )
+		for (auto it : values )
 		{
-			nim_cpp_wrapper_util::Json::Value value = values[i];
 			RecallMsgNotify notify;
-			notify.from_id_ = value[kNIMRecallMsgKeyFromAccID].asString();
-			notify.to_id_ = value[kNIMRecallMsgKeyToAccID].asString();
-			notify.msg_id_ = value[kNIMRecallMsgKeyMsgId].asString();
-			notify.operator_id_ = value[kNIMRecallMsgKeyOpeAccID].asString();
-			//if (value.isMember(kNIMRecallMsgKeyNotify))
-			notify.notify_ = value[kNIMRecallMsgKeyNotify].asString();
-			notify.session_type_ = (NIMSessionType)value[kNIMRecallMsgKeyToType].asInt();
-			notify.notify_timetag_ = value[kNIMRecallMsgKeyTime].asUInt64();
-			notify.notify_feature_ = (NIMMessageFeature)value[kNIMRecallMsgKeyNotifyFeature].asInt();
-			notify.msglog_exist_ = value[kNIMRecallMsgKeyMsgExist].asBool();
-			notify.msglog_timetag_ = value[kNIMRecallMsgKeyMsgTime].asUInt64();
-			notify.from_nick_ = value[kNIMRecallMsgKeyMsgFromNick].asString();
-			notifys.push_back(notify);
+			if(ParseRecallMsgNotify(it,notify))
+				notifys.emplace_back(notify);
 		}
 		return true;
 	}

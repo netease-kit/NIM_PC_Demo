@@ -48,7 +48,7 @@ typedef void(*nim_team_msg_query_unread_list)(const char *tid, const char *json_
 typedef void(*nim_team_query_members_invitor)(const char *tid, const char *members, nim_team_query_members_invitor_cb_func cb, const void *user_data);
 typedef void(*nim_team_query_teams_info_by_keyword)(const char *keyword, nim_team_query_all_my_teams_cb_func cb, const char *json_extension, const void *user_data);
 
-typedef void(*nim_team_get_team_info_batch_sftrans)(const char *json_extension, nim_team_query_all_my_teams_info_cb_func cb, unsigned __int64  time_tag, const void* user_data);
+typedef void(*nim_team_get_team_info_batch_sftrans)(const char *json_extension, nim_team_query_all_my_teams_info_cb_func cb, uint64_t time_tag, const void* user_data);
 #else
 #include "nim_team.h"
 #endif

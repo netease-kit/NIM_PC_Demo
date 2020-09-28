@@ -15,6 +15,7 @@ typedef void(*nim_session_query_last_few_session_async)(int limit, const char *j
 typedef void(*nim_session_query_all_recent_session_async)(const char *json_extension, nim_session_query_recent_session_cb_func cb, const void* user_data);
 typedef void(*nim_session_query_all_recent_session_with_last_msg_excluded_type_async)(const char *json_extension, nim_session_query_recent_session_cb_func cb, enum NIMMessageType last_msg_excluded_type,const void* user_data);
 typedef void(*nim_session_delete_recent_session_async)(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+typedef void(*nim_session_delete_session_roaming_async)(NIMSessionType to_type, const char* id, const char* json_extension, nim_session_delete_session_roaming_cb_func cb, const void* user_data);
 typedef void(*nim_session_delete_all_recent_session_async)(const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 typedef void(*nim_session_set_unread_count_zero_async)(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 typedef void(*nim_session_set_top)(enum NIMSessionType to_type, const char *id, bool top, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
@@ -143,7 +144,24 @@ bool Session::DeleteRecentSession(nim::NIMSessionType to_type, const std::string
 
 	return true;
 }
+bool Session::DeleteSessionRoamingMessage(nim::NIMSessionType to_type, const std::string& id, const DeleteSessionRoammsgCallback& cb, const std::string& json_extension/* = ""*/)
+{
+	if (id.empty())
+		return false;
 
+	DeleteSessionRoammsgCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new DeleteSessionRoammsgCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_session_delete_session_roaming_async)(to_type, id.c_str(), json_extension.c_str(), 
+		[](int rescode, const char* to_type, const char* id, const void* user_data) {
+			CallbackProxy::DoSafeCallback<DeleteSessionRoammsgCallback>(user_data, [=](const DeleteSessionRoammsgCallback& cb) {
+				CallbackProxy::Invoke(cb, (nim::NIMResCode)rescode,(nim::NIMSessionType)std::atoi(to_type),id);
+				}, true);
+		}, cb_pointer);
+	return true;
+}
 void Session::DeleteAllRecentSession(const DeleteAllRecentSessionCallabck& cb,  const std::string& json_extension)
 {
 	DeleteAllRecentSessionCallabck* cb_pointer = nullptr;

@@ -21,7 +21,7 @@ extern"C"
 	* @param[in] need_last_msg 是否需要lastMsg，默认true
 	* @param[in] limit 结果集limit，最大100，缺省值100
 	* @param[in] cb 结果回调  可查看nim_session_online_service_query_session_list_cb_func定义
-	* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+	* @param[in] user_data APP的自定义用户数据，SDKf只负责传回给回调函数cb，不做任何处理！
 	* @return void 无返回值
 	*/
 NIM_SDK_DLL_API void nim_session_online_service_query_session_list(uint64_t min_time,uint64_t max_time,bool need_last_msg,int limit,nim_session_online_service_query_session_list_cb_func cb, const void *user_data);

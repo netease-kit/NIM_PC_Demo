@@ -84,9 +84,9 @@ void ParseSession(const nim_cpp_wrapper_util::Json::Value& session_json, Session
 	{
 		session.stick_top_info_.id_ = session.id_;
 		session.stick_top_info_.type_ = session.type_;
-		session.stick_top_info_.ext_ = session_json[kNIMSessionStickTopInfo][kNIMSessionStickTopInfoExt];
-		session.stick_top_info_.create_time_ = session_json[kNIMSessionStickTopInfo][kNIMSessionStickTopInfoCreateTime];
-		session.stick_top_info_.update_time_ = session_json[kNIMSessionStickTopInfo][kNIMSessionStickTopInfoUpdateTime];
+		session.stick_top_info_.ext_ = session_json[kNIMSessionStickTopInfo][kNIMSessionStickTopInfoExt].asString();
+		session.stick_top_info_.create_time_ = session_json[kNIMSessionStickTopInfo][kNIMSessionStickTopInfoCreateTime].asUInt();
+		session.stick_top_info_.update_time_ = session_json[kNIMSessionStickTopInfo][kNIMSessionStickTopInfoUpdateTime].asUInt();
 	}	
 }
 
@@ -123,12 +123,12 @@ bool ParseStickTopSession(const std::string& session_json, StickTopSession& sess
 }
 void ParseStickTopSession(const nim_cpp_wrapper_util::Json::Value& session_json, StickTopSession& session)
 {
-	session.stick_top_info_.top_ = session_json[kNIMSessionStickTopInfoTop];
-	session.stick_top_info_.id_ = session_json[kNIMSessionStickTopInfoSessionId];
+	session.stick_top_info_.top_ = session_json[kNIMSessionStickTopInfoTop].asBool();
+	session.stick_top_info_.id_ = session_json[kNIMSessionStickTopInfoSessionId].asString();
 	session.stick_top_info_.type_ = (NIMSessionType)session_json[kNIMSessionStickTopInfoType].asInt();
-	session.stick_top_info_.ext_ = session_json[kNIMSessionStickTopInfoExt];
-	session.stick_top_info_.create_time_ = session_json[kNIMSessionStickTopInfoCreateTime];
-	session.stick_top_info_.update_time_ = session_json[kNIMSessionStickTopInfoUpdateTime];
+    session.stick_top_info_.ext_ = session_json[kNIMSessionStickTopInfoExt].asString();
+	session.stick_top_info_.create_time_ = session_json[kNIMSessionStickTopInfoCreateTime].asUInt();
+	session.stick_top_info_.update_time_ = session_json[kNIMSessionStickTopInfoUpdateTime].asUInt();
 	if (session_json.isMember(kNIMSessionStickTopSessionData))
 	{
 		session.session_data_.id_ = session_json[kNIMSessionStickTopSessionData][kNIMSessionId].asString();

@@ -4,8 +4,8 @@
 namespace nim_comp
 {
 //map<窗口类名，map<窗口id，窗口指针>>, 如果同一类只有一个窗口，使用类名作为id
-typedef std::map<std::wstring, std::map<std::wstring, WindowEx*>> WindowsMap; 
-typedef std::list<WindowEx *> WindowList;
+typedef std::map<std::wstring, std::map<std::wstring, std::pair<std::weak_ptr<nbase::WeakFlag>,WindowEx*>>> WindowsMap;
+typedef std::list<std::pair<std::weak_ptr<nbase::WeakFlag>, WindowEx*>> WindowList;
 
 /** @class WindowsManager
   * @brief 所有窗体的控制接
@@ -101,7 +101,22 @@ public:
 
 		return window;
 	}
-
+	template<typename TWindowType,typename TReturn>
+	static TReturn SafeDoWindowOption(const std::pair<std::weak_ptr<nbase::WeakFlag>, WindowEx*>& _wnd, const std::function<TReturn(TWindowType*)>& lambda)
+	{
+		if (lambda != nullptr && !_wnd.first.expired() && _wnd.second != nullptr)
+		{
+			TWindowType* wnd = dynamic_cast<TWindowType*>(_wnd.second);
+			if(wnd != nullptr)
+				return lambda(wnd);
+			else
+				return TReturn();
+		}
+		else
+		{
+			return TReturn();
+		}
+	}
 private:
 	WindowsMap					windows_map_;	//所有窗口
 	std::string					user_id_;

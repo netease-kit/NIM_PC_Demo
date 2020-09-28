@@ -67,6 +67,17 @@ typedef void (*nim_talk_recall_msg_func)(int rescode, const char *content, const
   */
 typedef void (*nim_talk_receive_broadcast_cb_func)(const char *content, const char *json_extension, const void *user_data);
 
+/**
+  *用于给撤回消息接口提供额外的参数，方便扩展
+*/
+typedef struct _nim_talk_recall_extra_params_
+{
+	const char* apnstext;
+	const char* pushpayload;
+	const char* json_extension;
+	const char* env_config;
+}nim_talk_recall_extra_params;
+
 /** @name 消息撤回通知Json Keys
   * @{
   */
@@ -131,36 +142,39 @@ static const char *kNIMMsgKeyMsgRoutable	= "routable_msg";		/**< int,(可选)该
 static const char *kNIMMsgKeySetMsgOffline	= "offline_msg";		/**< int,(可选)消息是否要存离线,0:不需要, 1:需要，默认1*/
 static const char *kNIMMsgKeyForcePushList	= "force_push_list";			/**< string,(可选)群组消息强推列表,推送指定账号id string array json, 如果推送全员不填*/
 static const char *kNIMMsgKeyForcePushContent= "force_push_content";		/**< string,(可选)群组消息强推文本 */
-static const char *kNIMMsgKeyIsForcePush	= "is_force_push";		/**< int,(可选)群组消息是否强推,0:不强推, 1:强推，属性只针对群组消息强推列表 */
-static const char *kNIMMsgKeyAntiSpamEnable	= "anti_spam_enable";	/**< int, 是否需要过易盾反垃圾, 0:不需要,1:需要, 默认0 */
-static const char *kNIMMsgKeyAntiSpamContent= "anti_spam_content";	/**< string, (可选)开发者自定义的反垃圾字段,长度限制：5000字符, 格式为json string,{"type" : 1:文本，2：图片，3视频, "data" : "文本内容or图片地址or视频地址"}*/
+static const char *kNIMMsgKeyIsForcePush	= "is_force_push";				/**< int,(可选)群组消息是否强推,0:不强推, 1:强推，属性只针对群组消息强推列表 */
+static const char *kNIMMsgKeyAntiSpamEnable	= "anti_spam_enable";			/**< int, 是否需要过易盾反垃圾, 0:不需要,1:需要, 默认0 */
+static const char *kNIMMsgKeyAntiSpamContent= "anti_spam_content";			/**< string, (可选)开发者自定义的反垃圾字段,长度限制：5000字符, 格式为json string,{"type" : 1:文本，2：图片，3视频, "data" : "文本内容or图片地址or视频地址"}*/
 static const char *kNIMMsgKeyClientAntiSpam = "client_anti_spam_hitting";	/**< int, (可选) 是否命中客户端反垃圾,命中:1 未命中：0 或者不填写*/
-static const char *kNIMMsgKeyAntiSpamBizId = "anti_spam_business_id";	/**< string,  (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
+static const char *kNIMMsgKeyAntiSpamBizId = "anti_spam_business_id";		/**< string,  (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
 static const char *kNIMMsgKeyAntiSpamUsingYiDun = "anti_spam_using_yidun";	/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
-static const char *kNIMMsgKeyTeamMsgAck		= "team_msg_ack";		/**< (可选)int, 群消息是否需要已读业务，0：不需要，1：需要*/
-static const char *kNIMMsgKeyIsUpdateSession = "is_update_session";		/**< (可选)bool, 消息是否需要刷新到session服务，false:否，true:是；只有消息存离线的情况下，才会判断该参数，缺省：true*/
+static const char *kNIMMsgKeyTeamMsgAck		= "team_msg_ack";				/**< (可选)int, 群消息是否需要已读业务，0：不需要，1：需要*/
+static const char *kNIMMsgKeyIsUpdateSession = "is_update_session";			/**< (可选)bool, 消息是否需要刷新到session服务，false:否，true:是；只有消息存离线的情况下，才会判断该参数，缺省：true*/
 static const char* kNIMMsgKeyYiDunAntiCheating = "yidun_anti_cheating";		/**< (可选)String, 易盾反垃圾增强反作弊专属字段, 限制json，长度限制1024*/
 //thread 消息信息
 
-static const char *kNIMMsgKeyThreadInfo = "thread_info";/**< (可选) json object，被回复消息的消息发送者 */
-static const char *kNIMMsgKeyReplyMsgFromAccount = "reply_msg_from_account";/**< (可选)string，从属thread_info节点，被回复消息的消息发送者 */
-static const char *kNIMMsgKeyReplyMsgToAccount = "replymsg_to_account";  /**< (可选)string，从属thread_info节点，被回复消息的消息接受者，群的话是tid*/
-static const char *kNIMMsgKeyReplyMsgTime = "reply_msg_time";       /**< (可选)long，从属thread_info节点，被回复消息的消息发送时间*/
-static const char *kNIMMsgKeyReplyMsgIdServer = "reply_msg_id_server";   /**< (可选)long，从属thread_info节点，被回复消息的消息ID)serverId)*/
-static const char *kNIMMsgKeyReplyMsgIdClient = "reply_msg_id_client";   /**< (可选)string，从属thread_info节点，被回复消息的消息ID)clientId)*/
-static const char *kNIMMsgKeyThreadMsgFromAccount = "thread_msg_from_account";/**< (可选)string，从属thread_info节点，thread消息的消息发送者*/
-static const char *kNIMMsgKeyThreadMsgToAccount = "thread_msg_to_account";  /**< (可选)string，t从属thread_info节点，hread消息的消息接受者，群的话是tid*/
-static const char *kNIMMsgKeyThreadMsgTime = "thread_msg_time";       /**< (可选)long，从属thread_info节点，thread消息的消息发送时间*/
-static const char *kNIMMsgKeyThreadMsgIdServer = "thread_msg_id_server";   /**< (可选)long，从属thread_info节点，thread消息的消息ID)serverId)*/
-static const char *kNIMMsgKeyThreadMsgIdClient = "thread_msg_id_client";   /**< (可选)string，从属thread_info节点，thread消息的消息ID)clientId)*/
-static const char *kNIMMsgKeyDeleted = "deleted";              /**< int 从属thread_info节点，消息是否已经被删除（可能是撤回，也可能是单向删除），查询thread消息历史时可能会有这个字段，大于0表示已经删除（目前撤回和单向删除都是1，未来可能区分）*/
+static const char *kNIMMsgKeyThreadInfo = "thread_info";						/**< (可选) json object，被回复消息的消息发送者 */
+static const char *kNIMMsgKeyReplyMsgFromAccount = "reply_msg_from_account";	/**< (可选)string，从属thread_info节点，被回复消息的消息发送者 */
+static const char *kNIMMsgKeyReplyMsgToAccount = "replymsg_to_account";			/**< (可选)string，从属thread_info节点，被回复消息的消息接受者，群的话是tid*/
+static const char *kNIMMsgKeyReplyMsgTime = "reply_msg_time";					/**< (可选)long，从属thread_info节点，被回复消息的消息发送时间*/
+static const char *kNIMMsgKeyReplyMsgIdServer = "reply_msg_id_server";			/**< (可选)long，从属thread_info节点，被回复消息的消息ID)serverId)*/
+static const char *kNIMMsgKeyReplyMsgIdClient = "reply_msg_id_client";			/**< (可选)string，从属thread_info节点，被回复消息的消息ID)clientId)*/
+static const char *kNIMMsgKeyThreadMsgFromAccount = "thread_msg_from_account";	/**< (可选)string，从属thread_info节点，thread消息的消息发送者*/
+static const char *kNIMMsgKeyThreadMsgToAccount = "thread_msg_to_account";		/**< (可选)string，t从属thread_info节点，hread消息的消息接受者，群的话是tid*/
+static const char *kNIMMsgKeyThreadMsgTime = "thread_msg_time";					/**< (可选)long，从属thread_info节点，thread消息的消息发送时间*/
+static const char *kNIMMsgKeyThreadMsgIdServer = "thread_msg_id_server";		/**< (可选)long，从属thread_info节点，thread消息的消息ID)serverId)*/
+static const char *kNIMMsgKeyThreadMsgIdClient = "thread_msg_id_client";		/**< (可选)string，从属thread_info节点，thread消息的消息ID)clientId)*/
+static const char *kNIMMsgKeyDeleted = "deleted";								/**< int 从属thread_info节点，消息是否已经被删除（可能是撤回，也可能是单向删除），查询thread消息历史时可能会有这个字段，大于0表示已经删除（目前撤回和单向删除都是1，未来可能区分）*/
 //v7.8 新增
-static const char* kNIMMsgKeyThirdPartyCBEXT = "third_party_callback_ext";              /**< (可选)string第三方回调回来的自定义扩展字段*/
-static const char* kNIMMsgKeySubType = "msg_sub_type";              /**<(可选)int，消息的子类型，客户端定义，服务器透传*/
-static const char* kNIMMsgKeyAntiCheatingYiDun = "yidun_anti_cheating";              /**< (可选)String, 易盾反垃圾增强反作弊专属字段, 限制json，长度限制1024 */
+static const char* kNIMMsgKeyThirdPartyCBEXT = "third_party_callback_ext";      /**< (可选)string第三方回调回来的自定义扩展字段*/
+static const char* kNIMMsgKeySubType = "msg_sub_type";							/**<(可选)int，消息的子类型，客户端定义，服务器透传*/
+static const char* kNIMMsgKeyAntiCheatingYiDun = "yidun_anti_cheating";         /**< (可选)String, 易盾反垃圾增强反作弊专属字段, 限制json，长度限制1024 */
+
+//v8.0.0新增
+static const char* kNIMMsgKeyEnv = "env_config";								/**(可选)String, 环境变量，用于指向不同的抄送、第三方回调等配置*/
 
 //本地定义
-static const char *kNIMMsgKeyLocalKeyTeamMsgAckSent	= "team_msg_ack_sent";	/**< bool 是否已经发送群消息已读回执 */
+static const char *kNIMMsgKeyLocalKeyTeamMsgAckSent	= "team_msg_ack_sent";			/**< bool 是否已经发送群消息已读回执 */
 static const char *kNIMMsgKeyLocalKeyTeamMsgUnreadCount	= "team_msg_unread_count";	/**< int, 群消息未读数 */
 static const char *kNIMMsgKeyLocalFilePath			= "local_res_path";		/**< string,多媒体消息资源本地绝对路径,SDK本地维护,发送多媒体消息时必填 */
 static const char *kNIMMsgKeyLocalTalkId			= "talk_id";			/**< string,会话id,发送方选填,接收方收到的是消息发送方id */

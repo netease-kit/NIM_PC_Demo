@@ -41,7 +41,7 @@ namespace nim_comp
 
 
 	const LPCTSTR MainFormEx::kClassName = L"MainFormEx";
-	MainFormEx::MainFormEx(IMainFormMenuHandler* main_menu_handler) : 
+	MainFormEx::MainFormEx(IMainFormMenuHandler* main_menu_handler) :
 		is_trayicon_left_double_clicked_(false), is_busy_(false),
 		main_menu_handler_(main_menu_handler),
 		btn_max_restore_(nullptr),
@@ -79,7 +79,7 @@ namespace nim_comp
 	std::wstring MainFormEx::GetWindowId() const
 	{
 		return kClassName;
-	}	
+	}
 	HWND MainFormEx::Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle,
 		bool isLayeredWindow, const ui::UiRect& rc)
 	{
@@ -94,15 +94,15 @@ namespace nim_comp
 		simple_plugin_bar_ = dynamic_cast<ui::VBox*>(FindControl(L"simple_plugin_bar"));
 		main_plugins_showpage_ = dynamic_cast<ui::TabBox*>(FindControl(L"main_plugins_showpage"));
 		btn_max_restore_ = static_cast<ui::Button*>(FindControl(L"btn_max_restore"));
-		btn_header_ = dynamic_cast<ui::Button*>(FindControl(L"btn_header"));		
+		btn_header_ = dynamic_cast<ui::Button*>(FindControl(L"btn_header"));
 		InitHeader();
 		btn_online_state_ = dynamic_cast<ui::Button*>(FindControl(L"btn_online_state"));
-		btn_online_state_->SetVisible(nim_comp::SubscribeEventManager::GetInstance()->IsEnabled());		
-		btn_header_->AttachClick([this](ui::EventArgs* param){
+		btn_online_state_->SetVisible(nim_comp::SubscribeEventManager::GetInstance()->IsEnabled());
+		btn_header_->AttachClick([this](ui::EventArgs* param) {
 			nim_comp::WindowsManager::GetInstance()->SingletonShow<nim_comp::ProfileMine>(nim_comp::ProfileMine::kClassName);
 			//nim_comp::ProfileForm::ShowProfileForm(nim_comp::LoginManager::GetInstance()->GetAccount());
 			return true;
-		});
+			});
 		btn_online_state_->AttachClick(nbase::Bind(&MainFormEx::OnlineStateMenuButtonClick, this, std::placeholders::_1));
 		TrayIconManager::GetInstance()->AddTrayIconEventHandler(this);
 		auto hicon = ::ExtractIcon(nbase::win32::GetCurrentModuleHandle(), nbase::win32::GetCurrentModuleName().c_str(), 0);
@@ -112,7 +112,7 @@ namespace nim_comp
 		nim_ui::SessionListManager::GetInstance()->QueryUnreadSysMsgCount();
 		nim_comp::SessionService::GetInstance()->InvokeLoadSessionList();
 		nim_comp::SessionService::GetInstance()->InvokeLoadOnlineSessionList();
-		
+
 
 		ui::ButtonBox* main_menu_button = (ui::ButtonBox*)FindControl(L"main_menu_button");
 		main_menu_button->AttachClick(nbase::Bind(&MainFormEx::MainMenuButtonClick, this, std::placeholders::_1));
@@ -268,7 +268,7 @@ namespace nim_comp
 					if (pControl)
 					{
 						if (dynamic_cast<ui::Button*>(pControl) || dynamic_cast<ui::ButtonBox*>(pControl) || dynamic_cast<ui::RichEdit*>(pControl))
-							return HTCLIENT;						
+							return HTCLIENT;
 						else
 							return HTCAPTION;
 					}
@@ -286,7 +286,7 @@ namespace nim_comp
 		{
 			if (plugin->GetPluginType() == IMainPlugin::PluginType::PluginType_Main)
 				plugin_bar = main_plugins_bar_;
-			else if(plugin->GetPluginType() == IMainPlugin::PluginType::PluginType_Simple)
+			else if (plugin->GetPluginType() == IMainPlugin::PluginType::PluginType_Simple)
 				plugin_bar = simple_plugin_bar_;
 			else
 				continue;
@@ -298,18 +298,18 @@ namespace nim_comp
 			if (plugin->GetPluginType() == IMainPlugin::PluginType::PluginType_Main)
 			{
 				plugin->SetGroup(L"Main_Plugin_Group");
-				plugin->AttachSelect(plugin->ToWeakCallback([this, plugin](ui::EventArgs* param){
+				plugin->AttachSelect(plugin->ToWeakCallback([this, plugin](ui::EventArgs* param) {
 					search_bar_->SetVisible(plugin->ShowSearchBar());
 					search_edit_->SetText(L"");
 					if (plugin->GetPluginPage() != nullptr)
 						main_plugins_showpage_->SelectItem(plugin->GetPluginPage());
 
 					return true;
-				}));
-			}			
+					}));
+			}
 		}
 	}
-	void MainFormEx::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
+	void MainFormEx::OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos)
 	{
 		for (auto iter = uinfos.cbegin(); iter != uinfos.cend(); iter++)
 		{
@@ -368,33 +368,33 @@ namespace nim_comp
 		pMenu->Init(xml, _T("xml"), point, ui::CMenuWnd::RIGHT_TOP);
 		//注册回调
 		ui::CMenuElementUI* display_session_list = (ui::CMenuElementUI*)pMenu->FindControl(L"display_session_list");
-		display_session_list->AttachSelect(ToWeakCallback([this](ui::EventArgs* param){
+		display_session_list->AttachSelect(ToWeakCallback([this](ui::EventArgs* param) {
 			auto session_plugin = MainPluginsManager::GetInstance()->GetPlugin(SessionPlugin::kPLUGIN_NAME);
-			session_plugin->Selected(true, true);			
+			session_plugin->Selected(true, true);
 			LeftClick();
 			return true;
-		}));
+			}));
 
 		ui::CMenuElementUI* logoff = (ui::CMenuElementUI*)pMenu->FindControl(L"logoff");
-		logoff->AttachSelect(ToWeakCallback([this](ui::EventArgs* param){
+		logoff->AttachSelect(ToWeakCallback([this](ui::EventArgs* param) {
 			QCommand::Set(kCmdRestart, L"true");
 			std::wstring wacc = nbase::UTF8ToUTF16(LoginManager::GetInstance()->GetAccount());
 			QCommand::Set(kCmdAccount, wacc);
-			auto task = [](){
-				nim_comp::LoginCallback::DoLogout(false, nim::kNIMLogoutChangeAccout);			
+			auto task = []() {
+				nim_comp::LoginCallback::DoLogout(false, nim::kNIMLogoutChangeAccout);
 			};
 			nbase::ThreadManager::PostTask(task);
 			return true;
-		}));
+			}));
 
 		ui::CMenuElementUI* quit = (ui::CMenuElementUI*)pMenu->FindControl(L"quit");
-		quit->AttachSelect(ToWeakCallback([this](ui::EventArgs* param){
-			auto task = [](){
+		quit->AttachSelect(ToWeakCallback([this](ui::EventArgs* param) {
+			auto task = []() {
 				nim_comp::LoginCallback::DoLogout(false);
 			};
 			nbase::ThreadManager::PostTask(task);
 			return true;
-		}));
+			}));
 		//显示
 		pMenu->Show();
 	}
@@ -449,28 +449,28 @@ namespace nim_comp
 
 		nim::EventData event_data = nim_comp::OnlineStateEventHelper::CreateBusyEvent(is_busy_);
 		nim::SubscribeEvent::Publish(event_data,
-			this->ToWeakCallback([this](nim::NIMResCode res_code, int event_type, const nim::EventData& event_data){
-			if (res_code == nim::kNIMResSuccess)
-			{
-				if (is_busy_)
-					btn_online_state_->SetBkImage(L"..\\menu\\icon_busy.png");
+			this->ToWeakCallback([this](nim::NIMResCode res_code, int event_type, const nim::EventData& event_data) {
+				if (res_code == nim::kNIMResSuccess)
+				{
+					if (is_busy_)
+						btn_online_state_->SetBkImage(L"..\\menu\\icon_busy.png");
+					else
+						btn_online_state_->SetBkImage(L"..\\menu\\icon_online.png");
+				}
 				else
-					btn_online_state_->SetBkImage(L"..\\menu\\icon_online.png");
-			}
-			else
-			{
-				QLOG_ERR(L"OnlineStateMenuItemClick publish busy event error, code:{0}, event_type:{1}") << res_code << event_type;
-			}
-		}));
+				{
+					QLOG_ERR(L"OnlineStateMenuItemClick publish busy event error, code:{0}, event_type:{1}") << res_code << event_type;
+				}
+				}));
 	}
 	bool MainFormEx::MainMenuButtonClick(ui::EventArgs* param)
 	{
 		RECT rect = param->pSender->GetPos();
 		ui::CPoint point;
-		point.x = rect.left ;
+		point.x = rect.left;
 		point.y = rect.top - 2;
 		ClientToScreen(m_hWnd, &point);
-		main_menu_handler_->PopupMainMenu(point);		
+		main_menu_handler_->PopupMainMenu(point);
 		return true;
 	}
 	void MainFormEx::InitSearchBar()
@@ -486,10 +486,10 @@ namespace nim_comp
 
 		search_result_list_ = static_cast<ui::ListBox*>(FindControl(_T("search_result_list")));
 		search_result_list_->AttachBubbledEvent(ui::kEventReturn, nbase::Bind(&MainFormEx::OnReturnEventsClick, this, std::placeholders::_1));
-		search_result_list_->AttachBubbledEvent(ui::kEventMouseDoubleClick, [this](ui::EventArgs* param){
+		search_result_list_->AttachBubbledEvent(ui::kEventMouseDoubleClick, [this](ui::EventArgs* param) {
 			search_result_list_->SetVisible(false);
 			return true;
-		});
+			});
 	}
 	bool MainFormEx::SearchEditChange(ui::EventArgs* param)
 	{
@@ -524,7 +524,7 @@ namespace nim_comp
 			if (item)
 			{
 				search_edit_->SetText(L"");
-				nim_comp::SessionManager::GetInstance()->OpenSessionBox(item->GetUTF8DataID(), item->GetFriendItemType() == kFriendItemTypeTeam ?  nim::kNIMSessionTypeTeam:nim::kNIMSessionTypeP2P );
+				nim_comp::SessionManager::GetInstance()->OpenSessionBox(item->GetUTF8DataID(), item->GetFriendItemType() == kFriendItemTypeTeam ? nim::kNIMSessionTypeTeam : nim::kNIMSessionTypeP2P);
 			}
 		}
 
@@ -537,7 +537,7 @@ namespace nim_comp
 		{
 			SendMessage(WM_SYSCOMMAND, SC_MINIMIZE);
 			::ShowWindow(m_hWnd, SW_HIDE);
-		}	
+		}
 		else if (name == L"btn_max_restore")
 		{
 			DWORD style = GetWindowLong(m_hWnd, GWL_STYLE);
@@ -562,7 +562,7 @@ namespace nim_comp
 					if (item)
 					{
 						search_edit_->SetText(L"");
-						nim_comp::SessionManager::GetInstance()->OpenSessionBox(item->GetUTF8DataID(), item->GetFriendItemType() == kFriendItemTypeTeam ?  nim::kNIMSessionTypeTeam:nim::kNIMSessionTypeP2P);
+						nim_comp::SessionManager::GetInstance()->OpenSessionBox(item->GetUTF8DataID(), item->GetFriendItemType() == kFriendItemTypeTeam ? nim::kNIMSessionTypeTeam : nim::kNIMSessionTypeP2P);
 					}
 				}
 				return true;
@@ -578,7 +578,7 @@ namespace nim_comp
 				msg_temp.pSender = search_result_list_;
 				search_result_list_->HandleMessage(msg_temp);
 				return true;
-			}			
+			}
 		}
 		return true;
 	}
@@ -589,13 +589,13 @@ namespace nim_comp
 			if (wParam == SIZE_RESTORED)
 				OnWndSizeMax(false);
 			else if (wParam == SIZE_MAXIMIZED)
-				OnWndSizeMax(true);			
+				OnWndSizeMax(true);
 		}
-		auto ret   = __super::HandleMessage(uMsg, wParam, lParam);
+		auto ret = __super::HandleMessage(uMsg, wParam, lParam);
 		if (uMsg == WM_CREATE)
 		{
 			shadow_wnd_ = new ShadowWnd();
-			shadow_wnd_->Create(GetHWND(), shadow_wnd_->GetWindowClassName().c_str(),  WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
+			shadow_wnd_->Create(GetHWND(), shadow_wnd_->GetWindowClassName().c_str(), WS_OVERLAPPEDWINDOW & ~WS_MAXIMIZEBOX, 0);
 			SetWindowLong(shadow_wnd_->GetHWND(), GWL_EXSTYLE, GetWindowLong(shadow_wnd_->GetHWND(), GWL_EXSTYLE) | WS_EX_TRANSPARENT);
 			shadow_wnd_->ShowWindow(true, false);
 		}
@@ -612,7 +612,7 @@ namespace nim_comp
 					shadow_wnd_->SetPos(pos, false, SWP_NOZORDER | SWP_NOACTIVATE, NULL, false);
 				}
 			}
-		}		
+		}
 		return ret;
 	}
 	void MainFormEx::OnWndSizeMax(bool max)
@@ -620,7 +620,7 @@ namespace nim_comp
 		if (btn_max_restore_)
 			btn_max_restore_->SetClass(max ? L"btn_wnd_restore" : L"btn_wnd_max");
 	}
-	void MainFormEx::OnEsc(BOOL &bHandled)
+	void MainFormEx::OnEsc(BOOL& bHandled)
 	{
 		bHandled = TRUE;
 	}
@@ -671,7 +671,7 @@ namespace nim_comp
 		RevokeDragDrop(this->GetHWND());
 	}
 
-	HRESULT MainFormEx::QueryInterface(REFIID iid, void ** ppvObject)
+	HRESULT MainFormEx::QueryInterface(REFIID iid, void** ppvObject)
 	{
 		if (NULL == drop_helper_)
 			return E_NOINTERFACE;
@@ -695,7 +695,7 @@ namespace nim_comp
 		return drop_helper_->Release();
 	}
 
-	HRESULT MainFormEx::DragEnter(IDataObject * pDataObject, DWORD grfKeyState, POINTL pt, DWORD * pdwEffect)
+	HRESULT MainFormEx::DragEnter(IDataObject* pDataObject, DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
 	{
 		if (NULL == drop_helper_)
 			return S_OK;
@@ -716,7 +716,7 @@ namespace nim_comp
 		return S_OK;
 	}
 
-	HRESULT MainFormEx::DragOver(DWORD grfKeyState, POINTL pt, DWORD *pdwEffect)
+	HRESULT MainFormEx::DragOver(DWORD grfKeyState, POINTL pt, DWORD* pdwEffect)
 	{
 		if (NULL == drop_helper_)
 			return S_OK;
@@ -752,7 +752,7 @@ namespace nim_comp
 		return S_OK;
 	}
 
-	HRESULT MainFormEx::Drop(IDataObject *pDataObj, DWORD grfKeyState, POINTL pt, DWORD __RPC_FAR *pdwEffect)
+	HRESULT MainFormEx::Drop(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD __RPC_FAR* pdwEffect)
 	{
 		// 如果不是拖拽会话盒子
 		auto active_session_box = SessionManager::GetInstance()->GetFirstActiveSession();

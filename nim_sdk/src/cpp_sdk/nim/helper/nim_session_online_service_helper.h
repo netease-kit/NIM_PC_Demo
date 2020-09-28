@@ -12,6 +12,9 @@
 #include <functional>
 #include "include/depend_lib/include/nim_json_util.h"
 #include "public_define/nim_sdk_define_include.h"
+#include "src/cpp_sdk/nim/helper/nim_msg_helper.h"
+#include "src/cpp_sdk/nim/helper/nim_talk_helper.h"
+#include "src/cpp_sdk/nim/helper/nim_talk_helper.h"
 #include "src/cpp_sdk/nim/nim_sdk_cpp_wrapper_dll.h"
 /**
 * @namespace nim
@@ -25,11 +28,27 @@ namespace nim
 		/** @brief 会话服务 会话数据定义 */
 		struct NIM_SDK_CPPWRAPPER_DLL_API SessionInfo
 		{
+			SessionInfo() : last_message_(""), last_message_type_(0) {}
 			std::string		id_;					/**< 会话ID */
 			NIMSessionType	type_;					/**< 会话类型 */
 			std::string		ext_;			/**< 自定的扩展字段 */
 			std::string		last_message_;			/**< 最后一条会话 json string */
 			uint64_t	update_time_;/**< 最后更新时间戳 */
+			int last_message_type_; /**< 最后一条消息的类型 0表示普通消息，1表示消息撤回通知*/
+			//返回普通消息 auto last_msg = SessionInfo.GetLastMessage<0>();
+			template <int type>
+			auto GetLastMessage() const -> typename std::enable_if<type == 0, IMMessage>::type {
+				IMMessage msg;
+				ParseReceiveMessage(last_message_, msg);
+				return msg;
+			}
+			//返回消息撤回通知auto last_msg = SessionInfo.GetLastMessage<1>();
+			template <int type>
+			auto GetLastMessage() const -> typename std::enable_if<type == 1, RecallMsgNotify>::type  {
+				RecallMsgNotify recall_notify_msg;
+				ParseRecallMsgNotify(last_message_, recall_notify_msg);
+				return recall_notify_msg;
+			}
 		};
 		typedef std::list<SessionInfo> SessionList; /**< 会话列表 */
 

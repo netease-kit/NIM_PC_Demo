@@ -21,7 +21,10 @@ namespace nim
 			session.id_ = json_session[kMINSessionOLSRVInfoID].asString();
 			session.update_time_ = json_session[kMINSessionOLSRVInfoUpdateT].asUInt64();
 			session.ext_ = json_session[kMINSessionOLSRVInfoEXT].asString();
-			session.last_message_ = json_session[kMINSessionOLSRVInfoLastMSG].asString();
+			if (json_session.isMember(kMINSessionOLSRVInfoLastMSG))
+				session.last_message_ = json_session[kMINSessionOLSRVInfoLastMSG].asString();
+			if(json_session.isMember(kMINSessionOLSRVInfoLastMSGType))
+				session.last_message_type_ = json_session[kMINSessionOLSRVInfoLastMSGType].asInt();
 			return true;
 		}
 		bool SessionOnLineServiceHelper::ParseQuerySessionListResult(const std::string& result_json, QuerySessionListResult& result)
@@ -38,7 +41,10 @@ namespace nim
 				session.id_ = it[kMINSessionOLSRVInfoID].asString();
 				session.update_time_ = it[kMINSessionOLSRVInfoUpdateT].asUInt64();
 				session.ext_ = it[kMINSessionOLSRVInfoEXT].asString();
-				session.last_message_ = it[kMINSessionOLSRVInfoLastMSG].asString();
+				if(it.isMember(kMINSessionOLSRVInfoLastMSG))
+					session.last_message_ = it[kMINSessionOLSRVInfoLastMSG].asString();
+				if(it.isMember(kMINSessionOLSRVInfoLastMSGType))
+					session.last_message_type_ = it[kMINSessionOLSRVInfoLastMSGType].asInt();
 				result.session_list_.emplace_back(session);
 			}
 			return true;

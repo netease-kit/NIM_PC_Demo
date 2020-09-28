@@ -37,7 +37,7 @@ NIM_SDK_DLL_API void nim_session_reg_change_cb(const char *json_extension, nim_s
 */
 NIM_SDK_DLL_API void nim_session_reg_badge_count_cb(const char *json_extension, nim_session_badge_count_cb_func cb, const void *user_data);
 
-/** @fn void nim_session_query_all_recent_session_async(const char *json_extension, nim_session_query_recent_session_cb_func cb, const void *user_data)
+/** @fn void nim_session_query_last_few_session_async(int limit, const char *json_extension, nim_session_query_recent_session_cb_func cb, const void *user_data)
   * 查询指定数量的最后会话数据
   * @param[in] limit		要返回的最大数量
   * @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -80,6 +80,20 @@ NIM_SDK_DLL_API void nim_session_query_all_recent_session_with_last_msg_excluded
   *				0:失败
   */
 NIM_SDK_DLL_API void nim_session_delete_recent_session_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+
+/** @fn  void nim_session_delete_session_roaming_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_delete_session_roaming_cb_func cb, const void *user_data)
+  * 删除指定会话的漫游消息
+  * @param[in] to_type		会话类型
+  * @param[in] id			对方的account id或者群组tid。
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb			最近会话列表项变更的回调函数， nim_session_delete_session_roaming_cb_func回调函数定义见nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
+  */
+NIM_SDK_DLL_API void nim_session_delete_session_roaming_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_delete_session_roaming_cb_func cb, const void *user_data);
+
 
 /** @fn void nim_session_delete_all_recent_session_async(const char *json_extension, nim_session_change_cb_func cb, const void *user_data)
   * 删除全部最近联系人
@@ -247,23 +261,23 @@ NIM_SDK_DLL_API void nim_session_query_session_hasmore_roammsg(const SessionMain
   */
 NIM_SDK_DLL_API void nim_session_query_all_session_hasmore_roammsg(nim_session_query_all_session_hasmore_roammsg_cb_func cb, const void* user_data);
 
-/** @fn void nim_session_update_session_hasmore_roammsg(const char *json_msg, nim_session_update_session_hasmore_roammsg_cb_func cb, const void* user_data)
+/** @fn void nim_session_update_session_hasmore_roammsg(const char *json_msg, nim_session_update_session_hasmore_roammsg_cb_func cb, const void *user_data)
   * 更新会话漫游消息未拉取信息
   * @param[in] json_msg 对应的消息内容
   * @param[in] cb	结果回调，详见 nim_session_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_session_update_session_hasmore_roammsg(const char *json_msg, nim_session_update_session_hasmore_roammsg_cb_func cb, const void* user_data);
+NIM_SDK_DLL_API void nim_session_update_session_hasmore_roammsg(const char *json_msg, nim_session_update_session_hasmore_roammsg_cb_func cb, const void *user_data);
 
-/** @fn void nim_session_update_session_hasmore_roammsg(const char *json_msg, nim_session_update_session_hasmore_roammsg_cb_func cb, const void* user_data)
+/** @fn void nim_session_delete_session_hasmore_roammsg(const SessionMainTagInfo *session_main_tag_info, nim_session_delete_session_hasmore_roammsg_cb_func cb, const void *user_data);
   * 删除会话漫游消息未拉取信息
   * @param[in] session_main_tag_info 要删除的会话信息
   * @param[in] cb	结果回调，详见 nim_session_def.h
   * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API void nim_session_delete_session_hasmore_roammsg(const SessionMainTagInfo* session_main_tag_info, nim_session_delete_session_hasmore_roammsg_cb_func cb, const void* user_data);
+NIM_SDK_DLL_API void nim_session_delete_session_hasmore_roammsg(const SessionMainTagInfo *session_main_tag_info, nim_session_delete_session_hasmore_roammsg_cb_func cb, const void *user_data);
 
 #ifdef __cplusplus
 };

@@ -62,6 +62,7 @@ static const char *kMINSessionOLSRVInfoID = "info_session_id";				/**< string �
 static const char *kMINSessionOLSRVInfoUpdateT = "info_update_time";/**< uint64_t 会话最后更新时间*/
 static const char *kMINSessionOLSRVInfoEXT = "info_ext";						/**< string 扩展字段，可自定义*/
 static const char *kMINSessionOLSRVInfoLastMSG = "info_last_msg";		/**< string 最后一条消息的相关数据 json格式,*/
+static const char* kMINSessionOLSRVInfoLastMSGType = "info_last_msg_type";		/**< int 最后一条消息的类型 0表示普通消息，1表示消息撤回通知*/
 /** @}*/ //会话服务 【会话信息】定义参数
 
 /** @name 会话服务 【查询会话列表】参数定义 */

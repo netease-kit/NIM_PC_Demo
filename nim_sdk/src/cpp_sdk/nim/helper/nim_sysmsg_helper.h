@@ -31,6 +31,7 @@ struct NIM_SDK_CPPWRAPPER_DLL_API SysMessageSetting
 	std::string push_content_;			/**< 自定义推送文案，长度限制200字节 */
 	BoolStatus anti_spam_enable_;		/**< (功能暂时不开放)是否需要过易盾反垃圾 */
 	std::string anti_spam_content_;		/**< (功能暂时不开放)(可选)开发者自定义的反垃圾字段 */
+	std::string env_config_;			/**< (可选) 指向自定义抄送的配置 */
 
 	/** 构造函数 */
 	SysMessageSetting() : need_push_(BS_NOT_INIT)
@@ -62,6 +63,8 @@ struct NIM_SDK_CPPWRAPPER_DLL_API SysMessageSetting
 			message[kNIMSysMsgKeyAntiSpamEnable] = anti_spam_enable_ == BS_TRUE ? 1 : 0;
 		if (!anti_spam_content_.empty())
 			message[kNIMSysMsgKeyAntiSpamContent] = anti_spam_content_;
+		if (!env_config_.empty())
+			message[kNIMSysMsgKeyEnvConfig] = env_config_;
 	}
 
 	/** @fn void ParseMessageSetting(const nim_cpp_wrapper_util::Json::Value& message)
@@ -86,6 +89,8 @@ struct NIM_SDK_CPPWRAPPER_DLL_API SysMessageSetting
 		if (message.isMember(kNIMSysMsgKeyAntiSpamEnable))
 			anti_spam_enable_ = message[kNIMSysMsgKeyAntiSpamEnable].asInt() == 1 ? BS_TRUE : BS_FALSE;
 		anti_spam_content_ = message[kNIMSysMsgKeyAntiSpamContent].asString();
+		if (message.isMember(kNIMSysMsgKeyEnvConfig))
+			env_config_ = message[kNIMSysMsgKeyEnvConfig].asString();
 	}
 };
 

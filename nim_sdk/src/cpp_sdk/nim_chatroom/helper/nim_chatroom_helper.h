@@ -326,10 +326,11 @@ struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomMessageSetting
 	bool			anti_spam_enable_;			/**< 是否需要过易盾反垃圾 */
 	std::string		anti_spam_content_;			/**< (可选)开发者自定义的反垃圾字段,长度限制2048 */
 	bool			history_save_;				/**< (可选)是否存云端消息历史，默认存 */
-	std::string anti_spam_bizid_;		/**< (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
-	int anti_spam_using_yidun_;	/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
+	std::string anti_spam_bizid_;				/**< (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
+	int anti_spam_using_yidun_;					/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
 	int				high_priority_;				/**< 高优先级消息标记,1:是; 非高优先级消息不带该字段,服务器填写,发送方不需要填写*/
-	std::string yidun_anti_cheating_;		/**< (可选)String, 易盾反垃圾增强反作弊专属字段, 限制json，长度限制1024*/
+	std::string yidun_anti_cheating_;			/**< (可选)String, 易盾反垃圾增强反作弊专属字段, 限制json，长度限制1024*/
+	std::string env_config_;					/**< (可选) 自定义抄送配置*/
 	/** 构造函数 */
 	ChatRoomMessageSetting() : resend_flag_(false)
 		, anti_spam_enable_(false)
@@ -356,6 +357,8 @@ struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomMessageSetting
 		message[kNIMChatRoomMsgKeyAntiSpamUsingYiDun] = anti_spam_using_yidun_;
 		if (!yidun_anti_cheating_.empty())
 			message[kNIMChatRoomMsgKeyYiDunAntiCheating] = yidun_anti_cheating_;
+		if (!env_config_.empty())
+			message[kNIMChatRoomMsgKeyEnvConfig] = env_config_;
 	}
 
 	/** @fn void ParseMessageSetting(const nim_cpp_wrapper_util::Json::Value& message)
@@ -373,6 +376,8 @@ struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomMessageSetting
 		high_priority_ = message[kNIMChatRoomMsgKeyHighPriorityFlag].asInt();
 		if(message.isMember(kNIMChatRoomMsgKeyYiDunAntiCheating))
 			yidun_anti_cheating_ = message[kNIMChatRoomMsgKeyYiDunAntiCheating].asString();
+		if (message.isMember(kNIMChatRoomMsgKeyEnvConfig))
+			env_config_ = message[kNIMChatRoomMsgKeyEnvConfig].asString();
 	}
 };
 

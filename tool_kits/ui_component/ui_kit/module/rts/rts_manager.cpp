@@ -45,15 +45,28 @@ bool RtsManager::StartRtsForm(int channel_type, std::string uid, std::string ses
 bool RtsManager::IsRtsFormExist(int channel_type, bool show)
 {
 	WindowList wnd_list = WindowsManager::GetInstance()->GetWindowsByClassName(RtsForm::kClassName);
+	static auto matcher = [](const std::pair<std::weak_ptr<nbase::WeakFlag>, WindowEx*>& it, int channel_type)->bool {
+		return nim_comp::WindowsManager::SafeDoWindowOption<RtsForm, bool>(it, [channel_type](RtsForm* rts_form)->bool {
+			if ((rts_form->GetType() & channel_type) > 0)
+			{
+				if (::IsWindow(rts_form->GetHWND()))
+				{
+					rts_form->ShowWindow();
+					::BringWindowToTop(rts_form->GetHWND());
+					return true;
+				}
+				else
+				{
+					return false;
+				}
+			}
+			return false;
+		});
+	};
 	for (auto it : wnd_list)
 	{
-		RtsForm *rts_form = dynamic_cast<RtsForm*>(it);
-		if ((rts_form->GetType() & channel_type) > 0)
-		{
-			rts_form->ShowWindow();
-			::BringWindowToTop(rts_form->GetHWND());
-			return true;
-		}
+		if(matcher(it, channel_type))
+			return true;		
 	}
 	return false;
 }
@@ -135,13 +148,21 @@ void RtsManager::OnRecDataCallback(const std::string& session_id, int channel_ty
 WindowEx* RtsManager::GetRtsFromBySessionId(const std::string& session_id)
 {
 	WindowList wnd_list = WindowsManager::GetInstance()->GetWindowsByClassName(RtsForm::kClassName);
+	static auto finder = [](const std::pair<std::weak_ptr<nbase::WeakFlag>, WindowEx*>& it, const std::string& session_id)->RtsForm* {
+		return nim_comp::WindowsManager::SafeDoWindowOption<RtsForm, RtsForm*>(it, [session_id](RtsForm* rts_form)->RtsForm* {
+			if (rts_form->GetSessionId() == session_id)
+			{
+				return rts_form;
+			}
+			return nullptr;
+		});
+	};
+
 	for (auto it : wnd_list)
 	{
-		RtsForm *rts_form = dynamic_cast<RtsForm*>(it);
-		if (rts_form->GetSessionId() == session_id)
-		{
+		RtsForm* rts_form = finder(it, session_id);
+		if (rts_form != nullptr)
 			return rts_form;
-		}
 	}
 	return nullptr;
 }

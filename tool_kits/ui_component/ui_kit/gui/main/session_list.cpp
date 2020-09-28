@@ -150,7 +150,7 @@ bool SessionList::DeleteSessionItemData(const std::string& session_id)
 		cursel_id_.clear();
 		session_list_->SelectItem(-1, false, false);
 	}
-		
+	return true;
 }
 void SessionList::DeleteSessionDataByType(nim::NIMSessionType type, std::list<nim::SessionData>& unsubscribe_list)
 {

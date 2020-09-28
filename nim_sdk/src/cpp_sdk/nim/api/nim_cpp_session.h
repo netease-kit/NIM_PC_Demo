@@ -46,7 +46,7 @@ public:
 	typedef std::function<void(nim::NIMResCode, const std::list<SessionRoamMsgHasMoreTagInfo>& info_list)> QueryAllHasmoreRoammsgCallback;/**< 查询所有漫游消息未拉取完全的会话回调模板*/
 	typedef std::function<void(nim::NIMResCode)> UpdateHasmoreRoammsgCallback;/**< 更新会话是漫游消息未拉取信息回调模板*/
 	typedef std::function<void(nim::NIMResCode)> DeleteHasmoreRoammsgCallback;/**< 删除会话是漫游消息未拉取信息回调模板*/
-
+	typedef std::function<void(nim::NIMResCode,nim::NIMSessionType,const std::string& session_id)> DeleteSessionRoammsgCallback;/**< 删除会话是漫游消息未拉取信息回调模板*/
 	/** @fn static void RegChangeCb(const ChangeCallback& cb, const std::string& json_extension = "")
 	* (全局回调)注册最近会话列表项变更通知
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -102,6 +102,18 @@ public:
 	*				0:失败
 	*/
 	static bool DeleteRecentSession(nim::NIMSessionType to_type, const std::string& id, const DeleteRecentSessionCallabck& cb, const std::string& json_extension = "");
+
+	/** @fn static bool DeleteSessionRoamingMessage(nim::NIMSessionType to_type, const std::string& id, const DeleteRecentSessionCallabck& cb, const std::string& json_extension = "")
+* 删除某会话的漫游消息
+* @param[in] to_type		会话类型，双人0，群组1 (nim_msglog_def.h)
+* @param[in] id			对方的account id或者群组tid。
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] cb			删除结果 回调回调函数
+* @return bool 检查参数如果不符合要求则返回失败
+* @note 错误码	200:成功
+*				0:失败
+*/
+	static bool DeleteSessionRoamingMessage(nim::NIMSessionType to_type, const std::string& id, const DeleteSessionRoammsgCallback& cb, const std::string& json_extension = "");
 
 	/** @fn static void DeleteAllRecentSession(const DeleteAllRecentSessionCallabck& cb, const std::string& json_extension = "")
 	* 删除全部最近联系人

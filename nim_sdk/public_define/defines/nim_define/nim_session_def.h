@@ -12,6 +12,47 @@
 extern"C"
 {
 #endif
+
+/** @enum NIMSessionType 会话类型 */
+enum NIMSessionType
+{ 
+    kNIMSessionTypeP2P            = 0,            /**< 个人，即点对点 */
+    kNIMSessionTypeTeam            = 1,            /**< 群组 */
+    kNIMSessionTypeSuperTeam    = 5,            /**< 超大群组 */
+};
+
+/** @enum NIMSessionCommand 会话操作命令 */
+enum NIMSessionCommand
+{
+    kNIMSessionCommandAdd                = 0,    /**< 添加会话项 */
+    kNIMSessionCommandRemove            = 1,    /**< 删除单个会话项 */
+    kNIMSessionCommandRemoveAll            = 2,    /**< 删除所有会话项 */
+    kNIMSessionCommandRemoveAllP2P        = 3,    /**< 删除所有点对点的会话项 */
+    kNIMSessionCommandRemoveAllTeam        = 4,    /**< 删除所有群的会话项 */
+    kNIMSessionCommandMsgDeleted        = 5,    /**< 单个会话项的消息已删除 */
+    kNIMSessionCommandAllMsgDeleted        = 6,    /**< 所有会话项的消息已删除 */
+    kNIMSessionCommandAllP2PMsgDeleted    = 7,    /**< 所有点对点会话项的消息已删除 */
+    kNIMSessionCommandAllTeamMsgDeleted    = 8,    /**< 所有群会话项的消息已删除 */
+    kNIMSessionCommandUpdate            = 9,    /**< 更新会话项 */
+    kNIMSessionCommandRemoveAllSuperTeam = 10,    /**< 删除所有超大群的会话项 */
+    kNIMSessionCommandAllSuperTeamMsgDeleted = 11,    /**< 所有超大群会话项的消息已删除 */
+
+};
+
+typedef struct
+{
+    char session_id[64];
+    enum NIMSessionType to_type;
+}SessionMainTagInfo;
+
+typedef struct
+{
+    SessionMainTagInfo session_tag_info;
+    uint64_t message_time_tag;
+    uint64_t message_server_id;
+}SessionRoamMsgHasMoreTagInfo;
+
+
 /** @typedef void (*nim_session_change_cb_func)(int rescode, const char *result, int total_unread_counts, const char *json_extension, const void *user_data)
   * 最近会话项更新通知的回调函数定义
   * @param[out] rescode		操作结果，成功200
@@ -22,6 +63,16 @@ extern"C"
   * @return void 无返回值
   */
 typedef void (*nim_session_change_cb_func)(int rescode, const char *result, int total_unread_counts, const char *json_extension, const void *user_data);
+
+/** @typedef void (*nim_session_delete_session_roaming_cb_func)(int rescode, const char *to_type, const char *id, const void *user_data)
+  * 最近会话项更新通知的回调函数定义
+  * @param[out] rescode		操作结果，成功200
+  * @param[out] to_type			会话类型
+  * @param[out] id 对方的account id或者群组tid
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_session_delete_session_roaming_cb_func)(int rescode, const char *to_type, const char *id, const void *user_data);
 
 /** @typedef void (*nim_session_query_recent_session_cb_func)(int total_unread_count, const char *result, const char *json_extension, const void *user_data)
   * 查询所有最近会话项的回调函数定义
@@ -158,44 +209,6 @@ static const char* kNIMSessionStickTopInfoCreateTime = "create_time";			/**< uin
 static const char* kNIMSessionStickTopInfoUpdateTime = "update_time";			/**< uint64_t 更新置顶的时间戳 */
 static const char* kNIMSessionStickTopSessionData = "session_data";			/**< json object 会话信息 */
 /** @}*/ //置顶会话Json Keys
-
-/** @enum NIMSessionType 会话类型 */
-enum NIMSessionType
-{ 
-	kNIMSessionTypeP2P			= 0,			/**< 个人，即点对点 */
-	kNIMSessionTypeTeam			= 1,			/**< 群组 */
-	kNIMSessionTypeSuperTeam	= 5,			/**< 超大群组 */
-};
-
-/** @enum NIMSessionCommand 会话操作命令 */
-enum NIMSessionCommand
-{
-	kNIMSessionCommandAdd				= 0,	/**< 添加会话项 */
-	kNIMSessionCommandRemove			= 1,	/**< 删除单个会话项 */
-	kNIMSessionCommandRemoveAll			= 2,	/**< 删除所有会话项 */
-	kNIMSessionCommandRemoveAllP2P		= 3,	/**< 删除所有点对点的会话项 */
-	kNIMSessionCommandRemoveAllTeam		= 4,	/**< 删除所有群的会话项 */
-	kNIMSessionCommandMsgDeleted		= 5,	/**< 单个会话项的消息已删除 */
-	kNIMSessionCommandAllMsgDeleted		= 6,	/**< 所有会话项的消息已删除 */
-	kNIMSessionCommandAllP2PMsgDeleted	= 7,	/**< 所有点对点会话项的消息已删除 */
-	kNIMSessionCommandAllTeamMsgDeleted	= 8,	/**< 所有群会话项的消息已删除 */
-	kNIMSessionCommandUpdate			= 9,	/**< 更新会话项 */
-	kNIMSessionCommandRemoveAllSuperTeam = 10,	/**< 删除所有超大群的会话项 */
-	kNIMSessionCommandAllSuperTeamMsgDeleted = 11,	/**< 所有超大群会话项的消息已删除 */
-
-};
-typedef struct
-{
-    char session_id[64];
-    enum NIMSessionType to_type;
-}SessionMainTagInfo;
-
-typedef struct
-{
-    SessionMainTagInfo session_tag_info;
-    uint64_t message_time_tag;
-	uint64_t message_server_id;
-}SessionRoamMsgHasMoreTagInfo;
 
 /** @typedef void(*nim_session_query_session_hasmore_roammsg_cb_func)(int rescode, const SessionRoamMsgHasMoreTagInfo *tag_info, const void *user_data)
 * 查询会话漫游消息未完待拉信息结果回调

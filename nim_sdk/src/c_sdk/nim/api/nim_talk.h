@@ -140,6 +140,22 @@ NIM_SDK_DLL_API void nim_talk_recall_msg(const char *json_msg, const char *notif
   */
 NIM_SDK_DLL_API void nim_talk_recall_msg2(const char *json_msg, const char *notify, const char *apnstext, const char *pushpayload,const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data);
 
+/** @fn void nim_talk_recall_msg_ex(const char* json_msg, const char* notify, nim_talk_recall_msg_func cb, nim_talk_recall_extra_params& extra_params, const void* user_data);
+  * 撤回消息
+  * @param[in] json_msg		消息体Json string (Keys SEE MORE `nim_talk_def.h` 『消息结构 Json Keys』)
+  * @param[in] notify		自定义通知
+  * @param[in] cb		    nim_talk_recall_msg_func回调函数定义见nim_talk_def.h
+  * @param[in] extra_params 额外参数，使用结构体便于以后扩展，包括：apnstext、pushpayload、json_extension、env_config、user_data
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				414:参数错误
+  *				508:撤回时间超过配制有效期，默认是2分钟
+  *				10414:本地错误码，参数错误
+  *				10508:本地错误码,超过配置有效期或者所需参数不存在
+  */
+NIM_SDK_DLL_API void nim_talk_recall_msg_ex(const char* json_msg, const char* notify, nim_talk_recall_msg_func cb, nim_talk_recall_extra_params& extra_params, const void* user_data);
+
 /** @fn void nim_talk_reg_recall_msg_cb(const char *json_extension, nim_talk_recall_msg_func cb, const void *user_data)
   * (全局回调)注册接收消息撤回通知的回调
   * @param[in] json_extension json扩展参数（备用，目前不需要）

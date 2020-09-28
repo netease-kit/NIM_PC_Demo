@@ -47,6 +47,15 @@ struct NIM_SDK_CPPWRAPPER_DLL_API RecallMsgNotify
 	RecallMsgNotify() : notify_timetag_(0), msglog_exist_(true), msglog_timetag_(0) {}
 };
 
+/** @fn bool bool ParseRecallMsgNotify(const std::string json_value, RecallMsgNotify& notify)
+  * @brief 解析消息撤回通知
+  * @param[in] json_value 消息撤回通知json格式
+  * @param[out] notify 消息撤回通知
+  * @return bool 解析成功 或失败
+  */
+
+NIM_SDK_CPPWRAPPER_DLL_API bool ParseRecallMsgNotify(const std::string json_value, RecallMsgNotify& notify);
+
 /** @fn bool ParseRecallMsgNotify(const std::string& notify_json, std::list<RecallMsgNotify>& notifys)
   * @brief 解析消息撤回通知
   * @param[in] notify_json 消息撤回通知(Json Value数据字符串)

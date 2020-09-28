@@ -1,15 +1,15 @@
 #include "stdafx.h"
 #include "mytree.h"
-std::string MyAddressbookDepartment::OnGetIUIStyleName() const 
-{ 
-	return "MyAddresbookDepartmentUI"; 
+std::string MyAddressbookDepartment::OnGetIUIStyleName() const
+{
+	return "MyAddresbookDepartmentUI";
 }
 std::string MyAddressbookContact::OnGetIUIStyleName() const
-{ 
-	return "MyAddressbookContactUI"; 
+{
+	return "MyAddressbookContactUI";
 }
-int MyAddresbookDepartmentUI::GetHeight() 
-{ 
+int MyAddresbookDepartmentUI::GetHeight()
+{
 	int height = 30;
 	ui::DpiManager::GetInstance()->ScaleInt(height);
 	return height;
@@ -22,8 +22,8 @@ void MyAddresbookDepartmentUI::OnFill()
 	auto label = dynamic_cast<ui::Label*>(FindSubControl(L"contact"));
 	label->SetUTF8Text(item_data->name_);
 }
-int MyAddressbookContactUI::GetHeight() 
-{ 
+int MyAddressbookContactUI::GetHeight()
+{
 	int height = 48;
 	ui::DpiManager::GetInstance()->ScaleInt(height);
 	return height;
@@ -40,6 +40,6 @@ void MyAddressbookContactUI::OnFill()
 	if (label != nullptr)
 		label->SetUTF8Text(item_data->mail_);
 	auto head = FindSubControl(L"contact_image");
-	if (head != nullptr)		
+	if (head != nullptr)
 		head->SetUTF8BkImage(item_data->head_image_path_);
 }

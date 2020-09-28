@@ -24,17 +24,17 @@ bool WindowsManager::RegisterWindow(const std::wstring wnd_class_name, const std
 	WindowsMap::iterator it = windows_map_.find(wnd_class_name);
 	if (it != windows_map_.end())
 	{
-		std::map<std::wstring, WindowEx*>::iterator it2 = it->second.find(wnd_id);
+		std::map<std::wstring, std::pair<std::weak_ptr<nbase::WeakFlag>, WindowEx*>>::iterator it2 = it->second.find(wnd_id);
 		if (it2 != it->second.end())
 		{
 			QLOG_PRO(L"The window <class name: {0}, id: {1}> has already registered !")<<wnd_class_name <<wnd_id;
 		}
-		it->second[wnd_id] = wnd;
+		it->second[wnd_id] = std::make_pair(wnd->GetWeakFlag(),wnd);
 	}
 	else
 	{
-		std::map<std::wstring, WindowEx*> id_win;
-		id_win[wnd_id] = wnd;
+		std::map<std::wstring, std::pair<std::weak_ptr<nbase::WeakFlag>, WindowEx*>> id_win;
+		id_win[wnd_id] = std::make_pair(wnd->GetWeakFlag(), wnd);;
 		windows_map_[wnd_class_name] = id_win;
 	}
 	return true;
@@ -45,7 +45,7 @@ void WindowsManager::UnRegisterWindow(const std::wstring &wnd_class_name, const 
 	WindowsMap::iterator it = windows_map_.find(wnd_class_name);
 	if (it != windows_map_.end())
 	{
-		std::map<std::wstring, WindowEx*>::iterator it2 = it->second.find(wnd_id);
+		std::map<std::wstring, std::pair<std::weak_ptr<nbase::WeakFlag>, WindowEx*>>::iterator it2 = it->second.find(wnd_id);
 		if (it2 != it->second.end())
 		{
 			it->second.erase(it2);
@@ -59,13 +59,14 @@ WindowList WindowsManager::GetAllWindows()
 	WindowsMap::iterator it = windows_map_.begin();
 	for ( ; it != windows_map_.end(); ++it)
 	{
-		std::map<std::wstring, WindowEx*>::iterator it2 = it->second.begin();
+		std::map<std::wstring, std::pair<std::weak_ptr<nbase::WeakFlag>, WindowEx*>>::iterator it2 = it->second.begin();
 		for ( ; it2 != it->second.end(); ++it2)
 		{
-			WindowEx *wnd = (WindowEx *)(it2->second);
-			if (wnd && ::IsWindow(wnd->GetHWND()))
+			std::pair<std::weak_ptr<nbase::WeakFlag>, WindowEx*> _wnd = it2->second;
+			//WindowEx *wnd = (WindowEx *)(it2->second);
+			if (!_wnd.first.expired() && _wnd.second != nullptr && ::IsWindow(_wnd.second->GetHWND()))
 			{
-				list.push_back(wnd);
+				list.push_back(_wnd);
 			}
 		}
 	}
@@ -77,17 +78,17 @@ WindowEx* WindowsManager::GetWindow(const std::wstring &wnd_class_name, const st
 	WindowsMap::iterator it = windows_map_.find(wnd_class_name);
 	if(it != windows_map_.end())
 	{
-		std::map<std::wstring, WindowEx*>::iterator it2 = it->second.find(wnd_id);
+		std::map<std::wstring, std::pair<std::weak_ptr<nbase::WeakFlag>, WindowEx*>>::iterator it2 = it->second.find(wnd_id);
 		if (it2 != it->second.end())
 		{
-			WindowEx* wnd = (WindowEx*)(it2->second);
-			if(wnd && ::IsWindow(wnd->GetHWND()))
+			std::pair<std::weak_ptr<nbase::WeakFlag>, WindowEx*> _wnd = it2->second;
+			if (!_wnd.first.expired() && _wnd.second != nullptr && ::IsWindow(_wnd.second->GetHWND()))
 			{
-				return wnd;
+				return _wnd.second;
 			}
 		}
 	}
-	return NULL;
+	return nullptr;
 }
 
 WindowList WindowsManager::GetWindowsByClassName(LPCTSTR classname)
@@ -96,13 +97,13 @@ WindowList WindowsManager::GetWindowsByClassName(LPCTSTR classname)
 	WindowsMap::iterator it = windows_map_.find(classname);
 	if(it != windows_map_.end())
 	{
-		std::map<std::wstring, WindowEx*>::iterator it2 = it->second.begin();
+		std::map<std::wstring, std::pair<std::weak_ptr<nbase::WeakFlag>, WindowEx*>>::iterator it2 = it->second.begin();
 		for(; it2 != it->second.end(); it2++)
 		{
-			WindowEx* wnd = (WindowEx*)(it2->second);
-			if(wnd && ::IsWindow(wnd->GetHWND()))
+			std::pair<std::weak_ptr<nbase::WeakFlag>, WindowEx*> _wnd = it2->second;
+			if (!_wnd.first.expired() && _wnd.second != nullptr && ::IsWindow(_wnd.second->GetHWND()))
 			{
-				wnd_list.push_back(wnd);
+				wnd_list.push_back(_wnd);
 			}
 		}
 	}
@@ -117,10 +118,9 @@ void WindowsManager::DestroyAllWindows()
 	WindowList::iterator it = lst_wnd.begin();
 	for ( ; it != lst_wnd.end(); ++it)
 	{
-		WindowEx *wnd = (WindowEx *)*it;
-		if (wnd && ::IsWindow(wnd->GetHWND()))
+		if (!it->first.expired() && it->second != nullptr && ::IsWindow(it->second->GetHWND()))
 		{
-			::DestroyWindow(wnd->GetHWND());
+			::DestroyWindow(it->second->GetHWND());
 		}
 	}
 }

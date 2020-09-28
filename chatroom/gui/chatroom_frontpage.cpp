@@ -187,8 +187,10 @@ void ChatroomFrontpage::CreateRoomItem(const ChatRoomInfo& room_info)
 				nim_comp::WindowList list = nim_ui::WindowsManager::GetInstance()->GetWindowsByClassName(ChatroomForm::kClassName);
 				for (auto &it : list)
 				{
-					ChatroomForm* form = static_cast<ChatroomForm*>(it);
-					form->Close();
+					nim_comp::WindowsManager::SafeDoWindowOption<ChatroomForm,void>(it, [](ChatroomForm* form) {
+						if (::IsWindow(form->GetHWND()))
+							form->Close();
+					});
 				}
 			}
 			__int64 id;

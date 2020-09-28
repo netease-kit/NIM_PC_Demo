@@ -13,6 +13,7 @@ namespace nim
 {
 #ifdef NIM_SDK_DLL_IMPORT
 typedef void (*nim_msglog_register_delete_msgs_self_callback)(const nim_msglog_delete_message_self_notify_cb_func cb, const void *user_data);
+typedef void (*nim_msglog_register_delete_history_messages_callback)(const nim_msglog_delete_history_online_notify_cb_func cb, const void* user_data);
 typedef void(*nim_msglog_query_msg_async)(const char* account_id, nim::NIMSessionType to_type, int limit_count, int64_t last_time, const char *json_extension, nim_msglog_query_cb_func cb, const void* user_data);
 typedef void(*nim_msglog_batch_status_read_async)(const char* account_id, nim::NIMSessionType to_type, const char *json_extension, nim_msglog_res_ex_cb_func cb, const void* user_data);
 typedef void(*nim_msglog_set_status_async)(const char* msg_id, nim::NIMMsgLogStatus msglog_status, const char *json_extension, nim_msglog_res_cb_func cb, const void* user_data);
@@ -49,6 +50,7 @@ typedef bool(*nim_import_backup_from_remote)(const NIMLogsBackupImportInfo* impo
 typedef bool(*nim_cancel_export_backup_to_remote)();
 typedef bool(*nim_cancel_import_backup_from_remote)();
 typedef void(*nim_msglog_delete_history_online_async)(const char *, bool , const char *, nim_msglog_delete_history_online_res_cb_func , const void *);
+typedef void(*nim_msglog_delete_history_online_async_ex)(const char*, enum NIMSessionType, bool, const char*,nim_msglog_delete_history_online_res_cb_func_ex, const void*);
 typedef void(*nim_msglog_query_the_message_of_the_specified_type_async)(enum NIMSessionType to_type, 
 	const char *id, 
 	int limit_count, 
@@ -61,6 +63,7 @@ typedef void(*nim_msglog_query_the_message_of_the_specified_type_async)(enum NIM
 	nim_msglog_query_cb_func cb, 
 	const void *user_data);
 typedef void (*nim_msglog_delete_message_self_async)(const char *, const char *, const char *, nim_msglog_delete_message_self_res_cb_func cb, const void *user_data);
+typedef void (*nim_msglog_delete_messages_self_async)(NIMDeleteMessagesSelfParam* param, int param_count, nim_msglog_delete_message_self_res_cb_func cb, const void* user_data);
 //thread talk
 typedef void (*nim_msglog_query_message_is_thread_root_async)(const char* msg_client_id, nim_msglog_query_message_is_thread_root_async_cb_func cb, const void* user_data);
 typedef void (*nim_msglog_query_message_online)(const NIMQueryMsgAsyncParam& param, nim_msglog_query_single_cb_func cb, const void* user_data);
@@ -266,6 +269,28 @@ void MsgLog::RegDeleteMsglogSelfNotify(const DeleteMsglogSelfNotifyCallback &cb)
 			}
 		}, false);
 	}, &g_delete_msglog_self_notify_cb);
+}
+MsgLog::DeleteHistoryOnLineNotifyCallback g_delete_history_messages_notify_cb = nullptr;
+void MsgLog::RegDeleteHistoryMessagesNotify(const DeleteHistoryOnLineNotifyCallback& cb)
+{
+	g_delete_history_messages_notify_cb = cb;
+	NIM_SDK_GET_FUNC(nim_msglog_register_delete_history_messages_callback)(
+		[](NIMDeleteSessionHistoryMessagesNotifyInfo* info_list_head_node, int node_count, const void* user_data) {
+			CallbackProxy::DoSafeCallback<MsgLog::DeleteHistoryOnLineNotifyCallback>(user_data,
+				[=](const MsgLog::DeleteHistoryOnLineNotifyCallback& cb) {
+					std::list< NIMDeleteSessionHistoryMessagesNotifyInfo> info_list;
+					NIMDeleteSessionHistoryMessagesNotifyInfo* head = info_list_head_node;
+					for (int index = 0; index < node_count; index++)
+					{
+						NIMDeleteSessionHistoryMessagesNotifyInfo info;
+						memset(&info, 0, sizeof(NIMDeleteSessionHistoryMessagesNotifyInfo));
+						memcpy(&info, head, sizeof(NIMDeleteSessionHistoryMessagesNotifyInfo));					
+						info_list.emplace_back(info);
+						head++;
+					}
+				CallbackProxy::Invoke(cb, info_list);
+		}, false);
+	}, & g_delete_history_messages_notify_cb);
 }
 bool MsgLog::QueryMsgByIDAysnc(const std::string &client_msg_id, const QuerySingleMsgCallback &cb, const std::string &json_extension/* = ""*/)
 {
@@ -734,7 +759,6 @@ bool MsgLog::DeleteMsgByTimeAsyncEx(const std::string& session_id, NIMSessionTyp
 
 	return true;
 }
-
 bool MsgLog::ExportDbAsync(const std::string& dst_path, const DBFunctionCallback& cb, const std::string& json_extension)
 {
 	if (dst_path.empty())
@@ -891,7 +915,22 @@ void MsgLog::DeleteHistoryOnlineAsync(const std::string& accid, bool delete_roam
 		}, true);
 	}, cb_pointer);
 }
-
+void MsgLog::DeleteHistoryOnlineAsync(const std::string& accid, nim::NIMSessionType to_type, bool notify_self, const std::string& ext, const DeleteHistoryOnLineAsyncExCallback& cb)
+{
+	DeleteHistoryOnLineAsyncExCallback* cb_pointer = nullptr;
+	if (cb != nullptr)
+	{
+		cb_pointer = new DeleteHistoryOnLineAsyncExCallback(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_msglog_delete_history_online_async_ex)(accid.c_str(), to_type, notify_self,ext.c_str(), \
+		[](int res_code, const char* accid, nim::NIMSessionType type, uint64_t time,const char* ext, const void* user_data) {
+			std::string id(accid);
+			std::string ext_param(ext);
+			CallbackProxy::DoSafeCallback<MsgLog::DeleteHistoryOnLineAsyncExCallback>(user_data, [=](const MsgLog::DeleteHistoryOnLineAsyncExCallback& cb) {
+				CallbackProxy::Invoke(cb,(NIMResCode)res_code, id, type, time,ext_param);
+			}, true);
+		}, cb_pointer);
+}
 void MsgLog::DeleteMessageSelfAsync(const IMMessage &msg, const std::string ext, const DeleteMsglogSelfCallback& cb)
 {
 	DeleteMsglogSelfCallback* cb_pointer = nullptr;
@@ -902,6 +941,39 @@ void MsgLog::DeleteMessageSelfAsync(const IMMessage &msg, const std::string ext,
 	std::string json_msg;
 	NIM_SDK_GET_FUNC(nim_msglog_delete_message_self_async)(msg.ToJsonString(false).c_str(), ext.c_str(), "", \
 		[](int res_code, const void *user_data) {
+			CallbackProxy::DoSafeCallback<MsgLog::DeleteMsglogSelfCallback>(user_data, [=](const MsgLog::DeleteMsglogSelfCallback& cb) {
+				CallbackProxy::Invoke(cb, (NIMResCode)res_code);
+				}, true);
+		}, cb_pointer);
+}
+#define DeclStringCopyToCharArrayLength(string,char_array)\
+(((string.length()) >= (sizeof(char_array)/sizeof(decltype(char_array[0])))) ? (sizeof(char_array)/sizeof(decltype(char_array[0])) - 1) : (string.length()))
+void MsgLog::DeleteMessageSelfAsync(const std::list<std::tuple<IMMessage, std::string>>& msgs, const DeleteMsglogSelfCallback& cb)
+{
+	DeleteMsglogSelfCallback* cb_pointer = nullptr;
+	if (cb != nullptr)
+	{
+		cb_pointer = new DeleteMsglogSelfCallback(cb);
+	}
+	std::vector<NIMDeleteMessagesSelfParam> msg_array;
+	for (auto it : msgs)
+	{
+		IMMessage msg;
+		std::string ext;
+		std::tie(msg, ext) = it;
+		NIMDeleteMessagesSelfParam param;
+		memset(&param, 0, sizeof(NIMDeleteMessagesSelfParam));
+		param.to_type_ = msg.session_type_;
+		msg.sender_accid_.copy(param.from_account, msg.sender_accid_.length(),0);
+		msg.receiver_accid_.copy(param.to_account, msg.receiver_accid_.length(), 0);
+		param.server_id = msg.readonly_server_id_;
+		msg.client_msg_id_.copy(param.client_id, msg.client_msg_id_.length(), 0);
+		param.time = msg.timetag_;
+		ext.copy(param.ext, DeclStringCopyToCharArrayLength(ext, param.ext), 0);
+		msg_array.emplace_back(param);
+	}
+	NIM_SDK_GET_FUNC(nim_msglog_delete_messages_self_async)(msg_array.data(), msg_array.size(), \
+		[](int res_code, const void* user_data) {
 			CallbackProxy::DoSafeCallback<MsgLog::DeleteMsglogSelfCallback>(user_data, [=](const MsgLog::DeleteMsglogSelfCallback& cb) {
 				CallbackProxy::Invoke(cb, (NIMResCode)res_code);
 				}, true);
@@ -978,5 +1050,6 @@ void MsgLog::UnregMsglogCb()
 {
 	UnregMsgologCb();
 	g_delete_msglog_self_notify_cb = nullptr;
+	g_delete_history_messages_notify_cb = nullptr;
 }
 }

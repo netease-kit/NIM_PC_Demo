@@ -14,14 +14,44 @@
 extern"C"
 {
 #endif
+	/** @brief 删除与某一会话的历史记录推送数据定义 */
+	typedef struct
+	{
+		enum NIMSessionType to_type;/**< enum 会话类型，双人0，群组1,超大群5 (nim_msglog_def.h) */
+		char id[128];/**< string 会话的ID */
+		int64_t time;/**<  int64_t 删除操作的时间戳 */
+		char ext[1024];/**< 扩展字段  */
+	} NIMDeleteSessionHistoryMessagesNotifyInfo;
+
 /** @typedef void(*nim_msglog_delete_history_online_res_cb_func)(int res_code, const char *accid,const void *user_data)
-  * 删除与某一账号云端的历史记录回调函数定义
+  * 删除与某一账号云端的历史记录回调函数定义(p2p类型)
   * @param[out] res_code		操作结果，成功200
   * @param[out] accid			进行删除操作时传入的对方accid
   * @param[out] user_data	APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
 typedef void(*nim_msglog_delete_history_online_res_cb_func)(int res_code, const char *accid,const void *user_data);
+
+/** @typedef void(*nim_msglog_delete_history_online_res_cb_func_ex)(int res_code, const char *accid, enum NIMSessionType type,uint64_t time,const char *ext,const void *user_data)
+  * 删除某一会话的云端的历史记录回调函数定义[v8.0.0]
+  * @param[out] res_code		操作结果，成功200
+  * @param[out] accid			进行删除操作时传入的会话id p2p:accid team:tid
+  * @param[out] type				会话的类型
+  * @param[out] time				删除时间
+  * @param[out] ext				删除某一会话的云端的历史记录操作时传入的ext字段
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void(*nim_msglog_delete_history_online_res_cb_func_ex)(int res_code, const char *accid, enum NIMSessionType type,uint64_t time,const char *ext,const void *user_data);
+
+/** @typedef void(*nim_msglog_delete_history_online_notify_cb_func)(NIMDeleteSessionHistoryMessagesNotifyInfo *info_list_head_node, int node_count,const void *user_data)
+  * 删除某一会话的云端的历史记录推送回调函数定义[v8.0.0]
+  * @param[out] info_list_head_node 被删除的会话列表的头指针
+  * @param[out] node_count 	会话列表的长度
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void(*nim_msglog_delete_history_online_notify_cb_func)(NIMDeleteSessionHistoryMessagesNotifyInfo *info_list_head_node, int node_count,const void *user_data);
 
 /** @typedef void(*nim_msglog_delete_message_self_res_cb_func)(int res_code, const char *result,const void *user_data)
 * 单向删除消息记录回调函数定义
@@ -495,6 +525,18 @@ static const char *kNIMDELMSGSelfNotifyKeySessionID = "session_id";				/**< stri
 static const char *kNIMDELMSGSelfNotifyKeyMsgClientID = "client_id";			/**< string 消息ID*/
 static const char *kNIMDELMSGSelfNotifyKeyEXT = "ext";			/**< string 用户自定义数据 */
 /** @}*/ //单向删除某条消息服务端推送 Json Keys
+
+  /** @brief 单向删除某条消息参数 */
+typedef struct
+{
+	enum NIMSessionType to_type_;/**< enum 会话类型，双人0，群组1,超大群5 (nim_msglog_def.h) */
+	char from_account[128];/**< string 消息的发送方 */
+	char to_account[128];/**< string 消息的接收方 */
+	int64_t server_id;/**< int64_t 消息的服务端id */
+	char client_id[128];/**< string 消息的客户端id */
+	int64_t time;/**<  int64_t 消息时间戳 */
+	char ext[1024];/**< string 扩展字段 */
+} NIMDeleteMessagesSelfParam;
 
   /** @brief 云端查询某条消息参数一般用在thread聊天场景中 */
 typedef struct

@@ -22,6 +22,14 @@ extern"C"
   */
 	NIM_SDK_DLL_API void nim_msglog_register_delete_msgs_self_callback(const nim_msglog_delete_message_self_notify_cb_func cb, const void *user_data);
 
+	/** @fn void nim_msglog_register_delete_history_messages_callback(const nim_msglog_delete_history_online_notify_cb_func cb, const void* user_data)
+  * 注册删除历史消息推送回调
+  * @param[in] cb		删除历史消息推送回调函数定义， nim_msglog_delete_history_online_res_cb_func_ex回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+	NIM_SDK_DLL_API void nim_msglog_register_delete_history_messages_callback(const nim_msglog_delete_history_online_notify_cb_func cb, const void* user_data);
+
 /** @fn void nim_msglog_query_msg_by_id_async(const char *client_msg_id, const char *json_extension, nim_msglog_query_single_cb_func cb, const void *user_data)
   * 根据消息ID查询本地（单条）消息
   * @param[in] client_msg_id	客户端消息ID
@@ -477,7 +485,7 @@ NIM_SDK_DLL_API void nim_cancel_import_backup_from_remote();
 */
 NIM_SDK_DLL_API void nim_cancel_export_backup_to_remote();
 /** @fn void nim_msglog_delete_history_online_async(const char *account_id, bool delete_roaming, const char *json_extension, nim_msglog_delete_history_online_res_cb_func cb, const void *user_data)
-  * 删除与某账号的所有云端历史记录与漫游消息
+  * 删除与某账号的所有云端历史记录与漫游消息(p2p)
   * @param[in] account_id 对方accid
   * @param[in] delete_roaming 是否同时删除与该accid的漫游消息
   * @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -487,6 +495,19 @@ NIM_SDK_DLL_API void nim_cancel_export_backup_to_remote();
   * @note 错误码	200:成功
   */
 NIM_SDK_DLL_API void nim_msglog_delete_history_online_async(const char *account_id, bool delete_roaming, const char *json_extension, nim_msglog_delete_history_online_res_cb_func cb, const void *user_data);
+
+/** @fn void nim_msglog_delete_history_online_async_ex(const char* account_id, enum NIMSessionType to_type, bool notify_self, const char* ext, nim_msglog_delete_history_online_res_cb_func_ex cb, const void* user_data)
+  * 删除某一会话的云端的历史记录[v8.0.0]
+  * @param[in] account_id 进行删除操作时传入的会话id p2p:accid team:tid
+  * @param[in] type				会话的类型
+  * @param[in] notify_self	 是否通知其它终端
+  * @param[in] ext				扩展ext字段
+  * @param[in] cb			操作结果的回调函数， nim_msglog_delete_history_online_res_cb_func_ex回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+NIM_SDK_DLL_API void nim_msglog_delete_history_online_async_ex(const char* account_id, enum NIMSessionType to_type, bool notify_self, const char* ext,nim_msglog_delete_history_online_res_cb_func_ex cb, const void* user_data);
 
 /** @fn void nim_msglog_delete_message_self_async(const char *json_msg, const char *ext, const char *json_extension, nim_msglog_delete_message_self_res_cb_func cb, const void *user_data)
   * 单向删除某条消息记录(同时删除本地与云端)
@@ -500,7 +521,18 @@ NIM_SDK_DLL_API void nim_msglog_delete_history_online_async(const char *account_
   */
 NIM_SDK_DLL_API void nim_msglog_delete_message_self_async(const char *json_msg, const char *ext, const char *json_extension, nim_msglog_delete_message_self_res_cb_func cb, const void *user_data);
 
-/** @fn void nim_msglog_delete_message_self_async(const char *json_msg, const char *ext, const char *json_extension, nim_msglog_delete_message_self_res_cb_func cb, const void *user_data)
+/** @fn void nim_msglog_delete_messages_self_async(NIMDeleteMessagesSelfParam* param,int param_count, nim_msglog_delete_message_self_res_cb_func cb, const void* user_data)
+  * 单向删除多条消息记录(同时删除本地与云端)
+  * @param[in] param 要删除的消息头指针
+  * @param[in] param_count 要删除的消息条数
+  * @param[in] cb			操作结果的回调函数， nim_msglog_delete_message_self_res_cb_func回调函数定义见nim_msglog_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+NIM_SDK_DLL_API void nim_msglog_delete_messages_self_async(NIMDeleteMessagesSelfParam* param,int param_count, nim_msglog_delete_message_self_res_cb_func cb, const void* user_data);
+
+/** @fn void nim_msglog_query_message_is_thread_root_async(const char* msg_client_id, nim_msglog_query_message_is_thread_root_async_cb_func cb, const void* user_data)
   * 查询某条消息是否为thread聊天的根消息
   * @param[in] msg_client_id 要查询的消息的客户端ID
   * @param[in] cb			操作结果的回调函数， nim_msglog_query_message_is_thread_root_async_cb_func回调函数定义见nim_msglog_def.h
@@ -520,7 +552,7 @@ NIM_SDK_DLL_API void nim_msglog_query_message_is_thread_root_async(const char* m
   */
 NIM_SDK_DLL_API void nim_msglog_query_message_online(const NIMQueryMsgAsyncParam& param, nim_msglog_query_single_cb_func cb, const void* user_data);
 
-/** @fn void nim_msglog_query_thread_history_msg(const char* json_msg,const NIMQueryThreadHistoryMsgAsyncParam& param, const nim_msglog_query_thread_history_msg_cb_func& cb)
+/** @fn void nim_msglog_query_thread_history_msg(const char* json_msg, const NIMQueryThreadHistoryMsgAsyncParam& param, const nim_msglog_query_thread_history_msg_cb_func& cb, const void* user_data)
   * 分页查询thread talk消息历史
   * @param[in] json_msg thread聊天的root消息
   * @param[in] param 查询thread聊天历史参数

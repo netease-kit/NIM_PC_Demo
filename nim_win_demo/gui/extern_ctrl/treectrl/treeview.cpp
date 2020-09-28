@@ -19,12 +19,12 @@ std::shared_ptr<ITreeItemUIStyle> TreeComponent::GetUIStyle(const std::shared_pt
 	{
 		need_fill = false;
 		ret = it_style->second;
-	}		
+	}
 	if (ret == nullptr)
 	{
-		auto it = std::find_if(style_group.begin(), style_group.end(), [&](const std::pair<TreeItemIDType, std::shared_ptr<ITreeItemUIStyle>> &item) {
+		auto it = std::find_if(style_group.begin(), style_group.end(), [&](const std::pair<TreeItemIDType, std::shared_ptr<ITreeItemUIStyle>>& item) {
 			return visible_item_list_.find(item.first) == visible_item_list_.end();
-		});
+			});
 		if (it == style_group.end())
 		{
 			std::function<std::shared_ptr<ITreeItemUIStyle>()> style_crator = nullptr;
@@ -44,31 +44,31 @@ std::shared_ptr<ITreeItemUIStyle> TreeComponent::GetUIStyle(const std::shared_pt
 			style_group.erase(it);
 			style_group.emplace(std::make_pair(id, ret));
 		}
-	//	
+		//	
 
 
-	//	if (style_group.size() < MAX_STYLE_COUNT)
-	//	{
-	//		std::function<std::shared_ptr<ITreeItemUIStyle>()> style_crator = nullptr;
-	//		auto it = style_factory_.find(item->GetIUIStyleName());
-	//		if (it != style_factory_.end())
-	//			style_crator = it->second;
-	//		if (style_crator != nullptr)
-	//		{
-	//			style_group.emplace(std::make_pair(id, style_crator()));
-	//			it_style = style_group.find(id);
-	//			ret = it_style->second;
-	//		}
-	//	}
-	//	else
-	//	{	
-	//		auto it = std::find_if(style_group.begin(), style_group.end(), [&](const std::pair<TreeItemIDType, std::shared_ptr<ITreeItemUIStyle>> &item) {
-	//			return visible_item_list_.find(item.first) == visible_item_list_.end();
-	//		});
-	//		ret = it->second;
-	//		style_group.erase(it);
-	//		style_group.emplace(std::make_pair(id, ret));			
-	//	}
+		//	if (style_group.size() < MAX_STYLE_COUNT)
+		//	{
+		//		std::function<std::shared_ptr<ITreeItemUIStyle>()> style_crator = nullptr;
+		//		auto it = style_factory_.find(item->GetIUIStyleName());
+		//		if (it != style_factory_.end())
+		//			style_crator = it->second;
+		//		if (style_crator != nullptr)
+		//		{
+		//			style_group.emplace(std::make_pair(id, style_crator()));
+		//			it_style = style_group.find(id);
+		//			ret = it_style->second;
+		//		}
+		//	}
+		//	else
+		//	{	
+		//		auto it = std::find_if(style_group.begin(), style_group.end(), [&](const std::pair<TreeItemIDType, std::shared_ptr<ITreeItemUIStyle>> &item) {
+		//			return visible_item_list_.find(item.first) == visible_item_list_.end();
+		//		});
+		//		ret = it->second;
+		//		style_group.erase(it);
+		//		style_group.emplace(std::make_pair(id, ret));			
+		//	}
 	}
 	return ret;
 }
@@ -76,26 +76,26 @@ int DpiScaleInt(int value)
 {
 	return ui::DpiManager::GetInstance()->ScaleInt(value);
 }
-TreeComponent::TreeComponent() : 
-	ui::ListBox(new ui::VLayout), 
+TreeComponent::TreeComponent() :
+	ui::ListBox(new ui::VLayout),
 	doc_(new TreeDoc),
-	show_tree_line_(true), 
+	show_tree_line_(true),
 	show_check_box_(true),
 	show_expand_button_(true),
 	expand_button_width_(DpiScaleInt(14)),
 	checkbox_button_width_(DpiScaleInt(14)),
 	level_space_widht_(DpiScaleInt(14)),
 	selected_item_(nullptr)
-{  
+{
 	doc_->AttachRemoveItem(std::bind(&TreeComponent::OnRemoveItemCallback, this, std::placeholders::_1));
 };
-TreeComponent::~TreeComponent() 
+TreeComponent::~TreeComponent()
 {
 	GetWindow()->RemoveControlFromPointFinder(this);
 };
 void TreeComponent::SetWindow(ui::Window* pManager, ui::Box* pParent, bool bInit/* = true*/)
 {
-	ui::ListBox::SetWindow(pManager, pParent, bInit);	
+	ui::ListBox::SetWindow(pManager, pParent, bInit);
 	if (bInit)
 	{
 		pManager->AddControlFromPointFinder(this);
@@ -122,22 +122,22 @@ ui::Control* TreeComponent::FindControlFromPoint(const ui::CPoint& pt)
 		LPPOINT pPoint = static_cast<LPPOINT>(pData);
 		ui::UiRect pos = pThis->GetPos();
 		return ::PtInRect(&pos, *pPoint) ? pThis : NULL;
-	}, &pt_temp, UIFIND_VISIBLE | UIFIND_HITTEST | UIFIND_TOP_FIRST);
-	if (ret == this &&  IsVisible())
+		}, &pt_temp, UIFIND_VISIBLE | UIFIND_HITTEST | UIFIND_TOP_FIRST);
+	if (ret == this && IsVisible())
 	{
 		for (auto& it : visible_item_list_)
 		{
 			auto ui_style = std::get<3>(it.second);
-			if(ui_style == nullptr)
+			if (ui_style == nullptr)
 				continue;
 			ui::UiRect rc(ui_style->GetPos());
 			if (rc.IsPointIn(pt))
-			{				
+			{
 				auto ctrl = ui_style->FindControl([](Control* pThis, LPVOID pData) {
 					LPPOINT pPoint = static_cast<LPPOINT>(pData);
 					ui::UiRect pos = pThis->GetPos();
 					return ::PtInRect(&pos, *pPoint) ? pThis : NULL;
-				}, &pt_temp, UIFIND_VISIBLE | UIFIND_HITTEST | UIFIND_TOP_FIRST);
+					}, &pt_temp, UIFIND_VISIBLE | UIFIND_HITTEST | UIFIND_TOP_FIRST);
 				if (ctrl != nullptr)
 				{
 					ret = ctrl;
@@ -148,7 +148,7 @@ ui::Control* TreeComponent::FindControlFromPoint(const ui::CPoint& pt)
 				}
 			}
 		}
-	}	
+	}
 	return ret;
 }
 void TreeComponent::Update(bool recalc_visible)
@@ -165,12 +165,12 @@ void TreeComponent::Update(bool recalc_visible)
 			rc.right -= m_pLayout->GetPadding().right;
 			rc.bottom -= m_pLayout->GetPadding().bottom;
 			bool reupdate = false;
-			if (GetVerticalScrollBar()->GetScrollPos() + rc.GetHeight() > required_size_.cy &&  required_size_.cy >  rc.GetHeight())
+			if (GetVerticalScrollBar()->GetScrollPos() + rc.GetHeight() > required_size_.cy && required_size_.cy > rc.GetHeight())
 			{
 				reupdate = true;
 				GetVerticalScrollBar()->SetScrollPos(required_size_.cy - rc.GetHeight());
 			}
-			if (GetHorizontalScrollBar()->GetScrollPos() + rc.GetWidth() > required_size_.cx &&  required_size_.cx >  rc.GetWidth())
+			if (GetHorizontalScrollBar()->GetScrollPos() + rc.GetWidth() > required_size_.cx && required_size_.cx > rc.GetWidth())
 			{
 				reupdate = true;
 				GetHorizontalScrollBar()->SetScrollPos(required_size_.cx - rc.GetWidth());
@@ -180,10 +180,10 @@ void TreeComponent::Update(bool recalc_visible)
 			if (required_size_.cx > rc.GetWidth())
 				GetHorizontalScrollBar()->SetVisible(true);
 			if (required_size_.cy > rc.GetHeight())
-				GetVerticalScrollBar()->SetVisible(true);		
+				GetVerticalScrollBar()->SetVisible(true);
 			if (reupdate)
 				Update(true);
-		};		
+		};
 		//nbase::ThreadManager::PostTask(ToWeakCallback(task));
 		//nbase::ThreadManager::PostDelayedTask(ToWeakCallback(task), nbase::TimeDelta::FromMilliseconds(30));
 		task();
@@ -231,7 +231,7 @@ ui::CSize TreeComponent::GetUIStyleSize(std::string style_name)
 	}
 }
 ui::CSize TreeComponent::ResetVisibleList(const ui::UiRect& rc_component)
-{	
+{
 	ui::UiRect rc(rc_component);
 	rc.left += m_pLayout->GetPadding().left;
 	rc.top += m_pLayout->GetPadding().top;
@@ -244,19 +244,19 @@ ui::CSize TreeComponent::ResetVisibleList(const ui::UiRect& rc_component)
 		auto&& scroll_pos = GetScrollPos_i();
 		auto&& root = doc_->GetRootItem();
 		auto&& child_item_list = root->GetSubItemList();
-		ui::UiRect rcdraw(rc.left - scroll_pos.cx,rc.top - scroll_pos.cy, rc.left - scroll_pos.cx, rc.top - scroll_pos.cy);
+		ui::UiRect rcdraw(rc.left - scroll_pos.cx, rc.top - scroll_pos.cy, rc.left - scroll_pos.cx, rc.top - scroll_pos.cy);
 		for (auto& child_it : child_item_list)
 		{
 			auto&& componet_doc_item = std::dynamic_pointer_cast<NulTreeItem>(child_it);
 			int componet_doc_item_height = componet_doc_item->GetUI()->GetWholeHeight();
 			required_size.cy += componet_doc_item_height;
-			if (!((rcdraw.bottom + componet_doc_item_height) < rc.top || rcdraw.top >rc.bottom))
+			if (!((rcdraw.bottom + componet_doc_item_height) < rc.top || rcdraw.top > rc.bottom))
 			{
 				auto&& size = ResetVisibleList(scroll_pos, rc, rcdraw, child_it);
 				if (required_size.cx < size.cx)
 					required_size.cx = size.cx;
 				rcdraw.top = rcdraw.bottom;
-			}	
+			}
 			else
 			{
 				rcdraw.Offset(0, componet_doc_item_height);
@@ -275,12 +275,12 @@ ui::CSize TreeComponent::ResetVisibleList(const ui::CSize& scrollpos, const ui::
 		ret.cx = rc_component.GetWidth() + scrollpos.cx;
 	rc.top = rc.bottom;
 	rc.right = rc.left + ret.cx;
-	rc.bottom = rc.top + ret.cy;	
-	if (!(rc.bottom < rc_component.top  || rc.top >rc_component.bottom ))
+	rc.bottom = rc.top + ret.cy;
+	if (!(rc.bottom < rc_component.top || rc.top >rc_component.bottom))
 	{
 		bool need_fill = true;
 		auto&& ui = GetUIStyle(componet_doc_item, need_fill);
-		if(need_fill)
+		if (need_fill)
 			ui->Fill(componet_doc_item);
 		ui->SetPos(rc);
 		if (auto_width)
@@ -290,7 +290,7 @@ ui::CSize TreeComponent::ResetVisibleList(const ui::CSize& scrollpos, const ui::
 			if (ret.cx < rc.GetWidth())
 				ret.cx = rc.GetWidth();
 		}
-		visible_item_list_.emplace(std::make_pair(componet_doc_item->GetItemID(), std::make_tuple(auto_width,rc, componet_doc_item,ui)));
+		visible_item_list_.emplace(std::make_pair(componet_doc_item->GetItemID(), std::make_tuple(auto_width, rc, componet_doc_item, ui)));
 	}
 	if (componet_doc_item->GetUI()->IsExpand())
 	{
@@ -319,10 +319,10 @@ ui::CSize TreeComponent::ResetVisibleList(const ui::CSize& scrollpos, const ui::
 	return ret;
 }
 void TreeComponent::SetPos(ui::UiRect rc)
-{	
+{
 	if (rc.Equal(m_rcItem))
 		return;
-	ui::ListBox::SetPos(rc);	
+	ui::ListBox::SetPos(rc);
 	Update(true);
 }
 ui::CSize TreeComponent::CalcRequiredSize(const ui::UiRect& rc)
@@ -413,7 +413,7 @@ void TreeComponent::SetScrollPos(ui::CSize szPos)
 	if (m_pWindow != NULL) {
 		m_pWindow->SendNotify(this, ui::kEventScrollChange);
 	}
-	Update(true);	
+	Update(true);
 }
 bool TreeComponent::ShowTreeLine() const
 {
@@ -432,7 +432,7 @@ unsigned int TreeComponent::GetLevelSpace() const
 	return level_space_widht_;
 }
 void TreeComponent::SetExpandImage(const std::wstring& expand, const std::wstring& collapse)
-{	
+{
 	expand_expand_image_.SetImageString(expand);
 	GetImage(expand_expand_image_);
 	expand_collapse_image_.SetImageString(collapse);
@@ -447,7 +447,7 @@ void TreeComponent::SetCheckImage(const std::wstring& sel, const std::wstring& u
 	GetImage(checkbox_unsel_image_);
 	checkbox_partsel_image_.SetImageString(partsel);
 	GetImage(checkbox_partsel_image_);
-	checkbox_button_width_ =  checkbox_sel_image_.imageCache->nX;
+	checkbox_button_width_ = checkbox_sel_image_.imageCache->nX;
 }
 bool TreeComponent::GetExpandImage(ui::Image& expand, ui::Image& collapse)
 {
@@ -456,7 +456,7 @@ bool TreeComponent::GetExpandImage(ui::Image& expand, ui::Image& collapse)
 	{
 		expand = expand_expand_image_;
 		collapse = expand_collapse_image_;
-	}	
+	}
 	return ret;
 }
 bool TreeComponent::GetCheckboxImage(ui::Image& sel, ui::Image& unsel, ui::Image& partsel)
@@ -480,7 +480,7 @@ void TreeComponent::OnItemSelected(TreeItemIDType id)
 			selected_item_->GetUI()->SetSelected(false);
 			auto ui = GetUIStyle(selected_item_);
 			ui->Selected(false, false);
-		}			
+		}
 		sel->GetUI()->SetSelected(true);
 		auto ui = GetUIStyle(sel);
 		ui->Selected(true, false);

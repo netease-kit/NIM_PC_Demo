@@ -287,6 +287,10 @@
 		static const char* kNIMChatRoomMsgKeyThirdPartyCBEXT = "third_party_callback_ext";              /**< (可选)string第三方回调回来的自定义扩展字段*/
 		static const char* kNIMChatRoomMsgKeySubType = "msg_sub_type";              /**<(可选)int，消息的子类型，客户端定义，服务器透传*/
 		static const char* kNIMChatRoomMsgKeyYiDunAntiCheating = "yidun_anti_cheating";		/**< (可选)String, 易盾反垃圾增强反作弊专属字段, 限制json，长度限制1024*/
+		
+		//v8.0.0新增
+		static const char* kNIMChatRoomMsgKeyEnvConfig = "env_config";		/**< (可选)String, 自定义抄送配置*/
+
 		//以下定义对于客户端只读
 		static const char *kNIMChatRoomMsgKeyRoomID = "room_id";			/**< long, 消息所属的聊天室id,服务器填写,发送方不需要填写 */
 		static const char *kNIMChatRoomMsgKeyFromAccount = "from_id";			/**< string, 消息发送者的账号,服务器填写,发送方不需要填写 */

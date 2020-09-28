@@ -22,7 +22,7 @@ namespace nim
 /** @brief 会话数据 */
 	struct NIM_SDK_CPPWRAPPER_DLL_API StickTopSessionInfo
 	{
-		bool top_;
+		bool top_;/**< 是否置顶 */
 		std::string		id_;					/**< 会话ID */
 		NIMSessionType	type_;		/**< 会话类型 */
 		std::string		ext_;				/**< 扩展信息*/

@@ -5,13 +5,17 @@
     <script language="JavaScript">
         // 通过调用NimCefWebFunction函数给渲染进程发送消息
         function sendMessage() {
-          NimCefWebFunction(document.getElementById("message").value);
-        }
-
-        // 写一个JS函数，让C++可以通过调用这个函数控制网页
-        function receiveMessage(param) {
-         document.getElementById("result").value = "收到来自C++的消息:" + param;
-        }
+          var message = document.getElementById("message").value;
+          NimCefWebInstance.call('showCppMessage',{message},(error, result) => {
+            console.log(result);
+          });
+        }        
+       // 写一个JS函数，让C++可以通过调用这个函数控制网页
+        ((obj) => {
+        obj.register('showJsMessage', (param)=>{
+                document.getElementById("result").value = "收到来自C++的消息:" + JSON.stringify(param);
+            })
+        })(NimCefWebInstance)        
     </script>
 </head>
 

@@ -125,14 +125,14 @@ typedef void (*nim_team_query_mute_list_cb_func)(int res_code, int member_count,
   */
 typedef void(*nim_team_query_members_invitor_cb_func)(int res_code,const char *tid, const char *result, const void *user_data);
 
-/** @typedef void(*nim_team_update_tinfo_local_cb_func)(const char* success_ids, const char* failure_ids)
+/** @typedef void(*nim_team_update_tinfo_local_cb_func)(const char *success_ids, const char *failure_ids, const void *user_data)
   * 更新群组本地缓存结果回调(顺丰专用)
   * @param[out] success_ids	更新成功的群组ID
   * @param[out] failure_ids 更新失败的群组ID
   * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
   * @return void 无返回值
   */
-typedef void(*nim_team_update_tinfo_local_cb_func)(const char* success_ids, const char* failure_ids, const void *user_data);
+typedef void(*nim_team_update_tinfo_local_cb_func)(const char *success_ids, const char *failure_ids, const void *user_data);
 
 /** @enum NIMTeamBeInviteMode 被邀请人同意方式 */
 enum NIMTeamBeInviteMode

@@ -24,32 +24,34 @@ namespace nim
 /** @brief 消息属性设置 */
 struct NIM_SDK_CPPWRAPPER_DLL_API MessageSetting
 {
-	BoolStatus resend_flag_;			/**< 该消息是否为重发状态 */
-	BoolStatus server_history_saved_;	/**< 该消息是否存储云端历史 */
-	BoolStatus roaming_;				/**< 该消息是否支持漫游 */
-	BoolStatus self_sync_;				/**< 该消息是否支持发送者多端同步 */
-	BoolStatus need_push_; 				/**< 是否需要推送 */
-	BoolStatus push_need_badge_;		/**< 是否要做消息计数 */
-	BoolStatus push_need_prefix_;		/**< 需要推送昵称 */
-	BoolStatus routable_;				/**< 是否要抄送 */
-	BoolStatus need_offline_;			/**< 是否支持离线消息 */
-	nim_cpp_wrapper_util::Json::Value push_payload_;			/**< 第三方自定义的推送属性，长度2048 */
-	std::string push_content_;			/**< 自定义推送文案，长度限制200字节 */
-	nim_cpp_wrapper_util::Json::Value server_ext_;			/**< 第三方扩展字段, 长度限制1024 */
-	std::string local_ext_;				/**< 本地扩展字段, 格式不限，长度限制1024 */
-	BoolStatus is_force_push_;			/**< 群组消息强推开关，强推全员设置true并强推列表为空 */
-	std::list<std::string> force_push_ids_list_;	/**< 群组消息强推列表 */
-	std::string force_push_content_;	/**< 群组消息强推文本 */
-	BoolStatus anti_spam_enable_;		/**< 是否需要过易盾反垃圾 */
-	std::string anti_spam_content_;		/**< (可选)开发者自定义的反垃圾字段,长度限制5000 */
-	std::string anti_apam_biz_id_;		/**< (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
-	int anti_apam_using_yidun_;	/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
-	BoolStatus client_anti_spam_hitting_;	/**< (可选) 是否命中客户端反垃圾*/
-	BoolStatus team_msg_need_ack_;		/** 群消息是否需要已读业务，0：不需要，1：需要*/
-	BoolStatus team_msg_ack_sent_;		/**< 是否已经发送群消息已读回执 */
-	int team_msg_unread_count_;			/**< 群消息未读数 */
-	BoolStatus is_update_session_;			/**< (可选) 消息是否需要刷新到session服务，0:否，1:是；只有消息存离线的情况下，才会判断该参数，缺省：1*/
-	std::string yidun_anti_cheating_;		/**< (可选)String, 易盾反垃圾增强反作弊专属字段, 限制json，长度限制1024*/
+	BoolStatus resend_flag_;							/**< 该消息是否为重发状态 */
+	BoolStatus server_history_saved_;					/**< 该消息是否存储云端历史 */
+	BoolStatus roaming_;								/**< 该消息是否支持漫游 */
+	BoolStatus self_sync_;								/**< 该消息是否支持发送者多端同步 */
+	BoolStatus need_push_; 								/**< 是否需要推送 */
+	BoolStatus push_need_badge_;						/**< 是否要做消息计数 */
+	BoolStatus push_need_prefix_;						/**< 需要推送昵称 */
+	BoolStatus routable_;								/**< 是否要抄送 */
+	BoolStatus need_offline_;							/**< 是否支持离线消息 */
+	nim_cpp_wrapper_util::Json::Value push_payload_;	/**< 第三方自定义的推送属性，长度2048 */
+	std::string push_content_;							/**< 自定义推送文案，长度限制200字节 */
+	nim_cpp_wrapper_util::Json::Value server_ext_;		/**< 第三方扩展字段, 长度限制1024 */
+	std::string local_ext_;								/**< 本地扩展字段, 格式不限，长度限制1024 */
+	BoolStatus is_force_push_;							/**< 群组消息强推开关，强推全员设置true并强推列表为空 */
+	std::list<std::string> force_push_ids_list_;		/**< 群组消息强推列表 */
+	std::string force_push_content_;					/**< 群组消息强推文本 */
+	BoolStatus anti_spam_enable_;						/**< 是否需要过易盾反垃圾 */
+	std::string anti_spam_content_;						/**< (可选)开发者自定义的反垃圾字段,长度限制5000 */
+	std::string anti_apam_biz_id_;						/**< (可选)用户配置的对某些单条消息另外的反垃圾的业务ID*/
+	int anti_apam_using_yidun_;							/**< int,  (可选) 单条消息是否使用易盾反垃圾 0:(在开通易盾的情况下)不过易盾反垃圾而是通用反垃圾 其他都是按照原来的规则*/
+	BoolStatus client_anti_spam_hitting_;				/**< (可选) 是否命中客户端反垃圾*/
+	BoolStatus team_msg_need_ack_;						/**< 群消息是否需要已读业务，0：不需要，1：需要*/
+	BoolStatus team_msg_ack_sent_;						/**< 是否已经发送群消息已读回执 */
+	int team_msg_unread_count_;							/**< 群消息未读数 */
+	BoolStatus is_update_session_;						/**< (可选) 消息是否需要刷新到session服务，0:否，1:是；只有消息存离线的情况下，才会判断该参数，缺省：1*/
+	std::string yidun_anti_cheating_;					/**< (可选)String, 易盾反垃圾增强反作弊专属字段, 限制json，长度限制1024*/
+	std::string env_config_;							/**< (可选)String, 环境变量，用于指向不同的抄送、第三方回调等配置(于8.0.0添加)*/
+	
 	/** 构造函数 */
 	MessageSetting() : resend_flag_(BS_NOT_INIT)
 		, server_history_saved_(BS_NOT_INIT)
@@ -62,14 +64,15 @@ struct NIM_SDK_CPPWRAPPER_DLL_API MessageSetting
 		, need_offline_(BS_NOT_INIT)
 		, is_force_push_(BS_NOT_INIT)
 		, anti_spam_enable_(BS_NOT_INIT)
-		,anti_apam_biz_id_("")
-		,anti_apam_using_yidun_(1)
+		, anti_apam_biz_id_("")
+		, anti_apam_using_yidun_(1)
 		, client_anti_spam_hitting_(BS_NOT_INIT)
 		, team_msg_need_ack_(BS_NOT_INIT)
 		, team_msg_ack_sent_(BS_NOT_INIT)
 		, team_msg_unread_count_(-1)
 		, is_update_session_(BS_NOT_INIT)
-		, yidun_anti_cheating_(""){}
+		, yidun_anti_cheating_("")
+		, env_config_(""){}
 
 	/** @fn void ToJsonValue(nim_cpp_wrapper_util::Json::Value& message) const
 	  * @brief 组装Json Value字符串
@@ -133,6 +136,8 @@ struct NIM_SDK_CPPWRAPPER_DLL_API MessageSetting
 			message[kNIMMsgKeyIsUpdateSession] = is_update_session_;
 		if(!yidun_anti_cheating_.empty())
 			message[kNIMMsgKeyYiDunAntiCheating] = yidun_anti_cheating_;
+		if (!env_config_.empty())
+			message[kNIMMsgKeyEnv] = env_config_;
 	}
 
 	/** @fn void ParseMessageSetting(const nim_cpp_wrapper_util::Json::Value& message)
@@ -195,6 +200,8 @@ struct NIM_SDK_CPPWRAPPER_DLL_API MessageSetting
 			is_update_session_ = message[kNIMMsgKeyIsUpdateSession].asBool() ? BS_TRUE : BS_FALSE;
 		if (message.isMember(kNIMMsgKeyYiDunAntiCheating))
 			yidun_anti_cheating_ = message[kNIMMsgKeyYiDunAntiCheating].asString();
+		if (message.isMember(kNIMMsgKeyEnv))
+			env_config_ = message[kNIMMsgKeyEnv].asString();
 	}
 };
 

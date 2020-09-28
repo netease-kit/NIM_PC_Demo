@@ -36,6 +36,8 @@ public:
 	typedef std::function<void(const std::list<BroadcastMessage>&)>	ReceiveBroadcastMsgsCallback;	/**< 批量接收广播消息通知回调模板 */
 	typedef std::function<bool(const IMMessage&)> MessageFilter; /**< 消息过滤器 */
 	typedef std::function<std::string(const IMMessage&)>	AntiCheatingFieldFillCallback;	/**< 易盾反垃圾增强反作弊字段填充回调模板 */
+
+																							
 	/** @fn static void RegSendMsgCb(const SendMsgCallback& cb, const std::string& json_extension = "")
 	* (全局回调)注册发送消息回调函数 （必须全局注册,统一接受回调后分发消息到具体的会话。注意：客户端发包之后,服务器不一定会返回！！！）
 	* @param[in] json_extension json扩展参数（备用,目前不需要）
@@ -390,6 +392,20 @@ public:
 	*/
 	static void RecallMsg2(const IMMessage &msg, const std::string &notify,const RecallMsgsCallback& cb, const std::string& apnstext = "", const std::string& pushpayloadconst = "", const std::string& json_extension = "");
 	
+	/** @fn static void RecallMsgEx(const IMMessage& msg, const std::string& notify, const RecallMsgsCallback& cb, nim_talk_recall_extra_params& extra_param);
+	* 撤回消息
+	* @param[in] msg 消息
+	* @param[in] notify 自定义通知消息
+	* @param[in] cb	回调
+	* @param[in] extra_param 额外的参数，包含apnstext、pushpayload、json_extension、env_config、user_data
+	* @note 错误码	200:成功
+	*				414:参数错误
+	*				508:撤回时间超过配制有效期，默认是2分钟
+	*				10414:本地错误码，参数错误
+	*				10508:本地错误码,超过配置有效期或者所需参数不存在
+	*/
+	static void RecallMsgEx(const IMMessage& msg, const std::string& notify, const RecallMsgsCallback& cb, nim_talk_recall_extra_params& extra_param);
+
 	/** @fn static std::string GetAttachmentPathFromMsg(const IMMessage& msg)
 	*  从消息体中获取附件（图片、语音、视频等）的本地路径
 	*  @param[in]  msg	消息

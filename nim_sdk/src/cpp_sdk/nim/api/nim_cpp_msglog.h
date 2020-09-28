@@ -51,11 +51,12 @@ typedef std::function<void(int64_t imported_count, int64_t total_count)> ImportD
 
 typedef std::function<void(const MessageStatusChangedResult&)>	MessageStatusChangedCallback;	/**< 发送消息已读回执通知回调模板 */	
 
-typedef std::function<void(const NIMResCode res_code,const std::string& accid)>	DeleteHistoryOnLineAsyncCallback;	/**< 删除与某账号的所有云端历史记录与漫游消息的回调模板 */
-
-typedef std::function<void(const NIMResCode res_code, const std::string & client_id,bool is_root,int reply_count)> QueryMessageIsThreadRootAsyncCallback;
-typedef std::function<void(const NIMResCode res_code, const std::string & client_id, const IMMessage & msg)> QueryMessageOnlineCallback;
-typedef std::function<void(const NIMResCode res_code, const IMMessage & root_msg,int total,uint64_t last_msg_time,const std::list<IMMessage>& msg_list)> QueryThreadHistoryMsgCallback;
+typedef std::function<void(const NIMResCode res_code,const std::string& accid)>	DeleteHistoryOnLineAsyncCallback;	/**< 删除与某账号(p2p)的所有云端历史记录与漫游消息的回调模板 */
+typedef std::function<void(const NIMResCode res_code, const std::string& accid,nim::NIMSessionType to_type,uint64_t time,const std::string& ext)>	DeleteHistoryOnLineAsyncExCallback;	/**< 删除某一会话的云端的历史记录的回调模板 */
+typedef std::function<void(const std::list< NIMDeleteSessionHistoryMessagesNotifyInfo>& info_list)>	DeleteHistoryOnLineNotifyCallback;	/**< 删除会话的云端的历史记录推送的回调模板 */
+typedef std::function<void(const NIMResCode res_code, const std::string & client_id,bool is_root,int reply_count)> QueryMessageIsThreadRootAsyncCallback;/**< 查询消息是否是thread聊天的根消息回调模板 */
+typedef std::function<void(const NIMResCode res_code, const std::string & client_id, const IMMessage & msg)> QueryMessageOnlineCallback; /**< 查询某条消息的具体内容回调模板 */
+typedef std::function<void(const NIMResCode res_code, const IMMessage & root_msg,int total,uint64_t last_msg_time,const std::list<IMMessage>& msg_list)> QueryThreadHistoryMsgCallback; /**< 分页查询thread talk消息历史回调模板 */
 
 class NIM_SDK_CPPWRAPPER_DLL_API AllMessageTypeList
 {
@@ -168,6 +169,13 @@ static void UnregMsglogCb();
 * @return void 无返回值
 */
 static void RegDeleteMsglogSelfNotify(const DeleteMsglogSelfNotifyCallback &cb);
+
+/** @fn  void RegDeleteHistoryMessagesNotify(const DeleteHistoryOnLineNotifyCallback& cb)
+* 注册删除某一会话的云端的历史记录通知回调[v8.0.0]
+* @param[in] cb				删除某一会话的云端的历史记录通知回调
+* @return void 无返回值
+*/
+static void RegDeleteHistoryMessagesNotify(const DeleteHistoryOnLineNotifyCallback& cb);
 
 /** @fn static bool QueryMsgByIDAysnc(const std::string &client_msg_id, const QuerySingleMsgCallback &cb, const std::string &json_extension = "")
 	* 根据消息ID查询本地（单条）消息
@@ -630,8 +638,8 @@ static void CancelImportBackupFromRemote();
 */
 static void CancelExportBackupToRemote();
 
-/** @fn static void DeleteHistoryOnlineAsync(const std::string& accid,bool delete_roaming,const DeleteHistoryOnLineAsyncCallback& cb)
-* 删除与某账号的所有云端历史记录与漫游消息
+/** @fn void DeleteHistoryOnlineAsync(const std::string& accid,bool delete_roaming,const std::string& json_extension,const DeleteHistoryOnLineAsyncCallback& cb)
+* 删除与某账号的所有云端历史记录与漫游消息(p2p)
 * @param[in] accid 对方的accid
 * @param[in] delete_roaming 是否同时删除所有的漫游消息 true : 是 false : 否
 * @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -641,7 +649,19 @@ static void CancelExportBackupToRemote();
 */
 static void DeleteHistoryOnlineAsync(const std::string& accid,bool delete_roaming,const std::string& json_extension,const DeleteHistoryOnLineAsyncCallback& cb);
 
-/** @fn void DeleteMessageSelfAsync(const MsgLog& msg, const std::string ext, const DeleteMsglogSelfCallback& cb)
+/** @fn void DeleteHistoryOnlineAsync(const std::string& accid, nim::NIMSessionType to_type, bool notify_self, const std::string& ext, const DeleteHistoryOnLineAsyncExCallback& cb)
+* 删除某一会话的云端的历史记录[v8.0.0]
+* @param[in] accid 对方的accid(p2p:accid team:tid)
+* @param[in] to_type 会话类型，双人0，群组1 (见nim_msglog_def.h)
+* @param[in] notify_self 是否通知其它终端
+* @param[in] ext 扩展字段
+* @param[in] cb	 操作结果的回调函数
+* @return void
+* @note 错误码	200:成功
+*/
+static void DeleteHistoryOnlineAsync(const std::string& accid, nim::NIMSessionType to_type, bool notify_self, const std::string& ext, const DeleteHistoryOnLineAsyncExCallback& cb);
+
+/** @fn void DeleteMessageSelfAsync(const IMMessage &msg, const std::string ext, const DeleteMsglogSelfCallback& cb)
   * 单向删除某条消息记录(同时删除本地与云端)
   * @param[in] msg 要删除的消息
   * @param[in] ext 用户自定义扩展字段
@@ -651,7 +671,16 @@ static void DeleteHistoryOnlineAsync(const std::string& accid,bool delete_roamin
   */
 static void DeleteMessageSelfAsync(const IMMessage &msg, const std::string ext, const DeleteMsglogSelfCallback& cb);
 
-/** @fn QueryMessageIsThreadRoot(const std::string msg_client_id, const QueryMessageIsThreadRootAsyncCallback& cb)
+/** @fn void DeleteMessageSelfAsync(const std::list<std::tuple<IMMessage, std::string>>& msgs, const DeleteMsglogSelfCallback& cb)
+  * 单向删除多条消息记录(同时删除本地与云端)
+  * @param[in] msg 要删除的消息及自定义扩展字段
+  * @param[in] cb	操作结果的回调函数
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  */
+static void DeleteMessageSelfAsync(const std::list<std::tuple<IMMessage, std::string>>& msgs, const DeleteMsglogSelfCallback& cb);
+
+/** @fn void QueryMessageIsThreadRoot(const std::string msg_client_id, const QueryMessageIsThreadRootAsyncCallback& cb)
   * 查询某条消息是否为thread聊天的根消息
   * @param[in] msg_client_id 要查询的消息的客户端ID
   * @param[in] cb			操作结果的回调函数
