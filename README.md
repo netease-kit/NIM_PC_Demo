@@ -24,7 +24,7 @@ git clone https://github.com/netease-im/NIM_PC_Demo.git
 
 克隆完成后进入 `NIM_PC_Demo/libs` 目录，解压 `cryptlib.zip` 来释放体积较大的依赖静态库文件，进入 `NIM_PC_Demo/nim_win_demo` 目录，使用 Visual Studio 2013 Update 5 以上版本 IDE 打开 `nim.sln`，按下 F7 即可编译项目
 
-如您需要编译 64 位工程，请将 `bin/x64_dlls` 目录下的文件复制并替换现有 `bin` 目录下的文件，同时也需要解压 `libs/x64` 目录下的 `cryptlib.zip`。
+如您需s要编译 64 位工程，请将 `bin/x64_dlls` 目录下的文件复制并替换现有 `bin` 目录下的文件，同时也需要解压 `libs/x64` 目录下的 `cryptlib.zip`。
 
 ## 目录
 
