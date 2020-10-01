@@ -11,7 +11,7 @@ typedef int FilesizeType;
 enum TransferFileSessiontype
 {
     TransferFileSessiontype_Sender = 0,//发送方
-    TransferFileSessiontype_Receiver = 1,//接收方
+    TransferFileSessiontype_Receiver = 1,//接收方s
 };
 enum TransferFileSessionState
 {
