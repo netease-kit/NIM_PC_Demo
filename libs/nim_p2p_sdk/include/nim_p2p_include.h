@@ -6,4 +6,4 @@
 #include "nim_p2p_sdk_file_def.h"
 #include "nim_p2p_sdk_proc_prog_def.h"
 
-#endif //NIM_P2P_INCLUDE_H
+#endif //NIM_P2P_INCLUDE_H end of file
