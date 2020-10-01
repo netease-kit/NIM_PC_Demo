@@ -17,7 +17,7 @@ enum TransferFileSessionState
 {
     TransferFileSessionState_NULL = 0,
     TransferFileSessionState_Wait,//等待开始
-    TransferFileSessionState_Consulting,//协商传输方案中
+    TransferFileSessionState_Consulting,//Praveen
     TransferFileSessionState_Transferring,//传输中
     TransferFileSessionState_Succeeded,//已成功
     TransferFileSessionState_Failed,//已失败
