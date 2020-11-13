@@ -215,6 +215,11 @@ bool SessionBox::Notify(ui::EventArgs* param)
 			std::string msg_id = md.client_msg_id_;
 			nim::MsgLog::QueryMsgByIDAysnc(msg_id, 
 				[this](nim::NIMResCode res_code, const std::string& msg_id, const nim::IMMessage& msg) {
+					if (msg.session_type_ == nim::NIMSessionType::kNIMSessionTypeTeam ||
+						msg.session_type_ == nim::NIMSessionType::kNIMSessionTypeSuperTeam)
+					{
+						const_cast<nim::IMMessage&>(msg).receiver_accid_ = this->GetSessionId();
+					}
 					nim::MsgLog::DeleteMessageSelfAsync(msg, "delete message log self",
 						ToWeakCallback([this, msg_id](nim::NIMResCode res_code) {
 							if (res_code != nim::kNIMResSuccess)

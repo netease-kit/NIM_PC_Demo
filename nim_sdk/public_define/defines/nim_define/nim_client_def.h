@@ -159,6 +159,7 @@ static const char *kNIMRsaPublicKeyModule				= "module";					/**< string, （必
 static const char *kNIMRsaVersion						= "version";				/**< int, （必填，RSA version 【6.9.0版本后已废弃】） */
 static const char *kNIMDownloadAddressTemplate			= "nos_downloader";			/**< string, 下载地址拼接模板，用于拼接最终得到的下载地址 */
 static const char *kNIMAccelerateHost					= "nos_accelerate_host";	/**< string, 需要被加速主机名*/
+static const char* kMINAccelerateHostList 				= "nos_accelerate_host_list";/**< string array, 需要被加速主机名列表*/
 static const char *kNIMAccelerateAddressTemplate		= "nos_accelerate";			/**< string, 加速地址拼接模板，用于获得加速后的下载地址*/
 //static const char* kNIMMarkreadAfterSaveDBEnabled 	= "enable_markread_after_save_db_";/**< bool, 是否开启消保存在本地DB以后再向服务端发送"已接收回执" 缺省 false 关闭*/
 static const char *kNIMCachingMarkreadEnabled			= "caching_markread_enabled";	/**< 是否开启缓存式“已接收回执”发送，程序可能收到大量消息以至触发频控时可以考虑开启此开关 缺省 false 关闭*/
@@ -185,6 +186,8 @@ static const char *kNIMSyncDataTypeConfigKey = "key";/**< int 同步数据类型
 static const char *kNIMSyncDataTypeConfigValue = "value";/**< int 同步数据类型配置的具体数据value 0:不更新 1:自动更新*/
 
 static const char* kNIMHttpDNSServerInterface = "httpdns_server_interface";/**< string list 私有化参数,选填 如果有特定的地址可以配置在这个参数中*/
+
+static const char* kNIMPriorityUseCdnHost = "priority_use_cdn_host"; /**< bool 是否优先使用cdn域名*/
 
 /** @}*/ //json extension params for nim_client_init API
 

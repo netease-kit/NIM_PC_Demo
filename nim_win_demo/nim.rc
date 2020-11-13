@@ -51,8 +51,8 @@ END
 //
 
 VS_VERSION_INFO VERSIONINFO
- FILEVERSION 7,8,0,664
- PRODUCTVERSION 7,8,0,664
+ FILEVERSION 8,0,0,674
+ PRODUCTVERSION 8,0,0,674
  FILEFLAGSMASK 0x3fL
 #ifdef _DEBUG
  FILEFLAGS 0x1L
@@ -69,12 +69,12 @@ BEGIN
         BEGIN
             VALUE "CompanyName", "网易公司"
             VALUE "FileDescription", "启动网易云信"
-            VALUE "FileVersion", "7.8.0.664"
+            VALUE "FileVersion", "8.0.0.674"
             VALUE "InternalName", "nim_demo.exe"
             VALUE "LegalCopyright", "网易公司版权所有 (C) 2015-2020"
             VALUE "OriginalFilename", "nim_demo.exe"
             VALUE "ProductName", "网易云信"
-            VALUE "ProductVersion", "7.8.0.664"
+            VALUE "ProductVersion", "8.0.0.674"
         END
     END
     BLOCK "VarFileInfo"

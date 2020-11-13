@@ -357,6 +357,32 @@ std::string Talk::CreateBotRobotMessage(const std::string& receiver_id
 	return GetJsonStringWithNoStyled(values);
 }
 
+std::string Talk::CreateG2NetCallMessage(const std::string& receiver_id
+	, const NIMSessionType session_type
+	, const std::string& client_msg_id
+	, const std::string& msg_attach
+	, const MessageSetting& msg_setting
+	, int64_t timetag/* = 0*/
+	, int32_t sub_type/* = 0*/)
+{
+	nim_cpp_wrapper_util::Json::Value values;
+	values[kNIMMsgKeyToAccount] = receiver_id;
+	values[kNIMMsgKeyToType] = session_type;
+	values[kNIMMsgKeyClientMsgid] = client_msg_id;
+	values[kNIMMsgKeyAttach] = msg_attach;
+	values[kNIMMsgKeyType] = kNIMMessageTypeG2NetCall;
+	values[kNIMMsgKeyLocalTalkId] = receiver_id;
+	if (sub_type > 0)
+		values[kNIMMsgKeySubType] = sub_type;
+	msg_setting.ToJsonValue(values);
+
+	//选填
+	if (timetag > 0)
+		values[kNIMMsgKeyTime] = timetag;
+
+	return GetJsonStringWithNoStyled(values);
+}
+
 std::string Talk::CreateRetweetMessage(const std::string& src_msg_json
 	, const std::string& client_msg_id
 	, const NIMSessionType retweet_to_session_type

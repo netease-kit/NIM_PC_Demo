@@ -146,6 +146,15 @@ static void Cleanup(const std::string& json_extension = "");
 */
 static bool IndependentEnter(const int64_t room_id,const ChatRoomIndependentEnterInfo& info);
 
+/** @fn bool IndependentEnter2(const int64_t room_id,const ChatRoomIndependentEnterInfo& info)
+* 聊天室独立进入
+* @param[in] room_id			  聊天室ID
+* @param[in] info	  聊天室进入信息
+* @param[in] config_getter	  聊天室配置对象
+* @return bool 进入信息是否正确,返回失败则不会触发进入回调
+*/
+static bool IndependentEnter2(const int64_t room_id, const ChatRoomIndependentEnterInfo& info, const NIMChatRoomConfigGetter config_getter);
+
 /** @fn bool AnonymousEnter(const int64_t room_id, const ChatRoomAnoymityEnterInfo& anonymity_info, const ChatRoomEnterInfo& info, const std::string& json_extension = "")
   * 聊天室匿名进入
   * @param[in] room_id			  聊天室ID
@@ -155,6 +164,16 @@ static bool IndependentEnter(const int64_t room_id,const ChatRoomIndependentEnte
   * @return bool 进入信息是否正确,返回失败则不会触发进入回调
   */
 static bool AnonymousEnter(const int64_t room_id, const ChatRoomAnoymityEnterInfo& anonymity_info, const ChatRoomEnterInfo& info, const std::string& json_extension = "");
+
+/** @fn bool AnonymousEnter2(const int64_t room_id, const ChatRoomAnoymityEnterInfo& anonymity_info, const ChatRoomEnterInfo& info, const NIMChatRoomConfigGetter config_getter)
+  * 聊天室匿名进入
+  * @param[in] room_id			  聊天室ID
+  * @param[in] anonymity_info	  匿名登录相关信息
+  * @param[in] info		  聊天室进入信息
+  * @param[in] config_getter	  聊天室配置对象
+  * @return bool 进入信息是否正确,返回失败则不会触发进入回调
+  */
+static bool AnonymousEnter2(const int64_t room_id, const ChatRoomAnoymityEnterInfo& anonymity_info, const ChatRoomEnterInfo& info, const NIMChatRoomConfigGetter config_getter);
 
 /** @fn bool Enter(const int64_t room_id, const std::string& request_login_data, const ChatRoomEnterInfo& info = ChatRoomEnterInfo(), const std::string& json_extension = "")
   * 聊天室登录

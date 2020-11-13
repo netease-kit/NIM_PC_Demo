@@ -343,6 +343,8 @@ void NimAPP::InitGlobalConfig(const std::string& server_conf_file_path,std::stri
 		config.ip_protocol_version_ = std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMIPProtVersion).c_str());
 	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMHandShakeType))
 		config.hand_shake_type_ = std::atoi(app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMHandShakeType).c_str());
+	if (app_sdk::AppSDKInterface::HasconfigValue(nim::kNIMPriorityUseCdnHost))
+		config.hand_shake_type_ = app_sdk::AppSDKInterface::GetConfigValue(nim::kNIMPriorityUseCdnHost).compare("0") != 0;
 }
 int NimAPP::UninitEnvironment()
 {

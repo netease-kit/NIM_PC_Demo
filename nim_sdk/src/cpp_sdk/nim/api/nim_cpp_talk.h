@@ -256,6 +256,25 @@ public:
 		, int64_t timetag = 0
 		, int32_t sub_type = 0);
 
+	/** @fn static std::string CreateG2NetCallMessage(const std::string& receiver_id, const NIMSessionType session_type, const std::string& client_msg_id, const std::string& msg_attach, const MessageSetting& msg_setting, int64_t timetag  = 0)
+	* 生成Tip消息内容,生成的字符串在调用SendMsg时直接传入
+	*  @param[in] receiver_id 聊天对象的 ID,如果是单聊,为用户帐号,如果是群聊,为群组 ID
+	*  @param[in] session_type NIMSessionType,聊天类型,单聊或群组
+	*  @param[in] client_msg_id 客户端消息id,建议uuid
+	*  @param[in] msg_attach ，G2话单json体包含type,channel,status,以及durations数组
+	*  @param[in] msg_setting 消息属性设置
+	*  @param[in] timetag 消息时间
+	*  @param[in] sub_type 消息子类型( > 0 ),由开发者自定义,服务端只负责透传 v7.8
+	*  @return std::string 位置消息Json字符串
+	*/
+	static std::string CreateG2NetCallMessage(const std::string& receiver_id
+		, const NIMSessionType session_type
+		, const std::string& client_msg_id
+		, const std::string& msg_attach
+		, const MessageSetting& msg_setting
+		, int64_t timetag = 0
+		, int32_t sub_type = 0);
+
 	/** @fn static std::string CreateRetweetMessage(const std::string& src_msg_json	, const std::string& client_msg_id	, const NIMSessionType retweet_to_session_type	, const std::string& retweet_to_session_id	, const MessageSetting& msg_setting	, int64_t timetag = 0)
 	* 由其他消息生成转发消息
 	*  @param[in] src_msg_json 原消息json

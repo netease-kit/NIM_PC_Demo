@@ -211,6 +211,7 @@ enum NIMMessageType
 	kNIMMessageTypeFile		 = 6,			/**< 文件类型消息*/
 	kNIMMessageTypeTips		 = 10,			/**< 提醒类型消息,Tip内容根据格式要求填入消息结构中的kNIMMsgKeyServerExt字段*/
 	kNIMMessageTypeRobot	 = 11,			/**< 波特机器人消息*/
+	kNIMMessageTypeG2NetCall = 12,			/**< G2话单消息*/
 	kNIMMessageTypeCustom    = 100,			/**< 自定义消息*/
 
 	kNIMMessageTypeUnknown	 = 1000,		/**< 未知类型消息，本地使用，发送时勿使用，作为默认值*/

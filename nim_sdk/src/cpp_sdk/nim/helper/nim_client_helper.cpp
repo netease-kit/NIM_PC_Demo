@@ -42,6 +42,7 @@ namespace nim
 		, dedicated_cluste_flag_(false)
 		, ip_protocol_version_(0)
 		, hand_shake_type_(1)
+		, priority_use_cdn_host_(true)
 	{
 		custom_client_type_ = std::make_pair(false, 0);
 	}

@@ -247,6 +247,7 @@ bool Client::Init(const std::string& app_key
 	config_values[nim::kNIMNegoKeyNECA] = config.nego_key_neca_;	
 	config_values[nim::kNIMCommNECA] = config.comm_neca_;
 	config_values[nim::kNIMIPProtVersion] = config.ip_protocol_version_;	
+	config_values[nim::kNIMPriorityUseCdnHost] = config.priority_use_cdn_host_;
 	if (!config.sync_data_type_list_.empty())
 	{
 		for (auto it : config.sync_data_type_list_)
@@ -274,6 +275,12 @@ bool Client::Init(const std::string& app_key
 		srv_config[nim::kNIMRsaVersion] = config.rsa_version_;
 		srv_config[nim::kNIMDownloadAddressTemplate] = config.nos_download_address_;
 		srv_config[nim::kNIMAccelerateHost] = config.nos_accelerate_host_;
+		if (!config.nos_accelerate_host_list_.empty())
+		{
+			for (auto it : config.nos_accelerate_host_list_)
+				srv_config[nim::kMINAccelerateHostList].append(it);
+		}
+		
 		srv_config[nim::kNIMAccelerateAddressTemplate] = config.nos_accelerate_address_;
 		srv_config[nim::kNIMNegoKeyNECAKeyPA] = config.nego_key_neca_key_parta_;
 		srv_config[nim::kNIMNegoKeyNECAKeyPB] = config.nego_key_neca_key_partb_;

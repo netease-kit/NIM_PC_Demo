@@ -118,13 +118,33 @@ NIM_SDK_DLL_API void nim_chatroom_cleanup(const char *json_extension);
   */
 NIM_SDK_DLL_API bool nim_chatroom_enter_with_anoymity(const int64_t room_id, const char *anonymity_info, const char *enter_info, const char *json_extension);
 
+/** @fn bool nim_chatroom_enter_with_anoymity2(const int64_t room_id, const char *anonymity_info, const char *enter_info, NIMChatRoomConfigGetter config_getter)
+  * 聊天室匿名进入
+  * @param[in] room_id			  聊天室ID
+  * @param[in] anonymity_info	  匿名登录所需的信息
+  * @param[in] enter_info		  聊天室进入信息
+  * @param[in] config_getter	  配置参数获取对象
+  * @return bool 进入信息是否正确,返回失败则不会触发进入回调
+  */
+NIM_SDK_DLL_API bool nim_chatroom_enter_with_anoymity2(const int64_t room_id, const char* anonymity_info, const char* enter_info, const NIMChatRoomConfigGetter config_getter);
+
+
 /** @fn bool nim_chatroom_independent_enter(const int64_t room_id,const char *enter_info)
   * 独立进入聊天室
   * @param[in] room_id		  聊天室ID
   * @param[in] enter_info	  聊天室进入信息
   * @return bool 进入信息是否正确,返回失败则不会触发进入回调
   */
-NIM_SDK_DLL_API bool nim_chatroom_independent_enter(const int64_t room_id,const char *enter_info);
+NIM_SDK_DLL_API bool nim_chatroom_independent_enter(const int64_t room_id, const char *enter_info);
+
+/** @fn bool nim_chatroom_independent_enter2(const int64_t room_id,const char *enter_info,NIMChatRoomConfigGetter config_getter)
+  * 独立进入聊天室
+  * @param[in] room_id		  聊天室ID
+  * @param[in] enter_info	  聊天室进入信息
+  * @param[in] config_getter	  配置参数获取对象
+  * @return bool 进入信息是否正确,返回失败则不会触发进入回调
+  */
+NIM_SDK_DLL_API bool nim_chatroom_independent_enter2(const int64_t room_id, const char* enter_info, const NIMChatRoomConfigGetter config_getter);
 
 /** @fn bool nim_chatroom_enter(const int64_t room_id, const char *request_enter_data, const char *enter_info, const char *json_extension)
   * 聊天室进入

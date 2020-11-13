@@ -94,6 +94,7 @@ MsgLog::AllMessageTypeList::AllMessageTypeList()
 	list_.emplace_back(nim::kNIMMessageTypeFile);
 	list_.emplace_back(nim::kNIMMessageTypeTips);
 	list_.emplace_back(nim::kNIMMessageTypeRobot);
+	list_.emplace_back(nim::kNIMMessageTypeG2NetCall);
 	list_.emplace_back(nim::kNIMMessageTypeCustom);
 }
 std::vector<nim::NIMMessageType> MsgLog::AllMessageTypeList::ExclusionType(const std::vector<nim::NIMMessageType>& exclusion_type_list) const

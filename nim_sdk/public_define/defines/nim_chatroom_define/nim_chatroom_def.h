@@ -585,6 +585,25 @@
 		static const char *kNIMRobotInfoKeyUpdateTime = "update_timetag";	/**< long 更新时间戳 毫秒*/
 		/** @}*/ //机器人信息 Json Keys
 
+		/** @name 公共配置 Json Keys
+		* @{
+		*/
+		static const char* kEnterKeyPublicConfigRoot = "public_config";/**< json obj 公共配置root key*/
+		static const char* kEnterKeyDedicatedClusteFlag = "dedicated_cluste_flag";/**< int 是否为专属集群 1:是 0: 否*/
+		static const char* kEnterKeyNegoKeyNECA = "nego_key_neca";/**< int  "交换密钥"协议加密算法 {1(RSA),2(SM2)}, def:1(RSA) 非对称加密 */
+		static const char* kEnterKeyCommNECA = "comm_enca";/**< int 通信加密算法 {1(RC4),2(AES128),4(SM4)} def:1(RC4) 对称加密*/
+		static const char* kEnterKeyHandShakeType = "hand_shake_type";/**< int 登录时使用的握手协议类型 0:支持配置多种对称与非对称加密算法,1:只支持RAS + RC4，缺省 1 */
+		/** @} */
+		/** @name 私有化配置 Json Keys
+		* @{
+		*/
+		static const char* kEnterKeyPrivateConfigRoot = "private_config";/**< json obj 私有配置root key*/
+		static const char* kEnterKeyNegoKeyNECAKeyPA = "nego_key_enca_key_parta";/**< string  "交换密钥"协议加密算法密钥 part A 自定义时则必填 BigNumHex string 不含0x RSA:module,SM2:X*/
+		static const char* kEnterKeyNegoKeyNECAKeyPB = "nego_key_enca_key_partb";/**< string  "交换密钥"协议加密算法密钥 part B 自定义时则必填 BigNumHex string 不含0x RSA:EXP,SM2:Y */
+		static const char* kEnterKeyNegoKeyNECAKeyV = "nego_key_enca_key_version";/**< int  非对称加密算法的 key version 自定义时则必填 */
+		/** @} */
+		typedef char* NIMChatRoomConfigGetter;
+#define EmptyNIMChatRoomConfigGetter ("")
 #ifdef __cplusplus
 };
 #endif //__cplusplus
