@@ -61,10 +61,13 @@
     <ClInclude Include="third_party\modp_b64\modp_b64.h" />
     <ClInclude Include="third_party\modp_b64\modp_b64_data.h" />
     <ClInclude Include="thread\framework_thread.h" />
+    <ClInclude Include="thread\task_loop_interface.h" />
     <ClInclude Include="thread\thread.h" />
+    <ClInclude Include="thread\threadex.h" />
     <ClInclude Include="thread\thread_local.h" />
     <ClInclude Include="thread\thread_manager.h" />
     <ClInclude Include="time\time.h" />
+    <ClInclude Include="util\any.h" />
     <ClInclude Include="util\at_exit.h" />
     <ClInclude Include="util\base64.h" />
     <ClInclude Include="util\cmd_line_args.h" />

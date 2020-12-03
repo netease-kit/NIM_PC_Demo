@@ -241,6 +241,15 @@
     <ClInclude Include="network\nio_base.h">
       <Filter>network</Filter>
     </ClInclude>
+    <ClInclude Include="thread\task_loop_interface.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="thread\threadex.h">
+      <Filter>thread</Filter>
+    </ClInclude>
+    <ClInclude Include="util\any.h">
+      <Filter>util</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="file\file_util.cpp">

@@ -105,7 +105,7 @@
       <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\bin\;</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalDependencies>vfw32.lib;jsoncpp_d.lib;tinyxml_d.lib;wxsqlite3_d.lib;duilib_d.lib;nim_capture_image_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vfw32.lib;jsoncpp_d.lib;tinyxml_d.lib;wxsqlite3_d.lib;duilib_d.lib;nim_capture_image_d.lib;g2_kit_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\libs\;$(ProjectDir)../../../sdk/nim_sdk/cpp_sdk/libs/x86/mt/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
@@ -151,7 +151,7 @@
       <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\bin\;</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalDependencies>vfw32.lib;jsoncpp.lib;tinyxml.lib;wxsqlite3.lib;duilib.lib;nim_capture_image.lib</AdditionalDependencies>
+      <AdditionalDependencies>vfw32.lib;jsoncpp.lib;tinyxml.lib;wxsqlite3.lib;duilib.lib;nim_capture_image.lib;g2_kit.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>..\..\..\libs\;$(ProjectDir)../../../sdk/nim_sdk/cpp_sdk/libs/x86/mt/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -178,8 +178,7 @@
       <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\bin\;</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalDependencies>
-      </AdditionalDependencies>
+      <AdditionalDependencies>g2_kit.lib</AdditionalDependencies>
     </Lib>
     <Lib>
       <AdditionalLibraryDirectories>..\..\..\libs\x64\;$(ProjectDir)../../../nim_sdk/cpp_sdk/libs/x64/mt/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
@@ -319,6 +318,7 @@
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
     <ClInclude Include="ui_kit_base\invoke_safe_callback.h" />
+    <ClInclude Include="util\net_call_helper.h" />
     <ClInclude Include="util\user.h" />
     <ClInclude Include="util\windows_manager.h" />
     <ClInclude Include="util\window_ex.h" />
@@ -464,6 +464,7 @@
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
     </ClCompile>
+    <ClCompile Include="util\net_call_helper.cpp" />
     <ClCompile Include="util\user.cpp" />
     <ClCompile Include="util\windows_manager.cpp" />
     <ClCompile Include="util\window_ex.cpp" />
@@ -477,6 +478,9 @@
     </ProjectReference>
     <ProjectReference Include="..\..\db\db.vcxproj">
       <Project>{745e6452-9fe1-435b-833a-767617eee1da}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\duilib\duilib.vcxproj">
+      <Project>{e106acd7-4e53-4aee-942b-d0dd426db34e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\shared\shared.vcxproj">
       <Project>{9951345f-620b-4bed-bb51-4f928cafd454}</Project>

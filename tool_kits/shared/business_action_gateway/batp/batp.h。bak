@@ -1,0 +1,64 @@
+#ifndef _COMPILE_SWITCH_BUSINESS_ACTION_GATEWAY_BATP_BATP_H_
+#define _COMPILE_SWITCH_BUSINESS_ACTION_GATEWAY_BATP_BATP_H_
+
+#include <string>
+
+#include "base/util/any.h"
+
+namespace nbase
+{
+	enum class BatpPackType
+	{
+		REQUEST,//请求
+		RESPONSE,//应答
+		NOTIFY,//推送
+	};
+	enum class BatpCode
+	{
+		OK = 200,
+		FORBIDDEN = 403,
+		NOTFOUND = 404,
+		METHODNOTALLOWED = 405,
+		PARAMETERERROR = 414,
+	};
+	enum class BatpRequestMeth
+	{
+		POST = 0,//异步
+		SEND = 1,//同步
+		UNIDIRECTIONAL = 2,//只发送，不等应答
+
+	};
+	class  BatpTrailInfo
+	{
+	public:
+		std::string file_name_;
+		std::string line_;
+		std::string function_name_;
+	};
+#define BatpTrailInfoFromHere {__FILE__,__LINE__,__FUNCTION__}
+	class BatpHead
+	{
+	public:
+		BatpPackType type_;
+		BatpCode code_;
+		std::string code_message_;
+		uint64_t sn_;
+		std::string action_name_;
+		BatpRequestMeth meth_;
+		BatpTrailInfo trail_info_;
+		std::string extern_message_;
+	};
+	class BatpBody
+	{
+	public:
+		any param_;
+	};
+	class BatpPack
+	{
+	public:
+		BatpHead head_;
+		BatpBody body_;
+	};
+}
+
+#endif //_COMPILE_SWITCH_BUSINESS_ACTION_GATEWAY_BATP_BATP_H_

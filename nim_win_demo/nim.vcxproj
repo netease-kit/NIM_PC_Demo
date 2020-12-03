@@ -103,6 +103,7 @@
       <DisableSpecificWarnings>4091;4100;4121;4127;4244;4310;4355;4458;4481;4505;4512;4702;4251;%(DisableSpecificWarnings)</DisableSpecificWarnings>
       <ForcedIncludeFiles>stdafx.h</ForcedIncludeFiles>
       <AdditionalOptions>-Zm200 %(AdditionalOptions)</AdditionalOptions>
+      <UndefinePreprocessorDefinitions>__MACHINEX64;__MACHINEARM;__MACHINEARM64;__MACHINEARM_ARM64_X64</UndefinePreprocessorDefinitions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -156,7 +157,7 @@
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <AdditionalDependencies>dbghelp.lib;libyuv.lib;libssl.lib;libcrypto.lib;custom_app_sdk.lib;ws2_32.lib;Userenv.lib;Crypt32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>..\sdk\nim_sdk\cpp_sdk\libs\x86\mt\;..\libs\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\sdk\nim_sdk\cpp_sdk\libs\x86\mt\;..\libs\;..\bin\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <DelayLoadDLLs>nim_libcef.dll;libEGL.dll;libGLESv2.dll;NELivePlayer.dll</DelayLoadDLLs>
       <IgnoreAllDefaultLibraries>
       </IgnoreAllDefaultLibraries>
@@ -285,6 +286,9 @@
     </ProjectReference>
     <ProjectReference Include="..\tool_kits\base\base.vcxproj">
       <Project>{8d9a6595-717a-41c8-b468-0011a72be3d1}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\tool_kits\duilib\duilib.vcxproj">
+      <Project>{e106acd7-4e53-4aee-942b-d0dd426db34e}</Project>
     </ProjectReference>
     <ProjectReference Include="..\tool_kits\shared\shared.vcxproj">
       <Project>{9951345f-620b-4bed-bb51-4f928cafd454}</Project>

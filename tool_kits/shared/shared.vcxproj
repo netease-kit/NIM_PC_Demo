@@ -90,7 +90,7 @@
       <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\;$(ProjectDir)../../nim_sdk/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
     </ClCompile>
@@ -122,7 +122,7 @@
       <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\;$(ProjectDir)../../nim_sdk/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
     </ClCompile>
@@ -141,7 +141,7 @@
       <AdditionalIncludeDirectories>.\;..\;..\..\;..\..\third_party\jsoncpp\include\;$(ProjectDir)../../nim_sdk/</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_CRT_SECURE_NO_WARNINGS;NIM_WIN_DESKTOP_ONLY_SDK;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <ForcedIncludeFiles>
       </ForcedIncludeFiles>
     </ClCompile>
@@ -157,6 +157,9 @@
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="business_action_gateway\batp\batp.cpp" />
+    <ClCompile Include="business_action_gateway\business_action_gateway\business_action_gateway_imp.cpp" />
+    <ClCompile Include="business_action_gateway\business_manager\business_manager.cpp" />
     <ClCompile Include="closure.cpp" />
     <ClCompile Include="cmd_line.cpp" />
     <ClCompile Include="cpp_wrapper_util.cpp" />
@@ -208,6 +211,12 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="auto_unregister.h" />
+    <ClInclude Include="business_action_gateway\batp\batp.h" />
+    <ClInclude Include="business_action_gateway\business_action_gateway\action_dispatcher.h" />
+    <ClInclude Include="business_action_gateway\business_action_gateway\business_action_gateway_imp.h" />
+    <ClInclude Include="business_action_gateway\business_action_gateway\ibusiness_action_gateway.h" />
+    <ClInclude Include="business_action_gateway\business_action_gateway\ibusiness_action_gateway_option.h" />
+    <ClInclude Include="business_action_gateway\business_manager\business_manager.h" />
     <ClInclude Include="closure.h" />
     <ClInclude Include="cmd_line.h" />
     <ClInclude Include="cpp_wrapper_util.h" />

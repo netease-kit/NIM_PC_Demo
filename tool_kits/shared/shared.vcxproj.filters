@@ -14,6 +14,18 @@
     <Filter Include="ui\toast">
       <UniqueIdentifier>{b17a3355-003a-4496-a770-f4626d93264d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="business_action_gateway">
+      <UniqueIdentifier>{3a980854-eddc-48fc-9968-2ae4f04b71a3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="business_action_gateway\batp">
+      <UniqueIdentifier>{59355b15-de13-4778-a6e4-ffb9f0fd4320}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="business_action_gateway\business_action_gateway">
+      <UniqueIdentifier>{2b66d888-f3bb-4a56-bf51-c64879980187}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="business_action_gateway\business_manager">
+      <UniqueIdentifier>{8b53d71d-a6ed-4fef-a80c-b69e3f8657df}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="cmd_line.cpp" />
@@ -52,6 +64,15 @@
     <ClCompile Include="unzip.cpp" />
     <ClCompile Include="zip.cpp" />
     <ClCompile Include="cpp_wrapper_util.cpp" />
+    <ClCompile Include="business_action_gateway\business_action_gateway\business_action_gateway_imp.cpp">
+      <Filter>business_action_gateway\business_action_gateway</Filter>
+    </ClCompile>
+    <ClCompile Include="business_action_gateway\business_manager\business_manager.cpp">
+      <Filter>business_action_gateway\business_manager</Filter>
+    </ClCompile>
+    <ClCompile Include="business_action_gateway\batp\batp.cpp">
+      <Filter>business_action_gateway\batp</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="cmd_line.h" />
@@ -96,5 +117,23 @@
     <ClInclude Include="unzip.h" />
     <ClInclude Include="zip.h" />
     <ClInclude Include="cpp_wrapper_util.h" />
+    <ClInclude Include="business_action_gateway\batp\batp.h">
+      <Filter>business_action_gateway\batp</Filter>
+    </ClInclude>
+    <ClInclude Include="business_action_gateway\business_action_gateway\action_dispatcher.h">
+      <Filter>business_action_gateway\business_action_gateway</Filter>
+    </ClInclude>
+    <ClInclude Include="business_action_gateway\business_action_gateway\business_action_gateway_imp.h">
+      <Filter>business_action_gateway\business_action_gateway</Filter>
+    </ClInclude>
+    <ClInclude Include="business_action_gateway\business_action_gateway\ibusiness_action_gateway.h">
+      <Filter>business_action_gateway\business_action_gateway</Filter>
+    </ClInclude>
+    <ClInclude Include="business_action_gateway\business_action_gateway\ibusiness_action_gateway_option.h">
+      <Filter>business_action_gateway\business_action_gateway</Filter>
+    </ClInclude>
+    <ClInclude Include="business_action_gateway\business_manager\business_manager.h">
+      <Filter>business_action_gateway\business_manager</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
