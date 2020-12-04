@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "nim_app.h"
 
 #include "resource.h"
@@ -17,6 +17,8 @@
 #include "nim_service\module\local\local_helper.h"
 #include "tool_kits\ui_component\ui_kit\export\nim_ui_runtime_manager.h"
 #include "app_sdk\app_config\app_sdk_config.h"
+#include "shared/business_action_gateway/business_manager/business_manager.h"
+
 void MainThread::Init()
 {
 	nbase::ThreadManager::RegisterThread(kThreadUI);
@@ -72,6 +74,8 @@ void MainThread::PreMessageLoop()
 
 	app_sdk_thread_.reset(new MiscThread(kThreadApp, "App SDK Thread"));
 	app_sdk_thread_->Start();
+
+	nbase::BusinessManager::GetInstance()->Init();
 }
 
 void MainThread::PostMessageLoop()
@@ -103,8 +107,8 @@ void MainThread::OnMsgBoxCallback(MsgBoxRet ret, const std::string& dmp_path)
 }
 
 /**
-* È«¾Öº¯Êı£¬³õÊ¼»¯ÔÆĞÅ¡£°üÀ¨¶ÁÈ¡Ó¦ÓÃ·şÎñÆ÷µØÖ·£¬ÔØÈëÔÆĞÅsdk£¬³õÊ¼»¯°²×°Ä¿Â¼ºÍÓÃ»§Ä¿Â¼£¬×¢²áÊÕµ½ÍÆËÍÊ±Ö´ĞĞµÄ»Øµ÷º¯Êı¡£
-* @return boolÊÇ·ñ³õÊ¼»¯³É¹¦
+* å…¨å±€å‡½æ•°ï¼Œåˆå§‹åŒ–äº‘ä¿¡ã€‚åŒ…æ‹¬è¯»å–åº”ç”¨æœåŠ¡å™¨åœ°å€ï¼Œè½½å…¥äº‘ä¿¡sdkï¼Œåˆå§‹åŒ–å®‰è£…ç›®å½•å’Œç”¨æˆ·ç›®å½•ï¼Œæ³¨å†Œæ”¶åˆ°æ¨é€æ—¶æ‰§è¡Œçš„å›è°ƒå‡½æ•°ã€‚
+* @return boolæ˜¯å¦åˆå§‹åŒ–æˆåŠŸ
 */
 bool NimAPP::InitNim(const std::string& server_conf_file_path)
 {
@@ -113,14 +117,14 @@ bool NimAPP::InitNim(const std::string& server_conf_file_path)
 	InitGlobalConfig(server_conf_file_path,app_key,config);
 	if (app_key.empty())
 		app_key = app_sdk::AppSDKInterface::GetAppKey();
-	//string£¨db key±ØÌî£¬Ä¿Ç°Ö»Ö§³Ö×î¶à32¸ö×Ö·ûµÄ¼ÓÃÜÃÜÔ¿£¡½¨ÒéÊ¹ÓÃ32¸ö×Ö·û£©
+	//stringï¼ˆdb keyå¿…å¡«ï¼Œç›®å‰åªæ”¯æŒæœ€å¤š32ä¸ªå­—ç¬¦çš„åŠ å¯†å¯†é’¥ï¼å»ºè®®ä½¿ç”¨32ä¸ªå­—ç¬¦ï¼‰
 #ifdef _DEBUG
 	config.database_encrypt_key_ = "";
 #endif
 
 	
 	std::wstring app_install;// = QPath::GetAppPath() + L"\\x64_dlls\\";
-	bool ret = nim::Client::Init(app_key, "Netease", nbase::UTF16ToUTF8(app_install), config); // ÔØÈëÔÆĞÅsdk£¬³õÊ¼»¯°²×°Ä¿Â¼ºÍÓÃ»§Ä¿Â¼
+	bool ret = nim::Client::Init(app_key, "Netease", nbase::UTF16ToUTF8(app_install), config); // è½½å…¥äº‘ä¿¡sdkï¼Œåˆå§‹åŒ–å®‰è£…ç›®å½•å’Œç”¨æˆ·ç›®å½•
 	if (ret)
 	{
 		nim_ui::RunTimeDataManager::GetInstance()->SetIMInited();
@@ -129,7 +133,7 @@ bool NimAPP::InitNim(const std::string& server_conf_file_path)
 			});
 	}
 	assert(ret);
-	//³õÊ¼»¯ÁÄÌìÊÒ
+	//åˆå§‹åŒ–èŠå¤©å®¤
 	{		
 		ret = nim_chatroom::ChatRoom::Init(nbase::UTF16ToUTF8(app_install), "");
 		if (ret)
@@ -143,7 +147,7 @@ bool NimAPP::InitNim(const std::string& server_conf_file_path)
 		}
 		assert(ret);
 	}
-	// ³õÊ¼»¯ÔÆĞÅÒôÊÓÆµ
+	// åˆå§‹åŒ–äº‘ä¿¡éŸ³è§†é¢‘
 	ret = nim::VChat::Init(server_conf_file_path);
 	if (ret)
 	{
@@ -151,8 +155,8 @@ bool NimAPP::InitNim(const std::string& server_conf_file_path)
 	}
 	assert(ret);
 	
-	// InitUiKit½Ó¿Ú²ÎÊı¾ö¶¨ÊÇ·ñÆôÓÃÊÂ¼ş¶©ÔÄÄ£¿é£¬Ä¬ÈÏÎªfalse£¬Èç¹ûÊÇÔÆĞÅdemo appÔòÎªtrue
-	// Èç¹ûÄãµÄApp¿ªÆôÁËÊÂ¼ş¶©ÔÄ¹¦ÄÜ£¬Ôò´Ë²ÎÊı¸ÄÎªtrue
+	// InitUiKitæ¥å£å‚æ•°å†³å®šæ˜¯å¦å¯ç”¨äº‹ä»¶è®¢é˜…æ¨¡å—ï¼Œé»˜è®¤ä¸ºfalseï¼Œå¦‚æœæ˜¯äº‘ä¿¡demo appåˆ™ä¸ºtrue
+	// å¦‚æœä½ çš„Appå¼€å¯äº†äº‹ä»¶è®¢é˜…åŠŸèƒ½ï¼Œåˆ™æ­¤å‚æ•°æ”¹ä¸ºtrue
 	//nim_ui::InitManager::GetInstance()->InitUiKit(app_sdk::AppSDKInterface::IsNimDemoAppKey(app_sdk::AppSDKInterface::GetAppKey())); 
 	if (ret)
 	{
@@ -194,7 +198,7 @@ int NimAPP::InitInstance(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLin
 		if (!nbase::FilePathIsExist(nim_http_tool_path, false))
 				nim_http_tool_path = L"";
 	}
-	// ³õÊ¼»¯ÔÆĞÅhttp
+	// åˆå§‹åŒ–äº‘ä¿¡http
 	try {
 		nim_http::Init(nim_http_tool_path);
 	}
@@ -210,7 +214,7 @@ int NimAPP::ExitInstance()
 {
 	
 
-	// ³ÌĞò½áÊøÖ®Ç°£¬ÇåÀíÔÆĞÅsdkºÍUI×é¼ş
+	// ç¨‹åºç»“æŸä¹‹å‰ï¼Œæ¸…ç†äº‘ä¿¡sdkå’ŒUIç»„ä»¶
 	nim_ui::InitManager::GetInstance()->CleanupUiKit();
 	if (nim_ui::RunTimeDataManager::GetInstance()->IsSDKInited())
 	{
@@ -222,6 +226,8 @@ int NimAPP::ExitInstance()
 			nim::Client::Cleanup2();
 	}	
 	nim_http::Uninit();
+
+	nbase::BusinessManager::GetInstance()->UnInit();
 	return 0;
 }
 //int NimAPP::InitRedistPackages()
@@ -231,14 +237,14 @@ int NimAPP::ExitInstance()
 //
 //	std::wstring redist_packages_path = QPath::GetAppPath();
 //#ifdef _DEBUG
-//	//cef_path += L"cef_debug"; // ÏÖÔÚ¼´Ê¹ÔÚdebugÄ£Ê½ÏÂÒ²Ê¹ÓÃcef release°æ±¾µÄdll£¬ÎªÁËÆÁ±ÎµôcefÍË³öÊ±µÄÖĞ¶Ï£¬Èç¹û²»ĞèÒªµ÷ÊÔcefµÄ¹¦ÄÜ²»ĞèÒªÊ¹ÓÃdebug°æ±¾µÄdll
+//	//cef_path += L"cef_debug"; // ç°åœ¨å³ä½¿åœ¨debugæ¨¡å¼ä¸‹ä¹Ÿä½¿ç”¨cef releaseç‰ˆæœ¬çš„dllï¼Œä¸ºäº†å±è”½æ‰cefé€€å‡ºæ—¶çš„ä¸­æ–­ï¼Œå¦‚æœä¸éœ€è¦è°ƒè¯•cefçš„åŠŸèƒ½ä¸éœ€è¦ä½¿ç”¨debugç‰ˆæœ¬çš„dll
 //	redist_packages_path += L"redist_packages";
 //#else
 //	redist_packages_path += L"redist_packages";
 //#endif
 //	if (!nbase::FilePathIsExist(redist_packages_path, true))
 //	{
-//		MessageBox(NULL, L"³õÊ¼»¯ SDK»·¾³²»ÍêÕû £¬¿ÉÄÜµ¼ÖÂSDK¼ÓÔØÊ§°Ü", L"ÌáÊ¾", MB_OK);
+//		MessageBox(NULL, L"åˆå§‹åŒ– SDKç¯å¢ƒä¸å®Œæ•´ ï¼Œå¯èƒ½å¯¼è‡´SDKåŠ è½½å¤±è´¥", L"æç¤º", MB_OK);
 //	}
 //	std::wstring new_envirom(redist_packages_path);
 //	new_envirom.append(L";").append(path_envirom);
@@ -246,7 +252,7 @@ int NimAPP::ExitInstance()
 //}
 int NimAPP::InitEnvironment(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)
 {
-	// °Ñcef dllÎÄ¼şµÄÎ»ÖÃÌí¼Óµ½³ÌĞòµÄ"path"»·¾³±äÁ¿ÖĞ,ÕâÑù¿ÉÒÔ°ÑdllÎÄ¼ş·Åµ½binÒÔÍâµÄÄ¿Â¼£¬²¢ÇÒ²»ĞèÒªÊÖ¶¯Æµ·±ÇĞ»»dllÎÄ¼ş£¬ÕâĞĞ´úÂë±ØĞëĞ´µ½mainµÄ¿ªÍ·
+	// æŠŠcef dllæ–‡ä»¶çš„ä½ç½®æ·»åŠ åˆ°ç¨‹åºçš„"path"ç¯å¢ƒå˜é‡ä¸­,è¿™æ ·å¯ä»¥æŠŠdllæ–‡ä»¶æ”¾åˆ°binä»¥å¤–çš„ç›®å½•ï¼Œå¹¶ä¸”ä¸éœ€è¦æ‰‹åŠ¨é¢‘ç¹åˆ‡æ¢dllæ–‡ä»¶ï¼Œè¿™è¡Œä»£ç å¿…é¡»å†™åˆ°mainçš„å¼€å¤´
 	nim_cef::CefManager::GetInstance()->AddCefDllToPath();
 	_wsetlocale(LC_ALL, L"chs");
 	srand((unsigned int)time(NULL));
@@ -256,7 +262,7 @@ int NimAPP::InitEnvironment(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmd
 	if (FAILED(::OleInitialize(NULL)))
 		return 0;
 	QCommand::ParseCommand(lpszCmdLine);
-	//³õÊ¼»¯cef
+	//åˆå§‹åŒ–cef
 	CefSettings settings;
 	if (!nim_cef::CefManager::GetInstance()->Initialize(QPath::GetNimAppDataDir(APPDATA_DIR), settings, atoi(GetConfigValue("kNIMCefOsrEnabled").c_str()) > 0))
 		return 0;
@@ -351,7 +357,7 @@ int NimAPP::UninitEnvironment()
 	com_module_->Term();
 	com_module_.reset();
 	::OleUninitialize();
-	//ÇåÀícef
+	//æ¸…ç†cef
 	nim_cef::CefManager::GetInstance()->UnInitialize();	
 	return 0;
 }
@@ -361,14 +367,14 @@ int NimAPP::Exec(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int n
 		return 0;
 	nbase::AtExitManager at_manager;	
 	InitInstance(hInst, hPrevInst, lpszCmdLine, nCmdShow);
-	// ´´½¨Ö÷Ïß³Ì
+	// åˆ›å»ºä¸»çº¿ç¨‹
 	QLOG_APP(L"begin ui loop");
-	MainThread().RunOnCurrentThreadWithLoop(nbase::MessageLoop::kUIMessageLoop); // Ö´ĞĞÖ÷Ïß³ÌÑ­»·
+	MainThread().RunOnCurrentThreadWithLoop(nbase::MessageLoop::kUIMessageLoop); // æ‰§è¡Œä¸»çº¿ç¨‹å¾ªç¯
 	QLOG_APP(L"exit ui loop");	
 	UninitEnvironment();
 	ExitInstance();
 	QLOG_APP(L"app exit");
-	// ÊÇ·ñÖØĞÂÔËĞĞ³ÌĞò
+	// æ˜¯å¦é‡æ–°è¿è¡Œç¨‹åº
 	CheckRestartApp();
 	return 0;
 }
