@@ -18,7 +18,9 @@ namespace app_sdk
 		{ "NRTCStreamENCKey", std::make_tuple("nrtc_stream_enc_key", NimServerConfType::NimServerConfType_String) },
 		{ "kNIMChatRoomAddress", std::make_tuple("chatroomDemoListUrl", NimServerConfType::NimServerConfType_String) }
 	};
-const std::string AppSDKInterface::kAppKey = "45c6af3c98409b18a84451215d0bdd6e";	
+
+//开发者需在此处替换成自己的appkey
+const std::string AppSDKInterface::kAppKey = "";	
 const std::string AppSDKInterface::kAppHost = "http://app.netease.im";
 
 std::map<std::string, std::string> AppSDKInterface::config_map_;
