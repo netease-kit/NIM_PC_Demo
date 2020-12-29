@@ -57,7 +57,7 @@ namespace nbase
 	}
 	void BusinessActionGatewayImp::Notify(const BatpPack& notify)
 	{
-		notify_thread_.PostTask(ToWeakCallback([this, notify]() {
+		notify_thread_.message_loop()->PostTask(ToWeakCallback([this, notify]() {
 			std::lock_guard<std::recursive_mutex> auto_lock(notify_list_lock_);
 			auto action_list = notify_list_.find(notify.head_.action_name_);
 			if (action_list != notify_list_.end())
@@ -84,7 +84,7 @@ namespace nbase
 				wait_response_list_[request.head_.sn_] = call_back;
 				//wait_response_list_.insert(std::make_pair(request.head_.sn_, call_back));
 			}
-			working_thread_.PostTask(ToWeakCallback([request, dispatcher]() {
+			working_thread_.message_loop()->PostTask(ToWeakCallback([request, dispatcher]() {
 				dispatcher->DispatchActionRequest(request);
 				}));
 		}
@@ -94,7 +94,7 @@ namespace nbase
 		}
 		else if (request.head_.meth_ == BatpRequestMeth::UNIDIRECTIONAL)
 		{
-			working_thread_.PostTask(ToWeakCallback([request, dispatcher]() {
+			working_thread_.message_loop()->PostTask(ToWeakCallback([request, dispatcher]() {
 				dispatcher->DispatchActionRequest(request);
 				}));
 		}
@@ -117,7 +117,7 @@ namespace nbase
 				if (cb != nullptr)
 					cb(response);
 				});
-			working_thread_.PostTask(task);
+			working_thread_.message_loop()->PostTask(task);
 		}
 	}
 }

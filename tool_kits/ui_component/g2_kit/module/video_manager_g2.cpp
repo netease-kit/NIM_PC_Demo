@@ -36,9 +36,12 @@ namespace nim_comp
 			kAvChatSetAudioDevice,
 			kAvChatSetVideoDevice,
 			kAvChatStartVideoPreview,
+			kAvChatSwitchCallType,
+			kAvChatSetAudioMute,
 			kAvChatStartAudioDeviceLoopbackTest,
 			kAvChatStopAudioDeviceLoopbackTest,
 			kAvChatSetVideoQuality,
+			kAvChatGetTockenService,
 		};
 	}
 	VideoManagerG2::VideoManagerG2():init_flag_(false), is_video_enable_(true), video_quality_type_(3), is_audio_input_enable_(true),is_audio_output_enable_(true)
@@ -67,9 +70,12 @@ namespace nim_comp
 		action_dispatcher_->AddActionProc(kAvChatSetAudioDevice, &AvChatBusinessWrapper::setAudioDevice);
 		action_dispatcher_->AddActionProc(kAvChatSetVideoDevice, &AvChatBusinessWrapper::setVideoDevice);
 		action_dispatcher_->AddActionProc(kAvChatStartVideoPreview, &AvChatBusinessWrapper::startVideoPreview);
+		action_dispatcher_->AddActionProc(kAvChatSwitchCallType, &AvChatBusinessWrapper::switchCallType);
+		action_dispatcher_->AddActionProc(kAvChatSetAudioMute, &AvChatBusinessWrapper::setAudioMute);
 		action_dispatcher_->AddActionProc(kAvChatStartAudioDeviceLoopbackTest, &AvChatBusinessWrapper::startAudioDeviceLoopbackTest);
 		action_dispatcher_->AddActionProc(kAvChatStopAudioDeviceLoopbackTest, &AvChatBusinessWrapper::stopAudioDeviceLoopbackTest);
 		action_dispatcher_->AddActionProc(kAvChatSetVideoQuality, &AvChatBusinessWrapper::setVideoQuality);
+		action_dispatcher_->AddActionProc(kAvChatGetTockenService, &AvChatBusinessWrapper::getTokenService);
 
 		nbase::BusinessManager::GetInstance()->RegActions(GetSupportedActionsList(),
 			nbase::ActionDispatcher(action_dispatcher_)
@@ -82,12 +88,18 @@ namespace nim_comp
 		SubSingleNotifyForUI(kAvChatOnUserReject, &VideoManagerG2::OnUserRejectCb);
 		SubSingleNotifyForUI(kAvChatOnUserEnter, &VideoManagerG2::OnUserEnterCb);
 		SubSingleNotifyForUI(kAvChatOnUserLeave, &VideoManagerG2::OnUserLeaveCb);
+		SubSingleNotifyForUI(kAvChatOnUserDisconnect, &VideoManagerG2::OnUserDisconnectCb);
 		SubSingleNotifyForUI(kAvChatOnUserBusy, &VideoManagerG2::OnUserBusyCb);
 		SubSingleNotifyForUI(kAvChatOnUserCancel, &VideoManagerG2::OnUserCancelCb);
 
 		SubSingleNotifyForUI(kAvChatOnCallingTimeOut, &VideoManagerG2::OnCallingTimeOutCb);
+		SubSingleNotifyForUI(kAvChatOnVideoToAudio, &VideoManagerG2::OnVideoToAudioCb);
 		SubSingleNotifyForUI(kAvChatOnCallEnd, &VideoManagerG2::OnCallEndCb);
 		SubSingleNotifyForUI(kAvChatOnError, &VideoManagerG2::OnErrorCb);
+
+		SubSingleNotifyForUI(kAvChatOnOtherClientAccept, &VideoManagerG2::onOtherClientAcceptCb);
+		SubSingleNotifyForUI(kAvChatOnOtherClientReject, &VideoManagerG2::onOtherClientRejectCb);
+		SubSingleNotifyForUI(kAvChatOnUserNetworkQuality, &VideoManagerG2::onUserNetworkQualityCb);
 
 		SubSingleNotifyForUI(kAvChatOnCameraAvailable, &VideoManagerG2::OnCameraAvailableCb);
 		SubSingleNotifyForUI(kAvChatOnAudioAvailable, &VideoManagerG2::OnAudioAvailableCb);
@@ -97,9 +109,18 @@ namespace nim_comp
 		//设置appkey，初始化nertc引擎
 		std::string appkey = app_sdk::AppSDKInterface::GetAppKey();
 		nbase::BatpPack bp;
+		AvChatParams params;
+		params.appKey = appkey;// nim::Client::GetCurrentUserAccount();
+		params.useRtcSafeMode = true;  //是否开启安全模式，true表示开启，false表示关闭
 		bp.head_.action_name_ = kAvChatSetupAppKey;
-		bp.body_.param_ = appkey;
+		bp.body_.param_ = params;
 		nbase::BusinessManager::GetInstance()->Request(bp, nullptr);
+
+		//获取token
+		params.tockenServiceFunc = QueryToken;
+		bp.head_.action_name_ = kAvChatGetTockenService;
+		bp.body_.param_ = params;
+		nbase::BusinessManager::GetInstance()->Request(bp, nullptr);	
 	}
 
 	void VideoManagerG2::UnInit(StdClosure cb)
@@ -179,7 +200,7 @@ namespace nim_comp
 
 			video_form_->ShowStatusPage(VideoFormG2::SP_DIAL);
 			video_form_->SwitchStatus(VideoFormG2::STATUS_CALLING);
-			video_form_->StartDialWaitingTimer();
+			//video_form_->StartDialWaitingTimer();
 		}
 		else
 		{
@@ -348,10 +369,6 @@ namespace nim_comp
 	 */
 	void VideoManagerG2::SetDeviceOnce()
 	{
-		static std::atomic_bool exec = false;
-		if (exec)
-			return;
-
 		std::vector<std::wstring> ids;
 		AvChatBusinessWrapper::getLocalDeviceList(nullptr, &ids, nullptr, nullptr, nullptr, nullptr);
 		if (ids.size() > 0)
@@ -370,8 +387,7 @@ namespace nim_comp
 
 		EnableAudioDevice(true, true);
 		EnableAudioDevice(true, false);
-		EnableVideoDevice(true);
-		exec = true;
+		if(is_video_mode_) EnableVideoDevice(true);
 	}
 	void VideoManagerG2::SetVideoDevice(const std::wstring& id)
 	{
@@ -552,7 +568,7 @@ namespace nim_comp
 	//扬声器开关、音量
 	void VideoManagerG2::SetDeviceStatusFromSetting()
 	{
-		EnableVideoDevice(is_video_enable_);
+		if (is_video_mode_) EnableVideoDevice(is_video_enable_);
 		SetVideoQuality(video_quality_type_);
 		EnableAudioDevice(is_audio_input_enable_, true);
 		EnableAudioDevice(is_audio_output_enable_, false);
@@ -592,6 +608,11 @@ namespace nim_comp
 	}
 	void VideoManagerG2::OnUserLeaveCb(const nbase::BatpPack& response)
 	{
+		//当前PC Demo只有一对一呼叫，不处理OnUserLeave事件
+		//video_form_->EnterEndCallPage(VideoFormG2::END_CALL_BE_HANGUP);
+	}
+	void VideoManagerG2::OnUserDisconnectCb(const nbase::BatpPack& response)
+	{
 		video_form_->EnterEndCallPage(VideoFormG2::END_CALL_BE_HANGUP);
 	}
 	void VideoManagerG2::OnUserBusyCb(const nbase::BatpPack& response)
@@ -607,8 +628,16 @@ namespace nim_comp
 	void VideoManagerG2::OnCallingTimeOutCb(const nbase::BatpPack& response)
 	{
 		std::string channelId = AvChatBusinessWrapper::getChannelId();
-
+		video_form_->SwitchStatus(VideoFormG2::STATUS_NO_RESPONSE);
 	}
+
+	void VideoManagerG2::OnVideoToAudioCb(const nbase::BatpPack& response) {
+		if (video_form_)
+		{
+			video_form_->IntoAudio();
+		}
+	}
+
 	void VideoManagerG2::OnCallEndCb(const nbase::BatpPack& response)
 	{
 		if (video_form_)
@@ -620,6 +649,20 @@ namespace nim_comp
 			video_form_->EnterEndCallPage(VideoFormG2::END_CALL_CLOSE);
 	}
 
+	void VideoManagerG2::onOtherClientAcceptCb(const nbase::BatpPack& response)
+	{
+		if (video_form_)
+			video_form_->EnterEndCallPage(VideoFormG2::END_CALL_OTHER_CLIENT_ACCEPT);
+	}
+	void VideoManagerG2::onOtherClientRejectCb(const nbase::BatpPack& response)
+	{
+		if (video_form_)
+			video_form_->EnterEndCallPage(VideoFormG2::END_CALL_OTHER_CLIENT_REJECT);
+	}
+	void VideoManagerG2::onUserNetworkQualityCb(const nbase::BatpPack& response)
+	{
+
+	}
 	void VideoManagerG2::OnCameraAvailableCb(const nbase::BatpPack& response)
 	{
 		QLOG_APP(L"");
@@ -684,6 +727,29 @@ namespace nim_comp
 
 		nbase::BusinessManager::GetInstance()->Request(bp, nullptr);
 	}
+
+	void VideoManagerG2::EnableVideoToAudio(std::string	session_id_, int call_type)
+	{
+		nbase::BatpPack bp;
+		AvChatParams params;
+		bp.head_.action_name_ = kAvChatSwitchCallType;
+		params.sessionId = session_id_;
+		params.callType = call_type;
+		bp.body_.param_ = params;
+		nbase::BusinessManager::GetInstance()->Request(bp, nullptr);
+	}
+
+	void VideoManagerG2::SetAudioMute(std::string	session_id_, bool bMute)
+	{
+		nbase::BatpPack bp;
+		AvChatParams params;
+		bp.head_.action_name_ = kAvChatSetAudioMute;
+		params.sessionId = session_id_;
+		params.muteAudio = bMute;
+		bp.body_.param_ = params;
+		nbase::BusinessManager::GetInstance()->Request(bp, nullptr);
+	}
+
 	VideoSettingFormG2* VideoManagerG2::GetVideoSettingForm()
 	{
 		if (setting_form_ && !setting_form_flag_.expired())
@@ -695,5 +761,36 @@ namespace nim_comp
 		if (video_form_ && !video_form_flag_.expired())
 			return video_form_.get();
 		return nullptr;
+	}
+
+	void QueryToken(int64_t uid, std::function<void(const std::string& token)> onGetToken)
+	{
+		std::string strKey = "45c6af3c98409b18a84451215d0bdd6e";
+		std::string suid = nbase::Int64ToString(uid);
+		std::string url = "https://nrtc.netease.im/demo/getChecksum.action?uid=";
+		url.append(suid);
+		url.append("&appkey=");
+		//url.append(app_sdk::AppSDKInterface::GetAppKey());
+		url.append(strKey);
+		nim_http::HttpRequest req(url, nullptr, 0,
+			[url, onGetToken](bool ret, int code, const std::string& resContent) {
+				if (ret && code == nim::kNIMResSuccess)
+				{
+					QLOG_APP(L"QueryToken configs:{0}") << resContent;
+					Json::Value values;
+					Json::Reader reader;
+					if (!reader.parse(resContent, values) || !values.isObject())
+					{
+						QLOG_ERR(L"parse resContent info failed: {0}");
+						return;
+					}
+					if (values["checksum"].isString()) {
+						std::string token = values["checksum"].asString();
+						onGetToken(token);
+					}
+				}
+			});
+		req.SetMethodAsPost();
+		nim_http::PostRequest(req);
 	}
 }

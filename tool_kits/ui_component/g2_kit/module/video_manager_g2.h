@@ -24,6 +24,7 @@ namespace nim_comp
 	typedef std::function<void(int code)>  MultiRoomCreatedCallback;
 
 	using ActionProc = void(*)(const nbase::BatpPack&);
+	void QueryToken(int64_t uid, std::function<void(const std::string& token)> onGetToken);
 
 
 	class VideoActionDispatcher : public nbase::IActionDispatcher
@@ -102,12 +103,18 @@ namespace nim_comp
 		void OnUserRejectCb(const nbase::BatpPack& response);
 		void OnUserEnterCb(const nbase::BatpPack& response);
 		void OnUserLeaveCb(const nbase::BatpPack& response);
+		void OnUserDisconnectCb(const nbase::BatpPack& response);
 		void OnUserBusyCb(const nbase::BatpPack& response);
 		void OnUserCancelCb(const nbase::BatpPack& response);
 
 		void OnCallingTimeOutCb(const nbase::BatpPack& response);
+		void OnVideoToAudioCb(const nbase::BatpPack& response);
 		void OnCallEndCb(const nbase::BatpPack& response);
 		void OnErrorCb(const nbase::BatpPack& response);
+
+		void onOtherClientAcceptCb(const nbase::BatpPack& response);
+		void onOtherClientRejectCb(const nbase::BatpPack& response);
+		void onUserNetworkQualityCb(const nbase::BatpPack& response);
 
 		void OnCameraAvailableCb(const nbase::BatpPack& response);
 		void OnAudioAvailableCb(const nbase::BatpPack& response);
@@ -116,6 +123,8 @@ namespace nim_comp
 		void StartVideoPreview(bool start = true);
 		void StartAudioPreview(bool start = true);
 		void SetVideoQuality(int tytpe);
+		void EnableVideoToAudio(std::string	session_id_, int call_type);
+		void SetAudioMute(std::string	session_id_, bool bMute);
 		VideoSettingFormG2* GetVideoSettingForm();
 		VideoFormG2* GetVideoForm();
 		//nbase::BusinessActionGatewayImp			gateway_impl_;

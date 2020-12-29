@@ -55,6 +55,9 @@ namespace nim_comp
 			END_CALL_BUSYING,
 			END_CALL_REJECT,
 			END_CALL_STARTFAIL,
+			END_CALL_TOAUDIO,
+			END_CALL_OTHER_CLIENT_ACCEPT,
+			END_CALL_OTHER_CLIENT_REJECT,
 		};
 		enum VideoChatMsgStateType
 		{
@@ -62,6 +65,10 @@ namespace nim_comp
 			kVideoChatMsgStateHangup1 = 1, //我发起，我挂断：   无人接听
 			kVideoChatMsgStateHangup2 = 2, //我发起，对方挂断： 对方正忙
 			kVideoChatMsgStateHangup3 = 3, //对方发起，我挂断： 未接听
+		};
+		enum CallType {
+			kVideoToAudio = 0,  //视频转音频
+			kAudioToVideo = 1,  //音频转视频
 		};
 	public:
 		VideoFormG2(const std::string& session_id);
@@ -106,6 +113,18 @@ namespace nim_comp
 		* @return Control* 创建的控件的指针
 		*/
 		virtual ui::Control* CreateControl(const std::wstring& pstrClass) override;
+
+		/**
+		* 进入语音通话界面
+		* @return void	无返回值
+		*/
+		void IntoAudio();
+
+		/**
+		* 切换到音频通话
+		* @return void	无返回值
+		*/
+		void ChangeToAudio();
 		
 		//virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
 		//virtual LRESULT OnWindowPosChanging(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
@@ -157,12 +176,13 @@ namespace nim_comp
 			void* user_data     /**< 用户透传数据 */);
 
 		void OnPeerCameraChanged(const std::string& userId, bool avaiable);
+		
 		void EnterEndCallPage(EndCallEnum why);
 		void OnAutoCloseWnd();
 		void DirectQuit();
 		void AdjustWindowSize(bool video);
 		void IntoVideo();
-		void IntoAudio();
+		//void IntoAudio();
 		void CheckTitle();
 		void SwitchStatus(StatusEnum status);
 		void setVideoMode(bool mode);

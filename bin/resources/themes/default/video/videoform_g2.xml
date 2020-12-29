@@ -66,8 +66,8 @@
                     <Button class="Face1" name="face_open" width="28" height="28" margin="5,0,0,0" tooltiptextid="STRID_VIDEO_OPEN_FACIAL" valign="center" visible="false"/>
                     <Button class="Face2" name="face_close" width="28" height="28" margin="5,0,0,0" tooltiptextid="STRID_VIDEO_CLOSE_FACIAL" valign="center" visible="false"/>
 
-                    <Button name="into_video" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_VIDEO" textpadding="5,0,5,0" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
-                    <Button name="into_audio" margin="10,0,0,0" valign="center" visible="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_AUDIO" textpadding="5,0,5,0" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
+                    <Button name="into_video" margin="10,0,0,0" valign="center" visible="false" enabled="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_VIDEO" textpadding="5,0,5,0" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
+                    <Button name="into_audio" margin="10,0,0,0" valign="center" visible="true" enabled="false" normaltextcolor="white" font="1" textid="STRID_VIDEO_INTO_AUDIO" textpadding="5,0,5,0" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
 					
                     <Button name="rotate" margin="10,0,0,0" valign="center" visible="false" tooltiptextid="STRID_VIDEO_ROTATE_SWITCH" textid="STRID_VIDEO_ROTATE_SWITCH" normaltextcolor="white" font="1" normalimage="bg_into0.png" hotimage="bg_into1.png" pushedimage="bg_into2.png"/>
 

@@ -128,7 +128,7 @@ namespace nim_comp
 
 		//暂不支持通话过程中的音视频切换
 		//into_video_btn_ = (Button*)FindControl(L"into_video");
-		//into_audio_btn_ = (Button*)FindControl(L"into_audio");
+		into_audio_btn_ = (Button*)FindControl(L"into_audio");
 		stop_chat_btn_ = (Button*)FindControl(L"stop_chat");
 
 		speaker_btn_ = (Button*)FindControl(L"speaker");
@@ -180,6 +180,7 @@ namespace nim_comp
 // 		speaker_btn_->SetEnabled(false);
 // 		camera_checkbox_->SetEnabled(false);
 		/**/
+		into_audio_btn_->SetVisible(current_video_mode_);
 		voip_ring_.Init(this->GetHWND());
 		
 	}
@@ -334,6 +335,19 @@ namespace nim_comp
 		
 	}
 
+	void VideoFormG2::ChangeToAudio()
+	{
+		//IVideoChatService* service = GetVideoChatService();
+		//PTR_VOID(service);
+
+		//FreeVideo();
+		VideoManagerG2::GetInstance()->EnableVideoToAudio(session_id_, kVideoToAudio);
+		IntoAudio();
+		//into_video_btn_->SetVisible(true);
+
+		//VideoManager::GetInstance()->VChatControl(channel_id_, nim::kNIMTagControlVideoToAudio);
+	}
+
 	bool VideoFormG2::OnClicked(ui::EventArgs* arg)
 	{
 		std::wstring name = arg->pSender->GetName();
@@ -341,13 +355,14 @@ namespace nim_comp
 		{
 			if (status_ != STATUS_TALKING)
 			{
-				VideoManagerG2::GetInstance()->handleNetCallMsg(nim_comp::kNIMNetCallStatusCanceled);
+				//VideoManagerG2::GetInstance()->handleNetCallMsg(nim_comp::kNIMNetCallStatusCanceled);
 			}
 			EnterEndCallPage(END_CALL_HANGUP);
 		}
 		else if (name == L"into_video")
 		{
 			//ChangeToVideo();
+			//VideoManagerG2::GetInstance()->SetAudioMute(session_id_, true); 静音远端音频功能
 		}
 		else if (name == L"swap_photo")
 		{
@@ -365,7 +380,7 @@ namespace nim_comp
 		}
 		else if (name == L"into_audio")
 		{
-			//ChangeToAudio();
+			ChangeToAudio();
 		}
 		else if (name == L"go_setting")
 		{
@@ -396,7 +411,7 @@ namespace nim_comp
 		if (name == L"refuse")
 		{
 			EnterEndCallPage(END_CALL_REJECT);
-			VideoManagerG2::GetInstance()->handleNetCallMsg(nim_comp::kNIMNetCallStatusRejected);
+			//VideoManagerG2::GetInstance()->handleNetCallMsg(nim_comp::kNIMNetCallStatusRejected);
 		}
 		else if (name == L"complete")
 		{
@@ -654,7 +669,7 @@ namespace nim_comp
 
 		if (current_video_mode_)
 		{
-			//into_audio_btn_->SetEnabled(true);
+			into_audio_btn_->SetEnabled(true);
 
 			AllowWindowMaxsize(true);
 		}
@@ -705,13 +720,15 @@ namespace nim_comp
 		//	}
 		//});
 		//nbase::ThreadManager::PostTask(kThreadUI, closure);
-		if (screen_is_other_)
+		if (screen_is_other_ && video_ctrl_preview_)
 		{
-			video_ctrl_preview_->CaptureVideoFrame(uid, data, type, width, height, count, offset, stride, rotation, user_data);
+			if (video_ctrl_preview_)
+				video_ctrl_preview_->CaptureVideoFrame(uid, data, type, width, height, count, offset, stride, rotation, user_data);
 		}
 		else
 		{
-			video_ctrl_screen_->CaptureVideoFrame(uid, data, type, width, height, count, offset, stride, rotation, user_data);
+			if (video_ctrl_screen_)
+				video_ctrl_screen_->CaptureVideoFrame(uid, data, type, width, height, count, offset, stride, rotation, user_data);
 
 		}
 	}
@@ -745,11 +762,13 @@ namespace nim_comp
 // 		nbase::ThreadManager::PostTask(kThreadUI, closure);
 		if (screen_is_other_)
 		{
-			video_ctrl_screen_->CaptureVideoFrame(uid, data, type, width, height, count, offset, stride, rotation, user_data);
+			if(video_ctrl_screen_)
+				video_ctrl_screen_->CaptureVideoFrame(uid, data, type, width, height, count, offset, stride, rotation, user_data);
 		}
 		else
 		{
-			video_ctrl_preview_->CaptureVideoFrame(uid, data, type, width, height, count, offset, stride, rotation, user_data);
+			if (video_ctrl_preview_)
+				video_ctrl_preview_->CaptureVideoFrame(uid, data, type, width, height, count, offset, stride, rotation, user_data);
 		}
 	}
 	void VideoFormG2::OnPeerCameraChanged(const std::string& userId, bool avaiable)
@@ -776,6 +795,7 @@ namespace nim_comp
 			ClearBitmapControl(false);
 		}
 	}
+
 	void VideoFormG2::EnterEndCallPage(EndCallEnum why)
 	{
 		is_start_ = false;
@@ -787,12 +807,17 @@ namespace nim_comp
 		dial_timeout_timer_.Cancel();
 		nbase::BatpPack bp;
 		AvChatParams params;
-		if(why == END_CALL_REJECT)
+		switch (why)
 		{
+		case END_CALL_REJECT:
 			bp.head_.action_name_ = kAvChatReject;
-		}
-		else
-		{
+			break;
+		case END_CALL_BUSYING:
+		case END_CALL_OTHER_CLIENT_ACCEPT://在其他端接听，只退出当前界面，不挂断通话
+		case END_CALL_OTHER_CLIENT_REJECT:
+			bp.head_.action_name_ = "NoAction";
+			break;
+		default:
 			bp.head_.action_name_ = kAvChatHangup;
 		}
 
@@ -838,6 +863,8 @@ namespace nim_comp
 		case VideoFormG2::END_CALL_VERSION:
 		case VideoFormG2::END_CALL_CONNECTION:
 		case VideoFormG2::END_CALL_STARTFAIL:
+		case VideoFormG2::END_CALL_OTHER_CLIENT_ACCEPT:
+		case VideoFormG2::END_CALL_OTHER_CLIENT_REJECT:
 		{
 			ASSERT(why != END_CALL_NONE);
 			if (why == END_CALL_BE_HANGUP)
@@ -848,6 +875,10 @@ namespace nim_comp
 				end_call_tip->SetTextId(L"STRID_VIDEO_END_CALL_SYNC_REFUSE");
 			else if (why == END_CALL_STARTFAIL)
 				end_call_tip->SetTextId(L"STRID_VIDEO_END_CALL_STARTFAIL");
+			else if(why == END_CALL_OTHER_CLIENT_ACCEPT)
+				end_call_tip->SetTextId(L"STRID_VIDEO_END_CALL_OTHER_CLIENT_ACCEPT");
+			else if(why == END_CALL_OTHER_CLIENT_REJECT)
+				end_call_tip->SetTextId(L"STRID_VIDEO_END_CALL_OTHER_CLIENT_REJECT");
 			else
 				end_call_tip->SetTextId(L"STRID_VIDEO_END_CALL_HANGUP");
 
@@ -882,7 +913,10 @@ namespace nim_comp
 			if (why == END_CALL_RESPONSE)
 				voip_ring_.Play(RING_VOIP_NORESPONSE);
 			else if (why == END_CALL_BUSYING)
+			{
 				voip_ring_.Play(RING_VOIP_PEERBUSY);
+				end_call_tip->SetTextId(L"STRID_SESSION_NETCALL_MSG_BUSY");
+			}
 			else if (why == END_CALL_REJECT)
 				voip_ring_.Play(RING_VOIP_PEERREJECT);
 			break;
@@ -941,7 +975,7 @@ namespace nim_comp
 
 	void VideoFormG2::IntoVideo()
 	{
-		//current_video_mode_ = true;
+		current_video_mode_ = true;
 		need_change_form_size_ = true;
 
 		screen_is_other_ = true;
@@ -957,14 +991,15 @@ namespace nim_comp
 
 		//into_video_btn_->SetVisible(false);
 
-		//into_audio_btn_->SetVisible(true);
-		//into_audio_btn_->SetEnabled(false);
+		into_audio_btn_->SetVisible(true);
+		into_audio_btn_->SetEnabled(false);
 	}
 
 	void VideoFormG2::IntoAudio()
 	{
 		//VideoManager::GetInstance()->SetVoipMode(nim::kNIMVideoChatModeAudio);
-		//current_video_mode_ = false;
+		//VideoManagerG2::GetInstance()->EnableVideoToAudio();
+		current_video_mode_ = false;
 
 		AdjustWindowSize(false);
 
@@ -973,7 +1008,7 @@ namespace nim_comp
 
 		InitSetting();
 
-		//into_audio_btn_->SetVisible(false);
+		into_audio_btn_->SetVisible(false);
 		//into_video_btn_->SetVisible(false);
 	}
 
@@ -1123,9 +1158,15 @@ namespace nim_comp
 
 			microphone_btn_->SetVisible(true);
 			speaker_btn_->SetVisible(true);
+
+			into_audio_btn_->SetVisible(true);
+			into_audio_btn_->SetEnabled(true);
 			if (current_video_mode_)
 			{
 				time_tick_label_->SetVisible(true);
+			}
+			else {
+				into_audio_btn_->SetVisible(false); //如果是语音呼叫，则不用显示
 			}
 		}
 		break;

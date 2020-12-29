@@ -38,7 +38,8 @@ namespace nim_comp
 		L"STRID_SESSION_NETCALL_MSG_COMPLETE",
 		L"STRID_SESSION_NETCALL_MSG_CANCELED",
 		L"STRID_SESSION_NETCALL_MSG_REJECTED",
-		L"STRID_SESSION_NETCALL_MSG_TIMEOUT"
+		L"STRID_SESSION_NETCALL_MSG_TIMEOUT",
+		L"STRID_SESSION_NETCALL_MSG_BUSY"
 	};
 
 	static std::atomic_bool hasRegMendMsgCb = false;
@@ -58,11 +59,22 @@ namespace nim_comp
 		if (json_values[kNIMNetCallStatus].isInt())
 		{
 			int status = json_values[kNIMNetCallStatus].asInt();
+			int type = 2; //通话类型，1::音频，2:视频
 			assert(status < StatusTipMsgs.size(), "net call msg info error");
+			if (json_values[kNIMNetCallType].isInt())
+				type = json_values[kNIMNetCallType].asInt();
 			ret = ui::MutiLanSupport::GetInstance()->GetStringViaID(StatusTipMsgs[status]);
 
 			if (NIMNetCallStatus(status) == kNIMNetCallStatusComplete)
 			{
+				if (type == 2) {
+					auto strVideo = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_SET_VIDEO");
+					ret = strVideo + ret;
+				}
+				else {
+					auto strVideo = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_VIDEO_SET_AUDIO");
+					ret = strVideo + ret;
+				}
 				assert(json_values[kNIMNetCallDurations].isArray()
 					&& json_values[kNIMNetCallDurations].size() > 0);
 

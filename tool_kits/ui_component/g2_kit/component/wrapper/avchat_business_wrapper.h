@@ -31,6 +31,11 @@ namespace nim_comp
 		bool					startPreview;
 		int						interval;
 		int						videoQuality;
+		int						reason;
+		std::string				sessionId;
+		bool					useRtcSafeMode;
+		GetTokenServiceFunc     tockenServiceFunc;
+		std::map<uint64_t, nertc::NERtcNetworkQualityType> network_quality;
 		AvChatParams() :userData(nullptr), window(nullptr), errCode(0)
 		{}
 	};
@@ -48,12 +53,19 @@ namespace nim_comp
 		virtual void onUserReject(const std::string& userId) override;
 		virtual void onUserEnter(const std::string& userId) override;
 		virtual void onUserLeave(const std::string& userId) override;
+		virtual void onUserDisconnect(const std::string& userId) override;
 		virtual void onUserBusy(const std::string& userId) override;
 		virtual void onUserCancel(const std::string& userId) override;
 
 		virtual void onCallingTimeOut() override;
+		virtual void onDisconnect(int reason) override;
+		virtual void OnVideoToAudio() override;
 		virtual void onCallEnd() override;
 		virtual void onError(int errCode) override;
+
+		virtual void onOtherClientAccept() override;
+		virtual void onOtherClientReject() override;
+		virtual void onUserNetworkQuality(std::map<uint64_t, nertc::NERtcNetworkQualityType>) override;
 
 		virtual void onCameraAvailable(const std::string& userId, bool available) override;
 		virtual void onAudioAvailable(const std::string& userId, bool available) override;
@@ -87,9 +99,12 @@ namespace nim_comp
 		static void setVideoDevice(const nbase::BatpPack& request);
 		static void setAudioDevice(const nbase::BatpPack& request);
 		static void startVideoPreview(const nbase::BatpPack& request);
+		static void switchCallType(const nbase::BatpPack& request);
+		static void setAudioMute(const nbase::BatpPack& request);
 		static void startAudioDeviceLoopbackTest(const nbase::BatpPack& request);
 		static void stopAudioDeviceLoopbackTest(const nbase::BatpPack& request);
 		static void setVideoQuality(const nbase::BatpPack& request);
+		static void getTokenService(const nbase::BatpPack& request);
 
 
 		static std::string getChannelId();

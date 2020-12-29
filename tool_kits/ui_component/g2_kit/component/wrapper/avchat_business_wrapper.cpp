@@ -75,6 +75,18 @@ namespace nim_comp
 		bp.body_.param_ = params;
 		nbase::BusinessManager::GetInstance()->Notify(bp);
 	}
+	void AvChatComponentEventHandler::onUserDisconnect(const std::string& userId)
+	{
+		QLOG_APP(L"AvChatComponentEventHandler onUserDisconnect, userId: {0}") << userId;
+
+		nbase::BatpPack bp;
+		bp.head_.action_name_ = kAvChatOnUserDisconnect;
+		AvChatParams params;
+
+		params.userId = userId;
+		bp.body_.param_ = params;
+		nbase::BusinessManager::GetInstance()->Notify(bp);
+	}
 	void AvChatComponentEventHandler::onUserBusy(const std::string& userId)
 	{
 		QLOG_APP(L"AvChatComponentEventHandler onUserBusy, userId: {0}") << userId;
@@ -105,7 +117,29 @@ namespace nim_comp
 		QLOG_APP(L"AvChatComponentEventHandler onCallingTimeOut");
 
 		nbase::BatpPack bp;
-		bp.head_.action_name_ = kAvChatOnUserEnter;
+		bp.head_.action_name_ = kAvChatOnCallingTimeOut;
+		nbase::BusinessManager::GetInstance()->Notify(bp);
+	}
+
+	void AvChatComponentEventHandler::onDisconnect(int reason)
+	{
+		QLOG_APP(L"AvChatComponentEventHandler onDisconnect");
+
+		nbase::BatpPack bp;
+		bp.head_.action_name_ = kAvChatOnDisconnect;
+		AvChatParams params;
+
+		params.reason = reason;
+		bp.body_.param_ = params;
+		nbase::BusinessManager::GetInstance()->Notify(bp);
+	}
+
+	void AvChatComponentEventHandler::OnVideoToAudio()
+	{
+		QLOG_APP(L"AvChatComponentEventHandler OnVideoToAudio");
+
+		nbase::BatpPack bp;
+		bp.head_.action_name_ = kAvChatOnVideoToAudio;
 		nbase::BusinessManager::GetInstance()->Notify(bp);
 	}
 	void AvChatComponentEventHandler::onCallEnd()
@@ -125,6 +159,33 @@ namespace nim_comp
 		bp.head_.action_name_ = kAvChatOnError;
 		AvChatParams params;
 		params.errCode = errCode;
+		bp.body_.param_ = params;
+		nbase::BusinessManager::GetInstance()->Notify(bp);
+	}
+	void AvChatComponentEventHandler::onOtherClientAccept()
+	{
+		QLOG_APP(L"AvChatComponentEventHandler onOtherClientAccept: ");
+
+		nbase::BatpPack bp;
+		bp.head_.action_name_ = kAvChatOnOtherClientAccept;
+		nbase::BusinessManager::GetInstance()->Notify(bp);
+	}
+	void AvChatComponentEventHandler::onOtherClientReject()
+	{
+		QLOG_APP(L"AvChatComponentEventHandler onOtherClientReject: ");
+
+		nbase::BatpPack bp;
+		bp.head_.action_name_ = kAvChatOnOtherClientReject;
+		nbase::BusinessManager::GetInstance()->Notify(bp);
+	}
+	void AvChatComponentEventHandler::onUserNetworkQuality(std::map<uint64_t, nertc::NERtcNetworkQualityType> network_quality)
+	{
+		QLOG_APP(L"AvChatComponentEventHandler onUserNetworkQuality: ");
+
+		nbase::BatpPack bp;
+		bp.head_.action_name_ = kAvChatOnUserNetworkQuality;
+		AvChatParams params;
+		params.network_quality = network_quality;
 		bp.body_.param_ = params;
 		nbase::BusinessManager::GetInstance()->Notify(bp);
 	}
@@ -184,8 +245,10 @@ namespace nim_comp
 	}
 	void AvChatBusinessWrapper::setupAppKey(const nbase::BatpPack& request)
 	{
-		std::string key = nbase::BatpParamCast<std::string>(request.body_.param_);
-		component.setupAppKey(key);
+		AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
+		std::string key = params.appKey;
+		bool bUseRtcSafeMode = params.useRtcSafeMode;
+		component.setupAppKey(key, bUseRtcSafeMode);
 
 		eventHandler_.reset();
 		eventHandler_ = std::make_shared<AvChatComponentEventHandler>();
@@ -231,7 +294,16 @@ namespace nim_comp
 		AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
 		component.hangup(params.optCb);
 	}
-
+	void AvChatBusinessWrapper::switchCallType(const nbase::BatpPack& request)
+	{
+		AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
+		component.switchCallType(params.sessionId, params.callType);
+	}
+	void AvChatBusinessWrapper::setAudioMute(const nbase::BatpPack& request)
+	{
+		AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
+		component.setAudioMute(params.sessionId, params.muteAudio);
+	}
 	void AvChatBusinessWrapper::cancel(const nbase::BatpPack& request)
 	{
 		AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
@@ -358,6 +430,11 @@ namespace nim_comp
 	{
 		AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
 		component.setVideoQuality((nertc::NERtcVideoProfileType)params.videoQuality);
+	}
+	void AvChatBusinessWrapper::getTokenService(const nbase::BatpPack& request)
+	{
+		AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);
+		component.setTokenService((GetTokenServiceFunc)params.tockenServiceFunc);
 	}
 	std::string AvChatBusinessWrapper::getChannelId()
 	{

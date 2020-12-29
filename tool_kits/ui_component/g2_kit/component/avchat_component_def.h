@@ -31,6 +31,9 @@ extern"C"
 	static const char* kAvChatSetAudioDevice    = "setAudioDevice";
 	static const char* kAvChatSetVideoDevice    = "setVideoDevice";
 	static const char* kAvChatStartVideoPreview = "startVideoPreview";
+	static const char* kAvChatSwitchCallType = "switchCallType";
+	static const char* kAvChatSetAudioMute = "setAudioMute";
+	static const char* kAvChatGetTockenService = "getTockenService";
 	static const char* kAvChatStartAudioDeviceLoopbackTest = "startAudioDeviceLoopbackTest";
 	static const char* kAvChatStopAudioDeviceLoopbackTest = "stopAudioDeviceLoopbackTest";
 	static const char* kAvChatSetVideoQuality   = "setVideoQuality";
@@ -41,11 +44,18 @@ extern"C"
 	static const char* kAvChatOnUserReject		= "onUserReject";
 	static const char* kAvChatOnUserEnter		= "onUserEnter";
 	static const char* kAvChatOnUserLeave		= "onUserLeave";
+	static const char* kAvChatOnUserDisconnect	= "onUserDisconnect";
 	static const char* kAvChatOnUserBusy		= "onUserBusy";
 	static const char* kAvChatOnUserCancel		= "onUserCancel";
 	static const char* kAvChatOnCallingTimeOut	= "onCallingTimeOut";
+	static const char* kAvChatOnDisconnect		= "onDisconnect";
+	static const char* kAvChatOnVideoToAudio	= "onVideoToAudio";
 	static const char* kAvChatOnCallEnd			= "onCallEnd";
 	static const char* kAvChatOnError			= "onError";
+
+	static const char* kAvChatOnOtherClientAccept = "onOtherClientAccept";
+	static const char* kAvChatOnOtherClientReject = "onOtherClientReject";
+	static const char* kAvChatOnUserNetworkQuality = "onUserNetworkQuality";
 
 	static const char* kAvChatOnCameraAvailable = "onCameraAvailable";
 	static const char* kAvChatOnAudioAvailable = "onAudioAvailable";

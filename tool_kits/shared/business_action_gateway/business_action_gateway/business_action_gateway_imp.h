@@ -12,6 +12,7 @@
 
 #include "shared/business_action_gateway/business_action_gateway/ibusiness_action_gateway.h"
 #include "shared/business_action_gateway/business_action_gateway/ibusiness_action_gateway_option.h"
+#include "base/thread/framework_thread.h"
 
 namespace nbase
 {
@@ -23,7 +24,7 @@ namespace nbase
 		public std::enable_shared_from_this<BusinessActionGatewayImp>
 	{
 	public:
-		BusinessActionGatewayImp() {}
+		BusinessActionGatewayImp():working_thread_("working_thread"), notify_thread_("notify_thread"){}
 		virtual ~BusinessActionGatewayImp() {}
 	public:
 		virtual bool Start() override;
@@ -48,8 +49,8 @@ namespace nbase
 		std::map<std::string, std::list<BatpSubNotifyCallback>> notify_list_;
 	private:
 		std::map<std::string, WeakActionDispatcher> action_dispatcher_list_;
-		BaseThread working_thread_;
-		BaseThread notify_thread_;
+		nbase::FrameworkThread working_thread_;
+		nbase::FrameworkThread notify_thread_;
 	};
 }
 
