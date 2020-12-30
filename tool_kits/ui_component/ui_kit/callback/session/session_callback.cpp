@@ -149,6 +149,8 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 			values["comment"] = "is_recall_notification";
 			values["notify_from"] = notify.from_id_;
 			values["operator_id"] = notify.operator_id_;
+			values["attach"] = notify.attach_;
+			values["callback_ext"] = notify.callback_ext_;
 			values["from_nick"] = notify.from_nick_;
 			values["feature"] = msg.feature_;
 			msg.attach_ = values.toStyledString();

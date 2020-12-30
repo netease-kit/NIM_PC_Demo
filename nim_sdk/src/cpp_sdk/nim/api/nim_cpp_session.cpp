@@ -14,10 +14,13 @@ typedef void(*nim_session_reg_badge_count_cb)(const char *json_extension, nim_se
 typedef void(*nim_session_query_last_few_session_async)(int limit, const char *json_extension, nim_session_query_recent_session_cb_func cb, const void *user_data);
 typedef void(*nim_session_query_all_recent_session_async)(const char *json_extension, nim_session_query_recent_session_cb_func cb, const void* user_data);
 typedef void(*nim_session_query_all_recent_session_with_last_msg_excluded_type_async)(const char *json_extension, nim_session_query_recent_session_cb_func cb, enum NIMMessageType last_msg_excluded_type,const void* user_data);
+typedef void(*nim_session_query_all_recent_session_with_last_msg_excluded_type_async_ex)(const char* json_extension, nim_session_query_recent_session_cb_func cb, const char * last_msg_excluded_type_list, const void* user_data);
 typedef void(*nim_session_delete_recent_session_async)(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+typedef void(*nim_session_delete_recent_session_async_ex)(NIMSessionType to_type, const char* id, bool delete_roaming, nim_session_change_cb_func cb, const void* user_data);
 typedef void(*nim_session_delete_session_roaming_async)(NIMSessionType to_type, const char* id, const char* json_extension, nim_session_delete_session_roaming_cb_func cb, const void* user_data);
 typedef void(*nim_session_delete_all_recent_session_async)(const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 typedef void(*nim_session_set_unread_count_zero_async)(NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+typedef void (*nim_session_set_multi_unread_count_zero_async)(bool super_team, const char* unread_count_zero_info_list, nim_session_multi_change_cb_func cb, const void* user_data);
 typedef void(*nim_session_set_top)(enum NIMSessionType to_type, const char *id, bool top, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 typedef void(*nim_session_set_extend_data)(enum NIMSessionType to_type, const char *id, const char *data, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
 typedef void(*nim_session_reset_all_unread_count_async)(const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
@@ -130,6 +133,18 @@ void Session::QueryAllRecentSessionAsync(NIMMessageType last_msg_excluded_type, 
 	}
 	NIM_SDK_GET_FUNC(nim_session_query_all_recent_session_with_last_msg_excluded_type_async)(json_extension.c_str(), &CallbackQuerySession, last_msg_excluded_type,cb_pointer);
 }
+void Session::QueryAllRecentSessionAsyncEx(const std::list<NIMMessageType>& last_msg_excluded_type, const QuerySessionListCallabck& cb, const std::string& json_extension/* = ""*/)
+{
+	QuerySessionListCallabck* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new QuerySessionListCallabck(cb);
+	}
+	nim_cpp_wrapper_util::Json::Value json_excluded_type_list;
+	for (auto& it : last_msg_excluded_type)
+		json_excluded_type_list.append(it);
+	NIM_SDK_GET_FUNC(nim_session_query_all_recent_session_with_last_msg_excluded_type_async_ex)(json_extension.c_str(), &CallbackQuerySession, nim_cpp_wrapper_util::Json::FastWriter().write(json_excluded_type_list).c_str(), cb_pointer);
+}
 bool Session::DeleteRecentSession(nim::NIMSessionType to_type, const std::string& id, const DeleteRecentSessionCallabck& cb, const std::string& json_extension)
 {
 	if (id.empty())
@@ -141,6 +156,20 @@ bool Session::DeleteRecentSession(nim::NIMSessionType to_type, const std::string
 		cb_pointer = new DeleteRecentSessionCallabck(cb);
 	}
 	NIM_SDK_GET_FUNC(nim_session_delete_recent_session_async)(to_type, id.c_str(), json_extension.c_str(), &CallbackNotifySession, cb_pointer);
+
+	return true;
+}
+bool Session::DeleteRecentSessionEx(nim::NIMSessionType to_type, const std::string& id, const DeleteRecentSessionCallabck& cb, bool delete_roaming)
+{
+	if (id.empty())
+		return false;
+
+	DeleteRecentSessionCallabck* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new DeleteRecentSessionCallabck(cb);
+	}
+	NIM_SDK_GET_FUNC(nim_session_delete_recent_session_async_ex)(to_type, id.c_str(), delete_roaming, &CallbackNotifySession, cb_pointer);
 
 	return true;
 }
@@ -183,6 +212,52 @@ bool Session::SetUnreadCountZeroAsync(nim::NIMSessionType to_type, const std::st
 		cb_pointer = new SetUnreadCountZeroCallback(cb);
 	}
 	NIM_SDK_GET_FUNC(nim_session_set_unread_count_zero_async)(to_type, id.c_str(), json_extension.c_str(), &CallbackNotifySession, cb_pointer);
+
+	return true;
+}
+bool Session::SetMultiUnreadCountZeroAsync(bool super_team, const std::list< MultiUnreadCountZeroInfo>& unread_zero_info_list, const SetMultiUnreadCountZeroCallback& cb)
+{
+	if (unread_zero_info_list.empty())
+		return false;
+
+	SetMultiUnreadCountZeroCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new SetMultiUnreadCountZeroCallback(cb);
+	}
+	nim_cpp_wrapper_util::Json::Value json_list;
+	for (auto& it : unread_zero_info_list)
+	{
+		nim_cpp_wrapper_util::Json::Value item;
+		item[kNIMSessionUnReadCountSessionType] = it.type_;
+		item[kNIMSessionUnReadCountSessionId] = it.id_;
+		json_list.append(item);
+	}
+	NIM_SDK_GET_FUNC(nim_session_set_multi_unread_count_zero_async)(super_team, nim_cpp_wrapper_util::Json::FastWriter().write(json_list).c_str(), 
+		[](int rescode, const char* result, int total_unread_counts, const void* user_data) {
+			CallbackProxy::DoSafeCallback<Session::SetMultiUnreadCountZeroCallback>(user_data, [=](const Session::SetMultiUnreadCountZeroCallback& cb) {
+				std::list<SessionData> session_data_list;
+				int ret = nim::NIMResCode::kNIMResSuccess;
+				if (rescode == nim::NIMResCode::kNIMResSuccess)
+				{
+					nim_cpp_wrapper_util::Json::Value json_list;					
+					if (nim_cpp_wrapper_util::Json::Reader().parse(result, json_list))
+					{
+						for (auto& it : json_list)
+						{
+							SessionData session;
+							ParseSession(it, session);
+							session_data_list.emplace_back(session);
+						}
+					}
+					else
+					{
+						ret = nim::NIMResCode::kNIMResParameterError;
+					}
+				}
+				CallbackProxy::Invoke(cb, (nim::NIMResCode)ret, session_data_list, total_unread_counts);
+				}, true);		
+		}, cb_pointer);
 
 	return true;
 }

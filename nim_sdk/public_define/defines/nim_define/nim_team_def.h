@@ -26,6 +26,17 @@ extern"C"
   */
 typedef void (*nim_team_event_cb_func)(int res_code, int notification_id, const char *tid, const char *result, const char *json_extension, const void *user_data);
 
+/** @typedef void (*nim_team_msg_ack_read_ex_cb_func)(const char *tid, const char *success_ids, const char *failure_ids, const char *ignored_ids, const void *user_data);
+  * 群组消息标注已读回调函数定义
+  * @param[out] tid				群组id
+  * @param[out] success_ids		json string array标记成功的消息id
+  * @param[out] failure_ids		json string array标记失败的消息id
+  * @param[out] ignored_ids		json string array忽略标记的消息id(不需要标记，或已经标记过的消息id）
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_team_msg_ack_read_ex_cb_func)(const char *tid, const char *success_ids, const char *failure_ids, const char *ignored_ids, const void *user_data);
+
 /** @typedef nim_team_event_cb_func nim_team_opt_cb_func
   * 群组操作的回调函数定义
   */
@@ -50,6 +61,16 @@ typedef void (*nim_team_query_all_my_teams_cb_func)(int team_count, const char *
   * @return void 无返回值
   */
 typedef void (*nim_team_query_all_my_teams_info_cb_func)(int team_count, const char *result, const char *json_extension, const void *user_data);
+
+/** @typedef void (*nim_team_get_team_info_list_cb_func)(int code, const char *tinfo_list, const char *fail_tid_list, const void *user_data);
+  * 查询给定的一组群ID详细信息的回调函数定义
+  * @param[out] code		返回码
+  * @param[out] tinfo_list	 Json string array (Keys SEE MORE `nim_team_def.h` 『群组信息 Json Keys』)
+  * @param[out] fail_tid_list 	Json string array,失败的群组id 列表
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_team_get_team_info_list_cb_func)(int code, const char *tinfo_list, const char *fail_tid_list, const void *user_data);
 
 /** @typedef void (*nim_team_query_my_all_member_infos_cb_func)(int team_count, const char *result, const char *json_extension, const void *user_data)
   * 查询我的所有群里我的成员信息的回调函数定义

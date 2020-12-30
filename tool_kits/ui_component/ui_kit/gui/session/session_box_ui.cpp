@@ -489,6 +489,14 @@ bool SessionBox::OnSelChanged(ui::EventArgs* param)
 		if (param->Type == kEventSelect)
 			OnBtnCaptureAudio();
 	}
+	else if (name == L"btn_team_ack_ui")
+	{
+		bool bOpen = false;
+		if (param->Type == kEventSelect) {
+			bOpen = true;
+		}
+		OnBtnTeamAckMsgUI(bOpen);
+	}
 	return true;
 }
 
@@ -707,6 +715,10 @@ void SessionBox::OnBtnJsb()
 void SessionBox::OnBtnCaptureAudio()
 {
 	audio_capture_view_->ShowControl(true);
+}
+
+void SessionBox::OnBtnTeamAckMsgUI(bool open) {
+	team_msg_need_ack_ = open;
 }
 
 void SessionBox::OnAudioCaptureComplete(int rescode, const std::string& sid, const std::string& file_path, const std::string& file_ext, long file_size, int audio_duration)

@@ -110,6 +110,7 @@ void SessionBox::InitSessionBox()
 	msg_list_ = (ListBox*)FindSubControl(L"msg_list");
 	btn_face_ = (CheckBox*)FindSubControl(L"btn_face");
 	input_edit_ = (RichEdit*)FindSubControl(L"input_edit");
+	btn_team_ack_ui_ = (CheckBox*)FindSubControl(L"btn_team_ack_ui");
 	input_edit_->SetLimitText(5000);
 	input_edit_->SetNoCaretReadonly();
 	input_edit_->AttachReturn(nbase::Bind(&SessionBox::OnInputEditEnter, this, std::placeholders::_1));
@@ -141,6 +142,12 @@ void SessionBox::InitSessionBox()
 		input_edit_droptarget_ = pdt;
 	}
 
+	//群回执消息
+	if (session_type_ == nim::kNIMSessionTypeTeam || session_type_ == nim::kNIMSessionTypeSuperTeam) {
+		btn_team_ack_ui_->SetVisible(true);
+	}else {
+		btn_team_ack_ui_->SetVisible(false);
+	}
 	atme_view_ = new AtMeView;
 	atme_view_->InitControl();
 	msg_content_->Add(atme_view_);
@@ -993,8 +1000,8 @@ void SessionBox::OnRecallMsgCallback(nim::NIMResCode code, const nim::RecallMsgN
 		values["notify_from"] = notify.from_id_;
 		values["from_nick"] = notify.from_nick_;
 		values["operator_id"] = notify.operator_id_;
-
-
+		values["attach"] = notify.attach_;
+		values["callback_ext"] = notify.callback_ext_;
 		msg.attach_ = values.toStyledString();
 		msg.content_ = nbase::UTF16ToUTF8(notify_text);
 		msg.msg_setting_.push_need_badge_ = BS_FALSE; //设置会话列表不需要计入未读数
@@ -1481,6 +1488,12 @@ void SessionBox::PackageMsg(nim::IMMessage &msg)
 	msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
 
 	msg.status_ = nim::kNIMMsgLogStatusSending;
+	if (session_type_ == nim::kNIMSessionTypeTeam || session_type_ == nim::kNIMSessionTypeSuperTeam)
+	{
+		if(std::atoi(app_sdk::AppSDKInterface::GetInstance()->GetConfigValue(nim::kNIMTeamMessageAckEnabled).c_str()) != 0 && team_msg_need_ack_)
+			msg.msg_setting_.team_msg_need_ack_ = BS_TRUE;
+	}
+	
 }
 
 void SessionBox::CheckLastReceiptMsg()

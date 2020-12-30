@@ -48,6 +48,7 @@ enum NIMResCode
 	kNIMResTeamInviteSuccess	= 810,		/**< 邀请成功 */
 	kNIMResForcePushCountLimit	= 811,		/**< 强推列表账号数量超限 */
 	kNIMResTeamMemberLimit		= 813,		/**< 操作成功，但部分成员的群数量超限 */
+	kNIMResTeamGetInfoListPartSuccess = 816,		/**< 批量查询群信息部分成功 */
 	//数据解编错误代码
 	kNIMResInvalidProtocol		= 997,		/**< 协议已失效 */
 	kNIMResEUnpacket			= 998,		/**< 解包错误 */

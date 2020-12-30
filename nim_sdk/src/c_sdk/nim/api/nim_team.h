@@ -542,6 +542,17 @@ NIM_SDK_DLL_API void nim_team_mute_async(const char *tid,
 */
 NIM_SDK_DLL_API void nim_team_msg_ack_read(const char *tid, const char *json_msgs, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 
+/** @fn void nim_team_msg_ack_read_ex(const char *tid, const char *json_msgs, const char *json_extension, nim_team_msg_ack_read_ex_cb_func cb, const void *user_data);
+* 群消息回执
+* @param[in] tid		群组id
+* @param[in] json_msgs	需要发送消息回执的群消息json array
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] cb		回调函数, 定义见nim_team_def.h
+* @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+* @return void 无返回值
+*/
+NIM_SDK_DLL_API void nim_team_msg_ack_read_ex(const char *tid, const char *json_msgs, const char *json_extension, nim_team_msg_ack_read_ex_cb_func cb, const void *user_data);
+
 /** @fn void nim_team_msg_query_unread_list(const char *tid, const char *json_msg, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 * 获取群消息未读成员列表
 * @param[in] tid		群组id
@@ -600,6 +611,18 @@ NIM_SDK_DLL_API void nim_team_get_team_info_batch_sftrans(const char *json_exten
   * @return void 无返回值
   */
 NIM_SDK_DLL_API void nim_team_update_tinfo_local(const char *json_info_list,nim_team_update_tinfo_local_cb_func cb_func, const void *user_data);
+
+/** @fn void nim_team_get_team_info_list(const char *tid_list, nim_team_get_team_info_list_cb_func cb, const void *user_data)
+  * 查询给定的一组群ID详细信息
+  * @param[in] tid_list json string array 群组id列表,最多10个
+  * @param[in] cb		查询给定的一组群ID详细信息的回调函数定义, nim_team_get_team_info_list_cb_func回调函数定义见nim_team_def.h
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+	*				414:参数错误
+	*				816:部分成功
+  */
+NIM_SDK_DLL_API void nim_team_get_team_info_list(const char *tid_list, nim_team_get_team_info_list_cb_func cb, const void* user_data);
 
 #ifdef __cplusplus
 };

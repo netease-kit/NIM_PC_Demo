@@ -545,6 +545,12 @@ public:
 	*/
 	void OnDropFile(HDROP hDrop);
 
+	/**
+	* 响应群回执消息按钮消息
+	* @return void 无返回值
+	*/
+	void OnBtnTeamAckMsgUI(bool open);
+
 	HRESULT STDMETHODCALLTYPE DragEnter(IDataObject * pDataObject, DWORD grfKeyState, POINTL pt, DWORD * pdwEffect);
 	HRESULT STDMETHODCALLTYPE DragOver(DWORD grfKeyState, POINTL pt, DWORD *pdwEffect);
 	HRESULT STDMETHODCALLTYPE DragLeave(void);
@@ -1229,6 +1235,7 @@ private:
 	//ui::ListBox*	member_list_;
 	ui::VirtualListBox* member_list_;
 	ui::VBox*		bottom_panel_;
+	ui::CheckBox*	btn_team_ack_ui_;
 	std::map < std::string, std::shared_ptr<nim::TeamMemberProperty>> team_member_info_list_;
 
 	std::vector< std::shared_ptr<nim::TeamMemberProperty>> team_member_sort_list_;
@@ -1272,6 +1279,7 @@ private:
 	
 	std::string		last_receipt_msg_id_;			//最近一条发送消息的id
 	bool			receipt_need_send_ = false;		//当下会话是否有已读回执需要发送
+	bool			team_msg_need_ack_ = false;
 
 	// P2P 传送文件相关
 	bool			received_p2p_reply_ = false;	//在发送 P2P 询问消息后是否收到了对方回复

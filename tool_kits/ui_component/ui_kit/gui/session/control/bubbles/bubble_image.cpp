@@ -38,7 +38,7 @@ void MsgBubbleImage::InitInfo(const nim::IMMessage &msg)
 			image_->SetFixedWidth(thumb_image_width_, false); 
 			image_->SetFixedHeight(thumb_image_height_);
 			image_->SetBkImage(thumb_);
-			if (!my_msg_ || !msg_.status_ == nim::kNIMMsgLogStatusSendFailed)
+			if (!my_msg_ || !(msg_.status_ == nim::kNIMMsgLogStatusSendFailed))
 				SetLoadStatus(RS_LOAD_OK);
 			if (my_msg_ && msg_.status_ == nim::kNIMMsgLogStatusSending)
 				SetMsgStatus(nim::kNIMMsgLogStatusSending);
