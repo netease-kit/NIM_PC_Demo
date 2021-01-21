@@ -125,7 +125,7 @@
       <AdditionalLibraryDirectories>..\..\..\libs\;..\..\..\bin\;</AdditionalLibraryDirectories>
     </Link>
     <Lib>
-      <AdditionalDependencies>vfw32.lib;jsoncpp_d.lib;tinyxml_d.lib;wxsqlite3_d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>%(AdditionalDependencies)</AdditionalDependencies>
       <AdditionalLibraryDirectories>..\..\..\libs\x64\;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
