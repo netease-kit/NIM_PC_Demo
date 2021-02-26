@@ -1,13 +1,13 @@
 # NetEase IM PC Demo
 
-网易云信 PC IM Demo 是基于[网易云信 PC SDK](https://yunxin.163.com/im-sdk-demo) 制作的即时通讯示例程序，UI 库使用 [NIM Duilib](https://github.com/netease-im/NIM_Duilib_Framework) 制作
+网易云信 PC IM Demo 是基于 [网易云信 PC SDK](https://yunxin.163.com/im-sdk-demo) 制作的即时通讯示例程序，UI 库使用 [NIM Duilib](https://github.com/netease-im/NIM_Duilib_Framework) 制作
 
 ![GitHub](https://img.shields.io/badge/license-MIT-green.svg)
 
-## sdk版本更新
+## SDK 版本更新
 [传输门](https://dev.yunxin.163.com/docs/product/IM%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97/Windows%E7%AB%AF%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)
 
-## demo版本更新
+## Demo 版本更新
 [传输门](https://dev.yunxin.163.com/docs/product/IM%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/Demo%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97/Windows-Demo%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)
 
 ## 预览
@@ -19,12 +19,9 @@
 克隆项目到你的磁盘中
 
 ```bash
-git clone https://github.com/netease-im/NIM_PC_Demo.git
+git clone https://github.com/netease-im/NIM_PC_Demo.git --depth 1
 ```
-
-克隆完成后进入 `NIM_PC_Demo/libs` 目录，解压 `cryptlib.zip` 来释放体积较大的依赖静态库文件，进入 `NIM_PC_Demo/nim_win_demo` 目录，使用 Visual Studio 2013 Update 5 以上版本 IDE 打开 `nim.sln`，按下 F7 即可编译项目
-
-如您需要编译 64 位工程，请将 `bin/x64_dlls` 目录下的文件复制并替换现有 `bin` 目录下的文件，同时也需要解压 `libs/x64` 目录下的 `cryptlib.zip`。
+进入 `NIM_PC_Demo/nim_win_demo` 目录，使用 Visual Studio 2013 Update 5 以上版本 IDE 打开 `nim.sln`，按下 F7 即可编译项目
 
 ## 目录
 
