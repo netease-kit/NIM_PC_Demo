@@ -16,6 +16,7 @@
 
 #include "module/session/session_manager.h"
 #include "av_kit/module/video/video_manager.h"
+#include "g2_kit/module/video_manager_g2.h"
 #include "module/rts/rts_manager.h"
 #include "module/service/user_service.h"
 
@@ -397,11 +398,19 @@ bool SessionBox::OnClicked(ui::EventArgs* param)
 	}
 	else if (name == L"btn_audio")
 	{
-		OnBtnAudio();
+		//OnBtnAudio();
+	}
+	else if (name == L"btn_audio_g2")
+	{
+		OnBtnAudioG2();
 	}
 	else if (name == L"btn_video")
 	{
-		OnBtnVideo();
+		//OnBtnVideo();
+	}
+	else if (name == L"btn_video_g2")
+	{
+		OnBtnVideoG2();
 	}
 	else if (name == L"btn_rts")
 	{
@@ -756,7 +765,13 @@ void SessionBox::OnEmotionClosed()
 
 	input_edit_->SetFocus();
 }
-
+void SessionBox::OnBtnAudioG2()
+{
+	if (session_type_ == nim::kNIMSessionTypeP2P)
+	{
+		VideoManagerG2::GetInstance()->ShowVideoChatForm(session_id_, false);
+	}
+}
 void SessionBox::OnBtnAudio()
 {
 	if (session_type_ == nim::kNIMSessionTypeP2P)
@@ -799,6 +814,23 @@ void SessionBox::OnBtnVideo()
 	}
 }
 
+/*
+ *使用G2实现1to1通话（音频+视频），暂时不考虑多人
+ */
+void SessionBox::OnBtnVideoG2()
+{
+	//暂时只实现p2p
+	switch (session_type_)
+	{
+	case nim::kNIMSessionTypeP2P:
+	{
+		VideoManagerG2::GetInstance()->ShowVideoChatForm(session_id_, true);
+		break;
+	}
+	default:
+		break;
+	}
+}
 void SessionBox::OnVChatSelectedCallback(const std::list<UTF8String>& selected_friends, const std::list<UTF8String>& selected_teams)
 {
 	auto cb = [=](int res)

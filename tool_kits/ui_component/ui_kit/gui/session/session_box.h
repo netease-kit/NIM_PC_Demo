@@ -408,6 +408,14 @@ private:
 	*/
 	void OnBtnAudio();
 
+	void OnBtnAudioG2();
+
+	/**
+	* 响应视频按钮消息,使用G2与信令SDK
+	* @return void 无返回值
+	*/
+	void OnBtnVideoG2();
+
 	/**
 	* 响应视频按钮消息
 	* @return void 无返回值
