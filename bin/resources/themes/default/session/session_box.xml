@@ -70,21 +70,29 @@
                         <Button name="btn_clip" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_CLIP"
                                 forenormalimage="file='../session/btn_clip.png' dest='5,5,25,25'" foredisabledimage="file='../session/btn_clip_disable.png' dest='5,5,25,25' fade='80'"
                                 hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
-                        <Button name="btn_audio" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_AUDIO_CHAT"
+                         <Button name="btn_audio_g2" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_AUDIO_CHAT"
                                 forenormalimage="file='../session/audio_chat.png' dest='5,5,25,25'" foredisabledimage="file='../session/audio_chat_disable.png' dest='5,5,25,25' fade='80'" 
                                 hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/>
-                        <Button name="btn_video" width="30" height="30" valign="center" margin="5" tooltiptextid="STRID_SESSION_VIDEO_CHAT" 
+						<Button name="btn_video_g2" width="30" height="30" valign="center" margin="5" tooltiptextid="STRID_SESSION_VIDEO_CHAT" 
                                 forenormalimage="file='../session/video_chat.png' dest='4,5,25,25'" foredisabledimage="file='../session/video_chat_disable.png' dest='4,5,25,25' fade='80'"
                                 hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/>
-                        <Button name="btn_rts" width="30" height="30" valign="center" margin="5" tooltiptextid="STRID_SESSION_RTS" 
+						<!--Button name="btn_audio" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_AUDIO_CHAT"
+                                forenormalimage="file='../session/audio_chat.png' dest='5,5,25,25'" foredisabledimage="file='../session/audio_chat_disable.png' dest='5,5,25,25' fade='80'" 
+                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/-->
+                        <!--Button name="btn_video" width="30" height="30" valign="center" margin="5" tooltiptextid="STRID_SESSION_VIDEO_CHAT" 
+                                forenormalimage="file='../session/video_chat.png' dest='4,5,25,25'" foredisabledimage="file='../session/video_chat_disable.png' dest='4,5,25,25' fade='80'"
+                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/-->
+                        <!--Button name="btn_rts" width="30" height="30" valign="center" margin="5" tooltiptextid="STRID_SESSION_RTS" 
                                 forenormalimage="file='../session/rts.png' dest='4,5,25,25'" foredisabledimage="file='../session/rts_disable.png' dest='4,5,25,25' fade='80'"
-                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/>
+                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/-->
                         <Button name="btn_tip" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_NOTIFICATION_MSG"
                                 forenormalimage="file='../session/btn_tip.png' dest='5,5,25,25'" foredisabledimage="file='../session/btn_tip_disable.png' dest='5,5,25,25' fade='80'"
                                 hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
-                        <Option name="btn_capture_audio" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_RECORD_AUDIO" 
-                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" selectednormalimage="../session/icon_pushed.png" textid="STRID_SESSION_RECORD_AUDIO_ICON" font="8" normaltextcolor="icongray" disabledtextcolor="iconfadegray"/>
-                        <Control />
+                        <!--Option name="btn_capture_audio" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_RECORD_AUDIO" 
+                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" selectednormalimage="../session/icon_pushed.png" textid="STRID_SESSION_RECORD_AUDIO_ICON" font="8" normaltextcolor="icongray" disabledtextcolor="iconfadegray"/-->
+                       
+						
+						<Control />
                         <!--Button name="add_msglog" dataid="10" valign="center" cursortype="hand" margin="5,0,10,0" normaltextcolor="link_blue" textid="STRID_SESSION_ADD_MSGLOG"/-->
                         <Button name="btn_team_ack_msg" valign="center" cursortype="hand" normaltextcolor="link_blue" disabledtextcolor="gray" textid="STRID_SESSION_TEAM_ACK_MSG" visible="false" tooltiptextid="STRID_SESSION_TEAM_ACK_MSG_TIP"/>
                         <Control width="10" />
