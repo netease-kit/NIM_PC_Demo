@@ -169,6 +169,8 @@ bool Friend::ParseFriendAddEvent(const FriendChangeEvent& change_event, FriendAd
 		out_event.accid_ = values["accid"].asString();
 		out_event.add_type_ = (NIMVerifyType)values["type"].asUInt();
 		out_event.msg_ = values["msg"].asString();
+        if (values.isMember("server_ex"))
+            out_event.server_ex_ = values["server_ex"].asString();
 		return true;
 	}
 

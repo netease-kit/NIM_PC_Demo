@@ -497,6 +497,20 @@ NIM_SDK_DLL_API void nim_super_team_mute_member_async(const char *tid,
 	nim_super_team_opt_cb_func cb,
 	const void *user_data);
 
+/** @fn void nim_super_team_query_mute_list_async(const char *tid, const char *json_extension, nim_super_team_query_mute_list_cb_func cb, const void *user_data)
+ * 对群成员禁言/解除禁言
+ * @param[in] tid		群组id
+ * @param[in] cb	    静音成员列表回调
+ * @param[in] json_extension json 扩展参数（备用，目前不需要）
+ * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+ * @return void 无返回值
+ * @note 错误码	200:成功
+ *				414:参数错误
+ *				803:群不存在
+ *				802:没有权限
+ */
+NIM_SDK_DLL_API void nim_super_team_query_mute_list_async(const char *tid, const char *json_extension, nim_super_team_query_mute_list_cb_func cb, const void *user_data);
+
 /** @fn void nim_super_team_mute_async(const char *tid, bool set_mute, const char *json_extension, nim_super_team_opt_cb_func cb, const void *user_data)
 * 对群禁言/解除禁言
 * @param[in] tid		群组id

@@ -35,13 +35,14 @@ NIM_SDK_DLL_API	bool nim_client_init(const char *app_data_dir, const char *app_i
   */
 NIM_SDK_DLL_API	void nim_client_cleanup(const char *json_extension);
 
-/** @fn void nim_client_cleanup2(nim_json_transport_cb_func cb,const char *json_extension)
+/** @fn void nim_client_cleanup2(nim_json_transport_cb_func cb,const char *json_extension, const void *user_data)
   * NIM SDK清理，传入的JSON参数定义见nim_client_def.h
   * @param[in] cb 清理的回调函数， nim_json_transport_cb_func回调函数定义见nim_global_def.h
   * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
   * @return void 无返回值
   */
-NIM_SDK_DLL_API	void nim_client_cleanup2(nim_json_transport_cb_func cb,const char *json_extension);
+NIM_SDK_DLL_API	void nim_client_cleanup2(nim_json_transport_cb_func cb,const char *json_extension, const void *user_data);
 
 /** @fn void nim_client_update_apns_token(const char *device_token)   
   * (PC SDK该接口无效)更新Device Token，iOS推送使用    
@@ -121,6 +122,16 @@ NIM_SDK_DLL_API void nim_client_kick_other_client(const char *json_extension);
   *				422:账号被禁用
   */
 NIM_SDK_DLL_API	void nim_client_reg_auto_relogin_cb(const char *json_extension, nim_json_transport_cb_func cb, const void *user_data);
+
+/** @fn void nim_client_reg_relogin_request_token_cb(const char* json_extension, nim_relogin_request_token_cb_func cb, const void* user_data)
+ *
+ * @param[in] json_extension json扩展参数（备用，目前不需要）
+ * @param[in] cb 如果登录类型模式默认类型，则注册该回调用于在重登陆时获取新的登录鉴权 token
+ * @param[in] user_data APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+ * @return void 无返回值
+ * @note 错误码	无
+ */
+NIM_SDK_DLL_API void nim_client_reg_relogin_request_token_cb(const char* json_extension, nim_relogin_request_token_cb_func cb, const void* user_data);
 
 /** @fn void nim_client_reg_kickout_cb(const char *json_extension, nim_json_transport_cb_func cb, const void *user_data)
   * (全局回调)注册NIM客户端被踢回调
