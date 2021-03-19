@@ -17,7 +17,7 @@
 #include "module/runtime_data/runtime_data_manager.h"
 #include "module/session/transfer_file_manager.h"
 #include "nim_p2p_develop_kit.h"
-
+#include "util/net_call_helper.h"
 using namespace ui;
 
 namespace
@@ -93,17 +93,21 @@ void SessionBox::InitSessionBox()
 	btn_invite_->SetVisible(false);
 	btn_invite_->AttachClick(nbase::Bind(&SessionBox::OnBtnInvite, this, std::placeholders::_1));
 
-	btn_capture_audio_ = (Option*)FindSubControl(L"btn_capture_audio");
-	Button* btn_audio = (Button*)FindSubControl(L"btn_audio");
-	Button* btn_video = (Button*)FindSubControl(L"btn_video");
-	Button* btn_rts = (Button*)FindSubControl(L"btn_rts");
+	//btn_capture_audio_ = (Option*)FindSubControl(L"btn_capture_audio");
+	//Button* btn_audio = (Button*)FindSubControl(L"btn_audio");
+	Button* btn_audio_g2 = (Button*)FindSubControl(L"btn_audio_g2");
+	//Button* btn_video = (Button*)FindSubControl(L"btn_video");
+	Button* btn_video_g2 = (Button*)FindSubControl(L"btn_video_g2");
+	//Button* btn_rts = (Button*)FindSubControl(L"btn_rts");
 	if (session_type_ == nim::kNIMSessionTypeP2P && !IsFileTransPhone())
 	{
-		btn_audio->SetVisible(true);
+		//btn_audio->SetVisible(true);
+		btn_audio_g2->SetVisible(true);
 		//btn_video->SetVisible(true);
-		btn_rts->SetVisible(true);
+		//btn_rts->SetVisible(true);
+		btn_video_g2->SetVisible(true);
 	}
-	btn_video->SetVisible(true);
+	//btn_video->SetVisible(true);
 	btn_max_restore_ = (Button*)FindSubControl(L"btn_max_restore");
 
 	msg_content_ = (Box*)FindSubControl(L"msg_content");
@@ -498,6 +502,11 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 	{
 		return nullptr;
 	}
+	else if (msg.type_ == nim::kNIMMessageTypeG2NetCall)
+	{
+		//将G2话单显示成一条普通消息
+		item = new MsgBubbleText;
+	}
 	
 	if (item == nullptr)
 	{
@@ -518,6 +527,7 @@ MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool s
 
 	item->InitControl(bubble_right);
 	item->InitInfo(msg);
+
 	if (msg.session_type_ == nim::kNIMSessionTypeTeam)
 		item->SetTeamMemberGetter([this]()->const decltype(team_member_info_list_)&{
 		return team_member_info_list_; 
