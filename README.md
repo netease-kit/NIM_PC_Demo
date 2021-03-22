@@ -21,7 +21,7 @@
 ```bash
 git clone https://github.com/netease-im/NIM_PC_Demo.git --depth 1
 ```
-进入 `NIM_PC_Demo/nim_win_demo` 目录，使用 Visual Studio 2013 Update 5 以上版本 IDE 打开 `nim.sln`，按下 F7 即可编译项目
+进入 `NIM_PC_Demo/nim_win_demo` 目录，使用 Visual Studio 2017 以上版本 IDE 打开 `nim.sln`，按下 F7 即可编译项目
 
 ## 目录
 
