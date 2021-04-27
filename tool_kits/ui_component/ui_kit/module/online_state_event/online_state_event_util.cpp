@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "online_state_event_util.h"
 #include "nim_service/module/subscribe_event/subscribe_event_manager.h"
 
@@ -78,7 +79,7 @@ namespace nim_comp
 				return online_state;
 		}
 
-		// ²»ÅÐ¶Ï±¾µØ PC ÔÚÏß×´Ì¬
+		// ä¸åˆ¤æ–­æœ¬åœ° PC åœ¨çº¿çŠ¶æ€
 		if (accid != LoginManager::GetInstance()->GetAccount() && online_client.find(nim::kNIMClientTypePCWindows) != online_client.end())
 		{
 			online_state = pc_string + online_string;

@@ -8,165 +8,165 @@ protected:
 	virtual void OnPopupMainMenu(POINT point) override;
 private:
 	/**
-	* ´¦Àí²é¿´ÈÕÖ¾Ä¿Â¼²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æŸ¥çœ‹æ—¥å¿—ç›®å½•èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool LookLogMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÎÒµÄÊÖ»ú²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æˆ‘çš„æ‰‹æœºèœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool MobilePhoneMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíË¢ĞÂÍ¨Ñ¶Â¼²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†åˆ·æ–°é€šè®¯å½•èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool AddressMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦Àíµ¼³öÁÄÌì¼ÇÂ¼²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å¯¼å‡ºèŠå¤©è®°å½•èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool ExportMsglogToLocal();
 
 	/**
-	* ´¦Àíµ¼ÈëÁÄÌì¼ÇÂ¼²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å¯¼å…¥èŠå¤©è®°å½•èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool ImportMsglogFromLocal();
 
 	/**
-	* ´¦ÀíÇå¿ÕËùÓĞÁÄÌì¼ÇÂ¼²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ¸…ç©ºæ‰€æœ‰èŠå¤©è®°å½•èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool ClearChatRecordMenuItemClick(bool del_session, ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÇå¿Õ¼ÇÂ¼²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ¸…ç©ºè®°å½•èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool ClearChatRecordBySessionTypeMenuItemClick(bool del_session, nim::NIMSessionType type, ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÒôÊÓÆµÉèÖÃ²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†éŸ³è§†é¢‘è®¾ç½®èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool VChatSettingMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦Àí°×°å»Ø·Å²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†ç™½æ¿å›æ”¾èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool RtsReplayMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÊÊÅäDPI²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†é€‚é…DPIèœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool AdaptDpiMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ÏÔÊ¾µ¼³öÏûÏ¢µ½±¾µØµÄ¶ş¼¶²Ëµ¥
-	* @param[in] msg ÏûÏ¢Ïà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* æ˜¾ç¤ºå¯¼å‡ºæ¶ˆæ¯åˆ°æœ¬åœ°çš„äºŒçº§èœå•
+	* @param[in] msg æ¶ˆæ¯ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool ShowMigrateMsglogMenu(ui::EventArgs* param, nim::LogsBackupRemoteOperate migrate_msglog_option);
 
 	/**
-	* ÏÔÊ¾µ¼ÈëÏûÏ¢µ½±¾µØµÄ¶ş¼¶²Ëµ¥
-	* @param[in] msg ÏûÏ¢Ïà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* æ˜¾ç¤ºå¯¼å…¥æ¶ˆæ¯åˆ°æœ¬åœ°çš„äºŒçº§èœå•
+	* @param[in] msg æ¶ˆæ¯ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool ShowImportMsglogMenu(ui::EventArgs* param);
 
 	/**
-	* ¹Ø±Õµ¼Èë»òµ¼³öÏûÏ¢µÄ¶ş¼¶²Ëµ¥
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @param[in] check_mouse true: ¼ì²éµ½Êó±êÔÚÓïÑÔÁĞ±íÉÏ¾Í²»¹Ø±Õ£»false£º²»¼ì²éÊó±êÎ»ÖÃ£¬Ö±½Ó¹Ø±Õ
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å…³é—­å¯¼å…¥æˆ–å¯¼å‡ºæ¶ˆæ¯çš„äºŒçº§èœå•
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @param[in] check_mouse true: æ£€æŸ¥åˆ°é¼ æ ‡åœ¨è¯­è¨€åˆ—è¡¨ä¸Šå°±ä¸å…³é—­ï¼›falseï¼šä¸æ£€æŸ¥é¼ æ ‡ä½ç½®ï¼Œç›´æ¥å…³é—­
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool CloseMigrateMsglogMenu(ui::EventArgs* param, bool check_mouse);
 
 	/**
-	* µ¼³öÉèÖÃ
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¯¼å‡ºè®¾ç½®
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnMigrateMsglog(ui::EventArgs* param, nim::LogsBackupRemoteOperate option, MigrateMsglogTarget target);
 
 	/**
-	* ÏÔÊ¾ÓïÑÔÁĞ±í
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* æ˜¾ç¤ºè¯­è¨€åˆ—è¡¨
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool ShowLanguageList(ui::EventArgs* param);
 
 	/**
-	* ¹Ø±ÕÓïÑÔÁĞ±í
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @param[in] check_mouse true: ¼ì²éµ½Êó±êÔÚÓïÑÔÁĞ±íÉÏ¾Í²»¹Ø±Õ£»false£º²»¼ì²éÊó±êÎ»ÖÃ£¬Ö±½Ó¹Ø±Õ
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å…³é—­è¯­è¨€åˆ—è¡¨
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @param[in] check_mouse true: æ£€æŸ¥åˆ°é¼ æ ‡åœ¨è¯­è¨€åˆ—è¡¨ä¸Šå°±ä¸å…³é—­ï¼›falseï¼šä¸æ£€æŸ¥é¼ æ ‡ä½ç½®ï¼Œç›´æ¥å…³é—­
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool CloseLanguageList(ui::EventArgs* param, bool check_mouse);
 
 	/**
-	* Ñ¡ÔñÓïÑÔ
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* é€‰æ‹©è¯­è¨€
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnSelectLanguage(ui::EventArgs* param);
 
 	/**
-	* Ñ¡ÔñÓïÑÔµÄ»Øµ÷
-	* @param[in] ret Ñ¡ÔñµÄ°´Å¥
-	* @return void ÎŞ·µ»ØÖµ
+	* é€‰æ‹©è¯­è¨€çš„å›è°ƒ
+	* @param[in] ret é€‰æ‹©çš„æŒ‰é’®
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnSelectLanguageCallback(MsgBoxRet ret, const std::string& language);
 
 	/**
-	* ´¦Àí¹ØÓÚ²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å…³äºèœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool AboutMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦Àí×¢Ïú²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ³¨é”€èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool LogoffMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÍË³ö²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†é€€å‡ºèœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool QuitMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* Ö÷²Ëµ¥¹Ø±ÕÊ±¹Ø±ÕËùÓĞ¶ş¼¶²Ëµ¥
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* ä¸»èœå•å…³é—­æ—¶å…³é—­æ‰€æœ‰äºŒçº§èœå•
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool CloseAllSubmenu(ui::EventArgs* param);
 
 	/**
-	* Ïú»Ù¶ş¼¶²Ëµ¥
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* é”€æ¯äºŒçº§èœå•
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool DestroySubmenu(const std::wstring& menu_name, bool check_mouse = true);
 };

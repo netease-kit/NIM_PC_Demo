@@ -5,7 +5,7 @@
 class MyAddresbookItemInfo
 {
 public:
-	int type_;//0 ²¿ÃÅ 1 ÁªÏµÈË
+	int type_;//0 éƒ¨é—¨ 1 è”ç³»äºº
 	std::string id_;
 	std::string name_;
 };

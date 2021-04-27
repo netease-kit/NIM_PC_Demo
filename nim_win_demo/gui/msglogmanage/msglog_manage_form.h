@@ -1,18 +1,18 @@
 #pragma once
 
 /** @class MsglogManageForm
-  * @brief ÏûÏ¢¼ÇÂ¼µ¼Èë\µ¼³ö´°¿Ú
+  * @brief æ¶ˆæ¯è®°å½•å¯¼å…¥\å¯¼å‡ºçª—å£
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @date 2016/10/12
   */
 
-enum MigrateMsglogOption	// µ¼Èë»¹ÊÇµ¼³ö
+enum MigrateMsglogOption	// å¯¼å…¥è¿˜æ˜¯å¯¼å‡º
 {
 	kExport,
 	kImport
 };
 
-enum MigrateMsglogTarget	// ±¾µØ»¹ÊÇÔÆ´¢´æ
+enum MigrateMsglogTarget	// æœ¬åœ°è¿˜æ˜¯äº‘å‚¨å­˜
 {
 	kLocal,
 	kRemote
@@ -24,7 +24,7 @@ public:
 	MsglogManageForm();
 	~MsglogManageForm();
 	
-	//¸²¸ÇĞéº¯Êı
+	//è¦†ç›–è™šå‡½æ•°
 	virtual std::wstring GetSkinFolder() override;
 	virtual std::wstring GetSkinFile() override;
 	virtual std::wstring GetWindowClassName() const override;
@@ -32,136 +32,136 @@ public:
 	virtual UINT GetClassStyle() const override;
 
 	/**
-	* ´°¿Ú³õÊ¼»¯º¯Êı
-	* @return void	ÎŞ·µ»ØÖµ
+	* çª—å£åˆå§‹åŒ–å‡½æ•°
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void InitWindow() override;
 
 	/**
-	* ´¦Àí´°¿ÚÏú»ÙÏûÏ¢
-	* @return void	ÎŞ·µ»ØÖµ
+	* å¤„ç†çª—å£é”€æ¯æ¶ˆæ¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void OnFinalMessage(HWND hWnd);
 
 	/**
-	* À¹½Ø²¢´¦Àíµ×²ã´°ÌåÏûÏ¢
-	* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-	* @param[in] wParam ¸½¼Ó²ÎÊı
-	* @param[in] lParam ¸½¼Ó²ÎÊı
-	* @return LRESULT ´¦Àí½á¹û
+	* æ‹¦æˆªå¹¶å¤„ç†åº•å±‚çª—ä½“æ¶ˆæ¯
+	* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+	* @param[in] wParam é™„åŠ å‚æ•°
+	* @param[in] lParam é™„åŠ å‚æ•°
+	* @return LRESULT å¤„ç†ç»“æœ
 	*/
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 	/**
-	* ÉèÖÃ´°¿Úµ¼Èë\µ¼³öÀàĞÍ
-	* @param[in] export_or_import true:µ¼³ö£¬false:µ¼Èë
-	* @return bool true ³É¹¦£¬false Ê§°Ü
+	* è®¾ç½®çª—å£å¯¼å…¥\å¯¼å‡ºç±»å‹
+	* @param[in] export_or_import true:å¯¼å‡ºï¼Œfalse:å¯¼å…¥
+	* @return bool true æˆåŠŸï¼Œfalse å¤±è´¥
 	*/
 	bool SetType(nim::LogsBackupRemoteOperate option, MigrateMsglogTarget target);
 
 	/**
-	* Êı¾İµ¼Èëµ¼³ö½ø¶ÈµÄ»Øµ÷
-	* @param[in] operate µ¼Èëµ¼³öÀàĞÍ
-	* @param[in] progress ½ø¶È
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ•°æ®å¯¼å…¥å¯¼å‡ºè¿›åº¦çš„å›è°ƒ
+	* @param[in] operate å¯¼å…¥å¯¼å‡ºç±»å‹
+	* @param[in] progress è¿›åº¦
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnMigrateMsglogProgressCallbackUI(nim::LogsBackupRemoteOperate operate, float progress);
 
 	/**
-	* Êı¾İµ¼Èëµ¼³öÍê³ÉµÄ»Øµ÷
-	* @param[in] operate µ¼Èëµ¼³öÀàĞÍ
-	* @param[in] state ×îÖÕ×´Ì¬
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ•°æ®å¯¼å…¥å¯¼å‡ºå®Œæˆçš„å›è°ƒ
+	* @param[in] operate å¯¼å…¥å¯¼å‡ºç±»å‹
+	* @param[in] state æœ€ç»ˆçŠ¶æ€
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnMigrateMsglogCompletedCallbackUI(nim::LogsBackupRemoteOperate operate, nim::LogsBackupRemoteState state);
 
 private:
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµÄËùÓĞÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶çš„æ‰€æœ‰æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool Notify(ui::EventArgs* msg);
 
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnClicked(ui::EventArgs* msg);
 
 	/**
-	* Ñ¡Ôñµ¼³ö\µ¼ÈëÂ·¾¶
-	* @return void	ÎŞ·µ»ØÖµ
+	* é€‰æ‹©å¯¼å‡º\å¯¼å…¥è·¯å¾„
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void SelectPath();
 
 	/**
-	* ÏìÓ¦Â·¾¶±»Ñ¡ÔñµÄ»Øµ÷º¯Êı
-	* @param[in] ret ÊÇ·ñÑ¡ÔñÁËÂ·¾¶
-	* @param[in] file_path Â·¾¶Öµ
-	* @return void	ÎŞ·µ»ØÖµ
+	* å“åº”è·¯å¾„è¢«é€‰æ‹©çš„å›è°ƒå‡½æ•°
+	* @param[in] ret æ˜¯å¦é€‰æ‹©äº†è·¯å¾„
+	* @param[in] file_path è·¯å¾„å€¼
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnSelectPathCallback(BOOL ret, std::wstring file_path);
 
 	/**
-	* Ö´ĞĞµ¼³ö²Ù×÷
-	* @param[in] path µ¼³öÂ·¾¶
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ‰§è¡Œå¯¼å‡ºæ“ä½œ
+	* @param[in] path å¯¼å‡ºè·¯å¾„
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void Export(const std::string& path);
 
 	/**
-	* µ¼³öµ½ÔÆ¶Ë
-	* @return bool	ÊÇ·ñ¿ÉÒÔ½øĞĞµ¼³ö²Ù×÷
+	* å¯¼å‡ºåˆ°äº‘ç«¯
+	* @return bool	æ˜¯å¦å¯ä»¥è¿›è¡Œå¯¼å‡ºæ“ä½œ
 	*/
 	bool ExportToRemote();
 
 	/**
-	* ÏìÓ¦µ¼³öÍê³ÉµÄ»Øµ÷º¯Êı
-	* @param[in] res_code µ¼³ö½á¹û´íÎóÂë
-	* @return void	ÎŞ·µ»ØÖµ
+	* å“åº”å¯¼å‡ºå®Œæˆçš„å›è°ƒå‡½æ•°
+	* @param[in] res_code å¯¼å‡ºç»“æœé”™è¯¯ç 
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnExportCompeleteCallback(nim::NIMResCode res_code);
 
 	/**
-	* Ö´ĞĞµ¼Èë²Ù×÷
-	* @param[in] path µ¼ÈëÂ·¾¶
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ‰§è¡Œå¯¼å…¥æ“ä½œ
+	* @param[in] path å¯¼å…¥è·¯å¾„
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void Import(const std::string& path);
 
 	/**
-	* ´ÓÔÆ¶Ëµ¼Èë
-	* @return bool ÊÇ·ñ¿ÉÒÔ½øĞĞµ¼Èë²Ù×÷
+	* ä»äº‘ç«¯å¯¼å…¥
+	* @return bool æ˜¯å¦å¯ä»¥è¿›è¡Œå¯¼å…¥æ“ä½œ
 	*/
 	bool ImportFromRemote();
 
 	/**
-	* ÏìÓ¦µ¼Èë¹ı³ÌµÄ»Øµ÷º¯Êı
-	* @param[in] imported_count ÒÑµ¼ÈëÊıÁ¿
-	* @param[in] total_count ×ÜÊı
-	* @return void	ÎŞ·µ»ØÖµ
+	* å“åº”å¯¼å…¥è¿‡ç¨‹çš„å›è°ƒå‡½æ•°
+	* @param[in] imported_count å·²å¯¼å…¥æ•°é‡
+	* @param[in] total_count æ€»æ•°
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnImportProgressCallback(int64_t imported_count, int64_t total_count);
 
 	/**
-	* ÏìÓ¦µ¼ÈëÍê³ÉµÄ»Øµ÷º¯Êı
-	* @param[in] res_code µ¼Èë½á¹û´íÎóÂë
-	* @return void	ÎŞ·µ»ØÖµ
+	* å“åº”å¯¼å…¥å®Œæˆçš„å›è°ƒå‡½æ•°
+	* @param[in] res_code å¯¼å…¥ç»“æœé”™è¯¯ç 
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnImportCompeleteCallback(nim::NIMResCode res_code);
 
 	/**
-	* ÑÓ³ÙÒ»¶¨Ê±¼äºó¹Ø±Õ´°¿Ú
-	* @return void	ÎŞ·µ»ØÖµ
+	* å»¶è¿Ÿä¸€å®šæ—¶é—´åå…³é—­çª—å£
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void DelayClose();
 
 	/**
-	* ÉèÖÃÊÇ·ñÕıÔÚÖ´ĞĞµ¼Èë\µ¼³ö²Ù×÷
-	* @param[in] running true:ÕıÔÚÖ´ĞĞ£¬falseÃ»ÓĞÖ´ĞĞ
-	* @return void	ÎŞ·µ»ØÖµ
+	* è®¾ç½®æ˜¯å¦æ­£åœ¨æ‰§è¡Œå¯¼å…¥\å¯¼å‡ºæ“ä½œ
+	* @param[in] running true:æ­£åœ¨æ‰§è¡Œï¼Œfalseæ²¡æœ‰æ‰§è¡Œ
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void SetDbStatus(bool running);
 

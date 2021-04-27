@@ -1,4 +1,5 @@
-﻿#include "msg_record_retweet.h"
+#include "stdafx.h"
+#include "msg_record_retweet.h"
 #include "module/audio/audio_manager.h"
 #include "module/multi_retweet/multi_retweet_manager.h"
 using namespace ui;

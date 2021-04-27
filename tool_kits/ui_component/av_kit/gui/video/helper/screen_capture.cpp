@@ -1,4 +1,4 @@
-
+#include "stdafx.h"
 #include "screen_capture.h"
 #include <shlobj.h> // SHGetFolderPathW
 #include <shlwapi.h>
@@ -9,7 +9,7 @@
 namespace nim_comp
 {
 	
-//±éÀúwindows´°¿Ú
+//éå†windowsçª—å£
 bool GetFileVersion(const wchar_t *file_path, WORD *major_version, WORD *minor_version, WORD *build_number, WORD *revision_number)
 {
 	DWORD handle, len;
@@ -126,13 +126,13 @@ int ScreenCapture::GetDesktopScale()
 		LPSetProcessDPIAware pSetProcessDPIAware = (LPSetProcessDPIAware)GetProcAddress(hUser32, "SetProcessDPIAware");
 		if (pSetProcessDPIAware)
 		{
-			//È¥µôÏµÍ³µÄ·Å´ó£¬²»Ó¦¸Ãµ÷ÓÃ
+			//å»æ‰ç³»ç»Ÿçš„æ”¾å¤§ï¼Œä¸åº”è¯¥è°ƒç”¨
 			//pSetProcessDPIAware();
 			std::wstring value;
 			HKEY hKEY;
 			long ret = 0;
 			ret = ::RegOpenKeyEx(HKEY_CURRENT_USER, L"CONTROL PANEL\\DESKTOP\\WINDOWMETRICS", 0, KEY_ALL_ACCESS, &hKEY);
-			if (ret != ERROR_SUCCESS)  //¸Ã¼üÖµ²»´æÔÚ
+			if (ret != ERROR_SUCCESS)  //è¯¥é”®å€¼ä¸å­˜åœ¨
 			{
 				::RegCloseKey(hKEY);
 			}
@@ -234,7 +234,7 @@ void ScreenCapture::CustomFrame()
 	//nbase::NAutoLock auto_lock(&lock_);
 	if (IsWindow(capture_hwnd_))
 	{
-		// °ÑÆÁÄ»Éè±¸ÃèÊö±í¿½±´µ½ÄÚ´æÉè±¸ÃèÊö±íÖĞ
+		// æŠŠå±å¹•è®¾å¤‡æè¿°è¡¨æ‹·è´åˆ°å†…å­˜è®¾å¤‡æè¿°è¡¨ä¸­
 		HDC w_dc = GetDC(capture_hwnd_);
 		if (w_dc)
 		{
@@ -266,7 +266,7 @@ void ScreenCapture::CustomFrame()
 				BitBlt(mem_dc, 0, 0, capture_width_, capture_height_, w_dc, 0, 0, SRCCOPY /*| CAPTUREBLT*/);
 			}
 			//__int64 time1 = get_time_ms();
-			//Êó±ê
+			//é¼ æ ‡
 			if (1)
 			{
 				CURSORINFO pci;
@@ -302,8 +302,8 @@ void ScreenCapture::CustomFrame()
 			DeleteDC(mem_dc);
 			ReleaseDC(capture_hwnd_, w_dc);
 			timeb time_now;
-			ftime(&time_now); // ÃëÊı
-			__int64 cur_timestamp = time_now.time * 1000 + time_now.millitm; // ºÁÃë
+			ftime(&time_now); // ç§’æ•°
+			__int64 cur_timestamp = time_now.time * 1000 + time_now.millitm; // æ¯«ç§’
 			int wxh = capture_width_ * capture_height_;
 			frame_.AddVideoFrame(true, cur_timestamp, (const char*)capture_data_, wxh * 4, \
 				capture_width_, capture_height_, "", nim_comp::VideoFrameMng::Ft_ARGB_r);

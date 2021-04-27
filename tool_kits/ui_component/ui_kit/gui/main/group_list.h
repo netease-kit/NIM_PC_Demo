@@ -5,7 +5,7 @@
 namespace nim_comp
 {
 /** @class GroupList
-  * @brief ÓÃÓÚ²éÑ¯ºÍ±£´æÈºÁĞ±í
+  * @brief ç”¨äºæŸ¥è¯¢å’Œä¿å­˜ç¾¤åˆ—è¡¨
   * @copyright (c) 2015, NetEase Inc. All rights reserved
   * @author towik
   * @date 2015/1/1
@@ -14,80 +14,80 @@ class GroupList : public nbase::SupportWeakCallback
 {
 public:
 	/**
-	* ¹¹Ôìº¯Êı
-	* @param[in] group_list ×÷Îª·Ö×éÁĞ±íµÄTreeView¿Ø¼şÖ¸Õë
+	* æ„é€ å‡½æ•°
+	* @param[in] group_list ä½œä¸ºåˆ†ç»„åˆ—è¡¨çš„TreeViewæ§ä»¶æŒ‡é’ˆ
 	*/
 	GroupList(ui::TreeView* group_list);
 	virtual ~GroupList();
 
 	/**
-	* »ñÈ¡×÷Îª·Ö×éÁĞ±íµÄTreeView¿Ø¼şÖ¸Õë
-	* @return ui::TreeView*	×÷Îª·Ö×éÁĞ±íµÄTreeView¿Ø¼şÖ¸Õë
+	* è·å–ä½œä¸ºåˆ†ç»„åˆ—è¡¨çš„TreeViewæ§ä»¶æŒ‡é’ˆ
+	* @return ui::TreeView*	ä½œä¸ºåˆ†ç»„åˆ—è¡¨çš„TreeViewæ§ä»¶æŒ‡é’ˆ
 	*/
 	ui::TreeView* GetGroupList() { return group_list_; }
 private:
 
 	/**
-	* Ìí¼ÓÒ»¸öÈº×éÁĞ±íÏî
-	* @param[in] team_info Èº×éĞÅÏ¢
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ·»åŠ ä¸€ä¸ªç¾¤ç»„åˆ—è¡¨é¡¹
+	* @param[in] team_info ç¾¤ç»„ä¿¡æ¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void AddListItem(const nim::TeamInfo& team_info);
 
 	/**
-	* Ìí¼ÓÒ»¸öÈº×éÁĞ±íÏîµ½Ö¸¶¨µÄ·Ö×éÄÚ
-	* @param[in] accid ÓÃ»§id
-	* @param[in] tree_node ·Ö×é¿Ø¼şÖ¸Õë
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ·»åŠ ä¸€ä¸ªç¾¤ç»„åˆ—è¡¨é¡¹åˆ°æŒ‡å®šçš„åˆ†ç»„å†…
+	* @param[in] accid ç”¨æˆ·id
+	* @param[in] tree_node åˆ†ç»„æ§ä»¶æŒ‡é’ˆ
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void AddListItemInGroup(const nim::TeamInfo& team_info, ui::TreeNode* tree_node);
 
 	/**
-	* ÏìÓ¦²éÑ¯ËùÓĞÈºĞÅÏ¢µÄ»Øµ÷º¯Êı
-	* @param[in] team_count Èº×é×ÜÊı
-	* @param[in] team_info_list Èº×éĞÅÏ¢ÁĞ±í
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”æŸ¥è¯¢æ‰€æœ‰ç¾¤ä¿¡æ¯çš„å›è°ƒå‡½æ•°
+	* @param[in] team_count ç¾¤ç»„æ€»æ•°
+	* @param[in] team_info_list ç¾¤ç»„ä¿¡æ¯åˆ—è¡¨
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnQueryAllMyTeams(int team_count, const std::list<nim::TeamInfo>& team_info_list);
 
 	/**
-	* ÏìÓ¦Ìí¼ÓÈºµÄ»Øµ÷º¯Êı
-	* @param[in] tid Èº×éid
-	* @param[in] tname Èº×éÃû×Ö
-	* @param[in] type Èº×éÀàĞÍ
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”æ·»åŠ ç¾¤çš„å›è°ƒå‡½æ•°
+	* @param[in] tid ç¾¤ç»„id
+	* @param[in] tname ç¾¤ç»„åå­—
+	* @param[in] type ç¾¤ç»„ç±»å‹
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnAddTeam(const std::string& tid, const std::string& tname, nim::NIMTeamType type);
 	
 	/**
-	* ÏìÓ¦ÒÆ³ıÈºµÄ»Øµ÷º¯Êı
-	* @param[in] tid Èº×éid
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ç§»é™¤ç¾¤çš„å›è°ƒå‡½æ•°
+	* @param[in] tid ç¾¤ç»„id
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnRemoveTeam(const std::string& tid);
 
 	/**
-	* ÏìÓ¦ÈºÃû³Æ¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] team_info Èº×éĞÅÏ¢
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ç¾¤åç§°æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] team_info ç¾¤ç»„ä¿¡æ¯
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnTeamNameChanged(const nim::TeamInfo& team_info);
 
 	/**
-	* ÏìÓ¦ÓÃ»§Í·Ïñ¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] type Í·ÏñÀàĞÍ
-	* @param[in] accid ÓÃ»§id
-	* @param[in] photo_path Í·ÏñÂ·¾¶
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ç”¨æˆ·å¤´åƒæ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] type å¤´åƒç±»å‹
+	* @param[in] accid ç”¨æˆ·id
+	* @param[in] photo_path å¤´åƒè·¯å¾„
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path);
 
 	bool OnReturnEventsClick(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíºÃÓÑ¿Ø¼şÍ·Ïñµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å¥½å‹æ§ä»¶å¤´åƒå•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnHeadImageClick(const std::string& uid, ui::EventArgs*);
 

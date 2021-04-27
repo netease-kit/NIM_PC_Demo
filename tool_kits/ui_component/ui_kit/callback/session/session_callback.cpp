@@ -1,8 +1,10 @@
-﻿#include "session_callback.h"
+#include "stdafx.h"
+#include "session_callback.h"
 #include "module/session/session_manager.h"
 #include "export/nim_ui_session_list_manager.h"
 #include "export/nim_ui_window_manager.h"
 #include "module/session/session_util.h"
+
 namespace nim_comp
 {
 void TalkCallback::OnSendMsgCallback(const nim::SendMessageArc& arc)
@@ -139,7 +141,7 @@ void TalkCallback::OnReceiveRecallMsgCallback(nim::NIMResCode code, const std::l
 			nim::IMMessage msg;
 			msg.timetag_ = notify.msglog_timetag_;
 			msg.feature_ = notify.notify_feature_;
-			msg.client_msg_id_ = QString::GetGUID();
+			msg.client_msg_id_ = nim::Tool::GetUuid();
 			msg.receiver_accid_ = talk_id;
 			msg.session_type_ = notify.session_type_;
 			msg.sender_accid_ = notify.from_id_;

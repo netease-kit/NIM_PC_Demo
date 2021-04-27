@@ -1,4 +1,5 @@
-﻿#include "video_setting.h"
+#include "stdafx.h"
+#include "video_setting.h"
 #include "module/video/video_manager.h"
 
 using namespace ui;

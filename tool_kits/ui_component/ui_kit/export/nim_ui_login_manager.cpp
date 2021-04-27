@@ -1,4 +1,5 @@
-﻿#include "nim_ui_login_manager.h"
+#include "stdafx.h"
+#include "nim_ui_login_manager.h"
 #include "callback/login/login_callback.h"
 #include "module/login/login_manager.h"
 

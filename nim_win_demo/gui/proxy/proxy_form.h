@@ -15,7 +15,7 @@ private:
 };
 typedef std::map<std::wstring, std::shared_ptr<nbase::ProxySetting>> ProxySettingList;
 /** @class ProxyForm
-  * @brief ´úÀíÉèÖÃ´°¿Ú
+  * @brief ä»£ç†è®¾ç½®çª—å£
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @author wp
   * @date 2014/02/14
@@ -26,7 +26,7 @@ public:
 	ProxyForm();
 	virtual ~ProxyForm();
 
-	//¸²¸ÇĞéº¯Êı
+	//è¦†ç›–è™šå‡½æ•°
 	virtual std::wstring GetSkinFolder() override;
 	virtual std::wstring GetSkinFile() override;
 	virtual std::wstring GetWindowClassName() const override { return kClassName; };
@@ -34,8 +34,8 @@ public:
 	virtual UINT GetClassStyle() const override	{ return UI_CLASSSTYLE_FRAME | CS_DBLCLKS; };
 
 	/**
-	* ´°¿Ú³õÊ¼»¯º¯Êı
-	* @return void	ÎŞ·µ»ØÖµ
+	* çª—å£åˆå§‹åŒ–å‡½æ•°
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void InitWindow() override;
 	virtual void Close(UINT nRet  = IDOK) override;
@@ -85,54 +85,54 @@ public:
 	void SetProxyName(const std::wstring& name);
 	std::wstring GetProxyName() const;
 	/**
-	* ¸ù¾İÉèÖÃµÄ´úÀíĞÅÏ¢£¬ÉèÖÃnim¡¢nim_http¡¢chatroomÄ£¿éµÄ´úÀíĞÅÏ¢
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ ¹æ®è®¾ç½®çš„ä»£ç†ä¿¡æ¯ï¼Œè®¾ç½®nimã€nim_httpã€chatroomæ¨¡å—çš„ä»£ç†ä¿¡æ¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void ApplyProxySetting() = 0;
 	/**
-	* °ÑNIM´úÀíÀàĞÍ×ª»»Îª¶ÔÓ¦µÄBASE´úÀíÀàĞÍ
-	* @param[in] type nim´úÀíÀàĞÍ
-	* @return nbase::ProxyType BASE´úÀíÀàĞÍ
+	* æŠŠNIMä»£ç†ç±»å‹è½¬æ¢ä¸ºå¯¹åº”çš„BASEä»£ç†ç±»å‹
+	* @param[in] type nimä»£ç†ç±»å‹
+	* @return nbase::ProxyType BASEä»£ç†ç±»å‹
 	*/
 	static nbase::ProxyType ConvertNimProxytypeToBaseProxyType(nim::NIMProxyType type);
 
 	/**
-	* °ÑBase´úÀíÀàĞÍ×ª»»Îª¶ÔÓ¦µÄNim´úÀíÀàĞÍ
-	* @param[in] type BASE´úÀíÀàĞÍ
-	* @return nim::NIMProxyType Nim´úÀíÀàĞÍ
+	* æŠŠBaseä»£ç†ç±»å‹è½¬æ¢ä¸ºå¯¹åº”çš„Nimä»£ç†ç±»å‹
+	* @param[in] type BASEä»£ç†ç±»å‹
+	* @return nim::NIMProxyType Nimä»£ç†ç±»å‹
 	*/
 	static nim::NIMProxyType ConvertBaseProxytypeToNimProxyType(nbase::ProxyType type);
 protected:
 	/**
-	* ´¦Àí´úÀíÀàĞÍ×éºÏ¿ò±»Ñ¡ÔñµÄÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†ä»£ç†ç±»å‹ç»„åˆæ¡†è¢«é€‰æ‹©çš„æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnProxyTypeSelected(ui::EventArgs* msg);
 
 	/**
-	* ¼ì²éÊäÈëµÄ´úÀíµØÖ·ºÍ¶Ë¿ÚÊÇ·ñºÏ·¨
-	* @return bool true ºÏ·¨£¬false ²»ºÏ·¨
+	* æ£€æŸ¥è¾“å…¥çš„ä»£ç†åœ°å€å’Œç«¯å£æ˜¯å¦åˆæ³•
+	* @return bool true åˆæ³•ï¼Œfalse ä¸åˆæ³•
 	*/
 	bool CheckProxyLegality();	
 
 	/**
-	* °Ñ´úÀíÀàĞÍ×éºÏ¿òµÄÑ¡ÖĞË÷Òı×ª»»Îª¶ÔÓ¦µÄ´úÀíÀàĞÍ
-	* @param[in] index Ñ¡ÖĞË÷Òı
-	* @return nim::NIMProxyTyp ´úÀíÀàĞÍ
+	* æŠŠä»£ç†ç±»å‹ç»„åˆæ¡†çš„é€‰ä¸­ç´¢å¼•è½¬æ¢ä¸ºå¯¹åº”çš„ä»£ç†ç±»å‹
+	* @param[in] index é€‰ä¸­ç´¢å¼•
+	* @return nim::NIMProxyTyp ä»£ç†ç±»å‹
 	*/
 	nim::NIMProxyType ConvertIndexToProxyType(int index);
 
 	/**
-	* °Ñ´úÀíÀàĞÍ×ª»»Îª´úÀíÀàĞÍ×éºÏ¿òµÄÑ¡ÖĞË÷Òı
-	* @param[in] nim::NIMProxyTyp ´úÀíÀàĞÍ
-	* @return int Ë÷Òı
+	* æŠŠä»£ç†ç±»å‹è½¬æ¢ä¸ºä»£ç†ç±»å‹ç»„åˆæ¡†çš„é€‰ä¸­ç´¢å¼•
+	* @param[in] nim::NIMProxyTyp ä»£ç†ç±»å‹
+	* @return int ç´¢å¼•
 	*/
 	int ConvertProxyTypeToIndex(nim::NIMProxyType type);
 	/**
-	* ÉèÖÃÃæ°å¿ÉÓÃ
-	* @param[in] enable ¿ÉÓÃ
-	* @return void	ÎŞ·µ»ØÖµ
+	* è®¾ç½®é¢æ¿å¯ç”¨
+	* @param[in] enable å¯ç”¨
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void SetPanelEnabled(bool enable);	
 
@@ -154,7 +154,7 @@ protected:
 	virtual std::vector<std::wstring> GetSupportedProxyTypeName() override;
 private:
 	/**
-	* ¼ì²éÊäÈëµÄ´úÀíµØÖ·ºÍ¶Ë¿ÚÊÇ·ñÓĞĞ§
+	* æ£€æŸ¥è¾“å…¥çš„ä»£ç†åœ°å€å’Œç«¯å£æ˜¯å¦æœ‰æ•ˆ
 	* @return void
 	*/
 	void DetectProxyLegality();

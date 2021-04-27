@@ -1,4 +1,4 @@
-﻿#include "mosaic.h"
+#include "mosaic.h"
 #include <stdlib.h>
 
 #define COLOR_WEIGHT	3

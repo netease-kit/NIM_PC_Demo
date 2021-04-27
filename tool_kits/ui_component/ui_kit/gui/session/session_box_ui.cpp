@@ -1,4 +1,5 @@
-﻿#include "session_box.h"
+#include "stdafx.h"
+#include "session_box.h"
 #include "session_form.h"
 #include "custom_msg_form.h"
 #include "gui/link/link_form.h"
@@ -8,17 +9,15 @@
 #include "gui/session/msg_record.h"
 #include "gui/profile_form/profile_form.h"
 #include "gui/session/control/audio_capture.h"
-
 #include "callback/session/session_callback.h"
 #include "callback/http/http_callback.h"
 #include "callback/team/team_callback.h"
 #include "capture_image/src/capture_manager.h"
-
 #include "module/session/session_manager.h"
 #include "av_kit/module/video/video_manager.h"
+#include "g2_kit/module/video_manager_g2.h"
 #include "module/rts/rts_manager.h"
 #include "module/service/user_service.h"
-
 #include "shared/modal_wnd/file_dialog_ex.h"
 #include "gui/session/unread_form.h"
 #include "av_kit/gui/video/multi_video_form.h"
@@ -353,7 +352,7 @@ bool SessionBox::Notify(ui::EventArgs* param)
 						nim::SysMessage msg;
 						msg.receiver_accid_ = session_id_;
 						msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
-						msg.client_msg_id_ = QString::GetGUID();
+						msg.client_msg_id_ = nim::Tool::GetUuid();
 						msg.attach_ = writer.write(json);
 						msg.type_ = nim::kNIMSysMsgTypeCustomP2PMsg;
 
@@ -399,9 +398,17 @@ bool SessionBox::OnClicked(ui::EventArgs* param)
 	{
 		OnBtnAudio();
 	}
+	else if (name == L"btn_audio_g2")
+	{
+		OnBtnAudioG2();
+	}
 	else if (name == L"btn_video")
 	{
 		OnBtnVideo();
+	}
+	else if (name == L"btn_video_g2")
+	{
+		OnBtnVideoG2();
 	}
 	else if (name == L"btn_rts")
 	{
@@ -530,7 +537,7 @@ void SessionBox::DoClip()
 	CaptureManager::CaptureCallback callback = nbase::Bind(&SessionBox::OnClipCallback, this, std::placeholders::_1, std::placeholders::_2);
 	std::string acc = LoginManager::GetInstance()->GetAccount();
 	assert(!acc.empty());
-	std::wstring app_data_audio_path = QPath::GetUserAppDataDir(acc);
+	std::wstring app_data_audio_path = nbase::UTF8ToUTF16(nim::Tool::GetUserAppdataDir(acc));
 	if (CaptureManager::GetInstance()->StartCapture(callback, app_data_audio_path, send_info) == false)
 	{
 		OnClipCallback(FALSE, L"");
@@ -768,7 +775,13 @@ void SessionBox::OnEmotionClosed()
 
 	input_edit_->SetFocus();
 }
-
+void SessionBox::OnBtnAudioG2()
+{
+	if (session_type_ == nim::kNIMSessionTypeP2P)
+	{
+		VideoManagerG2::GetInstance()->ShowVideoChatForm(session_id_, false);
+	}
+}
 void SessionBox::OnBtnAudio()
 {
 	if (session_type_ == nim::kNIMSessionTypeP2P)
@@ -811,6 +824,24 @@ void SessionBox::OnBtnVideo()
 	}
 }
 
+/*
+ *使用G2实现1to1通话（音频+视频），暂时不考虑多人
+ */
+void SessionBox::OnBtnVideoG2()
+{
+	//暂时只实现p2p
+	switch (session_type_)
+	{
+	case nim::kNIMSessionTypeP2P:
+	{
+		VideoManagerG2::GetInstance()->ShowVideoChatForm(session_id_, true);
+		break;
+	}
+	default:
+		break;
+	}
+}
+
 void SessionBox::OnVChatSelectedCallback(const std::list<UTF8String>& selected_friends, const std::list<UTF8String>& selected_teams)
 {
 	auto cb = [=](int res)
@@ -829,7 +860,7 @@ void SessionBox::OnVChatSelectedCallback(const std::list<UTF8String>& selected_f
 				msg.session_type_ = nim::kNIMSessionTypeTeam;
 				msg.receiver_accid_ = session_id_;
 				msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
-				msg.client_msg_id_ = QString::GetGUID();
+				msg.client_msg_id_ = nim::Tool::GetUuid();
 				msg.msg_setting_.resend_flag_ = BS_FALSE;
 				msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
 
@@ -905,13 +936,13 @@ void SessionBox::OnSelectedRetweetList(nim::IMMessage msg, const std::list<std::
 
 	for (auto &it : friend_list)
 	{
-		std::string send_msg = nim::Talk::CreateRetweetMessage(msg.ToJsonString(false), QString::GetGUID(), nim::kNIMSessionTypeP2P, it, msg.msg_setting_, 1000 * nbase::Time::Now().ToTimeT());
+		std::string send_msg = nim::Talk::CreateRetweetMessage(msg.ToJsonString(false), nim::Tool::GetUuid(), nim::kNIMSessionTypeP2P, it, msg.msg_setting_, 1000 * nbase::Time::Now().ToTimeT());
 		retweet_cb(send_msg, it, nim::kNIMSessionTypeP2P);
 	}
 
 	for (auto &it : team_list)
 	{
-		std::string send_msg = nim::Talk::CreateRetweetMessage(msg.ToJsonString(false), QString::GetGUID(), nim::kNIMSessionTypeTeam, it, msg.msg_setting_, 1000 * nbase::Time::Now().ToTimeT());
+		std::string send_msg = nim::Talk::CreateRetweetMessage(msg.ToJsonString(false), nim::Tool::GetUuid(), nim::kNIMSessionTypeTeam, it, msg.msg_setting_, 1000 * nbase::Time::Now().ToTimeT());
 		retweet_cb(send_msg, it, nim::kNIMSessionTypeTeam);
 	}
 }
@@ -1112,8 +1143,8 @@ bool SessionBox::PasteClipboard()
 			HBITMAP bmp = (HBITMAP)::GetClipboardData(CF_BITMAP);
 			if (bmp != NULL)
 			{
-				std::wstring image_path(QPath::GetUserAppDataDir(nim_comp::LoginManager::GetInstance()->GetAccount()));
-				image_path.append(nbase::UTF8ToUTF16(QString::GetGUID())).append(L".png");
+				std::wstring image_path(nbase::UTF8ToUTF16(nim::Tool::GetUserAppdataDir(nim_comp::LoginManager::GetInstance()->GetAccount())));
+				image_path.append(nbase::UTF8ToUTF16(nim::Tool::GetUuid())).append(L".png");
 				if (CaptureWindow::SaveBitmapToFile(bmp, image_path))
 				{
 					if (nbase::FilePathIsExist(image_path, false))

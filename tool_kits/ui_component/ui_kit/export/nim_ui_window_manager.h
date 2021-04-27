@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "nim_ui_dll.h"
 #include "util/windows_manager.h"
 

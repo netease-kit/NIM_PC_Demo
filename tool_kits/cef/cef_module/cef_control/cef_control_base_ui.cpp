@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "cef_control_base.h"
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
@@ -13,7 +14,7 @@ CefControlBase::CefControlBase(void)
 {
 	devtool_attached_ = false;
 #if !defined(SUPPORT_CEF)
-	ASSERT(FALSE && L"ÒªÊ¹ÓÃCef¹¦ÄÜÇë¿ªÆôSUPPORT_CEFºê");
+	ASSERT(FALSE && L"è¦ä½¿ç”¨CefåŠŸèƒ½è¯·å¼€å¯SUPPORT_CEFå®");
 #endif
 }
 

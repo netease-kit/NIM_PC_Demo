@@ -1,4 +1,4 @@
-﻿#ifndef NIM_WIN_GUI_VIDEO_FORM_H_
+#ifndef NIM_WIN_GUI_VIDEO_FORM_H_
 #define NIM_WIN_GUI_VIDEO_FORM_H_
 
 #include "shared/base.h"

@@ -13,6 +13,8 @@
 [Bb]in/*.txt
 [Ll]ibs/*.lib
 [Ll]ibs/x64/*.lib
+*.zip
+*.rc
 
 # User-specific files
 *.suo
@@ -30,6 +32,8 @@
 [Rr]eleases/
 [Oo]bj/
 [Ll]og/
+build/
+bin/
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/

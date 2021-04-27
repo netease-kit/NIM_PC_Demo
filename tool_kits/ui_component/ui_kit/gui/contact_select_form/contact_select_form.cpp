@@ -1,4 +1,5 @@
-﻿#include "contact_select_form.h"
+#include "stdafx.h"
+#include "contact_select_form.h"
 #include "util/windows_manager.h"
 #include "shared/pin_yin_helper.h"
 #include "shared/tool.h"

@@ -25,7 +25,7 @@ public:
 	virtual ui::Control* CreateControl(const std::wstring& pstrClass) override;
 	bool Notify(ui::EventArgs* msg);
 
-	//´°¿ÚÊÂ¼ş
+	//çª—å£äº‹ä»¶
 	virtual LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	virtual LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 	virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
@@ -33,58 +33,58 @@ public:
 
 	std::wstring GetImagePath(){return track_image_path_;}
 
-	void SetSendInfo(std::wstring send_info); // ÉèÖÃÌáÊ¾ÎÄ±¾
+	void SetSendInfo(std::wstring send_info); // è®¾ç½®æç¤ºæ–‡æœ¬
 
 	static BOOL SaveBitmapToFile(HBITMAP hBitmap, const std::wstring &file_path);
 
 private:
 	int GetTrackState() { return track_state_; }
 
-	//»æÖÆ
+	//ç»˜åˆ¶
 	void DrawTrack(RECT track_rect);
 
-	//ÏÔÊ¾¹¤¾ßÌõ
+	//æ˜¾ç¤ºå·¥å…·æ¡
 	void ShowToolBar(bool edit = false);
 
-	//ÏÔÊ¾½ØÍ¼´óĞ¡ĞÅÏ¢
+	//æ˜¾ç¤ºæˆªå›¾å¤§å°ä¿¡æ¯
 	void ShowSizeTip();
 
-	//±£´æ½ØÈ¡µÄÇøÓò
+	//ä¿å­˜æˆªå–çš„åŒºåŸŸ
 	BOOL SaveTrackImage(bool save_to_clipboard = true);
 
-	//ÊÕ²Ø½ØÈ¡µÄÇøÓò
+	//æ”¶è—æˆªå–çš„åŒºåŸŸ
 
-	// ³õÊ¼»¯Î»Í¼
+	// åˆå§‹åŒ–ä½å›¾
 	BOOL InitBitmaps();
 
 	void NormalizeRect(RECT& rect);
 
-	void SetTrackState(int track_state) { track_state_ = track_state; } // ÉèÖÃTrackerµÄ×´Ì¬
+	void SetTrackState(int track_state) { track_state_ = track_state; } // è®¾ç½®Trackerçš„çŠ¶æ€
 
-	RECT ClipTrackRect(RECT rect);//²Ã¼ôÔÚ¿Í»§ÇøµÄ¿É½ØÍ¼ÇøÓò
+	RECT ClipTrackRect(RECT rect);//è£å‰ªåœ¨å®¢æˆ·åŒºçš„å¯æˆªå›¾åŒºåŸŸ
 
-	RECT GetToolBarRect();//¹¤¾ßÌõÇøÓò
-	RECT GetToolBar2Rect();//¹¤¾ßÌõÇøÓò
+	RECT GetToolBarRect();//å·¥å…·æ¡åŒºåŸŸ
+	RECT GetToolBar2Rect();//å·¥å…·æ¡åŒºåŸŸ
 
-	RECT GetSizeTipRect();//´óĞ¡ĞÅÏ¢ÌáÊ¾ÇøÓò
+	RECT GetSizeTipRect();//å¤§å°ä¿¡æ¯æç¤ºåŒºåŸŸ
 
-	RECT GetDrawTrackRect(int hit_test);//µ¯Á¦¿òÔªËØÇøÓò
+	RECT GetDrawTrackRect(int hit_test);//å¼¹åŠ›æ¡†å…ƒç´ åŒºåŸŸ
 
-	// ¶ÔTracker½øĞĞHitTest
+	// å¯¹Trackerè¿›è¡ŒHitTest
 	int TrackerHitTest(RECT rect, POINT point);
 
-	// µ±ÔÚµ÷½Úµã£¨Ïß£©ÉÏµ÷½ÚµÄÊ±ºò£¬ĞŞÕıÎ»ÖÃ
+	// å½“åœ¨è°ƒèŠ‚ç‚¹ï¼ˆçº¿ï¼‰ä¸Šè°ƒèŠ‚çš„æ—¶å€™ï¼Œä¿®æ­£ä½ç½®
 	void AdjustOffset(RECT& rcTracker, POINT point_dest, POINT point_offset, int hit_test);
 
-	// ¸ù¾İHitTest½á¹ûÈ¡µÃÕıÈ·µÄ¹â±êÃû
+	// æ ¹æ®HitTestç»“æœå–å¾—æ­£ç¡®çš„å…‰æ ‡å
 	void SetHitTestCursor(int hit_test);
 
-	// ÉèÖÃµ±Ç°½ØÍ¼±à¼­µÄ×´Ì¬
+	// è®¾ç½®å½“å‰æˆªå›¾ç¼–è¾‘çš„çŠ¶æ€
 	void SetCaptureEditMode(EditMode mode);
 	EditMode GetCaptureEditMode() { return this->capture_edit_mode_; }
-	void ResetCaptureEditMode(); // ÖØÖÃ±à¼­×´Ì¬£¬Çå³ıÉÏ´Î±à¼­»æÖÆ
+	void ResetCaptureEditMode(); // é‡ç½®ç¼–è¾‘çŠ¶æ€ï¼Œæ¸…é™¤ä¸Šæ¬¡ç¼–è¾‘ç»˜åˆ¶
 
-	// ±£´æ½ØÍ¼µ½ÓÃ»§Ö¸¶¨µÄµØÖ·
+	// ä¿å­˜æˆªå›¾åˆ°ç”¨æˆ·æŒ‡å®šçš„åœ°å€
 	void Save();
 
 	void SaveTrackImageDlgCallback(BOOL ret, std::wstring file_path);
@@ -110,10 +110,10 @@ private:
 		SIZEBOTTOM_LINE	= 1<<15
 	};
 	RECT track_rect_;
-	//½ØÍ¼×´Ì¬
+	//æˆªå›¾çŠ¶æ€
 	int track_state_;
 
-	//½ØÍ¼ÇøÓò
+	//æˆªå›¾åŒºåŸŸ
 	int screen_width_;
 	int screen_height_;
 	int screen_x_;
@@ -121,7 +121,7 @@ private:
 
 	POINT point_offset_;
 
-	//±³¾°Í¼
+	//èƒŒæ™¯å›¾
 	HBITMAP bitmap_bg_;
 	std::wstring track_image_path_;
 	std::wstring send_info_;
@@ -130,13 +130,13 @@ private:
 	int toolbar_min_width2_;
 
 	ui::Box* toolbar_;
-	// ½ØÍ¼±à¼­×´Ì¬
+	// æˆªå›¾ç¼–è¾‘çŠ¶æ€
 	EditMode capture_edit_mode_;
 	CCaptureEdit *capture_edit_;
 	std::vector<std::wstring> vec_option_names_;
 	CColorPalette* color_palette_;
 	bool is_show_color_palette_;
-	int32_t desktop_scale_;//°Ù·ÖÖÆ
+	int32_t desktop_scale_;//ç™¾åˆ†åˆ¶
 	std::wstring user_data_dir_;
 };
 

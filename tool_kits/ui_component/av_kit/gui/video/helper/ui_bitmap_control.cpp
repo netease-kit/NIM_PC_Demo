@@ -1,4 +1,5 @@
-﻿#include "ui_bitmap_control.h"
+#include "stdafx.h"
+#include "ui_bitmap_control.h"
 #include <sys/timeb.h>
 #include "module/video/video_manager.h"
 
@@ -144,5 +145,3 @@ bool BitmapControl::IsRefreshTimeout()
 }
 
 }
-
-

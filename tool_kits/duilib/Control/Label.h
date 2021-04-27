@@ -12,7 +12,7 @@ class UILIB_API LabelTemplate : public InheritType
 public:
 	LabelTemplate();
 
-	/// ÖØĞ´¸¸Àà·½·¨£¬Ìá¹©¸öĞÔ»¯¹¦ÄÜ£¬Çë²Î¿¼¸¸ÀàÉùÃ÷
+	/// é‡å†™çˆ¶ç±»æ–¹æ³•ï¼Œæä¾›ä¸ªæ€§åŒ–åŠŸèƒ½ï¼Œè¯·å‚è€ƒçˆ¶ç±»å£°æ˜
 	virtual std::wstring GetText() const;
 	virtual std::string GetUTF8Text() const;
 	virtual void SetText(const std::wstring& strText);
@@ -25,82 +25,82 @@ public:
 	virtual void PaintText(IRenderContext* pRender) override;
 
 	/**
-	 * @brief ÉèÖÃÎÄ±¾ÑùÊ½
-	 * @param[in] uStyle ÒªÉèÖÃµÄÑùÊ½
-	 * @return ÎŞ
+	 * @brief è®¾ç½®æ–‡æœ¬æ ·å¼
+	 * @param[in] uStyle è¦è®¾ç½®çš„æ ·å¼
+	 * @return æ— 
 	 */
 	void SetTextStyle(UINT uStyle);
 
 	/**
-	 * @brief »ñÈ¡ÎÄ±¾ÑùÊ½
-	 * @return ·µ»ØÎÄ±¾ÑùÊ½
+	 * @brief è·å–æ–‡æœ¬æ ·å¼
+	 * @return è¿”å›æ–‡æœ¬æ ·å¼
 	 */
 	UINT GetTextStyle() const;
 
 	/**
-	 * @brief »ñÈ¡Ö¸¶¨×´Ì¬ÏÂµÄÎÄ±¾ÑÕÉ«
-	 * @param[in] stateType Òª»ñÈ¡µÄ×´Ì¬±êÖ¾
-	 * @return ·µ»ØÖ¸¶¨×´Ì¬ÏÂµÄÎÄ±¾ÑÕÉ«
+	 * @brief è·å–æŒ‡å®šçŠ¶æ€ä¸‹çš„æ–‡æœ¬é¢œè‰²
+	 * @param[in] stateType è¦è·å–çš„çŠ¶æ€æ ‡å¿—
+	 * @return è¿”å›æŒ‡å®šçŠ¶æ€ä¸‹çš„æ–‡æœ¬é¢œè‰²
 	 */
 	std::wstring GetStateTextColor(ControlStateType stateType);
 
 	/**
-	 * @brief ÉèÖÃÖ¸¶¨×´Ì¬ÏÂµÄÎÄ±¾ÑÕÉ«
-	 * @param[in] stateType ÒªÉèÖÃµÄ×´Ì¬±êÖ¾
-	 * @param[in] dwTextColor ÒªÉèÖÃµÄ×´Ì¬ÑÕÉ«×Ö·û´®£¬¸ÃÖµ±ØĞëÔÚ global.xml ÖĞ´æÔÚ
-	 * @return ÎŞ
+	 * @brief è®¾ç½®æŒ‡å®šçŠ¶æ€ä¸‹çš„æ–‡æœ¬é¢œè‰²
+	 * @param[in] stateType è¦è®¾ç½®çš„çŠ¶æ€æ ‡å¿—
+	 * @param[in] dwTextColor è¦è®¾ç½®çš„çŠ¶æ€é¢œè‰²å­—ç¬¦ä¸²ï¼Œè¯¥å€¼å¿…é¡»åœ¨ global.xml ä¸­å­˜åœ¨
+	 * @return æ— 
 	 */
 	void SetStateTextColor(ControlStateType stateType, const std::wstring& dwTextColor);
 
 	/**
-	 * @brief »ñÈ¡µ±Ç°×ÖÌå±àºÅ
-	 * @return ·µ»Ø×ÖÌå±àºÅ£¬¸Ã±àºÅÔÚ global.xml ÖĞ±êÊ¶
+	 * @brief è·å–å½“å‰å­—ä½“ç¼–å·
+	 * @return è¿”å›å­—ä½“ç¼–å·ï¼Œè¯¥ç¼–å·åœ¨ global.xml ä¸­æ ‡è¯†
 	 */
 	int GetFont() const;
 
 	/**
-	 * @brief ÉèÖÃµ±Ç°×ÖÌå
-	 * @param[in] index ÒªÉèÖÃµÄ×ÖÌå±àºÅ£¬¸Ã±àºÅ±ØĞëÔÚ global.xml ÖĞ´æÔÚ
-	 * @return ÎŞ
+	 * @brief è®¾ç½®å½“å‰å­—ä½“
+	 * @param[in] index è¦è®¾ç½®çš„å­—ä½“ç¼–å·ï¼Œè¯¥ç¼–å·å¿…é¡»åœ¨ global.xml ä¸­å­˜åœ¨
+	 * @return æ— 
 	 */
 	void SetFont(int index);
 
 	/**
-	 * @brief »ñÈ¡ÎÄ×Ö±ß¾à
-	 * @return ·µ»ØÎÄ×ÖµÄ±ß¾àĞÅÏ¢
+	 * @brief è·å–æ–‡å­—è¾¹è·
+	 * @return è¿”å›æ–‡å­—çš„è¾¹è·ä¿¡æ¯
 	 */
 	UiRect GetTextPadding() const;
 
 	/**
-	 * @brief ÉèÖÃÎÄ×Ö±ß¾àĞÅÏ¢
-	 * @param[in] rc ±ß¾àĞÅÏ¢
-	 * @return ÎŞ
+	 * @brief è®¾ç½®æ–‡å­—è¾¹è·ä¿¡æ¯
+	 * @param[in] rc è¾¹è·ä¿¡æ¯
+	 * @return æ— 
 	 */
 	void SetTextPadding(UiRect rc);
 
 	/**
-	 * @brief ÅĞ¶ÏÊÇ·ñÊÇµ¥ĞĞÄ£Ê½
-	 * @return ·µ»Ø true ±íÊ¾µ¥ĞĞÄ£Ê½£¬·ñÔòÎª false
+	 * @brief åˆ¤æ–­æ˜¯å¦æ˜¯å•è¡Œæ¨¡å¼
+	 * @return è¿”å› true è¡¨ç¤ºå•è¡Œæ¨¡å¼ï¼Œå¦åˆ™ä¸º false
 	 */
 	bool IsSingleLine();
 
 	/**
-	 * @brief ÉèÖÃÎªµ¥ĞĞÊäÈëÄ£Ê½
-	 * @param[in] bSingleLine Îª true Ê±Îªµ¥ĞĞÄ£Ê½£¬·ñÔòÎª false
-	 * @return ÎŞ
+	 * @brief è®¾ç½®ä¸ºå•è¡Œè¾“å…¥æ¨¡å¼
+	 * @param[in] bSingleLine ä¸º true æ—¶ä¸ºå•è¡Œæ¨¡å¼ï¼Œå¦åˆ™ä¸º false
+	 * @return æ— 
 	 */
 	void SetSingleLine(bool bSingleLine);
 
 	/**
-	 * @brief ÊÇ·ñÏŞÖÆÕûĞĞÊä³ö
-	 * @return ·µ»Ø true ÎªÏŞÖÆ£¬false Îª²»ÏŞÖÆ
+	 * @brief æ˜¯å¦é™åˆ¶æ•´è¡Œè¾“å‡º
+	 * @return è¿”å› true ä¸ºé™åˆ¶ï¼Œfalse ä¸ºä¸é™åˆ¶
 	 */
 	bool IsLineLimit();
 
 	/**
-	 * @brief ÏŞÖÆÕûĞĞÊä³ö
-	 * @param[in] bLineLimit ÉèÖÃ true ÎªÏŞÖÆ£¬false Îª²»ÏŞÖÆ
-	 * @return ÎŞ
+	 * @brief é™åˆ¶æ•´è¡Œè¾“å‡º
+	 * @param[in] bLineLimit è®¾ç½® true ä¸ºé™åˆ¶ï¼Œfalse ä¸ºä¸é™åˆ¶
+	 * @return æ— 
 	 */
 	void SetLineLimit(bool bLineLimit);
 

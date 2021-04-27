@@ -1,4 +1,5 @@
-﻿#include "contact_select_form.h"
+#include "stdafx.h"
+#include "contact_select_form.h"
 #include "module/login/login_manager.h"
 #include "av_kit/module/video/video_manager.h"
 

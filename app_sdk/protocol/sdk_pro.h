@@ -3,7 +3,7 @@
 namespace app_sdk
 {	
 	/** @class SDK_PRO
-	* @brief app_sdk Ğ­Òé¶¨Òå
+	* @brief app_sdk åè®®å®šä¹‰
 	* @copyright (c) 2018, NetEase Inc. All rights reserved
 	* @date 2018/4/26
 	*/
@@ -11,7 +11,7 @@ namespace app_sdk
 	{
 	private:	
 		/** @class ResponseBase
-		* @brief app_sdk Ó¦´ğ»ùÀà
+		* @brief app_sdk åº”ç­”åŸºç±»
 		* @copyright (c) 2018, NetEase Inc. All rights reserved
 		* @date 2018/4/26
 		*/
@@ -20,21 +20,21 @@ namespace app_sdk
 		public:			
 			ResponseBase() = default;
 			virtual ~ResponseBase() = default;
-			//½âÎöÓ¦´ğÊı¾İ
+			//è§£æåº”ç­”æ•°æ®
 			virtual void Parse(const std::string& response) override;
-			//»ñÈ¡Ô­Ê¼Ó¦´ğÊı¾İ
+			//è·å–åŸå§‹åº”ç­”æ•°æ®
 			std::string GetReplyContent() const;
-			//»ñÈ¡Ğ­Òé¶¨ÒåµÄÒµÎñ·µ»ØÂë
+			//è·å–åè®®å®šä¹‰çš„ä¸šåŠ¡è¿”å›ç 
 			virtual int32_t GetProtocolReplyCode() const;
 		protected:
 			virtual void OnParse(const std::string& response);
 			void SetProtocolReplyCode(int code);
 		private:
-			std::string reply_content_;//Ó¦´ğÔ­Ê¼Êı¾İ
-			int32_t pro_reply_code_;//ÒµÎñ·µ»ØÂë
+			std::string reply_content_;//åº”ç­”åŸå§‹æ•°æ®
+			int32_t pro_reply_code_;//ä¸šåŠ¡è¿”å›ç 
 		};
 		/** @class RequestBase
-		* @brief app_sdk ÇëÇó»ùÀà
+		* @brief app_sdk è¯·æ±‚åŸºç±»
 		* @copyright (c) 2018, NetEase Inc. All rights reserved
 		* @date 2018/4/26
 		*/
@@ -50,7 +50,7 @@ namespace app_sdk
 		protected:
 			virtual bool IsUsePostMethod() const;
 			virtual void OnGetRequestContent(std::string& content) const;
-			//»ñÈ¡ÇëÇóµÄÁ¬½ÓµØÖ·£¬¿ÉÒÔÖ±½Ó·µ»Ø£¬»òÕßÓÉOnGetHostÓëOnGetApiÆ´ÆğÀ´£¬¿ÉÒÔ²Î¿¼Ê¾Àı³ÌĞò
+			//è·å–è¯·æ±‚çš„è¿æ¥åœ°å€ï¼Œå¯ä»¥ç›´æ¥è¿”å›ï¼Œæˆ–è€…ç”±OnGetHostä¸OnGetApiæ‹¼èµ·æ¥ï¼Œå¯ä»¥å‚è€ƒç¤ºä¾‹ç¨‹åº
 			virtual std::string OnGetAPIURL() const;
 			virtual std::string OnGetHost() const;
 			virtual std::string OnGetAPI() const;
@@ -58,7 +58,7 @@ namespace app_sdk
 		private:
 			mutable std::string app_url_;
 		};
-		//×¢²áÕËºÅÇëÇó/Ó¦´ğ
+		//æ³¨å†Œè´¦å·è¯·æ±‚/åº”ç­”
 		class RegisterAccountRequest : public RequestBase
 		{		
 		public:
@@ -80,7 +80,7 @@ namespace app_sdk
 		public:
 			std::string err_msg_;
 		};
-		//»ñÈ¡ÁÄÌìÊÒÁĞ±íÇëÇó/Ó¦´ğ
+		//è·å–èŠå¤©å®¤åˆ—è¡¨è¯·æ±‚/åº”ç­”
 		class GetChatroomListRequest : public RequestBase
 		{
 		protected:
@@ -95,7 +95,7 @@ namespace app_sdk
 		public:
 			std::vector<nim_chatroom::ChatRoomInfo> chatroom_list_;
 		};
-		//»ñÈ¡ÁÄÌìÊÒÁ¬½ÓµØÖ·ÇëÇó/Ó¦´ğ
+		//è·å–èŠå¤©å®¤è¿æ¥åœ°å€è¯·æ±‚/åº”ç­”
 		class GetChatroomAddressRequest : public RequestBase
 		{
 		public:
@@ -114,18 +114,18 @@ namespace app_sdk
 		protected:
 			virtual void OnParse(const std::string& response) override;
 		public:
-			std::list<std::string> address_;	/**< ÁÄÌìÊÒµØÖ·£¬µØÖ·Í¨¹ıÓ¦ÓÃ·şÎñÆ÷½Ó¿Ú»ñÈ¡ */
+			std::list<std::string> address_;	/**< èŠå¤©å®¤åœ°å€ï¼Œåœ°å€é€šè¿‡åº”ç”¨æœåŠ¡å™¨æ¥å£è·å– */
 		};
 	public:
-		/****************************¶ÔÍâ±©Â¶¶¨Òå*****************************/
+		/****************************å¯¹å¤–æš´éœ²å®šä¹‰*****************************/
 
-		//×¢²áÕËºÅÇëÇó/Ó¦´ğ
+		//æ³¨å†Œè´¦å·è¯·æ±‚/åº”ç­”
 		using RegisterAccountReq = TSharedHttpRequest<RegisterAccountRequest>;
 		using RegisterAccountRsp = TSharedHttpResponse<RegisterAccountResponse>;
-		//»ñÈ¡ÁÄÌìÊÒÁĞ±íÇëÇó/Ó¦´ğ
+		//è·å–èŠå¤©å®¤åˆ—è¡¨è¯·æ±‚/åº”ç­”
 		using GetChatroomListReq = TSharedHttpRequest<GetChatroomListRequest>;
 		using GetChatroomListRsp = TSharedHttpResponse<GetChatroomListResponse>;
-		//»ñÈ¡ÁÄÌìÊÒÁĞ±íÇëÇó/Ó¦´ğ
+		//è·å–èŠå¤©å®¤åˆ—è¡¨è¯·æ±‚/åº”ç­”
 		using GetChatroomAddressReq = TSharedHttpRequest<GetChatroomAddressRequest>;
 		using GetChatroomAddressRsp = TSharedHttpResponse<GetChatroomAddressResponse>;
 	};	

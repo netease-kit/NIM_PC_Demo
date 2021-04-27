@@ -1,4 +1,5 @@
-﻿#include "bubble_finger.h"
+#include "stdafx.h"
+#include "bubble_finger.h"
 
 
 using namespace ui;

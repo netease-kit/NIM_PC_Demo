@@ -2,13 +2,12 @@
 
 #include "nim_ui_dll.h"
 #include "module/service/photo_service.h"
-#include "tool_kits/base/memory/singleton.h"
 
 namespace nim_ui
 {
 
 /** @class PhotoManager
-  * @brief Ìá¹©Í·Ïñ×ÊÔ´ÓĞ¹ØµÄ½Ó¿Ú
+  * @brief æä¾›å¤´åƒèµ„æºæœ‰å…³çš„æ¥å£
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2016/5/21
@@ -21,24 +20,24 @@ public:
 public:
 
 	/**
-	* »ñÈ¡ÓÃ»§Í·Ïñ
-	* @param[in] accid ÓÃ»§id
-	* @return wstring Í·ÏñµÄÂ·¾¶
+	* è·å–ç”¨æˆ·å¤´åƒ
+	* @param[in] accid ç”¨æˆ·id
+	* @return wstring å¤´åƒçš„è·¯å¾„
 	*/
 	std::wstring GetUserPhoto(const std::string &accid);
 
 	/**
-	* »ñÈ¡Èº×éÍ·Ïñ
-	* @param[in] tid Èºid
-	* @param[in] full_path ÊÇ·ñĞèÒª¾ø¶ÔÂ·¾¶
-	* @return wstring Í·ÏñµÄÂ·¾¶
+	* è·å–ç¾¤ç»„å¤´åƒ
+	* @param[in] tid ç¾¤id
+	* @param[in] full_path æ˜¯å¦éœ€è¦ç»å¯¹è·¯å¾„
+	* @return wstring å¤´åƒçš„è·¯å¾„
 	*/
 	std::wstring GetTeamPhoto(const std::string &tid, bool full_path = true);
 
 	/**
-	* ×¢²áÍ·ÏñÏÂÔØÍê±ÏºóµÄ»Øµ÷º¯Êı
-	* @param[in] callback »Øµ÷º¯Êı
-	* @return UnregisterCallback ·´×¢²á¶ÔÏó
+	* æ³¨å†Œå¤´åƒä¸‹è½½å®Œæ¯•åçš„å›è°ƒå‡½æ•°
+	* @param[in] callback å›è°ƒå‡½æ•°
+	* @return UnregisterCallback åæ³¨å†Œå¯¹è±¡
 	*/
 	UnregisterCallback RegPhotoReady(const OnPhotoReadyCallback& callback);
 

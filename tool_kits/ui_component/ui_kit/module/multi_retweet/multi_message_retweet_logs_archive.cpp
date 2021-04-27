@@ -1,4 +1,6 @@
-﻿#include "ui_kit/module/multi_retweet/multi_message_retweet_logs_archive.h"
+#include "stdafx.h"
+#include "ui_kit/module/multi_retweet/multi_message_retweet_logs_archive.h"
+
 namespace nim_comp
 {
 	RawFileArchive::RawFileArchive(const std::string& file_path, const std::function<void(int current_count, int count)>& progress_cb) :

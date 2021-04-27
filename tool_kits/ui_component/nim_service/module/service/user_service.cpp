@@ -1,4 +1,5 @@
-﻿#include "user_service.h"
+#include "stdafx.h"
+#include "user_service.h"
 #include "module/local/local_helper.h"
 #include "module/login/login_manager.h"
 #include "module/subscribe_event/subscribe_event_manager.h"
@@ -281,7 +282,7 @@ void UserService::OnFriendListChangeBySDK(const nim::FriendChangeEvent& change_e
 		msg.session_type_ = nim::kNIMSessionTypeP2P;
 		msg.receiver_accid_ = del_event.accid_; ///nim_comp::LoginManager::GetInstance()->GetAccount();
 		msg.sender_accid_ = del_event.accid_;
-		msg.client_msg_id_ = QString::GetGUID();
+		msg.client_msg_id_ = nim::Tool::GetUuid();
 		msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
 		msg.status_ = nim::kNIMMsgLogStatusUnread;
 		msg.type_ = nim::kNIMMessageTypeText;
@@ -315,7 +316,7 @@ void UserService::OnFriendListChangeBySDK(const nim::FriendChangeEvent& change_e
 				msg.session_type_ = nim::kNIMSessionTypeP2P;
 				msg.receiver_accid_ = user_profile.GetAccId(); ///nim_comp::LoginManager::GetInstance()->GetAccount();
 				msg.sender_accid_ = user_profile.GetAccId(); 
-				msg.client_msg_id_ = QString::GetGUID();
+				msg.client_msg_id_ = nim::Tool::GetUuid();
 				msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
 				msg.status_ = nim::kNIMMsgLogStatusUnread;
 				msg.type_ = nim::kNIMMessageTypeText;

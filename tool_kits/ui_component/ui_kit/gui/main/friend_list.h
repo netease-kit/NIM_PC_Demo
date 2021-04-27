@@ -6,7 +6,7 @@
 namespace nim_comp
 {
 /** @class FriendListItemManager
-  * @brief ¸ºÔğ´¦ÀíÒ»Ğ©ÓëºÃÓÑÁĞ±íÏîÏà¹ØµÄÊÂ¼ş
+  * @brief è´Ÿè´£å¤„ç†ä¸€äº›ä¸å¥½å‹åˆ—è¡¨é¡¹ç›¸å…³çš„äº‹ä»¶
   * @copyright (c) 2015, NetEase Inc. All rights reserved
   * @author towik
   * @date 2015/1/1
@@ -15,138 +15,138 @@ class FriendList : public nbase::SupportWeakCallback
 {
 public:
 	/**
-	* ¹¹Ôìº¯Êı
-	* @param[in] friend_list ×÷ÎªºÃÓÑÁĞ±íµÄTreeView¿Ø¼şÖ¸Õë
+	* æ„é€ å‡½æ•°
+	* @param[in] friend_list ä½œä¸ºå¥½å‹åˆ—è¡¨çš„TreeViewæ§ä»¶æŒ‡é’ˆ
 	*/
 	FriendList(ui::TreeView* friend_list);
 	virtual ~FriendList();
 
 	/**
-	* »ñÈ¡×÷ÎªºÃÓÑÁĞ±íµÄTreeView¿Ø¼şÖ¸Õë
-	* @return ui::TreeView*	×÷ÎªºÃÓÑÁĞ±íµÄTreeView¿Ø¼şÖ¸Õë
+	* è·å–ä½œä¸ºå¥½å‹åˆ—è¡¨çš„TreeViewæ§ä»¶æŒ‡é’ˆ
+	* @return ui::TreeView*	ä½œä¸ºå¥½å‹åˆ—è¡¨çš„TreeViewæ§ä»¶æŒ‡é’ˆ
 	*/
 	ui::TreeView* GetFriendList() { return friend_list_; }
 
 	/**
-	* ÏìÓ¦»ñÈ¡ºÃÓÑÁĞ±íµÄ»Øµ÷º¯Êı
-	* @param[in] uinfos ºÃÓÑÃûÆ¬ÁĞ±í
-	* @return void	ÎŞ·µ»ØÖµ
+	* å“åº”è·å–å¥½å‹åˆ—è¡¨çš„å›è°ƒå‡½æ•°
+	* @param[in] uinfos å¥½å‹åç‰‡åˆ—è¡¨
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnGetFriendList(const std::list<nim::UserNameCard> &user);
 
 private:
 	/**
-	* Ìí¼ÓÒ»¸öºÃÓÑÁĞ±íÏî
-	* @param[in] accid ÓÃ»§id
-	* @param[in] type ÀàĞÍ
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ·»åŠ ä¸€ä¸ªå¥½å‹åˆ—è¡¨é¡¹
+	* @param[in] accid ç”¨æˆ·id
+	* @param[in] type ç±»å‹
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void AddListItem(const std::string& accid, FriendItemType type);
 
 	/**
-	* Ìí¼ÓÒ»¸öºÃÓÑÁĞ±íÏîµ½Ö¸¶¨µÄ·Ö×éÄÚ
-	* @param[in] accid ÓÃ»§id
-	* @param[in] type ÀàĞÍ
-	* @param[in] tree_node ·Ö×é¿Ø¼şÖ¸Õë
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ·»åŠ ä¸€ä¸ªå¥½å‹åˆ—è¡¨é¡¹åˆ°æŒ‡å®šçš„åˆ†ç»„å†…
+	* @param[in] accid ç”¨æˆ·id
+	* @param[in] type ç±»å‹
+	* @param[in] tree_node åˆ†ç»„æ§ä»¶æŒ‡é’ˆ
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void AddListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node);
 
 	/**
-	* É¾³ıÒ»¸öºÃÓÑÁĞ±íÏî
-	* @param[in] accid ÓÃ»§id
-	* @param[in] type ÀàĞÍ
-	* @return void	ÎŞ·µ»ØÖµ
+	* åˆ é™¤ä¸€ä¸ªå¥½å‹åˆ—è¡¨é¡¹
+	* @param[in] accid ç”¨æˆ·id
+	* @param[in] type ç±»å‹
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void DeleteListItem(const std::string& accid, FriendItemType type);
 
 	/**
-	* ´ÓÖ¸¶¨µÄ·Ö×éÄÚÒÆ³ıÒ»¸öºÃÓÑÁĞ±íÏî
-	* @param[in] accid ÓÃ»§id
-	* @param[in] type ÀàĞÍ
-	* @param[in] tree_node ·Ö×é¿Ø¼şÖ¸Õë
-	* @return void	ÎŞ·µ»ØÖµ
+	* ä»æŒ‡å®šçš„åˆ†ç»„å†…ç§»é™¤ä¸€ä¸ªå¥½å‹åˆ—è¡¨é¡¹
+	* @param[in] accid ç”¨æˆ·id
+	* @param[in] type ç±»å‹
+	* @param[in] tree_node åˆ†ç»„æ§ä»¶æŒ‡é’ˆ
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void DeleteListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node);
 
 	/**
-	* ²éÕÒÒ»¸öºÃÓÑÁĞ±íÏî
-	* @param[in] accid ÓÃ»§id
-	* @return ui::TreeNode* ºÃÓÑÁĞ±íÏî¿Ø¼şÖ¸Õë
+	* æŸ¥æ‰¾ä¸€ä¸ªå¥½å‹åˆ—è¡¨é¡¹
+	* @param[in] accid ç”¨æˆ·id
+	* @return ui::TreeNode* å¥½å‹åˆ—è¡¨é¡¹æ§ä»¶æŒ‡é’ˆ
 	*/
 	ui::TreeNode* FindFriendItem(const std::string& accid);
 
 	/**
-	* ¸ù¾İ·Ö×éÀàĞÍºÍ·Ö×é±êÇ©»ñÈ¡·Ö×é¿Ø¼ş
-	* @param[in] groupType ·Ö×éÀàĞÍ
-	* @param[in] letter ·Ö×é±êÇ©
-	* @return ui::TreeNode*	·Ö×é¿Ø¼ş
+	* æ ¹æ®åˆ†ç»„ç±»å‹å’Œåˆ†ç»„æ ‡ç­¾è·å–åˆ†ç»„æ§ä»¶
+	* @param[in] groupType åˆ†ç»„ç±»å‹
+	* @param[in] letter åˆ†ç»„æ ‡ç­¾
+	* @return ui::TreeNode*	åˆ†ç»„æ§ä»¶
 	*/
 	ui::TreeNode* GetGroup(GroupType groupType, wchar_t letter = L'\0');
 
 	/**
-	* ¿Ø¼ş·¶Î§¹ö¶¯µ½Ö¸¶¨µÄ·Ö×é±êÇ©
-	* @param[in] letter ·Ö×é±êÇ©£¬Aµ½Z
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ§ä»¶èŒƒå›´æ»šåŠ¨åˆ°æŒ‡å®šçš„åˆ†ç»„æ ‡ç­¾
+	* @param[in] letter åˆ†ç»„æ ‡ç­¾ï¼ŒAåˆ°Z
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void ScrollToLetter(char letter);
 
 private:
 	/**
-	* ´¦ÀíºÃÓÑÁĞ±í¿Ø¼ş¹ö¶¯ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å¥½å‹åˆ—è¡¨æ§ä»¶æ»šåŠ¨æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnScrollChange(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíºÃÓÑ¿Ø¼şÍ·Ïñµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @param[in] type ÀàĞÍ
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å¥½å‹æ§ä»¶å¤´åƒå•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @param[in] type ç±»å‹
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnHeadImageClick(const std::string& uid, FriendItemType type, ui::EventArgs*);
 
 private:
 
 	/**
-	* ÏìÓ¦ÓÃ»§ÁĞ±í¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] change_type ºÃÓÑ±ä»¯ÀàĞÍ
-	* @param[in] accid ÓÃ»§id
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ç”¨æˆ·åˆ—è¡¨æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] change_type å¥½å‹å˜åŒ–ç±»å‹
+	* @param[in] accid ç”¨æˆ·id
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnFriendListChange(FriendChangeType change_type, const std::string& accid);
 
 	/**
-	* ÏìÓ¦ÓÃ»§ĞÅÏ¢¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] uinfos ÓÃ»§ĞÅÏ¢ÁĞ±í
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ç”¨æˆ·ä¿¡æ¯æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] uinfos ç”¨æˆ·ä¿¡æ¯åˆ—è¡¨
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 
 	/**
-	* ÏìÓ¦ºÚÃûµ¥¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] id ÓÃ»§id
-	* @param[in] is_black ÊÇ·ñ¼ÓÈëºÚÃûµ¥
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”é»‘åå•æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] id ç”¨æˆ·id
+	* @param[in] is_black æ˜¯å¦åŠ å…¥é»‘åå•
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnBlackListChange(const std::string& id, bool is_black);
 
 	/**
-	* ÏìÓ¦ÓÃ»§Í·Ïñ¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] type Í·ÏñÀàĞÍ
-	* @param[in] accid ÓÃ»§id
-	* @param[in] photo_path Í·ÏñÂ·¾¶
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ç”¨æˆ·å¤´åƒæ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] type å¤´åƒç±»å‹
+	* @param[in] accid ç”¨æˆ·id
+	* @param[in] photo_path å¤´åƒè·¯å¾„
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path);
 
 	/**
-	* ÏìÓ¦½ÓÊÕÊÂ¼şµÄ»Øµ÷º¯Êı
-	* @param[in] event_type ÊÂ¼şÀàĞÍ
-	* @param[in] accid ÓÃ»§id
-	* @param[in] data ÊÂ¼şĞÅÏ¢
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”æ¥æ”¶äº‹ä»¶çš„å›è°ƒå‡½æ•°
+	* @param[in] event_type äº‹ä»¶ç±»å‹
+	* @param[in] accid ç”¨æˆ·id
+	* @param[in] data äº‹ä»¶ä¿¡æ¯
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnReceiveEvent(int event_type, const std::string &accid, const EventDataEx &data);
 

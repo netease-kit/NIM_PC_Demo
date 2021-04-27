@@ -1,4 +1,5 @@
-﻿#include "login_manager.h"
+#include "stdafx.h"
+#include "login_manager.h"
 #include "shared/xml_util.h"
 
 namespace nim_comp

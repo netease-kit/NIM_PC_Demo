@@ -1,4 +1,5 @@
-﻿#include "team_info.h"
+#include "stdafx.h"
+#include "team_info.h"
 #include "util/windows_manager.h"
 #include "shared/pin_yin_helper.h"
 #include "callback/team/team_callback.h"
@@ -10,6 +11,7 @@
 #include "team_info_box.h"
 #include "gui/plugins/team/team_plugin.h"
 #include "module/plugins/main_plugins_manager.h"
+
 using namespace ui;
 using namespace std;
 

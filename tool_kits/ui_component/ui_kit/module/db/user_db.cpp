@@ -1,4 +1,5 @@
-﻿#include "user_db.h"
+#include "stdafx.h"
+#include "user_db.h"
 #include "module/login/login_manager.h"
 
 namespace nim_comp
@@ -258,7 +259,7 @@ std::string UserDB::GetEncryptKey() const
 std::string UserDB::GetDBPath() const
 {
 	std::string acc = LoginManager::GetInstance()->GetAccount();
-	std::string dirctory = nbase::UTF16ToUTF8(QPath::GetUserAppDataDir(acc));
+	std::string dirctory = nim::Tool::GetUserAppdataDir(acc);
 	return dirctory + MSG_EX_FILE;
 }
 }

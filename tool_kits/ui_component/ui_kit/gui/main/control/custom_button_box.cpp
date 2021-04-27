@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "custom_button_box.h"
 
 namespace nim_comp
@@ -18,8 +19,8 @@ namespace nim_comp
 			}
 			if (m_items.empty()) return;
 			for (auto it = m_items.begin(); it != m_items.end(); it++) {
-				// ¿ØÖÆ×Ó¿Ø¼þÏÔÊ¾×´Ì¬
-				// InternVisible×´Ì¬Ó¦ÓÉ×Ó¿Ø¼þ×Ô¼º¿ØÖÆ
+				// æŽ§åˆ¶å­æŽ§ä»¶æ˜¾ç¤ºçŠ¶æ€
+				// InternVisibleçŠ¶æ€åº”ç”±å­æŽ§ä»¶è‡ªå·±æŽ§åˆ¶
 				(*it)->SetVisible(false);
 			}
 		}
@@ -31,8 +32,8 @@ namespace nim_comp
 			}
 			if (m_items.empty()) return;
 			for (auto it = m_items.begin(); it != m_items.end(); it++) {
-				// ¿ØÖÆ×Ó¿Ø¼þÏÔÊ¾×´Ì¬
-				// InternVisible×´Ì¬Ó¦ÓÉ×Ó¿Ø¼þ×Ô¼º¿ØÖÆ
+				// æŽ§åˆ¶å­æŽ§ä»¶æ˜¾ç¤ºçŠ¶æ€
+				// InternVisibleçŠ¶æ€åº”ç”±å­æŽ§ä»¶è‡ªå·±æŽ§åˆ¶
 				(*it)->SetVisible(true);
 			}
 		}

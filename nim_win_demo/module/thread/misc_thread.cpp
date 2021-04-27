@@ -1,5 +1,5 @@
+#include "stdafx.h"
 #include "misc_thread.h"
-
 
 MiscThread::MiscThread(ThreadId thread_id, const char* name)
 	: FrameworkThread(name), thread_id_(thread_id)

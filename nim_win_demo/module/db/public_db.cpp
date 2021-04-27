@@ -1,4 +1,5 @@
-﻿#include "public_db.h"
+#include "stdafx.h"
+#include "public_db.h"
 #include "base/encrypt/encrypt_impl.h"
 #include "shared/tool.h"
 

@@ -1,4 +1,5 @@
-﻿#include "audio_manager.h"
+#include "stdafx.h"
+#include "audio_manager.h"
 #include "callback/audio/audio_callback.h"
 
 namespace nim_comp

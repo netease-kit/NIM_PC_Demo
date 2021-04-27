@@ -3,6 +3,7 @@
 #include "session_form.h"
 #include "module/plugins/main_plugins_manager.h"
 #include "gui/plugins/session/session_plugin.h"
+
 namespace nim_comp
 {
 	ISessionDock* ISessionDock::InstantDock()

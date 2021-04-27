@@ -1,4 +1,5 @@
-﻿#include "online_state_event_helper.h"
+#include "stdafx.h"
+#include "online_state_event_helper.h"
 #include "subscribe_event_manager.h"
 
 namespace nim_comp
@@ -16,7 +17,7 @@ nim::EventData OnlineStateEventHelper::CreateBusyEvent(bool busy)
 	nim::EventData event_data;
 	event_data.event_type_ = nim::kNIMEventTypeOnlineState;
 	event_data.event_value_ = nim::kNIMEventOnlineStateValueUpdateConfig;
-	event_data.client_msg_id_ = QString::GetGUID();
+	event_data.client_msg_id_ = nim::Tool::GetUuid();
 	event_data.ttl_ = nbase::TimeDelta::FromDays(7).ToSeconds();
 	event_data.broadcast_type_ = nim::kNIMEventBroadcastTypeAll;
 	event_data.sync_self_ = nim::kNIMEventSyncTypeSelf;

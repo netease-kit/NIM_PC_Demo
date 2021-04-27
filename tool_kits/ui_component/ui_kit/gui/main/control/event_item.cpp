@@ -1,9 +1,10 @@
-﻿#include "event_item.h"
+#include "stdafx.h"
+#include "event_item.h"
 #include "module/session/session_manager.h"
 #include "module/session/session_util.h"
 #include "gui/main/team_event_form.h"
 #include "gui/team_info/team_notify.h"
-#include "tool_kits/shared/ui/ui_menu.h"
+#include "shared/ui/ui_menu.h"
 #include "callback/team/team_callback.h"
 
 using namespace ui;

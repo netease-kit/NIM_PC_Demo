@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "mytree.h"
+
 std::string MyAddressbookDepartment::OnGetIUIStyleName() const
 {
 	return "MyAddresbookDepartmentUI";

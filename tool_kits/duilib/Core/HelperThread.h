@@ -1,4 +1,4 @@
-﻿#ifndef UI_CORE_HELPER_THREAD_H_
+#ifndef UI_CORE_HELPER_THREAD_H_
 #define UI_CORE_HELPER_THREAD_H_
 
 #include "base/thread/framework_thread.h"

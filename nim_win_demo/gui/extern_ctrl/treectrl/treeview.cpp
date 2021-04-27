@@ -2,7 +2,9 @@
 #include "treeview.h"
 #include "treeitem.h"
 #include "treeitem_uistyle.h"
+
 #define MAX_STYLE_COUNT (200)
+
 std::shared_ptr<ITreeItemUIStyle> TreeComponent::GetUIStyle(const std::shared_ptr<NulTreeItem>& item)
 {
 	bool need_fill = false;

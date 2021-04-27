@@ -1,4 +1,5 @@
-﻿#include "bubble_multi_retweet.h"
+#include "stdafx.h"
+#include "bubble_multi_retweet.h"
 #include "ui_kit/module/multi_retweet/multi_message_retweet_data_def.h"
 #include "gui/session/msg_record_retweet.h"
 

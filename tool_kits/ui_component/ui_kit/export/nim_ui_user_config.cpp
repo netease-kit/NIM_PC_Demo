@@ -1,4 +1,5 @@
-﻿#include "nim_ui_user_config.h"
+#include "stdafx.h"
+#include "nim_ui_user_config.h"
 #include "util/user.h"
 #include "module/emoji/richedit_util.h"
 #include "module/local/local_helper.h"

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "callback/audio/audio_callback.h"
 #include "module/session/force_push_manager.h"
 #include "module/online_state_event/online_state_event_util.h"
@@ -407,6 +407,14 @@ private:
 	* @return void 无返回值
 	*/
 	void OnBtnAudio();
+
+	void OnBtnAudioG2();
+
+	/**
+	* 响应视频按钮消息,使用G2与信令SDK
+	* @return void 无返回值
+	*/
+	void OnBtnVideoG2();
 
 	/**
 	* 响应视频按钮消息

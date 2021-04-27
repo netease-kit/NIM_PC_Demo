@@ -1,4 +1,5 @@
-﻿#include "team_item.h"
+#include "stdafx.h"
+#include "team_item.h"
 #include "shared/ui/ui_menu.h"
 #include "callback/team/team_callback.h"
 #include "module/session/session_manager.h"

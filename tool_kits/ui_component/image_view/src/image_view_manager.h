@@ -22,20 +22,20 @@ public:
 
 	bool StartViewPic(const std::wstring &path_pic, std::wstring message_id, bool size, bool nosave = false);
 	ImageViewSetNoTopMostCB StartViewPicEx(const std::wstring &path_pic, std::wstring message_id, bool size, bool nosave = false,bool topmost=false);
-	//ÅĞ¶Ïform_idÊÇ·ñÓëÍ¼Æ¬Ô¤ÀÀ´°ÌåµÄÀàÃûÒ»ÖÂ
+	//åˆ¤æ–­form_idæ˜¯å¦ä¸å›¾ç‰‡é¢„è§ˆçª—ä½“çš„ç±»åä¸€è‡´
 	bool JudgeViewImage(const std::wstring &form_id);
-	//Í¼Æ¬Ô¤ÀÀ´°Ìå¹Ø±ÕÊ±£¬ÓÃÀ´ÖØÖÃÖ¸ÏòÍ¼Æ¬Ô¤ÀÀ´°ÌåµÄÖ¸ÕëÎªNULL
+	//å›¾ç‰‡é¢„è§ˆçª—ä½“å…³é—­æ—¶ï¼Œç”¨æ¥é‡ç½®æŒ‡å‘å›¾ç‰‡é¢„è§ˆçª—ä½“çš„æŒ‡é’ˆä¸ºNULL
 	void ResetImageViewWndPoint(void);
 
 	bool SetImageViewList(ImageViewInfoList info_list, std::wstring message_id);
 
-	//ÏÔÊ¾ÏÂÒ»ÕÅ/ÉÏÒ»ÕÅÍ¼Æ¬
+	//æ˜¾ç¤ºä¸‹ä¸€å¼ /ä¸Šä¸€å¼ å›¾ç‰‡
 	bool ShowNextImageView(bool next);
-	//ÅĞ¶ÏÊÇ·ñ´æÔÚÏÂÒ»ÕÅ/ÉÏÒ»ÕÅÍ¼Æ¬
+	//åˆ¤æ–­æ˜¯å¦å­˜åœ¨ä¸‹ä¸€å¼ /ä¸Šä¸€å¼ å›¾ç‰‡
 	bool IsExistNextImage(bool next);
 	void GetImagePage(long& cur, long& sum);
 
-	//Í¼Æ¬×¼±¸ºÃÁË
+	//å›¾ç‰‡å‡†å¤‡å¥½äº†
 	void OnImageReady(std::wstring &path_pic, bool size);
 
 private:

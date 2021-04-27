@@ -66,7 +66,7 @@ LONG WINAPI MyUnhandledExceptionFilter(EXCEPTION_POINTERS* exp)
     std::wstring dir;
     if (nim_comp::RunTimeDataManager::GetInstance()->IsSDKInited())
     {
-		dir = QPath::GetUserAppDataDir("");
+		dir = nbase::UTF8ToUTF16(nim::Tool::GetUserAppdataDir(""));
     }
     else
     {

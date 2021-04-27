@@ -34,19 +34,19 @@ BOOL CCaptureEdit::OnLButtonDownInCaptureEditMode( POINT point, RECT tool_bar_re
 {
 	if (::PtInRect(&track_rect_, point))
 	{
-		// µ±ÔÚÄ³»æÖÆµ¥Ôª×´Ì¬ÏÂ£¬¹¤¾ßÌõÒ²ÔÚ½ØÍ¼ÇøÓòÄÚ£¬ÔÚ¹¤¾ßÌõÉÏµã»÷£¬²»×ö´¦Àí
+		// å½“åœ¨æŸç»˜åˆ¶å•å…ƒçŠ¶æ€ä¸‹ï¼Œå·¥å…·æ¡ä¹Ÿåœ¨æˆªå›¾åŒºåŸŸå†…ï¼Œåœ¨å·¥å…·æ¡ä¸Šç‚¹å‡»ï¼Œä¸åšå¤„ç†
 		if(::PtInRect(&tool_bar_rect, point))
 		{
 			SetNormalCursor();
 			return FALSE;
 		}
 
-		// µ±Ç°ÊÇÎÄ±¾Ä£Ê½
+		// å½“å‰æ˜¯æ–‡æœ¬æ¨¡å¼
 		if (edit_mode_ == EM_TEXT && text_edit_ != NULL)
 		{
 			if (m_pWindow->FindSubControlByPoint(text_edit_->GetParent(), point) == text_edit_)
-				return FALSE; //µã»÷ÔÚtext_edit_ÉÏ
-			else //Ã»ÓĞµã»÷ÔÚtext_edit_ÉÏ£¬ÏÈÌá½»text_edit_
+				return FALSE; //ç‚¹å‡»åœ¨text_edit_ä¸Š
+			else //æ²¡æœ‰ç‚¹å‡»åœ¨text_edit_ä¸Šï¼Œå…ˆæäº¤text_edit_
 				OnTextEditFinished(); 
 		}
 
@@ -64,7 +64,7 @@ void CCaptureEdit::OnMouseMoveInCaptureEditMode( POINT point, RECT tool_bar_rect
 	}
 	else
 	{
-		// ²»ÔÚ»æÖÆ×´Ì¬ÏÂ£¬Èç¹ûÊó±ê½øÈëÁË¹¤¾ßÌõ£¬ÄÇÃ´Êó±êÕı³£ÊÖÊÆ
+		// ä¸åœ¨ç»˜åˆ¶çŠ¶æ€ä¸‹ï¼Œå¦‚æœé¼ æ ‡è¿›å…¥äº†å·¥å…·æ¡ï¼Œé‚£ä¹ˆé¼ æ ‡æ­£å¸¸æ‰‹åŠ¿
 		if(::PtInRect(&tool_bar_rect, point))
 		{
 			SetNormalCursor();
@@ -91,9 +91,9 @@ void CCaptureEdit::OnDrawUnitStart( const ui::CPoint &point)
 void CCaptureEdit::OnDrawUnitProcess( const ui::CPoint &point )
 {
 	ui::CPoint pt_valid = point;
-	CalcValidEndPoint(pt_valid); // ÏŞÖÆ»æÍ¼ÖÕµãÔÚ½ØÍ¼¿òÄÚ
+	CalcValidEndPoint(pt_valid); // é™åˆ¶ç»˜å›¾ç»ˆç‚¹åœ¨æˆªå›¾æ¡†å†…
 	current_draw_unit_->SetEndPoint(pt_valid.x, pt_valid.y);
-	PaintContent(); // Êó±êÒÆ¶¯¹ı³ÌÖĞ£¬ĞèÒªÁ¢¼´ÖØ»æ
+	PaintContent(); // é¼ æ ‡ç§»åŠ¨è¿‡ç¨‹ä¸­ï¼Œéœ€è¦ç«‹å³é‡ç»˜
 }
 
 void CCaptureEdit::OnDrawUnitEnd( const ui::CPoint &point)
@@ -105,20 +105,20 @@ void CCaptureEdit::OnDrawUnitEnd( const ui::CPoint &point)
 	CalcValidEndPoint(pt_end);
 	current_draw_unit_->SetEndPoint(pt_end.x, pt_end.y);
 
-	if (edit_mode_ == EM_TEXT)	//ÎÄ±¾ĞèÒª¶îÍâ´¦Àí
+	if (edit_mode_ == EM_TEXT)	//æ–‡æœ¬éœ€è¦é¢å¤–å¤„ç†
 	{
-		//ÅĞ¶ÏÏÂÇøÓò´óĞ¡ Èç¹ûÌ«Ğ¡¾Í²»»­
+		//åˆ¤æ–­ä¸‹åŒºåŸŸå¤§å° å¦‚æœå¤ªå°å°±ä¸ç”»
 		ui::UiRect rcRect(pt_start.x,pt_start.y,pt_end.x,pt_end.y);
 		rcRect.Normalize();
 		if (rcRect.GetWidth() > 5 && rcRect.GetHeight() > 5)
 		{
-			text_edit_ = new CCaptureTextEdit(rcRect); //´´½¨Ò»¸öRichEditÀ´ÊäÈëÎÄ×Ö
-			text_edit_->SetFont(3); //Ìí¼Óµ½ÈİÆ÷Ç°±ØĞëÉèÖÃÒ»¸öfont
+			text_edit_ = new CCaptureTextEdit(rcRect); //åˆ›å»ºä¸€ä¸ªRichEditæ¥è¾“å…¥æ–‡å­—
+			text_edit_->SetFont(3); //æ·»åŠ åˆ°å®¹å™¨å‰å¿…é¡»è®¾ç½®ä¸€ä¸ªfont
 			ui::Box* parent_hor = static_cast<ui::Box*>(this->GetParent());
-			parent_hor->Add(text_edit_); // ¼ÓÈëµ½¸¸ÈİÆ÷£¨floatĞÍ£©
-			text_edit_->InitInfos(); //ÉèÖÃÒ»Ğ©¹Ì¶¨µÄÊôĞÔ
+			parent_hor->Add(text_edit_); // åŠ å…¥åˆ°çˆ¶å®¹å™¨ï¼ˆfloatå‹ï¼‰
+			text_edit_->InitInfos(); //è®¾ç½®ä¸€äº›å›ºå®šçš„å±æ€§
 			text_edit_->SetVisible(true);
-			text_edit_->SetFocus(); // ÈÃ±à¼­¿òµÃµ½ÊäÈë½¹µã
+			text_edit_->SetFocus(); // è®©ç¼–è¾‘æ¡†å¾—åˆ°è¾“å…¥ç„¦ç‚¹
 			text_edit_->SetTextFinishedCallback(nbase::Bind(&CCaptureEdit::OnTextEditFinished, this));
 
 			if(color_palette_)
@@ -126,14 +126,14 @@ void CCaptureEdit::OnDrawUnitEnd( const ui::CPoint &point)
 				DWORD text_color = color_palette_->GetSelectedColorRGB();
 				std::wstring color_name = color_palette_->GetSelectedColorName();
 				int font_index = color_palette_->GetSelectedFontIndex();
-				text_edit_->SetDotPenColor(text_color); //»­±ÊµÄÑÕÉ«
-				text_edit_->SetTextColor(color_name); //ÎÄ×ÖµÄÑÕÉ«
+				text_edit_->SetDotPenColor(text_color); //ç”»ç¬”çš„é¢œè‰²
+				text_edit_->SetTextColor(color_name); //æ–‡å­—çš„é¢œè‰²
 				text_edit_->SetFont(font_index);
 			}
 		}
 		delete current_draw_unit_;
 		current_draw_unit_ = NULL;
-		is_begin_draw_ = FALSE; // ²»ÒªÔÙ»­ÁË
+		is_begin_draw_ = FALSE; // ä¸è¦å†ç”»äº†
 		PaintContent();
 	}
 	else
@@ -147,7 +147,7 @@ void CCaptureEdit::CreateDrawUnit( const ui::CPoint& point)
 	delete current_draw_unit_;
 	switch (edit_mode_)
 	{
-	case EM_TEXT: //Õâ¸öDrawUnitTextÖ»°ïÖú¼ÇÂ¼»æÖÆ¿ò·¶Î§£¬²»»æÖÆÎÄ×Ö£¬Êó±êÒ»ÊÍ·Å¾Í±»Ïú»Ù
+	case EM_TEXT: //è¿™ä¸ªDrawUnitTextåªå¸®åŠ©è®°å½•ç»˜åˆ¶æ¡†èŒƒå›´ï¼Œä¸ç»˜åˆ¶æ–‡å­—ï¼Œé¼ æ ‡ä¸€é‡Šæ”¾å°±è¢«é”€æ¯
 		current_draw_unit_ = new DrawUnitText(point.x, point.y, track_rect_, FALSE);
 		break;
 	case EM_RECTANGLE:
@@ -178,7 +178,7 @@ void CCaptureEdit::CreateDrawUnit( const ui::CPoint& point)
 	}
 	assert(current_draw_unit_);
 
-	// ´Óµ÷É«°å»ñÈ¡ÓÃ»§Ñ¡ÔñµÄÑÕÉ«ºÍÏß¿í
+	// ä»è°ƒè‰²æ¿è·å–ç”¨æˆ·é€‰æ‹©çš„é¢œè‰²å’Œçº¿å®½
 	if(color_palette_)
 	{
 		current_draw_unit_->SetColor(color_palette_->GetSelectedColorRGB());
@@ -201,15 +201,15 @@ void CCaptureEdit::SetEditModeCursor( const ui::CPoint& point )
 	{
 		if(edit_mode_ == EM_TEXT && text_edit_!= NULL)
 		{
-			// µ±Êó±ê½øÈëÎÄ±¾±à¼­¿òÄÚÊ±
+			// å½“é¼ æ ‡è¿›å…¥æ–‡æœ¬ç¼–è¾‘æ¡†å†…æ—¶
 			RECT edit_rect = text_edit_->GetCaptureTextEditRect();
 			if(::PtInRect(&edit_rect, pt_mouse))
 			{
-				str_cursor_ = IDC_IBEAM;  // I×Ö¹â±ê
+				str_cursor_ = IDC_IBEAM;  // Iå­—å…‰æ ‡
 			}
 			else
 			{
-				str_cursor_ = IDC_CROSS; // Ê®×Ö¹â±ê
+				str_cursor_ = IDC_CROSS; // åå­—å…‰æ ‡
 			}
 		}
 		else if (edit_mode_ == EM_GAUSS || edit_mode_ == EM_MOSAIC)
@@ -241,12 +241,12 @@ void CCaptureEdit::SetEditModeCursor( const ui::CPoint& point )
 			} 
 			else
 			{
-				str_cursor_ = IDC_CROSS;  // Ê®×Ö¹â±ê
+				str_cursor_ = IDC_CROSS;  // åå­—å…‰æ ‡
 			}
 		}
 		else
 		{
-			str_cursor_ = IDC_CROSS;  // Ê®×Ö¹â±ê
+			str_cursor_ = IDC_CROSS;  // åå­—å…‰æ ‡
 		}
 	}
 	else
@@ -266,7 +266,7 @@ void CCaptureEdit::CalcValidEndPoint( ui::CPoint& pt_end )
 {
 	ui::UiRect rc_tracker = track_rect_;
 
-	//Èç¹û²»ÔÚ¾ØĞÎÄÚ
+	//å¦‚æœä¸åœ¨çŸ©å½¢å†…
 	if (!::PtInRect(&rc_tracker, pt_end))
 	{
 		pt_end.y = pt_end.y >= rc_tracker.bottom ? rc_tracker.bottom : pt_end.y;
@@ -280,7 +280,7 @@ void CCaptureEdit::SubmitDrawUnit()
 {
 	vec_draw_units_.push_back(current_draw_unit_);
 	ClearHistoryVector();
-	current_draw_unit_ = NULL; //ÖÃ¿Õ,vector×Ô¼º¹ÜÀíÄÚ´æ
+	current_draw_unit_ = NULL; //ç½®ç©º,vectorè‡ªå·±ç®¡ç†å†…å­˜
 	is_begin_draw_ = FALSE;
 	PaintContent();
 }
@@ -309,7 +309,7 @@ void CCaptureEdit::DrawExtraUnits( HDC hdc )
 	{
 		HDC hMemDC = CreateCompatibleDC(hdc);
 		HBITMAP hOldBitmap2 = (HBITMAP)SelectObject(hMemDC, extra_bitmap_);
-		// °ÑÆÁÄ»Éè±¸ÃèÊö±í¿½±´µ½ÄÚ´æÉè±¸ÃèÊö±íÖĞ
+		// æŠŠå±å¹•è®¾å¤‡æè¿°è¡¨æ‹·è´åˆ°å†…å­˜è®¾å¤‡æè¿°è¡¨ä¸­
 		BitBlt(hdc, track_rect_.left, track_rect_.top, track_rect_.GetWidth() + 1, track_rect_.GetHeight() + 1, hMemDC, track_rect_.left, track_rect_.top, SRCCOPY);
 		//BitBlt(hMemDC, 0, 0, width, height, hdc, 0, 0, SRCCOPY | CAPTUREBLT);
 		SelectObject(hMemDC, hOldBitmap2);
@@ -344,8 +344,8 @@ void CCaptureEdit::OnTextEditFinished()
 	if(text_edit_ == NULL)
 		return;
 
-	// TODO:Èç¹ûµ±Ç°Êó±ê²»ÔÚÉèÖÃ´°¿ÚµÄ·¶Î§ÄÚ²Å²úÉúÎÄ×Ö
-	// »ñÈ¡ÓÃ»§ÊäÈëµÄÎÄ±¾
+	// TODO:å¦‚æœå½“å‰é¼ æ ‡ä¸åœ¨è®¾ç½®çª—å£çš„èŒƒå›´å†…æ‰äº§ç”Ÿæ–‡å­—
+	// è·å–ç”¨æˆ·è¾“å…¥çš„æ–‡æœ¬
 	std::wstring text = text_edit_->GetText();
 	if (!text.empty())
 	{
@@ -358,7 +358,7 @@ void CCaptureEdit::OnTextEditFinished()
 			text_color = color_palette_->GetSelectedColorRGB();
 			font_index = color_palette_->GetSelectedFontIndex();
 		}
-		current_draw_unit_ = new DrawUnitText(edit_rect.left, edit_rect.top, track_rect_, TRUE); // »æÖÆÎÄ±¾
+		current_draw_unit_ = new DrawUnitText(edit_rect.left, edit_rect.top, track_rect_, TRUE); // ç»˜åˆ¶æ–‡æœ¬
 		current_draw_unit_->SetEndPoint(edit_rect.right, edit_rect.bottom);
 		current_draw_unit_->SetColor(text_color);
 		DrawUnitText* pDrawUnitText = (DrawUnitText*)current_draw_unit_;
@@ -367,13 +367,13 @@ void CCaptureEdit::OnTextEditFinished()
 		
 		ReleaseHBitmap(extra_bitmap_);
 		ReleaseHBitmap(blur_bitmap_);
-		SubmitDrawUnit(); //Ìá½»µ±Ç°»æÖÆµ¥Ôªµ½»æÖÆÁĞ±íÖĞ
+		SubmitDrawUnit(); //æäº¤å½“å‰ç»˜åˆ¶å•å…ƒåˆ°ç»˜åˆ¶åˆ—è¡¨ä¸­
 	}
 
-	// ÊÍ·Åtext_edit
+	// é‡Šæ”¾text_edit
 	ui::Box* parent_hor = static_cast<ui::Box*>(this->GetParent());
 	if(parent_hor)
-		parent_hor->Remove(text_edit_); // ÒÆ³ı£¬»á×Ô¶¯delete
+		parent_hor->Remove(text_edit_); // ç§»é™¤ï¼Œä¼šè‡ªåŠ¨delete
 
 	text_edit_ = NULL;
 	this->SetFocus();
@@ -385,12 +385,12 @@ void CCaptureEdit::Undo()
 	{
 		ReleaseHBitmap(extra_bitmap_);
 		ReleaseHBitmap(blur_bitmap_);
-		// µ¯³ö¶ÓÎ²
+		// å¼¹å‡ºé˜Ÿå°¾
 		DrawUnit* last_draw_unit = vec_draw_units_.back();
 		vec_draw_units_.pop_back();
-		// ¼ÓÈëµ½ÀúÊ·ÖĞ
+		// åŠ å…¥åˆ°å†å²ä¸­
 		vec_history_draw_units_.push_back(last_draw_unit);
-		// ÖØ»æ
+		// é‡ç»˜
 		PaintContent();
 	}
 }
@@ -401,12 +401,12 @@ void CCaptureEdit::Redo()
 	{
 		ReleaseHBitmap(extra_bitmap_);
 		ReleaseHBitmap(blur_bitmap_);
-		// µ¯³öÀúÊ·¶ÓÎ²
+		// å¼¹å‡ºå†å²é˜Ÿå°¾
 		DrawUnit* pDrawUnit = vec_history_draw_units_.back();
 		vec_history_draw_units_.pop_back();
-		// »¹Ô­µ½Ô­¶ÓÎ²
+		// è¿˜åŸåˆ°åŸé˜Ÿå°¾
 		vec_draw_units_.push_back(pDrawUnit);
-		// ÖØ»æ
+		// é‡ç»˜
 		PaintContent();
 	}
 }
@@ -438,13 +438,13 @@ void CCaptureEdit::ReleaseAllDrawUnits()
 	ReleaseHBitmap(extra_bitmap_);
 	ReleaseHBitmap(blur_bitmap_);
 }
-//»ñÈ¡ÕÚÕÖ
+//è·å–é®ç½©
 void CCaptureEdit::GetExtraUnitsBimap(HDC hdc, HBITMAP& bitmap, DrawUnit::BlurType blur_type, int range)
 {
 	ReleaseHBitmap(bitmap);
 //#ifdef _DEBUG
 //	timeb time_now;
-//	ftime(&time_now); // ÃëÊı
+//	ftime(&time_now); // ç§’æ•°
 //	uint64_t timestamp_cur = time_now.time * 1000 + time_now.millitm;
 //#endif
 	int width = track_rect_.right + 1;
@@ -464,7 +464,7 @@ void CCaptureEdit::GetExtraUnitsBimap(HDC hdc, HBITMAP& bitmap, DrawUnit::BlurTy
 		(void**)&pBitmapData, NULL, 0);
 	HDC hMemDC = CreateCompatibleDC(hdc);
 	HBITMAP hOldBitmap2 = (HBITMAP)SelectObject(hMemDC, bitmap);
-	// °ÑÆÁÄ»Éè±¸ÃèÊö±í¿½±´µ½ÄÚ´æÉè±¸ÃèÊö±íÖĞ
+	// æŠŠå±å¹•è®¾å¤‡æè¿°è¡¨æ‹·è´åˆ°å†…å­˜è®¾å¤‡æè¿°è¡¨ä¸­
 	BitBlt(hMemDC, 0, 0, width, height, hdc, 0, 0, SRCCOPY | CAPTUREBLT);
 	SelectObject(hMemDC, hOldBitmap2);
 	DeleteDC(hMemDC);
@@ -486,7 +486,7 @@ void CCaptureEdit::GetExtraUnitsBimap(HDC hdc, HBITMAP& bitmap, DrawUnit::BlurTy
 		}
 	}
 //#ifdef _DEBUG
-//	ftime(&time_now); // ÃëÊı
+//	ftime(&time_now); // ç§’æ•°
 //	uint64_t timestamp_cur2 = time_now.time * 1000 + time_now.millitm - timestamp_cur;
 //	printf("---check  %d\n", timestamp_cur2);
 //#endif
@@ -515,7 +515,7 @@ bool CCaptureEdit::CheckBlurBitmap(HDC hdc, DrawUnit* draw_units_)
 	}
 	return false;
 }
-//»ñÈ¡Ö¸ÕëÍ¼Æ¬¶ÔÏó
+//è·å–æŒ‡é’ˆå›¾ç‰‡å¯¹è±¡
 void CCaptureEdit::CheckCursor(HCURSOR &cursor, std::wstring image_name)
 {
 	if (cursor == NULL)

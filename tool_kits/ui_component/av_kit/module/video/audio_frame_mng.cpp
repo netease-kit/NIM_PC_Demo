@@ -1,4 +1,4 @@
-
+#include "stdafx.h"
 #include "audio_frame_mng.h"
 #include <sys/timeb.h>
 
@@ -25,8 +25,8 @@ void AudioFrameMng::AddAudioFrame(bool capture, int64_t time, const char* data, 
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	timeb time_now;
-	ftime(&time_now); // ÃëÊý
-	int64_t cur_timestamp = time_now.time * 1000 + time_now.millitm; // ºÁÃë
+	ftime(&time_now); // ç§’æ•°
+	int64_t cur_timestamp = time_now.time * 1000 + time_now.millitm; // æ¯«ç§’
 
 	Json::Value valus;
 	Json::Reader reader;
@@ -60,8 +60,8 @@ void AudioFrameMng::GetAudioFrame(bool capture, std::string& out_data, int& rate
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	timeb time_now;
-	ftime(&time_now); // ÃëÊý
-	int64_t cur_timestamp = time_now.time * 1000 + time_now.millitm; // ºÁÃë
+	ftime(&time_now); // ç§’æ•°
+	int64_t cur_timestamp = time_now.time * 1000 + time_now.millitm; // æ¯«ç§’
 
 	if (capture)
 	{

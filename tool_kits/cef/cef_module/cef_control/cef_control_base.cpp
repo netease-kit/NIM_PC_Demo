@@ -1,5 +1,7 @@
+#include "stdafx.h"
 #include "cef_control_base.h"
 #include "util/util.h"
+#include "base/thread/thread_manager.h"
 
 namespace ui 
 {

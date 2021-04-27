@@ -1,7 +1,7 @@
 #pragma once
 
 /** @class LoginForm
-  * @brief µÇÂ¼´°Ìå
+  * @brief ç™»å½•çª—ä½“
   * @copyright (c) 2015, NetEase Inc. All rights reserved
   * @date 2016/10/12
   */
@@ -11,7 +11,7 @@ public:
 	LoginForm();
 	~LoginForm();
 	
-	//¸²¸ÇĞéº¯Êı
+	//è¦†ç›–è™šå‡½æ•°
 	virtual std::wstring GetSkinFolder() override;
 	virtual std::wstring GetSkinFile() override;
 	virtual std::wstring GetWindowClassName() const override;
@@ -19,28 +19,28 @@ public:
 	virtual UINT GetClassStyle() const override;
 	
 	/**
-	* ´°¿Ú³õÊ¼»¯º¯Êı
-	* @return void	ÎŞ·µ»ØÖµ
+	* çª—å£åˆå§‹åŒ–å‡½æ•°
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void InitWindow() override;
 
 	/**
-	* À¹½Ø²¢´¦Àíµ×²ã´°ÌåÏûÏ¢
-	* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-	* @param[in] wParam ¸½¼Ó²ÎÊı
-	* @param[in] lParam ¸½¼Ó²ÎÊı
-	* @return LRESULT ´¦Àí½á¹û
+	* æ‹¦æˆªå¹¶å¤„ç†åº•å±‚çª—ä½“æ¶ˆæ¯
+	* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+	* @param[in] wParam é™„åŠ å‚æ•°
+	* @param[in] lParam é™„åŠ å‚æ•°
+	* @return LRESULT å¤„ç†ç»“æœ
 	*/
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 	
 	/**
-	* À¹½Ø²¢´¦ÀíWM_CLOSEÏûÏ¢
-	* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-	* @param[in] wParam ¸½¼Ó²ÎÊı
-	* @param[in] lParam ¸½¼Ó²ÎÊı
-	* @param[in] lParam ¸½¼Ó²ÎÊı
-	* @param[in] bHandled ÊÇ·ñ´¦ÀíÁËÏûÏ¢£¬Èç¹û´¦ÀíÁË²»¼ÌĞø´«µİÏûÏ¢
-	* @return LRESULT ´¦Àí½á¹û
+	* æ‹¦æˆªå¹¶å¤„ç†WM_CLOSEæ¶ˆæ¯
+	* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+	* @param[in] wParam é™„åŠ å‚æ•°
+	* @param[in] lParam é™„åŠ å‚æ•°
+	* @param[in] lParam é™„åŠ å‚æ•°
+	* @param[in] bHandled æ˜¯å¦å¤„ç†äº†æ¶ˆæ¯ï¼Œå¦‚æœå¤„ç†äº†ä¸ç»§ç»­ä¼ é€’æ¶ˆæ¯
+	* @return LRESULT å¤„ç†ç»“æœ
 	*/
 	virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
@@ -49,67 +49,67 @@ public:
 	void SwitchToLoginPage();
 private:
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµÄËùÓĞÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶çš„æ‰€æœ‰æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool Notify(ui::EventArgs* msg);
 
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnClicked(ui::EventArgs* msg);
 
 	/**
-	* ×¢²áUIKIT»Øµ÷º¯Êı£¬ÈÃUIKIT¿ØÖÆµÇÂ¼´°ÌåµÄÒ»Ğ©ĞĞÎª
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ³¨å†ŒUIKITå›è°ƒå‡½æ•°ï¼Œè®©UIKITæ§åˆ¶ç™»å½•çª—ä½“çš„ä¸€äº›è¡Œä¸º
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void RegLoginManagerCallback();
 
 	/**
-	* ÏìÓ¦µÇÂ¼½á¹ûµÄ»Øµ÷£¬
-	* @return void	ÎŞ·µ»ØÖµ
+	* å“åº”ç™»å½•ç»“æœçš„å›è°ƒï¼Œ
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnLoginError(int error);
 
 	/**
-	* ÏìÓ¦È¡ÏûµÇÂ¼µÄ»Øµ÷£¬ÖØÖÃ½çÃæ¿Ø¼şĞ§¹û
-	* @return void	ÎŞ·µ»ØÖµ
+	* å“åº”å–æ¶ˆç™»å½•çš„å›è°ƒï¼Œé‡ç½®ç•Œé¢æ§ä»¶æ•ˆæœ
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnCancelLogin();
 
 private:
 	/**
-	* ¼ì²éÓÃ»§ÊäÈëÄÚÈİ£¬Èç¹ûÊäÈëºÏ·¨Ôò¿ªÊ¼µÇÂ¼
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ£€æŸ¥ç”¨æˆ·è¾“å…¥å†…å®¹ï¼Œå¦‚æœè¾“å…¥åˆæ³•åˆ™å¼€å§‹ç™»å½•
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void DoBeforeLogin();
 
 	/**
-	* ¼ì²éÓÃ»§ÊäÈëÄÚÈİ£¬Èç¹ûÊäÈëºÏ·¨Ôò×¢²áÕÊºÅ
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ£€æŸ¥ç”¨æˆ·è¾“å…¥å†…å®¹ï¼Œå¦‚æœè¾“å…¥åˆæ³•åˆ™æ³¨å†Œå¸å·
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void DoRegisterAccount();
 
 	/**
-	* Ö´ĞĞµÇÂ¼²Ù×÷
-	* @param[in] username ÓÃ»§id
-	* @param[in] password ÓÃ»§ÃÜÂë
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ‰§è¡Œç™»å½•æ“ä½œ
+	* @param[in] username ç”¨æˆ·id
+	* @param[in] password ç”¨æˆ·å¯†ç 
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void StartLogin(std::string username, std::string password);
 
 	/**
-	* ÔÚ½çÃæÉÏÏÔÊ¾Ò»Ğ©ÌáÊ¾ÎÄ×Ö
-	* @return void	ÎŞ·µ»ØÖµ
+	* åœ¨ç•Œé¢ä¸Šæ˜¾ç¤ºä¸€äº›æç¤ºæ–‡å­—
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void ShowLoginTip(std::wstring tip_text);
 	/**
-	* ½øĞĞuikit³õÊ¼»¯
-	* @param[in] mode ³õÊ¼»¯ÀàĞÍ(IM/ÄäÃûÁÄÌìÊÒ)
-	* @return void	ÎŞ·µ»ØÖµ
+	* è¿›è¡Œuikitåˆå§‹åŒ–
+	* @param[in] mode åˆå§‹åŒ–ç±»å‹(IM/åŒ¿åèŠå¤©å®¤)
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void DoInitUiKit(nim_ui::InitManager::InitMode mode);
 	

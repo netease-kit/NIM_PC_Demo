@@ -22,6 +22,15 @@ CFileDialogEx::CFileDialogEx(void)
 	m_stOFN.lpstrFilter = m_szFilter;
 	m_stOFN.lpstrFile = m_szFileName;
 	m_stOFN.nMaxFile = MAX_PATH;
+
+    m_bi.hwndOwner = NULL;
+    m_bi.pidlRoot = NULL;
+    m_bi.pszDisplayName = m_szFileName;
+    m_bi.lpszTitle = L"";
+    m_bi.ulFlags = BIF_RETURNONLYFSDIRS | BIF_NEWDIALOGSTYLE;
+    m_bi.lpfn = NULL;
+    m_bi.lParam = 0;
+    m_bi.iImage = 0;
 }
 
 CFileDialogEx::~CFileDialogEx(void)
@@ -48,7 +57,7 @@ void CFileDialogEx::SetFlags(DWORD dwFlags)
 	m_stOFN.Flags = dwFlags;
 }
 
-// Ê¾Àı_T("Text Files(*.txt)\0*.txt\0ÍøÒ³ÎÄ¼ş\0*.htm;*.html\0All Files(*.*)\0*.*\0\0")
+// ç¤ºä¾‹_T("Text Files(*.txt)\0*.txt\0ç½‘é¡µæ–‡ä»¶\0*.htm;*.html\0All Files(*.*)\0*.*\0\0")
 void CFileDialogEx::SetFilter(LPCTSTR lpszFilter)
 {
 	LPTSTR lpsz = (LPTSTR)lpszFilter;
@@ -73,9 +82,9 @@ void CFileDialogEx::SetFilter(LPCTSTR lpszFilter)
 	}
 }
 
-//param:¹ıÂË×Ö·û´®¶Ô,key-ÃèÊö×Ö·û´® value-¹ıÂË×Ö·û´®
-//²ÎÊı¿ÉÒÔÖ¸¶¨¶à×é¹ıÂËÀàĞÍ
-//example:filers[L"Í¼ÏñÎÄ¼ş(*.jpg)"] = L"*.jpg";
+//param:è¿‡æ»¤å­—ç¬¦ä¸²å¯¹,key-æè¿°å­—ç¬¦ä¸² value-è¿‡æ»¤å­—ç¬¦ä¸²
+//å‚æ•°å¯ä»¥æŒ‡å®šå¤šç»„è¿‡æ»¤ç±»å‹
+//example:filers[L"å›¾åƒæ–‡ä»¶(*.jpg)"] = L"*.jpg";
 void CFileDialogEx::SetFilter(std::map<LPCTSTR,LPCTSTR>& filters)
 {
 	std::map<LPCTSTR,LPCTSTR>::iterator it = filters.begin();
@@ -159,6 +168,13 @@ void CFileDialogEx::AyncShowSaveFileDlg(FileDialogCallback2 file_dialog_callback
 	AsyncDoModal(this);
 }
 
+void CFileDialogEx::AsyncShowOpenDirFileDlg(FileDialogCallback2 file_dialog_callback2)
+{
+    file_dialog_callback2_ = file_dialog_callback2;
+    file_dialog_type_ = FDT_OpenDir;
+    AsyncDoModal(this);
+}
+
 void CFileDialogEx::SyncShowModal()
 {
 	if (file_dialog_type_ == FDT_OpenFile)
@@ -201,7 +217,17 @@ void CFileDialogEx::SyncShowModal()
 		BOOL ret = ::GetSaveFileName(&m_stOFN);
 		StdClosure closure = nbase::Bind(file_dialog_callback2_, ret, GetPathName());
 		nbase::ThreadManager::PostTask(kThreadUI, closure);
-	}
+	} 
+    else if (file_dialog_type_ == FDT_OpenDir)
+    {
+        TCHAR szDir[MAX_PATH];
+        ITEMIDLIST* pidl;
+        pidl = ::SHBrowseForFolder(&m_bi);
+        BOOL ret = ::SHGetPathFromIDList(pidl, szDir);
+        std::wstring ret_path = szDir;
+        StdClosure closure = std::bind(file_dialog_callback2_, ret, ret_path);
+        nbase::ThreadManager::PostTask(kThreadUI, closure);
+    }
 	else
 	{
 		assert(FALSE);

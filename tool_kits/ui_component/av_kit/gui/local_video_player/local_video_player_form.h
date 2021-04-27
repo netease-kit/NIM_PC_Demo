@@ -32,43 +32,43 @@ public:
 	virtual UINT GetClassStyle() const override;
 
 	/**
-	* ´°¿Ú³õÊ¼»¯º¯Êı
-	* @return void	ÎŞ·µ»ØÖµ
+	* çª—å£åˆå§‹åŒ–å‡½æ•°
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void InitWindow() override;
 	/**
-	* À¹½Ø²¢´¦Àíµ×²ã´°ÌåÏûÏ¢
-	* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-	* @param[in] wParam ¸½¼Ó²ÎÊı
-	* @param[in] lParam ¸½¼Ó²ÎÊı
-	* @return LRESULT ´¦Àí½á¹û
+	* æ‹¦æˆªå¹¶å¤„ç†åº•å±‚çª—ä½“æ¶ˆæ¯
+	* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+	* @param[in] wParam é™„åŠ å‚æ•°
+	* @param[in] lParam é™„åŠ å‚æ•°
+	* @return LRESULT å¤„ç†ç»“æœ
 	*/
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 	virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµÄËùÓĞÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶çš„æ‰€æœ‰æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	virtual bool Notify(ui::EventArgs* msg);
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	virtual bool OnClicked(ui::EventArgs* msg);
 
 	/**
-	* ´¦ÀíESC¼üÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†ESCé”®æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	virtual void OnEsc(BOOL &bHandled);
 	 /**
-	 * ´¦Àí´°Ìå×î´ó»¯ÏûÏ¢
-	 * @param[in] max ÊÇ·ñ×î´ó»¯
-	 * @return void ÎŞ·µ»ØÖµ
+	 * å¤„ç†çª—ä½“æœ€å¤§åŒ–æ¶ˆæ¯
+	 * @param[in] max æ˜¯å¦æœ€å¤§åŒ–
+	 * @return void æ— è¿”å›å€¼
 	 */
 	void OnMaxWindow(bool max);
 	void Play(const std::wstring& path);
@@ -76,48 +76,48 @@ public:
 private:
 
 	/**
-	* ¿ªÊ¼ÊÓÆµ²¥·Å
-	* @return void	ÎŞ·µ»ØÖµ
+	* å¼€å§‹è§†é¢‘æ’­æ”¾
+	* @return void	æ— è¿”å›å€¼
 	*/
 	bool StartPlay();
 	/**
-	* ¿ªÊ¼ÊÓÆµ²¥·Å
-	* @return void	ÎŞ·µ»ØÖµ
+	* å¼€å§‹è§†é¢‘æ’­æ”¾
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void Shutdown();
 	/**
-	* Ë¢ĞÂ²¥·ÅÊ±¼äºÍ½ø¶ÈÌõ
-	* @return void	ÎŞ·µ»ØÖµ
+	* åˆ·æ–°æ’­æ”¾æ—¶é—´å’Œè¿›åº¦æ¡
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void RefreshPlayTime();
 	/**
-	* ¸üĞÂ²¥·ÅÆ÷×´Ì¬
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ›´æ–°æ’­æ”¾å™¨çŠ¶æ€
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void ChangePlayerState(PlayerState new_state);
 	/**
-	* ²¥·Å½á¹û»Øµ÷
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ’­æ”¾ç»“æœå›è°ƒ
+	* @return void	æ— è¿”å›å€¼
 	*/
 	static void PlayerMessageCB(_HNLPSERVICE hNLPService, ST_NELP_MESSAGE msg);
 	static void UIPlayerMessageCB(_HNLPSERVICE hNLPService, ST_NELP_MESSAGE msg);
 	/**
-	* ÊÓÆµÊı¾İ»Øµ÷
-	* @return void	ÎŞ·µ»ØÖµ
+	* è§†é¢‘æ•°æ®å›è°ƒ
+	* @return void	æ— è¿”å›å€¼
 	*/
 	static void VideoFrameCB(_HNLPSERVICE hNLPService, ST_NELP_FRAME *frame);
 
 public:
 	static const LPTSTR kClassName;
 	static std::map<_HNLPSERVICE, LocalVideoPlayerForm*> InstFormMap;
-	static unsigned int InstanceNum; //²¥·ÅÆ÷´°¿Ú¸öÊı
+	static unsigned int InstanceNum; //æ’­æ”¾å™¨çª—å£ä¸ªæ•°
 
 private:
-	std::wstring       path_; //µ±Ç°´°¿ÚID
+	std::wstring       path_; //å½“å‰çª—å£ID
 	_HNLPSERVICE       nelp_handle_ = NULL;
 	bool               is_max_window_ = false;
 	bool               playing_ = false;
-	long long          total_duration_ = 0; //×ÜÊ±³¤£¬¿ÉÓÃÓÚÇø·ÖÊÇÖ±²¥¿ªÊ¼µã²¥
+	long long          total_duration_ = 0; //æ€»æ—¶é•¿ï¼Œå¯ç”¨äºåŒºåˆ†æ˜¯ç›´æ’­å¼€å§‹ç‚¹æ’­
 	float              volume_ = 20.0f;
 	bool               muted_ = false;
 	PlayerState        state_ = PlayerStateStopped;

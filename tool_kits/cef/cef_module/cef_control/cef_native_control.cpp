@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "cef_native_control.h"
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
@@ -50,7 +51,7 @@ void CefNativeControl::ReCreateBrowser()
 {
 	if (browser_handler_->GetBrowser() == nullptr)
 	{
-		// 使用有窗模式
+		// 浣跨敤鏈夌獥妯″紡
 		CefWindowInfo window_info;
 		window_info.SetAsChild(this->m_pWindow->GetHWND(), m_rcItem);
 
@@ -128,12 +129,12 @@ void CefNativeControl::SetWindow(ui::Window* pManager, ui::Box* pParent, bool bI
 	if (browser_handler_)
 		browser_handler_->SetHostWindow(pManager->GetHWND());
 
-	// 设置Cef窗口句柄为新的主窗口的子窗口
+	// 璁剧疆Cef绐楀彛鍙ユ焺涓烘柊鐨勪富绐楀彛鐨勫瓙绐楀彛
 	auto hwnd = GetCefHandle();
 	if (hwnd)
 		SetParent(hwnd, pManager->GetHWND());
 
-	// 为新的主窗口重新设置WS_CLIPSIBLINGS、WS_CLIPCHILDREN样式，否则Cef窗口刷新会出问题
+	// 涓烘柊鐨勪富绐楀彛閲嶆柊璁剧疆WS_CLIPSIBLINGS銆乄S_CLIPCHILDREN鏍峰紡锛屽惁鍒機ef绐楀彛鍒锋柊浼氬嚭闂
 	LONG style = GetWindowLong(pManager->GetHWND(), GWL_STYLE);
 	SetWindowLong(pManager->GetHWND(), GWL_STYLE, style | WS_CLIPSIBLINGS | WS_CLIPCHILDREN);
 

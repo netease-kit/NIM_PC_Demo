@@ -1,8 +1,10 @@
 #include "stdafx.h"
+#include "stdafx.h"
 #include "session_plugin.h"
 #include "export\nim_ui_session_list_manager.h"
 #include "export\nim_ui_session_manager.h"
 #include "session_plugin_page.h"
+
 namespace nim_comp
 {
 const IMainPlugin::PluginFlagType SessionPlugin::kPLUGIN_NAME = "SessionPlugin";

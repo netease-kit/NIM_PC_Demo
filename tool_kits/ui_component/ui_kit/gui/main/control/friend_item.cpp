@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "friend_item.h"
 #include "module/session/session_manager.h"
 #include "module/online_state_event/online_state_event_util.h"

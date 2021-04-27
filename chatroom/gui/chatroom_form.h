@@ -61,7 +61,7 @@ private: // cef
 
 private:
 	void InitHeader();
-	void GetOnlineCount();	// Ë¢ĞÂÔÚÏßÈËÊı
+	void GetOnlineCount();	// åˆ·æ–°åœ¨çº¿äººæ•°
 
 	void GetMembers();
 	void OnGetMembersCallback(__int64 room_id, int error_code, const std::list<ChatRoomMemberInfo>& infos);
@@ -90,7 +90,7 @@ private:
 
 private:
 	void GetMemberInfo(const std::string& params, nim_cef::ReportResultFunction callback);
-	void SetMemberAdmin(const std::string &id, bool is_admin);	//ÉèÖÃ³ÉÔ±ÁĞ±í½çÃæÖĞÄ³¸ö³ÉÔ±µÄÀàĞÍ
+	void SetMemberAdmin(const std::string &id, bool is_admin);	//è®¾ç½®æˆå‘˜åˆ—è¡¨ç•Œé¢ä¸­æŸä¸ªæˆå‘˜çš„ç±»å‹
 	void SetMemberBlacklist(const std::string &id, bool is_black);
 	void SetMemberMute(const std::string &id, bool is_mute);
 	void SetMemberFixed(const std::string &id, bool is_fixed);
@@ -120,34 +120,34 @@ private:
 	bool TempMuteMenuItemClick(ui::EventArgs* args);
 	bool RemoveTempMuteMenuItemClick(ui::EventArgs* args);
 
-	//@¹¦ÄÜÏà¹ØµÄ²Ù×÷
+	//@åŠŸèƒ½ç›¸å…³çš„æ“ä½œ
 #pragma region At
 private:
 	/**
-	* ´¦ÀíÊäÈë¿òµÄ@Ïà¹ØµÄ°´¼üÏûÏ¢
-	* @param[in] wParam ¸½¼ÓÏûÏ¢
-	* @param[in] lParam ¸½¼ÓÏûÏ¢
-	* @return bool true ²»¼ÌĞø´«µİÏûÏ¢£¬false ¼ÌĞø´«µİÏûÏ¢
+	* å¤„ç†è¾“å…¥æ¡†çš„@ç›¸å…³çš„æŒ‰é”®æ¶ˆæ¯
+	* @param[in] wParam é™„åŠ æ¶ˆæ¯
+	* @param[in] lParam é™„åŠ æ¶ˆæ¯
+	* @return bool true ä¸ç»§ç»­ä¼ é€’æ¶ˆæ¯ï¼Œfalse ç»§ç»­ä¼ é€’æ¶ˆæ¯
 	*/
 	bool HandleAtMsg(WPARAM wParam, LPARAM lParam);
 
 	/**
-	* ´¦ÀíÊäÈë¿òµÄ@Ïà¹ØµÄÊó±ê¹öÂÖÏûÏ¢
-	* @param[in] wParam ¸½¼ÓÏûÏ¢
-	* @param[in] lParam ¸½¼ÓÏûÏ¢
-	* @return bool true ²»¼ÌĞø´«µİÏûÏ¢£¬false ¼ÌĞø´«µİÏûÏ¢
+	* å¤„ç†è¾“å…¥æ¡†çš„@ç›¸å…³çš„é¼ æ ‡æ»šè½®æ¶ˆæ¯
+	* @param[in] wParam é™„åŠ æ¶ˆæ¯
+	* @param[in] lParam é™„åŠ æ¶ˆæ¯
+	* @return bool true ä¸ç»§ç»­ä¼ é€’æ¶ˆæ¯ï¼Œfalse ç»§ç»­ä¼ é€’æ¶ˆæ¯
 	*/
 	bool HandleAtMouseWheel(WPARAM wParam, LPARAM lParam);
 
 	/**
-	* Òş²Ø@ÁĞ±í´°¿Ú
-	* @return void	ÎŞ·µ»ØÖµ
+	* éšè—@åˆ—è¡¨çª—å£
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void HideAtListForm();
 
 	/**
-	* ³õÊ¼»¯»úÆ÷ÈËÁĞ±í
-	* @return void	ÎŞ·µ»ØÖµ
+	* åˆå§‹åŒ–æœºå™¨äººåˆ—è¡¨
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void InitRobots();
 #pragma endregion At
@@ -155,9 +155,9 @@ private:
 	void OnDownloadCallback(bool success, const std::string& file_path, bool is_complex_element, bool is_history);
 
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµÄËùÓĞÏûÏ¢
-	* @param[in] param ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶çš„æ‰€æœ‰æ¶ˆæ¯
+	* @param[in] param æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool Notify(ui::EventArgs* param);
 
@@ -193,18 +193,18 @@ private:
 	std::string		room_enter_token_;
 
 	bool			has_enter_;
-	std::string		creater_id_;		//´´½¨ÕßĞÅÏ¢
+	std::string		creater_id_;		//åˆ›å»ºè€…ä¿¡æ¯
 
 private:	
-	ui::Control*	my_icon_ = NULL;	//±êÌâÀ¸Í·Ïñ
-	ui::Label*		my_name_ = NULL;	//±êÌâÀ¸ĞÕÃû
+	ui::Control*	my_icon_ = NULL;	//æ ‡é¢˜æ å¤´åƒ
+	ui::Label*		my_name_ = NULL;	//æ ‡é¢˜æ å§“å
 
-	ui::Control*	host_icon_ = NULL;	//Ö÷²¥Í·Ïñ
-	ui::Label*		host_name_ = NULL;	//Ö÷²¥Ãû³Æ
+	ui::Control*	host_icon_ = NULL;	//ä¸»æ’­å¤´åƒ
+	ui::Label*		host_name_ = NULL;	//ä¸»æ’­åç§°
 
 	ui::Label*		room_name_ = NULL;
 	ui::Label*		online_num_ = NULL;
-	ui::RichEdit*	bulletin_ = NULL;	//¹«¸æ
+	ui::RichEdit*	bulletin_ = NULL;	//å…¬å‘Š
 
 	ui::TabBox*		list_tab_ = NULL;
 	ui::CefControl*	msg_list_ = NULL;
@@ -217,16 +217,16 @@ private:
 	ui::Control*	empty_members_list_ = NULL;
 
 private:
-	bool has_add_creater_ = false;			// ÊÇ·ñÔÚ³ÉÔ±ÁĞ±íÀïÌí¼ÓÁË´´½¨Õß
-	std::map<std::string, ChatRoomMemberInfo> members_map_;	//³ÉÔ±ĞÅÏ¢ <id,info>
-	std::deque<std::string> members_list_;	//ÆÕÍ¨³ÉÔ±ÁĞ±í
-	std::vector<std::string> managers_list_;//¹ÜÀíÔ±ÁĞ±í
-	std::map<std::string, std::string> nick_account_map_;	//¼ÇÂ¼½ÓÊÜµ½µÄÏûÏ¢µÄêÇ³Æ¶ÔÓ¦µÄÕÊºÅ£¬·½±ãÍ¨¹ıêÇ³Æ²éµ½ÕÊºÅ
+	bool has_add_creater_ = false;			// æ˜¯å¦åœ¨æˆå‘˜åˆ—è¡¨é‡Œæ·»åŠ äº†åˆ›å»ºè€…
+	std::map<std::string, ChatRoomMemberInfo> members_map_;	//æˆå‘˜ä¿¡æ¯ <id,info>
+	std::deque<std::string> members_list_;	//æ™®é€šæˆå‘˜åˆ—è¡¨
+	std::vector<std::string> managers_list_;//ç®¡ç†å‘˜åˆ—è¡¨
+	std::map<std::string, std::string> nick_account_map_;	//è®°å½•æ¥å—åˆ°çš„æ¶ˆæ¯çš„æ˜µç§°å¯¹åº”çš„å¸å·ï¼Œæ–¹ä¾¿é€šè¿‡æ˜µç§°æŸ¥åˆ°å¸å·
 
-	std::string		clicked_user_account_;	//±»µ¥»÷ÁËµÄÏûÏ¢ÁĞ±íÖĞµÄÕÊºÅ
-	std::string		kicked_user_account_;	//±»Ìß³öµÄÕÊºÅ
-	__int64			time_start_history_;		//»ñÈ¡µÄ×îÔçµÄÀúÊ·ÏûÏ¢Ê±¼ä
-	time_t			time_refresh_ = 0;			//ÉÏÒ»´ÎË¢ĞÂÔÚÏß³ÉÔ±ÁĞ±íµÄÊ±¼ä
+	std::string		clicked_user_account_;	//è¢«å•å‡»äº†çš„æ¶ˆæ¯åˆ—è¡¨ä¸­çš„å¸å·
+	std::string		kicked_user_account_;	//è¢«è¸¢å‡ºçš„å¸å·
+	__int64			time_start_history_;		//è·å–çš„æœ€æ—©çš„å†å²æ¶ˆæ¯æ—¶é—´
+	time_t			time_refresh_ = 0;			//ä¸Šä¸€æ¬¡åˆ·æ–°åœ¨çº¿æˆå‘˜åˆ—è¡¨çš„æ—¶é—´
 	bool			is_loading_history_ = false;
 
 	IDropTarget		*droptarget_;
@@ -241,7 +241,7 @@ private:
 		std::string uid_;
 		bool is_robot_ = false;
 	};
-	std::map<std::string, AtSomeone>	uid_at_someone_;//µ±Ç°ÊäÈë¿ò±»@µÄÈËµÄêÇ³ÆºÍuid
+	std::map<std::string, AtSomeone>	uid_at_someone_;//å½“å‰è¾“å…¥æ¡†è¢«@çš„äººçš„æ˜µç§°å’Œuid
 	bool has_robots_ = false;
 	Json::Value		complex_json_;
 

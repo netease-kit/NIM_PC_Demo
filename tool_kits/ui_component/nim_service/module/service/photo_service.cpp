@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "photo_service.h"
 #include "user_service.h"
 #include "module/login/login_manager.h"
@@ -17,9 +18,9 @@ std::wstring PhotoService::GetUserPhoto(const std::string &accid)
 	UserService::GetInstance()->GetUserInfo(accid, info);
 	if (!info.ExistValue(nim::kUserNameCardKeyIconUrl) || info.GetIconUrl().empty())
 		return default_photo;
-	photo_path = GetPhotoDir(kUser) + nbase::UTF8ToUTF16(QString::GetMd5(info.GetIconUrl()));
+	photo_path = GetPhotoDir(kUser) + nbase::UTF8ToUTF16(nim::Tool::GetMd5(info.GetIconUrl()));
 
-	// ¼ì²éÍ¼Æ¬ÊÇ·ñ´æÔÚ
+	// æ£€æŸ¥å›¾ç‰‡æ˜¯å¦å­˜åœ¨
 	if (!CheckPhotoOK(photo_path))
 		return default_photo;
 
@@ -31,13 +32,13 @@ bool PhotoService::CheckPhotoOK(std::wstring photo_path)
 	if (!nbase::FilePathIsExist(photo_path, false))
 		return false;
 
-	// ¼ì²éÍ¼Æ¬ÊÇ·ñËð»µ
+	// æ£€æŸ¥å›¾ç‰‡æ˜¯å¦æŸå
 	return (Gdiplus::Image(photo_path.c_str()).GetLastStatus() == Gdiplus::Status::Ok);
 }
 
 std::wstring PhotoService::GetPhotoDir(PhotoType type)
 {
-	std::wstring photo_dir = QPath::GetUserAppDataDir(LoginManager::GetInstance()->GetAccount());
+	std::wstring photo_dir = nbase::UTF8ToUTF16(nim::Tool::GetUserAppdataDir(LoginManager::GetInstance()->GetAccount()));
 	if (type == kUser || type == kRobot)
 		photo_dir = photo_dir.append(L"photo\\");
 	else if (type == kTeam)
@@ -64,11 +65,11 @@ UnregisterCallback PhotoService::RegPhotoReady(const OnPhotoReadyCallback & call
 
 int PhotoService::CheckForDownload(PhotoType type, const std::string& url)
 {
-	if (url.find_first_of("http") != 0) //info.head_image²»ÊÇÕýÈ·µÄurl
+	if (url.find_first_of("http") != 0) //info.head_imageä¸æ˜¯æ­£ç¡®çš„url
 		return -1;
 
-	std::wstring photo_path = GetPhotoDir(type) + nbase::UTF8ToUTF16(QString::GetMd5(url));
-	if (CheckPhotoOK(photo_path)) // Èç¹ûÍ·ÏñÒÑ¾­´æÔÚÇÒÍêºÃ£¬¾Í²»ÏÂÔØ
+	std::wstring photo_path = GetPhotoDir(type) + nbase::UTF8ToUTF16(nim::Tool::GetMd5(url));
+	if (CheckPhotoOK(photo_path)) // å¦‚æžœå¤´åƒå·²ç»å­˜åœ¨ä¸”å®Œå¥½ï¼Œå°±ä¸ä¸‹è½½
 		return 1;
 
 	std::string url_md5 = nim::Tool::GetMd5(url);
@@ -82,13 +83,13 @@ int PhotoService::CheckForDownload(PhotoType type, const std::string& url)
 void PhotoService::DownloadUserPhoto(const nim::UserNameCard &info)
 {
 	std::string url = info.GetIconUrl();
-	std::wstring photo_path = GetPhotoDir(kUser) + nbase::UTF8ToUTF16(QString::GetMd5(url));
+	std::wstring photo_path = GetPhotoDir(kUser) + nbase::UTF8ToUTF16(nim::Tool::GetMd5(url));
 	int valid = CheckForDownload(kUser, url);
 	if (valid != 0)
 	{
 		if (valid == 1)
 		{
-			for (auto &it : photo_ready_cb_list_) // Ö´ÐÐ¼àÌýÍ·ÏñÏÂÔØµÄ»Øµ÷
+			for (auto &it : photo_ready_cb_list_) // æ‰§è¡Œç›‘å¬å¤´åƒä¸‹è½½çš„å›žè°ƒ
 				(*it.second)(kUser, info.GetAccId(), photo_path);
 		}
 		return;
@@ -104,7 +105,7 @@ void PhotoService::DownloadUserPhoto(const nim::UserNameCard &info)
 				nbase::CopyFileW(ws_file_path, photo_path);
 				nbase::DeleteFile(ws_file_path);
 
-				for (auto &it : photo_ready_cb_list_) // Ö´ÐÐ¼àÌýÍ·ÏñÏÂÔØµÄ»Øµ÷
+				for (auto &it : photo_ready_cb_list_) // æ‰§è¡Œç›‘å¬å¤´åƒä¸‹è½½çš„å›žè°ƒ
 					(*it.second)(kUser, info.GetAccId(), photo_path);
 			}
 		}
@@ -115,13 +116,13 @@ void PhotoService::DownloadUserPhoto(const nim::UserNameCard &info)
 void PhotoService::DownloadRobotPhoto(const nim::RobotInfo &info)
 {
 	std::string url = info.GetIcon();
-	std::wstring photo_path = GetPhotoDir(kRobot) + nbase::UTF8ToUTF16(QString::GetMd5(url));
+	std::wstring photo_path = GetPhotoDir(kRobot) + nbase::UTF8ToUTF16(nim::Tool::GetMd5(url));
 	int valid = CheckForDownload(kRobot, url);
 	if (valid != 0)
 	{
 		if (valid == 1)
 		{
-			for (auto &it : photo_ready_cb_list_) // Ö´ÐÐ¼àÌýÍ·ÏñÏÂÔØµÄ»Øµ÷
+			for (auto &it : photo_ready_cb_list_) // æ‰§è¡Œç›‘å¬å¤´åƒä¸‹è½½çš„å›žè°ƒ
 				(*it.second)(kRobot, info.GetAccid(), photo_path);
 		}
 		return;
@@ -137,7 +138,7 @@ void PhotoService::DownloadRobotPhoto(const nim::RobotInfo &info)
 				nbase::CopyFileW(ws_file_path, photo_path);
 				nbase::DeleteFile(ws_file_path);
 
-				for (auto &it : photo_ready_cb_list_) // Ö´ÐÐ¼àÌýÍ·ÏñÏÂÔØµÄ»Øµ÷
+				for (auto &it : photo_ready_cb_list_) // æ‰§è¡Œç›‘å¬å¤´åƒä¸‹è½½çš„å›žè°ƒ
 					(*it.second)(kRobot, info.GetAccid(), photo_path);
 			}
 		}
@@ -151,13 +152,13 @@ void PhotoService::DownloadRobotPhoto(const nim::RobotInfo &info)
 void PhotoService::DownloadTeamIcon(const nim::TeamInfo &info)
 {
 	std::string url = info.GetIcon();
-	std::wstring photo_path = GetPhotoDir(kTeam) + nbase::UTF8ToUTF16(QString::GetMd5(url));
+	std::wstring photo_path = GetPhotoDir(kTeam) + nbase::UTF8ToUTF16(nim::Tool::GetMd5(url));
 	int valid = CheckForDownload(kTeam, url);
 	if (valid != 0)
 	{
 		if (valid == 1)
 		{
-			for (auto &it : photo_ready_cb_list_) // Ö´ÐÐ¼àÌýÍ·ÏñÏÂÔØµÄ»Øµ÷
+			for (auto &it : photo_ready_cb_list_) // æ‰§è¡Œç›‘å¬å¤´åƒä¸‹è½½çš„å›žè°ƒ
 			(*it.second)(kTeam, info.GetTeamID(), photo_path);
 		}
 		return;
@@ -173,7 +174,7 @@ void PhotoService::DownloadTeamIcon(const nim::TeamInfo &info)
 				nbase::CopyFileW(ws_file_path, photo_path);
 				nbase::DeleteFile(ws_file_path);
 
-				for (auto &it : photo_ready_cb_list_) // Ö´ÐÐ¼àÌýÍ·ÏñÏÂÔØµÄ»Øµ÷
+				for (auto &it : photo_ready_cb_list_) // æ‰§è¡Œç›‘å¬å¤´åƒä¸‹è½½çš„å›žè°ƒ
 					(*it.second)(kTeam, info.GetTeamID(), photo_path);
 			}
 		}
@@ -196,7 +197,7 @@ std::wstring PhotoService::GetTeamPhoto(const std::string &tid, bool full_path/*
 	if (!TeamService::GetInstance()->GetTeamIcon(tid, icon) || icon.empty())
 		return default_photo;
 
-	std::wstring photo_path = GetPhotoDir(kTeam) + nbase::UTF8ToUTF16(QString::GetMd5(icon));
+	std::wstring photo_path = GetPhotoDir(kTeam) + nbase::UTF8ToUTF16(nim::Tool::GetMd5(icon));
 	if (!CheckPhotoOK(photo_path))
 		return default_photo;
 

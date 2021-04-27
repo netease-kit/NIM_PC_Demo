@@ -1,4 +1,4 @@
-﻿#ifndef IMAGE_EFFECTS_GAUSS_BLUR_H
+#ifndef IMAGE_EFFECTS_GAUSS_BLUR_H
 #define IMAGE_EFFECTS_GAUSS_BLUR_H
 
 namespace ImageEffects

@@ -82,7 +82,7 @@ void AddresBookPluginPage::InitTreeData()
 		if (!weke_flag.expired())
 			nbase::ThreadManager::PostTask(ThreadId::kThreadUI, contact_profile_container_->ToWeakCallback(task_add));
 	};
-	nbase::ThreadManager::PostTask(ThreadId::kThreadGlobalMisc, contact_profile_container_->ToWeakCallback(task));//³õÊ¼»¯Êı¾İ·ÅÔÚ¸¨ÖúÏß³ÌÈ¥×ö
+	nbase::ThreadManager::PostTask(ThreadId::kThreadGlobalMisc, contact_profile_container_->ToWeakCallback(task));//åˆå§‹åŒ–æ•°æ®æ”¾åœ¨è¾…åŠ©çº¿ç¨‹å»åš
 }
 void AddresBookPluginPage::LoadDataToTree(TreeComponent* tree, TiXmlElement* config_item, const TreeDocItemPtr& parent)
 {
@@ -99,13 +99,15 @@ void AddresBookPluginPage::LoadDataToTree(TreeComponent* tree, TiXmlElement* con
 	if (string_type.empty())
 		return;
 	TreeDocItemPtr subitem = nullptr;
-	if (type == 0)//²¿ÃÅ
+	if (type == 0)//éƒ¨é—¨
 	{
 		auto item = std::make_shared<MyAddressbookDepartment>();
-		if (config_item->QueryStringAttribute("id", &item->id_) == TIXML_NO_ATTRIBUTE)
+		if (config_item->Attribute("id") == 0)
 			return;
+		item->id_ = config_item->Attribute("id");
 		item->type_ = type;
-		config_item->QueryStringAttribute("name", &item->name_);
+		if (config_item->Attribute("name") != 0)
+			item->name_ = config_item->Attribute("name");
 		item->SetItemID(item->id_);
 		item->SetTreeComponent(tree);
 		subitem = item;	
@@ -120,18 +122,23 @@ void AddresBookPluginPage::LoadDataToTree(TreeComponent* tree, TiXmlElement* con
 			child_element = child_element->NextSiblingElement();
 		}
 	}
-	else if (type == 1)//ÁªÏµÈË
+	else if (type == 1)//è”ç³»äºº
 	{
 		static int head_image_index = 1;
 		auto item = std::make_shared<MyAddressbookContact>();
 
-		if (config_item->QueryStringAttribute("id", &item->id_) == TIXML_NO_ATTRIBUTE)
+		if (config_item->Attribute("id") == 0)
 			return;
+		item->id_ = config_item->Attribute("id");
+		if (config_item->Attribute("name") != 0)
+			item->name_ = config_item->Attribute("name");
+		if (config_item->Attribute("mobile") != 0)
+			item->moblie_ = config_item->Attribute("mobile");
+		if (config_item->Attribute("mail") != 0)
+			item->mail_ = config_item->Attribute("mail");
+		if (config_item->Attribute("employeesa") != 0)
+			item->employeesa_ = config_item->Attribute("employeesa");
 		item->type_ = type;
-		config_item->QueryStringAttribute("name", &item->name_);
-		config_item->QueryStringAttribute("mobile", &item->moblie_);
-		config_item->QueryStringAttribute("mail", &item->mail_);
-		config_item->QueryStringAttribute("employeesa", &item->employeesa_);
 		int sa;
 		nbase::StringToInt(item->employeesa_, &sa);
 		item->head_image_path_.append("../plugins/addresbook/head_portrait_").append(nbase::IntToString(head_image_index++)).append(".png");
@@ -146,5 +153,4 @@ void AddresBookPluginPage::LoadDataToTree(TreeComponent* tree, TiXmlElement* con
 		if (head_image_index > 10)
 			head_image_index = 1;
 	}
-
 }

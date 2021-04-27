@@ -52,11 +52,11 @@ namespace nim_comp
 			{
 			}
 		public:
-			int version_;//±ØÌî,ÎÄ¼ş¸ñÊ½°æ±¾
-			int terminal_;//Ñ¡Ìî ÖÕ¶ËÀàĞÍ PC¿Í»§¶Ë¿É¹Ì¶¨Ìî4
-			std::string sdk_version_;//Ñ¡Ìî ÔÆĞÅSDK°æ±¾ºÅ
-			std::string app_version_;//Ñ¡Ìî Ó¦ÓÃ°æ±¾ºÅ£¨ÕâÀïÊÇdemoµÄ°æ±¾ºÅ£©
-			int message_count_;//±ØÌî,×îÖÕĞ´ÈëÎÄ¼şÖĞµÄÏûÏ¢Êı
+			int version_;//å¿…å¡«,æ–‡ä»¶æ ¼å¼ç‰ˆæœ¬
+			int terminal_;//é€‰å¡« ç»ˆç«¯ç±»å‹ PCå®¢æˆ·ç«¯å¯å›ºå®šå¡«4
+			std::string sdk_version_;//é€‰å¡« äº‘ä¿¡SDKç‰ˆæœ¬å·
+			std::string app_version_;//é€‰å¡« åº”ç”¨ç‰ˆæœ¬å·ï¼ˆè¿™é‡Œæ˜¯demoçš„ç‰ˆæœ¬å·ï¼‰
+			int message_count_;//å¿…å¡«,æœ€ç»ˆå†™å…¥æ–‡ä»¶ä¸­çš„æ¶ˆæ¯æ•°
 		};
 		class Body
 		{

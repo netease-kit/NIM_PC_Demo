@@ -8,7 +8,7 @@
 
 
 /** @class MainForm
-  * @brief demo³ÌĞòÖ÷½çÃæ´°¿ÚÀà
+  * @brief demoç¨‹åºä¸»ç•Œé¢çª—å£ç±»
   * @copyright (c) 2015, NetEase Inc. All rights reserved
   * @author towik
   * @date 2015/1/1
@@ -26,226 +26,226 @@ public:
 	~MainForm();
 
 	/**
-	* Ğéº¯Êı£¬Ö¸¶¨±¾½çÃæµÄxml²¼¾ÖÎÄ¼şºÍÍ¼Æ¬ËØ²ÄËùÔÚµÄÄ¿Â¼µÄÏà¶ÔÂ·¾¶
-	* @return std::wstring ·µ»Ø¸ÃÄ¿Â¼Ïà¶ÔÓÚ[°²×°Ä¿Â¼]/bin/resources/themes/defaultµÄÂ·¾¶
+	* è™šå‡½æ•°ï¼ŒæŒ‡å®šæœ¬ç•Œé¢çš„xmlå¸ƒå±€æ–‡ä»¶å’Œå›¾ç‰‡ç´ ææ‰€åœ¨çš„ç›®å½•çš„ç›¸å¯¹è·¯å¾„
+	* @return std::wstring è¿”å›è¯¥ç›®å½•ç›¸å¯¹äº[å®‰è£…ç›®å½•]/bin/resources/themes/defaultçš„è·¯å¾„
 	*/
 	virtual std::wstring GetSkinFolder() override;
 
-	//¸²¸ÇĞéº¯Êı
+	//è¦†ç›–è™šå‡½æ•°
 	virtual std::wstring GetSkinFile() override;
 	virtual std::wstring GetWindowClassName() const override;
 	virtual std::wstring GetWindowId() const override;
 	virtual UINT GetClassStyle() const override;
 	
 	/**
-	* ´¦Àí´°¿ÚÏú»ÙÏûÏ¢
-	* @return void	ÎŞ·µ»ØÖµ
+	* å¤„ç†çª—å£é”€æ¯æ¶ˆæ¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void OnFinalMessage(HWND hWnd);
 
 	/**
-	* À¹½Ø²¢´¦ÀíWM_CLOSEÏûÏ¢
-	* @param[in] wParam ¸½¼Ó²ÎÊı
-	* @param[in] lParam ¸½¼Ó²ÎÊı
-	* @param[in] lParam ¸½¼Ó²ÎÊı
-	* @param[in out] bHandled ÊÇ·ñ´¦ÀíÁËÏûÏ¢£¬Èç¹û´¦ÀíÁË²»¼ÌĞø´«µİÏûÏ¢
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ‹¦æˆªå¹¶å¤„ç†WM_CLOSEæ¶ˆæ¯
+	* @param[in] wParam é™„åŠ å‚æ•°
+	* @param[in] lParam é™„åŠ å‚æ•°
+	* @param[in] lParam é™„åŠ å‚æ•°
+	* @param[in out] bHandled æ˜¯å¦å¤„ç†äº†æ¶ˆæ¯ï¼Œå¦‚æœå¤„ç†äº†ä¸ç»§ç»­ä¼ é€’æ¶ˆæ¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 
 	/**
-	* À¹½ØESC¼üµÄÏûÏ¢´¦Àí
-	* @param[in out] bHandled ÊÇ·ñ´¦ÀíÁËÏûÏ¢£¬Èç¹û´¦ÀíÁË²»¼ÌĞø´«µİÏûÏ¢
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ‹¦æˆªESCé”®çš„æ¶ˆæ¯å¤„ç†
+	* @param[in out] bHandled æ˜¯å¦å¤„ç†äº†æ¶ˆæ¯ï¼Œå¦‚æœå¤„ç†äº†ä¸ç»§ç»­ä¼ é€’æ¶ˆæ¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void OnEsc(BOOL &bHandled);
 
 	/**
-	* ´°¿Ú³õÊ¼»¯º¯Êı
-	* @return void	ÎŞ·µ»ØÖµ
+	* çª—å£åˆå§‹åŒ–å‡½æ•°
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void InitWindow() override;
 
 private:
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµÄËùÓĞÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶çš„æ‰€æœ‰æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool Notify(ui::EventArgs* msg);
 
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnClicked(ui::EventArgs* msg);
 
 	/**
-	* ´¦ÀíÖ÷´°¿Úµ¯³ö²Ëµ¥°´Å¥µÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†ä¸»çª—å£å¼¹å‡ºèœå•æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool MainMenuButtonClick(ui::EventArgs* param);
 
 	/**
-	* µ¯³öÖ÷²Ëµ¥
-	* @param[in] point µ¯³ö×ø±ê
-	* @return void	ÎŞ·µ»ØÖµ
+	* å¼¹å‡ºä¸»èœå•
+	* @param[in] point å¼¹å‡ºåæ ‡
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void PopupMainMenu(POINT point);
 
 	/**
-	* ´¦Àí²é¿´ÈÕÖ¾Ä¿Â¼²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æŸ¥çœ‹æ—¥å¿—ç›®å½•èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool LookLogMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÎÒµÄÊÖ»ú²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æˆ‘çš„æ‰‹æœºèœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool FileTransMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíË¢ĞÂÍ¨Ñ¶Â¼²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†åˆ·æ–°é€šè®¯å½•èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool AddressMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦Àíµ¼³öÁÄÌì¼ÇÂ¼²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å¯¼å‡ºèŠå¤©è®°å½•èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool ExportMsglogMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦Àíµ¼ÈëÁÄÌì¼ÇÂ¼²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å¯¼å…¥èŠå¤©è®°å½•èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool ImportMsglogMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÇå¿ÕËùÓĞÁÄÌì¼ÇÂ¼²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ¸…ç©ºæ‰€æœ‰èŠå¤©è®°å½•èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool ClearChatRecordMenuItemClick(bool del_session, ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÇå¿Õ¼ÇÂ¼²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ¸…ç©ºè®°å½•èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool ClearChatRecordBySessionTypeMenuItemClick(bool del_session, nim::NIMSessionType type, ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÒôÊÓÆµÉèÖÃ²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†éŸ³è§†é¢‘è®¾ç½®èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool VChatSettingMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦Àí°×°å»Ø·Å²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†ç™½æ¿å›æ”¾èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool RtsReplayMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÊÊÅäDPI²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†é€‚é…DPIèœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool AdaptDpiMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ÏÔÊ¾ÓïÑÔÁĞ±í
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* æ˜¾ç¤ºè¯­è¨€åˆ—è¡¨
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool ShowLanguageList(ui::EventArgs* param);
 
 	/**
-	* ¹Ø±ÕÓïÑÔÁĞ±í
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @param[in] check_mouse true: ¼ì²éµ½Êó±êÔÚÓïÑÔÁĞ±íÉÏ¾Í²»¹Ø±Õ£»false£º²»¼ì²éÊó±êÎ»ÖÃ£¬Ö±½Ó¹Ø±Õ
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å…³é—­è¯­è¨€åˆ—è¡¨
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @param[in] check_mouse true: æ£€æŸ¥åˆ°é¼ æ ‡åœ¨è¯­è¨€åˆ—è¡¨ä¸Šå°±ä¸å…³é—­ï¼›falseï¼šä¸æ£€æŸ¥é¼ æ ‡ä½ç½®ï¼Œç›´æ¥å…³é—­
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool CloseLanguageList(ui::EventArgs* param, bool check_mouse);
 
 	/**
-	* Ñ¡ÔñÓïÑÔ
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* é€‰æ‹©è¯­è¨€
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnSelectLanguage(ui::EventArgs* param);
 
 	/**
-	* Ñ¡ÔñÓïÑÔµÄ»Øµ÷
-	* @param[in] ret Ñ¡ÔñµÄ°´Å¥
-	* @return void ÎŞ·µ»ØÖµ
+	* é€‰æ‹©è¯­è¨€çš„å›è°ƒ
+	* @param[in] ret é€‰æ‹©çš„æŒ‰é’®
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnSelectLanguageCallback(MsgBoxRet ret, const std::string& language);
 
 	/**
-	* ´¦ÀíÏÔÊ¾»á»°ÁĞ±í²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ˜¾ç¤ºä¼šè¯åˆ—è¡¨èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool SessionListMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦Àí¹ØÓÚ²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å…³äºèœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool AboutMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦Àí×¢Ïú²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ³¨é”€èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool LogoffMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÍË³ö²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†é€€å‡ºèœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool QuitMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* ÔÚÏß×´Ì¬²Ëµ¥°´Å¥µÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* åœ¨çº¿çŠ¶æ€èœå•æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnlineStateMenuButtonClick(ui::EventArgs* param);
 
 	/**
-	* ÔÚÏß×´Ì¬²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* åœ¨çº¿çŠ¶æ€èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnlineStateMenuItemClick(ui::EventArgs* param);
 
 	/**
-	* Èç¹û¶ÏÍøÖØÁ¬ÁËÔòÖØĞÂ·¢ËÍÔÚÏß×´Ì¬
-	* @param[in] json ¶ÏÍøÖØÁ¬ĞÅÏ¢
-	* @return void	ÎŞ·µ»ØÖµ
+	* å¦‚æœæ–­ç½‘é‡è¿äº†åˆ™é‡æ–°å‘é€åœ¨çº¿çŠ¶æ€
+	* @param[in] json æ–­ç½‘é‡è¿ä¿¡æ¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void CheckOnlineState(const Json::Value& json);
 
 	/**
-	* ÉèÖÃÔÚÏß×´Ì¬
-	* @return void	ÎŞ·µ»ØÖµ
+	* è®¾ç½®åœ¨çº¿çŠ¶æ€
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void SetOnlineState();
 
@@ -253,8 +253,8 @@ private:
 
 public:
 	/**
-	* ÊµÏÖITrayIconDelegate½Ó¿Úº¯Êı
-	* @return void	ÎŞ·µ»ØÖµ
+	* å®ç°ITrayIconDelegateæ¥å£å‡½æ•°
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void LeftClick() override;
 	virtual void LeftDoubleClick() override;
@@ -262,53 +262,53 @@ public:
 
 private:
 	/**
-	* ´¦ÀíËÑË÷À¸ÄÚÈİ¸Ä±äµÄÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æœç´¢æ å†…å®¹æ”¹å˜çš„æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool SearchEditChange(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÇåÀíËÑË÷À¸°´Å¥µÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ¸…ç†æœç´¢æ æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnClearInputBtnClicked(ui::EventArgs* param);
 
 	/**
-	* µ¯³öÍĞÅÌ²Ëµ¥
-	* @param[in] point µ¯³ö×ø±ê
-	* @return void	ÎŞ·µ»ØÖµ
+	* å¼¹å‡ºæ‰˜ç›˜èœå•
+	* @param[in] point å¼¹å‡ºåæ ‡
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void PopupTrayMenu(POINT point);
 
 private:
 	/**
-	* ÏìÓ¦¸öÈË×ÊÁÏ¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] uinfos ĞÂµÄ¸öÈË×ÊÁÏÁĞ±í
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ä¸ªäººèµ„æ–™æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] uinfos æ–°çš„ä¸ªäººèµ„æ–™åˆ—è¡¨
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 
 	/**
-	* ÏìÓ¦Í·ÏñÏÂÔØÍê³ÉµÄ»Øµ÷º¯Êı
-	* @param[in] type Í·ÏñÀàĞÍ
-	* @param[in] account Í·ÏñÏÂÔØÍê³ÉµÄÓÃ»§id
-	* @param[in] photo_path Í·Ïñ±¾µØÂ·¾¶
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”å¤´åƒä¸‹è½½å®Œæˆçš„å›è°ƒå‡½æ•°
+	* @param[in] type å¤´åƒç±»å‹
+	* @param[in] account å¤´åƒä¸‹è½½å®Œæˆçš„ç”¨æˆ·id
+	* @param[in] photo_path å¤´åƒæœ¬åœ°è·¯å¾„
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
 
 	/**
-	* ÏìÓ¦Í·×î½ü»á»°ÁĞ±íÎ´¶ÁÏûÏ¢×ÜÊı¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] unread_count Î´¶Á×ÜÊı
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”å¤´æœ€è¿‘ä¼šè¯åˆ—è¡¨æœªè¯»æ¶ˆæ¯æ€»æ•°æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] unread_count æœªè¯»æ€»æ•°
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnUnreadCountChange(int unread_count);
 
 	/**
-	* ³õÊ¼»¯ÓÃ»§Í·Ïñ
-	* @return void	ÎŞ·µ»ØÖµ
+	* åˆå§‹åŒ–ç”¨æˆ·å¤´åƒ
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void InitHeader();
 	bool OnReturnEventsClick(ui::EventArgs* param);

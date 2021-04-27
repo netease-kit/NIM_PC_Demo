@@ -2,7 +2,9 @@
 #include "team_plugin_page.h"
 #include "export\nim_ui_contacts_list_manager.h"
 #include "gui/team_info/team_info_box.h"
+
 using namespace nim_comp;
+
 TeamPluginPage::TeamPluginPage() :
 contact_teaminfo_container_(nullptr), detach_list_function_(nullptr)
 {

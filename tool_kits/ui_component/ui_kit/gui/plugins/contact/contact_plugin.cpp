@@ -1,5 +1,7 @@
 #include "stdafx.h"
+#include "stdafx.h"
 #include "contact_plugin.h"
+
 namespace nim_comp
 {
 	const IMainPlugin::PluginFlagType ContactPlugin::kPLUGIN_NAME = "ContactPlugin";

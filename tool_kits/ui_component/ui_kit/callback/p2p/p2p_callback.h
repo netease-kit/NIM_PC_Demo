@@ -1,5 +1,4 @@
-﻿#pragma once
-#include "include/nim_p2p_include.h"
+#pragma once
 
 namespace nim_comp
 {

@@ -1,4 +1,5 @@
-﻿#include "session_box.h"
+#include "stdafx.h"
+#include "session_box.h"
 #include "shared/zoom_image.h"
 
 using namespace ui;

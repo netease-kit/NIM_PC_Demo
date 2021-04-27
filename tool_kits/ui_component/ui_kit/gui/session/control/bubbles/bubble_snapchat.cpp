@@ -1,4 +1,5 @@
-﻿#include "bubble_snapchat.h"
+#include "stdafx.h"
+#include "bubble_snapchat.h"
 #include "image_view/src/image_view_manager.h"
 #include "module/session/session_manager.h"
 #include "util/user.h"

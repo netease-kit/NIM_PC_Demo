@@ -1,4 +1,5 @@
-﻿#include "login_callback.h"
+#include "stdafx.h"
+#include "login_callback.h"
 #include "export/nim_ui_all.h"
 #include "gui/link/link_form.h"
 #include "module/local/local_helper.h"
@@ -8,6 +9,7 @@
 #include "module/subscribe_event/subscribe_event_manager.h"
 #include "module/service/user_service.h"
 #include "module/audio/audio_manager.h"
+#include "module/video_manager_g2.h"
 #include "cef/cef_module/manager/cef_manager.h"
 #include "util/user.h"
 #include "shared/xml_util.h"
@@ -224,6 +226,8 @@ void LoginCallback::DoLogout(bool over, nim::NIMLogoutType type)
 	WindowsManager::GetInstance()->SetStopRegister(true);
 	WindowsManager::GetInstance()->DestroyAllWindows();
     VideoManager::GetInstance()->DestroyVideoChatForm();
+	if (status == LoginStatus_SUCCESS)
+		VideoManagerG2::GetInstance()->DestroyVideoChatForm();
 
 	if(status == LoginStatus_NONE)
 	{
@@ -316,6 +320,13 @@ void LoginCallback::OnMultispotLoginCallback(const nim::MultiSpotLoginRes& res)
 	QLOG_APP(L"OnMultispotLoginCallback: {0} - {1}") << res.notify_type_ << res.other_clients_.size();
 
 	bool online = res.notify_type_ == nim::kNIMMultiSpotNotifyTypeImIn;
+	if (online && !res.other_clients_.empty()) {
+		nbase::BatpPack bp;
+		AvChatParams params;
+		bp.body_.param_ = params;
+		AvChatBusinessWrapper::leave(bp);
+		VideoManagerG2::GetInstance()->DestroyVideoChatForm();
+	}
 	if (!res.other_clients_.empty())
 		Post2UI(nbase::Bind(LoginCallback::OnMultispotChange, online, res.other_clients_));
 

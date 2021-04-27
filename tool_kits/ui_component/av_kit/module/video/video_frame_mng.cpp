@@ -1,4 +1,4 @@
-
+#include "stdafx.h"
 #include "video_frame_mng.h"
 #include "libyuv.h"
 #include <sys/timeb.h>
@@ -39,8 +39,8 @@ void VideoFrameMng::AddVideoFrame(bool capture, int64_t time, const char* data, 
 	nbase::NAutoLock auto_lock(&lock_);
 	//nim::NIMVideoSubType subtype = nim::kNIMVideoSubTypeI420;
 	timeb time_now;
-	ftime(&time_now); // ÃëÊý
-	int64_t cur_timestamp = time_now.time * 1000 + time_now.millitm; // ºÁÃë
+	ftime(&time_now); // ç§’æ•°
+	int64_t cur_timestamp = time_now.time * 1000 + time_now.millitm; // æ¯«ç§’
 	const char* src_buffer = data;
 	std::string ret_data;
 	if (frame_type != Ft_I420)
@@ -90,8 +90,8 @@ bool VideoFrameMng::GetVideoFrame(std::string account, int64_t& time, char* out_
 {
 	nbase::NAutoLock auto_lock(&lock_);
 	timeb time_now;
-	ftime(&time_now); // ÃëÊý
-	int64_t cur_timestamp = time_now.time * 1000 + time_now.millitm; // ºÁÃë
+	ftime(&time_now); // ç§’æ•°
+	int64_t cur_timestamp = time_now.time * 1000 + time_now.millitm; // æ¯«ç§’
 	PicRegion* pic_info = nullptr;
 	if (account.empty())
 	{
@@ -110,7 +110,7 @@ bool VideoFrameMng::GetVideoFrame(std::string account, int64_t& time, char* out_
 		time = pic_info->timestamp_;
 		int src_w = pic_info->width_;
 		int src_h = pic_info->height_;
-		//µÈ±È
+		//ç­‰æ¯”
 		if (width <= 0 || height <= 0)
 		{
 			width = src_w;

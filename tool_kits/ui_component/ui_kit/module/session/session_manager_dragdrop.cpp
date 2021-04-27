@@ -1,4 +1,5 @@
-﻿#include "session_manager.h"
+#include "stdafx.h"
+#include "session_manager.h"
 #include "gui/session/session_form.h"
 #include "gui/session/session_box.h"
 #include "gui/session/dragdrop/drag_form.h"

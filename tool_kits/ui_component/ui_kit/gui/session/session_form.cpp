@@ -1,4 +1,5 @@
-﻿#include "session_form.h"
+#include "stdafx.h"
+#include "session_form.h"
 #include "session_box.h"
 #include "module/session/session_manager.h"
 #include "gui/session/control/merge_item.h"

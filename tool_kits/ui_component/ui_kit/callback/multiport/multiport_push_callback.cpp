@@ -1,4 +1,5 @@
-﻿#include "multiport_push_callback.h"
+#include "stdafx.h"
+#include "multiport_push_callback.h"
 #include "gui/profile_form/profile_form.h"
 
 namespace nim_comp

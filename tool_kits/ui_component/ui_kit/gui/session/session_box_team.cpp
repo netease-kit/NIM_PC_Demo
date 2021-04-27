@@ -1,4 +1,5 @@
-﻿#include "session_form.h"
+#include "stdafx.h"
+#include "session_form.h"
 #include "gui/session/atlist/at_list_form.h"
 #include "module/session/session_manager.h"
 #include "gui/profile_form/profile_form.h"

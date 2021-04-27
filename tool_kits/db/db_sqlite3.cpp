@@ -59,11 +59,13 @@ bool SQLiteDB::Open(const char* filename,
 	}
 	else
 	{
+		/*
 		if (key.length()) 
 		{
 			if( SQLITE_OK != sqlite3_key(sqlite3_,key.c_str(),(int)key.length()))
 				r = sqlite3_rekey(sqlite3_,key.c_str(),(int)key.length());
 		}
+		*/
 	}
 		
 		
@@ -219,7 +221,7 @@ int SQLiteDB::Query(const char* sql_text, SQLiteResultTable& table) const
 {
 	if (!sqlite3_ || !sql_text)
 		return SQLITE_MISUSE;
-	// 先清空结果表
+	// 鍏堟竻绌虹粨鏋滆〃
 	table.Free();
 	int r = sqlite3_get_table(sqlite3_, sql_text,
 								&table.result_column_, &table.row_, &table.col_, NULL);
@@ -327,7 +329,7 @@ const char* SQLiteResultTable::GetValue(int row, int col) const
 
 const char** const SQLiteResultTable::operator[](int row) const
 {
-	// 为了效率，这里不检查越界，就像STL那样
+	// 涓轰簡鏁堢巼锛岃繖閲屼笉妫�鏌ヨ秺鐣岋紝灏卞儚STL閭ｆ牱
 	return (const char**)result_ + row * col_;
 }
 	

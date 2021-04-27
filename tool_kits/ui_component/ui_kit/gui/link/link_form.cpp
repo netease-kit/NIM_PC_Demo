@@ -1,4 +1,5 @@
-﻿#include "resource.h"
+#include "stdafx.h"
+#include "resource.h"
 #include "link_form.h"
 #include "callback/login/login_callback.h"
 #include "module/login/login_manager.h"

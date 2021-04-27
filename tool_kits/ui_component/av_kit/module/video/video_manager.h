@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "video_frame_mng.h"
 #include "audio_frame_mng.h"

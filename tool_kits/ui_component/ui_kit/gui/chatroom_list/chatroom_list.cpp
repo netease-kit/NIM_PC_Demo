@@ -1,4 +1,5 @@
-﻿#include "chatroom_list.h"
+#include "stdafx.h"
+#include "chatroom_list.h"
 
 namespace nim_comp {
 

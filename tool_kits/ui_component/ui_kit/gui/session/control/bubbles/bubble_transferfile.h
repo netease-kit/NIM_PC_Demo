@@ -1,6 +1,6 @@
-﻿#pragma once
+#pragma once
 #include "bubble_item.h"
-#include "nim_p2p_develop_kit.h"
+#include "nim_p2p_def.h"
 
 namespace nim_comp
 {

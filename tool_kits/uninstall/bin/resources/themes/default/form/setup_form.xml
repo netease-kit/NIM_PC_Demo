@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Window size="480,180" caption="0,0,0,250">
+	<Box width="480" height="auto">
+		<VBox height="auto">
+			<VBox bkimage="pic.png" height="250">
+				<HBox height="34" padding="10,0,5,0" name="caption_btn">
+					<Control />
+					<Button class="btn_wnd_min_white" name="minbtn" margin="10,6,0,0"/>
+					<Button class="btn_wnd_close_white" name="closebtn" margin="5,6,0,0"/>
+				</HBox>
+			</VBox>
+			<Box height="auto" height="140" bkcolor="white">
+				<Box name="setup_1" padding="30,30,20,10" >
+					<Label font="4" width="auto" normaltextcolor="darkcolor" textid="STRING_SURE_TO_UNINSTALL" />
+					<CheckBox class="checkbox_font12" name="chkbox_userdata" valign="bottom" textid="STRING_LEAVE_MY_DATA" normaltextcolor="darkcolor" selected="true" margin="0,0,0,7"/>
+					<Button class="btn_global_white_80x30" valign="bottom" halign="right" name="uninstall" textid="STRING_OK" margin="0,0,90,0"/>
+					<Button class="btn_global_green_80x30" valign="bottom" halign="right" name="cancel" textid="STRING_NO" />
+				</Box>
+				<VBox name="setup_2" padding="30,66,30,0" visible="false">
+					<Progress name="progress" halign="center" valign="center" value="0" bkimage="bg.png" height="3" width="stretch" hor="true" max="100" min="0" progressimage="fg.png"/>
+					<HBox margin="0,7,0,0" >
+						<Label font="1" name="progress_tip" width="auto" normaltextcolor="dark2color" textid="STRING_UNINSTALLING" />
+						<Control />
+						<Label font="1" name="progress_pos" width="auto" normaltextcolor="dark2color" />
+					</HBox>
+				</VBox>
+				<Box name="setup_3" visible="false" padding="30,30,20,10">
+					<Label font="4" width="auto" normaltextcolor="darkcolor" textid="STRING_UNINSTALLED" />
+					<Button class="btn_global_green_80x30" valign="bottom" halign="right" name="cancel" textid="STRING_COMPLETED" textpadding="5,0,5,0" />
+				</Box>
+			</Box>
+		</VBox>
+	</Box>
+</Window>

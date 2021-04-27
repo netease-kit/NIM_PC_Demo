@@ -1,4 +1,4 @@
-﻿#ifndef IMAGE_EFFECTS_MOSAIC_H
+#ifndef IMAGE_EFFECTS_MOSAIC_H
 #define IMAGE_EFFECTS_MOSAIC_H
 
 namespace ImageEffects

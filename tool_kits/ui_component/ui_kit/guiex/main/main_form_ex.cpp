@@ -122,8 +122,8 @@ namespace nim_comp
 		m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&MainFormEx::OnClicked, this, std::placeholders::_1));
 
 		//auto name_task = [](){
-		//	static std::wstring xing = L"ÕÔÇ®ËïÀîÖÜÎâÖ£Íõ·ë³ÂñÒÎÀ½¯Éòº«ÑîÖìÇØÓÈĞíºÎÂÀÊ©ÕÅ¿×²ÜÑÏ»ª½ğÎºÌÕ½ªÆİĞ»×ŞÓ÷°ØË®ñ¼ÕÂÔÆËÕÅË¸ğŞÉ·¶ÅíÀÉÂ³Î¤²ıÂíÃç·ï»¨·½ÓáÈÎÔ¬ÁøÛº±«Ê·ÌÆ";
-		//	static std::wstring ming = L"·ï·ğ·ñ·ò·ó·ö·÷·ù·û·ü·ş¸¡¸£¸¥¸¦¸¨¸©¸«¸®¸¯¸°¸±¸²¸³¸´¸µ¸¶¸¸¸¹¸º¸»¸½¸¾¸Ã¸Ä¸Å¸Ç¸È¸É¸Ê¸Ì¸Í¸Î¸Ï¸Ğ¸Ò¸Õ¸Ù¸Ş¸ß¸à¸å¸æ¸è¸ë¸ñ¸ó¸ô¸ö¸÷¸ø¸ù¸û¸ü¸ı¹¢¹¤¹¥¹¦¹§¹©¹«¹¬¹­¹°¹±¹²¹³¹´¹µ¹¶¹·¹¸¹Á¹Â¹Ã¹Ä¹Å¹Ç¹È¹Ê¹Ë¹Ì¹Î¹Ï¹Ñ¹Ò¹Ö¹×¹Ø¹Ù¹Ú¹Û¹Ü¹İ¹Ş¹à¹á¹â¹ã¹æ¹é¹ê¹ë¹ì¹í¹ï¹ğ";
+		//	static std::wstring xing = L"èµµé’±å­™æå‘¨å´éƒ‘ç‹å†¯é™ˆè¤šå«è’‹æ²ˆéŸ©æ¨æœ±ç§¦å°¤è®¸ä½•å•æ–½å¼ å­”æ›¹ä¸¥åé‡‘é­é™¶å§œæˆšè°¢é‚¹å–»æŸæ°´çª¦ç« äº‘è‹æ½˜è‘›å¥šèŒƒå½­éƒé²éŸ¦æ˜Œé©¬è‹—å‡¤èŠ±æ–¹ä¿ä»»è¢æŸ³é…†é²å²å”";
+		//	static std::wstring ming = L"å‡¤ä½›å¦å¤«æ•·æ‰¶æ‹‚å¹…ç¬¦ä¼æœæµ®ç¦å¼—ç”«è¾…ä¿¯æ–§åºœè…èµ´å‰¯è¦†èµ‹å¤å‚…ä»˜çˆ¶è…¹è´Ÿå¯Œé™„å¦‡è¯¥æ”¹æ¦‚ç›–æº‰å¹²ç”˜æŸ‘ç«¿è‚èµ¶æ„Ÿæ•¢åˆšçº²çš‹é«˜è†ç¨¿å‘Šæ­Œé¸½æ ¼é˜éš”ä¸ªå„ç»™æ ¹è€•æ›´åºšè€¿å·¥æ”»åŠŸæ­ä¾›å…¬å®«å¼“æ‹±è´¡å…±é’©å‹¾æ²Ÿè‹Ÿç‹—å¢æ²½å­¤å§‘é¼“å¤éª¨è°·æ•…é¡¾å›ºåˆ®ç“œå¯¡æŒ‚æ€ªæ£ºå…³å®˜å† è§‚ç®¡é¦†ç½çŒè´¯å…‰å¹¿è§„å½’é¾Ÿé—ºè½¨é¬¼ç™¸æ¡‚";
 		//	std::wstring ret;
 		//	ret.append(1,xing[rand() % xing.length()]);
 		//	auto ming_length = rand() % 2 + 1;
@@ -141,8 +141,8 @@ namespace nim_comp
 		//};
 		//auto department_task = [](int index){
 		//	std::wstring ret;
-		//	static std::vector<std::wstring> dep_index = { L"Ò»", L"¶ş", L"Èı", L"ËÄ", L"Îå", L"Áù", L"Æß", L"°Ë", L"¾Å", L"Ê®", L"Ê®Ò»" };
-		//	ret = nbase::StringPrintf(L"µÚ%sÊÂÒµ²¿", dep_index[index].c_str());
+		//	static std::vector<std::wstring> dep_index = { L"ä¸€", L"äºŒ", L"ä¸‰", L"å››", L"äº”", L"å…­", L"ä¸ƒ", L"å…«", L"ä¹", L"å", L"åä¸€" };
+		//	ret = nbase::StringPrintf(L"ç¬¬%säº‹ä¸šéƒ¨", dep_index[index].c_str());
 		//	return ret;
 		//};
 		//auto employee_sa_task = [](){
@@ -159,15 +159,15 @@ namespace nim_comp
 		//};
 		//TiXmlDocument* document = new TiXmlDocument("d:/addresbook.xml");
 		//TiXmlElement* root = new TiXmlElement("Item");	
-		//root->SetAttribute("id", QString::GetGUID().c_str());
+		//root->SetAttribute("id", nim::Tool::GetUuid().c_str());
 		//root->SetAttribute("type", 0);
-		//root->SetAttribute("name", nbase::UTF16ToUTF8(L"nim_demo¿Æ¼¼"));
+		//root->SetAttribute("name", nbase::UTF16ToUTF8(L"nim_demoç§‘æŠ€"));
 		//document->LinkEndChild(root);
 		//TiXmlElement* elment = new TiXmlElement("Item");
 		//root->LinkEndChild(elment);
-		//elment->SetAttribute("id", QString::GetGUID().c_str());
+		//elment->SetAttribute("id", nim::Tool::GetUuid().c_str());
 		//elment->SetAttribute("type", 0);
-		//elment->SetAttribute("name", nbase::UTF16ToUTF8(L"ÆóÒµÖ±ÊôÈËÔ±"));
+		//elment->SetAttribute("name", nbase::UTF16ToUTF8(L"ä¼ä¸šç›´å±äººå‘˜"));
 		//auto count = rand() % 100 + 1;
 		//if (count < 30)
 		//	count = 30;
@@ -175,7 +175,7 @@ namespace nim_comp
 		//{
 		//	auto sub_elment = new TiXmlElement("Item");
 		//	elment->LinkEndChild(sub_elment);
-		//	sub_elment->SetAttribute("id", QString::GetGUID().c_str());
+		//	sub_elment->SetAttribute("id", nim::Tool::GetUuid().c_str());
 		//	sub_elment->SetAttribute("type", 1);
 		//	sub_elment->SetAttribute("name", nbase::UTF16ToUTF8(name_task()));
 		//	sub_elment->SetAttribute("mobile", nbase::UTF16ToUTF8(mobile_task()));
@@ -187,7 +187,7 @@ namespace nim_comp
 		//	{
 		//		auto sub_dep_elment = new TiXmlElement("Item");
 		//		dep_elment->LinkEndChild(sub_dep_elment);
-		//		sub_dep_elment->SetAttribute("id", QString::GetGUID().c_str());
+		//		sub_dep_elment->SetAttribute("id", nim::Tool::GetUuid().c_str());
 		//		sub_dep_elment->SetAttribute("type", 0);
 		//		sub_dep_elment->SetAttribute("name", nbase::UTF16ToUTF8(department_task(j)));
 		//		int count = rand() % 80;
@@ -199,7 +199,7 @@ namespace nim_comp
 		//			{
 		//				auto  employee_elment = new TiXmlElement("Item");
 		//				sub_dep_elment->LinkEndChild(employee_elment);
-		//				employee_elment->SetAttribute("id", QString::GetGUID().c_str());
+		//				employee_elment->SetAttribute("id", nim::Tool::GetUuid().c_str());
 		//				employee_elment->SetAttribute("type", 1);
 		//				auto sa = employee_sa_task();
 		//				employee_elment->SetAttribute("employeesa", nbase::UTF16ToUTF8(sa));
@@ -214,7 +214,7 @@ namespace nim_comp
 		//			{
 		//				auto sub_sub_dep_elment = new TiXmlElement("Item");
 		//				sub_dep_elment->LinkEndChild(sub_sub_dep_elment);
-		//				sub_sub_dep_elment->SetAttribute("id", QString::GetGUID().c_str());
+		//				sub_sub_dep_elment->SetAttribute("id", nim::Tool::GetUuid().c_str());
 		//				sub_sub_dep_elment->SetAttribute("type", 0);
 		//				sub_sub_dep_elment->SetAttribute("name", nbase::UTF16ToUTF8(department_task(j)));
 		//				int count = rand() % 60;
@@ -226,7 +226,7 @@ namespace nim_comp
 		//					{
 		//						auto  employee_elment = new TiXmlElement("Item");
 		//						sub_sub_dep_elment->LinkEndChild(employee_elment);
-		//						employee_elment->SetAttribute("id", QString::GetGUID().c_str());
+		//						employee_elment->SetAttribute("id", nim::Tool::GetUuid().c_str());
 		//						employee_elment->SetAttribute("type", 1);
 		//						auto sa = employee_sa_task();
 		//						employee_elment->SetAttribute("employeesa", nbase::UTF16ToUTF8(sa));
@@ -244,7 +244,7 @@ namespace nim_comp
 		//{
 		//	auto dep_elment = new TiXmlElement("Item");
 		//	root->LinkEndChild(dep_elment);
-		//	dep_elment->SetAttribute("id", QString::GetGUID().c_str());
+		//	dep_elment->SetAttribute("id", nim::Tool::GetUuid().c_str());
 		//	dep_elment->SetAttribute("type", 0);
 		//	dep_elment->SetAttribute("name", nbase::UTF16ToUTF8(department_task(i)));
 		//	task_create_sub(dep_elment);
@@ -362,11 +362,11 @@ namespace nim_comp
 
 	void MainFormEx::PopupTrayMenu(POINT point)
 	{
-		//´´½¨²Ëµ¥´°¿Ú
+		//åˆ›å»ºèœå•çª—å£
 		ui::CMenuWnd* pMenu = new ui::CMenuWnd(NULL);
 		ui::STRINGorID xml(L"tray_menu.xml");
 		pMenu->Init(xml, _T("xml"), point, ui::CMenuWnd::RIGHT_TOP);
-		//×¢²á»Øµ÷
+		//æ³¨å†Œå›è°ƒ
 		ui::CMenuElementUI* display_session_list = (ui::CMenuElementUI*)pMenu->FindControl(L"display_session_list");
 		display_session_list->AttachSelect(ToWeakCallback([this](ui::EventArgs* param) {
 			auto session_plugin = MainPluginsManager::GetInstance()->GetPlugin(SessionPlugin::kPLUGIN_NAME);
@@ -395,7 +395,7 @@ namespace nim_comp
 			nbase::ThreadManager::PostTask(task);
 			return true;
 			}));
-		//ÏÔÊ¾
+		//æ˜¾ç¤º
 		pMenu->Show();
 	}
 	bool MainFormEx::OnlineStateMenuButtonClick(ui::EventArgs* param)
@@ -406,18 +406,18 @@ namespace nim_comp
 		point.y = rect.bottom;
 		ClientToScreen(m_hWnd, &point);
 
-		//´´½¨²Ëµ¥´°¿Ú
+		//åˆ›å»ºèœå•çª—å£
 		ui::CMenuWnd* pMenu = new ui::CMenuWnd(NULL);
 		ui::STRINGorID xml(L"online_state_menu.xml");
 		pMenu->Init(xml, _T("xml"), point);
-		//×¢²á»Øµ÷
+		//æ³¨å†Œå›è°ƒ
 		ui::CMenuElementUI* look_log = (ui::CMenuElementUI*)pMenu->FindControl(L"online");
 		look_log->AttachSelect(nbase::Bind(&MainFormEx::OnlineStateMenuItemClick, this, std::placeholders::_1));
 
 		ui::CMenuElementUI* file_trans = (ui::CMenuElementUI*)pMenu->FindControl(L"busy");
 		file_trans->AttachSelect(nbase::Bind(&MainFormEx::OnlineStateMenuItemClick, this, std::placeholders::_1));
 
-		//ÏÔÊ¾
+		//æ˜¾ç¤º
 		pMenu->Show();
 		return true;
 	}
@@ -700,7 +700,7 @@ namespace nim_comp
 		if (NULL == drop_helper_)
 			return S_OK;
 
-		// Èç¹û²»ÊÇÍÏ×§»á»°ºĞ×Ó
+		// å¦‚æœä¸æ˜¯æ‹–æ‹½ä¼šè¯ç›’å­
 		auto active_session_box = SessionManager::GetInstance()->GetFirstActiveSession();
 		if (NULL != active_session_box)
 		{
@@ -721,7 +721,7 @@ namespace nim_comp
 		if (NULL == drop_helper_)
 			return S_OK;
 
-		// Èç¹û²»ÊÇÍÏ×§»á»°ºĞ×Ó
+		// å¦‚æœä¸æ˜¯æ‹–æ‹½ä¼šè¯ç›’å­
 		auto active_session_box = SessionManager::GetInstance()->GetFirstActiveSession();
 		if (NULL != active_session_box)
 		{
@@ -741,7 +741,7 @@ namespace nim_comp
 		if (NULL == drop_helper_)
 			return S_OK;
 
-		// Èç¹û²»ÊÇÍÏ×§»á»°ºĞ×Ó
+		// å¦‚æœä¸æ˜¯æ‹–æ‹½ä¼šè¯ç›’å­
 		auto active_session_box = SessionManager::GetInstance()->GetFirstActiveSession();
 		if (NULL != active_session_box)
 		{
@@ -754,7 +754,7 @@ namespace nim_comp
 
 	HRESULT MainFormEx::Drop(IDataObject* pDataObj, DWORD grfKeyState, POINTL pt, DWORD __RPC_FAR* pdwEffect)
 	{
-		// Èç¹û²»ÊÇÍÏ×§»á»°ºĞ×Ó
+		// å¦‚æœä¸æ˜¯æ‹–æ‹½ä¼šè¯ç›’å­
 		auto active_session_box = SessionManager::GetInstance()->GetFirstActiveSession();
 		if (NULL != active_session_box)
 		{

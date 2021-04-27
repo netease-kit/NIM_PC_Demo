@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "shared/auto_unregister.h"
 #include <utility>
 

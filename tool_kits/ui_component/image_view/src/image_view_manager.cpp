@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "image_view_manager.h"
 
 using namespace nbase;

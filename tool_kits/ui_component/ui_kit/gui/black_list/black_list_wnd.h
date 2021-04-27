@@ -6,7 +6,7 @@
 namespace nim_comp
 {
 /** @class BlackListWindow
-  * @brief ºÚÃûµ¥´°¿Ú
+  * @brief é»‘åå•çª—å£
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @date 2016/09/19
   */
@@ -16,67 +16,67 @@ public:
 	BlackListWindow();
 	virtual ~BlackListWindow();
 
-	//¸²¸ÇĞéº¯Êı
+	//è¦†ç›–è™šå‡½æ•°
 	virtual std::wstring GetSkinFolder() override;
 	virtual std::wstring GetSkinFile() override;
 	virtual std::wstring GetWindowClassName() const override { return kClassName; };
 	virtual std::wstring GetWindowId() const override { return kClassName; };
 
 	/**
-	* ´°¿Ú³õÊ¼»¯º¯Êı
-	* @return void	ÎŞ·µ»ØÖµ
+	* çª—å£åˆå§‹åŒ–å‡½æ•°
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void InitWindow() override;
 
 	/**
-	* Ë¢ĞÂºÚÃûµ¥´°¿Ú
-	* @return void	ÎŞ·µ»ØÖµ
+	* åˆ·æ–°é»‘åå•çª—å£
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void RefreshBlackList();
 
 private:
 	/**
-	* ´¦Àí½â³ı°´Å¥µÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†è§£é™¤æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnRemoveBtnClicked(ui::EventArgs *args);
 	
 	/**
-	* ¸ù¾İÓÃ»§ÃûÆ¬ÖØÖÃÁĞ±íÖĞ¶ÔÓ¦µÄºÚÃûµ¥Ïî
-	* @param[in] info ÓÃ»§ÃûÆ¬
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ ¹æ®ç”¨æˆ·åç‰‡é‡ç½®åˆ—è¡¨ä¸­å¯¹åº”çš„é»‘åå•é¡¹
+	* @param[in] info ç”¨æˆ·åç‰‡
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void ResetUserInfo(const nim::UserNameCard &info);
 
 	/**
-	* ¸ù¾İÓÃ»§ÃûÆ¬ÏòÁĞ±íÖĞÌí¼ÓºÚÃûµ¥Ïî
-	* @param[in] info ÓÃ»§ÃûÆ¬
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ ¹æ®ç”¨æˆ·åç‰‡å‘åˆ—è¡¨ä¸­æ·»åŠ é»‘åå•é¡¹
+	* @param[in] info ç”¨æˆ·åç‰‡
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void AddBlackListMember(const nim::UserNameCard &info);
 
 	/**
-	* ÏìÓ¦ÓÃ»§ĞÅÏ¢¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] uinfos ÓÃ»§ĞÅÏ¢ÁĞ±í
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ç”¨æˆ·ä¿¡æ¯æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] uinfos ç”¨æˆ·ä¿¡æ¯åˆ—è¡¨
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 
 	/**
-	* ÏìÓ¦ÓÃ»§Í·Ïñ¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] type Í·ÏñÀàĞÍ
-	* @param[in] account ÓÃ»§id
-	* @param[in] photo_path Í·ÏñÂ·¾¶
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ç”¨æˆ·å¤´åƒæ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] type å¤´åƒç±»å‹
+	* @param[in] account ç”¨æˆ·id
+	* @param[in] photo_path å¤´åƒè·¯å¾„
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
 
 	/**
-	* ÏìÓ¦ºÚÃûµ¥¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] id ÓÃ»§id
-	* @param[in] black ÊÇ·ñ¼ÓÈëºÚÃûµ¥
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”é»‘åå•æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] id ç”¨æˆ·id
+	* @param[in] black æ˜¯å¦åŠ å…¥é»‘åå•
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnSetBlackCallback(const std::string& id, bool black);
 public:

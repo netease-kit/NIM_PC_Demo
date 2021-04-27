@@ -1,4 +1,5 @@
-﻿#include "session_box.h"
+#include "stdafx.h"
+#include "session_box.h"
 #include "session_form.h"
 
 using namespace ui;

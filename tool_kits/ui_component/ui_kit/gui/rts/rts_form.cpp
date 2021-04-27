@@ -1,5 +1,5 @@
-﻿#include "rts_form.h"
-
+#include "stdafx.h"
+#include "rts_form.h"
 #include "av_kit/module/video/video_manager.h"
 #include "module/login/login_manager.h"
 #include "module/session/session_manager.h"
@@ -558,7 +558,7 @@ void RtsForm::SendCreateMsg()
 	msg.session_type_ = nim::kNIMSessionTypeP2P;
 	msg.receiver_accid_ = uid_;
 	msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
-	msg.client_msg_id_ = QString::GetGUID();
+	msg.client_msg_id_ = nim::Tool::GetUuid();
 
 	//base获取的时间单位是s，服务器的时间单位是ms
 	msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
@@ -586,7 +586,7 @@ void RtsForm::ShowEndMsg()
 	msg.session_type_ = nim::kNIMSessionTypeP2P;
 	msg.receiver_accid_ = uid_;
 	msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
-	msg.client_msg_id_ = QString::GetGUID();
+	msg.client_msg_id_ = nim::Tool::GetUuid();
 	//base获取的时间单位是s，服务器的时间单位是ms
 	msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
 	msg.status_ = nim::kNIMMsgLogStatusSent;

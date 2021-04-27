@@ -1,4 +1,6 @@
+#include "stdafx.h"
 #include "ui_kit/module/multi_retweet/multi_message_retweet_info.h"
+
 namespace nim_comp
 {
 	MultiMessageRetweetInfo::MultiMessageRetweetInfo() :

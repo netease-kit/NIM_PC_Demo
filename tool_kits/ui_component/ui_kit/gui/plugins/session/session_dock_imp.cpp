@@ -1,8 +1,11 @@
 #include "stdafx.h"
+#include "stdafx.h"
 #include "session_plugin_page.h"
 #include "gui/session/session_box.h"
 #include "export\nim_ui_session_list_manager.h"
+
 using namespace nim_comp;
+
 HWND SessionPluginPage::Create()
 {
 	return ui::Box::GetWindow()->GetHWND();

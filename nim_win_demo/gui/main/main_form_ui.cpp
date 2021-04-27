@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "resource.h"
 #include "main_form.h"
 #include "util/user.h"
@@ -265,10 +266,10 @@ bool MainForm::OnClicked( ui::EventArgs* msg )
 		nim_ui::WindowsManager::GetInstance()->SingletonShow<TestGifForm>(TestGifForm::kClassName);
 	else if (name == L"cef_test")
 	{
-		// Cefä¯ÀÀÆ÷Ä£¿é
+		// Cefæµè§ˆå™¨æ¨¡å—
 		if (nim_cef::CefManager::GetInstance()->IsEnableOffsetRender())
 		{
-			// ¿ªÆôÀëÆÁäÖÈ¾
+			// å¼€å¯ç¦»å±æ¸²æŸ“
 			CefForm *form = new CefForm;
 			form->Create(NULL, CefForm::kClassName, WS_OVERLAPPEDWINDOW, 0, true);
 			form->CenterWindow();
@@ -276,7 +277,7 @@ bool MainForm::OnClicked( ui::EventArgs* msg )
 		}
 		else
 		{
-			// ÎÞÀëÆÁäÖÈ¾£¬ÓÐ´°¿ÚÄ£Ê½
+			// æ— ç¦»å±æ¸²æŸ“ï¼Œæœ‰çª—å£æ¨¡å¼
 			CefNativeForm *form = new CefNativeForm;
 			form->Create(NULL, CefNativeForm::kClassName, WS_OVERLAPPEDWINDOW, 0, false);
 			form->CenterWindow();
@@ -285,7 +286,7 @@ bool MainForm::OnClicked( ui::EventArgs* msg )
 	}
 	else if (name == L"change_skin")
 	{
-		// »»·ôÊ¾Àý
+		// æ¢è‚¤ç¤ºä¾‹
 		std::wstring theme_dir = QPath::GetAppPath();
 		ui::GlobalManager::ReloadSkin(theme_dir + L"themes\\skin1");
 	}
@@ -327,7 +328,7 @@ void MainForm::PopupMainMenu(POINT point)
 {
 	main_menu_handler_->PopupMainMenu(point);
 	return;
-	//´´½¨²Ëµ¥´°¿Ú
+	//åˆ›å»ºèœå•çª—å£
 	CMenuWnd* pMenu = new CMenuWnd(NULL);
 	std::wstring main_menu_xml_path = L"main_menu.xml";
 	if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::Simplified_Chinese)
@@ -336,7 +337,7 @@ void MainForm::PopupMainMenu(POINT point)
 		main_menu_xml_path = L"main_menu_en.xml";
 	STRINGorID xml(main_menu_xml_path.c_str());
 	pMenu->Init(xml, _T("xml"), point);
-	//×¢²á»Øµ÷
+	//æ³¨å†Œå›žè°ƒ
 	CMenuElementUI* look_log = (CMenuElementUI*)pMenu->FindControl(L"look_log");
 	look_log->AttachSelect(nbase::Bind(&MainForm::LookLogMenuItemClick, this, std::placeholders::_1));
 
@@ -384,13 +385,13 @@ void MainForm::PopupMainMenu(POINT point)
 
 	CMenuElementUI* quit = (CMenuElementUI*)pMenu->FindControl(L"quit");
 	quit->AttachSelect(nbase::Bind(&MainForm::QuitMenuItemClick, this, std::placeholders::_1));
-	//ÏÔÊ¾
+	//æ˜¾ç¤º
 	pMenu->Show();
 }
 
 static void LookLogClick(HWND m_hWnd)
 {
-	//TODO£ºÔÝÊ±ÏÔÊ¾ÓÃ»§Êý¾ÝËùÔÚµÄÄ¿Â¼£¬·½±ãÊÕ¼¯ÓÃ»§·´À¡£¡
+	//TODOï¼šæš‚æ—¶æ˜¾ç¤ºç”¨æˆ·æ•°æ®æ‰€åœ¨çš„ç›®å½•ï¼Œæ–¹ä¾¿æ”¶é›†ç”¨æˆ·åé¦ˆï¼
 	std::wstring dir = nim_ui::UserConfig::GetInstance()->GetUserDataPath();
 	std::wstring tip = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_MENU_CURRENT_USER_DIR").c_str(), dir.c_str());
 	ShowMsgBox(m_hWnd, MsgboxCallback(), tip, false, L"STRING_TIPS", true, L"STRID_MAINWINDOW_MENU_GOT_IT", true);
@@ -479,7 +480,7 @@ bool MainForm::ShowLanguageList(ui::EventArgs* param)
 {
 	std::wstring menu_name = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_MENU_LANGUAGE_LIST");
 	HWND hWnd = ::FindWindow(L"MenuWnd", menu_name.c_str());
-	if (hWnd) //ÓïÑÔÁÐ±íÒÑ¾­´ò¿ª
+	if (hWnd) //è¯­è¨€åˆ—è¡¨å·²ç»æ‰“å¼€
 	{
 		::ShowWindow(hWnd, SW_SHOWNOACTIVATE);
 		return true;
@@ -492,7 +493,7 @@ bool MainForm::ShowLanguageList(ui::EventArgs* param)
 	ui::CPoint popup_pt(menu_pos.left + elem_pos.right + 2, menu_pos.top + elem_pos.top);
 	pMenu->Init(xml, _T("xml"), popup_pt, CMenuWnd::RIGHT_BOTTOM, true);
 	::SetWindowText(pMenu->GetHWND(), menu_name.c_str());
-	//×¢²á»Øµ÷
+	//æ³¨å†Œå›žè°ƒ
 	std::string current_language = ConfigHelper::GetInstance()->GetLanguage();
 	Box* language_list = (Box*)((Box*)pMenu->GetRoot())->GetItemAt(0);
 	if (language_list)
@@ -507,7 +508,7 @@ bool MainForm::ShowLanguageList(ui::EventArgs* param)
 		}
 	}
 
-	//ÏÔÊ¾
+	//æ˜¾ç¤º
 	pMenu->Show();
 	return true;
 }
@@ -526,7 +527,7 @@ bool MainForm::CloseLanguageList(ui::EventArgs* param, bool check_mouse)
 		POINT mouse_pt;
 		::GetCursorPos(&mouse_pt);
 		if (::PtInRect(&menu_rect, mouse_pt))
-			return true; //Êó±êÔÚÓïÑÔÁÐ±íÉÏ£¬¾Í²»¹Ø±Õ
+			return true; //é¼ æ ‡åœ¨è¯­è¨€åˆ—è¡¨ä¸Šï¼Œå°±ä¸å…³é—­
 	}
 
 	::DestroyWindow(hWnd);
@@ -600,18 +601,18 @@ bool MainForm::OnlineStateMenuButtonClick(ui::EventArgs* param)
 	point.y = rect.bottom + 10;
 	ClientToScreen(m_hWnd, &point);
 	
-	//´´½¨²Ëµ¥´°¿Ú
+	//åˆ›å»ºèœå•çª—å£
 	CMenuWnd* pMenu = new CMenuWnd(NULL);
 	STRINGorID xml(L"online_state_menu.xml");
 	pMenu->Init(xml, _T("xml"), point);
-	//×¢²á»Øµ÷
+	//æ³¨å†Œå›žè°ƒ
 	CMenuElementUI* look_log = (CMenuElementUI*)pMenu->FindControl(L"online");
 	look_log->AttachSelect(nbase::Bind(&MainForm::OnlineStateMenuItemClick, this, std::placeholders::_1));
 
 	CMenuElementUI* file_trans = (CMenuElementUI*)pMenu->FindControl(L"busy");
 	file_trans->AttachSelect(nbase::Bind(&MainForm::OnlineStateMenuItemClick, this, std::placeholders::_1));
 
-	//ÏÔÊ¾
+	//æ˜¾ç¤º
 	pMenu->Show();
 	return true;
 }

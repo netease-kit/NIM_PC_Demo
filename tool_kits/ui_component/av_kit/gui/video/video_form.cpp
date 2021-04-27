@@ -1,4 +1,5 @@
-﻿#include "video_form.h"
+#include "stdafx.h"
+#include "video_form.h"
 #include <sys/timeb.h>
 #include "shared/tool.h"
 #include "base/time/time.h"
@@ -470,7 +471,7 @@ namespace nim_comp
 	{
 		if (status_ == STATUS_CONNECTING)
 		{
-			//LOG_APP("connect voip server timeout");
+			//QLOG_APP("connect voip server timeout");
 			EnterEndCallPage(END_CALL_CONNECTION);
 		}
 	}

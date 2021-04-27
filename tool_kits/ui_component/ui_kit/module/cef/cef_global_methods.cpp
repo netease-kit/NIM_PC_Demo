@@ -1,4 +1,5 @@
-﻿#include "cef_global_methods.h"
+#include "stdafx.h"
+#include "cef_global_methods.h"
 
 namespace nim_comp
 {

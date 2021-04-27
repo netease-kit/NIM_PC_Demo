@@ -3,7 +3,7 @@
 namespace nim_comp
 {
 /** @class DataSyncCallback
-  * @brief Êı¾İÍ¬²½ÊÂ¼ş»Øµ÷Àà
+  * @brief æ•°æ®åŒæ­¥äº‹ä»¶å›è°ƒç±»
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @date 2016/09/13
   */
@@ -12,11 +12,11 @@ class DataSyncCallback
 public:
 
 	/**
-	* ×¢²áÊı¾İÍ¬²½Íê³ÉµÄ»Øµ÷º¯Êı
-	* @param[in] sync_type Êı¾İÍ¬²½ÀàĞÍ
-	* @param[in] status Êı¾İÍ¬²½×´Ì¬
-	* @param[in] data_sync_info Êı¾İÊı¾İ
-	* @return void ÎŞ·µ»ØÖµ
+	* æ³¨å†Œæ•°æ®åŒæ­¥å®Œæˆçš„å›è°ƒå‡½æ•°
+	* @param[in] sync_type æ•°æ®åŒæ­¥ç±»å‹
+	* @param[in] status æ•°æ®åŒæ­¥çŠ¶æ€
+	* @param[in] data_sync_info æ•°æ®æ•°æ®
+	* @return void æ— è¿”å›å€¼
 	*/
 	static void SyncCallback(nim::NIMDataSyncType sync_type, nim::NIMDataSyncStatus status, const std::string &data_sync_info);
 };

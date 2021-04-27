@@ -15,7 +15,7 @@ typedef std::function<void(PhotoType type, const std::string& id, const std::wst
 namespace nim_comp
 {
 /** @class PhotoService
-  * @brief Í·ÏñÏÂÔØÓë»ñÈ¡·şÎñ
+  * @brief å¤´åƒä¸‹è½½ä¸è·å–æœåŠ¡
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @date 2016/09/13
   */
@@ -29,61 +29,61 @@ public:
 public:
 
 	/**
-	* ×¢²áÍ·ÏñÏÂÔØÍê±ÏºóµÄ»Øµ÷º¯Êı
-	* @param[in] callback »Øµ÷º¯Êı
-	* @return UnregisterCallback ·´×¢²á¶ÔÏó
+	* æ³¨å†Œå¤´åƒä¸‹è½½å®Œæ¯•åçš„å›è°ƒå‡½æ•°
+	* @param[in] callback å›è°ƒå‡½æ•°
+	* @return UnregisterCallback åæ³¨å†Œå¯¹è±¡
 	*/
 	UnregisterCallback RegPhotoReady(const OnPhotoReadyCallback& callback);
 
 	/**
-	* »ñÈ¡ÓÃ»§Í·Ïñ
-	* @param[in] accid ÓÃ»§id
-	* @param[in] is_robot ¸ÃidÊÇ²»ÊÇ»úÆ÷ÈË
-	* @return wstring Í·ÏñµÄÂ·¾¶
+	* è·å–ç”¨æˆ·å¤´åƒ
+	* @param[in] accid ç”¨æˆ·id
+	* @param[in] is_robot è¯¥idæ˜¯ä¸æ˜¯æœºå™¨äºº
+	* @return wstring å¤´åƒçš„è·¯å¾„
 	*/
 	std::wstring GetUserPhoto(const std::string &accid);
 
 	/**
-	* »ñÈ¡Èº×éÍ·Ïñ
-	* @param[in] tid Èºid
-	* @param[in] full_path ÊÇ·ñĞèÒª¾ø¶ÔÂ·¾¶
-	* @return wstring Í·ÏñµÄÂ·¾¶
+	* è·å–ç¾¤ç»„å¤´åƒ
+	* @param[in] tid ç¾¤id
+	* @param[in] full_path æ˜¯å¦éœ€è¦ç»å¯¹è·¯å¾„
+	* @return wstring å¤´åƒçš„è·¯å¾„
 	*/
 	std::wstring GetTeamPhoto(const std::string &tid, bool full_path = true);
 
 public:
 	/**
-	* »ñÈ¡ÓÃ»§ĞÅÏ¢ºó£¬»òÕßÓÃ»§ĞÅÏ¢ĞŞ¸Äºó£¬ÏÂÔØÓÃ»§Í·Ïñ(²»¶ÔÍâ¿ª·Å£¬Ìá¹©¸øÆäËûserviceµ÷ÓÃ)
-	* @param[in] info ÒªÏÂÔØÍ·ÏñµÄÓÃ»§ÃûÆ¬
-	* @return void	ÎŞ·µ»ØÖµ
+	* è·å–ç”¨æˆ·ä¿¡æ¯åï¼Œæˆ–è€…ç”¨æˆ·ä¿¡æ¯ä¿®æ”¹åï¼Œä¸‹è½½ç”¨æˆ·å¤´åƒ(ä¸å¯¹å¤–å¼€æ”¾ï¼Œæä¾›ç»™å…¶ä»–serviceè°ƒç”¨)
+	* @param[in] info è¦ä¸‹è½½å¤´åƒçš„ç”¨æˆ·åç‰‡
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void DownloadUserPhoto(const nim::UserNameCard &info);
 
 	/**
-	* »ñÈ¡»úÆ÷ÈËĞÅÏ¢ºó£¬»òÕß»úÆ÷ÈËĞÅÏ¢ĞŞ¸Äºó£¬ÏÂÔØ»úÆ÷ÈËÍ·Ïñ(²»¶ÔÍâ¿ª·Å£¬Ìá¹©¸øÆäËûserviceµ÷ÓÃ)
-	* @param[in] info ÒªÏÂÔØÍ·ÏñµÄ»úÆ÷ÈËĞÅÏ¢
-	* @return void	ÎŞ·µ»ØÖµ
+	* è·å–æœºå™¨äººä¿¡æ¯åï¼Œæˆ–è€…æœºå™¨äººä¿¡æ¯ä¿®æ”¹åï¼Œä¸‹è½½æœºå™¨äººå¤´åƒ(ä¸å¯¹å¤–å¼€æ”¾ï¼Œæä¾›ç»™å…¶ä»–serviceè°ƒç”¨)
+	* @param[in] info è¦ä¸‹è½½å¤´åƒçš„æœºå™¨äººä¿¡æ¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void DownloadRobotPhoto(const nim::RobotInfo &info);
 
 	/**
-	* »ñÈ¡ÈºĞÅÏ¢ºó£¬»òÕßÈºĞÅÏ¢ĞŞ¸Äºó£¬ÏÂÔØÈºÍ·Ïñ(²»¶ÔÍâ¿ª·Å£¬Ìá¹©¸øÆäËûserviceµ÷ÓÃ)
-	* @param[in] info ÒªÏÂÔØÍ·ÏñµÄÈºĞÅÏ¢
-	* @return void	ÎŞ·µ»ØÖµ
+	* è·å–ç¾¤ä¿¡æ¯åï¼Œæˆ–è€…ç¾¤ä¿¡æ¯ä¿®æ”¹åï¼Œä¸‹è½½ç¾¤å¤´åƒ(ä¸å¯¹å¤–å¼€æ”¾ï¼Œæä¾›ç»™å…¶ä»–serviceè°ƒç”¨)
+	* @param[in] info è¦ä¸‹è½½å¤´åƒçš„ç¾¤ä¿¡æ¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void DownloadTeamIcon(const nim::TeamInfo &info);
 
 	/**
-	* »ñÈ¡ÓÃ»§»òÈºÍ·ÏñËùÔÚÄ¿Â¼
-	* @param[in] type »ñÈ¡Í·ÏñµÄÀàĞÍ
-	* @return wstring Í·ÏñÄ¿Â¼ËùÔÚÂ·¾¶
+	* è·å–ç”¨æˆ·æˆ–ç¾¤å¤´åƒæ‰€åœ¨ç›®å½•
+	* @param[in] type è·å–å¤´åƒçš„ç±»å‹
+	* @return wstring å¤´åƒç›®å½•æ‰€åœ¨è·¯å¾„
 	*/
 	std::wstring GetPhotoDir(PhotoType type);
 
 	/**
-	* ¼ì²éÄ³¸öÍ·ÏñÍ¼Æ¬ÊÇ·ñÍêºÃ
-	* @param[in] photo_path Í·ÏñÎÄ¼şÂ·¾¶
-	* @return bool true ÍêºÃ£¬false ²»ÍêºÃ
+	* æ£€æŸ¥æŸä¸ªå¤´åƒå›¾ç‰‡æ˜¯å¦å®Œå¥½
+	* @param[in] photo_path å¤´åƒæ–‡ä»¶è·¯å¾„
+	* @return bool true å®Œå¥½ï¼Œfalse ä¸å®Œå¥½
 	*/
 	bool CheckPhotoOK(std::wstring photo_path);
 
@@ -91,15 +91,15 @@ private:
 
 
 	/**
-	* ¼ì²éÄ³¸öurl¶ÔÓ¦µÄÍ·ÏñÍ¼Æ¬ÔÚ±¾µØÊÇ·ñÍêºÃ
-	* @param[in] type Í·ÏñµÄÀàĞÍ
-	* @param[in] url Í·ÏñµÄÏÂÔØµØÖ·
-	* @return int -1 url²»ÕıÈ·£¬0 ²»ÍæºÃ£¬1 ÍêºÃ
+	* æ£€æŸ¥æŸä¸ªurlå¯¹åº”çš„å¤´åƒå›¾ç‰‡åœ¨æœ¬åœ°æ˜¯å¦å®Œå¥½
+	* @param[in] type å¤´åƒçš„ç±»å‹
+	* @param[in] url å¤´åƒçš„ä¸‹è½½åœ°å€
+	* @return int -1 urlä¸æ­£ç¡®ï¼Œ0 ä¸ç©å¥½ï¼Œ1 å®Œå¥½
 	*/
 	int CheckForDownload(PhotoType type, const std::string& url);
 
 private:
-	std::map<int, std::unique_ptr<OnPhotoReadyCallback>> photo_ready_cb_list_; //ÓÃ»§Í·ÏñÏÂÔØÍê³É»Øµ÷ÁĞ±í
+	std::map<int, std::unique_ptr<OnPhotoReadyCallback>> photo_ready_cb_list_; //ç”¨æˆ·å¤´åƒä¸‹è½½å®Œæˆå›è°ƒåˆ—è¡¨
 	std::map<PhotoType, std::map<std::string, std::string>> download_tasks_;
 };
 

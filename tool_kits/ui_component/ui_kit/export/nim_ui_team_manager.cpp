@@ -1,5 +1,5 @@
-﻿#include "nim_ui_team_manager.h"
-
+#include "stdafx.h"
+#include "nim_ui_team_manager.h"
 
 namespace nim_ui
 {

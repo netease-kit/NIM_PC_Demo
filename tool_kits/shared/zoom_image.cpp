@@ -61,7 +61,7 @@ bool ZoomImage::Zoom(const std::wstring &filepath,std::wstring mime_type)
 	GUID guid;
 	if (image_src.GetRawFormat(&guid) != Ok)
 		return false;
-	if (guid == ImageFormatGIF) //不支持GIF文件;
+	if (guid == ImageFormatGIF) //涓嶆敮鎸丟IF鏂囦欢;
 		return false;
 
 	RotateFlipType type = GetRotateFlipType(image_src);
@@ -197,7 +197,7 @@ bool ZoomImage::SavePaddingImage(const std::wstring& image_path, const std::wstr
 			Gdiplus::RectF rectf(0.0f, 0.0f, (REAL)fixed_w, (REAL)fixed_h);
 			graphics.DrawImage(&image_src, rectf, left, top, width_src, height_src, Gdiplus::UnitPixel);
 			hbmp = (HBITMAP)SelectObject(hMemDC, hOldBitmap);
-			//清除
+			//娓呴櫎
 			DeleteDC(hMemDC);
 			::ReleaseDC(NULL, hdc);
 			Gdiplus::Bitmap bmp(hbmp, NULL);
@@ -388,7 +388,7 @@ std::wstring ZoomImage::GetMimeType(const std::wstring& filepath)
 std::wstring ZoomImage::GetMimeType(GUID& clsid)
 {
 	std::wstring mime_type;
-	if (clsid == ImageFormatGIF) //不支持GIF文件;
+	if (clsid == ImageFormatGIF) //涓嶆敮鎸丟IF鏂囦欢;
 		mime_type = kImageGIF;
 	else if (clsid == ImageFormatJPEG)
 		mime_type = kImageJPEG;
@@ -414,7 +414,7 @@ bool CalculateImageSize(const std::wstring& file, SIZE& size, int max_width, int
 		if(img.get() != NULL)
 		{
 			Gdiplus::RotateFlipType type = ZoomImage::GetRotateFlipType(*img);
-			if (type != RotateNoneFlipNone) //旋转图片;
+			if (type != RotateNoneFlipNone) //鏃嬭浆鍥剧墖;
 				img->RotateFlip(type);
 
 			size.cx = img->GetWidth();

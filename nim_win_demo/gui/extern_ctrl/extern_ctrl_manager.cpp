@@ -3,9 +3,11 @@
 // Date: 2017/10/16
 //
 // extern ctrl manager impl file
+#include "stdafx.h"
 #include "extern_ctrl_manager.h"
 #include "richedit_with_defmenu.h"
 #include "treectrl/treeview.h"
+
 ui::Control* ExternCtrlManager::CreateExternCtrl(const std::wstring& name)
 {
 	ui::Control* ret = nullptr;

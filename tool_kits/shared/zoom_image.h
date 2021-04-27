@@ -14,41 +14,41 @@ class ZoomImage
 public:
 	ZoomImage(void);
 	~ZoomImage(void);
-	//ÉèÖÃËõ·ÅºóµÄÍ¼Æ¬±£´æÂ·¾¶
+	//è®¾ç½®ç¼©æ”¾åçš„å›¾ç‰‡ä¿å­˜è·¯å¾„
 	void SetImagePath(const std::wstring &image_path);
-	//ÉèÖÃÎª×Ô¶¯Ëõ·ÅÄ£Ê½
+	//è®¾ç½®ä¸ºè‡ªåŠ¨ç¼©æ”¾æ¨¡å¼
 	void SetAutoZoom(bool area_zoom,int auto_max_with,int auto_max_height);
-	//ÉèÖÃÎª¹Ì¶¨´óĞ¡Ëõ·ÅÄ£Ê½
+	//è®¾ç½®ä¸ºå›ºå®šå¤§å°ç¼©æ”¾æ¨¡å¼
 	void SetSize(int width,int height);
-	//ÉèÖÃÎª°´±ÈÀıËõ·ÅÄ£Ê½
+	//è®¾ç½®ä¸ºæŒ‰æ¯”ä¾‹ç¼©æ”¾æ¨¡å¼
 	void SetRatio(float ratio);
 	
 	/*
-	 *	@brief Ëõ·ÅÄ³Ò»¸öÍ¼Æ¬£¬²¢±£´æµ½ÎªÖ¸¶¨¸ñÊ½
-	 *	@param filepath:ÒªËõ·ÅµÄÔ´Í¼Æ¬Â·¾¶
-	 *	@param mime_type:±£´æµÄÍ¼Æ¬ÀàĞÍ
+	 *	@brief ç¼©æ”¾æŸä¸€ä¸ªå›¾ç‰‡ï¼Œå¹¶ä¿å­˜åˆ°ä¸ºæŒ‡å®šæ ¼å¼
+	 *	@param filepath:è¦ç¼©æ”¾çš„æºå›¾ç‰‡è·¯å¾„
+	 *	@param mime_type:ä¿å­˜çš„å›¾ç‰‡ç±»å‹
 	 */
 	bool Zoom(const std::wstring& filepath,std::wstring mime_type=L"image/jpeg");
-	//°ÑÍ¼Æ¬±£´æÎªÖ¸¶¨ÀàĞÍ£¬²¢²»Ëõ·ÅÍ¼Æ¬
+	//æŠŠå›¾ç‰‡ä¿å­˜ä¸ºæŒ‡å®šç±»å‹ï¼Œå¹¶ä¸ç¼©æ”¾å›¾ç‰‡
 	bool ConvertImageFormat(std::wstring& filepath, std::wstring mime_type);
-	//»ñÈ¡Í¼ÏñµÄ·­×ªÀàĞÍ
+	//è·å–å›¾åƒçš„ç¿»è½¬ç±»å‹
 	static Gdiplus::RotateFlipType GetRotateFlipType(Gdiplus::Image& image);
 	static std::wstring GetMimeType(const std::wstring& filepath);
 	static void GetMimeType(const std::wstring& filepath, std::wstring& mime_type_out, std::wstring& exten_out);
 	/*
-	*	@brief ÒÔwidth¡¢heightµÄ±ÈÀı£¬½ØÈ¡Ô´Í¼Æ¬ÖĞÍ¬±ÈÀıµÄ×î´ó·¶Î§µÄÍ¼Æ¬²¿·Ö£¬²¢±£´æµ½ÎªÖ¸¶¨¸ñÊ½
-	*	@param filepath:Ô´Í¼Æ¬Â·¾¶
-	*	@param image_path_out:Êä³öÍ¼Æ¬Â·¾¶
-	*	@param width:ÒªËõ·ÅµÄÔ´Í¼Æ¬Â·¾¶
-	*	@param height:ÒªËõ·ÅµÄÔ´Í¼Æ¬Â·¾¶
-	*	@param mime_type:±£´æµÄÍ¼Æ¬ÀàĞÍ
+	*	@brief ä»¥widthã€heightçš„æ¯”ä¾‹ï¼Œæˆªå–æºå›¾ç‰‡ä¸­åŒæ¯”ä¾‹çš„æœ€å¤§èŒƒå›´çš„å›¾ç‰‡éƒ¨åˆ†ï¼Œå¹¶ä¿å­˜åˆ°ä¸ºæŒ‡å®šæ ¼å¼
+	*	@param filepath:æºå›¾ç‰‡è·¯å¾„
+	*	@param image_path_out:è¾“å‡ºå›¾ç‰‡è·¯å¾„
+	*	@param width:è¦ç¼©æ”¾çš„æºå›¾ç‰‡è·¯å¾„
+	*	@param height:è¦ç¼©æ”¾çš„æºå›¾ç‰‡è·¯å¾„
+	*	@param mime_type:ä¿å­˜çš„å›¾ç‰‡ç±»å‹
 	*/
 	static bool SavePaddingImage(const std::wstring& image_path, const std::wstring& image_path_out, int width, int height, std::wstring mime_type = L"image/jpeg");
 
 protected:
-	//ÅĞ¶ÏÊÇ·ñĞèÒª½øĞĞËõ·Å
+	//åˆ¤æ–­æ˜¯å¦éœ€è¦è¿›è¡Œç¼©æ”¾
 	bool IsNeedZoom(int width,int height);
-	//¼ÆËãËõ·ÅºóµÄ´óĞ¡£¬½á¹û±£´æµ½width_ºÍheight_
+	//è®¡ç®—ç¼©æ”¾åçš„å¤§å°ï¼Œç»“æœä¿å­˜åˆ°width_å’Œheight_
 	bool CalculateSize(int width_src,int height_src);
 	static bool GetImageCLSID(const wchar_t* format, CLSID* pCLSID);
 	static bool SaveImage(Gdiplus::Image& image, const std::wstring& file_path,std::wstring mime_type,long quality_num = 95);
@@ -61,12 +61,12 @@ private:
 		by_fixed_size = 0,
 		by_ratio,
 		by_auto,by_none
-	};//by_fixed_size:°´¹Ì¶¨³ß´ç,by_ratio:°´±ÈÂÊËõ·Å;
+	};//by_fixed_size:æŒ‰å›ºå®šå°ºå¯¸,by_ratio:æŒ‰æ¯”ç‡ç¼©æ”¾;
 
 	std::wstring file_path_save_;
 	ZoomType zoom_type_;
 
-	bool area_zoom_; //ÊÇ·ñ°´Ãæ»ıËõ·Åwidth*height;
+	bool area_zoom_; //æ˜¯å¦æŒ‰é¢ç§¯ç¼©æ”¾width*height;
 	int auto_max_width_;
 	int auto_max_height_;
 
@@ -78,8 +78,8 @@ private:
 	std::wstring image_path_;
 };
 
-//ËõÂÔÍ¼²»³¬¹ımax_width * max_heightµÄÇé¿öÏÂ£º·µ»ØÖµÎªtrue±íÊ¾ĞèÒª²Ã¼ô£¬Í¬Ê±°´Í¼Æ¬±ÈÀı·µ»Øsize
+//ç¼©ç•¥å›¾ä¸è¶…è¿‡max_width * max_heightçš„æƒ…å†µä¸‹ï¼šè¿”å›å€¼ä¸ºtrueè¡¨ç¤ºéœ€è¦è£å‰ªï¼ŒåŒæ—¶æŒ‰å›¾ç‰‡æ¯”ä¾‹è¿”å›size
 bool CalculateImageSize(const std::wstring& file, SIZE& size, int max_width, int max_height);
 
-//Éú³ÉËõÂÔÍ¼£¬´óĞ¡cx * cy
+//ç”Ÿæˆç¼©ç•¥å›¾ï¼Œå¤§å°cx * cy
 void ZoomImageF(const std::wstring &src, const std::wstring &dest, int cx, int cy);

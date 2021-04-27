@@ -1,4 +1,5 @@
-﻿#include "broad_form.h"
+#include "stdafx.h"
+#include "broad_form.h"
 #include "module/emoji/richedit_util.h"
 #include "module/session/session_manager.h"
 #include "callback/team/team_callback.h"

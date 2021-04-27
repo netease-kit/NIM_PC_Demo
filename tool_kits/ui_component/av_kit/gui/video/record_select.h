@@ -5,7 +5,7 @@ namespace nim_comp
 	typedef std::function<void(bool ret, std::wstring, std::wstring, std::wstring)> SelectRecordFileCallback;
 
 /** @class RecordSelectForm
-  * @brief Ìá¹©Ñ¡ÔñÒôÊÓÆµÍ¨»°Ê±Â¼ÖÆÑ¡ÔñµÄ¹¦ÄÜ
+  * @brief æä¾›é€‰æ‹©éŸ³è§†é¢‘é€šè¯æ—¶å½•åˆ¶é€‰æ‹©çš„åŠŸèƒ½
   * @copyright (c) 2017, NetEase Inc. All rights reserved
   * @author gq
   * @date 2017/02/15
@@ -16,53 +16,53 @@ public:
 	RecordSelectForm();
 	~RecordSelectForm();
 
-	//¸²¸ÇĞéº¯Êı
+	//è¦†ç›–è™šå‡½æ•°
 	virtual std::wstring GetSkinFolder() override;
 	virtual std::wstring GetSkinFile() override;
 	virtual std::wstring GetWindowClassName() const override;
 	virtual UINT GetClassStyle() const override;
 
 	/**
-	* ´°¿Ú³õÊ¼»¯º¯Êı
-	* @return void	ÎŞ·µ»ØÖµ
+	* çª—å£åˆå§‹åŒ–å‡½æ•°
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void InitWindow() override;
 
 	/**
-	* À¹½Ø²¢´¦Àíµ×²ã´°ÌåÏûÏ¢
-	* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-	* @param[in] wParam ¸½¼Ó²ÎÊı
-	* @param[in] lParam ¸½¼Ó²ÎÊı
-	* @return LRESULT ´¦Àí½á¹û
+	* æ‹¦æˆªå¹¶å¤„ç†åº•å±‚çª—ä½“æ¶ˆæ¯
+	* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+	* @param[in] wParam é™„åŠ å‚æ•°
+	* @param[in] lParam é™„åŠ å‚æ•°
+	* @return LRESULT å¤„ç†ç»“æœ
 	*/
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµÄËùÓĞÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶çš„æ‰€æœ‰æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool Notify(ui::EventArgs* msg);
 
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnClicked(ui::EventArgs* msg);
 
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµÄÑ¡ÔñÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶çš„é€‰æ‹©æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	virtual bool OnSelected(ui::EventArgs* msg);
 
 	/**
-	* ÉèÖÃÑ¡Ôñ´°¿ÚÍê±ÏµÄ»Øµ÷º¯Êı
-	* @param[in] video_mode ÊÇ·ñÊÇÊÓÆµÄ£Ê½
-	* @param[in] cb »Øµ÷º¯Êı
-	* @return void ÎŞ·µ»ØÖµ
+	* è®¾ç½®é€‰æ‹©çª—å£å®Œæ¯•çš„å›è°ƒå‡½æ•°
+	* @param[in] video_mode æ˜¯å¦æ˜¯è§†é¢‘æ¨¡å¼
+	* @param[in] cb å›è°ƒå‡½æ•°
+	* @return void æ— è¿”å›å€¼
 	*/
 	void SetSelFileCb(bool video_mode, SelectRecordFileCallback cb);
 

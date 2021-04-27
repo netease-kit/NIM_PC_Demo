@@ -1,4 +1,5 @@
-﻿#include "bubble_audio.h"
+#include "stdafx.h"
+#include "bubble_audio.h"
 #include "callback/audio/audio_callback.h"
 #include "module/audio/audio_manager.h"
 #include "util/user.h"

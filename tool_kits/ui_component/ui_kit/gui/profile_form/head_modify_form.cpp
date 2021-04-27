@@ -1,4 +1,5 @@
-﻿#include "head_modify_form.h"
+#include "stdafx.h"
+#include "head_modify_form.h"
 #include "shared/utf8_file_util.h"
 #include "shared/modal_wnd/file_dialog_ex.h"
 #include "module/service/user_service.h"

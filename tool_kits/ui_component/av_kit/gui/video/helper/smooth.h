@@ -1,5 +1,5 @@
 //
-// Author:gq ¾ù·½²îÄ¥Æ¤
+// Author:gq å‡æ–¹å·®ç£¨çš®
 // Date: 2016/7/29
 //
 #pragma once
@@ -20,9 +20,9 @@ namespace nim_comp
 	smooth_info_t;
 
 	smooth_info_t *smooth_init(uint8_t *in_i420, uint32_t width, uint32_t height);
-	//Ä¥Æ¤µÄ³Ì¶È sigema 
-	//°ë¾¶radius > 0 ? radius : std::max(info->width_, info->height_) * 0.02
-	//Ä¥Æ¤ºóÍ¼Ïñ»ìºÏÊ± Í¸Ã÷¶È£¬255´ú±íÄ¥Æ¤ÆäÓàÈ«²¿Ìæ»»Ô­Í¼£¬0´ú±í²»ÊÊÓÃÄ¥Æ¤Êı¾İ
+	//ç£¨çš®çš„ç¨‹åº¦ sigema 
+	//åŠå¾„radius > 0 ? radius : std::max(info->width_, info->height_) * 0.02
+	//ç£¨çš®åå›¾åƒæ··åˆæ—¶ é€æ˜åº¦ï¼Œ255ä»£è¡¨ç£¨çš®å…¶ä½™å…¨éƒ¨æ›¿æ¢åŸå›¾ï¼Œ0ä»£è¡¨ä¸é€‚ç”¨ç£¨çš®æ•°æ®
 	void smooth_processing(smooth_info_t *info, uint8_t *in_y, float sigema, int radius, uint8_t alpha);
 	void smooth_clear(smooth_info_t **info);
 

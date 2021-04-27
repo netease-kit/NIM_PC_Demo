@@ -1,4 +1,5 @@
-﻿#include "rts_manager.h"
+#include "stdafx.h"
+#include "rts_manager.h"
 #include "av_kit/module/video/video_manager.h"
 
 namespace nim_comp
@@ -28,7 +29,7 @@ bool RtsManager::StartRtsForm(int channel_type, std::string uid, std::string ses
 		bool my_rts = false;
 		if (session_id.empty())
 		{
-			session_id = QString::GetGUID();
+			session_id = nim::Tool::GetUuid();
 			my_rts = true;
 		}
 		RtsForm *window = new RtsForm(channel_type, uid, session_id);

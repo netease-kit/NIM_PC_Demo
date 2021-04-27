@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "resource.h"
 
 //c++ header
@@ -33,10 +33,10 @@
 #include "shared/tool.h"
 
 //json
-#include "jsoncpp/include/json/json.h"
+#include "json/json.h"
 
 //xml
-#include "tinyxml/tinyxml.h"
+#include "tinyxml.h"
 
 //window header
 #include <atlbase.h>
@@ -50,10 +50,9 @@
 #include "shared/util.h"
 
 //sdk
-#include "include/nim_cpp_api.h"
-#include "include/nim_chatroom_cpp_api.h"
-//tool
-#include "include/nim_cpp_tools_api.h"
+#include "nim_cpp_wrapper/nim_cpp_api.h"
+#include "nim_chatroom_cpp_wrapper/nim_cpp_chatroom_api.h"
+#include "nim_tools_cpp_wrapper/nim_tools_http_cpp.h"
 
 //notify
 #include "module/service/notify_center.h"
@@ -67,6 +66,6 @@
 #include "shared/closure.h"
 
 //custom_app_sdk
-#include "app_sdk.h"
+#include "include/app_sdk.h"
 
 #include <GdiPlus.h>

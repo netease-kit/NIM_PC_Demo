@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "at_list_form.h"
 #include "util/windows_manager.h"
 #include "module/login/login_manager.h"
@@ -82,7 +83,7 @@ void AtlistForm::RemoveListItem(const std::string& uid)
 	if (wstr_uid.empty())
 		return;
 
-	// Í¬Ê±É¾³ı×î½ü5¸ö·¢ÑÔÈËÀïµÄ×ÓÏî
+	// åŒæ—¶åˆ é™¤æœ€è¿‘5ä¸ªå‘è¨€äººé‡Œçš„å­é¡¹
 	AtListItem* five_item = FindInLastFiveSender(wstr_uid);
 	if (five_item != NULL)
 	{
@@ -107,7 +108,7 @@ void AtlistForm::CheckListItemHeadIcon(const std::string& uid, const std::wstrin
 {
 	std::wstring wuid = nbase::UTF8ToUTF16(uid);
 
-	// Í¬Ê±¸üĞÂ×î½ü5¸ö·¢ÑÔÈËÀïµÄ×ÓÏîµÄÍ·Ïñ
+	// åŒæ—¶æ›´æ–°æœ€è¿‘5ä¸ªå‘è¨€äººé‡Œçš„å­é¡¹çš„å¤´åƒ
 	AtListItem* five_item = FindInLastFiveSender(wuid);
 	if (five_item != NULL)
 	{
@@ -165,10 +166,10 @@ nim_comp::AtListItem* AtlistForm::CreateAtListItem(const std::string& uid, bool 
 
 bool AtlistForm::OnSelectItem(EventArgs *param)
 {
-	//GetDataIDÖĞ±£´æÁË¿Ø¼şµÄÃû×Ö£¬GetNameÊÇ¿Ø¼şµÄuid
+	//GetDataIDä¸­ä¿å­˜äº†æ§ä»¶çš„åå­—ï¼ŒGetNameæ˜¯æ§ä»¶çš„uid
 	if (param->pSender->GetDataID() == L"at_list_item")
 	{
-		//ÅĞ¶Ï²»Ó¦¸ÃÊÇ×Ô¼º
+		//åˆ¤æ–­ä¸åº”è¯¥æ˜¯è‡ªå·±
 		AtListItem *item = static_cast<AtListItem*>(param->pSender);
 		if (item != NULL)
 		{
@@ -247,7 +248,7 @@ std::wstring AtlistForm::GetShowName(const std::string& uid)
 
 LRESULT AtlistForm::OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled)
 {
-	//²»ÔÊĞí¹Ø±Õ@ÁĞ±í£¬Ö»ÄÜÒş²Ø¡£Ö»ÓĞ¶ÔÓ¦µÄ»á»°´°Ìå¹Ø±ÕÊ±²ÅÄÜÖ±½ÓÏú»Ù@ÁĞ±í´°¿Ú
+	//ä¸å…è®¸å…³é—­@åˆ—è¡¨ï¼Œåªèƒ½éšè—ã€‚åªæœ‰å¯¹åº”çš„ä¼šè¯çª—ä½“å…³é—­æ—¶æ‰èƒ½ç›´æ¥é”€æ¯@åˆ—è¡¨çª—å£
 	ShowWindow(false, false);
 	bHandled = true;
 	return 0;
@@ -268,7 +269,7 @@ bool AtlistForm::Match(const std::wstring& search_key, bool match_visible)
 	return team_member_match_list_.size() > 0;
 	
 
-	// Æ¥ÅäÊ±É¾³ıÖ®Ç°µÄ×î½ü5¸ö·¢ÑÔÈË
+	// åŒ¹é…æ—¶åˆ é™¤ä¹‹å‰çš„æœ€è¿‘5ä¸ªå‘è¨€äºº
 	RemoveLastFiveSender();
 
 	std::string utf8_low_search_key = nbase::UTF16ToUTF8(low_search_key);
@@ -324,7 +325,7 @@ void AtlistForm::ShowWindow(bool bShow, bool bTakeFocus)
 }
 void AtlistForm::SetShowPos(POINT pt)
 {
-	//µÚÒ»¸öÄ¬ÈÏÑ¡ÖĞ
+	//ç¬¬ä¸€ä¸ªé»˜è®¤é€‰ä¸­
 	int count = team_members_container_->GetCount();
 	if (count == 0)
 	{
@@ -346,7 +347,7 @@ void AtlistForm::SetShowPos(POINT pt)
 	ui::UiRect rc(pt.x, pt.y, 0, 0);
 	this->SetPos(rc, false, SWP_NOSIZE|SWP_SHOWWINDOW|SWP_NOACTIVATE);	
 
-	//Ç¿ÖÆË¢ĞÂÒ»ÏÂ£¬·ñÔòÁĞ±íÏîµÄÑ¡ÖĞ×´Ì¬»áÓĞÎÊÌâ
+	//å¼ºåˆ¶åˆ·æ–°ä¸€ä¸‹ï¼Œå¦åˆ™åˆ—è¡¨é¡¹çš„é€‰ä¸­çŠ¶æ€ä¼šæœ‰é—®é¢˜
 	::InvalidateRect(m_hWnd,NULL, FALSE);
 	RunTimeDataManager::GetInstance()->SetAttingSomeOne(true);
 }
@@ -492,7 +493,7 @@ void AtlistForm::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 		if (item == NULL)
 			return;
 
-		// Í¬Ê±¸üĞÂ×î½ü5¸ö·¢ÑÔÈËÀïµÄ×ÓÏîµÄêÇ³Æ
+		// åŒæ—¶æ›´æ–°æœ€è¿‘5ä¸ªå‘è¨€äººé‡Œçš„å­é¡¹çš„æ˜µç§°
 		AtListItem* five_item = FindInLastFiveSender(wuid);
 
 		if (team_member_info_list_.find(info.GetAccId()) != team_member_info_list_.end())
@@ -536,7 +537,7 @@ void AtlistForm::OnFriendInfoChange(FriendChangeType change_type, const std::str
 	if (item == NULL)
 		return;
 
-	// Í¬Ê±¸üĞÂ×î½ü5¸ö·¢ÑÔÈËÀïµÄ×ÓÏîµÄ±¸×¢Ãû
+	// åŒæ—¶æ›´æ–°æœ€è¿‘5ä¸ªå‘è¨€äººé‡Œçš„å­é¡¹çš„å¤‡æ³¨å
 	AtListItem* five_item = FindInLastFiveSender(wuid);
 
 	if (team_member_info_list_.find(accid) != team_member_info_list_.end())
@@ -574,7 +575,7 @@ void AtlistForm::OnTeamCardChange(const std::string& tid_uid, const std::string&
 		if (item == NULL)
 			return;
 
-		// Í¬Ê±¸üĞÂ×î½ü5¸ö·¢ÑÔÈËÀïµÄ×ÓÏîµÄÈºÃûÆ¬
+		// åŒæ—¶æ›´æ–°æœ€è¿‘5ä¸ªå‘è¨€äººé‡Œçš„å­é¡¹çš„ç¾¤åç‰‡
 		std::wstring wteam_card = nbase::UTF8ToUTF16(team_card);
 		AtListItem* five_item = FindInLastFiveSender(wuid);	
 		item->SetTeamCardName(wteam_card);
@@ -606,7 +607,7 @@ void AtlistForm::OnTeamMemberAdd(const std::string& tid, const nim::TeamMemberPr
 		std::string uid = team_member_info.GetAccountID();
 
 		auto i = team_member_info_list_.find(uid);
-		if (i != team_member_info_list_.end()) //ÒÑÌí¼Ó
+		if (i != team_member_info_list_.end()) //å·²æ·»åŠ 
 			return;
 
 		team_member_info_list_[uid] = std::make_shared<nim::TeamMemberProperty>( team_member_info);
@@ -620,7 +621,7 @@ void AtlistForm::OnTeamMemberRemove(const std::string& tid, const std::string& u
 	if (tid == session_id_)
 	{
 		auto i = team_member_info_list_.find(uid);
-		if (i == team_member_info_list_.end()) //ÒÑ´ÓÈºÖĞÉ¾³ı
+		if (i == team_member_info_list_.end()) //å·²ä»ç¾¤ä¸­åˆ é™¤
 			return;
 
 		team_member_info_list_.erase(uid);

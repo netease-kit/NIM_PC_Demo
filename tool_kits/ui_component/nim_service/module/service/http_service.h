@@ -15,7 +15,7 @@ typedef std::function<void(HttpResourceType type, const std::string& id, const s
 namespace nim_comp
 {
 	/** @class HttpService
-	  * @brief ×ÊÔ´ÏÂÔØ·þÎñ
+	  * @brief èµ„æºä¸‹è½½æœåŠ¡
 	  * @copyright (c) 2016, NetEase Inc. All rights reserved
 	  * @date 2016/09/18
 	  */
@@ -30,42 +30,42 @@ namespace nim_comp
 
 	public:
 		/**
-		* ÏÂÔØÍ¼Æ¬×ÊÔ´
-		* @param[in] type ×ÊÔ´ÀàÐÍ
-		* @param[in] id ×ÊÔ´ID£¬×÷ÎªÊ¶±ð±êÊ¶
-		* @param[in] url ÏÂÔØµØÖ·
-		* @return wstring Í¼Æ¬Â·¾¶
+		* ä¸‹è½½å›¾ç‰‡èµ„æº
+		* @param[in] type èµ„æºç±»åž‹
+		* @param[in] id èµ„æºIDï¼Œä½œä¸ºè¯†åˆ«æ ‡è¯†
+		* @param[in] url ä¸‹è½½åœ°å€
+		* @return wstring å›¾ç‰‡è·¯å¾„
 		*/
 		std::wstring GetCustomImage(HttpResourceType type, const std::string &id, const std::string &url);
 
 		/**
-		* ×¢²á×ÊÔ´ÏÂÔØÍê³ÉµÄ»Øµ÷
-		* @param[in] callback ÏÂÔØÍê³ÉµÄ»Øµ÷º¯Êý
-		* @return UnregisterCallback ·´×¢²á¶ÔÏó
+		* æ³¨å†Œèµ„æºä¸‹è½½å®Œæˆçš„å›žè°ƒ
+		* @param[in] callback ä¸‹è½½å®Œæˆçš„å›žè°ƒå‡½æ•°
+		* @return UnregisterCallback åæ³¨å†Œå¯¹è±¡
 		*/
 		UnregisterCallback RegDownloadComplete(const OnDownloadCompleteCallback& callback);
 
 	private:
 		/**
-		* ÏÂÔØ×ÊÔ´ÎÄ¼þ
-		* @param[in] type ×ÊÔ´ÀàÐÍ
-		* @param[in] id ×ÊÔ´ID£¬×÷ÎªÊ¶±ð±êÊ¶
-		* @param[in] url ÏÂÔØµØÖ·
-		* @return wstring Í¼Æ¬Â·¾¶
-		* @return void	ÎÞ·µ»ØÖµ
+		* ä¸‹è½½èµ„æºæ–‡ä»¶
+		* @param[in] type èµ„æºç±»åž‹
+		* @param[in] id èµ„æºIDï¼Œä½œä¸ºè¯†åˆ«æ ‡è¯†
+		* @param[in] url ä¸‹è½½åœ°å€
+		* @return wstring å›¾ç‰‡è·¯å¾„
+		* @return void	æ— è¿”å›žå€¼
 		*/
 		void DownloadResource(HttpResourceType type, const std::string &id, const std::string &url);
 
 		/**
-		* ¼ì²éÍ¼Æ¬ÊÇ·ñËð»µ
-		* @param[in] image_path Í¼Æ¬Â·¾¶
-		* @return bool true ³É¹¦£¬false Ê§°Ü
+		* æ£€æŸ¥å›¾ç‰‡æ˜¯å¦æŸå
+		* @param[in] image_path å›¾ç‰‡è·¯å¾„
+		* @return bool true æˆåŠŸï¼Œfalse å¤±è´¥
 		*/
 		bool CheckImageValid(std::wstring image_path);
 
 		/**
-		* »ñÈ¡httpÎÄ¼þ»º´æÂ·¾¶
-		* @return wstring »º´æÂ·¾¶
+		* èŽ·å–httpæ–‡ä»¶ç¼“å­˜è·¯å¾„
+		* @return wstring ç¼“å­˜è·¯å¾„
 		*/
 		std::wstring GetHttpCachedFileDir();
 

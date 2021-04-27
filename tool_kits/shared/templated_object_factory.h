@@ -3,8 +3,8 @@ namespace shared
 {
 	class TemplatedObjectFactoryWrapper;
 	/*
-	ÀàÃû£ºTemplatedObjectFactory
-	¹¦ÄÜ£º¸ù¾İ×¢²áÀàĞÍµÄĞÅÏ¢´´½¨Ò»¸öTOBJFLGµÄÊµÀı£¬ÀàĞÍTBaseÓ¦ÊÇTOBJFLGµÄ¸¸Àà
+	ç±»åï¼šTemplatedObjectFactory
+	åŠŸèƒ½ï¼šæ ¹æ®æ³¨å†Œç±»å‹çš„ä¿¡æ¯åˆ›å»ºä¸€ä¸ªTOBJFLGçš„å®ä¾‹ï¼Œç±»å‹TBaseåº”æ˜¯TOBJFLGçš„çˆ¶ç±»
 	*/
 	template<typename TBase, typename TOBJFLG>
 	class TemplatedObjectFactory : public nbase::Singleton<TemplatedObjectFactory<typename TBase, typename TOBJFLG>>
@@ -19,9 +19,9 @@ namespace shared
 		~TemplatedObjectFactory() = default;
 	private:		
 		/*
-		´´½¨TClassÊµÀıµÄ·½·¨, ´æÔÚTClass : public TBaseµÄ¹ØÏµ
-		params TClassµÄ¹¹Ôì²ÎÊı
-		·µ»ØTBaseÀàĞÍµÄÖ¸Õë¶ÔÏñ 
+		åˆ›å»ºTClasså®ä¾‹çš„æ–¹æ³•, å­˜åœ¨TClass : public TBaseçš„å…³ç³»
+		params TClassçš„æ„é€ å‚æ•°
+		è¿”å›TBaseç±»å‹çš„æŒ‡é’ˆå¯¹åƒ 
 		*/
 		template<typename TClass>
 		TBase* Create()
@@ -67,7 +67,7 @@ namespace shared
 	class TemplatedObjectFactoryWrapper
 	{
 	public:
-		//×¢²áÀàĞÍ
+		//æ³¨å†Œç±»å‹
 		template<typename TBase, typename TObject, typename TOBJFLG>
 		static void RegisteredOjbect(const TOBJFLG& flg)
 		{
@@ -77,21 +77,21 @@ namespace shared
 				TemplatedObjectFactory<TBase, TDecayType>::GetInstance()->AddCreateFunction<TObject>(flg);
 			}				
 		}
-		//´´½¨º¬ÒıÓÃ¼ÆÊıµÄÊµÀı
+		//åˆ›å»ºå«å¼•ç”¨è®¡æ•°çš„å®ä¾‹
 		template<typename TBase, typename TFLG>
 		static auto InstantiateSharedRegisteredOjbect(const TFLG& flag)->std::shared_ptr<TBase>
 		{
 			using TDecayType = typename std::decay<TFLG>::type;
 			return TemplatedObjectFactory<TBase, TDecayType>::GetInstance()->CreateSharedObject(flag);
 		}
-		//´´½¨ÊµÀı
+		//åˆ›å»ºå®ä¾‹
 		template<typename TBase, typename TFLG>
 		static auto InstantiateRegisteredOjbect(const TFLG& flag)->TBase*
 		{
 			using TDecayType = typename std::decay<TFLG>::type;
 			return TemplatedObjectFactory<TBase, TDecayType>::GetInstance()->CreateObject(flag);
 		}
-		//´´½¨ËùÓĞÒÑ×¢²áÎª TBase Óë TFLG Îª±êÊ¶µÄµÄÊµÀı
+		//åˆ›å»ºæ‰€æœ‰å·²æ³¨å†Œä¸º TBase ä¸ TFLG ä¸ºæ ‡è¯†çš„çš„å®ä¾‹
 		template<typename TBase, typename TFLG>
 		static auto InstantiateAllRegisteredSharedOjbect()->std::list<std::shared_ptr<TBase>>
 		{

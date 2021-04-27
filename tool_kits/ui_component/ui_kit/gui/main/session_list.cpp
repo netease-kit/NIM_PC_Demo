@@ -1,9 +1,11 @@
-﻿#include "session_list.h"
+#include "stdafx.h"
+#include "session_list.h"
 #include "module/session/session_manager.h"
 #include "gui/main/team_event_form.h"
 #include "duilib/Utils/MultiLangSupport.h"
 #include "ui_kit_base/invoke_safe_callback.h"
 #include "export/nim_ui_session_list_manager.h"
+
 namespace nim_comp
 {
 

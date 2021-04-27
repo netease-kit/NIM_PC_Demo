@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "drag_drop.h"
 #include <shlobj.h>
 #include <atlbase.h>

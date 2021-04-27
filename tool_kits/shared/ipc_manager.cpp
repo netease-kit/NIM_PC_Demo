@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "ipc_manager.h"
 #include "base/macros.h"
 

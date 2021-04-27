@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2017, NetEase Inc. All rights reserved.
+// Copyright (c) 2017, NetEase Inc. All rights reserved.
 //
 // Author: Redrain
 // Date: 2017/03/31

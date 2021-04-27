@@ -9,7 +9,7 @@ namespace shared
 {
 namespace tools
 {
-// ÔÚFrameworkThreadµÄÏß³Ì¹ı³ÌÖĞµ÷ÓÃ
+// åœ¨FrameworkThreadçš„çº¿ç¨‹è¿‡ç¨‹ä¸­è°ƒç”¨
 void InitTool();
 // os
 int			GetOSVersion();
@@ -23,14 +23,14 @@ std::wstring FormatBps(double bytes);
 void SplitString(const std::string &str, const std::string &seperator, std::vector<std::string> &array);
 void SplitString(const std::wstring &str, const std::wstring &seperator, std::vector<std::wstring> &array);
 std::string StringReverse(const std::string &input);
-//¹ıÂËÎŞ·¨ÏÔÊ¾µÄ±íÇé×Ö·û
+//è¿‡æ»¤æ— æ³•æ˜¾ç¤ºçš„è¡¨æƒ…å­—ç¬¦
 std::string FilterUCS4(const std::string& str, bool replace_spaces = true);
-//¸ñÊ½»¯SQLÓï¾äÀïµÄ×Ö·û´®£¨Èç×ªÒåµ¥ÒıºÅ£©£¬±ÜÃâÖ´ĞĞSQLÓï¾äÅ×³öÒì³£
+//æ ¼å¼åŒ–SQLè¯­å¥é‡Œçš„å­—ç¬¦ä¸²ï¼ˆå¦‚è½¬ä¹‰å•å¼•å·ï¼‰ï¼Œé¿å…æ‰§è¡ŒSQLè¯­å¥æŠ›å‡ºå¼‚å¸¸
 UTF8String FormatSQLText(const UTF8String &sql_text);
 
 // regex
 bool IsMobilePhoneNumber(const std::string &str);
-//ºÅÂëÄÜ·ñ·¢¶ÌĞÅ
+//å·ç èƒ½å¦å‘çŸ­ä¿¡
 bool IsChinaPhoneNumber(const std::string &str);
 bool IsAuthCode(const std::string &str);
 
@@ -40,7 +40,7 @@ std::wstring GetResourcePath(void);
 void MakeExtendPath(std::wstring &path);
 void ClearFile(const wchar_t *path, long file_length_limit);
 bool FilePathIsExist(const std::string &utf8_filepath_in, bool is_directory);
-// ²ÉÓÃµİ¹éµÄ·½Ê½²éÕÒÖ¸¶¨Ä¿ÏÂµÄÎÄ¼ş
+// é‡‡ç”¨é€’å½’çš„æ–¹å¼æŸ¥æ‰¾æŒ‡å®šç›®ä¸‹çš„æ–‡ä»¶
 bool FindFile(const std::wstring &dir,const std::wstring &file_desc,std::wstring &file_path);
 
 bool CompressFile(const std::wstring &file_path, std::string &compressed_data);
@@ -55,40 +55,40 @@ std::wstring EnsureValidFileName(const std::wstring &file_name,
 int CalcAvg(const std::vector<int> &vec, bool is_revise = true);
 int CalcStDev(const std::vector<int> &vec);
 
-// ´ò¿ªÍøÖ·
+// æ‰“å¼€ç½‘å€
 void SafeOpenUrl(const std::wstring &url, int show_cmd);
 void SafeOpenUrlEx(const std::string &url, int show_cmd);
 
 bool RestartComputer();
 bool RunAppWithRedirection(const std::wstring &app_path, const std::wstring &app_cmd, std::string &output);
 
-// Éú³ÉÊ±¼ä´Á£¬¾«¶ÈºÁÃë
+// ç”Ÿæˆæ—¶é—´æˆ³ï¼Œç²¾åº¦æ¯«ç§’
 std::string GenerateTimeStamp();
 
 //Register Server
 BOOL DllRegisterServer(LPCTSTR lpszFileName);
 BOOL DllUnregisterServer(LPCTSTR lpszFileName);
 
-// ¼ÆËãÎÄ¼şmd5
+// è®¡ç®—æ–‡ä»¶md5
 void CalculateFileMd5(const std::wstring& file_path, std::string& md5_value);
 
-// ½ø³ÌÍ¨ĞÅmessage
+// è¿›ç¨‹é€šä¿¡message
 void RegisterShowWndForgroudMessage();
 UINT GetShowWndForgroudMessageID();
 
-//»ñÈ¡Í¼Æ¬ÀàĞÍ¶ÔÓ¦µÄCLSID
+//è·å–å›¾ç‰‡ç±»å‹å¯¹åº”çš„CLSID
 bool GetImageCLSID(const wchar_t* format, CLSID* pCLSID);
 
-//»ñÈ¡ÎïÀíÍø¿¨macµØÖ·
+//è·å–ç‰©ç†ç½‘å¡macåœ°å€
 //std::string GetDevInfoMac();
-//»ñÈ¡Ó²ÅÌĞòÁĞºÅ
+//è·å–ç¡¬ç›˜åºåˆ—å·
 //std::string GetDevInfoHardDisk();
-//»ñÈ¡Ö÷°åĞòÁĞºÅ
+//è·å–ä¸»æ¿åºåˆ—å·
 //std::string GetDevInfoBIOS();
-//»ñÈ¡Éè±¸uuid
+//è·å–è®¾å¤‡uuid
 //std::string GetDevInfoUUID();
 
-//±éÀúÎÄ¼şÏÂµÄÎÄ¼ş£¨½öÏŞµÚÒ»²ã£©
+//éå†æ–‡ä»¶ä¸‹çš„æ–‡ä»¶ï¼ˆä»…é™ç¬¬ä¸€å±‚ï¼‰
 struct FileItem
 {
 	std::wstring file_;
@@ -102,9 +102,9 @@ typedef std::vector<FileItem> FileItemVector;
 class File
 {
 public:
-	//dir×îºó²»ĞèÒª"\\"
+	//diræœ€åä¸éœ€è¦"\\"
 	static void GetFolder(const std::wstring &dir, StringVector &out, bool full_path = false); 
-	//dir×îºó²»ĞèÒª"\\"
+	//diræœ€åä¸éœ€è¦"\\"
 	static void GetFile(const std::wstring &dir, std::vector<FileItem> &out, bool full_path = false); 
 };
 

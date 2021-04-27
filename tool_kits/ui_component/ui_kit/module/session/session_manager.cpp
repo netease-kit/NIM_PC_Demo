@@ -1,4 +1,5 @@
-﻿#include "session_manager.h"
+#include "stdafx.h"
+#include "session_manager.h"
 #include "export/nim_ui_session_list_manager.h"
 #include "module/session/force_push_manager.h"
 #include "module/service/mute_black_service.h"
@@ -7,6 +8,7 @@
 #include "gui/session/session_form.h"
 #include "gui/session/session_box.h"
 #include "gui/session/session_dock_def.h"
+
 namespace nim_comp
 {
 SessionManager::SessionManager()

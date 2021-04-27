@@ -1,4 +1,4 @@
-﻿#ifndef SHARED_THREADS_H_
+#ifndef SHARED_THREADS_H_
 #define SHARED_THREADS_H_
 
 // thread ids

@@ -3,7 +3,7 @@
 #include "base/util/string_number_conversions.h"
 
 /////////////////////////////////////////////////////////////////////////////
-//////////////////////////////// —’…´øÈ /////////////////////////////////////
+//////////////////////////////// È¢úËâ≤Âùó /////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 CColorBlock::CColorBlock()
@@ -28,7 +28,7 @@ CColorBlock::~CColorBlock()
 void CColorBlock::Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint)
 {
 	__super::Paint(pRender, rcPaint);
-	// ªÊ÷∆Õ‚øÚ
+	// ÁªòÂà∂Â§ñÊ°Ü
 	DrawColorBlock(pRender->GetDC(), m_rcItem);
 }
 
@@ -63,7 +63,7 @@ void CColorBlock::SetAttribute( const std::wstring& pstrName, const std::wstring
 }
 
 /////////////////////////////////////////////////////////////////////////////
-//////////////////////////////// ª≠À¢∞Â /////////////////////////////////////
+//////////////////////////////// ÁîªÂà∑Êùø /////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 CBrushBlock::CBrushBlock()
@@ -133,7 +133,7 @@ void CBrushBlock::DrawCircleBlock(HDC hdc, const ui::UiRect &rect)
 }
 
 /////////////////////////////////////////////////////////////////////////////
-//////////////////////////////// µ˜…´∞Â /////////////////////////////////////
+//////////////////////////////// Ë∞ÉËâ≤Êùø /////////////////////////////////////
 /////////////////////////////////////////////////////////////////////////////
 
 #define MIN_BRUSH_WIDTH 1
@@ -143,7 +143,7 @@ CColorPalette::CColorPalette()
 {
 	color_palette_ = NULL;
 	selected_color_ = NULL;
-	selected_brush_width_ = MIN_BRUSH_WIDTH; // ƒ¨»œ2px
+	selected_brush_width_ = MIN_BRUSH_WIDTH; // ÈªòËÆ§2px
 	selected_brush_width2_ = MIN_BRUSH_WIDTH2;
 	SetFixedWidth(DUI_LENGTH_AUTO);
 	SetFixedHeight(DUI_LENGTH_AUTO);
@@ -198,7 +198,7 @@ void CColorPalette::InitChildControls()
 			color_block_ctrl = static_cast<CColorBlock*>(m_pWindow->FindControl(ctrl_name.c_str()));
 			if(color_block_ctrl)
 			{
-				color_block_ctrl->AttachSelect(nbase::Bind(&CColorPalette::OnClick, this, std::placeholders::_1)); // ÃÌº”µ„ª˜œÏ”¶
+				color_block_ctrl->AttachSelect(nbase::Bind(&CColorPalette::OnClick, this, std::placeholders::_1)); // Ê∑ªÂä†ÁÇπÂáªÂìçÂ∫î
 				if (i==1)
 				{
 					color_ = color_block_ctrl->GetColor();
@@ -213,7 +213,7 @@ void CColorPalette::InitChildControls()
 			brush_ctrl = static_cast<CBrushBlock*>(m_pWindow->FindControl(ctrl_name.c_str()));
 			if(brush_ctrl)
 			{
-				brush_ctrl->AttachSelect(nbase::Bind(&CColorPalette::OnSelect, this, std::placeholders::_1)); // µ•—°œÏ”¶
+				brush_ctrl->AttachSelect(nbase::Bind(&CColorPalette::OnSelect, this, std::placeholders::_1)); // ÂçïÈÄâÂìçÂ∫î
 			}
 		}
 		ui::Slider* range = static_cast<ui::Slider*>(m_pWindow->FindControl(L"range"));
@@ -238,7 +238,7 @@ void CColorPalette::InitChildControls()
 					nbase::StringToInt(item->GetUTF8Name(), &index); //0_font_index, 1_font_index ...
 					ui::TFontInfo* tfont_info = ui::GlobalManager::GetTFontInfo(index);
 					if (tfont_info)
-						item->SetText(nbase::IntToString16(tfont_info->iSize)); //œ‘ æ◊÷∫≈
+						item->SetText(nbase::IntToString16(tfont_info->iSize)); //ÊòæÁ§∫Â≠óÂè∑
 				}
 			}
 		}
@@ -251,7 +251,7 @@ bool CColorPalette::OnSelect( ui::EventArgs *msg )
 
 	if(sender_name.find(L"brush") == 0)
 	{
-		// ªÒ»°ª≠À¢µƒøÌ∂»
+		// Ëé∑ÂèñÁîªÂà∑ÁöÑÂÆΩÂ∫¶
 		selected_brush_width_ = ((CBrushBlock*)msg->pSender)->GetBrushWidth();
 		selected_brush_width2_ = ((CBrushBlock*)msg->pSender)->GetBrushWidth2();
 	}
@@ -264,7 +264,7 @@ bool CColorPalette::OnClick(ui::EventArgs* param)
 	std::wstring sender_name = param->pSender->GetName();
 	if(sender_name.find(L"color") == 0)
 	{
-		// ªÒ»°—’…´√˚≥∆
+		// Ëé∑ÂèñÈ¢úËâ≤ÂêçÁß∞
 		color_ = ((CColorBlock*)param->pSender)->GetColor();
 		color_name_ = ((CColorBlock*)param->pSender)->GetColorName();
 	}
@@ -309,7 +309,7 @@ int CColorPalette::GetToolbarHeight()
 
 int CColorPalette::GetSelectedFontIndex()
 {
-	int font_index = 3; //ƒ¨»œŒ™16∫≈◊÷
+	int font_index = 3; //ÈªòËÆ§‰∏∫16Âè∑Â≠ó
 	if (font_size_combo_)
 	{
 		ui::ListContainerElement* item = (ui::ListContainerElement*)font_size_combo_->GetItemAt(font_size_combo_->GetCurSel());

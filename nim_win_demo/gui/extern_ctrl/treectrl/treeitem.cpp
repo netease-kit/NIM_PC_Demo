@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "treeitem.h"
 
-
 TreeItemUI::TreeItemUI(ITreeDocItem* doc_item):
 	height_(0),child_height_(0), get_style_height_(nullptr), state_(TreeItemUIState_EXPANDED), doc_item_(doc_item)
 {
@@ -125,13 +124,13 @@ void TreeItemUI::DrawTreeLine(const TreeDocItemPtr& doc_item, ui::IRenderContext
 	
 	ui::CPoint pt_begin(rc.left, rc.top);
 	ui::CPoint pt_end(rc.left, rc.top + rc.GetHeight());
-	//ÏÈ»­¸¸½ÚµãÏß
+	//å…ˆç”»çˆ¶èŠ‚ç‚¹çº¿
 	for (int i = 0; i < doc_item->GetLevel(); i++)
 	{
 		auto node_parent = GetNodeAtDepth(i);
 		if (!IsLast(node_parent))
 		{
-			pRender->DrawLine(ui::UiRect(pt_begin.x, pt_begin.y, pt_end.x, pt_end.y), 1, dwBorderColor);				// ©§										
+			pRender->DrawLine(ui::UiRect(pt_begin.x, pt_begin.y, pt_end.x, pt_end.y), 1, dwBorderColor);				// â”ƒ										
 		}
 		pt_begin.x += space;
 		pt_end.x += space;
@@ -140,14 +139,14 @@ void TreeItemUI::DrawTreeLine(const TreeDocItemPtr& doc_item, ui::IRenderContext
 	ui::CPoint pt_temp_end(pt_end);
 	if (doc_item->GetLevel() == 0)
 	{
-		if (IsLast(GetDocItem()) && IsFirst(GetDocItem()))// ©¥ 
+		if (IsLast(GetDocItem()) && IsFirst(GetDocItem()))// â” 
 		{
 			pt_begin.y += rc.GetHeight() / 2;
 			pt_end.x += space;
 			pt_end.y -= rc.GetHeight() / 2;
 			pRender->DrawLine(ui::UiRect(pt_begin.x, pt_begin.y, pt_end.x, pt_end.y), 1, dwBorderColor);
 		}
-		else if (IsFirst(GetDocItem()))// ©³
+		else if (IsFirst(GetDocItem()))// â”
 		{
 			pt_begin.y += rc.GetHeight() / 2;
 			pRender->DrawLine(ui::UiRect(pt_begin.x, pt_begin.y, pt_end.x, pt_end.y), 1, dwBorderColor);
@@ -155,7 +154,7 @@ void TreeItemUI::DrawTreeLine(const TreeDocItemPtr& doc_item, ui::IRenderContext
 			pt_end.x += space;
 			pRender->DrawLine(ui::UiRect(pt_begin.x, pt_begin.y, pt_end.x, pt_end.y), 1, dwBorderColor);
 		}
-		else if (IsLast(GetDocItem()))// ©»
+		else if (IsLast(GetDocItem()))// â”—
 		{
 			pt_end.y -= rc.GetHeight() / 2;
 			pRender->DrawLine(ui::UiRect(pt_begin.x, pt_begin.y, pt_end.x, pt_end.y), 1, dwBorderColor);
@@ -163,7 +162,7 @@ void TreeItemUI::DrawTreeLine(const TreeDocItemPtr& doc_item, ui::IRenderContext
 			pt_end.x += space;
 			pRender->DrawLine(ui::UiRect(pt_begin.x, pt_begin.y, pt_end.x, pt_end.y), 1, dwBorderColor);
 		}
-		else// ©Ç
+		else// â”£
 		{
 			pRender->DrawLine(ui::UiRect(pt_begin.x, pt_begin.y, pt_end.x, pt_end.y), 1, dwBorderColor);
 			pt_begin.y += rc.GetHeight() / 2;
@@ -174,7 +173,7 @@ void TreeItemUI::DrawTreeLine(const TreeDocItemPtr& doc_item, ui::IRenderContext
 	}
 	else
 	{
-		if (IsLast(GetDocItem()))// ©»
+		if (IsLast(GetDocItem()))// â”—
 		{
 			pt_end.y -= rc.GetHeight() / 2;
 			pRender->DrawLine(ui::UiRect(pt_begin.x, pt_begin.y, pt_end.x, pt_end.y), 1, dwBorderColor);
@@ -182,7 +181,7 @@ void TreeItemUI::DrawTreeLine(const TreeDocItemPtr& doc_item, ui::IRenderContext
 			pt_end.x += space;
 			pRender->DrawLine(ui::UiRect(pt_begin.x, pt_begin.y, pt_end.x, pt_end.y), 1, dwBorderColor);
 		}
-		else// ©Ç
+		else// â”£
 		{
 			pRender->DrawLine(ui::UiRect(pt_begin.x, pt_begin.y, pt_end.x, pt_end.y), 1, dwBorderColor);
 			pt_begin.y += rc.GetHeight() / 2;

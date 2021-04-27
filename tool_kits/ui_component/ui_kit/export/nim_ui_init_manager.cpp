@@ -1,4 +1,5 @@
-﻿#include "nim_ui_init_manager.h"
+#include "stdafx.h"
+#include "nim_ui_init_manager.h"
 #include <thread>
 #include "module/emoji/emoji_info.h"
 #include "module/service/user_service.h"
@@ -15,7 +16,7 @@
 #include "callback/multiport/multiport_push_callback.h"
 #include "callback/subscribe_event/subscribe_event_callback.h"
 #include "shared/modal_wnd/async_do_modal.h"
-#include "nim_p2p_develop_kit.h"
+#include "g2_kit/module/video_manager_g2.h"
 
 namespace nim_ui
 {
@@ -85,8 +86,7 @@ void InitManager::InitUiKit(bool enable_subscribe_event, InitMode mode)
 		nim_comp::SubscribeEventManager::GetInstance()->SetEnabled(enable_subscribe_event);
 
 		//注册P2P组件回调
-		QPath::AddNewEnvironment(QPath::GetAppPath() + L"p2p");
-		if (!nim_p2p::NimP2PDvelopKit::GetInstance()->Init(QPath::GetAppPath() + L"p2p",
+		if (!nim_p2p::NimP2PDvelopKit::GetInstance()->Init(QPath::GetAppPath(),
 			nim_comp::P2PCallback::OnTransferFileRequest,
 			nim_comp::P2PCallback::OnTransferFileSessionStateChangeCallback,
 			nim_comp::P2PCallback::OnTransferFileProgressCallback,
@@ -99,6 +99,7 @@ void InitManager::InitUiKit(bool enable_subscribe_event, InitMode mode)
 	//加载聊天表情
 	nim_comp::emoji::LoadEmoji();
 
+	nim_comp::VideoManagerG2::GetInstance()->Init();
 	init_ = true;
 }
 
@@ -107,9 +108,19 @@ void InitManager::CleanupUiKit()
 	if (!init_)
 		return;
 
+	QLOG_APP(L"CleanupUiKit");
 	nim_p2p::NimP2PDvelopKit::GetInstance()->UnInit();
 	nim_audio::Audio::Cleanup();
 	CancelAllAsyncModalDialogs();
+
+	nbase::WaitableEvent event(true, false);
+
+	nim_comp::VideoManagerG2::GetInstance()->UnInit([&event]() {
+		QLOG_APP(L"Uninit G2 done");
+		event.Signal();
+	});
+
+	event.Wait();
 
 	init_ = false;
 }

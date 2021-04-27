@@ -1,13 +1,13 @@
-// stdafx.h : ±ê×¼ÏµÍ³°üº¬ÎÄ¼şµÄ°üº¬ÎÄ¼ş£¬
-// »òÊÇ¾­³£Ê¹ÓÃµ«²»³£¸ü¸ÄµÄ
-// ÌØ¶¨ÓÚÏîÄ¿µÄ°üº¬ÎÄ¼ş
+// stdafx.h : æ ‡å‡†ç³»ç»ŸåŒ…å«æ–‡ä»¶çš„åŒ…å«æ–‡ä»¶ï¼Œ
+// æˆ–æ˜¯ç»å¸¸ä½¿ç”¨ä½†ä¸å¸¸æ›´æ”¹çš„
+// ç‰¹å®šäºé¡¹ç›®çš„åŒ…å«æ–‡ä»¶
 //
 
 #pragma once
 
 #include "targetver.h"
 
-#define WIN32_LEAN_AND_MEAN             //  ´Ó Windows Í·ÎÄ¼şÖĞÅÅ³ı¼«ÉÙÊ¹ÓÃµÄĞÅÏ¢
+#define WIN32_LEAN_AND_MEAN             //  ä» Windows å¤´æ–‡ä»¶ä¸­æ’é™¤æå°‘ä½¿ç”¨çš„ä¿¡æ¯
 
 #ifndef _WIN64
 #define SUPPORTLOCALPLAYER
@@ -50,9 +50,10 @@
 //third_party
 #include "duilib/UIlib.h"
 #include "json/json.h"
+#include "libyuv.h"
 
 //sdk
-#include "include/nim_cpp_api.h"
+#include "nim_cpp_wrapper/nim_cpp_api.h"
 
 #include "nim_service/module/service/user_service.h"
 #include "nim_service/module/service/http_service.h"

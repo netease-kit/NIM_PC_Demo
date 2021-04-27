@@ -1,4 +1,5 @@
-﻿#include "user.h"
+#include "stdafx.h"
+#include "user.h"
 #include "module/login/login_manager.h"
 
 namespace
@@ -14,7 +15,7 @@ std::wstring GetUserDataPath()
 {
 	std::string account = LoginManager::GetInstance()->GetAccount();
 	assert( !account.empty() );
-	std::wstring user_app_data_dir = QPath::GetUserAppDataDir( account );
+	std::wstring user_app_data_dir = nbase::UTF8ToUTF16(nim::Tool::GetUserAppdataDir(account));
 	return user_app_data_dir;
 }
 

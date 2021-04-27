@@ -1,4 +1,4 @@
-﻿#ifndef SSE_CHECH_H__
+#ifndef SSE_CHECH_H__
 #define SSE_CHECH_H__
 namespace sse_check
 {

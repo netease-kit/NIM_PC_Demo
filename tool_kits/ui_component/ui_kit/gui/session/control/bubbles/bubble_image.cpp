@@ -1,4 +1,5 @@
-﻿#include "bubble_image.h"
+#include "stdafx.h"
+#include "bubble_image.h"
 #include "image_view/src/image_view_manager.h"
 #include "util/user.h"
 #include "shared/zoom_image.h"

@@ -3,9 +3,9 @@
 #include "app_sdk_interface.h"
 namespace app_sdk
 {
-	static const std::string cmd_register_account = "/api/createDemoUser";//×¢²áÕËºÅ
-	static const std::string cmd_get_chatroomlist = "/api/chatroom/homeList";//»ñÈ¡ÁÄÌìÊÒÁĞ±í
-	static const std::string cmd_get_chatroomaddress = "/api/chatroom/requestAddress";//»ñÈ¡ÁÄÌìÊÒÁ¬½ÓµØÖ·
+	static const std::string cmd_register_account = "/api/createDemoUser";//æ³¨å†Œè´¦å·
+	static const std::string cmd_get_chatroomlist = "/api/chatroom/homeList";//è·å–èŠå¤©å®¤åˆ—è¡¨
+	static const std::string cmd_get_chatroomaddress = "/api/chatroom/requestAddress";//è·å–èŠå¤©å®¤è¿æ¥åœ°å€
 	void SDK_PRO::ResponseBase::Parse(const std::string& response) {
 		reply_content_ = response;
 		pro_reply_code_ = nim::kNIMResError;
@@ -76,7 +76,7 @@ namespace app_sdk
 	void SDK_PRO::RequestBase::OnGetRequestHead(std::map<std::string, std::string>& heads) const
 	{
 	};
-	//×¢²áÕËºÅÇëÇó/Ó¦´ğ
+	//æ³¨å†Œè´¦å·è¯·æ±‚/åº”ç­”
 	SDK_PRO::RegisterAccountRequest::RegisterAccountRequest(std::string username, std::string password, std::string nickname) :
 		username_(username), password_(password), nickname_(nickname)
 	{
@@ -126,7 +126,7 @@ namespace app_sdk
 			}
 		}
 	}
-	//»ñÈ¡ÁÄÌìÊÒÁĞ±íÇëÇó/Ó¦´ğ
+	//è·å–èŠå¤©å®¤åˆ—è¡¨è¯·æ±‚/åº”ç­”
 	std::string SDK_PRO::GetChatroomListRequest::OnGetAPI() const
 	{
 		return   cmd_get_chatroomlist;
@@ -176,7 +176,7 @@ namespace app_sdk
 			}			
 		}
 	};
-	//»ñÈ¡ÁÄÌìÊÒÁ¬½ÓµØÖ·ÇëÇó/Ó¦´ğ
+	//è·å–èŠå¤©å®¤è¿æ¥åœ°å€è¯·æ±‚/åº”ç­”
 	SDK_PRO::GetChatroomAddressRequest::GetChatroomAddressRequest() :
 		type_(2), uid_(""), room_id_(0)
 	{

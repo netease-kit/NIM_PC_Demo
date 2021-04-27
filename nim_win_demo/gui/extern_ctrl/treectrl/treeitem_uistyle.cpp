@@ -2,6 +2,7 @@
 #include "treeitem_uistyle.h"
 #include "TreeView.h"
 #include "treeitem.h"
+
 int ITreeItemUIStyle::GetLevel() const
 {
 	if (doc_item_ != nullptr)

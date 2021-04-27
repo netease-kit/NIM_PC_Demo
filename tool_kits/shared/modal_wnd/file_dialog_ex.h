@@ -4,6 +4,7 @@
 #include "duilib/UIlib.h"
 #include <commdlg.h>
 #include "modal_wnd_base.h"
+#include <ShlObj.h>
 
 struct __POSITION {};
 typedef __POSITION* POSITION;
@@ -17,7 +18,8 @@ public:
 	{
 		FDT_None,
 		FDT_OpenFile,
-		FDT_SaveFile
+		FDT_SaveFile,
+        FDT_OpenDir
 	};
 
 	CFileDialogEx(void);
@@ -36,6 +38,7 @@ public:
 
 	void AyncShowOpenFileDlg(FileDialogCallback2 file_dialog_callback1);
 	void AyncShowSaveFileDlg(FileDialogCallback2 file_dialog_callback2);
+    void AsyncShowOpenDirFileDlg(FileDialogCallback2 file_dialog_callback2);
 	virtual void SyncShowModal() override;
 	std::wstring GetPathName();
 	std::wstring GetFileName();
@@ -48,6 +51,7 @@ public:
 
 public:
 	OPENFILENAME m_stOFN;
+    BROWSEINFO m_bi;
 
 private:
 	wchar_t m_szDefExt[64];

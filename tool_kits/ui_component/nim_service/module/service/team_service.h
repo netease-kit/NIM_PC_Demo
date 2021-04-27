@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 //tid, tname
 typedef std::function<void(const std::string&, const std::string&, nim::NIMTeamType)> OnTeamAdd;

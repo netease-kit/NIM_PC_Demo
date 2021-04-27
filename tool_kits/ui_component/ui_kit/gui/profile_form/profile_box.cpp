@@ -109,17 +109,17 @@ namespace nim_comp
 		else
 			user_type = UserService::GetInstance()->GetUserType(m_uinfo.GetAccId());
 
-		if (user_type == -1) // ×Ô¼ºµÄÃûÆ¬
+		if (user_type == -1) // è‡ªå·±çš„åç‰‡
 		{
-			// »ñÈ¡¶à¶ËÍÆËÍ¿ª¹Ø
+			// è·å–å¤šç«¯æ¨é€å¼€å…³
 			nim::Client::GetMultiportPushConfigAsync(&MultiportPushCallback::OnMultiportPushConfigChange);
 
-			head_image_btn->SetMouseEnabled(true); // ¿Éµã»÷Í·Ïñ½øĞĞ¸ü»»
-			btn_modify_info->SetVisible(true); // ÏÔÊ¾¡°±à¼­¡±°´Å¥
-			head_image_btn->SetMouseEnabled(true); // ¿Éµã»÷Í·Ïñ½øĞĞ¸ü»»
+			head_image_btn->SetMouseEnabled(true); // å¯ç‚¹å‡»å¤´åƒè¿›è¡Œæ›´æ¢
+			btn_modify_info->SetVisible(true); // æ˜¾ç¤ºâ€œç¼–è¾‘â€æŒ‰é’®
+			head_image_btn->SetMouseEnabled(true); // å¯ç‚¹å‡»å¤´åƒè¿›è¡Œæ›´æ¢
 
-			FindSubControl(L"only_other")->SetVisible(false);	// µ±ÃûÆ¬ÊÇ×Ô¼ºµÄÊ±ºò£¬Òş²ØÏÂÃæÁ½¿é
-			FindSubControl(L"only_me")->SetVisible(true);		// µ±ÃûÆ¬ÊÇ×Ô¼ºµÄÊ±ºò£¬ÏÔÊ¾¶à¶ËÍÆËÍ¿ª¹Ø
+			FindSubControl(L"only_other")->SetVisible(false);	// å½“åç‰‡æ˜¯è‡ªå·±çš„æ—¶å€™ï¼Œéšè—ä¸‹é¢ä¸¤å—
+			FindSubControl(L"only_me")->SetVisible(true);		// å½“åç‰‡æ˜¯è‡ªå·±çš„æ—¶å€™ï¼Œæ˜¾ç¤ºå¤šç«¯æ¨é€å¼€å…³
 
 			nickname_edit->SetLimitText(10);
 			phone_edit->SetLimitText(13);
@@ -143,8 +143,8 @@ namespace nim_comp
 		}
 		else
 		{
-			FindSubControl(L"only_other")->SetVisible(true);	// µ±ÃûÆ¬ÊÇ×Ô¼ºµÄÊ±ºò£¬ÏÔÊ¾ÏÂÃæÁ½¿é
-			FindSubControl(L"only_me")->SetVisible(false);		// µ±ÃûÆ¬ÊÇ×Ô¼ºµÄÊ±ºò£¬Òş²Ø¶à¶ËÍÆËÍ¿ª¹Ø
+			FindSubControl(L"only_other")->SetVisible(true);	// å½“åç‰‡æ˜¯è‡ªå·±çš„æ—¶å€™ï¼Œæ˜¾ç¤ºä¸‹é¢ä¸¤å—
+			FindSubControl(L"only_me")->SetVisible(false);		// å½“åç‰‡æ˜¯è‡ªå·±çš„æ—¶å€™ï¼Œéšè—å¤šç«¯æ¨é€å¼€å…³
 
 			CheckInMuteBlack();
 			add_or_del->SelectItem(user_type == nim::kNIMFriendFlagNormal ? 0 : 1);
@@ -173,7 +173,7 @@ namespace nim_comp
 
 			if (have_mute_right_)
 			{
-				//TODO(litianyi) Í¬²½¶ÂÈû½Ó¿Ú²âÊÔ
+				//TODO(litianyi) åŒæ­¥å µå¡æ¥å£æµ‹è¯•
 				//nim::TeamMemberProperty prop = nim::Team::QueryTeamMemberBlock(tid_, m_uinfo.GetAccId());
 				//mute_switch->Selected(prop.IsMute());
 
@@ -214,7 +214,7 @@ namespace nim_comp
 
 		if (msg->Type == ui::kEventTab)
 		{
-			if (btn_modify_info->IsVisible()) // µ±Ç°²»ÊÇ±à¼­Ò³Ãæ
+			if (btn_modify_info->IsVisible()) // å½“å‰ä¸æ˜¯ç¼–è¾‘é¡µé¢
 				return false;
 
 			if (name == L"nickname_edit")
@@ -360,7 +360,7 @@ namespace nim_comp
 
 	void ProfileBox::OnModifyHeaderComplete(const std::string& id, const std::string &url)
 	{
-		// Í·ÏñÉÏ´«³É¹¦£¬¿ªÊ¼¸üĞÂÓÃ»§ĞÅÏ¢
+		// å¤´åƒä¸Šä¼ æˆåŠŸï¼Œå¼€å§‹æ›´æ–°ç”¨æˆ·ä¿¡æ¯
 		auto update_cb = nbase::Bind(&ProfileBox::UpdateUInfoHeaderCallback, this, std::placeholders::_1);
 		UserService::GetInstance()->InvokeUpdateMyPhoto(url, update_cb);
 	}
@@ -410,7 +410,7 @@ namespace nim_comp
 		signature_edit->SetVisible(to_modify);
 		if (to_modify)
 		{
-			InitBirthdayCombo(); //³õÊ¼»¯ÉúÈÕÏÂÀ­¿ò£¬ÔÚÏÂÃæÉèÖÃ³õÊ¼Öµ
+			InitBirthdayCombo(); //åˆå§‹åŒ–ç”Ÿæ—¥ä¸‹æ‹‰æ¡†ï¼Œåœ¨ä¸‹é¢è®¾ç½®åˆå§‹å€¼
 			InitEdits();
 			nickname_error_tip->SetVisible(false);
 		}
@@ -577,7 +577,7 @@ namespace nim_comp
 
 		std::set<int> big_months({ 1, 3, 5, 7, 8, 10, 12 });
 		std::set<int> small_months({ 4, 6, 9, 11 });
-		if (big_months.find(month) != big_months.cend()) //´óÔÂ
+		if (big_months.find(month) != big_months.cend()) //å¤§æœˆ
 		{
 			for (int i = 28; i < 31; i++)
 			{
@@ -585,7 +585,7 @@ namespace nim_comp
 				if (item) item->SetVisible(true);
 			}
 		}
-		else if (small_months.find(month) != small_months.cend()) //Ğ¡ÔÂ
+		else if (small_months.find(month) != small_months.cend()) //å°æœˆ
 		{
 			for (int i = 28; i < 30; i++)
 			{
@@ -599,7 +599,7 @@ namespace nim_comp
 			if (birth_day_combo->GetCurSel() > 29)
 				birth_day_combo->SelectItem(29);
 		}
-		else //¶şÔÂ
+		else //äºŒæœˆ
 		{
 			for (int i = 29; i < 31; i++)
 			{
@@ -686,11 +686,11 @@ namespace nim_comp
 	{
 		SetShowName();
 
-		head_image_btn->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(m_uinfo.GetAccId())); //Í·Ïñ
+		head_image_btn->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(m_uinfo.GetAccId())); //å¤´åƒ
 
 		if (m_uinfo.ExistValue(nim::kUserNameCardKeyGender))
 		{
-			switch (m_uinfo.GetGender()) // êÇ³ÆÓÒ±ßµÄĞÔ±ğÍ¼±ê
+			switch (m_uinfo.GetGender()) // æ˜µç§°å³è¾¹çš„æ€§åˆ«å›¾æ ‡
 			{
 			case UG_MALE:
 				sex_icon->Selected(false);
@@ -707,16 +707,16 @@ namespace nim_comp
 		}
 
 		std::wstring account = nbase::StringPrintf(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_PROFILE_FORM_ACCOUNT_").c_str(), nbase::UTF8ToUTF16(m_uinfo.GetAccId()).c_str());
-		user_id_label->SetText(account);//ÕÊºÅ
+		user_id_label->SetText(account);//å¸å·
 
 		if (m_uinfo.ExistValue(nim::kUserNameCardKeyBirthday))
-			birthday_label->SetText(nbase::UTF8ToUTF16(m_uinfo.GetBirth())); //ÉúÈÕ
+			birthday_label->SetText(nbase::UTF8ToUTF16(m_uinfo.GetBirth())); //ç”Ÿæ—¥
 		if (m_uinfo.ExistValue(nim::kUserNameCardKeyMobile))
-			phone_label->SetText(nbase::UTF8ToUTF16(m_uinfo.GetMobile())); //ÊÖ»ú
+			phone_label->SetText(nbase::UTF8ToUTF16(m_uinfo.GetMobile())); //æ‰‹æœº
 		if (m_uinfo.ExistValue(nim::kUserNameCardKeyEmail))
-			email_label->SetText(nbase::UTF8ToUTF16(m_uinfo.GetEmail())); //ÓÊÏä
+			email_label->SetText(nbase::UTF8ToUTF16(m_uinfo.GetEmail())); //é‚®ç®±
 		if (m_uinfo.ExistValue(nim::kUserNameCardKeySignature))
-			signature_label->SetText(nbase::UTF8ToUTF16(m_uinfo.GetSignature())); //Ç©Ãû
+			signature_label->SetText(nbase::UTF8ToUTF16(m_uinfo.GetSignature())); //ç­¾å
 	}
 
 	void ProfileBox::SetShowName()
@@ -726,26 +726,26 @@ namespace nim_comp
 		show_name_label->SetText(show_name);
 		ui::MutiLanSupport* mls = ui::MutiLanSupport::GetInstance();
 		std::wstring title = nbase::StringPrintf(mls->GetStringViaID(L"STRID_PROFILE_FORM_WHOSE_NAMECARD").c_str(), show_name.c_str());
-		SetTaskbarTitle(title); //ÈÎÎñÀ¸±êÌâ
+		SetTaskbarTitle(title); //ä»»åŠ¡æ æ ‡é¢˜
 
-		if (user_type == nim::kNIMFriendFlagNormal) //ºÃÓÑ
+		if (user_type == nim::kNIMFriendFlagNormal) //å¥½å‹
 		{
 			std::wstring alias = user_service->GetFriendAlias(m_uinfo.GetAccId());
 
-			alias_box->SetVisible(true); //¿ÉÒÔÉèÖÃ±¸×¢Ãû
+			alias_box->SetVisible(true); //å¯ä»¥è®¾ç½®å¤‡æ³¨å
 			if (!alias_edit->IsFocused())
-				alias_edit->SetText(alias); //±¸×¢Ãû±à¼­¿òÏÔÊ¾±¸×¢Ãû
+				alias_edit->SetText(alias); //å¤‡æ³¨åç¼–è¾‘æ¡†æ˜¾ç¤ºå¤‡æ³¨å
 
 			if (!alias.empty())
 			{
-				nickname_label->SetVisible(true); //ÕËºÅÏÂÃæÏÔÊ¾êÇ³Æ
+				nickname_label->SetVisible(true); //è´¦å·ä¸‹é¢æ˜¾ç¤ºæ˜µç§°
 				std::wstring nickname = nbase::StringPrintf(mls->GetStringViaID(L"STRID_PROFILE_FORM_NICKNAME_").c_str(), user_service->GetUserName(m_uinfo.GetAccId(), false).c_str());
 				nickname_label->SetText(nickname);
 			}
 			else
 				nickname_label->SetVisible(false);
 		}
-		else //²»ÊÇºÃÓÑ£¬²»ÏÔÊ¾±¸×¢Ãû
+		else //ä¸æ˜¯å¥½å‹ï¼Œä¸æ˜¾ç¤ºå¤‡æ³¨å
 		{
 			nickname_label->SetVisible(false);
 			alias_box->SetVisible(false);
@@ -755,13 +755,13 @@ namespace nim_comp
 	void ProfileBox::InitEdits()
 	{
 		if (m_uinfo.ExistValue(nim::kUserNameCardKeyName))
-			nickname_edit->SetText(nbase::UTF8ToUTF16(m_uinfo.GetName())); //êÇ³Æ
-		if (sex_icon->IsVisible() && m_uinfo.ExistValue(nim::kUserNameCardKeyGender))//ĞÔ±ğ
+			nickname_edit->SetText(nbase::UTF8ToUTF16(m_uinfo.GetName())); //æ˜µç§°
+		if (sex_icon->IsVisible() && m_uinfo.ExistValue(nim::kUserNameCardKeyGender))//æ€§åˆ«
 			sex_option->SelectItem(sex_icon->IsSelected());
 
 		if (m_uinfo.ExistValue(nim::kUserNameCardKeyBirthday))
 		{
-			int birth[3] = { 0, 0, 0 }; //ÉúÈÕ
+			int birth[3] = { 0, 0, 0 }; //ç”Ÿæ—¥
 			size_t pos = std::string::npos;
 			int count = 0;
 			do
@@ -786,11 +786,11 @@ namespace nim_comp
 		}
 
 		if (m_uinfo.ExistValue(nim::kUserNameCardKeyMobile))
-			phone_edit->SetText(nbase::UTF8ToUTF16(m_uinfo.GetMobile()));//ÊÖ»ú
+			phone_edit->SetText(nbase::UTF8ToUTF16(m_uinfo.GetMobile()));//æ‰‹æœº
 		if (m_uinfo.ExistValue(nim::kUserNameCardKeyEmail))
-			email_edit->SetText(nbase::UTF8ToUTF16(m_uinfo.GetEmail()));//ÓÊÏä
+			email_edit->SetText(nbase::UTF8ToUTF16(m_uinfo.GetEmail()));//é‚®ç®±
 		if (m_uinfo.ExistValue(nim::kUserNameCardKeySignature))
-			signature_edit->SetText(nbase::UTF8ToUTF16(m_uinfo.GetSignature()));//Ç©Ãû
+			signature_edit->SetText(nbase::UTF8ToUTF16(m_uinfo.GetSignature()));//ç­¾å
 	}
 	void ProfileBox::SetTaskbarTitle(const std::wstring &title)
 	{

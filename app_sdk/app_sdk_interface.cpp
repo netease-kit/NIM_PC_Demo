@@ -4,6 +4,7 @@
 #include "protocol/sdk_pro.h"
 #include "base/http/sdk_http_manager.h"
 #include "app_sdk_config_helper.h"
+
 namespace app_sdk
 {
 	const std::map<std::string, std::tuple< std::string, NimServerConfType>> key_use_nim_server_conf = {
@@ -134,7 +135,7 @@ bool AppSDKInterface::IsSafeUrl(const std::string& safe_url)
 
 std::string AppSDKInterface::GetReferrer()
 {
-	// ¿ª·¢ÕßÇë¸ù¾Ý×Ô¼ºÊµ¼ÊÇé¿öÀ´»ñÈ¡¸ÃÓòÃûµØÖ·
+	// å¼€å‘è€…è¯·æ ¹æ®è‡ªå·±å®žé™…æƒ…å†µæ¥èŽ·å–è¯¥åŸŸååœ°å€
 	return "http://yunxin_referer";
 }
 
@@ -144,16 +145,16 @@ std::string AppSDKInterface::GetAppHost()
 }
 void AppSDKInterface::InvokeFormatAccountAndPassword(const std::string &username, const std::string &password, const OnFormatAccountAndPasswordCallback& cb)
 {
-	//Èç¹ûÊÇÔÆÐÅµÄdemo password»á½øÐÐmd5±àÂë£¬Èç¹ûÊÇ¿ª·¢Õß×Ô¼ºµÄÓ¦ÓÃ¿ÉÒÔÒýÈëÆäËü·½Ê½
-	//ÉõÖÁ¿ÉÒÔ×ªµ½¿ª·¢Õß×Ô¼ºµÄÓ¦ÓÃ·þÎñÆ÷£¬ÄÃµ½ÕæÕýµÄaccid Óëpassword,¿ÉÒÔÒì²½²Ù×÷£¬µ«´ËÊ± userÏà¹ØÊý¾Ý£¨userÄ¿Â¼¡¢imageÄ¿Â¼ÒÔ¼°ÈÕÖ¾µÈ£©²¢Î´´´½¨
+	//å¦‚æžœæ˜¯äº‘ä¿¡çš„demo passwordä¼šè¿›è¡Œmd5ç¼–ç ï¼Œå¦‚æžœæ˜¯å¼€å‘è€…è‡ªå·±çš„åº”ç”¨å¯ä»¥å¼•å…¥å…¶å®ƒæ–¹å¼
+	//ç”šè‡³å¯ä»¥è½¬åˆ°å¼€å‘è€…è‡ªå·±çš„åº”ç”¨æœåŠ¡å™¨ï¼Œæ‹¿åˆ°çœŸæ­£çš„accid ä¸Žpassword,å¯ä»¥å¼‚æ­¥æ“ä½œï¼Œä½†æ­¤æ—¶ userç›¸å…³æ•°æ®ï¼ˆuserç›®å½•ã€imageç›®å½•ä»¥åŠæ—¥å¿—ç­‰ï¼‰å¹¶æœªåˆ›å»º
 	bool password_use_md5 = IsNimDemoAppKey(GetAppKey());
 	if (!password_use_md5)
 		password_use_md5 = (HasconfigValue("kNIMPasswordMD5") && (std::atoi(GetConfigValue("kNIMPasswordMD5").c_str()) != 0));
-	cb(!(username.empty() || password.empty()), username, (password_use_md5 ? QString::GetMd5(password) : password));
+	cb(!(username.empty() || password.empty()), username, (password_use_md5 ? nim::Tool::GetMd5(password) : password));
 }
 void AppSDKInterface::InvokeRegisterAccount(const std::string &username, const std::string &password, const std::string &nickname, const OnRegisterAccountCallback& cb)
 {
-	//ÔÚ¹¹Ôìº¯ÊýÖÐ´«ÈëÇëÇó²ÎÊý
+	//åœ¨æž„é€ å‡½æ•°ä¸­ä¼ å…¥è¯·æ±‚å‚æ•°
 	auto&& req = app_sdk::CreateHttpRequest<app_sdk_pro::RegisterAccountReq>(username,password,nickname);
 
 	SDKManager::GetInstance()->Invoke_Request<app_sdk_pro::RegisterAccountReq, app_sdk_pro::RegisterAccountRsp>(req, 
@@ -202,7 +203,7 @@ void AppSDKInterface::LoadConfig()
 		auto attribute = root->FirstAttribute();
 		while (attribute != nullptr)
 		{
-			config_map_[attribute->Name()] = attribute->ValueStr();
+            config_map_[attribute->Name()] = attribute->Value();
 			attribute = attribute->Next();
 		}
 	}

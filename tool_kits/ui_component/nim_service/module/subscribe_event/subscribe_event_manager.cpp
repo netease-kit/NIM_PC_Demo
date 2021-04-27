@@ -1,4 +1,5 @@
-﻿#include "subscribe_event_manager.h"
+#include "stdafx.h"
+#include "subscribe_event_manager.h"
 #include "module/service/user_service.h"
 #include "module/service/session_service.h"
 

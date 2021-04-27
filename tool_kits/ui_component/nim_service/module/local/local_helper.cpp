@@ -1,4 +1,5 @@
-﻿#include "local_helper.h"
+#include "stdafx.h"
+#include "local_helper.h"
 #include "shared/base.h"
 #include "shared/xml_util.h"
 

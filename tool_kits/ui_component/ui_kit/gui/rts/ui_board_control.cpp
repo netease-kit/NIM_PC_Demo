@@ -1,4 +1,5 @@
-﻿#include "ui_board_control.h"
+#include "stdafx.h"
+#include "ui_board_control.h"
 
 namespace ui
 {

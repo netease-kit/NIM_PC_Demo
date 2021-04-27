@@ -1,4 +1,4 @@
-﻿#ifndef _UIBITMAPCONTROL_H_
+#ifndef _UIBITMAPCONTROL_H_
 #define _UIBITMAPCONTROL_H_
 #pragma once
 

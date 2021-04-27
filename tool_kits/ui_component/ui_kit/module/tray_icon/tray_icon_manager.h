@@ -16,7 +16,7 @@ namespace nim_comp
 		virtual bool OnRightDoubleClick(){ return false; }
 	};
 	/** @class TrayIconManager
-	* @brief ÍĞÅÌÍ¼±ê¹ÜÀà
+	* @brief æ‰˜ç›˜å›¾æ ‡ç®¡ç±»
 	* @copyright (c) 2015, NetEase Inc. All rights reserved
 	* @date 2016/10/12
 	*/
@@ -30,50 +30,50 @@ namespace nim_comp
 	public:
 		void AddTrayIconEventHandler(ITrayIconEventHandler* handler);
 		/**
-		* Ïú»ÙÍĞÅÌÍ¼±ê
-		* @return void	ÎŞ·µ»ØÖµ
+		* é”€æ¯æ‰˜ç›˜å›¾æ ‡
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void Destroy();
 
 		/**
-		* ÉèÖÃÍĞÅÌÍ¼±êºÍÌáÊ¾ÎÄ±¾
-		* @param[in] icon Í¼±ê¾ä±ú
-		* @param[in] tray_icon_text ÌáÊ¾ÎÄ±¾
-		* @return void	ÎŞ·µ»ØÖµ
+		* è®¾ç½®æ‰˜ç›˜å›¾æ ‡å’Œæç¤ºæ–‡æœ¬
+		* @param[in] icon å›¾æ ‡å¥æŸ„
+		* @param[in] tray_icon_text æç¤ºæ–‡æœ¬
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void SetTrayIcon(HICON icon, const std::wstring& tray_icon_text);
 
 		/**
-		* ´Ó×ÊÔ´ÖĞ¼ÓÔØÒ»×éÍ¼±ê×ÊÔ´²¢»º´æÆğÀ´
-		* @param[in] icon_res_start_index ÒªÍ¼±ê×ÊÔ´µÄµÚÒ»¸ö×ÊÔ´µÄID
-		* @param[in] count Òª¼ÓÔØµÄÍ¼±êµÄÊıÁ¿
-		* @return void	ÎŞ·µ»ØÖµ
+		* ä»èµ„æºä¸­åŠ è½½ä¸€ç»„å›¾æ ‡èµ„æºå¹¶ç¼“å­˜èµ·æ¥
+		* @param[in] icon_res_start_index è¦å›¾æ ‡èµ„æºçš„ç¬¬ä¸€ä¸ªèµ„æºçš„ID
+		* @param[in] count è¦åŠ è½½çš„å›¾æ ‡çš„æ•°é‡
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void LoadIconList(int icon_res_start_index, int count);
 
 		/**
-		* ÉèÖÃÍĞÅÌ¶¯»­ÖĞ£¬ÓÃÓÚ¶¯»­Ğ§¹ûÍ¼±êÖ¡µÄË÷ÒıºÅ
-		* @param[in] aniIndex Í¼±êÖ¡Ë÷ÒıºÅÊı×é
-		* @param[in] anim_escape_time ¶¯»­¼ä¸ôÊ±¼ä
-		* @return void	ÎŞ·µ»ØÖµ
+		* è®¾ç½®æ‰˜ç›˜åŠ¨ç”»ä¸­ï¼Œç”¨äºåŠ¨ç”»æ•ˆæœå›¾æ ‡å¸§çš„ç´¢å¼•å·
+		* @param[in] aniIndex å›¾æ ‡å¸§ç´¢å¼•å·æ•°ç»„
+		* @param[in] anim_escape_time åŠ¨ç”»é—´éš”æ—¶é—´
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void SetAnimateTray(const std::vector<int>& aniIndex, int anim_escape_time);
 
 		/**
-		* ¿ªÊ¼ÍĞÅÌÍ¼±ê¶¯»­Ğ§¹û
-		* @return void	ÎŞ·µ»ØÖµ
+		* å¼€å§‹æ‰˜ç›˜å›¾æ ‡åŠ¨ç”»æ•ˆæœ
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void StartTrayIconAnimate();
 
 		/**
-		* Í£Ö¹ÍĞÅÌÍ¼±ê¶¯»­Ğ§¹û
-		* @return void	ÎŞ·µ»ØÖµ
+		* åœæ­¢æ‰˜ç›˜å›¾æ ‡åŠ¨ç”»æ•ˆæœ
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void StopTrayIconAnimate();
 
 		/**
-		* »ñÈ¡ÈÎÎñÀ¸Í¼±ê´´½¨Íê³ÉµÄÏûÏ¢µÄÏûÏ¢Öµ
-		* @return UINT ÏûÏ¢Öµ
+		* è·å–ä»»åŠ¡æ å›¾æ ‡åˆ›å»ºå®Œæˆçš„æ¶ˆæ¯çš„æ¶ˆæ¯å€¼
+		* @return UINT æ¶ˆæ¯å€¼
 		*/
 		UINT GetTaskbarCreatedMsgId();
 

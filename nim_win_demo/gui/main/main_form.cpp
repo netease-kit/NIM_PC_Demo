@@ -1,4 +1,5 @@
-﻿#include "main_form.h"
+#include "stdafx.h"
+#include "main_form.h"
 
 using namespace ui;
 
