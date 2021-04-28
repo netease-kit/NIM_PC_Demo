@@ -34,7 +34,7 @@ jobs:
       run: cmake tool_kits -B ${{env.GITHUB_WORKSPACE}}/build_setup -T"v141_xp" -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}}
       
     - name: Build nim demo installer
-      run: cmake --build build_setup --config ${{env.BUILD_CONFIGURATION}} --target installer
+      run: cmake --build ${{env.GITHUB_WORKSPACE}}/build_setup --config ${{env.BUILD_CONFIGURATION}} --target installer
 
     - uses: actions/upload-artifact@v2
       with:
