@@ -24,7 +24,7 @@ jobs:
     - name: Add msbuild to PATH
       uses: microsoft/setup-msbuild@v1.0.2
       with:
-        vs-version: '[15.9]'
+        vs-version: '[15.9,16.5)'
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
