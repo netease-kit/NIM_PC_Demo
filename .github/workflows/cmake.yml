@@ -13,15 +13,13 @@ env:
 
 jobs:
   build:
-    runs-on: windows-latest
+    runs-on: windows-2016
 
     steps:
     - uses: actions/checkout@v2
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
-      with:
-        vs-version: '15'
       
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
