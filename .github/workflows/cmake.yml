@@ -1,37 +1,31 @@
-name: CMake
+name: MSBuild
 
-on:
-  push:
-    branches: [ develop ]
-  pull_request:
-    branches: [ develop ]
+on: [push]
 
 env:
-  # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
-  BUILD_TYPE: Release
+  # Path to the solution file relative to the root of the project.
+  SOLUTION_FILE_PATH: .
+
+  # Configuration type to build.
+  # You can convert this to a build matrix if you need coverage of multiple configuration types.
+  # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
+  BUILD_CONFIGURATION: Release
 
 jobs:
   build:
-    # The CMake configure and build commands are platform agnostic and should work equally
-    # well on Windows or Mac.  You can convert this to a matrix build if you need
-    # cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
     runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v2
 
-    - name: Add msbuild to PATH
-      uses: microsoft/setup-msbuild@v1.0.2
-      with:
-        vs-version: '[15.9,16.5)'
-
+    - name: Add MSBuild to PATH
+      uses: microsoft/setup-msbuild@v1
+      
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -B ${{env.GITHUB_WORKSPACE}}/build -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}}
 
     - name: Build
       # Build your program with the given configuration
-      run: cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --target install
-      
+      run: cmake --build ${{env.GITHUB_WORKSPACE}}/build --config ${{env.BUILD_CONFIGURATION}} --target install
