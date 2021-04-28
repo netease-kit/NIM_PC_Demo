@@ -21,11 +21,8 @@ git clone https://github.com/netease-im/NIM_PC_Demo.git --depth 1
 执行如下命令进行工程初始化
 
 ```bash
-# 进入工程目录并创建编译缓存目录
-cd NIM_PC_Demo
-md build && cd build
 # 初始化项目
-cmake .. -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Debug
+cmake -B build -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Debug
 ```
 
 执行如上命令后，会自动下载依赖的三方库文件并解压到工程目录下，如执行无误您将看到如下信息：
@@ -60,7 +57,7 @@ cmake .. -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Debug
 您可以通过打开 build 目录下的 `nim_win_demo.sln` 来进行调试或通过 CMake 命令直接编译：
 
 ```bash
-cmake --build . --config Debug --target install
+cmake --build build --config Debug --target install
 ```
 
 编译完成后会自动拷贝程序到代码根目录的 bin 文件夹下：
@@ -78,8 +75,8 @@ Installing: C:/Jks/workspace/NeIM_Demo/bin/uninstall.exe
 
 ```bash
 # 请确保当前在 build 目录下
-cmake .. -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Release
-cmake --build . --config Release --target install
+cmake -B build -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release --target install
 ```
 
 ## 交流
