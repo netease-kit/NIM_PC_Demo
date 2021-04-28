@@ -63,6 +63,7 @@ IF (GIT_TAG STREQUAL "")
 ENDIF ()
 git_describe(GIT_DESCRIBE)
 git_commit_counts(GIT_COMMIT_COUNT)
+SET(GIT_TAG "8.4.0")
 STRING(REPLACE "." "," GIT_TAG_WITH_COMMA ${GIT_TAG})
 MESSAGE(STATUS "Current git tag: ${GIT_TAG}, commit count: ${GIT_COMMIT_COUNT}, describe: ${GIT_DESCRIBE}")
 
