@@ -89,7 +89,7 @@ cmake --build build --config Release --target install
 Demo 支持使用音视频 2.0 能力来展示视频、音频通话场景，您可以在初始化 CmMake 脚本时增加参数 `BUILD_WITH_NERTC_G2` 来开启该功能，如：
 
 ```
-cmake . -B build -G"Visual Studio 2017" -T"v141_xp" -DBUILD_WITH_NERTC_G2 -DCMAKE_BUILD_TYPE=Debug
+cmake . -B build -G"Visual Studio 2017" -T"v141_xp" -DBUILD_WITH_NERTC_G2=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build build --config Debug --target install
 ```
 
