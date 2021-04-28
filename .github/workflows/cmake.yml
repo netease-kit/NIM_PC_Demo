@@ -38,5 +38,5 @@ jobs:
 
     - uses: actions/upload-artifact@v2
       with:
-        name: nim_demo_installer
+        name: PC_Demo_Setup
         path: tool_kits/install/bin/*.exe

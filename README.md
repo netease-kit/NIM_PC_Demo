@@ -8,6 +8,11 @@
 
 ![preview](PREVIEW.png)
 
+## 最低要求
+
+ - CMake 3.10 或以上版本
+ - Visual Studio 2017 或以上版本
+
 ## 开发步骤
 
 NIM Demo 从 8.4.0 版本开始使用 CMake 管理工程结构，您需要下载安装 CMake 并安装到系统中：[https://cmake.org/download/](https://cmake.org/download/)
@@ -77,6 +82,15 @@ Installing: C:/Jks/workspace/NeIM_Demo/bin/uninstall.exe
 # 请确保当前在 build 目录下
 cmake -B build -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release --target install
+```
+
+## 使用音视频 2.0 版本
+
+Demo 支持使用音视频 2.0 能力来展示视频、音频通话场景，您可以在初始化 CmMake 脚本时增加参数 `BUILD_WITH_NERTC_G2` 来开启该功能，如：
+
+```
+cmake . -B build -G"Visual Studio 2017" -T"v141_xp" -DBUILD_WITH_NERTC_G2 -DCMAKE_BUILD_TYPE=Debug
+cmake --build build --config Debug --target install
 ```
 
 ## 交流

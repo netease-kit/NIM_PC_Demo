@@ -71,6 +71,16 @@ TARGET_LINK_LIBRARIES(${TARGET_NAME}
     ${CONAN_LIBS}
 )
 
+IF (NOT BUILD_WITH_CONAN)
+    TARGET_LINK_LIBRARIES(${TARGET_NAME}
+        nim_wrapper_util
+        nim_cpp_wrapper
+        nim_chatroom_cpp_wrapper
+        nim_tools_cpp_wrapper
+        nertc_sdk
+    )
+ENDIF ()
+
 IF (CMAKE_BUILD_TYPE MATCHES "Release")
     TARGET_LINK_LIBRARIES(${TARGET_NAME} nim_libcef)
 ELSE ()

@@ -32,8 +32,8 @@ SET(GROUP_UI_COMPONENTS "ui_components")
 SET(RELEASE_OUTPUT_7Z_FILE "${CMAKE_BINARY_DIR}/release.7z")
 STRING(REPLACE "/" "\\\\" RELEASE_OUTPUT_7Z_FILE_WIN ${RELEASE_OUTPUT_7Z_FILE})
 
-SET(DEBUG_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619604567/NIM_Windows_Demo_Build_Binaries_Debug.zip")
-SET(RELEASE_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619604651/NIM_Windows_Demo_Build_Binaries_Release.zip")
+SET(DEBUG_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605746/NIM_Windows_Demo_Build_Binaries_Debug.zip")
+SET(RELEASE_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605768/NIM_Windows_Demo_Build_Binaries_Release.zip")
 SET(NIM_CROSS_PLATFORM_SDK_URL "http://yx-web.nos.netease.com/package/1619595742/NIM_CrossPlatform_SDK_v8.4.0.zip")
 SET(NERTC_SDK_URL "http://yx-web.nos.netease.com/package/1618217725/NERtc_Windows_SDK_v4.1.1.zip")
 
@@ -92,6 +92,7 @@ EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf ${CMAKE_BINARY_DIR}/nim-cros
 EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf ${CMAKE_BINARY_DIR}/build_windows_release_x86.tar.gz WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 IF (NOT BUILD_WITH_CONAN)
     ADD_SUBDIRECTORY(wrapper)
+    INCLUDE_DIRECTORIES(wrapper)
     LINK_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/wrapper)
 ENDIF ()
 
