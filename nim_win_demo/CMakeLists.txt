@@ -67,6 +67,8 @@ TARGET_LINK_LIBRARIES(${TARGET_NAME}
     chatroom
     # Third party libs
     ${THIRD_PARTY_LIBS}
+    # Conan libs
+    ${CONAN_LIBS}
 )
 
 IF (CMAKE_BUILD_TYPE MATCHES "Release")

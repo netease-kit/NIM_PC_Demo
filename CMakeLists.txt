@@ -10,6 +10,7 @@ IF (NOT CMAKE_BUILD_TYPE)
 ENDIF ()
 
 SET(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_LIST_DIR} CACHE PATH "default install prefix" FORCE)
+SET(BUILD_WITH_CONAN OFF CACHE BOOL "Build project with conan")
 
 IF (CMAKE_BUILD_TYPE MATCHES "Release")
     ADD_DEFINITIONS(-DNDEBUG)
@@ -30,23 +31,38 @@ SET(GROUP_UI_COMPONENTS "ui_components")
 SET(RELEASE_OUTPUT_7Z_FILE "${CMAKE_BINARY_DIR}/release.7z")
 STRING(REPLACE "/" "\\\\" RELEASE_OUTPUT_7Z_FILE_WIN ${RELEASE_OUTPUT_7Z_FILE})
 
+PROJECT(nim_win_demo)
+
+# Build project with conan
+IF (BUILD_WITH_CONAN)
+    # https://github.com/conan-io/cmake-conan
+    # Download automatically, you can also just copy the conan.cmake file
+    IF (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
+        MESSAGE(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+        FILE(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/master/conan.cmake" "${CMAKE_BINARY_DIR}/conan.cmake")
+    ENDIF()
+    INCLUDE(${CMAKE_BINARY_DIR}/conan.cmake)
+    conan_cmake_autodetect(settings)
+    conan_cmake_install(PATH_OR_REFERENCE .. BUILD missing SETTINGS ${settings})
+    INCLUDE(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+    conan_basic_setup()
+ENDIF ()
+
 # Download third parties
-IF (CMAKE_BUILD_TYPE MATCHES Debug)
+IF (CMAKE_BUILD_TYPE MATCHES Debug AND NOT BUILD_WITH_CONAN)
     IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_debug.zip")
         MESSAGE(STATUS "Downloading third party libraries from http://yx-web.nos.netease.com/package/1619524144/nim_demo_build_libraries_x86_debug.zip")
         FILE(DOWNLOAD "http://yx-web.nos.netease.com/package/1619524144/nim_demo_build_libraries_x86_debug.zip" "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_debug.zip")
     ENDIF ()
     EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_debug.zip" WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 ENDIF ()
-IF (CMAKE_BUILD_TYPE MATCHES Release)
+IF (CMAKE_BUILD_TYPE MATCHES Release AND NOT BUILD_WITH_CONAN)
     IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_release.zip")
         MESSAGE(STATUS "Downloading third party libraries from http://yx-web.nos.netease.com/package/1619524201/nim_demo_build_libraries_x86_release.zip")
         FILE(DOWNLOAD "http://yx-web.nos.netease.com/package/1619524201/nim_demo_build_libraries_x86_release.zip" "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_release.zip")
     ENDIF ()
     EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_release.zip" WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 ENDIF ()
-
-PROJECT(nim_win_demo)
 
 ADD_DEFINITIONS(
     -DUNICODE 
