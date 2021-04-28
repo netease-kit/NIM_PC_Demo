@@ -11,6 +11,7 @@ ENDIF ()
 
 SET(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_LIST_DIR} CACHE PATH "default install prefix" FORCE)
 SET(BUILD_WITH_CONAN OFF CACHE BOOL "Build project with conan")
+SET(BUILD_WITH_NERTC_G2 OFF CACHE BOOL "Build project with NeRTC G2")
 
 IF (CMAKE_BUILD_TYPE MATCHES "Release")
     ADD_DEFINITIONS(-DNDEBUG)
@@ -30,6 +31,11 @@ SET(GROUP_BASE "base")
 SET(GROUP_UI_COMPONENTS "ui_components")
 SET(RELEASE_OUTPUT_7Z_FILE "${CMAKE_BINARY_DIR}/release.7z")
 STRING(REPLACE "/" "\\\\" RELEASE_OUTPUT_7Z_FILE_WIN ${RELEASE_OUTPUT_7Z_FILE})
+
+SET(DEBUG_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619604567/NIM_Windows_Demo_Build_Binaries_Debug.zip")
+SET(RELEASE_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619604651/NIM_Windows_Demo_Build_Binaries_Release.zip")
+SET(NIM_CROSS_PLATFORM_SDK_URL "http://yx-web.nos.netease.com/package/1619595742/NIM_CrossPlatform_SDK_v8.4.0.zip")
+SET(NERTC_SDK_URL "http://yx-web.nos.netease.com/package/1618217725/NERtc_Windows_SDK_v4.1.1.zip")
 
 PROJECT(nim_win_demo)
 
@@ -51,17 +57,42 @@ ENDIF ()
 # Download third parties
 IF (CMAKE_BUILD_TYPE MATCHES Debug AND NOT BUILD_WITH_CONAN)
     IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_debug.zip")
-        MESSAGE(STATUS "Downloading third party libraries from http://yx-web.nos.netease.com/package/1619524144/nim_demo_build_libraries_x86_debug.zip")
-        FILE(DOWNLOAD "http://yx-web.nos.netease.com/package/1619524144/nim_demo_build_libraries_x86_debug.zip" "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_debug.zip")
+        MESSAGE(STATUS "Downloading third party libraries from ${DEBUG_THIRD_PARTY_LIBS}")
+        FILE(DOWNLOAD ${DEBUG_THIRD_PARTY_LIBS} "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_debug.zip")
     ENDIF ()
     EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_debug.zip" WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 ENDIF ()
 IF (CMAKE_BUILD_TYPE MATCHES Release AND NOT BUILD_WITH_CONAN)
     IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_release.zip")
-        MESSAGE(STATUS "Downloading third party libraries from http://yx-web.nos.netease.com/package/1619524201/nim_demo_build_libraries_x86_release.zip")
-        FILE(DOWNLOAD "http://yx-web.nos.netease.com/package/1619524201/nim_demo_build_libraries_x86_release.zip" "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_release.zip")
+        MESSAGE(STATUS "Downloading third party libraries from ${RELEASE_THIRD_PARTY_LIBS}")
+        FILE(DOWNLOAD "${RELEASE_THIRD_PARTY_LIBS}" "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_release.zip")
     ENDIF ()
     EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_release.zip" WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+ENDIF ()
+
+# Downlaod NeRTC G2 SDK
+IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nertc-SDK.zip" AND NOT BUILD_WITH_CONAN)
+    MESSAGE(STATUS "Downloading NeRTC-SDK from ${NERTC_SDK_URL}")
+    FILE(DOWNLOAD ${NERTC_SDK_URL} ${CMAKE_BINARY_DIR}/nertc-SDK.zip)
+ENDIF ()
+EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf "${CMAKE_BINARY_DIR}/nertc-SDK.zip" WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+FILE(GLOB_RECURSE NERTC_HEADER_FIELS ${CMAKE_BINARY_DIR}/nertc_sdk_windows*/*.h)
+FILE(GLOB_RECURSE NERTC_LIB_FIELS ${CMAKE_BINARY_DIR}/nertc_sdk_windows*/*.lib)
+FILE(GLOB_RECURSE NERTC_BINARY_FIELS ${CMAKE_BINARY_DIR}/nertc_sdk_windows*/*.dll)
+FILE(COPY ${NERTC_HEADER_FIELS} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include)
+FILE(COPY ${NERTC_LIB_FIELS} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/lib)
+FILE(COPY ${NERTC_BINARY_FIELS} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/bin)
+
+# Download NeIM SDK
+IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nim-cross-platform-SDK.zip" AND NOT BUILD_WITH_CONAN)
+    MESSAGE(STATUS "Downloading NIM cross-platform SDK from ${NIM_CROSS_PLATFORM_SDK_URL}")
+    FILE(DOWNLOAD ${NIM_CROSS_PLATFORM_SDK_URL} ${CMAKE_BINARY_DIR}/nim-cross-platform-SDK.zip)
+ENDIF ()
+EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf ${CMAKE_BINARY_DIR}/nim-cross-platform-SDK.zip WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
+EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf ${CMAKE_BINARY_DIR}/build_windows_release_x86.tar.gz WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+IF (NOT BUILD_WITH_CONAN)
+    ADD_SUBDIRECTORY(wrapper)
+    LINK_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/wrapper)
 ENDIF ()
 
 ADD_DEFINITIONS(
@@ -70,6 +101,10 @@ ADD_DEFINITIONS(
     -DPSAPI_VERSION=1
     -DBUILD_WITH_XML_UTIL
 )
+
+IF (BUILD_WITH_NERTC_G2)
+    ADD_DEFINITIONS(-DUSING_RTC_G2)
+ENDIF ()
 
 # Git information
 LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/.cmake/")
@@ -80,6 +115,7 @@ IF (GIT_TAG STREQUAL "")
 ENDIF ()
 git_describe(GIT_DESCRIBE)
 git_commit_counts(GIT_COMMIT_COUNT)
+# Can not get git tag info in github actions
 SET(GIT_TAG "8.4.0")
 STRING(REPLACE "." "," GIT_TAG_WITH_COMMA ${GIT_TAG})
 MESSAGE(STATUS "Current git tag: ${GIT_TAG}, commit count: ${GIT_COMMIT_COUNT}, describe: ${GIT_DESCRIBE}")
