@@ -40,8 +40,3 @@ jobs:
       with:
         name: nim_demo_installer
         path: tool_kits/install/bin/*.exe
-    
-    - uses: actions/upload-artifact@v2
-      with:
-        name: nim_demo_installer
-        path: NIM_PC_Demo/tool_kits/install/bin/*.exe
