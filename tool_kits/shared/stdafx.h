@@ -35,5 +35,6 @@
 //third_party
 #include "duilib/UIlib.h"
 
-//xml
+#if defined(BUILD_WITH_XML_UTIL)
 #include "tinyxml.h"
+#endif

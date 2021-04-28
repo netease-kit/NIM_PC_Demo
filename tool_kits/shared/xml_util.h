@@ -13,7 +13,9 @@
 namespace shared
 {
 
+#if defined(BUILD_WITH_XML_UTIL)
 bool LoadXmlFromFile(TiXmlDocument &xml, const std::wstring &file_path);
+#endif
 
 }
 

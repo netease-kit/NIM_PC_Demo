@@ -14,6 +14,7 @@
 namespace shared
 {
 
+#if defined(BUILD_WITH_XML_UTIL)
 bool LoadXmlFromFile(TiXmlDocument &xml, const std::wstring &file_path)
 {
 	std::unique_ptr<FILE, nbase::DeleterFileClose> fp;
@@ -30,5 +31,6 @@ bool LoadXmlFromFile(TiXmlDocument &xml, const std::wstring &file_path)
 	}
 	return true;
 }
+#endif
 
 }

@@ -68,6 +68,7 @@ ADD_DEFINITIONS(
     -DUNICODE 
     -D_UNICODE 
     -DPSAPI_VERSION=1
+    -DBUILD_WITH_XML_UTIL
 )
 
 # Git information
