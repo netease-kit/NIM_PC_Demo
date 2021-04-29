@@ -4,29 +4,32 @@ SET(TARGET_NAME nim_demo)
 
 PROJECT(${TARGET_NAME} DESCRIPTION "NetEase IM Demo")
 
+# SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_LIST_DIR}/bin")
+# SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_LIST_DIR}/bin")
+
 ADD_DEFINITIONS(
     -DWITH_ENCRYPT
 )
 
 INCLUDE_DIRECTORIES(
-    ${PROJECT_SOURCE_DIR}/..
-    ${PROJECT_SOURCE_DIR}/../app_sdk/
-    ${PROJECT_SOURCE_DIR}/../chatroom/
-    ${PROJECT_SOURCE_DIR}/../tool_kits/
-    ${PROJECT_SOURCE_DIR}/../tool_kits/cef/cef_wrapper/
-    ${PROJECT_SOURCE_DIR}/../tool_kits/cef/cef_module/
-    ${PROJECT_SOURCE_DIR}/../tool_kits/ui_component/
-    ${PROJECT_SOURCE_DIR}/../tool_kits/ui_component/ui_kit/
-    ${PROJECT_SOURCE_DIR}/../tool_kits/ui_component/nim_service/
-    ${PROJECT_SOURCE_DIR}/../third_party/
+    ${CMAKE_CURRENT_LIST_DIR}/..
+    ${CMAKE_CURRENT_LIST_DIR}/../app_sdk/
+    ${CMAKE_CURRENT_LIST_DIR}/../chatroom/
+    ${CMAKE_CURRENT_LIST_DIR}/../tool_kits/
+    ${CMAKE_CURRENT_LIST_DIR}/../tool_kits/cef/cef_wrapper/
+    ${CMAKE_CURRENT_LIST_DIR}/../tool_kits/cef/cef_module/
+    ${CMAKE_CURRENT_LIST_DIR}/../tool_kits/ui_component/
+    ${CMAKE_CURRENT_LIST_DIR}/../tool_kits/ui_component/ui_kit/
+    ${CMAKE_CURRENT_LIST_DIR}/../tool_kits/ui_component/nim_service/
+    ${CMAKE_CURRENT_LIST_DIR}/../third_party/
 )
 
 LINK_DIRECTORIES(
-    ${PROJECT_SOURCE_DIR}/../lib/
+    ${CMAKE_CURRENT_LIST_DIR}/../lib/
 )
 
 CONFIGURE_FILE(
-    ${PROJECT_SOURCE_DIR}/nim.rc.in
+    ${CMAKE_CURRENT_LIST_DIR}/nim.rc.in
     ${CMAKE_BINARY_DIR}/nim.rc
 )
 
