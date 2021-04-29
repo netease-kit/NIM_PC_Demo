@@ -36,7 +36,7 @@ namespace nim_comp
 		if (json_msg.isMember(LogTokenToStringKey(LogToken::attach)))
 			msg.attach_ = json_msg[LogTokenToStringKey(LogToken::attach)].asString();
 		if (json_msg.isMember(LogTokenToStringKey(LogToken::msgid_server)))
-			msg.readonly_server_id_ = json_msg[LogTokenToStringKey(LogToken::msgid_server)].asInt64();
+			msg.readonly_server_id_ = std::atoi(json_msg[LogTokenToStringKey(LogToken::msgid_server)].asString().c_str());
 		if (json_msg.isMember(LogTokenToStringKey(LogToken::pushPayload)))
 			nim_cpp_wrapper_util::Json::Reader().parse(json_msg[LogTokenToStringKey(LogToken::pushPayload)].toStyledString(), msg.msg_setting_.push_payload_);
 		if (json_msg.isMember(LogTokenToStringKey(LogToken::pushContent)))
