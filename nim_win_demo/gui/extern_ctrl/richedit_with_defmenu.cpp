@@ -1,9 +1,12 @@
+#include "stdafx.h"
 #include "richedit_with_defmenu.h"
 #include "richedit_with_defmenu_btnimp.h"
+
 const std::wstring RichEditWithDefMenu::kMenuUIConfigPath = L"default_edit_menu.xml";
-const std::wstring RichEditWithDefMenu::kMenuBTNName_Cut = L"MID_CUT";//ºÙ«–
-const std::wstring RichEditWithDefMenu::kMenuBTNName_Copy = L"MID_COPY";//∏¥÷∆
-const std::wstring RichEditWithDefMenu::kMenuBTNName_Paste = L"MID_PASTE";//’≥Ã˘
+const std::wstring RichEditWithDefMenu::kMenuBTNName_Cut = L"MID_CUT";//Ââ™Âàá
+const std::wstring RichEditWithDefMenu::kMenuBTNName_Copy = L"MID_COPY";//Â§çÂà∂
+const std::wstring RichEditWithDefMenu::kMenuBTNName_Paste = L"MID_PASTE";//Á≤òË¥¥
+
 RichEditWithDefMenu::RichEditWithDefMenu()
 { 
 	RegisterMenuButtonHandel();

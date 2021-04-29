@@ -1,4 +1,5 @@
-﻿#include "bubble_writing.h"
+#include "stdafx.h"
+#include "bubble_writing.h"
 
 using namespace ui;
 

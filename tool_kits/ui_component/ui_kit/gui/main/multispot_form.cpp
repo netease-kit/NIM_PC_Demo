@@ -1,4 +1,5 @@
-﻿#include "resource.h"
+#include "stdafx.h"
+#include "resource.h"
 #include "multispot_form.h"
 #include "module/session/session_util.h"
 #include "export/nim_ui_user_config.h"
@@ -110,7 +111,7 @@ void MultispotForm::OnMultispotChange(const std::map<nim::NIMClientType, nim::Ot
 		multi_des->SetText(show_tip);
 
 		Button* kick = (Button*)item->FindSubControl(L"kick");
-		kick->SetDataID(nbase::UTF8ToUTF16(it.second.device_id_));
+		kick->SetDataID(nbase::UTF8ToUTF16(map_multispot_infos.begin()->second.device_id_));
 
 		dev_list_->Add(item);
 	}

@@ -5,7 +5,7 @@ namespace nim_comp
 typedef std::function<void(int rescode, const std::string& sid, const std::string& file_path, const std::string& file_ext, long file_size, int audio_duration)> OnCaptureCompeleteCallback;
 
 /** @class AudioCaptureView
-  * @brief ÔÚ»á»°ºĞ×ÓÖĞÏÔÊ¾ÓïÒôÂ¼ÖÆ½çÃæ
+  * @brief åœ¨ä¼šè¯ç›’å­ä¸­æ˜¾ç¤ºè¯­éŸ³å½•åˆ¶ç•Œé¢
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @author Redrain
   * @date 2016/9/12
@@ -16,66 +16,66 @@ public:
 	AudioCaptureView();
 
 	/**
-	* ³õÊ¼»¯ÓïÒôÂ¼ÖÆ¹¦ÄÜ½çÃæ
-	* @param[in] session_id ÓïÒôÂ¼ÖÆ½çÃæËùÊô»á»°id
-	* @param[in] callback ÓïÒôÂ¼ÖÆÍê±ÏµÄ»Øµ÷Í¨Öªº¯Êı
-	* @return void ÎŞ·µ»ØÖµ
+	* åˆå§‹åŒ–è¯­éŸ³å½•åˆ¶åŠŸèƒ½ç•Œé¢
+	* @param[in] session_id è¯­éŸ³å½•åˆ¶ç•Œé¢æ‰€å±ä¼šè¯id
+	* @param[in] callback è¯­éŸ³å½•åˆ¶å®Œæ¯•çš„å›è°ƒé€šçŸ¥å‡½æ•°
+	* @return void æ— è¿”å›å€¼
 	*/
 	void InitControl(const std::string& session_id, OnCaptureCompeleteCallback callback);
 
 	/**
-	* ÏÔÊ¾(Òş²Ø)ÓïÒôÂ¼ÖÆ½çÃæ
-	* @param[in] show ÏÔÊ¾(Òş²Ø)ÓïÒôÂ¼ÖÆ½çÃæ
-	* @return void ÎŞ·µ»ØÖµ
+	* æ˜¾ç¤º(éšè—)è¯­éŸ³å½•åˆ¶ç•Œé¢
+	* @param[in] show æ˜¾ç¤º(éšè—)è¯­éŸ³å½•åˆ¶ç•Œé¢
+	* @return void æ— è¿”å›å€¼
 	*/
 	void ShowControl(bool show);
 private:
 	/**
-	* ÏìÓ¦°´Å¥µ¥»÷ÏûÏ¢
-	* @param[in] param ±»µ¥»÷µÄ°´Å¥µÄÏà¹ØĞÅÏ¢
-	* @return bool ·µ»ØÖµtrue: ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬ false: Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å“åº”æŒ‰é’®å•å‡»æ¶ˆæ¯
+	* @param[in] param è¢«å•å‡»çš„æŒ‰é’®çš„ç›¸å…³ä¿¡æ¯
+	* @return bool è¿”å›å€¼true: ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œ false: åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnClicked(ui::EventArgs* param);
 	
 	/**
-	* ¿ªÊ¼Â¼ÖÆÓïÒôµÄ»Øµ÷
-	* @param[in] session_id ´¥·¢¿ªÊ¼Â¼Òô¹¦ÄÜµÄ»á»°id
-	* @param[in] code ·µ»ØÂë
-	* @return void ÎŞ·µ»ØÖµ
+	* å¼€å§‹å½•åˆ¶è¯­éŸ³çš„å›è°ƒ
+	* @param[in] session_id è§¦å‘å¼€å§‹å½•éŸ³åŠŸèƒ½çš„ä¼šè¯id
+	* @param[in] code è¿”å›ç 
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnStartCaptureCallback(const std::string& session_id, int code);
 
 	/**
-	* Â¼ÖÆÓïÒôÍê³ÉµÄ»Øµ÷
-	* @param[in] rescode ²Ù×÷½á¹û£¬Ò»ÇĞÕı³£200
-	* @param[in] sid »á»°id
-	* @param[in] cid ÏûÏ¢id
-	* @param[in] file_path ÓïÒôÎÄ¼ş¾ø¶ÔÂ·¾¶
-	* @param[in] file_ext ÎÄ¼şÀ©Õ¹Ãû
-	* @param[in] file_size ÎÄ¼ş´óĞ¡
-	* @param[in] audio_duration ÓïÒôÊ±³¤
-	* @return void ÎŞ·µ»ØÖµ
+	* å½•åˆ¶è¯­éŸ³å®Œæˆçš„å›è°ƒ
+	* @param[in] rescode æ“ä½œç»“æœï¼Œä¸€åˆ‡æ­£å¸¸200
+	* @param[in] sid ä¼šè¯id
+	* @param[in] cid æ¶ˆæ¯id
+	* @param[in] file_path è¯­éŸ³æ–‡ä»¶ç»å¯¹è·¯å¾„
+	* @param[in] file_ext æ–‡ä»¶æ‰©å±•å
+	* @param[in] file_size æ–‡ä»¶å¤§å°
+	* @param[in] audio_duration è¯­éŸ³æ—¶é•¿
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnStopCaptureCallback(int rescode, const std::string& sid, const std::string& cid, const std::string& file_path, const std::string& file_ext, long file_size, int audio_duration);
 
 	/**
-	* È¡ÏûÂ¼ÖÆÓïÒôµÄ»Øµ÷
-	* @param[in] session_id ´¥·¢È¡ÏûÂ¼Òô¹¦ÄÜµÄ»á»°id
-	* @param[in] code ·µ»ØÂë
-	* @return void ÎŞ·µ»ØÖµ
+	* å–æ¶ˆå½•åˆ¶è¯­éŸ³çš„å›è°ƒ
+	* @param[in] session_id è§¦å‘å–æ¶ˆå½•éŸ³åŠŸèƒ½çš„ä¼šè¯id
+	* @param[in] code è¿”å›ç 
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnCancelCaptureCallback(const std::string& session_id, int code);
 
 	/**
-	* Ã¶¾Ù±¾µØÂ¼Òô²É¼¯Éè±¸µÄ»Øµ÷
-	* @param[in] rescode ²Ù×÷½á¹û£¬Ò»ÇĞÕı³£200
-	* @param[in] device_list Éè±¸ÁĞ±í
+	* æšä¸¾æœ¬åœ°å½•éŸ³é‡‡é›†è®¾å¤‡çš„å›è°ƒ
+	* @param[in] rescode æ“ä½œç»“æœï¼Œä¸€åˆ‡æ­£å¸¸200
+	* @param[in] device_list è®¾å¤‡åˆ—è¡¨
 	*/
 	void OnEnumCaptureDeviceCallback(int rescode, const std::wstring& device_list);
 
 	/**
-	* Â¼ÖÆ²¥·ÅÊ±£¬¸üĞÂÂ¼ÖÆ½ø¶ÈµÄ»Øµ÷º¯Êı
-	* @return void ÎŞ·µ»ØÖµ
+	* å½•åˆ¶æ’­æ”¾æ—¶ï¼Œæ›´æ–°å½•åˆ¶è¿›åº¦çš„å›è°ƒå‡½æ•°
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnTick();
 

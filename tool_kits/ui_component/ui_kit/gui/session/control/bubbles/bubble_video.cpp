@@ -1,8 +1,10 @@
-﻿#include "bubble_video.h"
+#include "stdafx.h"
+#include "bubble_video.h"
 #include "image_view/src/image_view_manager.h"
 #include "util/user.h"
 #include "shared/zoom_image.h"
 #include "gui/local_video_player/local_video_player_form.h"
+
 using namespace ui;
 
 namespace nim_comp

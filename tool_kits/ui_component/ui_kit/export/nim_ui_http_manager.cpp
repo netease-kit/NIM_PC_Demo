@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "nim_ui_http_manager.h"
 
 namespace nim_ui

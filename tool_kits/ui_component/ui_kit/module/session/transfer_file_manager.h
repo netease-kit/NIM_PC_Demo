@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "base/memory/singleton.h"
 #include "gui/session/control/bubbles/bubble_item.h"
 #include "gui/session/control/bubbles/bubble_transferfile.h"

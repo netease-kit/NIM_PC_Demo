@@ -1,6 +1,6 @@
+#include "stdafx.h"
 #include "chatroom_form.h"
 #include "chatroom_frontpage.h"
-#include "src/cpp_sdk/nim_chatroom/helper/nim_chatroom_helper.h"
 #include "module/session/session_util.h"
 
 using namespace nim_comp;
@@ -43,11 +43,11 @@ static void SubAddSender(ui::RichEdit* edit, const std::string &robot_id, const 
 	//
 	long lSelBegin = 0, lSelEnd = 0;
 	CHARFORMAT2 cf;
-	edit->GetDefaultCharFormat(cf); //»ñÈ¡ÏûÏ¢×ÖÌå
+	edit->GetDefaultCharFormat(cf); //è·å–æ¶ˆæ¯å­—ä½“
 	cf.dwMask = CFM_LINK | CFM_FACE | CFM_COLOR;
 	cf.dwEffects = CFE_LINK;
 
-	// Ìí¼Ó·¢ÑÔÈË£¬²¢ÉèÖÃËûµÄÑÕÉ«
+	// æ·»åŠ å‘è¨€äººï¼Œå¹¶è®¾ç½®ä»–çš„é¢œè‰²
 	lSelEnd = lSelBegin = is_history ? old_end + 1 : edit->GetTextLength();
 	edit->SetSel(lSelEnd, lSelEnd);
 	edit->ReplaceSel(w_show_name, false);
@@ -59,12 +59,12 @@ static void SubAddSender(ui::RichEdit* edit, const std::string &robot_id, const 
 	edit->SetSel(lSelBegin, lNewSelEnd);
 	edit->SetSelectionCharFormat(cf);
 
-	// ÉèÖÃÎÄ±¾µÄËõ½ø
+	// è®¾ç½®æ–‡æœ¬çš„ç¼©è¿›
 	PARAFORMAT2 pf;
 	ZeroMemory(&pf, sizeof(PARAFORMAT2));
 	pf.cbSize = sizeof(pf);
 	pf.dwMask = PFM_STARTINDENT | PFM_LINESPACING;
-	LONG lineSpace = (LONG)(1.2 * 20);//ÉèÖÃ1.2ĞĞ¼ä¾à
+	LONG lineSpace = (LONG)(1.2 * 20);//è®¾ç½®1.2è¡Œé—´è·
 	pf.dxStartIndent = 0;
 	pf.bLineSpacingRule = 5;
 	pf.dyLineSpacing = lineSpace;
@@ -80,23 +80,23 @@ static void AddSubText(ui::RichEdit* edit, const std::wstring &text, bool end_do
 	long lSelBegin = 0, lSelEnd = 0;
 	CHARFORMAT2 cf;
 
-	// Ìí¼ÓÕıÎÄ£¬²¢ÉèÖÃËûµÄÑÕÉ«	
+	// æ·»åŠ æ­£æ–‡ï¼Œå¹¶è®¾ç½®ä»–çš„é¢œè‰²	
 	edit->ReplaceSel(ROOMMSG_R_N, false);
 	edit->GetSel(lSelBegin, lSelEnd);
 	edit->ReplaceSel(text, false);
-	//ÉèÖÃÎÄ±¾×ÖÌå
-	edit->GetDefaultCharFormat(cf); //»ñÈ¡ÏûÏ¢×ÖÌå
+	//è®¾ç½®æ–‡æœ¬å­—ä½“
+	edit->GetDefaultCharFormat(cf); //è·å–æ¶ˆæ¯å­—ä½“
 	long lSelBegin2 = 0, lSelEnd2 = 0;
 	edit->GetSel(lSelBegin2, lSelEnd2);
 	edit->SetSel(lSelEnd, lSelEnd2);
 	edit->SetSelectionCharFormat(cf);
 
-	// ÉèÖÃÎÄ±¾µÄËõ½ø
+	// è®¾ç½®æ–‡æœ¬çš„ç¼©è¿›
 	PARAFORMAT2 pf;
 	ZeroMemory(&pf, sizeof(PARAFORMAT2));
 	pf.cbSize = sizeof(pf);
 	pf.dwMask = PFM_STARTINDENT | PFM_LINESPACING;
-	LONG lineSpace = (LONG)(1.2 * 20);//ÉèÖÃ1.2ĞĞ¼ä¾à
+	LONG lineSpace = (LONG)(1.2 * 20);//è®¾ç½®1.2è¡Œé—´è·
 	pf.dxStartIndent = 150;
 	pf.bLineSpacingRule = 5;
 	pf.dyLineSpacing = lineSpace;

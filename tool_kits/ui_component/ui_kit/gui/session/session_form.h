@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "taskbar/taskbar_manager.h"
 #include "session_dock_def.h"
 interface IDropTargetHelper;

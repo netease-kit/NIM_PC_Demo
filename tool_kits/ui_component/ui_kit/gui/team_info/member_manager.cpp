@@ -1,4 +1,5 @@
-﻿#include "member_manager.h"
+#include "stdafx.h"
+#include "member_manager.h"
 #include "util/windows_manager.h"
 #include "shared/pin_yin_helper.h"
 #include "callback/team/team_callback.h"

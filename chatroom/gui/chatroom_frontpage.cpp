@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "chatroom_frontpage.h"
 #include "chatroom_form.h"
 #include "personal_center.h"
@@ -175,7 +176,7 @@ void ChatroomFrontpage::CreateRoomItem(const ChatRoomInfo& room_info)
 			if (room_id.empty())
 				return true;
 			
-			//ÕâÀïÓ¦¸Ã²éÕÒµ±Ç°·¿¼äºÅ
+			//è¿™é‡Œåº”è¯¥æŸ¥æ‰¾å½“å‰æˆ¿é—´å·
 			ChatroomForm* chat_form = static_cast<ChatroomForm*>(nim_ui::WindowsManager::GetInstance()->GetWindow(ChatroomForm::kClassName, room_id));
 			if (chat_form != NULL)
 			{

@@ -4,7 +4,7 @@
 namespace nim_comp
 {
 /** @class AtMeView
-  * @brief ÔÚ»á»°ºĞ×ÓÖĞÏÔÊ¾×Ô¼º±»@µÄÏûÏ¢
+  * @brief åœ¨ä¼šè¯ç›’å­ä¸­æ˜¾ç¤ºè‡ªå·±è¢«@çš„æ¶ˆæ¯
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @author Redrain
   * @date 2016/9/6
@@ -20,47 +20,47 @@ public:
 	};
 
 	/**
-	* ³õÊ¼»¯¿Ø¼ş
-	* @return void	ÎŞ·µ»ØÖµ
+	* åˆå§‹åŒ–æ§ä»¶
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void InitControl();
 
 	/**
-	* µ±ĞÂµÄ@meÏûÏ¢µ½À´ºó£¬×·¼Óµ½@meÏûÏ¢ÁĞ±íÄ©Î²
-	* @param[in] at_me_info Ç¿ÍÆĞÅÏ¢
-	* @return void	ÎŞ·µ»ØÖµ
+	* å½“æ–°çš„@meæ¶ˆæ¯åˆ°æ¥åï¼Œè¿½åŠ åˆ°@meæ¶ˆæ¯åˆ—è¡¨æœ«å°¾
+	* @param[in] at_me_info å¼ºæ¨ä¿¡æ¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void AddMessage(const AtMeInfo &at_me_info);
 
 	/**
-	* ÏÔÊ¾ÏÂÒ»Ìõ@meÏûÏ¢
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ˜¾ç¤ºä¸‹ä¸€æ¡@meæ¶ˆæ¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void ShowNextMessage();	
 
 	/**
-	* µ±ĞèÒª²éÕÒÀúÊ·ÏûÏ¢²ÅÄÜÕÒµ½@meÏûÏ¢Ê±£¬ÏÔÊ¾¡°ÕıÔÚ¼ÓÔØÖĞ¡±µÄÌáÊ¾£¬²¢ÇÒ½ûÓÃ±¾¿Ø¼ş
-	* @param[in] show ÊÇ·ñÏÔÊ¾ÌáÊ¾
-	* @return void	ÎŞ·µ»ØÖµ
+	* å½“éœ€è¦æŸ¥æ‰¾å†å²æ¶ˆæ¯æ‰èƒ½æ‰¾åˆ°@meæ¶ˆæ¯æ—¶ï¼Œæ˜¾ç¤ºâ€œæ­£åœ¨åŠ è½½ä¸­â€çš„æç¤ºï¼Œå¹¶ä¸”ç¦ç”¨æœ¬æ§ä»¶
+	* @param[in] show æ˜¯å¦æ˜¾ç¤ºæç¤º
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void ShowLoadingTip(bool show);
 
 	/**
-	* »ñÈ¡@meÏûÏ¢×ÜÊı
-	* @return UINT ÏûÏ¢×ÜÊı
+	* è·å–@meæ¶ˆæ¯æ€»æ•°
+	* @return UINT æ¶ˆæ¯æ€»æ•°
 	*/
 	UINT GetAtMeCount();
 
 	/**
-	* »ñÈ¡µ±Ç°µÄ@meÏûÏ¢µÄuuid
+	* è·å–å½“å‰çš„@meæ¶ˆæ¯çš„uuid
 	* @return wstring uuid
 	*/
 	std::wstring GetUuid();
 
 private:
 	/**
-	* ¸ù¾İ×îºóÒ»Ìõ@meÏûÏ¢ÏÔÊ¾¶ÔÓ¦µÄ½çÃæĞ§¹û
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ ¹æ®æœ€åä¸€æ¡@meæ¶ˆæ¯æ˜¾ç¤ºå¯¹åº”çš„ç•Œé¢æ•ˆæœ
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void UpdateView();
 	

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "gui/session/control/unread_item.h"
 #include "module/service/photo_service.h"
 

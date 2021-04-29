@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "smooth.h"
 #include <math.h>
 //#include"imagebright.h"

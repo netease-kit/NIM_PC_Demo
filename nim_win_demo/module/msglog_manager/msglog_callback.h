@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "base/synchronization/lock.h"
 #include "base/memory/singleton.h"

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "nim_ui_notify_center.h"
 
 namespace nim_ui

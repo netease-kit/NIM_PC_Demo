@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "multi_video_invite.h"
 #include "multi_video_form.h"
 #include "module/video/video_manager.h"
@@ -49,11 +50,11 @@ namespace nim_comp
 		btn_jump_session_ = dynamic_cast<ui::Button*>(FindControl(L"jump_session"));
 		InitControl();
 
-		//ÑûÇëµ¹¼ÆÊ±£¬Èç¹ûMULTI_VCHAT_INVITE_TIMEOUTÄÚÎÞ²Ù×÷Ôò×Ô¶¯¹Ø±Õ¸ÃÒ³Ãæ
+		//é‚€è¯·å€’è®¡æ—¶ï¼Œå¦‚æžœMULTI_VCHAT_INVITE_TIMEOUTå†…æ— æ“ä½œåˆ™è‡ªåŠ¨å…³é—­è¯¥é¡µé¢
 		StdClosure time_out_task = nbase::Bind(&MultiVideoInviteForm::InviteTimeOut, this);
 		nbase::ThreadManager::PostDelayedTask(kThreadUI, invite_game_timer_.ToWeakCallback(time_out_task), nbase::TimeDelta::FromSeconds(MULTI_VCHAT_INVITE_TIMEOUT));
 		
-		//ÏìÁå
+		//å“é“ƒ
 		voip_ring_.Init(this->GetHWND());
 		voip_ring_.Play(RING_VOIP_RING, true);
 	}
@@ -87,7 +88,7 @@ namespace nim_comp
 		}
 		else if (name == L"jump_session")
 		{
-			//ÔÝÊ±²»Ö§³ÖÌø×ª lty 20180430
+			//æš‚æ—¶ä¸æ”¯æŒè·³è½¬ lty 20180430
 			//JumpSession();
 		}
 		return true;
@@ -116,7 +117,7 @@ namespace nim_comp
 		//vchat_member_info = vchat_info_.team_name_;
 		//std::wstring vchat_info = nbase::UTF8ToUTF16(vchat_member_info);
 		//lb_multi_vchat_member_info_->SetText(vchat_info);
-		//lb_multi_vchat_member_count_->SetText(nbase::StringPrintf(L"(%dÈË)", vchat_info_.member_count_));
+		//lb_multi_vchat_member_count_->SetText(nbase::StringPrintf(L"(%däºº)", vchat_info_.member_count_));
 		CheckHeadIcon();
 	}
 
@@ -141,11 +142,11 @@ namespace nim_comp
 		cmd_value["id"] = 100;
 		cmd_value["content"] = value;
 		std::string json_value = fw.write(cmd_value);
-		//·¢ËÍ×Ô¶¨ÒåÏûÏ¢¸øÓÃ»§
+		//å‘é€è‡ªå®šä¹‰æ¶ˆæ¯ç»™ç”¨æˆ·
 
 		nim::SysMessage msg;
 		msg.sender_accid_ = current_user_id;
-		msg.client_msg_id_ = QString::GetGUID();
+		msg.client_msg_id_ = nim::Tool::GetUuid();
 		msg.attach_ = json_value;
 		msg.type_ = nim::kNIMSysMsgTypeCustomP2PMsg;
 		msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
@@ -166,7 +167,7 @@ namespace nim_comp
 	void MultiVideoInviteForm::JumpSession()
 	{
 		ASSERT(0);
-		//´ò¿ª»á»°Ò³Ãæ
+		//æ‰“å¼€ä¼šè¯é¡µé¢
 		//SessionManager::GetInstance()->OpenSessionBox(vchat_info_.team_id_, nim::kNIMSessionTypeTeam);
 	}
 
@@ -213,12 +214,12 @@ namespace nim_comp
 			UserService::GetInstance()->GetUserInfo(uid, user_name);
 			if (!invite_name.empty())
 			{
-				invite_name.append(nbase::UTF16ToUTF8(L"¡¢"));
+				invite_name.append(nbase::UTF16ToUTF8(L"ã€"));
 			}
 			invite_name.append(user_name.GetName());
 		}
 		lb_multi_vchat_member_info_->SetText(nbase::UTF8ToUTF16(invite_name));
-		lb_multi_vchat_member_count_->SetText(nbase::StringPrintf(L"(%dÈË)", invite_members_.size()));
+		lb_multi_vchat_member_count_->SetText(nbase::StringPrintf(L"(%däºº)", invite_members_.size()));
 	}
 
 	void MultiVideoInviteForm::AddInviteMembers(std::set<std::string> uids)

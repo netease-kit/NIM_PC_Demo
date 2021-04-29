@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "multi_video_form.h"
 #include "module/video/video_manager.h"
 #include "shared/ring.h"
@@ -296,7 +297,7 @@ namespace nim_comp
 	void MultiVideoChatForm::InitSetting()
 	{
 		InitVolumnSetting();
-		//ÉãÏñÍ·
+		//æ‘„åƒå¤´
 		InitCbCameraSetting();
 	}
 
@@ -328,7 +329,7 @@ namespace nim_comp
 
 	void MultiVideoChatForm::InitVolumnSetting()
 	{
-		//Âó¿Ë·ç
+		//éº¦å…‹é£
 		BYTE vol_in = nim::VChat::GetAudioVolumn(true);
 		if (vol_in == 0)
 		{
@@ -339,7 +340,7 @@ namespace nim_comp
 			btn_microphone_->SetClass(L"Microphone1");
 		}
 
-		//ÒôÁ¿
+		//éŸ³é‡
 		BYTE vol_out = nim::VChat::GetAudioVolumn(false);
 		if (vol_out == 0)
 		{
@@ -435,7 +436,7 @@ namespace nim_comp
 		Box* end_call_page = (Box*)FindControl(L"end_call_page");
 		ASSERT(end_call_page);
 
-		bool need_save_close = false; //ÍòÒ»ÁåÉù²¥·ÅÓĞÎÊÌâ£¬ÄÇÃ´´°¿ÚÆñ²»ÊÇÎŞ·¨¹Ø±ÕÁË£¬ËùÒÔ¼ÓÈë°²È«´ëÊ©£¬6sºó×Ô¶¯¹Ø±Õ
+		bool need_save_close = false; //ä¸‡ä¸€é“ƒå£°æ’­æ”¾æœ‰é—®é¢˜ï¼Œé‚£ä¹ˆçª—å£å²‚ä¸æ˜¯æ— æ³•å…³é—­äº†ï¼Œæ‰€ä»¥åŠ å…¥å®‰å…¨æªæ–½ï¼Œ6såè‡ªåŠ¨å…³é—­
 
 		switch (why)
 		{
@@ -519,7 +520,7 @@ namespace nim_comp
 		{
 			if (!team_name.empty())
 			{
-				team_name.append(L"¡¢");
+				team_name.append(L"ã€");
 			}
 			user_service->GetUserInfo(friend_info, user_info);
 			team_name.append(nbase::UTF8ToUTF16(user_info.GetName()));
@@ -548,11 +549,11 @@ namespace nim_comp
 		cmd_value["content"] = value;
 		// = array_value;
 		std::string json_value = fw.write(cmd_value);
-		//·¢ËÍ×Ô¶¨ÒåÏûÏ¢¸øÓÃ»§
+		//å‘é€è‡ªå®šä¹‰æ¶ˆæ¯ç»™ç”¨æˆ·
 
 		nim::SysMessage msg;
 		msg.sender_accid_ = current_user_id;
-		msg.client_msg_id_ = QString::GetGUID();
+		msg.client_msg_id_ = nim::Tool::GetUuid();
 		msg.attach_ = json_value;
 		msg.type_ = nim::kNIMSysMsgTypeCustomP2PMsg;
 		msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
@@ -729,10 +730,10 @@ namespace nim_comp
 		}
 		else if (name == L"add_member")
 		{
-			//ÔİÊ±²»Ö§³ÖÊµÊ±¼Ó lty 20180430
+			//æš‚æ—¶ä¸æ”¯æŒå®æ—¶åŠ  lty 20180430
 /*
-			//µ¯³öÈº³ÉÔ±Ñ¡Ôñ¿ò
-			//ÈºÊÓÆµÈËÔ±Ñ¡Ôñ½çÃæ
+			//å¼¹å‡ºç¾¤æˆå‘˜é€‰æ‹©æ¡†
+			//ç¾¤è§†é¢‘äººå‘˜é€‰æ‹©ç•Œé¢
 			if (talking_members_.size() >= MULTIVCHATMEMBERCOUNT)
 			{
 				ShowLimitNotify(false);
@@ -1025,7 +1026,7 @@ namespace nim_comp
 		}
 	}
 
-	//Æô¶¯ºô½Ğµ¹¼ÆÊ±
+	//å¯åŠ¨å‘¼å«å€’è®¡æ—¶
 	void MultiVideoChatForm::StartCallTimer(VideoUidsInfo& uid_info)
 	{
 		uid_info.call_timer_.Cancel();
@@ -1111,7 +1112,7 @@ namespace nim_comp
 	{
 		//people status:0,json:{"uid":"leewp04"}
 		//QLOG_APP(L"people status:{0},json:{1}") << code << json;
-		//·¢ËÍÏûÏ¢5
+		//å‘é€æ¶ˆæ¯5
 		QLOG_APP(L"people join:uid-{0} creator_id-{1}") << uid << creator_id_;
 		bool video = false;
 		start_call_timer_.Cancel();
@@ -1152,10 +1153,10 @@ namespace nim_comp
 		cmd_value["id"] = 100;
 		cmd_value["content"] = value;
 		std::string json_value = fw.write(cmd_value);
-		//·¢ËÍ×Ô¶¨ÒåÏûÏ¢¸øÓÃ»§
+		//å‘é€è‡ªå®šä¹‰æ¶ˆæ¯ç»™ç”¨æˆ·
 		nim::SysMessage temp_msg;
 		temp_msg.sender_accid_ = current_user_id;
-		temp_msg.client_msg_id_ = QString::GetGUID();
+		temp_msg.client_msg_id_ = nim::Tool::GetUuid();
 		temp_msg.attach_ = json_value;
 		temp_msg.type_ = team ? nim::kNIMSysMsgTypeCustomTeamMsg : nim::kNIMSysMsgTypeCustomP2PMsg;
 		temp_msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
@@ -1294,7 +1295,7 @@ namespace nim_comp
 		{
 			for (int temp_j = 0;temp_j < 4;temp_j++)
 			{
-				//ÕÒµ½µÚÒ»¸öµÄÎ»ÖÃ
+				//æ‰¾åˆ°ç¬¬ä¸€ä¸ªçš„ä½ç½®
 				if (video_uids[temp_i][temp_j].uid.empty())
 				{
 					if (find_i_index == -1)
@@ -1335,7 +1336,7 @@ namespace nim_comp
 				std::wstring show_text = L"";
 				if (local)
 				{
-					//´ó´°¿ÚÏÔÊ¾ÕıÔÚÁÄÌìµÄÈË
+					//å¤§çª—å£æ˜¾ç¤ºæ­£åœ¨èŠå¤©çš„äºº
 					VideoUidsInfo temp_info = big_wnd_info_;
 					nim::UserNameCard user_info;
 					if (!UserService::GetInstance()->GetUserInfo(video_uids[temp_i][temp_j].uid, user_info))
@@ -1363,7 +1364,7 @@ namespace nim_comp
 				video_uids[temp_i][temp_j].video = false;
 				video_uids[temp_i][temp_j].audio_volumn = 0;
 				video_uids[temp_i][temp_j].status = status;
-				//std::wstring image = PhotoService::GetInstance()->GetUserPhoto(uid, false); Í·Ïñ¸Ğ¾õ²»ºÏÀí£¬ÓÃÄ¬ÈÏÍ¼Æ¬
+				//std::wstring image = PhotoService::GetInstance()->GetUserPhoto(uid, false); å¤´åƒæ„Ÿè§‰ä¸åˆç†ï¼Œç”¨é»˜è®¤å›¾ç‰‡
 				//std::wstring image = L"video_close_small.png";
 				//video_ctrl_preview_[find_i_index][find_j_index]->SetBkImage(image);
 				std::wstring image = L"video_close_small.png";
@@ -1529,7 +1530,7 @@ namespace nim_comp
 				video_uids[temp_i][temp_j].video = false;
 				video_uids[temp_i][temp_j].audio_volumn = 0;
 
-				//ºóĞøµÄÍùÇ°ÒÆ
+				//åç»­çš„å¾€å‰ç§»
 				int i = temp_i, j = temp_j;
 				temp_j++;
 				if (temp_j == 4)

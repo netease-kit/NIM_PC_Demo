@@ -19,9 +19,9 @@ namespace nim_comp
 		std::wstring GetTeamID() const;
 		nim::NIMTeamType GetTeamType() const;
 		/**
-		* ÉèÖÃ±êÌâÀ¸±êÌâ
-		* @param[in] title ±êÌâÀ¸±êÌâ
-		* @return void	ÎŞ·µ»ØÖµ
+		* è®¾ç½®æ ‡é¢˜æ æ ‡é¢˜
+		* @param[in] title æ ‡é¢˜æ æ ‡é¢˜
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void SetTaskbarTitle(const std::wstring &title) override;
 		virtual void Close(UINT nRet = 0) override;
@@ -30,249 +30,249 @@ namespace nim_comp
 		void AttachClose(const std::function<void(UINT)>& cb);
 		void AttachActive(const std::function<void()>& cb);
 		/**
-		* ¸üĞÂÈº³ÉÔ±ĞÅÏ¢
-		* @return void	ÎŞ·µ»ØÖµ
+		* æ›´æ–°ç¾¤æˆå‘˜ä¿¡æ¯
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void UpdateTeamMember() override;
 		/**
-* @brief ´´½¨Ò»¸ö×ÓÏî
-* @return ·µ»Ø´´½¨ºóµÄ×ÓÏîÖ¸Õë
+* @brief åˆ›å»ºä¸€ä¸ªå­é¡¹
+* @return è¿”å›åˆ›å»ºåçš„å­é¡¹æŒ‡é’ˆ
 */
 		virtual ui::Control* CreateElement() override;
 
 		/**
-		* @brief Ìî³äÖ¸¶¨×ÓÏî
-		* @param[in] control ×ÓÏî¿Ø¼şÖ¸Õë
-		* @param[in] index Ë÷Òı
-		* @return ·µ»Ø´´½¨ºóµÄ×ÓÏîÖ¸Õë
+		* @brief å¡«å……æŒ‡å®šå­é¡¹
+		* @param[in] control å­é¡¹æ§ä»¶æŒ‡é’ˆ
+		* @param[in] index ç´¢å¼•
+		* @return è¿”å›åˆ›å»ºåçš„å­é¡¹æŒ‡é’ˆ
 		*/
 		virtual void FillElement(ui::Control* control, int index) override;
 
 		/**
-		* @brief »ñÈ¡×ÓÏî×ÜÊı
-		* @return ·µ»Ø×ÓÏî×ÜÊı
+		* @brief è·å–å­é¡¹æ€»æ•°
+		* @return è¿”å›å­é¡¹æ€»æ•°
 		*/
 		virtual int GetElementtCount() override;
 	private:
 		/**
-		* ÏìÓ¦»ñÈ¡µ½Èº³ÉÔ±ĞÅÏ¢µÄ»Øµ÷º¬ËÜ»¯
-		* @param[in] team_id Èº×éid
-		* @param[in] count Èº³ÉÔ±ÊıÁ¿
-		* @param[in] team_member_list Èº³ÉÔ±ĞÅÏ¢
-		* @return void	ÎŞ·µ»ØÖµ
+		* å“åº”è·å–åˆ°ç¾¤æˆå‘˜ä¿¡æ¯çš„å›è°ƒå«å¡‘åŒ–
+		* @param[in] team_id ç¾¤ç»„id
+		* @param[in] count ç¾¤æˆå‘˜æ•°é‡
+		* @param[in] team_member_list ç¾¤æˆå‘˜ä¿¡æ¯
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void OnGetTeamMembers(const std::string& team_id, int count, const std::list<nim::TeamMemberProperty>& team_member_list);
 
 		/**
-		* ´¦ÀíÈºÍ·Ïñµã»÷µÄÏûÏ¢
-		* @param[in] args ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†ç¾¤å¤´åƒç‚¹å‡»çš„æ¶ˆæ¯
+		* @param[in] args æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnHeadImageClicked(ui::EventArgs* args);
 	private:
         /**
-         * ´¦Àí Option Ñ¡ÏîÑ¡ÔñÊÂ¼ş
-         * @param[in] ¸½´ø²ÎÊı
-         * @reutrn bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+         * å¤„ç† Option é€‰é¡¹é€‰æ‹©äº‹ä»¶
+         * @param[in] é™„å¸¦å‚æ•°
+         * @reutrn bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
          */
         bool OnClicked(ui::EventArgs* args);
 
 		/**
-		* ´¦ÀíÍ·ÏñĞŞ¸ÄÍê±ÏºóµÄ»Øµ÷º¯Êı
-		* @param[in] id ÓÃ»§id
-		* @param[in] url Í·ÏñµÄÏÂÔØµØÖ·
-		* @return void	ÎŞ·µ»ØÖµ
+		* å¤„ç†å¤´åƒä¿®æ”¹å®Œæ¯•åçš„å›è°ƒå‡½æ•°
+		* @param[in] id ç”¨æˆ·id
+		* @param[in] url å¤´åƒçš„ä¸‹è½½åœ°å€
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void OnModifyHeaderComplete(const std::string& id, const std::string &url);
 
 		/**
-		* Ìí¼ÓÒ»¸öÑûÇë³ÉÔ±µÄ°´Å¥µ½½çÃæÉÏ
-		* @return void	ÎŞ·µ»ØÖµ
+		* æ·»åŠ ä¸€ä¸ªé‚€è¯·æˆå‘˜çš„æŒ‰é’®åˆ°ç•Œé¢ä¸Š
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void AddInviteButton();
 
 		/**
-		* ´¦ÀíÑûÇë³ÉÔ±µÄ°´Å¥±»µã»÷µÄÏûÏ¢
-		* @param[in] param ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†é‚€è¯·æˆå‘˜çš„æŒ‰é’®è¢«ç‚¹å‡»çš„æ¶ˆæ¯
+		* @param[in] param æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnInviteUesrBtnClick(ui::EventArgs *param);
 
 		/**
-		* ÏìÓ¦³ÉÔ±ÑûÇëÍê±ÏµÄ»Øµ÷º¯Êı
-		* @param[in] friend_list ÑûÇëµÄºÃÓÑÁĞ±í
-		* @param[in] team_list ÎŞĞè¹ØĞÄµÄ²ÎÊı
-		* @return void	ÎŞ·µ»ØÖµ
+		* å“åº”æˆå‘˜é‚€è¯·å®Œæ¯•çš„å›è°ƒå‡½æ•°
+		* @param[in] friend_list é‚€è¯·çš„å¥½å‹åˆ—è¡¨
+		* @param[in] team_list æ— éœ€å…³å¿ƒçš„å‚æ•°
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void SelectedCompleted(const std::list<UTF8String>& friend_list, const std::list<UTF8String>& team_list, bool delete_enable);
 
 		/**
-		* ´´½¨Ò»¸öÈº³ÉÔ±Ïî¿Ø¼ş
-		* @param[in] member_info Èº³ÉÔ±ĞÅÏ¢
-		* @return void	ÎŞ·µ»ØÖµ
+		* åˆ›å»ºä¸€ä¸ªç¾¤æˆå‘˜é¡¹æ§ä»¶
+		* @param[in] member_info ç¾¤æˆå‘˜ä¿¡æ¯
+		* @return void	æ— è¿”å›å€¼
 		*/
 		ui::HBox* CreateTeamMemberListItem(const nim::TeamMemberProperty& member_info, bool delelte_enable = false);
 
 		/**
-		* ¸ù¾İ×Ô¼ºµÄÉí·İ¸üĞÂ½çÃæÏÔÊ¾µÄĞ§¹û
-		* @return void	ÎŞ·µ»ØÖµ
+		* æ ¹æ®è‡ªå·±çš„èº«ä»½æ›´æ–°ç•Œé¢æ˜¾ç¤ºçš„æ•ˆæœ
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void UpdateUIByIdentity();
 
 		/**
-		* ´¦ÀíÈº³ÉÔ±É¾³ı°´Å¥µÄµ¥»÷ÏûÏ¢
-		* @param[in] container_element Èº³ÉÔ±¿Ø¼ş
-		* @param[in] user_id Èº³ÉÔ±ÓÃ»§id
-		* @param[in] args ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†ç¾¤æˆå‘˜åˆ é™¤æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+		* @param[in] container_element ç¾¤æˆå‘˜æ§ä»¶
+		* @param[in] user_id ç¾¤æˆå‘˜ç”¨æˆ·id
+		* @param[in] args æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnBtnDeleteClick(ui::Box* container_element, const UTF8String& user_id, ui::EventArgs* args);
 
 		/**
-		* ÏìÓ¦È·ÈÏÊÇ·ñÉ¾³ıµÄÌáÊ¾¿òµÄ»Øµ÷º¯Êı
-		* @param[in] user_id ÓÃ»§id
-		* @param[in] ret ÌáÊ¾¿ò·µ»ØÖµ
-		* @return void	ÎŞ·µ»ØÖµ
+		* å“åº”ç¡®è®¤æ˜¯å¦åˆ é™¤çš„æç¤ºæ¡†çš„å›è°ƒå‡½æ•°
+		* @param[in] user_id ç”¨æˆ·id
+		* @param[in] ret æç¤ºæ¡†è¿”å›å€¼
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void OnMsgbox(const UTF8String& user_id, MsgBoxRet ret);
 
 		/**
-		* ´¦ÀíÈº³ÉÔ±ÏîÊó±êÒÆÈëµÄÏûÏ¢
-		* @param[in] team_member_item Èº³ÉÔ±¿Ø¼ş
-		* @param[in] args ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†ç¾¤æˆå‘˜é¡¹é¼ æ ‡ç§»å…¥çš„æ¶ˆæ¯
+		* @param[in] team_member_item ç¾¤æˆå‘˜æ§ä»¶
+		* @param[in] args æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnTeamMemberItemMouseEnter(ui::Box* team_member_item, ui::EventArgs* args);
 
 		/**
-		* ´¦ÀíÈº³ÉÔ±ÏîÊó±êÒÆ³öµÄÏûÏ¢
-		* @param[in] team_member_item Èº³ÉÔ±¿Ø¼ş
-		* @param[in] args ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†ç¾¤æˆå‘˜é¡¹é¼ æ ‡ç§»å‡ºçš„æ¶ˆæ¯
+		* @param[in] team_member_item ç¾¤æˆå‘˜æ§ä»¶
+		* @param[in] args æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnTeamMemberItemMouseLeave(ui::Box* team_member_item, ui::EventArgs* args);
 
 		/**
-		* ´¦ÀíÈº³ÉÔ±Ïîµ¥»÷ÏûÏ¢
-		* @param[in] user_id Èº³ÉÔ±id
-		* @param[in] args ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†ç¾¤æˆå‘˜é¡¹å•å‡»æ¶ˆæ¯
+		* @param[in] user_id ç¾¤æˆå‘˜id
+		* @param[in] args æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnBtnHeadImageClick(const UTF8String& user_id, ui::EventArgs* args);
 
 		/**
-		* ´¦ÀíÈ·ÈÏ°´Å¥µ¥»÷ÏûÏ¢
-		* @param[in] param ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†ç¡®è®¤æŒ‰é’®å•å‡»æ¶ˆæ¯
+		* @param[in] param æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnBtnConfirmClick(ui::EventArgs* param);
 
 		/**
-		* ´¦ÀíÈ¡Ïû°´Å¥µ¥»÷ÏûÏ¢
-		* @param[in] param ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†å–æ¶ˆæŒ‰é’®å•å‡»æ¶ˆæ¯
+		* @param[in] param æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnBtnCancelClick(ui::EventArgs* param);
 
 		/**
-		* ´¦Àí½âÉ¢Èº°´Å¥µ¥»÷ÏûÏ¢
-		* @param[in] param ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†è§£æ•£ç¾¤æŒ‰é’®å•å‡»æ¶ˆæ¯
+		* @param[in] param æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnBtnDissmissClick(ui::EventArgs* param);
 
 		/**
-		* ´¦ÀíÍË³öÈº°´Å¥µ¥»÷ÏûÏ¢
-		* @param[in] param ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†é€€å‡ºç¾¤æŒ‰é’®å•å‡»æ¶ˆæ¯
+		* @param[in] param æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnBtnQuitClick(ui::EventArgs* param);
 
 		/**
-		* ÏìÓ¦Èº³ÉÔ±Ôö¼ÓµÄ»Øµ÷º¯Êı
-		* @param[in] tid Èº×éid
-		* @param[in] team_member_info Èº³ÉÔ±ĞÅÏ¢
-		* @return void	ÎŞ·µ»ØÖµ
+		* å“åº”ç¾¤æˆå‘˜å¢åŠ çš„å›è°ƒå‡½æ•°
+		* @param[in] tid ç¾¤ç»„id
+		* @param[in] team_member_info ç¾¤æˆå‘˜ä¿¡æ¯
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void OnTeamMemberAdd(const std::string& tid, const nim::TeamMemberProperty& team_member_info);
 
 		/**
-		* ÏìÓ¦Èº³ÉÔ±ÒÆ³ıµÄ»Øµ÷º¯Êı
-		* @param[in] tid Èº×éid
-		* @param[in] uid ÓÃ»§id
-		* @return void	ÎŞ·µ»ØÖµ
+		* å“åº”ç¾¤æˆå‘˜ç§»é™¤çš„å›è°ƒå‡½æ•°
+		* @param[in] tid ç¾¤ç»„id
+		* @param[in] uid ç”¨æˆ·id
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void OnTeamMemberRemove(const std::string& tid, const std::string& uid);
 
 		/**
-		* ÏìÓ¦Èº³ÉÔ±êÇ³Æ¸Ä±äµÄ»Øµ÷º¯Êı
-		* @param[in] tid_uid °üº¬Èº×éidºÍÓÃ»§idµÄ×Ö·û´®
-		* @param[in] team_card ÈºêÇ³Æ
-		* @return void	ÎŞ·µ»ØÖµ
+		* å“åº”ç¾¤æˆå‘˜æ˜µç§°æ”¹å˜çš„å›è°ƒå‡½æ•°
+		* @param[in] tid_uid åŒ…å«ç¾¤ç»„idå’Œç”¨æˆ·idçš„å­—ç¬¦ä¸²
+		* @param[in] team_card ç¾¤æ˜µç§°
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void OnTeamMemberChange(const std::string& tid_uid, const std::string& team_card);
 
 		/**
-		* ÏìÓ¦Èº¹ÜÀíÔ±¸Ä±äµÄ»Øµ÷º¯Êı
-		* @param[in] tid Èº×éid
-		* @param[in] uid ÓÃ»§id
-		* @param[in] admin ÊÇ·ñÎª¹ÜÀíÔ±
-		* @return void	ÎŞ·µ»ØÖµ
+		* å“åº”ç¾¤ç®¡ç†å‘˜æ”¹å˜çš„å›è°ƒå‡½æ•°
+		* @param[in] tid ç¾¤ç»„id
+		* @param[in] uid ç”¨æˆ·id
+		* @param[in] admin æ˜¯å¦ä¸ºç®¡ç†å‘˜
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void OnTeamAdminSet(const std::string& tid, const std::string& uid, bool admin);
 
 		/**
-		* ÏìÓ¦ÈºÖ÷¸Ä±äµÄ»Øµ÷º¯Êı
-		* @param[in] tid Èº×éid
-		* @param[in] uid ĞÂÈºÖ÷id
-		* @return void	ÎŞ·µ»ØÖµ
+		* å“åº”ç¾¤ä¸»æ”¹å˜çš„å›è°ƒå‡½æ•°
+		* @param[in] tid ç¾¤ç»„id
+		* @param[in] uid æ–°ç¾¤ä¸»id
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void OnTeamOwnerChange(const std::string& tid, const std::string& uid);
 
 		/**
-		* ÏìÓ¦ÓÃ»§ĞÅÏ¢¸Ä±äµÄ»Øµ÷º¯Êı
-		* @param[in] uinfos ÓÃ»§ĞÅÏ¢ÁĞ±í
-		* @return void	ÎŞ·µ»ØÖµ
+		* å“åº”ç”¨æˆ·ä¿¡æ¯æ”¹å˜çš„å›è°ƒå‡½æ•°
+		* @param[in] uinfos ç”¨æˆ·ä¿¡æ¯åˆ—è¡¨
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos);
 
 		/**
-		* ÏìÓ¦ÓÃ»§Í·Ïñ¸Ä±äµÄ»Øµ÷º¯Êı
-		* @param[in] type Í·ÏñÀàĞÍ
-		* @param[in] tid Èº×éid
-		* @param[in] photo_path Í·ÏñÂ·¾¶
-		* @return void	ÎŞ·µ»ØÖµ
+		* å“åº”ç”¨æˆ·å¤´åƒæ”¹å˜çš„å›è°ƒå‡½æ•°
+		* @param[in] type å¤´åƒç±»å‹
+		* @param[in] tid ç¾¤ç»„id
+		* @param[in] photo_path å¤´åƒè·¯å¾„
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void OnUserPhotoReady(PhotoType type, const std::string& tid, const std::wstring &photo_path);
 
 		/**
-		* ÏìÓ¦ÈºÒÆ³ıµÄ»Øµ÷º¯Êı
-		* @param[in] tid Èº×éid
-		* @return void	ÎŞ·µ»ØÖµ
+		* å“åº”ç¾¤ç§»é™¤çš„å›è°ƒå‡½æ•°
+		* @param[in] tid ç¾¤ç»„id
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void OnTeamRemove(const std::string& tid);
 		/**
-		* ÏìÓ¦ÈºÃû³Æ¸Ä±äÊÂ¼ş
-		* @param[in] team_info ÈºĞÅÏ¢
-		* @return void	ÎŞ·µ»ØÖµ
+		* å“åº”ç¾¤åç§°æ”¹å˜äº‹ä»¶
+		* @param[in] team_info ç¾¤ä¿¡æ¯
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void OnTeamNameChange(const nim::TeamInfo& team_info);
         /**
-        * ÏìÓ¦Èº½ûÑÔ×´Ì¬¸Ä±äÊÂ¼ş
-        * @param[in] tid Èºid
-        * @param[in] mute_all ÊÇ·ñ½ûÑÔ£¬true Îª½ûÑÔ£¬·ñÔòÎª false
-        * @return void	ÎŞ·µ»ØÖµ
+        * å“åº”ç¾¤ç¦è¨€çŠ¶æ€æ”¹å˜äº‹ä»¶
+        * @param[in] tid ç¾¤id
+        * @param[in] mute_all æ˜¯å¦ç¦è¨€ï¼Œtrue ä¸ºç¦è¨€ï¼Œå¦åˆ™ä¸º false
+        * @return void	æ— è¿”å›å€¼
         */
         void OnTeamMuteChange(const std::string& tid, bool mute_all);
 		/**
-		* ÅĞ¶ÏÊÇ·ñÎª¿ÉÒÔÏÔÊ¾µ½ÈºÁĞ±íµÄÈº³ÉÔ±ÀàĞÍ
-		* @param[in] user_type Èº³ÉÔ±ÀàĞÍ
-		* @return bool true ÊÇ£¬false ·ñ
+		* åˆ¤æ–­æ˜¯å¦ä¸ºå¯ä»¥æ˜¾ç¤ºåˆ°ç¾¤åˆ—è¡¨çš„ç¾¤æˆå‘˜ç±»å‹
+		* @param[in] user_type ç¾¤æˆå‘˜ç±»å‹
+		* @return bool true æ˜¯ï¼Œfalse å¦
 		*/
 		bool IsTeamMemberType(const nim::NIMTeamUserType user_type);
         /**
-        * ĞŞ¸ÄÈº×éÏûÏ¢Í¨Öª×´Ì¬¸Ä±äÊÂ¼ş
-        * @param[in] id Èº×é id
+        * ä¿®æ”¹ç¾¤ç»„æ¶ˆæ¯é€šçŸ¥çŠ¶æ€æ”¹å˜äº‹ä»¶
+        * @param[in] id ç¾¤ç»„ id
         * @param[in] bits 
         */
         void OnTeamNotificationModeChangeCallback(const std::string& id, int64_t bits);

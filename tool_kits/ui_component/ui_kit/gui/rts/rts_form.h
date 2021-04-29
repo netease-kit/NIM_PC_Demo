@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "util/window_ex.h"
 #include "ui_board_control.h"

@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "cmd_line.h"
 #include "base/util/string_util.h"
 

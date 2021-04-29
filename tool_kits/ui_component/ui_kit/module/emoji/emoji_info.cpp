@@ -1,4 +1,5 @@
-﻿#include "emoji_info.h"
+#include "stdafx.h"
+#include "emoji_info.h"
 #include "richedit_util.h"
 
 

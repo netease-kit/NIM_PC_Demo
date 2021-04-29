@@ -30,7 +30,7 @@ using TreeDocItemPtr = std::shared_ptr<ITreeDocItem>;
 using TreeDocItemWeakPtr = std::weak_ptr<ITreeDocItem>;
 using WeakTreeDocItemMap = std::map<TreeItemIDType, TreeDocItemWeakPtr>;
 using TreeDocItemList = std::list<TreeDocItemPtr>;
-//事件相关
+//浜嬩欢鐩稿叧
 using TreeItemAddChildCB = std::function<void(const TreeDocItemPtr&)>;
 using TreeItemReleaseChildCB = std::function<void(const TreeDocItemPtr&)>;
 using TreeItemEventDetatch = std::function<void()>;
@@ -78,7 +78,7 @@ protected:
 private:
 	mutable std::vector<TreeItemEventDetatch> cb_detach_;
 };
-//数据相关
+//鏁版嵁鐩稿叧
 //class ITreeDocItem;
 class ITreeDocItem : virtual public ITreeDocItemEvent,virtual public std::enable_shared_from_this<ITreeDocItem>
 {
@@ -101,7 +101,7 @@ public:
 	virtual bool IsLastSubItem(TreeItemIDType id) const = 0;
 };
 
-//UI相关定义
+//UI鐩稿叧瀹氫箟
 class ITreeComponent
 {
 public:

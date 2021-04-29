@@ -1,4 +1,5 @@
-﻿#include "nim_ui_session_list_manager.h"
+#include "stdafx.h"
+#include "nim_ui_session_list_manager.h"
 #include "callback/session/session_callback.h"
 #include "nim_service/module/service/session_service.h"
 #include "gui/main/team_event_form.h"
@@ -209,7 +210,7 @@ void SessionListManager::InsertLocalMsg(const nim_comp::InsertLocalMessageCallba
 	msg.session_type_ = session_type;
 	msg.receiver_accid_ = session_id;
 	msg.sender_accid_ = nim_comp::LoginManager::GetInstance()->GetAccount();
-	msg.client_msg_id_ = QString::GetGUID();
+	msg.client_msg_id_ = nim::Tool::GetUuid();
 	msg.timetag_ = time > 0 ? time : 1000 * nbase::Time::Now().ToTimeT();
 	if (status_delete)
 		msg.status_ = nim::kNIMMsgLogStatusDeleted;

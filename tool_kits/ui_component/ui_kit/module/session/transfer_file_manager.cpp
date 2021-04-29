@@ -1,4 +1,5 @@
-﻿#include "transfer_file_manager.h"
+#include "stdafx.h"
+#include "transfer_file_manager.h"
 
 namespace nim_comp {
 

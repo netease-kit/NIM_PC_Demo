@@ -21,8 +21,8 @@ private:
 	void DrawRect(HDC hDC);
 
 private:
-	ui::UiRect		rc_valid_;			// ÓĞĞ§Î»ÖÃ(´°¿Ú»æÖÆµÄÎ»ÖÃ)
-	DWORD			color_pen_;			// Ğé¿òµÄÑÕÉ«
-	StdClosure		text_finished_cb_;	// ÎÄ×ÖĞ´ÍêÊ±ĞèÒªÖ´ĞĞµÄÍâ²¿»Øµ÷
+	ui::UiRect		rc_valid_;			// æœ‰æ•ˆä½ç½®(çª—å£ç»˜åˆ¶çš„ä½ç½®)
+	DWORD			color_pen_;			// è™šæ¡†çš„é¢œè‰²
+	StdClosure		text_finished_cb_;	// æ–‡å­—å†™å®Œæ—¶éœ€è¦æ‰§è¡Œçš„å¤–éƒ¨å›è°ƒ
 };
 #endif  // _NIM_GUI_CAPTURE_FORM_UI_CAPTURE_TEXT_EDIT_H_

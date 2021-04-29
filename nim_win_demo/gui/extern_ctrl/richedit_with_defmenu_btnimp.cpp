@@ -1,5 +1,7 @@
+#include "stdafx.h"
 #include "richedit_with_defmenu_btnimp.h"
 #include "richedit_with_defmenu.h"
+
 MenuBtnHandel::MenuBtnHandel(RichEditWithDefMenu* edit, const std::wstring& name) :
 edit_(edit),
 menu_name_(name),

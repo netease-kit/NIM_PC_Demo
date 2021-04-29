@@ -1,6 +1,6 @@
 #pragma once
 /** @file http_protocol_interface_define.h
-* @brief app_sdk »ùÓÚhttpÇëÇóµÄĞ­Òé»ù´¡Êı¾İÀàĞÍ¶¨Òå
+* @brief app_sdk åŸºäºhttpè¯·æ±‚çš„åè®®åŸºç¡€æ•°æ®ç±»å‹å®šä¹‰
 * @copyright (c) 2015-2018, NetEase Inc. All rights reserved
 * @date 2018/4/26
 */
@@ -17,7 +17,7 @@ namespace app_sdk
 	
 	class SDKManager;
 	/** @class IHttpRequest
-	* @brief app_sdk ÇëÇó½Ó¿Ú¶¨Òå
+	* @brief app_sdk è¯·æ±‚æ¥å£å®šä¹‰
 	* @copyright (c) 2018, NetEase Inc. All rights reserved
 	* @date 2018/4/26
 	*/
@@ -26,21 +26,21 @@ namespace app_sdk
 	public:
 		IHttpRequest() = default;
 		virtual ~IHttpRequest() = default;
-		//ÊÇ·ñÊ¹ÓÃpost·½·¨
+		//æ˜¯å¦ä½¿ç”¨postæ–¹æ³•
 		virtual bool UsePostMethod() const;
-		//httpÇëÇóµØÖ·
+		//httpè¯·æ±‚åœ°å€
 		virtual std::string GetAPIURL() const = 0;	
-		//ÇëÇóµÄ³¬Ê±Ê±¼ä
+		//è¯·æ±‚çš„è¶…æ—¶æ—¶é—´
 		virtual int GetRequestTimeout() const;
-		//»ñÈ¡ÇëÇóÄÚÈİ
+		//è·å–è¯·æ±‚å†…å®¹
 		virtual void GetRequestContent(std::string& content) const = 0;
-		//»ñÈ¡ÇëÇóÊ±httpÍ·Òª¼ÓÈëµÄĞÅÏ¢
+		//è·å–è¯·æ±‚æ—¶httpå¤´è¦åŠ å…¥çš„ä¿¡æ¯
 		virtual void GetRequestHead(std::map<std::string, std::string>& heads) = 0;
 	private:
 		static const uint32_t request_time_out_;
 	};
 	/** @class IHttpRequest
-	* @brief app_sdk Ó¦´ğ½Ó¿Ú¶¨Òå
+	* @brief app_sdk åº”ç­”æ¥å£å®šä¹‰
 	* @copyright (c) 2018, NetEase Inc. All rights reserved
 	* @date 2018/4/26
 	*/
@@ -50,16 +50,16 @@ namespace app_sdk
 	public:	
 		IHttpResponse();
 		virtual ~IHttpResponse();
-		virtual void Parse(const std::string& response) = 0;	//½âÎöÓ¦´ğ		
-		//»ñÈ¡httpÇëÇóÓ¦´ğÂë
+		virtual void Parse(const std::string& response) = 0;	//è§£æåº”ç­”		
+		//è·å–httpè¯·æ±‚åº”ç­”ç 
 		int GetResponseCode() const;
 	private:
 		void SetResponseCode(int code);
 	protected:
-		int response_code_;//httpÇëÇóµÄÓ¦´ğÂë
+		int response_code_;//httpè¯·æ±‚çš„åº”ç­”ç 
 	};	
 
-	//´´½¨Ò»¸ö¼Ì³ĞÓÚIHttpRequestµÄhttpÇëÇó
+	//åˆ›å»ºä¸€ä¸ªç»§æ‰¿äºIHttpRequestçš„httpè¯·æ±‚
 	template<typename TSharedHttpRequest, typename... TParams>
 	static auto CreateHttpRequest(const TParams&... params)->
 		std::shared_ptr<typename TSharedHttpRequest::element_type>

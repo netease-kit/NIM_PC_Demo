@@ -1,4 +1,5 @@
-﻿#include "profile_mine.h"
+#include "stdafx.h"
+#include "profile_mine.h"
 #include "av_kit/module/video/video_manager.h"
 #include "base/encrypt/encrypt.h"
 #include "base/encrypt/encrypt_impl.h"

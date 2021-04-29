@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "stdafx.h"
 #include "team_info_box.h"
 #include "util/windows_manager.h"
 #include "shared/pin_yin_helper.h"
@@ -10,7 +11,9 @@
 #include "gui/team_info/member_manager.h"
 #include "gui/profile_form/head_modify_form.h"
 #include "gui/team_info/team_info.h"
+
 using namespace nim_comp;
+
 const std::vector<std::wstring> TeamInfoBox::options_name_list_ = {
 	L"join_mode_any",					L"join_mode_verify",				L"join_mode_nobody",
 	L"be_invite_mode_agree",			L"be_invite_mode_no_need_agree",
@@ -94,7 +97,7 @@ void TeamInfoBox::DoInit()
 	}
 	else
     {
-		//Ä¬ÈÏ¿ªÆôÏûÏ¢Í¨Öª oleg 20161025
+		//é»˜è®¤å¼€å¯æ¶ˆæ¯é€šçŸ¥ oleg 20161025
 		((ui::Option*)FindSubControl(L"notify_mode_on"))->Selected(true);
 		AddInviteButton();
 		btn_quit_->SetVisible(false);
@@ -462,8 +465,8 @@ bool TeamInfoBox::OnBtnConfirmClick(ui::EventArgs* param)
 		return true;
 	}
 
-	//¸ß¼¶Èº²»ĞèÒªÒ»¶¨ÑûÇë
-	if (type_ == nim::kNIMTeamTypeNormal && team_member_list_.size() <= 1)	//tile_box_ÖĞ°üº¬Ò»¸öÌí¼Ó°´Å¥
+	//é«˜çº§ç¾¤ä¸éœ€è¦ä¸€å®šé‚€è¯·
+	if (type_ == nim::kNIMTeamTypeNormal && team_member_list_.size() <= 1)	//tile_box_ä¸­åŒ…å«ä¸€ä¸ªæ·»åŠ æŒ‰é’®
 	{
 		ShowMsgBox(GetWindow()->GetHWND(), ToWeakCallback(cb), L"STRID_TEAM_INFO_PLEASE_INVITE_FRIEND");
 		return true;
@@ -547,7 +550,7 @@ bool TeamInfoBox::OnBtnConfirmClick(ui::EventArgs* param)
 	}
 	else
     {
-        // ÈºÏûÏ¢Í¨Öª·½Ê½
+        // ç¾¤æ¶ˆæ¯é€šçŸ¥æ–¹å¼
         if (((ui::Option*)FindSubControl(L"notify_mode_on"))->IsEnabled())
         {
             auto my_member_info = team_member_list_.at(LoginManager::GetInstance()->GetAccount());
@@ -569,7 +572,7 @@ bool TeamInfoBox::OnBtnConfirmClick(ui::EventArgs* param)
 
         if (FindSubControl(L"team_owner_section")->IsEnabled() || FindSubControl(L"team_name_panel")->IsEnabled())
         {
-            // Èº×é½ûÑÔ
+            // ç¾¤ç»„ç¦è¨€
             nim::NIMTeamMuteType mute_mode = nim::kNIMTeamMuteTypeNone;
             if (((ui::Option*)FindSubControl(L"mute_mode_allow_manager"))->IsSelected())
                 mute_mode = nim::kNIMTeamMuteTypeNomalMute;
@@ -580,7 +583,7 @@ bool TeamInfoBox::OnBtnConfirmClick(ui::EventArgs* param)
                 nim::Team::MuteAsync(tid_, mute_mode != nim::kNIMTeamMuteTypeNone, std::bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1), "");
             }
 
-            // ¸üĞÂÈº×é»ù±¾ĞÅÏ¢
+            // æ›´æ–°ç¾¤ç»„åŸºæœ¬ä¿¡æ¯
 			nim::Team::UpdateTeamInfoAsync(tid_, tinfo, std::bind(&TeamCallback::OnTeamEventCallback, std::placeholders::_1));
 		}
 	}
@@ -695,7 +698,7 @@ void TeamInfoBox::OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos)
 			if (iter->ExistValue(nim::kUserNameCardKeyIconUrl))
 				item->FindSubControl(L"head_image")->SetBkImage(PhotoService::GetInstance()->GetUserPhoto(iter->GetAccId()));
 
-			// Èç¹ûÃ»ÓĞÉèÖÃÈºêÇ³Æ£¬ÔòÏÔÊ¾ÓÃ»§µÄ±¸×¢Ãû»òêÇ³Æ¡£Èç¹ûÉèÖÃÁËÈºêÇ³Æ£¬¾Í²»±ä¡£
+			// å¦‚æœæ²¡æœ‰è®¾ç½®ç¾¤æ˜µç§°ï¼Œåˆ™æ˜¾ç¤ºç”¨æˆ·çš„å¤‡æ³¨åæˆ–æ˜µç§°ã€‚å¦‚æœè®¾ç½®äº†ç¾¤æ˜µç§°ï¼Œå°±ä¸å˜ã€‚
 			ui::Label* show_name_label = (ui::Label*)item->FindSubControl(L"show_name");
 			if (iter->ExistValue(nim::kUserNameCardKeyName) && team_member_list_.at(iter->GetAccId())->GetNick().empty())
 				show_name_label->SetText(UserService::GetInstance()->GetUserName(iter->GetAccId()));
@@ -862,7 +865,7 @@ void DeleteFileCallback(const std::wstring& tmp_head_image_path)
 {
 	if (nbase::FilePathIsExist(tmp_head_image_path, false))
 	{
-		nbase::DeleteFile(tmp_head_image_path); // É¾³ıÁÙÊ±ÎÄ¼ş
+		nbase::DeleteFile(tmp_head_image_path); // åˆ é™¤ä¸´æ—¶æ–‡ä»¶
 	}
 }
 void TeamInfoBox::SetTaskbarTitle(const std::wstring &title)
@@ -899,7 +902,7 @@ void TeamInfoBox::AttachActive(const std::function<void()>& cb)
 }
 void TeamInfoBox::RefreshInfo(nim::TeamInfo* team_info)
 {
-    // Èç¹ûÕıÔÚ±£´æÊı¾İ£¬²»Ë¢ĞÂ½çÃæ
+    // å¦‚æœæ­£åœ¨ä¿å­˜æ•°æ®ï¼Œä¸åˆ·æ–°ç•Œé¢
     if (saving_settings_)
         return;
 

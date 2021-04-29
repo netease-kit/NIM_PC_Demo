@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "http_service.h"
 #include "module/login/login_manager.h"
 
@@ -12,15 +13,15 @@ std::wstring HttpService::GetCustomImage(HttpResourceType type, const std::strin
 	if (id.empty() || url.empty())
 		return default_img;
 
-	// ¼ì²éÍ¼Æ¬ÊÇ·ñ´æÔÚ
-	std::wstring file_path = GetHttpCachedFileDir() + nbase::UTF8ToUTF16(QString::GetMd5(url));
+	// æ£€æŸ¥å›¾ç‰‡æ˜¯å¦å­˜åœ¨
+	std::wstring file_path = GetHttpCachedFileDir() + nbase::UTF8ToUTF16(nim::Tool::GetMd5(url));
 	if (!CheckImageValid(file_path))
 	{
 		DownloadResource(type, id, url);
 		return default_img;
 	}
 
-	return GetHttpCachedFileDir() + nbase::UTF8ToUTF16(QString::GetMd5(url));
+	return GetHttpCachedFileDir() + nbase::UTF8ToUTF16(nim::Tool::GetMd5(url));
 }
 
 UnregisterCallback HttpService::RegDownloadComplete(const OnDownloadCompleteCallback& callback)
@@ -45,8 +46,8 @@ void HttpService::DownloadResource(HttpResourceType type, const std::string &id,
 
 	if (type == kChatroomMemberIcon)
 	{
-		std::wstring photo_path = GetHttpCachedFileDir() + nbase::UTF8ToUTF16(QString::GetMd5(url));
-		if (CheckImageValid(photo_path)) // Èç¹ûÒÑ¾­£¬¾Í²»ÏÂÔØ
+		std::wstring photo_path = GetHttpCachedFileDir() + nbase::UTF8ToUTF16(nim::Tool::GetMd5(url));
+		if (CheckImageValid(photo_path)) // å¦‚æžœå·²ç»ï¼Œå°±ä¸ä¸‹è½½
 			return;
 
 		nim::NOS::DownloadMediaCallback cb = ToWeakCallback([this, type, id, photo_path](int res_code, const std::string& file_path, const std::string& call_id, const std::string& res_id) {
@@ -72,13 +73,13 @@ bool HttpService::CheckImageValid(std::wstring image_path)
 	if (!nbase::FilePathIsExist(image_path, false))
 		return false;
 
-	// ¼ì²éÍ¼Æ¬ÊÇ·ñËð»µ
+	// æ£€æŸ¥å›¾ç‰‡æ˜¯å¦æŸå
 	return (Gdiplus::Image(image_path.c_str()).GetLastStatus() == Gdiplus::Status::Ok);
 }
 
 std::wstring HttpService::GetHttpCachedFileDir()
 {
-	std::wstring dir = QPath::GetUserAppDataDir(LoginManager::GetInstance()->GetAccount()).append(L"demo_res\\");
+	std::wstring dir = nbase::UTF8ToUTF16(nim::Tool::GetUserAppdataDir(LoginManager::GetInstance()->GetAccount())).append(L"demo_res\\");
 	if (!nbase::FilePathIsExist(dir, true))
 		nbase::win32::CreateDirectoryRecursively(dir.c_str());
 	return dir;

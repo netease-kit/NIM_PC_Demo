@@ -19,7 +19,7 @@ const LPCTSTR g_ADDFRIEND_ADDSUCCESS_PAGE	  = L"add_success_page";
 const LPCTSTR g_ADDFRIEND_NET_ABNORMAL_PAGE = L"net_abnormal";
 
 /** @class AddFriendWindow
-  * @brief Ìí¼ÓºÃÓÑ´°¿Ú
+  * @brief æ·»åŠ å¥½å‹çª—å£
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @author pqk
   * @date 2016/09/19
@@ -30,7 +30,7 @@ public:
 	AddFriendWindow();
 	virtual ~AddFriendWindow();
 
-	//¸²¸ÇĞéº¯Êı
+	//è¦†ç›–è™šå‡½æ•°
 	virtual std::wstring GetSkinFolder() override;
 	virtual std::wstring GetSkinFile() override;
 	virtual std::wstring GetWindowClassName() const override { return kClassName; };
@@ -38,45 +38,45 @@ public:
 	virtual UINT GetClassStyle() const override { return UI_CLASSSTYLE_FRAME | CS_DBLCLKS; };
 
 	/**
-	* ´°¿Ú³õÊ¼»¯º¯Êı
-	* @return void	ÎŞ·µ»ØÖµ
+	* çª—å£åˆå§‹åŒ–å‡½æ•°
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void InitWindow() override;
 
 	/**
-	* À¹½Ø²¢´¦Àíµ×²ã´°ÌåÏûÏ¢
-	* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-	* @param[in] wParam ¸½¼Ó²ÎÊı
-	* @param[in] lParam ¸½¼Ó²ÎÊı
-	* @return LRESULT ´¦Àí½á¹û
+	* æ‹¦æˆªå¹¶å¤„ç†åº•å±‚çª—ä½“æ¶ˆæ¯
+	* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+	* @param[in] wParam é™„åŠ å‚æ•°
+	* @param[in] lParam é™„åŠ å‚æ•°
+	* @return LRESULT å¤„ç†ç»“æœ
 	*/
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 private:
 	/**
-	* ´¦ÀíËÑË÷°´Å¥µÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æœç´¢æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool Search(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÈ¡Ïû°´Å¥µÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å–æ¶ˆæŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool Cancel(ui::EventArgs* param);
 
 	/**
-	* ¸ù¾İÓÃ»§ÃûÆ¬ÉèÖÃ²¢ÇĞ»»ÓÃ»§ĞÅÏ¢Õ¹Ê¾Ò³Ãæ
-	* @param[in] user_info ÓÃ»§ÃûÆ¬
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ ¹æ®ç”¨æˆ·åç‰‡è®¾ç½®å¹¶åˆ‡æ¢ç”¨æˆ·ä¿¡æ¯å±•ç¤ºé¡µé¢
+	* @param[in] user_info ç”¨æˆ·åç‰‡
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void InitUserProfile(const nim::UserNameCard& user_info);
 
 	/**
-	* Çå¿ÕÊäÈë¿òÖĞµÄÎÄ±¾
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ¸…ç©ºè¾“å…¥æ¡†ä¸­çš„æ–‡æœ¬
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void InitEdit();
 
@@ -88,11 +88,11 @@ private:
 	};
 
 	/**
-	* ´¦ÀíÉÏÒ»²½»òÕßÏÂÒ»²½°´Å¥µÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @param[in] page_name ÒªÌø×ªµÄÄ¿±êÒ³Ãæ
-	* @param[in] init_edit ÒªÇåÀíµÄÊäÈë¿òµÄÀàĞÍ
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†ä¸Šä¸€æ­¥æˆ–è€…ä¸‹ä¸€æ­¥æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @param[in] page_name è¦è·³è½¬çš„ç›®æ ‡é¡µé¢
+	* @param[in] init_edit è¦æ¸…ç†çš„è¾“å…¥æ¡†çš„ç±»å‹
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool PreOrNextClick(ui::EventArgs* param, const std::wstring& page_name, INIT_TYPE init_edit);
 
@@ -101,53 +101,53 @@ public:
 
 private:
 	/**
-	* ´¦ÀíÌí¼ÓºÃÓÑ°´Å¥µÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ·»åŠ å¥½å‹æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool AddFriendClick(ui::EventArgs* param);
 
 	/**
-	* ´¦Àí¿ªÊ¼ÁÄÌì°´Å¥µÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å¼€å§‹èŠå¤©æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool ChatClick(ui::EventArgs* param);
 
 	/**
-	* ´¦Àí´ÓºÚÃûµ¥ÒÆ³ı°´Å¥µÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†ä»é»‘åå•ç§»é™¤æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool RemoveFromBlack(ui::EventArgs* args);
 
 	/**
-	* ´¦Àí·¢ËÍÌí¼ÓºÃÓÑÇëÇó°´Å¥µÄµ¥»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å‘é€æ·»åŠ å¥½å‹è¯·æ±‚æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool SendFriendApplyClick(ui::EventArgs* param);
 
 	/**
-	* ´¦ÀíÊäÈë¿ò»ñÈ¡½¹µãµÄÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†è¾“å…¥æ¡†è·å–ç„¦ç‚¹çš„æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnSearchKeyEditSetFocus(void* param);
 
 	/**
-	* ÏìÓ¦ÓÃ»§ĞÅÏ¢¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] uinfos ÓÃ»§ĞÅÏ¢ÁĞ±í
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ç”¨æˆ·ä¿¡æ¯æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] uinfos ç”¨æˆ·ä¿¡æ¯åˆ—è¡¨
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 
 	/**
-	* ÏìÓ¦ÓÃ»§Í·Ïñ¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] type Í·ÏñÀàĞÍ
-	* @param[in] account ÓÃ»§id
-	* @param[in] photo_path Í·ÏñÂ·¾¶
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ç”¨æˆ·å¤´åƒæ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] type å¤´åƒç±»å‹
+	* @param[in] account ç”¨æˆ·id
+	* @param[in] photo_path å¤´åƒè·¯å¾„
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
 

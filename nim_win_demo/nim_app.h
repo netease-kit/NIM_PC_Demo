@@ -4,7 +4,7 @@
 #include "shared/ui/msgbox.h"
 
 /** @class MainThread
-  * @brief Ö÷Ïß³Ì£¨UIÏß³Ì£©Àà£¬¼Ì³Ğnbase::FrameworkThread
+  * @brief ä¸»çº¿ç¨‹ï¼ˆUIçº¿ç¨‹ï¼‰ç±»ï¼Œç»§æ‰¿nbase::FrameworkThread
   * @copyright (c) 2015, NetEase Inc. All rights reserved
   * @author towik
   * @date 2015/1/1
@@ -17,33 +17,33 @@ public:
 	virtual ~MainThread() {}
 private:
 	/**
-	* ³ÌĞò±ÀÀ£Ê±µÄ´¦Àíº¯Êı
-	* @param[in] ret	ÓÃ»§µÄ´¦Àí·½Ê½£¨¹Ø±Õ»òÖØĞÂÔËĞĞ³ÌĞò£©
-	* @return void	ÎŞ·µ»ØÖµ
+	* ç¨‹åºå´©æºƒæ—¶çš„å¤„ç†å‡½æ•°
+	* @param[in] ret	ç”¨æˆ·çš„å¤„ç†æ–¹å¼ï¼ˆå…³é—­æˆ–é‡æ–°è¿è¡Œç¨‹åºï¼‰
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnMsgBoxCallback(MsgBoxRet ret, const std::string& dmp_path);
 
 	/**
-	* Ğéº¯Êı£¬³õÊ¼»¯Ö÷Ïß³Ì
-	* @return void	ÎŞ·µ»ØÖµ
+	* è™šå‡½æ•°ï¼Œåˆå§‹åŒ–ä¸»çº¿ç¨‹
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void Init() override;
 
 	/**
-	* Ğéº¯Êı£¬Ö÷Ïß³ÌÍË³öÊ±£¬×öÒ»Ğ©ÇåÀí¹¤×÷
-	* @return void	ÎŞ·µ»ØÖµ
+	* è™šå‡½æ•°ï¼Œä¸»çº¿ç¨‹é€€å‡ºæ—¶ï¼Œåšä¸€äº›æ¸…ç†å·¥ä½œ
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void Cleanup() override;
 
 	/**
-	* Ö÷Ïß³Ì¿ªÊ¼Ñ­»·Ç°£¬miscÏß³ÌºÍdbÏß³ÌÏÈ¿ªÊ¼Ñ­»·
-	* @return void	ÎŞ·µ»ØÖµ
+	* ä¸»çº¿ç¨‹å¼€å§‹å¾ªç¯å‰ï¼Œmiscçº¿ç¨‹å’Œdbçº¿ç¨‹å…ˆå¼€å§‹å¾ªç¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void PreMessageLoop();
 
 	/**
-	* Ö÷Ïß³Ì½áÊøÑ­»·Ç°£¬miscÏß³ÌºÍdbÏß³ÌÏÈ½áÊøÑ­»·
-	* @return void	ÎŞ·µ»ØÖµ
+	* ä¸»çº¿ç¨‹ç»“æŸå¾ªç¯å‰ï¼Œmiscçº¿ç¨‹å’Œdbçº¿ç¨‹å…ˆç»“æŸå¾ªç¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void PostMessageLoop();
 private:

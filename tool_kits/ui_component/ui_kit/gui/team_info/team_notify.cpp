@@ -1,4 +1,5 @@
-﻿#include "team_notify.h"
+#include "stdafx.h"
+#include "team_notify.h"
 #include "module/login/login_manager.h"
 #include "callback/team/team_callback.h"
 #include "gui/main/control/event_item.h"

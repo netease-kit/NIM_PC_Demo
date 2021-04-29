@@ -1,5 +1,5 @@
 /** @file browser_handler.h
-  * @brief ¶¨ÒåRender½ø³ÌÓëBrowser½ø³ÌÍ¨ĞÅËùÓÃ³£Á¿
+  * @brief å®šä¹‰Renderè¿›ç¨‹ä¸Browserè¿›ç¨‹é€šä¿¡æ‰€ç”¨å¸¸é‡
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @author Redrain
   * @date 2016/7/19
@@ -8,6 +8,6 @@
 
 namespace nim_cef
 {
-	static const char kFocusedNodeChangedMessage[] = "FocusedNodeChanged";	// webÒ³ÃæÖĞ»ñÈ¡½¹µãµÄÔªËØ¸Ä±ä
-	static const char kCallCppFunctionMessage[] = "JsCallback";					// webµ÷ÓÃC++½Ó¿Ú½Ó¿ÚµÄÍ¨Öª
+	static const char kFocusedNodeChangedMessage[] = "FocusedNodeChanged";	// webé¡µé¢ä¸­è·å–ç„¦ç‚¹çš„å…ƒç´ æ”¹å˜
+	static const char kCallCppFunctionMessage[] = "JsCallback";					// webè°ƒç”¨C++æ¥å£æ¥å£çš„é€šçŸ¥
 }

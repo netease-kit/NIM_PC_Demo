@@ -1,7 +1,10 @@
+#include "stdafx.h"
 #include "contact_plugin_page.h"
 #include "export\nim_ui_contacts_list_manager.h"
 #include "gui/profile_form/profile_box.h"
+
 using namespace nim_comp;
+
 ContactPluginPage::ContactPluginPage() : 
 contact_profile_container_(nullptr), detach_list_function_(nullptr)
 {
@@ -64,7 +67,7 @@ ProfileBox* ContactPluginPage::CrateProfile(const std::string &uid, bool is_robo
 	ret->SetUTF8Name(uid);
 	contact_profile_container_->Add(ret);
 
-	// 获取用户信息
+	// 鑾峰彇鐢ㄦ埛淇℃伅
 	nim::UserNameCard info;
 	UserService::GetInstance()->GetUserInfo(uid, info);
 	ret->InitUserInfo(info);

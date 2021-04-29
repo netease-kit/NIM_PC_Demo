@@ -14,10 +14,10 @@ DrawUnit::~DrawUnit()
 
 void DrawUnit::Render(HDC hdc, HBITMAP bitmap, bool is_continue)
 {
-	// ´´½¨¹«ÓÃPEN£¬¸÷¸öDrawUnitµÄPenµÄ¹«ÓÃµÄ£¬µ«ÊÇBrush¸÷¸öDrawUnit²»Í¬
+	// åˆ›å»ºå…¬ç”¨PENï¼Œå„ä¸ªDrawUnitçš„Pençš„å…¬ç”¨çš„ï¼Œä½†æ˜¯Brushå„ä¸ªDrawUnitä¸åŒ
 	HPEN current_pen = CreatePen(PS_SOLID, line_width_, color_);
 	HPEN old_pen = (HPEN)SelectObject(hdc, current_pen);
-	RenderSelf(hdc, bitmap, is_continue); // ×ÓÀà´¦Àí
+	RenderSelf(hdc, bitmap, is_continue); // å­ç±»å¤„ç†
 	SelectObject(hdc, old_pen);
 	DeleteObject(current_pen);
 }
@@ -31,7 +31,7 @@ void DrawUnit::MeasurePoint(int &x,int &y)
 }
 
 
-//////////////////////////////////¾ØĞÎ////////////////////////////////////////
+//////////////////////////////////çŸ©å½¢////////////////////////////////////////
 void DrawUnitRectangle::RenderSelf(HDC hdc, HBITMAP bitmap, bool is_continue)
 {
 	LOGBRUSH lb = {BS_NULL};
@@ -42,16 +42,16 @@ void DrawUnitRectangle::RenderSelf(HDC hdc, HBITMAP bitmap, bool is_continue)
 	DeleteObject(current_brush);
 }
 
-//////////////////////////////////Ö±Ïß////////////////////////////////////////
+//////////////////////////////////ç›´çº¿////////////////////////////////////////
 void DrawUnitLine::RenderSelf(HDC hdc, HBITMAP bitmap, bool is_continue)
 {
 	MoveToEx(hdc, left_, top_, NULL);
 	LineTo(hdc, right_, bottom_);
 }
 
-//////////////////////////////////»­Ë¢////////////////////////////////////////
+//////////////////////////////////ç”»åˆ·////////////////////////////////////////
 
-// ÖØĞ´£¬ÔÚMouseMove¹ı³ÌÖĞ£¬ÊÕ¼¯ËùÓĞ¾­¹ıµÄµã
+// é‡å†™ï¼Œåœ¨MouseMoveè¿‡ç¨‹ä¸­ï¼Œæ”¶é›†æ‰€æœ‰ç»è¿‡çš„ç‚¹
 void DrawUnitBrush::SetEndPoint(int x,int y)
 {
 	ui::CPoint point = m_vtPoints.back();
@@ -63,7 +63,7 @@ void DrawUnitBrush::SetEndPoint(int x,int y)
 
 void DrawUnitBrush::RenderSelf(HDC hdc, HBITMAP bitmap, bool is_continue)
 {
-	// »æÖÆËùÓĞMouseMove¾­¹ıµÄµã
+	// ç»˜åˆ¶æ‰€æœ‰MouseMoveç»è¿‡çš„ç‚¹
 	UINT draw_pos = is_continue ? draw_pos_ : 0;
 	need_save_draw_ = false;
 	if (blur_type_ != DrawUnit::BLUR_TYPE_NONE)
@@ -140,7 +140,7 @@ Gdiplus::Rect DrawUnitBrush::GetRectByPt(const ui::CPoint& pt)
 	return Gdiplus::Rect(x - line_width_/2, y - line_width_/2, line_width_, line_width_);
 }
 
-//////////////////////////////////ÍÖÔ²////////////////////////////////////////
+//////////////////////////////////æ¤­åœ†////////////////////////////////////////
 void DrawUnitEllipse::RenderSelf(HDC hdc, HBITMAP bitmap, bool is_continue)
 {
 	LOGBRUSH lb = {BS_NULL};
@@ -151,7 +151,7 @@ void DrawUnitEllipse::RenderSelf(HDC hdc, HBITMAP bitmap, bool is_continue)
 	DeleteObject(current_brush);
 }
 
-//////////////////////////////////¼ıÍ·////////////////////////////////////////
+//////////////////////////////////ç®­å¤´////////////////////////////////////////
 
 DrawUnitArrow::DrawUnitArrow(int x,int y,const RECT &rc_valid)
 	:DrawUnit(x,y,rc_valid), arrow_tag_(line_width_ * 5 + 5 / line_width_, 0.65f)
@@ -168,7 +168,7 @@ void DrawUnitArrow::RenderSelf(HDC hdc, HBITMAP bitmap, bool is_continue)
 	DeleteObject(current_brush);
 }
 
-// point ÈÆ(x,y)×ªalpha¶È(»¡¶È)
+// point ç»•(x,y)è½¬alphaåº¦(å¼§åº¦)
 ui::CPoint Transform(ui::CPoint point, float x, float y, float alpha)
 {
 	ui::CPoint ptResult;
@@ -179,7 +179,7 @@ ui::CPoint Transform(ui::CPoint point, float x, float y, float alpha)
 
 void DrawUnitArrow::DrawArrow(HDC hdc)
 {
-	// Èİ´í´¦Àí£¬Èç¹ûÆğµãºÍÖÕµã¾àÀëºÜĞ¡¾Í²»»­ÁË
+	// å®¹é”™å¤„ç†ï¼Œå¦‚æœèµ·ç‚¹å’Œç»ˆç‚¹è·ç¦»å¾ˆå°å°±ä¸ç”»äº†
 	const static int knMinDiff = 3;
 	if (abs(left_ - right_) <= knMinDiff &&
 		abs(top_ - bottom_) <= knMinDiff)
@@ -189,16 +189,16 @@ void DrawUnitArrow::DrawArrow(HDC hdc)
 
 	ui::CPoint	pt_start(left_, top_);
 	ui::CPoint	pt_end(right_, bottom_);
-	ui::CPoint	pt_polys[3]; // Èı½ÇĞÎµÄÈı¸öµã
+	ui::CPoint	pt_polys[3]; // ä¸‰è§’å½¢çš„ä¸‰ä¸ªç‚¹
 
-	// »­Ö±Ïß
+	// ç”»ç›´çº¿
 	MoveToEx(hdc, pt_start.x, pt_start.y, NULL);
 	LineTo(hdc, pt_end.x, pt_end.y);
 
-	//¼ÆËã³öË®Æ½Ê±¼ıÍ·Èı¸öµãµÄ×ø±ê
+	//è®¡ç®—å‡ºæ°´å¹³æ—¶ç®­å¤´ä¸‰ä¸ªç‚¹çš„åæ ‡
 	float diff_y = pt_end.y - pt_start.y;
 	float diff_x = pt_end.x - pt_start.x;
-	float radius = atan(diff_y/diff_x); // arc_tan(y/x)Çó½Ç¶È
+	float radius = atan(diff_y/diff_x); // arc_tan(y/x)æ±‚è§’åº¦
 	diff_x = (fabs(diff_x) <= 0.00001) ? (diff_x < 0 ? -0.00001 : 0.00001) :diff_x;
 	float half_arrow_width = arrow_tag_.arrow_width_ / 2.0f;
 	float f_length = (float)sqrt(diff_y * diff_y + diff_x * diff_x); 
@@ -212,18 +212,18 @@ void DrawUnitArrow::DrawArrow(HDC hdc)
 	ui::CPoint pt_high = ui::CPoint(ROUND(pt_arrow.x + arrow_x_offset), ROUND (pt_arrow.y - half_arrow_width));
 	ui::CPoint pt_low = ui::CPoint(ROUND(pt_arrow.x + arrow_x_offset), ROUND(pt_arrow.y + half_arrow_width));
 
-	//½øĞĞĞı×ª
+	//è¿›è¡Œæ—‹è½¬
 	float x = pt_start.x;
 	float y = pt_start.y;
 	pt_polys[0] = Transform(pt_arrow,x,y,radius);
 	pt_polys[1] = Transform(pt_high,x,y,radius);
 	pt_polys[2] = Transform(pt_low,x,y,radius);
 
-	//»æÖÆ¶à±ßĞÎ
+	//ç»˜åˆ¶å¤šè¾¹å½¢
 	Polygon(hdc, pt_polys, 3);
 }
 
-//////////////////////////////////ÎÄ×Ö»æÖÆÀà////////////////////////////////////////
+//////////////////////////////////æ–‡å­—ç»˜åˆ¶ç±»////////////////////////////////////////
 DrawUnitText::DrawUnitText(int x, int y, const RECT& rcValid, BOOL is_generated) :DrawUnit(x,y,rcValid)
 {
 	is_text_has_generated_	=	is_generated;
@@ -234,48 +234,48 @@ void DrawUnitText::RenderSelf(HDC hdc, HBITMAP bitmap, bool is_continue)
 {
 	if (is_text_has_generated_)	
 	{
-		DrawText(hdc); // Èç¹ûÒÑÉú³ÉÎÄ×Ö£¬»æÖÆÎÄ±¾
+		DrawText(hdc); // å¦‚æœå·²ç”Ÿæˆæ–‡å­—ï¼Œç»˜åˆ¶æ–‡æœ¬
 	}
 	else	
 	{
-		DrawRect(hdc); // »¹Ã»Éú³É¿Ø¼ş£¬À­Éì¹ı³ÌÖĞ»­ĞéÏßÏÔÊ¾
+		DrawRect(hdc); // è¿˜æ²¡ç”Ÿæˆæ§ä»¶ï¼Œæ‹‰ä¼¸è¿‡ç¨‹ä¸­ç”»è™šçº¿æ˜¾ç¤º
 	}
 }
 
 void DrawUnitText::DrawRect(HDC hdc)
 {
-	// Ê¹µÃÎÄ±¾±³¾°Í¸Ã÷£¬Óë´°¿Ú±³¾°Ò»Ñù
+	// ä½¿å¾—æ–‡æœ¬èƒŒæ™¯é€æ˜ï¼Œä¸çª—å£èƒŒæ™¯ä¸€æ ·
 	int old_bk_mode = SetBkMode(hdc, TRANSPARENT); 
-	// ĞéÏß»­±Ê
+	// è™šçº¿ç”»ç¬”
 	HPEN dot_pen = CreatePen(PS_DOT, 1, color_);
 	HPEN old_pen = (HPEN)SelectObject(hdc, dot_pen);
-	// »­Ë¢
+	// ç”»åˆ·
 	LOGBRUSH lb = {BS_NULL};
 	HBRUSH current_brush = CreateBrushIndirect(&lb);
 	HBRUSH old_brush = (HBRUSH)SelectObject(hdc, current_brush);
-	// »­¾ØĞÎ
+	// ç”»çŸ©å½¢
 	Rectangle(hdc, left_, top_, right_, bottom_);
-	// »Ö¸´
+	// æ¢å¤
 	SelectObject(hdc, old_pen);
 	SelectObject(hdc, old_brush);
 	SetBkMode(hdc, old_bk_mode);
-	// ÊÍ·Å¾ä±ú
+	// é‡Šæ”¾å¥æŸ„
 	DeleteObject(current_brush);
 	DeleteObject(dot_pen);
 }
 
 void DrawUnitText::DrawText(HDC hdc)
 {
-	int old_bk_mode = SetBkMode(hdc, TRANSPARENT); // Ê¹µÃÎÄ±¾±³¾°Í¸Ã÷£¬Óë´°¿Ú±³¾°Ò»Ñù
-	COLORREF old_color = ::SetTextColor(hdc, color_); //ÉèÖÃÑÕÉ«
+	int old_bk_mode = SetBkMode(hdc, TRANSPARENT); // ä½¿å¾—æ–‡æœ¬èƒŒæ™¯é€æ˜ï¼Œä¸çª—å£èƒŒæ™¯ä¸€æ ·
+	COLORREF old_color = ::SetTextColor(hdc, color_); //è®¾ç½®é¢œè‰²
 	HFONT font = ui::GlobalManager::GetFont(font_index_);
 	HFONT old_font = nullptr;
 	if (font)
-		old_font = (HFONT)SelectObject(hdc, font); //ÉèÖÃ×ÖÌå´óĞ¡
+		old_font = (HFONT)SelectObject(hdc, font); //è®¾ç½®å­—ä½“å¤§å°
 	ui::UiRect rc_text(left_, top_, right_, bottom_);
 	::DrawText(hdc, str_text_.c_str(), str_text_.size(), &rc_text, DT_LEFT | DT_EDITCONTROL | DT_WORDBREAK);
 	
-	//»¹Ô­
+	//è¿˜åŸ
 	::SetBkMode(hdc, old_bk_mode);
 	::SetTextColor(hdc, old_color);
 	if (old_font)

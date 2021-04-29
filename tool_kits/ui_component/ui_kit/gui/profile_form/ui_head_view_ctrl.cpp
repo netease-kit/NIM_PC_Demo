@@ -1,4 +1,6 @@
-﻿#include "ui_head_view_ctrl.h"
+#include "stdafx.h"
+#include "ui_head_view_ctrl.h"
+
 using namespace Gdiplus;
 /*
 	优化策略: hj 2013-12-09

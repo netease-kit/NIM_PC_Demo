@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "chatroom_form.h"
 #include "gui/emoji/emoji_form.h"
 #include "module/emoji/richedit_util.h"
@@ -122,7 +123,7 @@ void ChatroomForm::InitWindow()
 //	msg_list_ = (RichEdit*)FindControl(L"intercommunicate_list");
 //	msg_list_->SetSelAllOnFocus(false);
 //	msg_list_->SetNoSelOnKillFocus(false);
-//	msg_list_->SetAutoURLDetect(true); ¿ªÆô×Ô¶¯¼ì²âURL¹¦ÄÜºó£¬¶ÔÓÚ×Ô¶¨Òå³¬Á´½ÓµÄÅĞ¶Ï»á²úÉúÓ°Ïì
+//	msg_list_->SetAutoURLDetect(true); å¼€å¯è‡ªåŠ¨æ£€æµ‹URLåŠŸèƒ½åï¼Œå¯¹äºè‡ªå®šä¹‰è¶…é“¾æ¥çš„åˆ¤æ–­ä¼šäº§ç”Ÿå½±å“
 //	msg_list_->SetNoCaretReadonly();
 //	msg_list_->SetEventMask(msg_list_->GetEventMask() | ENM_LINK | ENM_MOUSEEVENTS | ENM_SCROLLEVENTS | ENM_KEYEVENTS);
 //	msg_list_->SetLimitText(INT_MAX);
@@ -133,7 +134,7 @@ void ChatroomForm::InitWindow()
 //	msg_list_->SetOleCallback(richeditolecallback_);
 //	richeditolecallback_->SetCustomMode(true);
 
-	// µ±ĞèÒªÖ§³ÖgifÊ±£¬ÔÙÆôÓÃ´Ë¹¦ÄÜ
+	// å½“éœ€è¦æ”¯æŒgifæ—¶ï¼Œå†å¯ç”¨æ­¤åŠŸèƒ½
 	//auto callback = nbase::Bind(&ChatroomForm::TimeHandle, this);
 	//nbase::ThreadManager::PostRepeatedTask(callback, nbase::TimeDelta::FromMilliseconds(50));
 
@@ -172,7 +173,7 @@ LRESULT ChatroomForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 		else if (wParam == SIZE_MAXIMIZED)
 			OnWndSizeMax(true);
 	}
-	else if (uMsg == WM_NOTIFY)  // ³¬Á´½ÓÏûÏ¢
+	else if (uMsg == WM_NOTIFY)  // è¶…é“¾æ¥æ¶ˆæ¯
 	{
  		if (OnLinkClick(wParam, lParam))
  			return 0;
@@ -194,7 +195,7 @@ LRESULT ChatroomForm::HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam)
 	{
 		if (wParam != VK_BACK)
 		{
-			//ÏÈÈÃRichEdit´¦ÀíÍê£¬È»ºóÔÙ´¦Àí@ÏûÏ¢
+			//å…ˆè®©RichEditå¤„ç†å®Œï¼Œç„¶åå†å¤„ç†@æ¶ˆæ¯
 			LRESULT res = __super::HandleMessage(uMsg, wParam, lParam);
 			HandleAtMsg(wParam, lParam);
 			return res;
@@ -271,7 +272,7 @@ bool ChatroomForm::OnSelectChanged(ui::EventArgs* param)
 	{
 		list_tab_->SelectItem(1);
 
-		// µ¥»÷ÔÚÏß³ÉÔ±tabºóÖØĞÂ»ñÈ¡ÔÚÏß³ÉÔ±£¬ Ò»·ÖÖÓÄÚ²»Ë¢ĞÂ
+		// å•å‡»åœ¨çº¿æˆå‘˜tabåé‡æ–°è·å–åœ¨çº¿æˆå‘˜ï¼Œ ä¸€åˆ†é’Ÿå†…ä¸åˆ·æ–°
 		time_t	sub_time = time(NULL) - time_refresh_;
 		if (sub_time <= 60)
 			return true;
@@ -321,7 +322,7 @@ bool ChatroomForm::Notify(ui::EventArgs* param)
 // 					bot.sent_param_["target"] = values["target"].asString();
 // 					bot.sent_param_["type"] = "03";
 // 					bot.sent_param_["params"] = values["params"].asString();
-// 					std::string json_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeRobot, QString::GetGUID(), bot.ToJsonString(), content, ChatRoomMessageSetting());
+// 					std::string json_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeRobot, nim::Tool::GetUuid(), bot.ToJsonString(), content, ChatRoomMessageSetting());
 // 					ChatRoom::SendMsg(room_id_, json_msg);
 // 					std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
 // 					std::wstring my_name = nim_ui::UserManager::GetInstance()->GetUserName(nim_ui::LoginManager::GetInstance()->GetAccount(), false);
@@ -466,24 +467,24 @@ void ChatroomForm::ShowMemberMenu(std::wstring &name)
 
 	clicked_user_account_.clear();
 
-	// ²»ÄÜ²Ù×÷×Ô¼ºÕÊºÅ
+	// ä¸èƒ½æ“ä½œè‡ªå·±å¸å·
 	std::string my_id = nim_comp::LoginManager::GetInstance()->GetAccount();
 	if (user_name == nim_ui::UserManager::GetInstance()->GetUserName(my_id, false))
 		return;
 
-	// Ö»ÓĞ´´½¨ÕßºÍ¹ÜÀíÔ±¿ÉÒÔ²Ù×÷
+	// åªæœ‰åˆ›å»ºè€…å’Œç®¡ç†å‘˜å¯ä»¥æ“ä½œ
 	bool show_admin = false;
 	if (my_id == creater_id_ || std::find(managers_list_.begin(), managers_list_.end(), my_id) != managers_list_.end())
 		show_admin = true;
 	else
 		return;
 
-	// ÕÒµ½êÇ³Æ¶ÔÓ¦µÄÕÊºÅ
+	// æ‰¾åˆ°æ˜µç§°å¯¹åº”çš„å¸å·
 	auto it = nick_account_map_.find(nbase::UTF16ToUTF8(user_name));
 	if (it == nick_account_map_.end())
 		return;
 
-	//Èç¹ûÄ¿±êÓÃ»§ÊÇ´´½¨Õß£¬²»ÄÜ²Ù×÷£¬Ö±½Ó·µ»Ø
+	//å¦‚æœç›®æ ‡ç”¨æˆ·æ˜¯åˆ›å»ºè€…ï¼Œä¸èƒ½æ“ä½œï¼Œç›´æ¥è¿”å›
 	if (it->second == creater_id_)
 		return;
 
@@ -492,7 +493,7 @@ void ChatroomForm::ShowMemberMenu(std::wstring &name)
 	if (it_member != members_map_.end())
 		member_info = it_member->second;
 
-	//Èç¹ûÄ¿±êÓÃ»§ºÍ×Ô¼º¶¼ÊÇ¹ÜÀíÔ±£¬²»ÄÜ²Ù×÷£¬Ö±½Ó·µ»Ø
+	//å¦‚æœç›®æ ‡ç”¨æˆ·å’Œè‡ªå·±éƒ½æ˜¯ç®¡ç†å‘˜ï¼Œä¸èƒ½æ“ä½œï¼Œç›´æ¥è¿”å›
 	bool my_room = my_id == creater_id_;
 	if (!my_room && member_info.type_ == 2)
 		return;
@@ -505,7 +506,7 @@ void ChatroomForm::ShowMemberMenu(std::wstring &name)
 		POINT point;
 		GetCursorPos(&point);
 		pMenu->Init(xml, _T("xml"), point, CMenuWnd::RIGHT_TOP);
-		//×¢²á»Øµ÷
+		//æ³¨å†Œå›è°ƒ
 
 		CMenuElementUI* kick = (CMenuElementUI*)pMenu->FindControl(L"kick");
 		kick->AttachSelect(nbase::Bind(&ChatroomForm::KickMenuItemClick, this, std::placeholders::_1));
@@ -704,12 +705,12 @@ bool ChatroomForm::RemoveTempMuteMenuItemClick(ui::EventArgs* args)
 // 		room_member_item->AttachMenu(nbase::Bind(&ChatroomForm::OnMemberMenu, this, std::placeholders::_1));
 // 		ui::Control* member_type = (ui::Control*)room_member_item->FindSubControl(L"member_type");
 // 
-// 		if (info.type_ == 1)//´´½¨Õß
+// 		if (info.type_ == 1)//åˆ›å»ºè€…
 // 		{
 // 			member_type->SetBkImage(L"icon_anchor.png");
 // 			online_members_list_->AddAt(room_member_item, 0);
 // 		}
-// 		else if (info.type_ == 2)//¹ÜÀíÔ±
+// 		else if (info.type_ == 2)//ç®¡ç†å‘˜
 // 		{
 // 			member_type->SetBkImage(L"icon_manager.png");
 // 			if (online_members_list_->GetCount() == 0)
@@ -786,14 +787,14 @@ void ChatroomForm::FillElement(ui::Control *control, int index)
 	ChatRoomMemberInfo info = it->second;
 
 	ui::Control* member_type = (ui::Control*)room_member_item->FindSubControl(L"member_type");
-	if (info.type_ == 1)//´´½¨Õß
+	if (info.type_ == 1)//åˆ›å»ºè€…
 	{
 		std::wstring bk = L"icon_anchor.png";
 		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
 			bk = L"icon_anchor_en.png";
 		member_type->SetBkImage(bk);
 	}
-	else if (info.type_ == 2)//¹ÜÀíÔ±
+	else if (info.type_ == 2)//ç®¡ç†å‘˜
 	{
 		std::wstring bk = L"icon_manager.png";
 		if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)

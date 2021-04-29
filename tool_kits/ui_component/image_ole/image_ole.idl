@@ -1,0 +1,89 @@
+// image_ole.idl : IDL source for image_ole
+//
+
+// This file will be processed by the MIDL tool to
+// produce the type library (image_ole.tlb) and marshalling code.
+
+#include "olectl.h"
+import "oaidl.idl";
+import "ocidl.idl";
+
+[
+	object,
+	uuid(a817e7a2-43fa-11d0-9e44-00aa00b6770a),
+	dual,	
+	pointer_default(unique)
+]
+interface IComponentRegistrar : IDispatch
+{
+	[id(1)]	HRESULT Attach([in] BSTR bstrPath);
+	[id(2)]	HRESULT RegisterAll();
+	[id(3)]	HRESULT UnregisterAll();
+	[id(4)]	HRESULT GetComponents([out] SAFEARRAY(BSTR)* pbstrCLSIDs, [out] SAFEARRAY(BSTR)* pbstrDescriptions);
+	[id(5)]	HRESULT RegisterComponent([in] BSTR bstrCLSID);
+	[id(6)] HRESULT UnregisterComponent([in] BSTR bstrCLSID);
+};
+
+[
+	object,
+	uuid(FDEEBA15-2214-4AAA-8222-7354491BE26C),
+	dual,
+	nonextensible,
+	pointer_default(unique)
+]
+interface IImageOle : IDispatch{
+	[id(1)] HRESULT LoadFromFile([in] BSTR lpszPathName);
+	[id(2)] HRESULT SetFaceId([in] LONG face_id);
+	[id(3)] HRESULT GetFaceId(LONG* face_id);
+	[id(4)] HRESULT SetFaceIndex(LONG face_index);
+	[id(5)] HRESULT GetFaceIndex(LONG* face_index);
+	[id(6)] HRESULT GetImageFile(BSTR* file_name);
+	[id(7)] HRESULT GetImageRect(LPRECT rect);
+	[id(8)] HRESULT GetImageFomat(GUID* guid);
+	[id(9)] HRESULT SaveAsFile(BSTR file_path);
+	[id(10)] HRESULT SetScaleSize(BOOL bScale, int nWidth, int nHeight);
+	[id(11)] HRESULT SetBgColor(COLORREF clrBg);
+	[id(12)] HRESULT Draw(void);
+	[id(13)] HRESULT SetFaceTag([in] BSTR face_tag);
+	[id(14)] HRESULT GetFaceTag([out] BSTR* face_tag);
+	[id(15)] HRESULT SetFont([in] BSTR font_name, [in] LONG font_size, [in] COLORREF clrText);
+	[id(16)] HRESULT SetGUID(BSTR guid);
+	[id(17)] HRESULT GetGUID(BSTR* guid);
+	[id(18)] HRESULT GetScale(LONG* scale);
+	[id(19)] HRESULT LoadFromDescription([in] BSTR des);
+};
+
+[
+	uuid(20667E6E-41AD-40D0-BFE9-94840D872CD4),
+	version(1.0),
+	custom(a817e7a1-43fa-11d0-9e44-00aa00b6770a,"{070D3F66-491B-4F0D-9ECC-5358BB7B0303}")
+]
+library image_oleLib
+{
+	importlib("stdole2.tlb");
+	[
+		uuid(070D3F66-491B-4F0D-9ECC-5358BB7B0303)		
+	]
+	coclass CompReg
+	{
+		[default] interface IComponentRegistrar;
+	};
+	[
+		uuid(280EB118-CF3F-49C4-A6E2-DE4B008C5BBB)		
+	]
+	dispinterface _IImageOleEvents
+	{
+		properties:
+		methods:
+	};
+	[
+		uuid(B0C73E85-1599-4705-BD6B-DB1DF767FC6D),		
+		control
+	]
+	coclass ImageOle
+	{
+		[default] interface IImageOle;
+		[default, source] dispinterface _IImageOleEvents;
+	};
+};
+

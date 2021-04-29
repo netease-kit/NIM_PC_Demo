@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "shared/base.h"
 #include "module/service/photo_service.h"
 

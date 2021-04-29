@@ -7,9 +7,9 @@ namespace nim_comp
 		IMainFormMenuHandler() : host_window_(nullptr){}
 		virtual ~IMainFormMenuHandler(){};
 		/**
-		* µ¯³öÖ÷²Ëµ¥
-		* @param[in] point µ¯³ö×ø±ê
-		* @return void	ÎŞ·µ»ØÖµ
+		* å¼¹å‡ºä¸»èœå•
+		* @param[in] point å¼¹å‡ºåæ ‡
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void PopupMainMenu(POINT point)
 		{

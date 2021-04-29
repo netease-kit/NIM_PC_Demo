@@ -1,4 +1,4 @@
-﻿#ifndef CHINESE_PIN_YIN_H_
+#ifndef CHINESE_PIN_YIN_H_
 #define CHINESE_PIN_YIN_H_
 
 /*

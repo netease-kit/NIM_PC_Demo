@@ -1,5 +1,7 @@
+#include "stdafx.h"
 #include "cef_form.h"
 #include "cef_tip.h"
+
 using namespace ui;
 using namespace std;
 

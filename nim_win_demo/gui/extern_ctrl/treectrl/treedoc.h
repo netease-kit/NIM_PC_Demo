@@ -117,7 +117,7 @@ protected:
 private:
 	void RemoveItem(const TreeDocItemPtr& item, TreeDocItemList& removed_item_list);
 private:
-	WeakTreeDocItemMap data_indexs_;//Êı¾İË÷Òı
-	TreeDocItemPtr root_;//¸ù½Úµã	Î¬³ÖÊ÷ĞÍ½á¹¹
+	WeakTreeDocItemMap data_indexs_;//æ•°æ®ç´¢å¼•
+	TreeDocItemPtr root_;//æ ¹èŠ‚ç‚¹	ç»´æŒæ ‘å‹ç»“æ„
 	std::function<void(const TreeDocItemList&)> item_remove_callback_;
 };

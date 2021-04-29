@@ -1,5 +1,5 @@
 /** @file sdk_http_manager.h
-* @brief app_sdk httpÇëÇó¹ÜÀíÆ÷
+* @brief app_sdk httpè¯·æ±‚ç®¡ç†å™¨
 * @copyright (c) 2015-2018, NetEase Inc. All rights reserved
 * @date 2018/4/26
 */
@@ -13,9 +13,9 @@
 namespace app_sdk
 {
 	template<typename TSharedResponse>
-	using RepeatHttpRequestStopCallback = std::function<bool(int cur_req_times/*µ±Ç°ÇëÇóµÄ´ÎÊı*/, const typename TSharedResponse& response/*´Ë´ÎÇëÇóµÄÓ¦´ğ*/)>;
+	using RepeatHttpRequestStopCallback = std::function<bool(int cur_req_times/*å½“å‰è¯·æ±‚çš„æ¬¡æ•°*/, const typename TSharedResponse& response/*æ­¤æ¬¡è¯·æ±‚çš„åº”ç­”*/)>;
 	/** @class SDKManager
-	* @brief app_sdk ÇëÇó¹ÜÀíÆ÷
+	* @brief app_sdk è¯·æ±‚ç®¡ç†å™¨
 	* @copyright (c) 2018, NetEase Inc. All rights reserved
 	* @date 2018/4/26
 	*/
@@ -27,9 +27,9 @@ namespace app_sdk
 		SINGLETON_DEFINE(SDKManager);
 	public:
 		/** void Invoke_Request(const typename TSharedRequest& request, const THttpCallback<typename TSharedRequest, typename TSharedResponse>& callback)
-		* app sdk ·¢ËÍhttpÇëÇó£¨Ğ­ÒéÀà£©½Ó¿Ú£¬Òì²½
-		* @param[in] request ÇëÇóµÄÊı¾İ
-		* @param[in] callback Ó¦´ğ»Øµ÷
+		* app sdk å‘é€httpè¯·æ±‚ï¼ˆåè®®ç±»ï¼‰æ¥å£ï¼Œå¼‚æ­¥
+		* @param[in] request è¯·æ±‚çš„æ•°æ®
+		* @param[in] callback åº”ç­”å›è°ƒ
 		* @return void 
 		*/
 		template<typename TSharedRequest, typename TSharedResponse>
@@ -38,7 +38,7 @@ namespace app_sdk
 			Invoke_RepeatRequest<typename TSharedRequest, typename TSharedResponse, 0>(request, callback, [](int, const typename TSharedResponse&) {return true; });
 		}
 	private:
-		//¶à´ÎÇëÇóÔİÊ±Î´¿ª·Å³öÀ´£¬¿ª·¢Õß¿É¸ù¾İÊµ¼ÊÓ¦ÓÃ×ÔĞĞ¿ª·Å
+		//å¤šæ¬¡è¯·æ±‚æš‚æ—¶æœªå¼€æ”¾å‡ºæ¥ï¼Œå¼€å‘è€…å¯æ ¹æ®å®é™…åº”ç”¨è‡ªè¡Œå¼€æ”¾
 		template<typename TSharedRequest, typename TSharedResponse, int time_interval>
 		void Invoke_RepeatRequest(const typename TSharedRequest& request, \
 			const typename THttpCallback<typename TSharedRequest, typename TSharedResponse>& callback, \
@@ -46,7 +46,7 @@ namespace app_sdk
 		{
 			using TRequest = typename TSharedRequest::element_type;
 			using TResponse = typename TSharedResponse::element_type;
-			//ÀàĞÍĞ£Ñé
+			//ç±»å‹æ ¡éªŒ
 			static_assert((
 				(std::is_base_of<IHttpRequest, TRequest>::value) && (std::is_base_of<IHttpResponse, TResponse>::value)
 				),
@@ -69,7 +69,7 @@ namespace app_sdk
 			using TResponse = typename TSharedResponse::element_type;
 		
 			auto request_param = std::dynamic_pointer_cast<IHttpRequest>(request);
-			//×é°ü
+			//ç»„åŒ…
 			std::string api(request_param->GetAPIURL());		
 			if (api.empty())
 				return;			
@@ -77,7 +77,7 @@ namespace app_sdk
 			request_param->GetRequestContent(post);
 			if (!request_param->UsePostMethod() && post.empty())			
 					api.append(1, '?').append(post);
-			//»Øµ÷
+			//å›è°ƒ
 			auto http_cb_op =
 				nbase::Bind(
 				&SDKManager::HttpCallback<typename TSharedRequest, typename TSharedResponse>,

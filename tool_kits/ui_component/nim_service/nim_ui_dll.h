@@ -1,4 +1,4 @@
-﻿// 定义导出宏
+// 定义导出宏
 
 #ifdef	NIM_UI_DLL
 #ifdef		NIM_UI_DLL_EXPORTS

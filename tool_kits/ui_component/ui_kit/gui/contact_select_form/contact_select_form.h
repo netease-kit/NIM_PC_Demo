@@ -1,4 +1,4 @@
-﻿#ifndef INVOKE_CHAT_FORM_H_
+#ifndef INVOKE_CHAT_FORM_H_
 #define INVOKE_CHAT_FORM_H_
 
 #include "util/window_ex.h"

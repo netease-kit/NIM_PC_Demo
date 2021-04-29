@@ -1,10 +1,12 @@
-﻿#include "session_util.h"
+#include "stdafx.h"
+#include "session_util.h"
 #include "shared/zoom_image.h"
 #include "util/user.h"
 #include "module/emoji/richedit_util.h"
 #include "module/session/session_manager.h"
 #include "cef\cef_module\cef_control\cef_control.h"
 #include "util\windows_manager.h"
+
 namespace nim_comp
 {
 SessionType GetSessionType(const nim::IMMessage &msg)
@@ -860,6 +862,15 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 	}
 	if (show_text.empty())
 		show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_TIP");
+}
+
+bool IsG2NetCallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
+{
+	if (msg_type == nim::kNIMMessageTypeG2NetCall)
+	{
+		return true;
+	}
+	return false;
 }
 
 bool IsNetCallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)

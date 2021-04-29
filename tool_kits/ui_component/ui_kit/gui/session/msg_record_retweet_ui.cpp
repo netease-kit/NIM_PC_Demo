@@ -1,4 +1,5 @@
-﻿#include "msg_record_retweet.h"
+#include "stdafx.h"
+#include "msg_record_retweet.h"
 #include "export/nim_ui_user_config.h"
 #include "module/audio/audio_manager.h"
 

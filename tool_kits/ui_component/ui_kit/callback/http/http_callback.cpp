@@ -1,4 +1,5 @@
-﻿#include "http_callback.h"
+#include "stdafx.h"
+#include "http_callback.h"
 #include "module/session/session_manager.h"
 #include "gui/session/msg_record.h"
 

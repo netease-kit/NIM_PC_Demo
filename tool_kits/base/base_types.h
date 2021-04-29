@@ -55,7 +55,7 @@ typedef     unsigned char       uint8_t;
 typedef     unsigned short      uint16_t;
 typedef     unsigned int        uint32_t;
 typedef     unsigned __int64    uint64_t;
-
+typedef     uint8_t             uint8;
 /* the following definitions are from VS2010's stdint.h */
 #ifndef _INTPTR_T_DEFINED
 #define _INTPTR_T_DEFINED

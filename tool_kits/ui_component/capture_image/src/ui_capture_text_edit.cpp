@@ -31,7 +31,7 @@ void CCaptureTextEdit::InitInfos()
 
 void CCaptureTextEdit::HandleMessage( ui::EventArgs& event )
 {
-	// µ±±à¼­¿òÊ§È¥½¹µãµÄÊ±ºò
+	// å½“ç¼–è¾‘æ¡†å¤±å»ç„¦ç‚¹çš„æ—¶å€™
 	if(event.Type == ui::kEventKillFocus)
 	{
 		if (text_finished_cb_)
@@ -42,30 +42,30 @@ void CCaptureTextEdit::HandleMessage( ui::EventArgs& event )
 
 void CCaptureTextEdit::Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint)
 {
-	DrawRect(pRender->GetDC()); // »æÖÆ¾ØĞÎĞéÏß
+	DrawRect(pRender->GetDC()); // ç»˜åˆ¶çŸ©å½¢è™šçº¿
 	return __super::Paint(pRender, rcPaint);
 }
 
 void CCaptureTextEdit::DrawRect( HDC hdc )
 {
-	// Ê¹µÃÎÄ±¾±³¾°Í¸Ã÷£¬Óë´°¿Ú±³¾°Ò»Ñù
+	// ä½¿å¾—æ–‡æœ¬èƒŒæ™¯é€æ˜ï¼Œä¸çª—å£èƒŒæ™¯ä¸€æ ·
 	int old_bk_mode = SetBkMode(hdc, TRANSPARENT);
-	// ĞéÏß»­±Ê
+	// è™šçº¿ç”»ç¬”
 	HPEN dot_pen = CreatePen(PS_DOT, 1, color_pen_);
 	HPEN old_pen = (HPEN)SelectObject(hdc, dot_pen);
-	// »­Ë¢
+	// ç”»åˆ·
 	LOGBRUSH lb = { BS_NULL };
 	HBRUSH current_brush = CreateBrushIndirect(&lb);
 	HBRUSH old_brush = (HBRUSH)SelectObject(hdc, current_brush);
-	// »æÖÆĞéÏß¿ò
-	ui::UiRect rcEdit = rc_valid_; // Òª»æÖÆµÄÇøÓò 
-	//InflateRect(&rcEdit, knEditOffset, knEditOffset); // ÏòÍâÀ©Õ¹3px
+	// ç»˜åˆ¶è™šçº¿æ¡†
+	ui::UiRect rcEdit = rc_valid_; // è¦ç»˜åˆ¶çš„åŒºåŸŸ 
+	//InflateRect(&rcEdit, knEditOffset, knEditOffset); // å‘å¤–æ‰©å±•3px
 	Rectangle(hdc, rcEdit.left, rcEdit.top, rcEdit.right, rcEdit.bottom);
-	// »¹Ô­
+	// è¿˜åŸ
 	SelectObject(hdc, old_pen);
 	SelectObject(hdc, old_brush);
 	SetBkMode(hdc, old_bk_mode);
-	// ÊÍ·Å
+	// é‡Šæ”¾
 	DeleteObject(current_brush);
 	DeleteObject(dot_pen);
 }

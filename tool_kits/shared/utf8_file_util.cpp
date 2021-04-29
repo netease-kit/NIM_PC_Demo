@@ -1,4 +1,4 @@
-﻿// File operation utilities for UTF-8 encoding support
+// File operation utilities for UTF-8 encoding support
 #include "stdafx.h"
 #include "shared/utf8_file_util.h"
 

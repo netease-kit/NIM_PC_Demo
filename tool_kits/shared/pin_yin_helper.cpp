@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "pin_yin_helper.h"
 #include "shared/tool.h"
 

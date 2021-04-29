@@ -2,9 +2,9 @@
 //#include "util.h"
 
 
-/*  ½áºÏc#ÓëcoutµÄlog
- *  Ê¾Àý£º
- *  QLOG_ERR(L"I am {0},this is {1} year,you can also call me {2}") <<L"ÌìÍâ·ÉÏÉ" <<2015 <<"Tom Stiven";
+/*  ç»“åˆc#ä¸Žcoutçš„log
+ *  ç¤ºä¾‹ï¼š
+ *  QLOG_ERR(L"I am {0},this is {1} year,you can also call me {2}") <<L"å¤©å¤–é£žä»™" <<2015 <<"Tom Stiven";
  */
 
 enum LOG_LEVEL
@@ -47,7 +47,7 @@ public:
 	QLogHelper& operator<<(const std::string &str);
 	QLogHelper& operator<<(const long long lld);
 private:
-	size_t FindArg( int &len ); //·µ»Ø"{x}"µÄË÷Òý£¬len´ú±í"{x}"µÄ³¤¶È
+	size_t FindArg( int &len ); //è¿”å›ž"{x}"çš„ç´¢å¼•ï¼Œlenä»£è¡¨"{x}"çš„é•¿åº¦
 private:
 	std::wstring fmt_;
 	std::wstring string_;

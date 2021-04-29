@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "module/service/team_service.h"
 
 namespace nim_comp

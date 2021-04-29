@@ -11,7 +11,7 @@ struct CaptureWindowInfo
 typedef std::vector<CaptureWindowInfo> CaptureWindowInfoList;
 
 /** @class ScreenCapture
-  * @brief ÆÁÄ»Â¼ÖÆ¿Ø¼ş
+  * @brief å±å¹•å½•åˆ¶æ§ä»¶
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @date 2016/09/21
   */
@@ -19,15 +19,15 @@ class ScreenCapture : public virtual nbase::SupportWeakCallback
 {
 public:
 	/**
-	* Ã¶¾ÙËùÓĞ¿ÉÂ¼ÖÆµÄ´°¿ÚµÄÁĞ±í
-	* @param[out] windows »ñÈ¡´°¿ÚÁĞ±í
-	* @return bool true Ã¶¾Ù³É¹¦£¬false Ã¶¾ÙÊ§°Ü
+	* æšä¸¾æ‰€æœ‰å¯å½•åˆ¶çš„çª—å£çš„åˆ—è¡¨
+	* @param[out] windows è·å–çª—å£åˆ—è¡¨
+	* @return bool true æšä¸¾æˆåŠŸï¼Œfalse æšä¸¾å¤±è´¥
 	*/
 	static bool GetCaptureWindowList(CaptureWindowInfoList* windows);
 
 	/**
-	* »ñÈ¡ÏµÍ³DPIÉèÖÃÖµ
-	* @return int DPIÖµ
+	* è·å–ç³»ç»ŸDPIè®¾ç½®å€¼
+	* @return int DPIå€¼
 	*/
 	static int GetDesktopScale();
 
@@ -35,38 +35,38 @@ public:
 	~ScreenCapture();
 
 	/**
-	* ¿ªÊ¼Â¼ÖÆ
-	* @param[in] id ±»Â¼ÖÆµÄ´°¿ÚµÄ¾ä±ú
+	* å¼€å§‹å½•åˆ¶
+	* @param[in] id è¢«å½•åˆ¶çš„çª—å£çš„å¥æŸ„
 	* @param[in] 
-	* @return void	ÎŞ·µ»ØÖµ
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void StartCapture(HWND id, int time_ms=60);
 
 	/**
-	* ÉèÖÃÂ¼ÖÆ·¶Î§
-	* @param[in] cut ÊÇ·ñÂ¼ÖÆ´°¿ÚÖĞµÄÒ»²¿·Ö
-	* @param[in] rect Â¼ÖÆ·¶Î§
-	* @return void	ÎŞ·µ»ØÖµ
+	* è®¾ç½®å½•åˆ¶èŒƒå›´
+	* @param[in] cut æ˜¯å¦å½•åˆ¶çª—å£ä¸­çš„ä¸€éƒ¨åˆ†
+	* @param[in] rect å½•åˆ¶èŒƒå›´
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void SetCutMode(bool cut, RECT rect);
 
 	/**
-	* ½ØÈ¡Ò»Ö¡Î»Í¼
-	* @return void	ÎŞ·µ»ØÖµ
+	* æˆªå–ä¸€å¸§ä½å›¾
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void CustomFrame();
 
 	/**
-	* »ñÈ¡ÊÓÆµÖ¡¹ÜÀíÆ÷
-	* @return VideoFrameMng* ÊÓÆµÖ¡¹ÜÀíÆ÷
+	* è·å–è§†é¢‘å¸§ç®¡ç†å™¨
+	* @return VideoFrameMng* è§†é¢‘å¸§ç®¡ç†å™¨
 	*/
 	VideoFrameMng* GetFrame() { return &frame_; }
 private:
 	/**
-	* ³õÊ¼»¯ÄÚ´æÎ»Í¼
-	* @param[in] width Î»Í¼¿í¶È
-	* @param[in] height Î»Í¼¸ß¶È
-	* @return void	ÎŞ·µ»ØÖµ
+	* åˆå§‹åŒ–å†…å­˜ä½å›¾
+	* @param[in] width ä½å›¾å®½åº¦
+	* @param[in] height ä½å›¾é«˜åº¦
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void InitHBitmap(int width, int height);
 private:

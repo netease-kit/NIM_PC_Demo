@@ -1,4 +1,5 @@
-﻿#include "vchat_callback.h"
+#include "stdafx.h"
+#include "vchat_callback.h"
 #include "module/video/video_manager.h"
 
 namespace nim_comp

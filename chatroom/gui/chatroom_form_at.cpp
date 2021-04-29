@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "chatroom_form.h"
 #include "gui/session/control/atme_view.h"
 #include "gui/session/atlist/at_list_form.h"
@@ -7,7 +8,7 @@ using namespace nim_comp;
 
 namespace nim_chatroom
 {
-//´¦ÀíÊäÈë¿òµÄ@ÏûÏ¢
+//å¤„ç†è¾“å…¥æ¡†çš„@æ¶ˆæ¯
 bool ChatroomForm::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 {
 	if ((input_edit_ == NULL) || !input_edit_->IsFocused())
@@ -28,7 +29,7 @@ bool ChatroomForm::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 	}
 	else if (wParam == VK_BACK)
 	{
-		// »ñÈ¡µ±Ç°¹â±êÖ®Ç°µÄËùÓÐÎÄ±¾
+		// èŽ·å–å½“å‰å…‰æ ‡ä¹‹å‰çš„æ‰€æœ‰æ–‡æœ¬
 		long start = 0;
 		long end = 0;
 		input_edit_->GetSel(start, end);
@@ -46,7 +47,7 @@ bool ChatroomForm::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 		{
 			if (at_str.length() == 1)
 			{
-				// Èç¹ûÖ»ÓÐÒ»¸ö×Ö·û£¬ÔòÉ¾³ýºó¾ÍÊ£ÏÂÁË@£¬´ËÊ±ÏÔÊ¾ËùÓÐ@Ïî
+				// å¦‚æžœåªæœ‰ä¸€ä¸ªå­—ç¬¦ï¼Œåˆ™åˆ é™¤åŽå°±å‰©ä¸‹äº†@ï¼Œæ­¤æ—¶æ˜¾ç¤ºæ‰€æœ‰@é¡¹
 				ui::CPoint pt = input_edit_->PosFromChar(end - 1);
 				pt.y = input_edit_->GetCaretRect().bottom;
 				::ClientToScreen(this->GetHWND(), &pt);
@@ -59,7 +60,7 @@ bool ChatroomForm::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 
 			if (last_char == L' ')
 			{
-				//Èç¹ûµ±Ç°ÒªÉ¾µÄÊÇ¿Õ¸ñ£¬¶øÇÒ¿Õ¸ñÇ°°üº¬ÁËÍêÕûµÄ@Ä³ÈËµÄÐÅÏ¢£¬¾ÍÉ¾³ýÕûÌõÐÅÏ¢£¬²¢ÇÒ²»ÈÃÏûÏ¢¼ÌÐø´«µÝ			
+				//å¦‚æžœå½“å‰è¦åˆ çš„æ˜¯ç©ºæ ¼ï¼Œè€Œä¸”ç©ºæ ¼å‰åŒ…å«äº†å®Œæ•´çš„@æŸäººçš„ä¿¡æ¯ï¼Œå°±åˆ é™¤æ•´æ¡ä¿¡æ¯ï¼Œå¹¶ä¸”ä¸è®©æ¶ˆæ¯ç»§ç»­ä¼ é€’			
 				if (uid_at_someone_.find(nbase::UTF16ToUTF8(at_name)) != uid_at_someone_.end())
 				{
 					input_edit_->SetSel(pos, end);
@@ -74,7 +75,7 @@ bool ChatroomForm::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 				if (last_second_char == L' ')
 				{
 					std::wstring at_name = at_str.substr(0, at_str.length() - 2);
-					//Èç¹ûµ±Ç°ÒªÉ¾µÄÊÇ¿Õ¸ñµÄºóÒ»Î»£¬¶øÇÒ¿Õ¸ñÇ°°üº¬ÁËÍêÕûµÄ@Ä³ÈËµÄÐÅÏ¢£¬¾Í²»¼ÌÐøÆ¥Åä¶øÒþ²Ø@ÁÐ±í£¬Ö±½Ó·µ»Ø		
+					//å¦‚æžœå½“å‰è¦åˆ çš„æ˜¯ç©ºæ ¼çš„åŽä¸€ä½ï¼Œè€Œä¸”ç©ºæ ¼å‰åŒ…å«äº†å®Œæ•´çš„@æŸäººçš„ä¿¡æ¯ï¼Œå°±ä¸ç»§ç»­åŒ¹é…è€Œéšè—@åˆ—è¡¨ï¼Œç›´æŽ¥è¿”å›ž		
 					if (uid_at_someone_.find(nbase::UTF16ToUTF8(at_name)) != uid_at_someone_.end())
 					{
 						return false;
@@ -116,7 +117,7 @@ bool ChatroomForm::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 	}
 	else
 	{
-		// »ñÈ¡µ±Ç°¹â±êÖ®Ç°µÄËùÓÐÎÄ±¾
+		// èŽ·å–å½“å‰å…‰æ ‡ä¹‹å‰çš„æ‰€æœ‰æ–‡æœ¬
 		long start = 0;
 		long end = 0;
 		input_edit_->GetSel(start, end);
@@ -136,8 +137,8 @@ bool ChatroomForm::HandleAtMsg(WPARAM wParam, LPARAM lParam)
 			POINT pt = { rc.left, rc.bottom };
 			::ClientToScreen(this->GetHWND(), &pt);
 
-			// Èç¹ûÆ¥ÅäµÄ¹Ø¼ü×ÖÖ»ÓÐÒ»¸ö£¬ÔòÊÇµÚÒ»´ÎÆ¥Åä
-			// ÓÉÓÚÏìÓ¦@Ê±ShowMemberItemsº¯ÊýÒþ²ØÁËÁÐ±íÖÐ×î½ü·¢ÑÔµÄ5¸öÈË£¬ËùÒÔµÚÒ»´ÎÆ¥ÅäÊ±£¬match_visibleÉèÎªfalse²»ÈÃMatchº¯ÊýºöÂÔÒþ²ØÏî
+			// å¦‚æžœåŒ¹é…çš„å…³é”®å­—åªæœ‰ä¸€ä¸ªï¼Œåˆ™æ˜¯ç¬¬ä¸€æ¬¡åŒ¹é…
+			// ç”±äºŽå“åº”@æ—¶ShowMemberItemså‡½æ•°éšè—äº†åˆ—è¡¨ä¸­æœ€è¿‘å‘è¨€çš„5ä¸ªäººï¼Œæ‰€ä»¥ç¬¬ä¸€æ¬¡åŒ¹é…æ—¶ï¼Œmatch_visibleè®¾ä¸ºfalseä¸è®©Matchå‡½æ•°å¿½ç•¥éšè—é¡¹
 			bool match_visible = at_str.length() > 1;
 			if (at_list_form->Match(at_str, match_visible))
 			{

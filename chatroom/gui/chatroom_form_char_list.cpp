@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "chatroom_form.h"
 
 using namespace ui;
@@ -14,7 +15,7 @@ void ChatroomForm::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 {
 #if 0
 	nbase::ThreadManager::PostRepeatedTask(kThreadGlobalMisc, ToWeakCallback([this]() {
-		std::vector<std::wstring> bq = { L"[ĞÄËé]", L"[´óĞ¦]", L"[¿É°®]", L"[¹íÁ³]", L"[¿ÚË®]", L"[º¦Ğß]" };
+		std::vector<std::wstring> bq = { L"[å¿ƒç¢]", L"[å¤§ç¬‘]", L"[å¯çˆ±]", L"[é¬¼è„¸]", L"[å£æ°´]", L"[å®³ç¾]" };
 		std::wstring text(L"Hello");
 		text.append(bq[rand() % bq.size()]).append(L"Hello");
 		AddText(text, L"jiajia01", "jiajia01", kMember, false);
@@ -113,7 +114,7 @@ void ChatroomForm::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 				bot.sent_param_["target"] = values["target"].asString();
 				bot.sent_param_["type"] = "03";
 				bot.sent_param_["params"] = values["params"].asString();
-				std::string json_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeRobot, QString::GetGUID(), bot.ToJsonString(), content, ChatRoomMessageSetting());
+				std::string json_msg = ChatRoom::CreateRoomMessage(kNIMChatRoomMsgTypeRobot, nim::Tool::GetUuid(), bot.ToJsonString(), content, ChatRoomMessageSetting());
 				ChatRoom::SendMsg(room_id_, json_msg);
 				std::string my_id = nim_ui::LoginManager::GetInstance()->GetAccount();
 				std::wstring my_name = nim_ui::UserManager::GetInstance()->GetUserName(nim_ui::LoginManager::GetInstance()->GetAccount(), false);
@@ -208,19 +209,19 @@ void ChatroomForm::GetMemberInfo(const std::string& params, nim_cef::ReportResul
 	if (it_member != members_map_.end())
 		member_info = it_member->second;
 
-	// ÊÇ·ñÊÇ×Ô¼º
+	// æ˜¯å¦æ˜¯è‡ªå·±
 	reponse["self"] = account == my_id;
 
-	// Ö»ÓĞ´´½¨ÕßºÍ¹ÜÀíÔ±¿ÉÒÔ²Ù×÷
+	// åªæœ‰åˆ›å»ºè€…å’Œç®¡ç†å‘˜å¯ä»¥æ“ä½œ
 	reponse["hasPermission"] = my_room || std::find(managers_list_.begin(), managers_list_.end(), my_id) != managers_list_.end();
 
-	// Èç¹ûÄ¿±êÓÃ»§ÊÇ´´½¨Õß£¬²»ÄÜ²Ù×÷£¬Ö±½Ó·µ»Ø
+	// å¦‚æœç›®æ ‡ç”¨æˆ·æ˜¯åˆ›å»ºè€…ï¼Œä¸èƒ½æ“ä½œï¼Œç›´æ¥è¿”å›
 	reponse["isCreator"] = account == creater_id_;
 
-	// Èç¹ûÄ¿±êÓÃ»§ºÍ×Ô¼º¶¼ÊÇ¹ÜÀíÔ±£¬²»ÄÜ²Ù×÷£¬Ö±½Ó·µ»Ø
+	// å¦‚æœç›®æ ‡ç”¨æˆ·å’Œè‡ªå·±éƒ½æ˜¯ç®¡ç†å‘˜ï¼Œä¸èƒ½æ“ä½œï¼Œç›´æ¥è¿”å›
 	reponse["isAdmin"] = (!my_room) && member_info.type_ == 2;
 
-	// ÓÃ»§ĞÅÏ¢
+	// ç”¨æˆ·ä¿¡æ¯
 	reponse["isMuted"] = member_info.is_muted_;
 	reponse["isTempMuted"] = member_info.temp_muted_;
 	reponse["inBlackList"] = member_info.is_blacklist_;
@@ -272,7 +273,7 @@ void ChatroomForm::SetMemberAdmin(const std::string &id, bool is_admin)
 		members_map_[id] = info->second;
 	}
 
-	// µ¥»÷ÁËÔÚÏß³ÉÔ±ÁĞ±íºó»áÖØĞÂË¢ĞÂ³ÉÔ±£¬ËùÒÔÖ»ÓĞÇĞ»»µ½ÔÚÏß³ÉÔ±ÁĞ±íÒ³Ê±£¬²Å²Ù×÷UI
+	// å•å‡»äº†åœ¨çº¿æˆå‘˜åˆ—è¡¨åä¼šé‡æ–°åˆ·æ–°æˆå‘˜ï¼Œæ‰€ä»¥åªæœ‰åˆ‡æ¢åˆ°åœ¨çº¿æˆå‘˜åˆ—è¡¨é¡µæ—¶ï¼Œæ‰æ“ä½œUI
 	if (option_online_members_->IsSelected())
 	{
 		if (NULL != online_members_virtual_list_->FindSubControl(nbase::UTF8ToUTF16(id)))
@@ -358,7 +359,7 @@ void ChatroomForm::SetRoomMemberMute(bool mute)
 
 void ChatroomForm::RemoveMember(const std::string &uid)
 {
-	// µ¥»÷ÁËÔÚÏß³ÉÔ±ÁĞ±íºó»áÖØĞÂË¢ĞÂ³ÉÔ±£¬ËùÒÔÖ»ÓĞÇĞ»»µ½ÔÚÏß³ÉÔ±ÁĞ±íÒ³Ê±£¬²Å²Ù×÷UI
+	// å•å‡»äº†åœ¨çº¿æˆå‘˜åˆ—è¡¨åä¼šé‡æ–°åˆ·æ–°æˆå‘˜ï¼Œæ‰€ä»¥åªæœ‰åˆ‡æ¢åˆ°åœ¨çº¿æˆå‘˜åˆ—è¡¨é¡µæ—¶ï¼Œæ‰æ“ä½œUI
 	auto exit_member = members_map_.find(uid);
 	if (exit_member != members_map_.end())
 	{

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "cef_control.h"
 #include "util/util.h"
 
@@ -20,7 +21,7 @@ void CefControl::OnPaint(CefRefPtr<CefBrowser> browser, CefRenderHandler::PaintE
 	}
 	else if (type == PET_POPUP && dc_cef_.IsValid() && rect_popup_.width > 0 && rect_popup_.height > 0)
 	{
-		// µ¥¶À±£´æpopup´°¿ÚµÄÎ»Í¼
+		// å•ç‹¬ä¿å­˜popupçª—å£çš„ä½å›¾
 		if (dc_cef_popup_.GetWidth() != width || dc_cef_popup_.GetHeight() != height)
 			dc_cef_popup_.Init(m_pWindow->GetPaintDC(), width, height);
 
@@ -36,7 +37,7 @@ void CefControl::OnPopupShow(CefRefPtr<CefBrowser> browser, bool show)
 {
 	if (!show)
 	{
-		// µ±popup´°¿ÚÒþ²ØÊ±£¬Ë¢ÐÂpopupÇøÓò
+		// å½“popupçª—å£éšè—æ—¶ï¼Œåˆ·æ–°popupåŒºåŸŸ
 		CefRect rect_dirty = rect_popup_;
 		rect_popup_.Set(0, 0, 0, 0);
 		browser->GetHost()->Invalidate(PET_VIEW);

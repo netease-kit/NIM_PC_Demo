@@ -1,4 +1,5 @@
-﻿#include "merge_item.h"
+#include "stdafx.h"
+#include "merge_item.h"
 
 using namespace ui;
 namespace nim_comp

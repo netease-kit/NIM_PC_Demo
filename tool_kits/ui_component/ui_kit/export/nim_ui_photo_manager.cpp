@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "nim_ui_photo_manager.h"
 
 namespace nim_ui

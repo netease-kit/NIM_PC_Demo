@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "custom_layout.h"
 
 using namespace ui;
@@ -9,8 +10,8 @@ ui::CSize CustomLayout::ArrangeChild(const std::vector<ui::Control*>& m_items, u
 	for (auto it = m_items.begin(); it != m_items.end(); it++) {
 		Control* pControl = *it;
 
-		// ¼´Ê¹×Ó¿Ø¼þinternVisibleÊôÐÔÎªfalse£¬ÕâÀïÒ²ÔÝÊ±Ç¿ÐÐÉèÖÃÎªtrue£¬ÅÅ°æÍê³Éºó»Ö¸´ÊôÐÔ¡£
-		// ·ñÔòÎÞ·¨ÅÅ°æ±»Òþ²ØµÄSessionBox£¬ÔÚÈÎÎñÀ¸Éú³ÉËõÂÔÍ¼ºÍÔ¤ÀÀÍ¼Ê±ÐèÒªÅÅ°æºóµÄSessionBox
+		// å³ä½¿å­æŽ§ä»¶internVisibleå±žæ€§ä¸ºfalseï¼Œè¿™é‡Œä¹Ÿæš‚æ—¶å¼ºè¡Œè®¾ç½®ä¸ºtrueï¼ŒæŽ’ç‰ˆå®ŒæˆåŽæ¢å¤å±žæ€§ã€‚
+		// å¦åˆ™æ— æ³•æŽ’ç‰ˆè¢«éšè—çš„SessionBoxï¼Œåœ¨ä»»åŠ¡æ ç”Ÿæˆç¼©ç•¥å›¾å’Œé¢„è§ˆå›¾æ—¶éœ€è¦æŽ’ç‰ˆåŽçš„SessionBox
 		bool visible = pControl->IsInternVisible();
 		pControl->SetInternVisible(true);
 		CSize new_size = this->SetCustomPos(pControl, rc);

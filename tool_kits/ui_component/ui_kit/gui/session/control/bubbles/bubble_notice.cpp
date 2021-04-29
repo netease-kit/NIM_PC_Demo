@@ -1,5 +1,5 @@
-﻿#include "bubble_notice.h"
-
+#include "stdafx.h"
+#include "bubble_notice.h"
 
 using namespace ui;
 

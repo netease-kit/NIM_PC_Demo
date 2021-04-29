@@ -5,16 +5,16 @@ namespace nim_comp
 	{
 	public:
 		/**
-		* ÉèÖÃ±êÌâÀ¸±êÌâ
-		* @param[in] title ±êÌâÀ¸±êÌâ
-		* @return void	ÎŞ·µ»ØÖµ
+		* è®¾ç½®æ ‡é¢˜æ æ ‡é¢˜
+		* @param[in] title æ ‡é¢˜æ æ ‡é¢˜
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void SetTaskbarTitle(const std::wstring &title) = 0;
 		virtual void Close(UINT nRet = 0) = 0;
 		virtual void ActiveWindow() = 0;
 		/**
-		* ¸üĞÂÈº³ÉÔ±ĞÅÏ¢
-		* @return void	ÎŞ·µ»ØÖµ
+		* æ›´æ–°ç¾¤æˆå‘˜ä¿¡æ¯
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void UpdateTeamMember() = 0;
 	};

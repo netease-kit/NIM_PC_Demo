@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 interface ITaskbarList4;
 namespace nim_comp

@@ -1,5 +1,5 @@
 /** @file cef_form.h
-* @brief ÀëÆÁÄ£Ê½Cefä¯ÀÀÆ÷¿Ø¼ş²âÊÔ´°¿Ú
+* @brief ç¦»å±æ¨¡å¼Cefæµè§ˆå™¨æ§ä»¶æµ‹è¯•çª—å£
 * @copyright (c) 2016, NetEase Inc. All rights reserved
 * @author Redrain
 * @date 2016/7/19

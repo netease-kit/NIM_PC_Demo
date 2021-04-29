@@ -1,4 +1,4 @@
-﻿#ifndef MEMBER_MANAGER_FORM_H_
+#ifndef MEMBER_MANAGER_FORM_H_
 #define MEMBER_MANAGER_FORM_H_
 
 #include "util/window_ex.h"

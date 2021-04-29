@@ -1,4 +1,5 @@
-﻿#include "bubble_sticker.h"
+#include "stdafx.h"
+#include "bubble_sticker.h"
 
 using namespace ui;
 

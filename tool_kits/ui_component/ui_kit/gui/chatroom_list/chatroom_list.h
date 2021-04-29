@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "cef/cef_module/cef_control/cef_control.h"
 
 namespace nim_comp

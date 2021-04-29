@@ -1,7 +1,7 @@
+#include "stdafx.h"
 #include "window_select.h"
 #include "helper/screen_capture.h"
 #include "base/util/string_number_conversions.h"
-
 
 namespace nim_comp
 {

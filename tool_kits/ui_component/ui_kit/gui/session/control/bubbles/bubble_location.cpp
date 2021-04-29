@@ -1,4 +1,5 @@
-﻿#include "bubble_location.h"
+#include "stdafx.h"
+#include "bubble_location.h"
 
 using namespace ui;
 

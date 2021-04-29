@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "main_form_menu.h"
 #include "shared\ui\ui_menu.h"
 #include "module\config\config_helper.h"
@@ -8,7 +9,7 @@ using namespace ui;
 
 void MainFormMenu::OnPopupMainMenu(POINT point)
 {
-	//创建菜单窗口
+	//鍒涘缓鑿滃崟绐楀彛
 	CMenuWnd* pMenu = new CMenuWnd(NULL);
 	std::wstring main_menu_xml_path = L"main_menu.xml";
 	if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::Simplified_Chinese)
@@ -17,7 +18,7 @@ void MainFormMenu::OnPopupMainMenu(POINT point)
 		main_menu_xml_path = L"main_menu_en.xml";
 	STRINGorID xml(main_menu_xml_path.c_str());
 	pMenu->Init(xml, _T("xml"), point);
-	//注册回调
+	//娉ㄥ唽鍥炶皟
 	CMenuElementUI* look_log = (CMenuElementUI*)pMenu->FindControl(L"look_log");
 	look_log->AttachSelect(nbase::Bind(&MainFormMenu::LookLogMenuItemClick, this, std::placeholders::_1));
 
@@ -66,13 +67,13 @@ void MainFormMenu::OnPopupMainMenu(POINT point)
 
 	CMenuElementUI* quit = (CMenuElementUI*)pMenu->FindControl(L"quit");
 	quit->AttachSelect(nbase::Bind(&MainFormMenu::QuitMenuItemClick, this, std::placeholders::_1));
-	//显示
+	//鏄剧ず
 	pMenu->AttachWindowClose(nbase::Bind(&MainFormMenu::CloseAllSubmenu, this, std::placeholders::_1));
 	pMenu->Show();
 }
 static void LookLogClick(HWND m_hWnd)
 {
-	//TODO：暂时显示用户数据所在的目录，方便收集用户反馈！
+	//TODO锛氭殏鏃舵樉绀虹敤鎴锋暟鎹墍鍦ㄧ殑鐩綍锛屾柟渚挎敹闆嗙敤鎴峰弽棣堬紒
 	std::wstring dir = nim_ui::UserConfig::GetInstance()->GetUserDataPath();
 	std::wstring tip = nbase::StringPrintf(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_MENU_CURRENT_USER_DIR").c_str(), dir.c_str());
 	ShowMsgBox(m_hWnd, MsgboxCallback(), tip, false, L"STRING_TIPS", true, L"STRID_MAINWINDOW_MENU_GOT_IT", true);
@@ -193,7 +194,7 @@ bool MainFormMenu::ShowMigrateMsglogMenu(ui::EventArgs* param, nim::LogsBackupRe
 	ui::CPoint popup_pt(menu_pos.left + elem_pos.right + 2, menu_pos.top + elem_pos.top);
 	pMenu->Init(xml, _T("xml"), popup_pt, CMenuWnd::RIGHT_BOTTOM, true);
 	::SetWindowText(pMenu->GetHWND(), menu_name.c_str());
-	//注册回调
+	//娉ㄥ唽鍥炶皟
 	Box* export_menu = (Box*)((Box*)pMenu->GetRoot())->GetItemAt(0);
 	if (export_menu)
 	{
@@ -204,7 +205,7 @@ bool MainFormMenu::ShowMigrateMsglogMenu(ui::EventArgs* param, nim::LogsBackupRe
 		second_item->AttachButtonDown(nbase::Bind(&MainFormMenu::OnMigrateMsglog, this, std::placeholders::_1, migrate_msglog_option, kRemote));
 	}
 
-	//显示
+	//鏄剧ず
 	pMenu->Show();
 	return true;
 }
@@ -232,7 +233,7 @@ bool MainFormMenu::ShowLanguageList(ui::EventArgs* param)
 {
 	std::wstring menu_name = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_MENU_LANGUAGE_LIST");
 	HWND hWnd = ::FindWindow(L"MenuWnd", menu_name.c_str());
-	if (hWnd) //语言列表已经打开
+	if (hWnd) //璇█鍒楄〃宸茬粡鎵撳紑
 	{
 		::ShowWindow(hWnd, SW_SHOWNOACTIVATE);
 		return true;
@@ -245,7 +246,7 @@ bool MainFormMenu::ShowLanguageList(ui::EventArgs* param)
 	ui::CPoint popup_pt(menu_pos.left + elem_pos.right + 2, menu_pos.top + elem_pos.top);
 	pMenu->Init(xml, _T("xml"), popup_pt, CMenuWnd::RIGHT_BOTTOM, true);
 	::SetWindowText(pMenu->GetHWND(), menu_name.c_str());
-	//注册回调
+	//娉ㄥ唽鍥炶皟
 	std::string current_language = ConfigHelper::GetInstance()->GetLanguage();
 	Box* language_list = (Box*)((Box*)pMenu->GetRoot())->GetItemAt(0);
 	if (language_list)
@@ -260,7 +261,7 @@ bool MainFormMenu::ShowLanguageList(ui::EventArgs* param)
 			}
 		}
 
-	//显示
+	//鏄剧ず
 	pMenu->Show();
 	return true;
 }

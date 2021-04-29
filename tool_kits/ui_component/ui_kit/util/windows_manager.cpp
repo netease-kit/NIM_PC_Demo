@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "windows_manager.h"
 #include "shared/log.h"
 

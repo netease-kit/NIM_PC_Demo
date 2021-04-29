@@ -1,13 +1,13 @@
-// stdafx.h : ±ê×¼ÏµÍ³°üº¬ÎÄ¼şµÄ°üº¬ÎÄ¼ş£¬
-// »òÊÇ¾­³£Ê¹ÓÃµ«²»³£¸ü¸ÄµÄ
-// ÌØ¶¨ÓÚÏîÄ¿µÄ°üº¬ÎÄ¼ş
+// stdafx.h : æ ‡å‡†ç³»ç»ŸåŒ…å«æ–‡ä»¶çš„åŒ…å«æ–‡ä»¶ï¼Œ
+// æˆ–æ˜¯ç»å¸¸ä½¿ç”¨ä½†ä¸å¸¸æ›´æ”¹çš„
+// ç‰¹å®šäºé¡¹ç›®çš„åŒ…å«æ–‡ä»¶
 //
 
 #pragma once
 
 #include "targetver.h"
 
-#define WIN32_LEAN_AND_MEAN             // ´Ó Windows Í·ÖĞÅÅ³ı¼«ÉÙÊ¹ÓÃµÄ×ÊÁÏ
+#define WIN32_LEAN_AND_MEAN             // ä» Windows å¤´ä¸­æ’é™¤æå°‘ä½¿ç”¨çš„èµ„æ–™
 
 #pragma once
 
@@ -46,10 +46,10 @@
 #include "duilib/UIlib.h"
 
 //json
-#include "jsoncpp/include/json/json.h"
+#include "json/json.h"
 
 //xml
-#include "tinyxml/tinyxml.h"
+#include "tinyxml.h"
 
 //window header
 #include <atlbase.h>
@@ -63,13 +63,10 @@
 #include "shared/util.h"
 
 //sdk
-#include "include/nim_cpp_api.h"
-//chatroom
-#include "include/nim_chatroom_cpp_api.h"
-
-//tool
-#include "include/nim_cpp_tools_api.h"
-
+#include "nim_chatroom_cpp_wrapper/nim_cpp_chatroom_api.h"
+#include "nim_cpp_wrapper/nim_cpp_api.h"
+#include "nim_tools_cpp_wrapper/nim_audio_cpp.h"
+#include "nim_tools_cpp_wrapper/nim_tools_http_cpp.h"
 
 //helper
 #include "shared/closure.h"
@@ -80,6 +77,6 @@
 // ui_kits
 #include "export/nim_ui_all.h"
 //custom_app_sdk
-#include "app_sdk.h"
+#include "include/app_sdk.h"
 
 #include "nim_service/module/login/login_manager.h"

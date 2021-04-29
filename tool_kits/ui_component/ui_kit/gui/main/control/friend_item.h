@@ -7,7 +7,7 @@
 namespace nim_comp
 {
 /** @class FriendItem
-  * @brief ºÃÓÑÁĞ±íÏîµÄUIÀà
+  * @brief å¥½å‹åˆ—è¡¨é¡¹çš„UIç±»
   * @copyright (c) 2015, NetEase Inc. All rights reserved
   * @author towik
   * @date 2015/1/1
@@ -19,49 +19,49 @@ public:
 	virtual ~FriendItem();
 
 	/**
-	* ³õÊ¼»¯¿Ø¼ş
-	* @param[in] type ÀàĞÍ
-	* @param[in] accid ÓÃ»§id»òÕßÈº×éid
-	* @return void	ÎŞ·µ»ØÖµ
+	* åˆå§‹åŒ–æ§ä»¶
+	* @param[in] type ç±»å‹
+	* @param[in] accid ç”¨æˆ·idæˆ–è€…ç¾¤ç»„id
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void Init(FriendItemType type, const std::string &accid);
 
 	/**
-	* ²éÑ¯ÀàĞÍ
+	* æŸ¥è¯¢ç±»å‹
 	* @return FriendItemType
 	*/
 	FriendItemType GetFriendItemType() const { return type_; }
 
 	/**
-	* »ñÈ¡ÓÃ»§id»òÕßÈº×éid
-	* @return string ÓÃ»§id»òÕßÈº×éid
+	* è·å–ç”¨æˆ·idæˆ–è€…ç¾¤ç»„id
+	* @return string ç”¨æˆ·idæˆ–è€…ç¾¤ç»„id
 	*/
 	std::string GetId()	{ return id_; }
 
 	/**
-	* »ñÈ¡ÓÃ»§Ãû»òÕßÈº×éÃû
-	* @return string ÓÃ»§id»òÕßÈº×éid
+	* è·å–ç”¨æˆ·åæˆ–è€…ç¾¤ç»„å
+	* @return string ç”¨æˆ·idæˆ–è€…ç¾¤ç»„id
 	*/
 	std::wstring GetNickName() { return nick_name_; }
 
 	/**
-	* ÓÃêÇ³Æ¡¢ÓÃ»§ÃûµÈĞÅÏ¢Æ¥ÅäËÑË÷¹Ø¼ü×Ö
-	* @param[in] search_key ¹Ø¼ü×Ö
-	* @return bool true Æ¥Åä³É¹¦£¬false Æ¥ÅäÊ§°Ü
+	* ç”¨æ˜µç§°ã€ç”¨æˆ·åç­‰ä¿¡æ¯åŒ¹é…æœç´¢å…³é”®å­—
+	* @param[in] search_key å…³é”®å­—
+	* @return bool true åŒ¹é…æˆåŠŸï¼Œfalse åŒ¹é…å¤±è´¥
 	*/
 	bool Match(const UTF8String& search_key);
 
 	/**
-	* ÉèÖÃºÃÓÑÔÚÏß×´Ì¬
-	* @param[in] EventDataEx ÊÂ¼şÊı¾İ
-	* @return void	ÎŞ·µ»ØÖµ
+	* è®¾ç½®å¥½å‹åœ¨çº¿çŠ¶æ€
+	* @param[in] EventDataEx äº‹ä»¶æ•°æ®
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void SetOnlineState(const EventDataEx& data);
 
 	/**
-	* ÓëÁíÒ»¸öºÃÓÑÏî¿Ø¼ş½øĞĞ±È½Ï£¬¸ù¾İêÇ³ÆÅĞ¶Ï´óĞ¡
-	* @param[in] elment2 ºÃÓÑÏî¿Ø¼ş
-	* @return bool true êÇ³ÆÔÚÁíÒ»¸ö¿Ø¼şÖ®Ç°£¬false êÇ³ÆÔÚÁíÒ»¸ö¿Ø¼şÖ®ºó
+	* ä¸å¦ä¸€ä¸ªå¥½å‹é¡¹æ§ä»¶è¿›è¡Œæ¯”è¾ƒï¼Œæ ¹æ®æ˜µç§°åˆ¤æ–­å¤§å°
+	* @param[in] elment2 å¥½å‹é¡¹æ§ä»¶
+	* @return bool true æ˜µç§°åœ¨å¦ä¸€ä¸ªæ§ä»¶ä¹‹å‰ï¼Œfalse æ˜µç§°åœ¨å¦ä¸€ä¸ªæ§ä»¶ä¹‹å
 	*/
 	bool operator < (const FriendItem& elment2) const
 	{
@@ -70,9 +70,9 @@ public:
 	}
 
 	/**
-	* ÅĞ¶ÏÓëÁíÒ»¸öºÃÓÑÏî¿Ø¼şidÊÇ·ñÒ»Ñù
-	* @param[in] elment2 ºÃÓÑÏî¿Ø¼ş
-	* @return bool true Ò»Ñù£¬false ²»Ò»Ñù
+	* åˆ¤æ–­ä¸å¦ä¸€ä¸ªå¥½å‹é¡¹æ§ä»¶idæ˜¯å¦ä¸€æ ·
+	* @param[in] elment2 å¥½å‹é¡¹æ§ä»¶
+	* @return bool true ä¸€æ ·ï¼Œfalse ä¸ä¸€æ ·
 	*/
 	bool operator == (const FriendItem& elment2) const 
 	{
@@ -80,16 +80,16 @@ public:
 	}
 
 	/**
-	* ´¦ÀíºÃÓÑ¿Ø¼şË«»÷ÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å¥½å‹æ§ä»¶åŒå‡»æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnDbClicked(ui::EventArgs* arg);
 
 	/**
-	* ÏìÓ¦ÈºÃû³Æ¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] team_info ÈºĞÅÏ¢
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ç¾¤åç§°æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] team_info ç¾¤ä¿¡æ¯
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnTeamNameChange(const nim::TeamInfo& team_info);
 

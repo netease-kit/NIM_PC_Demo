@@ -4,47 +4,97 @@
 
 ![GitHub](https://img.shields.io/badge/license-MIT-green.svg)
 
-## sdk版本更新
-[传输门](https://dev.yunxin.163.com/docs/product/IM%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97/Windows%E7%AB%AF%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)
-
-## demo版本更新
-[传输门](https://dev.yunxin.163.com/docs/product/IM%E5%8D%B3%E6%97%B6%E9%80%9A%E8%AE%AF/Demo%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97/Windows-Demo%E6%9B%B4%E6%96%B0%E6%97%A5%E5%BF%97)
-
 ## 预览
 
 ![preview](PREVIEW.png)
 
-## 开始
+## 最低要求
 
-克隆项目到你的磁盘中
+ - CMake 3.10 或以上版本
+ - Visual Studio 2017 或以上版本
 
-```bash
-git clone https://github.com/netease-im/NIM_PC_Demo.git
+## 开发步骤
+
+NIM Demo 从 8.4.0 版本开始使用 CMake 管理工程结构，您需要下载安装 CMake 并安装到系统中：[https://cmake.org/download/](https://cmake.org/download/)
+
+安装完成后，首先克隆项目到你的磁盘中：
+
+```
+git clone https://github.com/netease-im/NIM_PC_Demo.git --depth 1
 ```
 
-克隆完成后进入 `NIM_PC_Demo/libs` 目录，解压 `cryptlib.zip` 来释放体积较大的依赖静态库文件，进入 `NIM_PC_Demo/nim_win_demo` 目录，使用 Visual Studio 2013 Update 5 以上版本 IDE 打开 `nim.sln`，按下 F7 即可编译项目
+执行如下命令进行工程初始化
 
-如您需要编译 64 位工程，请将 `bin/x64_dlls` 目录下的文件复制并替换现有 `bin` 目录下的文件，同时也需要解压 `libs/x64` 目录下的 `cryptlib.zip`。
+```bash
+# 初始化项目
+cmake -B build -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Debug
+```
 
-## 目录
+执行如上命令后，会自动下载依赖的三方库文件并解压到工程目录下，如执行无误您将看到如下信息：
 
-├─`app_sdk` 针对 Demo 应用实现的一些工具类  
-├─`bin` 程序输出目录，包含预设的云信 SDK、皮肤、语言文件以及 CEF 依赖  
-├─`chatroom` 聊天室的 UI 及业务逻辑实现  
-├─`libs` 静态库编译后的输出目录，包含预设的一些 CEF 组件静态库  
-├─`nim_sdk` 云信 PC SDK 目录头文件和 C++ 封装层  
-├─`third_party` 第三方库，目前仅有 cef_control 有依赖  
-├─`toolkits`       
-│  ├─`base` 基础类库  
-│  ├─`cef` CEF 控件支持  
-│  ├─`db` 数据库管理  
-│  ├─`duilib` duilib 核心代码，依赖 base 但不依赖 shared  
-│  ├─`net` HTTP 库相关头文件  
-│  ├─`shared` 包含一些工具的封装，如命令行解析、日志、路径处理等  
-│  ├─`ui_components` 基于 duilib 封装的常用组件库如 `msgbox`、`toast`、`cef_control` 等  
+```bash
+############# nim_win_demo ##############
+-- Downloading third party libraries from http://yx-web.nos.netease.com/package/1619524144/nim_demo_build_libraries_x86_debug.zip
+-- Current git tag: 8.4.0, commit count: 772, describe: 8.4.0-2-gbe6c7fea
+############# core #############
+############# base #############
+############# duilib #############
+############# shared #############
+############# db #############
+############# transfer file P2P #############
+############# av_kit #############
+############# rtc_kit #############
+############# capture_image #############
+############# image_view #############
+############# nim_service #############
+############# ui_kit #############
+############# cef_module #############
+############# cef_render #############
+############# libcef_dll_wrapper #############
+############# app_sdk #############
+############# nim_demo #############
+############# nim demo uninstaller #############
+-- Configuring done
+-- Generating done
+-- Build files have been written to: C:/Code/nim_demo/build
+```
+
+您可以通过打开 build 目录下的 `nim_win_demo.sln` 来进行调试或通过 CMake 命令直接编译：
+
+```bash
+cmake --build build --config Debug --target install
+```
+
+编译完成后会自动拷贝程序到代码根目录的 bin 文件夹下：
+
+```bash
+Installing: C:/Jks/workspace/NeIM_Demo/pdb/render.pdb
+Installing: C:/Jks/workspace/NeIM_Demo/bin/render.exe
+Installing: C:/Jks/workspace/NeIM_Demo/pdb/nim_demo.pdb
+Installing: C:/Jks/workspace/NeIM_Demo/bin/nim_demo.exe
+Installing: C:/Jks/workspace/NeIM_Demo/pdb/uninstall.pdb
+Installing: C:/Jks/workspace/NeIM_Demo/bin/uninstall.exe
+```
+
+如您需要编译 Release 版本，则将上面的命令中 Debug 修改为 Release 即可：
+
+```bash
+# 请确保当前在 build 目录下
+cmake -B build -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release --target install
+```
+
+## 使用音视频 2.0 版本
+
+Demo 支持使用音视频 2.0 能力来展示视频、音频通话场景，您可以在初始化 CMake 脚本时增加参数 `BUILD_WITH_NERTC_G2` 来开启该功能，如：
+
+```
+cmake . -B build -G"Visual Studio 2017" -T"v141_xp" -DBUILD_WITH_NERTC_G2=ON -DCMAKE_BUILD_TYPE=Debug
+cmake --build build --config Debug --target install
+```
 
 ## 交流
 
  - 遇到问题：关注[云信开发人员手册](https://dev.yunxin.163.com/)帮助您理解和使用云信 SDK 接口
- - 提交缺陷：在确保使用最新版本依然存在问题时请尽量以简洁的语言描述清楚复现该问题的步骤并提交 issue
- - 功能建议：如果你有什么好的想法或者提案，欢迎提交 issue 与我们交流
+ - 提交缺陷：在确保使用最新版本依然存在问题时请尽量以简洁的语言描述清楚复现该问题的步骤并提交 Issue
+ - 功能建议：如果你有什么好的想法或者提案，欢迎提交 Issue 与我们交流

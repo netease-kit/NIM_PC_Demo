@@ -1,6 +1,8 @@
-﻿#include "nim_ui_window_manager.h"
+#include "stdafx.h"
+#include "nim_ui_window_manager.h"
 #include "module/login/login_manager.h"
 #include "shared/ui/toast/toast.h"
+#include "g2_kit/module/video_manager_g2.h"
 
 namespace nim_ui
 {
@@ -37,7 +39,11 @@ void WindowsManager::ShowLinkForm()
 
 void WindowsManager::ShowVideoSettingForm()
 {
-	nim_comp::VideoManager::GetInstance()->ShowVideoSetting();
+#if defined(USING_RTC_G2)
+    nim_comp::VideoManagerG2::GetInstance()->ShowVideoSetting();
+#else
+    nim_comp::VideoManager::GetInstance()->ShowVideoSetting();
+#endif
 }
 
 void ShowToast(const std::wstring &content, int duration, HWND parent)

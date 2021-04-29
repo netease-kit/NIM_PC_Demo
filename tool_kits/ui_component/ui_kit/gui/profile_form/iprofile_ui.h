@@ -5,28 +5,28 @@ namespace nim_comp
 	{
 	public:
 		/**
-		* ³õÊ¼»¯ÓÃ»§ĞÅÏ¢£¬Ö»ÄÜÊ¹ÓÃÒ»´Î£¬·ñÔò»á¶à´Î×¢²á»Øµ÷
-		* @param[in] info ÓÃ»§ÃûÆ¬
-		* @return void	ÎŞ·µ»ØÖµ
+		* åˆå§‹åŒ–ç”¨æˆ·ä¿¡æ¯ï¼Œåªèƒ½ä½¿ç”¨ä¸€æ¬¡ï¼Œå¦åˆ™ä¼šå¤šæ¬¡æ³¨å†Œå›è°ƒ
+		* @param[in] info ç”¨æˆ·åç‰‡
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void InitUserInfo(const nim::UserNameCard & info) = 0;
 
 		/**
-		* »ñÈ¡ËùÕ¹Ê¾ÃûÆ¬ĞÅÏ¢
-		* @return UserNameCard	ÃûÆ¬ĞÅÏ¢
+		* è·å–æ‰€å±•ç¤ºåç‰‡ä¿¡æ¯
+		* @return UserNameCard	åç‰‡ä¿¡æ¯
 		*/
 		virtual nim::UserNameCard	GetNameCard() const = 0;
 		/**
-		* ÉèÖÃ±êÌâÀ¸±êÌâ
-		* @param[in] title ±êÌâÀ¸±êÌâ
-		* @return void	ÎŞ·µ»ØÖµ
+		* è®¾ç½®æ ‡é¢˜æ æ ‡é¢˜
+		* @param[in] title æ ‡é¢˜æ æ ‡é¢˜
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void SetTaskbarTitle(const std::wstring &title) = 0;
 		virtual void Close(UINT nRet = 0) = 0;
 		/**
-		* ÏìÓ¦¶à¶ËÍÆËÍÅäÖÃ¸Ä±äµÄ»Øµ÷º¯Êı
-		* @param[in] switch_on ÊÇ·ñ¿ªÆô¶à¶ËÍÆËÍ
-		* @return void ÎŞ·µ»ØÖµ
+		* å“åº”å¤šç«¯æ¨é€é…ç½®æ”¹å˜çš„å›è°ƒå‡½æ•°
+		* @param[in] switch_on æ˜¯å¦å¼€å¯å¤šç«¯æ¨é€
+		* @return void æ— è¿”å›å€¼
 		*/
 		virtual void OnMultiportPushConfigChange(bool switch_on) = 0;
 	};

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "atme_view.h"
 #include "module/session/force_push_manager.h"
 

@@ -1,4 +1,4 @@
-﻿/** @file nim_tools_http_def.h
+/** @file nim_tools_http_def.h
 * @brief NIM HTTP提供的http传输相关接口的定义
 * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
 * @author towik, Oleg

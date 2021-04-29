@@ -2,9 +2,9 @@
 #include <string>
 #include <iostream>
 #include <fstream>
-#include "jsoncpp/include/json/json.h"
 #include "ui_component\ui_kit\module\runtime_data\runtime_data_manager.h"
 #include "app_sdk/app_config/app_sdk_config.h"
+
 namespace app_sdk
 {
 	enum NimServerConfType
@@ -41,9 +41,9 @@ namespace app_sdk
 		return ret;		
 	}
 	/**
-	* »ñÈ¡Á¬½Ó·şÎñÆ÷µÄÄ³Ò»¸öÅäÖÃĞÅÏ¢
-	* @param[in] key ĞèÒª»ñÈ¡µÄĞÅÏ¢¹Ø¼ü×Ö
-	* @return string ÅäÖÃĞÅÏ¢
+	* è·å–è¿æ¥æœåŠ¡å™¨çš„æŸä¸€ä¸ªé…ç½®ä¿¡æ¯
+	* @param[in] key éœ€è¦è·å–çš„ä¿¡æ¯å…³é”®å­—
+	* @return string é…ç½®ä¿¡æ¯
 	*/
 	template <int type>
 	static auto GetConfigValueFromNimServerConf(const std::string& key)->

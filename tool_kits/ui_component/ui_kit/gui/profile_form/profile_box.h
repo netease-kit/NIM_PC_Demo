@@ -12,27 +12,27 @@ public:
 	~ProfileBox();
 public:
 	/**
-	* ÏìÓ¦¶à¶ËÍÆËÍÅäÖÃ¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] switch_on ÊÇ·ñ¿ªÆô¶à¶ËÍÆËÍ
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”å¤šç«¯æ¨é€é…ç½®æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] switch_on æ˜¯å¦å¼€å¯å¤šç«¯æ¨é€
+	* @return void æ— è¿”å›å€¼
 	*/
 	virtual void OnMultiportPushConfigChange(bool switch_on) override;
 	virtual void DoInit() override;
 	/**
-	* ³õÊ¼»¯ÓÃ»§ĞÅÏ¢£¬Ö»ÄÜÊ¹ÓÃÒ»´Î£¬·ñÔò»á¶à´Î×¢²á»Øµ÷
-	* @param[in] info ÓÃ»§ÃûÆ¬
-	* @return void	ÎŞ·µ»ØÖµ
+	* åˆå§‹åŒ–ç”¨æˆ·ä¿¡æ¯ï¼Œåªèƒ½ä½¿ç”¨ä¸€æ¬¡ï¼Œå¦åˆ™ä¼šå¤šæ¬¡æ³¨å†Œå›è°ƒ
+	* @param[in] info ç”¨æˆ·åç‰‡
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void InitUserInfo(const nim::UserNameCard & info) override;
 	/**
-	* »ñÈ¡ËùÕ¹Ê¾ÃûÆ¬ĞÅÏ¢
-	* @return UserNameCard	ÃûÆ¬ĞÅÏ¢
+	* è·å–æ‰€å±•ç¤ºåç‰‡ä¿¡æ¯
+	* @return UserNameCard	åç‰‡ä¿¡æ¯
 	*/
 	virtual nim::UserNameCard	GetNameCard() const override;
 	/**
-	* ÉèÖÃ±êÌâÀ¸±êÌâ
-	* @param[in] title ±êÌâÀ¸±êÌâ
-	* @return void	ÎŞ·µ»ØÖµ
+	* è®¾ç½®æ ‡é¢˜æ æ ‡é¢˜
+	* @param[in] title æ ‡é¢˜æ æ ‡é¢˜
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void SetTaskbarTitle(const std::wstring &title) override;
 	virtual void Close(UINT nRet = 0) override;
@@ -40,248 +40,248 @@ public:
 	void AttachClose(const std::function<void(UINT)>& cb);
 private:
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµÄËùÓĞÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶çš„æ‰€æœ‰æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool Notify(ui::EventArgs* msg);
 
 	/**
-	* ¶à¶ËÍÆËÍ´ò¿ª£¨×ÀÃæ¶ËÔÚÏßÊ±ÒÆ¶¯¶Ë²»ĞèÍÆËÍ£©
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤šç«¯æ¨é€æ‰“å¼€ï¼ˆæ¡Œé¢ç«¯åœ¨çº¿æ—¶ç§»åŠ¨ç«¯ä¸éœ€æ¨é€ï¼‰
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnMultiPushSwitchSelected(ui::EventArgs* args);
 
 	/**
-	* ¶à¶ËÍÆËÍ¹Ø±Õ£¨×ÀÃæ¶ËÔÚÏßÊ±ÒÆ¶¯¶ËĞèÍÆËÍ£©
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤šç«¯æ¨é€å…³é—­ï¼ˆæ¡Œé¢ç«¯åœ¨çº¿æ—¶ç§»åŠ¨ç«¯éœ€æ¨é€ï¼‰
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnMultiPushSwitchUnSelected(ui::EventArgs* args);
 
 	/**
-	* WebRTC´ò¿ª
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* WebRTCæ‰“å¼€
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnWebRtcSelected(ui::EventArgs* args);
 
 	/**
-	* WebRTC¹Ø±Õ
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* WebRTCå…³é—­
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnWebRtcUnSelected(ui::EventArgs* args);
 
 	/**
-	* ÏûÏ¢ÌáĞÑ´ò¿ª£¨½ÓÊÕ¸ÃÓÃ»§µÄÏûÏ¢£©
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* æ¶ˆæ¯æé†’æ‰“å¼€ï¼ˆæ¥æ”¶è¯¥ç”¨æˆ·çš„æ¶ˆæ¯ï¼‰
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnNotifySwitchSelected(ui::EventArgs* args);
 
 	/**
-	* ÏûÏ¢ÌáĞÑ¹Ø±Õ£¨ÆÁ±Î¸ÃÓÃ»§µÄÏûÏ¢£©
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* æ¶ˆæ¯æé†’å…³é—­ï¼ˆå±è”½è¯¥ç”¨æˆ·çš„æ¶ˆæ¯ï¼‰
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnNotifySwitchUnSelected(ui::EventArgs* args);
 
 	/**
-	* ºÚÃûµ¥Ñ¡Ïî´ò¿ª£¨½«¸ÃÓÃ»§¼ÓÈëºÚÃûµ¥£©
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* é»‘åå•é€‰é¡¹æ‰“å¼€ï¼ˆå°†è¯¥ç”¨æˆ·åŠ å…¥é»‘åå•ï¼‰
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnBlackSwitchSelected(ui::EventArgs* args);
 
 	/**
-	* ºÚÃûµ¥Ñ¡Ïî¹Ø±Õ£¨½«¸ÃÓÃ»§´ÓºÚÃûµ¥ÒÆ³ı£©
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* é»‘åå•é€‰é¡¹å…³é—­ï¼ˆå°†è¯¥ç”¨æˆ·ä»é»‘åå•ç§»é™¤ï¼‰
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnBlackSwitchUnSelected(ui::EventArgs* args);
 
 	/**
-	* ÉèÖÃ½ûÑÔÑ¡Ïî´ò¿ª£¨½«¸ÃÓÃ»§¼ÓÈë½ûÑÔ×´Ì¬£©
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* è®¾ç½®ç¦è¨€é€‰é¡¹æ‰“å¼€ï¼ˆå°†è¯¥ç”¨æˆ·åŠ å…¥ç¦è¨€çŠ¶æ€ï¼‰
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnMuteSwitchSelected(ui::EventArgs* args);
 
 	/**
-	* ÉèÖÃ½ûÑÔÑ¡Ïî¹Ø±Õ£¨½«¸ÃÓÃ»§´Ó½ûÑÔ×´Ì¬ÖĞ½â³ı³ı£©
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* è®¾ç½®ç¦è¨€é€‰é¡¹å…³é—­ï¼ˆå°†è¯¥ç”¨æˆ·ä»ç¦è¨€çŠ¶æ€ä¸­è§£é™¤é™¤ï¼‰
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnMuteSwitchUnSelected(ui::EventArgs* args);
 	void OnNotifyChangeCallback(std::string id, bool mute);
 	void OnBlackChangeCallback(std::string id, bool black);
 
 	/**
-	* ´¦ÀíÁÄÌì°´Å¥±»µã»÷µÄÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†èŠå¤©æŒ‰é’®è¢«ç‚¹å‡»çš„æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnStartChatBtnClicked(ui::EventArgs* args);
 
 	/**
-	* ´¦ÀíÉ¾³ıºÃÓÑ°´Å¥±»µã»÷µÄÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†åˆ é™¤å¥½å‹æŒ‰é’®è¢«ç‚¹å‡»çš„æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnDeleteFriendBtnClicked(ui::EventArgs* args);
 
 	/**
-	* ´¦ÀíÈ·ÈÏÉ¾³ıºÃÓÑµÄÌáÊ¾¿ò·µ»ØµÄ»Øµ÷½á¹û
-	* @param[in] ret ÌáÊ¾¿òµÄ·µ»ØÖµ
-	* @return void ÎŞ·µ»ØÖµ
+	* å¤„ç†ç¡®è®¤åˆ é™¤å¥½å‹çš„æç¤ºæ¡†è¿”å›çš„å›è°ƒç»“æœ
+	* @param[in] ret æç¤ºæ¡†çš„è¿”å›å€¼
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnDeleteFriendMsgBox(MsgBoxRet ret);
 
 	/**
-	* ´¦ÀíÌí¼ÓºÃÓÑ°´Å¥±»µã»÷µÄÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ·»åŠ å¥½å‹æŒ‰é’®è¢«ç‚¹å‡»çš„æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnAddFriendBtnClicked(ui::EventArgs* args);
 
 	/**
-	* ´¦ÀíÉèÖÃÉúÈÕµÄ×éºÏ¿òµÄÑ¡ÔñÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†è®¾ç½®ç”Ÿæ—¥çš„ç»„åˆæ¡†çš„é€‰æ‹©æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnBirthdayComboSelect(ui::EventArgs* args);
 
 	/**
-	* ´¦Àí±à¼­ĞÅÏ¢»òÈ¡Ïû±à¼­°´Å¥±»µã»÷µÄÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†ç¼–è¾‘ä¿¡æ¯æˆ–å–æ¶ˆç¼–è¾‘æŒ‰é’®è¢«ç‚¹å‡»çš„æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnModifyOrCancelBtnClicked(ui::EventArgs* args, bool to_modify);
 
 	/**
-	* ´¦Àí±£´æ±à¼­ĞÅÏ¢°´Å¥±»µã»÷µÄÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†ä¿å­˜ç¼–è¾‘ä¿¡æ¯æŒ‰é’®è¢«ç‚¹å‡»çš„æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnSaveInfoBtnClicked(ui::EventArgs* args);
 
 	/**
-	* ´¦Àí±¸×¢Ãû±à¼­¿ò»ñµÃ½¹µãÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å¤‡æ³¨åç¼–è¾‘æ¡†è·å¾—ç„¦ç‚¹æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnAliasEditGetFocus(ui::EventArgs* args);
 
 	/**
-	* ´¦Àí±¸×¢Ãû±à¼­¿òÊ§È¥½¹µãÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å¤‡æ³¨åç¼–è¾‘æ¡†å¤±å»ç„¦ç‚¹æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnAliasEditLoseFocus(ui::EventArgs* args);
 
 	/**
-	* ´¦ÀíÊó±ê½øÈë±¸×¢Ãû±à¼­¿òÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†é¼ æ ‡è¿›å…¥å¤‡æ³¨åç¼–è¾‘æ¡†æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnAliasEditMouseEnter(ui::EventArgs* args);
 
 	/**
-	* ´¦ÀíÊó±êÀë¿ª±¸×¢Ãû±à¼­¿òÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†é¼ æ ‡ç¦»å¼€å¤‡æ³¨åç¼–è¾‘æ¡†æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnAliasEditMouseLeave(ui::EventArgs* args);
 
 	/**
-	* ´¦Àí±¸×¢Ãû±à¼­¿ò»Ø³µÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†å¤‡æ³¨åç¼–è¾‘æ¡†å›è½¦æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnReturnOnAliasEdit(ui::EventArgs* args);	
 
 	/**
-	* ´ò¿ªÃûÆ¬ºó£¬³õÊ¼»¯¸÷ÏîÌáÊ¾ĞÅÏ¢
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ‰“å¼€åç‰‡åï¼Œåˆå§‹åŒ–å„é¡¹æç¤ºä¿¡æ¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void InitLabels();
 
 	/**
-	* ÉèÖÃêÇ³Æ¡¢±¸×¢ÃûµÈ
-	* @return void	ÎŞ·µ»ØÖµ
+	* è®¾ç½®æ˜µç§°ã€å¤‡æ³¨åç­‰
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void SetShowName();
 
 	/**
-	* µã»÷±à¼­°´Å¥Ö®ºó£¬³õÊ¼»¯¸÷¸öÏÂÀ­¿òºÍÎÄ±¾ÊäÈë¿ò
-	* @return void	ÎŞ·µ»ØÖµ
+	* ç‚¹å‡»ç¼–è¾‘æŒ‰é’®ä¹‹åï¼Œåˆå§‹åŒ–å„ä¸ªä¸‹æ‹‰æ¡†å’Œæ–‡æœ¬è¾“å…¥æ¡†
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void InitEdits();
 
 	/**
-	* ³õÊ¼»¯ÉúÈÕÏÂÀ­¿ò
-	* @return void	ÎŞ·µ»ØÖµ
+	* åˆå§‹åŒ–ç”Ÿæ—¥ä¸‹æ‹‰æ¡†
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void InitBirthdayCombo();
 
 	/**
-	* ¼ì²é¸ÃÓÃ»§ÊÇ·ñÔÚ×Ô¼ºµÄ¾²ÒôÁĞ±íºÍºÚÃûµ¥ÖĞ
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ£€æŸ¥è¯¥ç”¨æˆ·æ˜¯å¦åœ¨è‡ªå·±çš„é™éŸ³åˆ—è¡¨å’Œé»‘åå•ä¸­
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void CheckInMuteBlack();
 
 	/**
-	* ÏìÓ¦ºÃÓÑÁĞ±í¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] change_type ºÃÓÑ±ä»¯ÀàĞÍ
-	* @param[in] accid ÓÃ»§id
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”å¥½å‹åˆ—è¡¨æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] change_type å¥½å‹å˜åŒ–ç±»å‹
+	* @param[in] accid ç”¨æˆ·id
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnFriendListChange(FriendChangeType change_type, const std::string& accid);
 
 	/**
-	* ÏìÓ¦ÓÃ»§ĞÅÏ¢¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] uinfos ÓÃ»§ĞÅÏ¢ÁĞ±í
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ç”¨æˆ·ä¿¡æ¯æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] uinfos ç”¨æˆ·ä¿¡æ¯åˆ—è¡¨
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 
 	/**
-	* ÏìÓ¦ÓÃ»§Í·Ïñ¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] type Í·ÏñÀàĞÍ
-	* @param[in] account ÓÃ»§id
-	* @param[in] photo_path Í·ÏñÂ·¾¶
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”ç”¨æˆ·å¤´åƒæ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] type å¤´åƒç±»å‹
+	* @param[in] account ç”¨æˆ·id
+	* @param[in] photo_path å¤´åƒè·¯å¾„
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);
 
 	/**
-	* ÏìÓ¦ÆäËûÓÃ»§ĞÅÏ¢¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] uinfos ÓÃ»§ĞÅÏ¢ÁĞ±í
-	* @return void ÎŞ·µ»ØÖµ
+	* å“åº”å…¶ä»–ç”¨æˆ·ä¿¡æ¯æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] uinfos ç”¨æˆ·ä¿¡æ¯åˆ—è¡¨
+	* @return void æ— è¿”å›å€¼
 	*/
 	void OnMiscUInfoChange(const std::list<nim::UserNameCard> &uinfos);
 
 	/**
-	* ´¦Àí×Ô¼ºÃûÆ¬µÄÍ·Ïñ±»µã»÷µÄÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†è‡ªå·±åç‰‡çš„å¤´åƒè¢«ç‚¹å‡»çš„æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnHeadImageClicked(ui::EventArgs* args);
 private:
 	/**
-	* ´¦ÀíÍ·ÏñĞŞ¸ÄÍê±ÏºóµÄ»Øµ÷º¯Êı
-	* @param[in] id ÓÃ»§id
-	* @param[in] url Í·ÏñµÄÏÂÔØµØÖ·
-	* @return void	ÎŞ·µ»ØÖµ
+	* å¤„ç†å¤´åƒä¿®æ”¹å®Œæ¯•åçš„å›è°ƒå‡½æ•°
+	* @param[in] id ç”¨æˆ·id
+	* @param[in] url å¤´åƒçš„ä¸‹è½½åœ°å€
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnModifyHeaderComplete(const std::string& id, const std::string &url);
 
 	/**
-	* ´¦ÀíÍ·Ïñ¸üĞÂÍê±ÏºóµÄ»Øµ÷º¯Êı
-	* @param[in] res ´íÎóÂë
-	* @return void	ÎŞ·µ»ØÖµ
+	* å¤„ç†å¤´åƒæ›´æ–°å®Œæ¯•åçš„å›è°ƒå‡½æ•°
+	* @param[in] res é”™è¯¯ç 
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void UpdateUInfoHeaderCallback(int res);
 public:
@@ -293,7 +293,7 @@ public:
 private:
 	nim::UserNameCard	m_uinfo;
 	nim::RobotInfo	m_robot;
-	int				user_type; // -1£º×Ô¼º£¬0£ºÄ°ÉúÈË£¬1£ººÃÓÑ
+	int				user_type; // -1ï¼šè‡ªå·±ï¼Œ0ï¼šé™Œç”Ÿäººï¼Œ1ï¼šå¥½å‹
 	AutoUnregister	unregister_cb;
 
 private:

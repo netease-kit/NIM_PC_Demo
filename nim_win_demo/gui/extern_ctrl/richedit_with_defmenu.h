@@ -2,7 +2,7 @@
 #pragma once
 #include "shared\ui\ui_menu.h"
 /** @class RichEditWithDefMenu
-* @brief 带缺省右键菜单的edit
+* @brief 甯︾己鐪佸彸閿彍鍗曠殑edit
 * @copyright (c) 2017, NetEase Inc. All rights reserved
 * @date 2017/10/17
 */
@@ -14,13 +14,13 @@ public:
 	virtual ~RichEditWithDefMenu();
 	virtual void DoInit();
 private:
-	//创建并初始化菜单窗口
+	//鍒涘缓骞跺垵濮嬪寲鑿滃崟绐楀彛
 	ui::CMenuWnd* CreateMenuWnd(const POINT& mouse_pos);
 	bool IsMenuButtonShow(const std::wstring& name);
 	virtual void SetAttribute(const std::wstring& pstrName, const std::wstring& pstrValue);	
 	bool OnMenu(ui::EventArgs* event);
 	void ShowDefaultMenu(ui::EventArgs* event);
-	//注册菜单按钮处理对象
+	//娉ㄥ唽鑿滃崟鎸夐挳澶勭悊瀵硅薄
 	void RegisterMenuButtonHandel();
 	void AddShowMenuButton(const std::wstring& name);
 	bool OnMenuWndClose(ui::EventArgs* event);

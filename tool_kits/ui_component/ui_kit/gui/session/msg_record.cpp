@@ -1,4 +1,5 @@
-﻿#include "msg_record.h"
+#include "stdafx.h"
+#include "msg_record.h"
 #include "module/audio/audio_manager.h"
 #include "module/multi_retweet/multi_retweet_manager.h"
 using namespace ui;
@@ -122,6 +123,10 @@ void MsgRecordForm::ShowMsg(const nim::IMMessage &msg, bool first, bool show_tim
 				}
 			}
 		}
+	}
+	else if(msg.type_ == nim::kNIMMessageTypeG2NetCall)
+	{
+		item = new MsgBubbleText;
 	}
 
 	if (item == nullptr)

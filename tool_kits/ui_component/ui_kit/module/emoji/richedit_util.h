@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <atlbase.h>
 #include "shared/image_ole_i.h"
 #include <richedit.h>

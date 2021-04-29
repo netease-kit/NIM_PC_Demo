@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "data_sync_callback.h"
 #include "module/session/session_manager.h"
 

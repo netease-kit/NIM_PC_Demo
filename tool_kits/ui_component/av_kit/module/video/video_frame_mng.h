@@ -9,7 +9,7 @@
 namespace nim_comp
 {
 /** @struct PicRegion
-  * @brief Ò»¿éÑÕÉ«Êı¾İÇøµÄÃèÊö£¬±ãÓÚ²ÎÊı´«µİ
+  * @brief ä¸€å—é¢œè‰²æ•°æ®åŒºçš„æè¿°ï¼Œä¾¿äºå‚æ•°ä¼ é€’
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @date 2016/09/19
   */
@@ -29,8 +29,8 @@ struct PicRegion
 	}
 
 	/**
-	* ÇåÀí±£´æµÄÑÕÉ«Êı¾İ
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ¸…ç†ä¿å­˜çš„é¢œè‰²æ•°æ®
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void Clear()
 	{
@@ -44,13 +44,13 @@ struct PicRegion
 	}
 
 	/**
-	* ÖØÖÃÑÕÉ«Êı¾İ
-	* @param[in] time Ê±¼ä´Á
-	* @param[in] data Ö¡Êı¾İ
-	* @param[in] size Ö¡Êı¾İ´óĞ¡
-	* @param[in] width ÊÓÆµ¿í¶È
-	* @param[in] height ÊÓÆµ¸ß¶È
-	* @return int ·µ»Ø´«ÈëµÄsizeÖµ
+	* é‡ç½®é¢œè‰²æ•°æ®
+	* @param[in] time æ—¶é—´æˆ³
+	* @param[in] data å¸§æ•°æ®
+	* @param[in] size å¸§æ•°æ®å¤§å°
+	* @param[in] width è§†é¢‘å®½åº¦
+	* @param[in] height è§†é¢‘é«˜åº¦
+	* @return int è¿”å›ä¼ å…¥çš„sizeå€¼
 	*/
 	int ResetData(uint64_t time, const char* data, int size, unsigned int width, unsigned int height/*, nim::NIMVideoSubType subtype*/)
 	{
@@ -74,16 +74,16 @@ struct PicRegion
 	}
 	
 	//nim::NIMVideoSubType subtype_;
-	char*		pdata_;         //ÑÕÉ«Êı¾İÊ×µØÖ·
+	char*		pdata_;         //é¢œè‰²æ•°æ®é¦–åœ°å€
 	int			size_max_;
 	int			size_;
-	long        width_;         //ÏñËØ¿í¶È
-	long        height_;        //ÏñËØ¸ß¶È
-	uint64_t	timestamp_;     //Ê±¼ä´Á£¨ºÁÃë£©
+	long        width_;         //åƒç´ å®½åº¦
+	long        height_;        //åƒç´ é«˜åº¦
+	uint64_t	timestamp_;     //æ—¶é—´æˆ³ï¼ˆæ¯«ç§’ï¼‰
 };
 
 /** @class VideoFrameMng
-  * @brief ÊÓÆµÖ¡¹ÜÀíÆ÷
+  * @brief è§†é¢‘å¸§ç®¡ç†å™¨
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @date 2016/09/19
   */
@@ -100,35 +100,35 @@ public:
 	~VideoFrameMng();
 
 	/**
-	* ÇåÀí±£´æµÄÊÓÆµÖ¡Êı¾İ
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ¸…ç†ä¿å­˜çš„è§†é¢‘å¸§æ•°æ®
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void Clear();
 
 	/**
-	* Ìí¼ÓÒ»¸öÊÓÆµÖ¡Êı¾İ
-	* @param[in] capture ÊÇ·ñÎªÂ¼ÖÆÒôÆµµÄÖ¡
-	* @param[in] time Ê±¼ä´Á
-	* @param[in] data Ö¡Êı¾İ
-	* @param[in] size Ö¡Êı¾İ´óĞ¡
-	* @param[in] width ÊÓÆµ¿í¶È
-	* @param[in] height ÊÓÆµ¸ß¶È
-	* @param[in] json °üº¬·¢ËÍÕßÓÃ»§idµÄjson´®
-	* @param[in] frame_type Ö¡ÀàĞÍ
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ·»åŠ ä¸€ä¸ªè§†é¢‘å¸§æ•°æ®
+	* @param[in] capture æ˜¯å¦ä¸ºå½•åˆ¶éŸ³é¢‘çš„å¸§
+	* @param[in] time æ—¶é—´æˆ³
+	* @param[in] data å¸§æ•°æ®
+	* @param[in] size å¸§æ•°æ®å¤§å°
+	* @param[in] width è§†é¢‘å®½åº¦
+	* @param[in] height è§†é¢‘é«˜åº¦
+	* @param[in] json åŒ…å«å‘é€è€…ç”¨æˆ·idçš„jsonä¸²
+	* @param[in] frame_type å¸§ç±»å‹
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void AddVideoFrame(bool capture, int64_t time, const char* data, int size, int width, int height, const std::string& json, FrameType frame_type = Ft_ARGB_r);
 
 	/**
-	* »ñÈ¡Ä³¸öÓÃ»§·¢À´µÄÒ»¸öÊÓÆµÖ¡Êı¾İ
-	* @param[in] account ÓÃ»§id
-	* @param[out] time Ê±¼ä´Á
-	* @param[out] out_data Ö¡Êı¾İ
-	* @param[out] width ÊÓÆµ¿í¶È
-	* @param[out] height ÊÓÆµ¸ß¶È
-	* @param[in] mirror ÊÇ·ñĞèÒª·­×ªÍ¼Ïñ
-	* @param[in] argb_or_yuv ÊÇ·ñĞèÒªARGB¸ñÊ½Êı¾İ
-	* @return void	ÎŞ·µ»ØÖµ
+	* è·å–æŸä¸ªç”¨æˆ·å‘æ¥çš„ä¸€ä¸ªè§†é¢‘å¸§æ•°æ®
+	* @param[in] account ç”¨æˆ·id
+	* @param[out] time æ—¶é—´æˆ³
+	* @param[out] out_data å¸§æ•°æ®
+	* @param[out] width è§†é¢‘å®½åº¦
+	* @param[out] height è§†é¢‘é«˜åº¦
+	* @param[in] mirror æ˜¯å¦éœ€è¦ç¿»è½¬å›¾åƒ
+	* @param[in] argb_or_yuv æ˜¯å¦éœ€è¦ARGBæ ¼å¼æ•°æ®
+	* @return void	æ— è¿”å›å€¼
 	*/
 	bool GetVideoFrame(std::string account, int64_t& time, char* out_data, int& width, int& height, bool mirror = false, bool argb_or_yuv = true);
 private:

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "team_plugin.h"
+
 namespace nim_comp
 {
 	const IMainPlugin::PluginFlagType TeamPlugin::kPLUGIN_NAME = "TeamPlugin";

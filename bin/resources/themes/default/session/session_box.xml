@@ -1,132 +1,145 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Window >
-    <VBox bkcolor="bk_wnd_lightcolor">
-        <Box height="68" bkimage="file='../session/bk_caption.png' corner='5,5,5,5'">
-            <HBox height="48" margin="10,0,20,0" valign="center" mouse="false">
-                <Box width="48" height="48" mouse="false">
-                    <Button name="btn_header" width="46" height="46" borderround="46,46,46,46" margin="1,1,1,1" cursortype="hand"/>
-                    <Button name="head_image_mask" bkimage="../public/headmask/icon_headimage_mask_48x48_selected.png" mouse="false"/>
-                </Box>
-                <VBox margin="5,0,0,0" height="auto" valign="center" width="auto">
-                    <HBox height="20" width="auto" maxwidth="520">
-                        <Label name="label_title" width="auto" mouse="false" font="2"/>
-                        <Control name="not_disturb" height="15" width="13" margin="10,0,0,0" valign="center" bkimage="../public/icon/not_disturb.png" visible="false"/>             
-                    </HBox>
-                    <Label name="label_tid" margin="0,5,0,0" mouse="false" normaltextcolor="lightcolor"/>
-                    <Label name="label_online_state" margin="0,5,0,0" mouse="false" normaltextcolor="lightcolor"/>
-                </VBox>
-            </HBox>
-            <VBox mouse="false" >
-                <HBox name="sysbar" height="auto" padding="0,0,5,0" mouse="false">
-                    <Control mouse="false"/>
-                    <Button class="btn_wnd_min" name="btn_min" margin="10,6,0,0"/>
-                    <Button class="btn_wnd_max" name="btn_max_restore" margin="10,6,0,0"/>
-                    <Button class="btn_wnd_close" name="btn_close" margin="10,6,0,0"/>
-                </HBox>
-                <HBox mouse="false">
-                    <Control mouse="false"/>
-                    <Button name="btn_invite" valign="center" margin="0,5,5,10" tooltiptextid="STRID_SESSION_INVITE_FRIEND" 
-                           normalimage="../session/btn_invite_normal.png" hotimage="../session/btn_invite_hovered.png" pushedimage="../session/btn_invite_pushed.png"/>
-                </HBox>
-            </VBox>
+  <VBox bkcolor="bk_wnd_lightcolor">
+    <Box height="68" bkimage="file='../session/bk_caption.png' corner='5,5,5,5'">
+      <HBox height="48" margin="10,0,20,0" valign="center" mouse="false">
+        <Box width="48" height="48" mouse="false">
+          <Button name="btn_header" width="46" height="46" borderround="46,46,46,46" margin="1,1,1,1" cursortype="hand"/>
+          <Button name="head_image_mask" bkimage="../public/headmask/icon_headimage_mask_48x48_selected.png" mouse="false"/>
         </Box>
+        <VBox margin="5,0,0,0" height="auto" valign="center" width="auto">
+          <HBox height="20" width="auto" maxwidth="520">
+            <Label name="label_title" width="auto" mouse="false" font="2"/>
+            <Control name="not_disturb" height="15" width="13" margin="10,0,0,0" valign="center" bkimage="../public/icon/not_disturb.png" visible="false"/>
+          </HBox>
+          <Label name="label_tid" margin="0,5,0,0" mouse="false" normaltextcolor="lightcolor"/>
+          <Label name="label_online_state" margin="0,5,0,0" mouse="false" normaltextcolor="lightcolor"/>
+        </VBox>
+      </HBox>
+      <VBox mouse="false" >
+        <HBox name="sysbar" height="auto" padding="0,0,5,0" mouse="false">
+          <Control mouse="false"/>
+          <Button class="btn_wnd_min" name="btn_min" margin="10,6,0,0"/>
+          <Button class="btn_wnd_max" name="btn_max_restore" margin="10,6,0,0"/>
+          <Button class="btn_wnd_close" name="btn_close" margin="10,6,0,0"/>
+        </HBox>
+        <HBox mouse="false">
+          <Control mouse="false"/>
+          <Button name="btn_invite" valign="center" margin="0,5,5,10" tooltiptextid="STRID_SESSION_INVITE_FRIEND"
+                 normalimage="../session/btn_invite_normal.png" hotimage="../session/btn_invite_hovered.png" pushedimage="../session/btn_invite_pushed.png"/>
+        </HBox>
+      </VBox>
+    </Box>
+    <HBox>
+      <!--左侧：消息-->
+      <VBox>
         <HBox>
-            <!--左侧：消息-->            
-            <VBox>
-                <HBox>
-                    <Box name="msg_content">
-                        <VListBox name="msg_list" padding="10,10,10,20" childmargin="10" vscrollbar="true" hscrollbar="false" vscrollunit="150"/>
-                    </Box>
-                    <Button name="show_right" height="auto"  valign="center" bkimage="../session/btn_right_open_normal.png"  hotimage="../session/btn_right_open_hover.png"
-                          pushedimage="../session/btn_right_open_down.png" visible="false" />
-                    <Button name="hide_right" height="auto"  valign="center" bkimage="../session/btn_fold_normal.png"  hotimage="../session/btn_fold_hover.png"
-                          pushedimage="../session/btn_fold_down.png" visible="false"/>
-                </HBox>
-                <Label name="mute_tips" textid="STRID_SESSION_TEAME_MUTE_TIPS" width="stretch" height="30" valign="bottom" textpadding="10,8,10,8" bkcolor="bk_wnd_darkcolor" visible="false"/>
-                <VBox name="toolbar_splitline" height="4">
-                    <Control class="splitline_hor_level1"/>
-                </VBox>
-                <VBox name="bottom_panel" height="auto" padding="0,1,10,10">
-                    <HBox name="hbox_toolbar" height="30" margin="5,0,5,0">
-                        <CheckBox name="btn_face" width="30" height="30" valign="center" margin="0" tooltiptextid="STRID_SESSION_EMOTICON"
-                                  forenormalimage="file='../session/btn_face.png' dest='5,5,25,25'" foredisabledimage="file='../session/btn_face_disable.png' dest='5,5,25,25' fade='80'"
-                                  hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" selectednormalimage="../session/icon_pushed.png"
-                                  selectedforenormalimage="file='../session/btn_face.png' dest='5,5,25,25'" selectedforedisabledimage="file='../session/btn_face_disable.png' dest='5,5,25,25' fade='80'"/>
-                        <Button name="btn_image" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_IMAGE"
-                                forenormalimage="file='../session/btn_image.png' dest='4,4,26,26'" foredisabledimage="file='../session/btn_image_disable.png' dest='4,4,26,26' fade='80'"
-                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
-                        <Button name="btn_snapchat" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_SNAPCHAT"
-                                forenormalimage="file='../session/btn_snapchat.png' dest='4,4,26,26'" foredisabledimage="file='../session/btn_snapchat_disable.png' dest='4,4,26,26' fade='80'"
-                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
-                        <Button name="btn_file" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_FILE"
-                                forenormalimage="file='../session/btn_file.png' dest='4,4,26,26'" foredisabledimage="file='../session/btn_file_disable.png' dest='4,4,26,26' fade='80'"
-                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
-                        <Button name="btn_transfer_file" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_P2P_FILE"
-                                forenormalimage="file='../session/btn_transfer_file.png' dest='4,4,26,26'" foredisabledimage="file='../session/btn_transfer_file_disable.png' dest='4,4,26,26' fade='80'"
-                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
-                        <Button name="btn_jsb" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_JSB"
-                                forenormalimage="../session/jsb.png" foredisabledimage="file='../session/jsb_disable.png' fade='80'"
-                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
-                        <Button name="btn_clip" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_CLIP"
-                                forenormalimage="file='../session/btn_clip.png' dest='5,5,25,25'" foredisabledimage="file='../session/btn_clip_disable.png' dest='5,5,25,25' fade='80'"
-                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
-                        <Button name="btn_audio" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_AUDIO_CHAT"
-                                forenormalimage="file='../session/audio_chat.png' dest='5,5,25,25'" foredisabledimage="file='../session/audio_chat_disable.png' dest='5,5,25,25' fade='80'" 
-                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/>
-                        <Button name="btn_video" width="30" height="30" valign="center" margin="5" tooltiptextid="STRID_SESSION_VIDEO_CHAT" 
+          <Box name="msg_content">
+            <VListBox name="msg_list" padding="10,10,10,20" childmargin="10" vscrollbar="true" hscrollbar="false" vscrollunit="150"/>
+          </Box>
+          <Button name="show_right" height="auto"  valign="center" bkimage="../session/btn_right_open_normal.png"  hotimage="../session/btn_right_open_hover.png"
+                pushedimage="../session/btn_right_open_down.png" visible="false" />
+          <Button name="hide_right" height="auto"  valign="center" bkimage="../session/btn_fold_normal.png"  hotimage="../session/btn_fold_hover.png"
+                pushedimage="../session/btn_fold_down.png" visible="false"/>
+        </HBox>
+        <Label name="mute_tips" textid="STRID_SESSION_TEAME_MUTE_TIPS" width="stretch" height="30" valign="bottom" textpadding="10,8,10,8" bkcolor="bk_wnd_darkcolor" visible="false"/>
+        <VBox name="toolbar_splitline" height="4">
+          <Control class="splitline_hor_level1"/>
+        </VBox>
+        <VBox name="bottom_panel" height="auto" padding="0,1,10,10">
+          <HBox name="hbox_toolbar" height="30" margin="5,0,5,0">
+            <CheckBox name="btn_face" width="30" height="30" valign="center" margin="0" tooltiptextid="STRID_SESSION_EMOTICON"
+                      forenormalimage="file='../session/btn_face.png' dest='5,5,25,25'" foredisabledimage="file='../session/btn_face_disable.png' dest='5,5,25,25' fade='80'"
+                      hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" selectednormalimage="../session/icon_pushed.png"
+                      selectedforenormalimage="file='../session/btn_face.png' dest='5,5,25,25'" selectedforedisabledimage="file='../session/btn_face_disable.png' dest='5,5,25,25' fade='80'"/>
+            <Button name="btn_image" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_IMAGE"
+                    forenormalimage="file='../session/btn_image.png' dest='4,4,26,26'" foredisabledimage="file='../session/btn_image_disable.png' dest='4,4,26,26' fade='80'"
+                    hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
+            <Button name="btn_snapchat" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_SNAPCHAT"
+                    forenormalimage="file='../session/btn_snapchat.png' dest='4,4,26,26'" foredisabledimage="file='../session/btn_snapchat_disable.png' dest='4,4,26,26' fade='80'"
+                    hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
+            <Button name="btn_file" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_FILE"
+                    forenormalimage="file='../session/btn_file.png' dest='4,4,26,26'" foredisabledimage="file='../session/btn_file_disable.png' dest='4,4,26,26' fade='80'"
+                    hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
+            <Button name="btn_transfer_file" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_P2P_FILE"
+                    forenormalimage="file='../session/btn_transfer_file.png' dest='4,4,26,26'" foredisabledimage="file='../session/btn_transfer_file_disable.png' dest='4,4,26,26' fade='80'"
+                    hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
+            <Button name="btn_jsb" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_JSB"
+                    forenormalimage="../session/jsb.png" foredisabledimage="file='../session/jsb_disable.png' fade='80'"
+                    hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
+            <Button name="btn_clip" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_CLIP"
+                    forenormalimage="file='../session/btn_clip.png' dest='5,5,25,25'" foredisabledimage="file='../session/btn_clip_disable.png' dest='5,5,25,25' fade='80'"
+                    hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
+            <Button name="btn_audio" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_AUDIO_CHAT"
+                   forenormalimage="file='../session/audio_chat.png' dest='5,5,25,25'" foredisabledimage="file='../session/audio_chat_disable.png' dest='5,5,25,25' fade='80'"
+                   hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/>
+            <Button name="btn_video" width="30" height="30" valign="center" margin="5" tooltiptextid="STRID_SESSION_VIDEO_CHAT"
                                 forenormalimage="file='../session/video_chat.png' dest='4,5,25,25'" foredisabledimage="file='../session/video_chat_disable.png' dest='4,5,25,25' fade='80'"
                                 hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/>
-                        <Button name="btn_rts" width="30" height="30" valign="center" margin="5" tooltiptextid="STRID_SESSION_RTS" 
+            <Button name="btn_audio_g2" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_AUDIO_CHAT"
+                   forenormalimage="file='../session/audio_chat.png' dest='5,5,25,25'" foredisabledimage="file='../session/audio_chat_disable.png' dest='5,5,25,25' fade='80'"
+                   hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/>
+            <Button name="btn_video_g2" width="30" height="30" valign="center" margin="5" tooltiptextid="STRID_SESSION_VIDEO_CHAT"
+                                forenormalimage="file='../session/video_chat.png' dest='4,5,25,25'" foredisabledimage="file='../session/video_chat_disable.png' dest='4,5,25,25' fade='80'"
+                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/>
+            <Button name="btn_audio" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_AUDIO_CHAT"
+                                forenormalimage="file='../session/audio_chat.png' dest='5,5,25,25'" foredisabledimage="file='../session/audio_chat_disable.png' dest='5,5,25,25' fade='80'" 
+                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/>
+            <Button name="btn_video" width="30" height="30" valign="center" margin="5" tooltiptextid="STRID_SESSION_VIDEO_CHAT" 
+                                forenormalimage="file='../session/video_chat.png' dest='4,5,25,25'" foredisabledimage="file='../session/video_chat_disable.png' dest='4,5,25,25' fade='80'"
+                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/>
+            <Button name="btn_rts" width="30" height="30" valign="center" margin="5" tooltiptextid="STRID_SESSION_RTS" 
                                 forenormalimage="file='../session/rts.png' dest='4,5,25,25'" foredisabledimage="file='../session/rts_disable.png' dest='4,5,25,25' fade='80'"
                                 hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" visible="false"/>
-                        <Button name="btn_tip" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_NOTIFICATION_MSG"
-                                forenormalimage="file='../session/btn_tip.png' dest='5,5,25,25'" foredisabledimage="file='../session/btn_tip_disable.png' dest='5,5,25,25' fade='80'"
-                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
-                        <Option name="btn_capture_audio" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_RECORD_AUDIO" 
-                                hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" selectednormalimage="../session/icon_pushed.png" textid="STRID_SESSION_RECORD_AUDIO_ICON" font="8" normaltextcolor="icongray" disabledtextcolor="iconfadegray"/>
-                        <Control />
-                        <!--Button name="add_msglog" dataid="10" valign="center" cursortype="hand" margin="5,0,10,0" normaltextcolor="link_blue" textid="STRID_SESSION_ADD_MSGLOG"/-->
-						<CheckBox class="checkbox_font12" name="btn_team_ack_ui" textid="STRID_SESSION_TEAM_ACK_MSG" margin="0,8,0,0" normaltextcolor="dark2color" visible="false"/>
-                        <Button name="btn_team_ack_msg" valign="center" cursortype="hand" normaltextcolor="link_blue" disabledtextcolor="gray" textid="STRID_SESSION_TEAM_ACK_MSG" visible="false" tooltiptextid="STRID_SESSION_TEAM_ACK_MSG_TIP"/>
-                        <Control width="10" />
-                        <Button name="btn_custom_msg" valign="center" cursortype="hand" normaltextcolor="link_blue" disabledtextcolor="gray" textid="STRID_SESSION_CUSTOM_NOTIFICATION"/>
-                        <Control width="10" />
-                        <Button name="btn_msg_record" valign="center" cursortype="hand" normaltextcolor="link_blue" textid="STRID_SESSION_MSG_RECORD"/>
-                    </HBox>
-                    <Control height="6"/>
-                    <Box height="auto">
-                        <MenuedRichEdit class="prompt" name="input_edit" minheight="86" maxheight="300" multiline="true" vscrollbar="true" autovscroll="true" readonly="false" font="2" defmenu="MID_COPY,MID_CUT,MID_PASTE" normaltextcolor="darkcolor" margin="2,2,2,2" padding="8,0,0,0" wantreturnmsg="true" rich="true"/>
-                        <Label name="input_edit_mute_tip" valign="center" halign="center" textid="STRID_SESSION_MUTE" visible="false" normaltextcolor="gray"/>
-                    </Box>
-                    <HBox name="hbox_send" height="30" margin="10,10,0,0">
-                        <Label valign="bottom" textid="STRID_SESSION_SEND_TIP"/>
-                        <Control />
-                        <Button name="btn_send" normaltextcolor="white" font="7" textid="STRING_SEND" normalimage="../session/send0.png" hotimage="../session/send1.png" pushedimage="../session/send2.png" disabledimage="../session/send_disable.png"/>
-                    </HBox>
-                </VBox>
-            </VBox>         
-            <!--中间：分割线-->
-            <Control class="splitline_ver_level1" name="frame_mid_split" visible="false"/>
-            <!--右侧：公告-->
-            <Box width="auto">
-                <VBox name="frame_right" width="240" visible="false" fadewidth="false">
-                    <HBox height="30">
-                        <Label width="stretch" margin="10,0,0,0" valign="center" normaltextcolor="lightcolor" textid="STRID_SESSION_TEAM_BOARD"/>
-                        <Button name="btn_new_broad" margin="0,0,10,0" valign="center" cursortype="hand" normaltextcolor="link_blue" textid="STRID_SESSION_NEW_BOARD"/>
-                    </HBox>
-                    <Control class="splitline_hor_level1"/>
-                    <RichEdit name="re_broad" width="stretch" height="200" padding="5,5,0,0" readonly="true" multiline="true" rich="true" 
-                              vscrollbar="true" hscrollbar="false" font="2"/>
-                    <Control class="splitline_hor_level1"/>
-                    <HBox height="30">
-                        <Label name="label_member" width="stretch" margin="10,0,0,0" valign="center" textid="STRID_SESSION_MEMBER_NUM"/>
-                        <Button name="btn_refresh_member" margin="0,0,10,0" valign="center" cursortype="hand" normaltextcolor="link_blue" textid="STRID_SESSION_REFRESH"/>
-                    </HBox>
-                    <Control class="splitline_hor_level1"/>
-                    <VirtualListBox class="list" name="member_list" vscrollbar="true" hscrollbar="false" vscrollunit="50"/>
-                </VBox>
-                
-            </Box>          
-        </HBox>
-    </VBox>
+            <Button name="btn_tip" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_NOTIFICATION_MSG"
+                    forenormalimage="file='../session/btn_tip.png' dest='5,5,25,25'" foredisabledimage="file='../session/btn_tip_disable.png' dest='5,5,25,25' fade='80'"
+                    hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png"/>
+            <Option name="btn_capture_audio" width="30" height="30" valign="center" margin="4" tooltiptextid="STRID_SESSION_RECORD_AUDIO" 
+                    hotimage="../session/icon_hover.png" pushedimage="../session/icon_pushed.png" selectednormalimage="../session/icon_pushed.png" 
+                    textid="STRID_SESSION_RECORD_AUDIO_ICON" font="8" normaltextcolor="icongray" disabledtextcolor="iconfadegray" visible="false"/>
+            <Control />
+            <!--Button name="add_msglog" dataid="10" valign="center" cursortype="hand" margin="5,0,10,0" normaltextcolor="link_blue" textid="STRID_SESSION_ADD_MSGLOG"/-->
+            <CheckBox class="checkbox_font12" name="btn_team_ack_ui" textid="STRID_SESSION_TEAM_ACK_MSG" margin="0,8,0,0" normaltextcolor="dark2color" visible="false"/>
+            <Button name="btn_team_ack_msg" valign="center" cursortype="hand" normaltextcolor="link_blue" disabledtextcolor="gray" textid="STRID_SESSION_TEAM_ACK_MSG" visible="false" tooltiptextid="STRID_SESSION_TEAM_ACK_MSG_TIP"/>
+            <Control width="10" />
+            <Button name="btn_custom_msg" valign="center" cursortype="hand" normaltextcolor="link_blue" disabledtextcolor="gray" textid="STRID_SESSION_CUSTOM_NOTIFICATION"/>
+            <Control width="10" />
+            <Button name="btn_msg_record" valign="center" cursortype="hand" normaltextcolor="link_blue" textid="STRID_SESSION_MSG_RECORD"/>
+          </HBox>
+          <Control height="6"/>
+          <Box height="auto">
+            <MenuedRichEdit class="prompt" name="input_edit" minheight="86" maxheight="300" multiline="true" vscrollbar="true" autovscroll="true" readonly="false" font="2" defmenu="MID_COPY,MID_CUT,MID_PASTE" normaltextcolor="darkcolor" margin="2,2,2,2" padding="8,0,0,0" wantreturnmsg="true" rich="true"/>
+            <Label name="input_edit_mute_tip" valign="center" halign="center" textid="STRID_SESSION_MUTE" visible="false" normaltextcolor="gray"/>
+          </Box>
+          <HBox name="hbox_send" height="30" margin="10,10,0,0">
+            <Label valign="bottom" textid="STRID_SESSION_SEND_TIP"/>
+            <Control />
+            <Button name="btn_send" normaltextcolor="white" font="7" textid="STRING_SEND" normalimage="../session/send0.png" hotimage="../session/send1.png" pushedimage="../session/send2.png" disabledimage="../session/send_disable.png"/>
+          </HBox>
+        </VBox>
+      </VBox>
+      <!--中间：分割线-->
+      <Control class="splitline_ver_level1" name="frame_mid_split" visible="false"/>
+      <!--右侧：公告-->
+      <Box width="auto">
+        <VBox name="frame_right" width="240" visible="false" fadewidth="false">
+          <HBox height="30">
+            <Label width="stretch" margin="10,0,0,0" valign="center" normaltextcolor="lightcolor" textid="STRID_SESSION_TEAM_BOARD"/>
+            <Button name="btn_new_broad" margin="0,0,10,0" valign="center" cursortype="hand" normaltextcolor="link_blue" textid="STRID_SESSION_NEW_BOARD"/>
+          </HBox>
+          <Control class="splitline_hor_level1"/>
+          <RichEdit name="re_broad" width="stretch" height="200" padding="5,5,0,0" readonly="true" multiline="true" rich="true"
+                    vscrollbar="true" hscrollbar="false" font="2"/>
+          <Control class="splitline_hor_level1"/>
+          <HBox height="30">
+            <Label name="label_member" width="stretch" margin="10,0,0,0" valign="center" textid="STRID_SESSION_MEMBER_NUM"/>
+            <Button name="btn_refresh_member" margin="0,0,10,0" valign="center" cursortype="hand" normaltextcolor="link_blue" textid="STRID_SESSION_REFRESH"/>
+          </HBox>
+          <Control class="splitline_hor_level1"/>
+          <VirtualListBox class="list" name="member_list" vscrollbar="true" hscrollbar="false" vscrollunit="50"/>
+        </VBox>
+
+      </Box>
+    </HBox>
+  </VBox>
 </Window>

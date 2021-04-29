@@ -1,4 +1,5 @@
-﻿#include "custom_msg_form.h"
+#include "stdafx.h"
+#include "custom_msg_form.h"
 #include "module/emoji/richedit_util.h"
 #include "module/login/login_manager.h"
 #include "export/nim_ui_user_config.h"
@@ -76,7 +77,7 @@ bool CustomMsgForm::OnClicked(ui::EventArgs* param)
 		nim::SysMessageSetting setting;
 		setting.need_offline_ = msg_mode_->IsSelected() ? BS_FALSE : BS_TRUE;
 
-		auto str = nim::SystemMsg::CreateCustomNotificationMsg(session_id_, session_type_ == nim::kNIMSessionTypeTeam ? nim::kNIMSysMsgTypeCustomTeamMsg : nim::kNIMSysMsgTypeCustomP2PMsg, QString::GetGUID(), writer.write(json), setting);
+		auto str = nim::SystemMsg::CreateCustomNotificationMsg(session_id_, session_type_ == nim::kNIMSessionTypeTeam ? nim::kNIMSysMsgTypeCustomTeamMsg : nim::kNIMSysMsgTypeCustomP2PMsg, nim::Tool::GetUuid(), writer.write(json), setting);
 		nim::SystemMsg::SendCustomNotificationMsg(str);
 	}
 	return true;

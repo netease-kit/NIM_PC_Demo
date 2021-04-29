@@ -7,7 +7,7 @@ typedef std::function<void(const std::string& uid)> OnSelectAtItem;
 namespace nim_comp
 {
 /** @class AtlistForm
-  * @brief @ÁĞ±í´°¿Ú
+  * @brief @åˆ—è¡¨çª—å£
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @author Redrain
   * @date 2016/9/6
@@ -58,230 +58,230 @@ class AtlistForm : public WindowEx, public ui::VirtualListInterface
 		}
 	public:
 		std::string	uid_;
-		std::string	alias_name_;	//ÓÃ»§±¸×¢Ãû,ÓÅÏÈÏÔÊ¾
+		std::string	alias_name_;	//ç”¨æˆ·å¤‡æ³¨å,ä¼˜å…ˆæ˜¾ç¤º
 		std::string	alias_full_name_;
 		std::string	alias_simple_name_;
-		std::string	team_card_name_;//ÓÃ»§ÈºÃûÆ¬,Æä´ÎÏÔÊ¾
+		std::string	team_card_name_;//ç”¨æˆ·ç¾¤åç‰‡,å…¶æ¬¡æ˜¾ç¤º
 		std::string	team_card_full_name_;
 		std::string	team_card_simple_name_;
-		std::string	nick_name_;		//ÓÃ»§êÇ³Æ,×îºóÏÔÊ¾
+		std::string	nick_name_;		//ç”¨æˆ·æ˜µç§°,æœ€åæ˜¾ç¤º
 		std::string	nick_full_name_;
 		std::string	nick_simple_name_;
 	};
 public:
 	/**
-	* ¹¹Ôìº¯Êı
-	* @param[in] session_id »á»°ID
-	* @param[in] session_type »á»°ÀàĞÍ
-	* @param[in] cb Ä³Ïî±»Ñ¡ÖĞµÄ»Øµ÷º¯Êı
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ„é€ å‡½æ•°
+	* @param[in] session_id ä¼šè¯ID
+	* @param[in] session_type ä¼šè¯ç±»å‹
+	* @param[in] cb æŸé¡¹è¢«é€‰ä¸­çš„å›è°ƒå‡½æ•°
+	* @return void	æ— è¿”å›å€¼
 	*/
 	AtlistForm(std::string session_id, nim::NIMSessionType session_type, OnSelectAtItem cb);
 	virtual ~AtlistForm();
 
-	//¸²¸ÇĞéº¯Êı
+	//è¦†ç›–è™šå‡½æ•°
     virtual std::wstring GetSkinFolder() override;
     virtual std::wstring GetSkinFile() override;
     virtual std::wstring GetWindowClassName() const override;
     virtual std::wstring GetWindowId() const override;
 	virtual void ShowWindow(bool bShow = true, bool bTakeFocus = true) override;
 	/**
-	* ´°¿Ú³õÊ¼»¯º¯Êı
-	* @return void	ÎŞ·µ»ØÖµ
+	* çª—å£åˆå§‹åŒ–å‡½æ•°
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void InitWindow() override;
    
 	/**
-	* Îª@ÁĞ±í³õÊ¼»¯Èº³ÉÔ±ĞÅÏ¢
-	* @param[in] team_member_info_list Èº³ÉÔ±ĞÅÏ¢±í
-	* @return void ÎŞ·µ»ØÖµ
+	* ä¸º@åˆ—è¡¨åˆå§‹åŒ–ç¾¤æˆå‘˜ä¿¡æ¯
+	* @param[in] team_member_info_list ç¾¤æˆå‘˜ä¿¡æ¯è¡¨
+	* @return void æ— è¿”å›å€¼
 	*/
 	void InitTeamMembers(const std::map<std::string, std::shared_ptr<nim::TeamMemberProperty>>& team_member_info_list);
 
 	/**
-	* ¸ù¾İ¹Ø¼ü×ÖÈ¥ÏÔÊ¾»òÒş²Ø@ÁĞ±íÏî
-	* @param[in] search_key ¹Ø¼ü×Ö
-	* @param[in] match_visible true Ö»±éÀúÁĞ±íÖĞÒÑ¾­ÏÔÊ¾µÄÏîÄ¿£¨µ±Æ¥Åä¹Ø¼ü×ÖÔö¼ÓÊ±Ê¹ÓÃ£©,false ÖØĞÂ±éÀúËùÓĞÏîÄ¿£¨µ±Æ¥ÅäµÄ¹Ø¼ü×Ö¼õÉÙÊ±Ê¹ÓÃ£©
-	* @return bool true Æ¥Åä³É¹¦£¬false Æ¥ÅäÊ§°Ü
+	* æ ¹æ®å…³é”®å­—å»æ˜¾ç¤ºæˆ–éšè—@åˆ—è¡¨é¡¹
+	* @param[in] search_key å…³é”®å­—
+	* @param[in] match_visible true åªéå†åˆ—è¡¨ä¸­å·²ç»æ˜¾ç¤ºçš„é¡¹ç›®ï¼ˆå½“åŒ¹é…å…³é”®å­—å¢åŠ æ—¶ä½¿ç”¨ï¼‰,false é‡æ–°éå†æ‰€æœ‰é¡¹ç›®ï¼ˆå½“åŒ¹é…çš„å…³é”®å­—å‡å°‘æ—¶ä½¿ç”¨ï¼‰
+	* @return bool true åŒ¹é…æˆåŠŸï¼Œfalse åŒ¹é…å¤±è´¥
 	*/
 	bool Match(const std::wstring& search_key, bool match_visible);
 
 	/**
-	* ÊäÈë@ºó»òÕßÉ¾³ıµÃÖ»Ê£ÏÂÁËÒ»¸ö@£¬ÖØĞÂÏÔÊ¾ËùÓĞµÄÁĞ±íÏî
-	* @param[in] last_five ×îºó5¸ö·¢ÑÔÈË
-	* @return void	ÎŞ·µ»ØÖµ
+	* è¾“å…¥@åæˆ–è€…åˆ é™¤å¾—åªå‰©ä¸‹äº†ä¸€ä¸ª@ï¼Œé‡æ–°æ˜¾ç¤ºæ‰€æœ‰çš„åˆ—è¡¨é¡¹
+	* @param[in] last_five æœ€å5ä¸ªå‘è¨€äºº
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void ShowMemberItems(std::list<std::string> &last_five);
 
 	/**
-	* ÖØÖÃ@ÁĞ±íÏÔÊ¾µÄÎ»ÖÃ£¬Í¬Ê±¾ßÓĞÏÔÊ¾ºÍË¢ĞÂ@ÁĞ±íµÄ¹¦ÄÜ
-	* @param[in] pt ÏÔÊ¾×ø±ê
-	* @return void	ÎŞ·µ»ØÖµ
+	* é‡ç½®@åˆ—è¡¨æ˜¾ç¤ºçš„ä½ç½®ï¼ŒåŒæ—¶å…·æœ‰æ˜¾ç¤ºå’Œåˆ·æ–°@åˆ—è¡¨çš„åŠŸèƒ½
+	* @param[in] pt æ˜¾ç¤ºåæ ‡
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void SetShowPos(POINT pt);
 
 	/**
-	* »á»°´°ÌåÊÕµ½ÁË¼üÅÌºÍÊó±êÏûÏ¢ºó£¬×ª¸øAtListForm´¦Àí¹ØĞÄEnter¼üÏûÏ¢
-	* @return bool true ÒÑ´¦Àí£¬false Ã»ÓĞ´¦Àí
+	* ä¼šè¯çª—ä½“æ”¶åˆ°äº†é”®ç›˜å’Œé¼ æ ‡æ¶ˆæ¯åï¼Œè½¬ç»™AtListFormå¤„ç†å…³å¿ƒEnteré”®æ¶ˆæ¯
+	* @return bool true å·²å¤„ç†ï¼Œfalse æ²¡æœ‰å¤„ç†
 	*/
 	bool HandleKeyEnter();
 
 	/**
-	* »á»°´°ÌåÊÕµ½ÁË¼üÅÌºÍÊó±êÏûÏ¢ºó£¬×ª¸øAtListForm´¦Àí¹ØĞÄDown¼üÏûÏ¢
-	* @return bool true ÒÑ´¦Àí£¬false Ã»ÓĞ´¦Àí
+	* ä¼šè¯çª—ä½“æ”¶åˆ°äº†é”®ç›˜å’Œé¼ æ ‡æ¶ˆæ¯åï¼Œè½¬ç»™AtListFormå¤„ç†å…³å¿ƒDowné”®æ¶ˆæ¯
+	* @return bool true å·²å¤„ç†ï¼Œfalse æ²¡æœ‰å¤„ç†
 	*/
 	bool HandleKeyDown();
 
 	/**
-	* »á»°´°ÌåÊÕµ½ÁË¼üÅÌºÍÊó±êÏûÏ¢ºó£¬×ª¸øAtListForm´¦Àí¹ØĞÄUp¼üÏûÏ¢
-	* @return bool true ÒÑ´¦Àí£¬false Ã»ÓĞ´¦Àí
+	* ä¼šè¯çª—ä½“æ”¶åˆ°äº†é”®ç›˜å’Œé¼ æ ‡æ¶ˆæ¯åï¼Œè½¬ç»™AtListFormå¤„ç†å…³å¿ƒUpé”®æ¶ˆæ¯
+	* @return bool true å·²å¤„ç†ï¼Œfalse æ²¡æœ‰å¤„ç†
 	*/
 	bool HandleKeyUp();
 
 	/**
-	* »á»°´°ÌåÊÕµ½ÁË¼üÅÌºÍÊó±êÏûÏ¢ºó£¬×ª¸øAtListForm´¦Àí¹ØĞÄÊó±ê¹öÂÖÏûÏ¢
-	* @param[in] is_up ÊÇ·ñÏòÉÏ¹ö¶¯
-	* @return bool true ÒÑ´¦Àí£¬false Ã»ÓĞ´¦Àí
+	* ä¼šè¯çª—ä½“æ”¶åˆ°äº†é”®ç›˜å’Œé¼ æ ‡æ¶ˆæ¯åï¼Œè½¬ç»™AtListFormå¤„ç†å…³å¿ƒé¼ æ ‡æ»šè½®æ¶ˆæ¯
+	* @param[in] is_up æ˜¯å¦å‘ä¸Šæ»šåŠ¨
+	* @return bool true å·²å¤„ç†ï¼Œfalse æ²¡æœ‰å¤„ç†
 	*/
 	bool HandleMouseWheel(bool is_up);
 
 	/**
-	* Ö±½ÓÏú»Ù´°¿Ú
-	* @return void	ÎŞ·µ»ØÖµ
+	* ç›´æ¥é”€æ¯çª—å£
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void CloseForm();
 	/**
-	 * @brief ´´½¨Ò»¸ö×ÓÏî
-	 * @return ·µ»Ø´´½¨ºóµÄ×ÓÏîÖ¸Õë
+	 * @brief åˆ›å»ºä¸€ä¸ªå­é¡¹
+	 * @return è¿”å›åˆ›å»ºåçš„å­é¡¹æŒ‡é’ˆ
 	 */
 	virtual ui::Control* CreateElement() override;
 
 	/**
-	 * @brief Ìî³äÖ¸¶¨×ÓÏî
-	 * @param[in] control ×ÓÏî¿Ø¼şÖ¸Õë
-	 * @param[in] index Ë÷Òı
-	 * @return ·µ»Ø´´½¨ºóµÄ×ÓÏîÖ¸Õë
+	 * @brief å¡«å……æŒ‡å®šå­é¡¹
+	 * @param[in] control å­é¡¹æ§ä»¶æŒ‡é’ˆ
+	 * @param[in] index ç´¢å¼•
+	 * @return è¿”å›åˆ›å»ºåçš„å­é¡¹æŒ‡é’ˆ
 	 */
 	virtual void FillElement(ui::Control* control, int index) override;
 
 	/**
-	 * @brief »ñÈ¡×ÓÏî×ÜÊı
-	 * @return ·µ»Ø×ÓÏî×ÜÊı
+	 * @brief è·å–å­é¡¹æ€»æ•°
+	 * @return è¿”å›å­é¡¹æ€»æ•°
 	 */
 	virtual int GetElementtCount() override;
 private:
 	/**
-	* À¹½Ø²¢´¦Àí´°¿Ú¹Ø±ÕÏûÏ¢£¬ÈÃËû×Ô¶¯Òş²Ø£¬µ÷ÓÃCloseFormº¯ÊıÖ±½ÓÏú»Ù´°Ìå
-	* @param[in] bHandled ÊÇ·ñ´¦ÀíÁËÏûÏ¢£¬ÎªtrueÔò²»¼ÌĞø´«µİ
-	* @return LRESULT ´¦Àí½á¹û
+	* æ‹¦æˆªå¹¶å¤„ç†çª—å£å…³é—­æ¶ˆæ¯ï¼Œè®©ä»–è‡ªåŠ¨éšè—ï¼Œè°ƒç”¨CloseFormå‡½æ•°ç›´æ¥é”€æ¯çª—ä½“
+	* @param[in] bHandled æ˜¯å¦å¤„ç†äº†æ¶ˆæ¯ï¼Œä¸ºtrueåˆ™ä¸ç»§ç»­ä¼ é€’
+	* @return LRESULT å¤„ç†ç»“æœ
 	*/
 	virtual LRESULT OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) override;
 
 	/**
-	* ´´½¨Ò»¸öÁĞ±íÏî¿Ø¼ş
-	* @param[in] uid ÓÃ»§id
-	* @param[in] is_last_five ÊÇ·ñÎª×î½ü·¢ÑÔÈË
-	* @return AtListItem* ÁĞ±íÏî¿Ø¼ş
+	* åˆ›å»ºä¸€ä¸ªåˆ—è¡¨é¡¹æ§ä»¶
+	* @param[in] uid ç”¨æˆ·id
+	* @param[in] is_last_five æ˜¯å¦ä¸ºæœ€è¿‘å‘è¨€äºº
+	* @return AtListItem* åˆ—è¡¨é¡¹æ§ä»¶
 	*/
 	AtListItem* CreateAtListItem(const std::string& uid, bool is_last_five);
 
 
 
 	/**
-	* ÒÆ³ıÒ»¸öÁĞ±íÏî¿Ø¼ş
-	* @param[in] uid ÓÃ»§id
-	* @return void	ÎŞ·µ»ØÖµ
+	* ç§»é™¤ä¸€ä¸ªåˆ—è¡¨é¡¹æ§ä»¶
+	* @param[in] uid ç”¨æˆ·id
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void RemoveListItem(const std::string& uid);
 
 	/**
-	* Ë¢ĞÂÄ³¸öÁĞ±íÏîµÄÍ·ÏñÏÔÊ¾
-	* @param[in] uid ÓÃ»§id
-	* @param[in] photo_path Í·ÏñÂ·¾¶
-	* @return void	ÎŞ·µ»ØÖµ
+	* åˆ·æ–°æŸä¸ªåˆ—è¡¨é¡¹çš„å¤´åƒæ˜¾ç¤º
+	* @param[in] uid ç”¨æˆ·id
+	* @param[in] photo_path å¤´åƒè·¯å¾„
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void CheckListItemHeadIcon(const std::string& uid, const std::wstring& photo_path);
 
 	/**
-	* É¾³ı×î½ü·¢ÑÔÈË
-	* @return void	ÎŞ·µ»ØÖµ
+	* åˆ é™¤æœ€è¿‘å‘è¨€äºº
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void RemoveLastFiveSender();
 
 	/**
-	* ´Ó×î½ü5¸ö·¢ÑÔÈËÀï²éÕÒ
-	* @param[in] uid ÓÃ»§id
-	* @return AtListItem* ÁĞ±íÏî¿Ø¼ş
+	* ä»æœ€è¿‘5ä¸ªå‘è¨€äººé‡ŒæŸ¥æ‰¾
+	* @param[in] uid ç”¨æˆ·id
+	* @return AtListItem* åˆ—è¡¨é¡¹æ§ä»¶
 	*/
 	AtListItem* FindInLastFiveSender(const std::wstring& uid);
 
 private:
 	/**
-	* »ñÈ¡ÈºêÇ³Æ
-	* @param[in] uid ÓÃ»§id
-	* @return std::wstring	ÈºêÇ³Æ
+	* è·å–ç¾¤æ˜µç§°
+	* @param[in] uid ç”¨æˆ·id
+	* @return std::wstring	ç¾¤æ˜µç§°
 	*/
 	std::wstring GetTeamCardName(const std::string& uid);
 
 	/**
-	* »ñÈ¡Êµ¼ÊÏÔÊ¾µÄÃû×Ö
-	* @param[in] uid ÓÃ»§id
-	* @return std::wstring	Ãû×Ö
+	* è·å–å®é™…æ˜¾ç¤ºçš„åå­—
+	* @param[in] uid ç”¨æˆ·id
+	* @return std::wstring	åå­—
 	*/
 	std::wstring GetShowName(const std::string& uid);
 
 	/**
-	* ´¦ÀíËùÓĞ¿Ø¼şµÄÑ¡ÖĞÏûÏ¢
-	* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-	* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+	* å¤„ç†æ‰€æœ‰æ§ä»¶çš„é€‰ä¸­æ¶ˆæ¯
+	* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+	* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 	*/
 	bool OnSelectItem(ui::EventArgs *param);
 private:
 	/**
-	* ÏìÓ¦ÓÃ»§Í·Ïñ¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] type Í·ÏñÀàĞÍ
-	* @param[in] accid ÓÃ»§id
-	* @param[in] photo_path Í·ÏñÂ·¾¶
-	* @return void	ÎŞ·µ»ØÖµ
+	* å“åº”ç”¨æˆ·å¤´åƒæ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] type å¤´åƒç±»å‹
+	* @param[in] accid ç”¨æˆ·id
+	* @param[in] photo_path å¤´åƒè·¯å¾„
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnUserPhotoChange(PhotoType type, const std::string& accid, const std::wstring &photo_path);
 
 	/**
-	* ÏìÓ¦ÓÃ»§ĞÅÏ¢¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] uinfos ÓÃ»§ĞÅÏ¢ÁĞ±í
-	* @return void	ÎŞ·µ»ØÖµ
+	* å“åº”ç”¨æˆ·ä¿¡æ¯æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] uinfos ç”¨æˆ·ä¿¡æ¯åˆ—è¡¨
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 
 	/**
-	* ÏìÓ¦ºÃÓÑ¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] change_type ºÃÓÑ¸Ä±äÀàĞÍ
-	* @param[in] accid ÓÃ»§id
-	* @return void	ÎŞ·µ»ØÖµ
+	* å“åº”å¥½å‹æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] change_type å¥½å‹æ”¹å˜ç±»å‹
+	* @param[in] accid ç”¨æˆ·id
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnFriendInfoChange(FriendChangeType change_type, const std::string& accid);
 
 	/**
-	* ÏìÓ¦Èº³ÉÔ±êÇ³Æ¸Ä±äµÄ»Øµ÷º¯Êı
-	* @param[in] tid_uid °üº¬Èº×éidºÍÓÃ»§idµÄ×Ö·û´®
-	* @param[in] team_card ÈºêÇ³Æ
-	* @return void	ÎŞ·µ»ØÖµ
+	* å“åº”ç¾¤æˆå‘˜æ˜µç§°æ”¹å˜çš„å›è°ƒå‡½æ•°
+	* @param[in] tid_uid åŒ…å«ç¾¤ç»„idå’Œç”¨æˆ·idçš„å­—ç¬¦ä¸²
+	* @param[in] team_card ç¾¤æ˜µç§°
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnTeamCardChange(const std::string& tid_uid, const std::string& team_card);
 
 	/**
-	* ÏìÓ¦Èº³ÉÔ±Ôö¼ÓµÄ»Øµ÷º¯Êı
-	* @param[in] tid Èº×éid
-	* @param[in] team_member_info Èº³ÉÔ±ĞÅÏ¢
-	* @return void	ÎŞ·µ»ØÖµ
+	* å“åº”ç¾¤æˆå‘˜å¢åŠ çš„å›è°ƒå‡½æ•°
+	* @param[in] tid ç¾¤ç»„id
+	* @param[in] team_member_info ç¾¤æˆå‘˜ä¿¡æ¯
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnTeamMemberAdd(const std::string& tid, const nim::TeamMemberProperty& team_member_info);
 
 	/**
-	* ÏìÓ¦Èº³ÉÔ±¼õÉÙµÄ»Øµ÷º¯Êı
-	* @param[in] tid Èº×éid
-	* @param[in] uid ÓÃ»§id
-	* @return void	ÎŞ·µ»ØÖµ
+	* å“åº”ç¾¤æˆå‘˜å‡å°‘çš„å›è°ƒå‡½æ•°
+	* @param[in] tid ç¾¤ç»„id
+	* @param[in] uid ç”¨æˆ·id
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void OnTeamMemberRemove(const std::string& tid, const std::string& uid);
 
@@ -299,10 +299,10 @@ private:
 	ui::VirtualListBox* team_members_container_;
 	std::vector<std::shared_ptr<ItemMatcher>> team_member_sort_list_;
 	std::vector<std::shared_ptr<ItemMatcher>> team_member_match_list_;
-	std::list<std::string>	uid_last_five_;	//×î½ü·¢ÏûÏ¢µÄ5¸öÈË£¨²»°üÀ¨×Ô¼º£©,×îĞÂ·¢ÑÔµÄÔÚÁĞ±í×îºó
+	std::list<std::string>	uid_last_five_;	//æœ€è¿‘å‘æ¶ˆæ¯çš„5ä¸ªäººï¼ˆä¸åŒ…æ‹¬è‡ªå·±ï¼‰,æœ€æ–°å‘è¨€çš„åœ¨åˆ—è¡¨æœ€å
 	std::map<std::string, std::string> uid_last_five_for_fined_;
 
-	OnSelectAtItem			callback_select_;//Ñ¡ÖĞÄ³ÏîºóµÄ»Øµ÷º¯Êı
+	OnSelectAtItem			callback_select_;//é€‰ä¸­æŸé¡¹åçš„å›è°ƒå‡½æ•°
 	AutoUnregister	unregister_cb;
 };
 }

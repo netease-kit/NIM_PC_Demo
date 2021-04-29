@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "control/session_item.h"
 #include "gui/main/multispot_form.h"
 #include "module/service/photo_service.h"

@@ -1,4 +1,5 @@
-﻿#include "shared/image_ole_i.h"
+#include "stdafx.h"
+#include "shared/image_ole_i.h"
 #include "richedit_olecallback.h"
 #include "richedit_util.h"
 #include "module/dragdrop/drag_drop.h"

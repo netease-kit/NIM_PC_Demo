@@ -1,9 +1,12 @@
 #include "stdafx.h"
+#include "stdafx.h"
 #include "session_plugin_icon.h"
 #include "export\nim_ui_session_list_manager.h"
 #include "gui\main\control\custom_button_box.h"
 #include "module\session\session_manager.h"
+
 using namespace nim_comp;
+
 SessionPluginIcon::SessionPluginIcon() :
 real_option_(nullptr), label_unread_(nullptr), box_unread_(nullptr)
 {

@@ -1,5 +1,5 @@
-﻿#include "session_item.h"
-
+#include "stdafx.h"
+#include "session_item.h"
 #include "module/session/session_manager.h"
 #include "module/session/force_push_manager.h"
 #include "module/runtime_data/runtime_data_manager.h"
@@ -8,11 +8,9 @@
 #include "gui/session/session_box.h"
 #include "gui/session/session_form.h"
 #include "gui/main/control/session_item_helper.h"
-
 #include "shared/ui/ui_menu.h"
 #include "shared/pin_yin_helper.h"
 #include "shared/ui/toast/toast.h"
-
 #include "module/online_state_event/online_state_event_util.h"
 #include "module/session/transfer_file_manager.h"
 

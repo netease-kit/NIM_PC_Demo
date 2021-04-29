@@ -1,4 +1,4 @@
-
+#include "stdafx.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <math.h>
@@ -102,7 +102,7 @@ namespace nim_comp
 		size_t i;
 
 		/* make a cumulative histogram
-		* ¹¹½¨Ö±·½Í¼
+		* æž„å»ºç›´æ–¹å›¾
 		*/
 		memset(histo, 0x00, h_size * sizeof(size_t));
 		for (i = 0; i < size; i++)
@@ -371,7 +371,7 @@ namespace nim_comp
 
 	unsigned char *colorbalance_yuv_u8(unsigned char *yuv, size_t size, size_t nb_min, size_t nb_max)
 	{
-		(void)balance_u8(yuv, size, nb_min, nb_max,0,1); //¶ÔyÖµÈ¡Æ½ºâ,¶ÔÁÁ¶È½øÐÐµ÷Õû
+		(void)balance_u8(yuv, size, nb_min, nb_max,0,1); //å¯¹yå€¼å–å¹³è¡¡,å¯¹äº®åº¦è¿›è¡Œè°ƒæ•´
 		return yuv;
 	}
 

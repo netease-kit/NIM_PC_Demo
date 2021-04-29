@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "shared/auto_unregister.h"
 #include "shared/ui/msgbox.h"
 #include "module/service/photo_service.h"

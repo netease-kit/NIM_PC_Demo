@@ -1,5 +1,5 @@
+#include "stdafx.h"
 #include "ui_image_view.h"
-
 
 UiImageView::UiImageView(void) 
 	: angle_(0)
@@ -49,7 +49,7 @@ void UiImageView::Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint)
 	 int control_width = m_rcItem.right - m_rcItem.left ;
 	 int control_height = m_rcItem.bottom - m_rcItem.top ;
 
-	 //¼ÆËã³õÊ¼ÏÔÊ¾±ÈÀı;
+	 //è®¡ç®—åˆå§‹æ˜¾ç¤ºæ¯”ä¾‹;
 	 if (scale_ <= 0)
 	 {
 		 scale_ = GetDefaultScale(control_width, control_height, image_width, image_height);
@@ -71,7 +71,7 @@ void UiImageView::Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint)
 	 image_transform_width = image_transform_->GetWidth();
 	 image_transform_height = image_transform_->GetHeight();
 
-	 //ĞŞÕıx¡¢y·½ÏòµÄÆ«ÒÆ£¬ÈÃÆ«ÒÆÏŞ¶¨ÔÚÒ»¶¨·¶Î§ÄÚ
+	 //ä¿®æ­£xã€yæ–¹å‘çš„åç§»ï¼Œè®©åç§»é™å®šåœ¨ä¸€å®šèŒƒå›´å†…
 	 CheckOffset(offset_x_, control_width, image_transform_width);
 	 CheckOffset(offset_y_, control_height, image_transform_height);
 
@@ -87,10 +87,10 @@ void UiImageView::Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint)
 
 	 Gdiplus::Graphics graph(pRender->GetDC()); 
 
-	 //Í¼Æ¬µÄ»æÖÆ·¶Î§£¬¿ÉÄÜ³¬³öÏÔÊ¾·¶Î§
+	 //å›¾ç‰‡çš„ç»˜åˆ¶èŒƒå›´ï¼Œå¯èƒ½è¶…å‡ºæ˜¾ç¤ºèŒƒå›´
 	 Gdiplus::RectF rect_image((Gdiplus::REAL)rect_image_.left, (Gdiplus::REAL)rect_image_.top, 
 					(Gdiplus::REAL)(rect_image_.right - rect_image_.left), (Gdiplus::REAL)(rect_image_.bottom - rect_image_.top));
-	 //Êµ¼ÊÏÔÊ¾³öÀ´µÄ·¶Î§
+	 //å®é™…æ˜¾ç¤ºå‡ºæ¥çš„èŒƒå›´
 	 Gdiplus::RectF rect_show((Gdiplus::REAL)m_rcItem.left, (Gdiplus::REAL)m_rcItem.top,
 					(Gdiplus::REAL)(m_rcItem.right - m_rcItem.left), (Gdiplus::REAL)(m_rcItem.bottom - m_rcItem.top));
 	 rect_show.Intersect(rect_image);
@@ -196,7 +196,7 @@ int UiImageView::SetPicPath(std::wstring image_path)
 	GUID guid = Gdiplus::FrameDimensionTime;
 	int frame_count = image_->GetFrameCount(&guid);
 
-	//Ğı×ªÔ­Í¼;
+	//æ—‹è½¬åŸå›¾;
 	Gdiplus::RotateFlipType type = GetRotateFlipType(*image_.get());
 	if (type != Gdiplus::RotateNoneFlipNone)
 		image_->RotateFlip(type);
@@ -240,9 +240,9 @@ float UiImageView::GetDefaultScale(int control_width, int control_height, int im
 	int width_sub = control_width - image_width;
 	int height_sub = control_height - image_height;
 
-	if (width_sub < 0 || height_sub < 0)//³¬³öÏÔÊ¾ÇøÓò
+	if (width_sub < 0 || height_sub < 0)//è¶…å‡ºæ˜¾ç¤ºåŒºåŸŸ
 	{
-		if (width_sub < height_sub)	//ÈÃ³¬³öÏÔÊ¾ÇøÓò¸ü¶àµÄÁ¿°´±ÈÀıÊÕËõ£¬ÕâÑù×îÖÕËõĞ¡ºó£¬¿ÉÒÔÈÃÍ¼Æ¬ÕıºÃ³äÂú´°Ìå
+		if (width_sub < height_sub)	//è®©è¶…å‡ºæ˜¾ç¤ºåŒºåŸŸæ›´å¤šçš„é‡æŒ‰æ¯”ä¾‹æ”¶ç¼©ï¼Œè¿™æ ·æœ€ç»ˆç¼©å°åï¼Œå¯ä»¥è®©å›¾ç‰‡æ­£å¥½å……æ»¡çª—ä½“
 		{
 			fScale = float(control_width * 10.0 / image_width);
 		}
@@ -396,16 +396,16 @@ Gdiplus::RotateFlipType UiImageView::GetRotateFlipType(short direction)
 
 void UiImageView::CheckOffset(int& nOffset, int nControl, int nImage)
 {
-	//Èç¹û¿Ø¼şµÄ¿í¶È(¸ß¶È)±ÈÍ¼Æ¬µÄ¿í¶È(¸ß¶È)Òª´ó£¬ÄÇÃ´×îÖÕÏÔÊ¾µÄÍ¼Æ¬²»ĞèÒªÆ«ÒÆ
+	//å¦‚æœæ§ä»¶çš„å®½åº¦(é«˜åº¦)æ¯”å›¾ç‰‡çš„å®½åº¦(é«˜åº¦)è¦å¤§ï¼Œé‚£ä¹ˆæœ€ç»ˆæ˜¾ç¤ºçš„å›¾ç‰‡ä¸éœ€è¦åç§»
 	if (nControl >= nImage)
 	{
 		nOffset = 0;
 	}
 	else
 	{
-		//Èç¹û¿Ø¼şµÄ¿í¶È±ÈÍ¼Æ¬µÄ¿í¶ÈĞ¡£¬ÄÇÃ´ÔÊĞíÓÃ»§ÍÏ×§Í¼Æ¬²úÉúÍ¼Æ¬µÄÆ«ÒÆ
-		//µ«ÊÇÆ«ÒÆºóµÄÍ¼Æ¬±ØĞëÌî³äÂúÕû¸ö¿Ø¼ş£¬²»ÄÜÓĞÈÎÒâµÄÆ«ÒÆÁ¿
-		//ÕâÀï¼ì²éÆ«ÒÆÁ¿£¬ÈÃËûËø¶¨ÔÚÒ»¶¨·¶Î§ÄÚ
+		//å¦‚æœæ§ä»¶çš„å®½åº¦æ¯”å›¾ç‰‡çš„å®½åº¦å°ï¼Œé‚£ä¹ˆå…è®¸ç”¨æˆ·æ‹–æ‹½å›¾ç‰‡äº§ç”Ÿå›¾ç‰‡çš„åç§»
+		//ä½†æ˜¯åç§»åçš„å›¾ç‰‡å¿…é¡»å¡«å……æ»¡æ•´ä¸ªæ§ä»¶ï¼Œä¸èƒ½æœ‰ä»»æ„çš„åç§»é‡
+		//è¿™é‡Œæ£€æŸ¥åç§»é‡ï¼Œè®©ä»–é”å®šåœ¨ä¸€å®šèŒƒå›´å†…
 		int normal_offset = (nControl - nImage) / 2;
 		normal_offset = -normal_offset;
 

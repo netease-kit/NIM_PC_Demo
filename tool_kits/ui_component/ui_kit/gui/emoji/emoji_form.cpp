@@ -1,4 +1,5 @@
-﻿#include "emoji_form.h"
+#include "stdafx.h"
+#include "emoji_form.h"
 #include "module/emoji/emoji_info.h"
 
 using namespace ui;

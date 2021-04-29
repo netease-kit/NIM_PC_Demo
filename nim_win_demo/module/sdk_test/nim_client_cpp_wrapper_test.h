@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "nim_all_cpp_wrapper.h"
 
@@ -45,7 +45,7 @@ namespace nim_test
 // 		static void Login(const std::string& user, const std::string& password)
 // 		{
 // 			std::string app_key = "45c6af3c98409b18a84451215d0bdd6e";	//app key 申请获得
-// 			//std::string pass_md5 = QString::GetMd5(password);	//MD5加密redrain
+// 			//std::string pass_md5 = nim::Tool::GetMd5(password);	//MD5加密redrain
 // 			const char* md5 = nim::Tool::GetMd5(password);
 // 			std::string pass_md5(md5);
 // 			nim::Global::NIMFreeBuf((char*)md5);

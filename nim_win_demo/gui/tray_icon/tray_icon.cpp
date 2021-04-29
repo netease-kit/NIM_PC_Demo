@@ -1,5 +1,5 @@
+#include "stdafx.h"
 #include "tray_icon.h"
-
 
 const  DWORD				uTrayIconAnimateID = 0x0001;
 
@@ -94,7 +94,7 @@ void TrayIcon::Init(ITrayIconDelegate* tray_icon_delegate)
 	wnd_ = CreateWindowExW(NULL, L"nim_tray_icon_class_name", L"nim_tray_icon_window_name", WS_POPUP | WS_CHILD,
 		0, 0, 0, 0, NULL, NULL, GetModuleHandleW(NULL), NULL);
 
-	//×¢²áexplorer±ÀÀ£ºóÖØĞÂË¢ĞÂtrayicon
+	//æ³¨å†Œexplorerå´©æºƒåé‡æ–°åˆ·æ–°trayicon
 	trayicon_msgid_=::RegisterWindowMessage(L"TaskbarCreated");
 
     assert(wnd_);
@@ -223,7 +223,7 @@ void TrayIcon::ModifyTrayIcon(UINT uTrayID, DWORD dwTrayMsg,
 	{
 		bInit = true;
 		BOOL res = ::Shell_NotifyIconW(NIM_ADD, &tnd);
-		//ÔÚ¼«¶ËÇé¿öÏÂÓĞ¿ÉÄÜ»á°²×°ÍĞÅÌÊ§°Ü£¬ÕâÀïÔÙ³¢ÊÔÏÂ
+		//åœ¨æç«¯æƒ…å†µä¸‹æœ‰å¯èƒ½ä¼šå®‰è£…æ‰˜ç›˜å¤±è´¥ï¼Œè¿™é‡Œå†å°è¯•ä¸‹
 		if (!res)
 		{
 			res = ::Shell_NotifyIconW(NIM_ADD, &tnd);

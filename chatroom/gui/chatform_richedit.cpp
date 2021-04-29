@@ -1,6 +1,6 @@
-#include "resource.h"
+#include "stdafx.h"
 #include "chatroom_form.h"
-#include "util/user.h"
+#include "ui_component/ui_kit/util/user.h"
 #include "shared/tool.h"
 
 namespace nim_chatroom
@@ -50,7 +50,7 @@ void ChatroomForm::OnDropFile(HDROP hDrop)
 	{
 		ShowMsgBox(m_hWnd, MsgboxCallback(), L"STRID_CHATROOM_SUPPORT_15MB");
 	}
-	//目前是通过RichEdit的拖曳来处理
+	//鐩墠鏄�氳繃RichEdit鐨勬嫋鏇虫潵澶勭悊
 	//DragFinish(hDrop);
 }
 
@@ -140,7 +140,7 @@ HRESULT ChatroomForm::Drop(IDataObject *pDataObj, DWORD grfKeyState, POINTL pt, 
 		HRESULT hr = pDataObj->GetData(&cFmt, &stgMedium);
 		if (hr == S_OK)
 		{
-			//拖曳文件
+			//鎷栨洺鏂囦欢
 			HDROP file = NULL;
 			file = (HDROP)GlobalLock(stgMedium.hGlobal);
 			GlobalUnlock(stgMedium.hGlobal);

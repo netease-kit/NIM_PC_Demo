@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "local_video_player_form.h"
 #ifdef SUPPORTLOCALPLAYER
 
@@ -27,7 +28,7 @@ bool LocalVideoPlayerForm::StartPlay()
 		Shutdown();
 
 	NELP_RET ret = NELP_OK;
-	std::string log_path = nbase::UTF16ToUTF8(QPath::GetUserAppDataDir(""));
+	std::string log_path = nim::Tool::GetUserAppdataDir("");
 	ret = Nelp_Create(log_path.c_str(), &nelp_handle_);
 	if (ret != NELP_OK)
 	{
@@ -104,7 +105,7 @@ void LocalVideoPlayerForm::RefreshPlayTime()
 
 void LocalVideoPlayerForm::PlayerMessageCB(_HNLPSERVICE hNLPService, ST_NELP_MESSAGE msg)
 {
-	nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&LocalVideoPlayerForm::UIPlayerMessageCB, hNLPService, msg)); //Å×µ½UIÏß³ÌÖ´ÐÐ
+	nbase::ThreadManager::PostTask(kThreadUI, nbase::Bind(&LocalVideoPlayerForm::UIPlayerMessageCB, hNLPService, msg)); //æŠ›åˆ°UIçº¿ç¨‹æ‰§è¡Œ
 }
 
 void LocalVideoPlayerForm::UIPlayerMessageCB(_HNLPSERVICE hNLPService, ST_NELP_MESSAGE msg)
@@ -117,15 +118,15 @@ void LocalVideoPlayerForm::UIPlayerMessageCB(_HNLPSERVICE hNLPService, ST_NELP_M
 	LocalVideoPlayerForm* main_form = iter->second;
 	switch (msg.iWhat)
 	{
-	case NELP_MSG_ERROR: //¿ªÊ¼²¥·ÅÊ§°Ü»òÕß²¥·Å¹ý³ÌÖÐ³ö´í
+	case NELP_MSG_ERROR: //å¼€å§‹æ’­æ”¾å¤±è´¥æˆ–è€…æ’­æ”¾è¿‡ç¨‹ä¸­å‡ºé”™
 		main_form->Shutdown();
 		main_form->ChangePlayerState(PlayerStateError);
 		break;
-	case NELP_MSG_PREPARED: //Ô¤´¦ÀíÍê³É£¬²ÅÖ´ÐÐNelp_Start
-		if (Nelp_Start(main_form->nelp_handle_) == NELP_OK) //¿ªÊ¼²¥·Å³É¹¦
+	case NELP_MSG_PREPARED: //é¢„å¤„ç†å®Œæˆï¼Œæ‰æ‰§è¡ŒNelp_Start
+		if (Nelp_Start(main_form->nelp_handle_) == NELP_OK) //å¼€å§‹æ’­æ”¾æˆåŠŸ
 		{
-			main_form->playing_ = true; //ÐÞ¸Ä±êÖ¾
-			main_form->total_duration_ = Nelp_GetDuration(main_form->nelp_handle_); //»ñÈ¡×ÜÊ±³¤
+			main_form->playing_ = true; //ä¿®æ”¹æ ‡å¿—
+			main_form->total_duration_ = Nelp_GetDuration(main_form->nelp_handle_); //èŽ·å–æ€»æ—¶é•¿
 			main_form->ChangePlayerState(PlayerStatePlaying);
 		}
 		break;
@@ -170,7 +171,7 @@ void LocalVideoPlayerForm::UIPlayerMessageCB(_HNLPSERVICE hNLPService, ST_NELP_M
 	}
 }
 
-//VideoFrameCBÊÇÔÚÖ÷Ïß³ÌÖ´ÐÐµÄ
+//VideoFrameCBæ˜¯åœ¨ä¸»çº¿ç¨‹æ‰§è¡Œçš„
 void LocalVideoPlayerForm::VideoFrameCB(_HNLPSERVICE hNLPService, ST_NELP_FRAME *frame)
 {
 	auto iter = InstFormMap.find(hNLPService);

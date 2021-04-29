@@ -1,4 +1,5 @@
-﻿#include "team_service.h"
+#include "stdafx.h"
+#include "team_service.h"
 #include "module/login/login_manager.h"
 
 namespace nim_comp

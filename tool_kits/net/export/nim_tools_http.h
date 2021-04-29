@@ -1,4 +1,4 @@
-﻿/** @file nim_tools_http.h
+/** @file nim_tools_http.h
   * @brief NIM HTTP提供的http传输相关接口
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author towik

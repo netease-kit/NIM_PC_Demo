@@ -1,5 +1,5 @@
+#include "stdafx.h"
 #include "db_thread.h"
-
 
 DBThread::DBThread(ThreadId thread_id, const char* name)
 	: FrameworkThread(name), thread_id_(thread_id)

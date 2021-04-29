@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "image_view_form.h"
 #include "image_view_manager.h"
 #include "shared/modal_wnd/file_dialog_ex.h"
@@ -12,7 +13,7 @@ ImageViewForm::ImageViewForm(void) :ui_image_view_(NULL), back_image_(NULL), pic
 {
 	point_off_.x = 0;
 	point_off_.y = 0;
-	show_nextorpre_btn_ = false;	//TODO:(zhuhongshuyu)ÏÖÔÚ²»ÈÃÉÏÒ»¸ö/ÏÂÒ»¸ö°´Å¥Ä¬ÈÏÏÔÊ¾,ÔÆĞÅÔö¼ÓÏà¹Ø¹¦ÄÜºó£¬¿ªÆô´ËÏî
+	show_nextorpre_btn_ = false;	//TODO:(zhuhongshuyu)ç°åœ¨ä¸è®©ä¸Šä¸€ä¸ª/ä¸‹ä¸€ä¸ªæŒ‰é’®é»˜è®¤æ˜¾ç¤º,äº‘ä¿¡å¢åŠ ç›¸å…³åŠŸèƒ½åï¼Œå¼€å¯æ­¤é¡¹
 }
 
 

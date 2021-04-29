@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "module/subscribe_event/online_state_event_helper.h"
 #include "shared/auto_unregister.h"
 

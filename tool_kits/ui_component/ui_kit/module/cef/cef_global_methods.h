@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "base/synchronization/lock.h"
 #include "db/db_sqlite3.h"
 #include "shared/db_helper.h"

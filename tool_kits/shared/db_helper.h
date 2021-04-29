@@ -15,7 +15,7 @@ public:
 	virtual bool DeleteFile(const std::string& file_path) override;
 	virtual bool CopyFile(const std::string &from_path, const std::string &to_path, bool fail_if_exists) override;
 	virtual bool CreateDir(const std::string& dir_path) override;
-	virtual bool GetDirFromPath(const std::string& file_path, std::string& dir) override;//dir º¬Î´Î²µÄ"/" or "\\"
+	virtual bool GetDirFromPath(const std::string& file_path, std::string& dir) override;//dir å«æœªå°¾çš„"/" or "\\"
 	virtual bool GetFileNameFromPath(const std::string& file_path, std::string& name, std::string& ext) override;
 	virtual bool MoveFile(const std::string &from_path, const std::string &to_path) override;
 	virtual void ClearTLSLastError() override;

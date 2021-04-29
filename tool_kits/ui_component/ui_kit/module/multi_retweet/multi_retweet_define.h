@@ -4,25 +4,25 @@ namespace nim_comp
 	enum class MultiMessageRetweetState
 	{
 		MultiMessageRetweetState_Begin = -2,
-		MultiMessageRetweetState_UnDef,			// Î´¶¨Òå
-		MultiMessageRetweetState_Start,				// ¿ªÊ¼
-		MultiMessageRetweetState_ExportRaw,	// µ¼³öµ½ÎÄ¼þ
-		MultiMessageRetweetState_Uploading,			// ÉÏ´«µ½nos
-		MultiMessageRetweetState_Downloading,	// ´ÓnosÏÂÔØÎÄ¼þ
-		MultiMessageRetweetState_Canceled = 5,	// ÒÑÈ¡Ïû
-		MultiMessageRetweetState_Error,					// ³ö´í
-		//µ¼Èë×´Ì¬
-		MultiMessageRetweetState_IMP_NoFile,//Ã»ÓÐ±¸·ÝÎÄ¼þ
-		MultiMessageRetweetState_IMP_DownloadFailed,//ÏÂÔØ±¸·ÝÎÄ¼þ³ö´í
-		MultiMessageRetweetState_IMP_RAWError,//½âÃÜ/½âÑ¹³öÀ´µÄÔ´ÎÄ¼þ¸ñÊ½´íÎó
-		MultiMessageRetweetState_IMP_ParseRAWError,//½âÎöÔ´ÎÄ¼þ¸ñÊ½´íÎó
-		//µ¼³ö×´Ì¬
-		MultiMessageRetweetState_EXP_RAWError,//µ¼³öµ½Ô´ÎÄ¼þÊ§°Ü
-		MultiMessageRetweetState_EXP_UploadFailed,//ÉÏ´«ÎÄ¼þ³ö´í
+		MultiMessageRetweetState_UnDef,			// æœªå®šä¹‰
+		MultiMessageRetweetState_Start,				// å¼€å§‹
+		MultiMessageRetweetState_ExportRaw,	// å¯¼å‡ºåˆ°æ–‡ä»¶
+		MultiMessageRetweetState_Uploading,			// ä¸Šä¼ åˆ°nos
+		MultiMessageRetweetState_Downloading,	// ä»Žnosä¸‹è½½æ–‡ä»¶
+		MultiMessageRetweetState_Canceled = 5,	// å·²å–æ¶ˆ
+		MultiMessageRetweetState_Error,					// å‡ºé”™
+		//å¯¼å…¥çŠ¶æ€
+		MultiMessageRetweetState_IMP_NoFile,//æ²¡æœ‰å¤‡ä»½æ–‡ä»¶
+		MultiMessageRetweetState_IMP_DownloadFailed,//ä¸‹è½½å¤‡ä»½æ–‡ä»¶å‡ºé”™
+		MultiMessageRetweetState_IMP_RAWError,//è§£å¯†/è§£åŽ‹å‡ºæ¥çš„æºæ–‡ä»¶æ ¼å¼é”™è¯¯
+		MultiMessageRetweetState_IMP_ParseRAWError,//è§£æžæºæ–‡ä»¶æ ¼å¼é”™è¯¯
+		//å¯¼å‡ºçŠ¶æ€
+		MultiMessageRetweetState_EXP_RAWError,//å¯¼å‡ºåˆ°æºæ–‡ä»¶å¤±è´¥
+		MultiMessageRetweetState_EXP_UploadFailed,//ä¸Šä¼ æ–‡ä»¶å‡ºé”™
 
-		MultiMessageRetweetState_Done,				// Íê³É
+		MultiMessageRetweetState_Done,				// å®Œæˆ
 		MultiMessageRetweetState_End,
-		MultiMessageRetweetState_FinalState_Begin = MultiMessageRetweetState_Canceled//ÊÇ·ñÒÑÊÇ×îÖÕ×´Ì¬µÄÒ»¸ö±êÊ¶£¬¿ÉÒÔÅÐ¶ÏstateÊÇ·ñÎªÖÕÌ¬(state >= MultiMessageRetweetState_FinalState_Begin)
+		MultiMessageRetweetState_FinalState_Begin = MultiMessageRetweetState_Canceled//æ˜¯å¦å·²æ˜¯æœ€ç»ˆçŠ¶æ€çš„ä¸€ä¸ªæ ‡è¯†ï¼Œå¯ä»¥åˆ¤æ–­stateæ˜¯å¦ä¸ºç»ˆæ€(state >= MultiMessageRetweetState_FinalState_Begin)
 
 	};
 	using MultiMessageRetweetProgressCallback = std::function<void(float)>;

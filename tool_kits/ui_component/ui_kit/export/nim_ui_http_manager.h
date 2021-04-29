@@ -2,13 +2,12 @@
 
 #include "nim_ui_dll.h"
 #include "module/service/http_service.h"
-#include "tool_kits/base/memory/singleton.h"
 
 namespace nim_ui
 {
 
 /** @class HttpManager
-  * @brief Ìá¹©HttpÏÂÔØ×ÊÔ´ÓĞ¹ØµÄ½Ó¿Ú
+  * @brief æä¾›Httpä¸‹è½½èµ„æºæœ‰å…³çš„æ¥å£
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Oleg
   * @date 2016/5/12
@@ -20,18 +19,18 @@ public:
 
 public:
 	/**
-	* ÏÂÔØÍ¼Æ¬×ÊÔ´
-	* @param[in] type ×ÊÔ´ÀàĞÍ
-	* @param[in] id ×ÊÔ´ID£¬×÷ÎªÊ¶±ğ±êÊ¶
-	* @param[in] url ÏÂÔØµØÖ·
-	* @return wstring Í¼Æ¬Â·¾¶
+	* ä¸‹è½½å›¾ç‰‡èµ„æº
+	* @param[in] type èµ„æºç±»å‹
+	* @param[in] id èµ„æºIDï¼Œä½œä¸ºè¯†åˆ«æ ‡è¯†
+	* @param[in] url ä¸‹è½½åœ°å€
+	* @return wstring å›¾ç‰‡è·¯å¾„
 	*/
 	std::wstring GetCustomImage(HttpResourceType type, const std::string &id, const std::string &url);
 
 	/**
-	* ×¢²á×ÊÔ´ÏÂÔØÍê³ÉµÄ»Øµ÷
-	* @param[in] callback ÏÂÔØÍê³ÉµÄ»Øµ÷º¯Êı
-	* @return UnregisterCallback ·´×¢²á¶ÔÏó
+	* æ³¨å†Œèµ„æºä¸‹è½½å®Œæˆçš„å›è°ƒ
+	* @param[in] callback ä¸‹è½½å®Œæˆçš„å›è°ƒå‡½æ•°
+	* @return UnregisterCallback åæ³¨å†Œå¯¹è±¡
 	*/
 	UnregisterCallback RegDownloadComplete(const OnDownloadCompleteCallback& callback);
 

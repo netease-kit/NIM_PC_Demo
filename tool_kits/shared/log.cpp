@@ -61,7 +61,7 @@ void QLogImpl::HalfTo( long max, long to )
 {
 	nbase::NAutoLock auto_lock( &lock_);
 
-	//´ò¿ªÎÄ¼ş
+	//æ‰“å¼€æ–‡ä»¶
 	std::unique_ptr<FILE, nbase::DeleterFileClose> fp;
 	FILE* fp_file = nullptr;
 	_wfopen_s(&fp_file, log_file_.c_str(), L"r");
@@ -72,21 +72,21 @@ void QLogImpl::HalfTo( long max, long to )
 		return;
 	}
 
-	//»ñÈ¡³¤¶È
+	//è·å–é•¿åº¦
 	int ret = fseek(fp.get(), 0L, SEEK_END);
 	if (ret != 0)
 	{
 		return;
 	}
 
-	//Ğ¡ÓÚmaxÔòÖ±½Ó·µ»Ø
+	//å°äºmaxåˆ™ç›´æ¥è¿”å›
 	long len = ftell(fp.get());
 	if(len <= max)
 	{
 		return;
 	}
 
-	//´óÓÚmax£¬Ö»ÁôÏÂ×îºóto
+	//å¤§äºmaxï¼Œåªç•™ä¸‹æœ€åto
 	len = max * (-1);
 	ret = fseek(fp.get(), len, SEEK_END);
 	if (ret != 0)
@@ -94,7 +94,7 @@ void QLogImpl::HalfTo( long max, long to )
 		return;
 	}
 
-	//´´½¨ĞÂÎÄ¼ş
+	//åˆ›å»ºæ–°æ–‡ä»¶
 	nbase::PathString new_file = log_file_ + L".old";
 	std::unique_ptr<FILE, nbase::DeleterFileClose> fp2;
 	FILE* fp_file2 = nullptr;
@@ -105,7 +105,7 @@ void QLogImpl::HalfTo( long max, long to )
 		return;
 	}
 
-	//Ğ´ÈëĞÂÎÄ¼ş
+	//å†™å…¥æ–°æ–‡ä»¶
 	char cbuf[12 * 1024] = { 0 };
 	int cn = sizeof(cbuf), n = 0;
 	while(!feof(fp.get()))
@@ -123,7 +123,7 @@ void QLogImpl::HalfTo( long max, long to )
 	fp.reset(NULL);
 	fp2.reset(NULL);
 
-	//ÎÄ¼şÌæ»»
+	//æ–‡ä»¶æ›¿æ¢
 	bool del = nbase::DeleteFileW(log_file_);
 	if(del)
 	{

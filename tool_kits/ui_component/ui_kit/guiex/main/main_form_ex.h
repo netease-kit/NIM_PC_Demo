@@ -13,7 +13,7 @@ namespace nim_comp
 		MainFormEx(IMainFormMenuHandler* main_menu_handler);
 		virtual ~MainFormEx();
 	public:
-		//¸²¸ÇĞéº¯Êı
+		//è¦†ç›–è™šå‡½æ•°
 		virtual std::wstring GetSkinFolder() override;
 		virtual std::wstring GetSkinFile() override;
 		virtual std::wstring GetWindowClassName() const override;
@@ -21,35 +21,35 @@ namespace nim_comp
 		virtual HWND Create(HWND hwndParent, LPCTSTR pstrName, DWORD dwStyle, DWORD dwExStyle,
 			bool isLayeredWindow = true, const ui::UiRect& rc = ui::UiRect(0, 0, 0, 0)) override;
 		/**
-		* ´°¿Ú³õÊ¼»¯º¯Êı
-		* @return void	ÎŞ·µ»ØÖµ
+		* çª—å£åˆå§‹åŒ–å‡½æ•°
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void InitWindow() override;
 		virtual LRESULT OnNcHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
 		virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 		/**
-		* ´¦Àí´°¿ÚÏú»ÙÏûÏ¢
-		* @return void	ÎŞ·µ»ØÖµ
+		* å¤„ç†çª—å£é”€æ¯æ¶ˆæ¯
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void OnFinalMessage(HWND hWnd);
 
 		/**
-		* À¹½Ø²¢´¦ÀíWM_CLOSEÏûÏ¢
-		* @param[in] wParam ¸½¼Ó²ÎÊı
-		* @param[in] lParam ¸½¼Ó²ÎÊı
-		* @param[in] lParam ¸½¼Ó²ÎÊı
-		* @param[in out] bHandled ÊÇ·ñ´¦ÀíÁËÏûÏ¢£¬Èç¹û´¦ÀíÁË²»¼ÌĞø´«µİÏûÏ¢
-		* @return void	ÎŞ·µ»ØÖµ
+		* æ‹¦æˆªå¹¶å¤„ç†WM_CLOSEæ¶ˆæ¯
+		* @param[in] wParam é™„åŠ å‚æ•°
+		* @param[in] lParam é™„åŠ å‚æ•°
+		* @param[in] lParam é™„åŠ å‚æ•°
+		* @param[in out] bHandled æ˜¯å¦å¤„ç†äº†æ¶ˆæ¯ï¼Œå¦‚æœå¤„ç†äº†ä¸ç»§ç»­ä¼ é€’æ¶ˆæ¯
+		* @return void	æ— è¿”å›å€¼
 		*/
 		LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled);
 		/**
-		* À¹½ØESC¼üµÄÏûÏ¢´¦Àí
-		* @param[in out] bHandled ÊÇ·ñ´¦ÀíÁËÏûÏ¢£¬Èç¹û´¦ÀíÁË²»¼ÌĞø´«µİÏûÏ¢
-		* @return void	ÎŞ·µ»ØÖµ
+		* æ‹¦æˆªESCé”®çš„æ¶ˆæ¯å¤„ç†
+		* @param[in out] bHandled æ˜¯å¦å¤„ç†äº†æ¶ˆæ¯ï¼Œå¦‚æœå¤„ç†äº†ä¸ç»§ç»­ä¼ é€’æ¶ˆæ¯
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void OnEsc(BOOL &bHandled);
 	protected:
-		//ÍĞÅÌ
+		//æ‰˜ç›˜
 		virtual bool OnLeftClick() override;
 		virtual bool OnLeftDoubleClick() override;
 		virtual bool OnRightClick() override;
@@ -57,86 +57,86 @@ namespace nim_comp
 		void LoadPlugins();
 	private:
 		/**
-		* ´¦ÀíËùÓĞ¿Ø¼şµÄËùÓĞÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†æ‰€æœ‰æ§ä»¶çš„æ‰€æœ‰æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool Notify(ui::EventArgs* msg);
 
 		/**
-		* ´¦ÀíËùÓĞ¿Ø¼şµ¥»÷ÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†æ‰€æœ‰æ§ä»¶å•å‡»æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnClicked(ui::EventArgs* msg);
 		/**
-		* ÏìÓ¦¸öÈË×ÊÁÏ¸Ä±äµÄ»Øµ÷º¯Êı
-		* @param[in] uinfos ĞÂµÄ¸öÈË×ÊÁÏÁĞ±í
-		* @return void ÎŞ·µ»ØÖµ
+		* å“åº”ä¸ªäººèµ„æ–™æ”¹å˜çš„å›è°ƒå‡½æ•°
+		* @param[in] uinfos æ–°çš„ä¸ªäººèµ„æ–™åˆ—è¡¨
+		* @return void æ— è¿”å›å€¼
 		*/
 		void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
 
 		/**
-		* ÏìÓ¦Í·ÏñÏÂÔØÍê³ÉµÄ»Øµ÷º¯Êı
-		* @param[in] type Í·ÏñÀàĞÍ
-		* @param[in] account Í·ÏñÏÂÔØÍê³ÉµÄÓÃ»§id
-		* @param[in] photo_path Í·Ïñ±¾µØÂ·¾¶
-		* @return void ÎŞ·µ»ØÖµ
+		* å“åº”å¤´åƒä¸‹è½½å®Œæˆçš„å›è°ƒå‡½æ•°
+		* @param[in] type å¤´åƒç±»å‹
+		* @param[in] account å¤´åƒä¸‹è½½å®Œæˆçš„ç”¨æˆ·id
+		* @param[in] photo_path å¤´åƒæœ¬åœ°è·¯å¾„
+		* @return void æ— è¿”å›å€¼
 		*/
 		void OnUserPhotoReady(PhotoType type, const std::string& account, const std::wstring& photo_path);		
 
 		/**
-		* ³õÊ¼»¯ÓÃ»§Í·Ïñ
-		* @return void	ÎŞ·µ»ØÖµ
+		* åˆå§‹åŒ–ç”¨æˆ·å¤´åƒ
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void InitHeader();
 
 		bool OnReturnEventsClick(ui::EventArgs* param);
 		/**
-		* µ¯³öÍĞÅÌ²Ëµ¥
-		* @param[in] point Êó±êÎ»ÖÃ
+		* å¼¹å‡ºæ‰˜ç›˜èœå•
+		* @param[in] point é¼ æ ‡ä½ç½®
 		* @return void
 		*/
 		void PopupTrayMenu(POINT point);
 		/**
-		* ÔÚÏß×´Ì¬²Ëµ¥°´Å¥µÄµ¥»÷ÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* åœ¨çº¿çŠ¶æ€èœå•æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnlineStateMenuButtonClick(ui::EventArgs* param);
 		/**
-		* ÔÚÏß×´Ì¬²Ëµ¥ÏîµÄµ¥»÷ÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* åœ¨çº¿çŠ¶æ€èœå•é¡¹çš„å•å‡»æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnlineStateMenuItemClick(ui::EventArgs* param);
 		/**
-		* ÉèÖÃÔÚÏß×´Ì¬
-		* @return void	ÎŞ·µ»ØÖµ
+		* è®¾ç½®åœ¨çº¿çŠ¶æ€
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void SetOnlineState();
 		/**
-		* ´¦ÀíÖ÷´°¿Úµ¯³ö²Ëµ¥°´Å¥µÄµ¥»÷ÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†ä¸»çª—å£å¼¹å‡ºèœå•æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool MainMenuButtonClick(ui::EventArgs* param);
 		/**
-		* ³õÊ¼»¯ËÑË÷À¸		
+		* åˆå§‹åŒ–æœç´¢æ 		
 		* @return void
 		*/
 		void InitSearchBar();
 		/**
-		* ´¦ÀíËÑË÷À¸ÄÚÈİ¸Ä±äµÄÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†æœç´¢æ å†…å®¹æ”¹å˜çš„æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool SearchEditChange(ui::EventArgs* param);
 
 		/**
-		* ´¦ÀíÇåÀíËÑË÷À¸°´Å¥µÄµ¥»÷ÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†æ¸…ç†æœç´¢æ æŒ‰é’®çš„å•å‡»æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnClearInputBtnClicked(ui::EventArgs* param);
 		void OnWndSizeMax(bool max);

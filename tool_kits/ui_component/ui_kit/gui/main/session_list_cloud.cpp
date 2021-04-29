@@ -1,4 +1,5 @@
-﻿#include "session_list_cloud.h"
+#include "stdafx.h"
+#include "session_list_cloud.h"
 #include "export/nim_ui_session_list_manager.h"
 #include "module/service/session_service.h"
 #include "module/session/session_manager.h"

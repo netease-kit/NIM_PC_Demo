@@ -1,7 +1,6 @@
-﻿#pragma once
+#pragma once
 
 #include "util/window_ex.h"
-
 #include "nim_ui_session_list_manager.h"
 #include "nim_ui_contacts_list_manager.h"
 #include "nim_ui_login_manager.h"

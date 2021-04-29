@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "resource.h"
 #include "login_form.h"
 #include "util/user.h"
@@ -7,8 +8,9 @@
 #include "module/db/public_db.h"
 #include "gui/chatroom_frontpage.h"
 #include "module\config\config_helper.h"
-#include "tool_kits\ui_component\ui_kit\export\nim_ui_runtime_manager.h"
+#include "ui_kit\export\nim_ui_runtime_manager.h"
 #include "nim_app.h"
+
 using namespace ui;
 
 const LPCTSTR LoginForm::kClassName = L"LoginForm";
@@ -107,7 +109,7 @@ void LoginForm::InitWindow()
         FindControl(L"proxy_setting")->SetVisible(true);
         return true;
     });
-    //RichEdit的SetText操作放在最后，会触发TextChange事件
+    //RichEdit鐨凷etText鎿嶄綔鏀惧湪鏈�鍚庯紝浼氳Е鍙慣extChange浜嬩欢
     std::wstring account = QCommand::Get(kCmdAccount);
     user_name_edit_->SetText(account);
 
@@ -204,7 +206,7 @@ bool LoginForm::Notify(ui::EventArgs* msg)
         }
         else if (name == L"password")
         {
-            //去除中文字符
+            //鍘婚櫎涓枃瀛楃
             bool has_chinise = false;
             std::wstring text = password_edit_->GetText(), text_fixed;
             for (size_t i = 0; i < text.length(); i++)
@@ -302,7 +304,7 @@ bool LoginForm::OnClicked(ui::EventArgs* msg)
 		CMenuWnd* pMenu = new CMenuWnd(NULL);
 		STRINGorID xml(L"login_setting_menu.xml");
 		pMenu->Init(xml, _T("xml"), point);
-		//注册回调
+		//娉ㄥ唽鍥炶皟
 		CMenuElementUI* proxy_setting = (CMenuElementUI*)pMenu->FindControl(L"proxy_setting");
 		proxy_setting->AttachSelect(ToWeakCallback([this](ui::EventArgs* args) {
 			if (InitSDK())

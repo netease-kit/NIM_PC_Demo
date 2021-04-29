@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "treedoc.h"
+
 const TreeItemIDType TreeDocItemBase::kDEFAULT_ITEM_ID = "";
+
 void TreeDoc::OnDocItemAddChildCallback(const TreeDocItemPtr& item)
 {
 	data_indexs_[item->GetItemID()] = item;

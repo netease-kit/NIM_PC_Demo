@@ -25,7 +25,7 @@ public:
 	HBITMAP GetHBitmap(int nIndex);
 	int GetFrameCount();
 	bool IsGif();
-	int GetInterval(int nIndex); //ºÁÃëÎªµ¥Î» 
+	int GetInterval(int nIndex); //æ¯«ç§’ä¸ºå•ä½ 
 	 
 	static std::unique_ptr<ImageInfo> LoadImage(const std::wstring& strImageFullPath);
 	static std::unique_ptr<ImageInfo> LoadImage(HGLOBAL hGlobal, const std::wstring& imageFullPath);
@@ -62,7 +62,7 @@ public:
 	BYTE bFade;
 	bool bTiledX;
 	bool bTiledY;
-	int nPlayCount;//Èç¹ûÊÇGIF¿ÉÒÔÖ¸¶¨²¥·Å´ÎÊı -1 £ºÒ»Ö±²¥·Å£¬È±Ê¡Öµ¡£
+	int nPlayCount;//å¦‚æœæ˜¯GIFå¯ä»¥æŒ‡å®šæ’­æ”¾æ¬¡æ•° -1 ï¼šä¸€ç›´æ’­æ”¾ï¼Œç¼ºçœå€¼ã€‚
 };
 
 class UILIB_API Image
@@ -91,7 +91,7 @@ public:
 private:
 	int m_nCurrentFrame;
 	bool m_bPlaying;
-	int m_nCycledCount;//²¥·Å´ÎÊı
+	int m_nCycledCount;//æ’­æ”¾æ¬¡æ•°
 };
 
 class UILIB_API StateImage

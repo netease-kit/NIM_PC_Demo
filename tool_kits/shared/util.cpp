@@ -3,36 +3,9 @@
 #include "shared/log.h"
 #include "shellapi.h"
 
-//
-std::string QString::GetGUID()
-{
-	return nim::Tool::GetUuid();
-}
-
-std::string QString::GetMd5(const std::string& input)
-{
-	return nim::Tool::GetMd5(input);
-}
-
-void QString::NIMFreeBuf(void *data)
-{
-	return nim::Global::FreeBuf(data);
-}
-
-//
 std::wstring QPath::GetAppPath()
 {
 	return nbase::win32::GetCurrentModuleDirectory();
-}
-
-std::wstring QPath::GetUserAppDataDir(const std::string& app_account)
-{
-	return nbase::UTF8ToUTF16(nim::Tool::GetUserAppdataDir(app_account));
-}
-
-std::wstring QPath::GetLocalAppDataDir()
-{
-	return nbase::UTF8ToUTF16(nim::Tool::GetLocalAppdataDir());
 }
 
 std::wstring QPath::GetNimAppDataDir(const std::wstring& app_data_dir)

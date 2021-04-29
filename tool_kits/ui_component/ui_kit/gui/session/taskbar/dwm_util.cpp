@@ -1,4 +1,5 @@
-﻿#include "dwm_util.h"
+#include "stdafx.h"
+#include "dwm_util.h"
 
 namespace nim_comp
 {

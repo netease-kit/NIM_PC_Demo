@@ -1,4 +1,5 @@
-﻿#include "bubble_unknown.h"
+#include "stdafx.h"
+#include "bubble_unknown.h"
 
 using namespace ui;
 

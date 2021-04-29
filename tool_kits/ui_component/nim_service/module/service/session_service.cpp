@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "session_service.h"
 #include "nim_service/module/subscribe_event/subscribe_event_manager.h"
 
@@ -27,8 +28,8 @@ void SessionService::OnQuerySessionList(const std::list<nim::SessionData>& sessi
 	if (sessions.empty())
 		return;
 
-	// ×î½ü»á»°ÁĞ±í»áÔÚµÇÂ¼ºó½ÏÔçµÄÊÕµ½£¬ÕâÊ±ÅúÁ¿µÄÀ­È¡Éæ¼°µ½µÄÓÃ»§ĞÅÏ¢°ÑÕâĞ©ÓÃ»§Ìí¼Óµ½²éÑ¯¶ÓÁĞÀï
-	// ±ÜÃâ´´½¨»á»°ÁĞ±íÏîÊ±£¬ÁĞ±íÏî¿Ø¼ş²éÑ¯ÓÃ»§ĞÅÏ¢¶øµ¼ÖÂÆµ·±µ÷ÓÃÓÃ»§ĞÅÏ¢»ñÈ¡½Ó¿Ú
+	// æœ€è¿‘ä¼šè¯åˆ—è¡¨ä¼šåœ¨ç™»å½•åè¾ƒæ—©çš„æ”¶åˆ°ï¼Œè¿™æ—¶æ‰¹é‡çš„æ‹‰å–æ¶‰åŠåˆ°çš„ç”¨æˆ·ä¿¡æ¯æŠŠè¿™äº›ç”¨æˆ·æ·»åŠ åˆ°æŸ¥è¯¢é˜Ÿåˆ—é‡Œ
+	// é¿å…åˆ›å»ºä¼šè¯åˆ—è¡¨é¡¹æ—¶ï¼Œåˆ—è¡¨é¡¹æ§ä»¶æŸ¥è¯¢ç”¨æˆ·ä¿¡æ¯è€Œå¯¼è‡´é¢‘ç¹è°ƒç”¨ç”¨æˆ·ä¿¡æ¯è·å–æ¥å£
 	std::list<std::string> user_ids;
 	for each (auto& session in sessions)
 	{
@@ -67,13 +68,13 @@ void SessionService::OnQuerySessionList(const std::list<nim::SessionData>& sessi
 
 void SessionService::OnQueryOnlineSessionList(int res_code, bool has_more, const nim::SessionOnLineServiceHelper::SessionList& sessions)
 {
-	// »º´æ²éÑ¯»ØÀ´µÄ·şÎñÆ÷ĞÅÏ¢
+	// ç¼“å­˜æŸ¥è¯¢å›æ¥çš„æœåŠ¡å™¨ä¿¡æ¯
 	for (auto& session : sessions)
 	{
 		auto iter = online_sessions_.find(session.id_);
 		if (iter != online_sessions_.end())
 		{
-			// Èç¹ûÓĞÖØ¸´µÄ£¬ÇÒÊ±¼ä½ÏĞÂ£¬ÔòÊ¹ÓÃ·şÎñÆ÷À­È¡»ØÀ´µÄÊı¾İ
+			// å¦‚æœæœ‰é‡å¤çš„ï¼Œä¸”æ—¶é—´è¾ƒæ–°ï¼Œåˆ™ä½¿ç”¨æœåŠ¡å™¨æ‹‰å–å›æ¥çš„æ•°æ®
 			if (session.update_time_ > iter->second.update_time_)
 				online_sessions_[session.id_] = session;
 		}
