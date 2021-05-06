@@ -214,7 +214,7 @@ function(git_commit_counts _var)
         OUTPUT_VARIABLE out
         ERROR_QUIET OUTPUT_STRIP_TRAILING_WHITESPACE)
     if(NOT res EQUAL 0)
-        set(out "GIT-TAG-NOTFOUND")
+        set(out "0")
     endif()
 
     set(${_var}
