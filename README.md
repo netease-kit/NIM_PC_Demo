@@ -3,6 +3,7 @@
 网易云信 PC IM Demo 是基于[网易云信 PC SDK](https://yunxin.163.com/im-sdk-demo) 制作的即时通讯示例程序，UI 库使用 [NIM Duilib](https://github.com/netease-im/NIM_Duilib_Framework) 制作
 
 ![GitHub](https://img.shields.io/badge/license-MIT-green.svg)
+[![Actions Status](https://github.com/netease-im/NIM_PC_Demo/workflows/MSBuild/badge.svg)](https://github.com/netease-im/NIM_PC_Demo/actions)
 
 ## 预览
 
