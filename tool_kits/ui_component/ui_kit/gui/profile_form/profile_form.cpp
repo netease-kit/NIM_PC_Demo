@@ -1,4 +1,5 @@
-﻿#include "profile_form.h"
+#include "stdafx.h"
+#include "profile_form.h"
 #include "profile_box.h"
 #include "module/plugins/main_plugins_manager.h"
 #include "gui/plugins/contact/contact_plugin.h"

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "shared/auto_unregister.h"
 
 typedef std::function<void(const std::string& session_id, int code)> StartCaptureCallback;

@@ -1,4 +1,6 @@
+#include "stdafx.h"
 #include "ui_kit_tray_icon.h"
+
 namespace nim_comp
 {
 	const  DWORD				uTrayIconAnimateID = 0x0001;
@@ -122,7 +124,7 @@ namespace nim_comp
 
 
 
-		//×¢²áexplorer±ÀÀ£ºóÖØĞÂË¢ĞÂtrayicon
+		//æ³¨å†Œexplorerå´©æºƒåé‡æ–°åˆ·æ–°trayicon
 		trayicon_msgid_ = ::RegisterWindowMessage(L"TaskbarCreated");
 		auto text = nbase::StringPrintf("%p",this);
 		::SetPropA(wnd_, nbase::StringPrintf("%p", this).c_str(), reinterpret_cast<HANDLE>(this));
@@ -252,7 +254,7 @@ namespace nim_comp
 		{
 			bInit = true;
 			BOOL res = ::Shell_NotifyIconW(NIM_ADD, &tnd);
-			//ÔÚ¼«¶ËÇé¿öÏÂÓĞ¿ÉÄÜ»á°²×°ÍĞÅÌÊ§°Ü£¬ÕâÀïÔÙ³¢ÊÔÏÂ
+			//åœ¨æç«¯æƒ…å†µä¸‹æœ‰å¯èƒ½ä¼šå®‰è£…æ‰˜ç›˜å¤±è´¥ï¼Œè¿™é‡Œå†å°è¯•ä¸‹
 			if (!res)
 			{
 				res = ::Shell_NotifyIconW(NIM_ADD, &tnd);

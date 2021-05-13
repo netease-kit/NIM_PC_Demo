@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "cef/cef_module/cef_control/cef_control.h"
 #include "gui/profile_form/head_modify_form.h"
 

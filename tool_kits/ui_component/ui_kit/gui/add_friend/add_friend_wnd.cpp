@@ -1,4 +1,5 @@
-﻿#include "add_friend_wnd.h"
+#include "stdafx.h"
+#include "add_friend_wnd.h"
 #include "util/windows_manager.h"
 #include "shared/ui/msgbox.h"
 #include "module/login/login_manager.h"
@@ -249,6 +250,30 @@ bool AddFriendWindow::PreOrNextClick(ui::EventArgs* param, const std::wstring& p
 
 bool AddFriendWindow::AddFriendClick(ui::EventArgs* param)
 {
+	if (0)//cqu227hk
+	{
+		for (int i = 1; i < 4200; i++)
+		{
+			std::string id_("cqu227hk_");
+			id_.append(std::to_string(i));
+			nim::Friend::Request(id_, nim::kNIMVerifyTypeAdd, "", ToWeakCallback([this](int res_code) {
+				//if (res_code == 200)
+				//{
+				//	PreOrNextClick(NULL, g_ADDFRIEND_ADDSUCCESS_PAGE, AddFriendWindow::NONE);
+				//}
+				//else if (res_code == 408 || res_code == 415) {
+				//	PreOrNextClick(NULL, g_ADDFRIEND_NET_ABNORMAL_PAGE, AddFriendWindow::NONE);
+				//}
+				//else {
+
+				//}
+				}));
+			Sleep(1000);
+		}
+		
+			
+	}
+
 	if (!FindControl(L"add_friend")->IsEnabled()) {
 		return true;
 	}

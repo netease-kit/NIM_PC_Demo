@@ -1,7 +1,7 @@
-﻿#pragma once
+#pragma once
 #include <fstream>
-#include "public_define/defines/nim_define/nim_talk_def.h"
 #include "ui_kit/module/multi_retweet/multi_message_retweet_info.h"
+
 namespace nim_comp
 {
 	enum class LogToken : int

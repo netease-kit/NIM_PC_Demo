@@ -1,4 +1,5 @@
-﻿#include "richedit_util.h"
+#include "stdafx.h"
+#include "richedit_util.h"
 #include "emoji_info.h"
 
 namespace nim_comp
@@ -154,7 +155,7 @@ bool Re_InsertCustomItem(ITextServices *text_service, InsertCustomItemErrorCallb
 		}
 		image_ole->SetScaleSize(scale, scale_width, scale_height);
 		image_ole->LoadFromFile((BSTR)(image_path.c_str()));
-		std::wstring guid = nbase::UTF8ToUTF16(QString::GetGUID());
+		std::wstring guid = nbase::UTF8ToUTF16(nim::Tool::GetUuid());
 		image_ole->SetGUID((BSTR)guid.c_str());
 		OleSetContainedObject(lpOleObject, TRUE);
 
@@ -246,7 +247,7 @@ bool Re_InsertDescriptionItem(ITextServices *text_service, InsertCustomItemError
 
 //		image_ole->SetScaleSize(scale, scale_width, scale_height);
 		image_ole->LoadFromDescription((BSTR)(description.c_str()));
-		std::wstring guid = nbase::UTF8ToUTF16(QString::GetGUID());
+		std::wstring guid = nbase::UTF8ToUTF16(nim::Tool::GetUuid());
 		image_ole->SetGUID((BSTR)guid.c_str());
 		OleSetContainedObject(lpOleObject, TRUE);
 

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "personal_center.h"
 
 const LPTSTR PersonalCenterForm::kClassName = L"PersonalCenterForm";

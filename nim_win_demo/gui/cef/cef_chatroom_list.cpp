@@ -17,7 +17,7 @@ CefChatroomList::~CefChatroomList()
 
 void CefChatroomList::DoInit()
 {
-	// ³õÊ¼»¯ Cef Control
+	// åˆå§‹åŒ– Cef Control
 	cef_control_ = static_cast<ui::CefControl*>(FindSubControl(L"cef_control"));
 	cef_control_->AttachLoadEnd(nbase::Bind(&CefChatroomList::OnLoadEnd, this, std::placeholders::_1));
 	cef_control_->AttachAfterCreated(nbase::Bind(&CefChatroomList::OnAfterCreated, this, std::placeholders::_1));
@@ -115,6 +115,6 @@ void CefChatroomList::OnBeforeContextMenu(CefRefPtr<CefContextMenuParams> params
 
 void CefChatroomList::OnLoadEnd(int httpStatusCode)
 {
-	// »ñÈ¡·¿¼äÁĞ±í
+	// è·å–æˆ¿é—´åˆ—è¡¨
 	InvokChatroomList();
 }

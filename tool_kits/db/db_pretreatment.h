@@ -19,15 +19,15 @@ namespace ndb
 		static TDBVersionType GetInvalidVersionValue(){ return DBVersionType(); }
 		static TDBVersionType GetEmptyVersionValue(){ return DBVersionType(); }
 	};
-	//Ò»¸ö°æ±¾ºÅÀàĞÍÊÇintµÄÌØ»¯
+	//ä¸€ä¸ªç‰ˆæœ¬å·ç±»å‹æ˜¯intçš„ç‰¹åŒ–
 	template<>
 	class DB_EXPORT DBVersionOpration<int>
 	{
 	public:
 		enum DBVersionCheckRet
 		{
-			DBVersionCheckRet_Invalid = ~((((unsigned int)~((unsigned int)0))) >> 1),//MININT32£¬ÎŞ·¨¶ÁÈ¡µ½°æ±¾ĞÅÏ¢Êı¾İ¿âËğ»µÁË
-			DBVersionCheckRet_Empty,//Ã»ÓĞ°æ±¾ĞÅÏ¢
+			DBVersionCheckRet_Invalid = ~((((unsigned int)~((unsigned int)0))) >> 1),//MININT32ï¼Œæ— æ³•è¯»å–åˆ°ç‰ˆæœ¬ä¿¡æ¯æ•°æ®åº“æŸåäº†
+			DBVersionCheckRet_Empty,//æ²¡æœ‰ç‰ˆæœ¬ä¿¡æ¯
 		};
 	protected:
 		typedef int DBVersionType;
@@ -48,11 +48,11 @@ namespace ndb
 			ndb::SQLiteStatement stmt;
 			db->Query(stmt, "SELECT * FROM version");
 			auto result = stmt.NextRow();
-			if (result == SQLITE_ROW)//¶ÁÈ¡°æ±¾ĞÅÏ¢
+			if (result == SQLITE_ROW)//è¯»å–ç‰ˆæœ¬ä¿¡æ¯
 				ret = stmt.GetIntField(0);
-			else if (result == SQLITE_DONE)//È«ĞÂµÄ¿â£¬ÒªĞ´Èë°æ±¾ĞÅÏ¢
+			else if (result == SQLITE_DONE)//å…¨æ–°çš„åº“ï¼Œè¦å†™å…¥ç‰ˆæœ¬ä¿¡æ¯
 				ret = DBVersionCheckRet_Empty;
-			else//Êı¾İÎÄ¼ş¿ÉÄÜÒÑ¾­Ëğ»µÁË
+			else//æ•°æ®æ–‡ä»¶å¯èƒ½å·²ç»æŸåäº†
 				ret = DBVersionCheckRet_Invalid;
 			return ret;
 		};
@@ -81,7 +81,7 @@ namespace ndb
 			virtual bool DeleteFile(const std::string& file_path) = 0;
 			virtual bool CopyFile(const std::string &from_path, const std::string &to_path, bool fail_if_exists = false) = 0;
 			virtual bool CreateDir(const std::string& dir_path) = 0;
-			virtual bool GetDirFromPath(const std::string& file_path, std::string& dir) = 0;//dir º¬Î´Î²µÄ"/" or "\\"
+			virtual bool GetDirFromPath(const std::string& file_path, std::string& dir) = 0;//dir å«æœªå°¾çš„"/" or "\\"
 			virtual bool GetFileNameFromPath(const std::string& file_path, std::string& name, std::string& ext) = 0;
 			virtual bool MoveFile(const std::string &from_path, const std::string &to_path) = 0;
 			virtual void ClearTLSLastError() = 0;
@@ -241,14 +241,14 @@ namespace ndb
 				newest_version_ = base_version_ = db_version_now_ = 1;
 			}
 		public:
-			std::string db_path_;//Êı¾İÎÄ¼şÂ·¾¶
-			std::string back_db_dir_;//±¸·İÄ¿Â¼
-			bool enable_def_restore_;//ÊÇ·ñÊ¹ÓÃÈ±Ê¡µÄ»Ö¸´´¦Àí
-			bool enable_backup_;//ÊÇ·ñ¿ªÆô±¸·İ¹¦ÄÜ
-			bool enable_restore_;//ÊÇ·ñ¿ªÆô»Ö¸´¹¦ÄÜ
-			DBVersionType newest_version_;	//Êı¾İ¿â×îĞÂ°æ±¾
-			DBVersionType base_version_;//Êı¾İ¿â×î³õ°æ±¾
-			DBVersionType db_version_now_;//Êı¾İ¿âµ±Ç°°æ±¾
+			std::string db_path_;//æ•°æ®æ–‡ä»¶è·¯å¾„
+			std::string back_db_dir_;//å¤‡ä»½ç›®å½•
+			bool enable_def_restore_;//æ˜¯å¦ä½¿ç”¨ç¼ºçœçš„æ¢å¤å¤„ç†
+			bool enable_backup_;//æ˜¯å¦å¼€å¯å¤‡ä»½åŠŸèƒ½
+			bool enable_restore_;//æ˜¯å¦å¼€å¯æ¢å¤åŠŸèƒ½
+			DBVersionType newest_version_;	//æ•°æ®åº“æœ€æ–°ç‰ˆæœ¬
+			DBVersionType base_version_;//æ•°æ®åº“æœ€åˆç‰ˆæœ¬
+			DBVersionType db_version_now_;//æ•°æ®åº“å½“å‰ç‰ˆæœ¬
 		};
 	public:
 		DBPretreatment() :
@@ -297,10 +297,10 @@ namespace ndb
 			db_restore_.SetRestoreInfo(file_system_, config_.db_path_, config_.back_db_dir_);
 			bool new_dbfile = true;
 			auto OpenDBTask = [&]()->bool{				
-				//´ò¿ªÊı¾İÎÄ¼şÊ§°Ü£¬²¢ÇÒ´¦ÀíÇÒ½â¾öÁËÎÄ¼şËğ»µ»áÔÙ´Î´ò¿ªÊı¾İÎÄ¼ş
+				//æ‰“å¼€æ•°æ®æ–‡ä»¶å¤±è´¥ï¼Œå¹¶ä¸”å¤„ç†ä¸”è§£å†³äº†æ–‡ä»¶æŸåä¼šå†æ¬¡æ‰“å¼€æ•°æ®æ–‡ä»¶
 				if (!OpenDB(config_.db_path_, db_password, new_dbfile) && CatchDBFileBroken() && !OpenDB(config_.db_path_, db_password, new_dbfile))
 					return false;
-				if (new_dbfile)//ĞÂ´´½¨µÄÊı¾İÎÄ¼ş
+				if (new_dbfile)//æ–°åˆ›å»ºçš„æ•°æ®æ–‡ä»¶
 				{
 					int db_result = SQLITE_OK;
 					std::for_each(createdb_sqls_.begin(), createdb_sqls_.end(), [&](const std::string& sql){
@@ -324,9 +324,9 @@ namespace ndb
 				}
 				return true;
 			};
-			if (!OpenDBTask())//´ò¿ªÊı¾İÎÄ¼şÊ§°Ü²¢ÇÒÃ»ÓĞ½øĞĞĞŞ¸´£¬»òÕßĞŞ¸´ÒÑºóÒÀÈ»ÎŞ·¨´ò¿ªÊı¾İÎÄ¼ş
+			if (!OpenDBTask())//æ‰“å¼€æ•°æ®æ–‡ä»¶å¤±è´¥å¹¶ä¸”æ²¡æœ‰è¿›è¡Œä¿®å¤ï¼Œæˆ–è€…ä¿®å¤å·²åä¾ç„¶æ— æ³•æ‰“å¼€æ•°æ®æ–‡ä»¶
 				return false;
-			config_.db_version_now_ = VersionOpration::CheckVersion(&db_);//Èç¹ûOpenDBTaskÖ´ĞĞ³É¹¦db_version_now_Ó¦¸ÃÊÇÏàÓ¦µÄ°æ±¾ºÅ
+			config_.db_version_now_ = VersionOpration::CheckVersion(&db_);//å¦‚æœOpenDBTaskæ‰§è¡ŒæˆåŠŸdb_version_now_åº”è¯¥æ˜¯ç›¸åº”çš„ç‰ˆæœ¬å·
 			if (config_.db_version_now_ == VersionOpration::GetInvalidVersionValue())
 			{
 				if (!(CatchDBFileBroken() && OpenDBTask()))
@@ -405,10 +405,10 @@ namespace ndb
 			return OnDBFileBroken();
 		}
 
-		/****************Éı¼¶Ïà¹Ø½Ó¿Ú********************/
+		/****************å‡çº§ç›¸å…³æ¥å£********************/
 		bool UpdateDataBase()
 		{
-			//ÔöÁ¿Éı¼¶DB¡£ÀıÈç1->2,2->3, 3->4
+			//å¢é‡å‡çº§DBã€‚ä¾‹å¦‚1->2,2->3, 3->4
 			bool ret = true;
 			std::for_each(std::find_if(updatefunctions_.begin(), updatefunctions_.end(), [&](const DBUpdateFunItem& item){return item.first > config_.db_version_now_ ; }),
 									 std::find_if(updatefunctions_.begin(), updatefunctions_.end(), [&](const DBUpdateFunItem& item){return item.first > config_.newest_version_; }),
@@ -420,7 +420,7 @@ namespace ndb
 					ret = false;
 				return ret;
 			});
-			//È«Á¿Éı¼¶DB¡£ÀıÈç1->4, 2->4, 3->4
+			//å…¨é‡å‡çº§DBã€‚ä¾‹å¦‚1->4, 2->4, 3->4
 			return DoOtherUpdate();
 		}
 		
@@ -467,7 +467,7 @@ namespace ndb
 		PretreatmentConfig config_;
 		typename FileSystem* file_system_;
 		DefaultDBRestore db_restore_;
-		std::list<std::string> createdb_sqls_;//Ö»°üº¬½¨±íSQL
+		std::list<std::string> createdb_sqls_;//åªåŒ…å«å»ºè¡¨SQL
 		typename DBUpdateFuncList updatefunctions_;
 	};
 }

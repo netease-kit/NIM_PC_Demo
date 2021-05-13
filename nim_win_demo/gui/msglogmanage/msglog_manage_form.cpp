@@ -1,5 +1,5 @@
-﻿#include "resource.h"
-#include "public_define/defines/nim_define/nim_msglog_def.h"
+#include "stdafx.h"
+#include "resource.h"
 #include "msglog_manage_form.h"
 #include "gui/main/main_form.h"
 #include "module/msglog_manager/msglog_callback.h"
@@ -260,7 +260,7 @@ bool MsglogManageForm::ExportToRemote()
 {
 	nim::LogsBackupExportInfo export_info;
 
-	export_info.SetEncryptKey(QString::GetMd5(QString::GetGUID()));
+	export_info.SetEncryptKey(nim::Tool::GetMd5(nim::Tool::GetUuid()));
 	export_info.ExportBackupToRemoteLogFiter = MsglogCallback::OnMigrateLogFilter;
 	export_info.ExportBackupToRemoteEncryptCallback = MsglogCallback::OnMigrateMsglogEncryptCallback;
 	export_info.ExportBackupToRemotePackageCallback = MsglogCallback::OnMigrateMsglogPackageCallback;

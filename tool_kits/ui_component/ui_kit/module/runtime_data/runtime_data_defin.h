@@ -3,7 +3,7 @@ namespace nim_comp
 {
 	enum class UIStyle
 	{
-		conventional = 0,//常规模式
-		join = 1,//聚合模式
+		conventional = 0,//甯歌妯″紡
+		join = 1,//鑱氬悎妯″紡
 	};
 }

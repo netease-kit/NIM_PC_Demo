@@ -1,4 +1,4 @@
-﻿#ifndef NIM_WIN_GUI_VIDEO_SETTING_H_
+#ifndef NIM_WIN_GUI_VIDEO_SETTING_H_
 #define NIM_WIN_GUI_VIDEO_SETTING_H_
 
 #include "helper/ui_bitmap_control.h"

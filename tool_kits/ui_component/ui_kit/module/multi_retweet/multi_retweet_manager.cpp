@@ -1,5 +1,7 @@
+#include "stdafx.h"
 #include "ui_kit/module/multi_retweet/multi_retweet_manager.h"
 #include "ui_kit/module/multi_retweet/multi_retweet_session.h"
+
 namespace nim_comp
 {
 	MultiMessageRetweetSessionPtr MultiMessageRetweetManager::CreateMultiMessageRetweetData(const std::string& session_id, const std::string& show_title,

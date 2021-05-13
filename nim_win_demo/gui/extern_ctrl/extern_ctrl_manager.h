@@ -1,7 +1,7 @@
 #pragma once
 #include "base/memory/singleton.h"
 /** @class ExternCtrlManager
-* @brief À©Õ¹¿Ø¼ş¹ÜÀíÆ÷
+* @brief æ‰©å±•æ§ä»¶ç®¡ç†å™¨
 * @copyright (c) 2015, NetEase Inc. All rights reserved
 * @date 2017/10/16
 */

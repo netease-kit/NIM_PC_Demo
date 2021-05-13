@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "tray_icon_manager.h"
+
 namespace nim_comp
 {
 	TrayIconManager::TrayIconManager()

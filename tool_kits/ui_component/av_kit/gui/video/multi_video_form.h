@@ -13,12 +13,12 @@ namespace nim_comp
 		enum VchatMemberStatus
 		{
 			kNone	=0,
-			kWaiting, //µÈ´ı
-			kRefuse,	//Î´½ÓÌı
-			kConnected,	//ÒÑÁ¬½Ó£¬ÕıÔÚÍ¨»°ÖĞ
-			kDisConnect	//³ÉÔ±¶Ï¿ªÁ¬½Ó
+			kWaiting, //ç­‰å¾…
+			kRefuse,	//æœªæ¥å¬
+			kConnected,	//å·²è¿æ¥ï¼Œæ­£åœ¨é€šè¯ä¸­
+			kDisConnect	//æˆå‘˜æ–­å¼€è¿æ¥
 		};
-		//½áÊøÍ¨»°Ô­Òò
+		//ç»“æŸé€šè¯åŸå› 
 		enum MultiEndCallEnum
 		{
 			END_CALL_CLOSE,
@@ -47,38 +47,38 @@ namespace nim_comp
 		MultiVideoChatForm(std::string room_name, std::string session_id, int64_t channel_id, bool video = false, bool creator=false,std::string creator_id="");
 		~MultiVideoChatForm();
 
-		// ¸²¸ÇĞéº¯Êı
+		// è¦†ç›–è™šå‡½æ•°
 		virtual std::wstring GetSkinFolder() override;
 		virtual std::wstring GetSkinFile() override;
 		virtual std::wstring GetWindowClassName() const override { return kClassName; };
 		virtual UINT GetClassStyle() const override { return UI_CLASSSTYLE_FRAME | CS_DBLCLKS; };
 
 		/**
-		* ´°¿Ú³õÊ¼»¯º¯Êı
-		* @return void	ÎŞ·µ»ØÖµ
+		* çª—å£åˆå§‹åŒ–å‡½æ•°
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void InitWindow() override;
 
 		/**
-		* À¹½Ø²¢´¦Àíµ×²ã´°ÌåÏûÏ¢
-		* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-		* @param[in] wParam ¸½¼Ó²ÎÊı
-		* @param[in] lParam ¸½¼Ó²ÎÊı
-		* @return LRESULT ´¦Àí½á¹û
+		* æ‹¦æˆªå¹¶å¤„ç†åº•å±‚çª—ä½“æ¶ˆæ¯
+		* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+		* @param[in] wParam é™„åŠ å‚æ•°
+		* @param[in] lParam é™„åŠ å‚æ•°
+		* @return LRESULT å¤„ç†ç»“æœ
 		*/
 		virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 		/**
-		* ´¦Àí´°¿Ú±»Ïú»ÙµÄÏûÏ¢
-		* @param[in] hWnd ´°¿Ú¾ä±ú
-		* @return void	ÎŞ·µ»ØÖµ
+		* å¤„ç†çª—å£è¢«é”€æ¯çš„æ¶ˆæ¯
+		* @param[in] hWnd çª—å£å¥æŸ„
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void OnFinalMessage(HWND hWnd) override;
 
 		/**
-		* ¸ù¾İ¿Ø¼şÀàÃû´´½¨×Ô¶¨Òå¿Ø¼ş
-		* @param[in] pstrClass ¿Ø¼şÀàÃû
-		* @return Control* ´´½¨µÄ¿Ø¼şµÄÖ¸Õë
+		* æ ¹æ®æ§ä»¶ç±»ååˆ›å»ºè‡ªå®šä¹‰æ§ä»¶
+		* @param[in] pstrClass æ§ä»¶ç±»å
+		* @return Control* åˆ›å»ºçš„æ§ä»¶çš„æŒ‡é’ˆ
 		*/
 		virtual ui::Control* CreateControl(const std::wstring& pstrClass) override;
 		void OnVideoInDeviceChange(uint32_t status);
@@ -87,306 +87,306 @@ namespace nim_comp
 		void OnAudioDeviceStartCallback(bool result);
 
 		/**
-		* ¶àÈËÈºÁÄÈËÔ±½øÈë
-		* @param[in] uid ³ÉÔ±uid
+		* å¤šäººç¾¤èŠäººå‘˜è¿›å…¥
+		* @param[in] uid æˆå‘˜uid
 		*/
 		void OnPeopleJoin(std::string uid);
 
 		/**
-		* ¶àÈËÈºÁÄÈËÔ±ÍË³ö      
-		* @param[in] uid ³ÉÔ±uid
+		* å¤šäººç¾¤èŠäººå‘˜é€€å‡º      
+		* @param[in] uid æˆå‘˜uid
 		*/
 		void OnPeopleLeave(std::string uid);
 
 		/**
-		* ÉèÖÃ³ÉÔ±uidµÄbitmap ĞÅÏ¢
-		* @param[in] uid ³ÉÔ±uid
-		* @param[in] video ÊÇ·ñÊÇÊÓÆµÄ£Ê½
-		* @param[in] refuse ÊÇ·ñ¾Ü¾øÁËÑûÇë
+		* è®¾ç½®æˆå‘˜uidçš„bitmap ä¿¡æ¯
+		* @param[in] uid æˆå‘˜uid
+		* @param[in] video æ˜¯å¦æ˜¯è§†é¢‘æ¨¡å¼
+		* @param[in] refuse æ˜¯å¦æ‹’ç»äº†é‚€è¯·
 		*/
 		void OnSetShowBitmap(std::string uid, bool video,bool refuse=false);
 
 		/**
-		* ÒôÁ¿»Øµ÷ĞÅÏ¢
-		* @param[in] map_volume uid¶ÔÓ¦µÄvolÒôÁ¿ĞÅÏ¢
+		* éŸ³é‡å›è°ƒä¿¡æ¯
+		* @param[in] map_volume uidå¯¹åº”çš„voléŸ³é‡ä¿¡æ¯
 		*/
 		void OnVChatVolumeCallback(std::map<std::string, int32_t> map_volume);
 
 		/**
-		* @¸üĞÂ³ÉÔ±µÄÒôÁ¿ĞÅÏ¢
+		* @æ›´æ–°æˆå‘˜çš„éŸ³é‡ä¿¡æ¯
 		*/
 		void RefreshMemberAudioStatus();
 
 		/**
-		* »ñÈ¡ÒôÁ¿ÖµµÄµÈ¼¶
-		* @param[in] volumeÒôÁ¿
+		* è·å–éŸ³é‡å€¼çš„ç­‰çº§
+		* @param[in] volumeéŸ³é‡
 		*/
 		int32_t GetVolumeStep(uint32_t volume);
 
 		/**
-		* »ñÈ¡ÒÑ¾­ÑûÇëµÄ³ÉÔ±µÄÊÓÆµ×´Ì¬
-		* @return map uid ¶ÔÓ¦µÄÊÓÆµ×´Ì¬
+		* è·å–å·²ç»é‚€è¯·çš„æˆå‘˜çš„è§†é¢‘çŠ¶æ€
+		* @return map uid å¯¹åº”çš„è§†é¢‘çŠ¶æ€
 		*/
 		std::map<std::string,bool> GetInvitedMember();
 
 		/**
-		* ÉèÖÃÑûÇë³ÉÔ±ÊÇ·ñ¿ªÆôÁËÊÓÆµ
-		* @param uid ³ÉÔ±uid
-		* @param video ÊÇ·ñÊÇÊÓÆµÄ£Ê½
+		* è®¾ç½®é‚€è¯·æˆå‘˜æ˜¯å¦å¼€å¯äº†è§†é¢‘
+		* @param uid æˆå‘˜uid
+		* @param video æ˜¯å¦æ˜¯è§†é¢‘æ¨¡å¼
 		*/
 		void SetInvitedMember(std::string uid,bool video);
 
 		/**
-		* µÃµ½ÊÓÆµÈËÊı,µ±Ç°·¿¼äµÄÊÓÆµÈËÊı+ÔÊĞíÊÓÆµÍ¨»°µÄÈËÊı£¨»¹Î´½ø·¿¼ä£©
-		* @return ·µ»Øµ±Ç°ÈºÁÄµÄ¿ªÆôÊÓÆµµÄÈËÊı
+		* å¾—åˆ°è§†é¢‘äººæ•°,å½“å‰æˆ¿é—´çš„è§†é¢‘äººæ•°+å…è®¸è§†é¢‘é€šè¯çš„äººæ•°ï¼ˆè¿˜æœªè¿›æˆ¿é—´ï¼‰
+		* @return è¿”å›å½“å‰ç¾¤èŠçš„å¼€å¯è§†é¢‘çš„äººæ•°
 		*/
 		int GetVideoCount();
 
 		/**
-		* »ñÈ¡ÕıÔÚÈºÁÄµÄ³ÉÔ±¼¯ºÏ
-		* @return set<std::string> ÒÑ¾­½øÈëÒôÊÓÆµ·¿¼äµÄ³ÉÔ±ĞÅÏ¢
+		* è·å–æ­£åœ¨ç¾¤èŠçš„æˆå‘˜é›†åˆ
+		* @return set<std::string> å·²ç»è¿›å…¥éŸ³è§†é¢‘æˆ¿é—´çš„æˆå‘˜ä¿¡æ¯
 		*/
 		std::set<std::string> GetTalkingMember() { return talking_members_; }
 
 		/**
-		* ÉèÖÃÑûÇëµÄ³ÉÔ±¼¯
-		* @param[in]  ÑûÇëµÄ³ÉÔ±uid¼¯ºÏ
+		* è®¾ç½®é‚€è¯·çš„æˆå‘˜é›†
+		* @param[in]  é‚€è¯·çš„æˆå‘˜uidé›†åˆ
 		*/
 		void SetInvitingMember(std::set<std::string> inviting_members);
 
 
 		/**
-		* ³õÊ¼ÒôÁ¿£¬²É¼¯£¬ÖÃ¶¥Ïà¹ØUIÉèÖÃ
+		* åˆå§‹éŸ³é‡ï¼Œé‡‡é›†ï¼Œç½®é¡¶ç›¸å…³UIè®¾ç½®
 		*/
 		void InitVolumnSetting();
 
 		/** 
-		* »ñÈ¡ÒôÊÓÆµ·¿¼äÃû
-		* @return std::string ÒôÊÓÆµ·¿¼äÃû
+		* è·å–éŸ³è§†é¢‘æˆ¿é—´å
+		* @return std::string éŸ³è§†é¢‘æˆ¿é—´å
 		*/
 		std::string  GetRoomName() { return room_name_; }
 		
 		/** 
-		* »º´æ³ÉÔ±µÄÊÓÆµĞÅÏ¢¡£ps,·ÀÖ¹¶Ô·½µÄÒôÊÓÆµÄ£Ê½Í¨ÖªÏûÏ¢£¨ÏûÏ¢kMsgMultiVchatP2PChangeMode£©ÏÈÓÚ¸Ã³ÉÔ±½øÈë·¿¼äµÄÍ¨ÖªÉÏ±¨£¬¹ÊĞèÒª»º´æ 
-		* @param[in] uid ³ÉÔ±uid
-		* @param[in] video true:ÊÓÆµ false:ÒôÆµ
+		* ç¼“å­˜æˆå‘˜çš„è§†é¢‘ä¿¡æ¯ã€‚ps,é˜²æ­¢å¯¹æ–¹çš„éŸ³è§†é¢‘æ¨¡å¼é€šçŸ¥æ¶ˆæ¯ï¼ˆæ¶ˆæ¯kMsgMultiVchatP2PChangeModeï¼‰å…ˆäºè¯¥æˆå‘˜è¿›å…¥æˆ¿é—´çš„é€šçŸ¥ä¸ŠæŠ¥ï¼Œæ•…éœ€è¦ç¼“å­˜ 
+		* @param[in] uid æˆå‘˜uid
+		* @param[in] video true:è§†é¢‘ false:éŸ³é¢‘
 		*/
 		void SetCacheMemberVideo(std::string uid, bool video) { cache_members_info_[uid] = video; }
 
         /**
-        * Ö±½Ó¹Ø±Õ´°¿Ú
-        * @return void	ÎŞ·µ»ØÖµ
+        * ç›´æ¥å…³é—­çª—å£
+        * @return void	æ— è¿”å›å€¼
         */
         void DirectQuit();
 	private:
 		/**
-		* ´¦ÀíËùÓĞ¿Ø¼şµÄËùÓĞÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†æ‰€æœ‰æ§ä»¶çš„æ‰€æœ‰æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool Notify(ui::EventArgs* msg);
 
 		/**
-		* ´¦ÀíËùÓĞ¿Ø¼şµ¥»÷ÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†æ‰€æœ‰æ§ä»¶å•å‡»æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnClicked(ui::EventArgs* msg);
 
 		/**
-		* ÏÔÊ¾½áÊøÍ¨»°Ò³Ãæ
-		* @param[in] end_reason ½áÊøÔ­Òò
-		* @return void	ÎŞ·µ»ØÖµ
+		* æ˜¾ç¤ºç»“æŸé€šè¯é¡µé¢
+		* @param[in] end_reason ç»“æŸåŸå› 
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void EnterEndCallPage(MultiEndCallEnum end_reason);
 
 		/**
-		* ×Ô¶¯¹Ø±Õ´°¿Ú
+		* è‡ªåŠ¨å…³é—­çª—å£
 		*/
 		void OnAutoCloseWnd();
 		
 		/** 
-		* ¹Ø±ÕÊÓÆµÉè±¸
+		* å…³é—­è§†é¢‘è®¾å¤‡
 		*/
 		void FreeVideo();
 
 		/**
-		* ¹Ø±ÕÒôÆµÉè±¸
+		* å…³é—­éŸ³é¢‘è®¾å¤‡
 		*/
 		void FreeAudio();
 
 		/**
-		* ³õÊ¼»¯ÉãÏñÍ·¿Ø¼ş
+		* åˆå§‹åŒ–æ‘„åƒå¤´æ§ä»¶
 		*/
 		void InitCbCameraSetting();
 
 		/** 
-		* ³õÊ¼»¯ÒôÊÓÆµÉèÖÃ²Ù×÷
+		* åˆå§‹åŒ–éŸ³è§†é¢‘è®¾ç½®æ“ä½œ
 		*/
 		void InitSetting();
 
 		/**
-		* ¼ì²éÊÓÆµÊäÈëÉè±¸
+		* æ£€æŸ¥è§†é¢‘è¾“å…¥è®¾å¤‡
 		*/
 		int CheckVideoInputDevice();
 
 		/** 
-		*  Âó¿Ë·çÒôÁ¿¿Ø¼şÊ§È¥½¹µãÊ±µÄ´¦ÀíÊÂ¼ş
+		*  éº¦å…‹é£éŸ³é‡æ§ä»¶å¤±å»ç„¦ç‚¹æ—¶çš„å¤„ç†äº‹ä»¶
 		*/
 		bool OnMicrophoneVolumnKillFocus(ui::EventArgs* arg);
 
 		/**
-		*  ÑïÉùÆ÷ÒôÁ¿¿Ø¼şÊ§È¥½¹µãÊ±µÄ´¦ÀíÊÂ¼ş
+		*  æ‰¬å£°å™¨éŸ³é‡æ§ä»¶å¤±å»ç„¦ç‚¹æ—¶çš„å¤„ç†äº‹ä»¶
 		*/
 		bool OnSpeakerVolumnKillFocus(ui::EventArgs* arg);
 
 		/** 
-		* ¹Ø±Õ´°¿ÚÇ°Ëù×öµÄ²Ù×÷
+		* å…³é—­çª—å£å‰æ‰€åšçš„æ“ä½œ
 		*/
 		void BeforeClose();
 
 		/** 
-		* È·¶¨ÍË³ö½çÃæÊÇµÄÌáÊ¾¿ò
+		* ç¡®å®šé€€å‡ºç•Œé¢æ˜¯çš„æç¤ºæ¡†
 		*/
 		void OnQuitMsgBox(MsgBoxRet ret);
 
 		/**  
-		* ×î´ó»¯´°¿Ú£¬ÔİÊ±Ã»ÊµÏÖ
+		* æœ€å¤§åŒ–çª—å£ï¼Œæš‚æ—¶æ²¡å®ç°
 		*/
 		void OnMaxWindow(bool _max);
 
 		/**
-		* ´¦ÀíËùÓĞ¿Ø¼şÑ¡ÖĞÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†æ‰€æœ‰æ§ä»¶é€‰ä¸­æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnSelect(ui::EventArgs* arg);
 
 		/**
-		* ´¦ÀíËùÓĞ¿Ø¼ş·ÇÑ¡ÖĞÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†æ‰€æœ‰æ§ä»¶éé€‰ä¸­æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnUnSelect(ui::EventArgs* arg);
 
 		/**
-		* ³õÊ¼»¯ÊÓÆµÉè±¸
-		* @return bool true ³É¹¦£¬false Ê§°Ü
+		* åˆå§‹åŒ–è§†é¢‘è®¾å¤‡
+		* @return bool true æˆåŠŸï¼Œfalse å¤±è´¥
 		*/
 		bool InitVideo();
 
 		/**
-		* ³õÊ¼»¯ÒôÆµÉè±¸
-		* @return bool true ³É¹¦£¬false Ê§°Ü
+		* åˆå§‹åŒ–éŸ³é¢‘è®¾å¤‡
+		* @return bool true æˆåŠŸï¼Œfalse å¤±è´¥
 		*/
 		bool InitAudio();
 
 		/** 
-		* ÊÓÆµäÖÈ¾¿Ø¼ş
+		* è§†é¢‘æ¸²æŸ“æ§ä»¶
 		*/
 		void PaintVideo();
 		
 		/**
-		* ´¦ÀíÊó±êÊÂ¼ş
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
+		* å¤„ç†é¼ æ ‡äº‹ä»¶
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
 		*/
 		bool OnMouseMessage(ui::EventArgs* arg);
 		
 		/** 
-		* ¸ø³ÉÔ±uid·¢ËÍÒôÊÓÆµÇĞ»»Í¨Öª
-		* @param[in] ³ÉÔ±uid
-		* @param[in] team true:ÈºÍ¸´«ÏûÏ¢ false:p2pÏûÏ¢
+		* ç»™æˆå‘˜uidå‘é€éŸ³è§†é¢‘åˆ‡æ¢é€šçŸ¥
+		* @param[in] æˆå‘˜uid
+		* @param[in] team true:ç¾¤é€ä¼ æ¶ˆæ¯ false:p2pæ¶ˆæ¯
 		*/
 		void SendNotifyToMember(std::string uid, bool team);
 		
 		/** 
-		* bitmapäÖÈ¾´°¿Ú·ÖÅä
-		* @param[in] uid ³ÉÔ±uid
-		* @param[in] uid remove  true:Ôö¼Ó,false:ÒÆ³ı,ps.Ä¿Ç°´°¿ÚÖĞÎ´ÒÆ³ı£¬ÓÃÎÄ×ÖÌáÊ¾
-		* @param[in] video  true:ÊÓÆµ false:ÒôÆµ
-		* @param[in] status uidµÄÍ¨»°×´Ì¬
+		* bitmapæ¸²æŸ“çª—å£åˆ†é…
+		* @param[in] uid æˆå‘˜uid
+		* @param[in] uid remove  true:å¢åŠ ,false:ç§»é™¤,ps.ç›®å‰çª—å£ä¸­æœªç§»é™¤ï¼Œç”¨æ–‡å­—æç¤º
+		* @param[in] video  true:è§†é¢‘ false:éŸ³é¢‘
+		* @param[in] status uidçš„é€šè¯çŠ¶æ€
 		*/
 		void AdjustVideoBitmap(std::string uid, bool remove, bool video, VchatMemberStatus status);
 		
 		/** 
-		* bitmapäÖÈ¾´°¿Ú·ÖÅä
-		* @param[in] uid ³ÉÔ±uid
-		* @param[in] uid remove  true:ÒÆ³ı,false:Ôö¼Ó»ò¸üĞÂ
-		* @param[in] video  true:ÊÓÆµ false:ÒôÆµ
-		* @param[in] status uidµÄÍ¨»°×´Ì¬
+		* bitmapæ¸²æŸ“çª—å£åˆ†é…
+		* @param[in] uid æˆå‘˜uid
+		* @param[in] uid remove  true:ç§»é™¤,false:å¢åŠ æˆ–æ›´æ–°
+		* @param[in] video  true:è§†é¢‘ false:éŸ³é¢‘
+		* @param[in] status uidçš„é€šè¯çŠ¶æ€
 		*/
 		void AdjustVideoBitmap2(std::string uid, bool remove, bool video, VchatMemberStatus status);
 		
 		/** 
-		* ¼ì²éÊÓÆµÈºÁÄµÄÈËÊı
+		* æ£€æŸ¥è§†é¢‘ç¾¤èŠçš„äººæ•°
 		*/
 		int  CheckVChatMembers();
 
 		/**
-		* ÏŞÖÆµ¯¿òÌáÊ¾
-		* @param[in] video true:´ú±íÊÓÆµÊÜÏŞÌáÊ¾ false:´ú±íÈºÁÄÈËÊıÊÜÏŞÌáÊ¾
+		* é™åˆ¶å¼¹æ¡†æç¤º
+		* @param[in] video true:ä»£è¡¨è§†é¢‘å—é™æç¤º false:ä»£è¡¨ç¾¤èŠäººæ•°å—é™æç¤º
 		*/
 		void ShowLimitNotify(bool video=true);
 
 		/** 
-		* ÑûÇë³ÉÔ±Ñ¡ÔñÍê´¦ÀíÊÂ¼ş
+		* é‚€è¯·æˆå‘˜é€‰æ‹©å®Œå¤„ç†äº‹ä»¶
 		*/
 		void SelectedCompleted(const std::list<UTF8String>& friend_list, const std::list<UTF8String>& team_list, bool delete_enable);
 
 		/** 
-		* Óë´ó´°¿ÚÖĞµÄÊÓÆµÔ´½øĞĞ½»»»
-		* @param[in] bitmap_i_index  small_camera_page_tip_ ¶şÎ¬Êı×éË÷ÒıºÅ
-		* @param[in] bitmap_j_index  small_camera_page_tip_ ¶şÎ¬Êı×éË÷ÒıºÅ
+		* ä¸å¤§çª—å£ä¸­çš„è§†é¢‘æºè¿›è¡Œäº¤æ¢
+		* @param[in] bitmap_i_index  small_camera_page_tip_ äºŒç»´æ•°ç»„ç´¢å¼•å·
+		* @param[in] bitmap_j_index  small_camera_page_tip_ äºŒç»´æ•°ç»„ç´¢å¼•å·
 		*/
 		void ExChangeBitmapControl(int bitmap_i_index, int bitmap_j_index);
 
 		/** 
-		* ÖÃ¶¥²Ù×÷
-		* @param[in] forever true:ÖÃ¶¥ false:²»ÖÃ¶¥
+		* ç½®é¡¶æ“ä½œ
+		* @param[in] forever true:ç½®é¡¶ false:ä¸ç½®é¡¶
 		*/
 		void SetTopMast(bool forever);
 
 		/** 
-		* µ÷Õû´°¿Ú´óĞ¡
+		* è°ƒæ•´çª—å£å¤§å°
 		*/
 		void AdjustWindowSize();
 
 		/** 
-		* Ë¢ĞÂÕıÔÚÈºÁÄµÄÈËÔ±¼ÇÂ¼
-		* @param[in] uid ³ÉÔ±uid remove true:ÒÆ³ı false Ôö¼Ó¼ÇÂ¼
+		* åˆ·æ–°æ­£åœ¨ç¾¤èŠçš„äººå‘˜è®°å½•
+		* @param[in] uid æˆå‘˜uid remove true:ç§»é™¤ false å¢åŠ è®°å½•
 		*/
 		void RefreshTalkingMembers(std::string uid, bool remove);
 
 		/** 
-		* Æô¶¯ÉãÏñÍ·Éè±¸
+		* å¯åŠ¨æ‘„åƒå¤´è®¾å¤‡
 		*/
 		void StartCameraDevice();
 
 		/** 
-		* Æô¶¯ºô½Ğµ¹¼ÆÊ±
-		* @param[in] uid_info ³ÉÔ±Ïà¹ØĞÅÏ¢
+		* å¯åŠ¨å‘¼å«å€’è®¡æ—¶
+		* @param[in] uid_info æˆå‘˜ç›¸å…³ä¿¡æ¯
 		*/
 		void StartCallTimer(VideoUidsInfo& uid_info);
 
 		/**
-		* ¹Ø±ÕuidµÄºô½Ğ¶¨Ê±Æ÷
+		* å…³é—­uidçš„å‘¼å«å®šæ—¶å™¨
 		*/
 		void EndCallTimer(std::string uid);
 
 		/** 
-		* ¹Ø±ÕÁÄÌì¡£ps 45sºóÎŞÈË½øÈëÄÇÃ´¾Í¹Ø±Õ»á»°
+		* å…³é—­èŠå¤©ã€‚ps 45såæ— äººè¿›å…¥é‚£ä¹ˆå°±å…³é—­ä¼šè¯
 		*/
 		void EndVChat();
 
 		/** 
-		* µ÷ÕûÈºÊÓÆµ´´½¨ÕßµÄÊÓÆµäÖÈ¾Î»ÖÃ 
-		* @param[in] uid ³ÉÔ±uid
+		* è°ƒæ•´ç¾¤è§†é¢‘åˆ›å»ºè€…çš„è§†é¢‘æ¸²æŸ“ä½ç½® 
+		* @param[in] uid æˆå‘˜uid
 		*/
 		void AdjustCreatorVideoBitmap(std::string uid);
 		
 		/** 
-		* ÓÃ»§ĞÅÏ¢ĞŞ¸Ä»Øµ÷
-		* @param[in] uinfos ³ÉÔ±ĞÅÏ¢
+		* ç”¨æˆ·ä¿¡æ¯ä¿®æ”¹å›è°ƒ
+		* @param[in] uinfos æˆå‘˜ä¿¡æ¯
 		*/
 		void OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos);
 
@@ -397,13 +397,13 @@ namespace nim_comp
 		std::string room_name_;
 		std::string session_id_;
 		uint64_t channel_id_;
-		bool  creator_;//ÊÇ·ñÊÇÈºÊÓÆµ·¢ÆğÕß
+		bool  creator_;//æ˜¯å¦æ˜¯ç¾¤è§†é¢‘å‘èµ·è€…
 		std::string creator_id_;//
-		bool	camera_is_open_;  //ÉãÏñÍ·ÊÇ·ñÖ÷¶¯¹Ø±Õ
+		bool	camera_is_open_;  //æ‘„åƒå¤´æ˜¯å¦ä¸»åŠ¨å…³é—­
 		bool is_max_window_;
 		bool current_video_mode_;
 		nbase::WeakCallbackFlag paint_video_timer_;
-		nbase::WeakCallbackFlag start_video_timer_;//1sºó¿ªÆôÉãÏñÍ·
+		nbase::WeakCallbackFlag start_video_timer_;//1såå¼€å¯æ‘„åƒå¤´
 		nbase::WeakCallbackFlag start_call_timer_;
 		VideoUidsInfo video_uids[2][4];
 		VideoUidsInfo big_wnd_info_;
@@ -411,7 +411,7 @@ namespace nim_comp
 		nbase::NLock invited_members_lock_;
 		std::map<std::string, bool> invited_members_;
 		std::set<std::string> talking_members_;
-		std::map<std::string, bool> cache_members_info_;//»º´æÌáÇ°µ½´ïµÄÏûÏ¢Í¨Öª
+		std::map<std::string, bool> cache_members_info_;//ç¼“å­˜æå‰åˆ°è¾¾çš„æ¶ˆæ¯é€šçŸ¥
 		std::set<std::string> members_info_error_;
 		shared::Ring	  voip_ring_;
 		VchatMemberStatus current_status_;
@@ -430,7 +430,7 @@ namespace nim_comp
 		ui::Slider*		output_volumn_slider_;
 		ui::VBox*		vbox_of_output_;
 		ui::Control*	place_ctrl_2_;
-		ui::BitmapControl* video_ctrl_screen_;  // ÊÓÆµäÖÈ¾´°¿Ú£¬´ó´°¿Ú
+		ui::BitmapControl* video_ctrl_screen_;  // è§†é¢‘æ¸²æŸ“çª—å£ï¼Œå¤§çª—å£
 		ui::Control*		camera_page_tip_;
 		ui::Label*			lb_ctrl_screen_;
 		ui::BitmapControl* video_ctrl_preview_[2][4];

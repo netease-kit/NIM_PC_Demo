@@ -1,0 +1,20 @@
+MESSAGE("############# av_kit #############")
+
+SET(TARGET_NAME av_kit)
+
+PROJECT(${TARGET_NAME})
+
+INCLUDE_DIRECTORIES(
+    ${PROJECT_SOURCE_DIR}/
+    ${PROJECT_SOURCE_DIR}/../
+    ${PROJECT_SOURCE_DIR}/../../
+    ${PROJECT_SOURCE_DIR}/../../../include/
+    ${PROJECT_SOURCE_DIR}/../../../lib/
+	${PROJECT_SOURCE_DIR}/../../../third_party/
+)
+
+FILE(GLOB_RECURSE AV_KIT_SOURCE *.cc *.h *.cpp *.c)
+
+ADD_LIBRARY(${TARGET_NAME} STATIC ${AV_KIT_SOURCE})
+
+SET_TARGET_PROPERTIES(${TARGET_NAME} PROPERTIES FOLDER ${GROUP_UI_COMPONENTS})

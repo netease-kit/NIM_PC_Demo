@@ -1,4 +1,5 @@
-﻿#include "nim_ui_session_manager.h"
+#include "stdafx.h"
+#include "nim_ui_session_manager.h"
 
 namespace nim_ui
 {

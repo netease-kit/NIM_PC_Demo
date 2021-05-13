@@ -10,102 +10,102 @@ public:
 	SINGLETON_DEFINE(AppSDKInterface);
 
 	/**
-	* ÅĞ¶ÏÊÇ·ñ´æÔÚÖ¸¶¨µÄÅäÖÃÏî
-	* @param[in] key ĞèÒªÅĞ¶ÏµÄĞÅÏ¢¹Ø¼ü×Ö
-	* @param[in] from_private_setting ¹«¹²ÅäÖÃÖĞÃ»ÓĞÅäÖÃÊ±£¬ÊÇ·ñ²éÕÒË½ÓĞ»¯ÅäÖÃÏî
+	* åˆ¤æ–­æ˜¯å¦å­˜åœ¨æŒ‡å®šçš„é…ç½®é¡¹
+	* @param[in] key éœ€è¦åˆ¤æ–­çš„ä¿¡æ¯å…³é”®å­—
+	* @param[in] from_private_setting å…¬å…±é…ç½®ä¸­æ²¡æœ‰é…ç½®æ—¶ï¼Œæ˜¯å¦æŸ¥æ‰¾ç§æœ‰åŒ–é…ç½®é¡¹
 	* @return bool 
 	*/
 	static bool HasconfigValue(const std::string& key,bool from_private_setting = true);
 
 	/**
-	 * »ñÈ¡Á¬½Ó·şÎñÆ÷µÄÄ³Ò»¸öÅäÖÃĞÅÏ¢
-	 * @param[in] key ĞèÒª»ñÈ¡µÄĞÅÏ¢¹Ø¼ü×Ö
-	 * @return string ÅäÖÃĞÅÏ¢
+	 * è·å–è¿æ¥æœåŠ¡å™¨çš„æŸä¸€ä¸ªé…ç½®ä¿¡æ¯
+	 * @param[in] key éœ€è¦è·å–çš„ä¿¡æ¯å…³é”®å­—
+	 * @return string é…ç½®ä¿¡æ¯
 	 */
 	static std::string GetConfigValue(const std::string& key);
 
 	/**
-	 * »ñÈ¡ÅäÖÃÎÄ¼şµÄ°æ±¾ĞÅÏ¢
-	 * @return string °æ±¾
+	 * è·å–é…ç½®æ–‡ä»¶çš„ç‰ˆæœ¬ä¿¡æ¯
+	 * @return string ç‰ˆæœ¬
 	 */
 	static int GetConfigFileVersion();
 
 	/**
-	 * »ñÈ¡Ó¦ÓÃµÄapp key
-	 * @return string ÅäÖÃĞÅÏ¢app key
+	 * è·å–åº”ç”¨çš„app key
+	 * @return string é…ç½®ä¿¡æ¯app key
 	 */
 	static std::string GetAppKey();
 		
 	/**
-	 * Ó¦ÓÃµÄapp keyÊÇ·ñÎªÍøÒ×ÔÆĞÅDemo±¾ÉíµÄapp key
-	 * @return bool true:ÊÇ,false:·ñ
+	 * åº”ç”¨çš„app keyæ˜¯å¦ä¸ºç½‘æ˜“äº‘ä¿¡Demoæœ¬èº«çš„app key
+	 * @return bool true:æ˜¯,false:å¦
 	 */
 	static bool IsNimDemoAppKey(const std::string& appkey);
 
 	/**
-	 * ÅĞ¶Ï URL ÊÇ·ñÊÇ°²È«Á´½Ó
-	 * @param[in] safe_url Òª¼ì²âµÄ URL
-	 * @return ·µ»Ø true ±íÊ¾ÊÇÒ»¸ö°²È«¶ÌÁ´½Ó£¬·ñÔòÎª false
+	 * åˆ¤æ–­ URL æ˜¯å¦æ˜¯å®‰å…¨é“¾æ¥
+	 * @param[in] safe_url è¦æ£€æµ‹çš„ URL
+	 * @return è¿”å› true è¡¨ç¤ºæ˜¯ä¸€ä¸ªå®‰å…¨çŸ­é“¾æ¥ï¼Œå¦åˆ™ä¸º false
 	 */
 	static bool IsSafeUrl(const std::string& safe_url);
 
 	/**
-	 * »ñÈ¡°²È«Á¬½ÓÖĞĞèÒª´«µİµÄ Referrer °×Ãûµ¥ URL
-	 * @return ·µ»Ø°×Ãûµ¥ÔÊĞíµÄ Referrer URL µØÖ·
+	 * è·å–å®‰å…¨è¿æ¥ä¸­éœ€è¦ä¼ é€’çš„ Referrer ç™½åå• URL
+	 * @return è¿”å›ç™½åå•å…è®¸çš„ Referrer URL åœ°å€
 	 */
 	static std::string GetReferrer();
 
 
 public:		
 	/**
-	 * »ñÈ¡Ó¦ÓÃ·¢ËÍhttpÇëÇóµÄhost,hostÓëapiÆ´½Ó³ÉÒ»¸öÍêÕûµÄhttpÇëÇóµØÖ·
-	 * ¿ª·¢Õß¿ÉÒÔĞŞ¸ÄÎª¾ßÌåÓ¦ÓÃµÄhost
-	 * @return string httpÇëÇóµÄhost
+	 * è·å–åº”ç”¨å‘é€httpè¯·æ±‚çš„host,hostä¸apiæ‹¼æ¥æˆä¸€ä¸ªå®Œæ•´çš„httpè¯·æ±‚åœ°å€
+	 * å¼€å‘è€…å¯ä»¥ä¿®æ”¹ä¸ºå…·ä½“åº”ç”¨çš„host
+	 * @return string httpè¯·æ±‚çš„host
 	 */
 	std::string GetAppHost();
 
 	/**
-	 * ×¢²áÒ»¸öĞÂÕËºÅ
-	 * @param[in] username ÒªÓÃ»§Ãû
-	 * @param[in] password ÃÜÂë
-	 * @param[in] cb ¸ñÊ½»¯Íê±ÏµÄ»Øµ÷Í¨Öªº¯Êı
-	 * @return void	ÎŞ·µ»ØÖµ
+	 * æ³¨å†Œä¸€ä¸ªæ–°è´¦å·
+	 * @param[in] username è¦ç”¨æˆ·å
+	 * @param[in] password å¯†ç 
+	 * @param[in] cb æ ¼å¼åŒ–å®Œæ¯•çš„å›è°ƒé€šçŸ¥å‡½æ•°
+	 * @return void	æ— è¿”å›å€¼
 	 */
 	void InvokeFormatAccountAndPassword(const std::string &username, const std::string &password, const OnFormatAccountAndPasswordCallback& cb);
 
 	/**
-	 * ×¢²áÒ»¸öĞÂÕËºÅ
-	 * @param[in] username Òª×¢²áµÄÓÃ»§Ãû
-	 * @param[in] password ÓÃ»§ÃÜÂë
-	 * @param[in] nickname ÓÃ»§êÇ³Æ
-	 * @param[in] cb ×¢²áÍê±ÏµÄ»Øµ÷Í¨Öªº¯Êı
-	 * @return void	ÎŞ·µ»ØÖµ
+	 * æ³¨å†Œä¸€ä¸ªæ–°è´¦å·
+	 * @param[in] username è¦æ³¨å†Œçš„ç”¨æˆ·å
+	 * @param[in] password ç”¨æˆ·å¯†ç 
+	 * @param[in] nickname ç”¨æˆ·æ˜µç§°
+	 * @param[in] cb æ³¨å†Œå®Œæ¯•çš„å›è°ƒé€šçŸ¥å‡½æ•°
+	 * @return void	æ— è¿”å›å€¼
 	 */
 	void InvokeRegisterAccount(const std::string &username, const std::string &password, const std::string &nickname, const OnRegisterAccountCallback& cb);
 
 	/**
-	 * »ñÈ¡ÁÄÌìÊÒÁĞ±í
-	 * @param[in] cb »Øµ÷Í¨Öªº¯Êı
-	 * @return void	ÎŞ·µ»ØÖµ
+	 * è·å–èŠå¤©å®¤åˆ—è¡¨
+	 * @param[in] cb å›è°ƒé€šçŸ¥å‡½æ•°
+	 * @return void	æ— è¿”å›å€¼
 	 */
 	void InvokeGetChatroomList(const OnGetChatroomListCallback& cb);
 
 	/**
-	 * »ñÈ¡ÁÄÌìÊÒÁ¬½ÓµØÖ·,¶àÓÃÓÚÄäÃûµÇÂ¼Ê±
-	 * @param[in] room_id ÁÄÌìÊÒID
-	 * @param[in] uid ÓÃ»§UID
-	 * @param[in] type ½øÈëÁÄÌìÊÒµÄÄ£Ê½ Logined = 1,Anonymous = 2,
-	 * @param[in] cb »Øµ÷Í¨Öªº¯Êı
-	 * @return void	ÎŞ·µ»ØÖµ
+	 * è·å–èŠå¤©å®¤è¿æ¥åœ°å€,å¤šç”¨äºåŒ¿åç™»å½•æ—¶
+	 * @param[in] room_id èŠå¤©å®¤ID
+	 * @param[in] uid ç”¨æˆ·UID
+	 * @param[in] type è¿›å…¥èŠå¤©å®¤çš„æ¨¡å¼ Logined = 1,Anonymous = 2,
+	 * @param[in] cb å›è°ƒé€šçŸ¥å‡½æ•°
+	 * @return void	æ— è¿”å›å€¼
 	 */
 	void InvokeGetChatroomAddress(__int64 room_id,const std::string& uid,int type, const OnGetChatroomAddressCallback& cb);
 
 private:
 	static void LoadConfig();
 	/**
-	* »ñÈ¡Á¬½Ó·şÎñÆ÷µÄÄ³Ò»¸öÅäÖÃĞÅÏ¢
-	* @param[in] key ĞèÒª»ñÈ¡µÄĞÅÏ¢¹Ø¼ü×Ö
-	* @return string ÅäÖÃĞÅÏ¢
+	* è·å–è¿æ¥æœåŠ¡å™¨çš„æŸä¸€ä¸ªé…ç½®ä¿¡æ¯
+	* @param[in] key éœ€è¦è·å–çš„ä¿¡æ¯å…³é”®å­—
+	* @return string é…ç½®ä¿¡æ¯
 	*/
 	static std::string GetConfigValueFromMap(const std::string& key);
 private:

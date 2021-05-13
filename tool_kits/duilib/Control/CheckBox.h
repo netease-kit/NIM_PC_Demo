@@ -12,7 +12,7 @@ class UILIB_API CheckBoxTemplate : public ButtonTemplate<InheritType>
 public:
 	CheckBoxTemplate();
 
-	/// ÖØĞ´¸¸Àà·½·¨£¬Ìá¹©¸öĞÔ»¯¹¦ÄÜ£¬Çë²Î¿¼¸¸ÀàÉùÃ÷
+	/// é‡å†™çˆ¶ç±»æ–¹æ³•ï¼Œæä¾›ä¸ªæ€§åŒ–åŠŸèƒ½ï¼Œè¯·å‚è€ƒçˆ¶ç±»å£°æ˜
 	virtual void Activate() override;
 	virtual Image* GetEstimateImage() override;
 	virtual void SetAttribute(const std::wstring& strName, const std::wstring& strValue) override;
@@ -22,88 +22,88 @@ public:
 	virtual bool HasHotState();
 
 	/**
-	 * @brief ÅĞ¶Ïµ±Ç°ÊÇ·ñÊÇÑ¡Ôñ×´Ì¬
-	 * @return ·µ»Ø true ÎªÑ¡Ôñ×´Ì¬£¬·ñÔòÎª false
+	 * @brief åˆ¤æ–­å½“å‰æ˜¯å¦æ˜¯é€‰æ‹©çŠ¶æ€
+	 * @return è¿”å› true ä¸ºé€‰æ‹©çŠ¶æ€ï¼Œå¦åˆ™ä¸º false
 	 */
 	bool IsSelected() const { return m_bSelected; }
 
 	/**
-	 * @brief ÉèÖÃ¿Ø¼şÊÇ·ñÑ¡Ôñ×´Ì¬
-	 * @param[in] bSelected Îª true Ê±ÎªÑ¡Ôñ×´Ì¬£¬false Ê±ÎªÈ¡ÏûÑ¡Ôñ×´Ì¬
-	 * @param[in] bTriggerEvent ÊÇ·ñ·¢ËÍ×´Ì¬¸Ä±äÊÂ¼ş£¬true Îª·¢ËÍ£¬·ñÔòÎª false¡£Ä¬ÈÏÎª false
-	 * @return ÎŞ
+	 * @brief è®¾ç½®æ§ä»¶æ˜¯å¦é€‰æ‹©çŠ¶æ€
+	 * @param[in] bSelected ä¸º true æ—¶ä¸ºé€‰æ‹©çŠ¶æ€ï¼Œfalse æ—¶ä¸ºå–æ¶ˆé€‰æ‹©çŠ¶æ€
+	 * @param[in] bTriggerEvent æ˜¯å¦å‘é€çŠ¶æ€æ”¹å˜äº‹ä»¶ï¼Œtrue ä¸ºå‘é€ï¼Œå¦åˆ™ä¸º falseã€‚é»˜è®¤ä¸º false
+	 * @return æ— 
 	 */
 	virtual void Selected(bool bSelected, bool bTriggerEvent = false);
 
 	/**
-	 * @brief »ñÈ¡±»Ñ¡ÔñÊ±µÄÍ¼Æ¬
-	 * @param[in] stateType Òª»ñÈ¡ºÎÖÖ×´Ì¬ÏÂµÄÍ¼Æ¬£¬²Î¿¼ ControlStateType Ã¶¾Ù
-	 * @return ·µ»ØÍ¼Æ¬Î»ÖÃ
+	 * @brief è·å–è¢«é€‰æ‹©æ—¶çš„å›¾ç‰‡
+	 * @param[in] stateType è¦è·å–ä½•ç§çŠ¶æ€ä¸‹çš„å›¾ç‰‡ï¼Œå‚è€ƒ ControlStateType æšä¸¾
+	 * @return è¿”å›å›¾ç‰‡ä½ç½®
 	 */
 	std::wstring GetSelectedStateImage(ControlStateType stateType);
 
 	/**
-	 * @brief ÉèÖÃ±»Ñ¡ÔñÊ±µÄÍ¼Æ¬
-	 * @param[in] stateType ÒªÉèÖÃÄÄÖĞ×´Ì¬ÏÂµÄÍ¼Æ¬
-	 * @param[in] strImage Í¼Æ¬µØÖ·
-	 * @return ÎŞ
+	 * @brief è®¾ç½®è¢«é€‰æ‹©æ—¶çš„å›¾ç‰‡
+	 * @param[in] stateType è¦è®¾ç½®å“ªä¸­çŠ¶æ€ä¸‹çš„å›¾ç‰‡
+	 * @param[in] strImage å›¾ç‰‡åœ°å€
+	 * @return æ— 
 	 */
 	void SetSelectedStateImage(ControlStateType stateType, const std::wstring& strImage);
 
 	/**
-	 * @brief »ñÈ¡±»Ñ¡ÔñÊ±µÄÎÄ±¾ÑÕÉ«
-	 * @return ·µ»Ø±»Ñ¡ÔñÊ±µÄÎÄ±¾ÑÕÉ«
+	 * @brief è·å–è¢«é€‰æ‹©æ—¶çš„æ–‡æœ¬é¢œè‰²
+	 * @return è¿”å›è¢«é€‰æ‹©æ—¶çš„æ–‡æœ¬é¢œè‰²
 	 */
 	std::wstring GetSelectedTextColor();
 
 	/**
-	 * @brief ÉèÖÃ±»Ñ¡ÔñÊ±µÄÎÄ±¾ÑÕÉ«
-	 * @param[in] dwTextColor ÒªÉèÖÃµÄÑÕÉ«×Ö·û´®£¬¸ÃÑÕÉ«±ØĞëÔÚ global.xml ÖĞ´æÔÚ
-	 * @return ÎŞ
+	 * @brief è®¾ç½®è¢«é€‰æ‹©æ—¶çš„æ–‡æœ¬é¢œè‰²
+	 * @param[in] dwTextColor è¦è®¾ç½®çš„é¢œè‰²å­—ç¬¦ä¸²ï¼Œè¯¥é¢œè‰²å¿…é¡»åœ¨ global.xml ä¸­å­˜åœ¨
+	 * @return æ— 
 	 */
 	void SetSelectedTextColor(const std::wstring& dwTextColor);
 
 	/**
-	 * @brief »ñÈ¡±»Ñ¡ÔñÊ±µÄ¿Ø¼şÑÕÉ« 
-	 * @param[in] stateType Òª»ñÈ¡ºÎÖÖ×´Ì¬ÏÂµÄÑÕÉ«
-	 * @return ·µ»ØÑÕÉ«×Ö·û´®£¬¸ÃÖµÔÚ global.xml ÖĞ¶¨Òå
+	 * @brief è·å–è¢«é€‰æ‹©æ—¶çš„æ§ä»¶é¢œè‰² 
+	 * @param[in] stateType è¦è·å–ä½•ç§çŠ¶æ€ä¸‹çš„é¢œè‰²
+	 * @return è¿”å›é¢œè‰²å­—ç¬¦ä¸²ï¼Œè¯¥å€¼åœ¨ global.xml ä¸­å®šä¹‰
 	 */
 	std::wstring GetSelectStateColor(ControlStateType stateType);
 
 	/**
-	 * @brief ÉèÖÃ±»Ñ¡ÔñÊ±µÄ¿Ø¼şÑÕÉ«
-	 * @param[in] stateType ÒªÉèÖÃºÎÖÖ×´Ì¬ÏÂµÄÑÕÉ«
-	 * @param[in] stateColor ÒªÉèÖÃµÄÑÕÉ«
-	 * @return ÎŞ
+	 * @brief è®¾ç½®è¢«é€‰æ‹©æ—¶çš„æ§ä»¶é¢œè‰²
+	 * @param[in] stateType è¦è®¾ç½®ä½•ç§çŠ¶æ€ä¸‹çš„é¢œè‰²
+	 * @param[in] stateColor è¦è®¾ç½®çš„é¢œè‰²
+	 * @return æ— 
 	 */
 	void SetSelectedStateColor(ControlStateType stateType, const std::wstring& stateColor);
 
 	/**
-	 * @brief »ñÈ¡±»Ñ¡ÔñÊ±µÄÇ°¾°Í¼Æ¬
-	 * @param[in] stateType Òª»ñÈ¡ºÎÖÖ×´Ì¬ÏÂµÄÇ°¾°Í¼Æ¬
-	 * @return ·µ»ØÍ¼Æ¬Î»ÖÃ
+	 * @brief è·å–è¢«é€‰æ‹©æ—¶çš„å‰æ™¯å›¾ç‰‡
+	 * @param[in] stateType è¦è·å–ä½•ç§çŠ¶æ€ä¸‹çš„å‰æ™¯å›¾ç‰‡
+	 * @return è¿”å›å›¾ç‰‡ä½ç½®
 	 */
 	std::wstring GetSelectedForeStateImage(ControlStateType stateType);
 
 	/**
-	 * @brief ÉèÖÃ±»Ñ¡ÔñÊ±µÄÇ°¾°Í¼Æ¬
-	 * @param[in] stateType ÒªÉèÖÃºÎÖÖ×´Ì¬ÏÂµÄÇ°¾°Í¼Æ¬
-	 * @param[in] pStrImage Í¼Æ¬Î»ÖÃ
-	 * @return ÎŞ
+	 * @brief è®¾ç½®è¢«é€‰æ‹©æ—¶çš„å‰æ™¯å›¾ç‰‡
+	 * @param[in] stateType è¦è®¾ç½®ä½•ç§çŠ¶æ€ä¸‹çš„å‰æ™¯å›¾ç‰‡
+	 * @param[in] pStrImage å›¾ç‰‡ä½ç½®
+	 * @return æ— 
 	 */
 	void SetSelectedForeStateImage(ControlStateType stateType, const std::wstring& pStrImage);
 
 	/**
-	 * @brief ¼àÌı±»Ñ¡ÔñÊ±µÄÊÂ¼ş
-	 * @param[in] callback ±»Ñ¡ÔñÊ±´¥·¢µÄ»Øµ÷º¯Êı
-	 * @return ÎŞ
+	 * @brief ç›‘å¬è¢«é€‰æ‹©æ—¶çš„äº‹ä»¶
+	 * @param[in] callback è¢«é€‰æ‹©æ—¶è§¦å‘çš„å›è°ƒå‡½æ•°
+	 * @return æ— 
 	 */
 	void AttachSelect(const EventCallback& callback) { OnEvent[kEventSelect] += callback; }
 
 	/**
-	 * @brief ¼àÌıÈ¡ÏûÑ¡ÔñÊ±µÄÊÂ¼ş
-	 * @param[in] callback È¡ÏûÑ¡ÔñÊ±´¥·¢µÄ»Øµ÷º¯Êı
-	 * @return ÎŞ
+	 * @brief ç›‘å¬å–æ¶ˆé€‰æ‹©æ—¶çš„äº‹ä»¶
+	 * @param[in] callback å–æ¶ˆé€‰æ‹©æ—¶è§¦å‘çš„å›è°ƒå‡½æ•°
+	 * @return æ— 
 	 */
 	void AttachUnSelect(const EventCallback& callback) { OnEvent[kEventUnSelect] += callback; }
 

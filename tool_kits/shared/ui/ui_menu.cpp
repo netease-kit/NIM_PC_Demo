@@ -101,7 +101,7 @@ void CMenuWnd::Show()
 		rc.top = monitor_rect.top;
 	}
 
-	//�ж��Ƿ񳬳���Ļ
+	//判断是否超出屏幕
 	if (rc.left > monitor_rect.right - szInit.cx)
 	{
 		rc.left = monitor_rect.right - szInit.cx;

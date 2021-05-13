@@ -1,4 +1,4 @@
-
+#include "stdafx.h"
 #include "yuv_image.h"
 #include "libyuv.h"
 

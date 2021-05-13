@@ -8,7 +8,7 @@ using namespace ui;
 using namespace std;
 using namespace nbase;
 
-//TODO ÒÔÏÂ´úÂëÀÃµ½¼Ò oleg
+//TODO ä»¥ä¸‹ä»£ç çƒ‚åˆ°å®¶ oleg
 int ListItemUtil::GetGroup(GroupType groupType, wchar_t letter, bool has_robot_node)
 {
 	int index = 0;

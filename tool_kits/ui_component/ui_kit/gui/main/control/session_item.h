@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "module/session/session_util.h"
 #include "module/subscribe_event/subscribe_event_manager.h"
 

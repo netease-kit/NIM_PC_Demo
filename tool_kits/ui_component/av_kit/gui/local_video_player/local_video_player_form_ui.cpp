@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "local_video_player_form.h"
 #include "shared/modal_wnd/file_dialog_ex.h"
 #ifdef SUPPORTLOCALPLAYER
@@ -99,7 +100,7 @@ LRESULT LocalVideoPlayerForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, B
 	{
 		while (playing_)
 			Sleep(100);
-		::DestroyWindow(m_hWnd); //È·±£²¥·ÅÆ÷ÊµÀýÏú»ÙÖ®ºóÔÙÕæÕý¹Ø±Õ´°¿Ú
+		::DestroyWindow(m_hWnd); //ç¡®ä¿æ’­æ”¾å™¨å®žä¾‹é”€æ¯ä¹‹åŽå†çœŸæ­£å…³é—­çª—å£
 		LocalVideoPlayerForm::InstanceNum--;		
 	});
 
@@ -107,10 +108,10 @@ LRESULT LocalVideoPlayerForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, B
 	if (playing_)
 	{
 		Shutdown();
-		nbase::ThreadManager::PostDelayedTask(post_close_cb, nbase::TimeDelta::FromSeconds(1)); //µÈ´ýshudownÍê³ÉÔÙ¹Ø±Õ´°¿Ú
+		nbase::ThreadManager::PostDelayedTask(post_close_cb, nbase::TimeDelta::FromSeconds(1)); //ç­‰å¾…shudownå®Œæˆå†å…³é—­çª—å£
 	}
 	else
-		post_close_cb(); //Ö±½Ó¹Ø±Õ´°¿Ú
+		post_close_cb(); //ç›´æŽ¥å…³é—­çª—å£
 	bHandled = true;
 	return 0;
 }
@@ -159,7 +160,7 @@ bool LocalVideoPlayerForm::OnClicked(ui::EventArgs * msg)
 	else if (name == L"start" )
 	{
 		ChangePlayerState(PlayerStateStarting);
-		if (!StartPlay()) //ÕâÀïÖ»´¦ÀíÊ§°ÜÇé¿ö£¬ÊÕµ½NELP_MSG_PREPAREDÏûÏ¢²ÅËã²¥·Å³É¹¦
+		if (!StartPlay()) //è¿™é‡Œåªå¤„ç†å¤±è´¥æƒ…å†µï¼Œæ”¶åˆ°NELP_MSG_PREPAREDæ¶ˆæ¯æ‰ç®—æ’­æ”¾æˆåŠŸ
 			ChangePlayerState(PlayerStateError);
 	}
 	else if (name == L"pause")
@@ -210,14 +211,14 @@ void LocalVideoPlayerForm::ChangePlayerState(PlayerState new_state)
 	{
 	case PlayerStateStarting:
 	{
-		play_pause_box_->SelectItem(L"start"); //ÏÔÊ¾¿ªÊ¼°´Å¥
-		btn_start_->SetEnabled(false); //disable¿ªÊ¼°´Å¥
+		play_pause_box_->SelectItem(L"start"); //æ˜¾ç¤ºå¼€å§‹æŒ‰é’®
+		btn_start_->SetEnabled(false); //disableå¼€å§‹æŒ‰é’®
 		break;
 	}
-	case PlayerStatePlaying: //Nelp_Start³É¹¦»òNelp_ResumeÖ®ºó
+	case PlayerStatePlaying: //Nelp_StartæˆåŠŸæˆ–Nelp_Resumeä¹‹åŽ
 	{		
-		play_pause_box_->SelectItem(L"pause"); //µã²¥ÏÔÊ¾ÔÝÍ£°´Å¥	
-		btn_start_->SetEnabled(false); //disable¿ªÊ¼°´Å¥
+		play_pause_box_->SelectItem(L"pause"); //ç‚¹æ’­æ˜¾ç¤ºæš‚åœæŒ‰é’®	
+		btn_start_->SetEnabled(false); //disableå¼€å§‹æŒ‰é’®
 		playing_progress_->SetEnabled(true);
 		playing_progress_->SetVisible(true);
 	
@@ -225,7 +226,7 @@ void LocalVideoPlayerForm::ChangePlayerState(PlayerState new_state)
 		{
 			auto refresh_time_cb = refresh_time_flag_.ToWeakCallback([this]()
 			{
-				RefreshPlayTime(); //¿ªÊ¼Ë¢ÐÂ²¥·ÅÊ±¼ä
+				RefreshPlayTime(); //å¼€å§‹åˆ·æ–°æ’­æ”¾æ—¶é—´
 			});
 			nbase::ThreadManager::PostRepeatedTask(refresh_time_cb, nbase::TimeDelta::FromMilliseconds(500));
 		}
@@ -233,29 +234,29 @@ void LocalVideoPlayerForm::ChangePlayerState(PlayerState new_state)
 	}
 	case PlayerStatePaused:
 	{
-		play_pause_box_->SelectItem(L"resume"); //ÏÔÊ¾¼ÌÐø²¥·Å°´Å¥
-		btn_start_->SetEnabled(false); //disable¿ªÊ¼°´Å¥
+		play_pause_box_->SelectItem(L"resume"); //æ˜¾ç¤ºç»§ç»­æ’­æ”¾æŒ‰é’®
+		btn_start_->SetEnabled(false); //disableå¼€å§‹æŒ‰é’®
 		break;
 	}
 	case PlayerStateStopping:
 	{
-		play_pause_box_->SelectItem(L"start"); //ÏÔÊ¾¿ªÊ¼°´Å¥
-		btn_start_->SetEnabled(false); //disable¿ªÊ¼°´Å¥
+		play_pause_box_->SelectItem(L"start"); //æ˜¾ç¤ºå¼€å§‹æŒ‰é’®
+		btn_start_->SetEnabled(false); //disableå¼€å§‹æŒ‰é’®
 		break;
 	}
 	case PlayerStateCompleted:
 	case PlayerStateStopped:
 	case PlayerStateError:
 	{		
-		play_pause_box_->SelectItem(L"start"); //ÏÔÊ¾¿ªÊ¼°´Å¥
-		refresh_time_flag_.Cancel(); //È¡ÏûË¢ÐÂÊ±¼äÈÎÎñ
-		btn_start_->SetEnabled(true); //disable¿ªÊ¼°´Å¥
+		play_pause_box_->SelectItem(L"start"); //æ˜¾ç¤ºå¼€å§‹æŒ‰é’®
+		refresh_time_flag_.Cancel(); //å–æ¶ˆåˆ·æ–°æ—¶é—´ä»»åŠ¡
+		btn_start_->SetEnabled(true); //disableå¼€å§‹æŒ‰é’®
 		playing_progress_->SetEnabled(false);
 		if (new_state != PlayerStateCompleted)
 		{
-			playing_progress_->SetVisible(false); //Òþ²Ø½ø¶ÈÌõ
+			playing_progress_->SetVisible(false); //éšè—è¿›åº¦æ¡
 			playing_progress_->SetValue(0);
-			label_duration_->SetText(L""); //ÖØÖÃ²¥·ÅÊ±¼ä
+			label_duration_->SetText(L""); //é‡ç½®æ’­æ”¾æ—¶é—´
 			canvas_->Clear();
 		}
 		break;

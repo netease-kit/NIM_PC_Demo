@@ -1,4 +1,5 @@
-﻿#include "gui/main/team_event_form.h"
+#include "stdafx.h"
+#include "gui/main/team_event_form.h"
 #include "gui/main/control/custom_msg.h"
 #include "module/db/user_db.h"
 

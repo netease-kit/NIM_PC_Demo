@@ -1,5 +1,7 @@
+#include "stdafx.h"
 #include "main.h"
 #include "nim_app.h"
+
 int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)
 {
 #ifdef _DEBUG

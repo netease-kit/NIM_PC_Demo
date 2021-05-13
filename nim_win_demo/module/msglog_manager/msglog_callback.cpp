@@ -1,4 +1,5 @@
-﻿#include "msglog_callback.h"
+#include "stdafx.h"
+#include "msglog_callback.h"
 #include "shared/zip.h"
 #include "shared/unzip.h"
 #include "module/session/session_util.h"
@@ -6,11 +7,10 @@
 #include "base/encrypt/encrypt.h"
 #include "base/encrypt/encrypt_impl.h"
 #include <fstream>
-#include "aes.h"
-#include "modes.h"
-#include "files.h"
-#include "hex.h"
-#include <openssl/aes.h>
+#include "openssl/aes.h"
+#include "openssl/modes.h"
+// #include "openssl/files.h"
+// #include "openssl/hex.h"
 
 bool CBC_AESDecryptFile(std::string sKey, std::string sIV, const std::string& src, const std::string& des)
 {
@@ -142,7 +142,7 @@ std::string MsglogCallback::OnMigrateMsglogPackageCallback(const std::string& lo
 	// 根据 SDK 传回的文件路径取目录
 	std::string work_directory;
 	shared::FilePathApartDirectory(local_source_file, work_directory);
-	std::wstring account_dir = QPath::GetUserAppDataDir(account);
+    std::wstring account_dir = nbase::UTF8ToUTF16(nim::Tool::GetUserAppdataDir(account));
 	std::wstring packaged_file_path = nbase::UTF8ToUTF16(work_directory + local_file_name + ".zip");
 
 	// 压缩文件到压缩包中

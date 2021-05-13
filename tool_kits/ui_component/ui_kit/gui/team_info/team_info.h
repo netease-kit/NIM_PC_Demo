@@ -1,4 +1,4 @@
-﻿#ifndef TEAM_INFO_FORM_H_
+#ifndef TEAM_INFO_FORM_H_
 #define TEAM_INFO_FORM_H_
 
 #include "util/window_ex.h"

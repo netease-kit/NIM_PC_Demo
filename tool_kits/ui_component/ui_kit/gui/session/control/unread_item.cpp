@@ -1,13 +1,15 @@
-﻿#include "unread_item.h"
+#include "stdafx.h"
+#include "unread_item.h"
 #include "module/session/session_manager.h"
 #include "module/session/session_util.h"
 #include "gui/main/team_event_form.h"
 #include "gui/team_info/team_notify.h"
-#include "tool_kits/shared/ui/ui_menu.h"
+#include "shared/ui/ui_menu.h"
 #include "callback/team/team_callback.h"
 #include "gui/profile_form/profile_form.h"
 
 using namespace ui;
+
 namespace nim_comp
 {
 

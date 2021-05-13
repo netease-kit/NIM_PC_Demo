@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "browser_handler.h"
 #include "include/cef_frame.h"
 #include "manager/cef_manager.h"
@@ -17,13 +18,13 @@ BrowserHandler::BrowserHandler()
 void BrowserHandler::SetViewRect(RECT rc)
 {
 	if (!CefCurrentlyOn(TID_UI)) {
-		// °Ñ²Ù×÷Ìø×ªµ½CefÏß³ÌÖ´ĞĞ
+		// æŠŠæ“ä½œè·³è½¬åˆ°Cefçº¿ç¨‹æ‰§è¡Œ
 		CefPostTask(TID_UI, base::Bind(&BrowserHandler::SetViewRect, this, rc));
 		return;
 	}
 
 	rect_cef_control_ = rc;
-	// µ÷ÓÃWasResized½Ó¿Ú£¬µ÷ÓÃºó£¬BrowserHandler»áµ÷ÓÃGetViewRect½Ó¿ÚÀ´»ñÈ¡ä¯ÀÀÆ÷¶ÔÏóĞÂµÄÎ»ÖÃ
+	// è°ƒç”¨WasResizedæ¥å£ï¼Œè°ƒç”¨åï¼ŒBrowserHandlerä¼šè°ƒç”¨GetViewRectæ¥å£æ¥è·å–æµè§ˆå™¨å¯¹è±¡æ–°çš„ä½ç½®
 	if (browser_.get() && browser_->GetHost().get())
 		browser_->GetHost()->WasResized();
 }
@@ -69,7 +70,7 @@ void BrowserHandler::CloseAllBrowser()
 
 bool BrowserHandler::OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)
 {
-	// ´¦Àírender½ø³Ì·¢À´µÄÏûÏ¢
+	// å¤„ç†renderè¿›ç¨‹å‘æ¥çš„æ¶ˆæ¯
 	std::string message_name = message->GetName();
 	if (message_name == kFocusedNodeChangedMessage)
 	{
@@ -113,12 +114,12 @@ bool BrowserHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 	CefBrowserSettings& settings,
 	bool* no_javascript_access)
 {
-	// ÈÃĞÂµÄÁ´½ÓÔÚÔ­ä¯ÀÀÆ÷¶ÔÏóÖĞ´ò¿ª
+	// è®©æ–°çš„é“¾æ¥åœ¨åŸæµè§ˆå™¨å¯¹è±¡ä¸­æ‰“å¼€
 	if (browser_.get() && !target_url.empty())
 	{
 		if (handle_delegate_)
 		{
-			// ·µ»ØtrueÔò¼ÌĞøÔÚ¿Ø¼şÄÚ´ò¿ªĞÂÁ´½Ó£¬falseÔò½ûÖ¹·ÃÎÊ
+			// è¿”å›trueåˆ™ç»§ç»­åœ¨æ§ä»¶å†…æ‰“å¼€æ–°é“¾æ¥ï¼Œfalseåˆ™ç¦æ­¢è®¿é—®
 			bool bRet = handle_delegate_->OnBeforePopup(browser, frame, target_url, target_frame_name, target_disposition, user_gesture, popupFeatures, windowInfo, client, settings, no_javascript_access);
 			if (bRet)
 				browser_->GetMainFrame()->LoadURL(target_url);
@@ -127,7 +128,7 @@ bool BrowserHandler::OnBeforePopup(CefRefPtr<CefBrowser> browser,
 			browser_->GetMainFrame()->LoadURL(target_url);
 	}
 
-	// ½ûÖ¹µ¯³öpopup´°¿Ú
+	// ç¦æ­¢å¼¹å‡ºpopupçª—å£
 	return true;
 }
 
@@ -146,7 +147,7 @@ void BrowserHandler::OnAfterCreated(CefRefPtr<CefBrowser> browser)
 			handle_delegate_->OnAfterCreated(browser);
 		}
 
-		// ÓĞ´°Ä£Ê½ÏÂ£¬ä¯ÀÀÆ÷´´½¨Íê±Ïºó£¬ÈÃÉÏ²ã¸üĞÂÒ»ÏÂ×Ô¼ºµÄÎ»ÖÃ£»ÒòÎªÔÚÒì²½×´Ì¬ÏÂ£¬ÉÏ²ã¸üĞÂÎ»ÖÃÊ±¿ÉÄÜCef´°¿Ú»¹Ã»ÓĞ´´½¨³öÀ´
+		// æœ‰çª—æ¨¡å¼ä¸‹ï¼Œæµè§ˆå™¨åˆ›å»ºå®Œæ¯•åï¼Œè®©ä¸Šå±‚æ›´æ–°ä¸€ä¸‹è‡ªå·±çš„ä½ç½®ï¼›å› ä¸ºåœ¨å¼‚æ­¥çŠ¶æ€ä¸‹ï¼Œä¸Šå±‚æ›´æ–°ä½ç½®æ—¶å¯èƒ½Cefçª—å£è¿˜æ²¡æœ‰åˆ›å»ºå‡ºæ¥
 		if (!CefManager::GetInstance()->IsEnableOffsetRender() && handle_delegate_)
 		{
 			handle_delegate_->UpdateWindowPos();
@@ -265,8 +266,8 @@ void BrowserHandler::OnPaint(CefRefPtr<CefBrowser> browser,
 {
 	if (handle_delegate_)
 	{
-		// ¶àÏß³ÌÏûÏ¢Ñ­»·Ä£Ê½ÖĞ£¬OnPaintÔÚCefµÄÏß³Ì±»´¥·¢£¬ÕâÊ±°ÑÊı¾İ±£´æµ½paint_buffer_ÖĞ£¬Ìø×ªµ½UIÏß³ÌÖ´ĞĞäÖÈ¾²Ù×÷¡£
-		// ÕâÀï²»¶Ôpaint_buffer_¼ÓËø£¬¼´Ê¹Á½¸öÏß³Ì²Ù×÷paint_buffer_·¢Éú¾ºÕù£¬Ò²Ö»ÊÇÈÃÄ³Ò»´ÎäÖÈ¾Ğ§¹ûÓĞè¦´Ã£¬²»»á±ÀÀ££¬Õâ¸öè¦´ÃÊÇ¿ÉÒÔ½ÓÊÜµÄ
+		// å¤šçº¿ç¨‹æ¶ˆæ¯å¾ªç¯æ¨¡å¼ä¸­ï¼ŒOnPaintåœ¨Cefçš„çº¿ç¨‹è¢«è§¦å‘ï¼Œè¿™æ—¶æŠŠæ•°æ®ä¿å­˜åˆ°paint_buffer_ä¸­ï¼Œè·³è½¬åˆ°UIçº¿ç¨‹æ‰§è¡Œæ¸²æŸ“æ“ä½œã€‚
+		// è¿™é‡Œä¸å¯¹paint_buffer_åŠ é”ï¼Œå³ä½¿ä¸¤ä¸ªçº¿ç¨‹æ“ä½œpaint_buffer_å‘ç”Ÿç«äº‰ï¼Œä¹Ÿåªæ˜¯è®©æŸä¸€æ¬¡æ¸²æŸ“æ•ˆæœæœ‰ç‘•ç–µï¼Œä¸ä¼šå´©æºƒï¼Œè¿™ä¸ªç‘•ç–µæ˜¯å¯ä»¥æ¥å—çš„
 		int buffer_length = width * height * 4;
 		if (buffer_length > (int)paint_buffer_.size())
 			paint_buffer_.resize(buffer_length + 1);
@@ -303,7 +304,7 @@ CefRefPtr<CefMenuModel> model)
 		{
 			if (model->GetCount() > 0)
 			{
-				// ½ûÖ¹ÓÒ¼ü²Ëµ¥
+				// ç¦æ­¢å³é”®èœå•
 				model->Clear();
 			}
 		}
@@ -385,7 +386,7 @@ void BrowserHandler::OnLoadError(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFra
 
 bool BrowserHandler::OnJSDialog(CefRefPtr<CefBrowser> browser, const CefString& origin_url, const CefString& accept_lang, JSDialogType dialog_type, const CefString& message_text, const CefString& default_prompt_text, CefRefPtr<CefJSDialogCallback> callback, bool& suppress_message)
 {
-	// releaseÊ±×èÖ¹µ¯³öjs¶Ô»°¿ò
+	// releaseæ—¶é˜»æ­¢å¼¹å‡ºjså¯¹è¯æ¡†
 #ifndef _DEBUG
 	suppress_message = true;
 #endif

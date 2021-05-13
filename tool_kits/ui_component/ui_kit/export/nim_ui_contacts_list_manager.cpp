@@ -1,4 +1,5 @@
-﻿#include "nim_ui_contacts_list_manager.h"
+#include "stdafx.h"
+#include "nim_ui_contacts_list_manager.h"
 #include "module/subscribe_event/subscribe_event_manager.h"
 #include "gui/main/friend_list.h"
 #include "gui/main/group_list.h"

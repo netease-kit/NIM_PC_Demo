@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 namespace ui
 {
 	typedef std::function<void(int nStartIndex, int nEndIndex)> DataChangedNotify;

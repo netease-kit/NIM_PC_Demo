@@ -33,11 +33,11 @@ LRESULT CaptureWindow::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 			}
 			else
 			{
-				// »æÖÆ½ØÍ¼±à¼­, ÕâÊÇÒ»´Î±à¼­µÄ¿ªÊ¼
+				// ç»˜åˆ¶æˆªå›¾ç¼–è¾‘, è¿™æ˜¯ä¸€æ¬¡ç¼–è¾‘çš„å¼€å§‹
 				capture_edit_->SetTrackRect(track_rect_); 
 				//capture_edit_->SetEditMode(capture_edit_mode_);
 				edit = capture_edit_->OnLButtonDownInCaptureEditMode(point_offset_, toolbar_->GetPos()) == TRUE;
-				// »æÖÆ½ØÍ¼±à¼­
+				// ç»˜åˆ¶æˆªå›¾ç¼–è¾‘
 				capture_edit_->OnMouseMoveInCaptureEditMode(point_offset_, toolbar_->GetPos());
 			}
 		}
@@ -78,7 +78,7 @@ LRESULT CaptureWindow::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 			}
 			else
 			{
-				// »æÖÆ½ØÍ¼±à¼­
+				// ç»˜åˆ¶æˆªå›¾ç¼–è¾‘
 				capture_edit_->OnMouseMoveInCaptureEditMode(point, toolbar_->GetPos());
 			}
 		}

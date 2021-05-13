@@ -1,4 +1,5 @@
-﻿#include "team_search.h"
+#include "stdafx.h"
+#include "team_search.h"
 #include "module/emoji/richedit_util.h"
 #include "module/session/session_util.h"
 #include "callback/team/team_callback.h"

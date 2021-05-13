@@ -1,19 +1,18 @@
 #ifndef UI_IMAGE_VIEW_H__
 #define UI_IMAGE_VIEW_H__
 
-
 class UiImageView : public ui::Control
 {
 public:
 	enum PicDirectionOfRotation
 	{
-		kClockWise = 0,		//Ë³Ê±Õë
-		kAntiClockWise		//ÄæÊ±Õë
+		kClockWise = 0,		//é¡ºæ—¶é’ˆ
+		kAntiClockWise		//é€†æ—¶é’ˆ
 	};
 	enum PicZoom
 	{
-		kMagnifyPic = 0,	//·Å´ó
-		kReducePic			//ËõĞ¡
+		kMagnifyPic = 0,	//æ”¾å¤§
+		kReducePic			//ç¼©å°
 	};
 
 	UiImageView();
@@ -24,34 +23,34 @@ public:
 	virtual void HandleMessage(ui::EventArgs& event) override;
 	virtual void Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint) override;
 	
-	//Íâ²¿½Ó¿Ú
+	//å¤–éƒ¨æ¥å£
 public:
-	//Ğı×ªÍ¼Æ¬
+	//æ—‹è½¬å›¾ç‰‡
 	void RotatePic(PicDirectionOfRotation direction);
-	//Ëõ·ÅÍ¼Æ¬
+	//ç¼©æ”¾å›¾ç‰‡
 	void ScalePic(PicZoom zoom);
-	//ÉèÖÃÒªÏÔÊ¾µÄÍ¼Æ¬Â·¾¶
+	//è®¾ç½®è¦æ˜¾ç¤ºçš„å›¾ç‰‡è·¯å¾„
 	int SetPicPath(std::wstring image_path);
 
 	UINT GetImageWidth();
 	UINT GetImageHeight();
 
-	//ÅĞ¶ÏÊó±êÊÇ·ñÔÚÍ¼Æ¬ÄÚÒÔ¼°Í¼Æ¬ÊÇ·ñ¿ÉÒÔ±»ÍÏ¶¯
+	//åˆ¤æ–­é¼ æ ‡æ˜¯å¦åœ¨å›¾ç‰‡å†…ä»¥åŠå›¾ç‰‡æ˜¯å¦å¯ä»¥è¢«æ‹–åŠ¨
 	bool PtInImageView(POINT point); 
 	
-	//ÖØÖÃÍ¼Æ¬ÎªÔ­Ê¼³ß´ç
+	//é‡ç½®å›¾ç‰‡ä¸ºåŸå§‹å°ºå¯¸
 	void SetOriginalSize();
 
 	/*
-	*	@brief ¸ù¾İ´«ÈëµÄÔ¤Éè¿Ø¼ş¿í¸ßºÍÍ¼Æ¬¿í¸ß£¬¼ÆËã½«ÒªÏÔÊ¾µÄÍ¼Æ¬µÄËõ·Å±È
-	*	@param control_width:Ô¤ÉèµÄ¿Ø¼ş¿í¶È
-	*	@param control_height:Ô¤ÉèµÄ¿Ø¼ş¸ß¶È
-	*	@param image_width :Ô¤ÉèµÄÍ¼Æ¬¿í¶È
-	*	@param image_height :Ô¤ÉèµÄÍ¼Æ¬¸ß¶È
+	*	@brief æ ¹æ®ä¼ å…¥çš„é¢„è®¾æ§ä»¶å®½é«˜å’Œå›¾ç‰‡å®½é«˜ï¼Œè®¡ç®—å°†è¦æ˜¾ç¤ºçš„å›¾ç‰‡çš„ç¼©æ”¾æ¯”
+	*	@param control_width:é¢„è®¾çš„æ§ä»¶å®½åº¦
+	*	@param control_height:é¢„è®¾çš„æ§ä»¶é«˜åº¦
+	*	@param image_width :é¢„è®¾çš„å›¾ç‰‡å®½åº¦
+	*	@param image_height :é¢„è®¾çš„å›¾ç‰‡é«˜åº¦
 	*/
 	float GetDefaultScale(int control_width, int control_height, int image_width, int image_height);
 
-	//ÉèÖÃÏÔÊ¾µÄÍ¼Æ¬µÄÆ«ÒÆÁ¿£¬ÓÃÓÚÓÃ»§ÍÏ¶¯Í¼Æ¬
+	//è®¾ç½®æ˜¾ç¤ºçš„å›¾ç‰‡çš„åç§»é‡ï¼Œç”¨äºç”¨æˆ·æ‹–åŠ¨å›¾ç‰‡
 	void SetPicOffset(int offset_x, int offset_y);
 
 	bool IsAdjustScale(void){ return bAdjustScale_; };
@@ -63,29 +62,29 @@ private:
 	void SetAngle(int angle);
 	void SetScale(float scale);
 
-	//Éú³ÉÒ»¸öĞı×ªºóµÄÎ»Í¼
+	//ç”Ÿæˆä¸€ä¸ªæ—‹è½¬åçš„ä½å›¾
 	HBITMAP GetRotatedBitmap(HDC hDC, HBITMAP hBitmap, float radians, COLORREF clrBack);
 
-	//»ñÈ¡Í¼Æ¬µÄĞı×ª·½Ïò
+	//è·å–å›¾ç‰‡çš„æ—‹è½¬æ–¹å‘
 	static Gdiplus::RotateFlipType GetRotateFlipType(Gdiplus::Image& image);
 	static Gdiplus::RotateFlipType GetRotateFlipType(short direction);
 
-	//ĞŞÕıÆ«ÒÆÁ¿£¬¸ù¾İ¿Ø¼şµÄ´óĞ¡ºÍÏÔÊ¾µÄÍ¼Æ¬µÄ´óĞ¡£¬ĞŞÕı´«ÈëµÄÆ«ÒÆÁ¿
+	//ä¿®æ­£åç§»é‡ï¼Œæ ¹æ®æ§ä»¶çš„å¤§å°å’Œæ˜¾ç¤ºçš„å›¾ç‰‡çš„å¤§å°ï¼Œä¿®æ­£ä¼ å…¥çš„åç§»é‡
 	void CheckOffset(int& nOffset, int nControl, int nImage);
 
 private:
 
-	int angle_;							//Í¼Æ¬µÄĞı×ª½Ç¶È
-	float scale_;						//Í¼Æ¬Ëõ·Å±ÈÀı
-	std::wstring image_path_;			//Í¼Æ¬±¾µØµØÖ·
+	int angle_;							//å›¾ç‰‡çš„æ—‹è½¬è§’åº¦
+	float scale_;						//å›¾ç‰‡ç¼©æ”¾æ¯”ä¾‹
+	std::wstring image_path_;			//å›¾ç‰‡æœ¬åœ°åœ°å€
 
-	std::unique_ptr<Gdiplus::Image> image_;//´æ·ÅÍ¼Æ¬ĞÅÏ¢
-	std::unique_ptr<Gdiplus::Bitmap> image_transform_;//´æ·Å´¦ÀíºóµÄÎ»Í¼
+	std::unique_ptr<Gdiplus::Image> image_;//å­˜æ”¾å›¾ç‰‡ä¿¡æ¯
+	std::unique_ptr<Gdiplus::Bitmap> image_transform_;//å­˜æ”¾å¤„ç†åçš„ä½å›¾
 	
-	RECT rect_image_;					//Í¼Æ¬´óĞ¡
-	bool can_moving_;					//Í¼Æ¬ÊÇ·ñ¿ÉÒÔÒÆ¶¯
-	int offset_x_;						//Í¼Æ¬»æÖÆµÄºáÏòÆ«ÒÆÁ¿
-	int offset_y_;						//Í¼Æ¬»æÖÆµÄ×İÏòÆ«ÒÆÁ¿
+	RECT rect_image_;					//å›¾ç‰‡å¤§å°
+	bool can_moving_;					//å›¾ç‰‡æ˜¯å¦å¯ä»¥ç§»åŠ¨
+	int offset_x_;						//å›¾ç‰‡ç»˜åˆ¶çš„æ¨ªå‘åç§»é‡
+	int offset_y_;						//å›¾ç‰‡ç»˜åˆ¶çš„çºµå‘åç§»é‡
 
 
 	bool bAdjustScale_;

@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "ui_head_view_ctrl.h"
 #include "ui_head_select_ctrl.h"
 #include "shared/ui/msgbox.h"

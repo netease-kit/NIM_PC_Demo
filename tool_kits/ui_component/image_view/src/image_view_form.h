@@ -17,12 +17,12 @@ public:
 	ImageViewForm(void);
 	virtual ~ImageViewForm(void);
 
-	//½Ó¿ÚÊµÏÖ
+	//æ¥å£å®ç°
 	virtual std::wstring GetSkinFolder() override;
 	virtual std::wstring GetSkinFile() override;
 	virtual ui::UILIB_RESOURCETYPE GetResourceType() const override;
 	virtual std::wstring GetZIPFileName() const;
-	//¸²¸ÇĞéº¯Êı
+	//è¦†ç›–è™šå‡½æ•°
 	virtual std::wstring GetWindowClassName() const override { return kClassName; };
 	virtual UINT GetClassStyle() const override { return UI_CLASSSTYLE_FRAME | CS_DBLCLKS; };
 	
@@ -30,11 +30,11 @@ public:
 	virtual ui::Control* CreateControl(const std::wstring& pstrClass) override;
 	virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 	bool Notify(ui::EventArgs* msg);
-	void SaveImageDlgCallback(BOOL ret, std::wstring file_path_save); //±£´æÍ¼Æ¬µÄ»Øµ÷
-	void ActiveWindow();  //¼¤»î´°¿Ú
+	void SaveImageDlgCallback(BOOL ret, std::wstring file_path_save); //ä¿å­˜å›¾ç‰‡çš„å›è°ƒ
+	void ActiveWindow();  //æ¿€æ´»çª—å£
 
 public:
-	//´°¿ÚÊÂ¼ş
+	//çª—å£äº‹ä»¶
 	virtual LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
 	virtual LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
 	virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
@@ -43,33 +43,33 @@ public:
 	virtual LRESULT OnSize(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
 
 	/*
-	 *	@brief ÏÔÊ¾Ä³Ò»¸öÍ¼Æ¬
-	 *	@param size true:¸ù¾İÍ¼Æ¬µÄ³ß´ç×Ô¶¯ÉèÖÃ´°ÌåµÄ³õÊ¼´óĞ¡
-	 *			    false:Ê¹ÓÃ´°ÌåµÄÄ¬ÈÏ´óĞ¡£¬²»ËæÍ¼Æ¬¸Ä¶¯
-	 *	@param nosave true:½ûÓÃ±£´æ°´Å¥
-	 *				  false:ÆôÓÃ±£´æ°´Å¥
+	 *	@brief æ˜¾ç¤ºæŸä¸€ä¸ªå›¾ç‰‡
+	 *	@param size true:æ ¹æ®å›¾ç‰‡çš„å°ºå¯¸è‡ªåŠ¨è®¾ç½®çª—ä½“çš„åˆå§‹å¤§å°
+	 *			    false:ä½¿ç”¨çª—ä½“çš„é»˜è®¤å¤§å°ï¼Œä¸éšå›¾ç‰‡æ”¹åŠ¨
+	 *	@param nosave true:ç¦ç”¨ä¿å­˜æŒ‰é’®
+	 *				  false:å¯ç”¨ä¿å­˜æŒ‰é’®
 	 */
 	bool StartViewPic(std::wstring path_pic, bool size, bool nosave);
 
-	//ÏÔÊ¾/Òş²ØÍ¼Æ¬°Ù·Ö±ÈÌáÊ¾
+	//æ˜¾ç¤º/éšè—å›¾ç‰‡ç™¾åˆ†æ¯”æç¤º
 	void ShowImageScale(bool show);
 
-	//ÆôÓÃ/½ûÓÃ¹¤¾ßÀ¸°´Å¥
+	//å¯ç”¨/ç¦ç”¨å·¥å…·æ æŒ‰é’®
 	void SetToolbarEnable(bool eable);
-	//µ÷Õû¹¤¾ßÌõ¹¤¾ßÌõÄÚ¿Ø¼şÏÔÊ¾×´Ì¬
+	//è°ƒæ•´å·¥å…·æ¡å·¥å…·æ¡å†…æ§ä»¶æ˜¾ç¤ºçŠ¶æ€
 	void AdjustToolbarStatus();
 
-	// ¸ù¾İHitTest½á¹ûÉèÖÃÊó±ê¹â±ê
+	// æ ¹æ®HitTestç»“æœè®¾ç½®é¼ æ ‡å…‰æ ‡
 	void SetHitTestCursor(CursorState hit_test);
 
-	//ÊÇ·ñÔÚÆäËû¿Ø¼şÉÏ
+	//æ˜¯å¦åœ¨å…¶ä»–æ§ä»¶ä¸Š
 	bool IsOnOtherControl(POINT pt);
 
-	//¼ì²éÉÏÒ»ÕÅºÍÏÂÒ»ÕÅÍ¼Æ¬°´Å¥µÄ×´Ì¬
+	//æ£€æŸ¥ä¸Šä¸€å¼ å’Œä¸‹ä¸€å¼ å›¾ç‰‡æŒ‰é’®çš„çŠ¶æ€
 	void CheckNextOrPreImageBtnStatus();
 	void SetNextOrPreImageBtnVisible(bool show);
 
-	//Ë¢ĞÂµ±Ç°ÏÔÊ¾µÄÍ¼Æ¬Êı
+	//åˆ·æ–°å½“å‰æ˜¾ç¤ºçš„å›¾ç‰‡æ•°
 	void UpdateImagePage();
 
 	void MaxWindowSize();
@@ -78,29 +78,29 @@ public:
 	std::wstring CurrentImagePath() { return image_path_; }
 
 private:
-	//ÍâÆÁ×ø±êµ÷Õû
+	//å¤–å±åæ ‡è°ƒæ•´
 	void ScreenToClientEx(POINT &pt);
 
-	//¸ù¾İÒªÏÔÊ¾µÄÍ¼Æ¬µÄ³ß´ç£¬µÃµ½Ó¦¸ÃÉèÖÃµÄ´°Ìå¿íºÍ¸ß£¬bg_cornerÊÇ´°Ìå±³¾°Í¼Æ¬cornerÊôĞÔËùĞèµÄÆ«ÒÆÁ¿
+	//æ ¹æ®è¦æ˜¾ç¤ºçš„å›¾ç‰‡çš„å°ºå¯¸ï¼Œå¾—åˆ°åº”è¯¥è®¾ç½®çš„çª—ä½“å®½å’Œé«˜ï¼Œbg_corneræ˜¯çª—ä½“èƒŒæ™¯å›¾ç‰‡cornerå±æ€§æ‰€éœ€çš„åç§»é‡
 	bool GetDefaultWindowSize(int &wnd_width, int &wnd_height, int &bg_corner);
 
-	//Í¼Æ¬´¦Àí¸¨Öúº¯Êı
+	//å›¾ç‰‡å¤„ç†è¾…åŠ©å‡½æ•°
 	void GetMimeType(const std::wstring& filepath, std::wstring& mime_type_out, std::wstring& exten_out);
 	std::wstring GetMimeType(GUID& clsid);
 
 private:
 
 	static LPCTSTR		kClassName;
-	static const int	kBackgroundCorner;	//·Ç×î´ó»¯´°Ìå×´Ì¬ÏÂ±³¾°Í¼Æ¬µÄÒõÓ°Ğ§¹ûµÄcornerÊôĞÔµÄÖµ
-	static LPCTSTR		kRestoredWindowBg;	//·Ç×î´ó»¯´°Ìå×´Ì¬µÄ±³¾°Í¼
-	static LPCTSTR		kMaxWindowBg;		//×î´ó»¯´°Ìå×´Ì¬µÄ±³¾°Í¼
+	static const int	kBackgroundCorner;	//éæœ€å¤§åŒ–çª—ä½“çŠ¶æ€ä¸‹èƒŒæ™¯å›¾ç‰‡çš„é˜´å½±æ•ˆæœçš„cornerå±æ€§çš„å€¼
+	static LPCTSTR		kRestoredWindowBg;	//éæœ€å¤§åŒ–çª—ä½“çŠ¶æ€çš„èƒŒæ™¯å›¾
+	static LPCTSTR		kMaxWindowBg;		//æœ€å¤§åŒ–çª—ä½“çŠ¶æ€çš„èƒŒæ™¯å›¾
 
 	ui::Box* back_image_;
-	ui::Control *gif_image_;		//ÕıÔÚÏÂÔØÍ¼Æ¬Ê±ÏÔÊ¾µÄwait¶¯Ì¬Í¼
+	ui::Control *gif_image_;		//æ­£åœ¨ä¸‹è½½å›¾ç‰‡æ—¶æ˜¾ç¤ºçš„waitåŠ¨æ€å›¾
 	UiImageView *ui_image_view_;
 
 	ui::Box	*scale_info_bg_;		
-	ui::Label *scale_info_;			//Ëõ·ÅÍ¼Æ¬Ê±ÖĞ¼äÏÔÊ¾µÄËõ·ÅĞÅÏ¢
+	ui::Label *scale_info_;			//ç¼©æ”¾å›¾ç‰‡æ—¶ä¸­é—´æ˜¾ç¤ºçš„ç¼©æ”¾ä¿¡æ¯
 	nbase::WeakCallbackFlag hide_scale_timer_weakflag_;
 	ui::Button *button_preimage_;
 	ui::Button *button_nextimage_;
@@ -120,11 +120,11 @@ private:
 	ui::Button *button_save_;
 
 
-	bool pic_moving_;			//ÅĞ¶ÏÊÇ·ñÒÆ¶¯Í¼Æ¬:true ±íÊ¾ÒÆ¶¯Í¼Æ¬
-	POINT point_off_;			//¼ÇÂ¼Êó±ê±ä»¯Ö®Ç°µÄÎ»ÖÃ
-	std::wstring image_path_;	//ÕıÔÚ²é¿´µÄÍ¼Æ¬µÄÂ·¾¶
-	bool show_scale_;			//´ò¿ªĞÂµÄÍ¼Æ¬Ê±ÊÇ·ñÒªÏÈÏÔÊ¾Ò»ÏÂµ±Ç°µÄËõ·Å±ÈÀı	
-	bool show_nextorpre_btn_;	//ÊÇ·ñÏÔÊ¾ÉÏÒ»¸ö/ÏÂÒ»¸ö°´Å¥
+	bool pic_moving_;			//åˆ¤æ–­æ˜¯å¦ç§»åŠ¨å›¾ç‰‡:true è¡¨ç¤ºç§»åŠ¨å›¾ç‰‡
+	POINT point_off_;			//è®°å½•é¼ æ ‡å˜åŒ–ä¹‹å‰çš„ä½ç½®
+	std::wstring image_path_;	//æ­£åœ¨æŸ¥çœ‹çš„å›¾ç‰‡çš„è·¯å¾„
+	bool show_scale_;			//æ‰“å¼€æ–°çš„å›¾ç‰‡æ—¶æ˜¯å¦è¦å…ˆæ˜¾ç¤ºä¸€ä¸‹å½“å‰çš„ç¼©æ”¾æ¯”ä¾‹	
+	bool show_nextorpre_btn_;	//æ˜¯å¦æ˜¾ç¤ºä¸Šä¸€ä¸ª/ä¸‹ä¸€ä¸ªæŒ‰é’®
 };
 
 #endif //IMAGE_VIEW_FORM_H__

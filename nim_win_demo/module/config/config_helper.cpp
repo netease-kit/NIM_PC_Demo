@@ -1,6 +1,6 @@
-﻿#include "config_helper.h"
+#include "stdafx.h"
+#include "config_helper.h"
 #include "module/db/public_db.h"
-
 
 ConfigHelper::ConfigHelper() :
 adapt_dpi_(true), uistyle_id_(1), 

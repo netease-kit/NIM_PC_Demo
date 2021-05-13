@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "gui/main/group_list.h"
 #include "shared/tool.h"
 #include "gui/main/control/friend_item.h"
@@ -27,7 +28,7 @@ GroupList::GroupList(ui::TreeView* group_list) :
 
 	nim::Team::QueryAllMyTeamsInfoAsync(nbase::Bind(&GroupList::OnQueryAllMyTeams, this, std::placeholders::_1, std::placeholders::_2));
 
-	//Ìí¼Ó´´½¨ºÍËÑË÷ÈºµÄlistitem£¬Î»ÓÚÁÐ±í×î¿ªÍ·Î»ÖÃ
+	//æ·»åŠ åˆ›å»ºå’Œæœç´¢ç¾¤çš„listitemï¼Œä½äºŽåˆ—è¡¨æœ€å¼€å¤´ä½ç½®
 	ui::TreeNode* create_group_item = (ui::TreeNode*)ui::GlobalManager::CreateBox(L"main/main_create_normal_group_list_item.xml");
 	group_list_->GetRootNode()->AddChildNodeAt(create_group_item, 0);
 
@@ -37,7 +38,7 @@ GroupList::GroupList(ui::TreeView* group_list) :
 	ui::TreeNode* search_group_item = (ui::TreeNode*)ui::GlobalManager::CreateBox(L"main/main_search_group_list_item.xml");
 	group_list_->GetRootNode()->AddChildNodeAt(search_group_item, 2);
 
-	//³õÊ¼»¯·Ö×éÏî
+	//åˆå§‹åŒ–åˆ†ç»„é¡¹
 	ui::TreeNode* tree_node;
 	tree_node = ListItemUtil::CreateFirstLetterListItem(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_ADVANCED_TEAM"));
 	group_list_->GetRootNode()->AddChildNode(tree_node);
@@ -84,7 +85,7 @@ void GroupList::OnQueryAllMyTeams(int team_count, const std::list<nim::TeamInfo>
 			AddListItem(*it);
 	}
 
-	// ÅúÁ¿²éÑ¯×Ô¼ºÔÚÃ¿¸öÈºÀïµÄ³ÉÔ±ÐÅÏ¢
+	// æ‰¹é‡æŸ¥è¯¢è‡ªå·±åœ¨æ¯ä¸ªç¾¤é‡Œçš„æˆå‘˜ä¿¡æ¯
 	if (!team_info_list.empty())
 		SessionManager::GetInstance()->QueryMyAllTeamMemberInfos();
 }

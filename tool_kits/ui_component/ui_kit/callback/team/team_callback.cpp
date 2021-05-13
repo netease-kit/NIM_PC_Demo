@@ -1,5 +1,5 @@
-﻿#include "team_callback.h"
-#include "shared/cpp_wrapper_util.h"
+#include "stdafx.h"
+#include "team_callback.h"
 #include "module/session/session_manager.h"
 #include "module/db/user_db.h"
 #include "gui/team_info/team_notify.h"
@@ -180,16 +180,20 @@ void TeamCallback::UITeamEventCallback(const nim::TeamEvent& info, const std::st
 		int sz = (int)info.src_data_.size();
 		for (auto i = 0; i < sz; i++)
 		{
-			Json::Value unread_info = std::move(shared::tools::NimCppWrapperJsonValueToJsonValue(info.src_data_[i]));
-			SessionBox* session = SessionManager::GetInstance()->FindSessionBox(tid);
-			if (session)
-				session->UpdateUnreadCount(unread_info["client_msg_id"].asString(), unread_info["count"].asInt());
-			if (unread_info.isMember("read_accid"))
-			{
-				UnreadForm *form = (UnreadForm *)WindowsManager::GetInstance()->GetWindow(UnreadForm::kClassName, UnreadForm::kClassName);
-				if (form)
-					form->UpdateUnreadCount(unread_info["client_msg_id"].asString(), unread_info["count"].asInt(), unread_info["read_accid"].asString());
-			}
+            nim_cpp_wrapper_util::Json::Value nim_json_values;
+            nim_cpp_wrapper_util::Json::Reader nim_json_reader;
+            if (nim_json_reader.parse(info.src_data_[i].toStyledString(), nim_json_values))
+            {
+                SessionBox* session = SessionManager::GetInstance()->FindSessionBox(tid);
+                if (session)
+                    session->UpdateUnreadCount(nim_json_values["client_msg_id"].asString(), nim_json_values["count"].asInt());
+                if (nim_json_values.isMember("read_accid")) {
+                    UnreadForm* form = (UnreadForm*)WindowsManager::GetInstance()->GetWindow(UnreadForm::kClassName, UnreadForm::kClassName);
+                    if (form)
+                        form->UpdateUnreadCount(nim_json_values["client_msg_id"].asString(), nim_json_values["count"].asInt(),
+                                                nim_json_values["read_accid"].asString());
+                }
+            }
 		}
 	}
 	else

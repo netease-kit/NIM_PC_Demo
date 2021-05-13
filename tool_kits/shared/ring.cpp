@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "ring.h"
 #include "log.h"
 #include "util.h"

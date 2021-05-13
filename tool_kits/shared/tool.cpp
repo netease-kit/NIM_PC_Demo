@@ -1,4 +1,4 @@
-﻿#include "stdafx.h"
+#include "stdafx.h"
 #include "tool.h"
 #include <atlbase.h>
 #include <shlwapi.h>

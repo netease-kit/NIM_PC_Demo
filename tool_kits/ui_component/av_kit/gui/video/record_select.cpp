@@ -1,8 +1,7 @@
+#include "stdafx.h"
 #include "record_select.h"
-
 #include <ShlObj.h>
 #include <sys/timeb.h>
-
 
 namespace nim_comp
 {
@@ -83,7 +82,7 @@ bool RecordSelectForm::OnClicked(ui::EventArgs * msg)
 			{
 				def_path_ = path;
 				timeb time_now;
-				ftime(&time_now); // ����
+				ftime(&time_now); // 秒数
 				std::wstring aac_file_name;
 				std::wstring mp4_file_name;
 				std::wstring mp42_file_name;
@@ -111,13 +110,13 @@ bool RecordSelectForm::OnClicked(ui::EventArgs * msg)
 	else if (name == L"path")
 	{
 		BROWSEINFO bInfo = { 0 };
-		bInfo.hwndOwner = GetHWND();//������  
+		bInfo.hwndOwner = GetHWND();//父窗口  
 		bInfo.lpszTitle = ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_RECORD_SELECT_SCAN_FOLDERS").c_str();
-		bInfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_USENEWUI/*����һ���༭�� �û������ֶ���д·�� �Ի�����Ե�����С֮���..*/ |
-			BIF_UAHINT/*��TIPS��ʾ*/ | BIF_NONEWFOLDERBUTTON /*�����½��ļ��а�ť*/;
+		bInfo.ulFlags = BIF_RETURNONLYFSDIRS | BIF_USENEWUI/*包含一个编辑框 用户可以手动填写路径 对话框可以调整大小之类的..*/ |
+			BIF_UAHINT/*带TIPS提示*/ | BIF_NONEWFOLDERBUTTON /*不带新建文件夹按钮*/;
 		LPITEMIDLIST lpDlist;
 		lpDlist = SHBrowseForFolder(&bInfo);
-		if (lpDlist != NULL)//������ȷ����ť  
+		if (lpDlist != NULL)//单击了确定按钮  
 		{
 			TCHAR szPathName[MAX_PATH];
 			SHGetPathFromIDList(lpDlist, szPathName);

@@ -5,7 +5,7 @@
 
 #include "duilib/UIlib.h"
 
-// ÑÕÉ«¿é
+// é¢œè‰²å—
 class CColorBlock : public ui::Option
 {
 public:
@@ -27,7 +27,7 @@ private:
 	std::wstring color_name_;
 };
 
-// »­Ë¢¿é
+// ç”»åˆ·å—
 class CBrushBlock : public ui::Option
 {
 public:
@@ -40,14 +40,14 @@ public:
 	int GetBrushWidth2() { return brush_width2_; };
 
 private:
-	int brush_width_; // »­Ë¢¿í¶È
-	int brush_width2_; // Ä£ºıÇøÓòÖ±¾¶
-	int brush_paint_width_;//ÏÔÊ¾µÄÊ±ºòÔ²µãÖ±¾¶
+	int brush_width_; // ç”»åˆ·å®½åº¦
+	int brush_width2_; // æ¨¡ç³ŠåŒºåŸŸç›´å¾„
+	int brush_paint_width_;//æ˜¾ç¤ºçš„æ—¶å€™åœ†ç‚¹ç›´å¾„
 	void DrawCircleBlock(HDC hDc, const ui::UiRect &rect);
 	std::unique_ptr<Gdiplus::SolidBrush> brush_;
 };
 
-// µ÷É«°å
+// è°ƒè‰²æ¿
 class CColorPalette : public ui::Box
 {
 public:

@@ -1,12 +1,12 @@
 #pragma once
 namespace app_sdk
 {
-	//¸ñÊ½»¯ÕËºÅÃÜÂë»Øµ÷
-	using OnFormatAccountAndPasswordCallback = std::function<void(bool ret,/*ÊÇ·ñ½øĞĞµÇÂ¼*/const std::string& account, const std::string& password)>;
-	//×¢²áĞÂÕËºÅ»Øµ÷
+	//æ ¼å¼åŒ–è´¦å·å¯†ç å›è°ƒ
+	using OnFormatAccountAndPasswordCallback = std::function<void(bool ret,/*æ˜¯å¦è¿›è¡Œç™»å½•*/const std::string& account, const std::string& password)>;
+	//æ³¨å†Œæ–°è´¦å·å›è°ƒ
 	using OnRegisterAccountCallback = std::function<void(int code, const std::string& err_msg)>;
-	//»ñÈ¡ÁÄÌìÊÒÁĞ±í»Øµ÷
+	//è·å–èŠå¤©å®¤åˆ—è¡¨å›è°ƒ
 	using OnGetChatroomListCallback = std::function<void(int code, const std::vector< nim_chatroom::ChatRoomInfo>& chatroom_list)>;
-	//»ñÈ¡ÁÄÌìÊÒµØÖ·»Øµ÷
+	//è·å–èŠå¤©å®¤åœ°å€å›è°ƒ
 	using OnGetChatroomAddressCallback = std::function<void(int code, const std::list< std::string>& address_list)>;
 }

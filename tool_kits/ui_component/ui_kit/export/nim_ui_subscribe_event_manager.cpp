@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "nim_ui_subscribe_event_manager.h"
 
 namespace nim_ui

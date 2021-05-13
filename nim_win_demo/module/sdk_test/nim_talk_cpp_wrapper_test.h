@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "nim_all_cpp_wrapper.h"
 
@@ -17,7 +17,7 @@ namespace nim_test
 
 			json[nim::kNIMMsgKeyToAccount] = receiver; //消息接收者帐号
 			json[nim::kNIMMsgKeyTime] = 1000 * nbase::Time::Now().ToTimeT();; // 消息发送时间（毫秒）
-			json[nim::kNIMMsgKeyClientMsgid] = QString::GetGUID(); //消息id，一般使用guid
+			json[nim::kNIMMsgKeyClientMsgid] = nim::Tool::GetUuid(); //消息id，一般使用guid
 
 
 			json[nim::kNIMMsgKeyLocalLogStatus] = nim::kNIMMsgLogStatusSending; //消息状态
@@ -60,7 +60,7 @@ namespace nim_test
 			json[nim::kNIMMsgKeyToAccount] = receiver;					    //消息接收者帐号
 			json[nim::kNIMMsgKeyTime] = 1000 * nbase::Time::Now().ToTimeT();;   //消息发送时间（毫秒）
 
-			json[nim::kNIMMsgKeyClientMsgid] = QString::GetGUID();				//消息id，一般使用guid
+			json[nim::kNIMMsgKeyClientMsgid] = nim::Tool::GetUuid();				//消息id，一般使用guid
 			json[nim::kNIMMsgKeyLocalLogStatus] = nim::kNIMMsgLogStatusSending; //消息状态
 
 			nim::Talk::SendMsg(json.toStyledString());

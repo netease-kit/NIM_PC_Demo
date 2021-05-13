@@ -2,13 +2,12 @@
 
 #include "nim_ui_dll.h"
 #include "module/service/notify_center.h"
-#include "tool_kits/base/memory/singleton.h"
 
 namespace nim_ui
 {
 
 /** @class NotifyCenter
-  * @brief ÊÂ¼şÍ¨ÖªÖĞĞÄ
+  * @brief äº‹ä»¶é€šçŸ¥ä¸­å¿ƒ
   * @copyright (c) 2015-2016, NetEase Inc. All rights reserved
   * @author Redrain
   * @date 2017/4/20
@@ -20,10 +19,10 @@ public:
 
 public:
 	/**
-	* ×¢²áÊÂ¼şÍ¨ÖªµÄ»Øµ÷º¯Êı
-	* @param[in] type ÊÂ¼şÀàĞÍ
-	* @param[in] notify »Øµ÷º¯Êı
-	* @return UnregisterCallback ·´×¢²á¶ÔÏó
+	* æ³¨å†Œäº‹ä»¶é€šçŸ¥çš„å›è°ƒå‡½æ•°
+	* @param[in] type äº‹ä»¶ç±»å‹
+	* @param[in] notify å›è°ƒå‡½æ•°
+	* @return UnregisterCallback åæ³¨å†Œå¯¹è±¡
 	*/
 	UnregisterCallback RegNotify(NotifyType type, OnNotify notify);
 

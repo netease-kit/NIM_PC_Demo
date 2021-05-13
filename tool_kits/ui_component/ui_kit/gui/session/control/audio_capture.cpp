@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "audio_capture.h"
 #include "module/audio/audio_manager.h"
 #include "module/video/video_manager.h"
@@ -77,7 +78,7 @@ bool AudioCaptureView::OnClicked(ui::EventArgs* param)
 		auto aac_option = dynamic_cast<ui::Option*>(FindSubControl(L"aac"));
 		if (aac_option != nullptr)
 			aac = aac_option->IsSelected();
-		msg_uuid_ = QString::GetGUID();
+		msg_uuid_ = nim::Tool::GetUuid();
 
         std::string device_path;
         int no = 0;
@@ -186,7 +187,7 @@ void AudioCaptureView::OnCancelCaptureCallback(const std::string& session_id, in
 
 void AudioCaptureView::OnEnumCaptureDeviceCallback(int rescode, const std::wstring& device_list)
 {
-	// Èç¹ûÕýÔÚ±¾¿Ø¼þÕýÔÚÂ¼ÖÆ£¬¾ÍÖ±½Ó·µ»Ø
+	// å¦‚æžœæ­£åœ¨æœ¬æŽ§ä»¶æ­£åœ¨å½•åˆ¶ï¼Œå°±ç›´æŽ¥è¿”å›ž
 	if (AudioManager::GetInstance()->GetCaptureSid() == session_id_)
 		return;
 

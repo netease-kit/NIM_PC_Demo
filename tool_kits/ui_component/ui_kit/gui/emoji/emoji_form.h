@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "module/emoji/emoji_info.h"
 
 typedef std::function<void(std::wstring)> OnSelectEmotion;

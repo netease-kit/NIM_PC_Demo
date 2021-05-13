@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "login_form.h"
 #include <fstream>
 #include "base/util/string_util.h"
@@ -15,9 +16,11 @@
 #include "tool_kits\ui_component\ui_kit\export\nim_ui_runtime_manager.h"
 #include "gui/proxy/proxy_form.h"
 #include "nim_app.h"
-
 #include "ui_component\ui_kit\util\user.h"
+#include <iostream>
+
 using namespace ui;
+
 void LoginForm::OnLogin()
 {
 	if (use_private_settings_->IsSelected())
@@ -118,8 +121,8 @@ bool LoginForm::InitSDK(const std::string& pravate_settings_file_path)
 }
 void LoginForm::DoInitUiKit(nim_ui::InitManager::InitMode mode)
 {
-	// InitUiKit接口第一个参数决定是否启用事件订阅模块，默认为false，如果是云信demo app则为true
-	// 如果你的App开启了事件订阅功能，则此参数改为true
+	// InitUiKit鎺ュ彛绗竴涓弬鏁板喅瀹氭槸鍚﹀惎鐢ㄤ簨浠惰闃呮ā鍧楋紝榛樿涓篺alse锛屽鏋滄槸浜戜俊demo app鍒欎负true
+	// 濡傛灉浣犵殑App寮�鍚簡浜嬩欢璁㈤槄鍔熻兘锛屽垯姝ゅ弬鏁版敼涓簍rue
 	nim_ui::InitManager::GetInstance()->InitUiKit(app_sdk::AppSDKInterface::IsNimDemoAppKey(app_sdk::AppSDKInterface::GetAppKey()), mode);
 }
 void LoginForm::DoBeforeLogin()
@@ -157,6 +160,27 @@ void LoginForm::DoRegisterAccount()
 	chkbox_private_use_proxy_enable_->SetEnabled(false);
 	if (!nim_ui::RunTimeDataManager::GetInstance()->IsSDKInited() && !InitSDK())
 			return;
+	if(0)
+	{//cqu227hk
+		//auto task = ToWeakCallback([](int res, const std::string& err_msg) {});
+		std::string password = nim::Tool::GetMd5("kuikui");
+		std::string username, nickname;
+		for (int i = 10; i < 8000; i++)
+		{
+			username.clear();
+			username.append("cqu227hk_").append(std::to_string(i));
+			nickname.clear();
+			nickname.append("hk_").append(std::to_string(i));
+			app_sdk::AppSDKInterface::GetInstance()->InvokeRegisterAccount(username, password, nickname, ToWeakCallback([i](int res, const std::string& err_msg) {
+				std::cout << "--------------------- " << i << " code " << res << "--------------------" << std::endl;
+				}));
+			Sleep(10);
+		}	
+		return;
+	}
+	
+
+
 	MutiLanSupport* mls = MutiLanSupport::GetInstance();
 	std::string username = user_name_edit_->GetUTF8Text();
 	StringHelper::Trim(username);
@@ -177,7 +201,7 @@ void LoginForm::DoRegisterAccount()
 		btn_register_->SetEnabled(false);
 		btn_login_->SetVisible(false);
 
-		password = QString::GetMd5(password);
+		password = nim::Tool::GetMd5(password);
 		auto task = ToWeakCallback([this](int res, const std::string& err_msg) {
 			if (res == 200)
 			{

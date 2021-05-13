@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 #include "shared/util.h"
 #include "module/emoji/richedit_util.h"

@@ -1,5 +1,7 @@
+#include "stdafx.h"
 #include "ui_kit/module/multi_retweet/multi_message_retweet_data_def.h"
 #include "gui/main/control/session_item_helper.h"
+
 namespace nim_comp
 {
 	const int MultiMessageRetweetData::abstract_list_length_ = 2;

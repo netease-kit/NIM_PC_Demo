@@ -1,4 +1,5 @@
-﻿#include "force_push_manager.h"
+#include "stdafx.h"
+#include "force_push_manager.h"
 #include "module/db/user_db.h"
 
 namespace nim_comp

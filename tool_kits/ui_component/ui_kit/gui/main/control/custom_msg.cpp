@@ -1,4 +1,5 @@
-﻿#include "custom_msg.h"
+#include "stdafx.h"
+#include "custom_msg.h"
 #include "module/session/session_util.h"
 #include "module/emoji/emoji_info.h"
 

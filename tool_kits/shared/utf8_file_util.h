@@ -1,4 +1,4 @@
-﻿// File operation utilities for UTF-8 encoding support
+// File operation utilities for UTF-8 encoding support
 
 #ifndef SHARED_UTF8_FILE_UTIL_H_
 #define SHARED_UTF8_FILE_UTIL_H_

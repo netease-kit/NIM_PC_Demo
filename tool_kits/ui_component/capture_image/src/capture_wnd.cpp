@@ -22,7 +22,7 @@ using namespace ui;
 
 static ui::Control* CaptureWindowCreateControl( const std::wstring& pstrClass )
 {
-	// ½âÎöXMLÊ±£¬Óöµ½×Ô¶¨ÒåµÄ½Úµã
+	// è§£æXMLæ—¶ï¼Œé‡åˆ°è‡ªå®šä¹‰çš„èŠ‚ç‚¹
 	if (pstrClass == _T("CaptureEdit"))
 	{
 		return new CCaptureEdit();
@@ -86,7 +86,7 @@ void CaptureWindow::OnFinalMessage(HWND hWnd)
 	__super::OnFinalMessage(hWnd);
 }
 
-// ÉèÖÃÌáÊ¾ÎÄ±¾
+// è®¾ç½®æç¤ºæ–‡æœ¬
 void CaptureWindow::SetSendInfo(std::wstring send_info)
 {
 	if (send_info.size() == 0)
@@ -138,10 +138,10 @@ void CaptureWindow::InitWindow()
 		desktop_scale_ = dpi_value * 100 / 96;
 	}
 
-	// ½ØÍ¼±à¼­¿Ø¼ş
+	// æˆªå›¾ç¼–è¾‘æ§ä»¶
 	capture_edit_ = static_cast<CCaptureEdit *>(FindControl(L"capture_edit"));
 	ASSERT(capture_edit_);
-	// 6¸öoptionÒ»×é
+	// 6ä¸ªoptionä¸€ç»„
 	vec_option_names_.push_back(L"rectangle_option");
 	vec_option_names_.push_back(L"ellipse_option");
 	vec_option_names_.push_back(L"line_option");
@@ -152,11 +152,11 @@ void CaptureWindow::InitWindow()
 	vec_option_names_.push_back(L"gauss_option");
 	toolbar_ = static_cast<Box *>(FindControl(L"toolbar_button"));
 
-	// ¶¯Ì¬´´½¨µ÷É«°å
-	color_palette_ = new CColorPalette(); // ±¾ÉíÊÇÒ»¸öÈİÆ÷
+	// åŠ¨æ€åˆ›å»ºè°ƒè‰²æ¿
+	color_palette_ = new CColorPalette(); // æœ¬èº«æ˜¯ä¸€ä¸ªå®¹å™¨
 	toolbar_->Add(color_palette_->CreateColorPaletteUI(nbase::Bind(&CaptureWindowCreateControl, std::placeholders::_1)));
 	color_palette_->InitChildControls();
-	color_palette_->SetVisible(false); // ³õÊ¼²»¿É¼û
+	color_palette_->SetVisible(false); // åˆå§‹ä¸å¯è§
 	capture_edit_->SetColorPalette(color_palette_);
 
 	Label *label = static_cast<Label *>(FindControl(L"send_info"));
@@ -210,12 +210,12 @@ void CaptureWindow::InitWindow()
 #ifdef DEBUG
 	SetWindowLong( m_hWnd, GWL_EXSTYLE, windowLongEx | WS_EX_TOOLWINDOW );
 
-	// µ÷ÊÔÊ±ÓÃ  HWND_NOTOPMOST£¬ÓÃÍê»»»ØÀ´ HWND_TOPMOST
+	// è°ƒè¯•æ—¶ç”¨  HWND_NOTOPMOSTï¼Œç”¨å®Œæ¢å›æ¥ HWND_TOPMOST
 	SetPos(ui::UiRect(screen_x_, screen_y_, screen_x_ + screen_width_, screen_y_+screen_height_), false, SWP_NOACTIVATE, NULL);
 #else
 	SetWindowLong(m_hWnd, GWL_EXSTYLE, windowLongEx | WS_EX_TOOLWINDOW | WS_EX_TOPMOST);
 
-	// µ÷ÊÔÊ±ÓÃ  HWND_NOTOPMOST£¬ÓÃÍê»»»ØÀ´ HWND_TOPMOST
+	// è°ƒè¯•æ—¶ç”¨  HWND_NOTOPMOSTï¼Œç”¨å®Œæ¢å›æ¥ HWND_TOPMOST
 	SetPos(ui::UiRect(screen_x_, screen_y_, screen_x_ + screen_width_, screen_y_ + screen_height_), false, SWP_NOACTIVATE, HWND_TOPMOST);
 #endif
 
@@ -253,19 +253,19 @@ bool CaptureWindow::Notify(ui::EventArgs* msg)
 		{
 			//da::DaSupport::GetInstance()->AddDaEvent(YX_TYPE_SESSION, YX_SESSIONCLICKSSTOOLBOX, L"SsSave");
 
-			Save(); // ±£´æµ½±¾µØÎÄ¼şºó×Ô¶¯ÍË³ö
+			Save(); // ä¿å­˜åˆ°æœ¬åœ°æ–‡ä»¶åè‡ªåŠ¨é€€å‡º
 		}
 		else if(msg->pSender->GetName() == L"undo_btn")
 		{
 			//da::DaSupport::GetInstance()->AddDaEvent(YX_TYPE_SESSION, YX_SESSIONCLICKSSTOOLBOX, L"SsRevoke");
 
-			capture_edit_->Undo(); // ³·Ïú
+			capture_edit_->Undo(); // æ’¤é”€
 		}
 		else if(msg->pSender->GetName() == L"redo_btn")
 		{
 			//da::DaSupport::GetInstance()->AddDaEvent(YX_TYPE_SESSION, YX_SESSIONCLICKSSTOOLBOX, L"SsRegain");
 
-			capture_edit_->Redo(); // ÖØ×ö
+			capture_edit_->Redo(); // é‡åš
 		}
 	}
 	else if(msg->Type == ui::kEventSelect)
@@ -275,54 +275,54 @@ bool CaptureWindow::Notify(ui::EventArgs* msg)
 		{
 			//da::DaSupport::GetInstance()->AddDaEvent(YX_TYPE_SESSION, YX_SESSIONCLICKSSTOOLBOX, L"SsBox");
 
-			SetCaptureEditMode(EM_RECTANGLE); // »æÖÆ¾ØĞÎ
+			SetCaptureEditMode(EM_RECTANGLE); // ç»˜åˆ¶çŸ©å½¢
 		}
 		else if(msg->pSender->GetName() == L"ellipse_option")
 		{
 			//da::DaSupport::GetInstance()->AddDaEvent(YX_TYPE_SESSION, YX_SESSIONCLICKSSTOOLBOX, L"SsRound");
 
-			SetCaptureEditMode(EM_ELLIPSE); // »æÖÆÍÖÔ²
+			SetCaptureEditMode(EM_ELLIPSE); // ç»˜åˆ¶æ¤­åœ†
 		}
 		else if(msg->pSender->GetName() == L"brush_option")
 		{
 			//da::DaSupport::GetInstance()->AddDaEvent(YX_TYPE_SESSION, YX_SESSIONCLICKSSTOOLBOX, L"SsBrush");
 
-			SetCaptureEditMode(EM_BRUSH); // »æÖÆ»­Ë¢
+			SetCaptureEditMode(EM_BRUSH); // ç»˜åˆ¶ç”»åˆ·
 		}
 		else if(msg->pSender->GetName() == L"line_option")
 		{
 			//da::DaSupport::GetInstance()->AddDaEvent(YX_TYPE_SESSION, YX_SESSIONCLICKSSTOOLBOX, L"SsLine");
 
-			SetCaptureEditMode(EM_LINE); // »æÖÆÖ±Ïß
+			SetCaptureEditMode(EM_LINE); // ç»˜åˆ¶ç›´çº¿
 		}
 		else if(msg->pSender->GetName() == L"arrow_option")
 		{
 			//da::DaSupport::GetInstance()->AddDaEvent(YX_TYPE_SESSION, YX_SESSIONCLICKSSTOOLBOX, L"SsArrow");
 
-			SetCaptureEditMode(EM_ARROW); // »æÖÆ¼ıÍ·
+			SetCaptureEditMode(EM_ARROW); // ç»˜åˆ¶ç®­å¤´
 		}
 		else if (msg->pSender->GetName() == L"mosaic_option")
 		{
 			//da::DaSupport::GetInstance()->AddDaEvent(YX_TYPE_SESSION, YX_SESSIONCLICKSSTOOLBOX, L"SsMosaics");
 
-			SetCaptureEditMode(EM_MOSAIC); // »æÖÆÂíÈü¿Ë
+			SetCaptureEditMode(EM_MOSAIC); // ç»˜åˆ¶é©¬èµ›å…‹
 		}
 		else if (msg->pSender->GetName() == L"gauss_option")
 		{
 			//da::DaSupport::GetInstance()->AddDaEvent(YX_TYPE_SESSION, YX_SESSIONCLICKSSTOOLBOX, L"SsGauss");
 
-			SetCaptureEditMode(EM_GAUSS); // »æÖÆÃ«²£Á§
+			SetCaptureEditMode(EM_GAUSS); // ç»˜åˆ¶æ¯›ç»ç’ƒ
 		}
 		else if(msg->pSender->GetName() == L"text_option")
 		{
 			//da::DaSupport::GetInstance()->AddDaEvent(YX_TYPE_SESSION, YX_SESSIONCLICKSSTOOLBOX, L"SsText");
 
-			SetCaptureEditMode(EM_TEXT); // ÊäÈëÎÄ±¾
+			SetCaptureEditMode(EM_TEXT); // è¾“å…¥æ–‡æœ¬
 		}
 		else
 			start_paint = false;
 
-		// ÉèÖÃ½ØÍ¼µÄÇøÓò
+		// è®¾ç½®æˆªå›¾çš„åŒºåŸŸ
 		if (start_paint)
 			capture_edit_->SetTrackRect(track_rect_); 
 	}
@@ -334,7 +334,7 @@ bool CaptureWindow::Notify(ui::EventArgs* msg)
 			Close();
 			break;
 		case TRACKED:
-			ResetCaptureEditMode(); // ÖØÖÃ½ØÍ¼±à¼­×´Ì¬£¬ÊÍ·ÅÉÏ´ÎµÄ»æÖÆµ¥Ôª
+			ResetCaptureEditMode(); // é‡ç½®æˆªå›¾ç¼–è¾‘çŠ¶æ€ï¼Œé‡Šæ”¾ä¸Šæ¬¡çš„ç»˜åˆ¶å•å…ƒ
 			SetTrackState(NOTRACK);
 			ShowToolBar();
 			AdjustOffset(track_rect_, point_offset_, point_offset_, NOTRACK);
@@ -363,11 +363,11 @@ static std::wstring GetGUID()
 	}
 }
 
-//±£´æ½ØÈ¡µÄÇøÓò
+//ä¿å­˜æˆªå–çš„åŒºåŸŸ
 //typedef BOOL (WINAPI *LPALPHABLEND)(HDC, int, int, int, int,HDC, int, int, int, int, BLENDFUNCTION);
 BOOL CaptureWindow::SaveTrackImage(bool save_to_clipboard)
 {
-	// Èç¹ûÎÄ±¾±à¼­»¹Î´½áÊø
+	// å¦‚æœæ–‡æœ¬ç¼–è¾‘è¿˜æœªç»“æŸ
 	if(capture_edit_mode_ == EM_TEXT && capture_edit_)
 	{
 		capture_edit_->OnTextEditFinished();
@@ -390,28 +390,28 @@ BOOL CaptureWindow::SaveTrackImage(bool save_to_clipboard)
 		int image_save_width = width;
 		int image_save_height = height;
 
-		// ÆÁÄ»DC 
+		// å±å¹•DC 
 		HDC hScrDC = ::CreateDC(_T("DISPLAY"), NULL, NULL, NULL);
-		// ÆÁÄ»¼æÈİDC£¬Ñ¡Èë½ØÍ¼¿ªÊ¼Ê±±£´æµÄÆÁÄ»Í¼Ïñ
+		// å±å¹•å…¼å®¹DCï¼Œé€‰å…¥æˆªå›¾å¼€å§‹æ—¶ä¿å­˜çš„å±å¹•å›¾åƒ
 		HDC hScrDC2 = CreateCompatibleDC(hScrDC);
 		HBITMAP hOldBitmap = (HBITMAP)SelectObject(hScrDC2,bitmap_bg_);
-		// »­ÉÏ±à¼­µÄÄÚÈİ
+		// ç”»ä¸Šç¼–è¾‘çš„å†…å®¹
 		if(capture_edit_)
 			capture_edit_->DrawExtraUnits(hScrDC2);
-		// ÆÁÄ»¼æÈİDC£¨Ä¿±ê»æÖÆDC£©£¬Ñ¡Èë½ØÍ¼ÇøÓòµÄ¼æÈİÎ»Í¼
+		// å±å¹•å…¼å®¹DCï¼ˆç›®æ ‡ç»˜åˆ¶DCï¼‰ï¼Œé€‰å…¥æˆªå›¾åŒºåŸŸçš„å…¼å®¹ä½å›¾
 		HDC hMemDC = CreateCompatibleDC(hScrDC);
 		HBITMAP hBitmap = CreateCompatibleBitmap(hScrDC, image_save_width, image_save_height);
 		HBITMAP hOldBitmap2 = (HBITMAP)SelectObject(hMemDC,hBitmap);
 		BitBlt(hMemDC,0,0,width, height, hScrDC2, x, y,SRCCOPY);
 		hBitmap = (HBITMAP)SelectObject(hMemDC,hOldBitmap2);
 		(HBITMAP)SelectObject(hScrDC2,hOldBitmap);
-		//Çå³ı
+		//æ¸…é™¤
 		DeleteDC(hScrDC);
 		DeleteDC(hScrDC2);
 		DeleteDC(hMemDC);
 		if(hBitmap)
 		{
-			//±£´æ³Éimage\\uuid.pngÎÄ¼ş
+			//ä¿å­˜æˆimage\\uuid.pngæ–‡ä»¶
 			std::wstring capture_path = user_data_dir_;
 			capture_path += L"tmp\\";
 			if (false == nbase::FilePathIsExist(capture_path, true))
@@ -428,7 +428,7 @@ BOOL CaptureWindow::SaveTrackImage(bool save_to_clipboard)
 			
 			if (save_to_clipboard && OpenClipboard(NULL))
 			{
-				//Çå¿Õ¼ôÌù°å
+				//æ¸…ç©ºå‰ªè´´æ¿
 				EmptyClipboard();
 				SetClipboardData(CF_BITMAP, hBitmap);
 
@@ -445,7 +445,7 @@ BOOL CaptureWindow::SaveTrackImage(bool save_to_clipboard)
 
 					hGblEffect = GlobalAlloc(GMEM_ZEROINIT | GMEM_MOVEABLE | GMEM_DDESHARE,sizeof(DWORD));
 					lpdDropEffect = (LPDWORD)GlobalLock(hGblEffect);
-					*lpdDropEffect = DROPEFFECT_COPY;//¸´ÖÆ; ¼ôÌùÔòÓÃDROPEFFECT_MOVE
+					*lpdDropEffect = DROPEFFECT_COPY;//å¤åˆ¶; å‰ªè´´åˆ™ç”¨DROPEFFECT_MOVE
 					GlobalUnlock(hGblEffect);
 
 					stDrop.pFiles = sizeof(DROPFILES);
@@ -463,7 +463,7 @@ BOOL CaptureWindow::SaveTrackImage(bool save_to_clipboard)
 
 					SetClipboardData(CF_HDROP,hGblFiles);
 				}
-				//¹Ø±Õ¼ôÌù°å
+				//å…³é—­å‰ªè´´æ¿
 				CloseClipboard();
 			}
 
@@ -473,7 +473,7 @@ BOOL CaptureWindow::SaveTrackImage(bool save_to_clipboard)
 	return bResult;
 }
 
-// ³õÊ¼»¯Î»Í¼
+// åˆå§‹åŒ–ä½å›¾
 BOOL CaptureWindow::InitBitmaps()
 {
 	BOOL bResult = FALSE;
@@ -483,17 +483,17 @@ BOOL CaptureWindow::InitBitmaps()
 	int height = screen_height_ * desktop_scale_ / 100;
 
 	HDC hScrDC = ::CreateDC(_T("DISPLAY"), NULL, NULL, NULL);
-	//ÎªÆÁÄ»Éè±¸ÃèÊö±í´´½¨¼æÈİµÄÄÚ´æÉè±¸ÃèÊö±í
+	//ä¸ºå±å¹•è®¾å¤‡æè¿°è¡¨åˆ›å»ºå…¼å®¹çš„å†…å­˜è®¾å¤‡æè¿°è¡¨
 	HDC hMemDC = CreateCompatibleDC(hScrDC);
-	// ´´½¨Ò»¸öÓëÆÁÄ»Éè±¸ÃèÊö±í¼æÈİµÄÎ»Í¼
+	// åˆ›å»ºä¸€ä¸ªä¸å±å¹•è®¾å¤‡æè¿°è¡¨å…¼å®¹çš„ä½å›¾
 	bitmap_bg_ = CreateCompatibleBitmap(hScrDC, width, height);
-	// °ÑĞÂÎ»Í¼Ñ¡µ½ÄÚ´æÉè±¸ÃèÊö±íÖĞ
+	// æŠŠæ–°ä½å›¾é€‰åˆ°å†…å­˜è®¾å¤‡æè¿°è¡¨ä¸­
 	HBITMAP hOldBitmap = (HBITMAP)SelectObject(hMemDC,bitmap_bg_);
-	// °ÑÆÁÄ»Éè±¸ÃèÊö±í¿½±´µ½ÄÚ´æÉè±¸ÃèÊö±íÖĞ
+	// æŠŠå±å¹•è®¾å¤‡æè¿°è¡¨æ‹·è´åˆ°å†…å­˜è®¾å¤‡æè¿°è¡¨ä¸­
 	BitBlt(hMemDC, 0, 0, width, height, hScrDC, x, y, SRCCOPY | CAPTUREBLT);
-	//µÃµ½ÆÁÄ»Î»Í¼µÄ¾ä±ú
+	//å¾—åˆ°å±å¹•ä½å›¾çš„å¥æŸ„
 	bitmap_bg_ = (HBITMAP)SelectObject(hMemDC,hOldBitmap);
-	//Çå³ı
+	//æ¸…é™¤
 	DeleteDC(hScrDC);
 	DeleteDC(hMemDC);
 	if(bitmap_bg_)
@@ -548,7 +548,7 @@ void CaptureWindow::NormalizeRect(RECT& rect)
 	}
 }
 
-//²Ã¼ôÔÚ¿Í»§ÇøµÄ¿É½ØÍ¼ÇøÓò
+//è£å‰ªåœ¨å®¢æˆ·åŒºçš„å¯æˆªå›¾åŒºåŸŸ
 RECT CaptureWindow::ClipTrackRect(RECT rect)
 {
 	RECT client_rect;
@@ -574,7 +574,7 @@ RECT CaptureWindow::GetToolBarRect()
 	RECT rect = ClipTrackRect(track_rect_);
 	int width = rect.right-rect.left;
 	int height = toolbar_->GetMinHeight();
-	// µ÷É«°å¿É¼ûÊ±Òª¼ÓÉÏµ÷É«°åµÄ¸ß¶È
+	// è°ƒè‰²æ¿å¯è§æ—¶è¦åŠ ä¸Šè°ƒè‰²æ¿çš„é«˜åº¦
 	if(is_show_color_palette_)
 	{
 		color_palette_->SetVisible(true);
@@ -641,7 +641,7 @@ RECT CaptureWindow::GetToolBar2Rect()
 	return rect;
 }
 
-//´óĞ¡ĞÅÏ¢ÌáÊ¾ÇøÓò
+//å¤§å°ä¿¡æ¯æç¤ºåŒºåŸŸ
 RECT CaptureWindow::GetSizeTipRect()
 {
 	int width = 75;
@@ -700,7 +700,7 @@ RECT CaptureWindow::GetSizeTipRect()
 	return rect;
 }
 
-//µ¯Á¦¿òÔªËØÇøÓò
+//å¼¹åŠ›æ¡†å…ƒç´ åŒºåŸŸ
 RECT CaptureWindow::GetDrawTrackRect(int hit_test)
 {
 	RECT rect_ret = ClipTrackRect(track_rect_);
@@ -709,71 +709,71 @@ RECT CaptureWindow::GetDrawTrackRect(int hit_test)
 	int height = rect_ret.bottom - rect_ret.top;
 	switch (hit_test)
 	{
-	case SIZETOP://ÉÏÖĞ
+	case SIZETOP://ä¸Šä¸­
 		{
 			rect_ret.left += width/2 - DOT_SIZE/2;
 			rect_ret.top -= DOT_SIZE/2;
 		}
 		break;
-	case SIZEBOTTOM://ÏÂÖĞ
+	case SIZEBOTTOM://ä¸‹ä¸­
 		{
 			rect_ret.left += width/2 - DOT_SIZE/2;
 			rect_ret.top = rect_ret.bottom - DOT_SIZE/2;
 		}
 		break;
-	case SIZELEFT://×óÖĞ
+	case SIZELEFT://å·¦ä¸­
 		{
 			rect_ret.left -= DOT_SIZE/2;
 			rect_ret.top += height/2 - DOT_SIZE/2;
 		}
 		break;
-	case SIZERIGHT://ÓÒÖĞ
+	case SIZERIGHT://å³ä¸­
 		{
 			rect_ret.left = rect_ret.right - DOT_SIZE/2;
 			rect_ret.top += height/2 - DOT_SIZE/2;
 		}
 		break;
-	case SIZESW://×óÉÏ
+	case SIZESW://å·¦ä¸Š
 		{
 			rect_ret.left -= DOT_SIZE/2;
 			rect_ret.top -= DOT_SIZE/2;
 		}
 		break;
-	case SIZESE://ÓÒÉÏ
+	case SIZESE://å³ä¸Š
 		{
 			rect_ret.left = rect_ret.right - DOT_SIZE/2;
 			rect_ret.top -= DOT_SIZE/2;
 		}
 		break;
-	case SIZENW://×óÏÂ
+	case SIZENW://å·¦ä¸‹
 		{
 			rect_ret.left -= DOT_SIZE/2;
 			rect_ret.top = rect_ret.bottom - DOT_SIZE/2;
 		}
 		break;
-	case SIZENE://ÓÒÏÂ
+	case SIZENE://å³ä¸‹
 		{
 			rect_ret.left = rect_ret.right - DOT_SIZE/2;
 			rect_ret.top = rect_ret.bottom - DOT_SIZE/2;
 		}
 		break;
-	case SIZELEFT_LINE://×ó
+	case SIZELEFT_LINE://å·¦
 		{
 			rect_ret.right = rect_ret.left + 1;
 		}
 		break;
-	case SIZERIGHT_LINE://ÓÒ
+	case SIZERIGHT_LINE://å³
 		{
 			rect_ret.left = rect_ret.right;
 			rect_ret.right = rect_ret.left + 1;
 		}
 		break;
-	case SIZETOP_LINE://ÉÏ
+	case SIZETOP_LINE://ä¸Š
 		{
 			rect_ret.bottom = rect_ret.top + 1;
 		}
 		break;
-	case SIZEBOTTOM_LINE://ÏÂ
+	case SIZEBOTTOM_LINE://ä¸‹
 		{
 			rect_ret.top = rect_ret.bottom;
 			rect_ret.bottom = rect_ret.top + 1;
@@ -788,7 +788,7 @@ RECT CaptureWindow::GetDrawTrackRect(int hit_test)
 	return rect_ret;
 }
 
-//»æÖÆ
+//ç»˜åˆ¶
 void CaptureWindow::DrawTrack(RECT track_rect)
 {
 	RECT client_rect;
@@ -835,7 +835,7 @@ void CaptureWindow::DrawTrack(RECT track_rect)
 		control->SetVisible(bottom > 0);
 	}
 
-	//ËÄÌõ±ß
+	//å››æ¡è¾¹
 	control = static_cast<Control *>(FindControl(L"track_left_line"));
 	if (control)
 	{
@@ -889,7 +889,7 @@ void CaptureWindow::DrawTrack(RECT track_rect)
 		control->SetVisible(show_track);
 	}
 
-	//ËÄ¶¥µã
+	//å››é¡¶ç‚¹
 	control = static_cast<Control *>(FindControl(L"track_topleft"));
 	if (control)
 	{
@@ -943,7 +943,7 @@ void CaptureWindow::DrawTrack(RECT track_rect)
 		control->SetVisible(show_track);
 	}
 
-	//ËÄÖĞµã
+	//å››ä¸­ç‚¹
 	control = static_cast<Control *>(FindControl(L"track_left"));
 	if (control)
 	{
@@ -998,7 +998,7 @@ void CaptureWindow::DrawTrack(RECT track_rect)
 	}
 }
 
-//ÏÔÊ¾¹¤¾ßÌõ
+//æ˜¾ç¤ºå·¥å…·æ¡
 void CaptureWindow::ShowToolBar(bool edit)
 {
 	bool show = DeTrackState(track_state_) == TRACKED;
@@ -1053,7 +1053,7 @@ void CaptureWindow::ShowToolBar(bool edit)
 	}
 }
 
-//ÏÔÊ¾½ØÍ¼´óĞ¡ĞÅÏ¢
+//æ˜¾ç¤ºæˆªå›¾å¤§å°ä¿¡æ¯
 void CaptureWindow::ShowSizeTip()
 {
 	Label *control = static_cast<Label *>(FindControl(L"size_tip"));
@@ -1083,7 +1083,7 @@ void CaptureWindow::ShowSizeTip()
 	}
 }
 
-// ¶ÔTracker½øĞĞHitTest
+// å¯¹Trackerè¿›è¡ŒHitTest
 int CaptureWindow::TrackerHitTest(RECT rect, POINT point)
 {
 	int x = point.x;// -screen_x_;
@@ -1100,55 +1100,55 @@ int CaptureWindow::TrackerHitTest(RECT rect, POINT point)
 
 	NormalizeRect(rect);
 
-	// ×óÉÏ
+	// å·¦ä¸Š
 	if(x >= rect.left - BORDER_SIZE && x <= rect.left + BORDER_SIZE &&  y >= rect.top - BORDER_SIZE &&  y <= rect.top + BORDER_SIZE)
 	{
 		return SIZENW;
 	}
 
-	// ÓÒÉÏ
+	// å³ä¸Š
 	if(x >= rect.right - BORDER_SIZE && x <= rect.right + BORDER_SIZE &&  y >= rect.top - BORDER_SIZE &&  y <= rect.top + BORDER_SIZE)
 	{
 		return SIZENE;
 	}
 
-	// ×óÏÂ
+	// å·¦ä¸‹
 	if(x >= rect.left - BORDER_SIZE && x <= rect.left + BORDER_SIZE &&  y >= rect.bottom - BORDER_SIZE &&  y <= rect.bottom + BORDER_SIZE)
 	{
 		return SIZESW;
 	}
 
-	// ÓÒÏÂ
+	// å³ä¸‹
 	if(x >= rect.right - BORDER_SIZE && x <= rect.right + BORDER_SIZE &&  y >= rect.bottom - BORDER_SIZE &&  y <= rect.bottom + BORDER_SIZE)
 	{
 		return SIZESE;
 	}
 
-	// ×ó
+	// å·¦
 	if(x >= rect.left - BORDER_SIZE && x <= rect.left + BORDER_SIZE &&  y >= rect.top &&  y <= rect.bottom)
 	{
 		return SIZELEFT;
 	}
 
-	// ÉÏ
+	// ä¸Š
 	if(x >= rect.left && x <= rect.right &&  y >= rect.top - BORDER_SIZE &&  y <= rect.top + BORDER_SIZE)
 	{
 		return SIZETOP;
 	}
 
-	// ÓÒ
+	// å³
 	if(x >= rect.right - BORDER_SIZE && x <= rect.right + BORDER_SIZE &&  y >= rect.top &&  y <= rect.bottom)
 	{
 		return SIZERIGHT;
 	}
 
-	// ÏÂ
+	// ä¸‹
 	if(x >= rect.left && x <= rect.right &&  y >= rect.bottom - BORDER_SIZE &&  y <= rect.bottom + BORDER_SIZE)
 	{
 		return SIZEBOTTOM;
 	}
 
-	// ÖĞ
+	// ä¸­
 	if(x >= rect.left && x <= rect.right &&  y >= rect.top &&  y <= rect.bottom)
 	{
 		return SIZEALL;
@@ -1157,7 +1157,7 @@ int CaptureWindow::TrackerHitTest(RECT rect, POINT point)
 	return 0;
 }
 
-// µ±ÔÚµ÷½Úµã£¨Ïß£©ÉÏµ÷½ÚµÄÊ±ºò£¬ĞŞÕıÎ»ÖÃ
+// å½“åœ¨è°ƒèŠ‚ç‚¹ï¼ˆçº¿ï¼‰ä¸Šè°ƒèŠ‚çš„æ—¶å€™ï¼Œä¿®æ­£ä½ç½®
 void CaptureWindow::AdjustOffset(RECT& rect_track, POINT point_dest, POINT point_offset, int hit_test)
 {
 	//point_dest.x -= screen_x_;
@@ -1195,7 +1195,7 @@ void CaptureWindow::AdjustOffset(RECT& rect_track, POINT point_dest, POINT point
 	}
 }
 
-// ¸ù¾İHitTest½á¹ûÈ¡µÃÕıÈ·µÄ¹â±êÃû
+// æ ¹æ®HitTestç»“æœå–å¾—æ­£ç¡®çš„å…‰æ ‡å
 void CaptureWindow::SetHitTestCursor(int hit_test)
 {
 	HCURSOR cursor = LoadCursor(NULL, IDC_ARROW);
@@ -1218,7 +1218,7 @@ void CaptureWindow::Save()
 {
 	std::wstring file_type = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_CAPTUREFORM_IMAGE_FORMAT");
 	std::wstring text = nbase::StringPrintf(L"%s(*.png)", file_type.c_str());
-	// Òª±£´æµÄÎÄ¼şÃû
+	// è¦ä¿å­˜çš„æ–‡ä»¶å
 	std::wstring file_name;
 	nbase::Time::TimeStruct now = nbase::Time::Now().ToTimeStruct(true);
 	nbase::StringPrintf(file_name, MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_CAPTUREFORM_CLIP").c_str(),
@@ -1230,7 +1230,7 @@ void CaptureWindow::Save()
 	file_dlg->SetFileName(file_name.c_str());
 	file_dlg->SetDefExt(L"png");
 	file_dlg->SetParentWnd(m_hWnd);
-	// µ¯³ö·ÇÄ£Ì¬¶Ô»°¿ò
+	// å¼¹å‡ºéæ¨¡æ€å¯¹è¯æ¡†
 	CFileDialogEx::FileDialogCallback2 callback2 = nbase::Bind(&CaptureWindow::SaveTrackImageDlgCallback, this, std::placeholders::_1, std::placeholders::_2);
 	file_dlg->AyncShowSaveFileDlg(callback2);
 }
@@ -1240,7 +1240,7 @@ void CaptureWindow::SaveTrackImageDlgCallback( BOOL ret, std::wstring file_path 
 	if(!ret)
 		return;
 
-	// Èç¹ûÎÄ±¾±à¼­»¹Î´½áÊø
+	// å¦‚æœæ–‡æœ¬ç¼–è¾‘è¿˜æœªç»“æŸ
 	if(capture_edit_mode_ == EM_TEXT && capture_edit_)
 	{
 		capture_edit_->OnTextEditFinished();
@@ -1263,15 +1263,15 @@ void CaptureWindow::SaveTrackImageDlgCallback( BOOL ret, std::wstring file_path 
 		int image_save_width = width;
 		int image_save_height = height;
 
-		// ÆÁÄ»DC 
+		// å±å¹•DC 
 		HDC hScrDC = ::CreateDC(_T("DISPLAY"), NULL, NULL, NULL);
-		// ÆÁÄ»¼æÈİDC£¬Ñ¡Èë½ØÍ¼¿ªÊ¼Ê±±£´æµÄÆÁÄ»Í¼Ïñ
+		// å±å¹•å…¼å®¹DCï¼Œé€‰å…¥æˆªå›¾å¼€å§‹æ—¶ä¿å­˜çš„å±å¹•å›¾åƒ
 		HDC hScrDC2 = CreateCompatibleDC(hScrDC);
 		HBITMAP hOldBitmap = (HBITMAP)SelectObject(hScrDC2,bitmap_bg_);
-		// »­ÉÏ±à¼­µÄÄÚÈİ
+		// ç”»ä¸Šç¼–è¾‘çš„å†…å®¹
 		if(capture_edit_)
 			capture_edit_->DrawExtraUnits(hScrDC2);
-		// ÆÁÄ»¼æÈİDC£¨Ä¿±ê»æÖÆDC£©£¬Ñ¡Èë½ØÍ¼ÇøÓòµÄ¼æÈİÎ»Í¼
+		// å±å¹•å…¼å®¹DCï¼ˆç›®æ ‡ç»˜åˆ¶DCï¼‰ï¼Œé€‰å…¥æˆªå›¾åŒºåŸŸçš„å…¼å®¹ä½å›¾
 		HDC hMemDC = CreateCompatibleDC(hScrDC);
 		HBITMAP hBitmap = CreateCompatibleBitmap(hScrDC, image_save_width, image_save_height);
 		HBITMAP hOldBitmap2 = (HBITMAP)SelectObject(hMemDC,hBitmap);
@@ -1280,16 +1280,16 @@ void CaptureWindow::SaveTrackImageDlgCallback( BOOL ret, std::wstring file_path 
 
 		hBitmap = (HBITMAP)SelectObject(hMemDC,hOldBitmap2);
 		(HBITMAP)SelectObject(hScrDC2,hOldBitmap);
-		//Çå³ı
+		//æ¸…é™¤
 		DeleteDC(hScrDC);
 		DeleteDC(hScrDC2);
 		DeleteDC(hMemDC);
 		if(hBitmap)
 		{
-			// ÓÃ»§Ñ¡Ôñ±£´æµÄÎ»ÖÃ
+			// ç”¨æˆ·é€‰æ‹©ä¿å­˜çš„ä½ç½®
 			SaveBitmapToFile(hBitmap, file_path);
 			DeleteObject(hBitmap);
-			// ¹Ø±Õ´°¿Ú
+			// å…³é—­çª—å£
 			this->Close();
 		}
 	}
@@ -1297,9 +1297,9 @@ void CaptureWindow::SaveTrackImageDlgCallback( BOOL ret, std::wstring file_path 
 
 void CaptureWindow::ResetCaptureEditMode()
 {
-	SetCaptureEditMode(EM_NONE); // »Ö¸´Î´±à¼­×´Ì¬
-	capture_edit_->ReleaseAllDrawUnits(); // ÊÍ·ÅÉÏ´Î±à¼­µÄ»æÖÆµ¥Ôª
-	// ÖØÖÃOptionµÄSelected×´Ì¬
+	SetCaptureEditMode(EM_NONE); // æ¢å¤æœªç¼–è¾‘çŠ¶æ€
+	capture_edit_->ReleaseAllDrawUnits(); // é‡Šæ”¾ä¸Šæ¬¡ç¼–è¾‘çš„ç»˜åˆ¶å•å…ƒ
+	// é‡ç½®Optionçš„SelectedçŠ¶æ€
 	Option* option_ui = NULL;
 	for(size_t i = 0; i < vec_option_names_.size(); i++)
 	{
@@ -1314,7 +1314,7 @@ void CaptureWindow::SetCaptureEditMode( EditMode mode )
 {
 	if(capture_edit_mode_ == mode && mode > EM_NONE)
 	{
-		// ÖØ¸´µã»÷ÏàÍ¬µÄ±à¼­µ¥Ôª£¬ÄÇÃ´ÊÕÆğµ÷É«°å
+		// é‡å¤ç‚¹å‡»ç›¸åŒçš„ç¼–è¾‘å•å…ƒï¼Œé‚£ä¹ˆæ”¶èµ·è°ƒè‰²æ¿
 		is_show_color_palette_ = false;
 	}
 	else
@@ -1326,5 +1326,5 @@ void CaptureWindow::SetCaptureEditMode( EditMode mode )
 		}
 	}
 	capture_edit_->SetEditMode(capture_edit_mode_);
-	ShowToolBar(); // ¿ÉÄÜÒıÆğ¸ß¶È¸Ä±ä£¬ÖØ»æ
+	ShowToolBar(); // å¯èƒ½å¼•èµ·é«˜åº¦æ”¹å˜ï¼Œé‡ç»˜
 }

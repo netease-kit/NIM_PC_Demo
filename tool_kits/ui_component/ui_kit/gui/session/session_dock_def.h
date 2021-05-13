@@ -16,145 +16,145 @@ namespace nim_comp
 		virtual void ActiveWindow() = 0;
 		virtual LRESULT PostMessage(UINT uMsg, WPARAM wParam = 0, LPARAM lParam = 0L) = 0;
 		/**
-		* ÉèÖÃ´°¿Ú±êÌâ
-		* @param[in] title ´°¿Ú±êÌâ
-		* @return void ÎŞ·µ»ØÖµ
+		* è®¾ç½®çª—å£æ ‡é¢˜
+		* @param[in] title çª—å£æ ‡é¢˜
+		* @return void æ— è¿”å›å€¼
 		*/
 		virtual void SetTaskbarTitle(const std::wstring &title) = 0;
 		/**
-		* ¸üĞÂµ±Ç°´°¿ÚÈÎÎñÏÔÊ¾µÄÍ¼±ê
-		* @param[in] icon Í¼±êÂ·¾¶
-		* @return void	ÎŞ·µ»ØÖµ
+		* æ›´æ–°å½“å‰çª—å£ä»»åŠ¡æ˜¾ç¤ºçš„å›¾æ ‡
+		* @param[in] icon å›¾æ ‡è·¯å¾„
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void SetTaskbarIcon(const std::wstring &icon) = 0;
 		/**
-		* ÔÚ±¾´°¿ÚÄÚ´´½¨Ò»¸öĞÂ»á»°ºĞ×Ó
-		* @param[in] session_id »á»°id
-		* @param[in] session_type »á»°ÀàĞÍ
-		* @return SessionBox* »á»°ºĞ×Ó
+		* åœ¨æœ¬çª—å£å†…åˆ›å»ºä¸€ä¸ªæ–°ä¼šè¯ç›’å­
+		* @param[in] session_id ä¼šè¯id
+		* @param[in] session_type ä¼šè¯ç±»å‹
+		* @return SessionBox* ä¼šè¯ç›’å­
 		*/
 		virtual SessionBox* CreateSessionBox(const std::string &session_id, nim::NIMSessionType session_type) = 0;
 
 		/**
-		* ¹Ø±Õ±¾´°¿ÚÄÚµÄÒ»¸ö»á»°ºĞ×Ó
-		* @param[in] session_id »á»°id
-		* @return void	ÎŞ·µ»ØÖµ
+		* å…³é—­æœ¬çª—å£å†…çš„ä¸€ä¸ªä¼šè¯ç›’å­
+		* @param[in] session_id ä¼šè¯id
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void CloseSessionBox(const std::string &session_id) = 0;
 
 		/**
-		* °ÑÒ»¸öÆäËû´°¿ÚÄÚµÄ»á»°ºĞ×Ó¸½¼Óµ½±¾´°¿ÚÄÚ
-		* @param[in] session_box »á»°ºĞ×Ó
-		* @return bool true ³É¹¦£¬false Ê§°Ü
+		* æŠŠä¸€ä¸ªå…¶ä»–çª—å£å†…çš„ä¼šè¯ç›’å­é™„åŠ åˆ°æœ¬çª—å£å†…
+		* @param[in] session_box ä¼šè¯ç›’å­
+		* @return bool true æˆåŠŸï¼Œfalse å¤±è´¥
 		*/
 		virtual bool AttachSessionBox(SessionBox *session_box) = 0;
 
 		/**
-		* °Ñ±¾´°¿ÚÄÚµÄÒ»¸ö»á»°ºĞ×ÓÍÑÀë´°¿Ú
-		* @param[in] session_box »á»°ºĞ×Ó
-		* @return bool true ³É¹¦£¬false Ê§°Ü
+		* æŠŠæœ¬çª—å£å†…çš„ä¸€ä¸ªä¼šè¯ç›’å­è„±ç¦»çª—å£
+		* @param[in] session_box ä¼šè¯ç›’å­
+		* @return bool true æˆåŠŸï¼Œfalse å¤±è´¥
 		*/
 		virtual bool DetachSessionBox(SessionBox *session_box) = 0;
 
 		/**
-		* »ñÈ¡µ±Ç°ÏÔÊ¾µÄ»á»°ºĞ×Ó
-		* @return SessionBox* »á»°ºĞ×Ó
+		* è·å–å½“å‰æ˜¾ç¤ºçš„ä¼šè¯ç›’å­
+		* @return SessionBox* ä¼šè¯ç›’å­
 		*/
 		virtual SessionBox* GetSelectedSessionBox() = 0;
 
 		/**
-		* ¼¤»î²¢ÇĞ»»µ½Ä³¸ö»á»°ºĞ×Ó(Í¬Ê±ÈÃ»á»°´°Ìå¼¤»î)
-		* @param[in] session_id »á»°id
-		* @return void ÎŞ·µ»ØÖµ
+		* æ¿€æ´»å¹¶åˆ‡æ¢åˆ°æŸä¸ªä¼šè¯ç›’å­(åŒæ—¶è®©ä¼šè¯çª—ä½“æ¿€æ´»)
+		* @param[in] session_id ä¼šè¯id
+		* @return void æ— è¿”å›å€¼
 		*/
 		virtual void SetActiveSessionBox(const std::string &session_id) = 0;
 
 		/**
-		* ÅĞ¶Ï»á»°ºĞ×ÓÊÇ·ñ´¦ÓÚ¼¤»î×´Ì¬(Í¬Ê±ÅĞ¶Ï»á»°´°ÌåÊÇ·ñ±»¼¤»î)
-		* @param[in] session_box »á»°ºĞ×Ó
-		* @return bool true ÊÇ£¬false ·ñ
+		* åˆ¤æ–­ä¼šè¯ç›’å­æ˜¯å¦å¤„äºæ¿€æ´»çŠ¶æ€(åŒæ—¶åˆ¤æ–­ä¼šè¯çª—ä½“æ˜¯å¦è¢«æ¿€æ´»)
+		* @param[in] session_box ä¼šè¯ç›’å­
+		* @return bool true æ˜¯ï¼Œfalse å¦
 		*/
 		virtual bool IsActiveSessionBox(const SessionBox *session_box) = 0;
 
 		/**
-		* ÅĞ¶Ï»á»°ºĞ×ÓÊÇ·ñ´¦ÓÚ¼¤»î×´Ì¬(Í¬Ê±ÅĞ¶Ï»á»°´°ÌåÊÇ·ñ±»¼¤»î)
-		* @param[in] session_id »á»°id
-		* @return bool true ÊÇ£¬false ·ñ
+		* åˆ¤æ–­ä¼šè¯ç›’å­æ˜¯å¦å¤„äºæ¿€æ´»çŠ¶æ€(åŒæ—¶åˆ¤æ–­ä¼šè¯çª—ä½“æ˜¯å¦è¢«æ¿€æ´»)
+		* @param[in] session_id ä¼šè¯id
+		* @return bool true æ˜¯ï¼Œfalse å¦
 		*/
 		virtual bool IsActiveSessionBox(const std::wstring &session_id) = 0;
 
 		/**
-		* »ñÈ¡±¾´°¿ÚÄÚ»á»°ºĞ×ÓµÄ×ÜÁ¿
-		* @return int	×ÜÁ¿
+		* è·å–æœ¬çª—å£å†…ä¼šè¯ç›’å­çš„æ€»é‡
+		* @return int	æ€»é‡
 		*/
 		virtual int GetSessionBoxCount() const = 0;
 
 		/**
-		* ÔÚÖ´ĞĞÍÏ×§²Ù×÷Ç°£¬Èç¹û±»ÍÏ×§µÄ»á»°ºĞ×ÓÊôÓÚ±¾´°¿Ú£¬ÔòÍ¨Öª±¾´°¿Ú
-		* @param[in] session_id »á»°id
-		* @return void	ÎŞ·µ»ØÖµ
+		* åœ¨æ‰§è¡Œæ‹–æ‹½æ“ä½œå‰ï¼Œå¦‚æœè¢«æ‹–æ‹½çš„ä¼šè¯ç›’å­å±äºæœ¬çª—å£ï¼Œåˆ™é€šçŸ¥æœ¬çª—å£
+		* @param[in] session_id ä¼šè¯id
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void OnBeforeDragSessionBoxCallback(const std::wstring &session_id) = 0;
 
 		/**
-		* ÔÚÖ´ĞĞÍÏ×§²Ù×÷ºó£¬Èç¹û±»ÍÏ×§µÄ»á»°ºĞ×ÓÊôÓÚ±¾´°¿Ú£¬ÔòÍ¨Öª±¾´°¿Ú²Ù×÷½á¹û
-		* @param[in] drop_succeed »á»°ºĞ×ÓÊÇ·ñ±»ÍÏ×§µ½ÁËÍâ²¿
-		* @return void	ÎŞ·µ»ØÖµ
+		* åœ¨æ‰§è¡Œæ‹–æ‹½æ“ä½œåï¼Œå¦‚æœè¢«æ‹–æ‹½çš„ä¼šè¯ç›’å­å±äºæœ¬çª—å£ï¼Œåˆ™é€šçŸ¥æœ¬çª—å£æ“ä½œç»“æœ
+		* @param[in] drop_succeed ä¼šè¯ç›’å­æ˜¯å¦è¢«æ‹–æ‹½åˆ°äº†å¤–éƒ¨
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void OnAfterDragSessionBoxCallback(bool drop_succeed) = 0;
 
 		/**
-		* ÉèÖÃ»á»°ºÏ²¢ÁĞ±íÖĞÄ³¸öºÏ²¢ÏîÎ´¶ÁÏûÏ¢Êı
-		* @param[in] id »á»°id
-		* @param[in] unread Î´¶ÁÏûÏ¢Êı
-		* @return void ÎŞ·µ»ØÖµ
+		* è®¾ç½®ä¼šè¯åˆå¹¶åˆ—è¡¨ä¸­æŸä¸ªåˆå¹¶é¡¹æœªè¯»æ¶ˆæ¯æ•°
+		* @param[in] id ä¼šè¯id
+		* @param[in] unread æœªè¯»æ¶ˆæ¯æ•°
+		* @return void æ— è¿”å›å€¼
 		*/
 		virtual void InvokeSetSessionUnread(const std::string &id, int unread) = 0;
 		/**
-		* ÉèÖÃÄ³¸ö»á»°¶ÔÓ¦µÄ×ó²àºÏ²¢ÁĞ±íÏîµÄ±êÌâ
-		* @param[in] session_id »á»°id
-		* @param[in] name ±êÌâ
-		* @return void	ÎŞ·µ»ØÖµ
+		* è®¾ç½®æŸä¸ªä¼šè¯å¯¹åº”çš„å·¦ä¾§åˆå¹¶åˆ—è¡¨é¡¹çš„æ ‡é¢˜
+		* @param[in] session_id ä¼šè¯id
+		* @param[in] name æ ‡é¢˜
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void SetMergeItemName(const std::wstring &session_id, const std::wstring &name) = 0;
 
 		/**
-		* ÉèÖÃÄ³¸ö»á»°¶ÔÓ¦µÄ×ó²àºÏ²¢ÁĞ±íÏîµÄÍ¼±ê
-		* @param[in] session_id »á»°id
-		* @param[in] photo Í¼±êÂ·¾¶
-		* @return void	ÎŞ·µ»ØÖµ
+		* è®¾ç½®æŸä¸ªä¼šè¯å¯¹åº”çš„å·¦ä¾§åˆå¹¶åˆ—è¡¨é¡¹çš„å›¾æ ‡
+		* @param[in] session_id ä¼šè¯id
+		* @param[in] photo å›¾æ ‡è·¯å¾„
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void SetMergeItemHeaderPhoto(const std::wstring &session_id, const std::wstring &photo) = 0;
 
 		/**
-		* ÊÕµ½ĞÂÏûÏ¢Ê±,¸Ä±ä´°Ìå×´Ì¬À´Í¨ÖªÓÃ»§
-		* @param[in] session_box ÊÕµ½ÏûÏ¢µÄ»á»°ºĞ×Ó
-		* @param[in] create	ÊÇ·ñ¸Õ´´½¨»á»°´°Ìå
-		* @param[in] flash	ÊÇ·ñĞèÒªÈÃÈÎÎñÀ¸Í¼±êÉÁË¸
-		* @return void ÎŞ·µ»ØÖµ
+		* æ”¶åˆ°æ–°æ¶ˆæ¯æ—¶,æ”¹å˜çª—ä½“çŠ¶æ€æ¥é€šçŸ¥ç”¨æˆ·
+		* @param[in] session_box æ”¶åˆ°æ¶ˆæ¯çš„ä¼šè¯ç›’å­
+		* @param[in] create	æ˜¯å¦åˆšåˆ›å»ºä¼šè¯çª—ä½“
+		* @param[in] flash	æ˜¯å¦éœ€è¦è®©ä»»åŠ¡æ å›¾æ ‡é—ªçƒ
+		* @return void æ— è¿”å›å€¼
 		*/
 		virtual void OnNewMsg(SessionBox &session_box, bool create, bool flash) = 0;
 		/**
-		* µ÷Õû»á»°´°ÌåµÄ´óĞ¡
-		* @return void ÎŞ·µ»ØÖµ
+		* è°ƒæ•´ä¼šè¯çª—ä½“çš„å¤§å°
+		* @return void æ— è¿”å›å€¼
 		*/
 		virtual void AdjustFormSize() = 0;
 		/**
-		* À¹½Ø²¢´¦Àíµ×²ã´°ÌåÏûÏ¢
-		* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-		* @param[in] wParam ¸½¼Ó²ÎÊı
-		* @param[in] lParam ¸½¼Ó²ÎÊı
-		* @param[in out] bHandled ÊÇ·ñ´¦ÀíÁËÏûÏ¢£¬Èç¹û´¦ÀíÁË²»¼ÌĞø´«µİÏûÏ¢
-		* @return LRESULT ´¦Àí½á¹û
+		* æ‹¦æˆªå¹¶å¤„ç†åº•å±‚çª—ä½“æ¶ˆæ¯
+		* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+		* @param[in] wParam é™„åŠ å‚æ•°
+		* @param[in] lParam é™„åŠ å‚æ•°
+		* @param[in out] bHandled æ˜¯å¦å¤„ç†äº†æ¶ˆæ¯ï¼Œå¦‚æœå¤„ç†äº†ä¸ç»§ç»­ä¼ é€’æ¶ˆæ¯
+		* @return LRESULT å¤„ç†ç»“æœ
 		*/
 		virtual LRESULT HostWindowHandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 		/**
-		* À¹½Ø²¢´¦Àíµ×²ã´°ÌåÏûÏ¢
-		* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-		* @param[in] wParam ¸½¼Ó²ÎÊı
-		* @param[in] lParam ¸½¼Ó²ÎÊı
-		* @param[in out] bHandled ÊÇ·ñ´¦ÀíÁËÏûÏ¢£¬Èç¹û´¦ÀíÁË²»¼ÌĞø´«µİÏûÏ¢
-		* @return LRESULT ´¦Àí½á¹û
+		* æ‹¦æˆªå¹¶å¤„ç†åº•å±‚çª—ä½“æ¶ˆæ¯
+		* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+		* @param[in] wParam é™„åŠ å‚æ•°
+		* @param[in] lParam é™„åŠ å‚æ•°
+		* @param[in out] bHandled æ˜¯å¦å¤„ç†äº†æ¶ˆæ¯ï¼Œå¦‚æœå¤„ç†äº†ä¸ç»§ç»­ä¼ é€’æ¶ˆæ¯
+		* @return LRESULT å¤„ç†ç»“æœ
 		*/
 		virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) = 0;
 	};

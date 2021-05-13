@@ -1,4 +1,5 @@
-﻿#include "ui_barrage_control.h"
+#include "stdafx.h"
+#include "ui_barrage_control.h"
 
 namespace ui
 {
@@ -226,5 +227,3 @@ bool BarrageControl::IsEmpty()
 }
 
 }
-
-

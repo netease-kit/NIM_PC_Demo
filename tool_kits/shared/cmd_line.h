@@ -17,7 +17,7 @@ public:
 	std::map<std::wstring, std::wstring> GetMap(void);
 
 protected:
-	// ¼òµ¥½«cmdÓÃ'/'·Ö¸î£¬²ÎÊıÖĞÈç¹û°üº¬'/'»á³öÎÊÌâ
+	// ç®€å•å°†cmdç”¨'/'åˆ†å‰²ï¼Œå‚æ•°ä¸­å¦‚æœåŒ…å«'/'ä¼šå‡ºé—®é¢˜
 	static bool Parse(const std::wstring &cmd, std::map<std::wstring, std::wstring> &param_map);
 
 protected:

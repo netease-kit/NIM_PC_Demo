@@ -16,6 +16,6 @@ int WINAPI wWinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, in
 
 	CefRefPtr<nim_cef::ClientApp> app(new nim_cef::ClientApp());
 
-	// Ö´ĞĞ×Ó½ø³ÌÂß¼­£¬´ËÊ±»á¶ÂÈûÖ±µ½×Ó½ø³ÌÍË³ö¡£
+	// æ‰§è¡Œå­è¿›ç¨‹é€»è¾‘ï¼Œæ­¤æ—¶ä¼šå µå¡ç›´åˆ°å­è¿›ç¨‹é€€å‡ºã€‚
 	return CefExecuteProcess(main_args, app.get(), NULL);
 }

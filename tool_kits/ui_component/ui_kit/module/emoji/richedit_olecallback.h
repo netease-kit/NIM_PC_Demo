@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <atlbase.h>
 #include <richedit.h>
 #include <richole.h>

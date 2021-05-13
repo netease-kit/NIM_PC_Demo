@@ -14,7 +14,7 @@ namespace nim_comp
 		kCaptureTypeScreen,
 		kCaptureTypeScreenAndCamera,
 	};
-	//½ØÍ¼ÇøÓò
+	//æˆªå›¾åŒºåŸŸ
 	enum
 	{
 		NOTRACK = 0,
@@ -30,7 +30,7 @@ namespace nim_comp
 	};
 
 	/** @class ScreenCaptureTool
-	  * @brief Â¼ÆÁ´°¿Ú
+	  * @brief å½•å±çª—å£
 	  * @copyright (c) 2016, NetEase Inc. All rights reserved
 	  * @date 2016/09/21
 	  */
@@ -40,150 +40,150 @@ namespace nim_comp
 		ScreenCaptureTool();
 		~ScreenCaptureTool();
 
-		//¸²¸ÇĞéº¯Êı
+		//è¦†ç›–è™šå‡½æ•°
 		virtual std::wstring GetSkinFolder() override;
 		virtual std::wstring GetSkinFile() override;
 		virtual std::wstring GetWindowClassName() const override;
 		virtual UINT GetClassStyle() const override;
 
 		/**
-		* ´°¿Ú³õÊ¼»¯º¯Êı
-		* @return void	ÎŞ·µ»ØÖµ
+		* çª—å£åˆå§‹åŒ–å‡½æ•°
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void InitWindow() override;
 
 		/**
-		* À¹½Ø²¢´¦Àíµ×²ã´°ÌåÏûÏ¢
-		* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-		* @param[in] wParam ¸½¼Ó²ÎÊı
-		* @param[in] lParam ¸½¼Ó²ÎÊı
-		* @return LRESULT ´¦Àí½á¹û
+		* æ‹¦æˆªå¹¶å¤„ç†åº•å±‚çª—ä½“æ¶ˆæ¯
+		* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+		* @param[in] wParam é™„åŠ å‚æ•°
+		* @param[in] lParam é™„åŠ å‚æ•°
+		* @return LRESULT å¤„ç†ç»“æœ
 		*/
 		virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 		/**
-		* À¹½Ø²¢´¦Àí´°¿Ú¹Ø±ÕÏûÏ¢
-		* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-		* @param[in] wParam ¸½¼Ó²ÎÊı
-		* @param[in] lParam ¸½¼Ó²ÎÊı
-		* @param[in] bHandled ÊÇ·ñĞèÒª¼ÌĞø´«µİÏûÏ¢£¬trueÔò²»´«µİ
-		* @return LRESULT ´¦Àí½á¹û
+		* æ‹¦æˆªå¹¶å¤„ç†çª—å£å…³é—­æ¶ˆæ¯
+		* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+		* @param[in] wParam é™„åŠ å‚æ•°
+		* @param[in] lParam é™„åŠ å‚æ•°
+		* @param[in] bHandled æ˜¯å¦éœ€è¦ç»§ç»­ä¼ é€’æ¶ˆæ¯ï¼Œtrueåˆ™ä¸ä¼ é€’
+		* @return LRESULT å¤„ç†ç»“æœ
 		*/
 		virtual LRESULT OnClose(UINT /*uMsg*/, WPARAM /*wParam*/, LPARAM /*lParam*/, BOOL& bHandled) override;
 
 		/**
-		* À¹½Ø²¢´¦ÀíÊó±ê×ó¼ü°´ÏÂ
-		* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-		* @param[in] wParam ¸½¼Ó²ÎÊı
-		* @param[in] lParam ¸½¼Ó²ÎÊı
-		* @param[in] bHandled ÊÇ·ñĞèÒª¼ÌĞø´«µİÏûÏ¢£¬trueÔò²»´«µİ
-		* @return LRESULT ´¦Àí½á¹û
+		* æ‹¦æˆªå¹¶å¤„ç†é¼ æ ‡å·¦é”®æŒ‰ä¸‹
+		* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+		* @param[in] wParam é™„åŠ å‚æ•°
+		* @param[in] lParam é™„åŠ å‚æ•°
+		* @param[in] bHandled æ˜¯å¦éœ€è¦ç»§ç»­ä¼ é€’æ¶ˆæ¯ï¼Œtrueåˆ™ä¸ä¼ é€’
+		* @return LRESULT å¤„ç†ç»“æœ
 		*/
 		virtual LRESULT OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
 
 		/**
-		* À¹½Ø²¢´¦ÀíÊó±êËÉ¿ªÏûÏ¢
-		* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-		* @param[in] wParam ¸½¼Ó²ÎÊı
-		* @param[in] lParam ¸½¼Ó²ÎÊı
-		* @param[in] bHandled ÊÇ·ñĞèÒª¼ÌĞø´«µİÏûÏ¢£¬trueÔò²»´«µİ
-		* @return LRESULT ´¦Àí½á¹û
+		* æ‹¦æˆªå¹¶å¤„ç†é¼ æ ‡æ¾å¼€æ¶ˆæ¯
+		* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+		* @param[in] wParam é™„åŠ å‚æ•°
+		* @param[in] lParam é™„åŠ å‚æ•°
+		* @param[in] bHandled æ˜¯å¦éœ€è¦ç»§ç»­ä¼ é€’æ¶ˆæ¯ï¼Œtrueåˆ™ä¸ä¼ é€’
+		* @return LRESULT å¤„ç†ç»“æœ
 		*/
 		virtual LRESULT OnLButtonUp(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
 
 		/**
-		* À¹½Ø²¢´¦ÀíÊó±êÒÆ¶¯ÏûÏ¢
-		* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-		* @param[in] wParam ¸½¼Ó²ÎÊı
-		* @param[in] lParam ¸½¼Ó²ÎÊı
-		* @param[in] bHandled ÊÇ·ñĞèÒª¼ÌĞø´«µİÏûÏ¢£¬trueÔò²»´«µİ
-		* @return LRESULT ´¦Àí½á¹û
+		* æ‹¦æˆªå¹¶å¤„ç†é¼ æ ‡ç§»åŠ¨æ¶ˆæ¯
+		* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+		* @param[in] wParam é™„åŠ å‚æ•°
+		* @param[in] lParam é™„åŠ å‚æ•°
+		* @param[in] bHandled æ˜¯å¦éœ€è¦ç»§ç»­ä¼ é€’æ¶ˆæ¯ï¼Œtrueåˆ™ä¸ä¼ é€’
+		* @return LRESULT å¤„ç†ç»“æœ
 		*/
 		virtual LRESULT OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
 
 		/**
-		* ´¦ÀíËùÓĞ¿Ø¼şµÄËùÓĞÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†æ‰€æœ‰æ§ä»¶çš„æ‰€æœ‰æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool Notify(ui::EventArgs* msg);
 
 		/**
-		* ´¦ÀíËùÓĞ¿Ø¼şµ¥»÷ÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†æ‰€æœ‰æ§ä»¶å•å‡»æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnClicked(ui::EventArgs* msg);
 
 		/**
-		* ÉèÖÃÊÓÆµÖ¡¹ÜÀíÆ÷
-		* @param[in] mng ÊÓÆµÖ¡¹ÜÀíÆ÷Ö¸Õë
-		* @return void	ÎŞ·µ»ØÖµ
+		* è®¾ç½®è§†é¢‘å¸§ç®¡ç†å™¨
+		* @param[in] mng è§†é¢‘å¸§ç®¡ç†å™¨æŒ‡é’ˆ
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void SetVideoMng(VideoFrameMng* mng) { video_frame_mng_ = mng; }
 
 		/**
-		* ¿ªÊ¼Â¼ÖÆ
-		* @param[in] type Â¼ÖÆÀàĞÍ
-		* @param[in] id Â¼ÖÆÄ¿±ê´°¿ÚµÄ¾ä±ú
-		* @param[in] time_ms Â¼ÖÆ¼ä¸ôÊ±¼ä
-		* @return void	ÎŞ·µ»ØÖµ
+		* å¼€å§‹å½•åˆ¶
+		* @param[in] type å½•åˆ¶ç±»å‹
+		* @param[in] id å½•åˆ¶ç›®æ ‡çª—å£çš„å¥æŸ„
+		* @param[in] time_ms å½•åˆ¶é—´éš”æ—¶é—´
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void StartCapture(CaptureType type, HWND id, int time_ms);
 
 		/**
-		* ÉèÖÃÂ¼ÖÆÀàĞÍ
-		* @param[in] type Â¼ÖÆÀàĞÍ
-		* @return void	ÎŞ·µ»ØÖµ
+		* è®¾ç½®å½•åˆ¶ç±»å‹
+		* @param[in] type å½•åˆ¶ç±»å‹
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void SetCaptureType(CaptureType type);
 
 		/**
-		* ÉèÖÃÂ¼ÖÆÄ¿±ê´°¿Ú
-		* @param[in] id ËùÊô´°¿ÚµÄ¾ä±ú
-		* @param[in] cut ÊÇ·ñÂ¼ÖÆÄ¿±ê´°¿ÚÖĞµÄÒ»²¿·Ö
-		* @return void	ÎŞ·µ»ØÖµ
+		* è®¾ç½®å½•åˆ¶ç›®æ ‡çª—å£
+		* @param[in] id æ‰€å±çª—å£çš„å¥æŸ„
+		* @param[in] cut æ˜¯å¦å½•åˆ¶ç›®æ ‡çª—å£ä¸­çš„ä¸€éƒ¨åˆ†
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void SetCaptureWnd(HWND id, bool cut);
 
 		/**
-		* Ôö¼ÓlogoÎÄ×Ö
-		* @param[in] text logoÎÄ×Ö
-		* @return void	ÎŞ·µ»ØÖµ
+		* å¢åŠ logoæ–‡å­—
+		* @param[in] text logoæ–‡å­—
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void SetTextLogo(std::wstring text);
 
 	private:
 		/**
-		* ¸ù¾İÃüÖĞ²âÊÔ½á¹ûÉèÖÃ¹â±ê
-		* @param[in] hit_type ÃüÖĞ²âÊÔ½á¹û
-		* @return void	ÎŞ·µ»ØÖµ
+		* æ ¹æ®å‘½ä¸­æµ‹è¯•ç»“æœè®¾ç½®å…‰æ ‡
+		* @param[in] hit_type å‘½ä¸­æµ‹è¯•ç»“æœ
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void SetHitTestCursor(int hit_type);
 
 		/**
-		* ¸ù¾İÊó±ê×ø±êÅĞ¶ÏÃüÖĞ²âÊÔ½á¹û
-		* @param[in] pt Êó±ê×ø±ê
-		* @return int ÃüÖĞ²âÊÔ½á¹û
+		* æ ¹æ®é¼ æ ‡åæ ‡åˆ¤æ–­å‘½ä¸­æµ‹è¯•ç»“æœ
+		* @param[in] pt é¼ æ ‡åæ ‡
+		* @return int å‘½ä¸­æµ‹è¯•ç»“æœ
 		*/
 		int CheckPtType(POINT pt);
 
 		/**
-		* µ÷ÕûÑ¡Çø´óĞ¡
-		* @param[in] pt µ÷ÕûµÄÆ«ÒÆÁ¿
-		* @return void	ÎŞ·µ»ØÖµ
+		* è°ƒæ•´é€‰åŒºå¤§å°
+		* @param[in] pt è°ƒæ•´çš„åç§»é‡
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void ResizeTrackRect(POINT& pt);
 
 		/**
-		* Í£Ö¹Â¼ÖÆ
-		* @return void	ÎŞ·µ»ØÖµ
+		* åœæ­¢å½•åˆ¶
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void StopCapture();
 
 		/**
-		* ½ØÈ¡Ò»Ö¡Í¼Ïñ
-		* @return void	ÎŞ·µ»ØÖµ
+		* æˆªå–ä¸€å¸§å›¾åƒ
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void MakeFrame();
 
@@ -198,7 +198,7 @@ namespace nim_comp
 		int width_;
 		int height_;
 		RECT track_rect_;
-		//½ØÍ¼×´Ì¬
+		//æˆªå›¾çŠ¶æ€
 		int track_state_;
 		ui::Box* track_box_;
 		ui::Control* track_NW_;
@@ -210,7 +210,7 @@ namespace nim_comp
 		ui::Control* track_B_;
 		ui::Control* track_SE_;
 
-		//½ØÍ¼ÇøÓò
+		//æˆªå›¾åŒºåŸŸ
 		int screen_width_;
 		int screen_height_;
 		int screen_x_;

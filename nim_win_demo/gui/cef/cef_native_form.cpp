@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "cef_native_form.h"
 
 using namespace ui;
@@ -68,9 +69,9 @@ void CefNativeForm::InitWindow()
 	cef_control_->AttachLoadEnd(nbase::Bind(&CefNativeForm::OnLoadEnd, this, std::placeholders::_1));
 	cef_control_->AttachLoadError(nbase::Bind(&CefNativeForm::OnLoadError, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 
-	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"cef/html/cef_test.html";
+	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"html/cef_test.html";
 	if(ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
-		html_path = L"file://" + QPath::GetAppPath() + L"cef/html/cef_test_en.html";
+		html_path = L"file://" + QPath::GetAppPath() + L"html/cef_test_en.html";
 	cef_control_->LoadURL(html_path);
 }
 
@@ -176,7 +177,7 @@ bool CefNativeForm::OnLinkClick(const std::wstring& url)
 
 CefRequestHandler::ReturnValue CefNativeForm::OnBeforeNavigate(CefRefPtr<CefRequest> request, bool is_redirect)
 {
-	// ·µ»ØRV_CANCEL½Ø¶Ïµ¼º½
+	// è¿”å›žRV_CANCELæˆªæ–­å¯¼èˆª
 	return RV_CONTINUE;
 }
 

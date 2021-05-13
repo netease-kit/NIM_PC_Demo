@@ -1,4 +1,5 @@
-﻿#include "rts_replay.h"
+#include "stdafx.h"
+#include "rts_replay.h"
 #include "shared/modal_wnd/file_dialog_ex.h"
 
 using namespace ui;

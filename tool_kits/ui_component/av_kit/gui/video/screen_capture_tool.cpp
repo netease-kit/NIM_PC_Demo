@@ -1,7 +1,6 @@
-﻿
+#include "stdafx.h"
 #include "screen_capture_tool.h"
 #include "module/video/video_manager.h"
-#include "libyuv.h"
 #include <sys/timeb.h>
 
 #define BORDER_SIZE	27

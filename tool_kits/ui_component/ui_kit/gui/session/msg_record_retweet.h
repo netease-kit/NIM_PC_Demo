@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "gui/session/session_box.h"
 
 namespace nim_comp

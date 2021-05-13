@@ -1,4 +1,5 @@
-﻿#include "video_form.h"
+#include "stdafx.h"
+#include "video_form.h"
 #include "record_select.h"
 // #include "util/windows_manager.h"
 #include "module/video/video_manager.h"

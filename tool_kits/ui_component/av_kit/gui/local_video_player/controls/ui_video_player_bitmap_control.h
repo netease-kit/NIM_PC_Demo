@@ -1,9 +1,9 @@
-﻿#ifndef _UI_VIDEO_PLAYER_BITMAPCONTROL_H_
+#ifndef _UI_VIDEO_PLAYER_BITMAPCONTROL_H_
 #define _UI_VIDEO_PLAYER_BITMAPCONTROL_H_
 #pragma once
 #ifdef SUPPORTLOCALPLAYER
 #include <map>
-#include "nls_play/nelp_api.h"
+#include "nelp_api.h"
 namespace ui
 {
 /** @class BitmapControl

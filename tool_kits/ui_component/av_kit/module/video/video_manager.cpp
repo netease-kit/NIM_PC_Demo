@@ -1,4 +1,4 @@
-﻿
+#include "stdafx.h"
 #include "video_manager.h"
 #include "callback/vchat/vchat_callback.h"
 #include "shared/ui/toast/toast.h"
@@ -486,7 +486,7 @@ void VideoManager::DoMultiVChat(const std::list<UTF8String>& friend_list, const 
 				invite_msg.session_type_ = nim::kNIMSessionTypeTeam;
 				invite_msg.receiver_accid_ = multi_vchat_session_id_;
 				invite_msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
-				invite_msg.client_msg_id_ = QString::GetGUID();
+				invite_msg.client_msg_id_ = nim::Tool::GetUuid();
 				invite_msg.msg_setting_.resend_flag_ = BS_FALSE;
 				invite_msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
 				invite_msg.content_ = nbase::UTF16ToUTF8(msg_content);
@@ -506,7 +506,7 @@ void VideoManager::DoMultiVChat(const std::list<UTF8String>& friend_list, const 
 #if 0
 				nim::SysMessage msg;
 				msg.sender_accid_ = current_user_id;
-				msg.client_msg_id_ = QString::GetGUID();
+				msg.client_msg_id_ = nim::Tool::GetUuid();
 				msg.attach_ = json_value;
 				msg.type_ = nim::kNIMSysMsgTypeCustomP2PMsg;
 				msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
@@ -989,7 +989,7 @@ void VideoManager::InvokeReceiveCustomP2PMessage(const Json::Value &json, const 
 				//发送自定义消息给用户
 				nim::SysMessage temp_msg;
 				temp_msg.sender_accid_ = current_user_id;
-				temp_msg.client_msg_id_ = QString::GetGUID();
+				temp_msg.client_msg_id_ = nim::Tool::GetUuid();
 				temp_msg.attach_ = json_value;
 				temp_msg.type_ = nim::kNIMSysMsgTypeCustomP2PMsg;
 				temp_msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
@@ -1108,7 +1108,7 @@ void VideoManager::InvokeReceiveCustomP2PMessage(const Json::Value &json, const 
 				//发送自定义消息给用户
 				nim::SysMessage temp_msg;
 				temp_msg.sender_accid_ = current_user_id;
-				temp_msg.client_msg_id_ = QString::GetGUID();
+				temp_msg.client_msg_id_ = nim::Tool::GetUuid();
 				temp_msg.attach_ = json_value;
 				temp_msg.type_ = nim::kNIMSysMsgTypeCustomP2PMsg;
 				temp_msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();

@@ -2,13 +2,12 @@
 
 #include "nim_ui_dll.h"
 #include "module/subscribe_event/subscribe_event_manager.h"
-#include "tool_kits/base/memory/singleton.h"
 
 namespace nim_ui
 {
 
 /** @class SubscribeEventManager
-  * @brief Ìá¹©¶©ÔÄÊÂ¼şÓĞ¹ØµÄ½Ó¿Ú
+  * @brief æä¾›è®¢é˜…äº‹ä»¶æœ‰å…³çš„æ¥å£
   * @copyright (c) 2017, NetEase Inc. All rights reserved
   * @author Redrain
   * @date 2017/4/6
@@ -20,69 +19,69 @@ public:
 
 public:
 	/**
-	* ÆôÓÃ/½ûÓÃÊÂ¼ş¶©ÔÄÄ£¿é
-	* @param[in] enable	ÊÇ·ñÆôÓÃÊÂ¼ş¶©ÔÄÄ£¿é
-	* @return void	ÎŞ·µ»ØÖµ
+	* å¯ç”¨/ç¦ç”¨äº‹ä»¶è®¢é˜…æ¨¡å—
+	* @param[in] enable	æ˜¯å¦å¯ç”¨äº‹ä»¶è®¢é˜…æ¨¡å—
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void SetEnabled(bool enable);
 
 	/**
-	* ÊÇ·ñÆôÓÃÁËÊÂ¼ş¶©ÔÄÄ£¿é
-	* @return bool	true:ÆôÓÃ, false : ½ûÓÃ
+	* æ˜¯å¦å¯ç”¨äº†äº‹ä»¶è®¢é˜…æ¨¡å—
+	* @return bool	true:å¯ç”¨, false : ç¦ç”¨
 	*/
 	bool IsEnabled() const;
 
 	/**
-	* »ñÈ¡ÊÂ¼şĞÅÏ¢
-	* @param[in] event_type ÊÂ¼şÀàĞÍ
-	* @param[in] accid ÓÃ»§id
-	* @param[out] data ÊÂ¼ş
-	* @return void	ÎŞ·µ»ØÖµ
+	* è·å–äº‹ä»¶ä¿¡æ¯
+	* @param[in] event_type äº‹ä»¶ç±»å‹
+	* @param[in] accid ç”¨æˆ·id
+	* @param[out] data äº‹ä»¶
+	* @return void	æ— è¿”å›å€¼
 	*/
 	bool GetEventData(int event_type, const std::string &accid, nim_comp::EventDataEx &data);
 
 	/**
-	* ¶©ÔÄ³¬Ê±ºó×Ô¶¯ÖØĞÂ¶©ÔÄÊÂ¼ş
-	* @return void	ÎŞ·µ»ØÖµ
+	* è®¢é˜…è¶…æ—¶åè‡ªåŠ¨é‡æ–°è®¢é˜…äº‹ä»¶
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void StartAutoSubscribe();
 
 	/**
-	* ¶©ÔÄÖ¸¶¨ÓÃ»§µÄÊÂ¼ş
-	* @param[in] event_type ÊÂ¼şÀàĞÍ
-	* @param[in] subscribe_account ¶©ÔÄÓÃ»§uid
-	* @return void	ÎŞ·µ»ØÖµ
+	* è®¢é˜…æŒ‡å®šç”¨æˆ·çš„äº‹ä»¶
+	* @param[in] event_type äº‹ä»¶ç±»å‹
+	* @param[in] subscribe_account è®¢é˜…ç”¨æˆ·uid
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void SubscribeEvent(int event_type, const std::string &subscribe_account);
 
 	/**
-	* ¶©ÔÄÖ¸¶¨ÓÃ»§µÄÊÂ¼ş
-	* @param[in] event_type ÊÂ¼şÀàĞÍ
-	* @param[in] subscribe_list ¶©ÔÄÁĞ±í
-	* @return void	ÎŞ·µ»ØÖµ
+	* è®¢é˜…æŒ‡å®šç”¨æˆ·çš„äº‹ä»¶
+	* @param[in] event_type äº‹ä»¶ç±»å‹
+	* @param[in] subscribe_list è®¢é˜…åˆ—è¡¨
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void SubscribeEvent(int event_type, const std::list<std::string> &subscribe_list);
 
 	/**
-	* È¡Ïû¶©ÔÄÖ¸¶¨ÓÃ»§µÄÊÂ¼ş
-	* @param[in] event_type ÊÂ¼şÀàĞÍ
-	* @param[in] unsubscribe_account È¡Ïû¶©ÔÄÓÃ»§uid
-	* @return void	ÎŞ·µ»ØÖµ
+	* å–æ¶ˆè®¢é˜…æŒ‡å®šç”¨æˆ·çš„äº‹ä»¶
+	* @param[in] event_type äº‹ä»¶ç±»å‹
+	* @param[in] unsubscribe_account å–æ¶ˆè®¢é˜…ç”¨æˆ·uid
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void UnSubscribeEvent(int event_type, const std::string &unsubscribe_account);
 
 	/**
-	* È¡Ïû¶©ÔÄÖ¸¶¨ÓÃ»§µÄÊÂ¼ş
-	* @param[in] event_type ÊÂ¼şÀàĞÍ
-	* @param[in] unsubscribe_list È¡Ïû¶©ÔÄÁĞ±í
-	* @return void	ÎŞ·µ»ØÖµ
+	* å–æ¶ˆè®¢é˜…æŒ‡å®šç”¨æˆ·çš„äº‹ä»¶
+	* @param[in] event_type äº‹ä»¶ç±»å‹
+	* @param[in] unsubscribe_list å–æ¶ˆè®¢é˜…åˆ—è¡¨
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void UnSubscribeEvent(int event_type, const std::list<std::string> &unsubscribe_list);
 
 	/**
-	* Éú³ÉÃ¦Âµ×´Ì¬ÊÂ¼ş
-	* @param[in] busy ÊÇ·ñÃ¦Âµ
-	* @return EventData	ÊÂ¼şÊı¾İ
+	* ç”Ÿæˆå¿™ç¢ŒçŠ¶æ€äº‹ä»¶
+	* @param[in] busy æ˜¯å¦å¿™ç¢Œ
+	* @return EventData	äº‹ä»¶æ•°æ®
 	*/
 	static nim::EventData CreateBusyEvent(bool busy);
 

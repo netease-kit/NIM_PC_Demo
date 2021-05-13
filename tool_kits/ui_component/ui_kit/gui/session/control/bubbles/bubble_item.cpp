@@ -1,4 +1,5 @@
-﻿#include "bubble_item.h"
+#include "stdafx.h"
+#include "bubble_item.h"
 #include "shared/ui/ui_menu.h"
 #include "gui/main/control/session_item.h"
 #include "gui/profile_form/profile_form.h"

@@ -2,7 +2,7 @@
 #include "shared/threads.h"
 
 /** @class DBThread
-  * @brief Êı¾İ¿â²Ù×÷Ïß³Ì
+  * @brief æ•°æ®åº“æ“ä½œçº¿ç¨‹
   * @copyright (c) 2015, NetEase Inc. All rights reserved
   * @author towik
   * @date 2015/1/1
@@ -11,23 +11,23 @@ class DBThread : public nbase::FrameworkThread
 {
 public:
 	/**
-	* ¹¹Ôìº¯Êı
-	* @param[in] thread_id Ïß³Ìid
-	* @param[in] name Ïß³ÌÃû×Ö
+	* æ„é€ å‡½æ•°
+	* @param[in] thread_id çº¿ç¨‹id
+	* @param[in] name çº¿ç¨‹åå­—
 	*/
 	DBThread(enum  ThreadId thread_id, const char *name);
 	~DBThread(void);
 
 private:
 	/**
-	* Ğéº¯Êı£¬³õÊ¼»¯Êı¾İ¿âÏß³Ì
-	* @return void	ÎŞ·µ»ØÖµ
+	* è™šå‡½æ•°ï¼Œåˆå§‹åŒ–æ•°æ®åº“çº¿ç¨‹
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void Init() override;
 
 	/**
-	* Ğéº¯Êı£¬Êı¾İ¿âÏß³ÌÍË³öÊ±£¬×öÒ»Ğ©ÇåÀí¹¤×÷
-	* @return void	ÎŞ·µ»ØÖµ
+	* è™šå‡½æ•°ï¼Œæ•°æ®åº“çº¿ç¨‹é€€å‡ºæ—¶ï¼Œåšä¸€äº›æ¸…ç†å·¥ä½œ
+	* @return void	æ— è¿”å›å€¼
 	*/
 	virtual void Cleanup() override;
 

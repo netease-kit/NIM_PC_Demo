@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "bubble_item.h"
 #include "module/multi_retweet/multi_message_retweet_data_def.h"
 namespace nim_comp

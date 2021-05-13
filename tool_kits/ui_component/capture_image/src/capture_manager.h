@@ -21,7 +21,7 @@ public:
 	//void AddClipHotkeyCallback(CaptureHotkeyCallback cb, std::weak_ptr<nbase::WeakFlag> flag);
 
 private:
-	bool capture_tracking_;//ÕıÔÚ½ØÍ¼
+	bool capture_tracking_;//æ­£åœ¨æˆªå›¾
 	CaptureCallback capture_callback_;
 	//std::vector<Hotkey_Callback_Info> capture_hotkey_cb_list_;
 };

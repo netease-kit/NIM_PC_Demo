@@ -1,4 +1,5 @@
-﻿#include "rts_callback.h"
+#include "stdafx.h"
+#include "rts_callback.h"
 #include "module/rts/rts_manager.h"
 
 namespace nim_comp

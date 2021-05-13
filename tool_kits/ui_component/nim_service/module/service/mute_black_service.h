@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 
 typedef std::function<void(const std::string &, bool)> SetStateCallback;
 namespace nim_comp

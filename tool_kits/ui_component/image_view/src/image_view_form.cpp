@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "image_view_form.h"
 #include "image_view_manager.h"
 #include "shared/modal_wnd/file_dialog_ex.h"
@@ -23,7 +24,7 @@ LRESULT ImageViewForm::OnLButtonDown(UINT uMsg, WPARAM wParam, LPARAM lParam, BO
 		return 0;
 	}
 
-	if (ui_image_view_->PtInImageView(point))//ÅĞ¶ÏĞèÒªÒÆ¶¯Í¼Æ¬
+	if (ui_image_view_->PtInImageView(point))//åˆ¤æ–­éœ€è¦ç§»åŠ¨å›¾ç‰‡
 	{
 		pic_moving_ = true;
 		SetHitTestCursor(CURSOR_HAND_MOVE);
@@ -45,7 +46,7 @@ LRESULT ImageViewForm::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 {
 	bHandled = FALSE;
 
-	if (pic_moving_)//Í¨Öª¿Ø¼şµ÷ÕûÍ¼Æ¬Î»ÖÃ
+	if (pic_moving_)//é€šçŸ¥æ§ä»¶è°ƒæ•´å›¾ç‰‡ä½ç½®
 	{
 		POINT point;
 		GetCursorPos(&point);
@@ -68,7 +69,7 @@ LRESULT ImageViewForm::OnMouseMove(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 		ScreenToClientEx(point);
 
 		bool close_btn_msg = IsOnOtherControl(point);
-		if (!close_btn_msg && ui_image_view_->PtInImageView(point))//ÅĞ¶ÏĞèÒªÒÆ¶¯Í¼Æ¬
+		if (!close_btn_msg && ui_image_view_->PtInImageView(point))//åˆ¤æ–­éœ€è¦ç§»åŠ¨å›¾ç‰‡
 		{
 			SetHitTestCursor(CURSOR_HAND_IMAGE);
 		}
@@ -101,7 +102,7 @@ LRESULT ImageViewForm::OnNcHitTest(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL
 	}
 
 
-	if (ui_image_view_->PtInImageView(point))//ÅĞ¶ÏĞèÒªÒÆ¶¯Í¼Æ¬
+	if (ui_image_view_->PtInImageView(point))//åˆ¤æ–­éœ€è¦ç§»åŠ¨å›¾ç‰‡
 	{
 		RECT rt = tool_bar_btns_->GetPos();
 		if (PtInRect(&rt, point) && !IsZoomed(m_hWnd))
@@ -129,7 +130,7 @@ LRESULT ImageViewForm::OnMouseWheel(UINT uMsg, WPARAM wParam, LPARAM lParam, BOO
 		POINT point;
 		GetCursorPos(&point);
 		ScreenToClientEx(point);
-		if (ui_image_view_->PtInImageView(point))//ÅĞ¶ÏĞèÒªÒÆ¶¯Í¼Æ¬
+		if (ui_image_view_->PtInImageView(point))//åˆ¤æ–­éœ€è¦ç§»åŠ¨å›¾ç‰‡
 		{
 			SetHitTestCursor(pic_moving_ ? CURSOR_HAND_MOVE : CURSOR_HAND_IMAGE);
 		}
@@ -239,7 +240,7 @@ void ImageViewForm::ShowImageScale(bool show)
 
 		std::wstring size;
 		int size_hum = int(ui_image_view_->GetScale() * 100);
-		if (ui_image_view_->IsAdjustScale())//´óÓÚ100ĞèÒªµ÷Õû
+		if (ui_image_view_->IsAdjustScale())//å¤§äº100éœ€è¦è°ƒæ•´
 		{
 			if (size_hum % 10 >= 5)
 			{
@@ -251,13 +252,13 @@ void ImageViewForm::ShowImageScale(bool show)
 			}
 		}
 
-		//Èç¹ûÊÇ´ò¿ªÁËĞÂµÄÍ¼Æ¬£¬¶øÇÒÍ¼Æ¬Ã»ÓĞËõ·Å£¬¾Í²»ÏÔÊ¾Ëõ·ÅĞÅÏ¢
+		//å¦‚æœæ˜¯æ‰“å¼€äº†æ–°çš„å›¾ç‰‡ï¼Œè€Œä¸”å›¾ç‰‡æ²¡æœ‰ç¼©æ”¾ï¼Œå°±ä¸æ˜¾ç¤ºç¼©æ”¾ä¿¡æ¯
 		if (size_hum == 100 && show_scale_ == true)
 		{
 			return;
 		}
 
-		if (size_hum != 100 && ui_image_view_->IsVisible())//²»¿ÉÏÔÊ¾±íÊ¾Îªgif
+		if (size_hum != 100 && ui_image_view_->IsVisible())//ä¸å¯æ˜¾ç¤ºè¡¨ç¤ºä¸ºgif
 		{
 			button_normal_->SetEnabled(true);
 		}
@@ -307,7 +308,7 @@ void ImageViewForm::AdjustToolbarStatus()
 	{
 		float fScale = ui_image_view_->GetScale();
 
-		if (fScale != 1.0f && ui_image_view_->IsVisible())//²»¿ÉÏÔÊ¾±íÊ¾Îªgif
+		if (fScale != 1.0f && ui_image_view_->IsVisible())//ä¸å¯æ˜¾ç¤ºè¡¨ç¤ºä¸ºgif
 		{
 			button_normal_->SetEnabled(true);
 		}
@@ -540,7 +541,7 @@ std::wstring ImageViewForm::GetMimeType(GUID& clsid)
 {
 	using namespace Gdiplus;
 	std::wstring mime_type;
-	if (clsid == ImageFormatGIF) //²»Ö§³ÖGIFÎÄ¼ş;
+	if (clsid == ImageFormatGIF) //ä¸æ”¯æŒGIFæ–‡ä»¶;
 		mime_type = kImageGIF;
 	else if (clsid == ImageFormatJPEG)
 		mime_type = kImageJPEG;

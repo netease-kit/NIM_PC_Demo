@@ -4,33 +4,33 @@
 
 #include "duilib/UIlib.h"
 
-// ±à¼­Ä£Ê½
+// ç¼–è¾‘æ¨¡å¼
 enum EditMode
 {	
-	EM_NONE,			// Î´Ñ¡ÖĞ
-	EM_RECTANGLE,		// ¾ØĞÎ
-	EM_ELLIPSE,			// ÍÖÔ²
-	EM_LINE,			// Ö±Ïß
-	EM_ARROW,			// ¼ıÍ·
-	EM_TEXT,			// ÎÄ×Ö
-	EM_BRUSH,			// »­Ë¢ (ÊµÖÊÊÇN¸öÏß¶Î)
-	EM_MOSAIC,			// »­Ë¢ÀàĞÍµÄ¼ÓÇ¿£¬ÏÔÊ¾ÎªÂíÈü¿Ë
-	EM_GAUSS,			// »­Ë¢ÀàĞÍµÄ¼ÓÇ¿£¬ÏÔÊ¾ÎªÃ«²£Á§
+	EM_NONE,			// æœªé€‰ä¸­
+	EM_RECTANGLE,		// çŸ©å½¢
+	EM_ELLIPSE,			// æ¤­åœ†
+	EM_LINE,			// ç›´çº¿
+	EM_ARROW,			// ç®­å¤´
+	EM_TEXT,			// æ–‡å­—
+	EM_BRUSH,			// ç”»åˆ· (å®è´¨æ˜¯Nä¸ªçº¿æ®µ)
+	EM_MOSAIC,			// ç”»åˆ·ç±»å‹çš„åŠ å¼ºï¼Œæ˜¾ç¤ºä¸ºé©¬èµ›å…‹
+	EM_GAUSS,			// ç”»åˆ·ç±»å‹çš„åŠ å¼ºï¼Œæ˜¾ç¤ºä¸ºæ¯›ç»ç’ƒ
 };
 
-// »æÖÆµ¥Ôª²ÎÊıÀàĞÍ
+// ç»˜åˆ¶å•å…ƒå‚æ•°ç±»å‹
 enum DrawUnitParamType
 {
 	DUPT_NONE,
-	DUPT_LINEWIDTH,		// Ïß¿í
-	DUPT_COLOR,			// ÑÕÉ«
-	DUPT_FONTSIZE,		// ×ÖÌå´óĞ¡
-	DUPT_BOLD,			// ¼Ó´Ö
-	DUPT_UNDERLINE,		// ÏÂ»®Ïß
-	DUPT_ITALIC,		// Ğ±Ìå
+	DUPT_LINEWIDTH,		// çº¿å®½
+	DUPT_COLOR,			// é¢œè‰²
+	DUPT_FONTSIZE,		// å­—ä½“å¤§å°
+	DUPT_BOLD,			// åŠ ç²—
+	DUPT_UNDERLINE,		// ä¸‹åˆ’çº¿
+	DUPT_ITALIC,		// æ–œä½“
 };
 
-// Ïß¿í
+// çº¿å®½
 enum LineWidth		
 {
 	LW_1POUND		=	1,
@@ -40,15 +40,15 @@ enum LineWidth
 	LW_6POUNDS		=	5,
 };
 
-const DWORD	kdwDefaultColor		=	RGB(0xe6,0x00,0x13);	// Ä¬ÈÏÑÕÉ«
-const int	knDefaultFontSize	=	18;						// Ä¬ÈÏ×ÖÌå´óĞ¡
-const int	knDefaultLineWidth	=	LW_1POUND;				// Ä¬ÈÏÏß´Ö
+const DWORD	kdwDefaultColor		=	RGB(0xe6,0x00,0x13);	// é»˜è®¤é¢œè‰²
+const int	knDefaultFontSize	=	18;						// é»˜è®¤å­—ä½“å¤§å°
+const int	knDefaultLineWidth	=	LW_1POUND;				// é»˜è®¤çº¿ç²—
 const int	knFontSizeLength	=	14;
 const int	vtFontSize[knFontSizeLength] = {8,9,10,11,knDefaultFontSize,14,16,18,20,22,24,26,28,36};
 const int	knDefaultIndex = 4;
 const int	knEditOffset = 3;
 
-// ¿ìËÙËÄÉáÎåÈë
+// å¿«é€Ÿå››èˆäº”å…¥
 template <typename FloatType>
 inline int __roundToInt (const FloatType value) throw()
 {
@@ -58,7 +58,7 @@ inline int __roundToInt (const FloatType value) throw()
 	return n.asInt [0];
 }
 
-// ËÄÉáÎåÈë, µÃÕûÊı
+// å››èˆäº”å…¥, å¾—æ•´æ•°
 #define   ROUND(X)  __roundToInt(X)
 
 #endif  // _NIM_GUI_CAPTURE_FORM_CAPTURE_DEF_H_

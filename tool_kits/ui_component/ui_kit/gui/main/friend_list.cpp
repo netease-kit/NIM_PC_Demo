@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "gui/main/friend_list.h"
 #include "gui/add_friend/add_friend_wnd.h"
 #include "gui/black_list/black_list_wnd.h"
@@ -9,6 +10,7 @@
 #include "module/runtime_data/runtime_data_manager.h"
 #include "module/plugins/main_plugins_manager.h"
 #include "gui/plugins/contact/contact_plugin.h"
+
 using namespace ui;
 
 namespace nim_comp
@@ -32,7 +34,7 @@ FriendList::FriendList(ui::TreeView* friend_list) :
 	friend_list->AttachScrollChange(nbase::Bind(&FriendList::OnScrollChange, this, std::placeholders::_1));
 	friend_list->AttachResize(nbase::Bind(&FriendList::OnScrollChange, this, std::placeholders::_1));
 
-	//Ìí¼ÓºÃÓÑlistitem
+	//æ·»åŠ å¥½å‹listitem
 	ui::TreeNode* add_friend_item = (ui::TreeNode*)ui::GlobalManager::CreateBox(L"main/main_add_friend_list_item.xml");
 	friend_list_->GetRootNode()->AddChildNodeAt(add_friend_item, 0);
 	add_friend_item->AttachClick([](ui::EventArgs* param)
@@ -50,7 +52,7 @@ FriendList::FriendList(ui::TreeView* friend_list) :
 		return true;
 	});
 
-	//Ìí¼Ó·Ö×é
+	//æ·»åŠ åˆ†ç»„
 	ui::TreeNode* tree_node = ListItemUtil::CreateFirstLetterListItem(L"Robot");
 	friend_list_->GetRootNode()->AddChildNode(tree_node);
 	tree_node_ver_.push_back(tree_node);
@@ -260,8 +262,8 @@ ui::TreeNode* FriendList::FindFriendItem(const std::string& accid)
 
 	ui::TreeNode* item = NULL;
 
-	// ÕâÀïÒª¿¼ÂÇÌØÊâÇé¿ö£¬Ä³Ð©accidÊÇAµ½Z£¬¶øFriendListÖÐµÄ·Ö×é¿Ø¼þGroupTitleµÄnameÒ²ÊÇAµ½Z
-	// ËùÒÔÖ±½ÓÓÃFindSubControlËÑË÷¿ÉÄÜ»áGroupTitle¡£¶ÔÓÚÕâÖÖÇé¿ö¾ÍÖ±½Ó±éÀúËùÓÐ·Ö×éÈ¥²éÕÒ
+	// è¿™é‡Œè¦è€ƒè™‘ç‰¹æ®Šæƒ…å†µï¼ŒæŸäº›accidæ˜¯Aåˆ°Zï¼Œè€ŒFriendListä¸­çš„åˆ†ç»„æŽ§ä»¶GroupTitleçš„nameä¹Ÿæ˜¯Aåˆ°Z
+	// æ‰€ä»¥ç›´æŽ¥ç”¨FindSubControlæœç´¢å¯èƒ½ä¼šGroupTitleã€‚å¯¹äºŽè¿™ç§æƒ…å†µå°±ç›´æŽ¥éåŽ†æ‰€æœ‰åˆ†ç»„åŽ»æŸ¥æ‰¾
 	char id = accid.at(0);
 	if (accid.length() == 1 && ((id >= 'a' && id <= 'z') || (id >= 'A' && id <= 'Z')))
 	{

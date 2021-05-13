@@ -1,4 +1,4 @@
-﻿#include "gauss_blur.h"
+#include "gauss_blur.h"
 #include <ppl.h>
 #include <intrin.h>
 #include <math.h>

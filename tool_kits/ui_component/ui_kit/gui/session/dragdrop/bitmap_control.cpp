@@ -1,4 +1,5 @@
-﻿#include "bitmap_control.h"
+#include "stdafx.h"
+#include "bitmap_control.h"
 
 using namespace ui;
 namespace nim_comp

@@ -1,4 +1,5 @@
-﻿#include "resource.h"
+#include "stdafx.h"
+#include "resource.h"
 #include "team_event_form.h"
 #include "control/custom_msg.h"
 #include "export/nim_ui_all.h"

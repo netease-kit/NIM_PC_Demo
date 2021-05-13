@@ -1,4 +1,5 @@
-﻿#include "bubble_transferfile.h"
+#include "stdafx.h"
+#include "bubble_transferfile.h"
 #include "shared/modal_wnd/file_dialog_ex.h"
 #include "module/db/user_db.h"
 #include "module/session/session_manager.h"

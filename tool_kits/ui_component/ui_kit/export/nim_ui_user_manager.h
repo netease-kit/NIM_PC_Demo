@@ -1,8 +1,7 @@
-﻿#pragma once
+#pragma once
 
 #include "nim_ui_dll.h"
 #include "module/service/user_service.h"
-#include "tool_kits/base/memory/singleton.h"
 
 namespace nim_ui
 {

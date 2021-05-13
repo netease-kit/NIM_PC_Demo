@@ -1,0 +1,32 @@
+HKCR
+{
+	ImageOle.ImageOle.1 = s 'ImageOle Class'
+	{
+		CLSID = s '{B0C73E85-1599-4705-BD6B-DB1DF767FC6D}'
+	}
+	ImageOle.ImageOle = s 'ImageOle Class'
+	{		
+		CurVer = s 'ImageOle.ImageOle.1'
+	}
+	NoRemove CLSID
+	{
+		ForceRemove {B0C73E85-1599-4705-BD6B-DB1DF767FC6D} = s 'ImageOle Class'
+		{
+			ProgID = s 'ImageOle.ImageOle.1'
+			VersionIndependentProgID = s 'ImageOle.ImageOle'
+			ForceRemove Programmable
+			InprocServer32 = s '%MODULE%'
+			{
+				val ThreadingModel = s 'Apartment'
+			}
+			ForceRemove Control
+			ForceRemove 'ToolboxBitmap32' = s '%MODULE%, 106'
+			MiscStatus = s '0'
+			{
+			    '1' = s '%OLEMISC%'
+			}
+			TypeLib = s '{20667E6E-41AD-40D0-BFE9-94840D872CD4}'
+			Version = s '1.0'
+		}
+	}
+}

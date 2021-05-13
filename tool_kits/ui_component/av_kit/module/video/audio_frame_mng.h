@@ -8,7 +8,7 @@
 namespace nim_comp
 {
 /** @class AudioFrameMng
-  * @brief ÒôÆµÖ¡¹ÜÀíÆ÷
+  * @brief éŸ³é¢‘å¸§ç®¡ç†å™¨
   * @copyright (c) 2016, NetEase Inc. All rights reserved
   * @date 2016/09/19
   */
@@ -19,28 +19,28 @@ public:
 	~AudioFrameMng();
 
 	/**
-	* ÇåÀí±£´æµÄÒôÆµÖ¡Êı¾İ
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ¸…ç†ä¿å­˜çš„éŸ³é¢‘å¸§æ•°æ®
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void Clear();
 
 	/**
-	* Ìí¼ÓÒ»¸öÒôÆµÖ¡Êı¾İ
-	* @param[in] capture ÊÇ·ñÎªÂ¼ÖÆÒôÆµµÄÖ¡
-	* @param[in] time Ê±¼ä´Á
-	* @param[in] data Ö¡Êı¾İ
-	* @param[in] size Ö¡Êı¾İ´óĞ¡
-	* @param[in] json °üº¬²ÉÑùÆµÂÊµÄjson´®
-	* @return void	ÎŞ·µ»ØÖµ
+	* æ·»åŠ ä¸€ä¸ªéŸ³é¢‘å¸§æ•°æ®
+	* @param[in] capture æ˜¯å¦ä¸ºå½•åˆ¶éŸ³é¢‘çš„å¸§
+	* @param[in] time æ—¶é—´æˆ³
+	* @param[in] data å¸§æ•°æ®
+	* @param[in] size å¸§æ•°æ®å¤§å°
+	* @param[in] json åŒ…å«é‡‡æ ·é¢‘ç‡çš„jsonä¸²
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void AddAudioFrame(bool capture, int64_t time, const char* data, int size, const std::string& json);
 
 	/**
-	* »ñÈ¡Ò»¸öÒôÆµÖ¡Êı¾İ
-	* @param[in] capture ÊÇ·ñÎªÂ¼ÖÆÒôÆµµÄÖ¡
-	* @param[out] out_data Ö¡Êı¾İ
-	* @param[out] rate ²ÉÑùÆµÂÊ
-	* @return void	ÎŞ·µ»ØÖµ
+	* è·å–ä¸€ä¸ªéŸ³é¢‘å¸§æ•°æ®
+	* @param[in] capture æ˜¯å¦ä¸ºå½•åˆ¶éŸ³é¢‘çš„å¸§
+	* @param[out] out_data å¸§æ•°æ®
+	* @param[out] rate é‡‡æ ·é¢‘ç‡
+	* @return void	æ— è¿”å›å€¼
 	*/
 	void GetAudioFrame(bool capture, std::string& out_data, int& rate);
 private:

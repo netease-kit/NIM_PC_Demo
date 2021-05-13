@@ -1,4 +1,5 @@
-﻿#include "audio_callback.h"
+#include "stdafx.h"
+#include "audio_callback.h"
 #include "module/session/session_manager.h"
 #include "gui/session/msg_record.h"
 #include "gui/session/msg_record_retweet.h"

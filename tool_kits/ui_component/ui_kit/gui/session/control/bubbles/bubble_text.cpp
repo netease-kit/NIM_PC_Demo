@@ -1,5 +1,7 @@
-﻿#include "bubble_text.h"
+#include "stdafx.h"
+#include "bubble_text.h"
 #include "module/emoji/emoji_info.h"
+#include "util/net_call_helper.h"
 
 using namespace ui;
 
@@ -41,7 +43,16 @@ void MsgBubbleText::InitInfo(const nim::IMMessage &msg)
 	__super::InitInfo(msg);
 
 	std::wstring str = nbase::UTF8ToUTF16(msg.content_);
-	if (IsNetCallMsg((nim::NIMMessageType)msg.type_, msg.attach_))
+#if defined(USING_RTC_G2)
+	if (IsG2NetCallMsg((nim::NIMMessageType)msg.type_, msg.attach_))
+#else
+    if (IsNetCallMsg((nim::NIMMessageType)msg.type_, msg.attach_))
+#endif
+    {
+        str = ParseNetCallMsg(msg);
+        msg_.content_ = nbase::UTF16ToUTF8(str);
+    }
+	else if (IsNetCallMsg((nim::NIMMessageType)msg.type_, msg.attach_))
 	{
 		GetNotifyMsg(msg.attach_, msg.sender_accid_, msg.receiver_accid_, str, sid_);
 		msg_.content_ = nbase::UTF16ToUTF8(str);

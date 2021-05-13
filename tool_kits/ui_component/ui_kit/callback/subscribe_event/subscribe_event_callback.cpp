@@ -1,4 +1,5 @@
-﻿#include "subscribe_event_callback.h"
+#include "stdafx.h"
+#include "subscribe_event_callback.h"
 #include "module/subscribe_event/subscribe_event_manager.h"
 
 namespace nim_comp

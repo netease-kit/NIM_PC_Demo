@@ -1,0 +1,128 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Global>
+    <!--所有字体-->
+    <!--0-->
+    <Font name="system" size="10"/>
+    <!--1-->
+    <Font name="system" size="12"/>
+    <!--2-->
+    <Font name="system" size="14"/>
+    <!--3-->
+    <Font name="system" size="16"/>
+    <!--4-->
+    <Font name="system" size="18"/>
+    <!--5-->
+    <Font name="system" size="10" bold="true"/>
+    <!--6-->
+    <Font name="system" size="12" bold="true"/>
+    <!--7-->
+    <Font name="system" size="14" bold="true"/>
+    <!--8-->
+    <Font name="system" size="16" bold="true"/>
+    <!--9-->
+    <Font name="system" size="18" bold="true"/>
+    <!--10-->
+    <Font name="arial" size="10"/>
+    <!--11-->
+    <Font name="arial" size="12"/>
+    <!--12-->
+    <Font name="arial" size="14"/>
+    <!--13-->
+    <Font name="arial" size="16"/>
+    <!--14-->
+    <Font name="arial" size="18"/>
+    <!--15-->
+    <Font name="arial" size="10" bold="true"/>
+    <!--16-->
+    <Font name="arial" size="12" bold="true"/>
+    <!--17-->
+    <Font name="arial" size="14" bold="true"/>
+    <!--18-->
+    <Font name="arial" size="16" bold="true"/>
+    <!--19-->
+    <Font name="arial" size="18" bold="true"/>
+	<!--20-->
+	<Font name="system" size="20"/>
+    <!--21-->
+    <Font name="system" size="20" bold="true"/>
+    <!--22-->
+    <Font name="system" size="22"/>
+    <!--23-->
+    <Font name="system" size="22" bold="true"/>
+    <!--24-->
+    <Font name="system" size="12" underline="true"/>
+    <!--25-->
+    <Font name="system" size="24"/>
+    <!--26-->
+    <Font name="system" size="14" underline="true"/>
+    <!--27-->
+    <Font name="system" size="16" underline="true"/>
+	
+    <!--文字色值，不带透明层-->
+    <TextColor name="textdefaultcolor" value="#ff333333"/>
+    <TextColor name="textdefaultdisablecolor" value="#ffa1aebc"/>
+    <TextColor name="darkcolor" value="#ff333333"/>
+    <TextColor name="dark2color" value="#ff555555"/>
+    <TextColor name="lightcolor" value="#ff888888"/>
+    <TextColor name="white" value="#ffffffff"/>
+    <TextColor name="btn_global_white" value="#ff72797f"/>
+    <TextColor name="tip" value="#ffeb6965"/>
+    <TextColor name="edit_tip" value="#a8a8a8"/>
+    <TextColor name="list_letter" value="#ff8fa7b4"/>
+    <TextColor name="gray" value="#ff8e99a6"/>
+    <TextColor name="green" value="#00bb96"/>
+    <TextColor name="red" value="#ffdd615f"/>
+    <TextColor name="link_green" value="#ff21c7a6"/>
+    <TextColor name="link_blue" value="#ff006DD9"/>
+    <TextColor name="link_red" value="#ffC63535"/>
+    <TextColor name="yellow" value="#ffcabaa0"/>
+    <TextColor name="black_gray" value="#ff888888"/>
+	
+    <!--窗口标题栏等使用-->
+    <TextColor name="splitline_hor_level1" value="#ffbacee3"/>
+	
+    <!--背景色值，完全不透明-->
+    <TextColor name="bk_wnd_lightcolor" value="#ffffffff"/>
+    <TextColor name="bk_wnd_mainwhite" value="#fffafbfc"/>
+    <TextColor name="bk_wnd_lightgreen" value="#ff1fd1a8"/>
+    <TextColor name="bk_gray1" value="#fff0f3f5"/>
+	
+    <!--字体大小-->
+    <Class name="font_title" value="font=&quot;3&quot;" />
+
+    <!--窗口标题条-->
+    <Class name="caption" value="height=&quot;34&quot; bkimage=&quot;../public/caption/caption_public.png&quot; padding=&quot;20,0,5,0&quot;"/>
+	
+    <!--窗口右上角按钮-->
+    <Class name="btn_wnd_min" value="width=&quot;auto&quot; height=&quot;auto&quot; forenormalimage=&quot;file='../public/button/btn_wnd_gray_min.png' dest='4,4,16,16'&quot; normalimage=&quot;&quot; hotimage=&quot;../public/button/btn_wnd_gray_min_hovered.png&quot; pushedimage=&quot;../public/button/btn_wnd_gray_min_pushed.png&quot;"/>
+	
+    <Class name="btn_wnd_min_white" value="width=&quot;auto&quot; height=&quot;auto&quot; forenormalimage=&quot;file='../public/button/btn_wnd_white_min.png' dest='4,4,16,16'&quot; normalimage=&quot;&quot; hotimage=&quot;../public/button/btn_wnd_white_min_hovered.png&quot; pushedimage=&quot;../public/button/btn_wnd_white_min_pushed.png&quot;"/>
+
+    <Class name="btn_wnd_close" value="width=&quot;auto&quot; height=&quot;auto&quot; bkimage=&quot;file='../public/button/btn_wnd_gray_close.png'&quot; normalimage=&quot;&quot; hotimage=&quot;../public/button/btn_wnd_close_hovered.png&quot; pushedimage=&quot;../public/button/btn_wnd_close_pushed.png&quot;"/>
+	
+    <Class name="btn_wnd_close_white" value="width=&quot;auto&quot; height=&quot;auto&quot; forenormalimage=&quot;file='../public/button/btn_wnd_white_close.png' dest='4,4,16,16'&quot; normalimage=&quot;&quot; hotimage=&quot;../public/button/btn_wnd_close_hovered.png&quot; pushedimage=&quot;../public/button/btn_wnd_close_pushed.png&quot;"/>
+
+    <Class name="btn_wnd_max" value="width=&quot;auto&quot; height=&quot;auto&quot; forenormalimage=&quot;file='../public/button/btn_wnd_gray_max.png' dest='4,4,16,16'&quot; normalimage=&quot;&quot; hotimage=&quot;../public/button/btn_wnd_gray_max_hovered.png&quot; pushedimage=&quot;../public/button/btn_wnd_gray_max_pushed.png&quot;"/>
+
+    <Class name="btn_wnd_restore" value="width=&quot;auto&quot; height=&quot;auto&quot; forenormalimage=&quot;file='../public/button/btn_wnd_restore.png' dest='4,4,16,16'&quot; normalimage=&quot;&quot; hotimage=&quot;../public/button/btn_wnd_bk_hovered.png&quot; pushedimage=&quot;../public/button/btn_wnd_bk_pushed.png&quot;"/>
+	
+    <!--checkbox-->
+    <Class name="checkbox_font12" value="height=&quot;16&quot; textpadding=&quot;20,0,0,0&quot; font=&quot;1&quot; normaltextcolor=&quot;darkcolor&quot; normalimage=&quot;file='../public/CheckBox/check_no.png' dest='0,0,16,16'&quot; disabledimage=&quot;file='../public/CheckBox/check_no.png' dest='0,0,16,16' fade='80'&quot; selectednormalimage=&quot;file='../public/CheckBox/check_yes.png' dest='0,0,16,16'&quot; selecteddisabledimage=&quot;file='../public/CheckBox/check_yes.png' dest='0,0,16,16' fade='80'&quot;"/>
+
+    <Class name="checkbox_font14" value="height=&quot;20&quot; textpadding=&quot;20,0,0,1&quot; font=&quot;2&quot; normaltextcolor=&quot;darkcolor&quot; normalimage=&quot;file='../public/CheckBox/check_no.png' dest='0,2,16,18'&quot; disabledimage=&quot;file='../public/CheckBox/check_no.png' dest='0,2,16,18' fade='80'&quot; selectednormalimage=&quot;file='../public/CheckBox/check_yes.png' dest='0,2,16,18'&quot; selecteddisabledimage=&quot;file='../public/CheckBox/check_yes.png' dest='0,2,16,18' fade='80'&quot;"/>
+
+    <Class name="checkbox_green" value="normalimage=&quot;file='../public/CheckBox/check_green_no.png'&quot; disabledimage=&quot;file='../public/CheckBox/check_green_no.png' fade='80'&quot; selectednormalimage=&quot;file='../public/CheckBox/check_green_yes.png'&quot; selecteddisabledimage=&quot;file='../public/CheckBox/check_green_yes.png' fade='80'&quot;"/>
+    
+    <!--全局按钮-->
+    <Class name="btn_global_green_80x30" value="font=&quot;7&quot; normaltextcolor=&quot;white&quot; normalimage=&quot;file='../public/button/btn_global_green_80x30_normal.png'&quot; hotimage=&quot;file='../public/button/btn_global_green_80x30_hovered.png'&quot; pushedimage=&quot;file='../public/button/btn_global_green_80x30_pushed.png'&quot; disabledimage=&quot;file='../public/button/btn_global_green_80x30_normal.png' fade='80'&quot;"/>
+    
+    <Class name="btn_global_white_80x30" value="font=&quot;7&quot; normaltextcolor=&quot;btn_global_white&quot; normalimage=&quot;file='../public/button/btn_global_white_80x30_normal.png'&quot; hotimage=&quot;file='../public/button/btn_global_white_80x30_hovered.png'&quot; pushedimage=&quot;file='../public/button/btn_global_white_80x30_pushed.png'&quot; disabledimage=&quot;file='../public/button/btn_global_white_80x30_normal.png' fade='128'&quot;"/>
+	
+    <!--RichEdit-->
+    <Class name="simple" value="multiline=&quot;false&quot; autohscroll=&quot;true&quot; wantreturnmsg=&quot;true&quot; wanttab=&quot;false&quot; rich=&quot;false&quot; normaltextcolor=&quot;darkcolor&quot; disabledtextcolor=&quot;textdefaultdisablecolor&quot;"/>
+    <Class name="prompt" value="promptmode=&quot;true&quot; promptcolor=&quot;edit_tip&quot;"/>
+	
+    <!--滚动条-->
+    <Class name="vscrollbar" value="width=&quot;14&quot; fadealpha=&quot;true&quot; thumbnormalimage=&quot;file='../public/vsrcollbar/thumb_normal.png'  corner='0,8,0,8'&quot; thumbhotimage=&quot;file='../public/vsrcollbar/thumb_hovered.png' corner='0,8,0,8'&quot; bknormalimage=&quot;file='../public/vsrcollbar/bk_normal.png' corner='0,4,0,4'&quot; bkhotimage=&quot;file='../public/vsrcollbar/bk_hovered.png' corner='0,4,0,4'&quot; showbutton1=&quot;false&quot; showbutton2=&quot;false&quot;"/>
+
+</Global>

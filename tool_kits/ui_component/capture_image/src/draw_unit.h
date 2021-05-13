@@ -5,20 +5,20 @@
 
 #include "duilib/UIlib.h"
 
-//////////////////////////////////»æÖÆ»ùÀà////////////////////////////////////////
+//////////////////////////////////ç»˜åˆ¶åŸºç±»////////////////////////////////////////
 
 class DrawUnit
 {
 public:
 	enum BlurType
 	{
-		BLUR_TYPE_NONE = 0,	// Ã»ÓĞÄ£ºıĞ§¹û
-		BLUR_TYPE_MOSAIC,	// ÂíÈü¿Ë
-		BLUR_TYPE_GAUSS,	// Ã«²£Á§
+		BLUR_TYPE_NONE = 0,	// æ²¡æœ‰æ¨¡ç³Šæ•ˆæœ
+		BLUR_TYPE_MOSAIC,	// é©¬èµ›å…‹
+		BLUR_TYPE_GAUSS,	// æ¯›ç»ç’ƒ
 	};
 	DrawUnit(int x, int y, const RECT& rc_valid);
 	virtual ~DrawUnit();
-	void Render(HDC hdc, HBITMAP bitmap, bool is_continue = false);  // »æÖÆ½Ó¿Ú
+	void Render(HDC hdc, HBITMAP bitmap, bool is_continue = false);  // ç»˜åˆ¶æ¥å£
 	void SetLineWidth(int line_width)	{ line_width_ = line_width; }
 	void SetColor(COLORREF dw_color)	{ color_ = dw_color; }
 	ui::CPoint	GetStartPoint()		{ return ui::CPoint(left_, top_); }
@@ -32,19 +32,19 @@ public:
 
 protected:
 	virtual	void RenderSelf(HDC hdc, HBITMAP bitmap, bool is_continue) = 0;
-	void MeasurePoint(int &x, int &y);	// È·±£Òª»æÖÆµÄµãÔÚ½ØÍ¼ÇøÓò·¶Î§ÄÚ 
+	void MeasurePoint(int &x, int &y);	// ç¡®ä¿è¦ç»˜åˆ¶çš„ç‚¹åœ¨æˆªå›¾åŒºåŸŸèŒƒå›´å†… 
 
 protected:
-	int left_, top_, right_, bottom_;	//ÆğÊ¼×ø±ê£¬ÖÕµã×ø±ê
-	int line_width_;					//Ïß´Ö
-	COLORREF color_;					//ÑÕÉ«
-	ui::UiRect rc_valid_;			//ºÏ·¨·¶Î§
+	int left_, top_, right_, bottom_;	//èµ·å§‹åæ ‡ï¼Œç»ˆç‚¹åæ ‡
+	int line_width_;					//çº¿ç²—
+	COLORREF color_;					//é¢œè‰²
+	ui::UiRect rc_valid_;			//åˆæ³•èŒƒå›´
 	int blur_range_;
 	BlurType blur_type_;
 	bool need_save_draw_;
 };
 
-//////////////////////////////////¾ØĞÎ////////////////////////////////////////
+//////////////////////////////////çŸ©å½¢////////////////////////////////////////
 
 class DrawUnitRectangle : public DrawUnit
 {
@@ -55,7 +55,7 @@ protected:
 	virtual	void RenderSelf(HDC hdc, HBITMAP bitmap, bool is_continue);
 };
 
-//////////////////////////////////Ö±Ïß////////////////////////////////////////
+//////////////////////////////////ç›´çº¿////////////////////////////////////////
 
 class DrawUnitLine	: public DrawUnit
 {
@@ -66,7 +66,7 @@ protected:
 	virtual	void RenderSelf(HDC hdc, HBITMAP bitmap, bool is_continue);
 };
 
-//////////////////////////////////»­Ë¢////////////////////////////////////////
+//////////////////////////////////ç”»åˆ·////////////////////////////////////////
 
 class DrawUnitBrush	: public DrawUnit
 {
@@ -86,10 +86,10 @@ private:
 	Gdiplus::Rect GetRectByPt(const ui::CPoint& pt);
 private:
 	std::vector<ui::CPoint>	m_vtPoints;
-	int draw_pos_;	//»æÖÆ¶È£¨¶ÔÓÚ¸´ÔÓµÄÒ»²½²Ù×÷ÉèÖÃÍê³É¶È£¬²»ĞèÒªÃ¿´Î¶¼ÖØĞÂ»­£©
+	int draw_pos_;	//ç»˜åˆ¶åº¦ï¼ˆå¯¹äºå¤æ‚çš„ä¸€æ­¥æ“ä½œè®¾ç½®å®Œæˆåº¦ï¼Œä¸éœ€è¦æ¯æ¬¡éƒ½é‡æ–°ç”»ï¼‰
 };
 
-//////////////////////////////////ÍÖÔ²////////////////////////////////////////
+//////////////////////////////////æ¤­åœ†////////////////////////////////////////
 
 class DrawUnitEllipse : public DrawUnit
 {
@@ -101,9 +101,9 @@ protected:
 };
 
 
-//////////////////////////////////¼ıÍ·////////////////////////////////////////
+//////////////////////////////////ç®­å¤´////////////////////////////////////////
 
-// ¼ıÍ·ĞÅÏ¢
+// ç®­å¤´ä¿¡æ¯
 struct ArrowInfo 
 {
 	ArrowInfo(int width, float theta)
@@ -111,8 +111,8 @@ struct ArrowInfo
 		arrow_width_ = width;
 		arrow_theta_ = theta;
 	}
-	int arrow_width_;	// ¼ıÍ·ºáÏò¿í¶È
-	float arrow_theta_; // ¼ıÍ·½Ç¶È 
+	int arrow_width_;	// ç®­å¤´æ¨ªå‘å®½åº¦
+	float arrow_theta_; // ç®­å¤´è§’åº¦ 
 };
 
 class DrawUnitArrow : public DrawUnit
@@ -127,7 +127,7 @@ private:
 	ArrowInfo arrow_tag_;
 };
 
-////////////////////////////////ÎÄ×Ö»æÖÆÀà////////////////////////////////////////
+////////////////////////////////æ–‡å­—ç»˜åˆ¶ç±»////////////////////////////////////////
 
 class DrawUnitText : public	DrawUnit
 {
@@ -144,9 +144,9 @@ private:
 	void DrawRect(HDC hdc);
 
 private:
-	BOOL				is_text_has_generated_;		// ÊÇ·ñÒÑ¾­Íê³É
-	std::wstring		str_text_;					// ÎÄ×Ö
-	int					font_index_;				// ×ÖÌåÔÚGlobalManagerÖĞµÄĞòºÅ
+	BOOL				is_text_has_generated_;		// æ˜¯å¦å·²ç»å®Œæˆ
+	std::wstring		str_text_;					// æ–‡å­—
+	int					font_index_;				// å­—ä½“åœ¨GlobalManagerä¸­çš„åºå·
 };
 
 #endif  // _NIM_GUI_CAPTURE_FORM_DRAW_UNIT_H_

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "at_list_item.h"
 #include "shared/pin_yin_helper.h"
 
@@ -36,7 +37,7 @@ void AtListItem::InitControls()
 void AtListItem::Activate()
 {
 	__super::Activate();
-	// ´¥·¢µ¥»÷ÏûÏ¢
+	// è§¦å‘å•å‡»æ¶ˆæ¯
 	ButtonTemplate::Activate();
 }
 
@@ -46,7 +47,7 @@ void AtListItem::SetUserID(const std::string& uid, bool last_five)
 	is_last_five_ = last_five;
 	if (is_last_five_)
 	{
-		//Èç¹ûÊÇ×î½ü·¢ÑÔµÄ5ÈËÖ®Ò»£¬¾Í²»ÉèÖÃ±¾itemµÄNameÎªuid£¬·ñÔò»áÓ°Ïìµ½@ÁÐ±íµÄ²éÕÒ
+		//å¦‚æžœæ˜¯æœ€è¿‘å‘è¨€çš„5äººä¹‹ä¸€ï¼Œå°±ä¸è®¾ç½®æœ¬itemçš„Nameä¸ºuidï¼Œå¦åˆ™ä¼šå½±å“åˆ°@åˆ—è¡¨çš„æŸ¥æ‰¾
 		this->SetUTF8Name(kLastFiveItemName);
 	}
 	else

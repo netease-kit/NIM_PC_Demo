@@ -1,7 +1,7 @@
+#include "stdafx.h"
 #include "shared/ui/msgbox.h"
 #include "proxy_form.h"
 #include "base/network/network_util.h"
-#include "public_define/nim_chatroom_define_include.h"
 
 //#include "base/network/http.h"
 //#include "util/NetStateTestHelper.h"
@@ -102,7 +102,7 @@ void ProxyForm::ConfirmSetting()
 	auto global_proxy_setting = global_proxy_->GetProxySetting();
 	nim::Global::SetProxy(ProxyTip::ConvertBaseProxytypeToNimProxyType(global_proxy_setting->GetType()), \
 		global_proxy_setting->GetHost(), global_proxy_setting->GetPort(), global_proxy_setting->GetUserName(), global_proxy_setting->GetPassowrd());
-	//ÁÄÌìÊÒ
+	//èŠå¤©å®¤
 	auto chatroom_proxy_setting = proxy_chatroom_->GetProxySetting();
 	if (chatroom_proxy_setting->IsUseGlobalSetting())
 		nim_chatroom::ChatRoom::SetProxy((nim_chatroom::NIMChatRoomProxyType)(ProxyTip::ConvertBaseProxytypeToNimProxyType(global_proxy_setting->GetType())),\

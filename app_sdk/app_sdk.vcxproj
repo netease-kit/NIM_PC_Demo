@@ -23,6 +23,7 @@
     <Keyword>Win32Proj</Keyword>
     <RootNamespace>app_sdk</RootNamespace>
     <ProjectName>custom_app_sdk</ProjectName>
+    <WindowsTargetPlatformVersion>7.0</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
@@ -68,21 +69,21 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <OutDir>..\libs\</OutDir>
+    <OutDir>..\lib\</OutDir>
     <IntDir>$(ProjectDir)..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
     <TargetName>$(ProjectName)_d</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <TargetName>$(ProjectName)_d</TargetName>
-    <OutDir>..\libs\x64</OutDir>
+    <OutDir>..\lib\x64</OutDir>
     <IntDir>$(ProjectDir)..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
-    <OutDir>..\libs\</OutDir>
+    <OutDir>..\lib\</OutDir>
     <IntDir>$(ProjectDir)..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
-    <OutDir>..\libs\x64</OutDir>
+    <OutDir>..\lib\x64</OutDir>
     <IntDir>$(ProjectDir)..\tmp\$(PlatformName)\$(ProjectName)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
@@ -91,28 +92,9 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\third_party\;$(ProjectDir)..\third_party\jsoncpp\include\;$(ProjectDir)../nim_sdk/;..\tool_kits\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\third_party\;$(ProjectDir)..\third_party\jsoncpp\include\;$(ProjectDir)..\include\;..\tool_kits\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
-    </ClCompile>
-    <Link>
-      <SubSystem>Windows</SubSystem>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
-    </Link>
-    <Lib>
-      <AdditionalDependencies>cpp_wrapper_util_d.lib;nim_cpp_sdk_d.lib;nim_chatroom_cpp_sdk_d.lib</AdditionalDependencies>
-    </Lib>
-    <Lib>
-      <AdditionalLibraryDirectories>../libs;$(ProjectDir)../nim_sdk/libs/x86/mt/</AdditionalLibraryDirectories>
-    </Lib>
-  </ItemDefinitionGroup>
-  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
-    <ClCompile>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <WarningLevel>Level3</WarningLevel>
-      <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\third_party\;$(ProjectDir)..\third_party\jsoncpp\include\;$(ProjectDir)../nim_sdk/;..\tool_kits\</AdditionalIncludeDirectories>
-      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -123,7 +105,31 @@
       </AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>../libs/x64/;../nim_sdk/bin/x64_dlls/;../nim_sdk/libs/x64/mt/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
+    </Lib>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\;..\third_party\;$(ProjectDir)..\third_party\jsoncpp\include\;$(ProjectDir)..\include\;..\tool_kits\</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Windows</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+    <Lib>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
+    </Lib>
+    <Lib>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -134,8 +140,9 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>WIN32;NDEBUG;_LIB;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;WITH_ENCRYPT;TIXML_USE_STL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\third_party\;$(ProjectDir)..\third_party\jsoncpp\include\;$(ProjectDir)../nim_sdk/;..\tool_kits\</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>.\;..\;..\third_party\;$(ProjectDir)..\third_party\jsoncpp\include\;$(ProjectDir)..\include\;..\tool_kits\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -144,10 +151,12 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>cpp_wrapper_util.lib;nim_cpp_sdk.lib;nim_chatroom_cpp_sdk.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>../libs;$(ProjectDir)../nim_sdk/libs/x86/mt/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Lib>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -157,10 +166,11 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;NIM_SDK_DLL_IMPORT;CPPWRAPPER_DLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>.\;..\;..\third_party\;$(ProjectDir)..\third_party\jsoncpp\include\;$(ProjectDir)../nim_sdk/;..\tool_kits\</AdditionalIncludeDirectories>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;__WINDOWS__;__i386__;__SUPPORT_XP__;_LIB;WITH_ENCRYPT;TIXML_USE_STL;NIM_SDK_DLL_IMPORT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\;..\;..\third_party\;$(ProjectDir)..\third_party\jsoncpp\include\;$(ProjectDir)..\include\;..\tool_kits\</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
       <BasicRuntimeChecks>Default</BasicRuntimeChecks>
+      <AdditionalOptions>/utf-8 %(AdditionalOptions)</AdditionalOptions>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -169,18 +179,16 @@
       <OptimizeReferences>true</OptimizeReferences>
     </Link>
     <Lib>
-      <AdditionalDependencies>cpp_wrapper_util.lib;nim_chatroom_sdk_cpp_wrapper_dll.lib;nim_sdk_cpp_wrapper_dll.lib</AdditionalDependencies>
+      <AdditionalDependencies>
+      </AdditionalDependencies>
     </Lib>
     <Lib>
-      <AdditionalLibraryDirectories>../libs/x64/;$(ProjectDir)../nim_sdk/libs/x64/mt/</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>
+      </AdditionalLibraryDirectories>
     </Lib>
     <PreBuildEvent>
-      <Command>xcopy $(ProjectDir)..\nim_sdk\bin\x64_dlls\nim_chatroom_sdk_cpp_wrapper_dll.dll $(ProjectDir)..\bin\ /y
-xcopy $(ProjectDir)..\nim_sdk\bin\x64_dlls\nim_chatroom_sdk_cpp_wrapper_dll.pdb $(ProjectDir)..\bin\ /y
-xcopy $(ProjectDir)..\nim_sdk\bin\x64_dlls\nim_chatroom_sdk_cpp_wrapper_dll.lib $(ProjectDir)..\libs\x64\ /y
-xcopy $(ProjectDir)..\nim_sdk\bin\x64_dlls\nim_sdk_cpp_wrapper_dll.dll $(ProjectDir)..\bin\ /y
-xcopy $(ProjectDir)..\nim_sdk\bin\x64_dlls\nim_sdk_cpp_wrapper_dll.pdb $(ProjectDir)..\bin\ /y
-xcopy $(ProjectDir)..\nim_sdk\bin\x64_dlls\nim_sdk_cpp_wrapper_dll.lib $(ProjectDir)..\libs\x64\ /y</Command>
+      <Command>
+      </Command>
     </PreBuildEvent>
     <PostBuildEvent>
       <Command>

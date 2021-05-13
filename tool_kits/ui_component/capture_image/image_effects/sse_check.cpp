@@ -1,4 +1,4 @@
-﻿#include "sse_check.h"
+#include "sse_check.h"
 #include <intrin.h>
 #include <excpt.h>
 

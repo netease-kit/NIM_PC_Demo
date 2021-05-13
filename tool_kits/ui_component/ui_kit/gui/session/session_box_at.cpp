@@ -1,4 +1,5 @@
-﻿#include "session_box.h"
+#include "stdafx.h"
+#include "session_box.h"
 #include "session_form.h"
 #include "module/session/force_push_manager.h"
 #include "gui/session/control/atme_view.h"

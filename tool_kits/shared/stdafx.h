@@ -31,8 +31,10 @@
 #include "base/file/file_util.h"
 #include "base/time/time.h"
 #include "base/framework/task.h"
+
 //third_party
 #include "duilib/UIlib.h"
 
-//sdk
-#include "include/nim_cpp_api.h"
+#if defined(BUILD_WITH_XML_UTIL)
+#include "tinyxml.h"
+#endif

@@ -8,11 +8,11 @@ namespace nim_comp
 	{
 	public:
 		/**
-		* ¸ù¾İÓÃ»§ÊÂ¼şĞÅÏ¢»ñÈ¡ÔÚÏß×´Ì¬ÕªÒªĞÅÏ¢
-		* @param[in] online_client_type ÔÚÏß¿Í»§¶Ë
-		* @param[in] multi_config ¶à¶ËÅäÖÃĞÅÏ¢
-		* @param[in] is_simple ÊÇ·ñÒª¼òÒªĞÅÏ¢£¨ÓÃÓÚÔÚÁĞ±íÕ¹Ê¾£©
-		* @return std::wstring ÕªÒªĞÅÏ¢
+		* æ ¹æ®ç”¨æˆ·äº‹ä»¶ä¿¡æ¯è·å–åœ¨çº¿çŠ¶æ€æ‘˜è¦ä¿¡æ¯
+		* @param[in] online_client_type åœ¨çº¿å®¢æˆ·ç«¯
+		* @param[in] multi_config å¤šç«¯é…ç½®ä¿¡æ¯
+		* @param[in] is_simple æ˜¯å¦è¦ç®€è¦ä¿¡æ¯ï¼ˆç”¨äºåœ¨åˆ—è¡¨å±•ç¤ºï¼‰
+		* @return std::wstring æ‘˜è¦ä¿¡æ¯
 		*/
 		static std::wstring GetOnlineState(const std::string& accid, const EventDataEx& data, bool is_simple);
 

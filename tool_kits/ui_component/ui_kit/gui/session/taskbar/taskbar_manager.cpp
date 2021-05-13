@@ -1,4 +1,5 @@
-﻿#include "taskbar_manager.h"
+#include "stdafx.h"
+#include "taskbar_manager.h"
 #include "gui/session/session_form.h"
 #include "gui/session/session_box.h"
 #include "dwm_util.h"

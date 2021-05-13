@@ -1,4 +1,5 @@
-﻿#include "mute_black_service.h"
+#include "stdafx.h"
+#include "mute_black_service.h"
 
 namespace nim_comp
 {

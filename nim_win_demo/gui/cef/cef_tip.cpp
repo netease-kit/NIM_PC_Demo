@@ -43,9 +43,9 @@ void CefTip::DoInit()
 	cef_control_->AttachAfterCreated(nbase::Bind(&CefTip::OnAfterCreated, this, std::placeholders::_1));
 	cef_control_->AttachBeforeCLose(nbase::Bind(&CefTip::OnBeforeClose, this, std::placeholders::_1));
 	cef_control_->AttachBeforeContextMenu(nbase::Bind(&CefTip::OnBeforeContextMenu, this, std::placeholders::_1, std::placeholders::_2));
-	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"cef/html/cef_test.html";
+	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"html/cef_test.html";
 	if (ui::GlobalManager::GetLanguageSetting().m_enumType == ui::LanguageType::American_English)
-		html_path = L"file://" + QPath::GetAppPath() + L"cef/html/cef_test_en.html";
+		html_path = L"file://" + QPath::GetAppPath() + L"html/cef_test_en.html";
 	cef_control_->LoadURL(html_path);
 }
 bool CefTip::OnClicked(ui::EventArgs* arg)
@@ -146,7 +146,7 @@ bool CefTip::OnLinkClick(const std::wstring& url)
 
 CefRequestHandler::ReturnValue CefTip::OnBeforeNavigate(CefRefPtr<CefRequest> request, bool is_redirect)
 {
-	// ·µ»ØRV_CANCEL½Ø¶Ïµ¼º½
+	// è¿”å›žRV_CANCELæˆªæ–­å¯¼èˆª
 	return RV_CONTINUE;
 }
 

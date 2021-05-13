@@ -1,4 +1,5 @@
-﻿#include "p2p_callback.h"
+#include "stdafx.h"
+#include "p2p_callback.h"
 #include "module/session/session_manager.h"
 #include "gui/session/msg_record.h"
 #include "module/session/transfer_file_manager.h"

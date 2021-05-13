@@ -1,4 +1,5 @@
-﻿#include "black_list_wnd.h"
+#include "stdafx.h"
+#include "black_list_wnd.h"
 
 namespace nim_comp
 {

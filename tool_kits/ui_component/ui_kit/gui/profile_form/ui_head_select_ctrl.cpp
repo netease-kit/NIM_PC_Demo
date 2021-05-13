@@ -1,4 +1,5 @@
-﻿#include "ui_head_select_ctrl.h"
+#include "stdafx.h"
+#include "ui_head_select_ctrl.h"
 
 namespace nim_comp
 {

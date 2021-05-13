@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "ui_kit/module/multi_retweet/multi_retweet_session.h"
 #include <fstream>
 #include "base/encrypt/encrypt.h"

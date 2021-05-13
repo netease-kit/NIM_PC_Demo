@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include <atomic>
 #include "module/session/session_util.h"
 #include "shared/ui/ui_menu.h"

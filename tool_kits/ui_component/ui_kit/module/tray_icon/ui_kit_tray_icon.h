@@ -2,7 +2,7 @@
 namespace nim_comp
 {
 	/** @class ITrayIconDelegate
-	* @brief ÍĞÅÌÍ¼±êÊÂ¼ş´¦Àí½Ó¿Ú
+	* @brief æ‰˜ç›˜å›¾æ ‡äº‹ä»¶å¤„ç†æ¥å£
 	* @copyright (c) 2015, NetEase Inc. All rights reserved
 	* @date 2016/10/12
 	*/
@@ -16,7 +16,7 @@ namespace nim_comp
 	};
 
 	/** @class TrayIcon
-	* @brief ÍĞÅÌÍ¼±ê¹ÜÀà
+	* @brief æ‰˜ç›˜å›¾æ ‡ç®¡ç±»
 	* @copyright (c) 2015, NetEase Inc. All rights reserved
 	* @date 2016/10/12
 	*/
@@ -28,104 +28,104 @@ namespace nim_comp
 
 	public:
 		/**
-		* ³õÊ¼»¯ÍĞÅÌÍ¼±ê
-		* @param[in] tray_icon_delegate Ö¸¶¨ÍĞÅÌÍ¼±êÊÂ¼ş´¦Àí½Ó¿Ú
-		* @return void	ÎŞ·µ»ØÖµ
+		* åˆå§‹åŒ–æ‰˜ç›˜å›¾æ ‡
+		* @param[in] tray_icon_delegate æŒ‡å®šæ‰˜ç›˜å›¾æ ‡äº‹ä»¶å¤„ç†æ¥å£
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void Init(ITrayIconDelegate* tray_icon_delegate);
 
 		/**
-		* Ïú»ÙÍĞÅÌÍ¼±ê
-		* @return void	ÎŞ·µ»ØÖµ
+		* é”€æ¯æ‰˜ç›˜å›¾æ ‡
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void Destroy();
 
 		/**
-		* ÉèÖÃÍĞÅÌÍ¼±êºÍÌáÊ¾ÎÄ±¾
-		* @param[in] icon Í¼±ê¾ä±ú
-		* @param[in] tray_icon_text ÌáÊ¾ÎÄ±¾
-		* @return void	ÎŞ·µ»ØÖµ
+		* è®¾ç½®æ‰˜ç›˜å›¾æ ‡å’Œæç¤ºæ–‡æœ¬
+		* @param[in] icon å›¾æ ‡å¥æŸ„
+		* @param[in] tray_icon_text æç¤ºæ–‡æœ¬
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void SetTrayIcon(HICON icon, const std::wstring& tray_icon_text);
 
 		/**
-		* ´Ó×ÊÔ´ÖĞ¼ÓÔØÒ»×éÍ¼±ê×ÊÔ´²¢»º´æÆğÀ´
-		* @param[in] icon_res_start_index ÒªÍ¼±ê×ÊÔ´µÄµÚÒ»¸ö×ÊÔ´µÄID
-		* @param[in] count Òª¼ÓÔØµÄÍ¼±êµÄÊıÁ¿
-		* @return void	ÎŞ·µ»ØÖµ
+		* ä»èµ„æºä¸­åŠ è½½ä¸€ç»„å›¾æ ‡èµ„æºå¹¶ç¼“å­˜èµ·æ¥
+		* @param[in] icon_res_start_index è¦å›¾æ ‡èµ„æºçš„ç¬¬ä¸€ä¸ªèµ„æºçš„ID
+		* @param[in] count è¦åŠ è½½çš„å›¾æ ‡çš„æ•°é‡
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void LoadIconList(int icon_res_start_index, int count);
 
 		/**
-		* ÉèÖÃÍĞÅÌ¶¯»­ÖĞ£¬ÓÃÓÚ¶¯»­Ğ§¹ûÍ¼±êÖ¡µÄË÷ÒıºÅ
-		* @param[in] aniIndex Í¼±êÖ¡Ë÷ÒıºÅÊı×é
-		* @param[in] anim_escape_time ¶¯»­¼ä¸ôÊ±¼ä
-		* @return void	ÎŞ·µ»ØÖµ
+		* è®¾ç½®æ‰˜ç›˜åŠ¨ç”»ä¸­ï¼Œç”¨äºåŠ¨ç”»æ•ˆæœå›¾æ ‡å¸§çš„ç´¢å¼•å·
+		* @param[in] aniIndex å›¾æ ‡å¸§ç´¢å¼•å·æ•°ç»„
+		* @param[in] anim_escape_time åŠ¨ç”»é—´éš”æ—¶é—´
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void SetAnimateTray(const std::vector<int>& aniIndex, int anim_escape_time);
 
 		/**
-		* ¿ªÊ¼ÍĞÅÌÍ¼±ê¶¯»­Ğ§¹û
-		* @return void	ÎŞ·µ»ØÖµ
+		* å¼€å§‹æ‰˜ç›˜å›¾æ ‡åŠ¨ç”»æ•ˆæœ
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void StartTrayIconAnimate();
 
 		/**
-		* Í£Ö¹ÍĞÅÌÍ¼±ê¶¯»­Ğ§¹û
-		* @return void	ÎŞ·µ»ØÖµ
+		* åœæ­¢æ‰˜ç›˜å›¾æ ‡åŠ¨ç”»æ•ˆæœ
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void StopTrayIconAnimate();
 
 		/**
-		* »ñÈ¡ÈÎÎñÀ¸Í¼±ê´´½¨Íê³ÉµÄÏûÏ¢µÄÏûÏ¢Öµ
-		* @return UINT ÏûÏ¢Öµ
+		* è·å–ä»»åŠ¡æ å›¾æ ‡åˆ›å»ºå®Œæˆçš„æ¶ˆæ¯çš„æ¶ˆæ¯å€¼
+		* @return UINT æ¶ˆæ¯å€¼
 		*/
 		UINT GetTaskbarCreatedMsgId(){ return trayicon_msgid_; }
 
 	private:
 		/**
-		* ´¦ÀíÄÚ²¿´°¿ÚÏûÏ¢
-		* @param[in] hWnd ´°¿Ú¾ä±ú
-		* @param[in] uMsg ÏûÏ¢Öµ
-		* @param[in] wParam ¸½¼Ó²ÎÊı
-		* @param[in] lParam ¸½¼Ó²ÎÊı
-		* @return LRESULT ÏûÏ¢´¦Àí½á¹û
+		* å¤„ç†å†…éƒ¨çª—å£æ¶ˆæ¯
+		* @param[in] hWnd çª—å£å¥æŸ„
+		* @param[in] uMsg æ¶ˆæ¯å€¼
+		* @param[in] wParam é™„åŠ å‚æ•°
+		* @param[in] lParam é™„åŠ å‚æ•°
+		* @return LRESULT æ¶ˆæ¯å¤„ç†ç»“æœ
 		*/
 		static LRESULT CALLBACK WndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 
 		/**
-		* Çå³ıÍĞÅÌ¶¯»­Ïà¹ØĞÅÏ¢
-		* @return void	ÎŞ·µ»ØÖµ
+		* æ¸…é™¤æ‰˜ç›˜åŠ¨ç”»ç›¸å…³ä¿¡æ¯
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void ClearAnimateInfo();
 
 		/**
-		* ´¦ÀíWM_TIMERÏûÏ¢
-		* @param[in] event_id ÊÂ¼şid
-		* @return void	ÎŞ·µ»ØÖµ
+		* å¤„ç†WM_TIMERæ¶ˆæ¯
+		* @param[in] event_id äº‹ä»¶id
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void OnTimer(UINT event_id);
 
 		/**
-		* ¸ù¾İÍ¼±êË÷ÒıÉèÖÃÍĞÅÌÍ¼±ê
+		* æ ¹æ®å›¾æ ‡ç´¢å¼•è®¾ç½®æ‰˜ç›˜å›¾æ ‡
 		* @param[in] index
-		* @return void	ÎŞ·µ»ØÖµ
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void SetTrayIconIndex(int index);
 
 		/**
-		* »Ö¸´ÍĞÅÌÍ¼±êµ½Ä¬ÈÏÖµ
-		* @return BOOL	TRUE£º»Ø¸´³É¹¦£¬ FALSE£º»Ö¸´Ê§°Ü
+		* æ¢å¤æ‰˜ç›˜å›¾æ ‡åˆ°é»˜è®¤å€¼
+		* @return BOOL	TRUEï¼šå›å¤æˆåŠŸï¼Œ FALSEï¼šæ¢å¤å¤±è´¥
 		*/
 		BOOL RestoreTrayIcon();
 
 		/**
-		* ĞŞ¸ÄÍĞÅÌÍ¼±ê
-		* @param[in] uTrayID ÍĞÅÌID
-		* @param[in] dwTrayMsg Ö¸¶¨ÓÃÓÚ½ÓÊÕÍĞÅÌÏûÏ¢µÄ»Øµ÷ÏûÏ¢Öµ
-		* @param[in] hTrayIcon Í¼±ê¾ä±ú
-		* @param[in] strTrayText ÍĞÅÌÌáÊ¾ÎÄ±¾
-		* @return void	ÎŞ·µ»ØÖµ
+		* ä¿®æ”¹æ‰˜ç›˜å›¾æ ‡
+		* @param[in] uTrayID æ‰˜ç›˜ID
+		* @param[in] dwTrayMsg æŒ‡å®šç”¨äºæ¥æ”¶æ‰˜ç›˜æ¶ˆæ¯çš„å›è°ƒæ¶ˆæ¯å€¼
+		* @param[in] hTrayIcon å›¾æ ‡å¥æŸ„
+		* @param[in] strTrayText æ‰˜ç›˜æç¤ºæ–‡æœ¬
+		* @return void	æ— è¿”å›å€¼
 		*/
 		void ModifyTrayIcon(UINT uTrayID, DWORD dwTrayMsg, HICON hTrayIcon, const std::wstring& strTrayText);
 

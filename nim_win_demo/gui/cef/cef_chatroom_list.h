@@ -18,15 +18,15 @@ private:
 
 private:
 	/**
-	 * ÔÚ browser ´´½¨»Øµ÷¸Ã·½·¨£¬´ËÊ±¿ÉÒÔÔÚ native ¶Ë×¢²áÌá¹© js µ÷ÓÃµÄ·½·¨ÁË¡£
+	 * åœ¨ browser åˆ›å»ºå›è°ƒè¯¥æ–¹æ³•ï¼Œæ­¤æ—¶å¯ä»¥åœ¨ native ç«¯æ³¨å†Œæä¾› js è°ƒç”¨çš„æ–¹æ³•äº†ã€‚
 	 */
 	void OnAfterCreated(CefRefPtr<CefBrowser> browser);
 	/**
-	 * ÓÒ¼ü²Ëµ¥
+	 * å³é”®èœå•
 	 */
 	void OnBeforeContextMenu(CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model);
 	/**
-	 * Ò³Ãæ¼ÓÔØÍê³É
+	 * é¡µé¢åŠ è½½å®Œæˆ
 	 */
 	void OnLoadEnd(int httpStatusCode);
 

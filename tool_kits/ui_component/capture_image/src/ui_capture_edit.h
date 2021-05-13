@@ -15,21 +15,21 @@ public:
 	virtual void Paint(ui::IRenderContext* pRender, const ui::UiRect& rcPaint) override;
 	
 public:
-	// Êó±ê²Ù×÷»æÍ¼
+	// é¼ æ ‡æ“ä½œç»˜å›¾
 	void SetTrackRect(RECT track_rect){ track_rect_ = track_rect; };
 	void SetEditMode(EditMode mode){ edit_mode_ = mode; };
 	void SetColorPalette(CColorPalette* color_palette) { color_palette_ = color_palette; };
-	BOOL OnLButtonDownInCaptureEditMode(POINT point, RECT tool_bar_rect); // ±à¼­Ê±Êó±ê°´ÏÂ
-	void OnMouseMoveInCaptureEditMode(POINT point, RECT tool_bar_rect); // ±à¼­Ê±Êó±êÍÏ¶¯
-	void OnLButtonUpInCaptureEditMode(POINT point); // ±à¼­Ê±Êó±êµ¯Æğ
-	void DrawExtraUnits(HDC hdc); // ¿Ø¼şÖØ»æ¡¢±£´æ½ØÍ¼Ê±µ÷ÓÃ
-	void OnTextEditFinished(); // µ±ÎÄ±¾±à¼­½áÊøÊ±
-	void Undo(); // ³·Ïú
-	void Redo(); // ÖØ×ö
-	void ReleaseAllDrawUnits(); // ÊÍ·ÅËùÓĞ»æÖÆµ¥Ôª
+	BOOL OnLButtonDownInCaptureEditMode(POINT point, RECT tool_bar_rect); // ç¼–è¾‘æ—¶é¼ æ ‡æŒ‰ä¸‹
+	void OnMouseMoveInCaptureEditMode(POINT point, RECT tool_bar_rect); // ç¼–è¾‘æ—¶é¼ æ ‡æ‹–åŠ¨
+	void OnLButtonUpInCaptureEditMode(POINT point); // ç¼–è¾‘æ—¶é¼ æ ‡å¼¹èµ·
+	void DrawExtraUnits(HDC hdc); // æ§ä»¶é‡ç»˜ã€ä¿å­˜æˆªå›¾æ—¶è°ƒç”¨
+	void OnTextEditFinished(); // å½“æ–‡æœ¬ç¼–è¾‘ç»“æŸæ—¶
+	void Undo(); // æ’¤é”€
+	void Redo(); // é‡åš
+	void ReleaseAllDrawUnits(); // é‡Šæ”¾æ‰€æœ‰ç»˜åˆ¶å•å…ƒ
 
 protected:
-	// »æÖÆÏà¹Ø
+	// ç»˜åˆ¶ç›¸å…³
 	void OnDrawUnitStart(const ui::CPoint &point);
 	void OnDrawUnitProcess(const ui::CPoint &point);
 	void OnDrawUnitEnd(const ui::CPoint &point);
@@ -40,23 +40,23 @@ protected:
 	void SubmitDrawUnit();
 	void ClearHistoryVector();
 	void PaintContent();
-	//»ñÈ¡ÕÚÕÖ
+	//è·å–é®ç½©
 	void GetExtraUnitsBimap(HDC hdc, HBITMAP& bitmap, DrawUnit::BlurType blur_type = DrawUnit::BLUR_TYPE_NONE, int range = 0);
 	void ReleaseHBitmap(HBITMAP& bitmap);
 	bool CheckBlurBitmap(HDC hdc, DrawUnit* draw_units_);
-	//»ñÈ¡Ö¸ÕëÍ¼Æ¬¶ÔÏó
+	//è·å–æŒ‡é’ˆå›¾ç‰‡å¯¹è±¡
 	void CheckCursor(HCURSOR &cursor, std::wstring image_name);
 
 private:
-	std::vector<DrawUnit*>			vec_draw_units_;			// µ±Ç°»æÖÆµ¥ÔªÁĞ±í
-	std::vector<DrawUnit*>			vec_history_draw_units_;	// ³·Ïú/»Ø¹ö»æÖÆµ¥ÔªÁĞ±í
-	DrawUnit*						current_draw_unit_;         // µ±Ç°ÕıÔÚ»æÖÆµÄµ¥Ôª
-	BOOL							is_begin_draw_;				// ÊÇ·ñ¿ªÊ¼»æÖÆ
-	ui::UiRect						track_rect_;				// µ±Ç°½ØÍ¼µÄÇøÓò£¨Ò²ÊÇ±à¼­µÄ¿ÉĞĞÓò£©
-	EditMode						edit_mode_;					// µ±Ç°±à¼­µÄÄ£Ê½£¨È·¶¨»æÖÆµÄÍ¼ĞÎ£©
-	TCHAR*							str_cursor_;				// µ±Ç°±à¼­²Ù×÷ÒªÏÔÊ¾µÄÊó±êÖ¸Õë
-	CCaptureTextEdit*				text_edit_;					// ÎÄ±¾±à¼­Ö¸Õë
-	CColorPalette*					color_palette_;				// µ÷É«°åÖ¸Õë
+	std::vector<DrawUnit*>			vec_draw_units_;			// å½“å‰ç»˜åˆ¶å•å…ƒåˆ—è¡¨
+	std::vector<DrawUnit*>			vec_history_draw_units_;	// æ’¤é”€/å›æ»šç»˜åˆ¶å•å…ƒåˆ—è¡¨
+	DrawUnit*						current_draw_unit_;         // å½“å‰æ­£åœ¨ç»˜åˆ¶çš„å•å…ƒ
+	BOOL							is_begin_draw_;				// æ˜¯å¦å¼€å§‹ç»˜åˆ¶
+	ui::UiRect						track_rect_;				// å½“å‰æˆªå›¾çš„åŒºåŸŸï¼ˆä¹Ÿæ˜¯ç¼–è¾‘çš„å¯è¡ŒåŸŸï¼‰
+	EditMode						edit_mode_;					// å½“å‰ç¼–è¾‘çš„æ¨¡å¼ï¼ˆç¡®å®šç»˜åˆ¶çš„å›¾å½¢ï¼‰
+	TCHAR*							str_cursor_;				// å½“å‰ç¼–è¾‘æ“ä½œè¦æ˜¾ç¤ºçš„é¼ æ ‡æŒ‡é’ˆ
+	CCaptureTextEdit*				text_edit_;					// æ–‡æœ¬ç¼–è¾‘æŒ‡é’ˆ
+	CColorPalette*					color_palette_;				// è°ƒè‰²æ¿æŒ‡é’ˆ
 	HBITMAP							extra_bitmap_;
 	HBITMAP							blur_bitmap_;
 	int								blur_range_;

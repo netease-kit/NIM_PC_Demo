@@ -26,37 +26,37 @@ namespace nim_comp
 		MultiVideoInviteForm(MultiVchatInfo vchat_info);
 		~MultiVideoInviteForm();
 
-		// ¸²¸ÇĞéº¯Êı
+		// è¦†ç›–è™šå‡½æ•°
 		virtual std::wstring GetSkinFolder() override;
 		virtual std::wstring GetSkinFile() override;
 		virtual std::wstring GetWindowClassName() const override { return kClassName; };
 		virtual UINT GetClassStyle() const override { return UI_CLASSSTYLE_FRAME | CS_DBLCLKS; };
 
 		/**
-		* ´°¿Ú³õÊ¼»¯º¯Êı
-		* @return void	ÎŞ·µ»ØÖµ
+		* çª—å£åˆå§‹åŒ–å‡½æ•°
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void InitWindow() override;
 
 		/**
-		* À¹½Ø²¢´¦Àíµ×²ã´°ÌåÏûÏ¢
-		* @param[in] uMsg ÏûÏ¢ÀàĞÍ
-		* @param[in] wParam ¸½¼Ó²ÎÊı
-		* @param[in] lParam ¸½¼Ó²ÎÊı
-		* @return LRESULT ´¦Àí½á¹û
+		* æ‹¦æˆªå¹¶å¤„ç†åº•å±‚çª—ä½“æ¶ˆæ¯
+		* @param[in] uMsg æ¶ˆæ¯ç±»å‹
+		* @param[in] wParam é™„åŠ å‚æ•°
+		* @param[in] lParam é™„åŠ å‚æ•°
+		* @return LRESULT å¤„ç†ç»“æœ
 		*/
 		virtual LRESULT HandleMessage(UINT uMsg, WPARAM wParam, LPARAM lParam) override;
 
 		/**
-		* ´¦Àí´°¿Ú±»Ïú»ÙµÄÏûÏ¢
-		* @param[in] hWnd ´°¿Ú¾ä±ú
-		* @return void	ÎŞ·µ»ØÖµ
+		* å¤„ç†çª—å£è¢«é”€æ¯çš„æ¶ˆæ¯
+		* @param[in] hWnd çª—å£å¥æŸ„
+		* @return void	æ— è¿”å›å€¼
 		*/
 		virtual void OnFinalMessage(HWND hWnd) override;
 
 		/** 
-		* »ñÈ¡ÈºÁÄĞÅÏ¢
-		* @return MultiVchatInfo ÈºÁÄĞÅÏ¢
+		* è·å–ç¾¤èŠä¿¡æ¯
+		* @return MultiVchatInfo ç¾¤èŠä¿¡æ¯
 		*/
 		MultiVchatInfo GetVchatInfo() { return vchat_info_; }
 
@@ -64,48 +64,48 @@ namespace nim_comp
 
 	private:
 		/**
-		* ´¦ÀíËùÓĞ¿Ø¼şµÄËùÓĞÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†æ‰€æœ‰æ§ä»¶çš„æ‰€æœ‰æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool Notify(ui::EventArgs* msg);
 
 		/**
-		* ´¦ÀíËùÓĞ¿Ø¼şµ¥»÷ÏûÏ¢
-		* @param[in] msg ÏûÏ¢µÄÏà¹ØĞÅÏ¢
-		* @return bool true ¼ÌĞø´«µİ¿Ø¼şÏûÏ¢£¬false Í£Ö¹´«µİ¿Ø¼şÏûÏ¢
+		* å¤„ç†æ‰€æœ‰æ§ä»¶å•å‡»æ¶ˆæ¯
+		* @param[in] msg æ¶ˆæ¯çš„ç›¸å…³ä¿¡æ¯
+		* @return bool true ç»§ç»­ä¼ é€’æ§ä»¶æ¶ˆæ¯ï¼Œfalse åœæ­¢ä¼ é€’æ§ä»¶æ¶ˆæ¯
 		*/
 		bool OnClicked(ui::EventArgs* msg);
 
 		/**
-		* ·¢ËÍÈºÁÄ½ÓÌıÍ¨Öª
+		* å‘é€ç¾¤èŠæ¥å¬é€šçŸ¥
 		* @param[in]accept
 		*/
 		void SendMultiVchatNotify(bool accept);
 
 		/**
-		* ÉèÖÃÑûÇë½çÃæÍ·ÏñĞÅÏ¢
+		* è®¾ç½®é‚€è¯·ç•Œé¢å¤´åƒä¿¡æ¯
 		*/
 		void CheckHeadIcon();
 
 
 		/**
-		* ³õÊ¼»¯¿Ø¼şĞÅÏ¢
+		* åˆå§‹åŒ–æ§ä»¶ä¿¡æ¯
 		*/
 		void InitControl();
 
 		/**
-		* Ìø×ªµ½»á»°Ò³Ãæ
+		* è·³è½¬åˆ°ä¼šè¯é¡µé¢
 		*/
 		void JumpSession();
 
 		/**
-		* ÑûÇë³¬Ê±¿ØÖÆ
+		* é‚€è¯·è¶…æ—¶æ§åˆ¶
 		*/
 		void InviteTimeOut();
 
 		/** 
-		*  ³ÉÔ±ĞÅÏ¢¸ü¸Ä»Øµ÷´¦Àí
+		*  æˆå‘˜ä¿¡æ¯æ›´æ”¹å›è°ƒå¤„ç†
 		*/
 		void OnUserInfoChange(const std::list<nim::UserNameCard>& uinfos);
 

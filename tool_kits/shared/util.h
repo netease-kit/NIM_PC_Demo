@@ -5,22 +5,12 @@
 #define DEMO_GLOBAL_APP_KEY			"45c6af3c98409b18a84451215d0bdd6e"
 #define DEMO_GLOBAL_TEST_APP_KEY	"fe416640c8e8a72734219e1847ad2547"
 
-class QString
-{
-public:
-	static std::string GetGUID();
-	static std::string GetMd5(const std::string& input);
-	static void NIMFreeBuf(void *data);
-};
-
 class QPath
 {
 public:
-	static std::wstring GetAppPath(); //»ñÈ¡exeËùÔÚÄ¿Â¼£¬×îºóÓĞ"\\"
-	static std::wstring GetUserAppDataDir(const std::string& app_account);
-	static std::wstring GetLocalAppDataDir();
+	static std::wstring GetAppPath(); //è·å–exeæ‰€åœ¨ç›®å½•ï¼Œæœ€åæœ‰"\\"
 	static std::wstring GetNimAppDataDir(const std::wstring& app_data_dir);  // "...Local\\Netease\\Nim\\"
-	static void			AddNewEnvironment(const std::wstring& directory); // Ìí¼ÓÒ»¸öÂ·¾¶µ½ exe µÄ»·¾³±äÁ¿
+	static void			AddNewEnvironment(const std::wstring& directory); // æ·»åŠ ä¸€ä¸ªè·¯å¾„åˆ° exe çš„ç¯å¢ƒå˜é‡
 };
 
 class QCommand

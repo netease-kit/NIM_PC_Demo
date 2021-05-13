@@ -1,4 +1,5 @@
-﻿#include "notify_center.h"
+#include "stdafx.h"
+#include "notify_center.h"
 
 namespace nim_comp
 {

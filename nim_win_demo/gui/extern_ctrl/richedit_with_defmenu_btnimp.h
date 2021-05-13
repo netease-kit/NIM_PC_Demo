@@ -4,7 +4,7 @@ namespace ui{
 }
 class RichEditWithDefMenu;
 /** @class MenuBtnHandel
-* @brief 菜单按钮处理对象基类
+* @brief 鑿滃崟鎸夐挳澶勭悊瀵硅薄鍩虹被
 * @copyright (c) 2017, NetEase Inc. All rights reserved
 * @date 2017/10/17
 */
@@ -25,7 +25,7 @@ protected:
 	unsigned sel_end_;
 };
 /** @class MenuBtnHandel
-* @brief 菜单按钮(copy) 实现
+* @brief 鑿滃崟鎸夐挳(copy) 瀹炵幇
 * @copyright (c) 2017, NetEase Inc. All rights reserved
 * @date 2017/10/17
 */
@@ -37,7 +37,7 @@ protected:
 	virtual void DoReset(ui::CMenuElementUI* menu_element);
 };
 /** @class MenuBtnHandel
-* @brief 菜单按钮(cut) 实现
+* @brief 鑿滃崟鎸夐挳(cut) 瀹炵幇
 * @copyright (c) 2017, NetEase Inc. All rights reserved
 * @date 2017/10/17
 */
@@ -49,7 +49,7 @@ protected:
 	virtual void DoReset(ui::CMenuElementUI* menu_element);
 };
 /** @class MenuBtnHandel
-* @brief 菜单按钮(paste) 实现
+* @brief 鑿滃崟鎸夐挳(paste) 瀹炵幇
 * @copyright (c) 2017, NetEase Inc. All rights reserved
 * @date 2017/10/17
 */

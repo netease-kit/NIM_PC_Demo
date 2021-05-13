@@ -1,4 +1,4 @@
-﻿#pragma once
+#pragma once
 #include "bubble_image.h"
 
 namespace nim_comp

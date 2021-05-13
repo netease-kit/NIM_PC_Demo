@@ -1,9 +1,12 @@
 #include "stdafx.h"
+#include "stdafx.h"
 #include "session_plugin_page.h"
 #include "module\session\session_manager.h"
 #include "gui\session\session_box.h"
 #include "export\nim_ui_session_list_manager.h"
+
 using namespace nim_comp;
+
 SessionPluginPage::SessionPluginPage() :
 active_session_box_(nullptr)
 {
@@ -72,7 +75,7 @@ LRESULT SessionPluginPage::MessageHandler(UINT uMsg, WPARAM wParam, LPARAM lPara
 			{
 				std::wstring ws = url;
 				nbase::LowerString(ws);
-				// ÒÔ"file:"¿ªÍ· »òÕß °üº¬".." µÄ³¬Á´½Ó²»ÔÊĞí´ò¿ª
+				// ä»¥"file:"å¼€å¤´ æˆ–è€… åŒ…å«".." çš„è¶…é“¾æ¥ä¸å…è®¸æ‰“å¼€
 				if (!(ws.find(L"file:", 0, 5) == 0 || ws.find(L"..") != std::wstring::npos))
 				{
 					Post2GlobalMisc(nbase::Bind(&shared::tools::SafeOpenUrl, url, SW_SHOW));
