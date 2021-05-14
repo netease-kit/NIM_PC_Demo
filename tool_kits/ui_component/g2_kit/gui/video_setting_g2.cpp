@@ -29,6 +29,11 @@ std::wstring VideoSettingFormG2::GetSkinFile()
 	return L"video_setting_g2.xml";
 }
 
+void VideoSettingFormG2::DirectQuit()
+{
+	::DestroyWindow(this->GetHWND());
+}
+
 ui::Control* VideoSettingFormG2::CreateControl(const std::wstring& pstrClass)
 {
 	if (pstrClass == _T("BitmapControlG2"))

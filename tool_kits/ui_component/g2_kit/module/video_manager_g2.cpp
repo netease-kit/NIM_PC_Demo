@@ -212,6 +212,20 @@ namespace nim_comp
 
 		return true;
 	}
+
+	void VideoManagerG2::DestroyVideoChatForm()
+	{
+		if (nullptr != setting_form_ && !setting_form_flag_.expired())
+		{
+			setting_form_->DirectQuit();
+		}
+
+		if (nullptr != video_form_ && !video_form_flag_.expired())
+		{
+			video_form_->DirectQuit();
+		}
+	}
+
 	bool VideoManagerG2::IsTalking()
 	{
 		if (video_form_ != NULL && !video_form_flag_.expired())
@@ -608,8 +622,7 @@ namespace nim_comp
 	}
 	void VideoManagerG2::OnUserLeaveCb(const nbase::BatpPack& response)
 	{
-		//当前PC Demo只有一对一呼叫，不处理OnUserLeave事件
-		//video_form_->EnterEndCallPage(VideoFormG2::END_CALL_BE_HANGUP);
+		video_form_->EnterEndCallPage(VideoFormG2::END_CALL_BE_HANGUP);
 	}
 	void VideoManagerG2::OnUserDisconnectCb(const nbase::BatpPack& response)
 	{

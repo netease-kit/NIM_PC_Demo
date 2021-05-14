@@ -12,6 +12,8 @@
 
 namespace nim_comp
 {
+#define RTC_COMPONENT_VER "1.2.0"
+
 	/*与 NIMSignalingType 同值*/
 	enum AVCHAT_CALL_TYPE {
 		kAvChatAudio = 1,		/**< 音频类型 */
@@ -129,13 +131,14 @@ namespace nim_comp
 		void signalingCreateCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb);
 		void signalingJoinCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb, const std::string& channelId);
 		void signalingInviteCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb);
+		// 被叫方调用accept的结果的回调
 		void signalingAcceptCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb);
 		void signalingRejectCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb);
 		void signalingCloseCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb);
 		void signalingLeaveCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb);
 		void signalingControlCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param);
-		void handleInvited(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo);
 
+		void handleInvited(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo);
 		void handleControl(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo);
 		void handleAccepted(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo);
 		void handleOtherClientAccepted(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo);
@@ -186,7 +189,9 @@ namespace nim_comp
 		std::string						joined_channel_id_;
 		int64_t							to_account_id_;
 		std::string						from_account_id_;
-		std::string	 stoken_;
+		std::string						stoken_;
+		std::string						version_;		/**< 对方版本 */
+		std::string						channelName_;	/**< 房间频道名称 */
 		int callType;
 		bool isCameraOpen;
 		bool timeOutHurryUp;

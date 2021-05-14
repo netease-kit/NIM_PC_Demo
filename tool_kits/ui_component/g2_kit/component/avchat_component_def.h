@@ -64,7 +64,8 @@ extern"C"
 	//自定义json信息中用到的key
 	static const char* kAvChatChannelMembers	= "callUserList";
 	static const char* kAvChatCallType			= "callType";
-		  
+	static const char* kAvChatCallVersion		= "version";
+	static const char* kAvChatCallChannelName	= "channelName";
 	//nertc日志目录
 	#define  AVCHAT_LOG_DIR	 L"Netease\\G2"
 #ifdef __cplusplus

@@ -66,6 +66,12 @@ namespace nim_comp
 		*/
 		bool ShowVideoChatForm(const std::string& id, bool video, bool isSender = true);
 
+		/**
+	     * 关闭所有窗口
+	     * @return void 无返回值
+	     */
+		void DestroyVideoChatForm();
+
 		//是否正在通话中，通话中无法进行本地预览以及音频测试
 		bool IsTalking();
 		bool ShowVideoSetting(bool video = true);
