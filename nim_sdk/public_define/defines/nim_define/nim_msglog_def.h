@@ -527,6 +527,14 @@ static const char *kNIMDELMSGSelfNotifyKeyMsgClientID = "client_id";			/**< stri
 static const char *kNIMDELMSGSelfNotifyKeyEXT = "ext";			/**< string 用户自定义数据 */
 /** @}*/ //单向删除某条消息服务端推送 Json Keys
 
+/** @name 群组消息标记已读回调 json key
+  * @{
+  */
+static const char* kNIMTEAMMSGACKREADSUCCESSIDSKEY = "success_ids";		/**< string json array 群组消息标记已读成功的msg id list key */
+static const char* kNIMTEAMMSGACKREADFAILUREIDSKEY = "failure_ids";		/**< string json array 群组消息标记已读失败的msg id list key */
+static const char* kNIMTEAMMSGACKREADSIGNOREDIDSKEY = "ignored_ids";		/**< string json array 群组消息标记已读忽略的msg id list key(消息不需要标记，或者已经标记过) */
+  /** @}*/ //单向删除某条消息参数 Json Keys
+
   /** @brief 单向删除某条消息参数 */
 typedef struct
 {

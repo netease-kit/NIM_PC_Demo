@@ -33,6 +33,7 @@ public:
 	typedef ChangeCallback DeleteRecentSessionCallabck;										/**< 删除会话回调模板 */
 	typedef ChangeCallback DeleteAllRecentSessionCallabck;									/**< 删除全部会话回调模板 */
 	typedef ChangeCallback SetUnreadCountZeroCallback;										/**< 会话未读消息数清零回调模板 */
+	typedef std::function<void(nim::NIMResCode, const std::list<SessionData>& session_data_list, int unread_count)> SetMultiUnreadCountZeroCallback;/**< 多条会话未读消息数清零回调模板 */
 	typedef std::function<void(nim::NIMResCode, const SessionData&)> QuerySessionDataCallback; /**< 会话信息查询结果回调模板 */
 	typedef std::function<void(const StickTopSession&)> SetToStickTopSessionNotifyCallback;/**< 置顶会话通知回调模板 */
 	typedef std::function<void(const std::string& session_id,nim::NIMSessionType)> CancelStickTopSessionNotifyCallback;/**< 取消置顶会话通知回调模板 */
@@ -91,6 +92,15 @@ public:
 	*/
 	static void QueryAllRecentSessionAsync(NIMMessageType last_msg_excluded_type,const QuerySessionListCallabck& cb, const std::string& json_extension = "");
 
+/** @fn static void QueryAllRecentSessionAsyncEx(const std::list<NIMMessageType>& last_msg_excluded_type, const QuerySessionListCallabck& cb, const std::string& json_extension = "");
+* 查询会话列表,可指定最后一条会话消息要排除掉的类型(列表)
+* @param[in] last_msg_excluded_type 最后一条会话消息要排除掉的类型(列表),如果不排除任何消息,传入空列表
+* @param[in] cb			查询会话列表的回调函数
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @return void 无返回值
+*/
+	static void QueryAllRecentSessionAsyncEx(const std::list<NIMMessageType>& last_msg_excluded_type, const QuerySessionListCallabck& cb, const std::string& json_extension = "");
+
 	/** @fn static bool DeleteRecentSession(nim::NIMSessionType to_type, const std::string& id, const DeleteRecentSessionCallabck& cb, const std::string& json_extension = "")
 	* 删除最近联系人
 	* @param[in] to_type		会话类型，双人0，群组1 (nim_msglog_def.h)
@@ -102,6 +112,18 @@ public:
 	*				0:失败
 	*/
 	static bool DeleteRecentSession(nim::NIMSessionType to_type, const std::string& id, const DeleteRecentSessionCallabck& cb, const std::string& json_extension = "");
+
+/** @fn static bool DeleteRecentSessionEx(nim::NIMSessionType to_type, const std::string& id, const DeleteRecentSessionCallabck& cb, bool delete_roaming)
+* 删除最近联系人
+* @param[in] to_type		会话类型，双人0，群组1 (nim_msglog_def.h)
+* @param[in] id			对方的account id或者群组tid。
+* @param[in] delete_roaming 是否同时删除漫游消息
+* @param[in] cb			最近会话列表项变更的回调函数
+* @return bool 检查参数如果不符合要求则返回失败
+* @note 错误码	200:成功
+*				0:失败
+*/
+	static bool DeleteRecentSessionEx(nim::NIMSessionType to_type, const std::string& id, const DeleteRecentSessionCallabck& cb, bool delete_roaming);
 
 	/** @fn static bool DeleteSessionRoamingMessage(nim::NIMSessionType to_type, const std::string& id, const DeleteRecentSessionCallabck& cb, const std::string& json_extension = "")
 * 删除某会话的漫游消息
@@ -136,6 +158,17 @@ public:
 	*				0:失败
 	*/
 	static bool SetUnreadCountZeroAsync(nim::NIMSessionType to_type, const std::string& id, const SetUnreadCountZeroCallback& cb, const std::string& json_extension = "");
+
+	/** @fn static bool SetMultiUnreadCountZeroAsync(bool super_team,const std::list< MultiUnreadCountZeroInfo>& unread_zero_info_list, const SetMultiUnreadCountZeroCallback& cb)
+	* 最近联系人项未读数清零
+	* @param[in] super_team	会话列表中的会话是否是超大群会话
+	* @param[in] unread_zero_info_list	清零的会话信息列表。
+	* @param[in] cb			最近会话列表项变更的回调函数
+	* @return bool 检查参数如果不符合要求则返回失败
+	* @note 错误码	200:成功
+	*				0:失败
+	*/
+	static bool SetMultiUnreadCountZeroAsync(bool super_team,const std::list< MultiUnreadCountZeroInfo>& unread_zero_info_list, const SetMultiUnreadCountZeroCallback& cb);
 
 	/** @fn static bool SetSessionTop(enum NIMSessionType to_type, const std::string& id, bool top, const ChangeCallback& cb, const std::string& json_extension = "");
 	* 设置会话项是否置顶(置顶属性只保存在本地)

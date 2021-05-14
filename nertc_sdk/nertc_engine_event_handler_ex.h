@@ -27,16 +27,34 @@ class IRtcEngineEventHandlerEx : public IRtcEngineEventHandler
 {
 public:
     virtual ~IRtcEngineEventHandlerEx() {}
-    /** 远端用户视频配置更新回调。
+
+    /** 远端用户开启屏幕共享辅流通道的回调。
 
      @param uid 远端用户ID。
      @param max_profile 最大分辨率。
+     */
+    virtual void onUserSubStreamVideoStart(uid_t uid, NERtcVideoProfileType max_profile) {
+        (void)uid;
+        (void)max_profile;
+    }
+    /** 远端用户停止屏幕共享辅流通道的回调。
+
+     @param uid 远端用户ID。
+     */
+    virtual void onUserSubStreamVideoStop(uid_t uid) {
+        (void)uid;
+    }
+
+    /** 远端用户视频配置更新的回调。
+
+     @param uid 远端用户 ID。
+     @param max_profile 视频编码的分辨率，用于衡量编码质量。
      */
     virtual void onUserVideoProfileUpdate(uid_t uid, NERtcVideoProfileType max_profile) {
         (void)uid;
         (void)max_profile;
     }
-    /** 远端用户是否静音回调。
+    /** 远端用户是否静音的回调。
 
      @param uid 远端用户ID。
      @param mute 是否静音。
@@ -45,7 +63,7 @@ public:
         (void)uid;
         (void)mute;
     }
-    /** 远端用户是否禁视频流回调。
+    /** 远端用户暂停或恢复发送视频流的回调。
 
      @param uid 远端用户ID。
      @param mute 是否禁视频流。
@@ -55,10 +73,10 @@ public:
         (void)mute;
     }
 
-    /** 音频设备状态更改回调。
+    /** 音频设备状态更改的回调。
 
      @param device_id 设备ID。
-     @param device_type 音频设备类型。
+     @param device_type 音频设备类型。详细信息请参考 NERtcAudioDeviceType。
      @param device_state 音频设备状态。
      */
     virtual void onAudioDeviceStateChanged(const char device_id[kNERtcMaxDeviceIDLength],
@@ -69,7 +87,7 @@ public:
         (void)device_state;
     }
 
-    /** 音频默认设备更改回调。
+    /** 音频默认设备更改的回调。
 
      @param device_id 设备ID。
      @param device_type 音频设备类型。
@@ -80,7 +98,7 @@ public:
         (void)device_type;
     }
 
-    /** 视频设备状态更改回调。
+    /** 视频设备状态已改变的回调。
 
      @param device_id 设备ID。
      @param device_type 视频设备类型。
@@ -94,15 +112,15 @@ public:
         (void)device_state;
     }
 
-    /** 已接收到远端音频首帧回调。
+    /** 已接收到远端音频首帧的回调。
 
-     @param uid 发送音频帧的远端用户的用户 ID。
+     @param uid 远端用户 ID，指定是哪个用户的音频流。 
      */
     virtual void onFirstAudioDataReceived(uid_t uid) {
         (void)uid;
     }
 
-    /** 已显示首帧远端视频回调。
+    /** 已显示首帧远端视频的回调。
 
     第一帧远端视频显示在视图上时，触发此调用。
 
@@ -114,15 +132,15 @@ public:
 
     /** 已解码远端音频首帧的回调。
 
-     @param uid 远端用户 ID。
+     @param uid 远端用户 ID，指定是哪个用户的音频流。
      */
     virtual void onFirstAudioFrameDecoded(uid_t uid) {
         (void)uid;
     }
 
-    /** 已接收到远端视频并完成解码回调。
+    /** 已接收到远端视频并完成解码的回调。
 
-    引擎收到第一帧远端视频流并解码成功时，触发此调用。 App 可在此回调中设置该用户的 video canvas。
+    引擎收到第一帧远端视频流并解码成功时，触发此调用。 
 
      @param uid 用户 ID，指定是哪个用户的视频流。
      @param width 视频流宽（px）。
@@ -166,7 +184,7 @@ public:
 
     /** 本地用户的音乐文件播放状态改变回调。
 
-    调用 startAudioMixing 播放混音音乐文件后，当音乐文件的播放状态发生改变时，会触发该回调。
+     调用 startAudioMixing 播放混音音乐文件后，当音乐文件的播放状态发生改变时，会触发该回调。
 
     - 如果播放音乐文件正常结束，state 会返回相应的状态码 kNERtcAudioMixingStateFinished，error_code 返回 kNERtcAudioMixingErrorOK。
     - 如果播放出错，则返回状态码 kNERtcAudioMixingStateFailed，error_code 返回相应的出错原因。
@@ -200,9 +218,11 @@ public:
 
     /** 提示频道内本地用户瞬时音量的回调。
 
-     该回调默认禁用。可以通过 enableAudioVolumeIndication 方法开启；
-     开启后，本地用户说话，SDK 会按 enableAudioVolumeIndication 方法中设置的时间间隔触发该回调。
-     如果本地用户将自己静音（调用了 muteLocalAudioStream），SDK 将音量设置为 0 后回调给应用层。
+     该回调默认禁用。可以通过 \ref IRtcEngineEx::enableAudioVolumeIndication "enableAudioVolumeIndication" 方法开启。
+
+     开启后，本地用户说话，SDK 会按  \ref IRtcEngineEx::enableAudioVolumeIndication "enableAudioVolumeIndication" 方法中设置的时间间隔触发该回调。
+
+     如果本地用户将自己静音（调用了 \ref IRtcEngineEx::muteLocalAudioStream "muteLocalAudioStream"），SDK 将音量设置为 0 后回调给应用层。
 
      @param volume （混音后的）音量，取值范围为 [0,100]。
      */
@@ -210,10 +230,9 @@ public:
         (void)volume;
     }
 
-    /** 提示频道内谁正在说话及说话者瞬时音量的回调。
+    /** 提示房间内谁正在说话及说话者瞬时音量的回调。
 
-     该回调默认禁用。可以通过 enableAudioVolumeIndication 方法开启；
-     开启后，无论频道内是否有人说话，SDK 都会按 enableAudioVolumeIndication 方法中设置的时间间隔触发该回调。
+     该回调默认为关闭状态。可以通过 enableAudioVolumeIndication 方法开启。开启后，无论房间内是否有人说话，SDK 都会按 enableAudioVolumeIndication 方法中设置的时间间隔触发该回调。
 
      在返回的 speakers 数组中:
 
@@ -278,7 +297,7 @@ public:
     }
 
     /** 通知直播推流状态
-
+     @note 该回调在通话中有效。
      @param task_id 任务id
      @param url 推流地址
      @param state #NERtcLiveStreamStateCode, 直播推流状态
@@ -291,6 +310,35 @@ public:
         (void)url;
         (void)state;
     }
+    
+    /** 检测到啸叫回调。
+     
+     当声源与扩音设备之间因距离过近时，可能会产生啸叫。NERTC SDK 支持啸叫检测，当检测到有啸叫信号产生的时候，自动触发该回调直至啸叫停止。App 应用层可以在收到啸叫回调时，提示用户静音麦克风，或直接静音麦克风。
+
+     @note
+     啸叫检测功能一般用于语音聊天室或在线会议等纯人声环境，不推荐在包含背景音乐的娱乐场景中使用。
+
+     @param howling 是否出现啸叫
+     - true: 啸叫；
+     - false: 正常；。
+     */
+    virtual void onAudioHowling(bool howling) {
+        (void)howling;
+    }
+
+    /** 收到远端流的 SEI 内容回调。
+     
+     当远端成功发送 SEI 后，本端会收到此回调。
+
+	 * @param[in] uid 发送该 sei 的用户 id
+	 * @param[in] data 接收到的 sei 数据
+	 * @param[in] dataSize 接收到 sei 数据的大小
+	 */
+	virtual void onRecvSEIMsg(uid_t uid, const char* data, uint32_t dataSize) {
+		(void)uid;
+		(void)data;
+		(void)dataSize;
+	}
 };
 } //namespace nertc
 

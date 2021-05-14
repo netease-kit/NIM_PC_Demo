@@ -29,7 +29,7 @@ public:
 
     /** 当前通话统计回调。
 
-    SDK 定期向 App 报告当前通话的统计信息，每 2 秒触发一次。
+    SDK 定期向 App 报告当前通话的统计信息，该回调在通话中每 2 秒触发一次。
 
      @param stats NERTC 引擎统计数据: NERtcStats
      */

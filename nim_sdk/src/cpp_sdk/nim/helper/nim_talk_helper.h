@@ -244,9 +244,9 @@ public:
 	std::string		receiver_accid_;			/**< 接收者ID */
 	std::string		sender_accid_;				/**< 发送者ID */
 	int64_t			timetag_;					/**< 消息时间戳（毫秒） */
-	std::string		content_;					/**< 消息内容,长度限制5000 */
+	std::string		content_;					/**< 消息内容,长度限制10000 */
 	NIMMessageType	type_;						/**< 消息类型 */
-	std::string		attach_;					/**< 消息附件 */
+	std::string		attach_;					/**< 消息附件 ,长度限制10000 */
 	std::string		client_msg_id_;				/**< 消息ID（客户端） */
 	MessageSetting	msg_setting_;				/**< 消息属性设置 */
 	std::string		third_party_callback_ext_;	/**< 第三方回调回来的自定义扩展字段 v7.8添加 */

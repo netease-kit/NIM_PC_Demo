@@ -1,4 +1,4 @@
-/** @file nim_talkex.h
+﻿/** @file nim_talkex.h
   * @brief 收藏、置顶聊天、PinMessage、ThreadMessage、快捷回复接口头文件
   * @copyright (c) 2015-2020, NetEase Inc. All rights reserved
   * @date 2020/04/20

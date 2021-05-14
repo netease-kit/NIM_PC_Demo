@@ -39,6 +39,8 @@ public:
 	typedef QueryAllMyTeamsInfoCallback QueryTeamsInfoCallback;
 	typedef QueryAllMyTeamsInfoCallback GetTeamInfoBatchSFTransCallback;/**< 查询所有群信息回调模板 顺丰专用 */
 	typedef std::function<void(const std::list<std::string>& success_ids, const std::list<std::string>& failure_ids)> UpdateTInfoLocalCallback;		/**< 更新本地缓存回调模板顺丰专用 */
+	typedef std::function<void(const std::string& tid, const std::list<std::string>& success_ids, const std::list<std::string>& failure_ids,const std::list<std::string>& ignored_ids)> TeamMsgAckReadCallback;
+	typedef std::function<void(NIMResCode error_code, const std::list<nim::TeamInfo>& team_info_list,const std::list<std::string>& fail_list)>	GetTeamInfoListCallback;	/**< 查询给定的一组群ID详细信息的回调模板 */
 	/** @fn static void RegTeamEventCb(const TeamEventCallback& cb, const std::string& json_extension = "")
 	* (全局回调)统一注册接收群通知回调函数（创建群,收到邀请等群通知通过此接口广播，注意：服务器推送过来的群通知和APP发起请求的回调统一处理！）
 	* @param[in] json_extension json扩展参数（备用，目前不需要）
@@ -493,6 +495,18 @@ public:
 	*/
 	static void TeamMsgAckRead(const std::string& tid, const std::list<IMMessage>& msgs, const TeamEventCallback& cb, const std::string& json_extension = "");
 
+	/** @fn void TeamMsgAckReadEx(const std::string& tid, const std::list<IMMessage>& msgs, const TeamMsgAckReadCallback& cb, const std::string& json_extension = "");
+* 群消息回执
+* @param[in] tid		群组id
+* @param[in] msgs		需要发送消息回执的群消息
+* @param[in] json_extension json扩展参数（备用，目前不需要）
+* @param[in] cb		回调函数
+* @return void 无返回值
+* @note 错误码	200:成功
+*				414:参数错误
+*/
+	static void TeamMsgAckReadEx(const std::string& tid, const std::list<IMMessage>& msgs, const TeamMsgAckReadCallback& cb, const std::string& json_extension = "");
+
 
 	/** @fn void TeamMsgQueryUnreadList(const std::string& tid, const IMMessage& msg, const TeamEventCallback& cb, const std::string& json_extension = "");
 	* 获取群消息未读成员列表
@@ -516,7 +530,7 @@ public:
 	*/
 	static void QueryTeamMembersInvitor(const std::string& tid, const std::list<std::string>& members, const QueryTeamMembersInvitorCallback& cb);
 
-	/** @fn static bool QueryTeamInfoAsync(const std::string& tid, const QueryTeamInfoCallback& cb, const std::string& json_extension = "")
+	/** @fn static bool QueryTeamInfoByKeywordAsync(const std::string& keyword, const QueryTeamsInfoCallback& cb, const std::string& json_extension = "")
 	* 查询群信息
 	* @param[in] keyword		要查询的关键字
 	* @param[in] cb				查询群信息的回调函数
@@ -536,7 +550,7 @@ public:
 	*/
 	static void UpdateTInfoLocal(const std::list<TeamInfo>& team_infos, const UpdateTInfoLocalCallback& cb, const std::string& json_extension = "");
 
-	/** @fn static bool GetTeamInfoBatch(const GetTeamInfoBatchCallback& cb, uint64_t  time_tag = 0, const std::string& json_extension = "")
+/** @fn static void GetTeamInfoBatchSFTrans(const GetTeamInfoBatchSFTransCallback& cb, uint64_t  time_tag = 0, const std::string& json_extension = "")
 * 查询所有群顺丰专用
 * @param[in] cb		查询所有群的回调函数
 * @param[in] time_tag	时间戳，没有特殊需求此参数赋0
@@ -545,6 +559,16 @@ public:
 */
 	static void GetTeamInfoBatchSFTrans(const GetTeamInfoBatchSFTransCallback& cb, uint64_t  time_tag = 0, const std::string& json_extension = "");
 
+/** @fn static void GetTeaminfoList(const std::list<std::string>& tid_list, const QueryTeamInfoListCallback& cb)
+* 查询给定的一组群ID详细信息
+* @param[in] tid_list	 群组id列表，最多10个
+* @param[in] cb	查询给定的一组群ID详细信息的回调模板
+* @return void 无返回值
+* @note 错误码	200:成功
+	*				414:参数错误
+	*				816:部分成功
+*/
+	static void GetTeaminfoList(const std::list<std::string>& tid_list, const GetTeamInfoListCallback& cb);
 };
 
 } 

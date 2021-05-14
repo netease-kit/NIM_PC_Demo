@@ -28,6 +28,14 @@ struct NIM_SDK_CPPWRAPPER_DLL_API QueryMsglogResult
 
 	/** 构造函数 */
 	QueryMsglogResult() : count_(0), source_(kNIMMsglogQuerySourceLocal) {}
+	std::string QueryMsglogResult::ToJsonString() const {
+		nim_cpp_wrapper_util::Json::Value values;
+		for (auto &it : msglogs_) {
+			nim_cpp_wrapper_util::Json::Value value = it.ToJsonObject(false);
+			values.append(value);
+		}
+		return nim_cpp_wrapper_util::Json::FastWriter().write(values);
+	}
 };
 
 /** @brief 单向删除消息记录回调参数 */

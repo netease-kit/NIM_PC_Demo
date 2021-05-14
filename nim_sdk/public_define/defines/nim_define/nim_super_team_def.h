@@ -143,7 +143,16 @@ static const char *kNIMSuperTeamInfoKeyBeInviteMode	= "be_invite_mode"; /**< int
 static const char *kNIMSuperTeamInfoKeyInviteMode	= "invite_mode";	/**< int, 谁可以邀请他人入群，属性本身只有群主管理员可以修改,默认kNIMTeamInviteModeManager(0)/kNIMTeamInviteModeEveryone(1) */
 static const char *kNIMSuperTeamInfoKeyUpdateInfoMode= "update_info_mode";/**< int, 谁可以修改群资料，属性本身只有群主管理员可以修改,默认kNIMTeamUpdateInfoModeManager(0)/kNIMTeamUpdateInfoModeEveryone(1) */
 static const char *kNIMSuperTeamInfoKeyUpdateCustomMode	= "update_custom_mode";/**< int, 谁可以更新群自定义属性，属性本身只有群主管理员可以修改,默认kNIMTeamUpdateCustomModeManager(0)/kNIMTeamUpdateCustomModeEveryone(1) */
-/** @}*/ //群组信息Json Keys
+static const char* kNIMSuperTeamInfoKeyMuteAll = "mute_all";		/**< int, 群全员禁言标记 0:未禁言，1:禁言, 开发者只读 无法设置 */
+static const char* kNIMSuperTeamInfoKeyMuteType = "mute_type";		/**<NIMSuperTeamMuteType, 群禁言0不禁言 1普通成员禁言 3全部禁言 包括群主 开发者可以通过设置该属性调整群禁言状态*/
+																			   /** @}*/ //群组信息Json Keys
+/** @enum NIMSuperTeamMuteType 群信息kNIMSuperTeamInfoKeyMuteType的配置定义 */
+enum NIMSuperTeamMuteType
+{
+	kNIMSuperTeamMuteTypeNone = 0,	/**< 不禁言 */
+	kNIMSuperTeamMuteTypeNomalMute = 1,	/**< 普通成员禁言 */
+	kNIMSuperTeamMuteTypeAllMute = 3,	/**< 全部禁言 */
+};
 
 /** @enum NIMSuperTeamBitsConfigMask 群组成员信息Bits属性kNIMSuperTeamUserKeyBits的配置定义 */
 enum NIMSuperTeamBitsConfigMask
@@ -216,9 +225,9 @@ enum NIMSuperTeamJoinMode
 /** @enum NIMSuperTeamQueryType 根据关键字查询群组信息类型 */
 enum NIMSuperTeamQueryType
 {
-	kNIMQuerySuperTeamDefault		= 1,		/** 默认查询条件，群组 ID 和群名称任意匹配则返回 */
-	kNIMQuerySuperTeamByTeamId		= 2,		/** 仅匹配群组 ID */
-	kNIMQuerySuperTeamByTeamName	= 3			/** 仅匹配群名称 */
+	kNIMQuerySuperTeamDefault		= 1,		/**< 默认查询条件，群组 ID 和群名称任意匹配则返回 */
+	kNIMQuerySuperTeamByTeamId		= 2,		/**< 仅匹配群组 ID */
+	kNIMQuerySuperTeamByTeamName	= 3			/**< 仅匹配群名称 */
 };
 
 /** @name 搜索本地群组相关信息扩展参数

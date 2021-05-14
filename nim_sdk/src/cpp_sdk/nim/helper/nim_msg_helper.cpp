@@ -25,6 +25,8 @@ namespace nim
 		notify.msglog_exist_ = json_value[kNIMRecallMsgKeyMsgExist].asBool();
 		notify.msglog_timetag_ = json_value[kNIMRecallMsgKeyMsgTime].asUInt64();
 		notify.from_nick_ = json_value[kNIMRecallMsgKeyMsgFromNick].asString();
+		notify.callback_ext_ = json_value[kNIMRecallMsgTagCallbackExt].asString();//v8.2.0
+		notify.attach_ = json_value[kNIMRecallMsgTagAttach].asString();//v8.2.0
 		return true;
 	}
 	bool ParseRecallMsgNotify(const std::string json_value, RecallMsgNotify& notify)

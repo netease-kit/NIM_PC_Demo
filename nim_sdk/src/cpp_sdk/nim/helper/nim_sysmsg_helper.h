@@ -111,7 +111,7 @@ struct NIM_SDK_CPPWRAPPER_DLL_API SysMessage
 	NIMMessageFeature	feature_;	/**< 通知属性 */
 	int			total_unread_count_;/**< 总计的通知未读数 */
 	std::string client_msg_id_;		/**< 通知ID（客户端） */
-
+	std::string callbac_ext_;	/**< v8.2.0 第三方回调返回的自定义字段*/
 	/** 构造函数 */
 	SysMessage() : timetag_(0)
 		, id_(0)

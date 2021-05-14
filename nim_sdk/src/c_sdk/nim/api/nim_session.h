@@ -66,6 +66,15 @@ NIM_SDK_DLL_API void nim_session_query_all_recent_session_async(const char *json
   */
 NIM_SDK_DLL_API void nim_session_query_all_recent_session_with_last_msg_excluded_type_async(const char *json_extension, nim_session_query_recent_session_cb_func cb, enum NIMMessageType last_msg_excluded_type,const void *user_data);
 
+/** @fn void nim_session_query_all_recent_session_with_last_msg_excluded_type_async_ex(const char *json_extension, nim_session_query_recent_session_cb_func cb, const char *last_msg_excluded_type_list, const void *user_data)
+  * 查询会话列表,可指定最后一条会话消息要排除掉的类型(列表)
+  * @param[in] json_extension json扩展参数（备用，目前不需要）
+  * @param[in] cb			查询会话列表的回调函数， nim_session_query_recent_session_cb_func回调函数定义见nim_session_def.h
+  * @param[in] last_msg_excluded_type 最后一条会话消息要排除掉的类型,如果不排除任何消息，参数请传入NIMMessageType::kNIMMessageTypeUnknown
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  */
+NIM_SDK_DLL_API void nim_session_query_all_recent_session_with_last_msg_excluded_type_async_ex(const char* json_extension, nim_session_query_recent_session_cb_func cb, const char* last_msg_excluded_type_list, const void* user_data);
 
 
 /** @fn void nim_session_delete_recent_session_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data)
@@ -80,6 +89,20 @@ NIM_SDK_DLL_API void nim_session_query_all_recent_session_with_last_msg_excluded
   *				0:失败
   */
 NIM_SDK_DLL_API void nim_session_delete_recent_session_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+
+/** @fn void nim_session_delete_recent_session_async_ex(enum NIMSessionType to_type, const char* id, bool delete_roaming, nim_session_change_cb_func cb, const void* user_data)
+  * 删除最近联系人
+  * @param[in] to_type		会话类型
+  * @param[in] id			对方的account id或者群组tid。
+  * @param[in] delete_roaming 是否删除漫游消息
+  * @param[in] cb			最近会话列表项变更的回调函数， nim_session_change_cb_func回调函数定义见nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
+  */
+NIM_SDK_DLL_API void nim_session_delete_recent_session_async_ex(enum NIMSessionType to_type, const char* id, bool delete_roaming, nim_session_change_cb_func cb, const void* user_data);
+
 
 /** @fn  void nim_session_delete_session_roaming_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_delete_session_roaming_cb_func cb, const void *user_data)
   * 删除指定会话的漫游消息
@@ -118,6 +141,18 @@ NIM_SDK_DLL_API void nim_session_delete_all_recent_session_async(const char *jso
   *				0:失败
   */
 NIM_SDK_DLL_API void nim_session_set_unread_count_zero_async(enum NIMSessionType to_type, const char *id, const char *json_extension, nim_session_change_cb_func cb, const void *user_data);
+
+/** @fn void nim_session_set_multi_unread_count_zero_async(bool super_team, const char* unread_count_zero_info_list, nim_session_multi_change_cb_func cb, const void* user_data);
+  * 最近联系人项(多条)未读数清零
+  * @param[in] super_team		是否是超大群
+  * @param[in] zero_info_list		json array 要清零的会话信息列表 示例[{"type":0,"id":"123"},{"type":1,"id":"789"}]	对方的account id或者群组tid。
+  * @param[in] cb			最近会话列表项变更的回调函数， nim_session_multi_change_cb_func回调函数定义见nim_session_def.h
+  * @param[in] user_data	APP的自定义用户数据，SDK只负责传回给回调函数cb，不做任何处理！
+  * @return void 无返回值
+  * @note 错误码	200:成功
+  *				0:失败
+  */
+NIM_SDK_DLL_API void nim_session_set_multi_unread_count_zero_async(bool super_team, const char* unread_count_zero_info_list, nim_session_multi_change_cb_func cb, const void* user_data);
 
 /** @fn void nim_session_set_top(enum NIMSessionType to_type, const char *id, bool top, const char *json_extension, nim_session_change_cb_func cb, const void *user_data)
   * 设置会话项是否置顶(置顶属性只保存在本地)

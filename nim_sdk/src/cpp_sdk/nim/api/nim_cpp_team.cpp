@@ -39,11 +39,13 @@ typedef void(*nim_team_query_team_info_async)(const char *tid, const char *json_
 typedef void(*nim_team_update_tinfo_local)(const char *json_info_list, nim_team_update_tinfo_local_cb_func cb_func, const void* user_data);
 typedef char*(*nim_team_query_team_member_block)(const char *tid, const char *user_id);
 typedef char*(*nim_team_query_team_info_block)(const char *tid);
+typedef void(*nim_team_get_team_info_list)(const char* tid_list, nim_team_get_team_info_list_cb_func cb, const void* user_data);
 
 typedef void(*nim_team_mute_member_async)(const char *tid, const char *member_id, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 typedef void(*nim_team_query_mute_list_online_async)(const char *tid, 	const char *json_extension, nim_team_query_mute_list_cb_func cb, const void *user_data);
 typedef void(*nim_team_mute_async)(const char *tid, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 typedef void(*nim_team_msg_ack_read)(const char *tid, const char *json_msgs, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
+typedef void(*nim_team_msg_ack_read_ex)(const char* tid, const char* json_msgs, const char* json_extension, nim_team_msg_ack_read_ex_cb_func cb, const void* user_data);
 typedef void(*nim_team_msg_query_unread_list)(const char *tid, const char *json_msg, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 typedef void(*nim_team_query_members_invitor)(const char *tid, const char *members, nim_team_query_members_invitor_cb_func cb, const void *user_data);
 typedef void(*nim_team_query_teams_info_by_keyword)(const char *keyword, nim_team_query_all_my_teams_cb_func cb, const char *json_extension, const void *user_data);
@@ -783,7 +785,44 @@ void Team::TeamMsgAckRead(const std::string& tid, const std::list<IMMessage>& ms
 		, &CallbackTeamChange
 		, cb_pointer);
 }
-
+void Team::TeamMsgAckReadEx(const std::string& tid, const std::list<IMMessage>& msgs, const TeamMsgAckReadCallback& cb, const std::string& json_extension )
+{
+	TeamMsgAckReadCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new TeamMsgAckReadCallback(cb);
+	}
+	std::string json_msgs;
+	nim_cpp_wrapper_util::Json::Value values;
+	for (auto iter = msgs.begin(); iter != msgs.end(); ++iter)
+	{
+		values.append(iter->ToJsonObject(false));
+	}
+	NIM_SDK_GET_FUNC(nim_team_msg_ack_read_ex)(tid.c_str()
+		, values.toStyledString().c_str()
+		, json_extension.c_str()
+		, [](const char* tid, const char* success_ids, const char* failure_ids, const char* ignored_ids, const void* user_data) {
+			CallbackProxy::DoSafeCallback<Team::TeamMsgAckReadCallback>(user_data, [=](const Team::TeamMsgAckReadCallback& cb) {
+				nim_cpp_wrapper_util::Json::Value value_success_ids;
+				nim_cpp_wrapper_util::Json::Value value_failure_ids;
+				nim_cpp_wrapper_util::Json::Value value_ignored_ids;
+				std::list<std::string> list_success_ids;
+				std::list<std::string> list_failure_ids;
+				std::list<std::string> list_ignored_ids;
+				if (nim_cpp_wrapper_util::Json::Reader().parse(success_ids, value_success_ids))
+					for (auto& it : value_success_ids)
+						list_success_ids.emplace_back(it.asString());
+				if (nim_cpp_wrapper_util::Json::Reader().parse(failure_ids, value_failure_ids))
+					for (auto& it : value_failure_ids)
+						list_failure_ids.emplace_back(it.asString());
+				if (nim_cpp_wrapper_util::Json::Reader().parse(ignored_ids, value_ignored_ids))
+					for (auto& it : value_ignored_ids)
+						list_ignored_ids.emplace_back(it.asString());
+				CallbackProxy::Invoke(cb, std::string(tid),list_success_ids, list_failure_ids, list_ignored_ids);
+				});
+		}
+		, cb_pointer);
+}
 void Team::TeamMsgQueryUnreadList(const std::string& tid, const IMMessage& msg, const TeamEventCallback& cb, const std::string& json_extension/* = ""*/)
 {
 	TeamEventCallback* cb_pointer = nullptr;
@@ -860,5 +899,31 @@ void Team::GetTeamInfoBatchSFTrans(const GetTeamInfoBatchSFTransCallback& cb, ui
 		cb_pointer = new GetTeamInfoBatchSFTransCallback(cb);
 	}
 	return NIM_SDK_GET_FUNC(nim_team_get_team_info_batch_sftrans)(json_extension.c_str(), &CallbackQueryAllMyTeamsInfo, time_tag, cb_pointer);
+}
+void Team::GetTeaminfoList(const std::list<std::string>& tid_list, const GetTeamInfoListCallback& cb)
+{
+	GetTeamInfoListCallback* cb_pointer = nullptr;
+	if (cb)
+	{
+		cb_pointer = new GetTeamInfoListCallback(cb);
+	}
+	nim_cpp_wrapper_util::Json::Value json_tid_list;
+	for (auto& it : tid_list)
+	{
+		json_tid_list.append(it);
+	}
+	return NIM_SDK_GET_FUNC(nim_team_get_team_info_list)(nim_cpp_wrapper_util::Json::FastWriter().write(json_tid_list).c_str(),
+		[](int code, const char* tinfo_list, const char* fail_tid_list, const void* user_data) {		
+			CallbackProxy::DoSafeCallback<Team::GetTeamInfoListCallback>(user_data,[=](const Team::GetTeamInfoListCallback& cb) {
+				std::list<nim::TeamInfo> team_info_list;
+				ParseTeamInfosJson(PCharToString(tinfo_list), team_info_list);
+				nim_cpp_wrapper_util::Json::Value json_fail_tid_list;
+				std::list<std::string> obj_fail_tid_list;
+				nim_cpp_wrapper_util::Json::Reader().parse(fail_tid_list, json_fail_tid_list);
+				for (auto& it : json_fail_tid_list)
+					obj_fail_tid_list.emplace_back(it.asString());
+				CallbackProxy::Invoke(cb, (NIMResCode)code,team_info_list, obj_fail_tid_list);
+				}, true);
+		}, cb_pointer);
 }
 }

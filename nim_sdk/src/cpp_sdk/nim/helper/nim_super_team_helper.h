@@ -67,6 +67,14 @@ public:
 			SetCustom(new_info.GetCustom());
 		if (new_info.ExistValue(kNIMSuperTeamInfoKeyIcon))
 			SetIcon(new_info.GetIcon());
+		if (new_info.ExistValue(kNIMSuperTeamInfoKeyBeInviteMode))
+			SetBeInviteMode(new_info.GetBeInviteMode());
+		if (new_info.ExistValue(kNIMSuperTeamInfoKeyInviteMode))
+			SetInviteMode(new_info.GetInviteMode());
+		if (new_info.ExistValue(kNIMSuperTeamInfoKeyUpdateInfoMode))
+			SetUpdateInfoMode(new_info.GetUpdateInfoMode());
+		if (new_info.ExistValue(kNIMSuperTeamInfoKeyUpdateCustomMode))
+			SetUpdateCustomMode(new_info.GetUpdateCustomMode());
 		if (new_info.ExistValue(kNIMSuperTeamInfoKeyID))
 			SetSuperTeamID(new_info.GetSuperTeamID());
 		if (new_info.ExistValue(kNIMSuperTeamInfoKeyValidFlag))
@@ -83,16 +91,8 @@ public:
 			SetUpdateTimetag(new_info.GetUpdateTimetag());
 		if (new_info.ExistValue(kNIMSuperTeamInfoKeyServerCustom))
 			SetServerCustom(new_info.GetServerCustom());
-		if (new_info.ExistValue(kNIMSuperTeamInfoKeyBeInviteMode))
-			SetBeInviteMode(new_info.GetBeInviteMode());
-		/*
-		if (new_info.ExistValue(kNIMSuperTeamInfoKeyInviteMode))
-			SetInviteMode(new_info.GetInviteMode());
-		if (new_info.ExistValue(kNIMSuperTeamInfoKeyUpdateInfoMode))
-			SetUpdateInfoMode(new_info.GetUpdateInfoMode());
-		if (new_info.ExistValue(kNIMSuperTeamInfoKeyUpdateCustomMode))
-			SetUpdateCustomMode(new_info.GetUpdateCustomMode());
-		*/
+		if (new_info.ExistValue(kNIMSuperTeamInfoKeyMuteAll) || new_info.ExistValue(kNIMSuperTeamInfoKeyMuteType))
+			SetMute(new_info.GetMuteType());
 	}
 
 public:
@@ -311,17 +311,16 @@ public:
 		return team_info_json_value_[nim::kNIMSuperTeamInfoKeyBeInviteMode].asUInt();
 	}
 
-#if 0
 	/** 设置谁可以邀请他人入群 */
-	void SetInviteMode(NIMTeamInviteMode mode)
+	void SetInviteMode(NIMSuperTeamInviteMode mode)
 	{
 		team_info_json_value_[nim::kNIMSuperTeamInfoKeyInviteMode] = mode;
 	}
 
 	/** 获取谁可以邀请他人入群 */
-	NIMTeamInviteMode GetInviteMode() const
+	NIMSuperTeamInviteMode GetInviteMode() const
 	{
-		return (NIMTeamInviteMode)team_info_json_value_[nim::kNIMSuperTeamInfoKeyInviteMode].asUInt();
+		return (NIMSuperTeamInviteMode)team_info_json_value_[nim::kNIMSuperTeamInfoKeyInviteMode].asUInt();
 	}
 
 	/** 设置谁可以修改群资料 */
@@ -347,7 +346,19 @@ public:
 	{
 		return (NIMSuperTeamUpdateCustomMode)team_info_json_value_[nim::kNIMSuperTeamInfoKeyUpdateCustomMode].asUInt();
 	}
-#endif
+	/** 设置全员禁言（除管理员） */
+	void SetMute(NIMSuperTeamMuteType mute_type)
+	{
+		team_info_json_value_[nim::kNIMTeamInfoKeyMuteType] = mute_type;
+	}
+
+	/** 获取群禁言状态 */
+	NIMSuperTeamMuteType GetMuteType() const
+	{
+		if (team_info_json_value_.isMember(nim::kNIMSuperTeamInfoKeyMuteAll) && team_info_json_value_[nim::kNIMSuperTeamInfoKeyMuteType].asUInt() == 1)
+			return kNIMSuperTeamMuteTypeNomalMute;
+		return (NIMSuperTeamMuteType)team_info_json_value_[nim::kNIMSuperTeamInfoKeyMuteType].asUInt();
+	}
 
 	/** @fn bool ExistValue(const std::string& nim_team_info_key) const
 	  * @brief 群组信息数据标记Key对应的数据是否有效（存在，非初始值状态）

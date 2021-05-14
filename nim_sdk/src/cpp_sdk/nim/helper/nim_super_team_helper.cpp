@@ -99,7 +99,7 @@ void ParseSuperTeamEvent(int rescode, const std::string& team_id, const NIMNotif
 			{
 				ParseSuperTeamMemberPropertyJson(values[kNIMNotificationKeyData][kNIMNotificationKeyTeamMember], team_event.member_property_);
 			}
-			break;
+			break;		
 		default:
 			break;
 		}
@@ -128,6 +128,14 @@ void ParseSuperTeamInfoJson(const nim_cpp_wrapper_util::Json::Value& team_info_j
 	//team_info.SetConfigBits(team_info_json[nim::kNIMSuperTeamInfoKeyBits].asUInt64());
 	team_info.SetMemberValid(team_info_json[nim::kNIMSuperTeamInfoKeyMemberValid].asUInt() == 0 ? false : true);
 	team_info.SetIcon(team_info_json[nim::kNIMSuperTeamInfoKeyIcon].asString());
+	team_info.SetBeInviteMode(team_info_json[nim::kNIMSuperTeamInfoKeyBeInviteMode].asInt() == 0 ? kNIMSuperTeamBeInviteModeNeedAgree : kNIMSuperTeamBeInviteModeNotNeedAgree);
+	team_info.SetInviteMode(team_info_json[nim::kNIMSuperTeamInfoKeyInviteMode].asInt() == 0 ? kNIMSuperTeamInviteModeManager : kNIMSuperTeamInviteModeEveryone);
+	team_info.SetUpdateInfoMode(team_info_json[nim::kNIMSuperTeamInfoKeyUpdateInfoMode].asInt() == 0 ? kNIMSuperTeamUpdateInfoModeManager : kNIMSuperTeamUpdateInfoModeEveryone);
+	team_info.SetUpdateCustomMode(team_info_json[nim::kNIMSuperTeamInfoKeyUpdateCustomMode].asInt() == 0 ? kNIMSuperTeamUpdateCustomModeManager : kNIMSuperTeamUpdateCustomModeEveryone);
+	if (team_info_json.isMember(nim::kNIMSuperTeamInfoKeyMuteAll) && team_info_json[nim::kNIMSuperTeamInfoKeyMuteAll].asInt() == 1)
+		team_info.SetMute(kNIMSuperTeamMuteTypeNomalMute);
+	else
+		team_info.SetMute((NIMSuperTeamMuteType)team_info_json[nim::kNIMSuperTeamInfoKeyMuteType].asUInt());
 }
 
 bool ParseSuperTeamInfoJson(const std::string& team_info_json, SuperTeamInfo& team_info)

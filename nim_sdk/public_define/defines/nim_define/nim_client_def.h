@@ -70,6 +70,12 @@ enum NIMLoginState
 	kNIMLoginStateUnLogin = 2,		/**< 未登录状态*/
 };
 
+enum NIMAuthType {
+    kNIMAuthTypeDefault,       /**< 默认登录方式 */
+    kNIMAuthTypeBySecretToken, /**< 使用 App secret 生成的 token */
+    kNIMAuthTypeByAppToken     /**< 使用第三方回调服务器生成的 token */
+};
+
 /** @enum NIMLogoutType Logout类型 */
 enum NIMLogoutType
 {
@@ -221,6 +227,8 @@ static const char *kNIMPresMac			= "mac";				/**< string, 登录设备的mac地�
 static const char *kNIMPresDeviceID		= "device_id";			/**< string, 设备id，uuid */
 static const char *kNIMPresLoginTime	= "login_time";			/**< long, 本次登录时间, 精度到ms */
 static const char *kNIMPresCustomTag	= "custom_tag";			/**< string, 本次登录用户自定义字段 */
+static const char* kNIMPresAuthType = "auth_type";              /**< int, 登录认证类型，0 为默认鉴权类型，1 为基于 app secret 生成的 token 鉴权，2 表示基于第三方回调的 token 鉴权方式 */
+static const char* kNIMPresLoginExData = "login_ex";            /**< string, 登录自定义字段，用于提交给用户第三方回调服务器进行登录检测，不会同步给其他端。只有在 auth_type = 2 时生效 */
 static const char *kNIMPresCustomClientType = "custom_client_type";/**< int, 自定义客户端类型字段,大于0 */
 
 /** @}*/ //json params for nim_json_transport_cb_func that has been registered in nim_client_login and nim_client_reg_auto_relogin_cb API

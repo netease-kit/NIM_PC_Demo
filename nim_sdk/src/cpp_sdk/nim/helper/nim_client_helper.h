@@ -168,6 +168,14 @@ struct NIM_SDK_CPPWRAPPER_DLL_API KickOtherRes
   */
 bool NIM_SDK_CPPWRAPPER_DLL_API ParseOtherClientsPres(const nim_cpp_wrapper_util::Json::Value array_objs, std::list<OtherClientPres> &outs);
 
+struct NIM_SDK_CPPWRAPPER_DLL_API LoginParams {
+    std::string custom_data_;  /**< 自定义登录数据，会同步给其他端 */
+    NIMAuthType auth_type_;  /**< 鉴权方式，0表示默认校验方式，1表示基于appSecret计算的token方式，2表示基于第三方回调的token方式，默认0 */
+    std::string login_ex_;  /**< 第三方回调方式鉴权要传递给服务器的拓展数据 */
+    LoginParams()
+        : auth_type_(kNIMAuthTypeDefault) {}
+};
+
 }
 
 #endif //_NIM_SDK_CPP_CLIENT_HELPER_H_
