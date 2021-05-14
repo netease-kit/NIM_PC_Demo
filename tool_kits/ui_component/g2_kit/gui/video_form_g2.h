@@ -265,7 +265,7 @@ namespace nim_comp
 		bool				camera_is_open_other_; //对方摄像头是否关闭
 
 		bool				need_change_form_size_; //视频通话在接通以后调整窗口大小
-
+		bool				firstFrame_ = false;	// 对方第一帧画面
 		uint32_t  time_stamp_;
 		nbase::WeakCallbackFlag tick_weakflag_; //通话过程计时
 

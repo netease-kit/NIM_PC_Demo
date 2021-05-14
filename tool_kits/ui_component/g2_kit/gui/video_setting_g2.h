@@ -28,6 +28,8 @@ namespace nim_comp
 		virtual std::wstring GetWindowClassName() const override { return kClassName; };
 		virtual UINT GetClassStyle() const override { return UI_CLASSSTYLE_FRAME | CS_DBLCLKS; };
 
+		void DirectQuit();
+
 		/**
 		* 窗口初始化函数
 		* @return void	无返回值
