@@ -76,6 +76,7 @@ typedef struct _nim_talk_recall_extra_params_
 	const char* pushpayload;
 	const char* json_extension;
 	const char* env_config;
+	const char* attach; /* v8.2.0 第三方回调回来的自定义字段*/
 }nim_talk_recall_extra_params;
 
 /** @name 消息撤回通知Json Keys
@@ -92,6 +93,8 @@ static const char *kNIMRecallMsgKeyMsgExist			= "msg_exist";			/**< bool,撤回�
 static const char *kNIMRecallMsgKeyMsgTime			= "msg_time";			/**< long,要撤回消息的创建时间戳(毫秒) */
 static const char *kNIMRecallMsgKeyMsgFromNick		= "from_nick";			/**< string,要撤回消息的发送者昵称 */
 static const char *kNIMRecallMsgKeyOpeAccID 		= "operator_id";			/**< string,操作者ID */
+static const char* kNIMRecallMsgTagCallbackExt = "callback_ext";				/**< string,v8.2.0 第三方回调回来的自定义字段*/
+static const char* kNIMRecallMsgTagAttach = "attach";				/**< string,v8.2.0 */
 /** @}*/ //消息撤回通知Json Keys
 
 /** @name 接收消息Json Keys

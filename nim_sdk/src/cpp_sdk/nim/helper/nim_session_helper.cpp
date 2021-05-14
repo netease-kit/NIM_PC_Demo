@@ -14,6 +14,21 @@ namespace nim
 		ToJsonObject(stick_session,value);
 		return nim_cpp_wrapper_util::Json::FastWriter().write(value);
 	}
+
+	std::string SessionData::ToJsonString(const SessionData& sessionData)
+	{
+		nim_cpp_wrapper_util::Json::Value value;
+		ToJsonObject(sessionData, value);
+		return nim_cpp_wrapper_util::Json::FastWriter().write(value);
+	}
+
+	std::string StickTopSessionInfo::ToJsonString(const StickTopSessionInfo& stickTopSessionInfo)
+	{
+		nim_cpp_wrapper_util::Json::Value value;
+		ToJsonObject(stickTopSessionInfo, value);
+		return nim_cpp_wrapper_util::Json::FastWriter().write(value);
+	}
+
 	void StickTopSession::ToJsonObject(const StickTopSession& stick_session,nim_cpp_wrapper_util::Json::Value& value)
 	{
 		value[kNIMSessionStickTopInfoSessionId] = stick_session.stick_top_info_.top_;
@@ -39,6 +54,17 @@ namespace nim
 		value[kNIMSessionStickTopSessionData][kNIMSessionExtendedData] = stick_session.session_data_.extend_data_;
 		value[kNIMSessionStickTopSessionData][kNIMSessionRobotFlag] = stick_session.session_data_.is_robot_session_;
 	}
+
+	void StickTopSessionInfo::ToJsonObject(const StickTopSessionInfo& stickTopSessionInfo, nim_cpp_wrapper_util::Json::Value& value)
+	{
+		value[kNIMSessionStickTopInfoTop] = stickTopSessionInfo.top_;
+		value[kNIMSessionStickTopInfoSessionId] = stickTopSessionInfo.id_;
+		value[kNIMSessionStickTopInfoType] = stickTopSessionInfo.type_;
+		value[kNIMSessionStickTopInfoExt] = stickTopSessionInfo.ext_;
+		value[kNIMSessionStickTopInfoCreateTime] = stickTopSessionInfo.create_time_;
+		value[kNIMSessionStickTopInfoUpdateTime] = stickTopSessionInfo.update_time_;
+	}
+
 	std::string StickTopSessionList::ToJsonString(const StickTopSessionList& stick_session_list)
 	{
 		nim_cpp_wrapper_util::Json::Value values;
@@ -50,6 +76,44 @@ namespace nim
 		}
 		return nim_cpp_wrapper_util::Json::FastWriter().write(values);
 	}
+
+	void SessionData::ToJsonObject(const SessionData& sessionData, nim_cpp_wrapper_util::Json::Value& value)
+	{
+		value[kNIMSessionId] = sessionData.id_;
+		value[kNIMSessionType] = sessionData.type_;
+		value[kNIMSessionListUnreadCount] = sessionData.unread_count_;
+		value[kNIMSessionCommand] = sessionData.command_;
+		value[kNIMSessionMsgClientID] = sessionData.msg_id_;
+		value[kNIMSessionMsgFromAccount] = sessionData.msg_sender_accid_;
+		value[kNIMSessionMsgTime] = sessionData.msg_timetag_;
+		value[kNIMSessionMsgType] = sessionData.msg_type_;
+		value[kNIMSessionMsgBody] = sessionData.msg_content_;
+		value[kNIMSessionMsgAttach] = sessionData.msg_attach_;
+		value[kNIMSessionMsgStatus] = sessionData.msg_status_;
+		value[kNIMSessionMsgSubStatus] = sessionData.msg_sub_status_;
+		value[kNIMSessionLastUpdatedMsg] = sessionData.last_updated_msg_;
+		value[kNIMSessionOnTop] = sessionData.placed_on_top_;
+		value[kNIMSessionExtendedData] = sessionData.extend_data_;
+		value[kNIMSessionRobotFlag] = sessionData.is_robot_session_;
+
+		nim_cpp_wrapper_util::Json::Value values;
+		StickTopSessionInfo::ToJsonObject(sessionData.stick_top_info_, values);
+		value[kNIMSessionStickTopInfo] = values;
+	}
+
+	std::string SessionDataList::ToJsonString(const SessionDataList& sessionData)
+	{
+		nim_cpp_wrapper_util::Json::Value values;
+		for (auto it : sessionData.sessions_)
+		{
+			nim_cpp_wrapper_util::Json::Value item;
+			it.ToJsonObject(it, item);
+			values.append(item);
+		}
+
+		return nim_cpp_wrapper_util::Json::FastWriter().write(values);
+	}
+
 bool ParseSession(const std::string& session_json, SessionData& session)
 {
 	nim_cpp_wrapper_util::Json::Value values;

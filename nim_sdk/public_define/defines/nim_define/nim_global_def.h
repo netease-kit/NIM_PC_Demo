@@ -29,6 +29,16 @@ static const char *kNIMResCode		= "err_code";		/**< int, NIMResCode */
   */ 
 typedef void (*nim_json_transport_cb_func)(const char *json_params, const void *user_data);
 
+/** @typedef void (*nim_relogin_request_token_cb_func)(char *&auth_token, uint32_t *length, const char *json_params, const void *user_data)
+ * 登录时 auth type 不为 0 时触发断线重连的回调函数
+ * @param[in] auth_token 新的 auth token
+ * @param[in] token 的长度
+ * @param[out] json_params 输出的json字符串内容
+ * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+ * @return void 无返回值
+ */
+typedef void(*nim_relogin_request_token_cb_func)(char *&auth_token, uint32_t *length, const char *json_params, const void *user_data);
+
 /** @enum NIMSDKLogLevel NIM SDK log级别，级别越高，log越详细 */
 enum NIMSDKLogLevel
 {
@@ -130,13 +140,13 @@ static const char *kNIMDBErrAttach = "error_attach";			/**< 具体的出错信�
 */
 typedef void(*nim_global_sdk_db_error_cb_func)(const char *error_info, const void *user_data);
 
-/** @typedef void(*nim_global_upload_sdk_log_cb_func)(int rescode, const void* user_data)
+/** @typedef void(*nim_global_upload_sdk_log_cb_func)(int rescode, const void *user_data)
 * 上传SDK日志回调
 * @param[out] rescode
 * @param[out] user_data APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
 * @return void 无返回值
 */
-typedef void(*nim_global_upload_sdk_log_cb_func)(int rescode, const void* user_data);
+typedef void(*nim_global_upload_sdk_log_cb_func)(int rescode, const void *user_data);
 
 /** @enum NIMProxyDetectStep 代理测试步骤 */
 enum NIMProxyDetectStep

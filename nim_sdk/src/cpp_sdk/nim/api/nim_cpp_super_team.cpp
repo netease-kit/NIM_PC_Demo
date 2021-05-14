@@ -29,6 +29,7 @@ typedef void(*nim_super_team_accept_invitation_async)(const char *tid, const cha
 typedef void(*nim_super_team_reject_invitation_async)(const char *tid, const char *invitor, const char *reason, const char *json_extension, nim_super_team_event_cb_func cb, const void* user_data);
 typedef void(*nim_super_team_mute_member_async)(const char *tid, const char *member_id, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 typedef void(*nim_super_team_mute_async)(const char *tid, bool set_mute, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
+typedef void(*nim_super_team_query_mute_list_async)(const char* tid, const char* json_extension, nim_super_team_query_mute_list_cb_func cb, const void* user_data);
 typedef void(*nim_super_team_msg_ack_read)(const char *tid, const char *json_msgs, const char *json_extension, nim_team_opt_cb_func cb, const void *user_data);
 
 typedef void(*nim_super_team_query_all_my_teams_async)(const char *json_extension, nim_super_team_query_all_my_teams_cb_func cb, const void* user_data);
@@ -123,6 +124,16 @@ static void CallbackQuerySuperTeamInfo(const char *tid, const char *result, cons
 		CallbackProxy::Invoke(cb, PCharToString(tid), team_info);
 	}, true);
 
+}
+
+static void CallbackQueryMutedMemberList(int res_code, int count, const char* tid, const char* result, const char* json_extension, const void* user_data) {
+    CallbackProxy::DoSafeCallback<SuperTeam::QuerySuperTeamMembersCallback>(user_data,
+        [=](const SuperTeam::QuerySuperTeamMembersCallback& cb) {
+        std::list<nim::SuperTeamMemberProperty> team_member_info_list;
+        ParseSuperTeamMemberPropertysJson(PCharToString(result), team_member_info_list);
+        CallbackProxy::Invoke(cb, (NIMResCode)res_code, PCharToString(tid), count, team_member_info_list);
+    },
+        true);
 }
 
 static SuperTeam::SuperTeamEventCallback g_cb_super_team_event_ = nullptr;
@@ -488,6 +499,19 @@ bool SuperTeam::MuteMemberAsync(const std::string& tid, const std::string& membe
 		, cb_pointer);
 
 	return true;
+}
+
+bool SuperTeam::QueryMuteListAsync(const std::string& tid, const QuerySuperTeamMembersCallback& cb, const std::string& json_extension /*= ""*/) {
+    if (tid.empty())
+        return false;
+
+    QuerySuperTeamMembersCallback* cb_pointer = nullptr;
+    if (cb) {
+        cb_pointer = new QuerySuperTeamMembersCallback(cb);
+    }
+    NIM_SDK_GET_FUNC(nim_super_team_query_mute_list_async)(tid.c_str(), json_extension.c_str(), &CallbackQueryMutedMemberList, cb_pointer);
+
+    return true;
 }
 
 bool SuperTeam::MuteAsync(const std::string& tid, bool set_mute, const SuperTeamEventCallback& cb, const std::string& json_extension/* = ""*/)

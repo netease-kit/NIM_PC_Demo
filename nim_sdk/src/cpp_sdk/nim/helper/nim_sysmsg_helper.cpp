@@ -60,6 +60,7 @@ void ParseSysMessageContent(const nim_cpp_wrapper_util::Json::Value& content_jso
 	msg.attach_ = content_json[kNIMSysMsgKeyAttach].asString();
 	msg.id_ = content_json[kNIMSysMsgKeyMsgId].asUInt64();
 	msg.status_ = (NIMSysMsgStatus)content_json[kNIMSysMsgKeyLocalStatus].asUInt();
+	msg.callbac_ext_ = content_json[kNIMSysMsgKeyCallbackExt].asString();
 	msg.msg_setting_.ParseMessageSetting(content_json);
 }
 

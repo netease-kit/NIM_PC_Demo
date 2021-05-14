@@ -38,6 +38,9 @@ namespace nim
 			update_time_(0) 
 		{
 		}
+
+		static std::string ToJsonString(const StickTopSessionInfo& stickTopSessionInfo);
+		static void ToJsonObject(const StickTopSessionInfo& stickTopSessionInfo, nim_cpp_wrapper_util::Json::Value& value);
 	};
 
 /** @brief 会话数据 */
@@ -71,6 +74,9 @@ struct NIM_SDK_CPPWRAPPER_DLL_API SessionData
 				, last_updated_msg_(true)
 				, placed_on_top_(false)
 				, is_robot_session_(false){}
+
+	static std::string ToJsonString(const SessionData& sessionData);
+	static void ToJsonObject(const SessionData& sessionData, nim_cpp_wrapper_util::Json::Value& value);
 };
 
 /** @brief 会话列表数据 */
@@ -81,6 +87,7 @@ struct NIM_SDK_CPPWRAPPER_DLL_API SessionDataList
 	std::list<SessionData> sessions_;	/**< 会话列表项数据 */
 
 	SessionDataList() : count_(0), unread_count_(0) {}
+	static std::string ToJsonString(const SessionDataList& sessionData);
 };
 struct NIM_SDK_CPPWRAPPER_DLL_API StickTopSession
 {
@@ -88,6 +95,12 @@ struct NIM_SDK_CPPWRAPPER_DLL_API StickTopSession
 	SessionData session_data_; /**< 会话信息*/
 	static std::string ToJsonString(const StickTopSession& stick_session);
 	static void ToJsonObject(const StickTopSession& stick_session,nim_cpp_wrapper_util::Json::Value& value);
+};
+
+struct NIM_SDK_CPPWRAPPER_DLL_API MultiUnreadCountZeroInfo
+{
+	std::string		id_;					/**< 会话ID */
+	NIMSessionType	type_;					/**< 会话类型 */
 };
 struct NIM_SDK_CPPWRAPPER_DLL_API StickTopSessionList
 {

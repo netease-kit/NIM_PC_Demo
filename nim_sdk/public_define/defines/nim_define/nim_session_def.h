@@ -64,6 +64,16 @@ typedef struct
   */
 typedef void (*nim_session_change_cb_func)(int rescode, const char *result, int total_unread_counts, const char *json_extension, const void *user_data);
 
+/** @typedef void (*nim_session_multi_change_cb_func)(int rescode, const char *result, int total_unread_counts, const void *user_data);
+  * 最近会话项(多项)更新通知的回调函数定义
+  * @param[out] rescode		操作结果，成功200
+  * @param[out] result			最近会话Json array string (『会话列表的Json Keys』 as follows 不包含消息的字段)
+  * @param[out] total_unread_counts 总的未读数目
+  * @param[out] user_data		APP的自定义用户数据，SDK只负责传回给回调函数，不做任何处理！
+  * @return void 无返回值
+  */
+typedef void (*nim_session_multi_change_cb_func)(int rescode, const char *result, int total_unread_counts, const void *user_data);
+
 /** @typedef void (*nim_session_delete_session_roaming_cb_func)(int rescode, const char *to_type, const char *id, const void *user_data)
   * 最近会话项更新通知的回调函数定义
   * @param[out] rescode		操作结果，成功200
@@ -209,6 +219,14 @@ static const char* kNIMSessionStickTopInfoCreateTime = "create_time";			/**< uin
 static const char* kNIMSessionStickTopInfoUpdateTime = "update_time";			/**< uint64_t 更新置顶的时间戳 */
 static const char* kNIMSessionStickTopSessionData = "session_data";			/**< json object 会话信息 */
 /** @}*/ //置顶会话Json Keys
+
+/** @name 会话未读数清零Json Keys(v8.2.0添加)
+  * @{
+  */
+static const char* kNIMSessionUnReadCountSessionType = "type";				/**< enum NIMSessionType, 会话类型 */
+static const char* kNIMSessionUnReadCountSessionId = "id";				/**< string, 会话id */
+
+/** @}*/ //会话未读数清零Json Keys
 
 /** @typedef void(*nim_session_query_session_hasmore_roammsg_cb_func)(int rescode, const SessionRoamMsgHasMoreTagInfo *tag_info, const void *user_data)
 * 查询会话漫游消息未完待拉信息结果回调

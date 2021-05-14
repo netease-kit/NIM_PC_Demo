@@ -253,6 +253,28 @@ struct NIM_CHATROOM_SDK_CPPWRAPPER_DLL_API ChatRoomNotification
 			queue_change_ = values[kChatRoomNotificationKeyData][kChatRoomNotificationDataKeyQueueChange].asString();
 		}
 	}
+
+	std::string	ToJsonString() const
+	{
+		nim_cpp_wrapper_util::Json::Value values;
+		values[kNIMChatRoomInfoKeyID] = id_;
+		values[kChatRoomNotificationDataKeyExt] = ext_;
+		values[kChatRoomNotificationDataKeyOpt] = operator_id_;
+		values[kChatRoomNotificationDataKeyOptNick] = operator_nick_;
+		for (const auto& nick : target_nick_)
+		{
+			values[kChatRoomNotificationDataKeyTargetNick].append(nick);
+		}
+		for (const auto& id : target_ids_)
+		{
+			values[kChatRoomNotificationDataKeyTarget].append(id);
+		}
+		values[kChatRoomNotificationDataKeyTempMuteDuration] = temp_mute_duration_;
+		values[kChatRoomNotificationDataKeyMuteFlag] = muted_;
+		values[kChatRoomNotificationDataKeyTempMutedFlag] = temp_muted_;
+		values[kChatRoomNotificationDataKeyQueueChange] = queue_change_;
+		return nim::GetJsonStringWithNoStyled(values);
+	}
 };
 
 /** @brief 聊天室队列通知内容*/

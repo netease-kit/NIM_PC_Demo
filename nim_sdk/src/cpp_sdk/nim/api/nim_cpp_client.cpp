@@ -14,13 +14,14 @@ namespace nim {
 #ifdef NIM_SDK_DLL_IMPORT
 typedef bool(*nim_client_init)(const char *app_data_dir, const char *app_install_dir, const char *json_extension);
 typedef void(*nim_client_cleanup)(const char *json_extension);
-typedef void(*nim_client_cleanup2)(nim_json_transport_cb_func cb,const char *json_extension);
+typedef void(*nim_client_cleanup2)(nim_json_transport_cb_func cb,const char *json_extension, const void* user_data);
 typedef void(*nim_client_login)(const char *app_token, const char *account, const char *password, const char *json_extension, nim_json_transport_cb_func cb, const void* user_data);
 typedef int (*nim_client_get_login_state)(const char *json_extension);
 typedef void(*nim_client_relogin)(const char *json_extension);
 typedef void(*nim_client_logout)(nim::NIMLogoutType logout_type, const char *json_extension, nim_json_transport_cb_func cb, const void* user_data);
 typedef void(*nim_client_kick_other_client)(const char *json_extension);
 typedef void(*nim_client_reg_auto_relogin_cb)(const char *json_extension, nim_json_transport_cb_func cb, const void* user_data);
+typedef void(*nim_client_reg_relogin_request_token_cb)(const char* json_extension, nim_relogin_request_token_cb_func cb, const void* user_data);
 typedef void(*nim_client_reg_kickout_cb)(const char *json_extension, nim_json_transport_cb_func cb, const void* user_data);
 typedef void(*nim_client_reg_disconnect_cb)(const char *json_extension, nim_json_transport_cb_func cb, const void* user_data);
 typedef void(*nim_client_reg_multispot_login_notify_cb)(const char *json_extension, nim_json_transport_cb_func cb, const void *user_data);
@@ -58,6 +59,15 @@ static void CallbackLogin(const char* json_res, const void *callback)
 	});
 }
 
+std::string g_app_token = "";
+static void CallbackRelginRequestToken(char*& token, uint32_t* length, const char* json_res, const void* callback) {
+    CallbackProxy::DoSafeCallback<Client::ReloginRequestTokenCallback>(callback, [&](const Client::ReloginRequestTokenCallback& cb) {
+        g_app_token.clear();
+        CallbackProxy::Invoke(cb, &g_app_token);
+        token = const_cast<char*>(g_app_token.c_str());
+        *length = (uint32_t)g_app_token.length();
+    });
+}
 
 static void CallbackLogout(const char *json_res, const void *callback)
 {
@@ -206,6 +216,8 @@ bool Client::Init(const std::string& app_key
 		{
 			nim_sdk_instance = new SDKInstance();
 		}
+        if (!nim_sdk_instance)
+            return false;
 		if (!nim_sdk_instance->LoadSdkDll(app_install_dir.c_str(), kSdkNimDll))
 			return false;
 #endif
@@ -325,24 +337,17 @@ void Client::Cleanup(const std::string& json_extension/* = ""*/)
 
 void Client::Cleanup2(const std::string& json_extension /*= ""*/)
 {
-	static std::atomic<bool> cleanup_flag(false);
-	auto cleanup_task = [&]() {
-		NIM_SDK_GET_FUNC(nim_client_cleanup2)([](const char *json_params, const void *user_data) {
-			cleanup_flag = true;
-		}, json_extension.c_str());
-		while (!cleanup_flag)
-		{
-            std::this_thread::sleep_for(std::chrono::seconds(0));
-		}
-	};
-	std::thread cleanup_thread(cleanup_task);
-	cleanup_thread.join();
+    std::promise<bool> cleanup_flag;
+    NIM_SDK_GET_FUNC(nim_client_cleanup2)([](const char *json_params, const void *user_data) {
+        auto pr = (std::promise<bool>*)user_data;
+        pr->set_value(true);
+    }, json_extension.c_str(), &cleanup_flag);
+    auto f = cleanup_flag.get_future().get();
 
 #ifdef NIM_SDK_DLL_IMPORT
 	nim_sdk_instance->UnLoadSdkDll();
 	delete nim_sdk_instance;
 	nim_sdk_instance = NULL;
-	cleanup_flag = false;
 #endif
 }
 
@@ -351,6 +356,14 @@ void Client::LoginCustomDataToJson(const std::string& custom_data, std::string& 
 	nim_cpp_wrapper_util::Json::Value value;
 	value[kNIMPresCustomTag] = custom_data;
 	strValue = GetJsonStringWithNoStyled(value);
+}
+
+void Client::LoginCustomDataToJson(const LoginParams& params, std::string& loginParams) {
+    nim_cpp_wrapper_util::Json::Value values;
+    values[kNIMPresCustomTag] = params.custom_data_;
+    values[kNIMPresAuthType] = params.auth_type_;
+    values[kNIMPresLoginExData] = params.login_ex_;
+    loginParams = GetJsonStringWithNoStyled(values);
 }
 
 bool Client::Login(const std::string& app_key
@@ -426,6 +439,12 @@ void Client::RegReloginCb(const LoginCallback& cb, const std::string& json_exten
 {
 	g_cb_relogin_ = cb;
 	NIM_SDK_GET_FUNC(nim_client_reg_auto_relogin_cb)(json_extension.c_str(), &CallbackLogin, &g_cb_relogin_);
+}
+
+static Client::ReloginRequestTokenCallback g_cb_relogin_request_token_ = nullptr;
+void Client::RegReloginRequestToeknCb(const ReloginRequestTokenCallback& cb, const std::string& json_extension /*= ""*/) {
+    g_cb_relogin_request_token_ = cb;
+    NIM_SDK_GET_FUNC(nim_client_reg_relogin_request_token_cb)(json_extension.c_str(), &CallbackRelginRequestToken, &g_cb_relogin_request_token_);
 }
 
 static Client::KickoutCallback g_cb_kickout_ = nullptr;

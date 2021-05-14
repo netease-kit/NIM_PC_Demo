@@ -123,6 +123,7 @@ static const char *kNIMSysMsgKeyPushNeedPrefix	= "push_prefix";		/**< int,		(可
 static const char *kNIMSysMsgKeyAntiSpamEnable	= "anti_spam_enable";	/**< int, (功能暂时不开放)是否需要过易盾反垃圾, 0:不需要,1:需要, 默认0 */
 static const char *kNIMSysMsgKeyAntiSpamContent = "anti_spam_content";	/**< string, (功能暂时不开放)(可选)开发者自定义的反垃圾字段 */
 static const char *kNIMSysMsgKeyEnvConfig       = "env_config";	    	/**< string, (可选) 指向自定义抄送的配置 */
+static const char* kNIMSysMsgKeyCallbackExt = "callback_ext";	    	/**< string, (可选) 第三方回调返回的自定义字段 */
 
 /** @}*/ //接收系统消息Json Keys，协议定义
 

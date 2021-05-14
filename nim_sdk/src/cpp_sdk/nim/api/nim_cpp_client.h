@@ -29,6 +29,7 @@ class NIM_SDK_CPPWRAPPER_DLL_API Client
 public:
 	typedef std::function<void(const std::function< void()>&)> SDKClosure;
 	typedef std::function<void(const LoginRes&)> LoginCallback; /**< 登录回调模板 */
+    typedef std::function<void(std::string*)> ReloginRequestTokenCallback;         /**< 自动重连时请求新的鉴权回调 */
 	typedef std::function<void(NIMResCode)> LogoutCallback;		/**< 登出回调模板 */
 	typedef std::function<void(const KickoutRes&)> KickoutCallback;	/**< 被踢通知回调模板 */
 	typedef std::function<void(void)> DisconnectCallback;		/**< 断网通知回调模板 */
@@ -70,12 +71,26 @@ public:
 	static void Cleanup(const std::string& json_extension = "");
 
 	/** @fn void Cleanup2(const std::string& json_extension = "")
-* NIM SDK清理如果未注销，SDK会在清理前进行注销操作
-* @param[in] json_extension json扩展参数（备用，目前不需要）
-* @return void 无返回值
-*/
+    * NIM SDK清理如果未注销，SDK会在清理前进行注销操作
+    * @param[in] json_extension json扩展参数（备用，目前不需要）
+    * @return void 无返回值
+    */
 	static void Cleanup2(const std::string& json_extension = "");
 
+	/** @fn void LoginCustomDataToJson(const LoginParams& params, std::string& loginParams);
+    * 将LoginParams 转换为json格式字符串
+    * @param[in] params 登录参数 详见nim_client_def.h LoginParams 定义 
+	* @param[out] loginParams json 格式字符串
+    * @return void 无返回值
+    */
+    static void LoginCustomDataToJson(const LoginParams& params, std::string& loginParams);
+
+	/** @fn void LoginCustomDataToJson(const std::string& custom_data, std::string& strValue);
+    * 将login 字定义数据 转换到 LoginParams json格式字符串
+    * @param[in] custom_data 字定义数据 
+	* @param[out] strValue json 格式字符串
+    * @return void 无返回值
+    */
 	static void LoginCustomDataToJson(const std::string& custom_data, std::string& strValue);
 	
 	/** @fn bool Login(const std::string& app_key, const std::string& account, const std::string& password, const LoginCallback& cb, const std::string& json_extension = "")
@@ -150,6 +165,15 @@ public:
 	*				422:账号被禁用
 	*/
 	static void RegReloginCb(const LoginCallback& cb, const std::string& json_extension = "");
+
+    /** @fn void RegReloginRequestToeknCb(const ReloginRequestTokenCallback& cb, const std::string& json_extension = "")
+     * 如果登录类型模式默认类型，则注册该回调用于在重登陆时获取新的登录鉴权 token
+     * @param[in] cb 上层用于生产 token 的回调函数
+     * @param[in] json_extension json扩展参数（备用，目前不需要）
+     * @return void 无返回值
+     * @note 错误码	无
+     */
+    static void RegReloginRequestToeknCb(const ReloginRequestTokenCallback& cb, const std::string& json_extension = "");
 
 	/** @fn void RegKickoutCb(const KickoutCallback& cb, const std::string& json_extension = "")
 	* (全局回调)注册NIM客户端被踢回调

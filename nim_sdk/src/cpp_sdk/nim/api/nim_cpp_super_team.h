@@ -325,6 +325,18 @@ public:
 	*/
 	static bool MuteMemberAsync(const std::string& tid, const std::string& member_id, bool set_mute, const SuperTeamEventCallback& cb, const std::string& json_extension = "");
 
+    /** @fn bool QueryMuteListAsync(const std::string& tid, const QuerySuperTeamMembersCallback& cb, const std::string& json_extension = "")
+     * 获取群禁言成员列表
+     * @param[in] tid	群组id
+     * @param[in] cb		回调函数
+     * @param[in] json_extension json扩展参数（备用，目前不需要）
+     * @return bool 检查参数如果不符合要求则返回失败
+     * @note 错误码	200:成功
+     *				803:群不存在
+     *				802:没有权限
+     */
+    static bool QueryMuteListAsync(const std::string& tid, const QuerySuperTeamMembersCallback& cb, const std::string& json_extension = "");
+
 	/** @fn static bool MuteAsync(const std::string& tid, bool set_mute, const SuperTeamEventCallback& cb, const std::string& json_extension = "")
 	* 群禁言/解除群禁言
 	* @param[in] tid		群组id

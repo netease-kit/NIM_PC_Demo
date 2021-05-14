@@ -29,150 +29,147 @@ protected:
     virtual ~IAudioDeviceManager() {}
 
 public:
-    /** Enumerates the audio recording devices.
+    /** 获取系统中所有的音频采集设备列表。
 
-     This method returns an IDeviceCollection object that includes all audio recording devices in the system. With the IDeviceCollection object, the application can enumerate the audio recording devices.
+     该方法返回一个 IDeviceCollection 对象，包含系统中所有的音频采集设备。通过IDeviceCollection 对象，App 可以枚举音频采集设备。
 
-     @note The application needs to call the \ref IDeviceCollection::destroy "destroy" method to destroy the returned object after using it.
-
+     @note 在使用结束后，App 需调用  \ref IDeviceCollection::destroy "destroy"  方法销毁返回的对象。
      @return
-     - Returns an IDeviceCollection object that includes all audio recording devices in the system: Success.
-     - Returns NULL: Failure.
+     - 方法调用成功：一个 IDeviceCollection 对象，包含所有的音频采集设备。
+     - 方法调用失败：NULL 。
      */
     virtual IDeviceCollection * enumerateRecordDevices() = 0;
-    /** Sets the audio recording device using the device ID.
+    /** 指定音频采集设备。
 
-     @param device_id Device ID of the audio recording device, retrieved by calling the \ref IAudioDeviceManager::enumerateRecordDevices "enumerateRecordDevices" method.
-
-     @note Plugging or unplugging the audio device does not change the device ID.
+     @param device_id 音频采集设备的设备 ID。可通过 enumerateRecordDevices 获取。插拔设备不会影响 deviceId。
 
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int setRecordDevice(const char device_id[kNERtcMaxDeviceIDLength]) = 0;
-    /** Retrieves the audio recording device associated with the device ID.
+    /** 获取当前使用的音频采集设备 ID。
 
-     @param device_id Pointer to the device ID of the audio recording device.
+     @param device_id 音频采集设备的设备 ID。
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int getRecordDevice(char device_id[kNERtcMaxDeviceIDLength]) = 0;
-    /** Enumerates the audio playout devices.
+    /** 获取系统中所有的播放设备列表。
+     
+     该方法返回一个 IDeviceCollection 对象，包含系统中所有的播放设备。通过 IDeviceCollection 对象，App 可以枚举播放设备。在使用结束后，App 需调用 destroy 方法销毁返回的对象。
 
-     This method returns an IDeviceCollection object that includes all audio playout devices in the system. With the IDeviceCollection object, the application can enumerate the audio playout devices.
-
-     @note The application must call the \ref IDeviceCollection::destroy "destroy" method to destroy the returned object after using it.
+     @note 程序必须调用 \ref IDeviceCollection::destroy "destroy" 方法销毁返回的值。
 
      @return
-     - Returns an IDeviceCollection object that includes all audio playout devices in the system: Success.
-     - Returns NULL: Failure.
+     - 方法调用成功：一个 IDeviceCollection 对象，包含所有的音频播放设备。
+     - 方法调用失败：NULL 。
      */
     virtual IDeviceCollection * enumeratePlayoutDevices() = 0;
-    /** Sets the audio playout device using the device ID.
+    /** 指定播放设备。
 
-     @note Plugging or unplugging the audio device does not change the device ID.plus:kNERtcAudioDeviceAutoID
-
-     @param device_id Device ID of the audio playout device, retrieved by calling the \ref IAudioDeviceManager::enumeratePlayoutDevices "enumeratePlayoutDevices" method.
+     @param device_id 音频播放设备的设备 ID。可以通过 \ref IAudioDeviceManager::enumeratePlayoutDevices "enumeratePlayoutDevices" 获取。插拔设备不会影响 deviceId。
 
      @return
-     - 0: Success.
-     - other: Failure.
+     - 方法调用成功：一个 IDeviceCollection 对象，包含所有的音频播放设备。
+     - 方法调用失败：NULL 。
      */
     virtual int setPlayoutDevice(const char device_id[kNERtcMaxDeviceIDLength]) = 0;
-    /** Retrieves the audio playout device associated with the device ID.
+    /** 获取当前使用的音频播放设备 ID。
 
-     @param device_id Pointer to the ID of the audio playout device.plus:kNERtcAudioDeviceAutoID
+     @param device_id 音频播放设备的设备 ID。
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int getPlayoutDevice(char device_id[kNERtcMaxDeviceIDLength]) = 0;
         
-    /** Sets the volume of the microphone.
+    /** 设置音频采集设备音量。
 
-     @param volume Sets the volume of the microphone. The value ranges between 0 (lowest volume) and 255 (highest volume).
+     @param volume 音频采集设备音量。取值范围为 0~255。
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int setRecordDeviceVolume(uint32_t volume) = 0;
-    /** Retrieves the volume of the microphone.
+    /** 获取音频采集设备音量。
 
-     @param volume Pointer to the microphone volume. The volume value ranges between 0 (lowest volume) and 255 (highest volume).
+     @param volume 音频采集设备音量。
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int getRecordDeviceVolume(uint32_t* volume) = 0;
-    /** Sets the volume of the audio playout device.
+    /** 设置音频播放设备音量。
 
-     @param volume Sets the volume of the audio playout device. The value ranges between 0 (lowest volume) and 255 (highest volume).
+     @param volume 音频播放设备音量。取值范围为 0~255。
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int setPlayoutDeviceVolume(uint32_t volume) = 0;
-    /** Retrieves the volume of the audio playout device.
+    /** 获取音频播放设备音量。
 
-     @param volume Pointer to the audio playout device volume. The volume value ranges between 0 (lowest volume) and 255 (highest volume).
+     @param volume 音频播放设备音量。
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int getPlayoutDeviceVolume(uint32_t* volume) = 0;
 
-    /** Mutes the audio playout device.
+    /** 静音或取消静音音频播放设备。
 
-     @param mute
-     - true: Mutes the device.
-     - false: Unmutes the device.
+     @param mute 是否静音音频播放设备。
+     - true：静音音频播放设备。
+     - false：取消静音音频播放设备。
 
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int setPlayoutDeviceMute(bool mute) = 0;
 
-    /** Retrieves the mute state of the playout device.
+    /** 获取音频播放设备静音状态。
 
-     @param mute Whether the playout device is muted/unmuted.
-     - true: The playout device is muted.
-     - false: The playout device is unmuted.
+     @param mute 音频播放设备静音状态。
+     - true：静音状态。
+     - false：非静音状态。
 
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int getPlayoutDeviceMute(bool *mute) = 0;
-    /** Mutes/Unmutes the microphone.
+    /** 静音或取消静音音频采集设备。
 
-     @param mute Whether to mute/unmute the microphone.
-     - true: Mutes the microphone.
-     - false: Unmutes the microphone.
+     @param mute 是否静音音频采集设备。
+     - true：静音音频采集设备。
+     - false：取消静音音频采集设备。
 
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int setRecordDeviceMute(bool mute) = 0;
 
-    /** Retrieves the microphone’s mute status.
+    /** 获取音频采集设备静音状态。
 
-     @param mute Whether the microphone is muted/unmuted.
-     - true: The microphone is muted.
-     - false: The microphone is unmuted.
+     @param mute 音频采集设备静音状态。
+     - true: 静音状态。
+     - false: 非静音状态。
 
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int getRecordDeviceMute(bool *mute) = 0;
 
-    /** 调节录音音量。
+    /** 调节采集信号音量。
 
-    @param[in] volume 录音信号音量可在 0 ~ 400 范围内进行调节:
+    @note 该方法仅调节应用程序中的采集信号音量，不修改设备音量。如果需要修改设备音量，请查看设备管理相关接口。
+
+    @param[in] volume 采集录音音量，取值范围为 [0, 400]。其中：
     - 0: 静音；
     - 100: 原始音量；
     - 400: 最大可为原始音量的 4 倍（自带溢出保护）。
@@ -183,9 +180,10 @@ public:
     */
     virtual int adjustRecordingSignalVolume(uint32_t volume) = 0;
 
-    /** 调节播放音量。
+    /** 调节本地播放音量。
+     @note 该方法仅调节应用程序中音量，不修改设备音量。如果需要修改设备音量，请查看设备管理相关接口。
 
-    @param[in] volume 播放音量可在 0 ~ 400 范围内进行调节:
+    @param[in] volume 播放音量。取值范围为 [0, 400]。其中：
     - 0:  静音；
     - 100: 原始音量；
     - 400: 最大可为原始音量的 4 倍（自带溢出保护）。
@@ -196,61 +194,87 @@ public:
     */
     virtual int adjustPlaybackSignalVolume(uint32_t volume) = 0;
 
-    /** Starts the microphone test.
+    /** 启动音频采集设备测试。
+     
+     该方法测试音频采集设备是否能正常工作。
 
-     This method tests whether the microphone works properly. Once the test starts, the SDK uses the \ref IRtcEngineEventHandlerEx::onLocalAudioVolumeIndication "onLocalAudioVolumeIndication" callback function to notify the application with the volume information.
+     调用该方法后，SDK 会按设置的时间间隔触发 \ref IRtcEngineEventHandlerEx::onLocalAudioVolumeIndication "onLocalAudioVolumeIndication"  回调， 报告采集设备的音量信息。
 
-     @param indication_interval Interval period (ms) of the \ref IRtcEngineEventHandlerEx::onLocalAudioVolumeIndication "onLocalAudioVolumeIndication" callback function cycle.
+     @note
+     - 该方法需在加入房间前调用。
+     - 音频采集设备测试会在通话开始后自动结束，您也可以手动调用 stopRecordDeviceTest 停止音频采集设备测试。
+
+     @param indication_interval SDK 返回 \ref IRtcEngineEventHandlerEx::onLocalAudioVolumeIndication "onLocalAudioVolumeIndication"  回调的时间间隔，单位为毫秒。
 
      @return
      - 0: Success.
      - other: Failure.
      */
     virtual int startRecordDeviceTest(uint64_t indication_interval) = 0;
-    /** Stops the microphone test.
-
-     This method stops the microphone test. To stop the test, call this method after calling the IAudioDeviceManager::startRecordDeviceTest method.
+    /** 停止音频采集设备测试。
+     
+     该方法停止音频采集设备测试。
+     @note
+     - 该方法需在加入房间前调用。
+     - 音频采集设备测试会在通话开始后自动结束，您也可以手动调用 stopRecordDeviceTest 停止音频采集设备测试。
 
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int stopRecordDeviceTest() = 0;
-    /** Starts the audio playout device test.
+    /** 启动音频播放设备测试。
+     
+     该方法测试音频播放设备是否能正常工作。启动测试后，SDK 播放指定的音频文件，测试者如果能听到声音，说明播放设备能正常工作。
 
-     This method tests if the playout device works properly. In the test, the SDK plays an audio file specified by the user. If the user can hear the audio, the playout device works properly.
+     调用该方法后，SDK 会每隔 100 ms 触发一次 \ref IRtcEngineEventHandlerEx::onLocalAudioVolumeIndication "onLocalAudioVolumeIndication" 回调，报告播放设备的音量信息。
 
-     @param test_audio_file_path File path of the audio file for the test, which is in the UTF-8 absolute path:
-     - Supported file format: wav, mp3, and aac
+     @note
+     - 该方法需在加入房间前调用。
+     - 音频播放设备测试会在通话开始后自动结束，您也可以手动调用 stopPlayoutDeviceTest 停止音频播放设备测试。
+     - 支持文件格式包括 wav、mp3、aac。
+
+     @param test_audio_file_path 音频文件的绝对路径，路径字符串使用 UTF-8 编码格式。
 
      @return
-     - 0: Success and you can hear the sound of the file you set.
-     - other: Failure.
+     - 0: 成功，并且可以听到所设置文件的声音。
+     - 其他：失败。
      */
     virtual int startPlayoutDeviceTest(const char *test_audio_file_path) = 0;
-    /** Stops the audio playout device test.
+    /** 停止播放设备测试。
+
+     @note
+     - 该方法需在加入房间前调用。
+     - 播放设备测试会在通话开始后自动结束，您也可以手动调用 stopPlayoutDeviceTest 停止播放设备测试。
 
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int stopPlayoutDeviceTest() = 0;
-    /** Starts the audio device loopback test.
+    /** 开始音频设备回路测试。
+     
+     该方法测试音频采集和播放设备是否能正常工作。一旦测试开始，音频采集设备会采集本地音频，然后使用音频播放设备播放出来。 SDK 会按设置的时间间隔触发 \ref IRtcEngineEventHandlerEx::onLocalAudioVolumeIndication "onLocalAudioVolumeIndication"  回调， 报告音量信息。
+     @note
+     - 该方法需在加入房间前调用。
+     - 音频设备回路测试会在通话开始后自动结束，您也可以手动调用 stopAudioDeviceLoopbackTest 停止音频设备回路测试。
+     - 该方法仅在本地进行音频设备测试，不涉及网络连接。
 
-     This method tests whether the audio device loopback works properly. Once the test starts, the SDK uses the \ref IRtcEngineEventHandlerEx::onLocalAudioVolumeIndication "onLocalAudioVolumeIndication" callback function to notify the application with the volume information.
-
-     @param indication_interval Interval period (ms) of the \ref IRtcEngineEventHandlerEx::onLocalAudioVolumeIndication "onLocalAudioVolumeIndication" callback function cycle.
+     @param indication_interval SDK 返回  \ref IRtcEngineEventHandlerEx::onLocalAudioVolumeIndication "onLocalAudioVolumeIndication" 回调的 时间间隔，单位为毫秒。
 
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int startAudioDeviceLoopbackTest(uint64_t indication_interval) = 0;
-    /** Stops the audio device loopback test.
+    /** 停止音频设备回路测试。
+     @note
+     - 该方法需在加入房间前调用。
+     - 音频设备回路测试会在通话开始后自动结束，您也可以手动调用 stopAudioDeviceLoopbackTest 停止音频设备回路测试。
 
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0: 方法调用成功；
+     - 其他: 方法调用失败。
      */
     virtual int stopAudioDeviceLoopbackTest() = 0;
 };

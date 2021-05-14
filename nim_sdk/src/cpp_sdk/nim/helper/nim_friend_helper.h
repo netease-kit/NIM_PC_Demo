@@ -289,6 +289,7 @@ struct NIM_SDK_CPPWRAPPER_DLL_API FriendAddEvent
 	std::string		accid_;				/**< 用户ID */
 	NIMVerifyType	add_type_;			/**< 验证类型 */
 	std::string		msg_;				/**< 附言 */
+    std::string server_ex_;             /**< 服务器下发的拓展字段，只有调用了服务器添加好友接口并且传递该字段时才会有内容 */
 };
 
 /** @brief 云信好友变更事件（删除） */

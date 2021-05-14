@@ -29,33 +29,33 @@ protected:
     virtual ~IVideoDeviceManager() {}
 
 public:
-    /** Enumerates the video devices.
+    /** 获取系统中所有的视频采集设备列表。
+     
+     该方法返回一个 IDeviceCollection 对象，包含系统中所有的音频采集设备。通过IDeviceCollection 对象，App 可以枚举视频采集设备。
 
-     This method returns an IDeviceCollection object including all video devices in the system. With the IDeviceCollection object, the application can enumerate the video devices. 
-     The application must call the \ref IDeviceCollection::destroy "destroy" method to destroy the returned object after using it.
+     @note
+     在使用结束后，App 需调用 destroy 方法销毁返回的对象。
 
      @return
-     - An IDeviceCollection object including all video devices in the system: Success.
-     - NULL: Failure.
+     - 方法调用成功：一个 IDeviceCollection 对象，包含所有的视频采集设备。
+     - 方法调用失败：NULL 。
      */
     virtual IDeviceCollection * enumerateCaptureDevices() = 0;
-    /** Sets a device with the device ID.
+    /** 指定视频采集设备。
 
-     @param device_id Pointer to the video-capture device ID. Call the \ref IVideoDeviceManager::enumerateCaptureDevices "enumerateCaptureDevices" method to retrieve it.
-
-     @note Plugging or unplugging the device does not change the device ID.plus:kNERtcExternalVideoDeviceID
+     @param device_id 视频采集设备的设备 ID。可以通过 enumerateCaptureDevices 获取。
 
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0：方法调用成功；
+     - 其他： 方法调用失败。
      */
     virtual int setDevice(const char device_id[kNERtcMaxDeviceIDLength]) = 0;
-    /** Retrieves the video-capture device that is in use.
+    /** 获取当前使用的视频采集设备信息。
 
-     @param device_id Pointer to the video-capture device ID.
+     @param device_id 视频采集设备的设备 ID。
      @return
-     - 0: Success.
-     - other: Failure.
+     - 0：方法调用成功；
+     - 其他： 方法调用失败。
      */
     virtual int getDevice(char device_id[kNERtcMaxDeviceIDLength]) = 0;
 };
