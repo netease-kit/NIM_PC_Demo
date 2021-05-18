@@ -4,6 +4,7 @@
 #include "g2_kit/component/avchat_component.h"
 #include "g2_kit/component/avchat_component_def.h"
 #include "g2_kit/gui/video_setting_g2.h"
+#include "nim_cpp_wrapper/api/nim_cpp_client.h"
 
 namespace nim_comp
 {
@@ -113,15 +114,13 @@ namespace nim_comp
 		params.useRtcSafeMode = true;  //是否开启安全模式，true表示开启，false表示关闭
 		bp.head_.action_name_ = kAvChatSetupAppKey;
 		bp.body_.param_ = params;
-        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
 		nbase::BusinessManager::GetInstance()->Request(bp, nullptr);
 
 		//获取token
 		params.tockenServiceFunc = QueryToken;
 		bp.head_.action_name_ = kAvChatGetTockenService;
 		bp.body_.param_ = params;
-        bp.head_.meth_ = nbase::BatpRequestMeth::POST;
-        nbase::BusinessManager::GetInstance()->Request(bp, nullptr);	
+		nbase::BusinessManager::GetInstance()->Request(bp, nullptr);	
 	}
 
 	void VideoManagerG2::UnInit(StdClosure cb)
@@ -623,7 +622,6 @@ namespace nim_comp
 	}
 	void VideoManagerG2::OnUserLeaveCb(const nbase::BatpPack& response)
 	{
-		//当前PC Demo只有一对一呼叫，不处理OnUserLeave事件
 		video_form_->EnterEndCallPage(VideoFormG2::END_CALL_BE_HANGUP);
 	}
 	void VideoManagerG2::OnUserDisconnectCb(const nbase::BatpPack& response)
