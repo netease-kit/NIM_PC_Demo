@@ -2,6 +2,8 @@
 #include "net_call_helper.h"
 #include <vector>
 #include "duilib/Utils/MultiLangSupport.h"
+#include "nim_cpp_wrapper/api/nim_cpp_talk.h"
+#include "nim_cpp_wrapper/api/nim_cpp_msglog.h"
 #include "module/session/session_manager.h"
 
 const static char* kNIMNetCallType = "type";
@@ -134,12 +136,11 @@ namespace nim_comp
 		std::vector<std::string> members,
 		std::vector<int> durations)
 	{
-		if (!hasRegMendMsgCb)
+		/*if (!hasRegMendMsgCb)
 		{
 			hasRegMendMsgCb = true;
 			nim::Talk::RegSendMsgCb(OnSendNetCallMsgCb);
-		}
-			
+		}*/
 
 		Json::Value values;
 		Json::FastWriter writer;
@@ -158,16 +159,16 @@ namespace nim_comp
 		}
 
 		auto attach_info = writer.write(values);
-		
 		std::string client_msg_id = nim::Tool::GetUuid();
 		nim::MessageSetting setting;
 
-		auto json_msg = nim::Talk::CreateG2NetCallMessage(to
-			, nim::kNIMSessionTypeP2P
-			, client_msg_id
-			, attach_info
-			, setting);
-
+		auto json_msg = nim::Talk::CreateG2NetCallMessage(to, nim::kNIMSessionTypeP2P, client_msg_id, attach_info, setting);
+		SessionBox* session_form = SessionManager::GetInstance()->FindSessionBox(to);
+		if (session_form) {
+			nim::IMMessage msg(json_msg);
+			msg.sender_accid_ = nim::Client::GetCurrentUserAccount();
+			session_form->ShowMsg(msg, false, false);
+		}
 		nim::Talk::SendMsg(json_msg);
 	}
 }

@@ -1,19 +1,21 @@
 ﻿#pragma once
 #include <string>
+#include "nim_cpp_wrapper/helper/nim_talk_helper.h"
+#include "nim_cpp_wrapper/helper/nim_session_helper.h"
+
 /*
  *G2 话单解析模块
  *
  */
 namespace nim_comp
 {
-
 	enum NIMNetCallStatus
 	{
-		kNIMNetCallStatusComplete = 1,	/**< 1:通话完成*/
+		kNIMNetCallStatusComplete = 1,		/**< 1:通话完成*/
 		kNIMNetCallStatusCanceled,			/**< 2:通话取消*/
 		kNIMNetCallStatusRejected,			/**< 3:通话拒绝*/
 		kNIMNetCallStatusTimeout,			/**< 4:超时未接听*/
-		kNIMNetCallStatusBusy,					/**< 5:对方忙线*/
+		kNIMNetCallStatusBusy,				/**< 5:对方忙线*/
 	};
 
 	enum NIMNetCallType
