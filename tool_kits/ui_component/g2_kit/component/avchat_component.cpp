@@ -11,8 +11,10 @@ namespace nim_comp
 	using namespace std::placeholders;
 
 	const int iCallingTimeoutSeconds = 45;
-	bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members);
+	bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members, std::string& version, std::string& channelName);
 	int64_t getUid(const std::list<SignalingMemberInfo>& list, const std::string& accid);
+	// 0相等，1大于，-1小于
+	int versionCompare(const std::string& v1, const std::string& v2);
 
 	AvChatComponent::AvChatComponent()
 	{
@@ -226,9 +228,13 @@ namespace nim_comp
 
 	}
 
+	// 呼叫方首先发送INVITE，扩展字段携带自身版本号(version)及动态channelName，即<channelId> | 0 | <uid>，并直接预加载token。
+	// 0代表1v1，uid为信令房间返回的用户uid；1代表group呼叫，uid传群组teamId
 	void AvChatComponent::call(const std::string& userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb)
 	{
 		channelMembers_.clear();
+		version_.clear();
+		channelName_.clear();
 		nim::SignalingCreateParam createParam;
 		createParam.channel_type_ = (nim::NIMSignalingType)type;
 		toAccid = userId;
@@ -271,6 +277,8 @@ namespace nim_comp
 		timer_cb = calling_timeout_timer_.ToWeakCallback(timer_cb);
 		nbase::ThreadManager::PostDelayedTask(timer_cb, nbase::TimeDelta::FromSeconds(iCallingTimeoutSeconds));
 	}
+
+	// 被叫方发送ACCEPT，并携带自己版本号(version)
 	void AvChatComponent::accept(AvChatComponentOptCb cb)
 	{
 		//信令accept（自动join）
@@ -282,8 +290,19 @@ namespace nim_comp
 		param.offline_enabled_ = true;
 		param.uid_ = 0;
 
+		Json::Value values;
+		//TODO PC暂不实现多人通话，故此处不处理channel中的其他人的信息
+		//单人通话不传kAvChatChannelMembers
+		Json::Reader().parse("[]", values[kAvChatChannelMembers]);
+		//values[kAvChatCallType] = (int)kAvChatP2P;
+		values[kAvChatCallVersion] = RTC_COMPONENT_VER;
+		Json::FastWriter fw;
+		param.accept_custom_info_ = fw.write(values);
+
 		//int ret = rtcEngine_->joinChannel("", param.channel_id_.c_str(), 0);
 		auto acceptCb = nbase::Bind(&AvChatComponent::signalingAcceptCb, this, _1, _2, cb);
+
+		QLOG_APP(L"accept, version: {0}") << RTC_COMPONENT_VER;
 		Signaling::Accept(param, acceptCb);
 	}
 
@@ -494,6 +513,7 @@ namespace nim_comp
 
 	void AvChatComponent::requestTokenValue(int64_t uid)
 	{
+		stoken_ = "xyz";
 		if (isUseRtcSafeMode) {
 			//int64_t uid;
 			//uid = channelMembers_[senderAccid];
@@ -556,7 +576,35 @@ namespace nim_comp
 			to_account_id_ = uid;
 			joined_channel_id_ = res->info_.channel_info_.channel_id_;
 			status_ = inCall;
-			requestTokenValue(uid);
+			if (versionCompare(version_, "1.1.0") < 0)
+			{
+				requestTokenValue(uid);
+			}
+			else {
+				requestTokenValue(uid);
+				while ("xyz" == stoken_)
+				{
+					std::this_thread::yield();
+				}
+				int type = res->info_.channel_info_.channel_type_;
+				if (type == kAvChatAudio) {
+					enableLocalVideo(false);
+				}
+				else if (type == kAvChatVideo) {
+					enableLocalVideo(true);
+				}
+				std::string strToken = "";
+				if (isUseRtcSafeMode) strToken = stoken_;
+				QLOG_APP(L"handleControl: strToken = {0}") << strToken;
+				int ret = rtcEngine_->joinChannel(strToken.c_str(), channelName_.c_str(), uid);
+				if (ret != 0)
+				{
+					QLOG_ERR(L"nertc join channel failed: {0}") << ret;
+					if (cb)
+						cb(errCode);
+					return;
+				}
+			}
 		}
 
 		if (cb)
@@ -634,6 +682,9 @@ namespace nim_comp
 		//单人通话不传kAvChatChannelMembers
 		Json::Reader().parse("[]", values[kAvChatChannelMembers]);
 		values[kAvChatCallType] = (int)kAvChatP2P;
+		values[kAvChatCallVersion] = RTC_COMPONENT_VER;
+		channelName_ = std::string(channelId).append("|").append("0").append("|").append(std::to_string(uid));
+		values[kAvChatCallChannelName] = channelName_;
 		Json::FastWriter fw;
 		SignalingInviteParam inviteParam;
 		inviteParam.account_id_ = toAccid;
@@ -642,6 +693,7 @@ namespace nim_comp
 		inviteParam.custom_info_ = fw.write(values);
 
 		auto inviteCb = nbase::Bind(&AvChatComponent::signalingInviteCb, this, _1, _2, cb);
+		QLOG_APP(L"Signaling::Invite, callType: {0}, version: {1}, channelName: {2}") << (int)kAvChatP2P << RTC_COMPONENT_VER << channelName_;
 		//3,信令 invite
 		Signaling::Invite(inviteParam, inviteCb);
 		status_ = calling;
@@ -684,7 +736,6 @@ namespace nim_comp
 			if (optCb_) optCb_(errCode);
 			return;
 		}
-
 	}
 
 	void AvChatComponent::handleControl(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
@@ -704,6 +755,10 @@ namespace nim_comp
 			//std::string sValue = values["cid"].asString();
 			if (value == 1) {
 				if (notifyInfo) {
+					while ("xyz" == stoken_)
+					{
+						std::this_thread::yield();
+					}
 					if (type == kAvChatAudio) {
 						enableLocalVideo(false);
 					}
@@ -712,7 +767,7 @@ namespace nim_comp
 					}
 					std::string strToken = "";
 					if (isUseRtcSafeMode) strToken = stoken_;
-					QLOG_APP(L"handleControl: strToken = {0}") << strToken;
+					QLOG_APP(L"handleControl: strToken: {0}") << strToken;
 					int ret = rtcEngine_->joinChannel(strToken.c_str(), notifyInfo->channel_info_.channel_id_.c_str(), to_account_id_);
 					if (ret != 0)
 					{
@@ -728,20 +783,23 @@ namespace nim_comp
 		}
 	}
 
+	// 被叫收到INVITE，先获取token，并判断版本号。如果是老版本发起呼叫，并等待控制信令，否则直接加入channelName，而不是原来的channelId。
 	void AvChatComponent::handleInvited(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
 	{
 		//抛出onInvite事件，更新UI、响应用户操作
 		if (compEventHandler_.expired())
 			return;
 
-		bool isFromGroup;
+		bool isFromGroup = false;
 		std::vector<std::string> members;
-		if (!parseCustomInfo(notifyInfo->custom_info_, isFromGroup, members))
+		version_.clear();
+		channelName_.clear();
+		if (!parseCustomInfo(notifyInfo->custom_info_, isFromGroup, members, version_, channelName_))
 		{
 			assert(false);
 			return;
 		}
-
+		QLOG_APP(L"handleInvited, from_account_id: {0}, version: {1}, channelName: {2}") << notifyInfo->from_account_id_ << version_ << channelName_;
 		SignalingNotifyInfoInvite* inviteInfo = (SignalingNotifyInfoInvite*)notifyInfo.get();
 
 		//忙线处理
@@ -756,12 +814,13 @@ namespace nim_comp
 			param.offline_enabled_ = true;
 
 			Signaling::Reject(param, [isFromGroup](int errCode, std::shared_ptr<nim::SignalingResParam> res_param) {
-				if (!isFromGroup){
+				if (!isFromGroup) {
 					QLOG_APP(L"handle busy, Signaling::Reject return: {0}") << errCode;
-				}else {
+				}
+				else {
 					QLOG_APP(L"handle isFromGroup is true, Signaling::Reject return: {0}") << errCode;
 				}
-			});
+				});
 			//忙线方(被叫方)发送话单
 			SendNetCallMsg(inviteInfo->from_account_id_,
 				param.channel_id_,
@@ -791,7 +850,8 @@ namespace nim_comp
 		status_ = idle;
 	}
 
-	//4.待受邀方accept之后，发起方自身 RTC Join。成功后服务端会开始进行通话计时
+	// 呼叫方收到accept之后，发起方自身 RTC Join。成功后服务端会开始进行通话计时
+	// 呼叫方收到ACCEPT，进入channelName而不是原来的channelId，加入成功后判断被叫方版本。如果是老版本则发送CONTROL
 	void AvChatComponent::handleAccepted(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
 	{
 		SignalingNotifyInfoAccept* acceptedInfo = (SignalingNotifyInfoAccept*)notifyInfo.get();
@@ -800,6 +860,26 @@ namespace nim_comp
 		if (acceptedInfo->to_account_id_ != senderAccid)
 			return;
 	
+		bool isFromGroup = false;
+		std::vector<std::string> members;
+		version_.clear();
+		if (!acceptedInfo->custom_info_.empty())
+		{
+			std::string channelNameTmp;
+			if (!parseCustomInfo(acceptedInfo->custom_info_, isFromGroup, members, version_, channelNameTmp))
+			{
+				assert(false);
+				return;
+			}
+		}
+		QLOG_APP(L"handleAccepted, version_: {0}") << version_;
+
+		requestTokenValue(channelMembers_[senderAccid]);
+		while ("xyz" == stoken_)
+		{
+			std::this_thread::yield();
+		}
+
 		if (callType == kAvChatAudio) {
 			enableLocalVideo(false);
 		}
@@ -809,9 +889,8 @@ namespace nim_comp
 		//auto selfUid = nim::Client::GetCurrentUserAccount();
 		std::string strToken = "";
 		if (isUseRtcSafeMode) strToken = stoken_;
-		QLOG_APP(L"handleAccepted: strToken = {0}") << strToken;
-		int ret = rtcEngine_->joinChannel(strToken.c_str(), acceptedInfo->channel_info_.channel_id_.c_str()
-			, channelMembers_[senderAccid]);
+		QLOG_APP(L"handleAccepted: strToken: {0}") << strToken;
+		int ret = rtcEngine_->joinChannel(strToken.c_str(), versionCompare(version_, "1.1.0") >= 0 ? channelName_.c_str() : acceptedInfo->channel_info_.channel_id_.c_str(), channelMembers_[senderAccid]);
 
 		//rtcEngine_->enableLocalAudio(true);
 		//rtcEngine_->(true);
@@ -886,7 +965,7 @@ namespace nim_comp
 			QLOG_APP(L"handleJoin, onUserEnter, userID: {0}") << joinInfo->member_.account_id_;
 			compEventHandler_.lock()->onUserEnter(joinInfo->member_.account_id_);
 
-			if (isMasterInvited) {
+			if (isMasterInvited && versionCompare(version_, "1.1.0") < 0) {
 				Json::Value values;
 				values["cid"] = 1;  //cid = 1表示控制信令，调整call流程，修复话单主叫被叫方顺序不对bug
 				values["type"] = 0;
@@ -1075,8 +1154,11 @@ namespace nim_comp
 		return 0;
 	}
 
-	bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members)
+	bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members, std::string& version, std::string& channelName)
 	{
+		version.clear();
+		channelName.clear();
+
 		Json::Value values;
 		Json::Reader reader;
 		if (!reader.parse(str, values) || !values.isObject())
@@ -1093,8 +1175,36 @@ namespace nim_comp
 				members.push_back(values[kAvChatChannelMembers][i].asString());
 			}
 		}
+
+		if (values.isMember(kAvChatCallVersion))
+		{
+			version = values[kAvChatCallVersion].asString();
+		}
+
+		if (values.isMember(kAvChatCallChannelName))
+		{
+			channelName = values[kAvChatCallChannelName].asString();
+		}
 		
 		return true;
 	}
 
+	int versionCompare(const std::string& version1, const std::string& version2)
+	{
+		char* p1 = (char*)version1.data();
+		char* p2 = (char*)version2.data();
+		int v1 = 0, v2 = 0;
+		while (*p1 || *p2) {
+			v1 = v2 = 0;
+			if (*p1) v1 = atoi(p1);
+			if (*p2) v2 = atoi(p2);
+			if (v1 > v2) return 1;
+			if (v1 < v2) return -1;
+			while (*p1 && *p1 != '.') ++p1;
+			if (*p1 == '.') ++p1;
+			while (*p2 && *p2 != '.') ++p2;
+			if (*p2 == '.') ++p2;
+		}
+		return 0;
+	}
 }

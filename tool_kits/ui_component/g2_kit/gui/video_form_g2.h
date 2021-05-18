@@ -1,4 +1,4 @@
-#pragma once
+﻿#pragma once
 
 #include "shared/base.h"
 // #include "video_setting.h"
@@ -7,6 +7,7 @@
 #include "shared/ring.h"
 #include "bitmap_control_g2.h"
 #include "shared/business_action_gateway/business_manager/business_manager.h"
+#include "nim_cpp_wrapper/helper/nim_talk_helper.h"
 //#include "helper/ui_bitmap_control.h"
 //#include "record_select.h"
 
@@ -264,7 +265,7 @@ namespace nim_comp
 		bool				camera_is_open_other_; //对方摄像头是否关闭
 
 		bool				need_change_form_size_; //视频通话在接通以后调整窗口大小
-
+		bool				firstFrame_ = false;	// 对方第一帧画面
 		uint32_t  time_stamp_;
 		nbase::WeakCallbackFlag tick_weakflag_; //通话过程计时
 

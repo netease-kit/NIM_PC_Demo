@@ -1,4 +1,4 @@
-
+﻿
 #include "pch.h"
 #include "video_form_g2.h"
 #include "video_canvas_g2.h"
@@ -760,6 +760,13 @@ namespace nim_comp
 // 			}
 // 		});
 // 		nbase::ThreadManager::PostTask(kThreadUI, closure);
+
+		if (!firstFrame_)
+		{
+			firstFrame_ = true;
+			QLOG_APP(L"CaptureRemoteVideoFrame firstFrame, uid: {0}") << uid;
+		}
+
 		if (screen_is_other_)
 		{
 			if(video_ctrl_screen_)

@@ -20,7 +20,7 @@ INCLUDE_DIRECTORIES(
     ${PROJECT_SOURCE_DIR}/../../../lib/
     ${PROJECT_SOURCE_DIR}/../../../app_sdk/
     ${PROJECT_SOURCE_DIR}/../../../include/
-	${PROJECT_SOURCE_DIR}/../../../third_party/
+    ${PROJECT_SOURCE_DIR}/../../../third_party/
 )
 
 INCLUDE_DIRECTORIES(${PROJECT_SOURCE_DIR}/..)
