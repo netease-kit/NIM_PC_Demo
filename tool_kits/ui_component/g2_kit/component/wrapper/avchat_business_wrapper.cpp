@@ -255,7 +255,7 @@ namespace nim_comp
 		component.regEventHandler(eventHandler_);
 	}
 
-	//avchat �����δ����onCalling�¼���Ϊ��֪ͨ�������״̬����AvChatBusinessWrapper::call�з�һ��onCalling�¼�
+	//avchat 组件并未定义onCalling事件，为了通知界面更新状态，在AvChatBusinessWrapper::call中发一个onCalling事件
 	void AvChatBusinessWrapper::call(const nbase::BatpPack& request)
 	{
 		AvChatParams params = nbase::BatpParamCast<AvChatParams>(request.body_.param_);

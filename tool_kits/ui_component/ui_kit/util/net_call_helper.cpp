@@ -169,6 +169,7 @@ namespace nim_comp
 			nim::IMMessage msg(json_msg);
 			msg.sender_accid_ = nim::Client::GetCurrentUserAccount();
 			session_form->ShowMsg(msg, false, false);
+			session_form->EndDown();
 		}
 		nim::Talk::SendMsg(json_msg);
 	}

@@ -1,7 +1,13 @@
-#pragma once
-//易用性组件（AvChatComponent）针对BusinessGateway的封装，负责将调用参数、通知参数打包成BatpPack
-//2020.11.03
-//Martin
+/**
+ * @file avchat_business_wrapper.h
+ * @brief 鍛煎彨缁勪欢锛圓vChatComponent锛夐拡瀵笲usinessGateway鐨勫皝瑁咃紝璐熻矗灏嗚皟鐢ㄥ弬鏁般�侀�氱煡鍙傛暟鎵撳寘鎴恘base::BatpPack
+ * @copyright (c) 2014-2021, NetEase Inc. All rights reserved
+ * @author Martin
+ * @date 2021/05/28
+ */
+
+#ifndef AVCHAT_BUSINESS_WRAPPER_H_
+#define AVCHAT_BUSINESS_WRAPPER_H_
 
 #include "shared/business_action_gateway/batp/batp.h"
 #include "g2_kit/component/avchat_component.h"
@@ -9,10 +15,13 @@
 
 namespace nim_comp
 {
+	/**
+	 * @brief wrapper鍙傛暟
+	 */
 	struct AvChatParams
 	{
 		std::string				appKey;
-		std::string				userId;//即为accid
+		std::string				userId;//鍗充负accid
 		int						callType;
 		AvChatComponentOptCb	optCb;
 		nertc::onFrameDataCallback     dataCb;
@@ -40,7 +49,9 @@ namespace nim_comp
 		{}
 	};
 
-	//将组建回调传来的参数，组装成BatpPack 通知出去
+	/**
+	 * @brief 灏嗙粍浠跺洖璋冧紶鏉ョ殑鍙傛暟锛岀粍瑁呮垚 nbase::BatpPack 閫氱煡鍑哄幓
+	 */
 	class AvChatComponentEventHandler : public IAvChatComponentEventHandler
 	{
 	public:
@@ -73,10 +84,13 @@ namespace nim_comp
 		virtual void onAudioVolumeChanged(unsigned char value, bool isRecord) override;
 	};
 
+	/**
+	 * @brief 缁勪欢瀹炵幇绫荤殑Wrapper
+	 * @see AvChatComponent
+	 */
 	class AvChatBusinessWrapper
 	{
 	public:
-
 		static void release(const nbase::BatpPack& request);
 		static void setupAppKey(const nbase::BatpPack& request);
 		static void call(const nbase::BatpPack& request);
@@ -127,5 +141,6 @@ namespace nim_comp
 		static AvChatComponent component;
 		static std::shared_ptr<AvChatComponentEventHandler> eventHandler_;
 	};
-
 }
+
+#endif  // !AVCHAT_BUSINESS_WRAPPER_H_

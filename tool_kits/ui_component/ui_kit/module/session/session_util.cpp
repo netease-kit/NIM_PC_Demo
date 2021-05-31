@@ -862,6 +862,15 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 		show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_TIP");
 }
 
+bool IsG2NetCallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
+{
+	if (msg_type == nim::kNIMMessageTypeG2NetCall)
+	{
+		return true;
+	}
+	return false;
+}
+
 bool IsNetCallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach)
 {
 	if (msg_type != nim::kNIMMessageTypeNotification)

@@ -260,6 +260,14 @@ void GetNotifyMsg(const std::string& msg_attach, const std::string& from_account
 bool IsNetCallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach);
 
 /**
+* 判断是否是G2音视频通话的话单消息
+* @param[in] msg_type 消息类型
+* @param[in] msg_attach 会话消息附加字段
+* @return bool true 成功，false 失败
+*/
+bool IsG2NetCallMsg(nim::NIMMessageType msg_type, const std::string& msg_attach);
+
+/**
 * 获取自定义消息的提示内容
 * @param[in] sender_accid 发送者帐号
 * @param[in] msg_attach 会话消息附加字段
