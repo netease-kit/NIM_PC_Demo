@@ -1,1211 +1,1213 @@
 #include "pch.h"
 #include "avchat_component.h"
-#include "nim_sdk/src/cpp_sdk/nim/api/nim_cpp_signaling.h"
 #include "avchat_component_def.h"
 #include "base/win32/path_util.h"
 #include "wrapper/avchat_business_wrapper.h"
 
 namespace nim_comp
 {
-	using Signaling = nim::Signaling;
-	using namespace nim;
-	using namespace std::placeholders;
-
-	const int iCallingTimeoutSeconds = 45;
-	bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members, std::string& version, std::string& channelName);
-	int64_t getUid(const std::list<SignalingMemberInfo>& list, const std::string& accid);
-	// 0ÏàµÈ£¬1´óÓÚ£¬-1Ğ¡ÓÚ
-	int versionCompare(const std::string& v1, const std::string& v2);
-
-	AvChatComponent::AvChatComponent()
-	{
-		isCameraOpen = true;
-		timeOutHurryUp = false;
-		isMasterInvited = false;
-		isUseRtcSafeMode = false;
-	}
-	AvChatComponent::~AvChatComponent()
-	{
-		if (rtcEngine_)
-		{
-			rtcEngine_->release();
-			destroyNERtcEngine((void*&)rtcEngine_);
-			rtcEngine_ = nullptr;
-		}
-	}
-
-	void AvChatComponent::release()
-	{
-		if (rtcEngine_)
-		{
-			QLOG_APP(L"AvChatComponent release");
-			rtcEngine_->release();
-			destroyNERtcEngine((void*&)rtcEngine_);
-			rtcEngine_ = nullptr;
-		}
-	}
-
-	void AvChatComponent::setupAppKey(const std::string& key, bool useRtcSafeMode)
-	{
-		appKey_ = key;
-		isUseRtcSafeMode = useRtcSafeMode;
-		//´´½¨²¢³õÊ¼»¯engine£»
-		assert(!rtcEngine_);
-		//rtcEngine_.reset((nertc::IRtcEngineEx*)createNERtcEngine());
-		rtcEngine_ = (nertc::IRtcEngineEx*)createNERtcEngine();
-		assert(rtcEngine_);
-
-		std::string logPath  = nbase::UTF16ToUTF8(nbase::win32::GetLocalAppDataDir().append(AVCHAT_LOG_DIR));
-
-		nertc::NERtcEngineContext context;
-		context.app_key = appKey_.c_str();
-		context.event_handler = this;
-		context.log_dir_path = logPath.c_str();//AVCHAT_LOG_DIR;
-		context.log_level = nertc::kNERtcLogLevelDebug;
-		context.log_file_max_size_KBytes = 0;
-		//context.log_dir_path = ""
-		int ret = rtcEngine_->initialize(context);
-		assert(ret == 0);
-		ret = rtcEngine_->setAudioProfile(nertc::kNERtcAudioProfileStandardExtend, nertc::kNERtcAudioScenarioSpeech);
-		if (0 != ret) {
-			QLOG_APP(L"setAudioProfile failed!");
-		}
-		Signaling::RegOnlineNotifyCb(nbase::Bind(&AvChatComponent::signalingNotifyCb, this, std::placeholders::_1));
-		Signaling::RegMutilClientSyncNotifyCb(nbase::Bind(&AvChatComponent::signalingMutilClientSyncCb, this, std::placeholders::_1));
-		Signaling::RegOfflineNotifyCb(nbase::Bind(&AvChatComponent::signalingOfflineNotifyCb, this, std::placeholders::_1));
-	}
-
-	int AvChatComponent::setRecordDeviceVolume(int value)
-	{
-		nertc::IAudioDeviceManager* audio_device_manager = nullptr;
-		rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
-		if (audio_device_manager)
-		{
-			int ret = audio_device_manager->adjustRecordingSignalVolume(value);
-			if (ret == 0)
-			{
-				compEventHandler_.lock()->onAudioVolumeChanged(value, true);
-			}
-			return ret;
-		}
-		return 1;
-	}
-	int AvChatComponent::setPlayoutDeviceVolume(int value)
-	{
-		nertc::IAudioDeviceManager* audio_device_manager = nullptr;
-		rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
-		if (audio_device_manager)
-		{
-			int ret = audio_device_manager->adjustPlaybackSignalVolume(value);
-			if (ret == 0)
-			{
-				QLOG_APP(L"setPlayoutDeviceVolume seccess");
-				compEventHandler_.lock()->onAudioVolumeChanged(value, false);
-			}
-			return ret;
-		}
-		return 1;
-	}
-	uint32_t AvChatComponent::getAudioVolumn(bool isRecord)
-	{
-		nertc::IAudioDeviceManager* audio_device_manager = nullptr;
-		rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
-		uint32_t volume = 0;
-		if (audio_device_manager)
-		{
-			isRecord ? audio_device_manager->getRecordDeviceVolume(&volume) 
-				: audio_device_manager->getPlayoutDeviceVolume(&volume);
-		}
-		return volume;
-	}
-	void AvChatComponent::getLocalDeviceList(
-		std::vector<std::wstring>* recordDevicesNames, 
-		std::vector<std::wstring>* recordDevicesIds, 
-		std::vector<std::wstring>* playoutDevicesNames, 
-		std::vector<std::wstring>* playoutDevicesIds, 
-		std::vector<std::wstring>* videoDeviceNames, 
-		std::vector<std::wstring>* videoDeviceIds )
-	{
-		nertc::IAudioDeviceManager* audio_device_manager = nullptr;
-		nertc::IVideoDeviceManager* video_device_manager = nullptr;
-		rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
-		rtcEngine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void**)&video_device_manager);
-
-		if (audio_device_manager)
-		{
-			nertc::IDeviceCollection* audio_record_collection = audio_device_manager->enumerateRecordDevices();
-			for (int i=0; i<audio_record_collection->getCount(); i++)
-			{
-				char device_name[kNERtcMaxDeviceNameLength]{ 0 };
-				char device_id[kNERtcMaxDeviceIDLength]{ 0 };
-				int ret = audio_record_collection->getDevice(i, device_name, device_id);
-				if (recordDevicesNames)
-					recordDevicesNames->emplace_back(nbase::UTF8ToUTF16(device_name));
-				if (recordDevicesIds)
-					recordDevicesIds->emplace_back(nbase::UTF8ToUTF16(device_id));
-			}
-
-			nertc::IDeviceCollection* audio_playout_collection = audio_device_manager->enumeratePlayoutDevices();
-			for (int i = 0; i <audio_playout_collection->getCount(); i++)
-			{
-				char device_name[kNERtcMaxDeviceNameLength]{ 0 };
-				char device_id[kNERtcMaxDeviceIDLength]{ 0 };
-				int ret = audio_playout_collection->getDevice(i, device_name, device_id);
-				if (playoutDevicesNames)
-					playoutDevicesNames->emplace_back(nbase::UTF8ToUTF16(device_name));
-				if (playoutDevicesIds)
-					playoutDevicesIds->emplace_back(nbase::UTF8ToUTF16(device_id));
-			}
-		}
-		if (video_device_manager)
-		{
-			nertc::IDeviceCollection* video_collection = video_device_manager->enumerateCaptureDevices();
-			for (int i = 0; i < video_collection->getCount(); i++)
-			{
-				char device_name[kNERtcMaxDeviceNameLength]{ 0 };
-				char device_id[kNERtcMaxDeviceIDLength]{ 0 };
-				int ret = video_collection->getDevice(i, device_name, device_id);
-				if (videoDeviceNames)
-					videoDeviceNames->emplace_back(nbase::UTF8ToUTF16(device_name));
-				if (videoDeviceIds)
-					videoDeviceIds->emplace_back(nbase::UTF8ToUTF16(device_id));
-			}
-		}
-	}
-	void AvChatComponent::setVideoDevice(const std::wstring& id)
-	{
-		nertc::IVideoDeviceManager* video_device_manager = nullptr;
-		rtcEngine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void**)&video_device_manager);
-		if (!video_device_manager)
-			return;
-		video_device_manager->setDevice(nbase::UTF16ToUTF8(id).c_str());
-	}
-
-	std::wstring AvChatComponent::getAudioDevice(bool isRecord)
-	{
-		nertc::IAudioDeviceManager* audio_device_manager = nullptr;
-		rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
-		if (!audio_device_manager)
-			return L"";
-
-		char device_id[kNERtcMaxDeviceIDLength] = { 0 };
-		isRecord ? audio_device_manager ->getRecordDevice(device_id)
-			: audio_device_manager->getPlayoutDevice(device_id);
-
-		return nbase::UTF8ToUTF16(device_id);
-	}
-	std::wstring AvChatComponent::getVideoDevice()
-	{
-		nertc::IVideoDeviceManager* video_device_manager = nullptr;
-		rtcEngine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void**)&video_device_manager);
-		if (!video_device_manager)
-			return L"";
-
-		char device_id[kNERtcMaxDeviceIDLength] = { 0 };
-		video_device_manager->getDevice(device_id);
-
-		return nbase::UTF8ToUTF16(device_id);
-	}
-
-	void AvChatComponent::setAudioDevice(const std::wstring& id, bool isRecord)
-	{
-		nertc::IAudioDeviceManager* audio_device_manager = nullptr;
-		rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
-
-		if (!audio_device_manager)
-			return;
-
-		isRecord ? audio_device_manager->setRecordDevice(nbase::UTF16ToUTF8(id).c_str())
-			: audio_device_manager->setPlayoutDevice(nbase::UTF16ToUTF8(id).c_str());
-	}
-
-	//µÇÂ¼µÇ³öÊ¹ÓÃIM SDK
-	void AvChatComponent::login(const std::string& account, const std::string& token, AvChatComponentOptCb cb)
-	{
-
-	}
-	void AvChatComponent::logout(AvChatComponentOptCb cb)
-	{
-
-	}
-
-	// ºô½Ğ·½Ê×ÏÈ·¢ËÍINVITE£¬À©Õ¹×Ö¶ÎĞ¯´ø×ÔÉí°æ±¾ºÅ(version)¼°¶¯Ì¬channelName£¬¼´<channelId> | 0 | <uid>£¬²¢Ö±½ÓÔ¤¼ÓÔØtoken¡£
-	// 0´ú±í1v1£¬uidÎªĞÅÁî·¿¼ä·µ»ØµÄÓÃ»§uid£»1´ú±ígroupºô½Ğ£¬uid´«Èº×éteamId
-	void AvChatComponent::call(const std::string& userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb)
-	{
-		channelMembers_.clear();
-		version_.clear();
-		channelName_.clear();
-		nim::SignalingCreateParam createParam;
-		createParam.channel_type_ = (nim::NIMSignalingType)type;
-		toAccid = userId;
-		callType = type;
-		optCb_ = cb;
-		senderAccid = nim::Client::GetCurrentUserAccount();
-		invitedInfo_ = SignalingNotifyInfoInvite();
-		createdChannelInfo_ = SignalingCreateResParam();
-		isMasterInvited = true; //Ö÷½Ğ·½±ê¼Çtrue
-
-		//1,´´½¨channel
-		auto createCb = nbase::Bind(&AvChatComponent::signalingCreateCb, this,  _1, _2, cb);
-		Signaling::SignalingCreate(createParam, createCb);
-		status_ = calling;
-		startDialWaitingTimer();
-		rtcEngine_->stopVideoPreview();
-		stopAudioDeviceLoopbackTest();
-	}
-	void AvChatComponent::onWaitingTimeout()
-	{
-		if (status_ == calling)
-		{
-			closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, nullptr);
-			compEventHandler_.lock()->onCallingTimeOut();
-		}
-		handleNetCallMsg(nim_comp::kNIMNetCallStatusTimeout);
-	}
-	void AvChatComponent::startDialWaitingTimer()
-	{
-		calling_timeout_timer_.Cancel();
-		StdClosure timer_cb = nbase::Bind([this]() {
-			if (status_ == calling)
-			{
-				//closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, nullptr);
-				timeOutHurryUp = true;
-				compEventHandler_.lock()->onCallingTimeOut();
-				handleNetCallMsg(nim_comp::kNIMNetCallStatusTimeout);
-			}
-			});
-		timer_cb = calling_timeout_timer_.ToWeakCallback(timer_cb);
-		nbase::ThreadManager::PostDelayedTask(timer_cb, nbase::TimeDelta::FromSeconds(iCallingTimeoutSeconds));
-	}
-
-	// ±»½Ğ·½·¢ËÍACCEPT£¬²¢Ğ¯´ø×Ô¼º°æ±¾ºÅ(version)
-	void AvChatComponent::accept(AvChatComponentOptCb cb)
-	{
-		//ĞÅÁîaccept£¨×Ô¶¯join£©
-		SignalingAcceptParam param;
-		param.account_id_ = invitedInfo_.from_account_id_;
-		param.auto_join_ = true;
-		param.channel_id_ = invitedInfo_.channel_info_.channel_id_;
-		param.request_id_ = invitedInfo_.request_id_;
-		param.offline_enabled_ = true;
-		param.uid_ = 0;
-
-		Json::Value values;
-		//TODO PCÔİ²»ÊµÏÖ¶àÈËÍ¨»°£¬¹Ê´Ë´¦²»´¦ÀíchannelÖĞµÄÆäËûÈËµÄĞÅÏ¢
-		//µ¥ÈËÍ¨»°²»´«kAvChatChannelMembers
-		Json::Reader().parse("[]", values[kAvChatChannelMembers]);
-		//values[kAvChatCallType] = (int)kAvChatP2P;
-		values[kAvChatCallVersion] = RTC_COMPONENT_VER;
-		Json::FastWriter fw;
-		param.accept_custom_info_ = fw.write(values);
-
-		//int ret = rtcEngine_->joinChannel("", param.channel_id_.c_str(), 0);
-		auto acceptCb = nbase::Bind(&AvChatComponent::signalingAcceptCb, this, _1, _2, cb);
-
-		QLOG_APP(L"accept, version: {0}") << RTC_COMPONENT_VER;
-		Signaling::Accept(param, acceptCb);
-	}
-
-	void AvChatComponent::reject(AvChatComponentOptCb cb)
-	{
-		//ĞÅÁîreject
-		SignalingRejectParam param;
-		param.account_id_ = invitedInfo_.from_account_id_;
-		param.channel_id_ = invitedInfo_.channel_info_.channel_id_;
-		param.request_id_ = invitedInfo_.request_id_;
-		param.offline_enabled_ = true;
-
-		auto rejectCb = nbase::Bind(&AvChatComponent::signalingRejectCb, this, _1, _2, cb);
-		Signaling::Reject(param, rejectCb);
-
-		invitedInfo_ = SignalingNotifyInfoInvite();
-		handleNetCallMsg(nim_comp::kNIMNetCallStatusRejected);
-	}
-	void AvChatComponent::hangup(AvChatComponentOptCb cb)
-	{
-		rtcEngine_->leaveChannel();
-		if (status_ == idle) 
-		{
-			QLOG_APP(L"The AvChatComponent status is idle, discard hangup operation");
-			return;
-		}
-		if (status_ == calling && isMasterInvited)
-		{
-			SignalingCancelInviteParam param;
-			param.channel_id_ = invitingInfo_.channel_id_;
-			param.account_id_ = invitingInfo_.account_id_;
-			param.request_id_ = invitingInfo_.request_id_;
-			param.offline_enabled_ = invitingInfo_.offline_enabled_;
-
-			Signaling::CancelInvite(param, nullptr);
-		}
-
-
-		if (timeOutHurryUp) { //À´×Ô³¬Ê±µÄ×Ô¶¯¹Ò¶Ï,²»ĞèÒª·¢ËÍNetCallMsg
-			timeOutHurryUp = false;
-		}
-		else {
-			handleNetCallMsg(nim_comp::kNIMNetCallStatusCanceled);
-		}
-
-		//Ö÷¶¯·½µ÷ÓÃ¹Ò¶Ï
-		if (isMasterInvited)
-		{
-			closeChannelInternal(invitingInfo_.channel_id_, cb);
-		} //±»¶¯·½µ÷ÓÃ¹Ò¶Ï
-		else
-		{
-			closeChannelInternal(invitedInfo_.channel_info_.channel_id_, cb);
-		}
-	}
-
-	//Ö÷¶¯·½È¡Ïûºô½Ğ
-	void AvChatComponent::cancel(AvChatComponentOptCb cb)
-	{
-		if (isMasterInvited && status_ == calling)
-		{
-			{
-				SignalingCancelInviteParam param;
-				param.channel_id_ = invitingInfo_.channel_id_;
-				param.account_id_ = invitingInfo_.account_id_;
-				param.request_id_ = invitingInfo_.request_id_;
-				param.offline_enabled_ = invitingInfo_.offline_enabled_;
-
-				Signaling::CancelInvite(param, nullptr);
-			}
-			rtcEngine_->leaveChannel();
-			closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, cb);
-		}
-		else
-		{
-			QLOG_ERR(L"cancel error");
-			if (cb)
-				cb(0);
-		}
-	}
-	void AvChatComponent::leave(AvChatComponentOptCb cb)
-	{
-		rtcEngine_->leaveChannel();
-		if (!joined_channel_id_.empty())
-		{
-			nim::SignalingLeaveParam param;
-			param.channel_id_ = joined_channel_id_;
-			param.offline_enabled_ = true;
-			Signaling::Leave(param, nbase::Bind(&AvChatComponent::signalingLeaveCb, this, _1, _2, cb));
-		}
-		else
-		{
-			QLOG_ERR(L"leave error: no joined channel exist.");
-			if (cb)
-				cb(0);
-		}
-	}
-	void AvChatComponent::setupLocalView(nertc::NERtcVideoCanvas* canvas)
-	{
-		assert(rtcEngine_ && canvas);
-		int ret = rtcEngine_->setupLocalVideoCanvas(canvas);
-		QLOG_APP(L"setupLocalView ret: {0}") << ret;
-	}
-	void AvChatComponent::setupRemoteView(nertc::NERtcVideoCanvas* canvas, const std::string& userId)
-	{
-		assert(rtcEngine_);
-		int64_t uid = channelMembers_[userId];
-		int ret = rtcEngine_->setupRemoteVideoCanvas(uid, canvas);
-		QLOG_APP(L"setupLocalView ret: {0}") << ret;
-		//ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, true);
-
-		QLOG_APP(L"subscribeRemoteVideoStream ret: {0}") << ret;
-	}
-
-	void AvChatComponent::switchCamera()
-	{
-		//PCÔİ²»ÊµÏÖÉãÏñÍ·ÇĞ»»
-		assert(false, "swtich camera is not supported on PC");
-	}
-	void AvChatComponent::enableLocalVideo(bool enable)
-	{
-		assert(rtcEngine_);
-		int ret = rtcEngine_->enableLocalVideo(enable);
-		QLOG_APP(L"enableLocalVideo ret: {0}") << ret;
-	}
-	//ÒôÆµÊäÈëÉè±¸¾²Òô
-	void AvChatComponent::muteLocalAudio(bool mute)
-	{
-		assert(rtcEngine_); 
-		if (mute)
-		{
-			QLOG_APP(L"muteLocalAudio ");
-		}
-		int ret = rtcEngine_->enableLocalAudio(!mute);
-		QLOG_APP(L"enableLocalAudio ret: {0}") << ret;
-	}
-	void AvChatComponent::enableAudioPlayout(bool enable)
-	{
-		rtcEngine_->muteLocalAudioStream(!enable);
-	}
-
-	void AvChatComponent::regEventHandler(std::shared_ptr<IAvChatComponentEventHandler> compEventHandler)
-	{
-		compEventHandler_.reset();
-		compEventHandler_ = compEventHandler;
-	}
-
-	void AvChatComponent::startVideoPreview(bool start/* = true*/)
-	{
-		if (start)
-			rtcEngine_->enableLocalVideo(true);
-		start ? rtcEngine_->startVideoPreview() : rtcEngine_->stopVideoPreview();
-	}
-
-	void AvChatComponent::switchCallType(std::string user_id, int call_type)
-	{
-		if (rtcEngine_ != nullptr)
-		{
-			int64_t uid = channelMembers_[user_id];
-			int ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, false);
-			//ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
-
-			QLOG_APP(L"subscribeRemoteVideoStream ret: {0}") << ret;
-
-			ret = rtcEngine_->muteLocalVideoStream(true);
-			//ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
-
-			QLOG_APP(L"enableVideoToAudio ret: {0}") << ret;
-
-			Json::Value values;
-			values["cid"] = 2; //cid = 2±íÊ¾¿ØÖÆĞÅÁî£¬±íÊ¾´¥·¢±»½Ğ·½ÊÓÆµ×ªÒôÆµ
-			values["type"] = kAvChatAudio; ///***ÒôÆµÆµµÀ* /AUDIO(1), ÊÓÆµÆµµÀVIDEO(2) */
-			nim::SignalingControlParam controlParam;
-			controlParam.channel_id_ = joined_channel_id_.empty()? AvChatBusinessWrapper::getChannelId(): joined_channel_id_;
-			controlParam.account_id_ = user_id;
-			controlParam.custom_info_ = values.toStyledString();
-
-			auto controlCb = nbase::Bind(&AvChatComponent::signalingControlCb,
-				this,
-				std::placeholders::_1,
-				std::placeholders::_2);
-			//¿ØÖÆĞÅÁî
-			Signaling::Control(controlParam, controlCb);
-
-		}
-	}
-
-	void AvChatComponent::startAudioDeviceLoopbackTest(int interval)
-	{
-		nertc::IAudioDeviceManager* audio_device_manager = nullptr;
-		rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
-
-		if (audio_device_manager)
-		{
-			audio_device_manager->startAudioDeviceLoopbackTest(interval);
-		}
-	}
-
-	void AvChatComponent::stopAudioDeviceLoopbackTest()
-	{
-		nertc::IAudioDeviceManager* audio_device_manager = nullptr;
-		rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
-		if (audio_device_manager)
-		{
-			audio_device_manager->stopAudioDeviceLoopbackTest();
-		}
-	}
-
-	void AvChatComponent::requestTokenValue(int64_t uid)
-	{
-		stoken_ = "xyz";
-		if (isUseRtcSafeMode) {
-			//int64_t uid;
-			//uid = channelMembers_[senderAccid];
-			getTokenService_(uid, [=](const std::string token) {
-				stoken_ = token;
-			});
-		}
-	}
-
-	void AvChatComponent::setVideoQuality(nertc::NERtcVideoProfileType type)
-	{
-		nertc::NERtcVideoConfig config;
-		config.max_profile = type;
-		config.framerate = nertc::kNERtcVideoFramerateFps_15;
-		config.crop_mode_ = nertc::kNERtcVideoCropModeDefault;
-		rtcEngine_->setVideoConfig(config);
-	}
-
-	void AvChatComponent::setAudioMute(std::string user_id, bool bMute) {
-		if (rtcEngine_) {
-			int64_t uid = channelMembers_[user_id];
-			rtcEngine_->subscribeRemoteAudioStream(uid, bMute);
-		}
-	}
-
-	void AvChatComponent::closeChannelInternal(const std::string& channelId, AvChatComponentOptCb cb)
-	{
-		QLOG_APP(L"closeChannelInternal£¬ channelId: {0}")<< channelId;
-		SignalingCloseParam param;
-		param.channel_id_ = channelId;
-		param.offline_enabled_ = true;
-		auto closeCb = nbase::Bind(&AvChatComponent::signalingCloseCb, this, _1, _2, cb);
-		Signaling::SignalingClose(param, closeCb);
-		isMasterInvited = false;
-	}
-	void AvChatComponent::signalingInviteCb(int errCode, std::shared_ptr<SignalingResParam> res_param, AvChatComponentOptCb cb)
-	{
-		//4,inviteÍê±Ïºó£¬call¹ı³Ì½áÊø£¬µ÷ÓÃcb·µ»Ø½á¹û
-		QLOG_APP(L"signalingInviteCb error: errCode:{0}") << errCode;
-		if (errCode != 200)
-		{
-			//closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, cb);
-		}
-		status_ = calling;
-		
-		if (cb) 
-			cb(errCode);
-	}
-	void AvChatComponent::signalingAcceptCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb)
-	{
-		SignalingAcceptResParam* res = (SignalingAcceptResParam*)res_param.get();
-		QLOG_APP(L"signalingAcceptCb, errCOde: {0}") << errCode;
-
-		if (errCode == 200)
-		{
-			updateChannelMembers(res);
-			auto uid = getUid(res->info_.members_, invitedInfo_.to_account_id_);
-			//int ret = rtcEngine_->joinChannel("", res->info_.channel_info_.channel_id_.c_str(), uid);
-			
-			to_account_id_ = uid;
-			joined_channel_id_ = res->info_.channel_info_.channel_id_;
-			status_ = inCall;
-			if (versionCompare(version_, "1.1.0") < 0)
-			{
-				requestTokenValue(uid);
-			}
-			else {
-				requestTokenValue(uid);
-				while ("xyz" == stoken_)
-				{
-					std::this_thread::yield();
-				}
-				int type = res->info_.channel_info_.channel_type_;
-				if (type == kAvChatAudio) {
-					enableLocalVideo(false);
-				}
-				else if (type == kAvChatVideo) {
-					enableLocalVideo(true);
-				}
-				std::string strToken = "";
-				if (isUseRtcSafeMode) strToken = stoken_;
-				QLOG_APP(L"handleControl: strToken = {0}") << strToken;
-				int ret = rtcEngine_->joinChannel(strToken.c_str(), channelName_.c_str(), uid);
-				if (ret != 0)
-				{
-					QLOG_ERR(L"nertc join channel failed: {0}") << ret;
-					if (cb)
-						cb(errCode);
-					return;
-				}
-			}
-		}
-
-		if (cb)
-			cb(errCode);
-	}
-
-	void AvChatComponent::signalingRejectCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb)
-	{
-		QLOG_APP(L"signalingAcceptCb, errCOde: {0}") << errCode;
-		if (cb) 
-			cb(errCode);
-
-		status_ = idle;
-	}
-	void AvChatComponent::signalingCloseCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb)
-	{
-		QLOG_APP(L"signalingCloseCb: errCode: {0}") << errCode;
-		if (errCode == 200)
-		{
-			createdChannelInfo_ = SignalingCreateResParam();
-			joined_channel_id_.clear();
-		}
-		else
-		{
-			QLOG_ERR(L"signalingCloseCb: errCode: {0}") << errCode;
-		}
-		status_ = idle;
-		if (cb)
-			cb(errCode);
-	}
-	void AvChatComponent::signalingLeaveCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb)
-	{
-		QLOG_APP(L"signalingLeaveCb errCode: {0}") << errCode;
-		if (errCode == 200)
-		{
-			joined_channel_id_.clear();
-			status_ = idle;
-		}
-		if (cb)
-			cb(errCode);
-	}
-	void AvChatComponent::updateChannelMembers(const SignalingJoinResParam* res)
-	{
-		for (auto memInfo : res->info_.members_)
-		{
-			channelMembers_[memInfo.account_id_] = memInfo.uid_;
-		}
-	}
-	std::string AvChatComponent::getAccid(int64_t uid)
-	{
-		for (auto it : channelMembers_)
-		{
-			if (it.second == uid)
-				return it.first;
-		}
-		QLOG_ERR(L"Get accid failed, uid: {0}") << uid;
-		return "";
-	}
-	void AvChatComponent::signalingJoinCb(int errCode, std::shared_ptr<SignalingResParam> res_param, AvChatComponentOptCb cb, const std::string& channelId)
-	{
-		if (errCode != 200)
-		{
-			QLOG_ERR(L"SignalingOptCallback error: errCode:{0}") << errCode;
-			closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, nullptr);
-			if (cb) cb(errCode);
-			return;
-		}
-		updateChannelMembers((SignalingJoinResParam*)res_param.get());
-
-		int64_t uid;
-		uid = channelMembers_[senderAccid];
-		requestTokenValue(uid);
-		Json::Value values;
-		//TODO PCÔİ²»ÊµÏÖ¶àÈËÍ¨»°£¬¹Ê´Ë´¦²»´¦ÀíchannelÖĞµÄÆäËûÈËµÄĞÅÏ¢
-		//µ¥ÈËÍ¨»°²»´«kAvChatChannelMembers
-		Json::Reader().parse("[]", values[kAvChatChannelMembers]);
-		values[kAvChatCallType] = (int)kAvChatP2P;
-		values[kAvChatCallVersion] = RTC_COMPONENT_VER;
-		channelName_ = std::string(channelId).append("|").append("0").append("|").append(std::to_string(uid));
-		values[kAvChatCallChannelName] = channelName_;
-		Json::FastWriter fw;
-		SignalingInviteParam inviteParam;
-		inviteParam.account_id_ = toAccid;
-		inviteParam.channel_id_ = channelId;
-		inviteParam.request_id_ = channelId;
-		inviteParam.custom_info_ = fw.write(values);
-
-		auto inviteCb = nbase::Bind(&AvChatComponent::signalingInviteCb, this, _1, _2, cb);
-		QLOG_APP(L"Signaling::Invite, callType: {0}, version: {1}, channelName: {2}") << (int)kAvChatP2P << RTC_COMPONENT_VER << channelName_;
-		//3,ĞÅÁî invite
-		Signaling::Invite(inviteParam, inviteCb);
-		status_ = calling;
-		invitingInfo_ = inviteParam;
-	}
-
-	void AvChatComponent::signalingCreateCb(int errCode, std::shared_ptr<SignalingResParam> res_param, AvChatComponentOptCb cb)
-	{
-		if (errCode != 200)
-		{
-			QLOG_ERR(L"SignalingOptCallback error: errCode:{0}") << errCode;
-			if (cb) cb(errCode);
-			return;
-		}
-		assert(res_param);
-
-		SignalingCreateResParam* res = (SignalingCreateResParam*)res_param.get();
-		createdChannelInfo_ = *res;
-
-		nim::SignalingJoinParam joinParam;
-		joinParam.channel_id_ = res->channel_info_.channel_id_;
-		joinParam.uid_ = 0;//0£¬·şÎñÆ÷»á×Ô¶¯·ÖÅä
-		joinParam.offline_enabled_ = true;
-
-		auto joinCb = nbase::Bind(&AvChatComponent::signalingJoinCb,
-							this,
-							std::placeholders::_1, 
-							std::placeholders::_2,
-							cb,
-							res->channel_info_.channel_id_);
-		//2.ĞÅÁîJoin
-		Signaling::Join(joinParam, joinCb);
-	}
-
-	void AvChatComponent::signalingControlCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param)
-	{
-		if (errCode != 200)
-		{
-			QLOG_ERR(L"SignalingOptCallback error: errCode:{0}") << errCode;
-			if (optCb_) optCb_(errCode);
-			return;
-		}
-	}
-
-	void AvChatComponent::handleControl(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
-	{
-		Json::Value values;
-		Json::Reader reader;
-		std::string info = notifyInfo->custom_info_;
-		int type = notifyInfo->channel_info_.channel_type_;
-		if (!reader.parse(info, values) || !values.isObject())
-		{
-			QLOG_ERR(L"parse custom info failed: {0}");
-			return;
-		}
-
-		if (values["cid"].isInt()) {
-			int value = values["cid"].asInt();
-			//std::string sValue = values["cid"].asString();
-			if (value == 1) {
-				if (notifyInfo) {
-					while ("xyz" == stoken_)
-					{
-						std::this_thread::yield();
-					}
-					if (type == kAvChatAudio) {
-						enableLocalVideo(false);
-					}
-					else if (type == kAvChatVideo) {
-						enableLocalVideo(true);
-					}
-					std::string strToken = "";
-					if (isUseRtcSafeMode) strToken = stoken_;
-					QLOG_APP(L"handleControl: strToken: {0}") << strToken;
-					int ret = rtcEngine_->joinChannel(strToken.c_str(), notifyInfo->channel_info_.channel_id_.c_str(), to_account_id_);
-					if (ret != 0)
-					{
-						QLOG_ERR(L"nertc join channel failed: {0}") << ret;
-						//if (cb) cb(ret);
-						return;
-					}
-				}
-			}
-			if (value == 2) {
-				compEventHandler_.lock()->OnVideoToAudio(); //±»½Ğ·½ÇĞ»»³ÉÒôÆµÄ£Ê½
-			}
-		}
-	}
-
-	// ±»½ĞÊÕµ½INVITE£¬ÏÈ»ñÈ¡token£¬²¢ÅĞ¶Ï°æ±¾ºÅ¡£Èç¹ûÊÇÀÏ°æ±¾·¢Æğºô½Ğ£¬²¢µÈ´ı¿ØÖÆĞÅÁî£¬·ñÔòÖ±½Ó¼ÓÈëchannelName£¬¶ø²»ÊÇÔ­À´µÄchannelId¡£
-	void AvChatComponent::handleInvited(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
-	{
-		//Å×³öonInviteÊÂ¼ş£¬¸üĞÂUI¡¢ÏìÓ¦ÓÃ»§²Ù×÷
-		if (compEventHandler_.expired())
-			return;
-
-		bool isFromGroup = false;
-		std::vector<std::string> members;
-		version_.clear();
-		channelName_.clear();
-		if (!parseCustomInfo(notifyInfo->custom_info_, isFromGroup, members, version_, channelName_))
-		{
-			assert(false);
-			return;
-		}
-		QLOG_APP(L"handleInvited, from_account_id: {0}, version: {1}, channelName: {2}") << notifyInfo->from_account_id_ << version_ << channelName_;
-		SignalingNotifyInfoInvite* inviteInfo = (SignalingNotifyInfoInvite*)notifyInfo.get();
-
-		//Ã¦Ïß´¦Àí
-		if (status_ != idle || isFromGroup)
-		{
-			//ĞÅÁîreject
-			SignalingRejectParam param;
-			param.account_id_ = inviteInfo->from_account_id_;
-			param.channel_id_ = inviteInfo->channel_info_.channel_id_;
-			param.request_id_ = inviteInfo->request_id_;
-			param.custom_info_ = "601";
-			param.offline_enabled_ = true;
-
-			Signaling::Reject(param, [isFromGroup](int errCode, std::shared_ptr<nim::SignalingResParam> res_param) {
-				if (!isFromGroup) {
-					QLOG_APP(L"handle busy, Signaling::Reject return: {0}") << errCode;
-				}
-				else {
-					QLOG_APP(L"handle isFromGroup is true, Signaling::Reject return: {0}") << errCode;
-				}
-				});
-			//Ã¦Ïß·½(±»½Ğ·½)·¢ËÍ»°µ¥
-			SendNetCallMsg(inviteInfo->from_account_id_,
-				param.channel_id_,
-				inviteInfo->channel_info_.channel_type_,
-				isFromGroup ? (int)nim_comp::kNIMNetCallStatusRejected : (int)nim_comp::kNIMNetCallStatusBusy,
-				std::vector<std::string>{inviteInfo->from_account_id_, nim::Client::GetCurrentUserAccount()},
-				std::vector<int>{0, 0}
-			);
-			return;
-		}
-
-		//½«ÊÕµ½ÑûÇëºóµÄÆµµÀĞÅÏ¢¿½±´µ½ÄÚ²¿£¬¹©acceptÊ¹ÓÃ
-		invitedInfo_ = *inviteInfo;
-		status_ = called;
-		int type = inviteInfo->channel_info_.channel_type_;
-		compEventHandler_.lock()->onInvited(notifyInfo->from_account_id_,
-			members,
-			isFromGroup,
-			AVCHAT_CALL_TYPE(type)
-		);
-	}
-
-	void AvChatComponent::handleOtherClientAccepted(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
-	{
-		//±»½Ğ·½µÄÍ¨»°ÑûÇëÔÚÆäËû¶Ë±»½ÓÌı£¬Í¨ÖªÉÏ²ã¹Ø±Õ½çÃæ¡¢²»¹Øchannel
-		compEventHandler_.lock()->onOtherClientAccept();
-		status_ = idle;
-	}
-
-	// ºô½Ğ·½ÊÕµ½acceptÖ®ºó£¬·¢Æğ·½×ÔÉí RTC Join¡£³É¹¦ºó·şÎñ¶Ë»á¿ªÊ¼½øĞĞÍ¨»°¼ÆÊ±
-	// ºô½Ğ·½ÊÕµ½ACCEPT£¬½øÈëchannelName¶ø²»ÊÇÔ­À´µÄchannelId£¬¼ÓÈë³É¹¦ºóÅĞ¶Ï±»½Ğ·½°æ±¾¡£Èç¹ûÊÇÀÏ°æ±¾Ôò·¢ËÍCONTROL
-	void AvChatComponent::handleAccepted(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
-	{
-		SignalingNotifyInfoAccept* acceptedInfo = (SignalingNotifyInfoAccept*)notifyInfo.get();
-		//SignalingNotifyInfoAccept tempacceptedInfo = *acceptedInfo;
-		QLOG_APP(L"handleAccepted, from_account_id_: {0}, senderAccid: {1}") << acceptedInfo->from_account_id_ << senderAccid;
-		if (acceptedInfo->to_account_id_ != senderAccid)
-			return;
-	
-		bool isFromGroup = false;
-		std::vector<std::string> members;
-		version_.clear();
-		if (!acceptedInfo->custom_info_.empty())
-		{
-			std::string channelNameTmp;
-			if (!parseCustomInfo(acceptedInfo->custom_info_, isFromGroup, members, version_, channelNameTmp))
-			{
-				assert(false);
-				return;
-			}
-		}
-		QLOG_APP(L"handleAccepted, version_: {0}") << version_;
-
-		requestTokenValue(channelMembers_[senderAccid]);
-		while ("xyz" == stoken_)
-		{
-			std::this_thread::yield();
-		}
-
-		if (callType == kAvChatAudio) {
-			enableLocalVideo(false);
-		}
-		else if (callType == kAvChatVideo) {
-			enableLocalVideo(true);
-		}
-		//auto selfUid = nim::Client::GetCurrentUserAccount();
-		std::string strToken = "";
-		if (isUseRtcSafeMode) strToken = stoken_;
-		QLOG_APP(L"handleAccepted: strToken: {0}") << strToken;
-		int ret = rtcEngine_->joinChannel(strToken.c_str(), versionCompare(version_, "1.1.0") >= 0 ? channelName_.c_str() : acceptedInfo->channel_info_.channel_id_.c_str(), channelMembers_[senderAccid]);
-
-		//rtcEngine_->enableLocalAudio(true);
-		//rtcEngine_->(true);
-		status_ = inCall;
-		compEventHandler_.lock()->onUserAccept(acceptedInfo->from_account_id_);
-		from_account_id_ = acceptedInfo->from_account_id_;
-
-		if (ret != 0)
-		{
-			QLOG_ERR(L"nertc join channel failed: {0}") << ret;
-			//if (cb) cb(ret);
-			return;
-		}
-	}
-	
-	//´¦ÀíÒì³£Çé¿öÏÂµÄ»°µ¥
-	void AvChatComponent::handleNetCallMsg(nim_comp::NIMNetCallStatus why)
-	{
-		if (status_ == inCall) return; //¶ÔÓÚÒÑ¾­½¨Á¢Á¬½ÓÍ¨»°Ö®ºóµÄ¹Ò¶Ï£¬²»ĞèÒª·¢ËÍ»°µ¥£¬ÓÉ·şÎñÆ÷·¢ËÍ
-		if (isMasterInvited) {
-			std::string channel_id = AvChatBusinessWrapper::getChannelId();
-			std::string session_id = toAccid;
-			bool is_video_mode_ = callType == AVCHAT_CALL_TYPE::kAvChatVideo ? true : false;
-			SendNetCallMsg(session_id,
-				channel_id,
-				is_video_mode_ ? 2 : 1,
-				(int)why,
-				std::vector<std::string>{session_id, nim::Client::GetCurrentUserAccount()},
-				std::vector<int>{0, 0}
-			);
-			
-		}
-	}
-
-	void AvChatComponent::handleOtherClientRejected(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
-	{
-		//Ö÷½Ğ·½µÄÍ¨»°ÑûÇëÔÚÆäËû¶Ë±»¾Ü½Ó£¬Í¨ÖªÉÏ²ã¹Ø±Õ½çÃæ¡¢²»¹Øchannel
-		compEventHandler_.lock()->onOtherClientReject();
-		status_ = idle;
-	}
-
-	void AvChatComponent::handleRejected(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
-	{
-		SignalingNotifyInfoReject* rejectedInfo = (SignalingNotifyInfoReject*)notifyInfo.get();
-		QLOG_APP(L"handleRejected, from_account_id_: {0}") << rejectedInfo->from_account_id_;
-		if (rejectedInfo->to_account_id_ != senderAccid)
-			return;
-
-		status_ = idle;
-		//±»½Ğ·½Ã¦Ïß»á×Ô¶¯reject¡¢ÈûÈë601×÷Îª±ê¼Ç£¬²¢·¢ËÍÃ¦Ïß»°µ¥£¬Ö÷½Ğ·½ÎŞĞè·¢ËÍ»°µ¥£¬Ò²ÎŞĞèµ÷ÓÃhangup£¨hangupÊ±»á·¢ËÍ»°µ¥£©
-		if (rejectedInfo->custom_info_ == "601")
-		{
-			//ÉÏ²ã´¦ÀíonUserBusyÊÂ¼şÊ±
-			compEventHandler_.lock()->onUserBusy(rejectedInfo->from_account_id_);
-			closeChannelInternal(rejectedInfo->channel_info_.channel_id_, nullptr);
-		}
-		else
-			compEventHandler_.lock()->onUserReject(rejectedInfo->from_account_id_);
-	}
-
-	//ÆµµÀÖĞÓĞ³ÉÔ±¼ÓÈë£¬ÓÃ»§Î¬»¤³ÉÔ±ÁĞ±í
-	void AvChatComponent::handleJoin(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
-	{
-		SignalingNotifyInfoJoin* joinInfo = (SignalingNotifyInfoJoin*)notifyInfo.get();
-		QLOG_APP(L"handleJoin: accid: {0}, uid: {1}") << joinInfo->member_.account_id_ << joinInfo->member_.uid_;
-		channelMembers_[joinInfo->member_.account_id_] = joinInfo->member_.uid_;
-
-		//ÓĞ×ÔÉíÒÔÍâµÄÈË¼ÓÈëÆµµÀ
-		if (joinInfo->member_.account_id_ != senderAccid)
-		{
-			//status_ = calling;
-			QLOG_APP(L"handleJoin, onUserEnter, userID: {0}") << joinInfo->member_.account_id_;
-			compEventHandler_.lock()->onUserEnter(joinInfo->member_.account_id_);
-
-			if (isMasterInvited && versionCompare(version_, "1.1.0") < 0) {
-				Json::Value values;
-				values["cid"] = 1;  //cid = 1±íÊ¾¿ØÖÆĞÅÁî£¬µ÷ÕûcallÁ÷³Ì£¬ĞŞ¸´»°µ¥Ö÷½Ğ±»½Ğ·½Ë³Ğò²»¶Ôbug
-				values["type"] = 0;
-				nim::SignalingControlParam controlParam;
-				controlParam.channel_id_ = joinInfo->channel_info_.channel_id_;
-				controlParam.account_id_ = joinInfo->member_.account_id_;
-				controlParam.custom_info_ = values.toStyledString();
-
-				auto controlCb = nbase::Bind(&AvChatComponent::signalingControlCb,
-					this,
-					std::placeholders::_1,
-					std::placeholders::_2);
-				//·¢ËÍ¿ØÖÆĞÅÁî£¬¸æÖª¶Ô·½½øĞĞrtcJoin
-				Signaling::Control(controlParam, controlCb);
-			}
-		}
-	}
-
-	void AvChatComponent::handleLeave(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
-	{
-		SignalingNotifyInfoLeave* leaveInfo = (SignalingNotifyInfoLeave*)notifyInfo.get(); 
-		QLOG_APP(L"handleLeave, from_account_id_: {0}, senderAccid: {1}") << leaveInfo->from_account_id_ << senderAccid;
-
-		compEventHandler_.lock()->onUserLeave(leaveInfo->from_account_id_);
-	}
-	void AvChatComponent::handleClose(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
-	{
-		SignalingNotifyInfoClose* closeInfo = (SignalingNotifyInfoClose*)notifyInfo.get();
-		QLOG_APP(L"handleClose, from_account_id_: {0}, senderAccid: {1}") << closeInfo->from_account_id_ << senderAccid;
-		
-		status_ = idle;
-		compEventHandler_.lock()->onCallEnd();
-		
-	}
-	void AvChatComponent::handleCancelInvite(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
-	{
-		SignalingNotifyInfoCancelInvite* cancelInfo = (SignalingNotifyInfoCancelInvite*)notifyInfo.get();
-		
-		compEventHandler_.lock()->onUserCancel(cancelInfo->from_account_id_);
-		status_ = idle;
-	}
-	void AvChatComponent::signalingNotifyCb(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
-	{
-		switch (notifyInfo->event_type_)
-		{
-		case nim::kNIMSignalingEventTypeInvite:
-			handleInvited(notifyInfo);
-			break;
-		case nim::kNIMSignalingEventTypeAccept:
-			handleAccepted(notifyInfo);
-			break;
-		case nim::kNIMSignalingEventTypeJoin:
-			handleJoin(notifyInfo);
-			break;
-		case nim::kNIMSignalingEventTypeReject:
-			handleRejected(notifyInfo);
-			break;
-		case nim::kNIMSignalingEventTypeCancelInvite:
-			handleCancelInvite(notifyInfo);
-			break;
-		case nim::kNIMSignalingEventTypeLeave:
-			handleLeave(notifyInfo);
-			break;
-		case nim::kNIMSignalingEventTypeClose:
-			handleClose(notifyInfo);
-			break;
-		case nim::kNIMSignalingEventTypeCtrl:
-			handleControl(notifyInfo);
-			break;
-		default:
-			break;
-		}
-	}
-
-	void AvChatComponent::signalingMutilClientSyncCb(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
-	{
-		QLOG_APP(L"MutilClientSyncCb");
-		switch (notifyInfo->event_type_)
-		{
-		case nim::kNIMSignalingEventTypeAccept:
-			handleOtherClientAccepted(notifyInfo);
-			break;
-		case nim::kNIMSignalingEventTypeReject:
-			handleOtherClientRejected(notifyInfo);
-			break;
-		default:
-			QLOG_APP(L"MutilClientSyncCb event_type: {0}")<< notifyInfo->event_type_;
-			break;
-		}
-	}
-	void AvChatComponent::signalingOfflineNotifyCb(std::list<std::shared_ptr<nim::SignalingNotifyInfo>> notifyInfo)
-	{
-		std::list<std::shared_ptr<SignalingNotifyInfo>> notifyInfoList = notifyInfo;
-		std::shared_ptr <nim::SignalingNotifyInfo> inviteInfo = nullptr;
-		std::set<std::string> cancelSet;
-		for (std::shared_ptr<SignalingNotifyInfo> info : notifyInfoList) {
-			if (info != nullptr) {
-				if (info->event_type_ == kNIMSignalingEventTypeInvite) {
-					if (!inviteInfo || info->timestamp_ > inviteInfo->timestamp_) {
-						inviteInfo = info;
-					}
-				}
-				else if (info->event_type_ == kNIMSignalingEventTypeCancelInvite) {
-					nim::SignalingNotifyInfoCancelInvite* cancelInfo = (nim::SignalingNotifyInfoCancelInvite*)(&(*info));
-					cancelSet.insert(cancelInfo->request_id_);
-				}
-			}
-		
-		}
-	
-		nim::SignalingNotifyInfoInvite* lastInviteInfo = (nim::SignalingNotifyInfoInvite*)(&(*inviteInfo));
-		if (lastInviteInfo != nullptr) {
-			int nCount = cancelSet.count(lastInviteInfo->request_id_);
-			//BOOL isValid = (inviteInfo != nullptr) && !inviteInfo->channel_info_.invalid_ && (cancelSet.find(lastInviteInfo->request_id_) == cancelSet.end());
-			BOOL isValid = (inviteInfo != nullptr) && (cancelSet.find(lastInviteInfo->request_id_) == cancelSet.end());
-			if (isValid) {
-				handleInvited(inviteInfo);
-			}
-		}
-	}
-	///////////////////////////////G2ÊÂ¼ş///////////////////////////////
-	void AvChatComponent::onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed) {
-		QLOG_APP(L"onJoinChannel");
-		//rtcEngine_->enableLocalAudio(true);
-	}
-	void AvChatComponent::onUserJoined(nertc::uid_t uid, const char* user_name)
-	{
-		QLOG_APP(L"onUserJoined");
-		int ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, true);
-		//ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
-
-		QLOG_APP(L"subscribeRemoteVideoStream ret: {0}") << ret;
-		
-		//¶Ô·½rtc JoinÖ®ºó ¶©ÔÄÊÓÆµÁ÷
-	}
-	void AvChatComponent::onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason)
-	{
-		if (reason != 4) {
-			compEventHandler_.lock()->onUserLeave(getAccid(uid));
-		}
-		else {
-			compEventHandler_.lock()->onUserDisconnect(getAccid(uid));
-		}
-	}
-	void AvChatComponent::onUserAudioStart(nertc::uid_t uid)
-	{
-		compEventHandler_.lock()->onAudioAvailable(getAccid(uid), true);
-	}
-	void AvChatComponent::onUserAudioStop(nertc::uid_t uid)
-	{
-		compEventHandler_.lock()->onAudioAvailable(getAccid(uid), false);
-	}
-
-	void AvChatComponent::onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile)
-	{
-		int ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, true);
-		compEventHandler_.lock()->onCameraAvailable(getAccid(uid), true);
-	}
-	void AvChatComponent::onUserVideoStop(nertc::uid_t uid)
-	{
-		compEventHandler_.lock()->onCameraAvailable(getAccid(uid), false);
-	}
-	void AvChatComponent::onDisconnect(nertc::NERtcErrorCode reason) {
-		compEventHandler_.lock()->onDisconnect(reason);
-	}
-
-	void AvChatComponent::onNetworkQuality(const nertc::NERtcNetworkQualityInfo *infos, unsigned int user_count)
-	{
-		std::map<uint64_t, nertc::NERtcNetworkQualityType> network_quality;
-		for (int i = 0; i < user_count; i++)
-		{
-			network_quality[infos[i].uid] = infos[i].tx_quality;
-		}
-		compEventHandler_.lock()->onUserNetworkQuality(network_quality);
-	}
-	///////////////////////////////////////////ÄÚ²¿·½·¨////////////////////////////////////////
-	//Signaling::SignalingNotifyCallback 
-	int64_t getUid(const std::list<SignalingMemberInfo>& list, const std::string& accid)
-	{
-		for (auto it : list)
-		{
-			if (it.account_id_ == accid)
-				return it.uid_;
-		}
-		assert(false);
-		return 0;
-	}
-
-	bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members, std::string& version, std::string& channelName)
-	{
-		version.clear();
-		channelName.clear();
-
-		Json::Value values;
-		Json::Reader reader;
-		if (!reader.parse(str, values) || !values.isObject())
-		{
-			QLOG_ERR(L"parse custom info failed: {0}") << str;
-			return false;
-		}
-		
-		isFromGroup = ((AVCHAT_MODULE_TYPE)values[kAvChatCallType].asBool() == kAvChatMulti);
-		if (values[kAvChatChannelMembers].isArray())
-		{
-			for (int i = 0; i < values[kAvChatChannelMembers].size(); i++)
-			{
-				members.push_back(values[kAvChatChannelMembers][i].asString());
-			}
-		}
-
-		if (values.isMember(kAvChatCallVersion))
-		{
-			version = values[kAvChatCallVersion].asString();
-		}
-
-		if (values.isMember(kAvChatCallChannelName))
-		{
-			channelName = values[kAvChatCallChannelName].asString();
-		}
-		
-		return true;
-	}
-
-	int versionCompare(const std::string& version1, const std::string& version2)
-	{
-		char* p1 = (char*)version1.data();
-		char* p2 = (char*)version2.data();
-		int v1 = 0, v2 = 0;
-		while (*p1 || *p2) {
-			v1 = v2 = 0;
-			if (*p1) v1 = atoi(p1);
-			if (*p2) v2 = atoi(p2);
-			if (v1 > v2) return 1;
-			if (v1 < v2) return -1;
-			while (*p1 && *p1 != '.') ++p1;
-			if (*p1 == '.') ++p1;
-			while (*p2 && *p2 != '.') ++p2;
-			if (*p2 == '.') ++p2;
-		}
-		return 0;
-	}
+    using Signaling = nim::Signaling;
+    using namespace nim;
+    using namespace std::placeholders;
+
+    const int iCallingTimeoutSeconds = 45;
+    bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members, std::string& version, std::string& channelName);
+    int64_t getUid(const std::list<SignalingMemberInfo>& list, const std::string& accid);
+    // 0ç›¸ç­‰ï¼Œ1å¤§äºï¼Œ-1å°äº
+    int versionCompare(const std::string& v1, const std::string& v2);
+
+    AvChatComponent::AvChatComponent()
+    {
+        isCameraOpen = true;
+        timeOutHurryUp = false;
+        isMasterInvited = false;
+        isUseRtcSafeMode = false;
+    }
+    AvChatComponent::~AvChatComponent()
+    {
+        if (rtcEngine_)
+        {
+            rtcEngine_->release();
+            destroyNERtcEngine((void*&)rtcEngine_);
+            rtcEngine_ = nullptr;
+        }
+    }
+
+    void AvChatComponent::release()
+    {
+        if (rtcEngine_)
+        {
+            QLOG_APP(L"AvChatComponent release");
+            rtcEngine_->release();
+            destroyNERtcEngine((void*&)rtcEngine_);
+            rtcEngine_ = nullptr;
+        }
+    }
+
+    void AvChatComponent::setupAppKey(const std::string& key, bool useRtcSafeMode)
+    {
+        appKey_ = key;
+        isUseRtcSafeMode = useRtcSafeMode;
+        //åˆ›å»ºå¹¶åˆå§‹åŒ–engineï¼›
+        assert(!rtcEngine_);
+        //rtcEngine_.reset((nertc::IRtcEngineEx*)createNERtcEngine());
+        rtcEngine_ = (nertc::IRtcEngineEx*)createNERtcEngine();
+        assert(rtcEngine_);
+
+        std::string logPath  = nbase::UTF16ToUTF8(nbase::win32::GetLocalAppDataDir().append(AVCHAT_LOG_DIR));
+
+        nertc::NERtcEngineContext context;
+        context.app_key = appKey_.c_str();
+        context.event_handler = this;
+        context.log_dir_path = logPath.c_str();//AVCHAT_LOG_DIR;
+        context.log_level = nertc::kNERtcLogLevelDebug;
+        context.log_file_max_size_KBytes = 0;
+        //context.log_dir_path = ""
+        int ret = rtcEngine_->initialize(context);
+        assert(ret == 0);
+        ret = rtcEngine_->setAudioProfile(nertc::kNERtcAudioProfileStandardExtend, nertc::kNERtcAudioScenarioSpeech);
+        if (0 != ret) {
+            QLOG_APP(L"setAudioProfile failed!");
+        }
+        Signaling::RegOnlineNotifyCb(nbase::Bind(&AvChatComponent::signalingNotifyCb, this, std::placeholders::_1));
+        Signaling::RegMutilClientSyncNotifyCb(nbase::Bind(&AvChatComponent::signalingMutilClientSyncCb, this, std::placeholders::_1));
+        Signaling::RegOfflineNotifyCb(nbase::Bind(&AvChatComponent::signalingOfflineNotifyCb, this, std::placeholders::_1));
+    }
+
+    int AvChatComponent::setRecordDeviceVolume(int value)
+    {
+        nertc::IAudioDeviceManager* audio_device_manager = nullptr;
+        rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
+        if (audio_device_manager)
+        {
+            int ret = audio_device_manager->adjustRecordingSignalVolume(value);
+            if (ret == 0)
+            {
+                compEventHandler_.lock()->onAudioVolumeChanged(value, true);
+            }
+            return ret;
+        }
+        return 1;
+    }
+    int AvChatComponent::setPlayoutDeviceVolume(int value)
+    {
+        nertc::IAudioDeviceManager* audio_device_manager = nullptr;
+        rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
+        if (audio_device_manager)
+        {
+            int ret = audio_device_manager->adjustPlaybackSignalVolume(value);
+            if (ret == 0)
+            {
+                QLOG_APP(L"setPlayoutDeviceVolume seccess");
+                compEventHandler_.lock()->onAudioVolumeChanged(value, false);
+            }
+            return ret;
+        }
+        return 1;
+    }
+    uint32_t AvChatComponent::getAudioVolumn(bool isRecord)
+    {
+        nertc::IAudioDeviceManager* audio_device_manager = nullptr;
+        rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
+        uint32_t volume = 0;
+        if (audio_device_manager)
+        {
+            isRecord ? audio_device_manager->getRecordDeviceVolume(&volume) 
+                : audio_device_manager->getPlayoutDeviceVolume(&volume);
+        }
+        return volume;
+    }
+    void AvChatComponent::getLocalDeviceList(
+        std::vector<std::wstring>* recordDevicesNames, 
+        std::vector<std::wstring>* recordDevicesIds, 
+        std::vector<std::wstring>* playoutDevicesNames, 
+        std::vector<std::wstring>* playoutDevicesIds, 
+        std::vector<std::wstring>* videoDeviceNames, 
+        std::vector<std::wstring>* videoDeviceIds )
+    {
+        nertc::IAudioDeviceManager* audio_device_manager = nullptr;
+        nertc::IVideoDeviceManager* video_device_manager = nullptr;
+        rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
+        rtcEngine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void**)&video_device_manager);
+
+        if (audio_device_manager)
+        {
+            nertc::IDeviceCollection* audio_record_collection = audio_device_manager->enumerateRecordDevices();
+            for (int i=0; i<audio_record_collection->getCount(); i++)
+            {
+                char device_name[kNERtcMaxDeviceNameLength]{ 0 };
+                char device_id[kNERtcMaxDeviceIDLength]{ 0 };
+                int ret = audio_record_collection->getDevice(i, device_name, device_id);
+                if (recordDevicesNames)
+                    recordDevicesNames->emplace_back(nbase::UTF8ToUTF16(device_name));
+                if (recordDevicesIds)
+                    recordDevicesIds->emplace_back(nbase::UTF8ToUTF16(device_id));
+            }
+
+            nertc::IDeviceCollection* audio_playout_collection = audio_device_manager->enumeratePlayoutDevices();
+            for (int i = 0; i <audio_playout_collection->getCount(); i++)
+            {
+                char device_name[kNERtcMaxDeviceNameLength]{ 0 };
+                char device_id[kNERtcMaxDeviceIDLength]{ 0 };
+                int ret = audio_playout_collection->getDevice(i, device_name, device_id);
+                if (playoutDevicesNames)
+                    playoutDevicesNames->emplace_back(nbase::UTF8ToUTF16(device_name));
+                if (playoutDevicesIds)
+                    playoutDevicesIds->emplace_back(nbase::UTF8ToUTF16(device_id));
+            }
+        }
+        if (video_device_manager)
+        {
+            nertc::IDeviceCollection* video_collection = video_device_manager->enumerateCaptureDevices();
+            for (int i = 0; i < video_collection->getCount(); i++)
+            {
+                char device_name[kNERtcMaxDeviceNameLength]{ 0 };
+                char device_id[kNERtcMaxDeviceIDLength]{ 0 };
+                int ret = video_collection->getDevice(i, device_name, device_id);
+                if (videoDeviceNames)
+                    videoDeviceNames->emplace_back(nbase::UTF8ToUTF16(device_name));
+                if (videoDeviceIds)
+                    videoDeviceIds->emplace_back(nbase::UTF8ToUTF16(device_id));
+            }
+        }
+    }
+    void AvChatComponent::setVideoDevice(const std::wstring& id)
+    {
+        nertc::IVideoDeviceManager* video_device_manager = nullptr;
+        rtcEngine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void**)&video_device_manager);
+        if (!video_device_manager)
+            return;
+        video_device_manager->setDevice(nbase::UTF16ToUTF8(id).c_str());
+    }
+
+    std::wstring AvChatComponent::getAudioDevice(bool isRecord)
+    {
+        nertc::IAudioDeviceManager* audio_device_manager = nullptr;
+        rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
+        if (!audio_device_manager)
+            return L"";
+
+        char device_id[kNERtcMaxDeviceIDLength] = { 0 };
+        isRecord ? audio_device_manager ->getRecordDevice(device_id)
+            : audio_device_manager->getPlayoutDevice(device_id);
+
+        return nbase::UTF8ToUTF16(device_id);
+    }
+    std::wstring AvChatComponent::getVideoDevice()
+    {
+        nertc::IVideoDeviceManager* video_device_manager = nullptr;
+        rtcEngine_->queryInterface(nertc::kNERtcIIDVideoDeviceManager, (void**)&video_device_manager);
+        if (!video_device_manager)
+            return L"";
+
+        char device_id[kNERtcMaxDeviceIDLength] = { 0 };
+        video_device_manager->getDevice(device_id);
+
+        return nbase::UTF8ToUTF16(device_id);
+    }
+
+    void AvChatComponent::setAudioDevice(const std::wstring& id, bool isRecord)
+    {
+        nertc::IAudioDeviceManager* audio_device_manager = nullptr;
+        rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
+
+        if (!audio_device_manager)
+            return;
+
+        isRecord ? audio_device_manager->setRecordDevice(nbase::UTF16ToUTF8(id).c_str())
+            : audio_device_manager->setPlayoutDevice(nbase::UTF16ToUTF8(id).c_str());
+    }
+
+    //ç™»å½•ç™»å‡ºä½¿ç”¨IM SDK
+    void AvChatComponent::login(const std::string& account, const std::string& token, AvChatComponentOptCb cb)
+    {
+
+    }
+    void AvChatComponent::logout(AvChatComponentOptCb cb)
+    {
+
+    }
+
+    // å‘¼å«æ–¹é¦–å…ˆå‘é€INVITEï¼Œæ‰©å±•å­—æ®µæºå¸¦è‡ªèº«ç‰ˆæœ¬å·(version)åŠåŠ¨æ€channelNameï¼Œå³<channelId> | 0 | <uid>ï¼Œå¹¶ç›´æ¥é¢„åŠ è½½tokenã€‚
+    // 0ä»£è¡¨1v1ï¼Œuidä¸ºä¿¡ä»¤æˆ¿é—´è¿”å›çš„ç”¨æˆ·uidï¼›1ä»£è¡¨groupå‘¼å«ï¼Œuidä¼ ç¾¤ç»„teamId
+    void AvChatComponent::call(const std::string& userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb)
+    {
+        channelMembers_.clear();
+        version_.clear();
+        channelName_.clear();
+        nim::SignalingCreateParam createParam;
+        createParam.channel_type_ = (nim::NIMSignalingType)type;
+        toAccid = userId;
+        callType = type;
+        optCb_ = cb;
+        senderAccid = nim::Client::GetCurrentUserAccount();
+        invitedInfo_ = SignalingNotifyInfoInvite();
+        createdChannelInfo_ = SignalingCreateResParam();
+        isMasterInvited = true; //ä¸»å«æ–¹æ ‡è®°true
+
+        //1,åˆ›å»ºchannel
+        auto createCb = nbase::Bind(&AvChatComponent::signalingCreateCb, this,  _1, _2, cb);
+        Signaling::SignalingCreate(createParam, createCb);
+        status_ = calling;
+        startDialWaitingTimer();
+        rtcEngine_->stopVideoPreview();
+        stopAudioDeviceLoopbackTest();
+    }
+    void AvChatComponent::onWaitingTimeout()
+    {
+        if (status_ == calling)
+        {
+            closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, nullptr);
+            compEventHandler_.lock()->onCallingTimeOut();
+        }
+        handleNetCallMsg(nim_comp::kNIMNetCallStatusTimeout);
+    }
+    void AvChatComponent::startDialWaitingTimer()
+    {
+        calling_timeout_timer_.Cancel();
+        StdClosure timer_cb = nbase::Bind([this]() {
+            if (status_ == calling)
+            {
+                //closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, nullptr);
+                timeOutHurryUp = true;
+                compEventHandler_.lock()->onCallingTimeOut();
+                handleNetCallMsg(nim_comp::kNIMNetCallStatusTimeout);
+            }
+            });
+        timer_cb = calling_timeout_timer_.ToWeakCallback(timer_cb);
+        nbase::ThreadManager::PostDelayedTask(timer_cb, nbase::TimeDelta::FromSeconds(iCallingTimeoutSeconds));
+    }
+
+    // è¢«å«æ–¹å‘é€ACCEPTï¼Œå¹¶æºå¸¦è‡ªå·±ç‰ˆæœ¬å·(version)
+    void AvChatComponent::accept(AvChatComponentOptCb cb)
+    {
+        //ä¿¡ä»¤acceptï¼ˆè‡ªåŠ¨joinï¼‰
+        SignalingAcceptParam param;
+        param.account_id_ = invitedInfo_.from_account_id_;
+        param.auto_join_ = true;
+        param.channel_id_ = invitedInfo_.channel_info_.channel_id_;
+        param.request_id_ = invitedInfo_.request_id_;
+        param.offline_enabled_ = true;
+        param.uid_ = 0;
+
+        Json::Value values;
+        //TODO PCæš‚ä¸å®ç°å¤šäººé€šè¯ï¼Œæ•…æ­¤å¤„ä¸å¤„ç†channelä¸­çš„å…¶ä»–äººçš„ä¿¡æ¯
+        //å•äººé€šè¯ä¸ä¼ kAvChatChannelMembers
+        Json::Reader().parse("[]", values[kAvChatChannelMembers]);
+        //values[kAvChatCallType] = (int)kAvChatP2P;
+        values[kAvChatCallVersion] = RTC_COMPONENT_VER;
+        Json::FastWriter fw;
+        param.accept_custom_info_ = fw.write(values);
+
+        //int ret = rtcEngine_->joinChannel("", param.channel_id_.c_str(), 0);
+        auto acceptCb = nbase::Bind(&AvChatComponent::signalingAcceptCb, this, _1, _2, cb);
+
+        QLOG_APP(L"accept, version: {0}") << RTC_COMPONENT_VER;
+        Signaling::Accept(param, acceptCb);
+    }
+
+    void AvChatComponent::reject(AvChatComponentOptCb cb)
+    {
+        //ä¿¡ä»¤reject
+        SignalingRejectParam param;
+        param.account_id_ = invitedInfo_.from_account_id_;
+        param.channel_id_ = invitedInfo_.channel_info_.channel_id_;
+        param.request_id_ = invitedInfo_.request_id_;
+        param.offline_enabled_ = true;
+
+        auto rejectCb = nbase::Bind(&AvChatComponent::signalingRejectCb, this, _1, _2, cb);
+        Signaling::Reject(param, rejectCb);
+
+        invitedInfo_ = SignalingNotifyInfoInvite();
+        handleNetCallMsg(nim_comp::kNIMNetCallStatusRejected);
+    }
+
+    void AvChatComponent::hangup(AvChatComponentOptCb cb)
+    {
+        rtcEngine_->leaveChannel();
+        if (status_ == idle) 
+        {
+            QLOG_APP(L"The AvChatComponent status is idle, discard hangup operation");
+            return;
+        }
+        if (status_ == calling && isMasterInvited)
+        {
+            SignalingCancelInviteParam param;
+            param.channel_id_ = invitingInfo_.channel_id_;
+            param.account_id_ = invitingInfo_.account_id_;
+            param.request_id_ = invitingInfo_.request_id_;
+            param.offline_enabled_ = invitingInfo_.offline_enabled_;
+
+            Signaling::CancelInvite(param, nullptr);
+        }
+
+
+        if (timeOutHurryUp) { //æ¥è‡ªè¶…æ—¶çš„è‡ªåŠ¨æŒ‚æ–­,ä¸éœ€è¦å‘é€NetCallMsg
+            timeOutHurryUp = false;
+        }
+        else {
+            handleNetCallMsg(nim_comp::kNIMNetCallStatusCanceled);
+        }
+
+        //ä¸»åŠ¨æ–¹è°ƒç”¨æŒ‚æ–­
+        if (isMasterInvited)
+        {
+            closeChannelInternal(invitingInfo_.channel_id_, cb);
+        } //è¢«åŠ¨æ–¹è°ƒç”¨æŒ‚æ–­
+        else
+        {
+            closeChannelInternal(invitedInfo_.channel_info_.channel_id_, cb);
+        }
+    }
+
+    //ä¸»åŠ¨æ–¹å–æ¶ˆå‘¼å«
+    void AvChatComponent::cancel(AvChatComponentOptCb cb)
+    {
+        if (isMasterInvited && status_ == calling)
+        {
+            {
+                SignalingCancelInviteParam param;
+                param.channel_id_ = invitingInfo_.channel_id_;
+                param.account_id_ = invitingInfo_.account_id_;
+                param.request_id_ = invitingInfo_.request_id_;
+                param.offline_enabled_ = invitingInfo_.offline_enabled_;
+
+                Signaling::CancelInvite(param, nullptr);
+            }
+            rtcEngine_->leaveChannel();
+            closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, cb);
+        }
+        else
+        {
+            QLOG_ERR(L"cancel error");
+            if (cb)
+                cb(0);
+        }
+    }
+    void AvChatComponent::leave(AvChatComponentOptCb cb)
+    {
+        rtcEngine_->leaveChannel();
+        if (!joined_channel_id_.empty())
+        {
+            nim::SignalingLeaveParam param;
+            param.channel_id_ = joined_channel_id_;
+            param.offline_enabled_ = true;
+            Signaling::Leave(param, nbase::Bind(&AvChatComponent::signalingLeaveCb, this, _1, _2, cb));
+        }
+        else
+        {
+            QLOG_ERR(L"leave error: no joined channel exist.");
+            if (cb)
+                cb(0);
+        }
+    }
+    void AvChatComponent::setupLocalView(nertc::NERtcVideoCanvas* canvas)
+    {
+        assert(rtcEngine_ && canvas);
+        int ret = rtcEngine_->setupLocalVideoCanvas(canvas);
+        QLOG_APP(L"setupLocalView ret: {0}") << ret;
+    }
+    void AvChatComponent::setupRemoteView(nertc::NERtcVideoCanvas* canvas, const std::string& userId)
+    {
+        assert(rtcEngine_);
+        int64_t uid = channelMembers_[userId];
+        int ret = rtcEngine_->setupRemoteVideoCanvas(uid, canvas);
+        QLOG_APP(L"setupLocalView ret: {0}") << ret;
+        //ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, true);
+
+        QLOG_APP(L"subscribeRemoteVideoStream ret: {0}") << ret;
+    }
+
+    void AvChatComponent::switchCamera()
+    {
+        //PCæš‚ä¸å®ç°æ‘„åƒå¤´åˆ‡æ¢
+        assert(false, "swtich camera is not supported on PC");
+    }
+    void AvChatComponent::enableLocalVideo(bool enable)
+    {
+        assert(rtcEngine_);
+        int ret = rtcEngine_->enableLocalVideo(enable);
+        QLOG_APP(L"enableLocalVideo ret: {0}") << ret;
+    }
+    //éŸ³é¢‘è¾“å…¥è®¾å¤‡é™éŸ³
+    void AvChatComponent::muteLocalAudio(bool mute)
+    {
+        assert(rtcEngine_); 
+        if (mute)
+        {
+            QLOG_APP(L"muteLocalAudio ");
+        }
+        int ret = rtcEngine_->enableLocalAudio(!mute);
+        QLOG_APP(L"enableLocalAudio ret: {0}") << ret;
+    }
+    void AvChatComponent::enableAudioPlayout(bool enable)
+    {
+        rtcEngine_->muteLocalAudioStream(!enable);
+    }
+
+    void AvChatComponent::regEventHandler(std::shared_ptr<IAvChatComponentEventHandler> compEventHandler)
+    {
+        compEventHandler_.reset();
+        compEventHandler_ = compEventHandler;
+    }
+
+    void AvChatComponent::startVideoPreview(bool start/* = true*/)
+    {
+        if (start)
+            rtcEngine_->enableLocalVideo(true);
+        start ? rtcEngine_->startVideoPreview() : rtcEngine_->stopVideoPreview();
+    }
+
+    void AvChatComponent::switchCallType(std::string user_id, int call_type)
+    {
+        if (rtcEngine_ != nullptr)
+        {
+            int64_t uid = channelMembers_[user_id];
+            int ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, false);
+            //ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
+
+            QLOG_APP(L"subscribeRemoteVideoStream ret: {0}") << ret;
+
+            ret = rtcEngine_->muteLocalVideoStream(true);
+            //ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
+
+            QLOG_APP(L"enableVideoToAudio ret: {0}") << ret;
+
+            Json::Value values;
+            values["cid"] = 2; //cid = 2è¡¨ç¤ºæ§åˆ¶ä¿¡ä»¤ï¼Œè¡¨ç¤ºè§¦å‘è¢«å«æ–¹è§†é¢‘è½¬éŸ³é¢‘
+            values["type"] = kAvChatAudio; ///***éŸ³é¢‘é¢‘é“* /AUDIO(1), è§†é¢‘é¢‘é“VIDEO(2) */
+            nim::SignalingControlParam controlParam;
+            controlParam.channel_id_ = joined_channel_id_.empty()? AvChatBusinessWrapper::getChannelId(): joined_channel_id_;
+            controlParam.account_id_ = user_id;
+            controlParam.custom_info_ = values.toStyledString();
+
+            auto controlCb = nbase::Bind(&AvChatComponent::signalingControlCb,
+                this,
+                std::placeholders::_1,
+                std::placeholders::_2);
+            //æ§åˆ¶ä¿¡ä»¤
+            Signaling::Control(controlParam, controlCb);
+
+        }
+    }
+
+    void AvChatComponent::startAudioDeviceLoopbackTest(int interval)
+    {
+        nertc::IAudioDeviceManager* audio_device_manager = nullptr;
+        rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
+
+        if (audio_device_manager)
+        {
+            audio_device_manager->startAudioDeviceLoopbackTest(interval);
+        }
+    }
+
+    void AvChatComponent::stopAudioDeviceLoopbackTest()
+    {
+        nertc::IAudioDeviceManager* audio_device_manager = nullptr;
+        rtcEngine_->queryInterface(nertc::kNERtcIIDAudioDeviceManager, (void**)&audio_device_manager);
+        if (audio_device_manager)
+        {
+            audio_device_manager->stopAudioDeviceLoopbackTest();
+        }
+    }
+
+    void AvChatComponent::requestTokenValue(int64_t uid)
+    {
+        stoken_ = "xyz";
+        if (isUseRtcSafeMode) {
+            //int64_t uid;
+            //uid = channelMembers_[senderAccid];
+            getTokenService_(uid, [=](const std::string token) {
+                stoken_ = token;
+            });
+        }
+    }
+
+    void AvChatComponent::setVideoQuality(nertc::NERtcVideoProfileType type)
+    {
+        nertc::NERtcVideoConfig config;
+        config.max_profile = type;
+        config.framerate = nertc::kNERtcVideoFramerateFps_15;
+        config.crop_mode_ = nertc::kNERtcVideoCropModeDefault;
+        rtcEngine_->setVideoConfig(config);
+    }
+
+    void AvChatComponent::setAudioMute(std::string user_id, bool bOpen) {
+        if (rtcEngine_) {
+            int64_t uid = channelMembers_[user_id];
+            rtcEngine_->subscribeRemoteAudioStream(uid, bOpen);
+        }
+    }
+
+    void AvChatComponent::closeChannelInternal(const std::string& channelId, AvChatComponentOptCb cb)
+    {
+        QLOG_APP(L"closeChannelInternalï¼Œ channelId: {0}")<< channelId;
+        SignalingCloseParam param;
+        param.channel_id_ = channelId;
+        param.offline_enabled_ = true;
+        auto closeCb = nbase::Bind(&AvChatComponent::signalingCloseCb, this, _1, _2, cb);
+        Signaling::SignalingClose(param, closeCb);
+        isMasterInvited = false;
+    }
+
+    void AvChatComponent::signalingInviteCb(int errCode, std::shared_ptr<SignalingResParam> res_param, AvChatComponentOptCb cb)
+    {
+        //4,inviteå®Œæ¯•åï¼Œcallè¿‡ç¨‹ç»“æŸï¼Œè°ƒç”¨cbè¿”å›ç»“æœ
+        QLOG_APP(L"signalingInviteCb error: errCode:{0}") << errCode;
+        if (errCode != 200)
+        {
+            //closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, cb);
+        }
+        status_ = calling;
+        
+        if (cb) 
+            cb(errCode);
+    }
+    void AvChatComponent::signalingAcceptCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb)
+    {
+        SignalingAcceptResParam* res = (SignalingAcceptResParam*)res_param.get();
+        QLOG_APP(L"signalingAcceptCb, errCOde: {0}") << errCode;
+
+        if (errCode == 200)
+        {
+            updateChannelMembers(res);
+            auto uid = getUid(res->info_.members_, invitedInfo_.to_account_id_);
+            //int ret = rtcEngine_->joinChannel("", res->info_.channel_info_.channel_id_.c_str(), uid);
+            
+            to_account_id_ = uid;
+            joined_channel_id_ = res->info_.channel_info_.channel_id_;
+            status_ = inCall;
+            if (versionCompare(version_, "1.1.0") < 0)
+            {
+                requestTokenValue(uid);
+            }
+            else {
+                requestTokenValue(uid);
+                while ("xyz" == stoken_)
+                {
+                    std::this_thread::yield();
+                }
+                int type = res->info_.channel_info_.channel_type_;
+                if (type == kAvChatAudio) {
+                    enableLocalVideo(false);
+                }
+                else if (type == kAvChatVideo) {
+                    enableLocalVideo(true);
+                }
+                std::string strToken = "";
+                if (isUseRtcSafeMode) strToken = stoken_;
+                QLOG_APP(L"handleControl: strToken = {0}") << strToken;
+                int ret = rtcEngine_->joinChannel(strToken.c_str(), channelName_.c_str(), uid);
+                if (ret != 0)
+                {
+                    QLOG_ERR(L"nertc join channel failed: {0}") << ret;
+                    if (cb)
+                        cb(errCode);
+                    return;
+                }
+            }
+        }
+
+        if (cb)
+            cb(errCode);
+    }
+
+    void AvChatComponent::signalingRejectCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb)
+    {
+        QLOG_APP(L"signalingAcceptCb, errCOde: {0}") << errCode;
+        if (cb) 
+            cb(errCode);
+
+        status_ = idle;
+    }
+    void AvChatComponent::signalingCloseCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb)
+    {
+        QLOG_APP(L"signalingCloseCb: errCode: {0}") << errCode;
+        if (errCode == 200)
+        {
+            createdChannelInfo_ = SignalingCreateResParam();
+            joined_channel_id_.clear();
+        }
+        else
+        {
+            QLOG_ERR(L"signalingCloseCb: errCode: {0}") << errCode;
+        }
+        status_ = idle;
+        if (cb)
+            cb(errCode);
+    }
+    void AvChatComponent::signalingLeaveCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param, AvChatComponentOptCb cb)
+    {
+        QLOG_APP(L"signalingLeaveCb errCode: {0}") << errCode;
+        if (errCode == 200)
+        {
+            joined_channel_id_.clear();
+            status_ = idle;
+        }
+        if (cb)
+            cb(errCode);
+    }
+    void AvChatComponent::updateChannelMembers(const SignalingJoinResParam* res)
+    {
+        for (auto memInfo : res->info_.members_)
+        {
+            channelMembers_[memInfo.account_id_] = memInfo.uid_;
+        }
+    }
+    std::string AvChatComponent::getAccid(int64_t uid)
+    {
+        for (auto it : channelMembers_)
+        {
+            if (it.second == uid)
+                return it.first;
+        }
+        QLOG_ERR(L"Get accid failed, uid: {0}") << uid;
+        return "";
+    }
+    void AvChatComponent::signalingJoinCb(int errCode, std::shared_ptr<SignalingResParam> res_param, AvChatComponentOptCb cb, const std::string& channelId)
+    {
+        if (errCode != 200)
+        {
+            QLOG_ERR(L"SignalingOptCallback error: errCode:{0}") << errCode;
+            closeChannelInternal(createdChannelInfo_.channel_info_.channel_id_, nullptr);
+            if (cb) cb(errCode);
+            return;
+        }
+        updateChannelMembers((SignalingJoinResParam*)res_param.get());
+
+        int64_t uid;
+        uid = channelMembers_[senderAccid];
+        requestTokenValue(uid);
+        Json::Value values;
+        //TODO PCæš‚ä¸å®ç°å¤šäººé€šè¯ï¼Œæ•…æ­¤å¤„ä¸å¤„ç†channelä¸­çš„å…¶ä»–äººçš„ä¿¡æ¯
+        //å•äººé€šè¯ä¸ä¼ kAvChatChannelMembers
+        Json::Reader().parse("[]", values[kAvChatChannelMembers]);
+        values[kAvChatCallType] = (int)kAvChatP2P;
+        values[kAvChatCallVersion] = RTC_COMPONENT_VER;
+        channelName_ = std::string(channelId).append("|").append("0").append("|").append(std::to_string(uid));
+        values[kAvChatCallChannelName] = channelName_;
+        Json::FastWriter fw;
+        SignalingInviteParam inviteParam;
+        inviteParam.account_id_ = toAccid;
+        inviteParam.channel_id_ = channelId;
+        inviteParam.request_id_ = channelId;
+        inviteParam.custom_info_ = fw.write(values);
+
+        auto inviteCb = nbase::Bind(&AvChatComponent::signalingInviteCb, this, _1, _2, cb);
+        QLOG_APP(L"Signaling::Invite, callType: {0}, version: {1}, channelName: {2}") << (int)kAvChatP2P << RTC_COMPONENT_VER << channelName_;
+        //3,ä¿¡ä»¤ invite
+        Signaling::Invite(inviteParam, inviteCb);
+        status_ = calling;
+        invitingInfo_ = inviteParam;
+    }
+
+    void AvChatComponent::signalingCreateCb(int errCode, std::shared_ptr<SignalingResParam> res_param, AvChatComponentOptCb cb)
+    {
+        if (errCode != 200)
+        {
+            QLOG_ERR(L"SignalingOptCallback error: errCode:{0}") << errCode;
+            if (cb) cb(errCode);
+            return;
+        }
+        assert(res_param);
+
+        SignalingCreateResParam* res = (SignalingCreateResParam*)res_param.get();
+        createdChannelInfo_ = *res;
+
+        nim::SignalingJoinParam joinParam;
+        joinParam.channel_id_ = res->channel_info_.channel_id_;
+        joinParam.uid_ = 0;//0ï¼ŒæœåŠ¡å™¨ä¼šè‡ªåŠ¨åˆ†é…
+        joinParam.offline_enabled_ = true;
+
+        auto joinCb = nbase::Bind(&AvChatComponent::signalingJoinCb,
+                            this,
+                            std::placeholders::_1, 
+                            std::placeholders::_2,
+                            cb,
+                            res->channel_info_.channel_id_);
+        //2.ä¿¡ä»¤Join
+        Signaling::Join(joinParam, joinCb);
+    }
+
+    void AvChatComponent::signalingControlCb(int errCode, std::shared_ptr<nim::SignalingResParam> res_param)
+    {
+        if (errCode != 200)
+        {
+            QLOG_ERR(L"SignalingOptCallback error: errCode:{0}") << errCode;
+            if (optCb_) optCb_(errCode);
+            return;
+        }
+    }
+
+    void AvChatComponent::handleControl(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
+    {
+        Json::Value values;
+        Json::Reader reader;
+        std::string info = notifyInfo->custom_info_;
+        int type = notifyInfo->channel_info_.channel_type_;
+        if (!reader.parse(info, values) || !values.isObject())
+        {
+            QLOG_ERR(L"parse custom info failed: {0}");
+            return;
+        }
+
+        if (values["cid"].isInt()) {
+            int value = values["cid"].asInt();
+            //std::string sValue = values["cid"].asString();
+            if (value == 1) {
+                if (notifyInfo) {
+                    while ("xyz" == stoken_)
+                    {
+                        std::this_thread::yield();
+                    }
+                    if (type == kAvChatAudio) {
+                        enableLocalVideo(false);
+                    }
+                    else if (type == kAvChatVideo) {
+                        enableLocalVideo(true);
+                    }
+                    std::string strToken = "";
+                    if (isUseRtcSafeMode) strToken = stoken_;
+                    QLOG_APP(L"handleControl: strToken: {0}") << strToken;
+                    int ret = rtcEngine_->joinChannel(strToken.c_str(), notifyInfo->channel_info_.channel_id_.c_str(), to_account_id_);
+                    if (ret != 0)
+                    {
+                        QLOG_ERR(L"nertc join channel failed: {0}") << ret;
+                        //if (cb) cb(ret);
+                        return;
+                    }
+                }
+            }
+            if (value == 2) {
+                compEventHandler_.lock()->OnVideoToAudio(); //è¢«å«æ–¹åˆ‡æ¢æˆéŸ³é¢‘æ¨¡å¼
+            }
+        }
+    }
+
+    // è¢«å«æ”¶åˆ°INVITEï¼Œå…ˆè·å–tokenï¼Œå¹¶åˆ¤æ–­ç‰ˆæœ¬å·ã€‚å¦‚æœæ˜¯è€ç‰ˆæœ¬å‘èµ·å‘¼å«ï¼Œå¹¶ç­‰å¾…æ§åˆ¶ä¿¡ä»¤ï¼Œå¦åˆ™ç›´æ¥åŠ å…¥channelNameï¼Œè€Œä¸æ˜¯åŸæ¥çš„channelIdã€‚
+    void AvChatComponent::handleInvited(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
+    {
+        //æŠ›å‡ºonInviteäº‹ä»¶ï¼Œæ›´æ–°UIã€å“åº”ç”¨æˆ·æ“ä½œ
+        if (compEventHandler_.expired())
+            return;
+
+        isMasterInvited = false;
+        bool isFromGroup = false;
+        std::vector<std::string> members;
+        version_.clear();
+        channelName_.clear();
+        if (!parseCustomInfo(notifyInfo->custom_info_, isFromGroup, members, version_, channelName_))
+        {
+            assert(false);
+            return;
+        }
+        QLOG_APP(L"handleInvited, from_account_id: {0}, version: {1}, channelName: {2}") << notifyInfo->from_account_id_ << version_ << channelName_;
+        SignalingNotifyInfoInvite* inviteInfo = (SignalingNotifyInfoInvite*)notifyInfo.get();
+
+        //å¿™çº¿å¤„ç†
+        if (status_ != idle || isFromGroup)
+        {
+            //ä¿¡ä»¤reject
+            SignalingRejectParam param;
+            param.account_id_ = inviteInfo->from_account_id_;
+            param.channel_id_ = inviteInfo->channel_info_.channel_id_;
+            param.request_id_ = inviteInfo->request_id_;
+            param.custom_info_ = "601";
+            param.offline_enabled_ = true;
+
+            Signaling::Reject(param, [isFromGroup](int errCode, std::shared_ptr<nim::SignalingResParam> res_param) {
+                if (!isFromGroup) {
+                    QLOG_APP(L"handle busy, Signaling::Reject return: {0}") << errCode;
+                }
+                else {
+                    QLOG_APP(L"handle isFromGroup is true, Signaling::Reject return: {0}") << errCode;
+                }
+                });
+            //å¿™çº¿æ–¹(è¢«å«æ–¹)å‘é€è¯å•
+            SendNetCallMsg(inviteInfo->from_account_id_,
+                param.channel_id_,
+                inviteInfo->channel_info_.channel_type_,
+                isFromGroup ? (int)nim_comp::kNIMNetCallStatusRejected : (int)nim_comp::kNIMNetCallStatusBusy,
+                std::vector<std::string>{inviteInfo->from_account_id_, nim::Client::GetCurrentUserAccount()},
+                std::vector<int>{0, 0}
+            );
+            return;
+        }
+
+        //å°†æ”¶åˆ°é‚€è¯·åçš„é¢‘é“ä¿¡æ¯æ‹·è´åˆ°å†…éƒ¨ï¼Œä¾›acceptä½¿ç”¨
+        invitedInfo_ = *inviteInfo;
+        status_ = called;
+        int type = inviteInfo->channel_info_.channel_type_;
+        compEventHandler_.lock()->onInvited(notifyInfo->from_account_id_,
+            members,
+            isFromGroup,
+            AVCHAT_CALL_TYPE(type)
+        );
+    }
+
+    void AvChatComponent::handleOtherClientAccepted(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
+    {
+        //è¢«å«æ–¹çš„é€šè¯é‚€è¯·åœ¨å…¶ä»–ç«¯è¢«æ¥å¬ï¼Œé€šçŸ¥ä¸Šå±‚å…³é—­ç•Œé¢ã€ä¸å…³channel
+        compEventHandler_.lock()->onOtherClientAccept();
+        status_ = idle;
+    }
+
+    // å‘¼å«æ–¹æ”¶åˆ°acceptä¹‹åï¼Œå‘èµ·æ–¹è‡ªèº« RTC Joinã€‚æˆåŠŸåæœåŠ¡ç«¯ä¼šå¼€å§‹è¿›è¡Œé€šè¯è®¡æ—¶
+    // å‘¼å«æ–¹æ”¶åˆ°ACCEPTï¼Œè¿›å…¥channelNameè€Œä¸æ˜¯åŸæ¥çš„channelIdï¼ŒåŠ å…¥æˆåŠŸååˆ¤æ–­è¢«å«æ–¹ç‰ˆæœ¬ã€‚å¦‚æœæ˜¯è€ç‰ˆæœ¬åˆ™å‘é€CONTROL
+    void AvChatComponent::handleAccepted(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
+    {
+        SignalingNotifyInfoAccept* acceptedInfo = (SignalingNotifyInfoAccept*)notifyInfo.get();
+        //SignalingNotifyInfoAccept tempacceptedInfo = *acceptedInfo;
+        QLOG_APP(L"handleAccepted, from_account_id_: {0}, senderAccid: {1}") << acceptedInfo->from_account_id_ << senderAccid;
+        if (acceptedInfo->to_account_id_ != senderAccid)
+            return;
+    
+        bool isFromGroup = false;
+        std::vector<std::string> members;
+        version_.clear();
+        if (!acceptedInfo->custom_info_.empty())
+        {
+            std::string channelNameTmp;
+            if (!parseCustomInfo(acceptedInfo->custom_info_, isFromGroup, members, version_, channelNameTmp))
+            {
+                assert(false);
+                return;
+            }
+        }
+        QLOG_APP(L"handleAccepted, version_: {0}") << version_;
+
+        requestTokenValue(channelMembers_[senderAccid]);
+        while ("xyz" == stoken_)
+        {
+            std::this_thread::yield();
+        }
+
+        if (callType == kAvChatAudio) {
+            enableLocalVideo(false);
+        }
+        else if (callType == kAvChatVideo) {
+            enableLocalVideo(true);
+        }
+        //auto selfUid = nim::Client::GetCurrentUserAccount();
+        std::string strToken = "";
+        if (isUseRtcSafeMode) strToken = stoken_;
+        QLOG_APP(L"handleAccepted: strToken: {0}") << strToken;
+        int ret = rtcEngine_->joinChannel(strToken.c_str(), versionCompare(version_, "1.1.0") >= 0 ? channelName_.c_str() : acceptedInfo->channel_info_.channel_id_.c_str(), channelMembers_[senderAccid]);
+
+        //rtcEngine_->enableLocalAudio(true);
+        //rtcEngine_->(true);
+        status_ = inCall;
+        compEventHandler_.lock()->onUserAccept(acceptedInfo->from_account_id_);
+        from_account_id_ = acceptedInfo->from_account_id_;
+
+        if (ret != 0)
+        {
+            QLOG_ERR(L"nertc join channel failed: {0}") << ret;
+            //if (cb) cb(ret);
+            return;
+        }
+    }
+    
+    //å¤„ç†å¼‚å¸¸æƒ…å†µä¸‹çš„è¯å•
+    void AvChatComponent::handleNetCallMsg(nim_comp::NIMNetCallStatus why)
+    {
+        if (status_ == inCall) return; //å¯¹äºå·²ç»å»ºç«‹è¿æ¥é€šè¯ä¹‹åçš„æŒ‚æ–­ï¼Œä¸éœ€è¦å‘é€è¯å•ï¼Œç”±æœåŠ¡å™¨å‘é€
+        if (isMasterInvited) {
+            std::string channel_id = AvChatBusinessWrapper::getChannelId();
+            std::string session_id = toAccid;
+            bool is_video_mode_ = callType == AVCHAT_CALL_TYPE::kAvChatVideo ? true : false;
+            SendNetCallMsg(session_id,
+                channel_id,
+                is_video_mode_ ? 2 : 1,
+                (int)why,
+                std::vector<std::string>{session_id, nim::Client::GetCurrentUserAccount()},
+                std::vector<int>{0, 0}
+            );
+            
+        }
+    }
+
+    void AvChatComponent::handleOtherClientRejected(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
+    {
+        //ä¸»å«æ–¹çš„é€šè¯é‚€è¯·åœ¨å…¶ä»–ç«¯è¢«æ‹’æ¥ï¼Œé€šçŸ¥ä¸Šå±‚å…³é—­ç•Œé¢ã€ä¸å…³channel
+        compEventHandler_.lock()->onOtherClientReject();
+        status_ = idle;
+    }
+
+    void AvChatComponent::handleRejected(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
+    {
+        SignalingNotifyInfoReject* rejectedInfo = (SignalingNotifyInfoReject*)notifyInfo.get();
+        QLOG_APP(L"handleRejected, from_account_id_: {0}") << rejectedInfo->from_account_id_;
+        if (rejectedInfo->to_account_id_ != senderAccid)
+            return;
+
+        status_ = idle;
+        //è¢«å«æ–¹å¿™çº¿ä¼šè‡ªåŠ¨rejectã€å¡å…¥601ä½œä¸ºæ ‡è®°ï¼Œå¹¶å‘é€å¿™çº¿è¯å•ï¼Œä¸»å«æ–¹æ— éœ€å‘é€è¯å•ï¼Œä¹Ÿæ— éœ€è°ƒç”¨hangupï¼ˆhangupæ—¶ä¼šå‘é€è¯å•ï¼‰
+        if (rejectedInfo->custom_info_ == "601")
+        {
+            //ä¸Šå±‚å¤„ç†onUserBusyäº‹ä»¶æ—¶
+            compEventHandler_.lock()->onUserBusy(rejectedInfo->from_account_id_);
+            closeChannelInternal(rejectedInfo->channel_info_.channel_id_, nullptr);
+        }
+        else
+            compEventHandler_.lock()->onUserReject(rejectedInfo->from_account_id_);
+    }
+
+    //é¢‘é“ä¸­æœ‰æˆå‘˜åŠ å…¥ï¼Œç”¨æˆ·ç»´æŠ¤æˆå‘˜åˆ—è¡¨
+    void AvChatComponent::handleJoin(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
+    {
+        SignalingNotifyInfoJoin* joinInfo = (SignalingNotifyInfoJoin*)notifyInfo.get();
+        QLOG_APP(L"handleJoin: accid: {0}, uid: {1}") << joinInfo->member_.account_id_ << joinInfo->member_.uid_;
+        channelMembers_[joinInfo->member_.account_id_] = joinInfo->member_.uid_;
+
+        //æœ‰è‡ªèº«ä»¥å¤–çš„äººåŠ å…¥é¢‘é“
+        if (joinInfo->member_.account_id_ != senderAccid)
+        {
+            //status_ = calling;
+            QLOG_APP(L"handleJoin, onUserEnter, userID: {0}") << joinInfo->member_.account_id_;
+            compEventHandler_.lock()->onUserEnter(joinInfo->member_.account_id_);
+
+            if (isMasterInvited && versionCompare(version_, "1.1.0") < 0) {
+                Json::Value values;
+                values["cid"] = 1;  //cid = 1è¡¨ç¤ºæ§åˆ¶ä¿¡ä»¤ï¼Œè°ƒæ•´callæµç¨‹ï¼Œä¿®å¤è¯å•ä¸»å«è¢«å«æ–¹é¡ºåºä¸å¯¹bug
+                values["type"] = 0;
+                nim::SignalingControlParam controlParam;
+                controlParam.channel_id_ = joinInfo->channel_info_.channel_id_;
+                controlParam.account_id_ = joinInfo->member_.account_id_;
+                controlParam.custom_info_ = values.toStyledString();
+
+                auto controlCb = nbase::Bind(&AvChatComponent::signalingControlCb,
+                    this,
+                    std::placeholders::_1,
+                    std::placeholders::_2);
+                //å‘é€æ§åˆ¶ä¿¡ä»¤ï¼Œå‘ŠçŸ¥å¯¹æ–¹è¿›è¡ŒrtcJoin
+                Signaling::Control(controlParam, controlCb);
+            }
+        }
+    }
+
+    void AvChatComponent::handleLeave(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
+    {
+        SignalingNotifyInfoLeave* leaveInfo = (SignalingNotifyInfoLeave*)notifyInfo.get(); 
+        QLOG_APP(L"handleLeave, from_account_id_: {0}, senderAccid: {1}") << leaveInfo->from_account_id_ << senderAccid;
+
+        compEventHandler_.lock()->onUserLeave(leaveInfo->from_account_id_);
+    }
+    void AvChatComponent::handleClose(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
+    {
+        SignalingNotifyInfoClose* closeInfo = (SignalingNotifyInfoClose*)notifyInfo.get();
+        QLOG_APP(L"handleClose, from_account_id_: {0}, senderAccid: {1}") << closeInfo->from_account_id_ << senderAccid;
+        
+        status_ = idle;
+        compEventHandler_.lock()->onCallEnd();
+        
+    }
+    void AvChatComponent::handleCancelInvite(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
+    {
+        SignalingNotifyInfoCancelInvite* cancelInfo = (SignalingNotifyInfoCancelInvite*)notifyInfo.get();
+        
+        compEventHandler_.lock()->onUserCancel(cancelInfo->from_account_id_);
+        status_ = idle;
+    }
+    void AvChatComponent::signalingNotifyCb(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
+    {
+        switch (notifyInfo->event_type_)
+        {
+        case nim::kNIMSignalingEventTypeInvite:
+            handleInvited(notifyInfo);
+            break;
+        case nim::kNIMSignalingEventTypeAccept:
+            handleAccepted(notifyInfo);
+            break;
+        case nim::kNIMSignalingEventTypeJoin:
+            handleJoin(notifyInfo);
+            break;
+        case nim::kNIMSignalingEventTypeReject:
+            handleRejected(notifyInfo);
+            break;
+        case nim::kNIMSignalingEventTypeCancelInvite:
+            handleCancelInvite(notifyInfo);
+            break;
+        case nim::kNIMSignalingEventTypeLeave:
+            handleLeave(notifyInfo);
+            break;
+        case nim::kNIMSignalingEventTypeClose:
+            handleClose(notifyInfo);
+            break;
+        case nim::kNIMSignalingEventTypeCtrl:
+            handleControl(notifyInfo);
+            break;
+        default:
+            break;
+        }
+    }
+
+    void AvChatComponent::signalingMutilClientSyncCb(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
+    {
+        QLOG_APP(L"MutilClientSyncCb");
+        switch (notifyInfo->event_type_)
+        {
+        case nim::kNIMSignalingEventTypeAccept:
+            handleOtherClientAccepted(notifyInfo);
+            break;
+        case nim::kNIMSignalingEventTypeReject:
+            handleOtherClientRejected(notifyInfo);
+            break;
+        default:
+            QLOG_APP(L"MutilClientSyncCb event_type: {0}")<< notifyInfo->event_type_;
+            break;
+        }
+    }
+    void AvChatComponent::signalingOfflineNotifyCb(std::list<std::shared_ptr<nim::SignalingNotifyInfo>> notifyInfo)
+    {
+        std::list<std::shared_ptr<SignalingNotifyInfo>> notifyInfoList = notifyInfo;
+        std::shared_ptr <nim::SignalingNotifyInfo> inviteInfo = nullptr;
+        std::set<std::string> cancelSet;
+        for (std::shared_ptr<SignalingNotifyInfo> info : notifyInfoList) {
+            if (info != nullptr) {
+                if (info->event_type_ == kNIMSignalingEventTypeInvite) {
+                    if (!inviteInfo || info->timestamp_ > inviteInfo->timestamp_) {
+                        inviteInfo = info;
+                    }
+                }
+                else if (info->event_type_ == kNIMSignalingEventTypeCancelInvite) {
+                    nim::SignalingNotifyInfoCancelInvite* cancelInfo = (nim::SignalingNotifyInfoCancelInvite*)(&(*info));
+                    cancelSet.insert(cancelInfo->request_id_);
+                }
+            }
+        
+        }
+    
+        nim::SignalingNotifyInfoInvite* lastInviteInfo = (nim::SignalingNotifyInfoInvite*)(&(*inviteInfo));
+        if (lastInviteInfo != nullptr) {
+            int nCount = cancelSet.count(lastInviteInfo->request_id_);
+            //BOOL isValid = (inviteInfo != nullptr) && !inviteInfo->channel_info_.invalid_ && (cancelSet.find(lastInviteInfo->request_id_) == cancelSet.end());
+            BOOL isValid = (inviteInfo != nullptr) && (cancelSet.find(lastInviteInfo->request_id_) == cancelSet.end());
+            if (isValid) {
+                handleInvited(inviteInfo);
+            }
+        }
+    }
+    ///////////////////////////////G2äº‹ä»¶///////////////////////////////
+    void AvChatComponent::onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed) {
+        QLOG_APP(L"onJoinChannel");
+        //rtcEngine_->enableLocalAudio(true);
+    }
+    void AvChatComponent::onUserJoined(nertc::uid_t uid, const char* user_name)
+    {
+        QLOG_APP(L"onUserJoined");
+        int ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, true);
+        //ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
+
+        QLOG_APP(L"subscribeRemoteVideoStream ret: {0}") << ret;
+        
+        //å¯¹æ–¹rtc Joinä¹‹å è®¢é˜…è§†é¢‘æµ
+    }
+    void AvChatComponent::onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason)
+    {
+        if (reason != 4) {
+            compEventHandler_.lock()->onUserLeave(getAccid(uid));
+        }
+        else {
+            compEventHandler_.lock()->onUserDisconnect(getAccid(uid));
+        }
+    }
+    void AvChatComponent::onUserAudioStart(nertc::uid_t uid)
+    {
+        compEventHandler_.lock()->onAudioAvailable(getAccid(uid), true);
+    }
+    void AvChatComponent::onUserAudioStop(nertc::uid_t uid)
+    {
+        compEventHandler_.lock()->onAudioAvailable(getAccid(uid), false);
+    }
+
+    void AvChatComponent::onUserVideoStart(nertc::uid_t uid, nertc::NERtcVideoProfileType max_profile)
+    {
+        int ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, true);
+        compEventHandler_.lock()->onCameraAvailable(getAccid(uid), true);
+    }
+    void AvChatComponent::onUserVideoStop(nertc::uid_t uid)
+    {
+        compEventHandler_.lock()->onCameraAvailable(getAccid(uid), false);
+    }
+    void AvChatComponent::onDisconnect(nertc::NERtcErrorCode reason) {
+        compEventHandler_.lock()->onDisconnect(reason);
+    }
+
+    void AvChatComponent::onNetworkQuality(const nertc::NERtcNetworkQualityInfo *infos, unsigned int user_count)
+    {
+        std::map<uint64_t, nertc::NERtcNetworkQualityType> network_quality;
+        for (int i = 0; i < user_count; i++)
+        {
+            network_quality[infos[i].uid] = infos[i].tx_quality;
+        }
+        compEventHandler_.lock()->onUserNetworkQuality(network_quality);
+    }
+    ///////////////////////////////////////////å†…éƒ¨æ–¹æ³•////////////////////////////////////////
+    //Signaling::SignalingNotifyCallback 
+    int64_t getUid(const std::list<SignalingMemberInfo>& list, const std::string& accid)
+    {
+        for (auto it : list)
+        {
+            if (it.account_id_ == accid)
+                return it.uid_;
+        }
+        assert(false);
+        return 0;
+    }
+
+    bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members, std::string& version, std::string& channelName)
+    {
+        version.clear();
+        channelName.clear();
+
+        Json::Value values;
+        Json::Reader reader;
+        if (!reader.parse(str, values) || !values.isObject())
+        {
+            QLOG_ERR(L"parse custom info failed: {0}") << str;
+            return false;
+        }
+        
+        isFromGroup = ((AVCHAT_MODULE_TYPE)values[kAvChatCallType].asBool() == kAvChatMulti);
+        if (values[kAvChatChannelMembers].isArray())
+        {
+            for (int i = 0; i < values[kAvChatChannelMembers].size(); i++)
+            {
+                members.push_back(values[kAvChatChannelMembers][i].asString());
+            }
+        }
+
+        if (values.isMember(kAvChatCallVersion))
+        {
+            version = values[kAvChatCallVersion].asString();
+        }
+
+        if (values.isMember(kAvChatCallChannelName))
+        {
+            channelName = values[kAvChatCallChannelName].asString();
+        }
+        
+        return true;
+    }
+
+    int versionCompare(const std::string& version1, const std::string& version2)
+    {
+        char* p1 = (char*)version1.data();
+        char* p2 = (char*)version2.data();
+        int v1 = 0, v2 = 0;
+        while (*p1 || *p2) {
+            v1 = v2 = 0;
+            if (*p1) v1 = atoi(p1);
+            if (*p2) v2 = atoi(p2);
+            if (v1 > v2) return 1;
+            if (v1 < v2) return -1;
+            while (*p1 && *p1 != '.') ++p1;
+            if (*p1 == '.') ++p1;
+            while (*p2 && *p2 != '.') ++p2;
+            if (*p2 == '.') ++p2;
+        }
+        return 0;
+    }
 }

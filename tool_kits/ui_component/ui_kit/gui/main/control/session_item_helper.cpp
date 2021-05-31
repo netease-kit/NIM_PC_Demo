@@ -1,6 +1,8 @@
 #include "gui/main/control/session_item_helper.h"
 #include "duilib/Utils/MultiLangSupport.h"
 #include "module/emoji/emoji_info.h"
+#include "util/net_call_helper.h"
+
 namespace nim_comp
 {
 	void SessionItemHelper::GetMsgContent(const nim::SessionData &msg, std::wstring &show_text)
@@ -72,6 +74,10 @@ namespace nim_comp
 				show_text = nbase::UTF8ToUTF16(msg.msg_content_);
 			else
 				show_text = mls->GetStringViaID(L"STRID_SESSION_ITEM_MSG_TYPE_ROBOT");
+		}
+		else if (msg.msg_type_ == nim::kNIMMessageTypeG2NetCall)
+		{
+			show_text = ParseNetCallMsg(msg);
 		}
 		else
 		{
