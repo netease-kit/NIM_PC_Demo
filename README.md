@@ -13,10 +13,13 @@
 
  - CMake 3.10 或以上版本
  - Visual Studio 2017 或以上版本
+ - Git
 
 ## 开发步骤
 
 NIM Demo 从 8.4.0 版本开始使用 CMake 管理工程结构，您需要下载安装 CMake 并安装到系统中：[https://cmake.org/download/](https://cmake.org/download/)
+
+ > 源代码脚本中使用 Git 和 CMake 指令根据当前仓库的提交信息、提交次数来动态生成的目录结构及 `.rc` 文件版本，您系统中必须安装 Git 客户端并推荐使用 git clone 下载代码而不是直接下载压缩包！
 
 安装完成后，首先克隆项目到你的磁盘中：
 
