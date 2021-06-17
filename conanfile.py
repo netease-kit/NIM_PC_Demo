@@ -15,7 +15,7 @@ class ModuleConan(ConanFile):
         "cef_2623_binaries/1.0.0-3-ge03c0ce@yunxin/testing",
         "nls_play/1.0.0-1-g3f1fcc3@yunxin/testing",
         "nim_p2p_sdk/1.0.0-3-g6a6cedb@yunxin/testing",
-        "nim_cpp_wrapper/8.4.0@yunxin/testing",
+        "nim_cpp_wrapper/8.5.0@yunxin/testing",
         "nertc/4.1.1-2-g0dc7953@yunxin/testing"
     )
     generators = "cmake"
