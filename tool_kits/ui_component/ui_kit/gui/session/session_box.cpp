@@ -367,19 +367,28 @@ namespace nim_comp
 
     MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool show_time)
     {
-        const std::string &bubble_id = msg.client_msg_id_;
-        if (bubble_id.empty())
-        {
+        Json::Value values;
+        Json::Reader reader;
+        bool parse_success = reader.parse(msg.attach_, values);
+        bool is_transfer_file = values.isMember("type") && values["type"].asInt() == nim_comp::CustomMsgType_TransferFile;
+        std::string bubble_id;
+        if (msg.type_ == nim::kNIMMessageTypeCustom && parse_success && is_transfer_file) {
+            bubble_id = values["session_id"].asString();
+        } else {
+            bubble_id = msg.client_msg_id_;
+        }
+
+        //const std::string &bubble_id = msg.client_msg_id_;
+        if (bubble_id.empty()) {
             QLOG_WAR(L"msg id empty");
             return nullptr;
         }
-
         IdBubblePair::iterator it = id_bubble_pair_.find(bubble_id);
-        if (it != id_bubble_pair_.end())
-        {
+        if (it != id_bubble_pair_.end()) {
             QLOG_WAR(L"repeat msg: {0}") << bubble_id;
             return nullptr;
         }
+        
 
         MsgBubbleItem* item = NULL;
         if (IsRecallMsg(msg.type_, msg.attach_))

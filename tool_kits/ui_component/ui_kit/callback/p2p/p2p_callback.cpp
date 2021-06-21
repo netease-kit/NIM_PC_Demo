@@ -29,7 +29,7 @@ void P2PCallback::OnTransferFileRequest(const RemoteFlagType remote_flag, Transf
 		msg.type_ = nim::kNIMMessageTypeCustom;
 		msg.receiver_accid_ = LoginManager::GetInstance()->GetAccount();
 		msg.sender_accid_ = remote_flag;
-		msg.client_msg_id_ = session_id;
+		msg.client_msg_id_ = nim::Tool::GetUuid();
 		msg.msg_setting_.resend_flag_ = BS_FALSE;
 		msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
 		msg.status_ = nim::kNIMMsgLogStatusSent;
@@ -66,7 +66,7 @@ bool P2PCallback::SendCommandChannel(const RemoteFlagType remote_flag, const cha
 		msg.sender_accid_ = LoginManager::GetInstance()->GetAccount();
 		// 确保发送出去的消息 id 和构建 bubble 使用的消息 id 都是相同的
 		// 在加载历史消息时才能根据消息 id 匹配到对应的数据
-		msg.client_msg_id_ = session_id;
+		msg.client_msg_id_ = nim::Tool::GetUuid();
 		msg.msg_setting_.resend_flag_ = BS_FALSE;
 		msg.timetag_ = 1000 * nbase::Time::Now().ToTimeT();
 		msg.status_ = nim::kNIMMsgLogStatusSending;
