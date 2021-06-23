@@ -7,7 +7,7 @@
 
 ## 预览
 
-![preview](PREVIEW.png)
+![preview](preview.png)
 
 ## 最低要求
 

@@ -75,7 +75,7 @@ bool P2PCallback::SendCommandChannel(const RemoteFlagType remote_flag, const cha
 		msg.msg_setting_.roaming_ = BS_FALSE;//不漫游
 		msg.msg_setting_.self_sync_ = BS_FALSE;//不进行多端同步
 		msg.msg_setting_.need_push_ = BS_FALSE;//不推送
-		msg.msg_setting_.push_need_badge_ = BS_FALSE;//不计数
+		// msg.msg_setting_.push_need_badge_ = BS_FALSE;//不计数
 		msg.msg_setting_.need_offline_ = BS_FALSE;//不需要支持离线
 		msg.msg_setting_.routable_ = BS_FALSE;//不需要抄送
 		msg.attach_ = values.toStyledString();
