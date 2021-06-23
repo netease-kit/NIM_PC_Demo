@@ -205,13 +205,6 @@ public:
 	* @return void	无返回值
 	*/
 	void OnRetweetResDownloadCallback(nim::NIMResCode code, const std::string& file_path, const std::string& sid, const std::string& cid);
-
-	/**
-	* 根据传输文件消息 id 查找对应的 bubble
-	* @param[in] 传输文件的 sessionId
-	* @return nim::IMMessage im 消息结构体
-	*/
-	MsgBubbleItem* FindBubbleByTransferFileSID(TransferFileSessionID transfer_file_session_id);
 #pragma endregion Message
 
 	//////////////////////////////////////////////////////////////////////////
@@ -1292,7 +1285,6 @@ private:
 	// P2P 传送文件相关
 	bool			received_p2p_reply_ = false;	//在发送 P2P 询问消息后是否收到了对方回复
 	bool			use_p2p_transfer_file_ = false; //是否使用点对点方式发送文件
-	std::map<std::string, MsgBubbleItem*>	transfer_file_bubble_list_; //界面上添加的 P2P 传送文件的 bubble 句柄列表，方便与状态回调快速找到对应 bubble
 
 	std::wstring	transfer_file_;
 

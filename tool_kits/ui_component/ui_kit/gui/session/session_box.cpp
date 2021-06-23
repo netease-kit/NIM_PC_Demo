@@ -312,19 +312,6 @@ namespace nim_comp
             show_time = CheckIfShowTime(last_msg_time_, msg.timetag_);
         }
 
-        // 如果收到的消息是 P2P 传送文件消息，那么抛到注入的命令通道来执行
-        Json::Value values;
-        Json::Reader reader;
-        bool parse_success = reader.parse(msg.attach_, values);
-        bool is_transfer_file = values.isMember("type") && values["type"].asInt() == nim_comp::CustomMsgType_TransferFile;
-
-        if (msg.type_ == nim::kNIMMessageTypeCustom && parse_success && is_transfer_file)
-        {
-            QLOG_APP(L"Receive transfer file notification, command type = {0}") << values[kJsonKeyCommand].asString();
-            // 协商成功后才能收到这个自定义的传送文件请求
-            nim_p2p::NimP2PDvelopKit::GetInstance()->OnReceiveChannelCommand((RemoteFlagType)msg.sender_accid_.c_str(), msg.attach_);
-        }
-
         ShowMsg(msg, false, show_time);
 
         if (!IsNoticeMsg(msg) && !IsRTSMsg(msg.type_, msg.attach_))
@@ -367,20 +354,31 @@ namespace nim_comp
 
     MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool show_time)
     {
-        const std::string &bubble_id = msg.client_msg_id_;
-        if (bubble_id.empty())
-        {
+        Json::Value values;
+        Json::Reader reader;
+        bool parse_success = reader.parse(msg.attach_, values);
+        bool is_transfer_file = values.isMember("type") && values["type"].asInt() == nim_comp::CustomMsgType_TransferFile;
+        std::string bubble_id;
+        if (msg.type_ == nim::kNIMMessageTypeCustom && parse_success && is_transfer_file) {
+            bubble_id = values["session_id"].asString();
+            QLOG_APP(L"Receive transfer file notification, command type = {0}") << values[kJsonKeyCommand].asString();
+            // 协商成功后才能收到这个自定义的传送文件请求
+            nim_p2p::NimP2PDvelopKit::GetInstance()->OnReceiveChannelCommand((RemoteFlagType)msg.sender_accid_.c_str(), msg.attach_);
+        } else {
+            bubble_id = msg.client_msg_id_;
+        }
+
+        //const std::string &bubble_id = msg.client_msg_id_;
+        if (bubble_id.empty()) {
             QLOG_WAR(L"msg id empty");
             return nullptr;
         }
-
         IdBubblePair::iterator it = id_bubble_pair_.find(bubble_id);
-        if (it != id_bubble_pair_.end())
-        {
+        if (it != id_bubble_pair_.end()) {
             QLOG_WAR(L"repeat msg: {0}") << bubble_id;
             return nullptr;
         }
-
+        
         MsgBubbleItem* item = NULL;
         if (IsRecallMsg(msg.type_, msg.attach_))
         {
@@ -501,11 +499,7 @@ namespace nim_comp
                     {
                         std::string transfer_file_session_id = json["session_id"].asString();
                         item = new MsgBubbleTransferFile;
-                        if (!first)
-                        {
-                            transfer_file_bubble_list_[transfer_file_session_id] = item;
-                            TransferFileManager::GetInstance()->AddItem(session_id_, transfer_file_session_id, item);
-                        }
+                        TransferFileManager::GetInstance()->AddItem(session_id_, transfer_file_session_id, item);
                     }
                     else
                     {
@@ -1029,41 +1023,6 @@ namespace nim_comp
     void SessionBox::OnRetweetResDownloadCallback(nim::NIMResCode code, const std::string& file_path, const std::string& sid, const std::string& cid)
     {
         OnDownloadCallback(cid, code == nim::kNIMResSuccess, file_path);
-    }
-
-    MsgBubbleItem* SessionBox::FindBubbleByTransferFileSID(TransferFileSessionID transfer_file_session_id)
-    {
-        MsgBubbleItem* bubble = nullptr;
-
-#if 0
-        for (auto i = 0; i < msg_list_->GetCount(); i++)
-        {
-            MsgBubbleTransferFile* bubble_item = dynamic_cast<MsgBubbleTransferFile*>(msg_list_->GetItemAt(i));
-
-            if (!bubble_item)
-                continue;
-
-            std::string session_id = bubble_item->GetTransferFileSessionId();
-            if (session_id == transfer_file_session_id)
-            {
-                bubble = bubble_item;
-                break;
-            }
-        }
-#else
-        auto bubble_iter = transfer_file_bubble_list_.find(transfer_file_session_id);
-        if (bubble_iter != transfer_file_bubble_list_.end())
-        {
-            bubble = bubble_iter->second;
-        }
-#endif
-
-        if (!bubble)
-        {
-            QLOG_ERR(L"[SessionBox::FindBubbleByTransferFileSessionId] Can not fount bubble by session id {0}") << transfer_file_session_id;
-        }
-
-        return bubble;
     }
 
     void SessionBox::SendText(const std::string &text, bool team_msg_need_ack/* = false*/)
