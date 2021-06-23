@@ -183,7 +183,7 @@ function(git_latest_tag _var)
         return()
     endif()
     execute_process(
-        COMMAND "${GIT_EXECUTABLE}" describe --abbrev=0
+        COMMAND "${GIT_EXECUTABLE}" describe --abbrev=0 --tags
         WORKING_DIRECTORY "${CMAKE_CURRENT_SOURCE_DIR}"
         RESULT_VARIABLE res
         OUTPUT_VARIABLE out
