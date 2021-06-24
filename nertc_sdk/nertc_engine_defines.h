@@ -16,7 +16,6 @@
 #define kNERtcMaxURILength          256     /**< URI最大长度。*/
 #define kNERtcMaxTaskIDLength       64      /**< 任务ID最大长度。*/
 #define kNERtcMaxBuffLength         1024    /**< 字符串缓存区最大长度。*/
-#define kNERtcMacSEIBufferLength    4096    /**< 直播推流中用到的SEI信息最大长度，单位：字节 */
 #define kNERtcExternalVideoDeviceID     "nertc-video-external-device"   /**< 外部视频输入源设备ID，开启外部输入之后，需要通过setDevice设置此设备ID。*/
 #define kNERtcAudioDeviceAutoID         "nertc-audio-device-auto"       /**< 音频设备自动选择ID，设置该ID为设备时，SDK会根据设备插拔系统设置等自动选择合适音频设备。*/
 
@@ -39,8 +38,8 @@ typedef enum
 
 /** 参会者角色类型 */
 typedef enum {
-    kNERtcClientRoleBroadcaster     = 0,            /**< （默认）直播模式中的主播，可以操作摄像头等音视频设备、发布流、配置互动直播推流任务、上下线对房间内其他用户可见。 */
-    kNERtcClientRoleAudience        = 1,            /**< 直播模式中的观众，观众只能接收音视频流，不支持操作音视频设备、配置互动直播推流任务、上下线不通知其他用户。 */
+    kNERtcClientRoleBroadcaster     = 0,            /**< 主播 */
+    kNERtcClientRoleAudience        = 1,            /**< 观众 */
 }NERtcClientRole;
 
 /** 场景模式 */
@@ -88,214 +87,57 @@ typedef enum
 
 /** 直播成员布局 */
 struct NERtcLiveStreamUserTranscoding {
-    /**
-     将指定uid对应用户的视频流拉入直播。如果添加多个 users，则 uid 不能重复。
-     */
-    uid_t uid;
-    /**
-     是否在直播中向观看者播放该用户的对应视频流。可设置为：
-     - true：在直播中播放该用户的视频流。
-     - false：在直播中不播放该用户的视频流。
-     推流模式为 kNERtcLsModeAudio 时无效。
-     */
-    bool video_push;
-    /**
-     直播推流视频和画布的调节属性。详细信息请参考 NERtcLiveStreamVideoScaleMode。
-     */
-    NERtcLiveStreamVideoScaleMode adaption;
-    /**
-     x 参数用于设置用户图像的横轴坐标值。通过 x 和 y 指定画布坐标中的一个点，该点将作为用户图像的左上角。
-
-     取值范围为 0~1920，若设置为奇数值，会自动向下取偶。
-
-     用户图像范围如果超出超出画布，调用方法时会报错。
-     */
-    int  x;
-    /**
-     y参数用于设置用户图像的纵轴坐标值。通过 x 和 y 指定画布坐标中的一个点，该点将作为用户图像的左上角。
-
-     取值范围为 0~1920，若设置为奇数值，会自动向下取偶。
-
-     用户图像范围如果超出超出画布，调用方法时会报错。
-     */
-    int  y;
-    /**
-     该用户图像在画布中的宽度。
-
-     取值范围为 0~1920，默认为0。若设置为奇数值，会自动向下取偶。
-
-     用户图像范围如果超出超出画布，调用方法时会报错。
-     */
-    int  width;
-    /**
-     该用户图像在画布中的高度。
-
-     取值范围为 0~1920，默认为0。若设置为奇数值，会自动向下取偶。
-
-     用户图像范围如果超出超出画布，调用方法时会报错。
-     */
-    int  height;
-    /**
-     是否在直播中混流该用户的对应音频流。可设置为：
-     - true：在直播中混流该用户的对应音频流。
-     - false：在直播中将该用户设置为静音。
-     */
-    bool audio_push;
-    /**
-    图层编号，用来决定渲染层级, 取值0-100，0位于最底层，100位于最顶层。
-
-    相同层级的渲染区域按照现有的覆盖逻辑实现，即按照数组中顺序进行渲染，index 递增依次往上叠加。
-    */
-    int z_order;
+    uid_t uid;                      /**< 用户id */
+    bool video_push;                /**< 是否推送该用户视频流，kNERtcLsModeAudio时无效 */
+    NERtcLiveStreamVideoScaleMode adaption;   /**< 视频流裁剪模式 */
+    int x;                          /**< 画面离主画面左边距 */
+    int y;                          /**< 画面离主画面上边距 */
+    int width;                      /**< 画面在主画面的显示宽度，画面右边超出主画面会失败 */
+    int height;                     /**< 画面在主画面的显示高度，画面底边超出主画面会失败 */
+    bool audio_push;                /**< 是否推送该用户音频流 */
 };
 
 /** 图片布局 */
 struct NERtcLiveStreamImageInfo {
-    /**
-     占位图片的URL。
-     */
-    char url[kNERtcMaxURILength];
-    /**
-     x 参数用于设置画布的横轴坐标值。
-
-     通过 x 和 y 指定画布坐标中的一个点，该点将作为占位图片的左上角。
-
-     取值范围为 0~1920，若设置为奇数值，会自动向下取偶。
-     */
-    int x;
-    /**
-     y 参数用于设置画布的纵轴坐标值。
-
-     通过 x 和 y 指定画布坐标中的一个点，该点将作为占位图片的左上角。
-
-     取值范围为 0~1920，若设置为奇数值，会自动向下取偶。
-     */
-    int y;
-    /**
-     该占位图片在画布中的宽度。
-
-     取值范围为 0~1920，若设置为奇数值，会自动向下取偶。
-     */
-    int width;
-    /**
-     该占位图片在画布中的高度。
-
-     取值范围为 0~1920，若设置为奇数值，会自动向下取偶。
-     */
-    int height;
+    char url[kNERtcMaxURILength];   /**< 图片地址 */
+    int x;                          /**< 画面离主画面左边距 */
+    int y;                          /**< 画面离主画面上边距 */
+    int width;                      /**< 画面在主画面的显示宽度，画面右边超出主画面会失败 */
+    int height;                     /**< 画面在主画面的显示高度，画面底边超出主画面会失败 */
 };
 
 /** 直播布局 */
 struct NERtcLiveStreamLayout {
-    /**
-     整体画布的宽度，单位为 px。取值范围为 0~1920，若设置为奇数值，会自动向下取偶。
-     */
-    int width;
-    /**
-     整体画布的高度，单位为 px。取值范围为 0~1920，若设置为奇数值，会自动向下取偶。
-     */
-    int height;
-    /**
-     画面背景颜色，格式为 256 x 256 x R + 256 x G + B的和。请将对应 RGB 的值分别带入此公式计算即可。若未设置，则默认为0。
-     */
-    unsigned int background_color;
-    /**
-     成员布局个数。
-     */
-    unsigned int user_count;
-    /**
-     成员布局数组，详细信息请参考 NERtcLiveStreamUserTranscoding。
-     */
-    NERtcLiveStreamUserTranscoding *users;
-    /**
-     详细信息请参考 NERtcLiveStreamImageInfo。
-     */
-    NERtcLiveStreamImageInfo* bg_image;
+    int width;                              /**< 视频推流宽度 */
+    int height;                             /**< 视频推流高度 */
+    unsigned int background_color;          /**< 视频推流背景色，(R & 0xff) << 16 | (G & 0xff) << 8 | (B & 0xff) */
+    unsigned int user_count;                /**< 成员布局个数 */
+    NERtcLiveStreamUserTranscoding *users;  /**< 成员布局数组 */
+    NERtcLiveStreamImageInfo* bg_image;     /**< 背景图信息 */
 };
-
-/**
- 直播推流音频采样率
- */
-typedef enum {
-    kNERtcLiveStreamAudioSampleRate32000 = 32000, /**<采样率为 32 kHz。*/
-    kNERtcLiveStreamAudioSampleRate44100 = 44100, /**<采样率为 44.1 kHz。*/
-    kNERtcLiveStreamAudioSampleRate48000 = 48000, /**<（默认）采样率为 48 kHz。*/
-} NERtcLiveStreamAudioSampleRate;
-
-/**
- 直播推流音频编码规格
- */
-typedef enum {
-    kNERtcLiveStreamAudioCodecProfileLCAAC = 0, /**<（默认）LC-AAC 规格，表示基本音频编码规格。*/
-    kNERtcLiveStreamAudioCodecProfileHEAAC = 1, /**<HE-AAC 规格，表示高效音频编码规格。*/
-} NERtcLiveStreamAudioCodecProfile;
 
 /** 直播流配置 */
 struct NERtcLiveConfig {
     /**
      * 单路视频透传开关，默认为关闭状态。
-     * 
      * 开启后，如果房间中只有一路视频流输入， 则不对输入视频流进行转码，不遵循转码布局，直接推流 CDN。
-     * 
-     * 如果有多个房间成员视频流混合为一路流，则该设置失效，并在恢复为一个成员画面（单路流）时也不会恢复。
      */
     bool single_video_passthrough;
-    /**
+    /** 
      * 音频推流码率。
-     * 
-     * 单位为 kbps，取值范围为 10~192。
-     * 
-     * 语音场景建议设置为 64 及以上码率，音乐场景建议设置为 128 及以上码率。
+     * 单位为 kbps，取值范围为 10~192，推荐设置为 64 
      */
     int audio_bitrate;
-
-    /**
-     音频推流采样率。单位为Hz。默认为 kNERtcLiveStreamAudioSampleRate48000，即采样率为 48 kHz。
-     */
-    NERtcLiveStreamAudioSampleRate sampleRate;
-
-    /**
-     音频推流声道数，默认值为 2 双声道。
-     */
-    int channels;
-
-    /**
-     音频编码规格。默认值 NERtcLiveStreamAudioCodecProfileLCAAC，普通编码规格。
-     - 0: LC-AAC 规格，表示基本音频编码规格
-     - 1: HE-AAC 规格，表示高效音频编码规格。
-     */
-    NERtcLiveStreamAudioCodecProfile audioCodecProfile;
 };
 
 /** 直播推流任务的配置项。*/
 struct NERtcLiveStreamTaskInfo {
-    /**
-     自定义的推流任务ID。字母、数字、下划线组成的 64 位以内的字符串。请保证此ID唯一。
-     */
-    char task_id[kNERtcMaxTaskIDLength];
-    /**
-     推流地址，例如 rtmp://test.url。
-
-     此处的推流地址可设置为网易云信直播产品中服务端 API创建房间的返回参数pushUrl。
-     */
-    char stream_url[kNERtcMaxURILength];
-    /**
-     旁路推流是否需要进行音视频录制。默认为关闭状态。
-     */
-    bool server_record_enabled;
-    /**
-     直播推流模式。详细信息请参考 NERtcLiveStreamMode。
-     */
-    NERtcLiveStreamMode ls_mode;
-    /**
-     设置互动直播的画面布局。详细信息请参考 NERtcLiveStreamLayout。
-     */
-    NERtcLiveStreamLayout layout;
-    /**
-     音视频流编码参数等设置。详细信息请参考 NERtcLiveConfig。
-     */
-    NERtcLiveConfig config;
-    char extraInfo[kNERtcMacSEIBufferLength];   /**< SEI信息 */
+    char task_id[kNERtcMaxTaskIDLength];    /**< 推流任务ID，为推流任务的唯一标识，用于过程中增删任务操作 */
+    char stream_url[kNERtcMaxURILength];    /**< 直播推流地址 */
+    bool server_record_enabled;             /**< 服务器录制功能是否开启 */
+    NERtcLiveStreamMode ls_mode;            /**< 直播推流模式，NERtcLiveStreamMode */
+    NERtcLiveStreamLayout layout;           /**< 视频布局 */
+    NERtcLiveConfig config;                 /**< 推流配置 */
 };
 
 /** 直播推流状态。*/
@@ -307,11 +149,12 @@ typedef enum {
 }NERtcLiveStreamStateCode;
 
 /** 系统分类。*/
-typedef enum {
-    kNERtcOSiOS = 1,     /**< iOS 通用设备 */
-    kNERtcOSAndroid = 2, /**< Android 通用设备 */
-    kNERtcOSPC = 3,      /**< PC设备 */
-    kNERtcOSWebRTC = 4,  /**< WebRTC */
+typedef enum
+{
+    kNERtcOSiOS      = 1,    /**< iOS 通用设备 */
+    kNERtcOSAndroid  = 2,		/**< Android 通用设备 */
+    kNERtcOSPC       = 3,    /**< PC设备 */
+    kNERtcOSWebRTC   = 4,		/**< WebRTC */
 } NERtcOSCategory;
 
 /** 音频属性。设置采样率，码率，编码模式和声道数。*/
@@ -326,61 +169,51 @@ typedef enum
     kNERtcAudioProfileHighQualityStereo = 6,    /**< 6: 高质量的立体声编码，48000Hz * 2，128Kbps  */
 } NERtcAudioProfileType;
 
-/** 音频应用场景。不同的场景设置对应不同的音频采集模式、播放模式*/
-typedef enum {
-    /** 0: 默认设置
+/** 音频应用场景。不同的场景设置对应不同的音频采集模式（移动平台）、播放模式*/
+typedef enum
+{
+    /** 0:
+       默认设置:
        - kNERtcChannelProfileCommunication下为kNERtcAudioScenarioSpeech，
        - kNERtcChannelProfileLiveBroadcasting下为kNERtcAudioScenarioMusic。
      */
-    kNERtcAudioScenarioDefault = 0,
-    /** 1: 语音场景. NERtcAudioProfileType 推荐使用 kNERtcAudioProfileMiddleQuality 及以下 */
-    kNERtcAudioScenarioSpeech = 1,
-    /** 2: 音乐场景。NERtcAudioProfileType 推荐使用 kNERtcAudioProfileMiddleQualityStereo 及以上 */
-    kNERtcAudioScenarioMusic = 2,
+    kNERtcAudioScenarioDefault  = 0,    
+    kNERtcAudioScenarioSpeech   = 1,    /** 1: 语音场景. NERtcAudioProfileType 推荐使用 kNERtcAudioProfileMiddleQuality 及以下 */
+    kNERtcAudioScenarioMusic    = 2,    /** 2: 音乐场景。NERtcAudioProfileType 推荐使用 kNERtcAudioProfileMiddleQualityStereo 及以上 */
+    kNERtcAudioScenarioChatRoom = 3,    /** 3: 语聊房场景。 NERtcAudioProfileType 推荐使用 kNERtcAudioProfileMiddleQualityStereo 及以上*/
 } NERtcAudioScenarioType;
 
-/** 变声 预设值 */
-typedef enum {
-    kNERtcVoiceChangerOff           = 0,    /**< 默认关闭 */
-    kNERtcVoiceChangerRobot         = 1,    /**< 机器人 */
-    kNERtcVoiceChangerGaint         = 2,    /**< 巨人 */
+/** EQ 预设值 */
+typedef enum 
+{
+    kNERtcVoiceEqualizationOff      = -1,   /**< 默认关闭 */
+    kNERtcVoiceEqualizationDeep     = 0,    /**< 低沉 */
+    kNERtcVoiceEqualizationMellow   = 1,    /**< 圆润 */
+    kNERtcVoiceEqualizationClear    = 2,    /**< 清澈 */
+}NERtcVoiceEqualizationType;
+
+/** 混响 预设值 */
+typedef enum
+{
+    kNERtcVoiceReverbOff    = -1,   /**< 默认关闭 */
+    kNERtcVoiceReverbKTV    = 0,    /**< KTV */
+    kNERtcVoiceReverbRecite = 1,    /**< 朗诵 */
+}NERtcVoiceReverbType;
+
+/** 变声/美声 预设值 */
+typedef enum
+{
+    kNERtcVoiceChangerOff           = -1,   /**< 默认关闭 */
+    kNERtcVoiceChangerRobot         = 0,    /**< 机器人 */
+    kNERtcVoiceChangerGaint         = 1,    /**< 巨人 */
+    kNERtcVoiceChangerChurchecho    = 2,    /**< 教堂 */
     kNERtcVoiceChangerHorror        = 3,    /**< 恐怖 */
-    kNERtcVoiceChangerMature        = 4,    /**< 成熟 */
+    kNERtcVoiceChangerMuffled       = 4,    /**< 低沉 */
     kNERtcVoiceChangerManToWoman    = 5,    /**< 男变女 */
     kNERtcVoiceChangerWomanToMan    = 6,    /**< 女变男 */
     kNERtcVoiceChangerManToLoli     = 7,    /**< 男变萝莉 */
     kNERtcVoiceChangerWomanToLoli   = 8,    /**< 女变萝莉 */
 }NERtcVoiceChangerType;
-
-/** 预设的美声效果 */
-typedef enum {
-    kNERtcVoiceBeautifierOff = 0,             /**< 默认关闭 */
-    kNERtcVoiceBeautifierMuffled = 1,         /**< 低沉 */
-    kNERtcVoiceBeautifierMellow = 2,          /**< 圆润 */
-    kNERtcVoiceBeautifierClear = 3,           /**< 清澈 */
-    kNERtcVoiceBeautifierMagnetic = 4,        /**< 磁性 */
-    kNERtcVoiceBeautifierRecordingstudio = 5, /**< 录音棚 */
-    kNERtcVoiceBeautifierNature = 6,          /**< 天籁 */
-    kNERtcVoiceBeautifierKTV = 7,             /**< KTV */
-    kNERtcVoiceBeautifierRemote = 8,          /**< 悠远 */
-    kNERtcVoiceBeautifierChurch = 9,          /**< 教堂 */
-    kNERtcVoiceBeautifierBedroom = 10,        /**< 卧室 */
-    kNERtcVoiceBeautifierLive = 11,           /**< Live */
-} NERtcVoiceBeautifierType;
-
-/** 音效均衡波段的中心频率 */
-typedef enum {
-    kNERtcVoiceEqualizationBand_31  = 0, /**<  31 Hz */
-    kNERtcVoiceEqualizationBand_62  = 1, /**<  62 Hz */
-    kNERtcVoiceEqualizationBand_125 = 2, /**<  125 Hz */
-    kNERtcVoiceEqualizationBand_250 = 3, /**<  250 Hz */
-    kNERtcVoiceEqualizationBand_500 = 4, /**<  500 Hz */
-    kNERtcVoiceEqualizationBand_1K  = 5, /**<  1 kHz */
-    kNERtcVoiceEqualizationBand_2K  = 6, /**<  2 kHz */
-    kNERtcVoiceEqualizationBand_4K  = 7, /**<  4 kHz */
-    kNERtcVoiceEqualizationBand_8K  = 8, /**<  8 kHz */
-    kNERtcVoiceEqualizationBand_16K = 9, /**<  16 kHz */
-} NERtcVoiceEqualizationBand;
 
 /** 视频编码配置。用于衡量编码质量。
 
@@ -391,19 +224,14 @@ typedef enum {
  */
 typedef enum
 {
-    kNERtcVideoProfileLowest = 0,       /**< 普清（160x90/120, 15fps） */
-    kNERtcVideoProfileLow = 1,          /**< 标清（320x180/240, 15fps） */
-    kNERtcVideoProfileStandard = 2,     /**< 高清（640x360/480, 30fps） */
-    kNERtcVideoProfileHD720P = 3,       /**< 超清（1280x720, 30fps） */
-    kNERtcVideoProfileHD1080P = 4,      /**< 1080P（1920x1080, 30fps） */
+    kNERtcVideoProfileLowest = 0,       /**< 160x90/120, 15fps */
+    kNERtcVideoProfileLow = 1,          /**< 320x180/240, 15fps */
+    kNERtcVideoProfileStandard = 2,     /**< 640x360/480, 30fps */
+    kNERtcVideoProfileHD720P = 3,       /**< 1280x720, 30fps */
+    kNERtcVideoProfileHD1080P = 4,      /**< 1920x1080, 30fps */
     kNERtcVideoProfileNone = 5,
     kNERtcVideoProfileMAX = kNERtcVideoProfileHD1080P,
-    /**
-     FakeVideo标识，仅在回调中显示。请勿主动设置，否则 SDK 会按照STANDARD处理。
-
-     当远端在纯音频状态发送 SEI 时，本端将会收到远端的onUserVideoStart回调，其中 max_profile 参数为kNERtcVideoProfileFake ， 表示对端发送 16*16 的FakeVideo，此时如果本端需要接收远端的SEI信息，只需要订阅一下远端的视频即可，无须设置远端画布。
-     */
-	kNERtcVideoProfileFake = 6,
+	kNERtcVideoProfileFake = 6,         /**< 辅助sei的视频流 */
 } NERtcVideoProfileType;
 
 /** 视频流类型。*/
@@ -480,9 +308,9 @@ typedef enum
 /** @enum NERtcVideoScalingMode 设置视频缩放模式。*/
 typedef enum
 {
-    kNERtcVideoScaleFit      = 0,   /**< 0：适应视频，视频尺寸等比缩放。优先保证视频内容全部显示。若视频尺寸与显示视窗尺寸不一致，视窗未被填满的区域填充背景色。*/
-    kNERtcVideoScaleFullFill = 1,   /**< 1：视频尺寸非等比缩放。保证视频内容全部显示，且填满视窗。*/
-    kNERtcVideoScaleCropFill = 2,   /**< 2：适应区域，视频尺寸等比缩放。保证所有区域被填满，视频超出部分会被裁剪。*/
+    kNERtcVideoScaleFit      = 0,   /**< 0: 视频尺寸等比缩放。优先保证视频内容全部显示。因视频尺寸与显示视窗尺寸不一致造成的视窗未被填满的区域填充黑色。*/
+    kNERtcVideoScaleFullFill = 1,   /**< 1: 视频尺寸非等比缩放。保证视频内容全部显示，且填满视窗。*/
+    kNERtcVideoScaleCropFill = 2,   /**< 2: 视频尺寸等比缩放。优先保证视窗被填满。因视频尺寸与显示视窗尺寸不一致而多出的视频将被截掉。*/
 } NERtcVideoScalingMode;
 
 /** @enum NERtcVideoMirrorMode 设置镜像模式。*/
@@ -496,11 +324,11 @@ typedef enum
 /** 连接状态 */
 typedef enum
 {
-    kNERtcConnectionStateDisconnected   = 1, /**< 没加入房间。*/
-    kNERtcConnectionStateConnecting     = 2, /**< 正在加入房间。*/
-    kNERtcConnectionStateConnected      = 3, /**< 加入房间成功。*/
-    kNERtcConnectionStateReconnecting   = 4, /**< 正在尝试重新加入房间。*/
-    kNERtcConnectionStateFailed         = 5, /**< 加入房间失败。*/
+    kNERtcConnectionStateDisconnected   = 1, /**< 没加入频道。*/
+    kNERtcConnectionStateConnecting     = 2, /**< 正在加入频道。*/
+    kNERtcConnectionStateConnected      = 3, /**< 加入频道成功。*/
+    kNERtcConnectionStateReconnecting   = 4, /**< 正在尝试重新加入频道。*/
+    kNERtcConnectionStateFailed         = 5, /**< 加入频道失败。*/
 } NERtcConnectionStateType;
 
 
@@ -508,7 +336,7 @@ typedef enum
 typedef enum
 {
     kNERtcReasonConnectionChangedLeaveChannel           = 1, /**< kNERtcConnectionStateDisconnected 离开房间 */
-    kNERtcReasonConnectionChangedChannelClosed          = 2, /**< kNERtcConnectionStateDisconnected 房间被关闭 */
+    kNERtcReasonConnectionChangedChannelClosed          = 2, /**< kNERtcConnectionStateDisconnected 	房间被关闭 */
     kNERtcReasonConnectionChangedBeKicked               = 3, /**< kNERtcConnectionStateDisconnected 用户被踢 */
     kNERtcReasonConnectionChangedTimeOut                = 4, /**< kNERtcConnectionStateDisconnected	服务超时 */
     kNERtcReasonConnectionChangedJoinChannel            = 5, /**< kNERtcConnectionStateConnecting 加入房间 */
@@ -516,8 +344,8 @@ typedef enum
     kNERtcReasonConnectionChangedReJoinSucceed          = 7, /**< kNERtcConnectionStateConnected 重新加入房间成功（重连） */
     kNERtcReasonConnectionChangedMediaConnectionDisconnected = 8, /**< kNERtcConnectionStateReconnecting 媒体连接断开 */
     kNERtcReasonConnectionChangedSignalDisconnected     = 9, /**< kNERtcConnectionStateReconnecting 信令连接断开 */
-    kNERtcReasonConnectionChangedRequestChannelFailed   = 10, /**< kNERtcConnectionStateFailed 请求房间失败 */
-    kNERtcReasonConnectionChangedJoinChannelFailed      = 11, /**< kNERtcConnectionStateFailed 加入房间失败 */
+    kNERtcReasonConnectionChangedRequestChannelFailed   = 10, /**< kNERtcConnectionStateFailed 请求频道失败 */
+    kNERtcReasonConnectionChangedJoinChannelFailed      = 11, /**< kNERtcConnectionStateFailed 加入频道失败 */
 } NERtcReasonConnectionChangedType;
 
 /** 声音音量信息。一个数组，包含每个说话者的用户 ID 和音量信息。*/
@@ -668,81 +496,28 @@ typedef enum {
     kNERtcVideoFramerateFps_15      = 15,   /**< 15帧每秒 */
     kNERtcVideoFramerateFps_24      = 24,   /**< 24帧每秒 */
     kNERtcVideoFramerateFps_30      = 30,   /**< 30帧每秒 */
-    kNERtcVideoFramerateFps_60      = 60,   /**< 60帧每秒 */
 } NERtcVideoFramerateType;
 
 /** @enum NERtcDegradationPreference 视频编码策略。*/
 typedef enum {
-    /**
-     - （默认）根据场景模式调整适应性偏好。
-     - 通信场景中，选择kNERtcDegradationBalanced 模式，在编码帧率和视频质量之间保持平衡。
-     - 直播场景中，选择kNERtcDegradationMaintainQuality 模式，降低编码帧率以保证视频质量。
-     */
-    kNERtcDegradationDefault            = 0,
-    /**
-     流畅优先，降低视频质量以保证编码帧率。在弱网环境下，降低视频清晰度以保证视频流畅，此时画质降低，画面会变得模糊，但可以保持视频流畅。
-     */
-    kNERtcDegradationMaintainFramerate  = 1,
-    /**
-     清晰优先，降低编码帧率以保证视频质量。在弱网环境下，降低视频帧率以保证视频清晰，此时可能会出现一定卡顿。
-     */
-    kNERtcDegradationMaintainQuality    = 2,
-    /**
-     在编码帧率和视频质量之间保持平衡。
-     */
-    kNERtcDegradationBalanced           = 3,
+    kNERtcDegradationDefault            = 0,  /**< 使用引擎推荐值。通话场景使用平衡模式，直播推流场景使用清晰优先 */
+    kNERtcDegradationMaintainFramerate  = 1,  /**< 帧率优先 */
+    kNERtcDegradationMaintainQuality    = 2,  /**< 清晰度优先 */
+    kNERtcDegradationBalanced           = 3,  /**< 平衡模式 */
 } NERtcDegradationPreference;
 
 /** 视频配置的属性。*/
 struct NERtcVideoConfig
 {
-    /**
-     视频编码的分辨率，用于衡量编码质量。详细信息请参考 NERtcVideoProfileType。
-     */
-    NERtcVideoProfileType max_profile;
-    /**
-     视频编码分辨率，衡量编码质量，以宽x高表示。与maxProfile属性二选一。
-
-     width表示视频帧在横轴上的像素，即自定义宽。
-     - 设置为负数时表示采用 max_profile 档位。
-     - 如果需要自定义分辨率场景，则设置此属性，maxProfile属性失效。
-
-     自定义视频输入width和height无效，会自动根据 maxProfile 缩放。
-     */
-    uint32_t width;
-    /**
-     视频编码分辨率，衡量编码质量，以宽x高表示。与maxProfile属性二选一。
-
-     height表示视频帧在纵轴上的像素，即自定义高。
-     - 设置为负数时表示采用 max_profile 档位。
-     - 如果需要自定义分辨率场景，则设置此属性，maxProfile属性失效。
-
-     自定义视频输入width和height无效，会自动根据 maxProfile 缩放。
-     */
-    uint32_t height;
-    /**
-     视频裁剪模式，宽高比。默认为 kNERtcVideoCropModeDefault。详细信息请参考 NERtcVideoCropMode。
-     */
-    NERtcVideoCropMode crop_mode_;
-    /**
-     主流的视频编码的帧率。详细信息请参考 NERtcVideoFramerateType。默认根据设置的maxProfile决定帧率。
-     - max_profile >= STANDARD，frameRate = FRAME_RATE_FPS_30 。
-     - max_profile < STANDARD，frameRate = FRAME_RATE_FPS_15 。
-     */
-    NERtcVideoFramerateType framerate;
-    /**
-     视频编码的最小帧率。默认为 0，表示使用默认最小帧率
-     */
-    NERtcVideoFramerateType min_framerate;
+    NERtcVideoProfileType max_profile;	/**< 视频编码的分辨率，用于衡量编码质量。*/
+    uint32_t width;                     /**< 视频编码自定义分辨率之宽度。width为0表示使用max_profile*/
+    uint32_t height;                    /**< 视频编码自定义分辨率之高度。height为0表示使用max_profile*/
+    NERtcVideoCropMode crop_mode_;      /**< 视频画面裁剪模式，默认kNERtcVideoCropModeDefault。*/
+    NERtcVideoFramerateType framerate;  /**< 视频帧率 */
+    NERtcVideoFramerateType min_framerate;  /**< 视频最小帧率 */
     uint32_t bitrate;                   /**< 视频编码码率kbps，取0时使用默认值 */
-    /**
-     视频编码的最小码率，单位为 Kbps。您可以根据场景需要，手动设置想要的最小码率，若设置为0，SDK 将会自行计算处理。
-     */
-    uint32_t min_bitrate;
-    /**
-     带宽受限时的视频编码降级偏好。详细信息请参考 NERtcDegradationPreference。
-     */
-    NERtcDegradationPreference degradation_preference;
+    uint32_t min_bitrate;               /**< 视频编码码率下限kbps，取0时使用默认值 */
+    NERtcDegradationPreference degradation_preference;   /**< 编码策略 */
 };
 
 /** 视频帧数据回调
@@ -801,10 +576,10 @@ struct NERtcVideoDimensions
 };
 /** 屏幕共享功能的编码策略倾向
 
-- kNERtcSubStreamContentPreferMotion: 内容类型为动画。当共享的内容是视频、电影或游戏时，推荐选择该内容类型
+- kNERtcSubStreamContentPreferMotion: 内容类型为动画;当共享的内容是视频、电影或游戏时，推荐选择该内容类型
 当用户设置内容类型为动画时，按用户设置的帧率处理
     
-- kNERtcSubStreamContentPreferDetails: 内容类型为细节。当共享的内容是图片或文字时，推荐选择该内容类型
+- kNERtcSubStreamContentPreferDetails: 内容类型为细节;当共享的内容是图片或文字时，推荐选择该内容类型
 当用户设置内容类型为细节时，最高允许用户设置到10帧，设置超过10帧时，不生效，按10帧处理
 
  */
@@ -815,7 +590,7 @@ typedef enum
     kNERtcSubStreamContentPreferDetails = 1,    /**< 细节模式。*/
 }NERtcSubStreamContentPrefer;
 
-/** 屏幕共享编码参数配置。用于衡量编码质量。*/
+/** 屏幕共享编码参数配置。用于衡量编码质量。一期只支持profile设置。*/
 struct NERtcScreenCaptureParameters
 {
     NERtcScreenProfileType profile;     /**< 屏幕共享编码参数配置。*/
@@ -832,36 +607,18 @@ struct NERtcScreenCaptureParameters
 /** 视频显示设置 */
 struct NERtcVideoCanvas
 {
-    /**
-     数据回调。详细信息请参考 onFrameDataCallback。
-
-     在 macosx中，需要设置 NERtcEngineContex t的 video_use_exnternal_render 为 true 才有效。
-     */
-    onFrameDataCallback cb;
-    /**
-     数据回调的用户透传数据。
-
-     在 macosx中，需要设置 NERtcEngineContex t的 video_use_exnternal_render 为 true 才有效。
-     */
-    void *user_data;
-    /**
-     渲染窗口句柄。
-
-     在 macosx中，需要设置 NERtcEngineContex t的 video_use_exnternal_render 为 false 才有效。
-     */
-    void *window;
-    /**
-     视频显示模式，详细信息请参考 NERtcVideoScalingMode。
-     */
-    NERtcVideoScalingMode scaling_mode;
+    onFrameDataCallback cb; /**< 数据回调  如果是macosx，需要设置NERtcEngineContext的video_use_exnternal_render为true才有效*/
+    void *user_data;        /**< 数据回调的用户透传数据 如果是macosx，需要设置NERtcEngineContext的video_use_exnternal_render为true才有效 */
+    void *window;           /**< 渲染窗口句柄 如果是macosx，需要设置NERtcEngineContext的video_use_exnternal_render为false才有效*/
+    NERtcVideoScalingMode scaling_mode; /**< 视频缩放模式 */
 };
 
 /** 录制类型。*/
 typedef enum
 {
-    kNERtcRecordTypeAll = 0,    /**< 参与合流+单流录制。*/
-    kNERtcRecordTypeMix = 1,    /**< 参与合流录制模式。*/
-    kNERtcRecordTypeSingle = 2, /**< 参与单流录制模式。*/
+    kNERtcRecordTypeAll = 0,    /**< 参与混合录制且录制单人文件。*/
+    kNERtcRecordTypeMix = 1,    /**< 参与混合录制。*/
+    kNERtcRecordTypeSingle = 2, /**< 只录单人文件。*/
 } NERtcRecordType;
 
 /** 音频类型。*/
@@ -872,74 +629,72 @@ typedef enum
 
 /** 音频帧请求数据的读写模式。*/
 typedef enum {
-	kNERtcRawAudioFrameOpModeReadOnly = 0,    /**< 返回数据只读模式 */
-	kNERtcRawAudioFrameOpModeReadWrite,       /**< 返回数据可读写 */
+	kNERtcRawAudioFrameOpModeReadOnly = 0,    /**< Audio callback just support read only. */
+	kNERtcRawAudioFrameOpModeReadWrite,       /**< Audio callback support read and write. */
 } NERtcRawAudioFrameOpModeType;
 
 /** 音频帧请求格式。*/
 struct NERtcAudioFrameRequestFormat
 {
-    uint32_t     channels;      /**< 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。*/
+    uint32_t     channels;      /**< 音频频道数量(如果是立体声，数据是交叉的)。单声道: 1；双声道 : 2。*/
     uint32_t     sample_rate;   /**< 采样率。*/
 	NERtcRawAudioFrameOpModeType mode = kNERtcRawAudioFrameOpModeReadWrite; /**<读写模式 */
 };
 
 /** 音频格式。*/
-struct NERtcAudioFormat {
-    NERtcAudioType type; /**< 音频类型。*/
-    uint32_t channels; /**< 音频声道数量。如果是立体声，数据是交叉的。单声道: 1；双声道 : 2。*/
-    uint32_t sample_rate; /**< 采样率。*/
-    uint32_t bytes_per_sample; /**< 每个采样点的字节数。对于 PCM 来说，一般使用 16 bit，即两个字节。*/
-    uint32_t samples_per_channel; /**< 每个房间的样本数量。*/
+struct NERtcAudioFormat
+{
+    NERtcAudioType type;        /**< 音频类型。*/
+    uint32_t     channels;      /**< 音频频道数量(如果是立体声，数据是交叉的)。单声道: 1；双声道 : 2。*/
+    uint32_t     sample_rate;    /**< 采样率。*/
+    uint32_t     bytes_per_sample;    /**< 每个采样点的字节数 : 对于 PCM 来说，一般使用 16 bit，即两个字节。*/
+    uint32_t     samples_per_channel;    /**< 每个频道的样本数量。*/
 };
 
 /** 音频帧。*/
-struct NERtcAudioFrame {
+struct NERtcAudioFrame
+{
     NERtcAudioFormat format;    /**< 音频格式。*/
     void *data;     /**< 数据缓冲区。有效数据长度为：samples_per_channel * channels * bytes_per_sample。*/
 };
 
-/** 语音观测器对象。
- 
- 部分接口允许修改 frame 里 void *data 所指向的内容，但不允许修改 format。如果对 format 有要求，需调用相应设置接口。*/
+/** 语音观测器对象。部分接口允许修改 frame 里 void *data 所指向的内容，但不允许修改 format。如果对 format 有要求，需调用相应设置接口。*/
 class INERtcAudioFrameObserver
 {
 public:
     virtual ~INERtcAudioFrameObserver() {}
-    /** 采集音频数据回调，用于声音处理等操作。
+    /** 采集音频数据回调。
 
      @note
-     - 返回音频数据支持读/写。
-     - 有本地音频数据驱动就会回调。
+     - 返回音频数据支持读/写
+     - 有本地音频数据驱动就会回调
 
      @param frame 音频帧。
      */
     virtual void onAudioFrameDidRecord(NERtcAudioFrame *frame) = 0;
-    /** 播放音频数据回调，用于声音处理等操作。
+    /** 播放音频数据回调。
     
      @note
-     - 返回音频数据支持读/写。
-     - 有本地音频数据驱动就会回调。
+     - 返回音频数据支持读/写
+     - 有本地音频数据驱动就会回调
 
      @param frame 音频帧。
      */
     virtual void onAudioFrameWillPlayback(NERtcAudioFrame *frame) = 0;
-    /** 获取本地用户和所有远端用户混音后的原始音频数据。
+    /** 播放和采集混合后的音频数据回调。
 
      @note
-     - 返回音频数据只读。
-     - 有本地音频数据驱动就会回调。
+     - 返回音频数据只读
+     - 有本地音频数据驱动就会回调
 
      @param frame 音频帧。
      */
     virtual void onMixedAudioFrame(NERtcAudioFrame * frame) = 0;
-    /** 
-     * 获取单个远端用户混音前的音频数据。
-     * 
-     * 成功注册音频观测器后，如果订阅了远端音频（默认订阅）且远端用户开启音频后，SDK 会在捕捉到混音前的音频数据时，触发该回调，将音频数据回调给用户。
+    /** 混合前各个用户的音频数据回调。
     
      @note
-     - 返回音频数据只读。
+     - 返回音频数据只读
+     - 远端用户音频开启并订阅对方后会回调
 
      @param userID 用户ID。
      @param frame  音频帧。
@@ -968,8 +723,8 @@ typedef enum
 
 /** 外部输入的视频桢。*/
 struct NERtcVideoFrame {
-    NERtcVideoType format;      /**< 视频帧格式，详细信息请参考 NERtcVideoType。*/
-    uint64_t timestamp;         /**< 视频时间戳，单位为毫秒。 */
+    NERtcVideoType format;      /**< 视频类型  详见: #NERtcVideoType*/
+    uint64_t timestamp;         /**< 视频桢时间戳 */
     uint32_t width;             /**< 视频桢宽度 */
     uint32_t height;            /**< 视频桢宽高 */
     NERtcVideoRotation rotation;/**<  视频旋转角度 详见: #NERtcVideoRotation */
@@ -997,63 +752,23 @@ typedef enum
 /** 创建混音的配置项 */
 struct NERtcCreateAudioMixingOption
 {
-    /**
-     待播放的音乐文件的绝对路径或 URL 地址。
-     */
-    char path[kNERtcMaxURILength];
-    /**
-     伴音循环播放的次数：
-     - 1：（默认）播放音效一次。
-     - ≤ 0：无限循环播放音效，直至调用 stopEffect 或 stopAllEffects 后停止。
-     */
-    int loop_count;
-    /**
-     是否将伴音发送远端，默认为 true，即远端用户订阅本端音频流后可听到该伴音。
-     */
-    bool send_enabled;
-    /**
-     音乐文件的发送音量，取值范围为 0~100。默认为 100，表示使用文件的原始音量。
-     */
-    uint32_t send_volume;
-    /**
-     是否可播放。默认为 true，即可在本地播放该伴音
-     */
-    bool playback_enabled;
-    /**
-     音乐文件的播放音量，取值范围为 0~100。默认为 100，表示使用文件的原始音量。
-     */
-    uint32_t playback_volume;
+    char path[kNERtcMaxURILength];  /**< 本地文件全路径或URL */
+    int loop_count;                 /**< 循环次数， <= 0, 表示无限循环，默认 1 */
+    bool send_enabled;              /**< 是否可发送，默认为 true */
+    uint32_t send_volume;           /**< 发送音量。最大为 100（默认）含义（0%-100%）*/
+    bool playback_enabled;          /**< 是否可回放，默认为 true */
+    uint32_t playback_volume;       /**< 回放音量。最大为 100（默认）*/
 };
 
 /** 创建音效的配置项 */
 struct NERtcCreateAudioEffectOption
 {
-    /**
-     待播放的音乐文件的绝对路径或 URL 地址。
-     */
-    char path[kNERtcMaxURILength];
-    /**
-     音效循环播放的次数：
-     - 1：（默认）播放音效一次。
-     - ≤ 0：无限循环播放音效，直至调用 stopEffect 或 stopAllEffects 后停止。
-     */
-    int loop_count;
-    /**
-     是否将伴音发送远端，默认为 true，即远端用户订阅本端音频流后可听到该伴音。
-     */
-    bool send_enabled;
-    /**
-     音乐文件的发送音量，取值范围为 0~100。默认为 100，表示使用文件的原始音量。
-     */
-    uint32_t send_volume;
-    /**
-     是否可播放。默认为 true，即可在本地播放该音效。
-     */
-    bool playback_enabled;
-    /**
-     音乐文件的播放音量，取值范围为 0~100。默认为 100，表示使用文件的原始音量。
-     */
-    uint32_t playback_volume;
+    char path[kNERtcMaxURILength];  /**< 本地文件全路径或URL */
+    int loop_count;                    /**< 循环次数， <= 0, 表示无限循环，默认 1 */
+    bool send_enabled;              /**< 是否可发送，默认为 true */
+    uint32_t send_volume;           /**< 发送音量。最大为 100（默认）含义（0%-100%）*/
+    bool playback_enabled;          /**< 是否可回放，默认为 true */
+    uint32_t playback_volume;       /**< 回放音量。最大为 100（默认）*/
 };
 
 /** 日志级别。 */
@@ -1085,12 +800,12 @@ typedef enum {
 } NERtcStreamChannelType;
 
 /** 通过 JSON 配置 SDK 提供技术预览或特别定制功能。以标准化方式公开 JSON 选项。详见API setParameters*/
-#define kNERtcKeyRecordHostEnabled          "record_host_enabled"          /**< bool value. true: 录制主讲人, false: 不是录制主讲人。通话前设置有效 */
-#define kNERtcKeyRecordAudioEnabled         "record_audio_enabled"         /**< bool value，启用服务器音频录制。默认值 false。通话前设置有效 */
-#define kNERtcKeyRecordVideoEnabled         "record_video_enabled"         /**< bool value，启用服务器视频录制。默认值 false。通话前设置有效 */
-#define kNERtcKeyRecordType                 "record_type"                  /**< int value, NERtcRecordType。通话前设置有效 */
-#define kNERtcKeyAutoSubscribeAudio         "auto_subscribe_audio"         /**< bool value，其他用户打开音频时，自动订阅。默认值 true。通话前设置有效 */
-#define kNERtcKeyPublishSelfStreamEnabled   "publish_self_stream_enabled"   /**< bool value，开启旁路直播。默认值 false。通话前设置有效 */
+#define kNERtcKeyRecordHostEnabled          "record_host_enabled"          /**< bool value. true: 录制主讲人, false: 不是录制主讲人 */
+#define kNERtcKeyRecordAudioEnabled         "record_audio_enabled"         /**< bool value，启用服务器音频录制。默认值 false */
+#define kNERtcKeyRecordVideoEnabled         "record_video_enabled"         /**< bool value，启用服务器视频录制。默认值 false */
+#define kNERtcKeyRecordType                 "record_type"                  /**< int value, NERtcRecordType */
+#define kNERtcKeyAutoSubscribeAudio         "auto_subscribe_audio"         /**< bool value，其他用户打开音频时，自动订阅,只允许通话开始前调用。 默认值 true */
+#define kNERtcKeyPublishSelfStreamEnabled   "publish_self_stream_enabled"   /**< bool value，开启旁路直播。默认值 false */
 #define kNERtcKeyLogLevel                   "log_level"                     /**< int value, NERtcLogLevel，SDK 输出小于或等于该级别的log，默认为 kNERtcLogLevelInfo */
 #define kNERtcKeyAudioProcessingAECEnable   "audio_processing_aec_enable"   /**< bool value. AEC开关，默认值 true */
 #define kNERtcKeyAudioAECLowLevelEnable     "audio_aec_low_level_enable" /**< bool value. low level AEC开关，默认值 false,需要kNERtcKeyAudioProcessingAECEnable打开才生效 */
@@ -1099,8 +814,7 @@ typedef enum {
 #define kNERtcKeyAudioProcessingAINSEnable  "audio_processing_ai_ns_enable"   /**< bool value.AI  NS开关，建议通话前修改，默认值 false */
 #define kNERtcKeyAudioProcessingExternalAudioMixEnable  "audio_processing_external_audiomix_enable"   /**< bool value. 输入混音开关，默认值 false */
 #define kNERtcKeyAudioProcessingEarphone    "audio_processing_earphone"    /**< bool value. 通知SDK是否使用耳机， true: 使用耳机, false: 不使用耳机，默认值 false */
-#define kNERtcKeyVideoSendOnPubType         "video_sendonpub_type"      /**< int value. NERtcSendOnPubType；设置视频发送策略，默认发送大流 kNERtcSendOnPubHigh。通话前设置有效 */
-#define kNERtcKeyTest1v1                    "test_1v1"                  /**< bool value. 1v1模式开关，默认关闭。通话前设置有效 */
+#define kNERtcKeyVideoSendOnPubType         "video_sendonpub_type"      /**< int value. NERtcSendOnPubType；设置视频发送策略，默认发送大流 kNERtcSendOnPubHigh；通话前设置有效 */
 } // namespace nertc
 
 #endif

@@ -1,8 +1,11 @@
-#include "pch.h"
+﻿#include "pch.h"
 #include "avchat_component.h"
 #include "avchat_component_def.h"
 #include "base/win32/path_util.h"
+#include "base/time/time.h"
 #include "wrapper/avchat_business_wrapper.h"
+#include "nim_sdk/src/cpp_sdk/nim_tools/http/nim_tools_http_cpp.h"
+#include <future>
 
 namespace nim_comp
 {
@@ -10,11 +13,14 @@ namespace nim_comp
     using namespace nim;
     using namespace std::placeholders;
 
-    const int iCallingTimeoutSeconds = 45;
-    bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members, std::string& version, std::string& channelName);
+    const int iCallingTimeoutSeconds = 30;
+
+    bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members, std::string& version, std::string& channelName, std::string& attachment);
     int64_t getUid(const std::list<SignalingMemberInfo>& list, const std::string& accid);
     // 0相等，1大于，-1小于
     int versionCompare(const std::string& v1, const std::string& v2);
+    /** 发送埋点 */
+    void sendStatics(const std::string& id, const std::string& appkey);
 
     AvChatComponent::AvChatComponent()
     {
@@ -230,11 +236,13 @@ namespace nim_comp
 
     // 呼叫方首先发送INVITE，扩展字段携带自身版本号(version)及动态channelName，即<channelId> | 0 | <uid>，并直接预加载token。
     // 0代表1v1，uid为信令房间返回的用户uid；1代表group呼叫，uid传群组teamId
-    void AvChatComponent::call(const std::string& userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb)
+    void AvChatComponent::call(const std::string& userId, AVCHAT_CALL_TYPE type, const std::string& attachment, AvChatComponentOptCb cb)
     {
+        sendStatics("call", appKey_);
         channelMembers_.clear();
         version_.clear();
         channelName_.clear();
+        attachment_ = attachment;
         nim::SignalingCreateParam createParam;
         createParam.channel_type_ = (nim::NIMSignalingType)type;
         toAccid = userId;
@@ -246,7 +254,7 @@ namespace nim_comp
         isMasterInvited = true; //主叫方标记true
 
         //1,创建channel
-        auto createCb = nbase::Bind(&AvChatComponent::signalingCreateCb, this,  _1, _2, cb);
+        auto createCb = nbase::Bind(&AvChatComponent::signalingCreateCb, this, _1, _2, cb);
         Signaling::SignalingCreate(createParam, createCb);
         status_ = calling;
         startDialWaitingTimer();
@@ -281,6 +289,8 @@ namespace nim_comp
     // 被叫方发送ACCEPT，并携带自己版本号(version)
     void AvChatComponent::accept(AvChatComponentOptCb cb)
     {
+        calling_timeout_timer_.Cancel();
+        sendStatics("accept", appKey_);
         //信令accept（自动join）
         SignalingAcceptParam param;
         param.account_id_ = invitedInfo_.from_account_id_;
@@ -308,6 +318,9 @@ namespace nim_comp
 
     void AvChatComponent::reject(AvChatComponentOptCb cb)
     {
+        calling_timeout_timer_.Cancel();
+        if (!isMasterInvited)
+            sendStatics("reject", appKey_);
         //信令reject
         SignalingRejectParam param;
         param.account_id_ = invitedInfo_.from_account_id_;
@@ -332,6 +345,10 @@ namespace nim_comp
         }
         if (status_ == calling && isMasterInvited)
         {
+            if (timeOutHurryUp)
+                sendStatics("timeout", appKey_);
+            else
+                sendStatics("cancel", appKey_);
             SignalingCancelInviteParam param;
             param.channel_id_ = invitingInfo_.channel_id_;
             param.account_id_ = invitingInfo_.account_id_;
@@ -340,7 +357,10 @@ namespace nim_comp
 
             Signaling::CancelInvite(param, nullptr);
         }
-
+        else
+        {
+            sendStatics("hangup", appKey_);
+        }
 
         if (timeOutHurryUp) { //来自超时的自动挂断,不需要发送NetCallMsg
             timeOutHurryUp = false;
@@ -363,6 +383,7 @@ namespace nim_comp
     //主动方取消呼叫
     void AvChatComponent::cancel(AvChatComponentOptCb cb)
     {
+        sendStatics("cancel", appKey_);
         if (isMasterInvited && status_ == calling)
         {
             {
@@ -687,6 +708,7 @@ namespace nim_comp
         values[kAvChatCallVersion] = RTC_COMPONENT_VER;
         channelName_ = std::string(channelId).append("|").append("0").append("|").append(std::to_string(uid));
         values[kAvChatCallChannelName] = channelName_;
+        values[kAvCharCallAttachment] = attachment_;
         Json::FastWriter fw;
         SignalingInviteParam inviteParam;
         inviteParam.account_id_ = toAccid;
@@ -797,12 +819,13 @@ namespace nim_comp
         std::vector<std::string> members;
         version_.clear();
         channelName_.clear();
-        if (!parseCustomInfo(notifyInfo->custom_info_, isFromGroup, members, version_, channelName_))
+        attachment_.clear();
+        if (!parseCustomInfo(notifyInfo->custom_info_, isFromGroup, members, version_, channelName_, attachment_))
         {
             assert(false);
             return;
         }
-        QLOG_APP(L"handleInvited, from_account_id: {0}, version: {1}, channelName: {2}") << notifyInfo->from_account_id_ << version_ << channelName_;
+        QLOG_APP(L"handleInvited, from_account_id: {0}, version: {1}, channelName: {2}, attachment: {3}") << notifyInfo->from_account_id_ << version_ << channelName_ << attachment_;
         SignalingNotifyInfoInvite* inviteInfo = (SignalingNotifyInfoInvite*)notifyInfo.get();
 
         //忙线处理
@@ -835,15 +858,22 @@ namespace nim_comp
             return;
         }
 
+        // 接听计时
+        calling_timeout_timer_.Cancel();
+        StdClosure timer_cb = nbase::Bind([this]() {
+                timeOutHurryUp = true;
+                sendStatics("timeout", appKey_);
+                compEventHandler_.lock()->onUserCancel(from_account_id_);
+                status_ = idle;
+            });
+        timer_cb = calling_timeout_timer_.ToWeakCallback(timer_cb);
+        nbase::ThreadManager::PostDelayedTask(timer_cb, nbase::TimeDelta::FromSeconds(iCallingTimeoutSeconds));
+
         //将收到邀请后的频道信息拷贝到内部，供accept使用
         invitedInfo_ = *inviteInfo;
         status_ = called;
         int type = inviteInfo->channel_info_.channel_type_;
-        compEventHandler_.lock()->onInvited(notifyInfo->from_account_id_,
-            members,
-            isFromGroup,
-            AVCHAT_CALL_TYPE(type)
-        );
+        compEventHandler_.lock()->onInvited(notifyInfo->from_account_id_, members, isFromGroup, "", AVCHAT_CALL_TYPE(type), attachment_);
     }
 
     void AvChatComponent::handleOtherClientAccepted(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
@@ -869,7 +899,8 @@ namespace nim_comp
         if (!acceptedInfo->custom_info_.empty())
         {
             std::string channelNameTmp;
-            if (!parseCustomInfo(acceptedInfo->custom_info_, isFromGroup, members, version_, channelNameTmp))
+            std::string attachmentTmp;
+            if (!parseCustomInfo(acceptedInfo->custom_info_, isFromGroup, members, version_, channelNameTmp, attachmentTmp))
             {
                 assert(false);
                 return;
@@ -1001,15 +1032,20 @@ namespace nim_comp
         
         status_ = idle;
         compEventHandler_.lock()->onCallEnd();
-        
     }
+
     void AvChatComponent::handleCancelInvite(std::shared_ptr<nim::SignalingNotifyInfo> notifyInfo)
     {
+        if (timeOutHurryUp) {
+            timeOutHurryUp = false;
+            return;
+        }
+        calling_timeout_timer_.Cancel();
         SignalingNotifyInfoCancelInvite* cancelInfo = (SignalingNotifyInfoCancelInvite*)notifyInfo.get();
-        
         compEventHandler_.lock()->onUserCancel(cancelInfo->from_account_id_);
         status_ = idle;
     }
+
     void AvChatComponent::signalingNotifyCb(std::shared_ptr<SignalingNotifyInfo> notifyInfo)
     {
         switch (notifyInfo->event_type_)
@@ -1091,8 +1127,10 @@ namespace nim_comp
     }
     ///////////////////////////////G2事件///////////////////////////////
     void AvChatComponent::onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed) {
-        QLOG_APP(L"onJoinChannel");
+        std::string strAccid = getAccid(uid);
+        QLOG_APP(L"onJoinChannel accid: {0}, uid: {1}, cid: {2}, cname: {3}") << strAccid << uid << cid << channelName_;
         //rtcEngine_->enableLocalAudio(true);
+        compEventHandler_.lock()->onJoinChannel(strAccid, uid, cid, channelName_);
     }
     void AvChatComponent::onUserJoined(nertc::uid_t uid, const char* user_name)
     {
@@ -1106,7 +1144,7 @@ namespace nim_comp
     }
     void AvChatComponent::onUserLeft(nertc::uid_t uid, nertc::NERtcSessionLeaveReason reason)
     {
-        if (reason != 4) {
+        if (0 == reason) {
             compEventHandler_.lock()->onUserLeave(getAccid(uid));
         }
         else {
@@ -1157,7 +1195,7 @@ namespace nim_comp
         return 0;
     }
 
-    bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members, std::string& version, std::string& channelName)
+    bool parseCustomInfo(const std::string& str, bool& isFromGroup, std::vector<std::string>& members, std::string& version, std::string& channelName, std::string& attachment)
     {
         version.clear();
         channelName.clear();
@@ -1188,6 +1226,11 @@ namespace nim_comp
         {
             channelName = values[kAvChatCallChannelName].asString();
         }
+
+        if (values.isMember(kAvCharCallAttachment))
+        {
+            attachment = values[kAvCharCallAttachment].asString();
+        }
         
         return true;
     }
@@ -1209,5 +1252,30 @@ namespace nim_comp
             if (*p2 == '.') ++p2;
         }
         return 0;
+    }
+
+    void sendStatics(const std::string& id, const std::string& appkey)
+    {
+        nbase::Time nowTime = nbase::Time::Now();
+        time_t curTime = nowTime.ToTimeT() * 1000 + nowTime.ToTimeStruct(true).millisecond();
+        std::async(std::launch::async, [id, appkey, curTime](){
+            Json::Value values;
+            Json::FastWriter writer;
+            values["id"] = id;
+            values["accid"] = nim::Client::GetCurrentUserAccount();
+            values["date"] = curTime;
+            values["appKey"] = appkey;
+            values["version"] = RTC_COMPONENT_VER;
+            values["platform"] = "pc";
+            std::string body = writer.write(values);;
+            nim_http::HttpRequest httpRequest("https://statistic.live.126.net/statics/report/callkit/action", body.c_str(), body.size(), [id](bool ret, int code, const std::string& rsp) {
+                if (!ret) {
+                    QLOG_APP(L"HttpRequest, sttatics: {0}, error: {1}") << id << code;
+                }
+                });
+            httpRequest.SetTimeout(5000);
+            httpRequest.AddHeader("Content-Type", "application/json;charset=utf-8");
+            nim_http::PostRequest(httpRequest);
+            });
     }
 }
