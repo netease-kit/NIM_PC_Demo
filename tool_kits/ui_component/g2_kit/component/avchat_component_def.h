@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file "avchat_component_def.h"
  * @brief 呼叫组件的一些定义
  * @copyright (c) 2014-2021, NetEase Inc. All rights reserved
@@ -64,15 +64,17 @@ extern"C"
     static const char* kAvChatOnAudioAvailable  = "onAudioAvailable";
     static const char* kAvChatOnLocalCameraStateChanged = "onLocalCameraStateChanged";
     static const char* kAvChatOnAudioVolumChanged   = "onAudioVolumeChanged";
+    static const char* kAvChatOnJoinChannel     = "onJoinChannel";
 
     // 自定义json信息中用到的key
     static const char* kAvChatChannelMembers    = "callUserList";
     static const char* kAvChatCallType          = "callType";
     static const char* kAvChatCallVersion       = "version";
     static const char* kAvChatCallChannelName   = "channelName";
+    static const char* kAvCharCallAttachment    = "_attachment";
     
     #define AVCHAT_LOG_DIR L"Netease\\G2"   /**< nertc日志目录 */
-    #define RTC_COMPONENT_VER "1.2.0"       /**< 组件版本 */
+    #define RTC_COMPONENT_VER "1.3.0"       /**< 组件版本 */
 
 #ifdef __cplusplus
 };

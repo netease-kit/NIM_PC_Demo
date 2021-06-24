@@ -93,9 +93,8 @@ typedef enum
 	kNERtcErrInvalidUserID = 30106,           /**< 非法的用户 ID */
 	kNERtcErrMediaNotStarted = 30107,         /**< 用户多媒体数据未连接 */
 	kNERtcErrSourceNotFound = 30108,          /**< source 未找到 */
-    kNERtcErrSwitchChannelInvalidState = 30109, /**< 切换频道状态无效 */
 
-    kNERtcErrConnectionNotFound = 30200,          /**< 连接未找到 */
+	kNERtcErrConnectionNotFound = 30200,      /**< 连接未找到 */
 	kNERtcErrStreamNotFound = 30201,          /**< 媒体流未找到 */
 	kNERtcErrAddTrackFail = 30202,            /**< 加入 track 失败 */
 	kNERtcErrTrackNotFound = 30203,           /**< track 未找到 */
@@ -103,7 +102,6 @@ typedef enum
 	kNERtcErrSignalDisconnected = 30205,      /**< 信令连接断开 */
 	kNERtcErrServerKicked = 30206,            /**< 被踢出频道 */
     kNERtcErrKickedForRoomClosed = 30207,     /**< 因频道已关闭而被踢出 */
-    kNERtcErrChannelLeaveBySwitchAction = 30208,  /**<因为切换频道的操作频道被关闭*/
     
     kNERtcRuntimeErrADMNoAuthorize = 40000,    /**< 没有音频设备权限 */
     
@@ -116,14 +114,14 @@ typedef enum
 /** @enum NERtcRoomServerErrorCode room server相关错误码。TODO：NERtcErrorCode */
 typedef enum
 {
-	kNERtcRoomServerErrOK               = 200,				/**< 操作成功 */
-	kNERtcRoomServerErrAuthError        = 401,			    /**< 认证错误*/
-	kNERtcRoomServerErrChannelNotExist  = 404,	            /**< 房间不存在*/
-	kNERtcRoomServerErrUidNotExist      = 405,		        /**< 房间下的uid不存在 */
-	kNERtcRoomServerErrDataError        = 417,			    /**< 请求数据不对 */
-	kNERtcRoomServerErrUnknown          = 500,			    /**< 内部错误（TurnServer请求异常）*/
-	kNERtcRoomServerErrServerError      = 600,		        /**< 服务器内部错误 */
-	kNERtcRoomServerErrInvilid          = 11403,			/**< 无效的操作 */
+	kNERtcRoomServerErrOK = 200,				/**< 操作成功 */
+	kNERtcRoomServerErrAuthError = 401,			/**< 认证错误*/
+	kNERtcRoomServerErrChannelNotExist = 404,	/**< 房间不存在*/
+	kNERtcRoomServerErrUidNotExist = 405,		/**< 房间下的uid不存在 */
+	kNERtcRoomServerErrDataError = 417,			/**< 请求数据不对 */
+	kNERtcRoomServerErrUnknown = 500,			/**< 内部错误（TurnServer请求异常）*/
+	kNERtcRoomServerErrServerError = 600,		/**< 服务器内部错误 */
+	kNERtcRoomServerErrInvilid = 11403,			/**< 无效的操作 */
 } NERtcRoomServerErrorCode;
 
 /** @enum NERtcAudioMixingErrorCode 混音音乐文件错误码。
@@ -157,16 +155,15 @@ typedef enum
 typedef enum
 {
     //ADM
-    kNERtcRuntimeErrADMInitRecording        = 40001,     /**< 音频设备模块：初始化录音设备时出现错误。请检查录音设备是否正常或者权限限制，或者尝试重新进入频道。*/
-    kNERtcRuntimeErrADMStartRecording       = 40002,     /**< 音频设备模块：启动录音设备出现错误。请检查录音设备是否正常，或者尝试重新进入频道。*/
-    kNERtcRuntimeErrADMStopRecording        = 40003,     /**< 音频设备模块：运行时录音错误。请检查录音设备是否正常，或者尝试重新进入频道。*/
-    kNERtcRuntimeErrADMInitPlayout          = 40004,     /**< 音频设备模块：初始化播放设备出现错误。请检查播放设备是否异常或者权限限制，或者尝试重新进入频道。*/
-    kNERtcRuntimeErrADMStartPlayout         = 40005,     /**< 音频设备模块：启动播放设备出现错误。请检查播放设备是否正常，或者尝试重新进入频道。*/
-    kNERtcRuntimeErrADMStopPlayout          = 40006,     /**< 音频设备模块：运行时播放出现错误。请检查播放设备是否正常，或者尝试重新进入频道。*/
-
+    kNERtcErrADMInitPlayout             = 1008,     /**< 音频设备模块：初始化播放设备出现错误。请检查播放设备是否异常或者权限限制，或者尝试重新进入频道。*/
+    kNERtcErrADMStartPlayout            = 1009,     /**< 音频设备模块：启动播放设备出现错误。请检查播放设备是否正常，或者尝试重新进入频道。*/
+    kNERtcErrADMInitRecording           = 1011,     /**< 音频设备模块：初始化录音设备时出现错误。请检查录音设备是否正常或者权限限制，或者尝试重新进入频道。*/
+    kNERtcErrADMStartRecording          = 1012,     /**< 音频设备模块：启动录音设备出现错误。请检查录音设备是否正常，或者尝试重新进入频道。*/
+    kNERtcErrADMRuntimePlayoutError     = 1015,     /**< 音频设备模块：运行时播放出现错误。请检查播放设备是否正常，或者尝试重新进入频道。*/
+    kNERtcErrADMRuntimeRecordingError   = 1017,     /**< 音频设备模块：运行时录音错误。请检查录音设备是否正常，或者尝试重新进入频道。*/
     //VDM
-    kNERtcErrVDMCameraNoFrame               = 1502,     /**< 视频设备模块：摄像头无数据帧。请检查摄像头或者切换摄像头。*/
-    kNERtcErrVDMCameraCreateFail            = 1503,     /**< 视频设备模块：摄像头启动失败。请检查摄像头是否存在或被占用*/
+    kNERtcErrVDMCameraNoFrame             = 1502,     /**< 视频设备模块：摄像头无数据帧。请检查摄像头或者切换摄像头。*/
+    kNERtcErrVDMCameraCreateFail          = 1503,     /**< 视频设备模块：摄像头启动失败。请检查摄像头是否存在或被占用*/
 
 } NERtcDMErrorCode;
 

@@ -1,4 +1,4 @@
-/**
+﻿/**
  * @file avchat_component.h
  * @brief 呼叫组件头文件
  * @copyright (c) 2014-2021, NetEase Inc. All rights reserved
@@ -46,14 +46,18 @@ namespace nim_comp
         * @brief 收到邀请
         * @param invitor 邀请者的用户id
         * @param userIDs 通话里的用户id列表
-        * @param isFromGroup  是否为多人通话
-        * @param type  呼叫类型 {@see AVCHAT_CALL_TYPE}
+        * @param isFromGroup 是否为多人通话
+        * @param groupID 透传groupCall传入的groupID，1to1则为空
+        * @param type 呼叫类型 {@see AVCHAT_CALL_TYPE}
+        * @param attachment 附件信息
         * @return void
         */
         virtual void onInvited(const std::string& invitor, 
             std::vector<std::string> userIDs, 
-            bool isFromGroup, 
-            int type)
+            bool isFromGroup,
+            const std::string& groupID,
+            int type,
+            const std::string& attachment)
         {};
 
         /**
@@ -186,6 +190,16 @@ namespace nim_comp
          * @return void 
          */
         virtual void onAudioVolumeChanged(unsigned char value, bool isRecord) {}
+
+        /**
+         * @brief 当前用户加入音视频的回调
+         * @param accid 用户id，即userId
+         * @param uid 音视频里的用户id
+         * @param cid 音视频通道id
+         * @param cname 音视频通道名称
+         * @return void
+         */
+        virtual void onJoinChannel(const std::string& accid, nertc::uid_t uid, nertc::channel_id_t cid, const std::string& cname) {}
     };
 
     /**
@@ -299,10 +313,11 @@ namespace nim_comp
          * @brief 呼叫
          * @param userId 对方用户id 
          * @param type 呼叫类型 {@see AVCHAT_CALL_TYPE}
+         * @param attachment 附件信息，透传到onInvited
          * @param cb 结果回调
          * @return void
          */
-        void call(const std::string& userId, AVCHAT_CALL_TYPE type, AvChatComponentOptCb cb);
+        void call(const std::string& userId, AVCHAT_CALL_TYPE type, const std::string& attachment, AvChatComponentOptCb cb);
 
         /**
          * @brief 接受
@@ -559,6 +574,7 @@ namespace nim_comp
         std::string                        stoken_;
         std::string                        version_;        /**< 对方版本 */
         std::string                        channelName_;    /**< 房间频道名称 */
+        std::string                        attachment_;     /**< 附件信息 */
         int callType;
         bool isCameraOpen;
         bool timeOutHurryUp;

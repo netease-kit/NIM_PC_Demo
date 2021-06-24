@@ -18,9 +18,9 @@
  */
 namespace nertc
 {
-/** 设备相关方法。
+/** device collection methods.
 
- 此接口类获取设备相关的信息。
+The IDeviceCollection interface class retrieves device-related information.
 */
 class IDeviceCollection
 {
@@ -28,36 +28,36 @@ protected:
     virtual ~IDeviceCollection(){}
 
 public:
-    /** 获取设备数量。
+    /** Retrieves the total number of  playback or  recording devices.
 
-     @note 调用此方法之前，必须调用 \ref IAudioDeviceManager::enumeratePlayoutDevices "enumeratePlayoutDevices" 或 \ref IAudioDeviceManager::enumerateRecordDevices "enumerateRecordDevices" 方法获取播放或采集设备数量。
+     @note You must first call the \ref IAudioDeviceManager::enumeratePlayoutDevices "enumeratePlayoutDevices" or \ref IAudioDeviceManager::enumerateRecordDevices "enumerateRecordDevices" method before calling this method to return the number of   playback or  recording devices.
 
-     @return 采集或播放设备数量。
+     @return Number of  playback or  recording devices.
      */
     virtual uint16_t getCount() = 0;
 
-    /** 获取指定 index 的设备信息。
+    /** Retrieves a specified piece of information about an indexed  device.
 
-     @param index  指定想查询的设备信息。必须小于 \ref IDeviceCollection::getCount "getCount"返回的值。
-     @param device_name  设备名称。
-     @param device_id  设备 ID。
+     @param index The specified index that must be less than the return value of \ref IDeviceCollection::getCount "getCount".
+     @param device_name Pointer to the  device name.
+     @param device_id Pointer to the  device ID.
      @return
      - 0: 方法调用成功；
      - 其他: 方法调用失败。
      */
     virtual int getDevice(uint16_t index, char device_name[kNERtcMaxDeviceNameLength], char device_id[kNERtcMaxDeviceIDLength]) = 0;
 
-    /** 检索有关索引设备的指定信息。
+    /** 检索有关索引设备的指定信息
      @note 可返回设备的链接方式，和SDK判定的疑似不可用状态。
-     @param index  指定想查询的设备信息。
-     @param device_info 设备信息，详细信息请参考 \ref NERtcDeviceInfo "NERtcDeviceInfo"。
+     @param index The specified index that must be less than the return value of \ref IDeviceCollection::getCount "getCount".
+     @param device_info Pointer to the NERtcDeviceInfo.
      @return
      - 0: 方法调用成功；
      - 其他: 方法调用失败。
      */
     virtual int getDeviceInfo(uint16_t index, NERtcDeviceInfo* device_info) = 0;
    
-    /** 释放所有 IDeviceCollection 资源。
+    /** Releases all IDeviceCollection resources.
     */
     virtual void destroy() = 0;
 };
