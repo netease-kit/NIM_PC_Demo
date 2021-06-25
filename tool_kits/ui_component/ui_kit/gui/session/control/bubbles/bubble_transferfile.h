@@ -71,6 +71,12 @@ public:
 	 * @return TransferFileSessionID 该 bubble 绑定的传输文件 sessionId
 	 */
 	TransferFileSessionID GetTransferFileSessionId() { return const_cast<TransferFileSessionID>(transfer_file_session_id_.c_str()); }
+
+	/**
+	* 保存消息状态至UserDB
+	* @return void 无返回值
+	*/
+	virtual void SaveBubbleStatus();
 protected:
 
 	/** 

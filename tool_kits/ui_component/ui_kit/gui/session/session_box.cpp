@@ -58,6 +58,9 @@ namespace nim_comp
     SessionBox::~SessionBox()
     {
         SessionManager::GetInstance()->RemoveSessionBox(session_id_);
+        for (MsgBubbleItem* item : cached_msgs_bubbles_) {
+            item->SaveBubbleStatus();
+        }
         /*
             ContactSelectForm *contact_select_form = (ContactSelectForm *)WindowsManager::GetInstance()->GetWindow\
                 (ContactSelectForm::kClassName, nbase::UTF8ToUTF16(session_id_));
@@ -366,7 +369,8 @@ namespace nim_comp
                 bubble_id = values["session_id"].asString();
                 QLOG_APP(L"Receive transfer file notification, command type = {0}") << values[kJsonKeyCommand].asString();
                 // 协商成功后才能收到这个自定义的传送文件请求
-                nim_p2p::NimP2PDvelopKit::GetInstance()->OnReceiveChannelCommand((RemoteFlagType)msg.sender_accid_.c_str(), msg.attach_);
+                if(!first_show_msg_)
+                    nim_p2p::NimP2PDvelopKit::GetInstance()->OnReceiveChannelCommand((RemoteFlagType)msg.sender_accid_.c_str(), msg.attach_);
             } else {
                 bubble_id = msg.client_msg_id_;
             }
@@ -580,6 +584,17 @@ namespace nim_comp
         for (size_t i = 0; i < len; i++)
         {
             const nim::IMMessage &message = msg[i];
+
+            //过滤P2P传文件除了transfer_request之外的其他消息
+			Json::Value values;
+			Json::Reader reader;
+			if (message.type_ == nim::kNIMMessageTypeCustom
+				&& reader.parse(message.attach_, values)
+				&& values.isMember("type") && values["type"].asInt() == nim_comp::CustomMsgType_TransferFile
+				&& values.isMember("command") && values["command"].asString() != "transfer_request") {
+				continue;
+			}
+
             if (i == len - 1)
             {
                 //如果最后一条是提示消息被拒收的消息，要把被拒收的消息加载出来
