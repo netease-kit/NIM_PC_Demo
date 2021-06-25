@@ -82,7 +82,7 @@ void MsgBubbleTransferFile::InitInfo(const nim::IMMessage &msg)
 
 	// 取用户目录
 	std::string path, extend;
-	UserDB::GetInstance()->QueryDataWithMsgId(msg.client_msg_id_, path, extend);
+	UserDB::GetInstance()->QueryDataWithMsgId(transfer_file_session_id_, path, extend);
 	if (!path.empty() || !extend.empty())
 	{
 		local_path_ = path;
@@ -221,7 +221,7 @@ void MsgBubbleTransferFile::SetBubbleStatus(TransferFileSessionState status, boo
 	{
 		// 如果修改的状态不是初始的等待状态或者未知状态，那么将状态写入数据库保存到本地
 		// 确保下次加载历史消息可以获取到正确的状态
-		UserDB::GetInstance()->InsertData(msg_.client_msg_id_, local_path_, nbase::IntToString(transfer_file_session_state_));
+		UserDB::GetInstance()->InsertData(transfer_file_session_id_, local_path_, nbase::IntToString(transfer_file_session_state_));
 	}
 }
 
@@ -445,6 +445,17 @@ void MsgBubbleTransferFile::OnDownloadFileProgressCallback(int total, int transf
 		int prog_value = (int)(transferred * 100.0 / total);
 		SetProgressValue(prog_value);
 	}
+}
+
+void MsgBubbleTransferFile::SaveBubbleStatus()
+{
+	if (transfer_file_session_state_ == TransferFileSessionState_Wait
+		|| transfer_file_session_state_ == TransferFileSessionState_Succeeded) {
+		UserDB::GetInstance()->InsertData(transfer_file_session_id_, local_path_, nbase::IntToString(transfer_file_session_state_));
+	} else {
+		UserDB::GetInstance()->InsertData(transfer_file_session_id_, local_path_, nbase::IntToString(TransferFileSessionState_Failed));
+	}
+	
 }
 
 }

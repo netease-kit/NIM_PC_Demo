@@ -183,6 +183,12 @@ public:
 	*/
 	bool IsMyMsg() { return my_msg_; }
 
+	/**
+	* 保存消息状态至UserDB
+	* @return void 无返回值
+	*/
+	virtual void SaveBubbleStatus() { }
+
 public:
 	void SetUnreadCount(int count);
 	/**
