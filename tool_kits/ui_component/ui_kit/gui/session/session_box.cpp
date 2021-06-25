@@ -312,7 +312,7 @@ namespace nim_comp
             show_time = CheckIfShowTime(last_msg_time_, msg.timetag_);
         }
 
-        ShowMsg(msg, false, show_time);
+        ShowMsg(msg, show_time);
 
         if (!IsNoticeMsg(msg) && !IsRTSMsg(msg.type_, msg.attach_))
             last_msg_time_ = msg.timetag_;
@@ -352,20 +352,24 @@ namespace nim_comp
         AddAtMessage(msg);
     }
 
-    MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool first, bool show_time)
+    MsgBubbleItem* SessionBox::ShowMsg(const nim::IMMessage &msg, bool show_time)
     {
-        Json::Value values;
-        Json::Reader reader;
-        bool parse_success = reader.parse(msg.attach_, values);
-        bool is_transfer_file = values.isMember("type") && values["type"].asInt() == nim_comp::CustomMsgType_TransferFile;
         std::string bubble_id;
-        if (msg.type_ == nim::kNIMMessageTypeCustom && parse_success && is_transfer_file) {
-            bubble_id = values["session_id"].asString();
-            QLOG_APP(L"Receive transfer file notification, command type = {0}") << values[kJsonKeyCommand].asString();
-            // 协商成功后才能收到这个自定义的传送文件请求
-            nim_p2p::NimP2PDvelopKit::GetInstance()->OnReceiveChannelCommand((RemoteFlagType)msg.sender_accid_.c_str(), msg.attach_);
-        } else {
+        if (msg.type_ != nim::kNIMMessageTypeCustom) {
             bubble_id = msg.client_msg_id_;
+        } else {
+            Json::Value values;
+            Json::Reader reader;
+            bool parse_success = reader.parse(msg.attach_, values);
+            bool is_transfer_file = values.isMember("type") && values["type"].asInt() == nim_comp::CustomMsgType_TransferFile;
+            if (parse_success && is_transfer_file) {
+                bubble_id = values["session_id"].asString();
+                QLOG_APP(L"Receive transfer file notification, command type = {0}") << values[kJsonKeyCommand].asString();
+                // 协商成功后才能收到这个自定义的传送文件请求
+                nim_p2p::NimP2PDvelopKit::GetInstance()->OnReceiveChannelCommand((RemoteFlagType)msg.sender_accid_.c_str(), msg.attach_);
+            } else {
+                bubble_id = msg.client_msg_id_;
+            }
         }
 
         //const std::string &bubble_id = msg.client_msg_id_;
@@ -406,10 +410,7 @@ namespace nim_comp
                 }
                 MsgBubbleNotice* cell = new MsgBubbleNotice;
                 GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
-                if (first)
-                    msg_list_->AddAt(cell, 0);
-                else
-                    msg_list_->Add(cell);
+                msg_list_->Add(cell);
                 cell->InitControl();
                 cell->InitInfo(notify_msg, session_id_, true);
                 return nullptr;
@@ -437,10 +438,7 @@ namespace nim_comp
 
             MsgBubbleNotice* cell = new MsgBubbleNotice;
             GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
-            if (first)
-                msg_list_->AddAt(cell, 0);
-            else
-                msg_list_->Add(cell);
+            msg_list_->Add(cell);
             cell->InitControl();
             cell->InitInfo(msg, session_id_);
             return nullptr;
@@ -482,10 +480,7 @@ namespace nim_comp
 
                             MsgBubbleNotice* cell = new MsgBubbleNotice;
                             GlobalManager::FillBoxWithCache(cell, L"session/cell_notice.xml");
-                            if (first)
-                                msg_list_->AddAt(cell, 0);
-                            else
-                                msg_list_->Add(cell);
+                            msg_list_->Add(cell);
                             cell->InitControl();
                             cell->InitInfo(msg, session_id_);
                             return nullptr;
@@ -529,10 +524,7 @@ namespace nim_comp
         else
             GlobalManager::FillBoxWithCache(item, L"session/bubble_left.xml");
 
-        if (first)
-            msg_list_->AddAt(item, 0);
-        else
-            msg_list_->Add(item);
+        msg_list_->Add(item);
 
         item->InitControl(bubble_right);
         item->InitInfo(msg);
@@ -558,10 +550,7 @@ namespace nim_comp
         }
 
         id_bubble_pair_[bubble_id] = item;
-        if (first)//第一次打开，顺序倒序
-            cached_msgs_bubbles_.insert(cached_msgs_bubbles_.begin(), 1, item);
-        else
-            cached_msgs_bubbles_.push_back(item);
+        cached_msgs_bubbles_.push_back(item);
         auto it_closure_befor_item_add = closure_befor_item_add_.find(bubble_id);
         if (it_closure_befor_item_add != closure_befor_item_add_.end())
         {
@@ -616,7 +605,7 @@ namespace nim_comp
                 else
                     show_time = CheckIfShowTime(older_time, message.timetag_);
             }
-            ShowMsg(message, true, show_time);
+            ShowMsg(message, show_time);
 
             if (session_type_ == nim::kNIMSessionTypeTeam &&
                 message.type_ != nim::kNIMMessageTypeNotification &&
@@ -817,7 +806,34 @@ namespace nim_comp
         transfer_file_.clear();
     }
 
-    void SessionBox::ShowMsgWriting(const nim::IMMessage &msg)
+	void SessionBox::CheckLatestSessionData(const nim::SessionData& session_data)
+	{
+        std::string bubble_id;
+        if (session_data.msg_type_ != nim::kNIMMessageTypeCustom) {
+            bubble_id = session_data.msg_id_;
+        } else {
+			Json::Value values;
+			Json::Reader reader;
+			bool parse_success = reader.parse(session_data.msg_attach_, values);
+			bool is_transfer_file = values.isMember("type") && values["type"].asInt() == nim_comp::CustomMsgType_TransferFile;
+            if (parse_success && is_transfer_file) {
+                bubble_id = values["session_id"].asString();
+            } else {
+                bubble_id = session_data.msg_id_;
+            }
+        }
+        
+        IdBubblePair::iterator it = id_bubble_pair_.find(bubble_id);
+        if (it == id_bubble_pair_.end()) {
+            //未找到匹配最新会话数据的msg，从本地数据库提取一条最新的消息
+            static const int query_msg_count = 1;
+            nim::MsgLog::QueryMsgAsync(session_id_, session_type_, query_msg_count, 0,
+                                       nbase::Bind(&TalkCallback::OnQueryMsgCallback, std::placeholders::_1, std::placeholders::_2,
+                                                   std::placeholders::_3, std::placeholders::_4));
+        }
+	}
+
+	void SessionBox::ShowMsgWriting(const nim::IMMessage& msg)
     {
         cancel_writing_timer_.Cancel();
         StdClosure cb = nbase::Bind(&SessionBox::CancelWriting, this);
@@ -1432,7 +1448,7 @@ namespace nim_comp
         if (!IsNoticeMsg(msg) && !IsRTSMsg(msg.type_, msg.attach_))
             last_msg_time_ = msg.timetag_;
 
-        MsgBubbleItem* item = ShowMsg(msg, false, show_time);
+        MsgBubbleItem* item = ShowMsg(msg, show_time);
         msg_list_->EndDown(true, false);
     }
 

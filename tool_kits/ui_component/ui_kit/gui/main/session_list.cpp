@@ -610,10 +610,17 @@ void SessionList::OnSessionChangeCallback(nim::NIMResCode rescode, const nim::Se
 		{
 			SubscribeEventManager::GetInstance()->SubscribeSessionEvent(data);
 			AddSessionItem(data);
+            SessionBox* session = SessionManager::GetInstance()->FindSessionBox(data.id_);
 			if (data.unread_count_ == 0
-				|| SessionManager::GetInstance()->IsSessionBoxActive(data.id_))
+				|| SessionManager::GetInstance()->IsSessionBoxActive(session))
 			{
 				ResetUnreadCount(data.id_);
+			}
+			if (session
+				&& data.command_ == nim::kNIMSessionCommandUpdate
+				&& data.msg_status_ == nim::kNIMMsgLogStatusUnread) 
+			{
+				//session->CheckLatestSessionData(data);
 			}
 		}
 	}
