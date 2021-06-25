@@ -185,11 +185,12 @@ void TalkCallback::OnSendCustomSysmsgCallback(const nim::SendMessageArc& arc)
 void TalkCallback::OnQueryMsgCallback(nim::NIMResCode code, const std::string& query_id, nim::NIMSessionType query_type, const nim::QueryMsglogResult& result)
 {
 	QLOG_APP(L"query end: id={0} type={1} code={2} source={3}") <<query_id <<query_type <<code<< result.source_;
-
+	
+	//QueryMsgAync 返回的消息为逆序排序 反向遍历加入vector
 	std::vector<nim::IMMessage> vec;
-	for each (auto msg in result.msglogs_)
-	{
-		vec.push_back(msg);
+	vec.reserve(result.msglogs_.size());
+	for (auto iter = result.msglogs_.rbegin(); iter != result.msglogs_.rend(); iter++) {
+		vec.push_back(*iter);
 	}
 
 	SessionBox* session_form = SessionManager::GetInstance()->FindSessionBox(query_id);

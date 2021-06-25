@@ -167,6 +167,16 @@ bool SessionManager::IsSessionBoxActive(const std::string& id)
 
 	return false;
 }
+
+bool SessionManager::IsSessionBoxActive(const SessionBox* session_box) 
+{
+    if (!session_box) {
+        return false;
+	}
+    ISessionDock* parent_form = session_box->GetSessionForm();
+    return parent_form->IsActiveSessionBox(session_box);
+}
+
 SessionBox* SessionManager::GetFirstActiveSession()
 {
 	for (auto &it_box : session_box_map_)
