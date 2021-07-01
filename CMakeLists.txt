@@ -34,7 +34,7 @@ STRING(REPLACE "/" "\\\\" RELEASE_OUTPUT_7Z_FILE_WIN ${RELEASE_OUTPUT_7Z_FILE})
 
 SET(DEBUG_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605746/NIM_Windows_Demo_Build_Binaries_Debug.zip")
 SET(RELEASE_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605768/NIM_Windows_Demo_Build_Binaries_Release.zip")
-SET(NIM_CROSS_PLATFORM_SDK_URL "http://yx-web.nos.netease.com/package/1624272662/NIM_CrossPlatform_SDK_v8.5.0.zip")
+SET(NIM_CROSS_PLATFORM_SDK_URL "http://yx-web.nos.netease.com/package/1625111512/NIM_CrossPlatform_SDK_v8.5.1.zip")
 SET(NERTC_SDK_URL "http://yx-web.nos.netease.com/package/1618217725/NERtc_Windows_SDK_v4.1.1.zip")
 
 PROJECT(nim_win_demo)
