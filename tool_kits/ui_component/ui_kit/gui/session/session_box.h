@@ -109,11 +109,10 @@ public:
 	/**
 	* 添加一条新消息到聊天框里
 	* @param[in] msg	新消息的数据
-	* @param[in] first	是否把消息添加到聊天框的开头位置
 	* @param[in] show_time	是否显示这条消息的接收时间
 	* @return MsgBubbleItem* 新添加的消息控件的指针
 	*/
-	MsgBubbleItem* ShowMsg(const nim::IMMessage &msg, bool first, bool show_time);
+	MsgBubbleItem* ShowMsg(const nim::IMMessage &msg, bool show_time);
 
 	/**
 	* 加载历史消息，把一组历史消息添加到聊天框的开头位置
@@ -704,6 +703,13 @@ public:
 	* @return void	无返回值
 	*/
 	void TransferFile();
+
+	/**
+	* 检查最新的会话数据是否匹配消息，如不匹配则从本地数据库重新拉取最近历史消息
+	* @param[in] session_data session_changed_callback收到的最新会话更新数据
+	* @return void	无返回值
+	*/
+	void CheckLatestSessionData(const nim::SessionData &session_data);
 
 private:
 	/**

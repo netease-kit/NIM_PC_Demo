@@ -125,7 +125,7 @@ namespace nim_comp
 
 			SessionBox* session_form = SessionManager::GetInstance()->FindSessionBox(arc.talk_id_);
 			if (session_form)
-				session_form->ShowMsg(msg, false, false);
+				session_form->ShowMsg(msg, false);
 		});
 	}
 	void SendNetCallMsg(
@@ -167,7 +167,7 @@ namespace nim_comp
 		if (session_form) {
 			nim::IMMessage msg(json_msg);
 			msg.sender_accid_ = nim::Client::GetCurrentUserAccount();
-			session_form->ShowMsg(msg, false, false);
+			session_form->ShowMsg(msg, false);
 		}
 		nim::Talk::SendMsg(json_msg);
 	}

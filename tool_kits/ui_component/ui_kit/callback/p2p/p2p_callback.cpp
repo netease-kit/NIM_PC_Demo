@@ -43,7 +43,7 @@ void P2PCallback::OnTransferFileRequest(const RemoteFlagType remote_flag, Transf
 		msg.msg_setting_.routable_ = BS_FALSE;//不需要抄送
 		msg.attach_ = root.toStyledString();
 
-		session_box->ShowMsg(msg, false, false);
+		session_box->ShowMsg(msg, false);
 	}
 }
 

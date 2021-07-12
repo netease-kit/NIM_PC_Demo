@@ -43,6 +43,13 @@ public:
 	*/
 	bool IsSessionBoxActive(const std::string& id);
 
+	/**
+    * 判断某个会话盒子是否处于激活状态
+    * @param[in] session_box 会话
+    * @return bool true 激活，false 非激活
+    */
+    bool IsSessionBoxActive(const SessionBox* session_box);
+
 	SessionBox* GetFirstActiveSession();
 
 	/**
