@@ -27,11 +27,11 @@ NIM Demo 从 8.4.0 版本开始使用 CMake 管理工程结构，您需要下载
 git clone https://github.com/netease-im/NIM_PC_Demo.git --depth 1
 ```
 
-执行如下命令进行工程初始化
+执行如下命令进行工程初始化，如果你要编译 Release 版本，请替换命令中的 Debug 为 Release
 
 ```bash
 # 初始化项目
-cmake -B build -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Debug
+cmake -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Debug
 ```
 
 执行如上命令后，会自动下载依赖的三方库文件并解压到工程目录下，如执行无误您将看到如下信息：
@@ -66,7 +66,7 @@ cmake -B build -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Debug
 您可以通过打开 build 目录下的 `nim_win_demo.sln` 来进行调试或通过 CMake 命令直接编译：
 
 ```bash
-cmake --build build --config Debug --target install
+cmake --build build --config Debug --target INSTALL
 ```
 
 编译完成后会自动拷贝程序到代码根目录的 bin 文件夹下：
@@ -83,9 +83,8 @@ Installing: C:/Jks/workspace/NeIM_Demo/bin/uninstall.exe
 如您需要编译 Release 版本，则将上面的命令中 Debug 修改为 Release 即可：
 
 ```bash
-# 请确保当前在 build 目录下
-cmake -B build -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Release
-cmake --build build --config Release --target install
+cmake -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release --target INSTALL
 ```
 
 ## 使用音视频 2.0 版本
@@ -93,7 +92,7 @@ cmake --build build --config Release --target install
 Demo 支持使用音视频 2.0 能力来展示视频、音频通话场景，您可以在初始化 CMake 脚本时增加参数 `BUILD_WITH_NERTC_G2` 来开启该功能，如：
 
 ```
-cmake . -B build -G"Visual Studio 15 2017" -T"v141_xp" -DBUILD_WITH_NERTC_G2=ON -DCMAKE_BUILD_TYPE=Debug
+cmake . -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DBUILD_WITH_NERTC_G2=ON -DCMAKE_BUILD_TYPE=Debug
 cmake --build build --config Debug --target install
 ```
 
