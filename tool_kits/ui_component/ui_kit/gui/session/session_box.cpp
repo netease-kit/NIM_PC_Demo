@@ -848,6 +848,12 @@ namespace nim_comp
         }
 	}
 
+	void SessionBox::RemoveAllMsgs()
+	{
+		msg_list_->RemoveAll();
+		cached_msgs_bubbles_.clear();
+	}
+
 	void SessionBox::ShowMsgWriting(const nim::IMMessage& msg)
     {
         cancel_writing_timer_.Cancel();
