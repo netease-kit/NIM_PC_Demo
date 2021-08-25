@@ -302,8 +302,11 @@ void SessionItem::DeleteRecentSessionCb(nim::NIMResCode code, const nim::Session
 void SessionItem::BatchStatusDeleteCb(nim::NIMResCode res_code, const std::string& uid, nim::NIMSessionType to_type)
 {
 	QLOG_APP(L"batch delete msg, id={0} type={1} code={2}") << uid << to_type << res_code;
-	//if (res_code == nim::kNIMResSuccess)
-	//	nim::Session::SetUnreadCountZeroAsync(to_type, uid, nim::Session::SetUnreadCountZeroCallback());
+	Post2UI(ToWeakCallback([=]() {
+		auto session_box = SessionManager::GetInstance()->FindSessionBox(msg_->id_);
+		if (session_box)
+			session_box->RemoveAllMsgs();
+	}));
 }
 
 void SessionItem::ShowAtmeTip(bool show)
@@ -425,9 +428,10 @@ bool SessionItem::DelSessionItemMenuItemClick(ui::EventArgs* param)
 	else if (name == L"del_session_msg")
 	{
 		nim::Session::SetUnreadCountZeroAsync(msg_->type_, msg_->id_, ToWeakCallback([this](nim::NIMResCode res_code, const nim::SessionData&, int){
-			if (res_code == nim::kNIMResSuccess)			
-			nim::MsgLog::BatchStatusDeleteAsyncEx(msg_->id_, msg_->type_, (atoi(GetConfigValue("kNIMMsglogRevert").c_str()) != 0),
-				nbase::Bind(&SessionItem::BatchStatusDeleteCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+			if (res_code == nim::kNIMResSuccess) {
+				nim::MsgLog::BatchStatusDeleteAsyncEx(msg_->id_, msg_->type_, (atoi(GetConfigValue("kNIMMsglogRevert").c_str()) != 0),
+					nbase::Bind(&SessionItem::BatchStatusDeleteCb, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
+			}
 		}));		
 	}
 	else if (name == L"del_session_msg_online")
