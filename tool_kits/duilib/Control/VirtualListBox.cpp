@@ -72,6 +72,9 @@ void VirtualListBox::Refresh()
     int nElementCount = GetElementCount();
     int nItemCount = GetCount();
 
+    if (nItemCount == nElementCount)
+        return;
+
     if (nItemCount > nElementCount) {
         int n = nItemCount - nElementCount;
         for (int i = 0; i < n; i++)
