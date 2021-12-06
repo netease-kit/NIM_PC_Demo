@@ -34,7 +34,7 @@ STRING(REPLACE "/" "\\\\" RELEASE_OUTPUT_7Z_FILE_WIN ${RELEASE_OUTPUT_7Z_FILE})
 
 SET(DEBUG_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605746/NIM_Windows_Demo_Build_Binaries_Debug.zip")
 SET(RELEASE_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605768/NIM_Windows_Demo_Build_Binaries_Release.zip")
-SET(NIM_CROSS_PLATFORM_SDK_URL "https://yx-web-nosdn.netease.im/package/1629860104/NIM_CrossPlatform_SDK_v8.7.0.zip?download=NIM_CrossPlatform_SDK_v8.7.0.zip")
+SET(NIM_CROSS_PLATFORM_SDK_URL "http://10.242.100.195/IM_pack/Cross-platform/feature/fusion_cloud_storage/nim-win32-ia32-feature-fusion_cloud_storage.488-build.667.tar.gz")
 SET(NERTC_SDK_URL "http://yx-web.nos.netease.com/package/1618217725/NERtc_Windows_SDK_v4.1.1.zip")
 
 PROJECT(nim_win_demo)
@@ -94,8 +94,7 @@ IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nim-cross-platform-SDK.zip" AND NOT BUILD_WI
     MESSAGE(STATUS "Downloading NIM cross-platform SDK from ${NIM_CROSS_PLATFORM_SDK_URL}")
     FILE(DOWNLOAD ${NIM_CROSS_PLATFORM_SDK_URL} ${CMAKE_BINARY_DIR}/nim-cross-platform-SDK.zip)
 ENDIF ()
-EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf ${CMAKE_BINARY_DIR}/nim-cross-platform-SDK.zip WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf ${CMAKE_BINARY_DIR}/windows-refs_tags_8.7.0.354-build.408-x86.tar.gz WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf ${CMAKE_BINARY_DIR}/nim-cross-platform-SDK.zip WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 IF (NOT BUILD_WITH_CONAN)
     ADD_SUBDIRECTORY(wrapper)
     INCLUDE_DIRECTORIES(wrapper)
