@@ -125,7 +125,11 @@ ui::Control* TreeComponent::FindControlFromPoint(const ui::CPoint& pt)
 		ui::UiRect pos = pThis->GetPos();
 		return ::PtInRect(&pos, *pPoint) ? pThis : NULL;
 		}, &pt_temp, UIFIND_VISIBLE | UIFIND_HITTEST | UIFIND_TOP_FIRST);
-	if (ret == this && IsVisible())
+	if (ret != this)
+	{
+		return NULL;
+	}
+	if (IsVisible())
 	{
 		for (auto& it : visible_item_list_)
 		{

@@ -135,7 +135,7 @@ public:
 	* @param[in] to_type 会话类型
 	* @return void	无返回值
 	*/
-	static void BatchStatusDeleteCb(nim::NIMResCode res_code, const std::string& uid, nim::NIMSessionType to_type);
+	void BatchStatusDeleteCb(nim::NIMResCode res_code, const std::string& uid, nim::NIMSessionType to_type);
 
 	void SetMute(bool mute);
 private:

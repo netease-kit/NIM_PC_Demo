@@ -711,6 +711,12 @@ public:
 	*/
 	void CheckLatestSessionData(const nim::SessionData &session_data);
 
+	/**
+	* 清空当前会话所有消息
+	* @return void 无返回值
+	*/
+	void RemoveAllMsgs();
+
 private:
 	/**
 	* 显示一条"对方正在输入"的提示消息

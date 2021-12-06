@@ -62,7 +62,7 @@ void LoginForm::InitWindow()
         use_private_settings_->SetEnabled(false);
         private_settings_url_->SetEnabled(false);
     });
-    SetIcon(IDI_ICON);
+    // SetIcon(IDI_ICON);
     m_pRoot->AttachBubbledEvent(ui::kEventAll, nbase::Bind(&LoginForm::Notify, this, std::placeholders::_1));
     m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&LoginForm::OnClicked, this, std::placeholders::_1));
 
