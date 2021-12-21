@@ -1,9 +1,9 @@
-#include "app_sdk_interface.h"
-#include "app_sdk_config_helper.h"
-#include "base/http/sdk_http_manager.h"
-#include "protocol/sdk_pro.h"
-#include "shared/xml_util.h"
 #include "stdafx.h"
+#include "app_sdk_interface.h"
+#include "shared/xml_util.h"
+#include "protocol/sdk_pro.h"
+#include "base/http/sdk_http_manager.h"
+#include "app_sdk_config_helper.h"
 
 namespace app_sdk {
 const std::map<std::string, std::tuple<std::string, NimServerConfType>> key_use_nim_server_conf = {
