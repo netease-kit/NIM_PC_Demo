@@ -34,7 +34,7 @@ STRING(REPLACE "/" "\\\\" RELEASE_OUTPUT_7Z_FILE_WIN ${RELEASE_OUTPUT_7Z_FILE})
 
 SET(DEBUG_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605746/NIM_Windows_Demo_Build_Binaries_Debug.zip")
 SET(RELEASE_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605768/NIM_Windows_Demo_Build_Binaries_Release.zip")
-SET(NIM_CROSS_PLATFORM_SDK_URL "http://10.242.100.195/IM_pack/Cross-platform/feature/fusion_cloud_storage/nim-win32-ia32-feature-fusion_cloud_storage.488-build.667.tar.gz")
+SET(NIM_CROSS_PLATFORM_SDK_URL "http://10.242.100.195/IM_pack/Cross-platform/release/8.10.0/nim-win32-ia32-release-8.10.0.583-build.3.tar.gz")
 SET(NERTC_SDK_URL "http://yx-web.nos.netease.com/package/1618217725/NERtc_Windows_SDK_v4.1.1.zip")
 
 PROJECT(nim_win_demo)
