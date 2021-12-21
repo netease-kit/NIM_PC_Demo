@@ -172,7 +172,7 @@ int NimAPP::InitInstance(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLin
     }
     // 初始化云信http
     try {
-        nim_http::Init(nim_http_tool_path);
+        nim_http::Init(nbase::UTF16ToUTF8(nim_http_tool_path));
     } catch (const std::exception& e) {
         MessageBoxA(NULL, e.what(), "exception", 0);
     }
