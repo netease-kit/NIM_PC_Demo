@@ -101,7 +101,7 @@ std::string AppSDKInterface::GetAppKey()
 }
 bool AppSDKInterface::IsNimDemoAppKey(const std::string& appkey)
 {
-	static const std::string kNimTestAppKey = "fe416640c8e8a72734219e1847ad2547";
+	static const std::string kNimTestAppKey = "";
 	if (appkey.compare(kNimTestAppKey) == 0 || appkey.compare(kAppKey) == 0)
 		return true;
 	return false;
