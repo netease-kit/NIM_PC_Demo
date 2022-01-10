@@ -123,7 +123,7 @@ enum NIMMultiSpotNotifyType
 
 /** @name json extension params for nim_client_init API
   * for example: 
-  * {"app_key":"45c6af3c98409b18a84451215d0bdd6e",
+  * {"app_key":"xxxxx",
   *  "global_config":{"db_encrypt_key":"xxxxx","preload_attach":true,"sdk_log_level":1,"push_cer_name":"xxxxx"},
   *  "private_server_setting":{"lbs":"xxxxx","nos_lbs":"xxxxx","default_link":["xxxxx"],"default_nos_upload":["xxxxx"],"default_nos_download":["xxxxx"],"rsa_public_key_module":"xxxxx"}
   * }

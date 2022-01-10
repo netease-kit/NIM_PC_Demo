@@ -778,7 +778,7 @@ namespace nim_comp
 
 	void QueryToken(int64_t uid, std::function<void(const std::string& token)> onGetToken)
 	{
-		std::string strKey = "45c6af3c98409b18a84451215d0bdd6e";
+		std::string strKey = "";
 		std::string suid = nbase::Int64ToString(uid);
 		std::string url = "https://nrtc.netease.im/demo/getChecksum.action?uid=";
 		url.append(suid);
