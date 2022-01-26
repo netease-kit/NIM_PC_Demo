@@ -111,7 +111,7 @@ namespace nim_comp
 		nbase::BatpPack bp;
 		AvChatParams params;
 		params.appKey = appkey;// nim::Client::GetCurrentUserAccount();
-		params.useRtcSafeMode = true;  //是否开启安全模式，true表示开启，false表示关闭
+		params.useRtcSafeMode = false;  //是否开启安全模式，true表示开启，false表示关闭
 		bp.head_.action_name_ = kAvChatSetupAppKey;
 		bp.body_.param_ = params;
 		nbase::BusinessManager::GetInstance()->Request(bp, nullptr);
@@ -780,7 +780,7 @@ namespace nim_comp
 	{
 		std::string strKey = "";
 		std::string suid = nbase::Int64ToString(uid);
-		std::string url = "https://nrtc.netease.im/demo/getChecksum.action?uid=";
+		std::string url = ""; // 用户需要填写自己的获取token地址
 		url.append(suid);
 		url.append("&appkey=");
 		//url.append(app_sdk::AppSDKInterface::GetAppKey());
