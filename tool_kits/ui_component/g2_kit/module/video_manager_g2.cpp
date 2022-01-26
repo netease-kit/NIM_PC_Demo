@@ -780,7 +780,7 @@ namespace nim_comp
 	{
 		std::string strKey = "";
 		std::string suid = nbase::Int64ToString(uid);
-		std::string url = "https://nrtc.netease.im/demo/getChecksum.action?uid=";
+		std::string url = ""; // 用户需要填写自己的获取token地址
 		url.append(suid);
 		url.append("&appkey=");
 		//url.append(app_sdk::AppSDKInterface::GetAppKey());
