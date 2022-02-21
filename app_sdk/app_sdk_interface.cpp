@@ -1,9 +1,10 @@
 #include "stdafx.h"
-#include "app_sdk_interface.h"
-#include "shared/xml_util.h"
-#include "protocol/sdk_pro.h"
-#include "base/http/sdk_http_manager.h"
+
 #include "app_sdk_config_helper.h"
+#include "app_sdk_interface.h"
+#include "base/http/sdk_http_manager.h"
+#include "protocol/sdk_pro.h"
+#include "shared/xml_util.h"
 
 namespace app_sdk {
 const std::map<std::string, std::tuple<std::string, NimServerConfType>> key_use_nim_server_conf = {
@@ -88,7 +89,8 @@ std::string AppSDKInterface::GetAppKey() {
 }
 bool AppSDKInterface::IsNimDemoAppKey(const std::string& appkey) {
     static const std::string kNimTestAppKey = "fe416640c8e8a72734219e1847ad2547";
-    if (appkey.compare(kNimTestAppKey) == 0 || appkey.compare(kAppKey) == 0)
+    static const std::string kNimSGAppKey = "b88e33e57c0f2a427e19db2b8461cb55";
+    if (appkey.compare(kNimTestAppKey) == 0 || appkey.compare(kAppKey) == 0 || appkey.compare(kNimSGAppKey) == 0)
         return true;
     return false;
 }
