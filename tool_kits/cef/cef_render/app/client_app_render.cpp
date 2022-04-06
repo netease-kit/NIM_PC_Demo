@@ -58,7 +58,8 @@ void ClientApp::OnWebKitInitialized()
 	CefRegisterExtension("v8/extern", extensionCode, handler);
 }
 
-void ClientApp::OnBrowserCreated(CefRefPtr<CefBrowser> browser)
+void ClientApp::OnBrowserCreated(CefRefPtr<CefBrowser> browser,
+	CefRefPtr<CefDictionaryValue> extra_info)
 {
 	if (!render_js_bridge_.get())
 		render_js_bridge_.reset(new CefJSBridge);
@@ -71,16 +72,6 @@ void ClientApp::OnBrowserDestroyed(CefRefPtr<CefBrowser> browser)
 CefRefPtr<CefLoadHandler> ClientApp::GetLoadHandler()
 {
 	return NULL;
-}
-
-bool ClientApp::OnBeforeNavigation(
-	CefRefPtr<CefBrowser> browser,
-	CefRefPtr<CefFrame> frame,
-	CefRefPtr<CefRequest> request,
-	NavigationType navigation_type,
-	bool is_redirect)
-{
-	return false;
 }
 
 void ClientApp::OnContextCreated(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefV8Context> context)
@@ -116,12 +107,13 @@ void ClientApp::OnFocusedNodeChanged(
 		CefRefPtr<CefProcessMessage> message = CefProcessMessage::Create(kFocusedNodeChangedMessage);
 
 		message->GetArgumentList()->SetBool(0, is_editable);
-		browser->SendProcessMessage(PID_BROWSER, message);
+		frame->SendProcessMessage(PID_BROWSER, message);
 	}
 }
 
 bool ClientApp::OnProcessMessageReceived(
 	CefRefPtr<CefBrowser> browser,
+	CefRefPtr<CefFrame> frame,
 	CefProcessId source_process,
 	CefRefPtr<CefProcessMessage> message)
 {

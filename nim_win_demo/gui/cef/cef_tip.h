@@ -1,5 +1,6 @@
 #pragma once
 #include "cef/cef_module/cef_control/cef_control.h"
+#include "cef/cef_module/cef_control/cef_native_control.h"
 #include "cef/cef_module/js_bridge/cef_js_bridge.h"
 #include "module/cef/cef_global_methods.h"
 
@@ -21,7 +22,6 @@ private:
 	void OnTitleChange(const std::wstring& title);
 	void OnUrlChange(const std::wstring& url);
 	bool OnLinkClick(const std::wstring& url);
-	CefRequestHandler::ReturnValue OnBeforeNavigate(CefRefPtr<CefRequest> request, bool is_redirect);
 	void OnLoadingStateChange(bool isLoading, bool canGoBack, bool canGoForward);
 	void OnLoadStart();
 	void OnLoadEnd(int httpStatusCode);
@@ -36,8 +36,8 @@ private:
 
 	ui::RichEdit	*edit_url_;
 	ui::RichEdit	*edit_js_;
-	ui::CefControl	*cef_control_;
-	ui::CefControl	*cef_control_dev_;
+	ui::CefNativeControl	*cef_control_;
+	ui::CefNativeControl	*cef_control_dev_;
 
 	std::shared_ptr<nim_comp::CefGlobalFunctions> global_functions_;
 };

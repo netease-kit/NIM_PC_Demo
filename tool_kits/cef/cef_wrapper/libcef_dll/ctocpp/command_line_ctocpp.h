@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,27 +9,30 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=dadda752a23cc7c0e21ebc9e0fb39d3cdc1e05a1$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_COMMAND_LINE_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_COMMAND_LINE_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
 #include <vector>
-#include "include/cef_command_line.h"
 #include "include/capi/cef_command_line_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_command_line.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class CefCommandLineCToCpp
-    : public CefCToCpp<CefCommandLineCToCpp, CefCommandLine,
-        cef_command_line_t> {
+class CefCommandLineCToCpp : public CefCToCppRefCounted<CefCommandLineCToCpp,
+                                                        CefCommandLine,
+                                                        cef_command_line_t> {
  public:
   CefCommandLineCToCpp();
+  virtual ~CefCommandLineCToCpp();
 
   // CefCommandLine methods.
   bool IsValid() OVERRIDE;
@@ -48,12 +51,11 @@ class CefCommandLineCToCpp
   void GetSwitches(SwitchMap& switches) OVERRIDE;
   void AppendSwitch(const CefString& name) OVERRIDE;
   void AppendSwitchWithValue(const CefString& name,
-      const CefString& value) OVERRIDE;
+                             const CefString& value) OVERRIDE;
   bool HasArguments() OVERRIDE;
   void GetArguments(ArgumentList& arguments) OVERRIDE;
   void AppendArgument(const CefString& argument) OVERRIDE;
   void PrependWrapper(const CefString& wrapper) OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_COMMAND_LINE_CTOCPP_H_

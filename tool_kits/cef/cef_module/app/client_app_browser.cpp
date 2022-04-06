@@ -17,7 +17,7 @@ void ClientApp::OnContextInitialized()
 	// Register cookieable schemes with the global cookie manager.
 	CefRefPtr<CefCookieManager> manager = CefCookieManager::GetGlobalManager(NULL);
 	assert(manager.get());
-	manager->SetSupportedSchemes(cookieable_schemes_, NULL);
+	manager->SetSupportedSchemes(cookieable_schemes_, true, nullptr);
 
 	// 这里可以删除了保存的Cooies信息
 	// manager->DeleteCookies(L"", L"", nullptr);

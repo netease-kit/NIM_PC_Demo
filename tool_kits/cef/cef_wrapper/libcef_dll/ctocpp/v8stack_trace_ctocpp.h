@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,26 +9,29 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=d37f45601064f850420d24e814903baba17c9135$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_V8STACK_TRACE_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_V8STACK_TRACE_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
-#include "include/cef_v8.h"
 #include "include/capi/cef_v8_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_v8.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class CefV8StackTraceCToCpp
-    : public CefCToCpp<CefV8StackTraceCToCpp, CefV8StackTrace,
-        cef_v8stack_trace_t> {
+class CefV8StackTraceCToCpp : public CefCToCppRefCounted<CefV8StackTraceCToCpp,
+                                                         CefV8StackTrace,
+                                                         cef_v8stack_trace_t> {
  public:
   CefV8StackTraceCToCpp();
+  virtual ~CefV8StackTraceCToCpp();
 
   // CefV8StackTrace methods.
   bool IsValid() OVERRIDE;
@@ -36,5 +39,4 @@ class CefV8StackTraceCToCpp
   CefRefPtr<CefV8StackFrame> GetFrame(int index) OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_V8STACK_TRACE_CTOCPP_H_

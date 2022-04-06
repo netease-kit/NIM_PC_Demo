@@ -40,11 +40,14 @@
 
 #include "include/cef_base.h"
 #include "include/cef_dom.h"
+#include "include/cef_process_message.h"
 #include "include/cef_request.h"
 #include "include/cef_stream.h"
 #include "include/cef_string_visitor.h"
 
 class CefBrowser;
+class CefURLRequest;
+class CefURLRequestClient;
 class CefV8Context;
 
 ///
@@ -54,55 +57,55 @@ class CefV8Context;
 // methods of this class may only be called on the main thread.
 ///
 /*--cef(source=library)--*/
-class CefFrame : public virtual CefBase {
+class CefFrame : public virtual CefBaseRefCounted {
  public:
   ///
   // True if this object is currently attached to a valid frame.
   ///
   /*--cef()--*/
-  virtual bool IsValid() =0;
+  virtual bool IsValid() = 0;
 
   ///
   // Execute undo in this frame.
   ///
   /*--cef()--*/
-  virtual void Undo() =0;
+  virtual void Undo() = 0;
 
   ///
   // Execute redo in this frame.
   ///
   /*--cef()--*/
-  virtual void Redo() =0;
+  virtual void Redo() = 0;
 
   ///
   // Execute cut in this frame.
   ///
   /*--cef()--*/
-  virtual void Cut() =0;
+  virtual void Cut() = 0;
 
   ///
   // Execute copy in this frame.
   ///
   /*--cef()--*/
-  virtual void Copy() =0;
+  virtual void Copy() = 0;
 
   ///
   // Execute paste in this frame.
   ///
   /*--cef()--*/
-  virtual void Paste() =0;
+  virtual void Paste() = 0;
 
   ///
   // Execute delete in this frame.
   ///
   /*--cef(capi_name=del)--*/
-  virtual void Delete() =0;
+  virtual void Delete() = 0;
 
   ///
   // Execute select all in this frame.
   ///
   /*--cef()--*/
-  virtual void SelectAll() =0;
+  virtual void SelectAll() = 0;
 
   ///
   // Save this frame's HTML source to a temporary file and open it in the
@@ -110,33 +113,33 @@ class CefFrame : public virtual CefBase {
   // browser process.
   ///
   /*--cef()--*/
-  virtual void ViewSource() =0;
+  virtual void ViewSource() = 0;
 
   ///
   // Retrieve this frame's HTML source as a string sent to the specified
   // visitor.
   ///
   /*--cef()--*/
-  virtual void GetSource(CefRefPtr<CefStringVisitor> visitor) =0;
+  virtual void GetSource(CefRefPtr<CefStringVisitor> visitor) = 0;
 
   ///
   // Retrieve this frame's display text as a string sent to the specified
   // visitor.
   ///
   /*--cef()--*/
-  virtual void GetText(CefRefPtr<CefStringVisitor> visitor) =0;
+  virtual void GetText(CefRefPtr<CefStringVisitor> visitor) = 0;
 
   ///
   // Load the request represented by the |request| object.
   ///
   /*--cef()--*/
-  virtual void LoadRequest(CefRefPtr<CefRequest> request) =0;
+  virtual void LoadRequest(CefRefPtr<CefRequest> request) = 0;
 
   ///
   // Load the specified |url|.
   ///
   /*--cef()--*/
-  virtual void LoadURL(const CefString& url) =0;
+  virtual void LoadURL(const CefString& url) = 0;
 
   ///
   // Load the contents of |string_val| with the specified dummy |url|. |url|
@@ -145,7 +148,7 @@ class CefFrame : public virtual CefBase {
   ///
   /*--cef()--*/
   virtual void LoadString(const CefString& string_val,
-                          const CefString& url) =0;
+                          const CefString& url) = 0;
 
   ///
   // Execute a string of JavaScript code in this frame. The |script_url|
@@ -157,19 +160,19 @@ class CefFrame : public virtual CefBase {
   /*--cef(optional_param=script_url)--*/
   virtual void ExecuteJavaScript(const CefString& code,
                                  const CefString& script_url,
-                                 int start_line) =0;
+                                 int start_line) = 0;
 
   ///
   // Returns true if this is the main (top-level) frame.
   ///
   /*--cef()--*/
-  virtual bool IsMain() =0;
+  virtual bool IsMain() = 0;
 
   ///
   // Returns true if this is the focused frame.
   ///
   /*--cef()--*/
-  virtual bool IsFocused() =0;
+  virtual bool IsFocused() = 0;
 
   ///
   // Returns the name for this frame. If the frame has an assigned name (for
@@ -179,47 +182,83 @@ class CefFrame : public virtual CefBase {
   // value.
   ///
   /*--cef()--*/
-  virtual CefString GetName() =0;
+  virtual CefString GetName() = 0;
 
   ///
   // Returns the globally unique identifier for this frame or < 0 if the
   // underlying frame does not yet exist.
   ///
   /*--cef()--*/
-  virtual int64 GetIdentifier() =0;
+  virtual int64 GetIdentifier() = 0;
 
   ///
   // Returns the parent of this frame or NULL if this is the main (top-level)
   // frame.
   ///
   /*--cef()--*/
-  virtual CefRefPtr<CefFrame> GetParent() =0;
+  virtual CefRefPtr<CefFrame> GetParent() = 0;
 
   ///
   // Returns the URL currently loaded in this frame.
   ///
   /*--cef()--*/
-  virtual CefString GetURL() =0;
+  virtual CefString GetURL() = 0;
 
   ///
   // Returns the browser that this frame belongs to.
   ///
   /*--cef()--*/
-  virtual CefRefPtr<CefBrowser> GetBrowser() =0;
+  virtual CefRefPtr<CefBrowser> GetBrowser() = 0;
 
   ///
   // Get the V8 context associated with the frame. This method can only be
   // called from the render process.
   ///
   /*--cef()--*/
-  virtual CefRefPtr<CefV8Context> GetV8Context() =0;
-  
+  virtual CefRefPtr<CefV8Context> GetV8Context() = 0;
+
   ///
   // Visit the DOM document. This method can only be called from the render
   // process.
   ///
   /*--cef()--*/
-  virtual void VisitDOM(CefRefPtr<CefDOMVisitor> visitor) =0;
+  virtual void VisitDOM(CefRefPtr<CefDOMVisitor> visitor) = 0;
+
+  ///
+  // Create a new URL request that will be treated as originating from this
+  // frame and the associated browser. This request may be intercepted by the
+  // client via CefResourceRequestHandler or CefSchemeHandlerFactory. Use
+  // CefURLRequest::Create instead if you do not want the request to have this
+  // association, in which case it may be handled differently (see documentation
+  // on that method). Requests may originate from both the browser process and
+  // the render process.
+  //
+  // For requests originating from the browser process:
+  //   - POST data may only contain a single element of type PDE_TYPE_FILE or
+  //     PDE_TYPE_BYTES.
+  // For requests originating from the render process:
+  //   - POST data may only contain a single element of type PDE_TYPE_BYTES.
+  //   - If the response contains Content-Disposition or Mime-Type header values
+  //     that would not normally be rendered then the response may receive
+  //     special handling inside the browser (for example, via the file download
+  //     code path instead of the URL request code path).
+  //
+  // The |request| object will be marked as read-only after calling this method.
+  ///
+  /*--cef()--*/
+  virtual CefRefPtr<CefURLRequest> CreateURLRequest(
+      CefRefPtr<CefRequest> request,
+      CefRefPtr<CefURLRequestClient> client) = 0;
+
+  ///
+  // Send a message to the specified |target_process|. Message delivery is not
+  // guaranteed in all cases (for example, if the browser is closing,
+  // navigating, or if the target process crashes). Send an ACK message back
+  // from the target process if confirmation is required.
+  ///
+  /*--cef()--*/
+  virtual void SendProcessMessage(CefProcessId target_process,
+                                  CefRefPtr<CefProcessMessage> message) = 0;
 };
 
 #endif  // CEF_INCLUDE_CEF_FRAME_H_

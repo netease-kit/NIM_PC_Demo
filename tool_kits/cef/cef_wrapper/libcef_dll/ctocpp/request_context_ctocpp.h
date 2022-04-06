@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,29 +9,35 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=dd07d0157b7e9128b240ed2b059f2358ebf9fc09$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_REQUEST_CONTEXT_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_REQUEST_CONTEXT_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
 #include <vector>
-#include "include/cef_request_context.h"
 #include "include/capi/cef_request_context_capi.h"
-#include "include/cef_scheme.h"
+#include "include/capi/cef_request_context_handler_capi.h"
 #include "include/capi/cef_scheme_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_request_context.h"
+#include "include/cef_request_context_handler.h"
+#include "include/cef_scheme.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class CefRequestContextCToCpp
-    : public CefCToCpp<CefRequestContextCToCpp, CefRequestContext,
-        cef_request_context_t> {
+    : public CefCToCppRefCounted<CefRequestContextCToCpp,
+                                 CefRequestContext,
+                                 cef_request_context_t> {
  public:
   CefRequestContextCToCpp();
+  virtual ~CefRequestContextCToCpp();
 
   // CefRequestContext methods.
   bool IsSame(CefRefPtr<CefRequestContext> other) OVERRIDE;
@@ -39,9 +45,10 @@ class CefRequestContextCToCpp
   bool IsGlobal() OVERRIDE;
   CefRefPtr<CefRequestContextHandler> GetHandler() OVERRIDE;
   CefString GetCachePath() OVERRIDE;
-  CefRefPtr<CefCookieManager> GetDefaultCookieManager(
+  CefRefPtr<CefCookieManager> GetCookieManager(
       CefRefPtr<CefCompletionCallback> callback) OVERRIDE;
-  bool RegisterSchemeHandlerFactory(const CefString& scheme_name,
+  bool RegisterSchemeHandlerFactory(
+      const CefString& scheme_name,
       const CefString& domain_name,
       CefRefPtr<CefSchemeHandlerFactory> factory) OVERRIDE;
   bool ClearSchemeHandlerFactories() OVERRIDE;
@@ -51,16 +58,23 @@ class CefRequestContextCToCpp
   CefRefPtr<CefDictionaryValue> GetAllPreferences(
       bool include_defaults) OVERRIDE;
   bool CanSetPreference(const CefString& name) OVERRIDE;
-  bool SetPreference(const CefString& name, CefRefPtr<CefValue> value,
-      CefString& error) OVERRIDE;
+  bool SetPreference(const CefString& name,
+                     CefRefPtr<CefValue> value,
+                     CefString& error) OVERRIDE;
   void ClearCertificateExceptions(
+      CefRefPtr<CefCompletionCallback> callback) OVERRIDE;
+  void ClearHttpAuthCredentials(
       CefRefPtr<CefCompletionCallback> callback) OVERRIDE;
   void CloseAllConnections(CefRefPtr<CefCompletionCallback> callback) OVERRIDE;
   void ResolveHost(const CefString& origin,
-      CefRefPtr<CefResolveCallback> callback) OVERRIDE;
-  cef_errorcode_t ResolveHostCached(const CefString& origin,
-      std::vector<CefString>& resolved_ips) OVERRIDE;
+                   CefRefPtr<CefResolveCallback> callback) OVERRIDE;
+  void LoadExtension(const CefString& root_directory,
+                     CefRefPtr<CefDictionaryValue> manifest,
+                     CefRefPtr<CefExtensionHandler> handler) OVERRIDE;
+  bool DidLoadExtension(const CefString& extension_id) OVERRIDE;
+  bool HasExtension(const CefString& extension_id) OVERRIDE;
+  bool GetExtensions(std::vector<CefString>& extension_ids) OVERRIDE;
+  CefRefPtr<CefExtension> GetExtension(const CefString& extension_id) OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_REQUEST_CONTEXT_CTOCPP_H_

@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,26 +9,29 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=789a1cb3970193193b0e5216be27e4d0b989fd54$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_BINARY_VALUE_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_BINARY_VALUE_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
-#include "include/cef_values.h"
 #include "include/capi/cef_values_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_values.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class CefBinaryValueCToCpp
-    : public CefCToCpp<CefBinaryValueCToCpp, CefBinaryValue,
-        cef_binary_value_t> {
+class CefBinaryValueCToCpp : public CefCToCppRefCounted<CefBinaryValueCToCpp,
+                                                        CefBinaryValue,
+                                                        cef_binary_value_t> {
  public:
   CefBinaryValueCToCpp();
+  virtual ~CefBinaryValueCToCpp();
 
   // CefBinaryValue methods.
   bool IsValid() OVERRIDE;
@@ -40,5 +43,4 @@ class CefBinaryValueCToCpp
   size_t GetData(void* buffer, size_t buffer_size, size_t data_offset) OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_BINARY_VALUE_CTOCPP_H_

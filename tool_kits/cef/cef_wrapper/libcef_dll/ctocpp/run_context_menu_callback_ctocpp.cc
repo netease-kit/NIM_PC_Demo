@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,14 +9,19 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=db9e1aa05b67bbc704bac6cf2d37122a5ec1d94f$
+//
 
 #include "libcef_dll/ctocpp/run_context_menu_callback_ctocpp.h"
-
+#include "libcef_dll/shutdown_checker.h"
 
 // VIRTUAL METHODS - Body may be edited by hand.
 
+NO_SANITIZE("cfi-icall")
 void CefRunContextMenuCallbackCToCpp::Continue(int command_id,
-    EventFlags event_flags) {
+                                               EventFlags event_flags) {
+  shutdown_checker::AssertNotShutdown();
+
   cef_run_context_menu_callback_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, cont))
     return;
@@ -24,12 +29,12 @@ void CefRunContextMenuCallbackCToCpp::Continue(int command_id,
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   // Execute
-  _struct->cont(_struct,
-      command_id,
-      event_flags);
+  _struct->cont(_struct, command_id, event_flags);
 }
 
-void CefRunContextMenuCallbackCToCpp::Cancel() {
+NO_SANITIZE("cfi-icall") void CefRunContextMenuCallbackCToCpp::Cancel() {
+  shutdown_checker::AssertNotShutdown();
+
   cef_run_context_menu_callback_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, cancel))
     return;
@@ -40,25 +45,30 @@ void CefRunContextMenuCallbackCToCpp::Cancel() {
   _struct->cancel(_struct);
 }
 
-
 // CONSTRUCTOR - Do not edit by hand.
 
-CefRunContextMenuCallbackCToCpp::CefRunContextMenuCallbackCToCpp() {
+CefRunContextMenuCallbackCToCpp::CefRunContextMenuCallbackCToCpp() {}
+
+// DESTRUCTOR - Do not edit by hand.
+
+CefRunContextMenuCallbackCToCpp::~CefRunContextMenuCallbackCToCpp() {
+  shutdown_checker::AssertNotShutdown();
 }
 
-template<> cef_run_context_menu_callback_t* CefCToCpp<CefRunContextMenuCallbackCToCpp,
-    CefRunContextMenuCallback, cef_run_context_menu_callback_t>::UnwrapDerived(
-    CefWrapperType type, CefRunContextMenuCallback* c) {
+template <>
+cef_run_context_menu_callback_t* CefCToCppRefCounted<
+    CefRunContextMenuCallbackCToCpp,
+    CefRunContextMenuCallback,
+    cef_run_context_menu_callback_t>::UnwrapDerived(CefWrapperType type,
+                                                    CefRunContextMenuCallback*
+                                                        c) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCToCpp<CefRunContextMenuCallbackCToCpp,
-    CefRunContextMenuCallback, cef_run_context_menu_callback_t>::DebugObjCt =
-    0;
-#endif
-
-template<> CefWrapperType CefCToCpp<CefRunContextMenuCallbackCToCpp,
-    CefRunContextMenuCallback, cef_run_context_menu_callback_t>::kWrapperType =
-    WT_RUN_CONTEXT_MENU_CALLBACK;
+template <>
+CefWrapperType
+    CefCToCppRefCounted<CefRunContextMenuCallbackCToCpp,
+                        CefRunContextMenuCallback,
+                        cef_run_context_menu_callback_t>::kWrapperType =
+        WT_RUN_CONTEXT_MENU_CALLBACK;

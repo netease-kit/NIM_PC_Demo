@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,14 +9,15 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=0c197661e7e3e905b90bec127ff7b1ff23240fa2$
+//
 
 #include "libcef_dll/ctocpp/response_ctocpp.h"
 #include "libcef_dll/transfer_util.h"
 
-
 // STATIC METHODS - Body may be edited by hand.
 
-CefRefPtr<CefResponse> CefResponse::Create() {
+NO_SANITIZE("cfi-icall") CefRefPtr<CefResponse> CefResponse::Create() {
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   // Execute
@@ -26,10 +27,9 @@ CefRefPtr<CefResponse> CefResponse::Create() {
   return CefResponseCToCpp::Wrap(_retval);
 }
 
-
 // VIRTUAL METHODS - Body may be edited by hand.
 
-bool CefResponseCToCpp::IsReadOnly() {
+NO_SANITIZE("cfi-icall") bool CefResponseCToCpp::IsReadOnly() {
   cef_response_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, is_read_only))
     return false;
@@ -40,10 +40,36 @@ bool CefResponseCToCpp::IsReadOnly() {
   int _retval = _struct->is_read_only(_struct);
 
   // Return type: bool
-  return _retval?true:false;
+  return _retval ? true : false;
 }
 
-int CefResponseCToCpp::GetStatus() {
+NO_SANITIZE("cfi-icall") cef_errorcode_t CefResponseCToCpp::GetError() {
+  cef_response_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, get_error))
+    return ERR_NONE;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Execute
+  cef_errorcode_t _retval = _struct->get_error(_struct);
+
+  // Return type: simple
+  return _retval;
+}
+
+NO_SANITIZE("cfi-icall")
+void CefResponseCToCpp::SetError(cef_errorcode_t error) {
+  cef_response_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, set_error))
+    return;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Execute
+  _struct->set_error(_struct, error);
+}
+
+NO_SANITIZE("cfi-icall") int CefResponseCToCpp::GetStatus() {
   cef_response_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_status))
     return 0;
@@ -57,7 +83,7 @@ int CefResponseCToCpp::GetStatus() {
   return _retval;
 }
 
-void CefResponseCToCpp::SetStatus(int status) {
+NO_SANITIZE("cfi-icall") void CefResponseCToCpp::SetStatus(int status) {
   cef_response_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, set_status))
     return;
@@ -65,11 +91,10 @@ void CefResponseCToCpp::SetStatus(int status) {
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   // Execute
-  _struct->set_status(_struct,
-      status);
+  _struct->set_status(_struct, status);
 }
 
-CefString CefResponseCToCpp::GetStatusText() {
+NO_SANITIZE("cfi-icall") CefString CefResponseCToCpp::GetStatusText() {
   cef_response_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_status_text))
     return CefString();
@@ -85,6 +110,7 @@ CefString CefResponseCToCpp::GetStatusText() {
   return _retvalStr;
 }
 
+NO_SANITIZE("cfi-icall")
 void CefResponseCToCpp::SetStatusText(const CefString& statusText) {
   cef_response_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, set_status_text))
@@ -92,17 +118,13 @@ void CefResponseCToCpp::SetStatusText(const CefString& statusText) {
 
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
-  // Verify param: statusText; type: string_byref_const
-  DCHECK(!statusText.empty());
-  if (statusText.empty())
-    return;
+  // Unverified params: statusText
 
   // Execute
-  _struct->set_status_text(_struct,
-      statusText.GetStruct());
+  _struct->set_status_text(_struct, statusText.GetStruct());
 }
 
-CefString CefResponseCToCpp::GetMimeType() {
+NO_SANITIZE("cfi-icall") CefString CefResponseCToCpp::GetMimeType() {
   cef_response_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_mime_type))
     return CefString();
@@ -118,6 +140,7 @@ CefString CefResponseCToCpp::GetMimeType() {
   return _retvalStr;
 }
 
+NO_SANITIZE("cfi-icall")
 void CefResponseCToCpp::SetMimeType(const CefString& mimeType) {
   cef_response_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, set_mime_type))
@@ -125,16 +148,43 @@ void CefResponseCToCpp::SetMimeType(const CefString& mimeType) {
 
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
-  // Verify param: mimeType; type: string_byref_const
-  DCHECK(!mimeType.empty());
-  if (mimeType.empty())
-    return;
+  // Unverified params: mimeType
 
   // Execute
-  _struct->set_mime_type(_struct,
-      mimeType.GetStruct());
+  _struct->set_mime_type(_struct, mimeType.GetStruct());
 }
 
+NO_SANITIZE("cfi-icall") CefString CefResponseCToCpp::GetCharset() {
+  cef_response_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, get_charset))
+    return CefString();
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Execute
+  cef_string_userfree_t _retval = _struct->get_charset(_struct);
+
+  // Return type: string
+  CefString _retvalStr;
+  _retvalStr.AttachToUserFree(_retval);
+  return _retvalStr;
+}
+
+NO_SANITIZE("cfi-icall")
+void CefResponseCToCpp::SetCharset(const CefString& charset) {
+  cef_response_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, set_charset))
+    return;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Unverified params: charset
+
+  // Execute
+  _struct->set_charset(_struct, charset.GetStruct());
+}
+
+NO_SANITIZE("cfi-icall")
 CefString CefResponseCToCpp::GetHeader(const CefString& name) {
   cef_response_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_header))
@@ -148,8 +198,8 @@ CefString CefResponseCToCpp::GetHeader(const CefString& name) {
     return CefString();
 
   // Execute
-  cef_string_userfree_t _retval = _struct->get_header(_struct,
-      name.GetStruct());
+  cef_string_userfree_t _retval =
+      _struct->get_header(_struct, name.GetStruct());
 
   // Return type: string
   CefString _retvalStr;
@@ -157,6 +207,7 @@ CefString CefResponseCToCpp::GetHeader(const CefString& name) {
   return _retvalStr;
 }
 
+NO_SANITIZE("cfi-icall")
 void CefResponseCToCpp::GetHeaderMap(HeaderMap& headerMap) {
   cef_response_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_header_map))
@@ -171,8 +222,7 @@ void CefResponseCToCpp::GetHeaderMap(HeaderMap& headerMap) {
     transfer_string_multimap_contents(headerMap, headerMapMultimap);
 
   // Execute
-  _struct->get_header_map(_struct,
-      headerMapMultimap);
+  _struct->get_header_map(_struct, headerMapMultimap);
 
   // Restore param:headerMap; type: string_map_multi_byref
   if (headerMapMultimap) {
@@ -182,6 +232,7 @@ void CefResponseCToCpp::GetHeaderMap(HeaderMap& headerMap) {
   }
 }
 
+NO_SANITIZE("cfi-icall")
 void CefResponseCToCpp::SetHeaderMap(const HeaderMap& headerMap) {
   cef_response_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, set_header_map))
@@ -196,30 +247,59 @@ void CefResponseCToCpp::SetHeaderMap(const HeaderMap& headerMap) {
     transfer_string_multimap_contents(headerMap, headerMapMultimap);
 
   // Execute
-  _struct->set_header_map(_struct,
-      headerMapMultimap);
+  _struct->set_header_map(_struct, headerMapMultimap);
 
   // Restore param:headerMap; type: string_map_multi_byref_const
   if (headerMapMultimap)
     cef_string_multimap_free(headerMapMultimap);
 }
 
+NO_SANITIZE("cfi-icall") CefString CefResponseCToCpp::GetURL() {
+  cef_response_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, get_url))
+    return CefString();
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Execute
+  cef_string_userfree_t _retval = _struct->get_url(_struct);
+
+  // Return type: string
+  CefString _retvalStr;
+  _retvalStr.AttachToUserFree(_retval);
+  return _retvalStr;
+}
+
+NO_SANITIZE("cfi-icall") void CefResponseCToCpp::SetURL(const CefString& url) {
+  cef_response_t* _struct = GetStruct();
+  if (CEF_MEMBER_MISSING(_struct, set_url))
+    return;
+
+  // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
+
+  // Unverified params: url
+
+  // Execute
+  _struct->set_url(_struct, url.GetStruct());
+}
 
 // CONSTRUCTOR - Do not edit by hand.
 
-CefResponseCToCpp::CefResponseCToCpp() {
-}
+CefResponseCToCpp::CefResponseCToCpp() {}
 
-template<> cef_response_t* CefCToCpp<CefResponseCToCpp, CefResponse,
-    cef_response_t>::UnwrapDerived(CefWrapperType type, CefResponse* c) {
+// DESTRUCTOR - Do not edit by hand.
+
+CefResponseCToCpp::~CefResponseCToCpp() {}
+
+template <>
+cef_response_t*
+CefCToCppRefCounted<CefResponseCToCpp, CefResponse, cef_response_t>::
+    UnwrapDerived(CefWrapperType type, CefResponse* c) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCToCpp<CefResponseCToCpp, CefResponse,
-    cef_response_t>::DebugObjCt = 0;
-#endif
-
-template<> CefWrapperType CefCToCpp<CefResponseCToCpp, CefResponse,
-    cef_response_t>::kWrapperType = WT_RESPONSE;
+template <>
+CefWrapperType CefCToCppRefCounted<CefResponseCToCpp,
+                                   CefResponse,
+                                   cef_response_t>::kWrapperType = WT_RESPONSE;

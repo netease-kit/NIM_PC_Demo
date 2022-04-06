@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,26 +9,29 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=61e1710e77b49f83d0881b5a81621ffbce4b06b7$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_V8VALUE_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_V8VALUE_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
 #include <vector>
-#include "include/cef_v8.h"
 #include "include/capi/cef_v8_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_v8.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class CefV8ValueCToCpp
-    : public CefCToCpp<CefV8ValueCToCpp, CefV8Value, cef_v8value_t> {
+    : public CefCToCppRefCounted<CefV8ValueCToCpp, CefV8Value, cef_v8value_t> {
  public:
   CefV8ValueCToCpp();
+  virtual ~CefV8ValueCToCpp();
 
   // CefV8Value methods.
   bool IsValid() OVERRIDE;
@@ -42,6 +45,7 @@ class CefV8ValueCToCpp
   bool IsString() OVERRIDE;
   bool IsObject() OVERRIDE;
   bool IsArray() OVERRIDE;
+  bool IsArrayBuffer() OVERRIDE;
   bool IsFunction() OVERRIDE;
   bool IsSame(CefRefPtr<CefV8Value> that) OVERRIDE;
   bool GetBoolValue() OVERRIDE;
@@ -62,25 +66,31 @@ class CefV8ValueCToCpp
   bool DeleteValue(int index) OVERRIDE;
   CefRefPtr<CefV8Value> GetValue(const CefString& key) OVERRIDE;
   CefRefPtr<CefV8Value> GetValue(int index) OVERRIDE;
-  bool SetValue(const CefString& key, CefRefPtr<CefV8Value> value,
-      PropertyAttribute attribute) OVERRIDE;
+  bool SetValue(const CefString& key,
+                CefRefPtr<CefV8Value> value,
+                PropertyAttribute attribute) OVERRIDE;
   bool SetValue(int index, CefRefPtr<CefV8Value> value) OVERRIDE;
-  bool SetValue(const CefString& key, AccessControl settings,
-      PropertyAttribute attribute) OVERRIDE;
+  bool SetValue(const CefString& key,
+                AccessControl settings,
+                PropertyAttribute attribute) OVERRIDE;
   bool GetKeys(std::vector<CefString>& keys) OVERRIDE;
-  bool SetUserData(CefRefPtr<CefBase> user_data) OVERRIDE;
-  CefRefPtr<CefBase> GetUserData() OVERRIDE;
+  bool SetUserData(CefRefPtr<CefBaseRefCounted> user_data) OVERRIDE;
+  CefRefPtr<CefBaseRefCounted> GetUserData() OVERRIDE;
   int GetExternallyAllocatedMemory() OVERRIDE;
   int AdjustExternallyAllocatedMemory(int change_in_bytes) OVERRIDE;
   int GetArrayLength() OVERRIDE;
+  CefRefPtr<CefV8ArrayBufferReleaseCallback> GetArrayBufferReleaseCallback()
+      OVERRIDE;
+  bool NeuterArrayBuffer() OVERRIDE;
   CefString GetFunctionName() OVERRIDE;
   CefRefPtr<CefV8Handler> GetFunctionHandler() OVERRIDE;
-  CefRefPtr<CefV8Value> ExecuteFunction(CefRefPtr<CefV8Value> object,
+  CefRefPtr<CefV8Value> ExecuteFunction(
+      CefRefPtr<CefV8Value> object,
       const CefV8ValueList& arguments) OVERRIDE;
   CefRefPtr<CefV8Value> ExecuteFunctionWithContext(
-      CefRefPtr<CefV8Context> context, CefRefPtr<CefV8Value> object,
+      CefRefPtr<CefV8Context> context,
+      CefRefPtr<CefV8Value> object,
       const CefV8ValueList& arguments) OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_V8VALUE_CTOCPP_H_

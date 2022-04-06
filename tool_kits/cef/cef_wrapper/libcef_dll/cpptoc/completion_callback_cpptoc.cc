@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,16 +9,20 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=9cdeea47297901ed9863ee2c80400a5e94e40612$
+//
 
 #include "libcef_dll/cpptoc/completion_callback_cpptoc.h"
-
+#include "libcef_dll/shutdown_checker.h"
 
 namespace {
 
 // MEMBER FUNCTIONS - Body may be edited by hand.
 
-void CEF_CALLBACK completion_callback_on_complete(
-    struct _cef_completion_callback_t* self) {
+void CEF_CALLBACK
+completion_callback_on_complete(struct _cef_completion_callback_t* self) {
+  shutdown_checker::AssertNotShutdown();
+
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   DCHECK(self);
@@ -31,25 +35,30 @@ void CEF_CALLBACK completion_callback_on_complete(
 
 }  // namespace
 
-
 // CONSTRUCTOR - Do not edit by hand.
 
 CefCompletionCallbackCppToC::CefCompletionCallbackCppToC() {
   GetStruct()->on_complete = completion_callback_on_complete;
 }
 
-template<> CefRefPtr<CefCompletionCallback> CefCppToC<CefCompletionCallbackCppToC,
-    CefCompletionCallback, cef_completion_callback_t>::UnwrapDerived(
-    CefWrapperType type, cef_completion_callback_t* s) {
+// DESTRUCTOR - Do not edit by hand.
+
+CefCompletionCallbackCppToC::~CefCompletionCallbackCppToC() {
+  shutdown_checker::AssertNotShutdown();
+}
+
+template <>
+CefRefPtr<CefCompletionCallback> CefCppToCRefCounted<
+    CefCompletionCallbackCppToC,
+    CefCompletionCallback,
+    cef_completion_callback_t>::UnwrapDerived(CefWrapperType type,
+                                              cef_completion_callback_t* s) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCppToC<CefCompletionCallbackCppToC,
-    CefCompletionCallback, cef_completion_callback_t>::DebugObjCt = 0;
-#endif
-
-template<> CefWrapperType CefCppToC<CefCompletionCallbackCppToC,
-    CefCompletionCallback, cef_completion_callback_t>::kWrapperType =
+template <>
+CefWrapperType CefCppToCRefCounted<CefCompletionCallbackCppToC,
+                                   CefCompletionCallback,
+                                   cef_completion_callback_t>::kWrapperType =
     WT_COMPLETION_CALLBACK;

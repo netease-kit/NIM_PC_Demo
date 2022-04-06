@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,13 +9,17 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=6b39d5523fb9c72765cf7e3601867bbacd4d284c$
+//
 
 #include "libcef_dll/ctocpp/callback_ctocpp.h"
-
+#include "libcef_dll/shutdown_checker.h"
 
 // VIRTUAL METHODS - Body may be edited by hand.
 
-void CefCallbackCToCpp::Continue() {
+NO_SANITIZE("cfi-icall") void CefCallbackCToCpp::Continue() {
+  shutdown_checker::AssertNotShutdown();
+
   cef_callback_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, cont))
     return;
@@ -26,7 +30,9 @@ void CefCallbackCToCpp::Continue() {
   _struct->cont(_struct);
 }
 
-void CefCallbackCToCpp::Cancel() {
+NO_SANITIZE("cfi-icall") void CefCallbackCToCpp::Cancel() {
+  shutdown_checker::AssertNotShutdown();
+
   cef_callback_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, cancel))
     return;
@@ -37,22 +43,25 @@ void CefCallbackCToCpp::Cancel() {
   _struct->cancel(_struct);
 }
 
-
 // CONSTRUCTOR - Do not edit by hand.
 
-CefCallbackCToCpp::CefCallbackCToCpp() {
+CefCallbackCToCpp::CefCallbackCToCpp() {}
+
+// DESTRUCTOR - Do not edit by hand.
+
+CefCallbackCToCpp::~CefCallbackCToCpp() {
+  shutdown_checker::AssertNotShutdown();
 }
 
-template<> cef_callback_t* CefCToCpp<CefCallbackCToCpp, CefCallback,
-    cef_callback_t>::UnwrapDerived(CefWrapperType type, CefCallback* c) {
+template <>
+cef_callback_t*
+CefCToCppRefCounted<CefCallbackCToCpp, CefCallback, cef_callback_t>::
+    UnwrapDerived(CefWrapperType type, CefCallback* c) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCToCpp<CefCallbackCToCpp, CefCallback,
-    cef_callback_t>::DebugObjCt = 0;
-#endif
-
-template<> CefWrapperType CefCToCpp<CefCallbackCToCpp, CefCallback,
-    cef_callback_t>::kWrapperType = WT_CALLBACK;
+template <>
+CefWrapperType CefCToCppRefCounted<CefCallbackCToCpp,
+                                   CefCallback,
+                                   cef_callback_t>::kWrapperType = WT_CALLBACK;

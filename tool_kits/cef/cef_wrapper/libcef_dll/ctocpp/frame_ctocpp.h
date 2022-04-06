@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,29 +9,34 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=1f9305ea3945990271795caf303c11ae09f662a4$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_FRAME_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_FRAME_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
-#include "include/cef_frame.h"
-#include "include/capi/cef_frame_capi.h"
-#include "include/cef_browser.h"
 #include "include/capi/cef_browser_capi.h"
-#include "include/cef_v8.h"
+#include "include/capi/cef_frame_capi.h"
+#include "include/capi/cef_urlrequest_capi.h"
 #include "include/capi/cef_v8_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_browser.h"
+#include "include/cef_frame.h"
+#include "include/cef_urlrequest.h"
+#include "include/cef_v8.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class CefFrameCToCpp
-    : public CefCToCpp<CefFrameCToCpp, CefFrame, cef_frame_t> {
+    : public CefCToCppRefCounted<CefFrameCToCpp, CefFrame, cef_frame_t> {
  public:
   CefFrameCToCpp();
+  virtual ~CefFrameCToCpp();
 
   // CefFrame methods.
   bool IsValid() OVERRIDE;
@@ -48,8 +53,9 @@ class CefFrameCToCpp
   void LoadRequest(CefRefPtr<CefRequest> request) OVERRIDE;
   void LoadURL(const CefString& url) OVERRIDE;
   void LoadString(const CefString& string_val, const CefString& url) OVERRIDE;
-  void ExecuteJavaScript(const CefString& code, const CefString& script_url,
-      int start_line) OVERRIDE;
+  void ExecuteJavaScript(const CefString& code,
+                         const CefString& script_url,
+                         int start_line) OVERRIDE;
   bool IsMain() OVERRIDE;
   bool IsFocused() OVERRIDE;
   CefString GetName() OVERRIDE;
@@ -59,7 +65,11 @@ class CefFrameCToCpp
   CefRefPtr<CefBrowser> GetBrowser() OVERRIDE;
   CefRefPtr<CefV8Context> GetV8Context() OVERRIDE;
   void VisitDOM(CefRefPtr<CefDOMVisitor> visitor) OVERRIDE;
+  CefRefPtr<CefURLRequest> CreateURLRequest(
+      CefRefPtr<CefRequest> request,
+      CefRefPtr<CefURLRequestClient> client) OVERRIDE;
+  void SendProcessMessage(CefProcessId target_process,
+                          CefRefPtr<CefProcessMessage> message) OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_FRAME_CTOCPP_H_

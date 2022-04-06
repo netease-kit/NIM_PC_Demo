@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,14 +9,19 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=aa237ebcc7df1defe9e8534281cf020034fe784e$
+//
 
 #include "libcef_dll/ctocpp/before_download_callback_ctocpp.h"
-
+#include "libcef_dll/shutdown_checker.h"
 
 // VIRTUAL METHODS - Body may be edited by hand.
 
+NO_SANITIZE("cfi-icall")
 void CefBeforeDownloadCallbackCToCpp::Continue(const CefString& download_path,
-    bool show_dialog) {
+                                               bool show_dialog) {
+  shutdown_checker::AssertNotShutdown();
+
   cef_before_download_callback_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, cont))
     return;
@@ -26,30 +31,33 @@ void CefBeforeDownloadCallbackCToCpp::Continue(const CefString& download_path,
   // Unverified params: download_path
 
   // Execute
-  _struct->cont(_struct,
-      download_path.GetStruct(),
-      show_dialog);
+  _struct->cont(_struct, download_path.GetStruct(), show_dialog);
 }
-
 
 // CONSTRUCTOR - Do not edit by hand.
 
-CefBeforeDownloadCallbackCToCpp::CefBeforeDownloadCallbackCToCpp() {
+CefBeforeDownloadCallbackCToCpp::CefBeforeDownloadCallbackCToCpp() {}
+
+// DESTRUCTOR - Do not edit by hand.
+
+CefBeforeDownloadCallbackCToCpp::~CefBeforeDownloadCallbackCToCpp() {
+  shutdown_checker::AssertNotShutdown();
 }
 
-template<> cef_before_download_callback_t* CefCToCpp<CefBeforeDownloadCallbackCToCpp,
-    CefBeforeDownloadCallback, cef_before_download_callback_t>::UnwrapDerived(
-    CefWrapperType type, CefBeforeDownloadCallback* c) {
+template <>
+cef_before_download_callback_t* CefCToCppRefCounted<
+    CefBeforeDownloadCallbackCToCpp,
+    CefBeforeDownloadCallback,
+    cef_before_download_callback_t>::UnwrapDerived(CefWrapperType type,
+                                                   CefBeforeDownloadCallback*
+                                                       c) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCToCpp<CefBeforeDownloadCallbackCToCpp,
-    CefBeforeDownloadCallback, cef_before_download_callback_t>::DebugObjCt =
-    0;
-#endif
-
-template<> CefWrapperType CefCToCpp<CefBeforeDownloadCallbackCToCpp,
-    CefBeforeDownloadCallback, cef_before_download_callback_t>::kWrapperType =
-    WT_BEFORE_DOWNLOAD_CALLBACK;
+template <>
+CefWrapperType
+    CefCToCppRefCounted<CefBeforeDownloadCallbackCToCpp,
+                        CefBeforeDownloadCallback,
+                        cef_before_download_callback_t>::kWrapperType =
+        WT_BEFORE_DOWNLOAD_CALLBACK;

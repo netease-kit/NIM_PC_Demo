@@ -63,7 +63,7 @@ void CefNativeForm::InitWindow()
 	cef_control_->AttachTitleChange(nbase::Bind(&CefNativeForm::OnTitleChange, this, std::placeholders::_1));
 	cef_control_->AttachUrlChange(nbase::Bind(&CefNativeForm::OnUrlChange, this, std::placeholders::_1));
 	cef_control_->AttachLinkClick(nbase::Bind(&CefNativeForm::OnLinkClick, this, std::placeholders::_1));
-	cef_control_->AttachBeforeNavigate(nbase::Bind(&CefNativeForm::OnBeforeNavigate, this, std::placeholders::_1, std::placeholders::_2));
+	// cef_control_->AttachBeforeNavigate(nbase::Bind(&CefNativeForm::OnBeforeNavigate, this, std::placeholders::_1, std::placeholders::_2));
 	cef_control_->AttachLoadingStateChange(nbase::Bind(&CefNativeForm::OnLoadingStateChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	cef_control_->AttachLoadStart(nbase::Bind(&CefNativeForm::OnLoadStart, this));
 	cef_control_->AttachLoadEnd(nbase::Bind(&CefNativeForm::OnLoadEnd, this, std::placeholders::_1));
@@ -175,11 +175,11 @@ bool CefNativeForm::OnLinkClick(const std::wstring& url)
 	return true;
 }
 
-CefRequestHandler::ReturnValue CefNativeForm::OnBeforeNavigate(CefRefPtr<CefRequest> request, bool is_redirect)
-{
-	// 返回RV_CANCEL截断导航
-	return RV_CONTINUE;
-}
+// CefRequestHandler::ReturnValue CefNativeForm::OnBeforeNavigate(CefRefPtr<CefRequest> request, bool is_redirect)
+// {
+// 	// 返回RV_CANCEL截断导航
+// 	return RV_CONTINUE;
+// }
 
 void CefNativeForm::OnLoadingStateChange(bool isLoading, bool canGoBack, bool canGoForward)
 {

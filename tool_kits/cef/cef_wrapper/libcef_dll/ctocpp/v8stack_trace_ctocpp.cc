@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,28 +9,33 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=e158c4785c2d13208735dc22b5b638f7983df04e$
+//
 
-#include "libcef_dll/ctocpp/v8stack_frame_ctocpp.h"
 #include "libcef_dll/ctocpp/v8stack_trace_ctocpp.h"
-
+#include "libcef_dll/ctocpp/v8stack_frame_ctocpp.h"
+#include "libcef_dll/shutdown_checker.h"
 
 // STATIC METHODS - Body may be edited by hand.
 
+NO_SANITIZE("cfi-icall")
 CefRefPtr<CefV8StackTrace> CefV8StackTrace::GetCurrent(int frame_limit) {
+  shutdown_checker::AssertNotShutdown();
+
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   // Execute
-  cef_v8stack_trace_t* _retval = cef_v8stack_trace_get_current(
-      frame_limit);
+  cef_v8stack_trace_t* _retval = cef_v8stack_trace_get_current(frame_limit);
 
   // Return type: refptr_same
   return CefV8StackTraceCToCpp::Wrap(_retval);
 }
 
-
 // VIRTUAL METHODS - Body may be edited by hand.
 
-bool CefV8StackTraceCToCpp::IsValid() {
+NO_SANITIZE("cfi-icall") bool CefV8StackTraceCToCpp::IsValid() {
+  shutdown_checker::AssertNotShutdown();
+
   cef_v8stack_trace_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, is_valid))
     return false;
@@ -41,10 +46,12 @@ bool CefV8StackTraceCToCpp::IsValid() {
   int _retval = _struct->is_valid(_struct);
 
   // Return type: bool
-  return _retval?true:false;
+  return _retval ? true : false;
 }
 
-int CefV8StackTraceCToCpp::GetFrameCount() {
+NO_SANITIZE("cfi-icall") int CefV8StackTraceCToCpp::GetFrameCount() {
+  shutdown_checker::AssertNotShutdown();
+
   cef_v8stack_trace_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_frame_count))
     return 0;
@@ -58,7 +65,10 @@ int CefV8StackTraceCToCpp::GetFrameCount() {
   return _retval;
 }
 
+NO_SANITIZE("cfi-icall")
 CefRefPtr<CefV8StackFrame> CefV8StackTraceCToCpp::GetFrame(int index) {
+  shutdown_checker::AssertNotShutdown();
+
   cef_v8stack_trace_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_frame))
     return NULL;
@@ -66,30 +76,34 @@ CefRefPtr<CefV8StackFrame> CefV8StackTraceCToCpp::GetFrame(int index) {
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   // Execute
-  cef_v8stack_frame_t* _retval = _struct->get_frame(_struct,
-      index);
+  cef_v8stack_frame_t* _retval = _struct->get_frame(_struct, index);
 
   // Return type: refptr_same
   return CefV8StackFrameCToCpp::Wrap(_retval);
 }
 
-
 // CONSTRUCTOR - Do not edit by hand.
 
-CefV8StackTraceCToCpp::CefV8StackTraceCToCpp() {
+CefV8StackTraceCToCpp::CefV8StackTraceCToCpp() {}
+
+// DESTRUCTOR - Do not edit by hand.
+
+CefV8StackTraceCToCpp::~CefV8StackTraceCToCpp() {
+  shutdown_checker::AssertNotShutdown();
 }
 
-template<> cef_v8stack_trace_t* CefCToCpp<CefV8StackTraceCToCpp,
-    CefV8StackTrace, cef_v8stack_trace_t>::UnwrapDerived(CefWrapperType type,
-    CefV8StackTrace* c) {
+template <>
+cef_v8stack_trace_t*
+CefCToCppRefCounted<CefV8StackTraceCToCpp,
+                    CefV8StackTrace,
+                    cef_v8stack_trace_t>::UnwrapDerived(CefWrapperType type,
+                                                        CefV8StackTrace* c) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCToCpp<CefV8StackTraceCToCpp,
-    CefV8StackTrace, cef_v8stack_trace_t>::DebugObjCt = 0;
-#endif
-
-template<> CefWrapperType CefCToCpp<CefV8StackTraceCToCpp, CefV8StackTrace,
-    cef_v8stack_trace_t>::kWrapperType = WT_V8STACK_TRACE;
+template <>
+CefWrapperType CefCToCppRefCounted<CefV8StackTraceCToCpp,
+                                   CefV8StackTrace,
+                                   cef_v8stack_trace_t>::kWrapperType =
+    WT_V8STACK_TRACE;

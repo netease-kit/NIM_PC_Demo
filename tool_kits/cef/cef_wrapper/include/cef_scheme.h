@@ -42,11 +42,10 @@
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
 #include "include/cef_request.h"
-#include "include/cef_response.h"
 #include "include/cef_resource_handler.h"
+#include "include/cef_response.h"
 
 class CefSchemeHandlerFactory;
-
 
 ///
 // Register a scheme handler factory with the global request context. An empty
@@ -77,73 +76,32 @@ bool CefRegisterSchemeHandlerFactory(
 /*--cef()--*/
 bool CefClearSchemeHandlerFactories();
 
-
 ///
 // Class that manages custom scheme registrations.
 ///
 /*--cef(source=library)--*/
-class CefSchemeRegistrar : public virtual CefBase {
+class CefSchemeRegistrar : public CefBaseScoped {
  public:
   ///
   // Register a custom scheme. This method should not be called for the built-in
   // HTTP, HTTPS, FILE, FTP, ABOUT and DATA schemes.
   //
-  // If |is_standard| is true the scheme will be treated as a standard scheme.
-  // Standard schemes are subject to URL canonicalization and parsing rules as
-  // defined in the Common Internet Scheme Syntax RFC 1738 Section 3.1 available
-  // at http://www.ietf.org/rfc/rfc1738.txt
-  //
-  // In particular, the syntax for standard scheme URLs must be of the form:
-  // <pre>
-  //  [scheme]://[username]:[password]@[host]:[port]/[url-path]
-  // </pre>
-  // Standard scheme URLs must have a host component that is a fully qualified
-  // domain name as defined in Section 3.5 of RFC 1034 [13] and Section 2.1 of
-  // RFC 1123. These URLs will be canonicalized to "scheme://host/path" in the
-  // simplest case and "scheme://username:password@host:port/path" in the most
-  // explicit case. For example, "scheme:host/path" and "scheme:///host/path"
-  // will both be canonicalized to "scheme://host/path". The origin of a
-  // standard scheme URL is the combination of scheme, host and port (i.e.,
-  // "scheme://host:port" in the most explicit case).
-  //
-  // For non-standard scheme URLs only the "scheme:" component is parsed and
-  // canonicalized. The remainder of the URL will be passed to the handler
-  // as-is. For example, "scheme:///some%20text" will remain the same.
-  // Non-standard scheme URLs cannot be used as a target for form submission.
-  //
-  // If |is_local| is true the scheme will be treated as local (i.e., with the
-  // same security rules as those applied to "file" URLs). Normal pages cannot
-  // link to or access local URLs. Also, by default, local URLs can only perform
-  // XMLHttpRequest calls to the same URL (origin + path) that originated the
-  // request. To allow XMLHttpRequest calls from a local URL to other URLs with
-  // the same origin set the CefSettings.file_access_from_file_urls_allowed
-  // value to true. To allow XMLHttpRequest calls from a local URL to all
-  // origins set the CefSettings.universal_access_from_file_urls_allowed value
-  // to true.
-  //
-  // If |is_display_isolated| is true the scheme will be treated as display-
-  // isolated. This means that pages cannot display these URLs unless they are
-  // from the same scheme. For example, pages in another origin cannot create
-  // iframes or hyperlinks to URLs with this scheme.
+  // See cef_scheme_options_t for possible values for |options|.
   //
   // This function may be called on any thread. It should only be called once
   // per unique |scheme_name| value. If |scheme_name| is already registered or
   // if an error occurs this method will return false.
   ///
   /*--cef()--*/
-  virtual bool AddCustomScheme(const CefString& scheme_name,
-                               bool is_standard,
-                               bool is_local,
-                               bool is_display_isolated) =0;
+  virtual bool AddCustomScheme(const CefString& scheme_name, int options) = 0;
 };
-
 
 ///
 // Class that creates CefResourceHandler instances for handling scheme requests.
 // The methods of this class will always be called on the IO thread.
 ///
-/*--cef(source=client)--*/
-class CefSchemeHandlerFactory : public virtual CefBase {
+/*--cef(source=client,no_debugct_check)--*/
+class CefSchemeHandlerFactory : public virtual CefBaseRefCounted {
  public:
   ///
   // Return a new resource handler instance to handle the request or an empty
@@ -151,14 +109,14 @@ class CefSchemeHandlerFactory : public virtual CefBase {
   // will be the browser window and frame respectively that originated the
   // request or NULL if the request did not originate from a browser window
   // (for example, if the request came from CefURLRequest). The |request| object
-  // passed to this method will not contain cookie data.
+  // passed to this method cannot be modified.
   ///
   /*--cef(optional_param=browser,optional_param=frame)--*/
   virtual CefRefPtr<CefResourceHandler> Create(
       CefRefPtr<CefBrowser> browser,
       CefRefPtr<CefFrame> frame,
       const CefString& scheme_name,
-      CefRefPtr<CefRequest> request) =0;
+      CefRefPtr<CefRequest> request) = 0;
 };
 
 #endif  // CEF_INCLUDE_CEF_SCHEME_H_

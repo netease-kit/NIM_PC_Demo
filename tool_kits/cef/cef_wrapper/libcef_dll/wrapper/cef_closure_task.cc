@@ -9,9 +9,7 @@ namespace {
 
 class CefClosureTask : public CefTask {
  public:
-  explicit CefClosureTask(const base::Closure& closure)
-      : closure_(closure) {
-  }
+  explicit CefClosureTask(const base::Closure& closure) : closure_(closure) {}
 
   // CefTask method
   virtual void Execute() OVERRIDE {
@@ -36,7 +34,8 @@ bool CefPostTask(CefThreadId threadId, const base::Closure& closure) {
   return CefPostTask(threadId, new CefClosureTask(closure));
 }
 
-bool CefPostDelayedTask(CefThreadId threadId, const base::Closure& closure,
+bool CefPostDelayedTask(CefThreadId threadId,
+                        const base::Closure& closure,
                         int64 delay_ms) {
   return CefPostDelayedTask(threadId, new CefClosureTask(closure), delay_ms);
 }

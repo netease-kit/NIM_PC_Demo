@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,18 +9,21 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=2e0bded63f4298687095587af532a83c455265d5$
+//
 
 #include "libcef_dll/cpptoc/v8accessor_cpptoc.h"
 #include "libcef_dll/ctocpp/v8value_ctocpp.h"
-
 
 namespace {
 
 // MEMBER FUNCTIONS - Body may be edited by hand.
 
 int CEF_CALLBACK v8accessor_get(struct _cef_v8accessor_t* self,
-    const cef_string_t* name, struct _cef_v8value_t* object,
-    struct _cef_v8value_t** retval, cef_string_t* exception) {
+                                const cef_string_t* name,
+                                struct _cef_v8value_t* object,
+                                struct _cef_v8value_t** retval,
+                                cef_string_t* exception) {
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   DCHECK(self);
@@ -53,10 +56,7 @@ int CEF_CALLBACK v8accessor_get(struct _cef_v8accessor_t* self,
 
   // Execute
   bool _retval = CefV8AccessorCppToC::Get(self)->Get(
-      CefString(name),
-      CefV8ValueCToCpp::Wrap(object),
-      retvalPtr,
-      exceptionStr);
+      CefString(name), CefV8ValueCToCpp::Wrap(object), retvalPtr, exceptionStr);
 
   // Restore param: retval; type: refptr_diff_byref
   if (retval) {
@@ -74,8 +74,10 @@ int CEF_CALLBACK v8accessor_get(struct _cef_v8accessor_t* self,
 }
 
 int CEF_CALLBACK v8accessor_set(struct _cef_v8accessor_t* self,
-    const cef_string_t* name, struct _cef_v8value_t* object,
-    struct _cef_v8value_t* value, cef_string_t* exception) {
+                                const cef_string_t* name,
+                                struct _cef_v8value_t* object,
+                                struct _cef_v8value_t* value,
+                                cef_string_t* exception) {
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   DCHECK(self);
@@ -103,17 +105,14 @@ int CEF_CALLBACK v8accessor_set(struct _cef_v8accessor_t* self,
 
   // Execute
   bool _retval = CefV8AccessorCppToC::Get(self)->Set(
-      CefString(name),
-      CefV8ValueCToCpp::Wrap(object),
-      CefV8ValueCToCpp::Wrap(value),
-      exceptionStr);
+      CefString(name), CefV8ValueCToCpp::Wrap(object),
+      CefV8ValueCToCpp::Wrap(value), exceptionStr);
 
   // Return type: bool
   return _retval;
 }
 
 }  // namespace
-
 
 // CONSTRUCTOR - Do not edit by hand.
 
@@ -122,17 +121,20 @@ CefV8AccessorCppToC::CefV8AccessorCppToC() {
   GetStruct()->set = v8accessor_set;
 }
 
-template<> CefRefPtr<CefV8Accessor> CefCppToC<CefV8AccessorCppToC,
-    CefV8Accessor, cef_v8accessor_t>::UnwrapDerived(CefWrapperType type,
-    cef_v8accessor_t* s) {
+// DESTRUCTOR - Do not edit by hand.
+
+CefV8AccessorCppToC::~CefV8AccessorCppToC() {}
+
+template <>
+CefRefPtr<CefV8Accessor>
+CefCppToCRefCounted<CefV8AccessorCppToC, CefV8Accessor, cef_v8accessor_t>::
+    UnwrapDerived(CefWrapperType type, cef_v8accessor_t* s) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCppToC<CefV8AccessorCppToC, CefV8Accessor,
-    cef_v8accessor_t>::DebugObjCt = 0;
-#endif
-
-template<> CefWrapperType CefCppToC<CefV8AccessorCppToC, CefV8Accessor,
-    cef_v8accessor_t>::kWrapperType = WT_V8ACCESSOR;
+template <>
+CefWrapperType CefCppToCRefCounted<CefV8AccessorCppToC,
+                                   CefV8Accessor,
+                                   cef_v8accessor_t>::kWrapperType =
+    WT_V8ACCESSOR;

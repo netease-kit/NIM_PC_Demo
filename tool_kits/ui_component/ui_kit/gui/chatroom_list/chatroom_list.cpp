@@ -40,7 +40,7 @@ void nim_comp::ChatroomList::InitWindow()
 	m_pRoot->AttachBubbledEvent(ui::kEventClick, nbase::Bind(&ChatroomList::OnClicked, this, std::placeholders::_1));
 
 	// 初始化 Cef Control
-	cef_control_ = static_cast<CefControl*>(FindControl(L"cef_control"));
+	cef_control_ = static_cast<CefNativeControl*>(FindControl(L"cef_control"));
 	cef_control_->AttachLoadEnd(nbase::Bind(&ChatroomList::OnLoadEnd, this, std::placeholders::_1));
 	cef_control_->AttachAfterCreated(nbase::Bind(&ChatroomList::OnAfterCreated, this, std::placeholders::_1));
 	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"cef_themes/chatroom_list/chatroom_list.html";

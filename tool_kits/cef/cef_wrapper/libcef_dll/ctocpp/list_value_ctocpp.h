@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,25 +9,29 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=5686551f8cdf6c1be674fe87a67a6b1f972fcf2d$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_LIST_VALUE_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_LIST_VALUE_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
-#include "include/cef_values.h"
 #include "include/capi/cef_values_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_values.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class CefListValueCToCpp
-    : public CefCToCpp<CefListValueCToCpp, CefListValue, cef_list_value_t> {
+class CefListValueCToCpp : public CefCToCppRefCounted<CefListValueCToCpp,
+                                                      CefListValue,
+                                                      cef_list_value_t> {
  public:
   CefListValueCToCpp();
+  virtual ~CefListValueCToCpp();
 
   // CefListValue methods.
   bool IsValid() OVERRIDE;
@@ -39,26 +43,26 @@ class CefListValueCToCpp
   bool SetSize(size_t size) OVERRIDE;
   size_t GetSize() OVERRIDE;
   bool Clear() OVERRIDE;
-  bool Remove(int index) OVERRIDE;
-  CefValueType GetType(int index) OVERRIDE;
-  CefRefPtr<CefValue> GetValue(int index) OVERRIDE;
-  bool GetBool(int index) OVERRIDE;
-  int GetInt(int index) OVERRIDE;
-  double GetDouble(int index) OVERRIDE;
-  CefString GetString(int index) OVERRIDE;
-  CefRefPtr<CefBinaryValue> GetBinary(int index) OVERRIDE;
-  CefRefPtr<CefDictionaryValue> GetDictionary(int index) OVERRIDE;
-  CefRefPtr<CefListValue> GetList(int index) OVERRIDE;
-  bool SetValue(int index, CefRefPtr<CefValue> value) OVERRIDE;
-  bool SetNull(int index) OVERRIDE;
-  bool SetBool(int index, bool value) OVERRIDE;
-  bool SetInt(int index, int value) OVERRIDE;
-  bool SetDouble(int index, double value) OVERRIDE;
-  bool SetString(int index, const CefString& value) OVERRIDE;
-  bool SetBinary(int index, CefRefPtr<CefBinaryValue> value) OVERRIDE;
-  bool SetDictionary(int index, CefRefPtr<CefDictionaryValue> value) OVERRIDE;
-  bool SetList(int index, CefRefPtr<CefListValue> value) OVERRIDE;
+  bool Remove(size_t index) OVERRIDE;
+  CefValueType GetType(size_t index) OVERRIDE;
+  CefRefPtr<CefValue> GetValue(size_t index) OVERRIDE;
+  bool GetBool(size_t index) OVERRIDE;
+  int GetInt(size_t index) OVERRIDE;
+  double GetDouble(size_t index) OVERRIDE;
+  CefString GetString(size_t index) OVERRIDE;
+  CefRefPtr<CefBinaryValue> GetBinary(size_t index) OVERRIDE;
+  CefRefPtr<CefDictionaryValue> GetDictionary(size_t index) OVERRIDE;
+  CefRefPtr<CefListValue> GetList(size_t index) OVERRIDE;
+  bool SetValue(size_t index, CefRefPtr<CefValue> value) OVERRIDE;
+  bool SetNull(size_t index) OVERRIDE;
+  bool SetBool(size_t index, bool value) OVERRIDE;
+  bool SetInt(size_t index, int value) OVERRIDE;
+  bool SetDouble(size_t index, double value) OVERRIDE;
+  bool SetString(size_t index, const CefString& value) OVERRIDE;
+  bool SetBinary(size_t index, CefRefPtr<CefBinaryValue> value) OVERRIDE;
+  bool SetDictionary(size_t index,
+                     CefRefPtr<CefDictionaryValue> value) OVERRIDE;
+  bool SetList(size_t index, CefRefPtr<CefListValue> value) OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_LIST_VALUE_CTOCPP_H_

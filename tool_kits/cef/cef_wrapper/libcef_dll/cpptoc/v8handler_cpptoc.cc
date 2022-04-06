@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,19 +9,23 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=fbd769c1bd93ce93436614d1285051ce35666902$
+//
 
 #include "libcef_dll/cpptoc/v8handler_cpptoc.h"
 #include "libcef_dll/ctocpp/v8value_ctocpp.h"
-
 
 namespace {
 
 // MEMBER FUNCTIONS - Body may be edited by hand.
 
 int CEF_CALLBACK v8handler_execute(struct _cef_v8handler_t* self,
-    const cef_string_t* name, struct _cef_v8value_t* object,
-    size_t argumentsCount, struct _cef_v8value_t* const* arguments,
-    struct _cef_v8value_t** retval, cef_string_t* exception) {
+                                   const cef_string_t* name,
+                                   struct _cef_v8value_t* object,
+                                   size_t argumentsCount,
+                                   struct _cef_v8value_t* const* arguments,
+                                   struct _cef_v8value_t** retval,
+                                   cef_string_t* exception) {
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   DCHECK(self);
@@ -49,7 +53,7 @@ int CEF_CALLBACK v8handler_execute(struct _cef_v8handler_t* self,
     return 0;
 
   // Translate param: arguments; type: refptr_vec_diff_byref_const
-  std::vector<CefRefPtr<CefV8Value> > argumentsList;
+  std::vector<CefRefPtr<CefV8Value>> argumentsList;
   if (argumentsCount > 0) {
     for (size_t i = 0; i < argumentsCount; ++i) {
       CefRefPtr<CefV8Value> argumentsVal = CefV8ValueCToCpp::Wrap(arguments[i]);
@@ -66,10 +70,7 @@ int CEF_CALLBACK v8handler_execute(struct _cef_v8handler_t* self,
 
   // Execute
   bool _retval = CefV8HandlerCppToC::Get(self)->Execute(
-      CefString(name),
-      CefV8ValueCToCpp::Wrap(object),
-      argumentsList,
-      retvalPtr,
+      CefString(name), CefV8ValueCToCpp::Wrap(object), argumentsList, retvalPtr,
       exceptionStr);
 
   // Restore param: retval; type: refptr_diff_byref
@@ -89,23 +90,26 @@ int CEF_CALLBACK v8handler_execute(struct _cef_v8handler_t* self,
 
 }  // namespace
 
-
 // CONSTRUCTOR - Do not edit by hand.
 
 CefV8HandlerCppToC::CefV8HandlerCppToC() {
   GetStruct()->execute = v8handler_execute;
 }
 
-template<> CefRefPtr<CefV8Handler> CefCppToC<CefV8HandlerCppToC, CefV8Handler,
-    cef_v8handler_t>::UnwrapDerived(CefWrapperType type, cef_v8handler_t* s) {
+// DESTRUCTOR - Do not edit by hand.
+
+CefV8HandlerCppToC::~CefV8HandlerCppToC() {}
+
+template <>
+CefRefPtr<CefV8Handler>
+CefCppToCRefCounted<CefV8HandlerCppToC, CefV8Handler, cef_v8handler_t>::
+    UnwrapDerived(CefWrapperType type, cef_v8handler_t* s) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCppToC<CefV8HandlerCppToC, CefV8Handler,
-    cef_v8handler_t>::DebugObjCt = 0;
-#endif
-
-template<> CefWrapperType CefCppToC<CefV8HandlerCppToC, CefV8Handler,
-    cef_v8handler_t>::kWrapperType = WT_V8HANDLER;
+template <>
+CefWrapperType CefCppToCRefCounted<CefV8HandlerCppToC,
+                                   CefV8Handler,
+                                   cef_v8handler_t>::kWrapperType =
+    WT_V8HANDLER;

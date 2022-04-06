@@ -53,11 +53,11 @@ void ProfileMine::InitWindow()
 	unregister_cb.Add(UserService::GetInstance()->RegMiscUInfoChange(misc_uinfo_change_cb));
 
 	// 初始化 Cef Control
-	cef_control_ = static_cast<CefControl*>(FindControl(L"cef_control"));
+	cef_control_ = static_cast<CefNativeControl*>(FindControl(L"cef_control"));
 	cef_control_->AttachLoadEnd(nbase::Bind(&ProfileMine::OnLoadEnd, this, std::placeholders::_1));
 	cef_control_->AttachAfterCreated(nbase::Bind(&ProfileMine::OnAfterCreated, this, std::placeholders::_1));
 	cef_control_->AttachBeforeCLose(nbase::Bind(&ProfileMine::OnBeforeClose, this, std::placeholders::_1));
-	cef_control_->AttachBeforeNavigate(nbase::Bind(&ProfileMine::OnBeforeLoadResource, this, std::placeholders::_1, std::placeholders::_2));
+	// cef_control_->AttachBeforeNavigate(nbase::Bind(&ProfileMine::OnBeforeLoadResource, this, std::placeholders::_1, std::placeholders::_2));
 	cef_control_->AttachBeforeContextMenu(nbase::Bind(&ProfileMine::OnBeforeContextMenu, this, std::placeholders::_1, std::placeholders::_2));
 	
 	std::wstring html_path = L"file://" + QPath::GetAppPath() + L"cef_themes/profile/profile.html";
@@ -91,43 +91,43 @@ void ProfileMine::OnBeforeContextMenu(CefRefPtr<CefContextMenuParams> params, Ce
 	model->Clear();
 }
 
-CefRequestHandler::ReturnValue ProfileMine::OnBeforeLoadResource(CefRefPtr<CefRequest> request, bool is_redirect)
-{
-	if (app_sdk::AppSDKInterface::IsSafeUrl(request->GetURL().ToString()))
-	{
-		CefRequest::HeaderMap headers;
-		request->GetHeaderMap(headers);
-
-		std::string appkey = app_sdk::AppSDKInterface::GetAppKey();
-		std::string referer = app_sdk::AppSDKInterface::GetReferrer();
-		std::string nonce = nim::Tool::GetUuid();
-		std::string curtime = nbase::Uint64ToString(nbase::Time::Now().ToTimeT());
-		std::string checksum_src = "";
-		checksum_src.append(appkey).append(nonce).append(curtime);
-		nbase::EncryptInterface_var encrypt_sha1(new nbase::Encrypt_Impl());
-		encrypt_sha1->SetMethod(nbase::ENC_SHA1);
-		encrypt_sha1->Encrypt(checksum_src);
-		const static char HEX_DIGITS[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
-		std::string checksum;
-		for (size_t j = 0; j < checksum_src.length(); j++)
-		{
-			checksum.append(1, HEX_DIGITS[(checksum_src[j] >> 4) & 0x0f]).append(1, HEX_DIGITS[checksum_src[j] & 0x0f]);
-		}
-
-		headers.emplace("AppKey", appkey);
-		headers.emplace("Nonce", nonce);
-		headers.emplace("CurTime", curtime);
-		headers.emplace("CheckSum", checksum);
-		request->SetHeaderMap(headers);
-
-		// referer 要单独设置，不允许使用 SetHeaderMap 接口设置 referer 内容见 SetHeaderMap 注释
-		request->SetReferrer(referer, REFERRER_POLICY_ALWAYS);
-
-		QLOG_APP(L"ProfileMine::OnBeforeLoadResource short URL = {0}") << request->GetURL().ToString16();
-	}
-
-	return RV_CONTINUE;
-}
+//CefRequestHandler::ReturnValue ProfileMine::OnBeforeLoadResource(CefRefPtr<CefRequest> request, bool is_redirect)
+//{
+//	if (app_sdk::AppSDKInterface::IsSafeUrl(request->GetURL().ToString()))
+//	{
+//		CefRequest::HeaderMap headers;
+//		request->GetHeaderMap(headers);
+//
+//		std::string appkey = app_sdk::AppSDKInterface::GetAppKey();
+//		std::string referer = app_sdk::AppSDKInterface::GetReferrer();
+//		std::string nonce = nim::Tool::GetUuid();
+//		std::string curtime = nbase::Uint64ToString(nbase::Time::Now().ToTimeT());
+//		std::string checksum_src = "";
+//		checksum_src.append(appkey).append(nonce).append(curtime);
+//		nbase::EncryptInterface_var encrypt_sha1(new nbase::Encrypt_Impl());
+//		encrypt_sha1->SetMethod(nbase::ENC_SHA1);
+//		encrypt_sha1->Encrypt(checksum_src);
+//		const static char HEX_DIGITS[] = { '0', '1', '2', '3', '4', '5', '6', '7', '8', '9', 'a', 'b', 'c', 'd', 'e', 'f' };
+//		std::string checksum;
+//		for (size_t j = 0; j < checksum_src.length(); j++)
+//		{
+//			checksum.append(1, HEX_DIGITS[(checksum_src[j] >> 4) & 0x0f]).append(1, HEX_DIGITS[checksum_src[j] & 0x0f]);
+//		}
+//
+//		headers.emplace("AppKey", appkey);
+//		headers.emplace("Nonce", nonce);
+//		headers.emplace("CurTime", curtime);
+//		headers.emplace("CheckSum", checksum);
+//		request->SetHeaderMap(headers);
+//
+//		// referer 要单独设置，不允许使用 SetHeaderMap 接口设置 referer 内容见 SetHeaderMap 注释
+//		request->SetReferrer(referer, REFERRER_POLICY_ALWAYS);
+//
+//		QLOG_APP(L"ProfileMine::OnBeforeLoadResource short URL = {0}") << request->GetURL().ToString16();
+//	}
+//
+//	return RV_CONTINUE;
+//}
 
 void ProfileMine::OnBeforeClose(CefRefPtr<CefBrowser> browser)
 {

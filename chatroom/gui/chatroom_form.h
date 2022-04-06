@@ -2,6 +2,7 @@
 #include "module/emoji/richedit_util.h"
 #include "module/emoji/richedit_olecallback.h"
 #include "cef/cef_module/cef_control/cef_control.h"
+#include "cef/cef_module/cef_control/cef_native_control.h"
 #include <time.h>
 
 namespace nim_chatroom
@@ -207,7 +208,7 @@ private:
 	ui::RichEdit*	bulletin_ = NULL;	//公告
 
 	ui::TabBox*		list_tab_ = NULL;
-	ui::CefControl*	msg_list_ = NULL;
+	ui::CefNativeControl*	msg_list_ = NULL;
 	ui::RichEdit*	input_edit_ = NULL;
 	ui::CheckBox*	btn_face_ = NULL;
 

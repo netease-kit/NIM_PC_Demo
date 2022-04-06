@@ -1,6 +1,7 @@
 #pragma once
 #include "include/cef_browser.h"
 #include "cef_control/cef_control.h"
+#include "cef/cef_module/cef_control/cef_native_control.h"
 
 class CefChatroomList : public ui::Box
 {
@@ -31,5 +32,5 @@ private:
 	void OnLoadEnd(int httpStatusCode);
 
 private:
-	ui::CefControl*	cef_control_;
+	ui::CefNativeControl*	cef_control_;
 };

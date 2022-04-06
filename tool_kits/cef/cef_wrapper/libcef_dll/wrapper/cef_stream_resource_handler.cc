@@ -18,12 +18,7 @@
 // Class that represents a readable/writable character buffer.
 class CefStreamResourceHandler::Buffer {
  public:
-  Buffer()
-      : size_(0),
-        bytes_requested_(0),
-        bytes_written_(0),
-        bytes_read_(0) {
-  }
+  Buffer() : size_(0), bytes_requested_(0), bytes_written_(0), bytes_read_(0) {}
 
   void Reset(int new_size) {
     if (size_ < new_size) {
@@ -36,19 +31,15 @@ class CefStreamResourceHandler::Buffer {
     bytes_read_ = 0;
   }
 
-  bool IsEmpty() const {
-    return (bytes_written_ == 0);
-  }
+  bool IsEmpty() const { return (bytes_written_ == 0); }
 
-  bool CanRead() const {
-    return (bytes_read_ < bytes_written_);
-  }
+  bool CanRead() const { return (bytes_read_ < bytes_written_); }
 
   int WriteTo(void* data_out, int bytes_to_read) {
     const int write_size =
         std::min(bytes_to_read, bytes_written_ - bytes_read_);
     if (write_size > 0) {
-      memcpy(data_out, buffer_ .get() + bytes_read_, write_size);
+      memcpy(data_out, buffer_.get() + bytes_read_, write_size);
       bytes_read_ += write_size;
     }
     return write_size;
@@ -59,9 +50,9 @@ class CefStreamResourceHandler::Buffer {
     // more data.
     int bytes_read;
     do {
-      bytes_read = static_cast<int>(
-          reader->Read(buffer_.get() + bytes_written_, 1,
-                       bytes_requested_ - bytes_written_));
+      bytes_read =
+          static_cast<int>(reader->Read(buffer_.get() + bytes_written_, 1,
+                                        bytes_requested_ - bytes_written_));
       bytes_written_ += bytes_read;
     } while (bytes_read != 0 && bytes_written_ < bytes_requested_);
 
@@ -85,8 +76,9 @@ CefStreamResourceHandler::CefStreamResourceHandler(
       status_text_("OK"),
       mime_type_(mime_type),
       stream_(stream)
-#ifndef NDEBUG
-      , buffer_owned_by_file_thread_(false)
+#if DCHECK_IS_ON()
+      ,
+      buffer_owned_by_file_thread_(false)
 #endif
 {
   DCHECK(!mime_type_.empty());
@@ -105,8 +97,9 @@ CefStreamResourceHandler::CefStreamResourceHandler(
       mime_type_(mime_type),
       header_map_(header_map),
       stream_(stream)
-#ifndef NDEBUG
-      , buffer_owned_by_file_thread_(false)
+#if DCHECK_IS_ON()
+      ,
+      buffer_owned_by_file_thread_(false)
 #endif
 {
   DCHECK(!mime_type_.empty());
@@ -114,8 +107,7 @@ CefStreamResourceHandler::CefStreamResourceHandler(
   read_on_file_thread_ = stream_->MayBlock();
 }
 
-CefStreamResourceHandler::~CefStreamResourceHandler() {
-}
+CefStreamResourceHandler::~CefStreamResourceHandler() {}
 
 bool CefStreamResourceHandler::ProcessRequest(CefRefPtr<CefRequest> request,
                                               CefRefPtr<CefCallback> callback) {
@@ -144,7 +136,7 @@ bool CefStreamResourceHandler::ReadResponse(void* data_out,
   DCHECK_GT(bytes_to_read, 0);
 
   if (read_on_file_thread_) {
-#ifndef NDEBUG
+#if DCHECK_IS_ON()
     DCHECK(!buffer_owned_by_file_thread_);
 #endif
     if (buffer_ && (buffer_->CanRead() || buffer_->IsEmpty())) {
@@ -160,12 +152,12 @@ bool CefStreamResourceHandler::ReadResponse(void* data_out,
     } else {
       // Perform another read on the file thread.
       bytes_read = 0;
-#ifndef NDEBUG
+#if DCHECK_IS_ON()
       buffer_owned_by_file_thread_ = true;
 #endif
       CefPostTask(TID_FILE,
-          base::Bind(&CefStreamResourceHandler::ReadOnFileThread, this,
-                     bytes_to_read, callback));
+                  base::Bind(&CefStreamResourceHandler::ReadOnFileThread, this,
+                             bytes_to_read, callback));
       return true;
     }
   } else {
@@ -184,14 +176,13 @@ bool CefStreamResourceHandler::ReadResponse(void* data_out,
   }
 }
 
-void CefStreamResourceHandler::Cancel() {
-}
+void CefStreamResourceHandler::Cancel() {}
 
 void CefStreamResourceHandler::ReadOnFileThread(
     int bytes_to_read,
     CefRefPtr<CefCallback> callback) {
   CEF_REQUIRE_FILE_THREAD();
-#ifndef NDEBUG
+#if DCHECK_IS_ON()
   DCHECK(buffer_owned_by_file_thread_);
 #endif
 
@@ -200,7 +191,7 @@ void CefStreamResourceHandler::ReadOnFileThread(
   buffer_->Reset(bytes_to_read);
   buffer_->ReadFrom(stream_);
 
-#ifndef NDEBUG
+#if DCHECK_IS_ON()
   buffer_owned_by_file_thread_ = false;
 #endif
   callback->Continue();

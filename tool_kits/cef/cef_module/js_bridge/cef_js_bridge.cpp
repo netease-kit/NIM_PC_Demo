@@ -31,7 +31,7 @@ bool CefJSBridge::CallCppFunction(const CefString& function_name, const CefStrin
 
 		// 发送消息到 browser 进程
 		CefRefPtr<CefBrowser> browser = context->GetBrowser();
-		browser->SendProcessMessage(PID_BROWSER, message);
+		browser->GetMainFrame()->SendProcessMessage(PID_BROWSER, message);
 
 		return true;
 	}
@@ -197,7 +197,7 @@ bool CefJSBridge::ExecuteJSFunc(const CefString& function_name, const CefString&
 				CefRefPtr<CefListValue> args = message->GetArgumentList();
 				args->SetString(0, json_string->GetStringValue());
 				args->SetInt(1, cpp_callback_id);
-				context->GetBrowser()->SendProcessMessage(PID_RENDERER, message);
+				frame->SendProcessMessage(PID_RENDERER, message);
 			}
 
 			context->Exit();
@@ -230,7 +230,7 @@ bool CefJSBridge::CallJSFunction(const CefString& js_function_name, const CefStr
 		args->SetInt(2, cpp_callback_id_++);
 		args->SetInt(3, frame->GetIdentifier());
 
-		frame->GetBrowser()->SendProcessMessage(PID_RENDERER, message);
+		frame->SendProcessMessage(PID_RENDERER, message);
 
 		return true;
 	}
@@ -298,7 +298,7 @@ bool CefJSBridge::ExecuteCppFunc(const CefString& function_name, const CefString
 				args->SetInt(0, js_callback_id);
 				args->SetBool(1, has_error);
 				args->SetString(2, json_result);
-				browser->SendProcessMessage(PID_RENDERER, message);
+				browser->GetMainFrame()->SendProcessMessage(PID_RENDERER, message);
 			});
 		});
 		return true;
@@ -314,7 +314,7 @@ bool CefJSBridge::ExecuteCppFunc(const CefString& function_name, const CefString
 				args->SetInt(0, js_callback_id);
 				args->SetBool(1, has_error);
 				args->SetString(2, json_result);
-				browser->SendProcessMessage(PID_RENDERER, message);
+				browser->GetMainFrame()->SendProcessMessage(PID_RENDERER, message);
 			});
 		});
 		return true;
@@ -324,7 +324,7 @@ bool CefJSBridge::ExecuteCppFunc(const CefString& function_name, const CefString
 		args->SetInt(0, js_callback_id);
 		args->SetBool(1, true);
 		args->SetString(2, R"({"message":"Function does not exist."})");
-		browser->SendProcessMessage(PID_RENDERER, message);
+		browser->GetMainFrame()->SendProcessMessage(PID_RENDERER, message);
 		return false;
 	}
 }

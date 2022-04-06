@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,13 +9,17 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=ac8ecfee0549169c2a8a058bd1a1c635f847364f$
+//
 
 #include "libcef_dll/ctocpp/request_callback_ctocpp.h"
-
+#include "libcef_dll/shutdown_checker.h"
 
 // VIRTUAL METHODS - Body may be edited by hand.
 
-void CefRequestCallbackCToCpp::Continue(bool allow) {
+NO_SANITIZE("cfi-icall") void CefRequestCallbackCToCpp::Continue(bool allow) {
+  shutdown_checker::AssertNotShutdown();
+
   cef_request_callback_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, cont))
     return;
@@ -23,11 +27,12 @@ void CefRequestCallbackCToCpp::Continue(bool allow) {
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   // Execute
-  _struct->cont(_struct,
-      allow);
+  _struct->cont(_struct, allow);
 }
 
-void CefRequestCallbackCToCpp::Cancel() {
+NO_SANITIZE("cfi-icall") void CefRequestCallbackCToCpp::Cancel() {
+  shutdown_checker::AssertNotShutdown();
+
   cef_request_callback_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, cancel))
     return;
@@ -38,24 +43,28 @@ void CefRequestCallbackCToCpp::Cancel() {
   _struct->cancel(_struct);
 }
 
-
 // CONSTRUCTOR - Do not edit by hand.
 
-CefRequestCallbackCToCpp::CefRequestCallbackCToCpp() {
+CefRequestCallbackCToCpp::CefRequestCallbackCToCpp() {}
+
+// DESTRUCTOR - Do not edit by hand.
+
+CefRequestCallbackCToCpp::~CefRequestCallbackCToCpp() {
+  shutdown_checker::AssertNotShutdown();
 }
 
-template<> cef_request_callback_t* CefCToCpp<CefRequestCallbackCToCpp,
-    CefRequestCallback, cef_request_callback_t>::UnwrapDerived(
-    CefWrapperType type, CefRequestCallback* c) {
+template <>
+cef_request_callback_t* CefCToCppRefCounted<
+    CefRequestCallbackCToCpp,
+    CefRequestCallback,
+    cef_request_callback_t>::UnwrapDerived(CefWrapperType type,
+                                           CefRequestCallback* c) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCToCpp<CefRequestCallbackCToCpp,
-    CefRequestCallback, cef_request_callback_t>::DebugObjCt = 0;
-#endif
-
-template<> CefWrapperType CefCToCpp<CefRequestCallbackCToCpp,
-    CefRequestCallback, cef_request_callback_t>::kWrapperType =
+template <>
+CefWrapperType CefCToCppRefCounted<CefRequestCallbackCToCpp,
+                                   CefRequestCallback,
+                                   cef_request_callback_t>::kWrapperType =
     WT_REQUEST_CALLBACK;

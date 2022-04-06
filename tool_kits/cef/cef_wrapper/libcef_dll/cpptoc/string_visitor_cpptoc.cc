@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,16 +9,20 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=9afe6821e0c7e4bca936ad8fb1f4d9b21b2b6355$
+//
 
 #include "libcef_dll/cpptoc/string_visitor_cpptoc.h"
-
+#include "libcef_dll/shutdown_checker.h"
 
 namespace {
 
 // MEMBER FUNCTIONS - Body may be edited by hand.
 
 void CEF_CALLBACK string_visitor_visit(struct _cef_string_visitor_t* self,
-    const cef_string_t* string) {
+                                       const cef_string_t* string) {
+  shutdown_checker::AssertNotShutdown();
+
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   DCHECK(self);
@@ -27,12 +31,10 @@ void CEF_CALLBACK string_visitor_visit(struct _cef_string_visitor_t* self,
   // Unverified params: string
 
   // Execute
-  CefStringVisitorCppToC::Get(self)->Visit(
-      CefString(string));
+  CefStringVisitorCppToC::Get(self)->Visit(CefString(string));
 }
 
 }  // namespace
-
 
 // CONSTRUCTOR - Do not edit by hand.
 
@@ -40,17 +42,24 @@ CefStringVisitorCppToC::CefStringVisitorCppToC() {
   GetStruct()->visit = string_visitor_visit;
 }
 
-template<> CefRefPtr<CefStringVisitor> CefCppToC<CefStringVisitorCppToC,
-    CefStringVisitor, cef_string_visitor_t>::UnwrapDerived(CefWrapperType type,
-    cef_string_visitor_t* s) {
+// DESTRUCTOR - Do not edit by hand.
+
+CefStringVisitorCppToC::~CefStringVisitorCppToC() {
+  shutdown_checker::AssertNotShutdown();
+}
+
+template <>
+CefRefPtr<CefStringVisitor> CefCppToCRefCounted<
+    CefStringVisitorCppToC,
+    CefStringVisitor,
+    cef_string_visitor_t>::UnwrapDerived(CefWrapperType type,
+                                         cef_string_visitor_t* s) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCppToC<CefStringVisitorCppToC,
-    CefStringVisitor, cef_string_visitor_t>::DebugObjCt = 0;
-#endif
-
-template<> CefWrapperType CefCppToC<CefStringVisitorCppToC, CefStringVisitor,
-    cef_string_visitor_t>::kWrapperType = WT_STRING_VISITOR;
+template <>
+CefWrapperType CefCppToCRefCounted<CefStringVisitorCppToC,
+                                   CefStringVisitor,
+                                   cef_string_visitor_t>::kWrapperType =
+    WT_STRING_VISITOR;

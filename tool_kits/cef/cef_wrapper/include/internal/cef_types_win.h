@@ -27,7 +27,6 @@
 // (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
 // OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-
 #ifndef CEF_INCLUDE_INTERNAL_CEF_TYPES_WIN_H_
 #define CEF_INCLUDE_INTERNAL_CEF_TYPES_WIN_H_
 #pragma once
@@ -42,7 +41,6 @@
 #define cef_cursor_handle_t HCURSOR
 #define cef_event_handle_t MSG*
 #define cef_window_handle_t HWND
-#define cef_text_input_context_t void*
 
 #define kNullCursorHandle NULL
 #define kNullEventHandle NULL
@@ -55,9 +53,7 @@ extern "C" {
 ///
 // Structure representing CefExecuteProcess arguments.
 ///
-typedef struct _cef_main_args_t {
-  HINSTANCE instance;
-} cef_main_args_t;
+typedef struct _cef_main_args_t { HINSTANCE instance; } cef_main_args_t;
 
 ///
 // Structure representing window information.
@@ -83,16 +79,23 @@ typedef struct _cef_window_info_t {
   // monitor will be used and some functionality that requires a parent window
   // may not function correctly. In order to create windowless browsers the
   // CefSettings.windowless_rendering_enabled value must be set to true.
+  // Transparent painting is enabled by default but can be disabled by setting
+  // CefBrowserSettings.background_color to an opaque value.
   ///
   int windowless_rendering_enabled;
 
   ///
-  // Set to true (1) to enable transparent painting in combination with
-  // windowless rendering. When this value is true a transparent background
-  // color will be used (RGBA=0x00000000). When this value is false the
-  // background will be white and opaque.
+  // Set to true (1) to enable shared textures for windowless rendering. Only
+  // valid if windowless_rendering_enabled above is also set to true. Currently
+  // only supported on Windows (D3D11).
   ///
-  int transparent_painting_enabled;
+  int shared_texture_enabled;
+
+  ///
+  // Set to true (1) to enable the ability to issue BeginFrame requests from the
+  // client application by calling CefBrowserHost::SendExternalBeginFrame.
+  ///
+  int external_begin_frame_enabled;
 
   ///
   // Handle for the new browser window. Only used with windowed rendering.

@@ -193,13 +193,7 @@ void CefManager::GetCefSetting(const std::wstring& app_data_dir, CefSettings &se
 
 	// 调试模型下使用单进程，但是千万不要在release发布版本中使用，官方已经不推荐使用单进程模式
 	// cef1916版本debug模式:在单进程模式下程序退出时会触发中断
-#ifdef _DEBUG
-	settings.single_process = true;
-	settings.remote_debugging_port = 10080;
-#else
 	CefString(&settings.browser_subprocess_path) = QPath::GetAppPath() + L"render.exe";
-	settings.single_process = false;
-#endif
 
 	// cef2623、2526版本debug模式:在使用multi_threaded_message_loop时退出程序会触发中断
 	// 加入disable-extensions参数可以修复这个问题，但是会导致一些页面打开时报错

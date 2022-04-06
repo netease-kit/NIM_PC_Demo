@@ -13,7 +13,7 @@ ui::Control* CefTip::CreateControl(const std::wstring& pstrClass)
 {
 	if (pstrClass == L"CefControl")
 	{
-		return new CefControl;
+		return new CefNativeControl;
 	}
 
 	return NULL;
@@ -25,8 +25,8 @@ void CefTip::DoInit()
 	edit_url_ = static_cast<RichEdit*>(FindSubControl(L"edit_url"));
 	edit_js_ = static_cast<RichEdit*>(FindSubControl(L"edit_js"));
 	lbl_title_ = static_cast<Label*>(FindSubControl(L"title"));
-	cef_control_ = static_cast<CefControl*>(FindSubControl(L"cef_control"));
-	cef_control_dev_ = dynamic_cast<CefControl*>(FindSubControl(L"cef_control_dev"));
+	cef_control_ = static_cast<CefNativeControl*>(FindSubControl(L"cef_control"));
+	cef_control_dev_ = dynamic_cast<CefNativeControl*>(FindSubControl(L"cef_control_dev"));
 	edit_url_->AttachReturn(nbase::Bind(&CefTip::OnReturn, this, std::placeholders::_1));
 
 	cef_control_->AttachBeforeContextMenu(nbase::Bind(&CefTip::OnBeforeMenu, this, std::placeholders::_1, std::placeholders::_2));
@@ -34,7 +34,7 @@ void CefTip::DoInit()
 	cef_control_->AttachTitleChange(nbase::Bind(&CefTip::OnTitleChange, this, std::placeholders::_1));
 	cef_control_->AttachUrlChange(nbase::Bind(&CefTip::OnUrlChange, this, std::placeholders::_1));
 	cef_control_->AttachLinkClick(nbase::Bind(&CefTip::OnLinkClick, this, std::placeholders::_1));
-	cef_control_->AttachBeforeNavigate(nbase::Bind(&CefTip::OnBeforeNavigate, this, std::placeholders::_1, std::placeholders::_2));
+	// cef_control_->AttachBeforeNavigate(nbase::Bind(&CefTip::OnBeforeNavigate, this, std::placeholders::_1, std::placeholders::_2));
 	cef_control_->AttachLoadingStateChange(nbase::Bind(&CefTip::OnLoadingStateChange, this, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3));
 	cef_control_->AttachLoadStart(nbase::Bind(&CefTip::OnLoadStart, this));
 	cef_control_->AttachLoadEnd(nbase::Bind(&CefTip::OnLoadEnd, this, std::placeholders::_1));
@@ -142,12 +142,6 @@ void CefTip::OnUrlChange(const std::wstring& url)
 bool CefTip::OnLinkClick(const std::wstring& url)
 {
 	return true;
-}
-
-CefRequestHandler::ReturnValue CefTip::OnBeforeNavigate(CefRefPtr<CefRequest> request, bool is_redirect)
-{
-	// 返回RV_CANCEL截断导航
-	return RV_CONTINUE;
 }
 
 void CefTip::OnLoadingStateChange(bool isLoading, bool canGoBack, bool canGoForward)

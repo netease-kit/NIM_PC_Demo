@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Marshall A. Greenblatt. All rights reserved.
+// Copyright (c) 2019 Marshall A. Greenblatt. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -33,6 +33,8 @@
 // by hand. See the translator.README.txt file in the tools directory for
 // more information.
 //
+// $hash=c57e44085a88acfdd107e40a76c88aaf92e64b4a$
+//
 
 #ifndef CEF_INCLUDE_CAPI_CEF_PATH_UTIL_CAPI_H_
 #define CEF_INCLUDE_CAPI_CEF_PATH_UTIL_CAPI_H_
@@ -43,7 +45,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-
 
 ///
 // Retrieve the path associated with the specified |key|. Returns true (1) on

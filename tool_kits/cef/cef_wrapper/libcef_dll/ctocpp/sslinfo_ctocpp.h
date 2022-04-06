@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,41 +9,32 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=c9aa6a27970e239b12162b386a02d50fca58d2a5$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_SSLINFO_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_SSLINFO_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
-#include "include/cef_ssl_info.h"
 #include "include/capi/cef_ssl_info_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_ssl_info.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class CefSSLInfoCToCpp
-    : public CefCToCpp<CefSSLInfoCToCpp, CefSSLInfo, cef_sslinfo_t> {
+    : public CefCToCppRefCounted<CefSSLInfoCToCpp, CefSSLInfo, cef_sslinfo_t> {
  public:
   CefSSLInfoCToCpp();
+  virtual ~CefSSLInfoCToCpp();
 
   // CefSSLInfo methods.
   cef_cert_status_t GetCertStatus() OVERRIDE;
-  bool IsCertStatusError() OVERRIDE;
-  bool IsCertStatusMinorError() OVERRIDE;
-  CefRefPtr<CefSSLCertPrincipal> GetSubject() OVERRIDE;
-  CefRefPtr<CefSSLCertPrincipal> GetIssuer() OVERRIDE;
-  CefRefPtr<CefBinaryValue> GetSerialNumber() OVERRIDE;
-  CefTime GetValidStart() OVERRIDE;
-  CefTime GetValidExpiry() OVERRIDE;
-  CefRefPtr<CefBinaryValue> GetDEREncoded() OVERRIDE;
-  CefRefPtr<CefBinaryValue> GetPEMEncoded() OVERRIDE;
-  size_t GetIssuerChainSize() OVERRIDE;
-  void GetDEREncodedIssuerChain(IssuerChainBinaryList& chain) OVERRIDE;
-  void GetPEMEncodedIssuerChain(IssuerChainBinaryList& chain) OVERRIDE;
+  CefRefPtr<CefX509Certificate> GetX509Certificate() OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_SSLINFO_CTOCPP_H_

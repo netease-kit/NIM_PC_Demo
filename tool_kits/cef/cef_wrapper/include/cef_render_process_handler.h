@@ -52,8 +52,8 @@
 // will be called on the render process main thread (TID_RENDERER) unless
 // otherwise indicated.
 ///
-/*--cef(source=client)--*/
-class CefRenderProcessHandler : public virtual CefBase {
+/*--cef(source=client,no_debugct_check)--*/
+class CefRenderProcessHandler : public virtual CefBaseRefCounted {
  public:
   typedef cef_navigation_type_t NavigationType;
 
@@ -75,10 +75,13 @@ class CefRenderProcessHandler : public virtual CefBase {
   ///
   // Called after a browser has been created. When browsing cross-origin a new
   // browser will be created before the old browser with the same identifier is
-  // destroyed.
+  // destroyed. |extra_info| is a read-only value originating from
+  // CefBrowserHost::CreateBrowser(), CefBrowserHost::CreateBrowserSync(),
+  // CefLifeSpanHandler::OnBeforePopup() or CefBrowserView::CreateBrowserView().
   ///
   /*--cef()--*/
-  virtual void OnBrowserCreated(CefRefPtr<CefBrowser> browser) {}
+  virtual void OnBrowserCreated(CefRefPtr<CefBrowser> browser,
+                                CefRefPtr<CefDictionaryValue> extra_info) {}
 
   ///
   // Called before a browser is destroyed.
@@ -90,21 +93,7 @@ class CefRenderProcessHandler : public virtual CefBase {
   // Return the handler for browser load status events.
   ///
   /*--cef()--*/
-  virtual CefRefPtr<CefLoadHandler> GetLoadHandler() {
-    return NULL;
-  }
-
-  ///
-  // Called before browser navigation. Return true to cancel the navigation or
-  // false to allow the navigation to proceed. The |request| object cannot be
-  // modified in this callback.
-  ///
-  /*--cef()--*/
-  virtual bool OnBeforeNavigation(CefRefPtr<CefBrowser> browser,
-                                  CefRefPtr<CefFrame> frame,
-                                  CefRefPtr<CefRequest> request,
-                                  NavigationType navigation_type,
-                                  bool is_redirect) { return false; }
+  virtual CefRefPtr<CefLoadHandler> GetLoadHandler() { return NULL; }
 
   ///
   // Called immediately after the V8 context for a frame has been created. To
@@ -159,6 +148,7 @@ class CefRenderProcessHandler : public virtual CefBase {
   ///
   /*--cef()--*/
   virtual bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
+                                        CefRefPtr<CefFrame> frame,
                                         CefProcessId source_process,
                                         CefRefPtr<CefProcessMessage> message) {
     return false;

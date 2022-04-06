@@ -1,5 +1,6 @@
 #pragma once
 #include "cef/cef_module/cef_control/cef_control.h"
+#include "cef/cef_module/cef_control/cef_native_control.h"
 #include "gui/profile_form/head_modify_form.h"
 
 namespace nim_comp
@@ -37,7 +38,6 @@ private:
 	 * 右键菜单
 	 */
 	void OnBeforeContextMenu(CefRefPtr<CefContextMenuParams> params, CefRefPtr<CefMenuModel> model);
-	CefRequestHandler::ReturnValue OnBeforeLoadResource(CefRefPtr<CefRequest> request, bool is_redirect);
 	void OnBeforeClose(CefRefPtr<CefBrowser> browser);
 	void OnMultiportPushConfigChange(int rescode, bool switch_on);
 	void OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos);
@@ -59,7 +59,7 @@ public:
 
 private:
 	AutoUnregister		unregister_cb;
-	ui::CefControl*		cef_control_;
+	ui::CefNativeControl*		cef_control_;
 	nim::UserNameCard	info_;
 };
 

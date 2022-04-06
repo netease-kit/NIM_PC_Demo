@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,23 +9,28 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=30aa5c48e2b7cf8ee53de8ef24e3807d66761f41$
+//
 
 #include "libcef_dll/cpptoc/download_handler_cpptoc.h"
 #include "libcef_dll/ctocpp/before_download_callback_ctocpp.h"
 #include "libcef_dll/ctocpp/browser_ctocpp.h"
-#include "libcef_dll/ctocpp/download_item_ctocpp.h"
 #include "libcef_dll/ctocpp/download_item_callback_ctocpp.h"
-
+#include "libcef_dll/ctocpp/download_item_ctocpp.h"
+#include "libcef_dll/shutdown_checker.h"
 
 namespace {
 
 // MEMBER FUNCTIONS - Body may be edited by hand.
 
-void CEF_CALLBACK download_handler_on_before_download(
-    struct _cef_download_handler_t* self, cef_browser_t* browser,
-    struct _cef_download_item_t* download_item,
-    const cef_string_t* suggested_name,
-    cef_before_download_callback_t* callback) {
+void CEF_CALLBACK
+download_handler_on_before_download(struct _cef_download_handler_t* self,
+                                    cef_browser_t* browser,
+                                    struct _cef_download_item_t* download_item,
+                                    const cef_string_t* suggested_name,
+                                    cef_before_download_callback_t* callback) {
+  shutdown_checker::AssertNotShutdown();
+
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   DCHECK(self);
@@ -51,15 +56,17 @@ void CEF_CALLBACK download_handler_on_before_download(
   // Execute
   CefDownloadHandlerCppToC::Get(self)->OnBeforeDownload(
       CefBrowserCToCpp::Wrap(browser),
-      CefDownloadItemCToCpp::Wrap(download_item),
-      CefString(suggested_name),
+      CefDownloadItemCToCpp::Wrap(download_item), CefString(suggested_name),
       CefBeforeDownloadCallbackCToCpp::Wrap(callback));
 }
 
-void CEF_CALLBACK download_handler_on_download_updated(
-    struct _cef_download_handler_t* self, cef_browser_t* browser,
-    struct _cef_download_item_t* download_item,
-    cef_download_item_callback_t* callback) {
+void CEF_CALLBACK
+download_handler_on_download_updated(struct _cef_download_handler_t* self,
+                                     cef_browser_t* browser,
+                                     struct _cef_download_item_t* download_item,
+                                     cef_download_item_callback_t* callback) {
+  shutdown_checker::AssertNotShutdown();
+
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   DCHECK(self);
@@ -87,7 +94,6 @@ void CEF_CALLBACK download_handler_on_download_updated(
 
 }  // namespace
 
-
 // CONSTRUCTOR - Do not edit by hand.
 
 CefDownloadHandlerCppToC::CefDownloadHandlerCppToC() {
@@ -95,18 +101,24 @@ CefDownloadHandlerCppToC::CefDownloadHandlerCppToC() {
   GetStruct()->on_download_updated = download_handler_on_download_updated;
 }
 
-template<> CefRefPtr<CefDownloadHandler> CefCppToC<CefDownloadHandlerCppToC,
-    CefDownloadHandler, cef_download_handler_t>::UnwrapDerived(
-    CefWrapperType type, cef_download_handler_t* s) {
+// DESTRUCTOR - Do not edit by hand.
+
+CefDownloadHandlerCppToC::~CefDownloadHandlerCppToC() {
+  shutdown_checker::AssertNotShutdown();
+}
+
+template <>
+CefRefPtr<CefDownloadHandler> CefCppToCRefCounted<
+    CefDownloadHandlerCppToC,
+    CefDownloadHandler,
+    cef_download_handler_t>::UnwrapDerived(CefWrapperType type,
+                                           cef_download_handler_t* s) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCppToC<CefDownloadHandlerCppToC,
-    CefDownloadHandler, cef_download_handler_t>::DebugObjCt = 0;
-#endif
-
-template<> CefWrapperType CefCppToC<CefDownloadHandlerCppToC,
-    CefDownloadHandler, cef_download_handler_t>::kWrapperType =
+template <>
+CefWrapperType CefCppToCRefCounted<CefDownloadHandlerCppToC,
+                                   CefDownloadHandler,
+                                   cef_download_handler_t>::kWrapperType =
     WT_DOWNLOAD_HANDLER;

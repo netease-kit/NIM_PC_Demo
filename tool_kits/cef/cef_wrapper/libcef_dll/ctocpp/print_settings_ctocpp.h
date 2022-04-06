@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,26 +9,30 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=d031ce1331738df412c61dd9bf4c6d36f94b82a8$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_PRINT_SETTINGS_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_PRINT_SETTINGS_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
-#include "include/cef_print_settings.h"
 #include "include/capi/cef_print_settings_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_print_settings.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class CefPrintSettingsCToCpp
-    : public CefCToCpp<CefPrintSettingsCToCpp, CefPrintSettings,
-        cef_print_settings_t> {
+    : public CefCToCppRefCounted<CefPrintSettingsCToCpp,
+                                 CefPrintSettings,
+                                 cef_print_settings_t> {
  public:
   CefPrintSettingsCToCpp();
+  virtual ~CefPrintSettingsCToCpp();
 
   // CefPrintSettings methods.
   bool IsValid() OVERRIDE;
@@ -37,8 +41,8 @@ class CefPrintSettingsCToCpp
   void SetOrientation(bool landscape) OVERRIDE;
   bool IsLandscape() OVERRIDE;
   void SetPrinterPrintableArea(const CefSize& physical_size_device_units,
-      const CefRect& printable_area_device_units,
-      bool landscape_needs_flip) OVERRIDE;
+                               const CefRect& printable_area_device_units,
+                               bool landscape_needs_flip) OVERRIDE;
   void SetDeviceName(const CefString& name) OVERRIDE;
   CefString GetDeviceName() OVERRIDE;
   void SetDPI(int dpi) OVERRIDE;
@@ -58,5 +62,4 @@ class CefPrintSettingsCToCpp
   DuplexMode GetDuplexMode() OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_PRINT_SETTINGS_CTOCPP_H_

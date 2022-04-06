@@ -18,7 +18,7 @@ CefChatroomList::~CefChatroomList()
 void CefChatroomList::DoInit()
 {
 	// 初始化 Cef Control
-	cef_control_ = static_cast<ui::CefControl*>(FindSubControl(L"cef_control"));
+	cef_control_ = static_cast<ui::CefNativeControl*>(FindSubControl(L"cef_control"));
 	cef_control_->AttachLoadEnd(nbase::Bind(&CefChatroomList::OnLoadEnd, this, std::placeholders::_1));
 	cef_control_->AttachAfterCreated(nbase::Bind(&CefChatroomList::OnAfterCreated, this, std::placeholders::_1));
 	cef_control_->AttachBeforeContextMenu(nbase::Bind(&CefChatroomList::OnBeforeContextMenu, this, std::placeholders::_1, std::placeholders::_2));
@@ -32,7 +32,7 @@ ui::Control* CefChatroomList::CreateControl(const std::wstring& pstrClass)
 {
 	if (pstrClass == L"CefControl")
 	{
-		return new ui::CefControl;
+		return new ui::CefNativeControl;
 	}
 
 	return NULL;

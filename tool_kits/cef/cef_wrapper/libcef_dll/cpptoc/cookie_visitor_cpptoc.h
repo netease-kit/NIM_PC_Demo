@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,27 +9,30 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=ca18debaaeb991a553ea497359b6c3a07ce504a3$
+//
 
 #ifndef CEF_LIBCEF_DLL_CPPTOC_COOKIE_VISITOR_CPPTOC_H_
 #define CEF_LIBCEF_DLL_CPPTOC_COOKIE_VISITOR_CPPTOC_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
-#include "include/cef_cookie.h"
 #include "include/capi/cef_cookie_capi.h"
-#include "libcef_dll/cpptoc/cpptoc.h"
+#include "include/cef_cookie.h"
+#include "libcef_dll/cpptoc/cpptoc_ref_counted.h"
 
 // Wrap a C++ class with a C structure.
 // This class may be instantiated and accessed wrapper-side only.
 class CefCookieVisitorCppToC
-    : public CefCppToC<CefCookieVisitorCppToC, CefCookieVisitor,
-        cef_cookie_visitor_t> {
+    : public CefCppToCRefCounted<CefCookieVisitorCppToC,
+                                 CefCookieVisitor,
+                                 cef_cookie_visitor_t> {
  public:
   CefCookieVisitorCppToC();
+  virtual ~CefCookieVisitorCppToC();
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CPPTOC_COOKIE_VISITOR_CPPTOC_H_

@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,16 +9,20 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=60cadf5ac7749d4b8ee5c38aad5015cdf40dc9c3$
+//
 
 #include "libcef_dll/cpptoc/response_filter_cpptoc.h"
-
+#include "libcef_dll/shutdown_checker.h"
 
 namespace {
 
 // MEMBER FUNCTIONS - Body may be edited by hand.
 
-int CEF_CALLBACK response_filter_init_filter(
-    struct _cef_response_filter_t* self) {
+int CEF_CALLBACK
+response_filter_init_filter(struct _cef_response_filter_t* self) {
+  shutdown_checker::AssertNotShutdown();
+
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   DCHECK(self);
@@ -32,10 +36,16 @@ int CEF_CALLBACK response_filter_init_filter(
   return _retval;
 }
 
-cef_response_filter_status_t CEF_CALLBACK response_filter_filter(
-    struct _cef_response_filter_t* self, void* data_in, size_t data_in_size,
-    size_t* data_in_read, void* data_out, size_t data_out_size,
-    size_t* data_out_written) {
+cef_response_filter_status_t CEF_CALLBACK
+response_filter_filter(struct _cef_response_filter_t* self,
+                       void* data_in,
+                       size_t data_in_size,
+                       size_t* data_in_read,
+                       void* data_out,
+                       size_t data_out_size,
+                       size_t* data_out_written) {
+  shutdown_checker::AssertNotShutdown();
+
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   DCHECK(self);
@@ -56,19 +66,15 @@ cef_response_filter_status_t CEF_CALLBACK response_filter_filter(
   // Unverified params: data_in
 
   // Translate param: data_in_read; type: simple_byref
-  size_t data_in_readVal = data_in_read?*data_in_read:0;
+  size_t data_in_readVal = data_in_read ? *data_in_read : 0;
   // Translate param: data_out_written; type: simple_byref
-  size_t data_out_writtenVal = data_out_written?*data_out_written:0;
+  size_t data_out_writtenVal = data_out_written ? *data_out_written : 0;
 
   // Execute
-  cef_response_filter_status_t _retval = CefResponseFilterCppToC::Get(
-      self)->Filter(
-      data_in,
-      data_in_size,
-      data_in_readVal,
-      data_out,
-      data_out_size,
-      data_out_writtenVal);
+  cef_response_filter_status_t _retval =
+      CefResponseFilterCppToC::Get(self)->Filter(
+          data_in, data_in_size, data_in_readVal, data_out, data_out_size,
+          data_out_writtenVal);
 
   // Restore param: data_in_read; type: simple_byref
   if (data_in_read)
@@ -83,7 +89,6 @@ cef_response_filter_status_t CEF_CALLBACK response_filter_filter(
 
 }  // namespace
 
-
 // CONSTRUCTOR - Do not edit by hand.
 
 CefResponseFilterCppToC::CefResponseFilterCppToC() {
@@ -91,17 +96,24 @@ CefResponseFilterCppToC::CefResponseFilterCppToC() {
   GetStruct()->filter = response_filter_filter;
 }
 
-template<> CefRefPtr<CefResponseFilter> CefCppToC<CefResponseFilterCppToC,
-    CefResponseFilter, cef_response_filter_t>::UnwrapDerived(
-    CefWrapperType type, cef_response_filter_t* s) {
+// DESTRUCTOR - Do not edit by hand.
+
+CefResponseFilterCppToC::~CefResponseFilterCppToC() {
+  shutdown_checker::AssertNotShutdown();
+}
+
+template <>
+CefRefPtr<CefResponseFilter> CefCppToCRefCounted<
+    CefResponseFilterCppToC,
+    CefResponseFilter,
+    cef_response_filter_t>::UnwrapDerived(CefWrapperType type,
+                                          cef_response_filter_t* s) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCppToC<CefResponseFilterCppToC,
-    CefResponseFilter, cef_response_filter_t>::DebugObjCt = 0;
-#endif
-
-template<> CefWrapperType CefCppToC<CefResponseFilterCppToC, CefResponseFilter,
-    cef_response_filter_t>::kWrapperType = WT_RESPONSE_FILTER;
+template <>
+CefWrapperType CefCppToCRefCounted<CefResponseFilterCppToC,
+                                   CefResponseFilter,
+                                   cef_response_filter_t>::kWrapperType =
+    WT_RESPONSE_FILTER;

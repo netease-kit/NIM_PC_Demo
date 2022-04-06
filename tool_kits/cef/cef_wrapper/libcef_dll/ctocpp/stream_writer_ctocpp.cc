@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,15 +9,20 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=55db4ae27a914d2a9ba931e7fc8de888a19e6630$
+//
 
-#include "libcef_dll/cpptoc/write_handler_cpptoc.h"
 #include "libcef_dll/ctocpp/stream_writer_ctocpp.h"
-
+#include "libcef_dll/cpptoc/write_handler_cpptoc.h"
+#include "libcef_dll/shutdown_checker.h"
 
 // STATIC METHODS - Body may be edited by hand.
 
+NO_SANITIZE("cfi-icall")
 CefRefPtr<CefStreamWriter> CefStreamWriter::CreateForFile(
     const CefString& fileName) {
+  shutdown_checker::AssertNotShutdown();
+
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   // Verify param: fileName; type: string_byref_const
@@ -26,15 +31,18 @@ CefRefPtr<CefStreamWriter> CefStreamWriter::CreateForFile(
     return NULL;
 
   // Execute
-  cef_stream_writer_t* _retval = cef_stream_writer_create_for_file(
-      fileName.GetStruct());
+  cef_stream_writer_t* _retval =
+      cef_stream_writer_create_for_file(fileName.GetStruct());
 
   // Return type: refptr_same
   return CefStreamWriterCToCpp::Wrap(_retval);
 }
 
+NO_SANITIZE("cfi-icall")
 CefRefPtr<CefStreamWriter> CefStreamWriter::CreateForHandler(
     CefRefPtr<CefWriteHandler> handler) {
+  shutdown_checker::AssertNotShutdown();
+
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   // Verify param: handler; type: refptr_diff
@@ -50,10 +58,12 @@ CefRefPtr<CefStreamWriter> CefStreamWriter::CreateForHandler(
   return CefStreamWriterCToCpp::Wrap(_retval);
 }
 
-
 // VIRTUAL METHODS - Body may be edited by hand.
 
+NO_SANITIZE("cfi-icall")
 size_t CefStreamWriterCToCpp::Write(const void* ptr, size_t size, size_t n) {
+  shutdown_checker::AssertNotShutdown();
+
   cef_stream_writer_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, write))
     return 0;
@@ -66,16 +76,16 @@ size_t CefStreamWriterCToCpp::Write(const void* ptr, size_t size, size_t n) {
     return 0;
 
   // Execute
-  size_t _retval = _struct->write(_struct,
-      ptr,
-      size,
-      n);
+  size_t _retval = _struct->write(_struct, ptr, size, n);
 
   // Return type: simple
   return _retval;
 }
 
+NO_SANITIZE("cfi-icall")
 int CefStreamWriterCToCpp::Seek(int64 offset, int whence) {
+  shutdown_checker::AssertNotShutdown();
+
   cef_stream_writer_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, seek))
     return 0;
@@ -83,15 +93,15 @@ int CefStreamWriterCToCpp::Seek(int64 offset, int whence) {
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   // Execute
-  int _retval = _struct->seek(_struct,
-      offset,
-      whence);
+  int _retval = _struct->seek(_struct, offset, whence);
 
   // Return type: simple
   return _retval;
 }
 
-int64 CefStreamWriterCToCpp::Tell() {
+NO_SANITIZE("cfi-icall") int64 CefStreamWriterCToCpp::Tell() {
+  shutdown_checker::AssertNotShutdown();
+
   cef_stream_writer_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, tell))
     return 0;
@@ -105,7 +115,9 @@ int64 CefStreamWriterCToCpp::Tell() {
   return _retval;
 }
 
-int CefStreamWriterCToCpp::Flush() {
+NO_SANITIZE("cfi-icall") int CefStreamWriterCToCpp::Flush() {
+  shutdown_checker::AssertNotShutdown();
+
   cef_stream_writer_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, flush))
     return 0;
@@ -119,7 +131,9 @@ int CefStreamWriterCToCpp::Flush() {
   return _retval;
 }
 
-bool CefStreamWriterCToCpp::MayBlock() {
+NO_SANITIZE("cfi-icall") bool CefStreamWriterCToCpp::MayBlock() {
+  shutdown_checker::AssertNotShutdown();
+
   cef_stream_writer_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, may_block))
     return false;
@@ -130,26 +144,31 @@ bool CefStreamWriterCToCpp::MayBlock() {
   int _retval = _struct->may_block(_struct);
 
   // Return type: bool
-  return _retval?true:false;
+  return _retval ? true : false;
 }
-
 
 // CONSTRUCTOR - Do not edit by hand.
 
-CefStreamWriterCToCpp::CefStreamWriterCToCpp() {
+CefStreamWriterCToCpp::CefStreamWriterCToCpp() {}
+
+// DESTRUCTOR - Do not edit by hand.
+
+CefStreamWriterCToCpp::~CefStreamWriterCToCpp() {
+  shutdown_checker::AssertNotShutdown();
 }
 
-template<> cef_stream_writer_t* CefCToCpp<CefStreamWriterCToCpp,
-    CefStreamWriter, cef_stream_writer_t>::UnwrapDerived(CefWrapperType type,
-    CefStreamWriter* c) {
+template <>
+cef_stream_writer_t*
+CefCToCppRefCounted<CefStreamWriterCToCpp,
+                    CefStreamWriter,
+                    cef_stream_writer_t>::UnwrapDerived(CefWrapperType type,
+                                                        CefStreamWriter* c) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCToCpp<CefStreamWriterCToCpp,
-    CefStreamWriter, cef_stream_writer_t>::DebugObjCt = 0;
-#endif
-
-template<> CefWrapperType CefCToCpp<CefStreamWriterCToCpp, CefStreamWriter,
-    cef_stream_writer_t>::kWrapperType = WT_STREAM_WRITER;
+template <>
+CefWrapperType CefCToCppRefCounted<CefStreamWriterCToCpp,
+                                   CefStreamWriter,
+                                   cef_stream_writer_t>::kWrapperType =
+    WT_STREAM_WRITER;

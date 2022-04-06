@@ -2,7 +2,6 @@
 #include "cef_native_control.h"
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
-#include "include/cef_runnable.h"
 #include "handler/browser_handler.h"
 #include "manager/cef_manager.h"
 
@@ -56,7 +55,7 @@ void CefNativeControl::ReCreateBrowser()
 		window_info.SetAsChild(this->m_pWindow->GetHWND(), m_rcItem);
 
 		CefBrowserSettings browser_settings;
-		CefBrowserHost::CreateBrowser(window_info, browser_handler_, L"", browser_settings, NULL);
+		CefBrowserHost::CreateBrowser(window_info, browser_handler_, L"", browser_settings, nullptr, nullptr);
 	}
 }
 

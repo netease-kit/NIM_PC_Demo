@@ -39,15 +39,16 @@
 #pragma once
 
 #include "include/cef_base.h"
-#include "include/cef_drag_data.h"
 #include "include/cef_browser.h"
+#include "include/cef_drag_data.h"
+#include "include/cef_frame.h"
 
 ///
 // Implement this interface to handle events related to dragging. The methods of
 // this class will be called on the UI thread.
 ///
 /*--cef(source=client)--*/
-class CefDragHandler : public virtual CefBase {
+class CefDragHandler : public virtual CefBaseRefCounted {
  public:
   typedef cef_drag_operations_mask_t DragOperationsMask;
 
@@ -60,7 +61,9 @@ class CefDragHandler : public virtual CefBase {
   /*--cef()--*/
   virtual bool OnDragEnter(CefRefPtr<CefBrowser> browser,
                            CefRefPtr<CefDragData> dragData,
-                           DragOperationsMask mask) { return false; }
+                           DragOperationsMask mask) {
+    return false;
+  }
 
   ///
   // Called whenever draggable regions for the browser window change. These can
@@ -72,6 +75,7 @@ class CefDragHandler : public virtual CefBase {
   /*--cef()--*/
   virtual void OnDraggableRegionsChanged(
       CefRefPtr<CefBrowser> browser,
+      CefRefPtr<CefFrame> frame,
       const std::vector<CefDraggableRegion>& regions) {}
 };
 

@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,28 +9,31 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=af9ed3cfda9c94f046f4f9b5c9c94b1b38ff2e64$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_BROWSER_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_BROWSER_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
 #include <vector>
-#include "include/cef_browser.h"
 #include "include/capi/cef_browser_capi.h"
-#include "include/cef_client.h"
 #include "include/capi/cef_client_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_browser.h"
+#include "include/cef_client.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class CefBrowserCToCpp
-    : public CefCToCpp<CefBrowserCToCpp, CefBrowser, cef_browser_t> {
+    : public CefCToCppRefCounted<CefBrowserCToCpp, CefBrowser, cef_browser_t> {
  public:
   CefBrowserCToCpp();
+  virtual ~CefBrowserCToCpp();
 
   // CefBrowser methods.
   CefRefPtr<CefBrowserHost> GetHost() OVERRIDE;
@@ -53,9 +56,6 @@ class CefBrowserCToCpp
   size_t GetFrameCount() OVERRIDE;
   void GetFrameIdentifiers(std::vector<int64>& identifiers) OVERRIDE;
   void GetFrameNames(std::vector<CefString>& names) OVERRIDE;
-  bool SendProcessMessage(CefProcessId target_process,
-      CefRefPtr<CefProcessMessage> message) OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_BROWSER_CTOCPP_H_

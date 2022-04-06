@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,13 +9,14 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=793eb79238372d2070e4e60673dbf65346999b31$
+//
 
 #include "libcef_dll/ctocpp/v8stack_frame_ctocpp.h"
 
-
 // VIRTUAL METHODS - Body may be edited by hand.
 
-bool CefV8StackFrameCToCpp::IsValid() {
+NO_SANITIZE("cfi-icall") bool CefV8StackFrameCToCpp::IsValid() {
   cef_v8stack_frame_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, is_valid))
     return false;
@@ -26,10 +27,10 @@ bool CefV8StackFrameCToCpp::IsValid() {
   int _retval = _struct->is_valid(_struct);
 
   // Return type: bool
-  return _retval?true:false;
+  return _retval ? true : false;
 }
 
-CefString CefV8StackFrameCToCpp::GetScriptName() {
+NO_SANITIZE("cfi-icall") CefString CefV8StackFrameCToCpp::GetScriptName() {
   cef_v8stack_frame_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_script_name))
     return CefString();
@@ -45,6 +46,7 @@ CefString CefV8StackFrameCToCpp::GetScriptName() {
   return _retvalStr;
 }
 
+NO_SANITIZE("cfi-icall")
 CefString CefV8StackFrameCToCpp::GetScriptNameOrSourceURL() {
   cef_v8stack_frame_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_script_name_or_source_url))
@@ -53,8 +55,8 @@ CefString CefV8StackFrameCToCpp::GetScriptNameOrSourceURL() {
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   // Execute
-  cef_string_userfree_t _retval = _struct->get_script_name_or_source_url(
-      _struct);
+  cef_string_userfree_t _retval =
+      _struct->get_script_name_or_source_url(_struct);
 
   // Return type: string
   CefString _retvalStr;
@@ -62,7 +64,7 @@ CefString CefV8StackFrameCToCpp::GetScriptNameOrSourceURL() {
   return _retvalStr;
 }
 
-CefString CefV8StackFrameCToCpp::GetFunctionName() {
+NO_SANITIZE("cfi-icall") CefString CefV8StackFrameCToCpp::GetFunctionName() {
   cef_v8stack_frame_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_function_name))
     return CefString();
@@ -78,7 +80,7 @@ CefString CefV8StackFrameCToCpp::GetFunctionName() {
   return _retvalStr;
 }
 
-int CefV8StackFrameCToCpp::GetLineNumber() {
+NO_SANITIZE("cfi-icall") int CefV8StackFrameCToCpp::GetLineNumber() {
   cef_v8stack_frame_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_line_number))
     return 0;
@@ -92,7 +94,7 @@ int CefV8StackFrameCToCpp::GetLineNumber() {
   return _retval;
 }
 
-int CefV8StackFrameCToCpp::GetColumn() {
+NO_SANITIZE("cfi-icall") int CefV8StackFrameCToCpp::GetColumn() {
   cef_v8stack_frame_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_column))
     return 0;
@@ -106,7 +108,7 @@ int CefV8StackFrameCToCpp::GetColumn() {
   return _retval;
 }
 
-bool CefV8StackFrameCToCpp::IsEval() {
+NO_SANITIZE("cfi-icall") bool CefV8StackFrameCToCpp::IsEval() {
   cef_v8stack_frame_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, is_eval))
     return false;
@@ -117,10 +119,10 @@ bool CefV8StackFrameCToCpp::IsEval() {
   int _retval = _struct->is_eval(_struct);
 
   // Return type: bool
-  return _retval?true:false;
+  return _retval ? true : false;
 }
 
-bool CefV8StackFrameCToCpp::IsConstructor() {
+NO_SANITIZE("cfi-icall") bool CefV8StackFrameCToCpp::IsConstructor() {
   cef_v8stack_frame_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, is_constructor))
     return false;
@@ -131,26 +133,29 @@ bool CefV8StackFrameCToCpp::IsConstructor() {
   int _retval = _struct->is_constructor(_struct);
 
   // Return type: bool
-  return _retval?true:false;
+  return _retval ? true : false;
 }
-
 
 // CONSTRUCTOR - Do not edit by hand.
 
-CefV8StackFrameCToCpp::CefV8StackFrameCToCpp() {
-}
+CefV8StackFrameCToCpp::CefV8StackFrameCToCpp() {}
 
-template<> cef_v8stack_frame_t* CefCToCpp<CefV8StackFrameCToCpp,
-    CefV8StackFrame, cef_v8stack_frame_t>::UnwrapDerived(CefWrapperType type,
-    CefV8StackFrame* c) {
+// DESTRUCTOR - Do not edit by hand.
+
+CefV8StackFrameCToCpp::~CefV8StackFrameCToCpp() {}
+
+template <>
+cef_v8stack_frame_t*
+CefCToCppRefCounted<CefV8StackFrameCToCpp,
+                    CefV8StackFrame,
+                    cef_v8stack_frame_t>::UnwrapDerived(CefWrapperType type,
+                                                        CefV8StackFrame* c) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCToCpp<CefV8StackFrameCToCpp,
-    CefV8StackFrame, cef_v8stack_frame_t>::DebugObjCt = 0;
-#endif
-
-template<> CefWrapperType CefCToCpp<CefV8StackFrameCToCpp, CefV8StackFrame,
-    cef_v8stack_frame_t>::kWrapperType = WT_V8STACK_FRAME;
+template <>
+CefWrapperType CefCToCppRefCounted<CefV8StackFrameCToCpp,
+                                   CefV8StackFrame,
+                                   cef_v8stack_frame_t>::kWrapperType =
+    WT_V8STACK_FRAME;

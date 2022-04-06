@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,26 +9,29 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=0dd5d920ae85599953a9581c40a8cecdd94ea188$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_STREAM_READER_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_STREAM_READER_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
-#include "include/cef_stream.h"
 #include "include/capi/cef_stream_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_stream.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class CefStreamReaderCToCpp
-    : public CefCToCpp<CefStreamReaderCToCpp, CefStreamReader,
-        cef_stream_reader_t> {
+class CefStreamReaderCToCpp : public CefCToCppRefCounted<CefStreamReaderCToCpp,
+                                                         CefStreamReader,
+                                                         cef_stream_reader_t> {
  public:
   CefStreamReaderCToCpp();
+  virtual ~CefStreamReaderCToCpp();
 
   // CefStreamReader methods.
   size_t Read(void* ptr, size_t size, size_t n) OVERRIDE;
@@ -38,5 +41,4 @@ class CefStreamReaderCToCpp
   bool MayBlock() OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_STREAM_READER_CTOCPP_H_

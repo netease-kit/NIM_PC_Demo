@@ -21,7 +21,7 @@ class BrowserHandler :
 	public CefContextMenuHandler,
 	public CefDisplayHandler,
 	public CefDragHandler,
-	public CefGeolocationHandler,
+	// public CefGeolocationHandler,
 	public CefJSDialogHandler,
 	public CefKeyboardHandler,	
 	public CefLoadHandler,
@@ -101,14 +101,6 @@ public:
 		// 在非UI线程中被调用
 		virtual bool OnBeforeBrowse(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, CefRefPtr<CefRequest> request, bool is_redirect) = 0;
 		virtual void OnProtocolExecution(CefRefPtr<CefBrowser> browser, const CefString& url, bool& allow_os_execution) = 0;
-
-		// 在非UI线程中被调用
-		virtual ReturnValue OnBeforeResourceLoad(
-			CefRefPtr<CefBrowser> browser,
-			CefRefPtr<CefFrame> frame,
-			CefRefPtr<CefRequest> request,
-			CefRefPtr<CefRequestCallback> callback) = 0;
-
 		virtual void OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser, TerminationStatus status) = 0;
 
 		// 文件下载相关
@@ -170,7 +162,7 @@ public:
 	virtual CefRefPtr<CefRenderHandler>  GetRenderHandler() OVERRIDE { return this; }
 	virtual CefRefPtr<CefDisplayHandler> GetDisplayHandler() OVERRIDE{ return this; }
 	virtual CefRefPtr<CefDragHandler> GetDragHandler() OVERRIDE{ return this; }
-	virtual CefRefPtr<CefGeolocationHandler> GetGeolocationHandler() OVERRIDE{ return this; }
+	// virtual CefRefPtr<CefGeolocationHandler> GetGeolocationHandler() OVERRIDE{ return this; }
 	virtual CefRefPtr<CefJSDialogHandler> GetJSDialogHandler() { return this; }
 	virtual CefRefPtr<CefKeyboardHandler> GetKeyboardHandler() OVERRIDE{ return this; }
 	virtual CefRefPtr<CefLifeSpanHandler> GetLifeSpanHandler() OVERRIDE{ return this; }
@@ -178,7 +170,10 @@ public:
 	virtual CefRefPtr<CefRequestHandler> GetRequestHandler() OVERRIDE{ return this; }
 	virtual CefRefPtr<CefDownloadHandler> GetDownloadHandler() OVERRIDE { return this; }
 	virtual CefRefPtr<CefDialogHandler> GetDialogHandler() OVERRIDE { return this; }
-	virtual bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser, CefProcessId source_process, CefRefPtr<CefProcessMessage> message)	OVERRIDE;
+	virtual bool OnProcessMessageReceived(CefRefPtr<CefBrowser> browser,
+		CefRefPtr<CefFrame> frame,
+		CefProcessId source_process,
+		CefRefPtr<CefProcessMessage> message)	OVERRIDE;
 
 	// CefLifeSpanHandler methods
 	virtual bool OnBeforePopup(CefRefPtr<CefBrowser> browser,
@@ -191,6 +186,7 @@ public:
 		CefWindowInfo& windowInfo,
 		CefRefPtr<CefClient>& client,
 		CefBrowserSettings& settings,
+		CefRefPtr<CefDictionaryValue>& extra_info,
 		bool* no_javascript_access) OVERRIDE;
 
 	virtual void OnAfterCreated(CefRefPtr<CefBrowser> browser) OVERRIDE;
@@ -202,7 +198,7 @@ public:
 	// CefRenderHandler methods
 	virtual bool GetRootScreenRect(CefRefPtr<CefBrowser> browser, CefRect& rect) OVERRIDE;
 
-	virtual bool GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) OVERRIDE;
+	virtual void GetViewRect(CefRefPtr<CefBrowser> browser, CefRect& rect) OVERRIDE;
 
 	virtual bool GetScreenPoint(CefRefPtr<CefBrowser> browser, int viewX, int viewY, int& screenX, int& screenY) OVERRIDE;
 
@@ -237,12 +233,18 @@ public:
 
 	virtual void OnTitleChange(CefRefPtr<CefBrowser> browser, const CefString& title) OVERRIDE;
 
-	virtual bool OnConsoleMessage(CefRefPtr<CefBrowser> browser, const CefString& message, const CefString& source, int line) OVERRIDE;
+	virtual bool OnConsoleMessage(CefRefPtr<CefBrowser> browser,
+		cef_log_severity_t level,
+		const CefString& message,
+		const CefString& source,
+		int line) OVERRIDE;
 
 	// CefLoadHandler methods
 	virtual void OnLoadingStateChange(CefRefPtr<CefBrowser> browser, bool isLoading, bool canGoBack, bool canGoForward) OVERRIDE;
 
-	virtual void OnLoadStart(CefRefPtr<CefBrowser> browser,	CefRefPtr<CefFrame> frame) OVERRIDE;
+	virtual void OnLoadStart(CefRefPtr<CefBrowser> browser,
+		CefRefPtr<CefFrame> frame,
+		TransitionType transition_type) OVERRIDE;
 
 	virtual void OnLoadEnd(CefRefPtr<CefBrowser> browser, CefRefPtr<CefFrame> frame, int httpStatusCode) OVERRIDE;
 
@@ -255,7 +257,6 @@ public:
 	// CefJSDialogHandler methods
 	virtual bool OnJSDialog(CefRefPtr<CefBrowser> browser,
 		const CefString& origin_url,
-		const CefString& accept_lang,
 		JSDialogType dialog_type,
 		const CefString& message_text,
 		const CefString& default_prompt_text,
@@ -266,17 +267,12 @@ public:
 	bool OnBeforeBrowse(CefRefPtr<CefBrowser> browser,
 		CefRefPtr<CefFrame> frame,
 		CefRefPtr<CefRequest> request,
+		bool user_gesture,
 		bool is_redirect) OVERRIDE;
 
 	virtual void OnProtocolExecution(CefRefPtr<CefBrowser> browser,
 		const CefString& url,
 		bool& allow_os_execution);
-
-	cef_return_value_t OnBeforeResourceLoad(
-		CefRefPtr<CefBrowser> browser,
-		CefRefPtr<CefFrame> frame,
-		CefRefPtr<CefRequest> request,
-		CefRefPtr<CefRequestCallback> callback) OVERRIDE;
 
 	bool OnQuotaRequest(CefRefPtr<CefBrowser> browser,
 		const CefString& origin_url,

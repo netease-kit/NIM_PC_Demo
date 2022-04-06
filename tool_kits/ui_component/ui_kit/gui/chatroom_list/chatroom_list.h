@@ -1,5 +1,6 @@
 #pragma once
 #include "cef/cef_module/cef_control/cef_control.h"
+#include "cef/cef_module/cef_control/cef_native_control.h"
 
 namespace nim_comp
 {
@@ -31,7 +32,7 @@ public:
 	static const LPCTSTR kClassName;
 
 private:
-	ui::CefControl*		cef_control_;
+	ui::CefNativeControl*		cef_control_;
 };
 
 }

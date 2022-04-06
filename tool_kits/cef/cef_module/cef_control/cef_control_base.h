@@ -218,13 +218,6 @@ public:
 	void AttachMainURLChange(OnMainURLChengeEvent cb){ cb_main_url_change_ = cb; }
 
 	/**
-	* @brief 绑定一个回调函数用于监听页面资源全部加载完毕
-	* @param[in] callback 一个回调函数，参考 OnBeforeResourceLoadEvent 声明
-	* @return 无
-	*/
-	void AttachBeforeNavigate(const OnBeforeResourceLoadEvent& callback){ cb_before_resource_load_ = callback; }
-
-	/**
 	* @brief 绑定一个回调函数用于监听一个弹出窗口弹出的通知
 	* @param[in] callback 一个回调函数，参考 OnLinkClickEvent 声明
 	* @return 无
@@ -379,13 +372,6 @@ private:
 
 	virtual void OnProtocolExecution(CefRefPtr<CefBrowser> browser, const CefString& url, bool& allow_os_execution) OVERRIDE;
 
-	// 在非UI线程中被调用
-	virtual CefRequestHandler::ReturnValue OnBeforeResourceLoad(
-		CefRefPtr<CefBrowser> browser,
-		CefRefPtr<CefFrame> frame,
-		CefRefPtr<CefRequest> request,
-		CefRefPtr<CefRequestCallback> callback) OVERRIDE;
-
 	virtual void OnRenderProcessTerminated(CefRefPtr<CefBrowser> browser, CefRequestHandler::TerminationStatus status) OVERRIDE;
 
 	// 下载文件相关
@@ -422,7 +408,6 @@ protected:
 	OnBeforeMenuEvent			cb_before_menu_ = nullptr;
 	OnMenuCommandEvent			cb_menu_command_ = nullptr;
 	OnTitleChangeEvent			cb_title_change_ = nullptr;
-	OnBeforeResourceLoadEvent	cb_before_resource_load_ = nullptr;
 	OnUrlChangeEvent			cb_url_change_ = nullptr;
 	OnMainURLChengeEvent		cb_main_url_change_ = nullptr;
 	OnLinkClickEvent			cb_link_click_ = nullptr;

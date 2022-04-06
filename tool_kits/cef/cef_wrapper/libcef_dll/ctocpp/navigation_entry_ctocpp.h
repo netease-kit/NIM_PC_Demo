@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,26 +9,30 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=54f78bfc6bf2274b47730a80b2f54e49ba5d5b49$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_NAVIGATION_ENTRY_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_NAVIGATION_ENTRY_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
-#include "include/cef_navigation_entry.h"
 #include "include/capi/cef_navigation_entry_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_navigation_entry.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class CefNavigationEntryCToCpp
-    : public CefCToCpp<CefNavigationEntryCToCpp, CefNavigationEntry,
-        cef_navigation_entry_t> {
+    : public CefCToCppRefCounted<CefNavigationEntryCToCpp,
+                                 CefNavigationEntry,
+                                 cef_navigation_entry_t> {
  public:
   CefNavigationEntryCToCpp();
+  virtual ~CefNavigationEntryCToCpp();
 
   // CefNavigationEntry methods.
   bool IsValid() OVERRIDE;
@@ -40,7 +44,7 @@ class CefNavigationEntryCToCpp
   bool HasPostData() OVERRIDE;
   CefTime GetCompletionTime() OVERRIDE;
   int GetHttpStatusCode() OVERRIDE;
+  CefRefPtr<CefSSLStatus> GetSSLStatus() OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_NAVIGATION_ENTRY_CTOCPP_H_

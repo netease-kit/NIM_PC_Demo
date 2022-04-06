@@ -65,7 +65,7 @@ ui::Control* ChatroomForm::CreateControl(const std::wstring& pstrClass)
 {
 	if (pstrClass == L"CefControl")
 	{
-		return new ui::CefControl;
+		return new ui::CefNativeControl;
 	}
 
 	return NULL;
@@ -112,7 +112,7 @@ void ChatroomForm::InitWindow()
 	input_edit_->SetOleCallback(richeditolecallback_);
 	richeditolecallback_->SetCustomMode(true);
 
-	msg_list_ = (ui::CefControl*)FindControl(L"intercommunicate_list");
+	msg_list_ = (ui::CefNativeControl*)FindControl(L"intercommunicate_list");
 	msg_list_->AttachLoadEnd(nbase::Bind(&ChatroomForm::OnLoadEnd, this, std::placeholders::_1));
 	msg_list_->AttachAfterCreated(nbase::Bind(&ChatroomForm::OnAfterCreated, this, std::placeholders::_1));
 	msg_list_->AttachBeforeCLose(nbase::Bind(&ChatroomForm::OnBeforeClose, this, std::placeholders::_1));

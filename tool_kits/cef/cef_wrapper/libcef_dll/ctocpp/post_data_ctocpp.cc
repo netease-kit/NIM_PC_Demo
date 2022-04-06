@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,15 +9,16 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=f74305590ef987c51ea4f9ce9439edbc722a794a$
+//
 
-#include <algorithm>
 #include "libcef_dll/ctocpp/post_data_ctocpp.h"
+#include <algorithm>
 #include "libcef_dll/ctocpp/post_data_element_ctocpp.h"
-
 
 // STATIC METHODS - Body may be edited by hand.
 
-CefRefPtr<CefPostData> CefPostData::Create() {
+NO_SANITIZE("cfi-icall") CefRefPtr<CefPostData> CefPostData::Create() {
   // AUTO-GENERATED CONTENT - DELETE THIS COMMENT BEFORE MODIFYING
 
   // Execute
@@ -27,10 +28,9 @@ CefRefPtr<CefPostData> CefPostData::Create() {
   return CefPostDataCToCpp::Wrap(_retval);
 }
 
-
 // VIRTUAL METHODS - Body may be edited by hand.
 
-bool CefPostDataCToCpp::IsReadOnly() {
+NO_SANITIZE("cfi-icall") bool CefPostDataCToCpp::IsReadOnly() {
   cef_post_data_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, is_read_only))
     return false;
@@ -41,10 +41,10 @@ bool CefPostDataCToCpp::IsReadOnly() {
   int _retval = _struct->is_read_only(_struct);
 
   // Return type: bool
-  return _retval?true:false;
+  return _retval ? true : false;
 }
 
-bool CefPostDataCToCpp::HasExcludedElements() {
+NO_SANITIZE("cfi-icall") bool CefPostDataCToCpp::HasExcludedElements() {
   cef_post_data_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, has_excluded_elements))
     return false;
@@ -55,10 +55,10 @@ bool CefPostDataCToCpp::HasExcludedElements() {
   int _retval = _struct->has_excluded_elements(_struct);
 
   // Return type: bool
-  return _retval?true:false;
+  return _retval ? true : false;
 }
 
-size_t CefPostDataCToCpp::GetElementCount() {
+NO_SANITIZE("cfi-icall") size_t CefPostDataCToCpp::GetElementCount() {
   cef_post_data_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_element_count))
     return 0;
@@ -72,6 +72,7 @@ size_t CefPostDataCToCpp::GetElementCount() {
   return _retval;
 }
 
+NO_SANITIZE("cfi-icall")
 void CefPostDataCToCpp::GetElements(ElementVector& elements) {
   cef_post_data_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, get_elements))
@@ -87,7 +88,7 @@ void CefPostDataCToCpp::GetElements(ElementVector& elements) {
     elementsList = new cef_post_data_element_t*[elementsCount];
     DCHECK(elementsList);
     if (elementsList) {
-       memset(elementsList, 0, sizeof(cef_post_data_element_t*)*elementsCount);
+      memset(elementsList, 0, sizeof(cef_post_data_element_t*) * elementsCount);
     }
     if (elementsList && elementsSize > 0) {
       for (size_t i = 0; i < elementsSize; ++i) {
@@ -97,9 +98,7 @@ void CefPostDataCToCpp::GetElements(ElementVector& elements) {
   }
 
   // Execute
-  _struct->get_elements(_struct,
-      &elementsCount,
-      elementsList);
+  _struct->get_elements(_struct, &elementsCount, elementsList);
 
   // Restore param:elements; type: refptr_vec_same_byref
   elements.clear();
@@ -107,10 +106,11 @@ void CefPostDataCToCpp::GetElements(ElementVector& elements) {
     for (size_t i = 0; i < elementsCount; ++i) {
       elements.push_back(CefPostDataElementCToCpp::Wrap(elementsList[i]));
     }
-    delete [] elementsList;
+    delete[] elementsList;
   }
 }
 
+NO_SANITIZE("cfi-icall")
 bool CefPostDataCToCpp::RemoveElement(CefRefPtr<CefPostDataElement> element) {
   cef_post_data_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, remove_element))
@@ -124,13 +124,14 @@ bool CefPostDataCToCpp::RemoveElement(CefRefPtr<CefPostDataElement> element) {
     return false;
 
   // Execute
-  int _retval = _struct->remove_element(_struct,
-      CefPostDataElementCToCpp::Unwrap(element));
+  int _retval = _struct->remove_element(
+      _struct, CefPostDataElementCToCpp::Unwrap(element));
 
   // Return type: bool
-  return _retval?true:false;
+  return _retval ? true : false;
 }
 
+NO_SANITIZE("cfi-icall")
 bool CefPostDataCToCpp::AddElement(CefRefPtr<CefPostDataElement> element) {
   cef_post_data_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, add_element))
@@ -144,14 +145,14 @@ bool CefPostDataCToCpp::AddElement(CefRefPtr<CefPostDataElement> element) {
     return false;
 
   // Execute
-  int _retval = _struct->add_element(_struct,
-      CefPostDataElementCToCpp::Unwrap(element));
+  int _retval =
+      _struct->add_element(_struct, CefPostDataElementCToCpp::Unwrap(element));
 
   // Return type: bool
-  return _retval?true:false;
+  return _retval ? true : false;
 }
 
-void CefPostDataCToCpp::RemoveElements() {
+NO_SANITIZE("cfi-icall") void CefPostDataCToCpp::RemoveElements() {
   cef_post_data_t* _struct = GetStruct();
   if (CEF_MEMBER_MISSING(_struct, remove_elements))
     return;
@@ -162,22 +163,24 @@ void CefPostDataCToCpp::RemoveElements() {
   _struct->remove_elements(_struct);
 }
 
-
 // CONSTRUCTOR - Do not edit by hand.
 
-CefPostDataCToCpp::CefPostDataCToCpp() {
-}
+CefPostDataCToCpp::CefPostDataCToCpp() {}
 
-template<> cef_post_data_t* CefCToCpp<CefPostDataCToCpp, CefPostData,
-    cef_post_data_t>::UnwrapDerived(CefWrapperType type, CefPostData* c) {
+// DESTRUCTOR - Do not edit by hand.
+
+CefPostDataCToCpp::~CefPostDataCToCpp() {}
+
+template <>
+cef_post_data_t*
+CefCToCppRefCounted<CefPostDataCToCpp, CefPostData, cef_post_data_t>::
+    UnwrapDerived(CefWrapperType type, CefPostData* c) {
   NOTREACHED() << "Unexpected class type: " << type;
   return NULL;
 }
 
-#ifndef NDEBUG
-template<> base::AtomicRefCount CefCToCpp<CefPostDataCToCpp, CefPostData,
-    cef_post_data_t>::DebugObjCt = 0;
-#endif
-
-template<> CefWrapperType CefCToCpp<CefPostDataCToCpp, CefPostData,
-    cef_post_data_t>::kWrapperType = WT_POST_DATA;
+template <>
+CefWrapperType CefCToCppRefCounted<CefPostDataCToCpp,
+                                   CefPostData,
+                                   cef_post_data_t>::kWrapperType =
+    WT_POST_DATA;

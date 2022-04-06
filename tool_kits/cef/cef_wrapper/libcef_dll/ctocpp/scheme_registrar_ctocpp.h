@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,31 +9,33 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=3664a7285a3f5eac9bc7522a2b812bdaf5d42467$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_SCHEME_REGISTRAR_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_SCHEME_REGISTRAR_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
-#include "include/cef_scheme.h"
 #include "include/capi/cef_scheme_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_scheme.h"
+#include "libcef_dll/ctocpp/ctocpp_scoped.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class CefSchemeRegistrarCToCpp
-    : public CefCToCpp<CefSchemeRegistrarCToCpp, CefSchemeRegistrar,
-        cef_scheme_registrar_t> {
+    : public CefCToCppScoped<CefSchemeRegistrarCToCpp,
+                             CefSchemeRegistrar,
+                             cef_scheme_registrar_t> {
  public:
   CefSchemeRegistrarCToCpp();
+  virtual ~CefSchemeRegistrarCToCpp();
 
   // CefSchemeRegistrar methods.
-  bool AddCustomScheme(const CefString& scheme_name, bool is_standard,
-      bool is_local, bool is_display_isolated) OVERRIDE;
+  bool AddCustomScheme(const CefString& scheme_name, int options) OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_SCHEME_REGISTRAR_CTOCPP_H_

@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,25 +9,28 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=14b514e55f58dff0d1c611f684e05890c9f246ef$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_VALUE_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_VALUE_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
-#include "include/cef_values.h"
 #include "include/capi/cef_values_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_values.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class CefValueCToCpp
-    : public CefCToCpp<CefValueCToCpp, CefValue, cef_value_t> {
+    : public CefCToCppRefCounted<CefValueCToCpp, CefValue, cef_value_t> {
  public:
   CefValueCToCpp();
+  virtual ~CefValueCToCpp();
 
   // CefValue methods.
   bool IsValid() OVERRIDE;
@@ -54,5 +57,4 @@ class CefValueCToCpp
   bool SetList(CefRefPtr<CefListValue> value) OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_VALUE_CTOCPP_H_

@@ -1,4 +1,4 @@
-// Copyright (c) 2016 Marshall A. Greenblatt. All rights reserved.
+// Copyright (c) 2019 Marshall A. Greenblatt. All rights reserved.
 //
 // Redistribution and use in source and binary forms, with or without
 // modification, are permitted provided that the following conditions are
@@ -33,6 +33,8 @@
 // by hand. See the translator.README.txt file in the tools directory for
 // more information.
 //
+// $hash=bf5c2a51aa80e831382bfe08e8dd5ec6331f0fdc$
+//
 
 #ifndef CEF_INCLUDE_CAPI_CEF_SCHEME_CAPI_H_
 #define CEF_INCLUDE_CAPI_CEF_SCHEME_CAPI_H_
@@ -58,59 +60,22 @@ typedef struct _cef_scheme_registrar_t {
   ///
   // Base structure.
   ///
-  cef_base_t base;
+  cef_base_scoped_t base;
 
   ///
   // Register a custom scheme. This function should not be called for the built-
   // in HTTP, HTTPS, FILE, FTP, ABOUT and DATA schemes.
   //
-  // If |is_standard| is true (1) the scheme will be treated as a standard
-  // scheme. Standard schemes are subject to URL canonicalization and parsing
-  // rules as defined in the Common Internet Scheme Syntax RFC 1738 Section 3.1
-  // available at http://www.ietf.org/rfc/rfc1738.txt
-  //
-  // In particular, the syntax for standard scheme URLs must be of the form:
-  // <pre>
-  //  [scheme]://[username]:[password]@[host]:[port]/[url-path]
-  // </pre> Standard scheme URLs must have a host component that is a fully
-  // qualified domain name as defined in Section 3.5 of RFC 1034 [13] and
-  // Section 2.1 of RFC 1123. These URLs will be canonicalized to
-  // "scheme://host/path" in the simplest case and
-  // "scheme://username:password@host:port/path" in the most explicit case. For
-  // example, "scheme:host/path" and "scheme:///host/path" will both be
-  // canonicalized to "scheme://host/path". The origin of a standard scheme URL
-  // is the combination of scheme, host and port (i.e., "scheme://host:port" in
-  // the most explicit case).
-  //
-  // For non-standard scheme URLs only the "scheme:" component is parsed and
-  // canonicalized. The remainder of the URL will be passed to the handler as-
-  // is. For example, "scheme:///some%20text" will remain the same. Non-standard
-  // scheme URLs cannot be used as a target for form submission.
-  //
-  // If |is_local| is true (1) the scheme will be treated as local (i.e., with
-  // the same security rules as those applied to "file" URLs). Normal pages
-  // cannot link to or access local URLs. Also, by default, local URLs can only
-  // perform XMLHttpRequest calls to the same URL (origin + path) that
-  // originated the request. To allow XMLHttpRequest calls from a local URL to
-  // other URLs with the same origin set the
-  // CefSettings.file_access_from_file_urls_allowed value to true (1). To allow
-  // XMLHttpRequest calls from a local URL to all origins set the
-  // CefSettings.universal_access_from_file_urls_allowed value to true (1).
-  //
-  // If |is_display_isolated| is true (1) the scheme will be treated as display-
-  // isolated. This means that pages cannot display these URLs unless they are
-  // from the same scheme. For example, pages in another origin cannot create
-  // iframes or hyperlinks to URLs with this scheme.
+  // See cef_scheme_options_t for possible values for |options|.
   //
   // This function may be called on any thread. It should only be called once
   // per unique |scheme_name| value. If |scheme_name| is already registered or
   // if an error occurs this function will return false (0).
   ///
-  int (CEF_CALLBACK *add_custom_scheme)(struct _cef_scheme_registrar_t* self,
-      const cef_string_t* scheme_name, int is_standard, int is_local,
-      int is_display_isolated);
+  int(CEF_CALLBACK* add_custom_scheme)(struct _cef_scheme_registrar_t* self,
+                                       const cef_string_t* scheme_name,
+                                       int options);
 } cef_scheme_registrar_t;
-
 
 ///
 // Structure that creates cef_resource_handler_t instances for handling scheme
@@ -121,7 +86,7 @@ typedef struct _cef_scheme_handler_factory_t {
   ///
   // Base structure.
   ///
-  cef_base_t base;
+  cef_base_ref_counted_t base;
 
   ///
   // Return a new resource handler instance to handle the request or an NULL
@@ -129,14 +94,15 @@ typedef struct _cef_scheme_handler_factory_t {
   // will be the browser window and frame respectively that originated the
   // request or NULL if the request did not originate from a browser window (for
   // example, if the request came from cef_urlrequest_t). The |request| object
-  // passed to this function will not contain cookie data.
+  // passed to this function cannot be modified.
   ///
-  struct _cef_resource_handler_t* (CEF_CALLBACK *create)(
+  struct _cef_resource_handler_t*(CEF_CALLBACK* create)(
       struct _cef_scheme_handler_factory_t* self,
-      struct _cef_browser_t* browser, struct _cef_frame_t* frame,
-      const cef_string_t* scheme_name, struct _cef_request_t* request);
+      struct _cef_browser_t* browser,
+      struct _cef_frame_t* frame,
+      const cef_string_t* scheme_name,
+      struct _cef_request_t* request);
 } cef_scheme_handler_factory_t;
-
 
 ///
 // Register a scheme handler factory with the global request context. An NULL
@@ -154,7 +120,8 @@ typedef struct _cef_scheme_handler_factory_t {
 // ory().
 ///
 CEF_EXPORT int cef_register_scheme_handler_factory(
-    const cef_string_t* scheme_name, const cef_string_t* domain_name,
+    const cef_string_t* scheme_name,
+    const cef_string_t* domain_name,
     cef_scheme_handler_factory_t* factory);
 
 ///

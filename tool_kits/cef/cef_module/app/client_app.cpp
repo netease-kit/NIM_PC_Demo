@@ -42,7 +42,7 @@ void ClientApp::OnBeforeCommandLineProcessing(const CefString& process_type, Cef
 }
 
 //////////////////////////////////////////////////////////////////////////////////////////
-void ClientApp::OnRegisterCustomSchemes(CefRefPtr<CefSchemeRegistrar> registrar)
+void ClientApp::OnRegisterCustomSchemes(CefRawPtr<CefSchemeRegistrar> registrar)
 {
 	// Default schemes that support cookies.
 	cookieable_schemes_.push_back("http");

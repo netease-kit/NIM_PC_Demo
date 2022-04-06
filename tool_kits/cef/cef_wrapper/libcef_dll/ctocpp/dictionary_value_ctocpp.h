@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,26 +9,30 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=78f4c316f837573dc42702821deefc4d6c0e0860$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_DICTIONARY_VALUE_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_DICTIONARY_VALUE_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
-#include "include/cef_values.h"
 #include "include/capi/cef_values_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_values.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
 class CefDictionaryValueCToCpp
-    : public CefCToCpp<CefDictionaryValueCToCpp, CefDictionaryValue,
-        cef_dictionary_value_t> {
+    : public CefCToCppRefCounted<CefDictionaryValueCToCpp,
+                                 CefDictionaryValue,
+                                 cef_dictionary_value_t> {
  public:
   CefDictionaryValueCToCpp();
+  virtual ~CefDictionaryValueCToCpp();
 
   // CefDictionaryValue methods.
   bool IsValid() OVERRIDE;
@@ -58,11 +62,10 @@ class CefDictionaryValueCToCpp
   bool SetDouble(const CefString& key, double value) OVERRIDE;
   bool SetString(const CefString& key, const CefString& value) OVERRIDE;
   bool SetBinary(const CefString& key,
-      CefRefPtr<CefBinaryValue> value) OVERRIDE;
+                 CefRefPtr<CefBinaryValue> value) OVERRIDE;
   bool SetDictionary(const CefString& key,
-      CefRefPtr<CefDictionaryValue> value) OVERRIDE;
+                     CefRefPtr<CefDictionaryValue> value) OVERRIDE;
   bool SetList(const CefString& key, CefRefPtr<CefListValue> value) OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_DICTIONARY_VALUE_CTOCPP_H_

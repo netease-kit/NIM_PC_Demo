@@ -1,4 +1,4 @@
-// Copyright (c) 2016 The Chromium Embedded Framework Authors. All rights
+// Copyright (c) 2019 The Chromium Embedded Framework Authors. All rights
 // reserved. Use of this source code is governed by a BSD-style license that
 // can be found in the LICENSE file.
 //
@@ -9,38 +9,47 @@
 // implementations. See the translator.README.txt file in the tools directory
 // for more information.
 //
+// $hash=529b0d3676e398d5047eb714a8210fefcc937e76$
+//
 
 #ifndef CEF_LIBCEF_DLL_CTOCPP_RESPONSE_CTOCPP_H_
 #define CEF_LIBCEF_DLL_CTOCPP_RESPONSE_CTOCPP_H_
 #pragma once
 
-#ifndef USING_CEF_SHARED
-#pragma message("Warning: "__FILE__" may be accessed wrapper-side only")
-#else  // USING_CEF_SHARED
+#if !defined(WRAPPING_CEF_SHARED)
+#error This file can be included wrapper-side only
+#endif
 
-#include "include/cef_response.h"
 #include "include/capi/cef_response_capi.h"
-#include "libcef_dll/ctocpp/ctocpp.h"
+#include "include/cef_response.h"
+#include "libcef_dll/ctocpp/ctocpp_ref_counted.h"
 
 // Wrap a C structure with a C++ class.
 // This class may be instantiated and accessed wrapper-side only.
-class CefResponseCToCpp
-    : public CefCToCpp<CefResponseCToCpp, CefResponse, cef_response_t> {
+class CefResponseCToCpp : public CefCToCppRefCounted<CefResponseCToCpp,
+                                                     CefResponse,
+                                                     cef_response_t> {
  public:
   CefResponseCToCpp();
+  virtual ~CefResponseCToCpp();
 
   // CefResponse methods.
   bool IsReadOnly() OVERRIDE;
+  cef_errorcode_t GetError() OVERRIDE;
+  void SetError(cef_errorcode_t error) OVERRIDE;
   int GetStatus() OVERRIDE;
   void SetStatus(int status) OVERRIDE;
   CefString GetStatusText() OVERRIDE;
   void SetStatusText(const CefString& statusText) OVERRIDE;
   CefString GetMimeType() OVERRIDE;
   void SetMimeType(const CefString& mimeType) OVERRIDE;
+  CefString GetCharset() OVERRIDE;
+  void SetCharset(const CefString& charset) OVERRIDE;
   CefString GetHeader(const CefString& name) OVERRIDE;
   void GetHeaderMap(HeaderMap& headerMap) OVERRIDE;
   void SetHeaderMap(const HeaderMap& headerMap) OVERRIDE;
+  CefString GetURL() OVERRIDE;
+  void SetURL(const CefString& url) OVERRIDE;
 };
 
-#endif  // USING_CEF_SHARED
 #endif  // CEF_LIBCEF_DLL_CTOCPP_RESPONSE_CTOCPP_H_

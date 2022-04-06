@@ -4,7 +4,7 @@
 namespace nim_comp
 {
 
-CefGlobalFunctions::CefGlobalFunctions(CefControl* cef_control)
+CefGlobalFunctions::CefGlobalFunctions(CefNativeControl* cef_control)
 	: cef_control_(cef_control)
 {
 

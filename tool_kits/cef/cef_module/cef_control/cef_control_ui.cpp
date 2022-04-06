@@ -2,7 +2,6 @@
 #include "cef_control.h"
 #include "include/cef_browser.h"
 #include "include/cef_frame.h"
-#include "include/cef_runnable.h"
 #include "handler/browser_handler.h"
 #include "manager/cef_manager.h"
 #include "js_bridge/cef_js_bridge.h"
@@ -59,11 +58,11 @@ void CefControl::ReCreateBrowser()
 	{
 		// 使用无窗模式，离屏渲染
 		CefWindowInfo window_info;
-		window_info.SetAsWindowless(m_pWindow->GetHWND(), false);
+		window_info.SetAsWindowless(m_pWindow->GetHWND());
 		CefBrowserSettings browser_settings;
 		//browser_settings.file_access_from_file_urls = STATE_ENABLED;
 		//browser_settings.universal_access_from_file_urls = STATE_ENABLED;
-		CefBrowserHost::CreateBrowser(window_info, browser_handler_, L"", browser_settings, NULL);
+		CefBrowserHost::CreateBrowser(window_info, browser_handler_, L"", browser_settings, nullptr, nullptr);
 	}	
 }
 
@@ -291,7 +290,7 @@ bool CefControl::AttachDevTools(Control* control)
 	else
 	{
 		CefWindowInfo windowInfo;
-		windowInfo.SetAsWindowless(GetWindow()->GetHWND(), false);
+		windowInfo.SetAsWindowless(GetWindow()->GetHWND());
 		CefBrowserSettings settings;
 		browser->GetHost()->ShowDevTools(windowInfo, view_browser->GetHost()->GetClient(), settings, CefPoint());
 		devtool_attached_ = true;

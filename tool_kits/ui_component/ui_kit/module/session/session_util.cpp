@@ -4,7 +4,8 @@
 #include "util/user.h"
 #include "module/emoji/richedit_util.h"
 #include "module/session/session_manager.h"
-#include "cef\cef_module\cef_control\cef_control.h"
+#include "cef/cef_module/cef_control/cef_control.h"
+#include "cef/cef_module/cef_control/cef_native_control.h"
 #include "util\windows_manager.h"
 
 namespace nim_comp
@@ -413,10 +414,10 @@ public:
 	virtual std::wstring GetWindowId() const override { return kClassName; };
 	virtual ui::Control* CreateControl(const std::wstring& pstrClass) override{
 		if (pstrClass.compare(L"CefControl") == 0)
-			return new ui::CefControl;
+			return new ui::CefNativeControl;
 	}
 	virtual void InitWindow() override {
-		cef_control_ = static_cast<ui::CefControl*>(FindControl(L"cef_control"));
+		cef_control_ = static_cast<ui::CefNativeControl*>(FindControl(L"cef_control"));
 		if(cef_control_ != nullptr)
 		cef_control_->AttachTitleChange([this](const std::wstring& title) {
 			((ui::Label*)FindControl(L"title"))->SetText(title);
@@ -476,7 +477,7 @@ private:
 public:
 	static const LPCTSTR kClassName;
 private:
-	ui::CefControl	*cef_control_;	
+	ui::CefNativeControl	*cef_control_;	
 };
 const LPCTSTR MapView::kClassName = L"MapView";
 void OpenMap(const std::string& title, const std::string& content, const std::string& point)
