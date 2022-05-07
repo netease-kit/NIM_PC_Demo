@@ -24,7 +24,7 @@ NIM Demo 从 8.4.0 版本开始使用 CMake 管理工程结构，您需要下载
 安装完成后，首先克隆项目到你的磁盘中：
 
 ```
-git clone https://github.com/netease-im/NIM_PC_Demo.git --depth 1
+git clone https://github.com/netease-im/NIM_PC_Demo.git --depth 10
 ```
 
 执行如下命令进行工程初始化，如果你要编译 Release 版本，请替换命令中的 Debug 为 Release
@@ -101,3 +101,6 @@ cmake --build build --config Debug --target install
  - 遇到问题：关注[云信开发人员手册](https://dev.yunxin.163.com/)帮助您理解和使用云信 SDK 接口
  - 提交缺陷：在确保使用最新版本依然存在问题时请尽量以简洁的语言描述清楚复现该问题的步骤并提交 Issue
  - 功能建议：如果你有什么好的想法或者提案，欢迎提交 Issue 与我们交流
+
+#推荐好友使用云信，即享1500元京东卡奖励# 点击参与https://yunxin.163.com/promotion/recommend?channel=github
+[![main]( https://yx-web-nosdn.netease.im/quickhtml%2Fassets%2Fyunxin%2Fdefault%2F2022%2Fgithub%2F233.png)](https://yunxin.163.com/promotion/recommend?channel=github)
