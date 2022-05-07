@@ -24,7 +24,7 @@ NIM Demo 从 8.4.0 版本开始使用 CMake 管理工程结构，您需要下载
 安装完成后，首先克隆项目到你的磁盘中：
 
 ```
-git clone https://github.com/netease-im/NIM_PC_Demo.git --depth 1
+git clone https://github.com/netease-im/NIM_PC_Demo.git --depth 10
 ```
 
 执行如下命令进行工程初始化，如果你要编译 Release 版本，请替换命令中的 Debug 为 Release
