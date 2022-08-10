@@ -80,6 +80,28 @@ namespace app_sdk
 		public:
 			std::string err_msg_;
 		};
+		//应用账号获取对应 IM 账号
+		class GetIMAccountRequest : public RequestBase
+		{
+		public:
+			GetIMAccountRequest(std::string username, std::string password);
+		protected:
+			virtual std::string OnGetHost() const override;
+			virtual std::string OnGetAPI() const override;
+			virtual void OnGetRequestHead(std::map<std::string, std::string>& heads) const override;
+			virtual void OnGetRequestContent(std::string& content) const override;
+		public:
+			std::string username_;
+			std::string password_;
+		};
+		class GetIMAccountResponse : public ResponseBase
+		{
+		protected:
+			virtual void OnParse(const std::string& response) override;
+		public:
+			std::string err_msg_;
+			std::string token_;
+		};
 		//获取聊天室列表请求/应答
 		class GetChatroomListRequest : public RequestBase
 		{
@@ -122,6 +144,9 @@ namespace app_sdk
 		//注册账号请求/应答
 		using RegisterAccountReq = TSharedHttpRequest<RegisterAccountRequest>;
 		using RegisterAccountRsp = TSharedHttpResponse<RegisterAccountResponse>;
+		//使用应用账号换取IM账号
+		using GetIMAccountReq = TSharedHttpRequest<GetIMAccountRequest>;
+		using GetIMAccountRsp = TSharedHttpResponse<GetIMAccountResponse>;
 		//获取聊天室列表请求/应答
 		using GetChatroomListReq = TSharedHttpRequest<GetChatroomListRequest>;
 		using GetChatroomListRsp = TSharedHttpResponse<GetChatroomListResponse>;

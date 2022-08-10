@@ -6,6 +6,7 @@ namespace app_sdk
 	static const std::string cmd_register_account = "/api/createDemoUser";//注册账号
 	static const std::string cmd_get_chatroomlist = "/api/chatroom/homeList";//获取聊天室列表
 	static const std::string cmd_get_chatroomaddress = "/api/chatroom/requestAddress";//获取聊天室连接地址
+	static const std::string cmd_get_im_account = "api/member/login";
 	void SDK_PRO::ResponseBase::Parse(const std::string& response) {
 		reply_content_ = response;
 		pro_reply_code_ = nim::kNIMResError;
@@ -64,9 +65,9 @@ namespace app_sdk
 	}
 	void SDK_PRO::RequestBase::GetRequestHead(std::map<std::string, std::string>& heads)
 	{
-		heads["User-Agent"] = "nim_demo_pc";
-		heads["appkey"] = AppSDKInterface::GetAppKey();
-		heads["charset"] = "utf-8";
+		//heads["User-Agent"] = "nim_demo_pc";
+		//heads["appkey"] = AppSDKInterface::GetAppKey();
+		//heads["charset"] = "utf-8";
 		heads["Content-Type"] = "application/json";
 		OnGetRequestHead(heads);
 	}
@@ -224,6 +225,40 @@ namespace app_sdk
 			for (auto it : json_reply["msg"]["addr"])
 			{
 				address_.emplace_back(it.asString());
+			}
+		}
+	}
+	SDK_PRO::GetIMAccountRequest::GetIMAccountRequest(std::string username, std::string password)
+		: username_(username)
+		, password_(password)
+	{
+	}
+	std::string SDK_PRO::GetIMAccountRequest::OnGetHost() const
+	{
+		return "http://8.210.45.210/";
+	}
+	std::string SDK_PRO::GetIMAccountRequest::OnGetAPI() const
+	{
+		return "api/member/login";
+	}
+	void SDK_PRO::GetIMAccountRequest::OnGetRequestHead(std::map<std::string, std::string>& heads) const
+	{
+	}
+	void SDK_PRO::GetIMAccountRequest::OnGetRequestContent(std::string& content) const
+	{
+		content.append("username=").append(username_)
+			.append("&password=").append(password_);
+	}
+	void SDK_PRO::GetIMAccountResponse::OnParse(const std::string& response)
+	{
+		Json::Value json_reply;
+		Json::Reader reader;
+		if (reader.parse(response, json_reply) && json_reply.isObject())
+		{
+			auto data = json_reply["data"];
+			if (data.isObject() && data.isMember("minAccount"))
+			{
+				token_ = data["minAccount"].asString();
 			}
 		}
 	}

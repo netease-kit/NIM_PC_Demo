@@ -7,6 +7,8 @@ namespace app_sdk {
 using OnFormatAccountAndPasswordCallback = std::function<void(bool ret, /*是否进行登录*/ const std::string& account, const std::string& password)>;
 //注册新账号回调
 using OnRegisterAccountCallback = std::function<void(int code, const std::string& err_msg)>;
+//使用应用账号换取IM账号
+using OnGetIMAccountCallback = std::function<void(int code, const std::string& account, const std::string& im_token)>;
 //获取聊天室列表回调
 using OnGetChatroomListCallback = std::function<void(int code, const std::vector<nim_chatroom::ChatRoomInfo>& chatroom_list)>;
 //获取聊天室地址回调

@@ -262,7 +262,14 @@ void LoginForm::StartLogin( std::string username, std::string password )
 	btn_login_->SetVisible(false);
 	btn_cancel_->SetVisible(true);
 
-	nim_ui::LoginManager::GetInstance()->DoLogin(username, password);
+	app_sdk::AppSDKInterface::GetInstance()->InvokeGetIMAccount(username, password, 
+		[](int code, const std::string& im_account, const std::string& im_token) {
+		if (code == 200) {
+			nim_ui::LoginManager::GetInstance()->DoLogin(im_account, im_token);
+		} else {
+			// TODO
+		}
+	});
 }
 
 void LoginForm::RegLoginManagerCallback()

@@ -84,6 +84,15 @@ public:
 	void InvokeRegisterAccount(const std::string &username, const std::string &password, const std::string &nickname, const OnRegisterAccountCallback& cb);
 
 	/**
+	 * 使用应用账号换取IM账号密码
+	 * @param[in] username 应用的用户名
+	 * @param[in] password 用户密码
+	 * @param[in] cb 换取完毕的回调通知函数
+	 * @return void	无返回值
+	 */
+	void InvokeGetIMAccount(const std::string& username, const std::string& password, const OnGetIMAccountCallback& cb);
+
+	/**
 	 * 获取聊天室列表
 	 * @param[in] cb 回调通知函数
 	 * @return void	无返回值

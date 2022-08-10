@@ -23,7 +23,7 @@ const std::map<std::string, std::tuple<std::string, NimServerConfType>> key_use_
     {nim::kNIMMockUA, std::make_tuple(nim::kNIMMockUA, NimServerConfType::NimServerConfType_String)},
     {nim::kNIMMockRefer, std::make_tuple(nim::kNIMMockRefer, NimServerConfType::NimServerConfType_String)},
 };
-const std::string AppSDKInterface::kAppKey = "45c6af3c98409b18a84451215d0bdd6e";
+const std::string AppSDKInterface::kAppKey = "1dfedeb107bd8c90d3204168edea65b6";
 const std::string AppSDKInterface::kAppHost = "http://app.netease.im";
 
 std::map<std::string, std::string> AppSDKInterface::config_map_;
@@ -151,6 +151,19 @@ void AppSDKInterface::InvokeRegisterAccount(const std::string& username,
             }
         }));
 }
+
+void AppSDKInterface::InvokeGetIMAccount(const std::string& username, const std::string& password, const OnGetIMAccountCallback& cb)
+{
+    auto&& req = app_sdk::CreateHttpRequest<app_sdk_pro::GetIMAccountReq>(username, password);
+    req->UsePostMethod();
+    SDKManager::GetInstance()->Invoke_Request<app_sdk_pro::GetIMAccountReq, app_sdk_pro::GetIMAccountRsp>(
+        req, ToWeakCallback([username, cb](const app_sdk_pro::GetIMAccountReq& req, const app_sdk_pro::GetIMAccountRsp& rsp) {
+            if (cb != nullptr) {
+                cb((rsp->GetResponseCode() == nim::kNIMResSuccess ? rsp->GetProtocolReplyCode() : rsp->GetResponseCode()), username, rsp->token_);
+            }
+        }));
+}
+
 void AppSDKInterface::InvokeGetChatroomList(const OnGetChatroomListCallback& cb) {
     auto&& req = app_sdk::CreateHttpRequest<app_sdk_pro::GetChatroomListReq>();
     SDKManager::GetInstance()->Invoke_Request<app_sdk_pro::GetChatroomListReq, app_sdk_pro::GetChatroomListRsp>(
