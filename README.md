@@ -11,15 +11,15 @@
 
 ## 最低要求
 
- - CMake 3.10 或以上版本
- - Visual Studio 2017 或以上版本
- - Git
+- CMake 3.10 或以上版本
+- Visual Studio 2017 或以上版本
+- Git
 
 ## 开发步骤
 
 NIM Demo 从 8.4.0 版本开始使用 CMake 管理工程结构，您需要下载安装 CMake 并安装到系统中：[https://cmake.org/download/](https://cmake.org/download/)
 
- > 源代码脚本中使用 Git 和 CMake 指令根据当前仓库的提交信息、提交次数来动态生成的目录结构及 `.rc` 文件版本，您系统中必须安装 Git 客户端并推荐使用 git clone 下载代码而不是直接下载压缩包！
+> 源代码脚本中使用 Git 和 CMake 指令根据当前仓库的提交信息、提交次数来动态生成的目录结构及 `.rc` 文件版本，您系统中必须安装 Git 客户端并推荐使用 git clone 下载代码而不是直接下载压缩包！
 
 安装完成后，首先克隆项目到你的磁盘中：
 
@@ -96,11 +96,28 @@ cmake . -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DBUILD_WITH_NERTC_G2=ON -
 cmake --build build --config Debug --target install
 ```
 
+## 常见问题
+
+- 检测到“\_ITERATOR_DEBUG_LEVEL”的不匹配项  
+  该问题常见于 Build Type 发生变化时，可在 build 之前加入 clean 命令
+
+  ```bash
+  cmake -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Release
+  cmake --build build --config Release --target clean
+  cmake --build build --config Release --target INSTALL
+  ```
+
+- “rc.exe”已退出, 代码为 x  
+  检查项目路径是否包含中文，导致 rc 文件中带中文编译出错
+
+- Demo 运行提示“资源不存在”  
+  检查项目 bin 目录中 cef_themes、res 等资源是否被删除，若被删除可用 git 恢复
+
 ## 交流
 
- - 遇到问题：关注[云信开发人员手册](https://dev.yunxin.163.com/)帮助您理解和使用云信 SDK 接口
- - 提交缺陷：在确保使用最新版本依然存在问题时请尽量以简洁的语言描述清楚复现该问题的步骤并提交 Issue
- - 功能建议：如果你有什么好的想法或者提案，欢迎提交 Issue 与我们交流
+- 遇到问题：关注[云信开发人员手册](https://dev.yunxin.163.com/)帮助您理解和使用云信 SDK 接口
+- 提交缺陷：在确保使用最新版本依然存在问题时请尽量以简洁的语言描述清楚复现该问题的步骤并提交 Issue
+- 功能建议：如果你有什么好的想法或者提案，欢迎提交 Issue 与我们交流
 
-#推荐好友使用云信，即享1500元京东卡奖励# 点击参与https://yunxin.163.com/promotion/recommend?channel=github
-[![main]( https://yx-web-nosdn.netease.im/quickhtml%2Fassets%2Fyunxin%2Fdefault%2F2022%2Fgithub%2F233.png)](https://yunxin.163.com/promotion/recommend?channel=github)
+#推荐好友使用云信，即享 1500 元京东卡奖励# 点击参与https://yunxin.163.com/promotion/recommend?channel=github
+[![main](https://yx-web-nosdn.netease.im/quickhtml%2Fassets%2Fyunxin%2Fdefault%2F2022%2Fgithub%2F233.png)](https://yunxin.163.com/promotion/recommend?channel=github)
