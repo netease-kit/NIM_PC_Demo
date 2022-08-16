@@ -99,15 +99,38 @@ void PhotoService::DownloadUserPhoto(const nim::UserNameCard &info)
 		download_tasks_[kUser].erase(nim::Tool::GetMd5(info.GetIconUrl()));
 		if (res_code == nim::kNIMResSuccess)
 		{
-			std::wstring ws_file_path = nbase::UTF8ToUTF16(file_path);
-			if (nbase::FilePathIsExist(ws_file_path, false))
-			{
-				nbase::CopyFileW(ws_file_path, photo_path);
-				nbase::DeleteFile(ws_file_path);
+			auto notify_task = [this, file_path]() {
+				QLOG_APP(L"[DownloadMediaCallback] run update photo callback, download list size: {0}") << photo_download_list_.size();
+				for (auto& photo_download_item : photo_download_list_) {
+					std::wstring ws_file_path = nbase::UTF8ToUTF16(file_path);
+					if (nbase::FilePathIsExist(ws_file_path, false))
+					{
+						nbase::CopyFileW(ws_file_path, photo_download_item.photo_path_);
+						nbase::DeleteFile(ws_file_path);
+						for (auto& it : photo_ready_cb_list_) // 执行监听头像下载的回调
+							(*it.second)(kUser, photo_download_item.info_.GetAccId(), photo_download_item.photo_path_);
+					}
+				}
+				photo_download_list_.clear();
+			};
 
-				for (auto &it : photo_ready_cb_list_) // 执行监听头像下载的回调
-					(*it.second)(kUser, info.GetAccId(), photo_path);
+			QLOG_APP(L"[DownloadMediaCallback] download photo finished, accid: {0}, photo path: {1}") << info.GetAccId() << photo_path;
+			PhotoDownloadInfo download_info;
+			download_info.info_ = info;
+			download_info.photo_path_ = photo_path;
+			photo_download_list_.push_back(download_info);
+			if (photo_download_flag_.HasUsed() && photo_download_list_.size() < 30)
+			{
+				photo_download_flag_.Cancel();
 			}
+			else
+			{
+				nbase::ThreadManager::PostTask(photo_download_flag_.ToWeakCallback(notify_task));
+				return;
+			}
+
+			nbase::ThreadManager::PostDelayedTask(photo_download_flag_.ToWeakCallback(notify_task), nbase::TimeDelta::FromSeconds(2));
+			
 		}
 	});
 	nim::NOS::DownloadResource(url, cb);

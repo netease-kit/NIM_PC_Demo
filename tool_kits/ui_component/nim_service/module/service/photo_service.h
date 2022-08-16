@@ -26,6 +26,11 @@ public:
 	PhotoService() {}
 	~PhotoService() {}
 
+	struct PhotoDownloadInfo {
+		nim::UserNameCard info_;
+		std::wstring photo_path_;
+	};
+
 public:
 
 	/**
@@ -101,6 +106,8 @@ private:
 private:
 	std::map<int, std::unique_ptr<OnPhotoReadyCallback>> photo_ready_cb_list_; //用户头像下载完成回调列表
 	std::map<PhotoType, std::map<std::string, std::string>> download_tasks_;
+	nbase::WeakCallbackFlag photo_download_flag_;
+	std::list<PhotoDownloadInfo> photo_download_list_;
 };
 
 
