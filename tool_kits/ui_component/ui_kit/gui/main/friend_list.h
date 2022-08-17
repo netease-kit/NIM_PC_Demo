@@ -5,6 +5,9 @@
 
 namespace nim_comp
 {
+
+class FriendItem;
+
 /** @class FriendListItemManager
   * @brief 负责处理一些与好友列表项相关的事件
   * @copyright (c) 2015, NetEase Inc. All rights reserved
@@ -156,6 +159,7 @@ private:
 	ui::Label* tip_letter_;
 	ui::TreeNode* pos_tip_;
 	ui::TreeView* friend_list_;
+	std::map<std::string, FriendItem*> friend_items_map_;
 	vector<ui::TreeNode*> tree_node_ver_;
 	AutoUnregister unregister_cb;
 };

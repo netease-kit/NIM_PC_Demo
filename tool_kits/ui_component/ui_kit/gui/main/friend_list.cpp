@@ -157,9 +157,7 @@ void FriendList::AddListItem(const std::string& accid, FriendItemType type)
 void FriendList::AddListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node)
 {
 	if (tree_node->GetChildNodeCount() == 0)
-	{
 		tree_node->SetVisible(true);
-	}
 
 	FriendItem* item = new FriendItem;
 	ui::GlobalManager::FillBoxWithCache(item, L"main/friend_item.xml");
@@ -185,11 +183,7 @@ void FriendList::AddListItemInGroup(const std::string& accid, FriendItemType typ
 	{
 		FriendItem* temp = (FriendItem*)tree_node->GetChildNode(index);
 		if (*container_element == *temp)
-		{
-			//delete item;
-			//ASSERT(FALSE);
 			return;
-		}
 		if (*container_element < *temp)
 		{
 			tree_node->AddChildNodeAt(container_element, index);
@@ -198,9 +192,9 @@ void FriendList::AddListItemInGroup(const std::string& accid, FriendItemType typ
 	}
 
 	if (index == tree_node->GetChildNodeCount())
-	{
 		tree_node->AddChildNodeAt(container_element, index);
-	}
+
+	friend_items_map_[accid] = container_element;
 }
 
 void FriendList::DeleteListItem(const std::string& accid, FriendItemType type)
@@ -239,6 +233,7 @@ void FriendList::DeleteListItem(const std::string& accid, FriendItemType type)
 
 void FriendList::DeleteListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node)
 {
+	friend_items_map_.erase(accid);
 	for (size_t index = 0; index < tree_node->GetChildNodeCount(); index++)
 	{
 		FriendItem* temp = (FriendItem*)tree_node->GetChildNode(index);
@@ -268,7 +263,6 @@ ui::TreeNode* FriendList::FindFriendItem(const std::string& accid)
 	if (accid.length() == 1 && ((id >= 'a' && id <= 'z') || (id >= 'A' && id <= 'Z')))
 	{
 		std::wstring waccid = nbase::UTF8ToUTF16(accid);
-
 		for (size_t i = 0; i < tree_node_ver_.size(); i++)
 		{
 			ui::TreeNode *group_node = tree_node_ver_.at(i);
@@ -287,7 +281,9 @@ ui::TreeNode* FriendList::FindFriendItem(const std::string& accid)
 	}
 	else
 	{
-		item = static_cast<ui::TreeNode*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
+		auto iter = friend_items_map_.find(accid);
+		if (iter != friend_items_map_.end())
+			item = dynamic_cast<ui::TreeNode*>(iter->second);
 	}
 
 	return item;
@@ -373,9 +369,8 @@ bool FriendList::OnScrollChange(ui::EventArgs* param)
 
 	}
 	else {
-		if (pos_tip_) {
+		if (pos_tip_)
 			pos_tip_->SetAlpha(0);
-		}
 	}
 
 	return true;
@@ -415,22 +410,23 @@ void FriendList::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 		std::string accid = info.GetAccId();
 		if (UserService::GetInstance()->GetUserType(accid) == nim::kNIMFriendFlagNormal)
 		{
-			FriendItem* item = dynamic_cast<FriendItem*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
-			if (item != NULL)
+			auto iter = friend_items_map_.find(accid);
+			if (iter != friend_items_map_.end())
 			{
 				std::wstring nick_name = UserService::GetInstance()->GetUserName(accid, true);
-				if (info.ExistValue(nim::kUserNameCardKeyName) && nick_name.compare(item->GetNickName()) != 0)
+				if (info.ExistValue(nim::kUserNameCardKeyName) && nick_name.compare(iter->second->GetNickName()) != 0)
 				{
 					resel = active_profile_id.compare(info.GetAccId()) == 0;
 					DeleteListItem(accid, kFriendItemTypeP2P);
 					AddListItem(accid, kFriendItemTypeP2P);
 				}
 				else
-					item->Init(kFriendItemTypeP2P, accid);
+					iter->second->Init(kFriendItemTypeP2P, accid);
 			}
-			else if(accid != LoginManager::GetInstance()->GetAccount()
-				&& !MuteBlackService::GetInstance()->IsInBlackList(accid))
+			else if (accid != LoginManager::GetInstance()->GetAccount() && !MuteBlackService::GetInstance()->IsInBlackList(accid))
+			{
 				AddListItem(accid, kFriendItemTypeP2P);
+			}
 		}
 	}
 	if (resel)
@@ -456,13 +452,11 @@ void FriendList::OnBlackListChange(const std::string& id, bool is_black)
 
 void FriendList::OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path)
 {
-	if ((type == kUser && UserService::GetInstance()->GetUserType(accid) == nim::kNIMFriendFlagNormal)
-		|| type == kRobot)
+	if ((type == kUser && UserService::GetInstance()->GetUserType(accid) == nim::kNIMFriendFlagNormal) || type == kRobot)
 	{
-		FriendItem* item = (FriendItem*)friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
-		if (item == NULL)
-			return;
-		item->FindSubControl(L"head_image")->SetBkImage(photo_path);
+		auto iter = friend_items_map_.find(accid);
+		if (iter != friend_items_map_.end() && iter->second != nullptr)
+			iter->second->FindSubControl(L"head_image")->SetBkImage(photo_path);
 	}
 }
 
@@ -470,10 +464,9 @@ void FriendList::OnReceiveEvent(int event_type, const std::string &accid, const 
 {
 	if (event_type == nim::kNIMEventTypeOnlineState)
 	{
-		FriendItem* item = dynamic_cast<FriendItem*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
-		if (item == NULL)
-			return;
-		item->SetOnlineState(data);
+		auto iter = friend_items_map_.find(accid);
+		if (iter != friend_items_map_.end() && iter->second != nullptr)
+			iter->second->SetOnlineState(data);
 	}
 }
 

@@ -127,7 +127,7 @@ git_commit_counts(GIT_COMMIT_COUNT)
 # Can not get git tag info in github actions
 STRING(REPLACE "." "," GIT_TAG_WITH_COMMA ${GIT_TAG})
 MESSAGE(STATUS "Current git tag: ${GIT_TAG}, commit count: ${GIT_COMMIT_COUNT}, describe: ${GIT_DESCRIBE}")
-
+add_compile_options(/wd4573 /MP)
 ADD_COMPILE_OPTIONS("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 ADD_COMPILE_OPTIONS("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Gm- /Zi")
