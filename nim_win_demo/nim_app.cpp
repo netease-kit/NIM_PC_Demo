@@ -154,17 +154,36 @@ void NimAPP::CleanupSDKBeforLogin() {
     nim_chatroom::ChatRoom::Cleanup();
     nim::Client::Cleanup2();
 }
-
-int NimAPP::InitInstance(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow) {
-    // 初始化云信http
-    try {
-        nim_http::Init("");
-    } catch (const std::exception& e) {
-        MessageBoxA(NULL, e.what(), "exception", 0);
-    }
-
-    g_need_restart_after_dump = true;
-    return 0;
+int NimAPP::InitInstance(HINSTANCE hInst, HINSTANCE hPrevInst, LPWSTR lpszCmdLine, int nCmdShow)
+{
+	TCHAR module_path[MAX_PATH] = { 0 };	
+	std::wstring nim_http_tool_path;
+	if (GetModuleFileName(NULL, module_path, MAX_PATH) > 0)
+	{
+		std::wstring exe_path;
+		exe_path = module_path;
+		size_t pos = exe_path.find_last_of('\\');
+		if (pos != std::wstring::npos)
+			exe_path = exe_path.substr(0, pos + 1);
+		nim_http_tool_path = exe_path + L"nim_tools_http_app.dll";
+		std::wstring nim_http_tool_path_src = exe_path + L"nim_tools_http.dll";
+		if (!nbase::FilePathIsExist(nim_http_tool_path, false))
+			if (!nbase::CopyFile(nim_http_tool_path_src, nim_http_tool_path))
+				nim_http_tool_path = L"";
+		if (!nbase::FilePathIsExist(nim_http_tool_path, false))
+				nim_http_tool_path = L"";
+	}
+	// 初始化云信http
+	try {
+		nim_http::Init();
+	}
+	catch (const std::exception& e)
+	{
+		MessageBoxA(NULL, e.what(), "exception", 0);
+	}
+	
+	g_need_restart_after_dump = true;
+	return 0;
 }
 
 int NimAPP::ExitInstance() {
