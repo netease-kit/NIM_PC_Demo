@@ -12,6 +12,7 @@ ENDIF ()
 SET(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_LIST_DIR} CACHE PATH "default install prefix" FORCE)
 SET(BUILD_WITH_CONAN OFF CACHE BOOL "Build project with conan")
 SET(BUILD_WITH_NERTC_G2 OFF CACHE BOOL "Build project with NeRTC G2")
+set(INSTALL_CPP_WRAPPER OFF CACHE BOOL "Exports headers of C++ wrapper when called --target INSTALL" FORCE)
 
 IF (CMAKE_BUILD_TYPE MATCHES "Release")
     ADD_DEFINITIONS(-DNDEBUG)
@@ -55,6 +56,11 @@ IF (BUILD_WITH_CONAN)
     conan_basic_setup()
 ENDIF ()
 
+# Remove bin lib and include folder
+file(REMOVE_RECURSE ${CMAKE_CURRENT_LIST_DIR}/bin)
+file(REMOVE_RECURSE ${CMAKE_CURRENT_LIST_DIR}/lib)
+file(REMOVE_RECURSE ${CMAKE_CURRENT_LIST_DIR}/include)
+
 # Download third parties
 IF (CMAKE_BUILD_TYPE MATCHES Debug AND NOT BUILD_WITH_CONAN)
     IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_debug.zip")
@@ -90,6 +96,9 @@ FILE(COPY ${NERTC_HEADER_FIELS} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include)
 FILE(COPY ${NERTC_LIB_FIELS} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/lib)
 FILE(COPY ${NERTC_BINARY_FIELS} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/bin)
 
+# Copy Resources
+execute_process( COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/resource ${CMAKE_CURRENT_LIST_DIR}/bin)
+
 # Download NeIM SDK
 IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nim-cross-platform-SDK.zip" AND NOT BUILD_WITH_CONAN)
     MESSAGE(STATUS "Downloading NIM cross-platform SDK from ${NIM_CROSS_PLATFORM_SDK_URL}")
@@ -122,7 +131,7 @@ IF ("${GIT_TAG}" STREQUAL "")
     git_latest_tag(GIT_TAG)
 ENDIF ()
 IF ("${GIT_TAG}" STREQUAL "HEAD-HASH-NOTFOUND")
-    SET(GIT_TAG "8.5.0")
+    SET(GIT_TAG "0.0.0")
 ENDIF ()
 git_describe(GIT_DESCRIBE)
 git_commit_counts(GIT_COMMIT_COUNT)
