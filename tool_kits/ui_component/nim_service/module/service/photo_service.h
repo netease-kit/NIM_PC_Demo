@@ -26,6 +26,11 @@ public:
 	PhotoService() {}
 	~PhotoService() {}
 
+	struct PhotoDownloadInfo {
+		nim::UserNameCard info_;
+		std::wstring photo_path_;
+	};
+
 public:
 
 	/**

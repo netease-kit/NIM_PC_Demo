@@ -5,6 +5,14 @@
 
 namespace nim_comp
 {
+
+typedef struct _tagNodeGroupItem {
+	ui::TreeNode* tree_node_;
+	int index_;
+} NodeGroupItem;
+
+class FriendItem;
+
 /** @class FriendListItemManager
   * @brief 负责处理一些与好友列表项相关的事件
   * @copyright (c) 2015, NetEase Inc. All rights reserved
@@ -50,7 +58,7 @@ private:
 	* @param[in] tree_node 分组控件指针
 	* @return void	无返回值
 	*/
-	void AddListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node);
+	void AddListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node, int group_index);
 
 	/**
 	* 删除一个好友列表项
@@ -67,7 +75,7 @@ private:
 	* @param[in] tree_node 分组控件指针
 	* @return void	无返回值
 	*/
-	void DeleteListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node);
+	void DeleteListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node, int index);
 
 	/**
 	* 查找一个好友列表项
@@ -82,7 +90,7 @@ private:
 	* @param[in] letter 分组标签
 	* @return ui::TreeNode*	分组控件
 	*/
-	ui::TreeNode* GetGroup(GroupType groupType, wchar_t letter = L'\0');
+	NodeGroupItem GetGroup(GroupType groupType, wchar_t letter = L'\0');
 
 	/**
 	* 控件范围滚动到指定的分组标签
@@ -156,7 +164,10 @@ private:
 	ui::Label* tip_letter_;
 	ui::TreeNode* pos_tip_;
 	ui::TreeView* friend_list_;
+
+	std::map<std::string, FriendItem*> friend_items_map_;
 	vector<ui::TreeNode*> tree_node_ver_;
+	std::vector<std::vector<FriendItem*>> tree_node_ver_mirror_;
 	AutoUnregister unregister_cb;
 };
 }

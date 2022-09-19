@@ -258,13 +258,13 @@ bool ContactSelectForm::OnBtnConfirmClick(ui::EventArgs* param)
 	}
 
 	completedCallback_(friend_list, team_list);
-	Close();
+	ShowWindow(false);
 	return true;
 }
 
 bool ContactSelectForm::OnBtnCancelClick(ui::EventArgs* param)
 {
-	Close();
+	ShowWindow(false);
 	return true;
 }
 

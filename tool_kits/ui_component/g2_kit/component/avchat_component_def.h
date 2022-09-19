@@ -67,7 +67,7 @@ extern"C"
 	static const char* kAvChatCallVersion		= "version";
 	static const char* kAvChatCallChannelName	= "channelName";
 	//nertc日志目录
-	#define  AVCHAT_LOG_DIR	 L"Netease\\G2"
+	#define  AVCHAT_LOG_DIR	 L"Netease\\NRTC"
 #ifdef __cplusplus
 };
 #endif //__cplusplus

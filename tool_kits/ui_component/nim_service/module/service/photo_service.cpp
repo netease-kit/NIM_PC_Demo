@@ -104,7 +104,6 @@ void PhotoService::DownloadUserPhoto(const nim::UserNameCard &info)
 			{
 				nbase::CopyFileW(ws_file_path, photo_path);
 				nbase::DeleteFile(ws_file_path);
-
 				for (auto &it : photo_ready_cb_list_) // 执行监听头像下载的回调
 					(*it.second)(kUser, info.GetAccId(), photo_path);
 			}

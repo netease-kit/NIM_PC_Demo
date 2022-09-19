@@ -113,6 +113,8 @@ cmake --build build --config Debug --target install
 - Demo 运行提示“资源不存在”  
   检查项目 bin 目录中 cef_themes、res 等资源是否被删除，若被删除可用 git 恢复
 
+- Demo 每次构建时会清空 bin 目录并重新生成，如果您有需要运行时必须的文件，可以将其放在 resource 目录中，构建时会自动拷贝到 bin 目录中
+
 ## 交流
 
 - 遇到问题：关注[云信开发人员手册](https://dev.yunxin.163.com/)帮助您理解和使用云信 SDK 接口

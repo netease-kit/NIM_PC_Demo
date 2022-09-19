@@ -12,6 +12,7 @@ ENDIF ()
 SET(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_LIST_DIR} CACHE PATH "default install prefix" FORCE)
 SET(BUILD_WITH_CONAN OFF CACHE BOOL "Build project with conan")
 SET(BUILD_WITH_NERTC_G2 OFF CACHE BOOL "Build project with NeRTC G2")
+set(INSTALL_CPP_WRAPPER OFF CACHE BOOL "Exports headers of C++ wrapper when called --target INSTALL" FORCE)
 
 IF (CMAKE_BUILD_TYPE MATCHES "Release")
     ADD_DEFINITIONS(-DNDEBUG)
@@ -32,9 +33,10 @@ SET(GROUP_UI_COMPONENTS "ui_components")
 SET(RELEASE_OUTPUT_7Z_FILE "${CMAKE_BINARY_DIR}/release.7z")
 STRING(REPLACE "/" "\\\\" RELEASE_OUTPUT_7Z_FILE_WIN ${RELEASE_OUTPUT_7Z_FILE})
 
+SET(NIM_CROSS_PLATFORM_SDK_FILE_NAME "nim-win32-ia32-refs-tags-9.4.0.1554-build.166.tar.gz")
 SET(DEBUG_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605746/NIM_Windows_Demo_Build_Binaries_Debug.zip")
 SET(RELEASE_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605768/NIM_Windows_Demo_Build_Binaries_Release.zip")
-SET(NIM_CROSS_PLATFORM_SDK_URL "https://yx-web-nosdn.netease.im/package/1629860104/NIM_CrossPlatform_SDK_v8.7.0.zip?download=NIM_CrossPlatform_SDK_v8.7.0.zip")
+SET(NIM_CROSS_PLATFORM_SDK_URL "https://yx-web-nosdn.netease.im/package/${NIM_CROSS_PLATFORM_SDK_FILE_NAME}")
 SET(NERTC_SDK_URL "http://yx-web.nos.netease.com/package/1618217725/NERtc_Windows_SDK_v4.1.1.zip")
 
 PROJECT(nim_win_demo)
@@ -53,6 +55,11 @@ IF (BUILD_WITH_CONAN)
     INCLUDE(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
     conan_basic_setup()
 ENDIF ()
+
+# Remove bin lib and include folder
+file(REMOVE_RECURSE ${CMAKE_CURRENT_LIST_DIR}/bin)
+file(REMOVE_RECURSE ${CMAKE_CURRENT_LIST_DIR}/lib)
+file(REMOVE_RECURSE ${CMAKE_CURRENT_LIST_DIR}/include)
 
 # Download third parties
 IF (CMAKE_BUILD_TYPE MATCHES Debug AND NOT BUILD_WITH_CONAN)
@@ -89,13 +96,16 @@ FILE(COPY ${NERTC_HEADER_FIELS} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include)
 FILE(COPY ${NERTC_LIB_FIELS} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/lib)
 FILE(COPY ${NERTC_BINARY_FIELS} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/bin)
 
+# Copy Resources
+execute_process( COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/resource ${CMAKE_CURRENT_LIST_DIR}/bin)
+
 # Download NeIM SDK
 IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nim-cross-platform-SDK.zip" AND NOT BUILD_WITH_CONAN)
     MESSAGE(STATUS "Downloading NIM cross-platform SDK from ${NIM_CROSS_PLATFORM_SDK_URL}")
-    FILE(DOWNLOAD ${NIM_CROSS_PLATFORM_SDK_URL} ${CMAKE_BINARY_DIR}/nim-cross-platform-SDK.zip)
+    FILE(DOWNLOAD ${NIM_CROSS_PLATFORM_SDK_URL} ${CMAKE_BINARY_DIR}/${NIM_CROSS_PLATFORM_SDK_FILE_NAME})
 ENDIF ()
-EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf ${CMAKE_BINARY_DIR}/nim-cross-platform-SDK.zip WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf ${CMAKE_BINARY_DIR}/windows-refs_tags_8.7.0.354-build.408-x86.tar.gz WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf ${CMAKE_BINARY_DIR}/${NIM_CROSS_PLATFORM_SDK_FILE_NAME} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
+# EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf ${CMAKE_BINARY_DIR}/nim-win32-ia32-refs-tags-9.4.0.1554-build.166.tar.gz WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
 IF (NOT BUILD_WITH_CONAN)
     ADD_SUBDIRECTORY(wrapper)
     INCLUDE_DIRECTORIES(wrapper)
@@ -121,14 +131,14 @@ IF ("${GIT_TAG}" STREQUAL "")
     git_latest_tag(GIT_TAG)
 ENDIF ()
 IF ("${GIT_TAG}" STREQUAL "HEAD-HASH-NOTFOUND")
-    SET(GIT_TAG "8.5.0")
+    SET(GIT_TAG "0.0.0")
 ENDIF ()
 git_describe(GIT_DESCRIBE)
 git_commit_counts(GIT_COMMIT_COUNT)
 # Can not get git tag info in github actions
 STRING(REPLACE "." "," GIT_TAG_WITH_COMMA ${GIT_TAG})
 MESSAGE(STATUS "Current git tag: ${GIT_TAG}, commit count: ${GIT_COMMIT_COUNT}, describe: ${GIT_DESCRIBE}")
-
+add_compile_options(/wd4573 /MP)
 ADD_COMPILE_OPTIONS("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
 ADD_COMPILE_OPTIONS("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
 SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Gm- /Zi")

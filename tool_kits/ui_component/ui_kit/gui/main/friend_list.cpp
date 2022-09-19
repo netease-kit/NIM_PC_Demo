@@ -58,24 +58,28 @@ FriendList::FriendList(ui::TreeView* friend_list) :
 	tree_node_ver_.push_back(tree_node);
 	tree_node->SetVisible(false);
 	tree_node->SetEnabled(false);
+	tree_node_ver_mirror_.push_back(std::vector<FriendItem*>());
 
 	tree_node = ListItemUtil::CreateFirstLetterListItem(L"*");
 	friend_list_->GetRootNode()->AddChildNode(tree_node);
 	tree_node_ver_.push_back(tree_node);
 	tree_node->SetVisible(false);
 	tree_node->SetEnabled(false);
+	tree_node_ver_mirror_.push_back(std::vector<FriendItem*>());
 
 	tree_node = ListItemUtil::CreateFirstLetterListItem(ui::MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_MAINWINDOW_TEAMS"));
 	friend_list_->GetRootNode()->AddChildNode(tree_node);
 	tree_node_ver_.push_back(tree_node);
 	tree_node->SetVisible(false);
 	tree_node->SetEnabled(false);
+	tree_node_ver_mirror_.push_back(std::vector<FriendItem*>());
 
 	tree_node = ListItemUtil::CreateFirstLetterListItem(L"#");
 	friend_list_->GetRootNode()->AddChildNode(tree_node);
 	tree_node_ver_.push_back(tree_node);
 	tree_node->SetVisible(false);
 	tree_node->SetEnabled(false);
+	tree_node_ver_mirror_.push_back(std::vector<FriendItem*>());
 
 	for (int i = 0; i < 26; i++)
 	{
@@ -85,6 +89,7 @@ FriendList::FriendList(ui::TreeView* friend_list) :
 		tree_node = ListItemUtil::CreateFirstLetterListItem(letter_str);
 		friend_list_->GetRootNode()->AddChildNode(tree_node);
 		tree_node_ver_.push_back(tree_node);
+		tree_node_ver_mirror_.push_back(std::vector<FriendItem*>());
 		tree_node->SetVisible(false);
 		tree_node->SetEnabled(false);
 	}
@@ -132,6 +137,7 @@ void FriendList::AddListItem(const std::string& accid, FriendItemType type)
 
 	std::wstring ws_spell;
 	ui::TreeNode* tree_node;
+	int index = 0;
 	if (type != kFriendItemTypeRobot)
 	{
 		std::wstring ws_show_name = UserService::GetInstance()->GetUserName(accid);
@@ -139,27 +145,28 @@ void FriendList::AddListItem(const std::string& accid, FriendItemType type)
 		ws_spell = nbase::UTF8ToUTF16(spell);
 		if (!ws_spell.empty())
 		{
-			tree_node = GetGroup(GT_COMMON_FRIEND, ws_spell[0]);
+			auto group_item = GetGroup(GT_COMMON_FRIEND, ws_spell[0]);
+			tree_node = group_item.tree_node_;
+			index = group_item.index_;
 		}
 		else
 		{
-			tree_node = tree_node_ver_[3];
+			tree_node = tree_node_ver_[GT_COMMON_NUMBER];
+			index = GT_COMMON_NUMBER;
 		}
 	}
 	else
 	{
-		tree_node = GetGroup(GT_ROBOT, ws_spell[0]);
+		tree_node = GetGroup(GT_ROBOT, ws_spell[0]).tree_node_;
 	}
 
-	AddListItemInGroup(accid, type, tree_node);
+	AddListItemInGroup(accid, type, tree_node, index);
 }
 
-void FriendList::AddListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node)
+void FriendList::AddListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node, int group_index)
 {
 	if (tree_node->GetChildNodeCount() == 0)
-	{
 		tree_node->SetVisible(true);
-	}
 
 	FriendItem* item = new FriendItem;
 	ui::GlobalManager::FillBoxWithCache(item, L"main/friend_item.xml");
@@ -180,27 +187,26 @@ void FriendList::AddListItemInGroup(const std::string& accid, FriendItemType typ
 		head_image->AttachClick(nbase::Bind(&FriendList::OnHeadImageClick, this, accid, type, std::placeholders::_1));
 	}
 	FriendItem* container_element = item;
-	std::size_t index = 0;
-	for (index = 0; index < tree_node->GetChildNodeCount(); index++)
-	{
-		FriendItem* temp = (FriendItem*)tree_node->GetChildNode(index);
+	std::size_t insert_at = 0;
+	auto& tree_mirror = tree_node_ver_mirror_[group_index];
+	for (insert_at = 0; insert_at < tree_mirror.size(); insert_at++) {
+		FriendItem* temp = (FriendItem*)tree_mirror[insert_at];
 		if (*container_element == *temp)
-		{
-			//delete item;
-			//ASSERT(FALSE);
 			return;
-		}
 		if (*container_element < *temp)
 		{
-			tree_node->AddChildNodeAt(container_element, index);
+			tree_node->AddChildNodeAt(container_element, insert_at);
+			tree_mirror.insert(tree_mirror.begin() + insert_at, container_element);
 			break;
 		}
 	}
 
-	if (index == tree_node->GetChildNodeCount())
-	{
-		tree_node->AddChildNodeAt(container_element, index);
+	if (insert_at == tree_mirror.size()) {
+		tree_node->AddChildNodeAt(container_element, insert_at);
+		tree_mirror.insert(tree_mirror.begin() + insert_at, container_element);
 	}
+
+	friend_items_map_[accid] = container_element;
 }
 
 void FriendList::DeleteListItem(const std::string& accid, FriendItemType type)
@@ -220,31 +226,38 @@ void FriendList::DeleteListItem(const std::string& accid, FriendItemType type)
 	std::string spell = PinYinHelper::GetInstance()->ConvertToFullSpell(ws_show_name);
 	std::wstring ws_spell = nbase::UTF8ToUTF16(spell);
 	ui::TreeNode* tree_node;
+	int index = 0;
 	if (type != kFriendItemTypeRobot)
 	{
 		if (!ws_spell.empty())
 		{
-			tree_node = GetGroup(GT_COMMON_FRIEND, ws_spell[0]);
+			auto group_item = GetGroup(GT_COMMON_FRIEND, ws_spell[0]);
+			tree_node = group_item.tree_node_;
+			index = group_item.index_;
 		}
 		else
 		{
-			tree_node = tree_node_ver_[3];
+			tree_node = tree_node_ver_[GT_COMMON_NUMBER];
+			index = GT_COMMON_NUMBER;
 		}
 	}
 	else
-		tree_node = GetGroup(GT_ROBOT, ws_spell[0]);
+		tree_node = GetGroup(GT_ROBOT, ws_spell[0]).tree_node_;
 
-	DeleteListItemInGroup(accid, type, tree_node);
+	DeleteListItemInGroup(accid, type, tree_node, index);
 }
 
-void FriendList::DeleteListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node)
+void FriendList::DeleteListItemInGroup(const std::string& accid, FriendItemType type, ui::TreeNode* tree_node, int index)
 {
-	for (size_t index = 0; index < tree_node->GetChildNodeCount(); index++)
+	friend_items_map_.erase(accid);
+	for (size_t remove_at = 0; remove_at < tree_node->GetChildNodeCount(); remove_at++)
 	{
-		FriendItem* temp = (FriendItem*)tree_node->GetChildNode(index);
+		auto& tree_node_mirror = tree_node_ver_mirror_[index];
+		FriendItem* temp = (FriendItem*)tree_node->GetChildNode(remove_at);
 		if (accid == temp->GetId())
 		{
-			tree_node->RemoveChildNodeAt(index);
+			tree_node->RemoveChildNodeAt(remove_at);
+			tree_node_mirror.erase(tree_node_mirror.begin() + remove_at);
 			break;
 		}
 	}
@@ -268,7 +281,6 @@ ui::TreeNode* FriendList::FindFriendItem(const std::string& accid)
 	if (accid.length() == 1 && ((id >= 'a' && id <= 'z') || (id >= 'A' && id <= 'Z')))
 	{
 		std::wstring waccid = nbase::UTF8ToUTF16(accid);
-
 		for (size_t i = 0; i < tree_node_ver_.size(); i++)
 		{
 			ui::TreeNode *group_node = tree_node_ver_.at(i);
@@ -287,15 +299,20 @@ ui::TreeNode* FriendList::FindFriendItem(const std::string& accid)
 	}
 	else
 	{
-		item = static_cast<ui::TreeNode*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
+		auto iter = friend_items_map_.find(accid);
+		if (iter != friend_items_map_.end())
+			item = dynamic_cast<ui::TreeNode*>(iter->second);
 	}
 
 	return item;
 }
 
-ui::TreeNode* FriendList::GetGroup(GroupType groupType, wchar_t letter)
+NodeGroupItem FriendList::GetGroup(GroupType groupType, wchar_t letter)
 {
-	return tree_node_ver_[ListItemUtil::GetGroup(groupType, letter, true)];
+	NodeGroupItem item;
+	item.index_ = ListItemUtil::GetGroup(groupType, letter, true);
+	item.tree_node_ = tree_node_ver_[item.index_];
+	return item;
 }
 
 void FriendList::ScrollToLetter(char letter)
@@ -373,9 +390,8 @@ bool FriendList::OnScrollChange(ui::EventArgs* param)
 
 	}
 	else {
-		if (pos_tip_) {
+		if (pos_tip_)
 			pos_tip_->SetAlpha(0);
-		}
 	}
 
 	return true;
@@ -415,22 +431,23 @@ void FriendList::OnUserInfoChange(const std::list<nim::UserNameCard> &uinfos)
 		std::string accid = info.GetAccId();
 		if (UserService::GetInstance()->GetUserType(accid) == nim::kNIMFriendFlagNormal)
 		{
-			FriendItem* item = dynamic_cast<FriendItem*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
-			if (item != NULL)
+			auto iter = friend_items_map_.find(accid);
+			if (iter != friend_items_map_.end())
 			{
 				std::wstring nick_name = UserService::GetInstance()->GetUserName(accid, true);
-				if (info.ExistValue(nim::kUserNameCardKeyName) && nick_name.compare(item->GetNickName()) != 0)
+				if (info.ExistValue(nim::kUserNameCardKeyName) && nick_name.compare(iter->second->GetNickName()) != 0)
 				{
 					resel = active_profile_id.compare(info.GetAccId()) == 0;
 					DeleteListItem(accid, kFriendItemTypeP2P);
 					AddListItem(accid, kFriendItemTypeP2P);
 				}
 				else
-					item->Init(kFriendItemTypeP2P, accid);
+					iter->second->Init(kFriendItemTypeP2P, accid);
 			}
-			else if(accid != LoginManager::GetInstance()->GetAccount()
-				&& !MuteBlackService::GetInstance()->IsInBlackList(accid))
+			else if (accid != LoginManager::GetInstance()->GetAccount() && !MuteBlackService::GetInstance()->IsInBlackList(accid))
+			{
 				AddListItem(accid, kFriendItemTypeP2P);
+			}
 		}
 	}
 	if (resel)
@@ -456,13 +473,11 @@ void FriendList::OnBlackListChange(const std::string& id, bool is_black)
 
 void FriendList::OnUserPhotoReady(PhotoType type, const std::string& accid, const std::wstring &photo_path)
 {
-	if ((type == kUser && UserService::GetInstance()->GetUserType(accid) == nim::kNIMFriendFlagNormal)
-		|| type == kRobot)
+	if ((type == kUser && UserService::GetInstance()->GetUserType(accid) == nim::kNIMFriendFlagNormal) || type == kRobot)
 	{
-		FriendItem* item = (FriendItem*)friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid));
-		if (item == NULL)
-			return;
-		item->FindSubControl(L"head_image")->SetBkImage(photo_path);
+		auto iter = friend_items_map_.find(accid);
+		if (iter != friend_items_map_.end() && iter->second != nullptr)
+			iter->second->FindSubControl(L"head_image")->SetBkImage(photo_path);
 	}
 }
 
@@ -470,10 +485,9 @@ void FriendList::OnReceiveEvent(int event_type, const std::string &accid, const 
 {
 	if (event_type == nim::kNIMEventTypeOnlineState)
 	{
-		FriendItem* item = dynamic_cast<FriendItem*>(friend_list_->FindSubControl(nbase::UTF8ToUTF16(accid)));
-		if (item == NULL)
-			return;
-		item->SetOnlineState(data);
+		auto iter = friend_items_map_.find(accid);
+		if (iter != friend_items_map_.end() && iter->second != nullptr)
+			iter->second->SetOnlineState(data);
 	}
 }
 

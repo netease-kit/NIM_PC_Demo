@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Window>
     <ListContainerElement class="listitem" normalcolor="bk_wnd_lightcolor" height="60">
+        <Box width="auto" height="auto" name="top_icon_name" mouse="false" visible="false">
+            <ButtonBox width="16" height="16" margin="0,0,0,0" cursortype="hand" bkimage="file='../main/session_top.png'"/>
+        </Box>
         <HBox padding="9,0,10,0" mouse="false">
             <Box width="auto" height="auto" valign="center" mouse="false">
 				<ButtonBox name="head_image" width="38" height="38" borderround="38,38" margin="1,1,0,0" cursortype="hand"/>
