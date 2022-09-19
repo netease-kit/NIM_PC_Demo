@@ -31,7 +31,7 @@ git clone https://github.com/netease-im/NIM_PC_Demo.git --depth 10
 
 ```bash
 # 初始化项目
-cmake -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Debug
+cmake -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Debug -DINSTALL_CPP_WRAPPER=OFF
 ```
 
 执行如上命令后，会自动下载依赖的三方库文件并解压到工程目录下，如执行无误您将看到如下信息：
@@ -83,7 +83,7 @@ Installing: C:/Jks/workspace/NeIM_Demo/bin/uninstall.exe
 如您需要编译 Release 版本，则将上面的命令中 Debug 修改为 Release 即可：
 
 ```bash
-cmake -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Release
+cmake -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Release -DINSTALL_CPP_WRAPPER=OFF
 cmake --build build --config Release --target INSTALL
 ```
 
@@ -92,7 +92,7 @@ cmake --build build --config Release --target INSTALL
 Demo 支持使用音视频 2.0 能力来展示视频、音频通话场景，您可以在初始化 CMake 脚本时增加参数 `BUILD_WITH_NERTC_G2` 来开启该功能，如：
 
 ```
-cmake . -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DBUILD_WITH_NERTC_G2=ON -DCMAKE_BUILD_TYPE=Debug
+cmake . -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DBUILD_WITH_NERTC_G2=ON -DCMAKE_BUILD_TYPE=Debug -DINSTALL_CPP_WRAPPER=OFF
 cmake --build build --config Debug --target install
 ```
 
@@ -102,7 +102,7 @@ cmake --build build --config Debug --target install
   该问题常见于 Build Type 发生变化时，可在 build 之前加入 clean 命令
 
   ```bash
-  cmake -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Release
+  cmake -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DINSTALL_CPP_WRAPPER=OFF -DCMAKE_BUILD_TYPE=Release
   cmake --build build --config Release --target clean
   cmake --build build --config Release --target INSTALL
   ```
