@@ -33,7 +33,7 @@ SET(GROUP_UI_COMPONENTS "ui_components")
 SET(RELEASE_OUTPUT_7Z_FILE "${CMAKE_BINARY_DIR}/release.7z")
 STRING(REPLACE "/" "\\\\" RELEASE_OUTPUT_7Z_FILE_WIN ${RELEASE_OUTPUT_7Z_FILE})
 
-SET(NIM_CROSS_PLATFORM_SDK_FILE_NAME "nim-win32-ia32-refs-tags-9.4.0.1554-build.166.tar.gz")
+SET(NIM_CROSS_PLATFORM_SDK_FILE_NAME "nim-win32-ia32-9-7-0-156-build-1671629.tar.gz")
 SET(DEBUG_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605746/NIM_Windows_Demo_Build_Binaries_Debug.zip")
 SET(RELEASE_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605768/NIM_Windows_Demo_Build_Binaries_Release.zip")
 SET(NIM_CROSS_PLATFORM_SDK_URL "https://yx-web-nosdn.netease.im/package/${NIM_CROSS_PLATFORM_SDK_FILE_NAME}")
