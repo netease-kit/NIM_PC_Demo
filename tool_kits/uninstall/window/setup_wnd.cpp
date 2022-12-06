@@ -85,7 +85,7 @@ void SetupForm::InitWindow()
 	progress_pos_ = (ui::Label*)FindControl(L"progress_pos");
 	check_userdata_ = (ui::CheckBox*)FindControl(L"chkbox_userdata");
 }
-HRESULT SetupForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+LRESULT SetupForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
 	if (pre_progress_pos_ > 0 && pre_progress_pos_ < 100 && wParam == 0)
