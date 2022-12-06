@@ -27,14 +27,14 @@ jobs:
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{env.GITHUB_WORKSPACE}}/build -T"v141_xp" -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}}
+      run: cmake -B ${{env.GITHUB_WORKSPACE}}/build -AWin32 -T"v141_xp" -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}}
 
     - name: Build nim demo
       # Build your program with the given configuration
       run: cmake --build ${{env.GITHUB_WORKSPACE}}/build --config ${{env.BUILD_CONFIGURATION}} --target install
 
     - name: Configure nim demo installer
-      run: cmake tool_kits -B ${{env.GITHUB_WORKSPACE}}/build_setup -T"v141_xp" -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}}
+      run: cmake tool_kits -B ${{env.GITHUB_WORKSPACE}}/build_setup -AWin32 -T"v141_xp" -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}}
       
     - name: Build nim demo installer
       run: cmake --build ${{env.GITHUB_WORKSPACE}}/build_setup --config ${{env.BUILD_CONFIGURATION}} --target installer
