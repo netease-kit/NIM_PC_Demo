@@ -97,7 +97,7 @@ void SetupForm::InitWindow()
 		Setup();
 	}
 }
-HRESULT SetupForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
+LRESULT SetupForm::OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled)
 {
 	bHandled = FALSE;
 	if (start_setup_ && wParam == 1)
