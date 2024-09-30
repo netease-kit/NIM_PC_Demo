@@ -1,35 +1,35 @@
-from conans import ConanFile, tools
-import platform
+from conan import ConanFile
+from conan.errors import ConanInvalidConfiguration
+from conan.tools.cmake import CMake, CMakeToolchain, cmake_layout
+from conan.tools.files import get, copy, collect_libs
+from conan.tools.scm import Git
+from conan.tools.build import check_min_cppstd
+import os
+import re
 
 
-class ModuleConan(ConanFile):
+class NebaseConan(ConanFile):
+    name = "nim_demo"
+    author = "Dylan <2894220@gmail.com>"
+    url = "https://github.com/netease-kit/NIM_PC_Demo.git"
+    description = "nim_demo"
     settings = "os", "compiler", "build_type", "arch"
-    build_requires = (
-        # "sqlcipher/4.4.2",
-        "openssl/1.1.1k",
-        "tinyxml/2.6.2",
-        "jsoncpp/1.9.4",
-        "libuv/1.41.0",
-        "libyuv/cci.20201106",
-        "sqlite3/3.35.3",
-        "cef_2623_binaries/1.0.0-3-ge03c0ce@yunxin/testing",
-        "nls_play/1.0.0-1-g3f1fcc3@yunxin/testing",
-        "nim_p2p_sdk/1.0.0-3-g6a6cedb@yunxin/testing",
-        "nim_cpp_wrapper/8.5.0@yunxin/testing",
-        "nertc/4.1.1-2-g0dc7953@yunxin/testing"
-    )
-    generators = "cmake"
-    build_policy = "missing"
+    options = {"shared": [True, False], "fPIC": [True, False]}
+    default_options = {"shared": False, "fPIC": True}
+    generators = "CMakeDeps", "cmake_paths", "cmake_find_package", "cmake"
+    exports_sources = "*", "!build"
 
-    def imports(self):
-        self.copy("*.dll", "bin", "bin", keep_path=True)
-        self.copy("*.pak", "bin", "bin", keep_path=True)
-        self.copy("*.dat", "bin", "bin", keep_path=True)
-        self.copy("cef*.pak", src="bin", dst="bin")
-        self.copy("*.txt", "bin", "bin", keep_path=True)
-        self.copy("*.bin", "bin", "bin", keep_path=True)
-        self.copy("wow_helper.exe", "bin", "bin", keep_path=True)
-        self.copy("*.html", "bin", "bin", keep_path=True)
-        self.copy("*.dylib", "lib", "lib")
-        self.copy("*.lib", "lib", "lib")
-        self.copy("*.h", "include", "include", keep_path=True)
+    def requirements(self):
+        self.requires("libjpeg/9e")
+        self.requires("openssl/3.3.2")
+        self.requires("jsoncpp/1.9.5")
+        self.requires("libuv/1.49.0")
+        self.requires("libyuv/1892")
+        self.requires("sqlite3/3.46.1")
+        self.requires("tinyxml/2.6.2")
+        self.requires("nim/10.5.0@yunxin/stable")
+        self.requires("nertc/4.1.1@yunxin/stable")
+        self.requires("cef/2623@yunxin/stable")
+        self.requires("ne_live_player/1.1.1@yunxin/stable")
+        self.requires("image_ole/4.2.0@yunxin/stable")
+        self.requires("ne_transfer/0.1.0@yunxin/stable")

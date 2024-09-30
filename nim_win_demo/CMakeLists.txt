@@ -1,5 +1,3 @@
-MESSAGE("############# nim_demo #############")
-
 SET(TARGET_NAME nim_demo)
 
 PROJECT(${TARGET_NAME} DESCRIPTION "NetEase IM Demo")

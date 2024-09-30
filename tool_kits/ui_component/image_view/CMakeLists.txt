@@ -1,5 +1,3 @@
-MESSAGE("############# image_view #############")
-
 SET(TARGET_NAME image_view)
 
 PROJECT(${TARGET_NAME})

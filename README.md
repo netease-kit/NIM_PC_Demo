@@ -37,27 +37,8 @@ cmake -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Debug
 执行如上命令后，会自动下载依赖的三方库文件并解压到工程目录下，如执行无误您将看到如下信息：
 
 ```bash
-############# nim_win_demo ##############
 -- Downloading third party libraries from http://yx-web.nos.netease.com/package/1619524144/nim_demo_build_libraries_x86_debug.zip
 -- Current git tag: 8.4.0, commit count: 772, describe: 8.4.0-2-gbe6c7fea
-############# core #############
-############# base #############
-############# duilib #############
-############# shared #############
-############# db #############
-############# transfer file P2P #############
-############# av_kit #############
-############# rtc_kit #############
-############# capture_image #############
-############# image_view #############
-############# nim_service #############
-############# ui_kit #############
-############# cef_module #############
-############# cef_render #############
-############# libcef_dll_wrapper #############
-############# app_sdk #############
-############# nim_demo #############
-############# nim demo uninstaller #############
 -- Configuring done
 -- Generating done
 -- Build files have been written to: C:/Code/nim_demo/build

@@ -1,5 +1,3 @@
-MESSAGE("############# db #############")
-
 SET(TARGET_NAME db)
 
 PROJECT(${TARGET_NAME})

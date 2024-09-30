@@ -1,7 +1,5 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
 
-MESSAGE("############# nim demo installer #############")
-
 SET(CMAKE_CXX_STANDARD 11)
 SET(TARGET_NAME installer)
 

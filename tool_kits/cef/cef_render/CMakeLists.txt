@@ -1,5 +1,3 @@
-MESSAGE("############# cef_render #############")
-
 SET(TARGET_NAME render)
 
 PROJECT(${TARGET_NAME} DESCRIPTION "NetEase IM Demo CEF Render Process")

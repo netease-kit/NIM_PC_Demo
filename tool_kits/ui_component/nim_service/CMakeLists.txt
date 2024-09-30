@@ -1,5 +1,3 @@
-MESSAGE("############# nim_service #############")
-
 SET(TARGET_NAME nim_service)
 
 PROJECT(${TARGET_NAME})
