@@ -1,8 +1,5 @@
 project(nim_demo DESCRIPTION "NetEase IM Demo")
 
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin")
-
 add_definitions(
     -DWITH_ENCRYPT
 )
@@ -69,12 +66,6 @@ target_link_libraries(${PROJECT_NAME}
     # Conan libs
     ${CONAN_LIBS}
 )
-
-if (CMAKE_BUILD_TYPE MATCHES "Release")
-    target_link_libraries(${PROJECT_NAME} nim_libcef)
-else ()
-    target_link_libraries(${PROJECT_NAME} nim_libcef_d)
-endif ()
 
 set_target_properties(${PROJECT_NAME}
     PROPERTIES 

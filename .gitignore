@@ -33,7 +33,7 @@
 [Oo]bj/
 [Ll]og/
 build/
-bin/
+bin/*.*
 
 # Visual Studio 2015/2017 cache/options directory
 .vs/
