@@ -35,7 +35,7 @@ endif ()
 include(${CMAKE_CURRENT_LIST_DIR}/.cmake/conan.cmake)
 conan_add_remote(NAME yunxin URL https://gitlab.com/api/v4/projects/47777150/packages/conan)
 conan_cmake_autodetect(settings)
-conan_cmake_install(PATH_OR_REFERENCE .. BUILD missing SETTINGS ${settings})
+conan_cmake_install(PATH_OR_REFERENCE ${CMAKE_CURRENT_LIST_DIR} BUILD missing SETTINGS ${settings})
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 
