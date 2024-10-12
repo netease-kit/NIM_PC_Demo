@@ -1,15 +1,13 @@
-SET(TARGET_NAME nim_demo)
+project(nim_demo DESCRIPTION "NetEase IM Demo")
 
-PROJECT(${TARGET_NAME} DESCRIPTION "NetEase IM Demo")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin")
 
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin")
-SET(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin")
-
-ADD_DEFINITIONS(
+add_definitions(
     -DWITH_ENCRYPT
 )
 
-INCLUDE_DIRECTORIES(
+include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/..
     ${CMAKE_CURRENT_LIST_DIR}/../app_sdk/
     ${CMAKE_CURRENT_LIST_DIR}/../chatroom/
@@ -22,20 +20,20 @@ INCLUDE_DIRECTORIES(
     ${CMAKE_CURRENT_LIST_DIR}/../third_party/
 )
 
-LINK_DIRECTORIES(
+link_directories(
     ${CMAKE_CURRENT_LIST_DIR}/../lib/
 )
 
-CONFIGURE_FILE(
+configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/nim.rc.in
     ${CMAKE_BINARY_DIR}/nim.rc
 )
 
-FILE(GLOB_RECURSE NIM_DEMO_SOURCE *.cc *.h *.cpp *.c)
+file(GLOB_RECURSE NIM_DEMO_SOURCE *.cc *.h *.cpp *.c)
 
-ADD_EXECUTABLE(${TARGET_NAME} ${NIM_DEMO_SOURCE} ${CMAKE_BINARY_DIR}/nim.rc)
+add_executable(${PROJECT_NAME} ${NIM_DEMO_SOURCE} ${CMAKE_BINARY_DIR}/nim.rc)
 
-TARGET_LINK_LIBRARIES(${TARGET_NAME}
+target_link_libraries(${PROJECT_NAME}
     # Windows libs
 	Crypt32
     DbgHelp
@@ -72,30 +70,26 @@ TARGET_LINK_LIBRARIES(${TARGET_NAME}
     ${CONAN_LIBS}
 )
 
-IF (NOT BUILD_WITH_CONAN)
-    TARGET_LINK_LIBRARIES(${TARGET_NAME}
-        nim_wrapper_util
-        nim_cpp_wrapper
-        nim_chatroom_cpp_wrapper
-        nim_tools_cpp_wrapper
-        nertc_sdk
-    )
-ENDIF ()
+if (CMAKE_BUILD_TYPE MATCHES "Release")
+    target_link_libraries(${PROJECT_NAME} nim_libcef)
+else ()
+    target_link_libraries(${PROJECT_NAME} nim_libcef_d)
+endif ()
 
-IF (CMAKE_BUILD_TYPE MATCHES "Release")
-    TARGET_LINK_LIBRARIES(${TARGET_NAME} nim_libcef)
-ELSE ()
-    TARGET_LINK_LIBRARIES(${TARGET_NAME} nim_libcef_d)
-ENDIF ()
-
-SET_TARGET_PROPERTIES(${TARGET_NAME}
+set_target_properties(${PROJECT_NAME}
     PROPERTIES 
     LINK_FLAGS "/SUBSYSTEM:WINDOWS /DELAYLOAD:nim_libcef.dll /DELAYLOAD:NELivePlayer.dll"
 )
 
-INSTALL(FILES $<TARGET_PDB_FILE:${TARGET_NAME}> DESTINATION pdb OPTIONAL)
-INSTALL(
-    TARGETS ${TARGET_NAME}
+add_custom_command(TARGET ${PROJECT_NAME} POST_BUILD
+    COMMAND conan imports ${CMAKE_SOURCE_DIR}/conanfile.py -imf ${CMAKE_SOURCE_DIR}
+    COMMENT "Import Conan dependencies......."
+    WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+)
+
+install(FILES $<TARGET_PDB_FILE:${PROJECT_NAME}> DESTINATION pdb OPTIONAL)
+install(
+    TARGETS ${PROJECT_NAME}
     RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
     LIBRARY DESTINATION ${CMAKE_INSTALL_LIBDIR}
 )
