@@ -25,7 +25,6 @@ configure_file(
     ${CMAKE_CURRENT_LIST_DIR}/nim.rc.in
     ${CMAKE_BINARY_DIR}/nim.rc
 )
-
 file(GLOB_RECURSE NIM_DEMO_SOURCE *.cc *.h *.cpp *.c)
 
 add_executable(${PROJECT_NAME} ${NIM_DEMO_SOURCE} ${CMAKE_BINARY_DIR}/nim.rc)

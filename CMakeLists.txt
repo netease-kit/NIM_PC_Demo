@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.10)
+cmake_minimum_required(VERSION 3.19)
 
 set(CMAKE_CXX_STANDARD 14)
 
@@ -13,11 +13,6 @@ if (CMAKE_CL_64)
 else ()
     add_definitions(-DSUPPORTLOCALPLAYER)
 endif ()
-
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/bin")
-set(CMAKE_PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_SOURCE_DIR}/pdb")
-set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/bin")
-set(CMAKE_PDB_OUTPUT_DIRECTORY_RELEASE "${CMAKE_SOURCE_DIR}/pdb")
 
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
@@ -38,6 +33,7 @@ if (NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/.cmake/conan.cmake")
     file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/master/conan.cmake" "${CMAKE_CURRENT_LIST_DIR}/.cmake/conan.cmake")
 endif ()
 include(${CMAKE_CURRENT_LIST_DIR}/.cmake/conan.cmake)
+conan_add_remote(NAME yunxin URL https://gitlab.com/api/v4/projects/47777150/packages/conan)
 conan_cmake_autodetect(settings)
 conan_cmake_install(PATH_OR_REFERENCE .. BUILD missing SETTINGS ${settings})
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
@@ -81,6 +77,11 @@ include_directories(
 
 file(GLOB_RECURSE THIRD_PARTY_LIBS ${CMAKE_CURRENT_LIST_DIR}/lib/*.lib)
 
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_LIST_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_LIST_DIR}/bin")
+set(CMAKE_PDB_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_LIST_DIR}/pdb")
+set(CMAKE_PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_LIST_DIR}/pdb")
+
 add_subdirectory(chatroom)
 add_subdirectory(tool_kits/base)
 add_subdirectory(tool_kits/duilib)
@@ -98,5 +99,6 @@ add_subdirectory(tool_kits/cef/cef_render)
 add_subdirectory(app_sdk)
 add_subdirectory(nim_win_demo)
 add_subdirectory(tool_kits/uninstall)
+add_subdirectory(tool_kits/install)
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT nim_demo)
