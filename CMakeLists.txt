@@ -101,6 +101,6 @@ add_subdirectory(nim_win_demo)
 add_subdirectory(tool_kits/uninstall)
 add_subdirectory(tool_kits/install)
 
-add_dependencies(nim_demo cef_render uninstall)
+add_dependencies(nim_demo render uninstall)
 
 set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT nim_demo)
