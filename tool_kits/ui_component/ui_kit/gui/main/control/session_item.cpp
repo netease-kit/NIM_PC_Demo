@@ -63,9 +63,11 @@ void SessionItem::InitMsg(const std::shared_ptr<nim::SessionData>& msg) {
 
 #if 1
     // 显示或隐藏 Top 标志
-    label_session_item_top_->SetVisible(msg->placed_on_top_);
+    if (label_session_item_top_)
+        label_session_item_top_->SetVisible(msg->placed_on_top_);
 #else
-    label_session_item_top_->SetVisible(msg->stick_top_info_.top_);
+    if (label_session_item_top_)
+        label_session_item_top_->SetVisible(msg->stick_top_info_.top_);
 #endif
 
     //更新时间

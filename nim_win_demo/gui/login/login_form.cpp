@@ -34,7 +34,7 @@ void LoginForm::OnLogin()
 			chkbox_private_use_proxy_enable_->SetEnabled(true);
 			return;
 		}		
-		nim_http::SetGlobalProxy(NIMProxyType::kNIMProxyNone, "", 0, "", "");		
+		nim_http::SetGlobalProxy(nim::kNIMProxyNone, "", 0, "", "");		
 		nim_http::HttpRequest req(url, nullptr,0,
 		[this, url](bool ret, int code, const std::string& configs) {
 			Post2UI(this->ToWeakCallback([this,ret,code, configs, url]() {

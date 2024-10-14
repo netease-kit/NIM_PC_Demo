@@ -1,175 +1,106 @@
-CMAKE_MINIMUM_REQUIRED(VERSION 3.10)
+cmake_minimum_required(VERSION 3.19)
 
-MESSAGE("############# nim_win_demo ##############")
+set(CMAKE_CXX_STANDARD 14)
 
-SET(CMAKE_CXX_STANDARD 11)
+if (NOT CMAKE_BUILD_TYPE)
+    set(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build." FORCE)
+    message(STATUS "No CMAKE_BUILD_TYPE selected, defaulting to ${CMAKE_BUILD_TYPE}")
+endif ()
 
-IF (NOT CMAKE_BUILD_TYPE)
-    SET(CMAKE_BUILD_TYPE "Debug" CACHE STRING "Choose the type of build." FORCE)
-    MESSAGE(STATUS "No CMAKE_BUILD_TYPE selected, defaulting to ${CMAKE_BUILD_TYPE}")
-ENDIF ()
+set(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_LIST_DIR} CACHE PATH "default install prefix" FORCE)
 
-SET(CMAKE_INSTALL_PREFIX ${CMAKE_CURRENT_LIST_DIR} CACHE PATH "default install prefix" FORCE)
-SET(BUILD_WITH_CONAN OFF CACHE BOOL "Build project with conan")
-SET(BUILD_WITH_NERTC_G2 OFF CACHE BOOL "Build project with NeRTC G2")
-set(INSTALL_CPP_WRAPPER OFF CACHE BOOL "Exports headers of C++ wrapper when called --target INSTALL" FORCE)
+if (CMAKE_CL_64)
+else ()
+    add_definitions(-DSUPPORTLOCALPLAYER)
+endif ()
 
-IF (CMAKE_BUILD_TYPE MATCHES "Release")
-    ADD_DEFINITIONS(-DNDEBUG)
-ENDIF ()
+set(CMAKE_INCLUDE_CURRENT_DIR ON)
+set_property(GLOBAL PROPERTY USE_FOLDERS ON)
+set_property(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmake")
 
-IF (CMAKE_CL_64)
-ELSE ()
-    ADD_DEFINITIONS(-DSUPPORTLOCALPLAYER)
-ENDIF ()
+set(GROUP_BASE "base")
+set(GROUP_UI_COMPONENTS "ui_components")
+set(RELEASE_OUTPUT_7Z_FILE "${CMAKE_BINARY_DIR}/release.7z")
+string(REPLACE "/" "\\\\" RELEASE_OUTPUT_7Z_FILE_WIN ${RELEASE_OUTPUT_7Z_FILE})
 
-SET(CONAN_DISABLE_CHECK_COMPILER ON)
-SET(CMAKE_INCLUDE_CURRENT_DIR ON)
-SET_PROPERTY(GLOBAL PROPERTY USE_FOLDERS ON)
-SET_PROPERTY(GLOBAL PROPERTY PREDEFINED_TARGETS_FOLDER "cmake")
-
-SET(GROUP_BASE "base")
-SET(GROUP_UI_COMPONENTS "ui_components")
-SET(RELEASE_OUTPUT_7Z_FILE "${CMAKE_BINARY_DIR}/release.7z")
-STRING(REPLACE "/" "\\\\" RELEASE_OUTPUT_7Z_FILE_WIN ${RELEASE_OUTPUT_7Z_FILE})
-
-SET(NIM_CROSS_PLATFORM_SDK_FILE_NAME "nim-win32-ia32-refs-tags-9.4.0.1554-build.166.tar.gz")
-SET(DEBUG_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605746/NIM_Windows_Demo_Build_Binaries_Debug.zip")
-SET(RELEASE_THIRD_PARTY_LIBS "http://yx-web.nos.netease.com/package/1619605768/NIM_Windows_Demo_Build_Binaries_Release.zip")
-SET(NIM_CROSS_PLATFORM_SDK_URL "https://yx-web-nosdn.netease.im/package/${NIM_CROSS_PLATFORM_SDK_FILE_NAME}")
-SET(NERTC_SDK_URL "http://yx-web.nos.netease.com/package/1618217725/NERtc_Windows_SDK_v4.1.1.zip")
-
-PROJECT(nim_win_demo)
+project(nim_win_demo)
 
 # Build project with conan
-IF (BUILD_WITH_CONAN)
-    # https://github.com/conan-io/cmake-conan
-    # Download automatically, you can also just copy the conan.cmake file
-    IF (NOT EXISTS "${CMAKE_BINARY_DIR}/conan.cmake")
-        MESSAGE(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
-        FILE(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/master/conan.cmake" "${CMAKE_BINARY_DIR}/conan.cmake")
-    ENDIF()
-    INCLUDE(${CMAKE_BINARY_DIR}/conan.cmake)
-    conan_cmake_autodetect(settings)
-    conan_cmake_install(PATH_OR_REFERENCE .. BUILD missing SETTINGS ${settings})
-    INCLUDE(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
-    conan_basic_setup()
-ENDIF ()
+# https://github.com/conan-io/cmake-conan
+# Download automatically, you can also just copy the conan.cmake file
+if (NOT EXISTS "${CMAKE_CURRENT_LIST_DIR}/.cmake/conan.cmake")
+    message(STATUS "Downloading conan.cmake from https://github.com/conan-io/cmake-conan")
+    file(DOWNLOAD "https://raw.githubusercontent.com/conan-io/cmake-conan/master/conan.cmake" "${CMAKE_CURRENT_LIST_DIR}/.cmake/conan.cmake")
+endif ()
+include(${CMAKE_CURRENT_LIST_DIR}/.cmake/conan.cmake)
+conan_add_remote(NAME yunxin URL https://gitlab.com/api/v4/projects/47777150/packages/conan)
+conan_cmake_autodetect(settings)
+conan_cmake_install(PATH_OR_REFERENCE ${CMAKE_CURRENT_LIST_DIR} BUILD missing SETTINGS ${settings})
+include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
+conan_basic_setup()
 
-# Remove bin lib and include folder
-file(REMOVE_RECURSE ${CMAKE_CURRENT_LIST_DIR}/bin)
-file(REMOVE_RECURSE ${CMAKE_CURRENT_LIST_DIR}/lib)
-file(REMOVE_RECURSE ${CMAKE_CURRENT_LIST_DIR}/include)
-
-# Download third parties
-IF (CMAKE_BUILD_TYPE MATCHES Debug AND NOT BUILD_WITH_CONAN)
-    IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_debug.zip")
-        MESSAGE(STATUS "Downloading third party libraries from ${DEBUG_THIRD_PARTY_LIBS}")
-        FILE(DOWNLOAD ${DEBUG_THIRD_PARTY_LIBS} "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_debug.zip")
-    ENDIF ()
-    EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_debug.zip" WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
-ENDIF ()
-IF (CMAKE_BUILD_TYPE MATCHES Release AND NOT BUILD_WITH_CONAN)
-    IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_release.zip")
-        MESSAGE(STATUS "Downloading third party libraries from ${RELEASE_THIRD_PARTY_LIBS}")
-        FILE(DOWNLOAD "${RELEASE_THIRD_PARTY_LIBS}" "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_release.zip")
-    ENDIF ()
-    EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf "${CMAKE_BINARY_DIR}/nim_demo_build_libraries_x86_release.zip" WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
-ENDIF ()
-
-# Downlaod NeRTC G2 SDK
-IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nertc-SDK.zip" AND NOT BUILD_WITH_CONAN)
-    MESSAGE(STATUS "Downloading NeRTC-SDK from ${NERTC_SDK_URL}")
-    FILE(DOWNLOAD ${NERTC_SDK_URL} ${CMAKE_BINARY_DIR}/nertc-SDK.zip)
-ENDIF ()
-EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf "${CMAKE_BINARY_DIR}/nertc-SDK.zip" WORKING_DIRECTORY ${CMAKE_BINARY_DIR})
-FILE(GLOB_RECURSE NERTC_HEADER_FIELS ${CMAKE_BINARY_DIR}/nertc_sdk_windows*/*.h)
-IF  (CMAKE_VS_PLATFORM_TOOLSET_HOST_ARCHITECTURE MATCHES "x64")
-    FILE(GLOB_RECURSE NERTC_LIB_FIELS ${CMAKE_BINARY_DIR}/nertc_sdk_windows*/lib/x64/*.lib)
-    FILE(GLOB_RECURSE NERTC_BINARY_FIELS ${CMAKE_BINARY_DIR}/nertc_sdk_windows*/dll/x64/*.dll)
-ELSE ()
-    FILE(GLOB_RECURSE NERTC_LIB_FIELS ${CMAKE_BINARY_DIR}/nertc_sdk_windows*/lib/x86/*.lib)
-    FILE(GLOB_RECURSE NERTC_BINARY_FIELS ${CMAKE_BINARY_DIR}/nertc_sdk_windows*/dll/x86/*.dll)
-ENDIF ()
-
-FILE(COPY ${NERTC_HEADER_FIELS} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/include)
-FILE(COPY ${NERTC_LIB_FIELS} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/lib)
-FILE(COPY ${NERTC_BINARY_FIELS} DESTINATION ${CMAKE_CURRENT_LIST_DIR}/bin)
-
-# Copy Resources
-execute_process( COMMAND ${CMAKE_COMMAND} -E copy_directory ${CMAKE_CURRENT_LIST_DIR}/resource ${CMAKE_CURRENT_LIST_DIR}/bin)
-
-# Download NeIM SDK
-IF (NOT EXISTS "${CMAKE_BINARY_DIR}/nim-cross-platform-SDK.zip" AND NOT BUILD_WITH_CONAN)
-    MESSAGE(STATUS "Downloading NIM cross-platform SDK from ${NIM_CROSS_PLATFORM_SDK_URL}")
-    FILE(DOWNLOAD ${NIM_CROSS_PLATFORM_SDK_URL} ${CMAKE_BINARY_DIR}/${NIM_CROSS_PLATFORM_SDK_FILE_NAME})
-ENDIF ()
-EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf ${CMAKE_BINARY_DIR}/${NIM_CROSS_PLATFORM_SDK_FILE_NAME} WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
-# EXECUTE_PROCESS(COMMAND ${CMAKE_COMMAND} -E tar -xf ${CMAKE_BINARY_DIR}/nim-win32-ia32-refs-tags-9.4.0.1554-build.166.tar.gz WORKING_DIRECTORY ${CMAKE_CURRENT_LIST_DIR})
-IF (NOT BUILD_WITH_CONAN)
-    ADD_SUBDIRECTORY(wrapper)
-    INCLUDE_DIRECTORIES(wrapper)
-    LINK_DIRECTORIES(${CMAKE_CURRENT_LIST_DIR}/wrapper)
-ENDIF ()
-
-ADD_DEFINITIONS(
+add_definitions(
     -DUNICODE 
     -D_UNICODE 
     -DPSAPI_VERSION=1
     -DBUILD_WITH_XML_UTIL
 )
 
-IF (BUILD_WITH_NERTC_G2)
-    ADD_DEFINITIONS(-DUSING_RTC_G2)
-ENDIF ()
+add_definitions(-DUSING_RTC_G2)
 
 # Git information
-LIST(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/.cmake/")
-INCLUDE(GetGitRevisionDescription)
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/.cmake/")
+include(GetGitRevisionDescription)
 git_release_version(GIT_TAG)
-IF ("${GIT_TAG}" STREQUAL "")
+if ("${GIT_TAG}" STREQUAL "")
     git_latest_tag(GIT_TAG)
-ENDIF ()
-IF ("${GIT_TAG}" STREQUAL "HEAD-HASH-NOTFOUND")
-    SET(GIT_TAG "0.0.0")
-ENDIF ()
+endif ()
+if ("${GIT_TAG}" STREQUAL "HEAD-HASH-NOTFOUND")
+    set(GIT_TAG "0.0.0")
+endif ()
 git_describe(GIT_DESCRIBE)
 git_commit_counts(GIT_COMMIT_COUNT)
 # Can not get git tag info in github actions
-STRING(REPLACE "." "," GIT_TAG_WITH_COMMA ${GIT_TAG})
-MESSAGE(STATUS "Current git tag: ${GIT_TAG}, commit count: ${GIT_COMMIT_COUNT}, describe: ${GIT_DESCRIBE}")
+string(REPLACE "." "," GIT_TAG_WITH_COMMA ${GIT_TAG})
+message(STATUS "Current git tag: ${GIT_TAG}, commit count: ${GIT_COMMIT_COUNT}, describe: ${GIT_DESCRIBE}")
 add_compile_options(/wd4573 /MP)
-ADD_COMPILE_OPTIONS("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
-ADD_COMPILE_OPTIONS("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
-SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Gm- /Zi")
-SET(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
-SET(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
+add_compile_options("$<$<C_COMPILER_ID:MSVC>:/utf-8>")
+add_compile_options("$<$<CXX_COMPILER_ID:MSVC>:/utf-8>")
+set(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE} /Gm- /Zi")
+set(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
+set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS_RELEASE} /DEBUG /OPT:REF /OPT:ICF")
 
-INCLUDE_DIRECTORIES(
+include_directories(
     ${CMAKE_CURRENT_LIST_DIR}/lib/
     ${CMAKE_CURRENT_LIST_DIR}/include/
 )
 
-FILE(GLOB_RECURSE THIRD_PARTY_LIBS ${CMAKE_CURRENT_LIST_DIR}/lib/*.lib)
+file(GLOB_RECURSE THIRD_PARTY_LIBS ${CMAKE_CURRENT_LIST_DIR}/lib/*.lib)
 
-ADD_SUBDIRECTORY(chatroom)
-ADD_SUBDIRECTORY(tool_kits/base)
-ADD_SUBDIRECTORY(tool_kits/duilib)
-ADD_SUBDIRECTORY(tool_kits/shared)
-ADD_SUBDIRECTORY(tool_kits/db)
-ADD_SUBDIRECTORY(tool_kits/transfer_file)
-ADD_SUBDIRECTORY(tool_kits/ui_component/av_kit)
-ADD_SUBDIRECTORY(tool_kits/ui_component/g2_kit)
-ADD_SUBDIRECTORY(tool_kits/ui_component/capture_image)
-ADD_SUBDIRECTORY(tool_kits/ui_component/image_view)
-ADD_SUBDIRECTORY(tool_kits/ui_component/nim_service)
-ADD_SUBDIRECTORY(tool_kits/ui_component/ui_kit)
-ADD_SUBDIRECTORY(tool_kits/cef/cef_module)
-ADD_SUBDIRECTORY(tool_kits/cef/cef_render)
-ADD_SUBDIRECTORY(tool_kits/cef/cef_wrapper)
-ADD_SUBDIRECTORY(app_sdk)
-ADD_SUBDIRECTORY(nim_win_demo)
-# uninstall
-ADD_SUBDIRECTORY(tool_kits/uninstall)
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_LIST_DIR}/bin")
+set(CMAKE_RUNTIME_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_LIST_DIR}/bin")
+set(CMAKE_PDB_OUTPUT_DIRECTORY_RELEASE "${CMAKE_CURRENT_LIST_DIR}/pdb")
+set(CMAKE_PDB_OUTPUT_DIRECTORY_DEBUG "${CMAKE_CURRENT_LIST_DIR}/pdb")
 
-SET_PROPERTY(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT nim_demo)
+add_subdirectory(chatroom)
+add_subdirectory(tool_kits/base)
+add_subdirectory(tool_kits/duilib)
+add_subdirectory(tool_kits/shared)
+add_subdirectory(tool_kits/db)
+add_subdirectory(tool_kits/transfer_file)
+add_subdirectory(tool_kits/ui_component/av_kit)
+add_subdirectory(tool_kits/ui_component/g2_kit)
+add_subdirectory(tool_kits/ui_component/capture_image)
+add_subdirectory(tool_kits/ui_component/image_view)
+add_subdirectory(tool_kits/ui_component/nim_service)
+add_subdirectory(tool_kits/ui_component/ui_kit)
+add_subdirectory(tool_kits/cef/cef_module)
+add_subdirectory(tool_kits/cef/cef_render)
+add_subdirectory(app_sdk)
+add_subdirectory(nim_win_demo)
+add_subdirectory(tool_kits/uninstall)
+add_subdirectory(tool_kits/install)
+
+add_dependencies(nim_demo cef_render uninstall)
+
+set_property(DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR} PROPERTY VS_STARTUP_PROJECT nim_demo)

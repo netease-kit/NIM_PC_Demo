@@ -99,8 +99,8 @@ namespace nim_comp
 		btn_online_state_ = dynamic_cast<ui::Button*>(FindControl(L"btn_online_state"));
 		btn_online_state_->SetVisible(nim_comp::SubscribeEventManager::GetInstance()->IsEnabled());
 		btn_header_->AttachClick([this](ui::EventArgs* param) {
-			nim_comp::WindowsManager::GetInstance()->SingletonShow<nim_comp::ProfileMine>(nim_comp::ProfileMine::kClassName);
-			//nim_comp::ProfileForm::ShowProfileForm(nim_comp::LoginManager::GetInstance()->GetAccount());
+			//nim_comp::WindowsManager::GetInstance()->SingletonShow<nim_comp::ProfileMine>(nim_comp::ProfileMine::kClassName);
+			nim_comp::ProfileForm::ShowProfileForm(nim_comp::LoginManager::GetInstance()->GetAccount());
 			return true;
 			});
 		btn_online_state_->AttachClick(nbase::Bind(&MainFormEx::OnlineStateMenuButtonClick, this, std::placeholders::_1));

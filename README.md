@@ -11,109 +11,82 @@
 
 ## 最低要求
 
-- CMake 3.10 或以上版本
-- Visual Studio 2017 或以上版本
-- Git
+- CMake 3.19 或以上版本 [Download](https://cmake.org/download/)
+- Visual Studio 2017 或以上版本 [Download](https://visualstudio.microsoft.com/zh-hans/downloads/)
+- Git [Download](https://git-scm.com/downloads)
+- Python3 [Download](https://www.python.org/downloads/)
+- Conan >1.65.0 <2.0.0（python -m pip install conan==1.65.0）
 
 ## 开发步骤
 
-NIM Demo 从 8.4.0 版本开始使用 CMake 管理工程结构，您需要下载安装 CMake 并安装到系统中：[https://cmake.org/download/](https://cmake.org/download/)
-
-> 源代码脚本中使用 Git 和 CMake 指令根据当前仓库的提交信息、提交次数来动态生成的目录结构及 `.rc` 文件版本，您系统中必须安装 Git 客户端并推荐使用 git clone 下载代码而不是直接下载压缩包！
-
-安装完成后，首先克隆项目到你的磁盘中：
+您需要根据最低要求中的版本安装对应的工具，安装完成后，首先克隆项目到你的磁盘中：
 
 ```
 git clone https://github.com/netease-im/NIM_PC_Demo.git --depth 10
 ```
 
-执行如下命令进行工程初始化，如果你要编译 Release 版本，请替换命令中的 Debug 为 Release
+### 输出 Debug 工程
+
+执行如下命令初始化 Debug 调试版本的项目：
+
+ > 首次初始化 Debug 或 Release 工程时会自动下载并编译依赖的三方库代码，这个过程可能相对较慢，请耐心等待。当您再次编译时，将不再重复下载和编译三方库代码而是使用上一次编译后的产物。
 
 ```bash
-# 初始化项目
-cmake -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Debug
-```
-
-执行如上命令后，会自动下载依赖的三方库文件并解压到工程目录下，如执行无误您将看到如下信息：
-
-```bash
-############# nim_win_demo ##############
--- Downloading third party libraries from http://yx-web.nos.netease.com/package/1619524144/nim_demo_build_libraries_x86_debug.zip
--- Current git tag: 8.4.0, commit count: 772, describe: 8.4.0-2-gbe6c7fea
-############# core #############
-############# base #############
-############# duilib #############
-############# shared #############
-############# db #############
-############# transfer file P2P #############
-############# av_kit #############
-############# rtc_kit #############
-############# capture_image #############
-############# image_view #############
-############# nim_service #############
-############# ui_kit #############
-############# cef_module #############
-############# cef_render #############
-############# libcef_dll_wrapper #############
-############# app_sdk #############
-############# nim_demo #############
-############# nim demo uninstaller #############
--- Configuring done
--- Generating done
--- Build files have been written to: C:/Code/nim_demo/build
+cmake -Bbuild -AWin32 -DCMAKE_BUILD_TYPE=Debug
 ```
 
 您可以通过打开 build 目录下的 `nim_win_demo.sln` 来进行调试或通过 CMake 命令直接编译：
 
 ```bash
-cmake --build build --config Debug --target INSTALL
+cmake --build build --config Debug
 ```
 
-编译完成后会自动拷贝程序到代码根目录的 bin 文件夹下：
-
-```bash
-Installing: C:/Jks/workspace/NeIM_Demo/pdb/render.pdb
-Installing: C:/Jks/workspace/NeIM_Demo/bin/render.exe
-Installing: C:/Jks/workspace/NeIM_Demo/pdb/nim_demo.pdb
-Installing: C:/Jks/workspace/NeIM_Demo/bin/nim_demo.exe
-Installing: C:/Jks/workspace/NeIM_Demo/pdb/uninstall.pdb
-Installing: C:/Jks/workspace/NeIM_Demo/bin/uninstall.exe
-```
+### 输出 Release 工程
 
 如您需要编译 Release 版本，则将上面的命令中 Debug 修改为 Release 即可：
 
 ```bash
-cmake -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Release
-cmake --build build --config Release --target INSTALL
+cmake -Bbuild -AWin32 -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
 ```
 
-## 使用音视频 2.0 版本
+ > 所有产物均生成在项目根目录下的 bin 文件夹中，项目编译完成后您可以直接从 bin 目录下运行 nim_demo.exe 来启动 Demo
 
-Demo 支持使用音视频 2.0 能力来展示视频、音频通话场景，您可以在初始化 CMake 脚本时增加参数 `BUILD_WITH_NERTC_G2` 来开启该功能，如：
+ > 需要注意的是，由于 Debug 和 Release 版本的依赖库文件都会拷贝到 bin 目录下，因此在切换 Debug 和 Release 版本时请使用 git clean -xdf 命令清理 bin 目录下的临时文件
 
+### 制作安装包
+
+当所有产物编译完成后，您可以执行如下命令编译安装包，安装包最终输出在 bin 目录下：
+
+```bash
+cmake --build build --config Release --target installer
 ```
-cmake . -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DBUILD_WITH_NERTC_G2=ON -DCMAKE_BUILD_TYPE=Debug
-cmake --build build --config Debug --target install
+
+## 更新 IM SDK 版本
+
+IM SDK 当前使用 Conan 包管理工具管理，如果您需要检索已经发布的版本，可通过如下命令搜索：
+
+```bash
+conan search nim -r yunxin
 ```
 
-## 常见问题
+输出结果类似：
 
-- 检测到“\_ITERATOR_DEBUG_LEVEL”的不匹配项  
-  该问题常见于 Build Type 发生变化时，可在 build 之前加入 clean 命令
+```bash
+Existing package recipes:
 
-  ```bash
-  cmake -Bbuild -G"Visual Studio 15 2017" -T"v141_xp" -DCMAKE_BUILD_TYPE=Release
-  cmake --build build --config Release --target clean
-  cmake --build build --config Release --target INSTALL
-  ```
+nim/9.10.0@yunxin/stable
+nim/9.12.1@yunxin/stable
+nim/9.12.2@yunxin/stable
+nim/9.13.0@yunxin/stable
+nim/9.14.2@yunxin/stable
+nim/9.15.0@yunxin/stable
+nim/9.15.1@yunxin/stable
+nim/9.18.0@yunxin/stable
+nim/10.5.0@yunxin/stable
+```
 
-- “rc.exe”已退出, 代码为 x  
-  检查项目路径是否包含中文，导致 rc 文件中带中文编译出错
-
-- Demo 运行提示“资源不存在”  
-  检查项目 bin 目录中 cef_themes、res 等资源是否被删除，若被删除可用 git 恢复
-
-- Demo 每次构建时会清空 bin 目录并重新生成，如果您有需要运行时必须的文件，可以将其放在 resource 目录中，构建时会自动拷贝到 bin 目录中
+您可以打开 `conanfile.py` 文件，修改 `self.requires("nim/*.*.*@yunxin/stable")` 为指定版本即可，修改完成后重新执行 CMake 初始化命令即可，CMake 会自动下载并编译指定版本的 IM SDK。
 
 ## 交流
 

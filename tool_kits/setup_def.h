@@ -3,6 +3,7 @@
 
 #include <list>
 #include <tchar.h>
+#include <string>
 
 
 //参数

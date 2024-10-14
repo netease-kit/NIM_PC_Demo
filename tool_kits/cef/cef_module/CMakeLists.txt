@@ -1,5 +1,3 @@
-MESSAGE("############# cef_module #############")
-
 SET(TARGET_NAME cef_module)
 
 PROJECT(${TARGET_NAME})

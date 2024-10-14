@@ -113,10 +113,10 @@ void ProxyForm::ConfirmSetting()
 	//httptool
 	auto httptool_proxy_setting = proxy_httptool_->GetProxySetting();
 	if (httptool_proxy_setting->IsUseGlobalSetting())
-		nim_http::SetGlobalProxy((NIMProxyType)(ProxyTip::ConvertBaseProxytypeToNimProxyType(global_proxy_setting->GetType())), \
+		nim_http::SetGlobalProxy((nim::NIMProxyType)(ProxyTip::ConvertBaseProxytypeToNimProxyType(global_proxy_setting->GetType())), \
 		global_proxy_setting->GetHost(), global_proxy_setting->GetPort(), global_proxy_setting->GetUserName(), global_proxy_setting->GetPassowrd());
 	else
-		nim_http::SetGlobalProxy((NIMProxyType)(ProxyTip::ConvertBaseProxytypeToNimProxyType(httptool_proxy_setting->GetType())), \
+		nim_http::SetGlobalProxy((nim::NIMProxyType)(ProxyTip::ConvertBaseProxytypeToNimProxyType(httptool_proxy_setting->GetType())), \
 		httptool_proxy_setting->GetHost(), httptool_proxy_setting->GetPort(), httptool_proxy_setting->GetUserName(), httptool_proxy_setting->GetPassowrd());	
 
 	//VChat

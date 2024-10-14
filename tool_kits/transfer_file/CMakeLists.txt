@@ -1,5 +1,3 @@
-MESSAGE("############# transfer file P2P #############")
-
 SET(TARGET_NAME transfer_file)
 
 PROJECT(${TARGET_NAME})

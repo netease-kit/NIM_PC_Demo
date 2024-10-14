@@ -11,16 +11,6 @@ extern"C"
 {
 #endif
 
-/** @enum NIMProxyType 代理类型 */
-	enum NIMProxyType
-	{
-	kNIMProxyNone		= 0,	/**< 不使用代理*/
-	kNIMProxyHttp11		= 1,	/**< HTTP 1.1 Proxy*/
-	kNIMProxySocks4		= 4,	/**< Socks4 Proxy*/
-	kNIMProxySocks4a	= 5,	/**< Socks4a Proxy*/
-	kNIMProxySocks5		= 6,	/**< Socks5 Proxy*/
-};
-
 /** @typedef void* HttpRequestHandle
   * http任务句柄
   */

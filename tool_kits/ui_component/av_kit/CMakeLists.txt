@@ -1,5 +1,3 @@
-MESSAGE("############# av_kit #############")
-
 SET(TARGET_NAME av_kit)
 
 PROJECT(${TARGET_NAME})

@@ -1,5 +1,3 @@
-MESSAGE("############# nim demo uninstaller #############")
-
 SET(TARGET_NAME uninstall)
 
 PROJECT(${TARGET_NAME} DESCRIPTION "NetEase IM Demo Uninstaller")
