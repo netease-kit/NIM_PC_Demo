@@ -45,4 +45,4 @@ jobs:
     - uses: actions/upload-artifact@v4
       with:
         name: PC_Demo_Setup
-        path: tool_kits/install/bin/NIM_Demo_Setup*.exe
+        path: bin/NIM_Demo_Setup*.exe
