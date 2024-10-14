@@ -44,8 +44,7 @@
             "description": "Conan v2 with CMake example for Windows - Release Configuration",
             "binaryDir": "${sourceDir}/build",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Release",
-                "CMAKE_INSTALL_PREFIX": "${sourceDir}/win32-release"
+                "CMAKE_BUILD_TYPE": "Release"
             }
         }
     ],
