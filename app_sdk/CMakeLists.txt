@@ -1,5 +1,3 @@
-MESSAGE("############# app_sdk #############")
-
 SET(TARGET_NAME app_sdk)
 
 PROJECT(${TARGET_NAME})

@@ -21,25 +21,28 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
 
+    - name: Install Conan
+      id: conan
+      uses: turtlebrowser/get-conan@main
+      with:
+        version: 1.65.0
+
     - name: Fetch all tags
       run: git fetch --tags --prune --unshallow --force
       
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{env.GITHUB_WORKSPACE}}/build -AWin32 -T"v141_xp" -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}}
+      run: cmake -Bbuild -AWin32 -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}}
 
-    - name: Build nim demo
+    - name: Build nim-demo
       # Build your program with the given configuration
-      run: cmake --build ${{env.GITHUB_WORKSPACE}}/build --config ${{env.BUILD_CONFIGURATION}} --target install
+      run: cmake --build build --config ${{env.BUILD_CONFIGURATION}}
 
-    - name: Configure nim demo installer
-      run: cmake tool_kits -B ${{env.GITHUB_WORKSPACE}}/build_setup -AWin32 -T"v141_xp" -DCMAKE_BUILD_TYPE=${{env.BUILD_CONFIGURATION}}
-      
-    - name: Build nim demo installer
-      run: cmake --build ${{env.GITHUB_WORKSPACE}}/build_setup --config ${{env.BUILD_CONFIGURATION}} --target installer
+    - name: Build nim-demo installer
+      run: cmake --build build --config ${{env.BUILD_CONFIGURATION}} --target installer
 
-    - uses: actions/upload-artifact@v2
+    - uses: actions/upload-artifact@v4
       with:
         name: PC_Demo_Setup
-        path: tool_kits/install/bin/*.exe
+        path: bin/NIM_Demo_Setup*.exe

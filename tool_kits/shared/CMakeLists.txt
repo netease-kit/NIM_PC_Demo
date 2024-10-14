@@ -1,5 +1,3 @@
-MESSAGE("############# shared #############")
-
 SET(TARGET_NAME shared)
 
 PROJECT(${TARGET_NAME})

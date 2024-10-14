@@ -1,5 +1,3 @@
-MESSAGE("############# duilib #############")
-
 SET(TARGET_NAME duilib)
 
 PROJECT(${TARGET_NAME})

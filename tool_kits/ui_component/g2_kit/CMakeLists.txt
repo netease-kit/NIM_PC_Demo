@@ -1,5 +1,3 @@
-MESSAGE("############# rtc_kit #############")
-
 SET(TARGET_NAME rtc_kit)
 
 PROJECT(${TARGET_NAME})

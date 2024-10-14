@@ -1,5 +1,3 @@
-MESSAGE("############# ui_kit #############")
-
 SET(TARGET_NAME ui_kit)
 
 PROJECT(${TARGET_NAME})

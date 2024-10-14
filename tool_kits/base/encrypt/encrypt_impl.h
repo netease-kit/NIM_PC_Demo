@@ -647,9 +647,9 @@ public:
                 case RSA_PKCS1_PADDING:
                     block_size = RSA_size(rsa) - RSA_PKCS1_PADDING_SIZE;
                     break;
-                case RSA_SSLV23_PADDING:
-                    block_size = RSA_size(rsa);
-                    break;
+                // case RSA_SSLV23_PADDING:
+                //     block_size = RSA_size(rsa);
+                //     break;
                 case RSA_NO_PADDING:
                     block_size = RSA_size(rsa);
                     break;

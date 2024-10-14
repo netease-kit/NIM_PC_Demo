@@ -1,5 +1,3 @@
-MESSAGE("############# core #############")
-
 SET(TARGET_NAME chatroom)
 
 PROJECT(${TARGET_NAME})
