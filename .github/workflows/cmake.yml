@@ -44,7 +44,7 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       with:
-        name: PC_Demo_Setup
+        name: PC_Demo_Setup_x64
         path: bin/NIM_Demo_Setup*.exe
   build-x86:
     runs-on: windows-2019
@@ -78,5 +78,5 @@ jobs:
 
     - uses: actions/upload-artifact@v4
       with:
-        name: PC_Demo_Setup
+        name: PC_Demo_Setup_Win32
         path: bin/NIM_Demo_Setup*.exe
