@@ -24,17 +24,17 @@ class NebaseConan(ConanFile):
     exports_sources = "*", "!build"
 
     def requirements(self):
-        self.requires("libjpeg/9e")
+        self.requires("libjpeg/9c")
         self.requires("openssl/3.3.2")
         self.requires("jsoncpp/1.9.5")
         self.requires("libuv/1.49.0")
         self.requires("libyuv/1892")
-        self.requires("sqlite3/3.46.1")
+        self.requires("sqlite3/3.36.0")
         self.requires("tinyxml/2.6.2")
-        self.requires("nim/10.5.0@yunxin/stable")
+        self.requires("nim/10.7.1@yunxin/stable")
         self.requires("nertc/4.1.1@yunxin/stable")
         self.requires("libcef/3.2623.1401@yunxin/stable")
-        self.requires("ne_live_player/1.1.1@yunxin/stable")
+        self.requires("ne_live_player/1.6.9@yunxin/stable")
         self.requires("image_ole/4.2.0@yunxin/stable")
         self.requires("ne_transfer/0.1.0@yunxin/stable")
 

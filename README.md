@@ -2,8 +2,7 @@
 
 网易云信 PC IM Demo 是基于[网易云信 PC SDK](https://yunxin.163.com/im-sdk-demo) 制作的即时通讯示例程序，UI 库使用 [NIM Duilib](https://github.com/netease-im/NIM_Duilib_Framework) 制作
 
-![GitHub](https://img.shields.io/badge/license-MIT-green.svg)
-[![Actions Status](https://github.com/netease-im/NIM_PC_Demo/workflows/MSBuild/badge.svg)](https://github.com/netease-im/NIM_PC_Demo/actions)
+![GitHub](https://img.shields.io/badge/license-MIT-green.svg) | [![Actions Status](https://github.com/netease-im/NIM_PC_Demo/workflows/MSBuild/badge.svg)](https://github.com/netease-im/NIM_PC_Demo/actions)
 
 ## 预览
 
@@ -29,11 +28,23 @@ git clone https://github.com/netease-im/NIM_PC_Demo.git --depth 10
 
 执行如下命令初始化 Debug 调试版本的项目：
 
- > 首次初始化 Debug 或 Release 工程时会自动下载并编译依赖的三方库代码，这个过程可能相对较慢，请耐心等待。当您再次编译时，将不再重复下载和编译三方库代码而是使用上一次编译后的产物。
+> [!NOTE]
+> 首次初始化 Debug 或 Release 工程时会自动下载并编译依赖的三方库代码，这个过程可能相对较慢，请耐心等待。当您再次编译时，将不再重复下载和编译三方库代码而是使用上一次编译后的产物。
 
 ```bash
+# 生成 64 位 Debug 工程，如果您未指定 Visual Studio 版本将默认使用本机安装的最新版本
+cmake -Bbuild -Ax64 -DCMAKE_BUILD_TYPE=Debug
+
+# 生成 32 位 Debug 工程
 cmake -Bbuild -AWin32 -DCMAKE_BUILD_TYPE=Debug
 ```
+
+> [!TIP]
+> Visual Studio 2017 以下版本工具链不支持使用 cmake -A 参数来指定目标产物架构，您可以使用如下命令分别生成 32 位和 64 位的工程
+>
+> `cmake -Bbuild -G "Visual Studio 15 2017" -DCMAKE_BUILD_TYPE=Debug`
+>
+> `cmake -Bbuild -G "Visual Studio 15 2017 Win64" -DCMAKE_BUILD_TYPE=Debug`
 
 您可以通过打开 build 目录下的 `nim_win_demo.sln` 来进行调试或通过 CMake 命令直接编译：
 
@@ -46,13 +57,20 @@ cmake --build build --config Debug
 如您需要编译 Release 版本，则将上面的命令中 Debug 修改为 Release 即可：
 
 ```bash
+# 生成 64 位 Release 工程，
+cmake -Bbuild -Ax64 -DCMAKE_BUILD_TYPE=Release
+cmake --build build --config Release
+
+# 生成 32 位 Release 工程，
 cmake -Bbuild -AWin32 -DCMAKE_BUILD_TYPE=Release
 cmake --build build --config Release
 ```
 
- > 所有产物均生成在项目根目录下的 bin 文件夹中，项目编译完成后您可以直接从 bin 目录下运行 nim_demo.exe 来启动 Demo
+> [!TIP]
+> 所有产物均生成在项目根目录下的 bin 文件夹中，项目编译完成后您可以直接从 bin 目录下运行 nim_demo.exe 来启动 Demo
 
- > 需要注意的是，由于 Debug 和 Release 版本的依赖库文件都会拷贝到 bin 目录下，因此在切换 Debug 和 Release 版本时请使用 git clean -xdf 命令清理 bin 目录下的临时文件
+> [!IMPORTANT]
+> 需要注意的是，由于 Debug 和 Release 版本的依赖库文件都会拷贝到 bin 目录下，因此在切换 Debug 和 Release 版本时请使用 `git clean -xdf` 命令清理 bin 目录下的临时文件
 
 ### 制作安装包
 

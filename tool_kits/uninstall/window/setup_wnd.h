@@ -26,7 +26,7 @@ public:
 	virtual UINT GetClassStyle() const override;
 	virtual void OnFinalMessage(HWND hWnd) override;
 	virtual void InitWindow() override;
-	virtual HRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
+	virtual LRESULT OnClose(UINT uMsg, WPARAM wParam, LPARAM lParam, BOOL& bHandled) override;
 	virtual bool Notify(ui::EventArgs* msg);
 
 private:
