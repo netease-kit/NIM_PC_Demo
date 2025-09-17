@@ -21,6 +21,10 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
 
+    - name: Install CMake
+      run: choco install cmake --version=3.31.8 --no-progress
+      shell: powershell
+
     - name: Install Conan
       id: conan
       uses: turtlebrowser/get-conan@main
@@ -54,6 +58,10 @@ jobs:
 
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
+
+    - name: Install CMake
+      run: choco install cmake --version=3.31.8 --no-progress
+      shell: powershell
 
     - name: Install Conan
       id: conan
