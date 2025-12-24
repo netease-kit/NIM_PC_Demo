@@ -29,7 +29,7 @@ jobs:
       id: conan
       uses: turtlebrowser/get-conan@main
       with:
-        version: 1.65.0
+        version: 1.66.0
 
     - name: Fetch all tags
       run: git fetch --tags --prune --unshallow --force
@@ -67,7 +67,7 @@ jobs:
       id: conan
       uses: turtlebrowser/get-conan@main
       with:
-        version: 1.65.0
+        version: 1.66.0
 
     - name: Fetch all tags
       run: git fetch --tags --prune --unshallow --force
