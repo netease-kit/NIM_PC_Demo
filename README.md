@@ -14,7 +14,7 @@
 - Visual Studio 2017 或以上版本 [Download](https://visualstudio.microsoft.com/zh-hans/downloads/)
 - Git [Download](https://git-scm.com/downloads)
 - Python3 [Download](https://www.python.org/downloads/)
-- Conan >1.65.0 <2.0.0（python -m pip install conan==1.65.0）
+- Conan >1.66.0 <2.0.0（python -m pip install conan==1.66.0）
 
 ## 开发步骤
 
@@ -79,32 +79,6 @@ cmake --build build --config Release
 ```bash
 cmake --build build --config Release --target installer
 ```
-
-## 更新 IM SDK 版本
-
-IM SDK 当前使用 Conan 包管理工具管理，如果您需要检索已经发布的版本，可通过如下命令搜索：
-
-```bash
-conan search nim -r yunxin
-```
-
-输出结果类似：
-
-```bash
-Existing package recipes:
-
-nim/9.10.0@yunxin/stable
-nim/9.12.1@yunxin/stable
-nim/9.12.2@yunxin/stable
-nim/9.13.0@yunxin/stable
-nim/9.14.2@yunxin/stable
-nim/9.15.0@yunxin/stable
-nim/9.15.1@yunxin/stable
-nim/9.18.0@yunxin/stable
-nim/10.5.0@yunxin/stable
-```
-
-您可以打开 `conanfile.py` 文件，修改 `self.requires("nim/*.*.*@yunxin/stable")` 为指定版本即可，修改完成后重新执行 CMake 初始化命令即可，CMake 会自动下载并编译指定版本的 IM SDK。
 
 ## 交流
 
