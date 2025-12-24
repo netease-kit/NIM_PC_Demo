@@ -280,9 +280,9 @@ void SDK_PRO::SendSmsCodeResponse::OnParse(const std::string &response)
         }
         else
         {
-            if (json_reply.isMember("message"))
+            if (json_reply.isMember("msg"))
             {
-                err_msg_ = json_reply["message"].asString();
+                err_msg_ = json_reply["msg"].asString();
             }
             QLOG_ERR(L"Invoke send sms code error. Json rescode: {0}.") << res;
         }

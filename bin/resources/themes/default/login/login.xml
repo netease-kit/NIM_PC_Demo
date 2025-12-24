@@ -26,7 +26,7 @@
           <VBox name="enter_panel" width="240" height="auto" margin="20,10,20,0" bkimage="user_password.png">
             <HBox height="41" padding="14,1,10,0">
               <Control name="usericon" width="16" height="16" valign="center" normalimage="user_1.png" disabledimage="user_2.png"/>
-              <RichEdit class="simple prompt" name="username" width="stretch" height="auto" margin="10,0,10,0" valign="center" font="2" prompttext="请输入手机号"/>
+              <RichEdit class="simple prompt" name="username" width="stretch" height="auto" margin="10,0,10,0" valign="center" font="1" prompttextid="STRID_LOGIN_FORM_INPUT_MOBILE"/>
             </HBox>
             <HBox name="nick_name_panel" height="40" padding="14,1,0,0" visible="false" margin="0,0,0,0">
               <Control name="nick_name_icon" width="16" height="16" valign="center" normalimage="nickname.png" disabledimage="nickname.png"/>
@@ -34,9 +34,9 @@
             </HBox>
             <HBox height="41" padding="14,1,5,0">
               <Control name="passwordicon" width="16" height="16" valign="center" normalimage="password_1.png" disabledimage="password_2.png"/>
-              <RichEdit class="simple prompt" name="password" width="110" height="auto" margin="10,0,5,0" valign="center" font="2" prompttext="请输入验证码"/>
-              <Button name="btn_get_code" width="70" height="30" margin="5,5,5,0" font="0" normaltextcolor="white" text="获取验证码"
-                      normalimage="login0.png" hotimage="login1.png" pushedimage="login2.png"/>
+              <RichEdit class="simple prompt" name="password" width="110" height="auto" margin="10,0,5,0" valign="center" font="1" prompttextid="STRID_LOGIN_FORM_INPUT_SMS_CODE"/>
+              <Button name="btn_get_code" width="70" height="30" margin="5,5,5,0" font="0" normaltextcolor="white" textid="STRID_LOGIN_FORM_GET_CODE"
+                      normalimage="login0.png" hotimage="login1.png" pushedimage="login2.png" disabledimage="file='cancel0.png'"/>
             </HBox>
           </VBox>
         </VBox>
@@ -51,7 +51,6 @@
             <Event type="select" receiver="chkbox_remember_username" applyattribute="selected=&quot;true&quot;"/>
             <Event type="unselect" receiver="chkbox_remember_username" applyattribute="selected=&quot;false&quot;"/>
           </CheckBox>
-          <Control />
           <!--Button name="forget_password" cursortype="hand" font="1" normaltextcolor="link_gray" textid="STRID_LOGIN_FORGET_PASSWORD" /-->
         </HBox>
 

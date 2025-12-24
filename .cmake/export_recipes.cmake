@@ -128,7 +128,7 @@ function(export_recipes_dynamically)
         "libyuv/1892@yunxin/stable"
         "sqlite3/3.51.0@yunxin/stable"
         "tinyxml/2.6.2@yunxin/stable"
-        "nim/10.9.33@yunxin/stable"
+        "nim/10.9.72-beta.0@yunxin/stable"
         "nertc/4.1.1@yunxin/stable"
         "libcef/3.2623.1401@yunxin/stable"
         "ne_live_player/1.6.9@yunxin/stable"

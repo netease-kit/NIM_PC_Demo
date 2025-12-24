@@ -129,19 +129,19 @@ void LoginForm::OnGetSmsCode()
 
     if (mobile.empty())
     {
-        ShowLoginTip(L"请输入手机号");
+        ShowLoginTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_MOBILE_EMPTY"));
         return;
     }
 
     // 简单的手机号验证
     if (mobile.length() != 11)
     {
-        ShowLoginTip(L"请输入正确的手机号");
+        ShowLoginTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_MOBILE_INVALID"));
         return;
     }
 
     btn_get_code_->SetEnabled(false);
-    btn_get_code_->SetText(L"发送中...");
+    btn_get_code_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_SENDING_CODE"));
 
     current_mobile_ = mobile;
 
@@ -161,23 +161,25 @@ void LoginForm::OnGetSmsCodeCallback(int code, bool is_first_register, const std
 {
     if (code == 200)
     {
-        ShowLoginTip(L"验证码发送成功");
+        ShowLoginTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_CODE_SENT_SUCCESS"));
         countdown_seconds_ = 60;
         StartCodeCountdown();
     }
     else
     {
         btn_get_code_->SetEnabled(true);
-        btn_get_code_->SetText(L"获取验证码");
+        btn_get_code_->SetText(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_GET_CODE"));
 
-        std::wstring error_msg = L"发送验证码失败";
+        std::wstring error_msg = MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_CODE_SEND_FAILED");
         if (!err_msg.empty())
         {
             error_msg = nbase::UTF8ToUTF16(err_msg);
         }
         else
         {
-            error_msg += L" (错误码: " + std::to_wstring(code) + L")";
+            std::wstring error_code_format =
+                MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_ERROR_WITH_CODE");
+            error_msg += L" (" + nbase::StringPrintf(error_code_format.c_str(), code) + L")";
         }
         ShowLoginTip(error_msg);
     }

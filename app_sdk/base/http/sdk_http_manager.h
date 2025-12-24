@@ -116,7 +116,6 @@ namespace app_sdk
 			
 #ifdef _DEBUG
 			QLOG_APP(L"#####response api:{0} rescode:{1}\r\n{2}") << request->GetAPIURL() << response_code << reply;
-			std::wstring test = nbase::UTF8ToUTF16(reply);
 #else
 			QLOG_APP(L"#####response api:{0} rescode:{1}") << request->GetAPIURL() << response_code ;
 #endif
