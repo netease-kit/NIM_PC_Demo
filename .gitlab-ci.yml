@@ -4,8 +4,6 @@ stages:
 windows-x86:
   stage: build
   interruptible: true
-  needs:
-    - git-naming-validation
   variables:
     PACKAGE_NAME: "nim-${CI_BUILD_NAME}-${CI_BUILD_REF_SLUG}-${CI_PIPELINE_IID}-build-${CI_PIPELINE_ID}"
   before_script:
@@ -33,8 +31,6 @@ windows-x86:
 windows-x86_64:
   stage: build
   interruptible: true
-  needs:
-    - git-naming-validation
   variables:
     PACKAGE_NAME: "nim-${CI_BUILD_NAME}-${CI_BUILD_REF_SLUG}-${CI_PIPELINE_IID}-build-${CI_PIPELINE_ID}"
   before_script:
