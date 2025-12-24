@@ -2,25 +2,25 @@
 <Global>
   <!--所有字体-->
   <!--0-->
-  <Font name="system" size="10"/>
+  <Font name="Microsoft YaHei UI" size="10"/>
   <!--1-->
-  <Font name="system" size="12"/>
+  <Font name="Microsoft YaHei UI" size="12"/>
   <!--2-->
-  <Font name="system" size="14"/>
+  <Font name="Microsoft YaHei UI" size="14"/>
   <!--3-->
-  <Font name="system" size="16"/>
+  <Font name="Microsoft YaHei UI" size="16"/>
   <!--4-->
-  <Font name="system" size="18"/>
+  <Font name="Microsoft YaHei UI" size="18"/>
   <!--5-->
-  <Font name="system" size="10" bold="true"/>
+  <Font name="Microsoft YaHei UI" size="10" bold="true"/>
   <!--6-->
-  <Font name="system" size="12" bold="true"/>
+  <Font name="Microsoft YaHei UI" size="12" bold="true"/>
   <!--7-->
-  <Font name="system" size="14" bold="true"/>
+  <Font name="Microsoft YaHei UI" size="14" bold="true"/>
   <!--8-->
-  <Font name="system" size="16" bold="true"/>
+  <Font name="Microsoft YaHei UI" size="16" bold="true"/>
   <!--9-->
-  <Font name="system" size="18" bold="true"/>
+  <Font name="Microsoft YaHei UI" size="18" bold="true"/>
   <!--10-->
   <Font name="arial" size="10"/>
   <!--11-->
@@ -42,31 +42,31 @@
   <!--19-->
   <Font name="arial" size="18" bold="true"/>
   <!--20-->
-  <Font name="system" size="20"/>
+  <Font name="Microsoft YaHei UI" size="20"/>
   <!--21-->
-  <Font name="system" size="20" bold="true"/>
+  <Font name="Microsoft YaHei UI" size="20" bold="true"/>
   <!--22-->
-  <Font name="system" size="22"/>
+  <Font name="Microsoft YaHei UI" size="22"/>
   <!--23-->
-  <Font name="system" size="22" bold="true"/>
+  <Font name="Microsoft YaHei UI" size="22" bold="true"/>
   <!--24-->
-  <Font name="system" size="12" underline="true"/>
+  <Font name="Microsoft YaHei UI" size="12" underline="true"/>
   <!--25-->
-  <Font name="system" size="24"/>
+  <Font name="Microsoft YaHei UI" size="24"/>
   <!--26-->
-  <Font name="system" size="14" underline="true"/>
+  <Font name="Microsoft YaHei UI" size="14" underline="true"/>
   <!--27-->
-  <Font name="system" size="16" underline="true"/>
+  <Font name="Microsoft YaHei UI" size="16" underline="true"/>
   <!--28-->
-  <Font name="system" size="32" />
+  <Font name="Microsoft YaHei UI" size="32" />
 
   <!--微软雅黑-->
   <!--29-->
-  <Font name="system" size="12"/>
+  <Font name="Microsoft YaHei UI" size="12"/>
   <!--30-->
-  <Font name="system" size="14"/>
+  <Font name="Microsoft YaHei UI" size="14"/>
   <!--31-->
-  <Font name="system" size="16"/>
+  <Font name="Microsoft YaHei UI" size="16"/>
 
   <!--文字色值，不带透明层-->
   <TextColor name="textdefaultcolor" value="#ff333333"/>

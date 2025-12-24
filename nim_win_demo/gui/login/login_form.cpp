@@ -1,461 +1,576 @@
 #include "stdafx.h"
-#include "login_form.h"
-#include <fstream>
+
 #include "base/util/string_util.h"
 #include "gui/main/main_form.h"
+#include "gui/main/main_form_menu.h"
+#include "gui/plugins/addresbook_plugin/addresbook_plugin.h"
+#include "gui/plugins/cef_test_plugin.h"
+#include "gui/plugins/chatroom_plugin.h"
+#include "gui/plugins/gif_test_plugin.h"
+#include "gui/proxy/proxy_form.h"
+#include "guiex/main/main_form_ex.h"
+#include "login_form.h"
+#include "module/config/config_helper.h"
 #include "module/db/public_db.h"
 #include "module/login/login_manager.h"
-#include "guiex/main/main_form_ex.h"
-#include "gui/main/main_form_menu.h"
-#include "gui/plugins/chatroom_plugin.h"
 #include "module/plugins/main_plugins_manager.h"
-#include "gui/plugins/cef_test_plugin.h"
-#include "gui/plugins/gif_test_plugin.h"
-#include "module/config/config_helper.h"
-#include "gui/plugins/addresbook_plugin/addresbook_plugin.h"
-#include "tool_kits\ui_component\ui_kit\export\nim_ui_runtime_manager.h"
-#include "gui/proxy/proxy_form.h"
 #include "nim_app.h"
+#include "tool_kits\ui_component\ui_kit\export\nim_ui_runtime_manager.h"
 #include "ui_component\ui_kit\util\user.h"
+#include <fstream>
 #include <iostream>
 
 using namespace ui;
 
 void LoginForm::OnLogin()
 {
-	if (use_private_settings_->IsSelected())
-	{
-		chkbox_private_use_proxy_enable_->SetEnabled(false);		
-		std::string url = private_settings_url_->GetUTF8Text();
-		if (url.empty())
-		{
-			ShowMsgBox(this->GetHWND(), MsgboxCallback(), 
-				MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_INPUT_PRIVATESETTINGS_URL"), false);
-			chkbox_private_use_proxy_enable_->SetEnabled(true);
-			return;
-		}		
-		nim_http::SetGlobalProxy(nim::kNIMProxyNone, "", 0, "", "");		
-		nim_http::HttpRequest req(url, nullptr,0,
-		[this, url](bool ret, int code, const std::string& configs) {
-			Post2UI(this->ToWeakCallback([this,ret,code, configs, url]() {
-				if (ret && code == nim::kNIMResSuccess)
-				{
-					Json::Value json_config;
-					if (Json::Reader().parse(configs, json_config) && json_config.isObject() &&
-						json_config.isMember("version") && json_config.isMember("link"))
-					{
-						ConfigHelper::GetInstance()->UsePrivateSettings(true, url);
-						std::string priavet_setting_path =  nbase::UTF16ToUTF8(QPath::GetNimAppDataDir(L"").append(L"nim_private_server.conf"));
-						std::ofstream config(priavet_setting_path, std::ios::out | std::ios::trunc);
-						if (config.is_open())
-						{
-							config << configs;
-							config.close();
-						}						
-						if (InitSDK(priavet_setting_path))
-						{
-							nim::Global::SetProxy(nim::NIMProxyType::kNIMProxyNone, "", 0, "", "");
-							nim_chatroom::ChatRoom::SetProxy(nim_chatroom::kNIMChatRoomProxyNone, "", 0, "", "");
-							if (chkbox_private_use_proxy_enable_->IsSelected())
-							{
-								auto proxy_form = nim_comp::WindowsManager::SingletonShow<ProxyForm>(ProxyForm::kClassName);
-								proxy_form->AttachBeforClose([this]() {
-									Post2UI(ToWeakCallback([this]() {
-										OnLogin_i();
-									}));
-								});
-							}
-							else
-							{										
-								OnLogin_i();
-							}
-						}
-							
-					}					
-					else
-					{
-						ShowMsgBox(this->GetHWND(), MsgboxCallback(), 
-							MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_PRIVATESETTINGS_ERROR_A_CHECK"), 
-							false);
-						chkbox_private_use_proxy_enable_->SetEnabled(true);
-					}						
-				}
-				else
-				{
-					ShowMsgBox(this->GetHWND(), MsgboxCallback(), 
-						MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_UNABLE_DOWNLOAD_PRIVATESETTINGS"),
-						false);
-					chkbox_private_use_proxy_enable_->SetEnabled(true);
-				}
-			}));
-	});
-	nim_http::PostRequest(req);
-	}
-	else
-	{
-		ConfigHelper::GetInstance()->UsePrivateSettings(false);
-		chkbox_private_use_proxy_enable_->SetEnabled(false);
-		if (InitSDK())
-			OnLogin_i();
-	}
+    if (use_private_settings_->IsSelected())
+    {
+        chkbox_private_use_proxy_enable_->SetEnabled(false);
+        std::string url = private_settings_url_->GetUTF8Text();
+        if (url.empty())
+        {
+            ShowMsgBox(this->GetHWND(), MsgboxCallback(),
+                       MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_INPUT_PRIVATESETTINGS_URL"),
+                       false);
+            chkbox_private_use_proxy_enable_->SetEnabled(true);
+            return;
+        }
+        nim_http::SetGlobalProxy(nim::kNIMProxyNone, "", 0, "", "");
+        nim_http::HttpRequest req(url, nullptr, 0, [this, url](bool ret, int code, const std::string &configs) {
+            Post2UI(this->ToWeakCallback([this, ret, code, configs, url]() {
+                if (ret && code == nim::kNIMResSuccess)
+                {
+                    Json::Value json_config;
+                    if (Json::Reader().parse(configs, json_config) && json_config.isObject() &&
+                        json_config.isMember("version") && json_config.isMember("link"))
+                    {
+                        ConfigHelper::GetInstance()->UsePrivateSettings(true, url);
+                        std::string priavet_setting_path =
+                            nbase::UTF16ToUTF8(QPath::GetNimAppDataDir(L"").append(L"nim_private_server.conf"));
+                        std::ofstream config(priavet_setting_path, std::ios::out | std::ios::trunc);
+                        if (config.is_open())
+                        {
+                            config << configs;
+                            config.close();
+                        }
+                        if (InitSDK(priavet_setting_path))
+                        {
+                            nim::Global::SetProxy(nim::NIMProxyType::kNIMProxyNone, "", 0, "", "");
+                            nim_chatroom::ChatRoom::SetProxy(nim_chatroom::kNIMChatRoomProxyNone, "", 0, "", "");
+                            if (chkbox_private_use_proxy_enable_->IsSelected())
+                            {
+                                auto proxy_form =
+                                    nim_comp::WindowsManager::SingletonShow<ProxyForm>(ProxyForm::kClassName);
+                                proxy_form->AttachBeforClose(
+                                    [this]() { Post2UI(ToWeakCallback([this]() { OnLogin_i(); })); });
+                            }
+                            else
+                            {
+                                OnLogin_i();
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ShowMsgBox(this->GetHWND(), MsgboxCallback(),
+                                   MutiLanSupport::GetInstance()->GetStringViaID(
+                                       L"STRID_LOGIN_FORM_PRIVATESETTINGS_ERROR_A_CHECK"),
+                                   false);
+                        chkbox_private_use_proxy_enable_->SetEnabled(true);
+                    }
+                }
+                else
+                {
+                    ShowMsgBox(this->GetHWND(), MsgboxCallback(),
+                               MutiLanSupport::GetInstance()->GetStringViaID(
+                                   L"STRID_LOGIN_FORM_UNABLE_DOWNLOAD_PRIVATESETTINGS"),
+                               false);
+                    chkbox_private_use_proxy_enable_->SetEnabled(true);
+                }
+            }));
+        });
+        nim_http::PostRequest(req);
+    }
+    else
+    {
+        ConfigHelper::GetInstance()->UsePrivateSettings(false);
+        chkbox_private_use_proxy_enable_->SetEnabled(false);
+        if (InitSDK())
+            OnLogin_i();
+    }
 }
 void LoginForm::OnLogin_i()
 {
-	DoInitUiKit(nim_ui::InitManager::kIM);
-	SetAnonymousChatroomVisible(false);
-	DoBeforeLogin();
+    DoInitUiKit(nim_ui::InitManager::kIM);
+    SetAnonymousChatroomVisible(false);
+    DoBeforeLogin();
 }
-bool LoginForm::InitSDK(const std::string& pravate_settings_file_path)
+bool LoginForm::InitSDK(const std::string &pravate_settings_file_path)
 {
-	if (!nim_ui::RunTimeDataManager::GetInstance()->IsSDKInited())
-	{		
-		if (!NimAPP::GetInstance()->InitNim(pravate_settings_file_path))
-		{
-			ShowMsgBox(this->GetHWND(), MsgboxCallback(), 
-				MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_SDK_INIT_ERR_CHECK_PRIVATESETTINGS"),
-				false);
-			return false;
-		}	
-	}
-	return true;
+    if (!nim_ui::RunTimeDataManager::GetInstance()->IsSDKInited())
+    {
+        if (!NimAPP::GetInstance()->InitNim(pravate_settings_file_path))
+        {
+            ShowMsgBox(
+                this->GetHWND(), MsgboxCallback(),
+                MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_SDK_INIT_ERR_CHECK_PRIVATESETTINGS"),
+                false);
+            return false;
+        }
+    }
+    return true;
+}
+
+void LoginForm::OnGetSmsCode()
+{
+    std::string mobile = user_name_edit_->GetUTF8Text();
+    StringHelper::Trim(mobile);
+
+    if (mobile.empty())
+    {
+        ShowLoginTip(L"请输入手机号");
+        return;
+    }
+
+    // 简单的手机号验证
+    if (mobile.length() != 11)
+    {
+        ShowLoginTip(L"请输入正确的手机号");
+        return;
+    }
+
+    btn_get_code_->SetEnabled(false);
+    btn_get_code_->SetText(L"发送中...");
+
+    current_mobile_ = mobile;
+
+    if (!nim_ui::RunTimeDataManager::GetInstance()->IsSDKInited() && !InitSDK())
+        return;
+
+    // 调用发送验证码接口
+    app_sdk::AppSDKInterface::GetInstance()->InvokeSendSmsCode(
+        mobile, ToWeakCallback([this](int code, bool is_first_register, const std::string &request_id,
+                                      const std::string &err_msg) {
+            OnGetSmsCodeCallback(code, is_first_register, request_id, err_msg);
+        }));
+}
+
+void LoginForm::OnGetSmsCodeCallback(int code, bool is_first_register, const std::string &request_id,
+                                     const std::string &err_msg)
+{
+    if (code == 200)
+    {
+        ShowLoginTip(L"验证码发送成功");
+        countdown_seconds_ = 60;
+        StartCodeCountdown();
+    }
+    else
+    {
+        btn_get_code_->SetEnabled(true);
+        btn_get_code_->SetText(L"获取验证码");
+
+        std::wstring error_msg = L"发送验证码失败";
+        if (!err_msg.empty())
+        {
+            error_msg = nbase::UTF8ToUTF16(err_msg);
+        }
+        else
+        {
+            error_msg += L" (错误码: " + std::to_wstring(code) + L")";
+        }
+        ShowLoginTip(error_msg);
+    }
+}
+
+void LoginForm::OnLoginByCodeCallback(int code, const std::string &im_accid, const std::string &im_token,
+                                      const std::string &request_id, const std::string &err_msg)
+{
+    if (code == 200)
+    {
+        // 使用 imAccid 和 imToken 进行 NIM 登录
+        if (!im_accid.empty() && !im_token.empty())
+        {
+            nim_ui::LoginManager::GetInstance()->DoLogin(im_accid, im_token);
+        }
+        else
+        {
+            OnCancelLogin();
+            ShowLoginTip(L"登录信息不完整");
+        }
+    }
+    else
+    {
+        OnCancelLogin();
+        btn_get_code_->SetEnabled(true);
+
+        std::wstring error_msg = L"登录失败";
+        if (!err_msg.empty())
+        {
+            error_msg = nbase::UTF8ToUTF16(err_msg);
+        }
+        else
+        {
+            error_msg += L" (错误码: " + std::to_wstring(code) + L")";
+        }
+        ShowLoginTip(error_msg);
+    }
+}
+
+void LoginForm::StartCodeCountdown()
+{
+    if (countdown_seconds_ > 0)
+    {
+        btn_get_code_->SetText(L"重新发送(" + std::to_wstring(countdown_seconds_) + L")");
+        countdown_seconds_--;
+
+        nbase::ThreadManager::PostDelayedTask(ToWeakCallback([this]() { StartCodeCountdown(); }),
+                                              nbase::TimeDelta::FromSeconds(1));
+    }
+    else
+    {
+        btn_get_code_->SetEnabled(true);
+        btn_get_code_->SetText(L"获取验证码");
+    }
 }
 void LoginForm::DoInitUiKit(nim_ui::InitManager::InitMode mode)
 {
-	// InitUiKit接口第一个参数决定是否启用事件订阅模块，默认为false，如果是云信demo app则为true
-	// 如果你的App开启了事件订阅功能，则此参数改为true
-	nim_ui::InitManager::GetInstance()->InitUiKit(app_sdk::AppSDKInterface::IsNimDemoAppKey(app_sdk::AppSDKInterface::GetAppKey()), mode);
+    // InitUiKit接口第一个参数决定是否启用事件订阅模块，默认为false，如果是云信demo app则为true
+    // 如果你的App开启了事件订阅功能，则此参数改为true
+    nim_ui::InitManager::GetInstance()->InitUiKit(
+        app_sdk::AppSDKInterface::IsNimDemoAppKey(app_sdk::AppSDKInterface::GetAppKey()), mode);
 }
 void LoginForm::DoBeforeLogin()
 {
-	std::string username = user_name_edit_->GetUTF8Text();
-	StringHelper::Trim( username );
-	std::wstring user_name_temp = nbase::UTF8ToUTF16(username);
-	user_name_temp = StringHelper::MakeLowerString(user_name_temp);
-	username = nbase::UTF16ToUTF8(user_name_temp);
-	if( username.empty() )
-	{
-		usericon_->SetEnabled(false);
-		ShowLoginTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ACCOUNT_EMPTY"));
-		chkbox_private_use_proxy_enable_->SetEnabled(true);
-		return;
-	}
+    std::string mobile = user_name_edit_->GetUTF8Text();
+    StringHelper::Trim(mobile);
+    if (mobile.empty())
+    {
+        usericon_->SetEnabled(false);
+        ShowLoginTip(L"请输入手机号");
+        chkbox_private_use_proxy_enable_->SetEnabled(true);
+        return;
+    }
 
-	std::string password = password_edit_->GetUTF8Text();
-	StringHelper::Trim( password );
-	if( password.empty() )
-	{
-		passwordicon_->SetEnabled(false);
-		ShowLoginTip(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_TIP_PASSWORD_EMPTY"));
-		chkbox_private_use_proxy_enable_->SetEnabled(true);
-		return;
-	}	
-	usericon_->SetEnabled(true);
-	passwordicon_->SetEnabled(true);
-	StartLogin(username, password);
+    std::string sms_code = password_edit_->GetUTF8Text();
+    StringHelper::Trim(sms_code);
+    if (sms_code.empty())
+    {
+        passwordicon_->SetEnabled(false);
+        ShowLoginTip(L"请输入验证码");
+        chkbox_private_use_proxy_enable_->SetEnabled(true);
+        return;
+    }
+
+    usericon_->SetEnabled(true);
+    passwordicon_->SetEnabled(true);
+
+    // 使用验证码登录
+    user_name_edit_->SetEnabled(false);
+    password_edit_->SetEnabled(false);
+    btn_get_code_->SetEnabled(false);
+
+    login_error_tip_->SetVisible(false);
+    login_ing_tip_->SetVisible(true);
+
+    btn_login_->SetVisible(false);
+    btn_cancel_->SetVisible(true);
+
+    current_mobile_ = mobile;
+
+    if (!nim_ui::RunTimeDataManager::GetInstance()->IsSDKInited() && !InitSDK())
+        return;
+
+    // 调用验证码登录接口
+    app_sdk::AppSDKInterface::GetInstance()->InvokeLoginByCode(
+        mobile, sms_code,
+        ToWeakCallback([this](int code, const std::string &im_accid, const std::string &im_token,
+                              const std::string &request_id, const std::string &err_msg) {
+            OnLoginByCodeCallback(code, im_accid, im_token, request_id, err_msg);
+        }));
 }
 
 void LoginForm::DoRegisterAccount()
 {
-	ConfigHelper::GetInstance()->UsePrivateSettings(false);
-	chkbox_private_use_proxy_enable_->SetEnabled(false);
-	if (!nim_ui::RunTimeDataManager::GetInstance()->IsSDKInited() && !InitSDK())
-			return;
-	if(0)
-	{//cqu227hk
-		//auto task = ToWeakCallback([](int res, const std::string& err_msg) {});
-		std::string password = nim::Tool::GetMd5("kuikui");
-		std::string username, nickname;
-		for (int i = 10; i < 8000; i++)
-		{
-			username.clear();
-			username.append("cqu227hk_").append(std::to_string(i));
-			nickname.clear();
-			nickname.append("hk_").append(std::to_string(i));
-			app_sdk::AppSDKInterface::GetInstance()->InvokeRegisterAccount(username, password, nickname, ToWeakCallback([i](int res, const std::string& err_msg) {
-				std::cout << "--------------------- " << i << " code " << res << "--------------------" << std::endl;
-				}));
-			Sleep(10);
-		}	
-		return;
-	}
-	
+    ConfigHelper::GetInstance()->UsePrivateSettings(false);
+    chkbox_private_use_proxy_enable_->SetEnabled(false);
+    if (!nim_ui::RunTimeDataManager::GetInstance()->IsSDKInited() && !InitSDK())
+        return;
+    MutiLanSupport *mls = MutiLanSupport::GetInstance();
+    std::string username = user_name_edit_->GetUTF8Text();
+    StringHelper::Trim(username);
+    std::string password = password_edit_->GetUTF8Text();
+    StringHelper::Trim(password);
+    std::string nickname = nick_name_edit_->GetUTF8Text();
+    StringHelper::Trim(nickname);
+    if (password.length() < 6 || password.length() > 128)
+    {
+        ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_PASSWORD_RESTRICT"));
+    }
+    else if (nickname.empty())
+    {
+        ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_NICKNAME_RESTRICT"));
+    }
+    else
+    {
+        btn_register_->SetEnabled(false);
+        btn_login_->SetVisible(false);
 
+        password = nim::Tool::GetMd5(password);
+        auto task = ToWeakCallback([this](int res, const std::string &err_msg) {
+            if (res == 200)
+            {
+                register_ok_toast_->SetVisible(true);
+                nbase::ThreadManager::PostDelayedTask(
+                    ToWeakCallback([this]() { register_ok_toast_->SetVisible(false); }),
+                    nbase::TimeDelta::FromSeconds(2));
 
-	MutiLanSupport* mls = MutiLanSupport::GetInstance();
-	std::string username = user_name_edit_->GetUTF8Text();
-	StringHelper::Trim(username);
-	std::string password = password_edit_->GetUTF8Text();
-	StringHelper::Trim(password);
-	std::string nickname = nick_name_edit_->GetUTF8Text();
-	StringHelper::Trim(nickname);
-	if (password.length() < 6 || password.length() > 128)
-	{
-		ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_PASSWORD_RESTRICT"));
-	}
-	else if (nickname.empty())
-	{
-		ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_NICKNAME_RESTRICT"));
-	}
-	else 
-	{
-		btn_register_->SetEnabled(false);
-		btn_login_->SetVisible(false);
-
-		password = nim::Tool::GetMd5(password);
-		auto task = ToWeakCallback([this](int res, const std::string& err_msg) {
-			if (res == 200)
-			{
-				register_ok_toast_->SetVisible(true);
-				nbase::ThreadManager::PostDelayedTask(ToWeakCallback([this]() {
-					register_ok_toast_->SetVisible(false);
-				}), nbase::TimeDelta::FromSeconds(2));
-
-				nbase::ThreadManager::PostDelayedTask(ToWeakCallback([this]() {
-					SetTaskbarTitle(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_LOGIN"));
-					FindControl(L"enter_panel")->SetBkImage(L"user_password.png");
-					FindControl(L"nick_name_panel")->SetVisible(false);
-					FindControl(L"enter_login")->SetVisible(false);
-					FindControl(L"register_account")->SetVisible(true);
-					FindControl(L"login_cache_conf")->SetVisible(true);
-					SetAnonymousChatroomVisible(!login_function_);
-					btn_register_->SetEnabled(true);
-					btn_register_->SetVisible(false);
-					btn_login_->SetVisible(true);
-				}), nbase::TimeDelta::FromMilliseconds(2500));
-			}
-			else
-			{
-				MutiLanSupport* mls = MutiLanSupport::GetInstance();
-				if (res == 601) {
-					ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ACCOUNT_RESTRICT"));
-				}
-				else if (res == 602) {
-					ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ACCOUNT_EXIST"));
-				}
-				else if (res == 603) {
-					ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_NICKNAME_TOO_LONG"));
-				}
-				else {
-					ShowLoginTip(nbase::UTF8ToUTF16(err_msg));
-				}
-				btn_register_->SetEnabled(true);
-			}
-		});
-		app_sdk::AppSDKInterface::GetInstance()->InvokeRegisterAccount(username, password, nickname, task);
-	}
+                nbase::ThreadManager::PostDelayedTask(
+                    ToWeakCallback([this]() {
+                        SetTaskbarTitle(MutiLanSupport::GetInstance()->GetStringViaID(L"STRID_LOGIN_FORM_LOGIN"));
+                        FindControl(L"enter_panel")->SetBkImage(L"user_password.png");
+                        FindControl(L"nick_name_panel")->SetVisible(false);
+                        FindControl(L"enter_login")->SetVisible(false);
+                        FindControl(L"register_account")->SetVisible(true);
+                        FindControl(L"login_cache_conf")->SetVisible(true);
+                        SetAnonymousChatroomVisible(!login_function_);
+                        btn_register_->SetEnabled(true);
+                        btn_register_->SetVisible(false);
+                        btn_login_->SetVisible(true);
+                    }),
+                    nbase::TimeDelta::FromMilliseconds(2500));
+            }
+            else
+            {
+                MutiLanSupport *mls = MutiLanSupport::GetInstance();
+                if (res == 601)
+                {
+                    ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ACCOUNT_RESTRICT"));
+                }
+                else if (res == 602)
+                {
+                    ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ACCOUNT_EXIST"));
+                }
+                else if (res == 603)
+                {
+                    ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_NICKNAME_TOO_LONG"));
+                }
+                else
+                {
+                    ShowLoginTip(nbase::UTF8ToUTF16(err_msg));
+                }
+                btn_register_->SetEnabled(true);
+            }
+        });
+        app_sdk::AppSDKInterface::GetInstance()->InvokeRegisterAccount(username, password, nickname, task);
+    }
 }
 
-void LoginForm::StartLogin( std::string username, std::string password )
+void LoginForm::StartLogin(std::string username, std::string password)
 {
-	if (!nim_ui::LoginManager::GetInstance()->CheckSingletonRun(nbase::UTF8ToUTF16(username)))
-	{
-		ShowMsgBox(this->GetHWND(), MsgboxCallback(), L"STRID_CHECK_SINGLETON_RUN", true);
-		return;
-	}
-		
-	user_name_edit_->SetEnabled(false);
-	password_edit_->SetEnabled(false);
+    if (!nim_ui::LoginManager::GetInstance()->CheckSingletonRun(nbase::UTF8ToUTF16(username)))
+    {
+        ShowMsgBox(this->GetHWND(), MsgboxCallback(), L"STRID_CHECK_SINGLETON_RUN", true);
+        return;
+    }
 
-	login_error_tip_->SetVisible(false);
-	login_ing_tip_->SetVisible(true);
+    user_name_edit_->SetEnabled(false);
+    password_edit_->SetEnabled(false);
 
-	btn_login_->SetVisible(false);
-	btn_cancel_->SetVisible(true);
+    login_error_tip_->SetVisible(false);
+    login_ing_tip_->SetVisible(true);
 
-	nim_ui::LoginManager::GetInstance()->DoLogin(username, password);
+    btn_login_->SetVisible(false);
+    btn_cancel_->SetVisible(true);
+
+    nim_ui::LoginManager::GetInstance()->DoLogin(username, password);
 }
 
 void LoginForm::RegLoginManagerCallback()
 {
-	nim_ui::OnLoginError cb_result = [this](int error){
-		this->OnLoginError(error);
-	};
+    nim_ui::OnLoginError cb_result = [this](int error) { this->OnLoginError(error); };
 
-	nim_ui::OnCancelLogin cb_cancel = [this]{
-		this->OnCancelLogin();
-	};
+    nim_ui::OnCancelLogin cb_cancel = [this] { this->OnCancelLogin(); };
 
-	nim_ui::OnHideWindow cb_hide = [this]{
-		this->ShowWindow(false, false);
-	};
+    nim_ui::OnHideWindow cb_hide = [this] { this->ShowWindow(false, false); };
 
-	nim_ui::OnDestroyWindow cb_destroy = [this]{
-		PublicDB::GetInstance()->SaveLoginData();
-		::DestroyWindow(this->GetHWND());
-	};
+    nim_ui::OnDestroyWindow cb_destroy = [this] {
+        PublicDB::GetInstance()->SaveLoginData();
+        ::DestroyWindow(this->GetHWND());
+    };
 
-	nim_ui::OnShowMainWindow cb_show_main = [this]{
-		nim_ui::UIStyle uistyle = nim_ui::UIStyle::join;
-		switch (ConfigHelper::GetInstance()->GetUIStyle())
-		{
-		case  0:
-			uistyle = nim_ui::UIStyle::conventional;
-			break;
-		case 1:
-			uistyle = nim_ui::UIStyle::join;
-			break;
-		default:
-			break;
-		}
+    nim_ui::OnShowMainWindow cb_show_main = [this] {
+        nim_ui::UIStyle uistyle = nim_ui::UIStyle::join;
+        switch (ConfigHelper::GetInstance()->GetUIStyle())
+        {
+        case 0:
+            uistyle = nim_ui::UIStyle::conventional;
+            break;
+        case 1:
+            uistyle = nim_ui::UIStyle::join;
+            break;
+        default:
+            break;
+        }
 
-		nim_ui::RunTimeDataManager::GetInstance()->SetUIStyle(uistyle);
-		switch (nim_ui::RunTimeDataManager::GetInstance()->GetUIStyle())
-		{
-		case nim_ui::UIStyle::join:
-			nim_comp::MainPluginsManager::GetInstance()->RegPlugin<CefTestPlugin>("CefTestPlugin");
-			nim_comp::MainPluginsManager::GetInstance()->RegPlugin<ChatroomPlugin>("ChatroomPlugin");
-			nim_comp::MainPluginsManager::GetInstance()->RegPlugin<GifTestPlugin>("GifTestPlugin");
-			nim_comp::MainPluginsManager::GetInstance()->RegPlugin<AddresBookPlugin>("AddresBookPlugin");
-			nim_ui::WindowsManager::SingletonShow<nim_comp::MainFormEx>(nim_comp::MainFormEx::kClassName,new MainFormMenu());
-			break;
-		case nim_ui::UIStyle::conventional:
-			nim_ui::WindowsManager::SingletonShow<MainForm>(MainForm::kClassName);
-			break;
-		default:
-			break;
-		}	
-	};
+        nim_ui::RunTimeDataManager::GetInstance()->SetUIStyle(uistyle);
+        switch (nim_ui::RunTimeDataManager::GetInstance()->GetUIStyle())
+        {
+        case nim_ui::UIStyle::join:
+            nim_comp::MainPluginsManager::GetInstance()->RegPlugin<CefTestPlugin>("CefTestPlugin");
+            nim_comp::MainPluginsManager::GetInstance()->RegPlugin<ChatroomPlugin>("ChatroomPlugin");
+            nim_comp::MainPluginsManager::GetInstance()->RegPlugin<GifTestPlugin>("GifTestPlugin");
+            nim_comp::MainPluginsManager::GetInstance()->RegPlugin<AddresBookPlugin>("AddresBookPlugin");
+            nim_ui::WindowsManager::SingletonShow<nim_comp::MainFormEx>(nim_comp::MainFormEx::kClassName,
+                                                                        new MainFormMenu());
+            break;
+        case nim_ui::UIStyle::conventional:
+            nim_ui::WindowsManager::SingletonShow<MainForm>(MainForm::kClassName);
+            break;
+        default:
+            break;
+        }
+    };
 
-	nim_ui::LoginManager::GetInstance()->RegLoginManagerCallback(ToWeakCallback(cb_result),
-		ToWeakCallback(cb_cancel),
-		ToWeakCallback(cb_hide),
-		ToWeakCallback(cb_destroy),
-		ToWeakCallback(cb_show_main));
+    nim_ui::LoginManager::GetInstance()->RegLoginManagerCallback(ToWeakCallback(cb_result), ToWeakCallback(cb_cancel),
+                                                                 ToWeakCallback(cb_hide), ToWeakCallback(cb_destroy),
+                                                                 ToWeakCallback(cb_show_main));
 }
 
-void LoginForm::OnLoginError( int error )
+void LoginForm::OnLoginError(int error)
 {
-	if (error == nim::kNIMResSuccess)
-	{
-		OnLoginOK();
-	}
-	else
-	{
-		OnCancelLogin();
-		if (use_private_settings_->IsSelected())
-			chkbox_private_use_proxy_enable_->SetEnabled(true);
-		MutiLanSupport* mls = MutiLanSupport::GetInstance();
-		if (error == nim::kNIMResUidPassError)
-		{
- 			usericon_->SetEnabled(false);
- 			passwordicon_->SetEnabled(false);
-			ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_PASSWORD_ERROR"));
-		}
-		else if (error == nim::kNIMResConnectionError)
-		{
-			ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_NETWORK_ERROR"));
-		}
-		else if (error == nim::kNIMResExist)
-		{
-			ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_LOCATION_CHANGED"));
-		}
-		else
-		{
-			std::wstring tip = nbase::StringPrintf(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ERROR_CODE").c_str(), error);
-			ShowLoginTip(tip);
-		}
-	}
+    if (error == nim::kNIMResSuccess)
+    {
+        OnLoginOK();
+    }
+    else
+    {
+        OnCancelLogin();
+        if (use_private_settings_->IsSelected())
+            chkbox_private_use_proxy_enable_->SetEnabled(true);
+        MutiLanSupport *mls = MutiLanSupport::GetInstance();
+        if (error == nim::kNIMResUidPassError)
+        {
+            usericon_->SetEnabled(false);
+            passwordicon_->SetEnabled(false);
+            ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_PASSWORD_ERROR"));
+        }
+        else if (error == nim::kNIMResConnectionError)
+        {
+            ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_NETWORK_ERROR"));
+        }
+        else if (error == nim::kNIMResExist)
+        {
+            ShowLoginTip(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_LOCATION_CHANGED"));
+        }
+        else
+        {
+            std::wstring tip =
+                nbase::StringPrintf(mls->GetStringViaID(L"STRID_LOGIN_FORM_TIP_ERROR_CODE").c_str(), error);
+            ShowLoginTip(tip);
+        }
+    }
 }
 
 void LoginForm::OnCancelLogin()
 {
-	usericon_->SetEnabled(true);
-	passwordicon_->SetEnabled(true);
+    usericon_->SetEnabled(true);
+    passwordicon_->SetEnabled(true);
 
-	user_name_edit_->SetEnabled(true);
-	password_edit_->SetEnabled(true);
+    user_name_edit_->SetEnabled(true);
+    password_edit_->SetEnabled(true);
+    btn_get_code_->SetEnabled(countdown_seconds_ <= 0); // 只有在倒计时结束时才启用
 
-	login_ing_tip_->SetVisible(false);
-	login_error_tip_->SetVisible(false);
+    login_ing_tip_->SetVisible(false);
+    login_error_tip_->SetVisible(false);
 
-	btn_login_->SetVisible(true);
-	btn_cancel_->SetVisible(false);
-	btn_cancel_->SetEnabled(true);
+    btn_login_->SetVisible(true);
+    btn_cancel_->SetVisible(false);
+    btn_cancel_->SetEnabled(true);
 }
 
 void LoginForm::ShowLoginTip(std::wstring tip_text)
 {
-	auto task = ToWeakCallback([this, tip_text](){
-		login_ing_tip_->SetVisible(false);
+    auto task = ToWeakCallback([this, tip_text]() {
+        login_ing_tip_->SetVisible(false);
 
-		login_error_tip_->SetText(tip_text);
-		login_error_tip_->SetVisible(true);
-	});
-	Post2UI(task);
+        login_error_tip_->SetText(tip_text);
+        login_error_tip_->SetVisible(true);
+    });
+    Post2UI(task);
 }
 
 void LoginForm::InitLoginData()
 {
-	PublicDB* manager = PublicDB::GetInstance();
-	UTF8String user_name = manager->GetLoginData()->user_name_;
-	UTF8String user_password = manager->GetLoginData()->user_password_;
-	bool remember_user = manager->GetLoginData()->remember_user_ == 1;
-	bool remember_psw = manager->GetLoginData()->remember_psw_ == 1;
+    PublicDB *manager = PublicDB::GetInstance();
+    UTF8String user_name = manager->GetLoginData()->user_name_;
+    UTF8String user_password = manager->GetLoginData()->user_password_;
+    bool remember_user = manager->GetLoginData()->remember_user_ == 1;
+    bool remember_psw = manager->GetLoginData()->remember_psw_ == 1;
 
-	if (!user_name.empty() && !user_password.empty())
-	{
-		if (remember_user)
-		{
-			user_name_edit_->SetUTF8Text(user_name);
-		}
+    if (!user_name.empty() && !user_password.empty())
+    {
+        if (remember_user)
+        {
+            user_name_edit_->SetUTF8Text(user_name);
+        }
 
-		if (remember_psw)
-		{
-			password_edit_->SetUTF8Text(user_password);
-		}
+        if (remember_psw)
+        {
+            password_edit_->SetUTF8Text(user_password);
+        }
 
-		remember_pwd_ckb_->Selected(remember_psw);
-		remember_user_ckb_->Selected(remember_user);
-	}
-	else
-	{
-		remember_pwd_ckb_->Selected(false);
-		remember_user_ckb_->Selected(false);
-	}
+        remember_pwd_ckb_->Selected(remember_psw);
+        remember_user_ckb_->Selected(remember_user);
+    }
+    else
+    {
+        remember_pwd_ckb_->Selected(false);
+        remember_user_ckb_->Selected(false);
+    }
 }
 
 void LoginForm::OnLoginOK()
 {
-	UTF8String user_name = user_name_edit_->GetUTF8Text();
-	UTF8String pass = password_edit_->GetUTF8Text();
+    UTF8String user_name = user_name_edit_->GetUTF8Text();
+    UTF8String pass = password_edit_->GetUTF8Text();
 
-	PublicDB::GetInstance()->GetLoginData()->status_ = kLoginDataStatusValid;
-	PublicDB::GetInstance()->GetLoginData()->user_name_ = user_name;
-	PublicDB::GetInstance()->GetLoginData()->user_password_ = pass;
-	PublicDB::GetInstance()->GetLoginData()->remember_psw_ = remember_pwd_ckb_->IsSelected() ? 1 : 0;
-	PublicDB::GetInstance()->GetLoginData()->remember_user_ = remember_user_ckb_->IsSelected() ? 1 : 0;
-	PublicDB::GetInstance()->SaveLoginData();
-	nim_http::InitLog(nbase::UTF16ToUTF8(nim_comp::GetUserDataPath().append(L"nim_demo_http.log")));
+    PublicDB::GetInstance()->GetLoginData()->status_ = kLoginDataStatusValid;
+    PublicDB::GetInstance()->GetLoginData()->user_name_ = user_name;
+    PublicDB::GetInstance()->GetLoginData()->user_password_ = pass;
+    PublicDB::GetInstance()->GetLoginData()->remember_psw_ = remember_pwd_ckb_->IsSelected() ? 1 : 0;
+    PublicDB::GetInstance()->GetLoginData()->remember_user_ = remember_user_ckb_->IsSelected() ? 1 : 0;
+    PublicDB::GetInstance()->SaveLoginData();
+    nim_http::InitLog(nbase::UTF16ToUTF8(nim_comp::GetUserDataPath().append(L"nim_demo_http.log")));
 }
 
 void LoginForm::CheckAutoLogin()
 {
-	bool pwd_save = remember_pwd_ckb_->IsSelected();
-	bool autorun_flag = QCommand::Get(L"autorun") == L"1";
-	QLOG_APP(L"CheckAutoLogin: pwd:{0} autorun:{1}") << pwd_save << autorun_flag;
-	if (pwd_save && autorun_flag)
-	{
-		OnLogin();
-	}
-
+    bool pwd_save = remember_pwd_ckb_->IsSelected();
+    bool autorun_flag = QCommand::Get(L"autorun") == L"1";
+    QLOG_APP(L"CheckAutoLogin: pwd:{0} autorun:{1}") << pwd_save << autorun_flag;
+    if (pwd_save && autorun_flag)
+    {
+        OnLogin();
+    }
 }
 bool LoginForm::OnSwitchToLoginPage()
 {
-	MutiLanSupport* multilan = MutiLanSupport::GetInstance();
-	SetTaskbarTitle(multilan->GetStringViaID(L"STRID_LOGIN_FORM_LOGIN"));
-	FindControl(L"nick_name_panel")->SetVisible(false);
-	FindControl(L"enter_login")->SetVisible(false);
-	FindControl(L"enter_panel")->SetBkImage(L"user_password.png");
-	FindControl(L"login_cache_conf")->SetVisible(true);
-	SetAnonymousChatroomVisible(!login_function_);
-	btn_register_->SetVisible(false);
-	btn_login_->SetVisible();
-	user_name_edit_->SetText(L"");
-	user_name_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_ACCOUNT"));
-	password_edit_->SetText(L"");
-	password_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_PASSWORD"));
-	FindControl(L"register_account")->SetVisible(true);
-	FindControl(L"private_settings")->SetVisible(!login_function_);
+    MutiLanSupport *multilan = MutiLanSupport::GetInstance();
+    SetTaskbarTitle(multilan->GetStringViaID(L"STRID_LOGIN_FORM_LOGIN"));
+    FindControl(L"nick_name_panel")->SetVisible(false);
+    FindControl(L"enter_login")->SetVisible(false);
+    FindControl(L"enter_panel")->SetBkImage(L"user_password.png");
+    FindControl(L"login_cache_conf")->SetVisible(true);
+    SetAnonymousChatroomVisible(!login_function_);
+    btn_register_->SetVisible(false);
+    btn_login_->SetVisible();
+    user_name_edit_->SetText(L"");
+    user_name_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_ACCOUNT"));
+    password_edit_->SetText(L"");
+    password_edit_->SetPromptText(multilan->GetStringViaID(L"STRID_LOGIN_FORM_PASSWORD"));
+    FindControl(L"register_account")->SetVisible(true);
+    FindControl(L"private_settings")->SetVisible(!login_function_);
 
-	return true;
+    return true;
 }

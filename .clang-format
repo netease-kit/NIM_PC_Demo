@@ -1,8 +1,1 @@
-BasedOnStyle: Chromium
-ColumnLimit: 150
-BreakBeforeBraces: Attach
-IndentWidth: 4
-BreakConstructorInitializers: BeforeComma
-ConstructorInitializerAllOnOneLineOrOnePerLine: false
-ConstructorInitializerIndentWidth: 4
-AccessModifierOffset: -4
+BasedOnStyle: Microsoft
