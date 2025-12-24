@@ -1,0 +1,35 @@
+From 881ccdf39a0f873b31bf0875cc387151aab91840 Mon Sep 17 00:00:00 2001
+From: Dylan <dengjiajia@corp.netease.com>
+Date: Fri, 18 Jul 2025 18:04:28 +0800
+Subject: [PATCH] fix: crash after post remove socket event
+
+Signed-off-by: Dylan <dengjiajia@corp.netease.com>
+---
+ src/tnet_transport_poll.c | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/src/tnet_transport_poll.c b/src/tnet_transport_poll.c
+index 306c830..d468c19 100644
+--- a/src/tnet_transport_poll.c
++++ b/src/tnet_transport_poll.c
+@@ -705,7 +705,7 @@ void *tnet_transport_mainthread(void *param)
+                     if(remove_socket) {
+                         fd = active_socket->fd;
+                         tnet_transport_remove_socket(transport, &active_socket->fd);
+-                        TSK_RUNNABLE_ENQUEUE(transport, event_closed, transport->callback_data, fd);
++                        // TSK_RUNNABLE_ENQUEUE(transport, event_closed, transport->callback_data, fd);
+                         continue;
+                     }
+                     goto TNET_POLLIN_DONE;
+@@ -801,7 +801,7 @@ TNET_POLLIN_DONE:
+                     TSK_DEBUG_INFO("NETWORK EVENT FOR SERVER [%s] -- TNET_POLLHUP(%d)", transport->description, fd);
+ 
+                     tnet_transport_remove_socket(transport, &active_socket->fd);
+-                    TSK_RUNNABLE_ENQUEUE(transport, event_closed, transport->callback_data, fd);
++                    // TSK_RUNNABLE_ENQUEUE(transport, event_closed, transport->callback_data, fd);
+                     continue;
+                 }
+             }
+-- 
+2.39.5 (Apple Git-154)
+

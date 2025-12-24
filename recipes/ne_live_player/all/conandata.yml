@@ -1,0 +1,22 @@
+sources:
+  "1.1.1":
+    Windows:
+      x86:
+        url: "https://yx-web-nosdn.netease.im/package/1727665485241/ne_live_player_v1.1.1.tar.gz"
+        sha256: "f59d38b6f677157044c2cd4782ada21f59589a0dd23795148aac8c8412d35b9d"
+  "1.6.0":
+    Windows:
+      url: "https://yx-web-nosdn.netease.im/package/1655891879207/LivePlayer_Windows_SDK_v1.6.0.zip"
+      sha256: "a57714a2d93e3219deb3c6612a637e65c47c094d004f07609cce354307e21cae"
+  "1.6.1":
+    Windows:
+      url: "https://yx-web-nosdn.netease.im/package/1657865553/LivePlayer_Windows_SDK_v1.6.1.zip"
+      sha256: "cad7d8ecf1ee12bb798d110fdd87fa7faa208049384051c17c1700f231c20359"
+  "1.6.9":
+    Windows:
+      url: "https://yx-web-nosdn.netease.im/package/1734572924130/Windows-LivePlayer-SDK-1.6.9.zip"
+      sha256: "dd7840fb9b2a31f9cdb6e8baf66238be76986a3773934a2b98603ab0b2977936"
+  "1.6.9.1":
+    Windows:
+      url: "https://yx-web-nosdn.netease.im/package/1738810208841/Windows-LivePlayer-SDK-1.6.9.1.zip"
+      sha256: "6e453fde4538057bccc21660c713a6ad082b57676f5b5079fea786853d4d4ca7"

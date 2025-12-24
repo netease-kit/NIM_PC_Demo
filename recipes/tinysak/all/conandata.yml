@@ -1,0 +1,7 @@
+sources:
+  "0.1.0":
+    url: "https://github.com/netease-im/tinySAK/archive/refs/tags/0.1.0.tar.gz"
+    sha256: "40ec135b35d667f54853dac78f41b9b74f0992414093736d9300c212df0f22a5"
+  "0.1.1":
+    url: "https://yx-web-nosdn.netease.im/package/1698311894407/tinySAK-0.1.1.tar.gz"
+    sha256: "148fab44ac25be2b0bdce2c348dcf32f47f782d5efee9e2e78127437bae9ace7"

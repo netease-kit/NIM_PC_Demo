@@ -1,0 +1,25 @@
+sources:
+  "0.1.1":
+    url: "https://github.com/netease-im/tinyNET/archive/refs/tags/0.1.1.tar.gz"
+    sha256: "05e34cf60a74f4139965913610be8e4eccd0d6f721e734d3f1e785ce113973ec"
+  "0.1.2":
+    url: "https://github.com/netease-im/tinyNET/archive/refs/tags/0.1.2.tar.gz"
+    sha256: "6385f64880bf27783d412a001dea93d3613553f30099077535afa9f77e8c1559"
+  "0.1.3":
+    url: "https://yx-web-nosdn.netease.im/package/1698311915948/tinyNET-0.1.3.tar.gz"
+    sha256: "92ee7ef4af16a4bf9fca452e10a87df132b6e2ddceaa2c42531954cc692f5d51"
+  "0.1.4":
+    url: "https://github.com/netease-im/tinyNET/archive/refs/heads/main.zip"
+    sha256: "7f70722ad79b706b4397128d59a16afa5143cab37ea12a006c0bed4bdae8ed5c"
+  "0.1.6":
+    url: "https://yx-web-nosdn.netease.im/package/1698311915948/tinyNET-0.1.3.tar.gz"
+    sha256: "92ee7ef4af16a4bf9fca452e10a87df132b6e2ddceaa2c42531954cc692f5d51"
+patches:
+  "0.1.4":
+    - patch_file: "patches/0001-fix-crash-after-post-remove-socket-event.patch"
+      patch_description: "Fix crash after post remove socket event"
+      patch_type: "yunxin"
+  "0.1.6":
+    - patch_file: "patches/0001-fix-crash-after-post-remove-socket-event.patch"
+      patch_description: "Fix crash after post remove socket event"
+      patch_type: "yunxin"

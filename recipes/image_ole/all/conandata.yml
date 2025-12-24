@@ -1,0 +1,9 @@
+sources:
+  "4.2.0":
+    Windows:
+      x86:
+        url: "https://yx-web-nosdn.netease.im/package/1727665901081/image_ole_v4.2.0.tar.gz"
+        sha256: "3721f1bc6342be53def4a19d273f58bc9a02af3c34ae7b48aa237109bcdc6d3b"
+      x86_64:
+        url: "https://yx-web-nosdn.netease.im/package/1736740100320/image_ole_x64_v4.2.0.tar.gz"
+        sha256: "eba1dad52d49719e207589b1929663db4fe2ba34d84c3f6e8483b33e943e481c"

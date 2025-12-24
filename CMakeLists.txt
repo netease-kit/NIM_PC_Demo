@@ -25,6 +25,10 @@ string(REPLACE "/" "\\\\" RELEASE_OUTPUT_7Z_FILE_WIN ${RELEASE_OUTPUT_7Z_FILE})
 
 project(nim_win_demo)
 
+# Export local recipes before conan install
+include(${CMAKE_CURRENT_LIST_DIR}/.cmake/export_recipes.cmake)
+export_recipes_dynamically()
+
 # Build project with conan
 # https://github.com/conan-io/cmake-conan
 # Download automatically, you can also just copy the conan.cmake file
@@ -36,7 +40,12 @@ execute_process(COMMAND conan config set general.revisions_enabled=True)
 include(${CMAKE_CURRENT_LIST_DIR}/.cmake/conan.cmake)
 conan_add_remote(NAME yunxin URL https://gitlab.com/api/v4/projects/47777150/packages/conan)
 conan_cmake_autodetect(settings)
-conan_cmake_install(PATH_OR_REFERENCE ${CMAKE_CURRENT_LIST_DIR} BUILD missing SETTINGS ${settings})
+conan_cmake_install(PATH_OR_REFERENCE ${CMAKE_CURRENT_LIST_DIR}
+    PROFILE_BUILD default
+    PROFILE_HOST default
+    BUILD missing
+    SETTINGS ${settings}
+)
 include(${CMAKE_BINARY_DIR}/conanbuildinfo.cmake)
 conan_basic_setup()
 

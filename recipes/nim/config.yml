@@ -1,0 +1,7 @@
+versions:
+  "9.10.0":
+    folder: all
+  "9.12.1":
+    folder: all
+  "9.12.2":
+    folder: all
