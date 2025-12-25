@@ -2,7 +2,7 @@
 #include <string>
 #include <map>
 
-#define DEMO_GLOBAL_APP_KEY			"45c6af3c98409b18a84451215d0bdd6e"
+#define DEMO_GLOBAL_APP_KEY			"3e215d27b6a6a9e27dad7ef36dd5b65c"
 #define DEMO_GLOBAL_TEST_APP_KEY	"fe416640c8e8a72734219e1847ad2547"
 
 class QPath

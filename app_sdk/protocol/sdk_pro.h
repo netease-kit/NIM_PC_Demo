@@ -1,5 +1,6 @@
 #pragma once
 #include "base/http/http_protocol_interface_define.h"
+#include "app_sdk_define.h"
 namespace app_sdk
 {	
 	/** @class SDK_PRO
@@ -109,25 +110,78 @@ namespace app_sdk
 			std::string uid_;
 			int type_;
 		};
-		class GetChatroomAddressResponse : public ResponseBase
-		{
-		protected:
-			virtual void OnParse(const std::string& response) override;
+			class GetChatroomAddressResponse : public ResponseBase
+			{
+			protected:
+				virtual void OnParse(const std::string& response) override;
+			public:
+				std::list<std::string> address_;	/**< 聊天室地址，地址通过应用服务器接口获取 */
+			};
+			
+			//发送手机验证码请求/应答
+			class SendSmsCodeRequest : public RequestBase
+			{		
+			public:
+				SendSmsCodeRequest(std::string mobile);
+			protected:
+				virtual std::string OnGetHost() const override;
+				virtual std::string OnGetAPI() const override;
+				virtual void OnGetRequestHead(std::map<std::string, std::string>& heads) const override;
+				virtual void OnGetRequestContent(std::string& content) const override;
+			public:
+				std::string mobile_;
+			};
+			class SendSmsCodeResponse : public ResponseBase
+			{
+			protected:
+				virtual void OnParse(const std::string& response) override;
+			public:
+				bool is_first_register_;
+				std::string request_id_;
+				std::string err_msg_;
+			};
+			
+			//手机验证码登录请求/应答
+			class LoginByCodeRequest : public RequestBase
+			{		
+			public:
+				LoginByCodeRequest(std::string mobile, std::string sms_code);
+			protected:
+				virtual std::string OnGetHost() const override;
+				virtual std::string OnGetAPI() const override;
+				virtual void OnGetRequestHead(std::map<std::string, std::string>& heads) const override;
+				virtual void OnGetRequestContent(std::string& content) const override;
+			public:
+				std::string mobile_;
+				std::string sms_code_;
+			};
+			class LoginByCodeResponse : public ResponseBase
+			{
+			protected:
+				virtual void OnParse(const std::string& response) override;
+			public:
+				LoginByCodeResult result_;
+				std::string request_id_;
+				std::string err_msg_;
+			};
 		public:
-			std::list<std::string> address_;	/**< 聊天室地址，地址通过应用服务器接口获取 */
-		};
-	public:
-		/****************************对外暴露定义*****************************/
+			/****************************对外暴露定义*****************************/
 
-		//注册账号请求/应答
-		using RegisterAccountReq = TSharedHttpRequest<RegisterAccountRequest>;
-		using RegisterAccountRsp = TSharedHttpResponse<RegisterAccountResponse>;
-		//获取聊天室列表请求/应答
-		using GetChatroomListReq = TSharedHttpRequest<GetChatroomListRequest>;
-		using GetChatroomListRsp = TSharedHttpResponse<GetChatroomListResponse>;
-		//获取聊天室列表请求/应答
-		using GetChatroomAddressReq = TSharedHttpRequest<GetChatroomAddressRequest>;
-		using GetChatroomAddressRsp = TSharedHttpResponse<GetChatroomAddressResponse>;
+			//注册账号请求/应答
+			using RegisterAccountReq = TSharedHttpRequest<RegisterAccountRequest>;
+			using RegisterAccountRsp = TSharedHttpResponse<RegisterAccountResponse>;
+			//获取聊天室列表请求/应答
+			using GetChatroomListReq = TSharedHttpRequest<GetChatroomListRequest>;
+			using GetChatroomListRsp = TSharedHttpResponse<GetChatroomListResponse>;
+			//获取聊天室列表请求/应答
+			using GetChatroomAddressReq = TSharedHttpRequest<GetChatroomAddressRequest>;
+			using GetChatroomAddressRsp = TSharedHttpResponse<GetChatroomAddressResponse>;
+			//发送验证码请求/应答
+			using SendSmsCodeReq = TSharedHttpRequest<SendSmsCodeRequest>;
+			using SendSmsCodeRsp = TSharedHttpResponse<SendSmsCodeResponse>;
+			//验证码登录请求/应答
+			using LoginByCodeReq = TSharedHttpRequest<LoginByCodeRequest>;
+			using LoginByCodeRsp = TSharedHttpResponse<LoginByCodeResponse>;
 	};	
 }
 using app_sdk_pro = app_sdk::SDK_PRO;

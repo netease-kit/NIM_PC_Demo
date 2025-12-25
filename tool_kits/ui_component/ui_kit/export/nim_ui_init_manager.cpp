@@ -67,10 +67,12 @@ void InitManager::InitUiKit(bool enable_subscribe_event, InitMode mode)
 		nim::SubscribeEvent::RegPushEventCb(nbase::Bind(&nim_comp::SubscribeEventCallback::OnPushEventCallback, std::placeholders::_1, std::placeholders::_2));
 		nim::SubscribeEvent::RegBatchPushEventCb(nbase::Bind(&nim_comp::SubscribeEventCallback::OnBatchPushEventCallback, std::placeholders::_1, std::placeholders::_2));
 
+		#if !defined(USING_RTC_G2)
 		//注册音视频回调
 		nim::VChat::SetVideoDataCb(true, nim_comp::VChatCallback::VideoCaptureData);
 		nim::VChat::SetVideoDataCb(false, nim_comp::VChatCallback::VideoRecData);
 		nim::VChat::SetCbFunc(nim_comp::VChatCallback::VChatCb);
+		#endif
 
 		//注册白板消息回调
 		nim::Rts::SetStartNotifyCb(nbase::Bind(&nim_comp::RtsCallback::StartNotifyCb, std::placeholders::_1, std::placeholders::_2, std::placeholders::_3, std::placeholders::_4));

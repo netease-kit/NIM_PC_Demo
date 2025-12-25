@@ -8,6 +8,7 @@
 #include <functional>
 #include <condition_variable>
 #include <queue>
+#include <chrono>
 
 #include "task_loop_interface.h"
 #include "base/thread/thread.h"

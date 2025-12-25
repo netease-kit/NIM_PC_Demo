@@ -1,0 +1,56 @@
+stages:
+  - build
+
+windows-x86:
+  stage: build
+  interruptible: true
+  variables:
+    PACKAGE_NAME: "nim-${CI_BUILD_NAME}-${CI_BUILD_REF_SLUG}-${CI_PIPELINE_IID}-build-${CI_PIPELINE_ID}"
+  before_script:
+    - echo "Cleanup conan package cache file..."
+    - rm -rf %CI_BUILD_NAME%/conanbuildinfo.cmake
+  script:
+    - set
+    - git checkout -B "%CI_BUILD_REF_NAME%" "%CI_BUILD_REF%"
+    - cmake -Bbuild -DCMAKE_BUILD_TYPE=Release
+    - cmake --build build --config Release
+    - cmake --build build --config Release --target installer
+  artifacts:
+    name: $PACKAGE_NAME
+    paths:
+     - bin/NIM_Demo_Setup*.exe
+    expire_in: 1 week
+  rules:
+    - if: $CI_BUILD_REF_NAME =~ /^release/
+    - if: $CI_BUILD_REF_NAME =~ /^hotfix/
+    - if: $CI_BUILD_REF_NAME =~ /^develop/
+    - if: $CI_COMMIT_TAG
+  tags:
+    - yunxin-win32-runner
+
+windows-x86_64:
+  stage: build
+  interruptible: true
+  variables:
+    PACKAGE_NAME: "nim-${CI_BUILD_NAME}-${CI_BUILD_REF_SLUG}-${CI_PIPELINE_IID}-build-${CI_PIPELINE_ID}"
+  before_script:
+    - echo "Cleanup conan package cache file..."
+    - rm -rf %CI_BUILD_NAME%/conanbuildinfo.cmake
+  script:
+    - set
+    - git checkout -B "%CI_BUILD_REF_NAME%" "%CI_BUILD_REF%"
+    - cmake -Bbuild -AWin32 -DCMAKE_BUILD_TYPE=Release
+    - cmake --build build --config Release
+    - cmake --build build --config Release --target installer
+  artifacts:
+    name: $PACKAGE_NAME
+    paths:
+     - bin/NIM_Demo_Setup*.exe
+    expire_in: 1 week
+  rules:
+    - if: $CI_BUILD_REF_NAME =~ /^release/
+    - if: $CI_BUILD_REF_NAME =~ /^hotfix/
+    - if: $CI_BUILD_REF_NAME =~ /^develop/
+    - if: $CI_COMMIT_TAG
+  tags:
+    - yunxin-win32-runner

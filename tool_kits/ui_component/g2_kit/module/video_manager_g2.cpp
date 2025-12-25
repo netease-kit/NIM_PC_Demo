@@ -778,7 +778,7 @@ namespace nim_comp
 
 	void QueryToken(int64_t uid, std::function<void(const std::string& token)> onGetToken)
 	{
-		std::string strKey = "45c6af3c98409b18a84451215d0bdd6e";
+		std::string strKey = "3e215d27b6a6a9e27dad7ef36dd5b65c";
 		std::string suid = nbase::Int64ToString(uid);
 		std::string url = ""; // 用户需要填写自己的获取token地址
 		url.append(suid);

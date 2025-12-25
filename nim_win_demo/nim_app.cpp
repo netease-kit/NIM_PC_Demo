@@ -127,12 +127,14 @@ bool NimAPP::InitNim(const std::string& server_conf_file_path) {
         }
         assert(ret);
     }
+#if !defined(USING_RTC_G2)
     // 初始化云信音视频
     ret = nim::VChat::Init(server_conf_file_path);
     if (ret) {
         nim_ui::RunTimeDataManager::GetInstance()->SetVChatInited();
     }
     assert(ret);
+#endif
 
     // InitUiKit接口参数决定是否启用事件订阅模块，默认为false，如果是云信demo app则为true
     // 如果你的App开启了事件订阅功能，则此参数改为true
@@ -150,7 +152,9 @@ bool NimAPP::InitNim(const std::string& server_conf_file_path) {
     return ret;
 }
 void NimAPP::CleanupSDKBeforLogin() {
+#if !defined(USING_RTC_G2)
     nim::VChat::Cleanup();
+#endif
     nim_chatroom::ChatRoom::Cleanup();
     nim::Client::Cleanup2();
 }

@@ -1,0 +1,41 @@
+sources:
+  "4.1.1":
+    Windows:
+      x86_64:
+        url: "https://yx-web-nosdn.netease.im/package/1618217725/NERtc_Windows_SDK_v4.1.1.zip"
+        sha256: "e9e08bbd0706e263d90cff3abf360dec267e4c5f31145290c0ada9f413ae1503"
+      x86:
+        url: "https://yx-web-nosdn.netease.im/package/1618217725/NERtc_Windows_SDK_v4.1.1.zip"
+        sha256: "e9e08bbd0706e263d90cff3abf360dec267e4c5f31145290c0ada9f413ae1503"
+  "4.6.43":
+    Windows:
+      x86_64:
+        url: "https://yx-web-nosdn.netease.im/package/1676892563/NERTC_Windows_SDK_V4.6.43.zip"
+        sha256: "d100aef259bf050de81356a7883d58c90dfdb3027064c18a5f574443b4fe8981"
+      x86:
+        url: "https://yx-web-nosdn.netease.im/package/1676892563/NERTC_Windows_SDK_V4.6.43.zip"
+        sha256: "d100aef259bf050de81356a7883d58c90dfdb3027064c18a5f574443b4fe8981"
+    Macos:
+      x86_64:
+        url: "http://10.219.25.127:88/NERTC/4.6/package_1676892673_NERTC_MacOS_SDK_V4.6.43.tar.gz"
+        sha256: "a9a6bf8d4d6da3f179b5cb49331554b83c9f2f6a0762fbf216c0bf198d12ae94"
+  "4.6.50":
+    Windows:
+      x86_64:
+        url: "https://yx-web-nosdn.netease.im/package/1679987389/NERTC_Windows_SDK_V4.6.50.zip"
+        sha256: "138547922da4ddfdc80979a76e140bc5d7a33b39c4c5b842169ddf1a19f73d53"
+      x86:
+        url: "https://yx-web-nosdn.netease.im/package/1679987389/NERTC_Windows_SDK_V4.6.50.zip"
+        sha256: "138547922da4ddfdc80979a76e140bc5d7a33b39c4c5b842169ddf1a19f73d53"
+    Macos:
+      x86_64:
+        url: "https://yx-web-nosdn.netease.im/package/1679992232/NERTC_MacOS_SDK_V4.6.50.zip"
+        sha256: "e81961ad042c5dcf36722e7c16b6f449ffcdadd951fb03333266f729bea65ee2"
+  "5.9.15":
+    Windows:
+      x86_64:
+        url: "https://yx-web-nosdn.netease.im/package/1766136551/NERTC_Windows_SDK_V5.9.15.zip"
+        sha256: "28419e38311115c935ee2c117206eccbcf84a8bd16febc8a50d0f4ab66eb6aa8"
+      x86:
+        url: "https://yx-web-nosdn.netease.im/package/1766136551/NERTC_Windows_SDK_V5.9.15.zip"
+        sha256: "28419e38311115c935ee2c117206eccbcf84a8bd16febc8a50d0f4ab66eb6aa8"

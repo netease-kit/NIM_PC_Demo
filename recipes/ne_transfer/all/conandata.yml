@@ -1,0 +1,9 @@
+sources:
+  "0.1.0":
+    Windows:
+      x86:
+        url: "https://yx-web-nosdn.netease.im/package/1727666900820/ne_transfer_v0.1.0.tar.gz"
+        sha256: "3a7f0efa3bc3f5130818fc2f28991ab857a0efc8dd7085d64e302ddb08666762"
+      x86_64:
+        url: "https://yx-web-nosdn.netease.im/package/1736738225723/ne_transfer_x64_v0.1.0.tar.gz"
+        sha256: "e9b2f38cf64f3435dfbca799b3e544c917bea0073884fcc6a3ea0ed6db7cfe56"

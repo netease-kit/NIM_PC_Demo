@@ -1,0 +1,9 @@
+{
+    "version": 4,
+    "vendor": {
+        "conan": {}
+    },
+    "include": [
+        "G:\\Workspace\\yunxin-conan-index\\recipes\\nim\\all\\test_package\\build\\generators\\CMakePresets.json"
+    ]
+}

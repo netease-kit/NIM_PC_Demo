@@ -1,0 +1,9 @@
+sources:
+  "3.2623.1401":
+    Windows:
+      x86:
+        url: "https://yx-web-nosdn.netease.im/package/1728711827387/libcef_binary_3.2623.1401.gb90a3be_windows32.tar.gz"
+        sha256: "e94e395ffab1a4e03df8bf6bc662257e5a9cc574c3b0917be54ad2cfbc20f953"
+      x86_64:
+        url: "https://yx-web-nosdn.netease.im/package/1736739334191/libcef_binary_3.2623.1401.gb90a3be_windows64.tar.gz"
+        sha256: "1942155b7eee129413041a2f4ad089a0d908f5954677a51b7ddcc10285310c45"

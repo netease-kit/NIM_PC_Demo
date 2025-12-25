@@ -13,7 +13,7 @@ env:
 
 jobs:
   build-x86_64:
-    runs-on: windows-2019
+    runs-on: windows-2022
 
     steps:
     - uses: actions/checkout@v2
@@ -21,11 +21,15 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
 
+    - name: Install CMake
+      run: choco install cmake --version=3.31.8 --no-progress
+      shell: powershell
+
     - name: Install Conan
       id: conan
       uses: turtlebrowser/get-conan@main
       with:
-        version: 1.65.0
+        version: 1.66.0
 
     - name: Fetch all tags
       run: git fetch --tags --prune --unshallow --force
@@ -47,7 +51,7 @@ jobs:
         name: PC_Demo_Setup_x64
         path: bin/NIM_Demo_Setup*.exe
   build-x86:
-    runs-on: windows-2019
+    runs-on: windows-2022
 
     steps:
     - uses: actions/checkout@v2
@@ -55,11 +59,15 @@ jobs:
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v1
 
+    - name: Install CMake
+      run: choco install cmake --version=3.31.8 --no-progress
+      shell: powershell
+
     - name: Install Conan
       id: conan
       uses: turtlebrowser/get-conan@main
       with:
-        version: 1.65.0
+        version: 1.66.0
 
     - name: Fetch all tags
       run: git fetch --tags --prune --unshallow --force
