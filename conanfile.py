@@ -32,7 +32,7 @@ class NebaseConan(ConanFile):
         self.requires("sqlite3/3.51.0@yunxin/stable")
         self.requires("tinyxml/2.6.2@yunxin/stable")
         self.requires("nim/10.9.72-beta.0@yunxin/stable")
-        self.requires("nertc/4.1.1@yunxin/stable")
+        self.requires("nertc/5.9.15@yunxin/stable")
         self.requires("libcef/3.2623.1401@yunxin/stable")
         self.requires("ne_live_player/1.6.9@yunxin/stable")
         self.requires("image_ole/4.2.0@yunxin/stable")

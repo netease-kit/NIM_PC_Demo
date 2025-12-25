@@ -31,3 +31,11 @@ sources:
       x86_64:
         url: "https://yx-web-nosdn.netease.im/package/1679992232/NERTC_MacOS_SDK_V4.6.50.zip"
         sha256: "e81961ad042c5dcf36722e7c16b6f449ffcdadd951fb03333266f729bea65ee2"
+  "5.9.15":
+    Windows:
+      x86_64:
+        url: "https://yx-web-nosdn.netease.im/package/1766136551/NERTC_Windows_SDK_V5.9.15.zip"
+        sha256: "28419e38311115c935ee2c117206eccbcf84a8bd16febc8a50d0f4ab66eb6aa8"
+      x86:
+        url: "https://yx-web-nosdn.netease.im/package/1766136551/NERTC_Windows_SDK_V5.9.15.zip"
+        sha256: "28419e38311115c935ee2c117206eccbcf84a8bd16febc8a50d0f4ab66eb6aa8"

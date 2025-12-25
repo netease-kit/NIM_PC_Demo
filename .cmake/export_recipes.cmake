@@ -129,7 +129,7 @@ function(export_recipes_dynamically)
         "sqlite3/3.51.0@yunxin/stable"
         "tinyxml/2.6.2@yunxin/stable"
         "nim/10.9.72-beta.0@yunxin/stable"
-        "nertc/4.1.1@yunxin/stable"
+        "nertc/5.9.15@yunxin/stable"
         "libcef/3.2623.1401@yunxin/stable"
         "ne_live_player/1.6.9@yunxin/stable"
         "image_ole/4.2.0@yunxin/stable"

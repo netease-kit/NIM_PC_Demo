@@ -582,7 +582,7 @@ namespace nim_comp
 			}
 			else {
 				requestTokenValue(uid);
-				while ("xyz" == stoken_)
+				while ("xyz" == stoken_ && isUseRtcSafeMode)
 				{
 					std::this_thread::yield();
 				}
@@ -755,7 +755,7 @@ namespace nim_comp
 			//std::string sValue = values["cid"].asString();
 			if (value == 1) {
 				if (notifyInfo) {
-					while ("xyz" == stoken_)
+                    while ("xyz" == stoken_ && isUseRtcSafeMode)
 					{
 						std::this_thread::yield();
 					}
@@ -875,7 +875,7 @@ namespace nim_comp
 		QLOG_APP(L"handleAccepted, version_: {0}") << version_;
 
 		requestTokenValue(channelMembers_[senderAccid]);
-		while ("xyz" == stoken_)
+        while ("xyz" == stoken_ && isUseRtcSafeMode)
 		{
 			std::this_thread::yield();
 		}
@@ -1088,12 +1088,13 @@ namespace nim_comp
 	}
 	///////////////////////////////G2事件///////////////////////////////
 	void AvChatComponent::onJoinChannel(nertc::channel_id_t cid, nertc::uid_t uid, nertc::NERtcErrorCode result, uint64_t elapsed) {
-		QLOG_APP(L"onJoinChannel");
+		QLOG_APP(L"onJoinChannel, cid: {0}, uid: {1}, result: {2}, elapsed: {3}")
+			<< cid << uid << result << elapsed;
 		//rtcEngine_->enableLocalAudio(true);
 	}
 	void AvChatComponent::onUserJoined(nertc::uid_t uid, const char* user_name)
 	{
-		QLOG_APP(L"onUserJoined");
+		QLOG_APP(L"onUserJoined, uid: {0}, user name: {1}") << uid << user_name;
 		int ret = rtcEngine_->subscribeRemoteVideoStream(uid, nertc::kNERtcRemoteVideoStreamTypeHigh, true);
 		//ret = rtcEngine_->subscribeRemoteAudioStream(uid, true);
 
