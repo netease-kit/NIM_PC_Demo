@@ -27,7 +27,7 @@ class NetEaseRTCConan(ConanFile):
         if (self.settings.os == 'Windows'):
             arch = 'x64' if self.settings.arch == 'x86_64' else 'x86'
             self.copy("*.dll", src=os.path.join('dll', arch), dst="bin")
-            self.copy("*.lib", src=os.path.join('lib', arch), dst="lib")
+            self.copy("*.lib", src=os.path.join('libs', arch), dst="lib")
             self.copy("*.h", src='api', dst="include")
 
     def package_info(self):
