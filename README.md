@@ -1,5 +1,8 @@
 # NetEase IM PC Demo
 
+> [!IMPORTANT]
+当前项目已停止迭代，桌面端 IM Demo 已推出基于全新 V2 系列 API 设计的跨平台方案（Windows、macOS、Linux 含国产化信创系统支持），请移步 [NIM UIkit Electron](https://github.com/netease-kit/nim-uikit-electron.git) 查看详情。
+
 网易云信 PC IM Demo 是基于[网易云信 PC SDK](https://yunxin.163.com/im-sdk-demo) 制作的即时通讯示例程序，UI 库使用 [NIM Duilib](https://github.com/netease-im/NIM_Duilib_Framework) 制作
 
 ![GitHub](https://img.shields.io/badge/license-MIT-green.svg) | [![Actions Status](https://github.com/netease-im/NIM_PC_Demo/workflows/MSBuild/badge.svg)](https://github.com/netease-im/NIM_PC_Demo/actions)
